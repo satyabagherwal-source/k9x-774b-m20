@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-FQSY",
-    "timestamp": "2026-11-23T16:02:52.402Z",
-    "repository": "mlua-rs/mlua",
-    "learningId": "learn-github-mlua-rs-mlua",
-    "contentHash": "9059a66108be3bdfcdad77fbfac4e5994e4546a911428d55577399832a2c4230",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-FY0N",
-    "timestamp": "2026-11-23T16:03:01.751Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "80a08af9ecc02e1f95a6cc7a44dd1f9eabc2d00f17579685691dc9f28c00b7b7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-R1OK",
     "timestamp": "2026-11-23T16:11:39.716Z",
     "repository": "google/vit-base-patch16-224",
@@ -7490,6 +7460,36 @@
     "repository": "gocd/gocd",
     "learningId": "learn-github-gocd-gocd",
     "contentHash": "b909e2561ff7f36b4cd3c258611d02ba9deaaeb4cd143f0d6a6db6b4cdd794a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-KW0T",
+    "timestamp": "2026-11-25T02:10:24.413Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "2814f579fcd1579f4a35e9054f394df5e1b4bfe9ee36248f35d06871d652d7c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-KXHT",
+    "timestamp": "2026-11-25T02:10:26.321Z",
+    "repository": "faker-js/faker",
+    "learningId": "learn-github-faker-js-faker",
+    "contentHash": "6463b4ea7293827afec042a0a6dfcfc4952bc099861f1a5bf465032507dbc485",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

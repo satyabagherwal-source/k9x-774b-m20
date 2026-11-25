@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "c2a50c31",
+    "sourceVersion": "ce19ae70",
     "license": "MIT",
-    "contentHash": "b50b6d380f162f73c5b48071542cc8ac9ba8aab477f166c773f4c03c216fe549",
-    "lastHarvestedAt": "2026-11-23T23:31:27.318Z",
+    "contentHash": "2814f579fcd1579f4a35e9054f394df5e1b4bfe9ee36248f35d06871d652d7c8",
+    "lastHarvestedAt": "2026-11-25T02:10:24.418Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {
@@ -10283,10 +10283,10 @@
     "repository": "faker-js/faker",
     "platform": "github",
     "sourceUrl": "https://github.com/faker-js/faker",
-    "sourceVersion": "84d1bf84",
+    "sourceVersion": "1092e61c",
     "license": "NOASSERTION",
-    "contentHash": "14cc82f9f478387e5bc87b4733c292ed97217a831b75f7b0c67683d3dbba10b3",
-    "lastHarvestedAt": "2026-11-21T03:15:35.056Z",
+    "contentHash": "6463b4ea7293827afec042a0a6dfcfc4952bc099861f1a5bf465032507dbc485",
+    "lastHarvestedAt": "2026-11-25T02:10:26.326Z",
     "learningId": "learn-github-faker-js-faker"
   },
   "storybookjs-storybook": {

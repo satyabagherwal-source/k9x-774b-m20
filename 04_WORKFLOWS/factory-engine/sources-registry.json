@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T02:02:10.101Z",
-    "lastVerified": "2026-11-25T02:02:10.101Z",
+    "lastChecked": "2026-11-25T02:10:33.806Z",
+    "lastVerified": "2026-11-25T02:10:33.806Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -186,8 +186,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T01:36:08.558Z",
-    "lastVerified": "2026-11-25T01:36:08.558Z",
+    "lastChecked": "2026-11-25T02:10:33.797Z",
+    "lastVerified": "2026-11-25T02:10:33.797Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1066,9 +1066,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-24T21:47:58.060Z",
+    "lastChecked": "2026-11-25T02:10:28.862Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-24T21:47:58.060Z"
+    "lastVerified": "2026-11-25T02:10:28.862Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -3418,9 +3418,9 @@
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
     "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
-    "lastChecked": "2026-11-24T06:38:27.175Z",
+    "lastChecked": "2026-11-25T02:10:31.266Z",
     "revisionIdentifier": "2b290b34",
-    "lastVerified": "2026-11-24T06:38:27.175Z"
+    "lastVerified": "2026-11-25T02:10:31.266Z"
   },
   "hf-huggingfacetb-smolvlm2-256m-video-instruct": {
     "name": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
@@ -5709,9 +5709,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-24T07:55:37.594Z",
+    "lastChecked": "2026-11-25T02:10:26.380Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-24T07:55:37.594Z"
+    "lastVerified": "2026-11-25T02:10:26.380Z"
   },
   "apple-foundationdb": {
     "name": "apple/foundationdb",
@@ -8162,9 +8162,9 @@
   "louiscad-splitties": {
     "name": "Splitties",
     "officialUrl": "https://github.com/LouisCAD/Splitties",
-    "lastChecked": "2026-11-22T14:40:34.617Z",
+    "lastChecked": "2026-11-25T02:10:23.778Z",
     "revisionIdentifier": "1ed56ba2",
-    "lastVerified": "2026-11-22T14:40:34.617Z"
+    "lastVerified": "2026-11-25T02:10:23.778Z"
   },
   "killercup-cargo-edit": {
     "name": "cargo-edit",
@@ -8613,12 +8613,12 @@
     "officialUrl": "https://github.com/astral-sh/ruff",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T23:31:26.214Z",
-    "lastVerified": "2026-11-23T23:31:26.214Z",
+    "lastChecked": "2026-11-25T02:10:23.157Z",
+    "lastVerified": "2026-11-25T02:10:23.157Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "b50b6d380f162f73c5b48071542cc8ac9ba8aab477f166c773f4c03c216fe549",
+    "contentHash": "2814f579fcd1579f4a35e9054f394df5e1b4bfe9ee36248f35d06871d652d7c8",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
@@ -12198,14 +12198,14 @@
     "officialUrl": "https://github.com/faker-js/faker",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T03:15:34.077Z",
-    "lastVerified": "2026-11-21T03:15:34.077Z",
+    "lastChecked": "2026-11-25T02:10:25.200Z",
+    "lastVerified": "2026-11-25T02:10:25.200Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-faker-js-faker",
-    "contentHash": "14cc82f9f478387e5bc87b4733c292ed97217a831b75f7b0c67683d3dbba10b3",
+    "contentHash": "6463b4ea7293827afec042a0a6dfcfc4952bc099861f1a5bf465032507dbc485",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

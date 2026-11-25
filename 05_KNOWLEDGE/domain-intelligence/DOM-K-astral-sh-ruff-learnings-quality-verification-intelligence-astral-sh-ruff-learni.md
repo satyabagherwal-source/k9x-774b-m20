@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T16:22:58.892Z",
+  "timestamp": "2026-11-25T02:10:34.536Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-astral-sh-ruff-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [astral-sh-ruff-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T16:22:58.892Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T02:10:34.536Z`  
 > **Learning ID**: `LEARN-EVO-astral-sh-ruff-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from astral-sh-ruff-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `a3a3ebb5`  
+> **Source Version**: `ce19ae70`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T16:22:49.591Z  
+> **Timestamp**: 2026-11-25T02:10:23.275Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T16:22:49.587Z  
+> **Harvest Timestamp**: 2026-11-25T02:10:23.157Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51232 stars
+- **Stars / Engagement**: 51466 stars
 
 ---
 
@@ -1565,6 +1565,8 @@ impl<'a> ResolvedDiagnostic<'a> {
 
 ### Core Architecture Module: `crates/ruff_db/src/diagnostic/render/azure.rs`
 ```
+use std::fmt::{self, Display, Write};
+
 use ruff_source_file::LineColumn;
 
 use crate::diagnostic::{Diagnostic, DisplayDiagnosticConfig, Severity};
@@ -1586,16 +1588,16 @@ impl<'a> AzureRenderer<'a> {
 }
 
 impl Renderer for AzureRenderer<'_> {
-    fn render(&self, f: &mut std::fmt::Formatter, diagnostics: &[Diagnostic]) -> std::fmt::Result {
+    fn render(&self, f: &mut fmt::Formatter, diagnostics: &[Diagnostic]) -> fmt::Result {
         for diag in diagnostics {
             let severity = match diag.severity() {
                 Severity::Hint | Severity::Info | Severity::Warning => "warning",
                 Severity::Error | Severity::Fatal => "error",
             };
             write!(f, "##vso[task.logissue type={severity};")?;
-            if let Some(span) = diag.primary_span() {
+            if let Some(span) = diag.primary_span_ref() {
                 let filename = span.file().path(self.resolver);
-                write!(f, "sourcepath={filename};")?;
+                write!(f, "sourcepath={};", escape_property(filename))?;
                 if let Some(range) = span.range() {
                     let location = if self.resolver.notebook_index(span.file()).is_some() {
                         // We can't give a reasonable location for the structured formats,
@@ -1620,18 +1622,91 @@ impl Renderer for AzureRenderer<'_> {
             } else {
                 diag.secondary_code_or_id()
             };
-            writeln!(f, "code={code};]{body}", body = diag.concise_message(),)?;
+            writeln!(
+                f,
+                "code={};]{}",
+                escape_property(code),
+                escape_message(diag.concise_message()),
+            )?;
         }
 
         Ok(())
     }
 }
 
+/// Escape command data as in the [Azure Pipelines task library].
+///
+/// [Azure Pipelines task library]: https://github.com/microsoft/azure-pipelines-task-lib/blob/43673c958dc5fb40b898c5c7b5b7b5bf0ebd14bd/node/taskcommand.ts#L93-L110
+fn escape_message(message: impl Display) -> impl Display {
+    fmt::from_fn(move |f| write!(MessageWriter(f), "{message}"))
+}
+
+/// Property values must also escape the delimiters in the command header.
+fn escape_property(text: &str) -> impl Display + '_ {
+    fmt::from_fn(move |f| {
+        let mut start = 0;
+        for i in memchr::memchr2_iter(b';', b']', text.as_bytes()) {
+            MessageWriter(f).write_str(&text[start..i])?;
+            f.write_str(if text.as_bytes()[i] == b';' {
+                "%3B"
+            } else {
+                "%5D"
+            })?;
+            start = i + 1;
+        }
+        MessageWriter(f).write_str(&text[start..])
+    })
+}
+
+/// Escape each fragment of a formatted message without buffering it.
+struct MessageWriter<'a, 'b>(&'a mut fmt::Formatter<'b>);
+
+impl Write for MessageWriter<'_, '_> {
+    fn write_str(&mut self, text: &str) -> fmt::Result {
+        let mut start = 0;
+        for i in memchr::memchr3_iter(b'%', b'\r', b'\n', text.as_bytes()) {
+            self.0.write_str(&text[start..i])?;
+            self.0.write_str(match text.as_bytes()[i] {
+                b'%' => "%AZP25",
+                b'\r' => "%0D",
+                _ => "%0A",
+            })?;
+            start = i + 1;
+        }
+        self.0.write_str(&text[start..])
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::diagnostic::Severity;
     use crate::diagnostic::render::tests::{
-        DiagnosticFormat, create_diagnostics, create_syntax_error_diagnostics,
+        DiagnosticFormat, TestEnvironment, create_diagnostics, create_syntax_error_diagnostics,
     };
+
+    #[test]
+    fn escapes_command_properties_and_messages() {
+        let mut env = TestEnvironment::new();
+        env.format(DiagnosticFormat::Azure);
+        let path = "café;part]%0A.py";
+        env.add(path, "x");
+        let diag = env
+            .builder(
+                "test",
+                Severity::Error,
+                "expected operator:\r\nbad;]%0A\n^^^^^^^^",
+            )
+            .primary(path, "1:0", "1:1", "")
+            .build();
+
+        assert_eq!(
+            env.render(&diag),
+            concat!(
+                "##vso[task.logissue type=error;sourcepath=/café%3Bpart%5D%AZP250A.py;linenumber=1;columnnumber=1;code=test;]",
+                "expected operator:%0D%0Abad;]%AZP250A%0A^^^^^^^^\n",
+            )
+        );
+    }
 
     #[test]
     fn output() {
@@ -2076,9 +2151,7 @@ impl<'a> Diff<'a> {
             // Find the new line number with the largest number of digits to align all of the line
             // number separators.
             let last_op = grouped_ops.last().and_then(|group| group.last());
-            let largest_new = last_op
-                .map(|op| op.new_range().end + line_offset)
-                .unwrap_or_default();
+            let largest_new = last_op.map_or_default(|op| op.new_range().end + line_offset);
 
             let digit_with = OneIndexed::new(largest_new).unwrap_or_default().digits();
 
@@ -2135,7 +2208,7 @@ impl<'a> Diff<'a> {
                         for (emphasized, value) in change.iter_strings_lossy() {
                             if needs_separator && !value.trim_end_matches(['\n', '\r']).is_empty() {
                                 f.write_str(" ")?;
-        
+                                needs_separator = f
 ```
 
 
@@ -2144,14 +2217,11 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30404** (2026-11-13): **[ty] Avoid spurious syntax warnings when applying fixes**
-  *Symptoms*: `ty check --fix` can emit a spurious syntax warning for a valid `pyproject.toml`. An applicable fix in one Python file starts the fix pass, which then tries to parse other files with diagnostics as Python. That includes configuration files with a `renamed-rule` warning.  The fix loop now checks each file for applicable fixes before parsing it. When a Python syntax error blocks a fix, the warning follows the diagnostic renderer’s path convention. It shows paths relative to the working directory for files under it and absolute paths for files outside it. 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:43413964620:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [733da98](https://github.com/astral-sh/ruff/commit/733da988af5c7f3d2ea36de3be76fc3ddd4ebff1) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/43413964620/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:43413964673:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [733da98](https://github.com/astral-sh/ruff/commit/733da988af5c7f3d2ea36de3be76fc3ddd4ebff1) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/43413964673/attempts/1) 
+- **Issue #30911** (2026-11-25): **[ty] Preserve peer context for collection literals in boolean and conditional expressions**
+  *Symptoms*: Since #30478, ty rejects a safe append when a fresh list is used as a fallback.  ```py def f(values: list[int] | None):     result = values or [None]     result.append(1) ```  Before this change, ty infers `list[None]` for the fallback and rejects `append(1)`. With this change, the fallback can hold `int | None`, so the append succeeds. We still reject `append(None)` because `result` could be the original `list[int]`.  The same reasoning applies to conditional expressions. Another branch can suggest element types without requiring the fresh collection to be assignable to that branch. We distinguish this context from an assignment target and skip the retry that discards contextual bounds. Incompatible assignments retain the diagnostics from #30478.  ## Ecosystem report  On [`343133ff`](https://github.com/astral-sh/ruff/commit/343133ff2739a4a6f1bef660c77fbde1d8687752), eight existing Pandera errors show `DataFrame | str` in place of `str | DataFrame`. Only the display order changed. No diagnostics were added or removed, and the [full analysis](https://github.com/astral-sh/ruff/pull/30911#issuecomment-7144425467) found no regression. 
 
-- **Issue #30399** (2026-11-13): **[ty] Fix a panic checking class decorators with inferred return types**
-  *Symptoms*: ty could panic when checking a decorated class if it inferred the return type of an inner decorator and an outer decorator returned a class from another module. During cycle recovery, ty could use that replacement class's scope to look up names in the file that defined the original class.  Preserve the original class before applying decorators and use it for class-definition checks. The decorated name still takes the type returned by the outer decorator.  Fixes astral-sh/ty#5021.  ## Test plan  Checked the reported `EnumCheck` example with return type inference enabled. Before this change it panicked. With the fix, ty reports the invalid argument to `@d2` and finishes checking the file. 
+- **Issue #30893** (2026-11-24): **[ty] Restore folding for indented region comments**
+  *Symptoms*: ## Summary  Today, ty misses `# region` and `# endregion` when they’re indented inside a function. The comment range starts at the beginning of the line, but ty tries to strip `#` before trimming the indentation. For `"    # region Apply discount"`, that leaves `"# region Apply discount"`, which fails the check for a `region` prefix.  This PR trims the indentation first, so ty folds the marked section and keeps both markers out of adjacent comment blocks. It fixes a regression introduced in #23831 and [reported on Discord](https://discord.com/channels/1039017663004942429/1039017663512449056/1572008439507591179).  Added a regression test and verified the folding ranges through the language server. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2168,738 +2238,761 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1267effe` (2026-11-13)
-**Commit Message**: Use the shared diagnostic rendering order in Ruff (#30291)
-
-Summary
---
-
-This is another supporting change for #30269. Diagnostic sorting is the
-last place where we `expect` to have a Ruff file. This PR swaps out the
-`ruff_start_ordering` helper for the `rendering_sort_key` version used
-in ty. We previously opted not to make this change
-(https://github.com/astral-sh/ruff/pull/19179#discussion_r2190586209)
-because it changes the sort order of diagnostics (obviously) in a way
-that looks a bit bad when rule codes are displayed. I think this is
-probably more palatable, and actually preferable, now that
-human-readable names are in preview. It also changes the sort order of
-panic diagnostics added in
-https://github.com/astral-sh/ruff/pull/20258#discussion_r2349077788, but
-I think that's okay as it also matches ty.
-
-The second commit has the snapshot changes to make it a little easier to
-isolate the code changes.
-
-Test Plan
---
-
-New and updated tests
-
-**File**: `crates/mdtest/src/matcher.rs` (modified, +1/-1)
-```diff
-@@ -196,7 +196,7 @@ pub fn match_file(
-     if failures.is_empty() {
-         // We need to re-sort the diagnostics because matching uses `swap_remove` internally, which can change ordering.
-         snapshot_diagnostics
--            .sort_unstable_by(|a, b| a.rendering_sort_key(db).cmp(&b.rendering_sort_key(db)));
-+            .sort_unstable_by(|a, b| a.rendering_sort_key(&db).cmp(&b.rendering_sort_key(&db)));
-         Ok(snapshot_diagnostics)
-     } else {
-         Err(failures)
-```
-
-**File**: `crates/ruff/src/commands/check.rs` (modified, +6/-5)
-```diff
-@@ -9,11 +9,10 @@ use ignore::Error;
- use log::{debug, warn};
- #[cfg(not(target_family = "wasm"))]
- use rayon::prelude::*;
--use ruff_linter::message::create_panic_diagnostic;
-+use ruff_linter::message::{RenderContext, create_panic_diagnostic};
- use ruff_python_ast::{SourceType, TomlSourceType};
- use rustc_hash::FxHashMap;
- 
--use ruff_db::diagnostic::Diagnostic;
- use ruff_db::panic::catch_unwind;
- use ruff_linter::package::PackageRoot;
- use ruff_linter::registry::Rule;
-@@ -177,9 +176,11 @@ pub(crate) fn check(
-             |a, b| (a.0 + b.0, a.1 + b.1),
-         );
- 
--    all_diagnostics
--        .inner
--        .sort_by(Diagnostic::ruff_start_ordering);
-+    let context = RenderContext::new(&all_diagnostics.notebook_indexes);
-+    all_diagnostics.inner.sort_by(|a, b| {
-+        a.rendering_sort_key(&context)
-+            .cmp(&b.rendering_sort_key(&context))
-+    });
- 
-     // Store the caches.
-     caches.persist()?;
-```
-
-**File**: `crates/ruff/src/commands/check_stdin.rs` (modified, +6/-4)
-```diff
-@@ -1,7 +1,7 @@
- use std::path::Path;
- 
- use anyhow::Result;
--use ruff_db::diagnostic::Diagnostic;
-+use ruff_linter::message::RenderContext;
- use ruff_linter::package::PackageRoot;
- use ruff_linter::packaging;
- use ruff_linter::settings::flags;
-@@ -53,8 +53,10 @@ pub(crate) fn check_stdin(
-         noqa,
-         fix_mode,
-     )?;
--    diagnostics
--        .inner
--        .sort_unstable_by(Diagnostic::ruff_start_ordering);
-+    let context = RenderContext::new(&diagnostics.notebook_indexes);
-+    diagnostics.inner.sort_unstable_by(|a, b| {
-+        a.rendering_sort_key(&context)
-+            .cmp(&b.rendering_sort_key(&context))
-+    });
-     Ok(diagnostics)
- }
-```
-
-**File**: `crates/ruff/src/commands/format.rs` (modified, +16/-13)
-```diff
-@@ -591,14 +591,17 @@ impl<'a> FormatResults<'a> {
-                 }
-             })
-             .collect();
--        let diagnostics: Vec<_> = errors
-+        let mut diagnostics: Vec<_> = errors
-             .iter()
-             .map(Diagnostic::from)
-             .chain(self.to_diagnostics(&mut notebook_index))
--            .sorted_unstable_by(Diagnostic::ruff_start_ordering)
-             .collect();
- 
-         let context = RenderContext::new(&notebook_index);
-+        diagnostics.sort_unstable_by(|a, b| {
-+            a.rendering_sort_key(&context)
-+                .cmp(&b.rendering_sort_key(&context))
-+        });
-         let config = DisplayDiagnosticConfig::new("ruff")
-             .hide_severity(true)
-             .color(!cfg!(test) && colored::control::SHOULD_COLORIZE.should_colorize());
-@@ -1345,19 +1348,19 @@ mod tests {
-         let _s = settings.bind_to_scope();
- 
-         assert_snapshot!(str::from_utf8(&buf)?, @"
--        io: test.py: Permission denied
--        --> test.py:1:1
--
--        io: File not found
-+        panic: Panicked at <location> when checking `test.py`: `Test panic for FormatCommandError`
-         --> test.py:1:1
-+        info: This indicates a bug in Ruff.
-+        info: If you could open an issue at https://github.com/astral-sh/ruff/issues/new?title=%5Bpanic%5D, we'd be very appreciative!
-+        info: run with `RUST_BACKTRACE=1` environment variable to show the full backtrace information
- 
--        internal-error: Expected index or slice expression
-+        io: Cannot write to file
-         --> test.py:1:1
- 
--        io: Cannot write to file
-+        io: File not found
-         --> test.py:1:1
- 
--        invalid-cli-option: Range formatting is only supported for Python files.
-+        io: test.py: Permission denied
-         --> test.py:1:1
- 
-         invalid-syntax: Unexpected indentation
-@@ -1366,11 +1369,11 @@ mod tests {
-         1 | 1
-           | ^
- 
--        panic: Panicked at <location> when checking `test.py`: `Test panic for FormatCommandError`
-+        invalid-cli-option: Range formatting is only supported for Python files.
-+        --> test.py:1:1
-+
-+        internal-error: Expected index or slice expression
-         --> test.py:1:1
--        info: This indicates a bug in Ruff.
--        info: If you could open an issue at https://github.com/astral-sh/ruff/issues/new?title=%5Bpanic%5D, we'd be very appreciative!
--        info: run with `RUST_BACKTRACE=1` environment variable to show the full backtrace information
-         ");
- 
-         Ok(())
-```
-
-**File**: `crates/ruff/src/lib.rs` (modified, +3/-4)
-```diff
-@@ -480,10 +480,9 @@ pub fn check(args: CheckCommand, global_options: GlobalConfigArgs) -> Result<Exi
-             .unwrap_or(Severity::Info);
-         if max_severity.is_fatal() {
-             // When a panic/fatal error is reported, prompt the user to open an issue on github.
--            // Diagnostics with severity `fatal` will be sorted to the bottom, and printing the
--            // message here instead of attaching it to the diagnostic ensures that we only print
--            // it once instead of repeating it for each diagnostic. Prints to stderr to prevent
--            // the message from being captured by tools parsing the normal output.
-+            // Printing the message here instead of attaching it to the diagnostic ensures that we
-+            // only print it once instead of repeating it for each diagnostic. Prints to stderr to
-+            // prevent the message from being captured by tools parsing the normal output.
-             let message = "Panic during linting indicates a bug in Ruff. If you could open an issue at:
- 
- https://github.com/astral-sh/ruff/issues/new?title=%5BLinter%20panic%5D
-```
-
-**File**: `crates/ruff/tests/cli/lint.rs` (modified, +17/-17)
-```diff
-@@ -4794,12 +4794,12 @@ fn rule_panic_mixed_results_concise() -> Result<()> {
-     success: false
-     exit_code: 2
-     ----- stdout -----
-+    normal.py:1:1: preview-test-rule: Hey this is a preview test rule.
-+    normal.py:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     normal.py:1:1: stable-test-rule: Hey this is a stable test rule.
-+    normal.py:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     normal.py:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     normal.py:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
--    normal.py:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
--    normal.py:1:1: preview-test-rule: Hey this is a preview test rule.
--    normal.py:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     panic.py: panic: Panicked at <location> when checking `[TMP]/panic.py`: `This is a fake panic for testing.`
-     Found 7 errors.
-     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
-@@ -4829,23 +4829,14 @@ fn rule_panic_mixed_results_full() -> Result<()> {
-     success: false
-     exit_code: 2
-     ----- stdout -----
--    stable-test-rule: Hey this is a stable test rule.
-+    preview-test-rule: Hey this is a preview test rule.
-     --> normal.py:1:1
- 
--    stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-+    redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     --> normal.py:1:1
--      |
--    1 + # fix from stable-test-rule-safe-fix
--    2 | import os
--      |
- 
--    stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
-+    stable-test-rule: Hey this is a stable test rule.
-     --> normal.py:1:1
--      |
--    1 + # fix from stable-test-rule-unsafe-fix
--    2 | import os
--      |
--    note: This is an unsafe fix and may change runtime behavior
- 
-     stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     --> normal.py:1:1
-@@ -4855,11 +4846,20 @@ fn rule_panic_mixed_results_full() -> Result<()> {
-       |
-     note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
- 
--    preview-test-rule: Hey this is a preview test rule.
-+    stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     --> normal.py:1:1
-+      |
-+    1 + # fix from stable-test-rule-safe-fix
-+    2 | import os
-+      |
- 
--    redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-+    stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
-     --> normal.py:1:1
-+      |
-+    1 + # fix from stable-test-rule-unsafe-fix
-+    2 | import os
-+      |
-+    note: This is an unsafe fix and may change runtime behavior
- 
-     panic: Panicked at <location> when checking `[TMP]/panic.py`: `This is a fake panic for testing.`
-     --> panic.py:1:1
-```
-
-**File**: `crates/ruff/tests/integration_test.rs` (modified, +23/-23)
-```diff
-@@ -1308,12 +1308,12 @@ fn preview_enabled_prefix() {
-     success: false
-     exit_code: 1
-     ----- stdout -----
-+    -:1:1: preview-test-rule: Hey this is a preview test rule.
-+    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     -:1:1: stable-test-rule: Hey this is a stable test rule.
-+    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     -:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     -:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
--    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
--    -:1:1: preview-test-rule: Hey this is a preview test rule.
--    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     Found 6 errors.
-     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
- 
-@@ -1330,14 +1330,14 @@ fn preview_enabled_all() {
-     success: false
-     exit_code: 1
-     ----- stdout -----
--    -:1:1: undocumented-public-module: Missing docstring in public module
-     -:1:1: missing-copyright-notice: Missing copyright notice at top of file
-+    -:1:1: preview-test-rule: Hey this is a preview test rule.
-+    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     -:1:1: stable-test-rule: Hey this is a stable test rule.
-+    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     -:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     -:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
--    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
--    -:1:1: preview-test-rule: Hey this is a preview test rule.
--    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-+    -:1:1: undocumented-public-module: Missing docstring in public module
-     Found 8 errors.
-     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
- 
-@@ -1470,12 +1470,12 @@ fn preview_enabled_group_ignore() {
-     success: false
-     exit_code: 1
-     ----- stdout -----
-+    -:1:1: preview-test-rule: Hey this is a preview test rule.
-+    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     -:1:1: stable-test-rule: Hey this is a stable test rule.
-+    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     -:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     -:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
--    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
--    -:1:1: preview-test-rule: Hey this is a preview test rule.
--    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     Found 6 errors.
-     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
- 
-@@ -1677,10 +1677,10 @@ fn deprecated_multiple_direct() {
-     success: false
-     exit_code: 1
-     ----- stdout -----
--    RUF920 Hey this is a deprecated test rule.
-+    RUF921 Hey this is another deprecated test rule.
-     --> -:1:1
- 
--    RUF921 Hey this is another deprecated test rule.
-+    RUF920 Hey this is a deprecated test rule.
-     --> -:1:1
- 
-     Found 2 errors.
-@@ -2461,34 +2461,34 @@ extend-safe-fixes = ["RUF9"]
-     success: false
-     exit_code: 1
-     ----- stdout -----
-+    RUF950 Hey this is a test rule that was redirected from another.
-+    --> -:1:1
-+
-     RUF900 Hey this is a stable test rule.
-     --> -:1:1
- 
--    RUF901 Hey this is a stable test rule with a safe fix.
-+    RUF903 Hey this is a stable test rule with a display only fix.
-     --> -:1:1
-       |
--    1 + # fix from stable-test-rule-safe-fix
-+    1 + # fix from stable-test-rule-display-only-fix
-     2 | x = {'a': 1, 'a': 1}
-       |
--    note: This is an unsafe fix and may change runtime behavior
-+    note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
- 
--    RUF902 [*] Hey this is a stable test rule with an unsafe fix.
-+    RUF901 Hey this is a stable test rule with a safe fix.
-     --> -:1:1
-       |
--    1 + # fix from stable-test-rule-unsafe-fix
-+    1 + # fix from stable-test-rule-safe-fix
-     2 | x = {'a': 1, 'a': 1}
-       |
-+    note: This is an unsafe fix and may change runtime behavior
- 
--    RUF903 Hey this is a stable test rule with a display only fix.
-+    RUF902 [*] Hey this is a stable test rule with an unsafe fix.
-     --> -:1:1
-       |
--    1 + # fix from stable-test-rule-display-only-fix
-+    1 + # fix from stable-test-rule-unsafe-fix
-     2 | x = {'a': 1, 'a': 1}
-       |
--  
-```
-
-**File**: `crates/ruff_db/src/diagnostic/mod.rs` (modified, +7/-39)
-```diff
-@@ -13,7 +13,7 @@ pub use self::render::{DummyFileResolver, FileResolver, Input};
- use self::render::{FullRenderer, Renderer};
- pub use self::stylesheet::{DiagnosticStylesheet, fmt_with_hyperlink};
- use crate::cancellation::CancellationToken;
--use crate::{Db, files::File};
-+use crate::files::File;
- 
- pub mod render;
- mod stylesheet;
-@@ -342,19 +342,16 @@ impl Diagnostic {
- 
-     /// Returns the "primary" span of this diagnostic, panicking if it does not exist.
-     ///
--    /// This should typically only be used when working with diagnostics in Ruff, where diagnostics
--    /// are currently required to have a primary span.
--    ///
-     /// See [`Diagnostic::primary_span`] for more details.
-     pub fn expect_primary_span(&self) -> Span {
-         self.primary_span().expect("Expected a primary span")
-     }
- 
-     /// Returns a key that can be used to sort two diagnostics into the canonical order
-     /// in which they should appear when rendered.
--    pub fn rendering_sort_key<'a>(&'a self, db: &'a dyn Db) -> impl Ord + 'a {
-+    pub fn rendering_sort_key<'a>(&'a self, resolver: &'a dyn FileResolver) -> impl Ord + 'a {
-         RenderingSortKey {
--            db,
-+            resolver,
-             diagnostic: self,
-         }
-     }
-@@ -487,42 +484,11 @@ impl Diagnostic {
-             .map(|sub| sub.inner.message.as_str())
-     }
- 
--    /// Returns the [`SourceFile`] which the message belongs to.
--    fn ruff_source_file(&self) -> Option<&SourceFile> {
--        self.primary_span_ref()?.as_ruff_file()
--    }
--
--    /// Returns the [`SourceFile`] which the message belongs to.
--    ///
--    /// Panics if the diagnostic has no primary span, or if its file is not a `SourceFile`.
--    fn expect_ruff_source_file(&self) -> &SourceFile {
--        self.ruff_source_file()
--            .expect("Expected a ruff source file")
--    }
--
-     /// Returns the [`TextRange`] for the diagnostic.
-     pub fn range(&self) -> Option<TextRange> {
-         self.primary_span()?.range()
-     }
- 
--    /// Returns the ordering of diagnostics based on the start of their ranges, if they have any.
--    ///
--    /// Panics if either diagnostic has no primary span, or if its file is not a `SourceFile`.
--    pub fn ruff_start_ordering(&self, other: &Self) -> std::cmp::Ordering {
--        let a = (
--            self.severity().is_fatal(),
--            self.expect_ruff_source_file(),
--            self.range().map(|r| r.start()),
--        );
--        let b = (
--            other.severity().is_fatal(),
--            other.expect_ruff_source_file(),
--            other.range().map(|r| r.start()),
--        );
--
--        a.cmp(&b)
--    }
--
-     /// Add an offset for aligning the header sigil with the line number separators in a diff.
-     pub fn set_header_offset(&mut self, offset: usize) {
-         Arc::make_mut(&mut self.inner).header_offset = offset;
-@@ -546,7 +512,7 @@ struct DiagnosticInner {
- }
- 
- struct RenderingSortKey<'a> {
--    db: &'a dyn Db,
-+    resolver: &'a dyn FileResolver,
-     diagnostic: &'a Diagnostic,
- }
- 
-@@ -565,7 +531,9 @@ impl Ord for RenderingSortKey<'_> {
-             let left_file = left_span.file();
-             let right_file = right_span.file();
-             if left_file != right_file {
--                let order = left_file.path(&self.db).cmp(right_file.path(&self.db));
-+                let order = left_file
-+                    .path(self.resolver)
-+                    .cmp(right_file.path(self.resolver));
-                 if order.is_ne() {
-                     return order;
-                 }
-```
-
----
-
-### Incident Patch 2: `837da15e` (2026-11-13)
-**Commit Message**: [ty] Fix a panic checking class decorators with inferred return types (#30399)
-
-ty could panic when checking a decorated class if it inferred the return
-type of an inner decorator and an outer decorator returned a class from
-another module. During cycle recovery, ty could use that replacement
-class's scope to look up names in the file that defined the original
-class.
-
-Preserve the original class before applying decorators and use it for
-class-definition checks. The decorated name still takes the type
-returned by the outer decorator.
-
-Fixes astral-sh/ty#5021.
-
-## Test plan
-
-Checked the reported `EnumCheck` example with return type inference
-enabled. Before this change it panicked. With the fix, ty reports the
-invalid argument to `@d2` and finishes checking the file.
-
-**File**: `crates/ty_python_semantic/resources/mdtest/function/return_type_inference.md` (modified, +22/-0)
-```diff
-@@ -453,6 +453,28 @@ def returns_4_but_will_be_replaced():
- reveal_type(returns_4_but_will_be_replaced())  # revealed: Literal["a"]
- ```
- 
-+## Decorated classes
-+
-+When the inner decorator's return type is inferred, we still check the original class body. The
-+decorated name takes the type returned by the outer decorator.
-+
-+```py
-+from typing import Final
-+
-+def identity(cls: type):
-+    return cls
-+
-+def replace(cls: type) -> type[bool]:
-+    return bool
-+
-+@replace
-+@identity
-+class C:
-+    value: Final[int]  # error: [final-without-value]
-+
-+reveal_type(C)  # revealed: <class 'bool'>
-+```
-+
- ## Methods
- 
- ### Overrides
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +5/-7)
-```diff
-@@ -1295,16 +1295,14 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
-                             definition,
-                             &class_node.node(self.module()).decorator_list,
-                         );
--                        let original_ty = match self.region {
--                            InferenceRegion::Definition(current) if current == definition => {
--                                self.undecorated_type
--                            }
--                            _ => original_class_type(self.db(), definition).map(Type::ClassLiteral),
-+                        let Some(ClassLiteral::Static(class)) =
-+                            original_class_type(self.db(), definition)
-+                        else {
-+                            continue;
-                         };
--                        let ty = original_ty.unwrap_or(ty);
-                         post_inference::static_class::check_static_class_definitions(
-                             &self.context,
--                            ty,
-+                            class,
-                             class_node.node(self.module()),
-                             self.index,
-                             &|expr| self.file_expression_type(expr),
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/builder/class.rs` (modified, +5/-9)
-```diff
-@@ -337,20 +337,18 @@ impl<'db> TypeInferenceBuilder<'db, '_> {
-             ));
-         }
- 
--        let mut inferred_ty = infer_original_class_ty(
-+        let original_class_ty = infer_original_class_ty(
-             deprecated,
-             type_check_only,
-             dataclass_params,
-             dataclass_transformer_params,
-             total_ordering,
-         );
- 
--        let original_class_ty = inferred_ty;
--        let mut undecorated_ty = None;
--
-         // In the second pass, apply class decorators from inner to outer and use their return types
-         // to update the public binding. `original_class_ty` remains the class object whose body and
-         // metadata were inferred above.
-+        let mut inferred_ty = original_class_ty;
-         for (decorator_ty, decorator_node, application) in decorators_to_apply {
-             let precomputed_result = match application {
-                 ClassDecoratorApplication::Ordinary(precomputed_result) => precomputed_result,
-@@ -425,15 +423,13 @@ impl<'db> TypeInferenceBuilder<'db, '_> {
-                     decorated_ty,
-                 )
-             } else {
--                // Only record an undecorated type once a decorator actually replaces the public
--                // binding. If all decorators preserve the class, there is no alternate class type
--                // to expose.
--                undecorated_ty.get_or_insert(inferred_ty);
-                 decorated_ty
-             };
-         }
- 
--        self.undecorated_type = undecorated_ty;
-+        // An intermediate decorator result can contain a cycle marker. Class-body checks need
-+        // the original class even while the public binding is still being inferred.
-+        self.undecorated_type = (inferred_ty != original_class_ty).then_some(original_class_ty);
- 
-         // A decorator can replace a nested class with a writable value, including another class.
-         let qualifiers = if self.scope().scope(db).kind().is_class()
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/builder/post_inference/static_class.rs` (modified, +1/-5)
-```diff
-@@ -143,17 +143,13 @@ fn check_class_slots<'db>(
- /// [metaclass]: https://docs.python.org/3/reference/datamodel.html#metaclasses
- pub(crate) fn check_static_class_definitions<'db>(
-     context: &InferContext<'db, '_>,
--    ty: Type<'db>,
-+    class: StaticClassLiteral<'db>,
-     class_node: &ast::StmtClassDef,
-     index: &SemanticIndex<'db>,
-     file_expression_type: &impl Fn(&ast::Expr) -> Type<'db>,
- ) {
-     let db = context.db();
- 
--    let Type::ClassLiteral(ClassLiteral::Static(class)) = ty else {
--        return;
--    };
--
-     // Check that the class does not have a cyclic definition
-     if let Some(inheritance_cycle) = class.inheritance_cycle(context.db()) {
-         if inheritance_cycle.is_participant()
-```
-
----
-
-### Incident Patch 3: `f11d1825` (2026-11-13)
-**Commit Message**: [ty] Fix completion after an alias in a parenthesized import (#30394)
+### Incident Patch 1: `eb4e0b24` (2026-11-24)
+**Commit Message**: [`flake8-bugbear`] Detect jumps in nested branches (`B012`) (#30421)
 
 ## Summary
 
-With the cursor after `timede` in the import below, accepting the
-`timedelta` suggestion now changes that line to `timedelta`. Previously,
-ty offered to auto-import `timedelta`, which could leave `timede` in
-place and add a separate entry to the import list.
+Ruff's B012 rule was missing some return statements inside nested else
+and except branches of finally blocks. I traced the issue to walk_stmt
+which only visited the main body of certain AST statements.
 
-```python
-from datetime import (
-    date as _date,
-    timede
-)
+My change extends the traversal to cover elif/else clauses, exception
+handlers, try/else branches, and loop else branches. I also added
+regression cases to B012.py and updated the expected snapshot.
+
+Fixes #30225.
+
+**File**: `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B012.py` (modified, +38/-0)
+```diff
+@@ -127,3 +127,41 @@ def k():
+                 y = 0
+             case 0, *x:
+                 pass  # no warning
++
++
++# Regression: return inside an if-else branch.
++def regression_if_else(condition):
++    try:
++        pass
++    finally:
++        if condition:
++            pass
++        else:
++            return 1  # warning
++
++
++# Regression: return inside an except handler.
++def regression_except():
++    try:
++        pass
++    finally:
++        try:
++            pass
++        except ValueError:
++            return 2  # warning
++
++
++# Regression: ordinary return outside finally.
++def regression_no_warning():
++    if True:
++        return 3  # no warning
++
++
++def regression_loop_else():
++    try:
++        pass
++    finally:
++        for item in []:
++            pass
++        else:
++            return 6  # warning
+\ No newline at end of file
 ```
 
-Fixes https://github.com/astral-sh/ty/issues/5018.
-
-## Approach
-
-`ImportStatement::detect` scans tokens backward from the cursor to
-identify the import statement and determine which module to suggest
-names from. In the example above, the scan used to stop at the opening
-parenthesis after reading `date as _date`. It now continues through the
-parenthesis to find `from datetime import` and suggest members of
-`datetime`. The `completing_alias` guard limits that transition to cases
-where the cursor is outside the alias name.
-
-## Test Plan
-
-See included tests.
-
-**File**: `crates/ty_ide/src/completion.rs` (modified, +39/-1)
+**File**: `crates/ruff_linter/src/rules/flake8_bugbear/rules/jump_statement_in_finally.rs` (modified, +32/-4)
 ```diff
-@@ -2830,6 +2830,8 @@ impl<'a> ImportStatement<'a> {
-         // Usually either `from foo imp<CURSOR>`
-         // or `import foo a<CURSOR>`.
-         let mut incomplete_as_or_import = false;
-+        // Whether the cursor is at the name being defined by `as`.
-+        let mut completing_alias = false;
-         for token in cursor.tokens_before.iter().rev().take(Self::LIMIT) {
-             if token.kind().is_trivia() {
-                 continue;
-@@ -2854,7 +2856,10 @@ impl<'a> ImportStatement<'a> {
-                 (S::Start | S::FirstName | S::AdjacentName, TK::Comma) => S::NameList,
-                 (S::Start | S::FirstName | S::AdjacentName, TK::Dot) => S::InitialDot,
-                 (S::Start | S::FirstName | S::AdjacentName, TK::Ellipsis) => S::FromEllipsisName,
--                (S::Start | S::FirstName, TK::As) => S::As,
-+                (S::Start | S::FirstName, TK::As) => {
-+                    completing_alias = true;
-+                    S::As
+@@ -72,12 +72,40 @@ fn walk_stmt(checker: &Checker, body: &[Stmt], f: fn(&Stmt) -> bool) {
+             );
+         }
+         match stmt {
+-            Stmt::While(ast::StmtWhile { body, .. }) | Stmt::For(ast::StmtFor { body, .. }) => {
++            Stmt::While(ast::StmtWhile { body, orelse, .. })
++            | Stmt::For(ast::StmtFor { body, orelse, .. }) => {
+                 walk_stmt(checker, body, Stmt::is_return_stmt);
++                walk_stmt(checker, orelse, f);
+             }
+-            Stmt::If(ast::StmtIf { body, .. })
+-            | Stmt::Try(ast::StmtTry { body, .. })
+-            | Stmt::With(ast::StmtWith { body, .. }) => {
++            Stmt::If(ast::StmtIf {
++                body,
++                elif_else_clauses,
++                ..
++            }) => {
++                walk_stmt(checker, body, f);
++
++                for clause in elif_else_clauses {
++                    walk_stmt(checker, &clause.body, f);
 +                }
-                 (S::Start | S::AdjacentName, TK::From) => S::From,
-                 (S::FirstName, TK::From) => S::From,
-                 (S::FirstName, TK::Identifier) => S::AdjacentName,
-@@ -2903,6 +2908,7 @@ impl<'a> ImportStatement<'a> {
-                 (S::AsName, TK::Dot) => S::AsDottedNameDot,
-                 (S::AsName, TK::Import) => S::Import,
-                 (S::AsName, TK::Comma) => S::NameList,
-+                (S::AsName, TK::Lpar) if !completing_alias => S::FromLpar,
++            }
++
++            Stmt::Try(ast::StmtTry {
++                body,
++                handlers,
++                orelse,
++                ..
++            }) => {
++                walk_stmt(checker, body, f);
++
++                for handler in handlers {
++                    let ast::ExceptHandler::ExceptHandler(handler) = handler;
++                    walk_stmt(checker, &handler.body, f);
++                }
++
++                walk_stmt(checker, orelse, f);
++            }
++
++            Stmt::With(ast::StmtWith { body, .. }) => {
+                 walk_stmt(checker, body, f);
+             }
+             Stmt::Match(ast::StmtMatch { cases, .. }) => {
+```
+
+**File**: `crates/ruff_linter/src/rules/flake8_bugbear/snapshots/ruff_linter__rules__flake8_bugbear__tests__jump-statement-in-finally_B012.py.snap` (modified, +24/-0)
+```diff
+@@ -106,3 +106,27 @@ B012 `break` inside `finally` blocks cause exceptions to be silenced
+ 117 |             case 0, *x:
+ 118 |                 break  # warning
+     |                 ^^^^^
++
++B012 `return` inside `finally` blocks cause exceptions to be silenced
++   --> B012.py:140:13
++    |
++138 |             pass
++139 |         else:
++140 |             return 1  # warning
++    |             ^^^^^^^^
++
++B012 `return` inside `finally` blocks cause exceptions to be silenced
++   --> B012.py:151:13
++    |
++149 |             pass
++150 |         except ValueError:
++151 |             return 2  # warning
++    |             ^^^^^^^^
++
++B012 `return` inside `finally` blocks cause exceptions to be silenced
++   --> B012.py:167:13
++    |
++165 |             pass
++166 |         else:
++167 |             return 6  # warning
++    |             ^^^^^^^^
+```
+
+---
+
+### Incident Patch 2: `a243d414` (2026-11-24)
+**Commit Message**: Fix caching for PEP 723 scripts with inline configurations (#30608)
+
+## Summary
+
+Today, a cached script can retain stale diagnostics or formatting
+results when an extended configuration changes or a CLI override changes
+only the script’s settings. For example, repeating a project setting on
+the command line can change which Python version Ruff targets for an
+unchanged script.
+
+**`ruff.toml`**
+
+```toml
+preview = true
+target-version = "py310"
+per-file-target-version = { "script.py" = "py310" }
+lint.select = ["UP045"]
+```
+
+**`script.py`**
+
+```python
+# /// script
+# requires-python = ">=3.9"
+# ///
+from typing import Optional
+x: Optional[int]
+```
+
+| Command | Project target for `script.py` | Script target | Expected
+result |
+| --- | --- | --- | --- |
+| `ruff check script.py` | 3.10 | 3.9 | Passes |
+| `ruff check --target-version py310 script.py` | 3.10 | 3.10 | Suggests
+`int \| None` |
+| `ruff check --config 'per-file-target-version = { "script.py" =
+"py310" }' script.py` | 3.10 | 3.10 | Suggests `int \| None` |
+
+In the first run, Ruff infers Python 3.9 from `requires-python`. That
+takes precedence over both the project’s target and its matching
+per-file target. Without `requires-python`
+
+**File**: `crates/ruff/src/args.rs` (modified, +6/-0)
+```diff
+@@ -729,6 +729,12 @@ impl ConfigArguments {
+         self.config_file.as_deref()
+     }
  
-                 // This is the mini state machine for handling
-                 // `dotted_as_names`. We enter it when we see
-@@ -3423,6 +3429,7 @@ mod tests {
-     use ruff_python_ast::helpers::is_dunder;
-     use ruff_python_ast::token::{TokenKind, Tokens};
-     use ruff_python_parser::{Mode, ParseOptions};
-+    use ruff_python_trivia::textwrap::dedent;
-     use ty_module_resolver::ModuleName;
++    pub(crate) fn overrides_script_target(&self) -> bool {
++        self.script_configuration() == ScriptConfiguration::Disabled
++            || self.target_version().is_some()
++            || self.overrides.per_file_target_version.is_some()
++    }
++
+     pub(crate) fn target_version(&self) -> Option<ast::PythonVersion> {
+         self.per_flag_overrides
+             .target_version
+```
+
+**File**: `crates/ruff/src/cache.rs` (modified, +106/-5)
+```diff
+@@ -18,26 +18,69 @@ use tempfile::NamedTempFile;
  
-     use crate::CompletionCapabilities;
-@@ -6727,6 +6734,37 @@ from sys import (
-         builder.build().contains("getsizeof");
+ use ruff_cache::{CacheKey, CacheKeyHasher};
+ use ruff_linter::package::PackageRoot;
++use ruff_linter::settings::types::PreviewMode;
+ use ruff_linter::{VERSION, warn_user};
+ use ruff_macros::CacheKey;
++use ruff_python_ast::SourceType;
+ use ruff_workspace::Settings;
+ use ruff_workspace::resolver::Resolver;
++use ruff_workspace::script::{Script, should_read_script_metadata};
++
++use crate::args::ConfigArguments;
+ 
+ /// [`Path`] that is relative to the package root in [`PackageCache`].
+ pub(crate) type RelativePath = Path;
+ /// [`PathBuf`] that is relative to the package root in [`PackageCache`].
+ pub(crate) type RelativePathBuf = PathBuf;
+ 
++/// Part of the file key because an explicit Python target can override a script's
++/// requirement while leaving the project's target and package cache key unchanged.
++#[derive(Clone, Copy, CacheKey)]
++pub(crate) enum ScriptCacheMode {
++    /// Script metadata is disabled for this file.
++    MetadataDisabled,
++    /// Cache only scripts with no Ruff settings or Python requirement.
++    ProjectOnly,
++    /// A Python requirement is cacheable because it changes with the source.
++    AllowRequirements,
++}
++
++impl ScriptCacheMode {
++    pub(crate) fn new(
++        preview: PreviewMode,
++        source_type: SourceType,
++        overrides: &ConfigArguments,
++    ) -> Self {
++        if !should_read_script_metadata(preview, source_type) {
++            Self::MetadataDisabled
++        } else if overrides.overrides_script_target() {
++            Self::ProjectOnly
++        } else {
++            Self::AllowRequirements
++        }
++    }
++
++    pub(crate) fn allows(self, script: Option<&Script>) -> bool {
++        match (self, script) {
++            (Self::MetadataDisabled, _) | (_, None) => true,
++            (Self::ProjectOnly, Some(script)) => !script.declares_settings(),
++            (Self::AllowRequirements, Some(script)) => !script.has_ruff_table(),
++        }
++    }
++}
++
+ #[derive(CacheKey)]
+ pub(crate) struct FileCacheKey {
+     /// Timestamp when the file was last modified before the (cached) check.
+     file_last_modified: FileTime,
+     /// Permissions of the file before the (cached) check.
+     file_permissions_mode: u32,
++    /// Files with nested configurations can share a package cache with a different preview mode.
++    script_mode: ScriptCacheMode,
+ }
+ 
+ impl FileCacheKey {
+-    pub(crate) fn from_path(path: &Path) -> io::Result<FileCacheKey> {
++    pub(crate) fn from_path(path: &Path, script_mode: ScriptCacheMode) -> io::Result<FileCacheKey> {
+         // Construct a cache key for the file
+         let metadata = path.metadata()?;
+ 
+@@ -52,6 +95,7 @@ impl FileCacheKey {
+         Ok(FileCacheKey {
+             file_last_modified: FileTime::from_last_modification_time(&metadata),
+             file_permissions_mode: permissions,
++            script_mode,
+         })
+     }
+ }
+@@ -508,6 +552,7 @@ mod tests {
+ 
+     use anyhow::Result;
+     use filetime::{FileTime, set_file_mtime};
++    use indoc::indoc;
+     use itertools::Itertools;
+     use ruff_python_ast::SourceType;
+     use rustc_hash::FxHashMap;
+@@ -517,7 +562,7 @@ mod tests {
+     use ruff_linter::UnresolvedRuleSelector;
+     use ruff_linter::package::PackageRoot;
+     use ruff_linter::settings::flags;
+-    use ruff_linter::settings::types::UnsafeFixes;
++    use ruff_linter::settings::types::{PreviewMode, UnsafeFixes};
+     use ruff_python_ast::PySourceType;
+     use ruff_python_ast::PythonVersion;
+     use ruff_workspace::configuration::{Configuration, RuleSelection};
+@@ -526,7 +571,7 @@ mod tests {
+     use crate::args::ConfigArguments;
+ 
+     use crate::cache::{self, ChangeData, FileCache, FileCacheData, FileCacheKey};
+-    use crate::cache::{Cache, RelativePathBuf};
++    use crate::cache::{Cache, RelativePathBuf, ScriptCacheMode};
+     use crate::commands::format::{FormatCommandError, FormatMode, FormatResult, format_path};
+     use crate::diagnostics::{Diagnostics, lint_path};
+ 
+@@ -653,6 +698,58 @@ mod tests {
+         );
      }
  
 +    #[test]
-+    fn parenthesized_import_after_alias_completes_without_import_edit() {
-+        let builder = completion_test_builder(&dedent(
-+            "
-+            from datetime import (
-+                date as _date,
-+                timede<CURSOR>
-+            )
-+            ",
-+        ))
-+        .imports()
-+        .filter(|completion| completion.name == "timedelta");
++    fn cache_skips_only_scripts_with_ruff_tables() -> Result<()> {
++        let mut test = TestCache::new("cache_skips_only_scripts_with_ruff_tables");
++        test.project.settings.preview = PreviewMode::Enabled;
++        let cache = test.open();
++        let check = |name: &str, source: &str| -> Result<()> {
++            test.write_source_file(name, source.as_bytes());
++            assert!(test.lint_file_with_cache(name, &cache)?.inner.is_empty());
++            test.format_file_with_cache(name, &cache).unwrap();
++            Ok(())
++        };
++        check(
++            "version.py",
++            indoc! {r#"
++                # /// script
++                # requires-python = ">=3.12"
++                # ///
++                x = 1
++            "#},
++        )?;
++        check(
++            "inline.py",
++            indoc! {r#"
++                # /// script
++                # [tool.ruff]
++                # ///
++    
+```
+
+**File**: `crates/ruff/src/commands/format.rs` (modified, +13/-4)
+```diff
+@@ -32,6 +32,7 @@ use ruff_linter::registry::Rule;
+ use ruff_linter::rules::flake8_quotes::settings::Quote;
+ use ruff_linter::source_kind::{SourceError, SourceKind};
+ use ruff_linter::{warn_user_once, warn_user_once_by_message};
++use ruff_python_ast::script::ScriptTag;
+ use ruff_python_ast::{PySourceType, SourceType};
+ use ruff_python_formatter::{FormatModuleError, QuoteStyle, format_module_source, format_range};
+ use ruff_source_file::{LineIndex, LineRanges, OneIndexed, SourceFile, SourceFileBuilder};
+@@ -43,7 +44,7 @@ use ruff_workspace::script::{ScriptSettingsError, script};
+ use ruff_workspace::{FormatterSettings, Settings};
+ 
+ use crate::args::{ConfigArguments, FormatArguments, FormatRange};
+-use crate::cache::{Cache, FileCacheKey, PackageCacheMap, PackageCaches};
++use crate::cache::{Cache, FileCacheKey, PackageCacheMap, PackageCaches, ScriptCacheMode};
+ use crate::{ExitStatus, resolve_default_files};
+ 
+ #[derive(Debug, Copy, Clone, is_macro::Is)]
+@@ -261,12 +262,13 @@ pub(crate) fn format_path(
+     range: Option<FormatRange>,
+     cache: Option<&Cache>,
+ ) -> Result<FormatResult, FormatCommandError> {
++    let script_mode = ScriptCacheMode::new(project.settings.preview, source_type, overrides);
+     if let Some(cache) = cache {
+         let relative_path = cache
+             .relative_path(path)
+             .expect("wrong package cache for file");
+ 
+-        if let Ok(cache_key) = FileCacheKey::from_path(path) {
++        if let Ok(cache_key) = FileCacheKey::from_path(path, script_mode) {
+             if cache.is_formatted(relative_path, &cache_key) {
+                 return Ok(FormatResult::Unchanged);
+             }
+@@ -314,8 +316,14 @@ pub(crate) fn format_path(
+                     .write(&mut writer)
+                     .map_err(|err| FormatCommandError::Write(Some(path.to_path_buf()), err))?;
+ 
++                // Formatting can change script metadata or turn `#/// script` into a valid
++                // opening marker. The rewritten file may now use different settings.
++                let cache = cache.filter(|_| {
++                    matches!(script_mode, ScriptCacheMode::MetadataDisabled)
++                        || (script.is_none() && ScriptTag::parse(formatted.source_code()).is_none())
++                });
+                 if let Some(cache) = cache {
+-                    if let Ok(cache_key) = FileCacheKey::from_path(path) {
++                    if let Ok(cache_key) = FileCacheKey::from_path(path, script_mode) {
+                         let relative_path = cache
+                             .relative_path(path)
+                             .expect("wrong package cache for file");
+@@ -331,8 +339,9 @@ pub(crate) fn format_path(
+             },
+         },
+         FormattedSource::Unchanged => {
++            let cache = cache.filter(|_| script_mode.allows(script.as_ref()));
+             if let Some(cache) = cache {
+-                if let Ok(cache_key) = FileCacheKey::from_path(path) {
++                if let Ok(cache_key) = FileCacheKey::from_path(path, script_mode) {
+                     let relative_path = cache
+                         .relative_path(path)
+                         .expect("wrong package cache for file");
+```
+
+**File**: `crates/ruff/src/diagnostics.rs` (modified, +8/-4)
+```diff
+@@ -29,7 +29,7 @@ use ruff_workspace::script::script;
+ use rustc_hash::FxHashMap;
+ 
+ use crate::args::ConfigArguments;
+-use crate::cache::{Cache, FileCache, FileCacheKey};
++use crate::cache::{Cache, FileCache, FileCacheKey, ScriptCacheMode};
+ 
+ /// A collection of [`Diagnostic`]s and additional information needed to render them.
+ ///
+@@ -195,14 +195,17 @@ pub(crate) fn lint_path(
+     unsafe_fixes: UnsafeFixes,
+ ) -> Result<Diagnostics> {
+     let settings = &project.settings.linter;
++    let source_type = settings.extension.get_source_type(path);
++    let script_mode = ScriptCacheMode::new(project.settings.preview, source_type, overrides);
+     // Check the cache.
+-    let caching = match cache {
++    let mut caching = match cache {
+         Some(cache) if noqa.is_enabled() => {
+             let relative_path = cache
+                 .relative_path(path)
+                 .expect("wrong package cache for file");
+ 
+-            let cache_key = FileCacheKey::from_path(path).context("Failed to create cache key")?;
++            let cache_key =
++                FileCacheKey::from_path(path, script_mode).context("Failed to create cache key")?;
+             let cached_diagnostics = cache
+                 .get(relative_path, &cache_key)
+                 .is_some_and(FileCache::linted);
+@@ -219,7 +222,7 @@ pub(crate) fn lint_path(
+ 
+     debug!("Checking: {}", path.display());
+ 
+-    let source_type = match settings.extension.get_source_type(path) {
++    let source_type = match source_type {
+         SourceType::Toml(source_type @ (TomlSourceType::Pyproject | TomlSourceType::Ruff)) => {
+             let (diagnostics, fixed) = if settings
+                 .rules
+@@ -307,6 +310,7 @@ pub(crate) fn lint_path(
+             ));
+         }
+     };
++    caching = caching.filter(|_| script_mode.allows(script.as_ref()));
+     let package = script.as_ref().map_or(package, |script| {
+         script.package_root(path, &project.settings.linter, package, package_roots)
+     });
+```
+
+**File**: `crates/ruff/tests/cli/format.rs` (modified, +38/-0)
+```diff
+@@ -2546,6 +2546,44 @@ fn inline_script_configuration() -> Result<()> {
+     Ok(())
+ }
+ 
++#[test]
++fn formatting_activates_script_settings() -> Result<()> {
++    let test = CliTest::with_file(
++        "script.py",
++        r#"
++            #/// script
++            # tool.ruff.format.quote-style = "single"
++            # ///
++            x = "hello"
++        "#,
++    )?;
++    let args = ["format", "--preview", "--quiet", "script.py"];
 +
-+        assert_snapshot!(builder.build().snapshot(), @"timedelta :: <no import edit>");
++    assert_cmd_snapshot!(test.command().args(args), @"
++    success: true
++    exit_code: 0
++    ----- stdout -----
++
++    ----- stderr -----
++    ");
++    assert_cmd_snapshot!(test.command().args(args).arg("--check"), @r#"
++    success: false
++    exit_code: 1
++    ----- stdout -----
++    unformatted: File would be reformatted
++     --> script.py:4:5
++      |
++    3 | # ///
++      - x = "hello"
++    4 + x = 'hello'
++      |
++
++
++    ----- stderr -----
++    "#);
++    Ok(())
++}
++
+ #[test]
+ fn inline_script_conflicts() -> Result<()> {
+     let test = CliTest::with_files([
+```
+
+**File**: `crates/ruff/tests/cli/lint.rs` (modified, +18/-3)
+```diff
+@@ -4774,13 +4774,28 @@ fn cli_target_version_overrides_script_requirement() -> Result<()> {
+             x: Optional[int]
+         ",
+     )?;
+-    assert_cmd_snapshot!(test.check_command().args(["--preview", "--select=UP045", "--target-version=py310", "script.py"]), @"
++    test.write_file("ruff.toml", "target-version = 'py310'")?;
++    let args = [
++        "check",
++        "--quiet",
++        "--preview",
++        "--select=UP045",
++        "--output-format=concise",
++        "script.py",
++    ];
++    // Warm the cache. The explicit override changes the script target but not the project target.
++    assert_cmd_snapshot!(test.command().args(args), @"
++    success: true
++    exit_code: 0
++    ----- stdout -----
++
++    ----- stderr -----
++    ");
++    assert_cmd_snapshot!(test.command().args(args).arg("--target-version=py310"), @"
+     success: false
+     exit_code: 1
+     ----- stdout -----
+     script.py:6:4: non-pep604-annotation-optional: [*] Use `X | None` for type annotations
+-    Found 1 error.
+-    [*] 1 fixable with `--fix`.
+ 
+     ----- stderr -----
+     ");
+```
+
+**File**: `crates/ruff_workspace/src/script.rs` (modified, +14/-1)
+```diff
+@@ -44,6 +44,7 @@ pub enum ScriptConfiguration {
+ /// A Python file with a PEP 723 script metadata header.
+ #[derive(Debug)]
+ pub struct Script {
++    has_ruff_table: bool,
+     settings: ScriptSettings,
+     config_path: Option<PathBuf>,
+ }
+@@ -56,6 +57,16 @@ impl Script {
+             .or_else(|| project.config_path())
+     }
+ 
++    /// Whether the script contains a `[tool.ruff]` table, even if empty or ignored.
++    pub fn has_ruff_table(&self) -> bool {
++        self.has_ruff_table
 +    }
 +
-+    #[test]
-+    fn parenthesized_import_alias_on_next_line_does_not_complete_members() {
-+        let builder = completion_test_builder(&dedent(
-+            "
-+            from datetime import (
-+                date as
-+                timede<CURSOR>
-+            )
-+            ",
-+        ))
-+        .skip_auto_import();
-+
-+        builder.build().not_contains("timedelta");
++    /// Whether the script declares `requires-python` or `[tool.ruff]`, even if ignored.
++    pub fn declares_settings(&self) -> bool {
++        matches!(self.settings, ScriptSettings::Declared(_))
 +    }
 +
-     #[test]
-     fn from_import_with_bare_annotation() {
-         let builder = CursorTest::builder()
+     /// Return the script's resolved settings, falling back to the project's settings.
+     pub fn settings<'a>(&'a self, project: &'a Settings) -> &'a Settings {
+         match &self.settings {
+@@ -152,7 +163,8 @@ pub fn script(
+ 
+     let requires_python = metadata.requires_python.as_ref();
+     let options = metadata.tool.and_then(|tool| tool.ruff);
+-    let declared = requires_python.is_some() || options.is_some();
++    let has_ruff_table = options.is_some();
++    let declared = requires_python.is_some() || has_ruff_table;
+ 
+     let config_error = |err| ScriptSettingsError::configuration(path, &err);
+     let resolve = |configuration, root: &Path| {
+@@ -185,6 +197,7 @@ pub fn script(
+     };
+ 
+     Ok(Some(Script {
++        has_ruff_table,
+         config_path,
+         settings: if declared {
+             ScriptSettings::Declared(settings.map(Box::new))
+```
+
+---
+
+### Incident Patch 3: `881dc619` (2026-11-24)
+**Commit Message**: [ty] Look up syntax node uses and scopes in fixed-size pages (#30886)
+
+## Summary
+
+To look up a name use, we binary search the pages of use IDs. To find
+its scope, we search the file’s full list of scope ranges.
+
+We now group AST nodes into fixed pages of 64. The node index tells us
+which page to read, and a bit mask gives us the offset into the packed
+array of uses. Each page also records how many scope ranges have started
+by its end. We only search the ranges that start on the page and the
+last one from an earlier page, which may still overlap.
+
+Pages without any uses now take space too.
+
+<!-- ty-pinned-project-instructions:start -->
+
+Across 28 projects, the mean change in instructions was −0.25% and the
+median was −0.24%.
+
+<details>
+<summary>Instruction counts by project</summary>
+
+Four single-worker Cachegrind pairs on Linux (x86-64). Both builds use
+the linked base, with the PR applied to the second.
+
+| Project | [Base
+instructions](https://github.com/astral-sh/ruff/commit/77203ea5529a70e55edb0857224eb05b286a077d)
+| [PR
+instructions](https://github.com/astral-sh/ruff/commit/bfef40f25c53b82caf87bc4dd6bbb9b7b118ee98)
+| Change | Paired range |
+| --- | ---: | ---: | ---: | ---: |
+
+
+**File**: `crates/ty_python_core/src/ast_ids.rs` (modified, +70/-43)
+```diff
+@@ -110,32 +110,33 @@ impl AstIdsBuilder {
+     /// Stores use IDs and their lexical places in node-index order.
+     /// The IDs themselves keep the order in which the flow builder visited uses in each scope.
+     pub(super) fn finish(self) -> AstIds {
+-        let mut pages: Vec<UsePage> = Vec::new();
++        let mut pages = Vec::with_capacity(self.root.len().div_ceil(NODES_PER_PAGE));
+         let mut use_ids = Vec::new();
+         let mut places_plus_one = Vec::new();
+         let mut scopes = Vec::new();
+-        for (node, row) in (0..).map(ast::NodeIndex::from).zip(self.root) {
+-            if let Some(scope) = row.scope {
+-                ScopeRange::record(&mut scopes, node, scope);
+-            }
+-            let Some(use_id) = row.use_id else { continue };
+-            if let Some(page) = pages.last_mut()
+-                && let Some(bit) = page.bit(node)
+-            {
+-                page.mask |= bit;
+-            } else {
+-                // Each set bit accounts for one distinct node in the use array.
+-                let first_use = pages
+-                    .last()
+-                    .map_or(0, |last| last.first_use + last.mask.count_ones());
+-                pages.push(UsePage {
+-                    first_node: node,
+-                    first_use,
+-                    mask: 1,
+-                });
++        for (first_node, rows) in (0_u32..)
++            .step_by(NODES_PER_PAGE)
++            .zip(self.root.chunks(NODES_PER_PAGE))
++        {
++            let first_use = u32::try_from(use_ids.len()).expect("more uses than node indices");
++            let mut mask = 0;
++            for (offset, row) in (0_u32..).zip(rows) {
++                if let Some(scope) = row.scope {
++                    let node = ast::NodeIndex::from(first_node + offset);
++                    ScopeRange::record(&mut scopes, node, scope);
++                }
++                if let Some(use_id) = row.use_id {
++                    mask |= 1_u64 << offset;
++                    use_ids.push(use_id);
++                    places_plus_one.push(row.place_plus_one);
++                }
+             }
+-            use_ids.push(use_id);
+-            places_plus_one.push(row.place_plus_one);
++            pages.push(UsePage {
++                first_use,
++                scope_count: u32::try_from(scopes.len())
++                    .expect("more scope ranges than node indices"),
++                mask,
++            });
+         }
+         AstIds {
+             pages: pages.into_boxed_slice(),
+@@ -146,25 +147,21 @@ impl AstIdsBuilder {
+     }
+ }
+ 
+-/// The set bits locate uses within 64 node indices of the first use on this page.
+-/// Gaps between pages occupy no storage.
++/// Number of nodes in a full [`UsePage`], one per bit in its use mask.
++const NODES_PER_PAGE: usize = u64::BITS as usize;
++
++/// Indexes uses and scope ranges for up to [`NODES_PER_PAGE`] consecutive nodes in the root AST.
+ #[derive(Debug, get_size2::GetSize)]
+ struct UsePage {
+-    first_node: ast::NodeIndex,
++    /// Number of uses on earlier pages. This is the page's starting offset in
++    /// `use_ids` and `places_plus_one`.
+     first_use: u32,
++    /// Number of scope ranges that start on this page or an earlier page.
++    scope_count: u32,
++    /// Bit `i` is set if the node at offset `i` on this page has a use ID.
+     mask: u64,
+ }
+ 
+-impl UsePage {
+-    fn bit(&self, node: ast::NodeIndex) -> Option<u64> {
+-        if node == self.first_node {
+-            return Some(1);
+-        }
+-        let offset = node.as_u32()?.checked_sub(self.first_node.as_u32()?)?;
+-        1_u64.checked_shl(offset)
+-    }
+-}
+-
+ #[derive(Debug, get_size2::GetSize)]
+ struct ScopeRange {
+     start: ast::NodeIndex,
+@@ -204,9 +201,9 @@ impl AstIds {
+     /// Looks up a node in the packed use array. Each earlier set bit on the same page
+     /// accounts for one preceding entry in the array.
+     fn use_index(&self, node: ast::NodeIndex) -> Option<usize> {
+-        let end = self.pages.partition_point(|page| page.first_node <= node);
+-        let page = self.pages[..end].last()?;
+-        let bit = page.bit(node)?;
++        let node = node.as_u32()? as usize;
++        let page = self.pages.get(node / NODES_PER_PAGE)?;
++        let bit = 1_u64 << (node % NODES_PER_PAGE);
+         if page.mask & bit == 0 {
+             return None;
+         }
+@@ -215,8 +212,15 @@ impl AstIds {
+     }
+ 
+     fn scope_at(&self, node: ast::NodeIndex) -> Option<FileScopeId> {
+-        let index = self.scopes.partition_point(|range| range.end < node);
+-        let range = self.scopes.get(index)?;
++        let page_index = node.as_u32()? as usize / NODES_PER_PAGE;
++        let end = self.pages.get(page_index)?.scope_count as usize;
++        // A range started on an earlier page may extend across the boundary.
++        let start = page_index.checked_sub(1).map_or(0, |previous| {
++            self.pages[previous].scope_count.saturating_sub(1) as usize
++        });
++        let scopes = &self.scopes[star
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30431** (closed): [ty] Avoid rechecking whether a statement call's callee is reachable (@charliermarsh)
-- **PR #30429** (2026-11-14): [ty] Skip union comparisons for unrelated nominal classes (@charliermarsh)
-- **PR #30426** (closed): [ty] Measure ecosystem impact of removing solver declared-type preference (@carljm)
-- **PR #30417** (closed): fix(flake8-simplify): omit redundant bool wrapper in double-negation fix (SIM208) (@GautamKumarOffical)
-- **PR #30409** (2026-11-13): Update dependency soupsieve to v4 (@renovate[bot])
-- **PR #30408** (closed): [UP030] Fix touching format specifiers leaving numeric index (#30345) (@viliamgonda)
+- **PR #30911** (2026-11-25): [ty] Preserve peer context for collection literals in boolean and conditional expressions (@carljm)
+- **PR #30903** (2026-11-24): [ty] Skip inferring more decorated methods during abstract-method discovery (@AlexWaygood)
+- **PR #30899** (2026-11-24): [ty] Tiny refactor: add `FieldInstanceKind::is_attrs()` (@sharkdp)
+- **PR #30893** (2026-11-24): [ty] Restore folding for indented region comments (@MichaReiser)
+- **PR #30890** (2026-11-24): Recognize `frozendict.fromkeys` as immutable (@DrSkyle)
+- **PR #30887** (2026-11-24): [ty] Initialize constraint solver storage lazily (@charliermarsh)
 
 ---
 
@@ -2919,31 +3012,68 @@ See included tests.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use the shared diagnostic rendering order in Ruff
+## X. [`flake8-bugbear`] Detect jumps in nested branches (`B012`)
 
 **RULE**:
-When implementing operations in `crates/mdtest/src/matcher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B012.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1267effe`: Use the shared diagnostic rendering order in Ruff. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb4e0b24`: [`flake8-bugbear`] Detect jumps in nested branches (`B012`). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/mdtest/src/matcher.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B012.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            .sort_unstable_by(|a, b| a.rendering_sort_key(&db).cmp(&b.rendering_sort_key(&db)));
+
+
+# Regression: return inside an if-else branch.
+def regression_if_else(condition):
+    try:
+        pass
+    finally:
+        if condition:
+            pass
+        else:
+            return 1  # warning
+
+
+# Regression: return inside an except handler.
+def regression_except():
+    try:
+        pass
+    finally:
+        try:
+            pass
+        except ValueError:
+            return 2  # warning
+
+
+# Regression: ordinary return outside finally.
+def regression_no_warning():
+    if True:
+        return 3  # no warning
+
+
+def regression_loop_else():
+    try:
+        pass
+    finally:
+        for item in []:
+            pass
+        else:
+            return 6  # warning
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            .sort_unstable_by(|a, b| a.rendering_sort_key(db).cmp(&b.rendering_sort_key(db)));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1267effe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb4e0b24` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

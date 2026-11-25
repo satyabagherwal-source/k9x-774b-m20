@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:02:14.068Z",
+  "last_updated": "2026-11-25T02:10:36.635Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53863,11 +53863,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-1UYF",
+      "id": "CD-L5G9",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-1UYF-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-L5G9-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -58793,6 +58793,57 @@
       "source_repo": "crosspaste-crosspaste-desktop",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-415AAF--bug-add-ws-pause-gating-inbound-busines.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-L3XW",
+      "directive_title": "[`flake8-bugbear`] Detect jumps in nested branches (`B012`)",
+      "source_repo": "astral-sh-ruff-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-L3XW-flake8-bugbear-detect-jumps-in-nested-branches-b012.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-KXOH",
+      "directive_title": "replace Gwangju and South Jeolla with the Jeonnam-Gwangju special city",
+      "source_repo": "faker-js/faker",
+      "source_commit": "1092e61c",
+      "staged_file": "11_INBOX/candidate-directives/CD-KXOH-replace-gwangju-and-south-jeolla-with-the-jeonnam-gwangju-special-city.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-92A7D2",
+      "directive_title": "[`flake8-bugbear`] Detect jumps in nested branches (`B012`)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-ruff",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-92A7D2--flake8-bugbear-detect-jumps-in-nested-b.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-L4Q6",
+      "directive_title": "locale): replace Gwangju and South Jeolla with the Jeonnam-Gwangju special city",
+      "source_repo": "faker-js-faker-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-L4Q6-locale-replace-gwangju-and-south-jeolla-with-the-jeonnam-gwangju-special-city.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-5BC29D",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5BC29D-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-25"
     }
   ]

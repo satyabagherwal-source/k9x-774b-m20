@@ -4,22 +4,22 @@
 {
   "source_repository": "faker-js/faker",
   "source_url": "https://github.com/faker-js/faker",
-  "source_version": "84d1bf84",
+  "source_version": "1092e61c",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-21T03:15:35.244Z",
+  "timestamp": "2026-11-25T02:10:26.562Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-faker-js-faker",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [faker-js/faker](https://github.com/faker-js/faker) (Revision: `84d1bf84`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-21T03:15:35.244Z`  
+> **Provenance**: Harvested from [faker-js/faker](https://github.com/faker-js/faker) (Revision: `1092e61c`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T02:10:26.562Z`  
 > **Learning ID**: `learn-github-faker-js-faker`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `faker-js/faker` (Commit: `84d1bf84`)
+- **Target Repository**: `faker-js/faker` (Commit: `1092e61c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/faker-js-faker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/faker-js/faker](https://github.com/faker-js/faker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:15:34.077Z  
+> **Harvest Timestamp**: 2026-11-25T02:10:25.200Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Generate massive amounts of fake data in the browser and node.js
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15556 stars
+- **Stars / Engagement**: 15561 stars
 
 ---
 
@@ -375,14 +375,11 @@ export default [
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4276** (2026-11-18): **fix(locale): use five-digit postcodes with assigned prefixes for ko**
-  *Symptoms*: South Korea replaced its six-digit postcodes (`XXX-XXX`) with five-digit ones on 1 August 2015 (see https://en.wikipedia.org/wiki/Postal_codes_in_South_Korea). The `ko` patterns were `['###-###', '#####']`, so half of `fakerKO.location.zipCode()` results used the retired format, and the other half could start with a prefix no area has, like `67098` or `98306`. Only 29.6% of 100,000 generated codes could be Korean postcodes.  The first two digits of a Korean postcode identify the province or metropolitan city, from `01` (Seoul) to `63` (Jeju). This lists the 59 prefixes used by the 3,307 post offices in Korea Post's [nationwide post office list](https://www.data.go.kr/data/15070368/fileData.do) (as of 2026-08-31): `01`–`08`, `10`–`18`, `21`–`59` and `61`–`63`, one pattern each so every prefix is equally likely. With this change, all 100,000 generated codes are five digits with one of those prefixes.  Prepared with Claude Code and checked by me.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #4280** (2026-11-21): **fix(locale): remove free_email domains without mail servers**
+  *Symptoms*: <!-- Please run `pnpm run preflight` before opening a Pull Request to ensure that your code fulfills the minimal requirements for our project. -->  <!-- Please first read https://github.com/faker-js/faker/blob/next/CONTRIBUTING.md -->  <!-- Help us by writing a correct PR title following this guide: https://fakerjs.dev/contributing/submit-a-pull-request#the-pull-request-title -->  These domains have no MX record (`mailhr.hr` doesn't resolve at all, `posta.ge` returns SERVFAIL/REFUSED), so `internet.email()` in those locales can produce addresses nobody can receive mail at. This removes `corpfolder.com` (es_MX), `gmail.ru` (ro_MD), `hotamil.com` (hu), `mailhr.hr` (hr), `one.lv` (lv), `yandex.ua` (uk) and `posta.ge` (ka_GE). `gmail.co.id` is left out since #4277 already handles it.  Fixes #4278 
 
-- **Issue #4274** (2026-11-18): **fix(locale): correct uz_UZ_latin month names**
-  *Symptoms*: Split out of #4273, as requested.  Fixes two month names in `uz_UZ_latin` `date.month.wide`:  | before | after | |---|---| | `Oktyabr` | `Oktabr` | | `Sentyabr` | `Sentabr` |  `Oktabr` and `Sentabr` are the spellings in the current Uzbek Latin orthography and in CLDR (`common/main/uz.xml`: `oktabr`, `sentabr`). `-yabr` is the Russian form. I'm a native speaker.  The abbreviations (`Okt`, `Sen`) already match. No other characters change, so the `locale-data` snapshot is unaffected.
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *fakerjs* ready! Built [without sensitive environment variables](https://docs.netlify.com/build/environment-variables/get-started/#untrusted-deploys-and-sensitive-variables)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 48fef06913c6fc0b0ed4374ffc39a861407a2fe6 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/fakerjs/deploys/6afad43e3fdb99244b481276 | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-4274.fakerjs.dev](https://deploy-preview-4274.fakerjs.dev) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTQyNzQuZmFrZXJqcy5kZXYifQ.nxemMtZyu2DtScPnZI8tEMt7Mhio8DEXp-4IqpUMCq8)<br /><br />_Use your smartphone camera to open Q
-  > ## [Codecov](https://app.codecov.io/gh/faker-js/faker/pull/4274?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.09%. Comparing base ([`5060c90`](https://app.codecov.io/gh/faker-js/faker/commit/5060c90a7f06bfa6d65eee322ffb55e4139dcb08?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)) to head ([`48fef06`](https://app.codecov.io/gh/faker-js/faker/commit/48fef06913c6fc0b0ed4374ffc39a861407a2fe6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             next    #4274      +/-   ## =========================
+- **Issue #4279** (2026-11-22): **fix(locale): replace Gwangju and South Jeolla with the Jeonnam-Gwangju special city for ko**
+  *Symptoms*: On 1 July 2026, Gwangju Metropolitan City (광주광역시) and South Jeolla Province (전라남도) were abolished and merged into one province-level unit, 전남광주통합특별시. Its legal short name is 광주특별시. Its cities, counties and districts kept their names and areas, so an address now reads `전남광주통합특별시 여수시` instead of `전라남도 여수시`.  `ko` `location.state` still listed both abolished names, so 11.9% of 100,000 seeded `fakerKO.location.state()` calls returned one of them. This replaces them with `전남광주통합특별시` and drops `전남` from `state_abbr`. `광주` stays there because the new unit's legal short name is 광주특별시. After the change, none of 100,000 calls return an abolished name.  ### Sources  1. **The act itself.** 「전남광주통합특별시 설치를 위한 특별법」 (Special Act on the Establishment of Jeonnam-Gwangju Integrated Special City), Act No. 21446, enacted 2026-03-05, in force 2026-07-01, on the Korean government's legal database: https://www.law.go.kr/lsInfoP.do?lsiSeq=284111    - Article 7(1): "전라남도와 광주광역시를 각각 폐지하고 정부의 직할(直轄)로 통합특별시를 다음과 같이 설치하며, 약칭은 광주특별시로 한다." ("South Jeolla Province and Gwangju Metropolitan City are each abolished, and an integrated special city under direct government jurisdiction is established as follows; its short name is 광주특별시.") The table that follows gives the name 전남광주통합특별시 and its area as the former South Jeolla Province plus the former Gwangju Metropolitan City.    - Article 9(2): the cities, counties and districts of the new unit keep the names and areas they had in South Jeolla Province and Gwangju
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -399,89 +396,50 @@ export default [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe174e4b` (2026-11-18)
-**Commit Message**: fix(locale): avoid a leading zero in sv postcodes (#4261)
+### Incident Patch 1: `1092e61c` (2026-11-22)
+**Commit Message**: fix(locale): replace Gwangju and South Jeolla with the Jeonnam-Gwangju special city for ko (#4279)
 
-**File**: `src/locales/sv/location/postcode.ts` (modified, +12/-1)
-```diff
-@@ -1 +1,12 @@
--export default ['#####'];
-+// The first digit of a Swedish postal code is 1 to 9 (0 is not used).
-+export default [
-+  '1####',
-+  '2####',
-+  '3####',
-+  '4####',
-+  '5####',
-+  '6####',
-+  '7####',
-+  '8####',
-+  '9####',
-+];
-```
-
----
-
-### Incident Patch 2: `b75e6f09` (2026-11-18)
-**Commit Message**: fix(locale): fix postcodes and add missing province for id_ID (#4272)
-
-Co-authored-by: Insan Rizky <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/locales/id_ID/location/postcode.ts` (modified, +11/-1)
+**File**: `src/locales/ko/location/state.ts` (modified, +1/-2)
 ```diff
-@@ -1 +1,11 @@
--export default ['#####'];
-+export default [
-+  '1####',
-+  '2####',
-+  '3####',
-+  '4####',
-+  '5####',
-+  '6####',
-+  '7####',
-+  '8####',
-+  '9####',
-+];
+@@ -3,14 +3,13 @@ export default [
+   '경기도',
+   '경상남도',
+   '경상북도',
+-  '광주광역시',
+   '대구광역시',
+   '대전광역시',
+   '부산광역시',
+   '서울특별시',
+   '울산광역시',
+   '인천광역시',
+-  '전라남도',
++  '전남광주통합특별시',
+   '전북특별자치도',
+   '제주특별자치도',
+   '충청남도',
 ```
 
-**File**: `src/locales/id_ID/location/state.ts` (modified, +1/-0)
+**File**: `src/locales/ko/location/state_abbr.ts` (modified, +0/-1)
 ```diff
-@@ -36,4 +36,5 @@ export default [
-   'Papua Tengah',
-   'Papua Pegunungan',
-   'Papua Selatan',
-+  'Papua Barat Daya',
- ];
-```
-
----
-
-### Incident Patch 3: `be68da3b` (2026-11-18)
-**Commit Message**: fix(locale): correct uz_UZ_latin month names (#4274)
-
-**File**: `src/locales/uz_UZ_latin/date/month.ts` (modified, +2/-2)
-```diff
-@@ -9,8 +9,8 @@ export default {
-     'Mart',
-     'May',
-     'Noyabr',
--    'Oktyabr',
--    'Sentyabr',
-+    'Oktabr',
-+    'Sentabr',
-     'Yanvar',
-   ],
-   abbr: [
+@@ -10,7 +10,6 @@ export default [
+   '서울',
+   '울산',
+   '인천',
+-  '전남',
+   '전북',
+   '제주',
+   '충남',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4280** (closed): fix(locale): remove free_email domains without mail servers (@lazerg)
+- **PR #4279** (2026-11-22): fix(locale): replace Gwangju and South Jeolla with the Jeonnam-Gwangju special city for ko (@wonjangcloud9)
 - **PR #4276** (2026-11-18): fix(locale): use five-digit postcodes with assigned prefixes for ko (@wonjangcloud9)
 - **PR #4274** (2026-11-18): fix(locale): correct uz_UZ_latin month names (@XakimovNosirbek)
 - **PR #4273** (2026-11-19): feat(locale): add phone numbers to uz_UZ_latin (@XakimovNosirbek)
 - **PR #4272** (2026-11-18): fix(locale): fix postcodes and add missing province for id_ID (@insanrizky)
-- **PR #4271** (2026-11-13): feat(locale): add date data for tr (@bahriy-dev)
-- **PR #4270** (closed): infra: use actions-lock (@matthewmayer)
 
 ---
 
@@ -501,42 +459,32 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. locale): avoid a leading zero in sv postcodes
+## X. locale): replace Gwangju and South Jeolla with the Jeonnam-Gwangju special city 
 
 **RULE**:
-When implementing operations in `src/locales/sv/location/postcode.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in faker-js/faker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/locales/ko/location/state.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in faker-js/faker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe174e4b`: locale): avoid a leading zero in sv postcodes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1092e61c`: locale): replace Gwangju and South Jeolla with the Jeonnam-Gwangju special city for ko. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/locales/sv/location/postcode.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/locales/ko/location/state.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// The first digit of a Swedish postal code is 1 to 9 (0 is not used).
-export default [
-  '1####',
-  '2####',
-  '3####',
-  '4####',
-  '5####',
-  '6####',
-  '7####',
-  '8####',
-  '9####',
-];
+  '전남광주통합특별시',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-export default ['#####'];
+  '광주광역시',
+  '전라남도',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe174e4b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1092e61c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

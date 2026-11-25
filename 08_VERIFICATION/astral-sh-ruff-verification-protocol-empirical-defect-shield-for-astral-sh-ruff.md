@@ -4,22 +4,22 @@
 {
   "source_repository": "astral-sh/ruff",
   "source_url": "https://github.com/astral-sh/ruff",
-  "source_version": "c2a50c31",
+  "source_version": "ce19ae70",
   "license": "MIT",
-  "timestamp": "2026-11-23T23:31:27.545Z",
+  "timestamp": "2026-11-25T02:10:24.660Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-astral-sh-ruff",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [astral-sh/ruff](https://github.com/astral-sh/ruff) (Revision: `c2a50c31`).  
-> **License**: MIT | **Timestamp**: `2026-11-23T23:31:27.545Z`  
+> **Provenance**: Harvested from [astral-sh/ruff](https://github.com/astral-sh/ruff) (Revision: `ce19ae70`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T02:10:24.660Z`  
 > **Learning ID**: `learn-github-astral-sh-ruff`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `astral-sh/ruff` (Commit: `c2a50c31`)
+- **Target Repository**: `astral-sh/ruff` (Commit: `ce19ae70`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:31:26.214Z  
+> **Harvest Timestamp**: 2026-11-25T02:10:23.157Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51398 stars
+- **Stars / Engagement**: 51466 stars
 
 ---
 
@@ -2200,17 +2200,11 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30850** (2026-11-23): **[ty] Exclude `init=False` dataclass fields from `__replace__`**
-  *Symptoms*: ## Summary  Passing a dataclass field with `init=False` to `copy.replace` raises a `TypeError` at runtime. ty now excludes these fields from the signature of the synthesized `__replace__` method.  ```py from copy import replace from dataclasses import dataclass, field  @dataclass class User:     name: str     id: int = field(init=False, default=0)  user = User(name="Alice") replace(user, name="Bob")  # ok replace(user, id=42)  # ty now reports an unknown argument here ```  This also applies to attrs classes, Pydantic dataclasses and other classes that use `dataclass_transform`. 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:45263261392:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [912aea0](https://github.com/astral-sh/ruff/commit/912aea05f45920e072e5a98809b7c13b1a55bd23) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/45263261392/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:45263261315:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [912aea0](https://github.com/astral-sh/ruff/commit/912aea05f45920e072e5a98809b7c13b1a55bd23) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/45263261315/attempts/1) 
+- **Issue #30911** (2026-11-25): **[ty] Preserve peer context for collection literals in boolean and conditional expressions**
+  *Symptoms*: Since #30478, ty rejects a safe append when a fresh list is used as a fallback.  ```py def f(values: list[int] | None):     result = values or [None]     result.append(1) ```  Before this change, ty infers `list[None]` for the fallback and rejects `append(1)`. With this change, the fallback can hold `int | None`, so the append succeeds. We still reject `append(None)` because `result` could be the original `list[int]`.  The same reasoning applies to conditional expressions. Another branch can suggest element types without requiring the fresh collection to be assignable to that branch. We distinguish this context from an assignment target and skip the retry that discards contextual bounds. Incompatible assignments retain the diagnostics from #30478.  ## Ecosystem report  On [`343133ff`](https://github.com/astral-sh/ruff/commit/343133ff2739a4a6f1bef660c77fbde1d8687752), eight existing Pandera errors show `DataFrame | str` in place of `str | DataFrame`. Only the display order changed. No diagnostics were added or removed, and the [full analysis](https://github.com/astral-sh/ruff/pull/30911#issuecomment-7144425467) found no regression. 
 
-- **Issue #30831** (2026-11-23): **Escape diagnostic messages and paths in GitHub Actions and Azure Pipelines output**
-  *Symptoms*: ## Summary  Today, a line break in a diagnostic message ends the annotation in GitHub Actions and Azure Pipelines. For example, an [invalid `requires-python` value and the caret pointing to it](https://github.com/astral-sh/ruff/pull/29768#discussion_r4665837003) appear on separate log lines outside the annotation. A comma in a filename can also truncate the path in GitHub Actions.  This PR updates Ruff and ty to escape line breaks and percent signs in diagnostic messages and command properties. It also escapes delimiters in property values such as file paths, following the rules in the [GitHub Actions toolkit](https://github.com/actions/toolkit/blob/0c3a9c332b678ff1e776f93d728a4ad279803abe/packages/core/src/command.ts#L103-L117) and [Azure Pipelines task library](https://github.com/microsoft/azure-pipelines-task-lib/blob/43673c958dc5fb40b898c5c7b5b7b5bf0ebd14bd/node/taskcommand.ts#L93-L110). This keeps the full message in one annotation and preserves literal text like `%0A`.  ## Notes to reviewers  Escaping adds about 14–27 ns per short diagnostic in a local rendering benchmark. I measured median wall time in ns per diagnostic over 24 runs per variant in alternating order on an M5 Max with the profiling profile. Each run rendered 2,048 prebuilt diagnostics into a reusable string 64 times, excluding analysis and I/O.  | Message | GitHub main | GitHub PR | Azure main | Azure PR | |---|---:|---:|---:|---:| | Short | 147 | 174 | 68 | 82 | | Headline and primary label | 157 | 185 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:45195527541:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [541d74e](https://github.com/astral-sh/ruff/commit/541d74e1800b0cdf998a1093c52d335ff9e764e5) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/45195527541/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:45195527336:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [541d74e](https://github.com/astral-sh/ruff/commit/541d74e1800b0cdf998a1093c52d335ff9e764e5) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/45195527336/attempts/1) 
+- **Issue #30893** (2026-11-24): **[ty] Restore folding for indented region comments**
+  *Symptoms*: ## Summary  Today, ty misses `# region` and `# endregion` when they’re indented inside a function. The comment range starts at the beginning of the line, but ty tries to strip `#` before trimming the indentation. For `"    # region Apply discount"`, that leaves `"# region Apply discount"`, which fails the check for a `region` prefix.  This PR trims the indentation first, so ty folds the marked section and keeps both markers out of adjacent comment blocks. It fixes a regression introduced in #23831 and [reported on Discord](https://discord.com/channels/1039017663004942429/1039017663512449056/1572008439507591179).  Added a regression test and verified the folding ranges through the language server. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2227,1501 +2221,761 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2f9cda2` (2026-11-23)
-**Commit Message**: Rename 17 rules for library and builtin usage (#30482)
-
-| Code | Old name | New name |
-|---|---|---|
-| [`ASYNC105`](https://docs.astral.sh/ruff/rules/ASYNC105/) |
-`trio-sync-call` | `trio-call-not-awaited` |
-| [`ASYNC240`](https://docs.astral.sh/ruff/rules/ASYNC240/) |
-`blocking-path-method-in-async-function` |
-`blocking-path-call-in-async-function` |
-| [`B005`](https://docs.astral.sh/ruff/rules/B005/) |
-`strip-with-multi-characters` | `strip-with-duplicate-characters` |
-| [`FLY002`](https://docs.astral.sh/ruff/rules/FLY002/) |
-`static-join-to-f-string` | `unnecessary-str-join` |
-| [`FURB101`](https://docs.astral.sh/ruff/rules/FURB101/) |
-`read-whole-file` | `manual-path-read` |
-| [`FURB103`](https://docs.astral.sh/ruff/rules/FURB103/) |
-`write-whole-file` | `manual-path-write` |
-| [`FURB116`](https://docs.astral.sh/ruff/rules/FURB116/) |
-`f-string-number-format` | `sliced-integer-base-conversion` |
-| [`FURB152`](https://docs.astral.sh/ruff/rules/FURB152/) |
-`math-constant` | `hardcoded-math-constant` |
-| [`PLE1507`](https://docs.astral.sh/ruff/rules/PLE1507/) |
-`invalid-envvar-value` | `invalid-getenv-key` |
-| [`RUF061`](https://docs.astral.sh/ruff/rules/RUF061/) |
-`legacy-form-py
-
-**File**: `crates/ruff/tests/cli/lint.rs` (modified, +10/-10)
-```diff
-@@ -5070,7 +5070,7 @@ fn default_rules() -> Result<()> {
-     	sys-version-cmp-str10 (YTT302),
-     	sys-version-slice1 (YTT303),
-     	cancel-scope-no-checkpoint (ASYNC100),
--    	trio-sync-call (ASYNC105),
-+    	trio-call-not-awaited (ASYNC105),
-     	async-zero-sleep (ASYNC115),
-     	long-sleep-not-forever (ASYNC116),
-     	blocking-http-call-in-async-function (ASYNC210),
-@@ -5086,7 +5086,7 @@ fn default_rules() -> Result<()> {
-     	unary-prefix-increment-decrement (B002),
-     	assignment-to-os-environ (B003),
-     	unreliable-callable-check (B004),
--    	strip-with-multi-characters (B005),
-+    	strip-with-duplicate-characters (B005),
-     	mutable-argument-default (B006),
-     	function-call-in-default-argument (B008),
-     	getattr-with-constant (B009),
-@@ -5220,7 +5220,7 @@ fn default_rules() -> Result<()> {
-     	return-in-try-except-finally (SIM107),
-     	manual-loop-counter (SIM113),
-     	if-with-identical-branches (SIM114),
--    	open-file-with-context-handler (SIM115),
-+    	open-file-without-context-manager (SIM115),
-     	multiple-with-statements (SIM117),
-     	in-dict-keys (SIM118),
-     	negate-equal-op (SIM201),
-@@ -5241,7 +5241,7 @@ fn default_rules() -> Result<()> {
-     	runtime-string-union (TC010),
-     	py-path (PTH124),
-     	invalid-pathlib-with-suffix (PTH210),
--    	static-join-to-f-string (FLY002),
-+    	unnecessary-str-join (FLY002),
-     	unsorted-imports (I001),
-     	invalid-module-name (N999),
-     	unnecessary-list-cast (PERF101),
-@@ -5323,7 +5323,7 @@ fn default_rules() -> Result<()> {
-     	bad-string-format-character (PLE1300),
-     	bad-string-format-type (PLE1307),
-     	bad-str-strip-call (PLE1310),
--    	invalid-envvar-value (PLE1507),
-+    	invalid-getenv-key (PLE1507),
-     	singledispatch-method (PLE1519),
-     	singledispatchmethod-function (PLE1520),
-     	yield-from-in-async-function (PLE1700),
-@@ -5379,20 +5379,20 @@ fn default_rules() -> Result<()> {
-     	unnecessary-encode-utf8 (UP012),
-     	functional-named-tuple (UP014),
-     	datetime-timezone-utc (UP017),
--    	native-literals (UP018),
-+    	unnecessary-literal-constructor (UP018),
-     	typing-text-str-alias (UP019),
-     	open-alias (UP020),
--    	replace-universal-newlines (UP021),
--    	replace-stdout-stderr (UP022),
-+    	subprocess-run-with-universal-newlines (UP021),
-+    	subprocess-run-with-piped-stdout-and-stderr (UP022),
-     	deprecated-c-element-tree (UP023),
-     	os-error-alias (UP024),
-     	unicode-kind-prefix (UP025),
-     	deprecated-mock-import (UP026),
-     	yield-in-for-loop (UP028),
-     	unnecessary-builtin-import (UP029),
--    	format-literals (UP030),
-+    	unnecessary-positional-str-format-indices (UP030),
-     	printf-string-formatting (UP031),
--    	f-string (UP032),
-+    	str-format (UP032),
-     	lru-cache-with-maxsize-none (UP033),
-     	extraneous-parentheses (UP034),
-     	deprecated-import (UP035),
-```
-
-**File**: `crates/ruff/tests/cli/snapshots/cli__show_settings__display_default_settings.snap` (modified, +20/-20)
-```diff
-@@ -81,7 +81,7 @@ linter.rules.enabled = [
- 	sys-version-cmp-str10 (YTT302),
- 	sys-version-slice1 (YTT303),
- 	cancel-scope-no-checkpoint (ASYNC100),
--	trio-sync-call (ASYNC105),
-+	trio-call-not-awaited (ASYNC105),
- 	async-zero-sleep (ASYNC115),
- 	long-sleep-not-forever (ASYNC116),
- 	blocking-http-call-in-async-function (ASYNC210),
-@@ -97,7 +97,7 @@ linter.rules.enabled = [
- 	unary-prefix-increment-decrement (B002),
- 	assignment-to-os-environ (B003),
- 	unreliable-callable-check (B004),
--	strip-with-multi-characters (B005),
-+	strip-with-duplicate-characters (B005),
- 	mutable-argument-default (B006),
- 	function-call-in-default-argument (B008),
- 	getattr-with-constant (B009),
-@@ -231,7 +231,7 @@ linter.rules.enabled = [
- 	return-in-try-except-finally (SIM107),
- 	manual-loop-counter (SIM113),
- 	if-with-identical-branches (SIM114),
--	open-file-with-context-handler (SIM115),
-+	open-file-without-context-manager (SIM115),
- 	multiple-with-statements (SIM117),
- 	in-dict-keys (SIM118),
- 	negate-equal-op (SIM201),
-@@ -252,7 +252,7 @@ linter.rules.enabled = [
- 	runtime-string-union (TC010),
- 	py-path (PTH124),
- 	invalid-pathlib-with-suffix (PTH210),
--	static-join-to-f-string (FLY002),
-+	unnecessary-str-join (FLY002),
- 	unsorted-imports (I001),
- 	invalid-module-name (N999),
- 	unnecessary-list-cast (PERF101),
-@@ -334,7 +334,7 @@ linter.rules.enabled = [
- 	bad-string-format-character (PLE1300),
- 	bad-string-format-type (PLE1307),
- 	bad-str-strip-call (PLE1310),
--	invalid-envvar-value (PLE1507),
-+	invalid-getenv-key (PLE1507),
- 	singledispatch-method (PLE1519),
- 	singledispatchmethod-function (PLE1520),
- 	yield-from-in-async-function (PLE1700),
-@@ -390,20 +390,20 @@ linter.rules.enabled = [
- 	unnecessary-encode-utf8 (UP012),
- 	functional-named-tuple (UP014),
- 	datetime-timezone-utc (UP017),
--	native-literals (UP018),
-+	unnecessary-literal-constructor (UP018),
- 	typing-text-str-alias (UP019),
- 	open-alias (UP020),
--	replace-universal-newlines (UP021),
--	replace-stdout-stderr (UP022),
-+	subprocess-run-with-universal-newlines (UP021),
-+	subprocess-run-with-piped-stdout-and-stderr (UP022),
- 	deprecated-c-element-tree (UP023),
- 	os-error-alias (UP024),
- 	unicode-kind-prefix (UP025),
- 	deprecated-mock-import (UP026),
- 	yield-in-for-loop (UP028),
- 	unnecessary-builtin-import (UP029),
--	format-literals (UP030),
-+	unnecessary-positional-str-format-indices (UP030),
- 	printf-string-formatting (UP031),
--	f-string (UP032),
-+	str-format (UP032),
- 	lru-cache-with-maxsize-none (UP033),
- 	extraneous-parentheses (UP034),
- 	deprecated-import (UP035),
-@@ -490,7 +490,7 @@ linter.rules.should_fix = [
- 	sys-version-cmp-str10 (YTT302),
- 	sys-version-slice1 (YTT303),
- 	cancel-scope-no-checkpoint (ASYNC100),
--	trio-sync-call (ASYNC105),
-+	trio-call-not-awaited (ASYNC105),
- 	async-zero-sleep (ASYNC115),
- 	long-sleep-not-forever (ASYNC116),
- 	blocking-http-call-in-async-function (ASYNC210),
-@@ -506,7 +506,7 @@ linter.rules.should_fix = [
- 	unary-prefix-increment-decrement (B002),
- 	assignment-to-os-environ (B003),
- 	unreliable-callable-check (B004),
--	strip-with-multi-characters (B005),
-+	strip-with-duplicate-characters (B005),
- 	mutable-argument-default (B006),
- 	function-call-in-default-argument (B008),
- 	getattr-with-constant (B009),
-@@ -640,7 +640,7 @@ linter.rules.should_fix = [
- 	return-in-try-except-finally (SIM107),
- 	manual-loop-counter (SIM113),
- 	if-with-identical-branches (SIM114),
--	open-file-with-context-handler (SIM115),
-+	open-file-without-context-manager (SIM115),
- 	multiple-with-statements (SIM117),
- 	in-dict-keys (SIM118),
- 	negate-equal-op (SIM201),
-@@ -661,7 +661,7 @@ linter.rules.should_fix = [
- 	runtime-string-union (TC010),
- 	py-path (PTH124),
- 	invalid-pathlib-with-suffix (PTH210),
--	static-join-to-f-string (FLY002),
-+	unnecessary-str-join (FLY002),
- 	unsorted-imports (I001),
- 	invalid-module-name (N999),
- 	unnecessary-list-cast (PERF101),
-@@ -743,7 +743,7 @@ linter.rules.should_fix = [
- 	bad-string-format-character (PLE1300),
- 	bad-string-format-type (PLE1307),
- 	bad-str-strip-call (PLE1310),
--	invalid-envvar-value (PLE1507),
-+	invalid-getenv-key (PLE1507),
- 	singledispatch-method (PLE1519),
- 	singledispatchmethod-function (PLE1520),
- 	yield-from-in-async-function (PLE1700),
-@@ -799,20 +799,20 @@ linter.rules.should_fix = [
- 	unnecessary-encode-utf8 (UP012),
- 	functional-named-tuple (UP014),
- 	datetime-timezone-utc (UP017),
--	native-literals (UP018),
-+	unnecessary-literal-constructor (UP018),
- 	typing-text-str-alias (UP019),
- 	open-alias (UP020),
--	replace-universal-newlines (UP021),
--	replace-stdout-stderr (UP022),
-+	subprocess-run-with-universal-newlines (UP021),
-+	subprocess-run-with-piped-stdout-and-stderr (UP022),
- 	deprecated-c-element-tree (UP023),
- 	os-error-alias (UP024),
- 	unicode-kind-prefix (UP025),
- 	deprecated-mock-import (UP026),
- 	yield-in-for-loop (UP028),
- 	unnecessary-builtin-import (UP029),
--	format-literals (UP030),
-+	unnecessary-positional-str-format-indices (UP030),
- 	printf-string-formatting (UP031),
--	
-```
-
-**File**: `crates/ruff_linter/resources/mdtest/pyupgrade/str-format.md` (renamed, +35/-35)
-```diff
-@@ -1,4 +1,4 @@
--# `f-string` (`UP032`)
-+# `str-format` (`UP032`)
- 
- ```toml
- lint.select = ["UP032"]
-@@ -32,20 +32,20 @@ When the argument is interpolated once, the side effect runs once either way, so
- def foo(): ...
- 
- 
--"{x}".format(x=foo())  # snapshot: f-string
-+"{x}".format(x=foo())  # snapshot: str-format
- ```
- 
- ```snapshot
- error[UP032]: Use f-string instead of `format` call
-  --> src/mdtest_snippet.py:4:1
-   |
--4 | "{x}".format(x=foo())  # snapshot: f-string
-+4 | "{x}".format(x=foo())  # snapshot: str-format
-   | ^^^^^^^^^^^^^^^^^^^^^
- help: Convert to f-string
-   |
- 3 |
--  - "{x}".format(x=foo())  # snapshot: f-string
--4 + f"{foo()}"  # snapshot: f-string
-+  - "{x}".format(x=foo())  # snapshot: str-format
-+4 + f"{foo()}"  # snapshot: str-format
-   |
- ```
- 
-@@ -56,60 +56,60 @@ dropping a leading one would orphan whatever precedes the first kept segment, su
- an opening parenthesis, or a comment. A leading empty literal is left in place instead.
- 
- ```py
--"" "{}".format(x)  # snapshot: f-string
-+"" "{}".format(x)  # snapshot: str-format
- ```
- 
- ```snapshot
- error[UP032]: Use f-string instead of `format` call
-  --> src/mdtest_snippet.py:1:1
-   |
--1 | "" "{}".format(x)  # snapshot: f-string
-+1 | "" "{}".format(x)  # snapshot: str-format
-   | ^^^^^^^^^^^^^^^^^
- help: Convert to f-string
-   |
--  - "" "{}".format(x)  # snapshot: f-string
--1 + "" f"{x}"  # snapshot: f-string
--2 | "a" "" "{}".format(x)  # snapshot: f-string
-+  - "" "{}".format(x)  # snapshot: str-format
-+1 + "" f"{x}"  # snapshot: str-format
-+2 | "a" "" "{}".format(x)  # snapshot: str-format
-   |
- ```
- 
- ```py
--"a" "" "{}".format(x)  # snapshot: f-string
-+"a" "" "{}".format(x)  # snapshot: str-format
- ```
- 
- ```snapshot
- error[UP032]: Use f-string instead of `format` call
-  --> src/mdtest_snippet.py:2:1
-   |
--2 | "a" "" "{}".format(x)  # snapshot: f-string
-+2 | "a" "" "{}".format(x)  # snapshot: str-format
-   | ^^^^^^^^^^^^^^^^^^^^^
- help: Convert to f-string
-   |
--1 | "" "{}".format(x)  # snapshot: f-string
--  - "a" "" "{}".format(x)  # snapshot: f-string
--2 + "a" f"{x}"  # snapshot: f-string
--3 | x = ("" "{}").format(value)  # snapshot: f-string
-+1 | "" "{}".format(x)  # snapshot: str-format
-+  - "a" "" "{}".format(x)  # snapshot: str-format
-+2 + "a" f"{x}"  # snapshot: str-format
-+3 | x = ("" "{}").format(value)  # snapshot: str-format
-   |
- ```
- 
- A leading empty literal inside parentheses must keep the opening parenthesis, otherwise the fix would
- introduce a syntax error by leaving the closing one unbalanced.
- 
- ```py
--x = ("" "{}").format(value)  # snapshot: f-string
-+x = ("" "{}").format(value)  # snapshot: str-format
- ```
- 
- ```snapshot
- error[UP032]: Use f-string instead of `format` call
-  --> src/mdtest_snippet.py:3:5
-   |
--3 | x = ("" "{}").format(value)  # snapshot: f-string
-+3 | x = ("" "{}").format(value)  # snapshot: str-format
-   |     ^^^^^^^^^^^^^^^^^^^^^^^
- help: Convert to f-string
-   |
--2 | "a" "" "{}".format(x)  # snapshot: f-string
--  - x = ("" "{}").format(value)  # snapshot: f-string
--3 + x = ("" f"{value}")  # snapshot: f-string
-+2 | "a" "" "{}".format(x)  # snapshot: str-format
-+  - x = ("" "{}").format(value)  # snapshot: str-format
-+3 + x = ("" f"{value}")  # snapshot: str-format
- 4 | foo(
-   |
- ```
-@@ -118,7 +118,7 @@ A comment between a leading empty literal and the f-string must not be dropped b
- 
- ```py
- foo(
--    ""  # snapshot: f-string
-+    ""  # snapshot: str-format
-     # comment
-     "{}".format(value)
- )
-@@ -128,7 +128,7 @@ foo(
- error[UP032]: Use f-string instead of `format` call
-  --> src/mdtest_snippet.py:5:5
-   |
--5 | /     ""  # snapshot: f-string
-+5 | /     ""  # snapshot: str-format
- 6 | |     # comment
- 7 | |     "{}".format(value)
-   | |______________________^
-@@ -145,20 +145,20 @@ When every segment is an empty literal, the leading one is still preserved, keep
- and its parentheses balanced.
- 
- ```py
--y = ("" "").format(value)  # snapshot: f-string
-+y = ("" "").format(value)  # snapshot: str-format
- ```
- 
- ```snapshot
- error[UP032]: Use f-string instead of `format` call
-  --> src/mdtest_snippet.py:9:5
-   |
--9 | y = ("" "").format(value)  # snapshot: f-string
-+9 | y = ("" "").format(value)  # snapshot: str-format
-   |     ^^^^^^^^^^^^^^^^^^^^^
- help: Convert to f-string
-   |
- 8 | )
--  - y = ("" "").format(value)  # snapshot: f-string
--9 + y = ("" "")  # snapshot: f-string
-+  - y = ("" "").format(value)  # snapshot: str-format
-+9 + y = ("" "")  # snapshot: str-format
-   |
- ```
- 
-@@ -215,37 +215,37 @@ Inside brackets, `str.format` only reads an all-digit index as an integer. A sig
- key, so it converts to a quoted subscript rather than an integer one:
- 
- ```py
--"{0[+1]}".format(d)  # snapshot: f-string
-+"{0[+1]}".format(d)  # snapshot: str-format
- ```
- 
- ```snapshot
- error[UP032]: Use f-string instead of `format` call
-  --> src/mdtest_snippet.py:1:1
-   |
--1 | "{0[+1]}".format(d)  # snapshot: f-string
-+1 | "{0[+1]}".format(d)  # snapshot: str-format
-   | ^^^^^^^^^^^^^^^^^^^
- help: Convert to f-
-```
-
-**File**: `crates/ruff_linter/resources/mdtest/ruff/pytest-legacy-callable-form.md` (renamed, +2/-2)
-```diff
-@@ -1,4 +1,4 @@
--# `legacy-form-pytest-raises` (`RUF061`)
-+# `pytest-legacy-callable-form` (`RUF061`)
- 
- ```toml
- lint.select = ["RUF061"]
-@@ -21,7 +21,7 @@ def func(a, b):
- 
- def test_error_nested_in_with():
-     with pytest.raises(ValueError, "oops"):  # ok
--        pytest.raises(ZeroDivisionError, func, 1, b=0)  # error: [legacy-form-pytest-raises]
-+        pytest.raises(ZeroDivisionError, func, 1, b=0)  # error: [pytest-legacy-callable-form]
- ```
- 
- ## `pytest.warns`
-```
-
-**File**: `crates/ruff_linter/src/checkers/ast/analyze/deferred_with_statements.rs` (modified, +2/-2)
-```diff
-@@ -13,10 +13,10 @@ pub(crate) fn deferred_with_statements(checker: &mut Checker) {
-         let Stmt::With(stmt_with) = checker.semantic.current_statement() else {
-             unreachable!("Expected Stmt::With");
-         };
--        if checker.is_rule_enabled(Rule::ReadWholeFile) {
-+        if checker.is_rule_enabled(Rule::ManualPathRead) {
-             refurb::rules::read_whole_file(checker, stmt_with);
-         }
--        if checker.is_rule_enabled(Rule::WriteWholeFile) {
-+        if checker.is_rule_enabled(Rule::ManualPathWrite) {
-             refurb::rules::write_whole_file(checker, stmt_with);
-         }
-     }
-```
-
-**File**: `crates/ruff_linter/src/checkers/ast/analyze/expression.rs` (modified, +25/-23)
-```diff
-@@ -180,7 +180,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
-             if checker.is_rule_enabled(Rule::SortedMinMax) {
-                 refurb::rules::sorted_min_max(checker, subscript);
-             }
--            if checker.is_rule_enabled(Rule::FStringNumberFormat) {
-+            if checker.is_rule_enabled(Rule::SlicedIntegerBaseConversion) {
-                 refurb::rules::fstring_number_format(checker, subscript);
-             }
-             if checker.is_rule_enabled(Rule::IncorrectlyParenthesizedTupleInSubscript) {
-@@ -558,10 +558,10 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
-                 Rule::StringDotFormatMissingArguments,
-                 Rule::StringDotFormatMixingAutomatic,
-                 // pyupgrade
--                Rule::FormatLiterals,
--                Rule::FString,
-+                Rule::UnnecessaryPositionalStrFormatIndices,
-+                Rule::StrFormat,
-                 // flynt
--                Rule::StaticJoinToFString,
-+                Rule::UnnecessaryStrJoin,
-                 // refurb
-                 Rule::HashlibDigestHex,
-                 // flake8-simplify
-@@ -576,7 +576,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
-                     {
-                         if attr == "join" {
-                             // "...".join(...) call
--                            if checker.is_rule_enabled(Rule::StaticJoinToFString) {
-+                            if checker.is_rule_enabled(Rule::UnnecessaryStrJoin) {
-                                 flynt::rules::static_join_to_fstring(
-                                     checker,
-                                     expr,
-@@ -634,10 +634,12 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
-                                             checker, call, &summary,
-                                         );
-                                     }
--                                    if checker.is_rule_enabled(Rule::FormatLiterals) {
-+                                    if checker.is_rule_enabled(
-+                                        Rule::UnnecessaryPositionalStrFormatIndices,
-+                                    ) {
-                                         pyupgrade::rules::format_literals(checker, call, &summary);
-                                     }
--                                    if checker.is_rule_enabled(Rule::FString) {
-+                                    if checker.is_rule_enabled(Rule::StrFormat) {
-                                         pyupgrade::rules::f_strings(checker, call, &summary);
-                                     }
-                                 }
-@@ -675,17 +677,17 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
-             if checker.is_rule_enabled(Rule::UnnecessaryEncodeUTF8) {
-                 pyupgrade::rules::unnecessary_encode_utf8(checker, call);
-             }
--            if checker.is_rule_enabled(Rule::NativeLiterals) {
-+            if checker.is_rule_enabled(Rule::UnnecessaryLiteralConstructor) {
-                 pyupgrade::rules::native_literals(
-                     checker,
-                     call,
-                     checker.semantic().current_expression_parent(),
-                 );
-             }
--            if checker.is_rule_enabled(Rule::ReplaceUniversalNewlines) {
-+            if checker.is_rule_enabled(Rule::SubprocessRunWithUniversalNewlines) {
-                 pyupgrade::rules::replace_universal_newlines(checker, call);
-             }
--            if checker.is_rule_enabled(Rule::ReplaceStdoutStderr) {
-+            if checker.is_rule_enabled(Rule::SubprocessRunWithPipedStdoutAndStderr) {
-                 pyupgrade::rules::replace_stdout_stderr(checker, call);
-             }
-             if checker.is_rule_enabled(Rule::NonPEP604Isinstance) {
-@@ -702,7 +704,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
-             if checker.is_rule_enabled(Rule::BlockingOpenCallInAsyncFunction) {
-                 flake8_async::rules::blocking_open_call(checker, call);
-             }
--            if checker.is_rule_enabled(Rule::BlockingPathMethodInAsyncFunction) {
-+            if checker.is_rule_enabled(Rule::BlockingPathCallInAsyncFunction) {
-                 flake8_async::rules::blocking_os_path(checker, call);
-             }
-             if checker.any_rule_enabled(&[
-@@ -754,7 +756,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
-                     checker, expr, func, args, keywords,
-                 );
-             }
--            if checker.is_rule_enabled(Rule::StripWithMultiCharacters) {
-+            if checker.is_rule_enabled(Rule::StripWithDuplicateCharacters) {
-                 flake8_bugbear::rules::strip_with_multi_characters(checker, expr, func, args);
-             }
-             if keywords.is_empty() {
-@@ -798,7 +800,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
-             if checker.is_rule_enabled(Rule::HardcodedPasswordFuncArg) 
-```
-
-**File**: `crates/ruff_linter/src/checkers/ast/analyze/statement.rs` (modified, +1/-1)
-```diff
-@@ -1213,7 +1213,7 @@ pub(crate) fn statement(stmt: &Stmt, checker: &mut Checker) {
-             if checker.is_rule_enabled(Rule::RedefinedForOrWithTarget) {
-                 pylint::rules::redefined_loop_name(checker, stmt);
-             }
--            if checker.any_rule_enabled(&[Rule::ReadWholeFile, Rule::WriteWholeFile]) {
-+            if checker.any_rule_enabled(&[Rule::ManualPathRead, Rule::ManualPathWrite]) {
-                 checker
-                     .analyze
-                     .with_statements
-```
-
-**File**: `crates/ruff_linter/src/codes.rs` (modified, +17/-17)
-```diff
-@@ -403,7 +403,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
-         (Pylint, "E1300") => rules::pylint::rules::BadStringFormatCharacter,
-         (Pylint, "E1307") => rules::pylint::rules::BadStringFormatType,
-         (Pylint, "E1310") => rules::pylint::rules::BadStrStripCall,
--        (Pylint, "E1507") => rules::pylint::rules::InvalidEnvvarValue,
-+        (Pylint, "E1507") => rules::pylint::rules::InvalidGetenvKey,
-         (Pylint, "E1519") => rules::pylint::rules::SingledispatchMethod,
-         (Pylint, "E1520") => rules::pylint::rules::SingledispatchmethodFunction,
-         (Pylint, "E1700") => rules::pylint::rules::YieldFromInAsyncFunction,
-@@ -481,7 +481,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
- 
-         // flake8-async
-         (Flake8Async, "100") => rules::flake8_async::rules::CancelScopeNoCheckpoint,
--        (Flake8Async, "105") => rules::flake8_async::rules::TrioSyncCall,
-+        (Flake8Async, "105") => rules::flake8_async::rules::TrioCallNotAwaited,
-         (Flake8Async, "109") => rules::flake8_async::rules::AsyncFunctionWithTimeout,
-         (Flake8Async, "110") => rules::flake8_async::rules::AsyncBusyWait,
-         (Flake8Async, "115") => rules::flake8_async::rules::AsyncZeroSleep,
-@@ -493,7 +493,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
-         (Flake8Async, "221") => rules::flake8_async::rules::RunProcessInAsyncFunction,
-         (Flake8Async, "222") => rules::flake8_async::rules::WaitForProcessInAsyncFunction,
-         (Flake8Async, "230") => rules::flake8_async::rules::BlockingOpenCallInAsyncFunction,
--        (Flake8Async, "240") => rules::flake8_async::rules::BlockingPathMethodInAsyncFunction,
-+        (Flake8Async, "240") => rules::flake8_async::rules::BlockingPathCallInAsyncFunction,
-         (Flake8Async, "250") => rules::flake8_async::rules::BlockingInputInAsyncFunction,
-         (Flake8Async, "251") => rules::flake8_async::rules::BlockingSleepInAsyncFunction,
-         (Flake8Async, "401") => rules::flake8_async::rules::PytestRaisesExceptionGroup,
-@@ -510,7 +510,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
-         (Flake8Bugbear, "002") => rules::flake8_bugbear::rules::UnaryPrefixIncrementDecrement,
-         (Flake8Bugbear, "003") => rules::flake8_bugbear::rules::AssignmentToOsEnviron,
-         (Flake8Bugbear, "004") => rules::flake8_bugbear::rules::UnreliableCallableCheck,
--        (Flake8Bugbear, "005") => rules::flake8_bugbear::rules::StripWithMultiCharacters,
-+        (Flake8Bugbear, "005") => rules::flake8_bugbear::rules::StripWithDuplicateCharacters,
-         (Flake8Bugbear, "006") => rules::flake8_bugbear::rules::MutableArgumentDefault,
-         (Flake8Bugbear, "007") => rules::flake8_bugbear::rules::UnusedLoopControlVariable,
-         (Flake8Bugbear, "008") => rules::flake8_bugbear::rules::FunctionCallInDefaultArgument,
-@@ -663,7 +663,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
-         (Flake8Simplify, "112") => rules::flake8_simplify::rules::UncapitalizedEnvironmentVariables,
-         (Flake8Simplify, "113") => rules::flake8_simplify::rules::ManualLoopCounter,
-         (Flake8Simplify, "114") => rules::flake8_simplify::rules::IfWithIdenticalBranches,
--        (Flake8Simplify, "115") => rules::flake8_simplify::rules::OpenFileWithContextHandler,
-+        (Flake8Simplify, "115") => rules::flake8_simplify::rules::OpenFileWithoutContextManager,
-         (Flake8Simplify, "116") => rules::flake8_simplify::rules::IfElseBlockInsteadOfDictLookup,
-         (Flake8Simplify, "117") => rules::flake8_simplify::rules::MultipleWithStatements,
-         (Flake8Simplify, "118") => rules::flake8_simplify::rules::InDictKeys,
-@@ -702,21 +702,21 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
-         (Pyupgrade, "014") => rules::pyupgrade::rules::FunctionalNamedTuple,
-         (Pyupgrade, "015") => rules::pyupgrade::rules::RedundantOpenModes,
-         (Pyupgrade, "017") => rules::pyupgrade::rules::DatetimeTimezoneUTC,
--        (Pyupgrade, "018") => rules::pyupgrade::rules::NativeLiterals,
-+        (Pyupgrade, "018") => rules::pyupgrade::rules::UnnecessaryLiteralConstructor,
-         (Pyupgrade, "019") => rules::pyupgrade::rules::TypingTextStrAlias,
-         (Pyupgrade, "020") => rules::pyupgrade::rules::OpenAlias,
--        (Pyupgrade, "021") => rules::pyupgrade::rules::ReplaceUniversalNewlines,
--        (Pyupgrade, "022") => rules::pyupgrade::rules::ReplaceStdoutStderr,
-+        (Pyupgrade, "021") => rules::pyupgrade::rules::SubprocessRunWithUniversalNewlines,
-+        (Pyupgrade, "022") => rules::pyupgrade::rules::SubprocessRunWithPipedStdoutAndStderr,
-         (Pyupgrade, "023") => rules::pyupgrade::rules::DeprecatedCElementTree,
-         (Pyupgrade, "024") => rules::pyupgrade::rules::OSErrorAlias,
-         (Pyupgrade, "025") => rules::pyupgrade::r
-```
-
----
-
-### Incident Patch 2: `2c98e831` (2026-11-23)
-**Commit Message**: [ty] Treat caller-fixed type variables as concrete during inference (#30423)
-
-Consider this example of a generic call within another generic function
-(the last line):
-
-```python
-from typing import Any
-
-def keep[L: list[Any]](items: L) -> L:
-    return items
-
-def forward[T](items: list[T]) -> list[T]:
-    return keep(items)
-```
-
-The type variables for the call we are currently inferring (`L`) are
-"inferable", and we can pick any solution for them that fits the
-constraints: the goal of constraint solving is to pick a valid solution
-for inferable type variables.
-
-Type variables from the outer scope (`T`) are "fixed" or "non-inferable"
--- they could take on any type within their bounds/constraints, and our
-solution has to work for all their possible specializations; we aren't
-allowed to pick a solution for them.
-
-Today on main, our solver largely internally treats non-inferable type
-variables as inferable. This can cause us to wrongly report "solutions"
-that are only valid for some specializations of the non-inferable
-typevars. It can also cause us to wrongly substitute occurrences of the
-fixed typevar with some other type.
-
-For example, in the above snippet we get the constraint `list
-
-**File**: `crates/ruff_benchmark/benches/ty_constraint_set.rs` (modified, +146/-0)
-```diff
-@@ -270,6 +270,40 @@ fn benchmark_constructor_literal_alias(criterion: &mut Criterion) {
-     }
- }
- 
-+/// Bokeh calls `super().__init__()` on a receiver with a large union of literals (ty#5063).
-+/// We specialize the overloads before filtering by arity. Two ways to partition the literals
-+/// between `A` and `B` already rule out a unique receiver specialization.
-+fn benchmark_overloaded_constructor_receiver(criterion: &mut Criterion) {
-+    setup_rayon();
-+
-+    let code = r#"
-+        from typing import Literal, overload
-+
-+        type Pattern = Literal["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"]
-+
-+        class Either[T]:
-+            value: T
-+
-+            @overload
-+            def __init__[A, B](self: "Either[A | B]", value: A) -> None: ...
-+            @overload
-+            def __init__(self) -> None: ...
-+            def __init__(self, *args: object) -> None: ...
-+
-+        class HatchPattern(Either[Pattern]):
-+            def __init__(self) -> None:
-+                super().__init__()
-+    "#;
-+
-+    criterion.bench_function("ty_micro[overloaded_constructor_receiver]", |b| {
-+        b.iter_batched_ref(
-+            || setup_micro_case(code),
-+            |Case { db }| assert_eq!(db.check().len(), 0),
-+            BatchSize::SmallInput,
-+        );
-+    });
-+}
-+
- /// These constructors used to hang because recursive substitution kept reordering union
- /// members in their inferred type arguments (ty#5057).
- fn benchmark_constructor_union_specialization(criterion: &mut Criterion) {
-@@ -931,6 +965,114 @@ fn benchmark_pydantic_core_schema_dict(criterion: &mut Criterion) {
-     });
- }
- 
-+/// Each overload brings its own `T` into the scope of `P`. Interning the growing set of
-+/// binders after each overload retains a quadratic number of entries. Passing `first` keeps
-+/// the final argument check from comparing the whole overload set against itself.
-+fn benchmark_paramspec_capture_many_overloads(criterion: &mut Criterion) {
-+    setup_rayon();
-+
-+    let mut code = String::from("from typing import Callable, Literal, overload\n\n");
-+    for tag in 0..256 {
-+        writeln!(
-+            &mut code,
-+            "@overload\ndef select[T](tag: Literal[{tag}], value: T) -> T: ..."
-+        )
-+        .ok();
-+    }
-+    code.push_str(
-+        "\
-+def select(tag: int, value: object) -> object:
-+    return value
-+
-+def register[**P](f: Callable[P, object], g: Callable[P, object]) -> None: ...
-+
-+def first(tag: Literal[0], value: int) -> int:
-+    return value
-+
-+register(first, select)
-+",
-+    );
-+
-+    criterion.bench_function("ty_micro[paramspec_capture_many_overloads]", |b| {
-+        b.iter_batched_ref(
-+            || setup_micro_case(&code),
-+            |Case { db }| assert_eq!(db.check().len(), 0),
-+            BatchSize::SmallInput,
-+        );
-+    });
-+}
-+
-+/// An overloaded `__call__` can refer to the protocol itself in each receiver annotation. Checking
-+/// the receiver can therefore encounter the same overloads again.
-+fn benchmark_overloaded_protocol_receivers(criterion: &mut Criterion) {
-+    setup_rayon();
-+
-+    let code = r#"
-+        from __future__ import annotations
-+
-+        from collections.abc import Callable
-+        from os import PathLike
-+        from typing import Generic, ParamSpec, Protocol, TypeVar, overload
-+
-+        V = TypeVar("V", covariant=True)
-+        A = TypeVar("A", contravariant=True)
-+        P = ParamSpec("P")
-+        T = TypeVar("T")
-+        C = TypeVar("C", bound=type)
-+
-+        class Wrapper(Protocol, Generic[V, A]):
-+            @overload
-+            def __call__(
-+                self: Wrapper[Callable[P, T], A], f: Callable[P, T], arg: A, /
-+            ) -> Callable[P, T]: ...
-+            @overload
-+            def __call__(
-+                self: Wrapper[classmethod[C, P, T], A], f: classmethod[C, P, T], arg: A, /
-+            ) -> classmethod[C, P, T]: ...
-+            @overload
-+            def __call__(
-+                self: Wrapper[staticmethod[P, T], A], f: staticmethod[P, T], arg: A, /
-+            ) -> staticmethod[P, T]: ...
-+            def __call__(self, f, arg, /): ...
-+
-+        def check(wrapper: Wrapper[object, str | PathLike[str]], f: Callable[P, T]) -> Callable[P, T]:
-+            return wrapper(f, "arg")
-+    "#;
-+
-+    criterion.bench_function("ty_micro[overloaded_protocol_receivers]", |b| {
-+        b.iter_batched_ref(
-+            || setup_micro_case(code),
-+            |Case { db }| assert_eq!(db.check().len(), 0),
-+            BatchSize::SmallInput,
-+        );
-+    });
-+}
-+
-+/// Inferring the element type of this list checks whether a recursive alias and the type variables
-+/// from `product` can satisfy both endpoints of an inference bound.
-+fn benchmark_recursive_alias_product(criterion: &mut Criterion) {
-+    setup_rayon();
-+
-+    let code = r#"
-+        from collections.abc import Hashable, Sequence
-+        from itertools import product
-+        from typing import Union
-+
-+        Label = Union[Ha
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/annotations/callable.md` (modified, +19/-0)
-```diff
-@@ -366,6 +366,25 @@ def expects_str_return(c: Callable[[int | str], str]) -> None:
- expects_str_return(wide_return_converter)
- ```
- 
-+## Overloaded bound method assignability
-+
-+When both overloads accept any receiver, their parameter types together cover the callable's input
-+union.
-+
-+```py
-+from typing import Callable, overload
-+
-+class Parser:
-+    @overload
-+    def parse(self: object, x: int, /) -> int: ...
-+    @overload
-+    def parse(self: object, x: str, /) -> str: ...
-+    def parse(self: object, x: int | str, /) -> int | str:
-+        return x
-+
-+parse: Callable[[int | str], int | str] = Parser().parse  # ok
-+```
-+
- ## Union
- 
- ```py
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/call/builtins.md` (modified, +3/-7)
-```diff
-@@ -697,8 +697,8 @@ OrderedDict(zip(["name"], items))
- 
- ## Contextual inference for `next`
- 
--An incompatible return context does not make an invalid iterator argument valid. An optional context
--also preserves the concrete return type of a valid iterator.
-+The iterator determines the result type of `next`. Returning that `int` from a method annotated with
-+`str` is an error.
- 
- ```toml
- [rules]
-@@ -711,11 +711,7 @@ class Counter:
-         return 1
- 
-     def text(self) -> str:
--        # TODO: Infer `int` for `next(self)` and report a single `invalid-explicit-return` error
--        # for returning `int` where `str` is expected.
--        # error: [invalid-argument-type] "Expected `SupportsNext[str]`, found `Self@text`"
--        # error: [unsound-return] "`Unknown`"
--        return next(self)
-+        return next(self)  # error: [invalid-explicit-return]
- 
-     def read(self) -> int | None:
-         return reveal_type(next(self))  # revealed: int
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/cycle/basic.md` (modified, +4/-3)
-```diff
-@@ -783,16 +783,17 @@ while value:
- python-version = "3.12"
- ```
- 
--A list passed to a generic function retains the type inferred from its elements, even when the
--call's return type supplies an incompatible context for that list.
-+An unannotated list receives element types from both its initializer and its later uses. Here the
-+return annotation supplies `T` through `keep`, but the list also contains an `int`. Returning it as
-+`list[T]` would be unsafe.
- 
- ```py
- def keep[U](values: list[U]) -> list[U]:
-     return values
- 
- def make[T](arg: T) -> list[T]:
-     values = [42]
--    reveal_type(values)  # revealed: list[int]
-+    reveal_type(values)  # revealed: list[T@make | int]
-     return keep(values)  # error: [invalid-explicit-return]
- ```
- 
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/diagnostics/error_context.md` (modified, +15/-16)
-```diff
-@@ -962,9 +962,8 @@ help: A subclass of `Empty` could validly add a new field of an arbitrary type,
- 
- ## Generic `TypedDict` field conflicts in overload diagnostics
- 
--A generic `TypedDict` relation can be unsatisfiable without being the `never` terminal. Capturing
--its type variable from an enclosing function keeps the overload non-generic while retaining the
--conflicting constraints. The resulting diagnostic should explain which field introduced them.
-+A non-generic overload can refer to a type variable from its enclosing function. That variable is
-+fixed when checking the overload, so the diagnostic explains why the first field is incompatible.
- 
- ```py
- from typing import Generic, TypeVar, TypedDict, overload
-@@ -1000,15 +999,15 @@ error[inconsistent-overload-implementation]: Implementation does not accept all
- info: Implementation signature `(value: Pair[T@outer] | str) -> None` is not assignable to overload signature `(value: Fixed) -> None`
- info: parameter `value` has an incompatible type: `Fixed` is not assignable to `Pair[T@outer] | str`
- info: └── type `Fixed` is not assignable to any element of the union `Pair[T@outer] | str`
--info:     ├── field "second" on TypedDict `Fixed` has type `str` which is not assignable to type `T@outer` expected by TypedDict `Pair`
-+info:     ├── field "first" on TypedDict `Fixed` has type `int` which is not assignable to type `T@outer` expected by TypedDict `Pair`
- info:     └── ... omitted 1 union element without additional context
- ```
- 
--## Stop checking callable parameters after incompatible generic constraints
-+## Stop checking callable parameters after an incompatibility
- 
--Once earlier parameters produce an unsatisfiable nonterminal constraint set, continuing to a later
--parameter must not replace the diagnostic context that explains the original incompatibility. The
--type variable belongs to the enclosing function, so the overload itself remains non-generic.
-+An incompatibility in a later parameter does not replace the diagnostic context from the first
-+incompatible parameter. The type variable belongs to the enclosing function, so the overload itself
-+remains non-generic.
- 
- ```py
- from typing import Generic, TypeVar, TypedDict, overload
-@@ -1044,7 +1043,7 @@ error[inconsistent-overload-implementation]: Implementation does not accept all
- info: Implementation signature `(value: Pair[T@outer] | str, later: str) -> None` is not assignable to overload signature `(value: Fixed, later: int) -> None`
- info: parameter `value` has an incompatible type: `Fixed` is not assignable to `Pair[T@outer] | str`
- info: └── type `Fixed` is not assignable to any element of the union `Pair[T@outer] | str`
--info:     ├── field "second" on TypedDict `Fixed` has type `str` which is not assignable to type `T@outer` expected by TypedDict `Pair`
-+info:     ├── field "first" on TypedDict `Fixed` has type `int` which is not assignable to type `T@outer` expected by TypedDict `Pair`
- info:     └── ... omitted 1 union element without additional context
- ```
- 
-@@ -1356,8 +1355,8 @@ info:     └── parameter `y` has an incompatible type: `str` is not assigna
- ## Recursive protocol diagnostic context
- 
- A value-constrained type parameter makes the recursive `child` override valid for each permitted
--specialization. The explicit receiver on `Outer.expose` preserves unresolved type variables while
--diagnostic context is collected, including the incompatible recursive member and its return type.
-+specialization. When checking `Outer[int]`, the diagnostic follows the return type of `expose` to
-+the incompatible `value` method. Its return type is the caller's `T`, which need not be `int`.
- 
- ```py
- from __future__ import annotations
-@@ -1390,12 +1389,12 @@ error[invalid-assignment]: Object of type `Concrete[T@diagnose]` is not assignab
-    |              ----------   ^^^^^ Incompatible value of type `Concrete[T@diagnose]`
-    |              |
-    |              Declared type
--info: type `Concrete[T@diagnose]` is not assignable to protocol `Chain[int]`
--info: └── protocol member `child` is incompatible
--info:     └── incompatible return types: `Concrete[str]` is not assignable to `Chain[int]`
--info:         └── type `Concrete[str]` is not assignable to protocol `Chain[int]`
-+info: type `Concrete[T@diagnose]` is not assignable to protocol `Outer[int]`
-+info: └── protocol member `expose` is incompatible
-+info:     └── incompatible return types: `Concrete[T@diagnose]` is not assignable to `Chain[int]`
-+info:         └── type `Concrete[T@diagnose]` is not assignable to protocol `Chain[int]`
- info:             └── protocol member `value` is incompatible
--info:                 └── incompatible return types: `str` is not assignable to `int`
-+info:                 └── incompatible return types: `T@diagnose` is not assignable to `int`
- ```
- 
- ## Recursive protocols in a union after overload comparison
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/callables.md` (modified, +111/-3)
-```diff
-@@ -1135,7 +1135,7 @@ def _(callback: Restricted[str]):
- F = TypeVar("F", bound=Restricted[str])
- 
- def _(callback: F):
--    consume(callback)  # TODO: This should error.
-+    consume(callback)  # error: [invalid-argument-type]
-     x: Callable[[int], str] = callback  # error: [invalid-assignment]
- ```
- 
-@@ -1150,8 +1150,7 @@ G = TypeVar("G", bound=Restricted[int])
- 
- def _(callback: G):
-     consume(callback)
--    # TODO: This should not error.
--    x: Callable[[int], str] = callback  # error: [invalid-assignment]
-+    x: Callable[[int], str] = callback  # ok
- ```
- 
- Note that a compatible receiver bound does not satisfy an incompatible return type:
-@@ -1161,6 +1160,33 @@ def _(callback: G):
-     wrong: Callable[[int], bytes] = callback  # error: [invalid-assignment]
- ```
- 
-+## Overloaded methods on a bounded type variable
-+
-+Both overloads accept any receiver, so together they cover the protocol's input union even when the
-+receiver is `T`. The bound method's return type must account for both overloads.
-+
-+```py
-+from typing import Callable, Protocol, TypeVar, overload
-+
-+class Parser:
-+    @overload
-+    def parse(self: object, value: int, /) -> int: ...
-+    @overload
-+    def parse(self: object, value: str, /) -> str: ...
-+    def parse(self: object, value: int | str, /) -> int | str:
-+        return value
-+
-+class SupportsParse(Protocol):
-+    def parse(self, value: int | str, /) -> int | str: ...
-+
-+T = TypeVar("T", bound=Parser)
-+
-+def check(parser: T):
-+    impl: SupportsParse = parser  # ok
-+    parse: Callable[[int | str], int | str] = parser.parse  # ok
-+    wrong: Callable[[int | str], int] = parser.parse  # error: [invalid-assignment]
-+```
-+
- ## Constructor bounds in callable inference
- 
- The signature of a class constructor can be inferred from a type variable with an upper bound of
-@@ -1394,6 +1420,61 @@ class Closed:
-     def method(cls, value: int) -> None: ...
- ```
- 
-+## Decorating a binary method with a bounded receiver
-+
-+Both `self` and `abs(self)` satisfy the bound on `M`. The decorated method accepts another matrix,
-+even though the decorator's signature doesn't tell us whether the result keeps the receiver's type.
-+
-+```py
-+from typing import Callable, TypeVar
-+from typing_extensions import Self
-+
-+A = TypeVar("A")
-+B = TypeVar("B")
-+R = TypeVar("R")
-+M = TypeVar("M", bound="Matrix")
-+
-+def decorate(fn: Callable[[A, B], R]) -> Callable[[A, B], R]:
-+    return fn
-+
-+class Matrix:
-+    def __abs__(self) -> Self:
-+        return self
-+
-+    @decorate
-+    def __add__(self: M, other: M) -> M:
-+        return self
-+
-+    def check(self):
-+        reveal_type(abs(self))  # revealed: Self@check
-+        reveal_type(self + self)  # revealed: Unknown
-+        reveal_type(abs(self) + self)  # revealed: Unknown
-+        abs(self) + 1  # error: [unsupported-operator]
-+```
-+
-+## Decorating a generic function with a bounded decorator
-+
-+`identity` accepts any value, but the decorator limits the wrapped function to integers.
-+
-+```py
-+from typing import Callable, TypeVar
-+
-+A = TypeVar("A", bound=int)
-+R = TypeVar("R", bound=int)
-+T = TypeVar("T")
-+
-+def integers(fn: Callable[[A], R]) -> Callable[[A], R]:
-+    return fn
-+
-+@integers
-+def identity(value: T) -> T:
-+    return value
-+
-+identity("x")  # error: [invalid-argument-type]
-+# TODO: Solve for the decorator's bounded variables and accept this call.
-+identity(1)  # error: [invalid-argument-type]
-+```
-+
- ## Gradual class parameters
- 
- A callback that accepts `type[Any]` or `type[Unknown]` can accept any class object.
-@@ -1764,6 +1845,33 @@ class Box(Generic[C]):
-             reveal_type(Box[C](arg))
- ```
- 
-+## Inferring a callback parameter through a protocol member
-+
-+`Box` has no type arguments, but its `value` attribute carries the type variable from `put`.
-+Comparing the result of `put` with `HasValue` supplies the upper bound of `int` for `X`.
-+
-+```py
-+from typing import Callable, Protocol, TypeVar
-+
-+T = TypeVar("T", bound=int)
-+X = TypeVar("X")
-+
-+class HasValue(Protocol):
-+    @property
-+    def value(self) -> int: ...
-+
-+class Box:
-+    def put(self, x: T) -> "Box":
-+        self.value = x
-+        return self
-+
-+def argument(f: Callable[[X], HasValue]) -> X:
-+    raise NotImplementedError
-+
-+def check(box: Box):
-+    reveal_type(argument(box.put))  # revealed: int
-+```
-+
- ## Specializing generic protocol methods
- 
- A method can use its own type parameter as the class argument of another instance of its protocol.
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md` (modified, +148/-2)
-```diff
-@@ -1441,7 +1441,7 @@ class C(Generic[T]):
-     def __init__(self, value: T) -> None:
-         reveal_type(C(value))  # revealed: C[T@C]
- 
--        # error: [invalid-argument-type] "Expected `int`, found `T@C`"
-+        # error: [invalid-assignment] "Object of type `C[T@C]` is not assignable to `C[int]`"
-         invalid: C[int] = C(value)
- ```
- 
-@@ -1983,6 +1983,36 @@ reveal_type(C(1, True))  # revealed: C[int]
- wrong_innards: C[int] = C("five", 1)
- ```
- 
-+### Inferring a union from the initializer's receiver
-+
-+The arguments fix `A` to `bool` and `B` to `int`. The initializer's `self` annotation then gives the
-+new box the element type `int`, since `bool` is a subtype of `int`.
-+
-+```py
-+from typing import Generic, TypeVar
-+
-+T = TypeVar("T")
-+A = TypeVar("A")
-+B = TypeVar("B")
-+
-+class Box(Generic[T]):
-+    value: T
-+
-+    def __init__(self: "Box[A | B]", left: "Box[A]", right: "Box[B]") -> None: ...
-+
-+def combine(left: Box[bool], right: Box[int]):
-+    reveal_type(Box(left, right))  # revealed: Box[int]
-+```
-+
-+If the left box carries a caller's type variable, the result keeps it in the union.
-+
-+```py
-+U = TypeVar("U")
-+
-+def forward(left: Box[U], right: Box[int]):
-+    reveal_type(Box(left, right))  # revealed: Box[U@forward | int]
-+```
-+
- ### Calling a generic initializer on an existing instance
- 
- An inherited initializer can infer its own type parameters from the arguments. Its explicit `self`
-@@ -2020,7 +2050,7 @@ could be `str` alone, so the initializer cannot assume it accepts both types.
- class Child(Either[T]):
-     def initialize(self, cls: type[T], default: T | Callable[[], T]) -> None:
-         super().__init__(cls, cls, default)  # ok
--        super().__init__(str, int, default)  # error: [invalid-argument-type] "Expected `Either[str | int]`"
-+        super().__init__(str, int, default)  # error: [invalid-argument-type] "found `Self@initialize`"
- ```
- 
- For `Either[bytes]`, the receiver is incompatible whether it is bound implicitly or passed
-@@ -2587,6 +2617,122 @@ as_specialized: Base[list[int]] = GenericChild[int]()
- incompatible_specialization: Base[list[str]] = GenericChild[int]()  # error: [unsound-assignment]
- ```
- 
-+Both `Child` and `Reversed` inherit `Base[int]`, so a value stored in either must be assignable to
-+`int`, even though they both also inherit `Base[Any]`.
-+
-+```py
-+U = TypeVar("U")
-+
-+def store(value: T, box: Base[T]) -> None:
-+    box.value = value
-+
-+def check(value: U, child: Child, reversed_child: Reversed, concrete: Concrete):
-+    # TODO: error: [invalid-argument-type]
-+    store("wrong", child)
-+    # TODO: error: [invalid-argument-type]
-+    store(value, child)
-+
-+    # TODO: error: [invalid-argument-type]
-+    store("wrong", reversed_child)
-+    # TODO: error: [invalid-argument-type]
-+    store(value, reversed_child)
-+
-+    store("wrong", concrete)  # error: [invalid-argument-type]
-+    store(value, concrete)  # error: [invalid-argument-type]
-+```
-+
-+## Overriding a method that returns its receiver type
-+
-+The base method promises a `Base` at minimum. An override that can return `None` violates that
-+promise even when the receiver satisfies the bound on `T`.
-+
-+```pyi
-+from typing import TypeVar
-+
-+T = TypeVar("T", bound="Base")
-+
-+class Base:
-+    def clone(self: T) -> T: ...
-+
-+class Child(Base):
-+    def clone(self) -> Child: ...
-+
-+class OptionalChild(Base):
-+    def clone(self) -> OptionalChild | None: ...  # error: [incompatible-method-override]
-+
-+class Sibling(Base):
-+    # TODO: Reject this override. The bound permits a Child, but the receiver is a Sibling.
-+    def clone(self) -> Child: ...
-+```
-+
-+## Invariant parameter and return types with a bounded receiver type variable
-+
-+The override of `get` returns `list[int]` where the base method promises `list[T]`. The override of
-+`put` accepts `list[T]` where the base method accepts `list[int]`. Since `list` is invariant, both
-+overrides would require `T` to be `int`, which exceeds its bound of `bool`.
-+
-+```pyi
-+from typing import Generic, TypeVar
-+
-+K = TypeVar("K", bound=bool, covariant=True)
-+T = TypeVar("T", bound=bool)
-+
-+class Buffer(Generic[K]):
-+    def get(self: Buffer[T]) -> list[T]: ...
-+    def put(self, values: list[int]) -> None: ...
-+
-+class Child(Buffer[K]):
-+    def get(self) -> list[int]: ...  # error: [incompatible-method-override]
-+    # error: [incompatible-method-override]
-+    def put(self: Child[T], values: list[T]) -> None: ...
-+```
-+
-+## Parameter and return types with a constrained receiver type variable
-+
-+The base methods restrict the receiver's key type to `bool` or `str`. Neither choice allows
-+`first_key` to return an arbitrary `int` or `remove` to narrow its parameter from `int` to `T`.
-+Returning `K` is valid for every receiver the base method accepts, even though `K` is unbounded.
-+
-+```pyi
-+from typing import Any, Generic, TypeVar
-+
-+K = TypeVar("K", covariant=True)
-+V = TypeVar("V")
-+T = TypeVar("T", bool, str)
-+
-+class Map(Generic[K, V]):
-+    def first_key(self: 
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md` (modified, +407/-16)
-```diff
-@@ -533,6 +533,70 @@ def invalid_argument_with_context(value: Callable[[], S]) -> list[str]:
-     return box_callable(value)  # error: [invalid-argument-type]
- ```
- 
-+`consume` expects to read a `str` from `source.value`. We can't assume a compatible specialization
-+of `Source[T]`: a caller of `wrapper` could pass a `Source[object]` whose `value` is `42`.
-+
-+```py
-+from typing import Protocol, TypeVar
-+
-+Element = TypeVar("Element")
-+
-+class Source(Protocol[Element]):
-+    value: Element
-+
-+SourceT = TypeVar("SourceT", bound=Source[object])
-+Text = TypeVar("Text", bound=str)
-+
-+def consume(source: Source[Text]) -> str:
-+    return source.value
-+
-+def wrapper(source: SourceT) -> None:
-+    consume(source)  # error: [invalid-argument-type]
-+```
-+
-+## Preserving the caller's type variable with an aliased union bound
-+
-+The invariant list and the callback's input and output both require `T` to match `U`. Every
-+specialization of `U` satisfies the shared `Scalar` bound.
-+
-+```py
-+from collections.abc import Callable
-+from typing import TypeVar
-+from typing_extensions import TypeAliasType
-+
-+Scalar = TypeAliasType("Scalar", int | str)
-+T = TypeVar("T", bound=Scalar)
-+U = TypeVar("U", bound=Scalar)
-+
-+def first(items: list[T] | None) -> T | None:
-+    return items[0] if items is not None and items else None
-+
-+def apply(fn: Callable[[T], T], value: T) -> T:
-+    return fn(value)
-+
-+def forward(items: list[U], fn: Callable[[U], U], value: U) -> None:
-+    reveal_type(first(items))  # revealed: U@forward | None
-+    reveal_type(apply(fn, value))  # revealed: U@forward
-+```
-+
-+## Preserving an argument through a gradual upper bound
-+
-+In the call on the last line of this example, we should infer `list[T]`, not substitute `Any` for
-+`T` (due to the `list[Any]` upper bound) and infer `list[Any]`:
-+
-+```py
-+from typing import Any, TypeVar
-+
-+L = TypeVar("L", bound=list[Any])
-+T = TypeVar("T")
-+
-+def keep(items: L) -> L:
-+    return items
-+
-+def forward(items: list[T]) -> list[T]:
-+    return reveal_type(keep(items))  # revealed: list[T@forward]
-+```
-+
- ## Inferring a bound from a narrowed protocol
- 
- Narrowing to `Text` supplies a `str` return type that satisfies the bound, even when the original
-@@ -647,6 +711,31 @@ def extend(values: list[T], other: list[T]) -> None:
-     values.extend([1])
- ```
- 
-+## Passing bound methods with a specialized receiver
-+
-+A method restricted to `Box[int]` is a valid callback when the receiver has that specialization. A
-+caller with a `Box[T]` cannot assume its element type is `int`.
-+
-+```py
-+from collections.abc import Callable
-+from typing import Generic, TypeVar
-+
-+T = TypeVar("T")
-+
-+class Box(Generic[T]):
-+    value: T
-+
-+    def get_int(self: "Box[int]") -> int:
-+        return self.value
-+
-+def invoke(callback: Callable[[], T]) -> T:
-+    return callback()
-+
-+def forward(box: Box[T], ints: Box[int]) -> None:
-+    invoke(box.get_int)  # error: [invalid-argument-type]
-+    reveal_type(invoke(ints.get_int))  # revealed: int
-+```
-+
- ## Generic callbacks in bound method calls
- 
- A callback registered for an arbitrary `T` must return that `T` for every input. The identity
-@@ -1377,6 +1466,54 @@ def f(value: T):
-     reveal_type(value + value)  # revealed: Unknown
- ```
- 
-+## A bounded receiver implementing an operator protocol
-+
-+The bound defines the available operators. Their generic receiver is the caller's `R`, so the
-+products and their sum retain that type.
-+
-+```py
-+from operator import mul
-+from typing import Protocol, TypeVar
-+
-+T = TypeVar("T")
-+
-+class Ring(Protocol):
-+    def __mul__(self: T, other: T, /) -> T: ...
-+    def __add__(self: T, other: T, /) -> T: ...
-+
-+R = TypeVar("R", bound=Ring)
-+
-+def dot(left: list[R], right: list[R], start: R) -> R:
-+    reveal_type(mul(start, start))  # revealed: R@dot
-+    result = sum(map(mul, left, right), start)
-+    reveal_type(result)  # revealed: R@dot
-+    return result
-+```
-+
-+An alias for a nominal bound also preserves the receiver type, even when the protocol parameter is
-+optional. The bound still restricts the other operand to `int`.
-+
-+```py
-+from _typeshed import SupportsMul
-+from typing_extensions import TypeAliasType
-+
-+class Scalable:
-+    def __mul__(self: T, factor: int, /) -> T:
-+        return self
-+
-+ScalableAlias = TypeAliasType("ScalableAlias", Scalable)
-+S = TypeVar("S", bound=ScalableAlias)
-+
-+def twice(value: SupportsMul[int, T] | None) -> T:
-+    assert value is not None
-+    return value * 2
-+
-+def scale(value: S) -> S:
-+    mul(value, "bad")  # error: [no-matching-overload]
-+    reveal_type(twice(value))  # revealed: S@scale
-+    return mul(value, 2)
-+```
-+
- ## Unary operators on bounded type variables
- 
- When a unary method returns `Self`, the operator preserves the operand's type variable.
-@@ -2617,6 +2754,30 @@ reveal_type(f(g("a")))  # revealed: tuple[Literal["a"] | None, int]
- reveal_type(g(f("a")))  # revealed: tuple[Literal["a"], int] | None
- ```
- 
-+Inside `find`, `wrap(value)` has type `list[T]` for 
-```
-
----
-
-### Incident Patch 3: `ab236150` (2026-11-23)
-**Commit Message**: [`pyupgrade`] Clarify `UP006` fix safety (#30843)
+### Incident Patch 1: `eb4e0b24` (2026-11-24)
+**Commit Message**: [`flake8-bugbear`] Detect jumps in nested branches (`B012`) (#30421)
 
 ## Summary
 
-改了 Ruff 的 **UP006 文档里【Fix safety】这一节**，让它和实际行为一致。
+Ruff's B012 rule was missing some return statements inside nested else
+and except branches of finally blocks. I traced the issue to walk_stmt
+which only visited the main body of certain AST statements.
 
-旧文档可能让人以为：项目目标设为 Python 3.9 时，`ruff check --fix` 会自动把 `typing.List[int]`
-改成 `list[int]`。
+My change extends the traversal to cover elif/else clauses, exception
+handlers, try/else branches, and loop else branches. I also added
+regression cases to B012.py and updated the expected snapshot.
 
-实际情况是，Ruff 在 Python 3.9 下也把这项修复标为 `unsafe`。默认的 `--fix` 会跳过它，加上
-`--unsafe-fixes` 才会应用。
+Fixes #30225.
 
-这次提交只改了文档，一共改写了6行
-
-### English translation (AI-assisted)
-
-> This updates the **Fix safety** section of Ruff's UP006 documentation
-to match the rule's behavior.
->
-> The old wording could lead readers to expect `ruff check --fix` to
-rewrite `typing.List[int]` as `list[int]` when targeting Python 3.9.
->
-> Ruff marks this fix as `unsafe` when targeting Python 3.9. With the
-default settings, `--fix` skips it unless `--unsafe-fixes` is enabled.
->
-> The patch rewrites six lines of documentation.
-
-Fixes #30822.
-
-## Notes to reviewers
-
-AI assisted with the patch, the checks below, and the wording of this
-description.
-
-> Verified with Ruff 0.17.6 and `--isolated --select UP006`. With a
-Python 3.9 target, `--fix` skipped the rewrite and `--fix
---unsafe-fixes` applied it. With a Python 3.10 target, `--fix` applied
-it.
-
----------
-
-Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
-
-**File**: `crates/ruff_linter/src/rules/pyupgrade/rules/use_pep585_annotation.rs` (modified, +3/-3)
+**File**: `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B012.py` (modified, +38/-0)
 ```diff
-@@ -47,9 +47,9 @@ use crate::{Applicability, Edit, Fix, FixAvailability, Violation};
- /// ```
+@@ -127,3 +127,41 @@ def k():
+                 y = 0
+             case 0, *x:
+                 pass  # no warning
++
++
++# Regression: return inside an if-else branch.
++def regression_if_else(condition):
++    try:
++        pass
++    finally:
++        if condition:
++            pass
++        else:
++            return 1  # warning
++
++
++# Regression: return inside an except handler.
++def regression_except():
++    try:
++        pass
++    finally:
++        try:
++            pass
++        except ValueError:
++            return 2  # warning
++
++
++# Regression: ordinary return outside finally.
++def regression_no_warning():
++    if True:
++        return 3  # no warning
++
++
++def regression_loop_else():
++    try:
++        pass
++    finally:
++        for item in []:
++            pass
++        else:
++            return 6  # warning
+\ No newline at end of file
+```
+
+**File**: `crates/ruff_linter/src/rules/flake8_bugbear/rules/jump_statement_in_finally.rs` (modified, +32/-4)
+```diff
+@@ -72,12 +72,40 @@ fn walk_stmt(checker: &Checker, body: &[Stmt], f: fn(&Stmt) -> bool) {
+             );
+         }
+         match stmt {
+-            Stmt::While(ast::StmtWhile { body, .. }) | Stmt::For(ast::StmtFor { body, .. }) => {
++            Stmt::While(ast::StmtWhile { body, orelse, .. })
++            | Stmt::For(ast::StmtFor { body, orelse, .. }) => {
+                 walk_stmt(checker, body, Stmt::is_return_stmt);
++                walk_stmt(checker, orelse, f);
+             }
+-            Stmt::If(ast::StmtIf { body, .. })
+-            | Stmt::Try(ast::StmtTry { body, .. })
+-            | Stmt::With(ast::StmtWith { body, .. }) => {
++            Stmt::If(ast::StmtIf {
++                body,
++                elif_else_clauses,
++                ..
++            }) => {
++                walk_stmt(checker, body, f);
++
++                for clause in elif_else_clauses {
++                    walk_stmt(checker, &clause.body, f);
++                }
++            }
++
++            Stmt::Try(ast::StmtTry {
++                body,
++                handlers,
++                orelse,
++                ..
++            }) => {
++                walk_stmt(checker, body, f);
++
++                for handler in handlers {
++                    let ast::ExceptHandler::ExceptHandler(handler) = handler;
++                    walk_stmt(checker, &handler.body, f);
++                }
++
++                walk_stmt(checker, orelse, f);
++            }
++
++            Stmt::With(ast::StmtWith { body, .. }) => {
+                 walk_stmt(checker, body, f);
+             }
+             Stmt::Match(ast::StmtMatch { cases, .. }) => {
+```
+
+**File**: `crates/ruff_linter/src/rules/flake8_bugbear/snapshots/ruff_linter__rules__flake8_bugbear__tests__jump-statement-in-finally_B012.py.snap` (modified, +24/-0)
+```diff
+@@ -106,3 +106,27 @@ B012 `break` inside `finally` blocks cause exceptions to be silenced
+ 117 |             case 0, *x:
+ 118 |                 break  # warning
+     |                 ^^^^^
++
++B012 `return` inside `finally` blocks cause exceptions to be silenced
++   --> B012.py:140:13
++    |
++138 |             pass
++139 |         else:
++140 |             return 1  # warning
++    |             ^^^^^^^^
++
++B012 `return` inside `finally` blocks cause exceptions to be silenced
++   --> B012.py:151:13
++    |
++149 |             pass
++150 |         except ValueError:
++151 |             return 2  # warning
++    |             ^^^^^^^^
++
++B012 `return` inside `finally` blocks cause exceptions to be silenced
++   --> B012.py:167:13
++    |
++165 |             pass
++166 |         else:
++167 |             return 6  # warning
++    |             ^^^^^^^^
+```
+
+---
+
+### Incident Patch 2: `a243d414` (2026-11-24)
+**Commit Message**: Fix caching for PEP 723 scripts with inline configurations (#30608)
+
+## Summary
+
+Today, a cached script can retain stale diagnostics or formatting
+results when an extended configuration changes or a CLI override changes
+only the script’s settings. For example, repeating a project setting on
+the command line can change which Python version Ruff targets for an
+unchanged script.
+
+**`ruff.toml`**
+
+```toml
+preview = true
+target-version = "py310"
+per-file-target-version = { "script.py" = "py310" }
+lint.select = ["UP045"]
+```
+
+**`script.py`**
+
+```python
+# /// script
+# requires-python = ">=3.9"
+# ///
+from typing import Optional
+x: Optional[int]
+```
+
+| Command | Project target for `script.py` | Script target | Expected
+result |
+| --- | --- | --- | --- |
+| `ruff check script.py` | 3.10 | 3.9 | Passes |
+| `ruff check --target-version py310 script.py` | 3.10 | 3.10 | Suggests
+`int \| None` |
+| `ruff check --config 'per-file-target-version = { "script.py" =
+"py310" }' script.py` | 3.10 | 3.10 | Suggests `int \| None` |
+
+In the first run, Ruff infers Python 3.9 from `requires-python`. That
+takes precedence over both the project’s target and its matching
+per-file target. Without `requires-python`
+
+**File**: `crates/ruff/src/args.rs` (modified, +6/-0)
+```diff
+@@ -729,6 +729,12 @@ impl ConfigArguments {
+         self.config_file.as_deref()
+     }
+ 
++    pub(crate) fn overrides_script_target(&self) -> bool {
++        self.script_configuration() == ScriptConfiguration::Disabled
++            || self.target_version().is_some()
++            || self.overrides.per_file_target_version.is_some()
++    }
++
+     pub(crate) fn target_version(&self) -> Option<ast::PythonVersion> {
+         self.per_flag_overrides
+             .target_version
+```
+
+**File**: `crates/ruff/src/cache.rs` (modified, +106/-5)
+```diff
+@@ -18,26 +18,69 @@ use tempfile::NamedTempFile;
+ 
+ use ruff_cache::{CacheKey, CacheKeyHasher};
+ use ruff_linter::package::PackageRoot;
++use ruff_linter::settings::types::PreviewMode;
+ use ruff_linter::{VERSION, warn_user};
+ use ruff_macros::CacheKey;
++use ruff_python_ast::SourceType;
+ use ruff_workspace::Settings;
+ use ruff_workspace::resolver::Resolver;
++use ruff_workspace::script::{Script, should_read_script_metadata};
++
++use crate::args::ConfigArguments;
+ 
+ /// [`Path`] that is relative to the package root in [`PackageCache`].
+ pub(crate) type RelativePath = Path;
+ /// [`PathBuf`] that is relative to the package root in [`PackageCache`].
+ pub(crate) type RelativePathBuf = PathBuf;
+ 
++/// Part of the file key because an explicit Python target can override a script's
++/// requirement while leaving the project's target and package cache key unchanged.
++#[derive(Clone, Copy, CacheKey)]
++pub(crate) enum ScriptCacheMode {
++    /// Script metadata is disabled for this file.
++    MetadataDisabled,
++    /// Cache only scripts with no Ruff settings or Python requirement.
++    ProjectOnly,
++    /// A Python requirement is cacheable because it changes with the source.
++    AllowRequirements,
++}
++
++impl ScriptCacheMode {
++    pub(crate) fn new(
++        preview: PreviewMode,
++        source_type: SourceType,
++        overrides: &ConfigArguments,
++    ) -> Self {
++        if !should_read_script_metadata(preview, source_type) {
++            Self::MetadataDisabled
++        } else if overrides.overrides_script_target() {
++            Self::ProjectOnly
++        } else {
++            Self::AllowRequirements
++        }
++    }
++
++    pub(crate) fn allows(self, script: Option<&Script>) -> bool {
++        match (self, script) {
++            (Self::MetadataDisabled, _) | (_, None) => true,
++            (Self::ProjectOnly, Some(script)) => !script.declares_settings(),
++            (Self::AllowRequirements, Some(script)) => !script.has_ruff_table(),
++        }
++    }
++}
++
+ #[derive(CacheKey)]
+ pub(crate) struct FileCacheKey {
+     /// Timestamp when the file was last modified before the (cached) check.
+     file_last_modified: FileTime,
+     /// Permissions of the file before the (cached) check.
+     file_permissions_mode: u32,
++    /// Files with nested configurations can share a package cache with a different preview mode.
++    script_mode: ScriptCacheMode,
+ }
+ 
+ impl FileCacheKey {
+-    pub(crate) fn from_path(path: &Path) -> io::Result<FileCacheKey> {
++    pub(crate) fn from_path(path: &Path, script_mode: ScriptCacheMode) -> io::Result<FileCacheKey> {
+         // Construct a cache key for the file
+         let metadata = path.metadata()?;
+ 
+@@ -52,6 +95,7 @@ impl FileCacheKey {
+         Ok(FileCacheKey {
+             file_last_modified: FileTime::from_last_modification_time(&metadata),
+             file_permissions_mode: permissions,
++            script_mode,
+         })
+     }
+ }
+@@ -508,6 +552,7 @@ mod tests {
+ 
+     use anyhow::Result;
+     use filetime::{FileTime, set_file_mtime};
++    use indoc::indoc;
+     use itertools::Itertools;
+     use ruff_python_ast::SourceType;
+     use rustc_hash::FxHashMap;
+@@ -517,7 +562,7 @@ mod tests {
+     use ruff_linter::UnresolvedRuleSelector;
+     use ruff_linter::package::PackageRoot;
+     use ruff_linter::settings::flags;
+-    use ruff_linter::settings::types::UnsafeFixes;
++    use ruff_linter::settings::types::{PreviewMode, UnsafeFixes};
+     use ruff_python_ast::PySourceType;
+     use ruff_python_ast::PythonVersion;
+     use ruff_workspace::configuration::{Configuration, RuleSelection};
+@@ -526,7 +571,7 @@ mod tests {
+     use crate::args::ConfigArguments;
+ 
+     use crate::cache::{self, ChangeData, FileCache, FileCacheData, FileCacheKey};
+-    use crate::cache::{Cache, RelativePathBuf};
++    use crate::cache::{Cache, RelativePathBuf, ScriptCacheMode};
+     use crate::commands::format::{FormatCommandError, FormatMode, FormatResult, format_path};
+     use crate::diagnostics::{Diagnostics, lint_path};
+ 
+@@ -653,6 +698,58 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn cache_skips_only_scripts_with_ruff_tables() -> Result<()> {
++        let mut test = TestCache::new("cache_skips_only_scripts_with_ruff_tables");
++        test.project.settings.preview = PreviewMode::Enabled;
++        let cache = test.open();
++        let check = |name: &str, source: &str| -> Result<()> {
++            test.write_source_file(name, source.as_bytes());
++            assert!(test.lint_file_with_cache(name, &cache)?.inner.is_empty());
++            test.format_file_with_cache(name, &cache).unwrap();
++            Ok(())
++        };
++        check(
++            "version.py",
++            indoc! {r#"
++                # /// script
++                # requires-python = ">=3.12"
++                # ///
++                x = 1
++            "#},
++        )?;
++        check(
++            "inline.py",
++            indoc! {r#"
++                # /// script
++                # [tool.ruff]
++                # ///
++    
+```
+
+**File**: `crates/ruff/src/commands/format.rs` (modified, +13/-4)
+```diff
+@@ -32,6 +32,7 @@ use ruff_linter::registry::Rule;
+ use ruff_linter::rules::flake8_quotes::settings::Quote;
+ use ruff_linter::source_kind::{SourceError, SourceKind};
+ use ruff_linter::{warn_user_once, warn_user_once_by_message};
++use ruff_python_ast::script::ScriptTag;
+ use ruff_python_ast::{PySourceType, SourceType};
+ use ruff_python_formatter::{FormatModuleError, QuoteStyle, format_module_source, format_range};
+ use ruff_source_file::{LineIndex, LineRanges, OneIndexed, SourceFile, SourceFileBuilder};
+@@ -43,7 +44,7 @@ use ruff_workspace::script::{ScriptSettingsError, script};
+ use ruff_workspace::{FormatterSettings, Settings};
+ 
+ use crate::args::{ConfigArguments, FormatArguments, FormatRange};
+-use crate::cache::{Cache, FileCacheKey, PackageCacheMap, PackageCaches};
++use crate::cache::{Cache, FileCacheKey, PackageCacheMap, PackageCaches, ScriptCacheMode};
+ use crate::{ExitStatus, resolve_default_files};
+ 
+ #[derive(Debug, Copy, Clone, is_macro::Is)]
+@@ -261,12 +262,13 @@ pub(crate) fn format_path(
+     range: Option<FormatRange>,
+     cache: Option<&Cache>,
+ ) -> Result<FormatResult, FormatCommandError> {
++    let script_mode = ScriptCacheMode::new(project.settings.preview, source_type, overrides);
+     if let Some(cache) = cache {
+         let relative_path = cache
+             .relative_path(path)
+             .expect("wrong package cache for file");
+ 
+-        if let Ok(cache_key) = FileCacheKey::from_path(path) {
++        if let Ok(cache_key) = FileCacheKey::from_path(path, script_mode) {
+             if cache.is_formatted(relative_path, &cache_key) {
+                 return Ok(FormatResult::Unchanged);
+             }
+@@ -314,8 +316,14 @@ pub(crate) fn format_path(
+                     .write(&mut writer)
+                     .map_err(|err| FormatCommandError::Write(Some(path.to_path_buf()), err))?;
+ 
++                // Formatting can change script metadata or turn `#/// script` into a valid
++                // opening marker. The rewritten file may now use different settings.
++                let cache = cache.filter(|_| {
++                    matches!(script_mode, ScriptCacheMode::MetadataDisabled)
++                        || (script.is_none() && ScriptTag::parse(formatted.source_code()).is_none())
++                });
+                 if let Some(cache) = cache {
+-                    if let Ok(cache_key) = FileCacheKey::from_path(path) {
++                    if let Ok(cache_key) = FileCacheKey::from_path(path, script_mode) {
+                         let relative_path = cache
+                             .relative_path(path)
+                             .expect("wrong package cache for file");
+@@ -331,8 +339,9 @@ pub(crate) fn format_path(
+             },
+         },
+         FormattedSource::Unchanged => {
++            let cache = cache.filter(|_| script_mode.allows(script.as_ref()));
+             if let Some(cache) = cache {
+-                if let Ok(cache_key) = FileCacheKey::from_path(path) {
++                if let Ok(cache_key) = FileCacheKey::from_path(path, script_mode) {
+                     let relative_path = cache
+                         .relative_path(path)
+                         .expect("wrong package cache for file");
+```
+
+**File**: `crates/ruff/src/diagnostics.rs` (modified, +8/-4)
+```diff
+@@ -29,7 +29,7 @@ use ruff_workspace::script::script;
+ use rustc_hash::FxHashMap;
+ 
+ use crate::args::ConfigArguments;
+-use crate::cache::{Cache, FileCache, FileCacheKey};
++use crate::cache::{Cache, FileCache, FileCacheKey, ScriptCacheMode};
+ 
+ /// A collection of [`Diagnostic`]s and additional information needed to render them.
  ///
- /// ## Fix safety
--/// This rule's fix is marked as unsafe, as it may lead to runtime errors when
--/// alongside libraries that rely on runtime type annotations, like Pydantic,
--/// on Python versions prior to Python 3.9.
-+/// This rule's fix is marked as unsafe on Python versions prior to Python 3.9,
-+/// as the newer syntax may lead to runtime errors in libraries that rely on
-+/// runtime type annotations, like Pydantic.
- ///
- /// In [preview], this rule can also add its own `__future__` import on Python
- /// 3.9 and earlier, if the [`lint.future-annotations`] setting is enabled. This
+@@ -195,14 +195,17 @@ pub(crate) fn lint_path(
+     unsafe_fixes: UnsafeFixes,
+ ) -> Result<Diagnostics> {
+     let settings = &project.settings.linter;
++    let source_type = settings.extension.get_source_type(path);
++    let script_mode = ScriptCacheMode::new(project.settings.preview, source_type, overrides);
+     // Check the cache.
+-    let caching = match cache {
++    let mut caching = match cache {
+         Some(cache) if noqa.is_enabled() => {
+             let relative_path = cache
+                 .relative_path(path)
+                 .expect("wrong package cache for file");
+ 
+-            let cache_key = FileCacheKey::from_path(path).context("Failed to create cache key")?;
++            let cache_key =
++                FileCacheKey::from_path(path, script_mode).context("Failed to create cache key")?;
+             let cached_diagnostics = cache
+                 .get(relative_path, &cache_key)
+                 .is_some_and(FileCache::linted);
+@@ -219,7 +222,7 @@ pub(crate) fn lint_path(
+ 
+     debug!("Checking: {}", path.display());
+ 
+-    let source_type = match settings.extension.get_source_type(path) {
++    let source_type = match source_type {
+         SourceType::Toml(source_type @ (TomlSourceType::Pyproject | TomlSourceType::Ruff)) => {
+             let (diagnostics, fixed) = if settings
+                 .rules
+@@ -307,6 +310,7 @@ pub(crate) fn lint_path(
+             ));
+         }
+     };
++    caching = caching.filter(|_| script_mode.allows(script.as_ref()));
+     let package = script.as_ref().map_or(package, |script| {
+         script.package_root(path, &project.settings.linter, package, package_roots)
+     });
+```
+
+**File**: `crates/ruff/tests/cli/format.rs` (modified, +38/-0)
+```diff
+@@ -2546,6 +2546,44 @@ fn inline_script_configuration() -> Result<()> {
+     Ok(())
+ }
+ 
++#[test]
++fn formatting_activates_script_settings() -> Result<()> {
++    let test = CliTest::with_file(
++        "script.py",
++        r#"
++            #/// script
++            # tool.ruff.format.quote-style = "single"
++            # ///
++            x = "hello"
++        "#,
++    )?;
++    let args = ["format", "--preview", "--quiet", "script.py"];
++
++    assert_cmd_snapshot!(test.command().args(args), @"
++    success: true
++    exit_code: 0
++    ----- stdout -----
++
++    ----- stderr -----
++    ");
++    assert_cmd_snapshot!(test.command().args(args).arg("--check"), @r#"
++    success: false
++    exit_code: 1
++    ----- stdout -----
++    unformatted: File would be reformatted
++     --> script.py:4:5
++      |
++    3 | # ///
++      - x = "hello"
++    4 + x = 'hello'
++      |
++
++
++    ----- stderr -----
++    "#);
++    Ok(())
++}
++
+ #[test]
+ fn inline_script_conflicts() -> Result<()> {
+     let test = CliTest::with_files([
+```
+
+**File**: `crates/ruff/tests/cli/lint.rs` (modified, +18/-3)
+```diff
+@@ -4774,13 +4774,28 @@ fn cli_target_version_overrides_script_requirement() -> Result<()> {
+             x: Optional[int]
+         ",
+     )?;
+-    assert_cmd_snapshot!(test.check_command().args(["--preview", "--select=UP045", "--target-version=py310", "script.py"]), @"
++    test.write_file("ruff.toml", "target-version = 'py310'")?;
++    let args = [
++        "check",
++        "--quiet",
++        "--preview",
++        "--select=UP045",
++        "--output-format=concise",
++        "script.py",
++    ];
++    // Warm the cache. The explicit override changes the script target but not the project target.
++    assert_cmd_snapshot!(test.command().args(args), @"
++    success: true
++    exit_code: 0
++    ----- stdout -----
++
++    ----- stderr -----
++    ");
++    assert_cmd_snapshot!(test.command().args(args).arg("--target-version=py310"), @"
+     success: false
+     exit_code: 1
+     ----- stdout -----
+     script.py:6:4: non-pep604-annotation-optional: [*] Use `X | None` for type annotations
+-    Found 1 error.
+-    [*] 1 fixable with `--fix`.
+ 
+     ----- stderr -----
+     ");
+```
+
+**File**: `crates/ruff_workspace/src/script.rs` (modified, +14/-1)
+```diff
+@@ -44,6 +44,7 @@ pub enum ScriptConfiguration {
+ /// A Python file with a PEP 723 script metadata header.
+ #[derive(Debug)]
+ pub struct Script {
++    has_ruff_table: bool,
+     settings: ScriptSettings,
+     config_path: Option<PathBuf>,
+ }
+@@ -56,6 +57,16 @@ impl Script {
+             .or_else(|| project.config_path())
+     }
+ 
++    /// Whether the script contains a `[tool.ruff]` table, even if empty or ignored.
++    pub fn has_ruff_table(&self) -> bool {
++        self.has_ruff_table
++    }
++
++    /// Whether the script declares `requires-python` or `[tool.ruff]`, even if ignored.
++    pub fn declares_settings(&self) -> bool {
++        matches!(self.settings, ScriptSettings::Declared(_))
++    }
++
+     /// Return the script's resolved settings, falling back to the project's settings.
+     pub fn settings<'a>(&'a self, project: &'a Settings) -> &'a Settings {
+         match &self.settings {
+@@ -152,7 +163,8 @@ pub fn script(
+ 
+     let requires_python = metadata.requires_python.as_ref();
+     let options = metadata.tool.and_then(|tool| tool.ruff);
+-    let declared = requires_python.is_some() || options.is_some();
++    let has_ruff_table = options.is_some();
++    let declared = requires_python.is_some() || has_ruff_table;
+ 
+     let config_error = |err| ScriptSettingsError::configuration(path, &err);
+     let resolve = |configuration, root: &Path| {
+@@ -185,6 +197,7 @@ pub fn script(
+     };
+ 
+     Ok(Some(Script {
++        has_ruff_table,
+         config_path,
+         settings: if declared {
+             ScriptSettings::Declared(settings.map(Box::new))
+```
+
+---
+
+### Incident Patch 3: `881dc619` (2026-11-24)
+**Commit Message**: [ty] Look up syntax node uses and scopes in fixed-size pages (#30886)
+
+## Summary
+
+To look up a name use, we binary search the pages of use IDs. To find
+its scope, we search the file’s full list of scope ranges.
+
+We now group AST nodes into fixed pages of 64. The node index tells us
+which page to read, and a bit mask gives us the offset into the packed
+array of uses. Each page also records how many scope ranges have started
+by its end. We only search the ranges that start on the page and the
+last one from an earlier page, which may still overlap.
+
+Pages without any uses now take space too.
+
+<!-- ty-pinned-project-instructions:start -->
+
+Across 28 projects, the mean change in instructions was −0.25% and the
+median was −0.24%.
+
+<details>
+<summary>Instruction counts by project</summary>
+
+Four single-worker Cachegrind pairs on Linux (x86-64). Both builds use
+the linked base, with the PR applied to the second.
+
+| Project | [Base
+instructions](https://github.com/astral-sh/ruff/commit/77203ea5529a70e55edb0857224eb05b286a077d)
+| [PR
+instructions](https://github.com/astral-sh/ruff/commit/bfef40f25c53b82caf87bc4dd6bbb9b7b118ee98)
+| Change | Paired range |
+| --- | ---: | ---: | ---: | ---: |
+
+
+**File**: `crates/ty_python_core/src/ast_ids.rs` (modified, +70/-43)
+```diff
+@@ -110,32 +110,33 @@ impl AstIdsBuilder {
+     /// Stores use IDs and their lexical places in node-index order.
+     /// The IDs themselves keep the order in which the flow builder visited uses in each scope.
+     pub(super) fn finish(self) -> AstIds {
+-        let mut pages: Vec<UsePage> = Vec::new();
++        let mut pages = Vec::with_capacity(self.root.len().div_ceil(NODES_PER_PAGE));
+         let mut use_ids = Vec::new();
+         let mut places_plus_one = Vec::new();
+         let mut scopes = Vec::new();
+-        for (node, row) in (0..).map(ast::NodeIndex::from).zip(self.root) {
+-            if let Some(scope) = row.scope {
+-                ScopeRange::record(&mut scopes, node, scope);
+-            }
+-            let Some(use_id) = row.use_id else { continue };
+-            if let Some(page) = pages.last_mut()
+-                && let Some(bit) = page.bit(node)
+-            {
+-                page.mask |= bit;
+-            } else {
+-                // Each set bit accounts for one distinct node in the use array.
+-                let first_use = pages
+-                    .last()
+-                    .map_or(0, |last| last.first_use + last.mask.count_ones());
+-                pages.push(UsePage {
+-                    first_node: node,
+-                    first_use,
+-                    mask: 1,
+-                });
++        for (first_node, rows) in (0_u32..)
++            .step_by(NODES_PER_PAGE)
++            .zip(self.root.chunks(NODES_PER_PAGE))
++        {
++            let first_use = u32::try_from(use_ids.len()).expect("more uses than node indices");
++            let mut mask = 0;
++            for (offset, row) in (0_u32..).zip(rows) {
++                if let Some(scope) = row.scope {
++                    let node = ast::NodeIndex::from(first_node + offset);
++                    ScopeRange::record(&mut scopes, node, scope);
++                }
++                if let Some(use_id) = row.use_id {
++                    mask |= 1_u64 << offset;
++                    use_ids.push(use_id);
++                    places_plus_one.push(row.place_plus_one);
++                }
+             }
+-            use_ids.push(use_id);
+-            places_plus_one.push(row.place_plus_one);
++            pages.push(UsePage {
++                first_use,
++                scope_count: u32::try_from(scopes.len())
++                    .expect("more scope ranges than node indices"),
++                mask,
++            });
+         }
+         AstIds {
+             pages: pages.into_boxed_slice(),
+@@ -146,25 +147,21 @@ impl AstIdsBuilder {
+     }
+ }
+ 
+-/// The set bits locate uses within 64 node indices of the first use on this page.
+-/// Gaps between pages occupy no storage.
++/// Number of nodes in a full [`UsePage`], one per bit in its use mask.
++const NODES_PER_PAGE: usize = u64::BITS as usize;
++
++/// Indexes uses and scope ranges for up to [`NODES_PER_PAGE`] consecutive nodes in the root AST.
+ #[derive(Debug, get_size2::GetSize)]
+ struct UsePage {
+-    first_node: ast::NodeIndex,
++    /// Number of uses on earlier pages. This is the page's starting offset in
++    /// `use_ids` and `places_plus_one`.
+     first_use: u32,
++    /// Number of scope ranges that start on this page or an earlier page.
++    scope_count: u32,
++    /// Bit `i` is set if the node at offset `i` on this page has a use ID.
+     mask: u64,
+ }
+ 
+-impl UsePage {
+-    fn bit(&self, node: ast::NodeIndex) -> Option<u64> {
+-        if node == self.first_node {
+-            return Some(1);
+-        }
+-        let offset = node.as_u32()?.checked_sub(self.first_node.as_u32()?)?;
+-        1_u64.checked_shl(offset)
+-    }
+-}
+-
+ #[derive(Debug, get_size2::GetSize)]
+ struct ScopeRange {
+     start: ast::NodeIndex,
+@@ -204,9 +201,9 @@ impl AstIds {
+     /// Looks up a node in the packed use array. Each earlier set bit on the same page
+     /// accounts for one preceding entry in the array.
+     fn use_index(&self, node: ast::NodeIndex) -> Option<usize> {
+-        let end = self.pages.partition_point(|page| page.first_node <= node);
+-        let page = self.pages[..end].last()?;
+-        let bit = page.bit(node)?;
++        let node = node.as_u32()? as usize;
++        let page = self.pages.get(node / NODES_PER_PAGE)?;
++        let bit = 1_u64 << (node % NODES_PER_PAGE);
+         if page.mask & bit == 0 {
+             return None;
+         }
+@@ -215,8 +212,15 @@ impl AstIds {
+     }
+ 
+     fn scope_at(&self, node: ast::NodeIndex) -> Option<FileScopeId> {
+-        let index = self.scopes.partition_point(|range| range.end < node);
+-        let range = self.scopes.get(index)?;
++        let page_index = node.as_u32()? as usize / NODES_PER_PAGE;
++        let end = self.pages.get(page_index)?.scope_count as usize;
++        // A range started on an earlier page may extend across the boundary.
++        let start = page_index.checked_sub(1).map_or(0, |previous| {
++            self.pages[previous].scope_count.saturating_sub(1) as usize
++        });
++        let scopes = &self.scopes[star
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30850** (2026-11-23): [ty] Exclude `init=False` dataclass fields from `__replace__` (@sharkdp)
-- **PR #30844** (2026-11-23): Use the shared upload-r2 action for release mirrors (@ewdurbin)
-- **PR #30843** (2026-11-23): [`pyupgrade`] Clarify `UP006` fix safety (@Wimpykid1a)
-- **PR #30839** (2026-11-23): [ty] attrs: Support field validator decorators (@sharkdp)
-- **PR #30838** (2026-11-23): [ty] Bump ecosystem-analyzer to include jsonschema and cattrs (@sharkdp)
-- **PR #30832** (2026-11-23): [ty] attrs: Bump to 26.1.0 in external mdtests (@sharkdp)
+- **PR #30911** (2026-11-25): [ty] Preserve peer context for collection literals in boolean and conditional expressions (@carljm)
+- **PR #30903** (2026-11-24): [ty] Skip inferring more decorated methods during abstract-method discovery (@AlexWaygood)
+- **PR #30899** (2026-11-24): [ty] Tiny refactor: add `FieldInstanceKind::is_attrs()` (@sharkdp)
+- **PR #30893** (2026-11-24): [ty] Restore folding for indented region comments (@MichaReiser)
+- **PR #30890** (2026-11-24): Recognize `frozendict.fromkeys` as immutable (@DrSkyle)
+- **PR #30887** (2026-11-24): [ty] Initialize constraint solver storage lazily (@charliermarsh)
 
 ---
 
@@ -3741,49 +2995,68 @@ Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rename 17 rules for library and builtin usage
+## X. [`flake8-bugbear`] Detect jumps in nested branches (`B012`)
 
 **RULE**:
-When implementing operations in `crates/ruff/tests/cli/lint.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B012.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2f9cda2`: Rename 17 rules for library and builtin usage. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb4e0b24`: [`flake8-bugbear`] Detect jumps in nested branches (`B012`). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff/tests/cli/lint.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B012.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    	trio-call-not-awaited (ASYNC105),
-    	strip-with-duplicate-characters (B005),
-    	open-file-without-context-manager (SIM115),
-    	unnecessary-str-join (FLY002),
-    	invalid-getenv-key (PLE1507),
-    	unnecessary-literal-constructor (UP018),
-    	subprocess-run-with-universal-newlines (UP021),
-    	subprocess-run-with-piped-stdout-and-stderr (UP022),
-    	unnecessary-positional-str-format-indices (UP030),
-    	str-format (UP032),
+
+
+# Regression: return inside an if-else branch.
+def regression_if_else(condition):
+    try:
+        pass
+    finally:
+        if condition:
+            pass
+        else:
+            return 1  # warning
+
+
+# Regression: return inside an except handler.
+def regression_except():
+    try:
+        pass
+    finally:
+        try:
+            pass
+        except ValueError:
+            return 2  # warning
+
+
+# Regression: ordinary return outside finally.
+def regression_no_warning():
+    if True:
+        return 3  # no warning
+
+
+def regression_loop_else():
+    try:
+        pass
+    finally:
+        for item in []:
+            pass
+        else:
+            return 6  # warning
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    	trio-sync-call (ASYNC105),
-    	strip-with-multi-characters (B005),
-    	open-file-with-context-handler (SIM115),
-    	static-join-to-f-string (FLY002),
-    	invalid-envvar-value (PLE1507),
-    	native-literals (UP018),
-    	replace-universal-newlines (UP021),
-    	replace-stdout-stderr (UP022),
-    	format-literals (UP030),
-    	f-string (UP032),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2f9cda2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb4e0b24` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

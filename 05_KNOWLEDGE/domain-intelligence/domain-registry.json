@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T02:02:14.314Z",
+  "last_updated": "2026-11-25T02:10:36.809Z",
   "total_records": 2619,
   "domains": {
     "A": {
@@ -8434,8 +8434,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "6d9581f86513ae90aace13659aef7112fe7acc7fbe58511773e1b210c78d1def",
-      "created_at": "2026-11-25T01:27:37.207Z"
+      "content_hash": "34d97a63a7aa85314bccd91feb579e814421675db01f45aaaae6260299b25a74",
+      "created_at": "2026-11-25T02:10:36.809Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -17042,8 +17042,8 @@
       "title": "Quality & Verification Intelligence: astral-sh/ruff Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-astral-sh-ruff-quality-verification-intelligence-astral-sh-ruff-core-invariants.md",
       "repository": "astral-sh/ruff",
-      "content_hash": "7dbcab9a133f792bc14c7cff52d1dab05d088f074bddc5fea6513f95c9643ad5",
-      "created_at": "2026-11-14T16:22:50.409Z"
+      "content_hash": "d61455d9cabeed0e79776def560e5d2959a7faf87167c6e2427cb9cb5d40ccec",
+      "created_at": "2026-11-25T02:10:24.841Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-core": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-core",
@@ -17060,8 +17060,8 @@
       "title": "Quality & Verification Intelligence: astral-sh-ruff-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-astral-sh-ruff-learnings-quality-verification-intelligence-astral-sh-ruff-learni.md",
       "repository": "astral-sh-ruff-learnings",
-      "content_hash": "a801569514392487e56b363cb33f212d47c65bd9f5bc2206542ce9de5bb89b45",
-      "created_at": "2026-11-14T16:22:59.037Z"
+      "content_hash": "85c0fb57140cde05c0dab9b26ae7d60857787d976bacf073476f1c1d32e9deb9",
+      "created_at": "2026-11-25T02:10:34.868Z"
     },
     "DOM-D-80D6B779": {
       "record_id": "DOM-D-80D6B779",
@@ -27413,8 +27413,8 @@
       "title": "Architecture Intelligence: faker-js/faker Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-architecture-intelligence-faker-js-faker-core-invariants.md",
       "repository": "faker-js/faker",
-      "content_hash": "0b029de932be6b37473217aa8c37795d49962b70e8e7686352da4436e02974cf",
-      "created_at": "2026-11-21T03:15:35.397Z"
+      "content_hash": "6ca6c1c544b477be77d2949f936defdfc4a7cfe3647ac24c5de103351da46fe7",
+      "created_at": "2026-11-25T02:10:26.752Z"
     },
     "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants",
@@ -27482,8 +27482,8 @@
       "title": "Architecture Intelligence: faker-js-faker-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-learnings-architecture-intelligence-faker-js-faker-learnings-core.md",
       "repository": "faker-js-faker-learnings",
-      "content_hash": "8180f654862c10942b44dced9665442964424ce3fd6ae5e3d2ae889a99f12eb1",
-      "created_at": "2026-11-21T03:15:44.145Z"
+      "content_hash": "7bc55e0357376abd41c4e3655c715800ddd0baabd00ff25384d06dd52d013d49",
+      "created_at": "2026-11-25T02:10:35.873Z"
     },
     "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",

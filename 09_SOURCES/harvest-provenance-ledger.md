@@ -12933,3 +12933,5 @@ Every entry in this ledger must capture:
 | `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `864bf69b` | Multi-dimensional audit evidence | 2026-11-25T02:02:02.087Z |
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `9498f76d` | Multi-dimensional audit evidence | 2026-11-25T02:02:03.921Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `81a7d3ab` | Multi-dimensional audit evidence | 2026-11-25T02:02:06.496Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `ce19ae70` | Multi-dimensional audit evidence | 2026-11-25T02:10:24.418Z |
+| `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `1092e61c` | Multi-dimensional audit evidence | 2026-11-25T02:10:26.326Z |

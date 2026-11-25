@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T02:02:12.699Z",
+  "updated_at": "2026-11-25T02:10:35.452Z",
   "stats": {
-    "total_discovered": 9130,
-    "approved_pending_harvest": 8651,
+    "total_discovered": 9138,
+    "approved_pending_harvest": 8659,
     "harvested_count": 0,
     "rejected_count": 479,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8638,
+      "COMMUNITY_AND_EXPERT": 8646,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -197534,6 +197534,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
         "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-26D73590A5BC": {
+      "id": "SRC-26D73590A5BC",
+      "url": "https://github.com/astral-sh/ruff/commit/343133ff2739a4a6f1bef660c77fbde1d8687752",
+      "title": "https://github.com/astral-sh/ruff/commit/343133ff2739a4a6f1bef660c77fbde1d8687752",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:10:34.163Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-F4D1D21AF6E7": {
+      "id": "SRC-F4D1D21AF6E7",
+      "url": "https://github.com/astral-sh/ruff/pull/30911",
+      "title": "https://github.com/astral-sh/ruff/pull/30911",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:10:34.225Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-DADD4C1DBD04": {
+      "id": "SRC-DADD4C1DBD04",
+      "url": "https://discord.com/channels/1039017663004942429/1039017663512449056/1572008439507591179",
+      "title": "https://discord.com/channels/1039017663004942429/1039017663512449056/1572008439507591179",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:10:34.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-F58FDFBE56BA": {
+      "id": "SRC-F58FDFBE56BA",
+      "url": "https://github.com/astral-sh/ruff/commit/77203ea5529a70e55edb0857224eb05b286a077d",
+      "title": "https://github.com/astral-sh/ruff/commit/77203ea5529a70e55edb0857224eb05b286a077d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:10:34.352Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-46F81F01C80A": {
+      "id": "SRC-46F81F01C80A",
+      "url": "https://github.com/astral-sh/ruff/commit/bfef40f25c53b82caf87bc4dd6bbb9b7b118ee98",
+      "title": "https://github.com/astral-sh/ruff/commit/bfef40f25c53b82caf87bc4dd6bbb9b7b118ee98",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:10:34.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-9DE63E80E6E0": {
+      "id": "SRC-9DE63E80E6E0",
+      "url": "https://github.com/faker-js/faker/blob/next/CONTRIBUTING.md",
+      "title": "https://github.com/faker-js/faker/blob/next/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:10:35.327Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-1BB12DBDC2DE": {
+      "id": "SRC-1BB12DBDC2DE",
+      "url": "https://fakerjs.dev/contributing/submit-a-pull-request",
+      "title": "https://fakerjs.dev/contributing/submit-a-pull-request",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:10:35.393Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-6FDFC72FCF6C": {
+      "id": "SRC-6FDFC72FCF6C",
+      "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=284111",
+      "title": "https://www.law.go.kr/lsInfoP.do?lsiSeq=284111",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:10:35.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
       }
     }
   }

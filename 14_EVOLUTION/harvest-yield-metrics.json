@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:02:06.504Z",
-  "total_cycles_completed": 12253,
-  "total_learnings_persisted": 12253,
-  "total_rules_promoted": 11300,
+  "last_updated": "2026-11-25T02:10:26.331Z",
+  "total_cycles_completed": 12255,
+  "total_learnings_persisted": 12255,
+  "total_rules_promoted": 11302,
   "history": [
-    {
-      "timestamp": "2026-11-24T13:38:50.698Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T13:47:21.870Z",
-      "repository": "i18next/react-i18next",
-      "learningId": "learn-github-i18next-react-i18next",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T13:47:30.071Z",
       "repository": "apache/shardingsphere",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T02:02:06.504Z",
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T02:10:24.423Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T02:10:26.331Z",
+      "repository": "faker-js/faker",
+      "learningId": "learn-github-faker-js-faker",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
