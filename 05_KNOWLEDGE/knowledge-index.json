@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T05:01:27.693Z",
+  "last_updated": "2026-11-25T05:10:50.746Z",
   "total_verified_learnings": 9112,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25245,
+  "total_items": 25247,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3598d2e3389bd37e082924a719d91d1d2360787a1e64464773068d48f322a60e",
+      "content_hash": "6351d0d57eecb91cc211fa654e525656dfa5fea8d2aa9d3226d6fe16bf065f54",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:16:04.663Z"
+      "persisted_at": "2026-11-25T05:10:50.506Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "36a8ac81531acd257a14ffffb4f443cd83aa7918e264f6dbe97500db511f8b50",
+      "content_hash": "43a91f0bcab2921e94c1c20c090f704542e72a43c6b90df5e3ffa2d07e37ab75",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:16:04.830Z"
+      "persisted_at": "2026-11-25T05:10:50.746Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -230590,8 +230590,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "eeb815a6",
-      "content_hash": "9f39ed506619545bb0e86acb447d2be28ebc422544804831d0aa5de4ffe6cf41",
+      "source_version": "bc2854dc",
+      "content_hash": "020b66cf0decbd45c1114aaba6a2b43cb2b708250d4be6ef67438788150d3f0b",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230869,6 +230869,11 @@
           "number": 10434,
           "title": "Draft NUC 143 Reactive Squaring",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10461,
+          "title": "Draft NUC 144 Nullish Value Assignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230876,7 +230881,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T02:29:01.953Z",
+      "verified_at": "2026-11-25T05:10:43.665Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230918,10 +230923,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "eeb815a6",
-      "content_hash": "27de56f4be03f51067a1567db083807dc48b17d10fd5573a3198606ff4e4f841",
+      "source_version": "bc2854dc",
+      "content_hash": "37881fd8bacc5e09b5e2c9f61092d47fee5e476edde1d27e26f1abb8e0b362be",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T02:29:02.592Z"
+      "persisted_at": "2026-11-25T05:10:44.549Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230930,10 +230935,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "eeb815a6",
-      "content_hash": "9dbbfe348dc90ae14cc24b47fcc0a3392789f81987a5ee6447d2b0f3b90a6dbb",
+      "source_version": "bc2854dc",
+      "content_hash": "c57798d941c45f2596cf320a3f176529dab3ef140d3490f69baf94ae5f79312f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:29:02.782Z"
+      "persisted_at": "2026-11-25T05:10:44.786Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -232061,9 +232066,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "80ad2b13ef3aa33d8571d71af614b00dcca8dd8fe70b1843e66986126e6cd5f3",
+      "content_hash": "9868b91b85a5fc466beb26c7b7f7b0c3d465af70df7bce550041b01e6c49551a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:51:15.947Z"
+      "persisted_at": "2026-11-25T05:10:49.356Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -232073,9 +232078,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "915107b4a2b4183cccebbb6d2bfbd41b14b34cfe79982976385a566f2056ccec",
+      "content_hash": "7ddced5fe7708d221cc6ea7376ee16d4903577e451038848f4f6c4186a7c10ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:51:16.108Z"
+      "persisted_at": "2026-11-25T05:10:49.602Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -277436,7 +277441,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
       "source_version": "hf-comfy-org-moss-image",
-      "content_hash": "bb3d98ff917dbe16425f7f2a05e77bd8406e01e6ac88c87182f99928950c910d",
+      "content_hash": "0335908ccb5f8e064f57209f94b2e6f618c1acf274f6442110e675943ebe8383",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "promoted_rules": [
@@ -277461,7 +277466,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T08:25:04.385Z",
+      "verified_at": "2026-11-25T05:10:27.257Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277478,9 +277483,9 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/MOSS-Image Core Invariants",
       "repository": "Comfy-Org/MOSS-Image",
       "source_version": "hf-comfy-org-moss-image",
-      "content_hash": "7dc00111593a8d565b06ea993c0c5403a302fee52350f960d36a43bffebeb3b8",
+      "content_hash": "1429d5635df9c98c77a3ff5a30f2485ecc74cdc56a74388d1a89d59b9887de52",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T14:41:22.554Z"
+      "persisted_at": "2026-11-25T05:10:27.900Z"
     },
     "rule-8977": {
       "learning_id": "rule-8977",
@@ -277528,9 +277533,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-moss-image-learnings Core Invariants",
       "repository": "hf-comfy-org-moss-image-learnings",
       "source_version": "HEAD",
-      "content_hash": "63695b6000d03f0f19d6913b13ddc894ce9a90593d393c5ec70ca769142d8bf5",
+      "content_hash": "4f3d1a93a2265073b9de1f2de70450ec90c9d725b0e1d363302141cd73c63706",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T14:41:30.009Z"
+      "persisted_at": "2026-11-25T05:10:48.098Z"
     },
     "candidate_directive-search-journal-only-successful-index-changes-align-ft-acl-categories": {
       "item_id": "candidate_directive-search-journal-only-successful-index-changes-align-ft-acl-categories",
@@ -339188,13 +339193,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2HZP-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0XAZ-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "04f58a0fa104f4df16aef981ed942470f926211d667786c2c4366d5d47bdffdf",
+      "content_hash": "cd5a9add613af37ec3014c3d374d79a264b108308eb9a7d9868904214eb9357c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:16:04.503Z"
+      "persisted_at": "2026-11-25T05:10:50.274Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -345219,6 +345224,32 @@
       "content_hash": "3237e6d66fc15561dcaf6db9ad58600f326a40fee77b2eee796122aced78fcf6",
       "domain_letter": "D",
       "persisted_at": "2026-11-25T05:01:26.573Z"
+    },
+    "rule-10461": {
+      "learning_id": "rule-10461",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10461,
+      "title": "Draft NUC 144 Nullish Value Assignment",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "bc2854dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T05:10:43.665Z"
+    },
+    "candidate_directive-draft-nuc-144-nullish-value-assignment": {
+      "item_id": "candidate_directive-draft-nuc-144-nullish-value-assignment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0WEZ-draft-nuc-144-nullish-value-assignment.md",
+      "title": "Draft NUC 144 Nullish Value Assignment",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d0b2dee3ba94b9edc3d03efd666beaa96ec36125246d3b31d36597baf81b768f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T05:10:49.115Z"
     }
   },
   "ai-builder-brain": {

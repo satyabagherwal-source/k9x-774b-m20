@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T05:00:50.364Z",
-  "total_cycles_completed": 12293,
-  "total_learnings_persisted": 12293,
-  "total_rules_promoted": 11335,
+  "last_updated": "2026-11-25T05:10:43.967Z",
+  "total_cycles_completed": 12295,
+  "total_learnings_persisted": 12295,
+  "total_rules_promoted": 11336,
   "history": [
-    {
-      "timestamp": "2026-11-24T15:44:35.586Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T15:53:38.057Z",
-      "repository": "nativewind/nativewind",
-      "learningId": "learn-github-nativewind-nativewind",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T15:53:48.082Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T05:00:50.364Z",
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:10:27.577Z",
+      "repository": "Comfy-Org/MOSS-Image",
+      "learningId": "learn-huggingface-comfy-org-moss-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:10:43.967Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2085,8 +2085,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
     "sourceVersion": "hf-comfy-org-moss-image",
     "license": "Open-Source",
-    "contentHash": "bb3d98ff917dbe16425f7f2a05e77bd8406e01e6ac88c87182f99928950c910d",
-    "lastHarvestedAt": "2026-11-21T08:25:04.594Z",
+    "contentHash": "0335908ccb5f8e064f57209f94b2e6f618c1acf274f6442110e675943ebe8383",
+    "lastHarvestedAt": "2026-11-25T05:10:27.569Z",
     "learningId": "learn-huggingface-comfy-org-moss-image"
   },
   "bvaughn-react-virtualized": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "eeb815a6",
+    "sourceVersion": "bc2854dc",
     "license": "Apache-2.0",
-    "contentHash": "9f39ed506619545bb0e86acb447d2be28ebc422544804831d0aa5de4ffe6cf41",
-    "lastHarvestedAt": "2026-11-25T02:29:02.170Z",
+    "contentHash": "020b66cf0decbd45c1114aaba6a2b43cb2b708250d4be6ef67438788150d3f0b",
+    "lastHarvestedAt": "2026-11-25T05:10:43.960Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {

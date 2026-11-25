@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-4M5H",
-    "timestamp": "2026-11-23T17:46:11.621Z",
-    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "10ac85247d9a564117431ff24affc71a7f8ad06149f6b7fe2c7340fa584aef78",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-4P15",
-    "timestamp": "2026-11-23T17:46:15.353Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "3653a1032fb920de821f1a7a0086b57178fbf3ac6ac8b29ddee98c746ba7db7a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-4TIB",
     "timestamp": "2026-11-23T17:46:21.155Z",
     "repository": "fabio-rovai/open-ontologies",
@@ -7490,6 +7460,36 @@
     "repository": "HelixDB/helix-db",
     "learningId": "learn-github-helixdb-helix-db",
     "contentHash": "177066ac3f1a96ba6216c929786356bdfeeec62564c2fdc70088ee855108ff60",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-0FSB",
+    "timestamp": "2026-11-25T05:10:27.563Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "0335908ccb5f8e064f57209f94b2e6f618c1acf274f6442110e675943ebe8383",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-0SFM",
+    "timestamp": "2026-11-25T05:10:43.954Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "020b66cf0decbd45c1114aaba6a2b43cb2b708250d4be6ef67438788150d3f0b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

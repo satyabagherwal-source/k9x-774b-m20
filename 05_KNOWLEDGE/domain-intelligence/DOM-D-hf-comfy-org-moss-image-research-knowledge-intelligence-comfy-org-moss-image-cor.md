@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
   "source_version": "hf-comfy-org-moss-image",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T14:41:22.553Z",
+  "timestamp": "2026-11-25T05:10:27.899Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-comfy-org-moss-image",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Comfy-Org/MOSS-Image](https://huggingface.co/Comfy-Org/MOSS-Image) (Revision: `hf-comfy-o`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T14:41:22.553Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:10:27.899Z`  
 > **Learning ID**: `learn-huggingface-comfy-org-moss-image`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/MOSS-Image](https://huggingface.co/Comfy-Org/MOSS-Image))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:41:10.717Z  
+> **Harvest Timestamp**: 2026-11-25T05:10:26.762Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6460250 downloads | 707 likes
+- **Stars / Engagement**: 5581661 downloads | 755 likes
 
 ---
 

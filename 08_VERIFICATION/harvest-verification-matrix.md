@@ -12944,3 +12944,5 @@
 | `CYCLE-20261125-NQCB` | `2026-11-25T05:00:34.715Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10459` | Yes (`c1ae45a5...`) |
 | `CYCLE-20261125-O2EQ` | `2026-11-25T05:00:50.354Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10460` | Yes (`177066ac...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T05:01:26.265Z` | `hf-openai-clip-vit-large-patch14` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9DE8D876` [Domain D] | Yes (`6a51a66d...`) |
+| `CYCLE-20261125-0FSB` | `2026-11-25T05:10:27.563Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | Yes (`0335908c...`) |
+| `CYCLE-20261125-0SFM` | `2026-11-25T05:10:43.954Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10461` | Yes (`020b66cf...`) |

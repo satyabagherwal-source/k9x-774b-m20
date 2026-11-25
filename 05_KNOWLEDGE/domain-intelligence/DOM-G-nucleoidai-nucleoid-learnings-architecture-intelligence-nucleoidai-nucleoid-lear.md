@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T22:51:15.661Z",
+  "timestamp": "2026-11-25T05:10:48.956Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T22:51:15.661Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:10:48.956Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `f45b916b`  
+> **Source Version**: `bc2854dc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:51:09.011Z  
+> **Timestamp**: 2026-11-25T05:10:42.502Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:51:09.006Z  
+> **Harvest Timestamp**: 2026-11-25T05:10:42.495Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1609,91 +1609,137 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f45b916b` (2026-11-24)
-**Commit Message**: Draft NUC 141 Reactive Cosecant
+### Incident Patch 1: `bc2854dc` (2026-11-25)
+**Commit Message**: Draft NUC 144 Nullish Value Assignment
 
-Category: Utility enhancement.
+Category: Runtime features, selected by one unbiased uniform draw from the
+live eligible registry, with no redraw.
 
-Request: Add only native static Math.csc(value), taking radians and computing exactly 1.0 / first.sin() through the existing intrinsic conversion and unary dispatcher. Preserve all accepted syntax, Math argument evaluation, supplied-Undefined gating, dependencies, deferral, shadowing and rollback.
+Request statement-only TARGET ??:= EXPR: check the ordinary current value
+without recording dependencies; for Null or Undefined perform the existing
+one-shot value assignment, otherwise preserve the target unchanged and
+skip the right-hand expression. Reuse existing ?? and := tokens, preserve
+all accepted forms and keep the pinned ??= diagnostics unchanged.
 
-Continuous mode; one uniform draw from the live eligible registry selected Utility enhancement. This allocation changes only the Draft proposal and its two index rows. No runtime, executable corpus, tests, generated exports, dependencies or versions change.
+Continuous mode; runtime applicability existing_comparable through guarded
+snapshot reads and accepted := statements. Pin this pushed allocation
+before recording the baseline or drafting implementation details.
+No runtime, executable document, test, dataset, grammar, export, manifest
+or version changes are included. Learning is not_configured/unattributed.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -141,6 +141,7 @@ Created: 31-Jul-2026
- | [124](nuc-0124.md) | List and Population Quantiles | Accepted |
- | [129](nuc-0129.md) | List and Population Zipping | Accepted |
- | [138](nuc-0138.md) | Reactive Secant | Accepted |
-+| [141](nuc-0141.md) | Reactive Cosecant | Draft |
+@@ -103,6 +103,7 @@ Created: 31-Jul-2026
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+ | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
+ | [140](nuc-0140.md) | Match Statements | Draft |
++| [144](nuc-0144.md) | Nullish Value Assignment | Draft |
  
- ### Reasoning enhancement
+ ### Utility enhancement
  
-@@ -335,6 +336,7 @@ Created: 31-Jul-2026
- | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Accepted |
- | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Draft |
-+| [141](nuc-0141.md) | Reactive Cosecant | Standards Track | Utility enhancement | Draft |
+@@ -341,6 +342,7 @@ Created: 31-Jul-2026
+ | [141](nuc-0141.md) | Reactive Cosecant | Standards Track | Utility enhancement | Accepted |
+ | [142](nuc-0142.md) | Reactive Sign Copying | Standards Track | Utility enhancement | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
+ | [143](nuc-0143.md) | Reactive Squaring | Standards Track | Utility enhancement | Accepted |
++| [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0141.md` (added, +58/-0)
+**File**: `docs/nuc-0144.md` (added, +95/-0)
 ```diff
-@@ -0,0 +1,58 @@
-+# NUC 141 -- Reactive Cosecant
+@@ -0,0 +1,95 @@
++# NUC 144 -- Nullish Value Assignment
 +
 +```
-+NUC: 141
-+Title: Reactive Cosecant
++NUC: 144
++Title: Nullish Value Assignment
 +Author: Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Utility enhancement
-+Created: 24-Nov-2026
++Category: Runtime features
++Created: 25-Nov-2026
++Requires: 60, 66
 +```
 +
 +## Abstract
 +
-+- Add only native static `Math.csc(value)`, taking radians and naming the
-+  accepted `1 / Math.sin(value)` composition.
-+- Intrinsically convert the first argument, then compute exactly
-+  `1.0 / first.sin()`, retaining sine and reciprocal rounding rather than
-+  introducing angle normalization, pole shortcuts or another numerical model.
-+- Preserve Math's supplied-Undefined gate, eager argument evaluation, ignored
-+  extras, dependencies, deferral, shadowing, rollback and every accepted form.
-+- This continuous proposal follows one uniform draw from the live eligible
-+  category registry, which selected Utility enhancement. Paired lexer-token
-+  comparison and every hard criterion remain mandatory.
++- Add only the statement `TARGET ??:= EXPR`: when the current target value
++  is Null or Undefined, perform one ordinary imperative value assignment;
++  otherwise do nothing and never evaluate the right-hand expression.
++- Keep the whole operation one-shot and isolated from dependency tracking,
++  including its guard, target reads and called code. A skipped operation
++  must not change the target's declaration, history or dependencies.
++- Reuse the existing `??` and `:=` tokens without relaxing the accepted
++  `??=` rejection or any other existing syntax, diagnostic or behavior.
++- The caller's one uniform live-registry draw selected Runtime features.
++  This allocated Draft is not an implemented or evaluated outcome.
 +
 +## Motivation
 +
-+- Geometry and declarative trigonometric models use cosecant as the reciprocal
-+  of sine; a named helper expresses that operation in live properties without
-+  repeating its surrounding division.
-+- Accepted sine and division already provide an executable counterpart,
-+  while the accepted native runtime rejects `Math.csc(1)` as an unknown
-+  function and returns `1.1883951057781212` for `1 / Math.sin(1)`.
-+- Extend the existing unary dispatcher without changing the parser, public
-+  Rust API, dependencies, options, versions or ARC implementation.
++- A fallback action currently needs an explicit conditional, snapshot reads
++  for its guard and a separate `:=`. Omitting those snapshot boundaries
++  can accidentally turn the guard into a standing dependency.
++- A distinct conditional value-assignment operation should preserve
++  Nucleoid's law/action distinction: write a missing value once, rather
++  than installing a coalescing law or replacing an already supplied value.
++- Preserve false, zero, empty Strings and every other non-nullish value.
++  A skipped right-hand side must not run effects, raise errors or record
++  dependencies; a taken one keeps the ordinary `:=` semantics.
++- The accepted runtime rejects `slot ??:= 7`. Existing proposals expressly
++  leave out `??=` and protect its diagnostics, so this proposal does not
++  repurpose that spelling.
 +
 +## Rationale
 +
-+- Pending: the proposer completes this section.
++- This is a core short-circuit assignment execution mode, not a
++  cross-language alias. Keep the confirmed Runtime features category.
++- Complete the detailed rationale in the isolated candidate after pinning
++  this allocation and the immutable accepted-corpus baseline.
 +
 +## Specification
 +
-+- Pending: the proposer completes this section.
++- Keep the accepted `:=` target restrictions, storage/null-read behavior,
++  scope, class-level boundaries, target-resolution timing and transactions.
++  Check nullishness without leaking reads or guard deferral into the write.
++- Preserve ordinary lookup errors; this is not an implicit declaration of
++  an unbound name. Use the existing value-assignment operation only when
++  the target's ordinary current value is Null or Undefined.
++- Complete the bounded statement grammar and executable specification in
++  the candidate. Do not broaden assignment expressions or compound targets.
 +
 +## Errors
 +
-+- Pending: the proposer completes this section.
++- Preserve all accepted syntax, pinned diagnostics and existing tests.
++  In particular, keep the old `??=` spellings and scalar-default errors.
++- Complete the new form's diagnostics without weakening accepted cases.
 +
 +## Reference Implementation
 +
-+- Pending: the proposer completes this section.
++- A fresh proposal agent will prototype the operation in its isolated
++  candidate after the caller records the accepted baseline.
++- Reuse the existing value-assignment tracking barrier and binding/storage
++  machinery where possible. Update the W3C EBNF and synchronized documents
++  and exports with the new accepted syntax.
++- Report any necessary public Rust AST SemVer review; project versions
++  remain human-owned and unchanged.
++
++## Evaluation
++
++- Mode: `continuous`; Category: `Runtime features`.
++- Runtime applicability: `existing_comparable`. Accepted guarded `if`
++  statements with snapshot `.value` reads and `:=` supply behavior-
++  equivalent counterparts for the selected cases.
++- The continuous token comparison is required and has not run.
++  Immutable accepted sources, original extra counterparts, full behavior/
++  integrity and compatibility checks, all development suites and a fresh
++  independent evaluator remain mandatory.
++- No hint, scoring rubric or strategy-learning configuration was supplied.
++  Advisory usefulness is unscored and learning is `not_configured`,
++  unattributed. Do not invoke either selector or learner.
 +
 +## Copyright
 +
@@ -1701,316 +1747,6 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `a5042ae6` (2026-11-24)
-**Commit Message**: NUC 138 Reactive Secant
-
-Accepted.
-
-Continuous Utility enhancement; all three hard criteria and every independent policy check passed. The frozen candidate is integrated unchanged, apart from outcome metadata.
-
-Build --all-targets, warning-denied Clippy, formatting and strict rustdoc passed independently and on integration. Full cargo test --no-fail-fast:4032 passed,0 failed,25 unchanged ignored. All4049 accepted scoped test identities/statuses and11 expected-panic labels retained;8 additions passed. All1308 original accepted programs including cosine extras replayed;1308 candidate cases preserved assertions, returns and coverage.
-
-Required lexer-token comparison ran:2 less,1306 same,0 more; secant cases115->113 and88->86. No missing,unpaired,invalid or incompatible case.
-
-Frozen proposal7235424ffafb3702c9fc45639e0b55037a683deb; accepted claim8f515043a546d4e509f2d809e6f14352b4472ff9; normalized candidate tree378830a51e079d88015186b2c3e2b8a9cdb34e21. Core reportf76887245307c04727bcc2d784c4a2557d9a2dad; independent report8b0eb20155801c20d59e661709d06031ce9b4379; caller integrated validationd05c6d142d6c20b7b094686a71b4b921574c3af4.
-
-Advisory usefulness/reward unscored:missing_rubric. 
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
-```diff
-@@ -874,3 +874,4 @@
- {"id":"spec-0874","description":"Nucleoid tests negated membership with Kotlin's !in","code":"xs = [1, 2, 3]\nassert([2 !in xs, 4 !in xs], [false, true])\nassert([2 !in xs, 4 !in xs], [2 not in xs, 4 not in xs])\nword = \"hello\"\nassert([\"z\" !in word, \"ell\" !in word], [true, false])\nclass Seat\nfront = Seat()\nassert([front !in Seat, 3 !in Seat], [false, true])\nassert([1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs], [true, true, true])\nassert([!(4 in xs), 4 not in xs, 4 !in xs], [true, true, true])\nmissing = 4 !in xs\nxs.push(4)\nassert(missing, false)\nmissing","return":"false"}
- {"id":"spec-0875","description":"Nucleoid keeps !in rules live over class populations","code":"class Order(status):\n    this.status = status\napproved = [\"paid\", \"shipped\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\nassert([first.pending, second.pending], [false, false])\nfirst.status = \"lost\"\nassert(first.pending, true)\nopen = Order.filter(order -> order.pending).map(order -> order.status)\nassert(open, [\"lost\"])\nsecond.status = \"held\"\nassert(open, [\"lost\", \"held\"])\nfailure = \"\"\ntry:\n    approved = 5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"approved is not a collection\"))\nassert([approved, open], [[\"paid\", \"shipped\", \"new\"], [\"lost\", \"held\"]])\nopen","return":"[\"lost\",\"held\"]"}
- {"id":"spec-0876","description":"Nucleoid rolls back failed updates through !in","code":"items = [\"a\"]\nabsent = \"b\" !in items\nassert(absent, true)\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\nassert(failure, TypeError(\"items is not a collection\"))\nassert([items, absent], [[\"a\"], true])\nitems.push(\"b\")\nassert(absent, false)\ntags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nassert(untagged, true)\nabsent","return":"false"}
-+{"id":"spec-0877","description":"Nucleoid keeps secants reactive","code":"angle = 0\nratio = Math.sec(angle)\nassert(ratio, 1)\nangle = Math.PI\nassert(ratio, -1)\nangle = Math.PI / 3\nassert(ratio, 1 / Math.cos(angle))\nangle = -Math.PI / 3\nassert(ratio, 1 / Math.cos(angle))\nangle = Math.PI / 2\nassert(ratio, 1 / Math.cos(angle))\nangle = 0\nassert(ratio, 1)\nratio","return":"1"}
-```
-
-**File**: `dataset/nucleoid.synth.138.jsonl` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+{"id":"synth-138-0001","description":"Nucleoid keeps secant scale factors live as angles change","code":"angle = 0\nscale = Math.sec(angle)\nassert(scale, 1)\nangle = Math.PI\nassert(scale, -1)\nangle = Math.PI / 3\nassert(scale, 1 / Math.cos(angle))\nangle = 0\nassert(scale, 1)\nscale","return":"1"}
-+{"id":"synth-138-0002","description":"Nucleoid maintains independent secant class rules through deletion and recovery","code":"class Direction(angle):\n    this.angle = angle\n$Direction.scale = Math.sec($Direction.angle)\nfirst = Direction(0)\nsecond = Direction(Math.PI)\nassert([first.scale, second.scale], [1, -1])\nfirst.angle = Math.PI\nassert([first.scale, second.scale], [-1, -1])\ndelete first.angle\nassert(first.scale, undefined)\nassert(second.scale, -1)\nfirst.angle = 0\nassert(first.scale, 1)\n[first.scale, second.scale]","return":"[1,-1]"}
-```
-
-**File**: `docs/README.md` (modified, +44/-0)
-```diff
-@@ -2786,6 +2786,14 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
-   See the [cotangent contract](../nucleoid.spec.md#reactive-cotangent),
-   `Nucleoid preserves cotangent argument dependencies` in `tests/reference.md`,
-   and the [direction example](examples.md#reactive-cotangent).
-+- [NUC 138](nuc-0138.md) adds only native static `Math.sec(value)`, exactly
-+  `1 / Math.cos(value)` in radians, preserving cosine rounding followed by
-+  reciprocal rounding, not a pole shortcut. Both zero signs yield positive
-+  `1`; omission gives NaN. The supplied top-level-Undefined gate, intrinsic
-+  first-input conversion, eager extras, dependencies, deferral, shadowing and
-+  rollback remain unchanged.
-+  See the [secant contract](../nucleoid.spec.md#reactive-secant) and the
-+  [argument-dependency case](#reactive-secant-argument-dependencies).
- - Accepted [NUC 56](nuc-0056.md) adds only static `Math.exp2(value)`, computing
-   exactly the accepted `Math.pow(2, value)` host powf operation after intrinsic
-   first-input conversion and the existing supplied-Undefined gate. The
-@@ -5946,6 +5954,7 @@ Math.remap(start, end, targetStart, targetEnd, value) unclamped static remapping
- Math.toRadians(value)                   static division-first degree conversion (NUC 50 candidate)
- Math.exp2(value)                        static powf-based base-two power (Accepted NUC 56)
- Math.cot(value)                         static reciprocal of tangent in radians (NUC 100 candidate)
-+Math.sec(value)                         static reciprocal of cosine in radians (NUC 138)
- Name[0]  Name["id"]  Name.find(...)    address an instance
- value[start:end]  value[-n:]           slice, negative counts from the end
- Name[start:end]  Name[:]  Name[-n:]    instance list range (NUC 61)
-@@ -6046,6 +6055,41 @@ selection |> diff                     steps new or changed since the running blo
- 
- ---
- 
-+## Reactive secant argument dependencies
-+
-+```
-+angle = 0
-+gate = 1
-+ratio = Math.sec(angle, gate)
-+assert(ratio, 1)
-+angle = Math.PI
-+assert(ratio, -1)
-+gate = 2
-+assert(ratio, -1)
-+delete gate
-+assert(ratio, undefined)
-+gate = 3
-+assert(ratio, -1)
-+angle = 0
-+assert(ratio, 1)
-+ratio
-+```
-+
-+- This is the complete `Nucleoid preserves secant argument dependencies`
-+  case in `tests/reference.md`, without its title and return comments; its
-+  explicit expected return is `1`. The specification's
-+  [secant contract](../nucleoid.spec.md#reactive-secant) is authoritative.
-+- Every argument evaluates once left to right, even after Undefined.
-+  Extras retain strict errors, effects, reads and dependencies without numeric
-+  conversion. Deleting the ignored `gate` defers the live call; restoring it
-+  recovers the result.
-+- Preserve native cosine followed by reciprocal rounding; no range
-+  normalization, pole shortcut or accuracy/performance claim is added.
-+  Literal-null coercion and live-null/parameter deferral stay distinct.
-+- Native method value reads remain Undefined/non-callable, ordinary `.sec`
-+  and `.Math` members and Math shadowing stay ordinary, and existing class
-+  subscriptions, captured values, frames and rollback are unchanged.
-+
- ## Copyright
- 
- Copyright 2020 Nucleoid
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -140,7 +140,7 @@ Created: 31-Jul-2026
- | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
- | [124](nuc-0124.md) | List and Population Quantiles | Accepted |
- | [129](nuc-0129.md) | List and Population Zipping | Accepted |
--| [138](nuc-0138.md) | Reactive Secant | Draft |
-+| [138](nuc-0138.md) | Reactive Secant | Accepted |
- 
- ### Reasoning enhancement
- 
-@@ -332,7 +332,7 @@ Created: 31-Jul-2026
- | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Accepted |
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
--| [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
-+| [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Accepted |
- | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Draft |
- 
-```
-
-**File**: `docs/nuc-0138.md` (modified, +202/-10)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 138
- Title: Reactive Secant
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Utility enhancement
- Created: 23-Nov-2026
-@@ -19,8 +19,8 @@ Created: 23-Nov-2026
-   introducing angle normalization, pole shortcuts or another numerical model.
- - Preserve Math's supplied-Undefined gate, eager argument evaluation, ignored
-   extras, dependencies, deferral, shadowing, rollback and every accepted form.
--- This continuous cycle selected Utility enhancement with one unbiased draw
--  from the live eligible registry, index 2 among five categories. Paired
-+- This continuous stale-Draft pickup keeps the allocated Utility enhancement
-+  category and request; no new category draw or allocation occurs. Paired
-   lexer-token comparison and every hard criterion remain mandatory.
- 
- ## Motivation
-@@ -36,22 +36,214 @@ Created: 23-Nov-2026
- 
- ## Rationale
- 
--- Pending isolated preparation against the pushed allocation and immutable
--  accepted-syntax baseline.
-+- Secant is a bounded standard-library utility, not a syntax change or a new
-+  numeric model. Accepted cosine followed by division defines its complete
-+  numeric contract; the cotangent dispatcher added by accepted NUC 100 is the
-+  analogous implementation pattern.
-+- Reuse the intrinsic conversion, argument evaluator and Undefined gate.
-+  Adding one unary arm avoids lowering into shadowable source helpers,
-+  changing dependencies or introducing a second call path.
-+- Do not normalize angles, approximate cosine, infer mathematical poles,
-+  rearrange operations, use fused arithmetic or claim improved accuracy or
-+  performance. Preserve the actual rounded cosine before its reciprocal.
-+- The original allocation recorded a uniform Utility enhancement selection.
-+  The caller subsequently picked up the lowest stale allocated Draft under
-+  that same category and renewed its held claim for this source-alignment
-+  revision. This worker neither redraws nor allocates a proposal.
-+- Keep the caller's continuous mode and Utility enhancement. Runtime
-+  applicability is `not_applicable`, with runtime-category inputs absent.
-+  No hint or frozen usefulness rubric is supplied; usefulness is unscored
-+  (`missing_rubric`). Strategy learning is `not_configured` and unattributed:
-+  no policy, selection receipt, trial or selected strategy is supplied.
- 
- ## Specification
- 
--- Pending isolated preparation; preserve all existing corpus identities,
--  canonical assertions, expected returns and executed coverage.
-+- Add only native static `Math.sec(value)`, with radians as for `Math.cos`.
-+  The accepted `1 / Math.cos(value)` spelling remains unchanged and available.
-+- Evaluate each supplied argument expression exactly once from left to right,
-+  including ignored extras and expressions after Undefined. Preserve all
-+  effects, strict errors, reads, dependency subscriptions and rollback.
-+- After successful argument evaluation, return Undefined if any supplied
-+  top-level value is Undefined, before numeric conversion. Nested Undefined
-+  is not a top-level gate. Otherwise convert only the first value through
-+  intrinsic `Value::to_number`; omission supplies numeric NaN.
-+- Compute exactly `1.0 / first.cos()`. Non-NaN results agree with the accepted
-+  cosine-then-reciprocal composition by bits; NaNs agree by classification,
-+  without a payload guarantee.
-+- Both zero signs yield positive `1`. Finite extremes, subnormal inputs and
-+  values near `Math.PI / 2` follow the actual cosine, not inferred infinity
-+  at a mathematical pole. Infinite and NaN inputs yield numeric NaN.
-+- Literal null converts to zero; booleans, trimmed numeric strings, lists,
-+  dates and nonnumeric values retain their existing conversion. Conversion
-+  does not resolve or subscribe to shadowable `Number`.
-+- Extras are numerically ignored and never converted. Their Undefined values,
-+  including missing/deleted property reads, still defer the call; definitions
-+  restore it. Literal-null conversion does not override live-input or
-+  parameter-null deferral.
-+- Named functions, class rules, independent instances, subscriptions,
-+  deletion/recovery, captured values, frames and transactions use unchanged
-+  machinery. Preserve the written `Math.sec(...)` AST and graph rule source,
-+  without lowering.
-+- State/local/receiver `Math` shadowing and ordinary `.Math` or `.sec` lookup
-+  stay ordinary. Native `Math.sec` read as a value remains Undefined and
-+  non-callable. No aliases, global forms or non-native receiver methods are
-+  introduced. List/population aggregate fallback remains behind the existing
-+  closed method-name dispatch.
-+- The intended extension is native `sec` calls that formerly reached the
-+  unknown-method error after successful eager argument evaluation without a
-+  supplied Undefined value. Already successful supplied-Undefined calls keep
-+  their Undefined result. No other accepted parse 
-```
-
-**File**: `nucleoid.spec.md` (modified, +48/-0)
-```diff
-@@ -29457,6 +29457,24 @@ tags = ["blue"]
- assert(untagged, true)
- absent
- # return: false
-+---
-+# Nucleoid keeps secants reactive
-+
-+angle = 0
-+ratio = Math.sec(angle)
-+assert(ratio, 1)
-+angle = Math.PI
-+assert(ratio, -1)
-+angle = Math.PI / 3
-+assert(ratio, 1 / Math.cos(angle))
-+angle = -Math.PI / 3
-+assert(ratio, 1 / Math.cos(angle))
-+angle = Math.PI / 2
-+assert(ratio, 1 / Math.cos(angle))
-+angle = 0
-+assert(ratio, 1)
-+ratio
-+# return: 1
- ```
- 
- ## Floating-point absolute value alias
-@@ -29478,3 +29496,33 @@ absent
-   Native method value reads remain Undefined, not callable references.
- - No global aliases, additional receivers, other math names, flags,
-   parser/lexer changes, public API changes or dependencies are introduced.
-+
-+## Reactive secant
-+
-+- NUC 138 adds only native static `Math.sec(value)`, with radians as input
-+  and exactly the accepted `1 / Math.cos(value)` result.
-+- After successful eager evaluation of every argument, the existing
-+  any-supplied-top-level-Undefined gate returns Undefined before conversion.
-+  Otherwise intrinsically convert only the first value with `Value::to_number`,
-+  then compute exactly `1.0 / first.cos()`. Omission gives numeric NaN.
-+- Preserve cosine rounding followed by reciprocal rounding: no normalization,
-+  approximation, inferred pole infinity, rearrangement or shadowable helper.
-+  Non-NaNs match the accepted composition by bits; NaNs match by classification.
-+  Both zero signs yield positive `1`; finite extremes, subnormals and values
-+  near `Math.PI / 2` follow the actual cosine, while infinite inputs give NaN.
-+- Extras still evaluate exactly once left to right, including after Undefined,
-+  with their effects, strict errors, reads and dependencies; they are not
-+  numerically converted. Only top-level Undefined triggers the native gate.
-+- Literal null retains numeric zero conversion. Inherited live-input and
-+  parameter-null deferral, named functions, independent class rules, instance
-+  subscriptions, deletion/recovery, frames, captured values and rollback stay
-+  unchanged. Numeric conversion does not resolve shadowable `Number`.
-+- State/local/receiver `Math` shadowing and ordinary `.Math` or `.sec` lookup
-+  stay ordinary. Native `Math.sec` value reads remain Undefined/non-callable.
-+  No aliases, global forms, non-native receiver methods or syntax are added;
-+  list/population aggregates keep their existing closed method-name dispatch.
-+- Formerly failing native `sec` calls gain numbers only after successful
-+  argument evaluation without supplied Undefined. Already successful calls
-+  with supplied Undefined retain Undefined. All other accepted behavior,
-+  strict diagnostics, error positions and transaction effects remain unchanged;
-+  `Math.toDegrees` remains unsupported.
-```
-
-**File**: `src/builtins/numeric.rs` (modified, +1/-0)
-```diff
-@@ -72,6 +72,7 @@ fn math_unary(name: &str, first: f64) -> Option<f64> {
-         "log10" => first.log10(),
-         "sin" => first.sin(),
-         "cos" => first.cos(),
-+        "sec" => 1.0 / first.cos(),
-         "tan" => first.tan(),
-         "cot" => 1.0 / first.tan(),
-         "atan" => first.atan(),
-```
-
-**File**: `tests/case_conversion_aliases.rs` (modified, +2/-2)
-```diff
-@@ -370,7 +370,7 @@ fn only_the_appended_cases_call_the_aliases_and_they_run_every_assertion() {
-         }
-     }
-     assert_eq!(assertions, 23);
--    assert_eq!(cases, 1306);
-+    assert_eq!(cases, 1308);
- }
- 
- #[test]
-@@ -442,7 +442,7 @@ fn the_appended_cases_stand_after_nuc_117_and_before_nuc_103() {
-         let index = cases.iter().position(|case| case.title == title).unwrap();
-         assert_eq!(
-             index,
--            cases.len() - 21 - 2 * usize::from(title == REFERENCE_TITLE),
-+            cases.len() - 21 - 3 * usize::from(title == REFERENCE_TITLE),
-             "{title}"
-         );
-         assert_eq!(cases[index - 1].title, previous);
 ```
 
 #### Recent Merged Pull Requests:
@@ -2039,13 +1775,13 @@ Advisory usefulness/reward unscored:missing_rubric.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 141 Reactive Cosecant
+## X. Draft NUC 144 Nullish Value Assignment
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f45b916b`: Draft NUC 141 Reactive Cosecant. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc2854dc`: Draft NUC 144 Nullish Value Assignment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -2053,8 +1789,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [141](nuc-0141.md) | Reactive Cosecant | Draft |
-| [141](nuc-0141.md) | Reactive Cosecant | Standards Track | Utility enhancement | Draft |
+| [144](nuc-0144.md) | Nullish Value Assignment | Draft |
+| [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2064,7 +1800,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f45b916b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc2854dc` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

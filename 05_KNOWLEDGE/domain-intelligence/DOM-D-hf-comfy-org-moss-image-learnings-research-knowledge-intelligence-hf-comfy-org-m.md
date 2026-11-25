@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T14:41:29.921Z",
+  "timestamp": "2026-11-25T05:10:47.951Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-comfy-org-moss-image-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-comfy-org-moss-image-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T14:41:29.921Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:10:47.951Z`  
 > **Learning ID**: `LEARN-EVO-hf-comfy-org-moss-image-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-comfy-org`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T14:41:21.926Z  
+> **Timestamp**: 2026-11-25T05:10:26.876Z  
 > **Learning ID**: `learn-huggingface-comfy-org-moss-image`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/MOSS-Image](https://huggingface.co/Comfy-Org/MOSS-Image))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:41:10.717Z  
+> **Harvest Timestamp**: 2026-11-25T05:10:26.762Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6460250 downloads | 707 likes
+- **Stars / Engagement**: 5581661 downloads | 755 likes
 
 ---
 

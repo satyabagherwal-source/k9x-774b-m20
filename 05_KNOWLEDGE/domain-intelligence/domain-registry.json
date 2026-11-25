@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T05:01:27.425Z",
+  "last_updated": "2026-11-25T05:10:50.506Z",
   "total_records": 2635,
   "domains": {
     "A": {
@@ -9368,8 +9368,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "3598d2e3389bd37e082924a719d91d1d2360787a1e64464773068d48f322a60e",
-      "created_at": "2026-11-25T04:16:04.663Z"
+      "content_hash": "6351d0d57eecb91cc211fa654e525656dfa5fea8d2aa9d3226d6fe16bf065f54",
+      "created_at": "2026-11-25T05:10:50.506Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15714,8 +15714,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "27de56f4be03f51067a1567db083807dc48b17d10fd5573a3198606ff4e4f841",
-      "created_at": "2026-11-25T02:29:02.592Z"
+      "content_hash": "37881fd8bacc5e09b5e2c9f61092d47fee5e476edde1d27e26f1abb8e0b362be",
+      "created_at": "2026-11-25T05:10:44.549Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16164,8 +16164,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "80ad2b13ef3aa33d8571d71af614b00dcca8dd8fe70b1843e66986126e6cd5f3",
-      "created_at": "2026-11-24T22:51:15.947Z"
+      "content_hash": "9868b91b85a5fc466beb26c7b7f7b0c3d465af70df7bce550041b01e6c49551a",
+      "created_at": "2026-11-25T05:10:49.356Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -28213,8 +28213,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/MOSS-Image Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-moss-image-research-knowledge-intelligence-comfy-org-moss-image-cor.md",
       "repository": "Comfy-Org/MOSS-Image",
-      "content_hash": "7dc00111593a8d565b06ea993c0c5403a302fee52350f960d36a43bffebeb3b8",
-      "created_at": "2026-11-17T14:41:22.554Z"
+      "content_hash": "1429d5635df9c98c77a3ff5a30f2485ecc74cdc56a74388d1a89d59b9887de52",
+      "created_at": "2026-11-25T05:10:27.900Z"
     },
     "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-core-invariants",
@@ -28231,8 +28231,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-moss-image-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-moss-image-learnings-research-knowledge-intelligence-hf-comfy-org-m.md",
       "repository": "hf-comfy-org-moss-image-learnings",
-      "content_hash": "63695b6000d03f0f19d6913b13ddc894ce9a90593d393c5ec70ca769142d8bf5",
-      "created_at": "2026-11-17T14:41:30.009Z"
+      "content_hash": "4f3d1a93a2265073b9de1f2de70450ec90c9d725b0e1d363302141cd73c63706",
+      "created_at": "2026-11-25T05:10:48.098Z"
     },
     "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-learnings-core-invariants",
