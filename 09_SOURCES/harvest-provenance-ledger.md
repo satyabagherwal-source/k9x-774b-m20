@@ -13597,3 +13597,4 @@ Every entry in this ledger must capture:
 | `learn-github-arxhr007-aliens_eye` | `https://github.com/arxhr007/Aliens_eye` | `da0f12ef` | Multi-dimensional audit evidence | 2026-11-26T21:17:20.562Z |
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-26T21:17:24.698Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `498590e2` | Multi-dimensional audit evidence | 2026-11-26T21:17:41.312Z |
+| `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-26T21:26:03.210Z |

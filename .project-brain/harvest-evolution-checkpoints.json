@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T21:17:48.090Z",
+  "last_updated": "2026-11-26T21:26:17.737Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-26T20:50:19.269Z",
+      "processed_at": "2026-11-26T21:26:15.604Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-26T21:09:07.399Z",
+      "processed_at": "2026-11-26T21:26:16.604Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2418,7 +2418,7 @@
       "staged_for_review": 1
     },
     "hf-baidu-unlimited-ocr-learnings.md": {
-      "processed_at": "2026-11-23T08:33:17.249Z",
+      "processed_at": "2026-11-26T21:26:15.174Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4008,7 +4008,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4677,
+  "total_dossiers_evaluated": 4680,
   "total_canonical_promoted": 568,
-  "total_staged_for_review": 3514
+  "total_staged_for_review": 3516
 }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-9LZ7",
-    "timestamp": "2026-11-25T10:25:31.267Z",
-    "repository": "loft-sh/vcluster",
-    "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "590448c9d68cd0df28e86f824452b13200227317848481335d2a596b93924831",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-M1G0",
     "timestamp": "2026-11-25T10:35:11.184Z",
     "repository": "baidu/Unlimited-OCR-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "6cb594bcfe24b405e591a6b320af1d50c82e211113cfb920b03a7aec1ea2fa9e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-AWUE",
+    "timestamp": "2026-11-26T21:26:03.206Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "269cf778fa275e3f4d3f91743d823b9405b8e0a92e30b4e3aaf2e4fec0825f7f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

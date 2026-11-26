@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T21:17:44.698Z",
-    "lastVerified": "2026-11-26T21:17:44.698Z",
+    "lastChecked": "2026-11-26T21:26:15.031Z",
+    "lastVerified": "2026-11-26T21:26:15.031Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -197,8 +197,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T20:49:49.805Z",
-    "lastVerified": "2026-11-26T20:49:49.805Z",
+    "lastChecked": "2026-11-26T21:26:15.023Z",
+    "lastVerified": "2026-11-26T21:26:15.023Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1442,8 +1442,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T17:23:04.647Z",
-    "lastVerified": "2026-11-26T17:23:04.647Z",
+    "lastChecked": "2026-11-26T21:26:09.965Z",
+    "lastVerified": "2026-11-26T21:26:09.965Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -3171,12 +3171,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "xerj-org-xerj": {
-    "name": "xerj-org/xerj",
+    "name": "xerj",
     "officialUrl": "https://github.com/xerj-org/xerj",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T02:55:18.878Z",
-    "lastVerified": "2026-11-26T02:55:18.878Z",
+    "lastChecked": "2026-11-26T21:26:12.495Z",
+    "lastVerified": "2026-11-26T21:26:12.495Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xerj-org-xerj",
@@ -3185,7 +3185,8 @@
     "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "35ccd192"
   },
   "xampprocky-tokei": {
     "name": "tokei",
@@ -3379,9 +3380,9 @@
   "devhubapp-devhub": {
     "name": "devhub",
     "officialUrl": "https://github.com/devhubapp/devhub",
-    "lastChecked": "2026-11-24T13:38:37.890Z",
+    "lastChecked": "2026-11-26T21:26:05.076Z",
     "revisionIdentifier": "1d0d66a3",
-    "lastVerified": "2026-11-24T13:38:37.890Z"
+    "lastVerified": "2026-11-26T21:26:05.076Z"
   },
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
@@ -4406,9 +4407,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-25T14:23:40.759Z",
+    "lastChecked": "2026-11-26T21:25:59.978Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-25T14:23:40.759Z"
+    "lastVerified": "2026-11-26T21:25:59.978Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -5437,12 +5438,12 @@
     "officialUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T08:33:03.302Z",
-    "lastVerified": "2026-11-23T08:33:03.302Z",
+    "lastChecked": "2026-11-26T21:26:02.569Z",
+    "lastVerified": "2026-11-26T21:26:02.569Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "678114bd2a4bd3b28ee8deb638197f43d574f1824cbf9d7deb65e40ac9b91939",
+    "contentHash": "269cf778fa275e3f4d3f91743d823b9405b8e0a92e30b4e3aaf2e4fec0825f7f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6337,9 +6338,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-26T03:46:45.274Z",
+    "lastChecked": "2026-11-26T21:26:07.477Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-26T03:46:45.274Z"
+    "lastVerified": "2026-11-26T21:26:07.477Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",

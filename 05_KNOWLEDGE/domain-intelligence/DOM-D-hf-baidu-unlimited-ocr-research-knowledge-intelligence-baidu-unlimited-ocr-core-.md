@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
   "source_version": "hf-baidu-unlimited-ocr",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T08:33:12.415Z",
+  "timestamp": "2026-11-26T21:26:03.437Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-baidu-unlimited-ocr",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [baidu/Unlimited-OCR](https://huggingface.co/baidu/Unlimited-OCR) (Revision: `hf-baidu-u`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T08:33:12.415Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T21:26:03.437Z`  
 > **Learning ID**: `learn-huggingface-baidu-unlimited-ocr`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/baidu/Unlimited-OCR](https://huggingface.co/baidu/Unlimited-OCR))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T08:33:03.302Z  
+> **Harvest Timestamp**: 2026-11-26T21:26:02.569Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5530702 downloads | 5033 likes
+- **Stars / Engagement**: 5389495 downloads | 5056 likes
 
 ---
 
