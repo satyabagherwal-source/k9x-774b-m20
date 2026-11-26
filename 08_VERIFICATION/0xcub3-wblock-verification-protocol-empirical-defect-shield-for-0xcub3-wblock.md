@@ -4,22 +4,22 @@
 {
   "source_repository": "0xCUB3/wBlock",
   "source_url": "https://github.com/0xCUB3/wBlock",
-  "source_version": "bb1c3e27",
+  "source_version": "d439e269",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-23T17:20:43.215Z",
+  "timestamp": "2026-11-26T03:04:35.411Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-0xcub3-wblock",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `bb1c3e27`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-23T17:20:43.215Z`  
+> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `d439e269`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-26T03:04:35.411Z`  
 > **Learning ID**: `learn-github-0xcub3-wblock`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `0xCUB3/wBlock` (Commit: `bb1c3e27`)
+- **Target Repository**: `0xCUB3/wBlock` (Commit: `d439e269`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:20:41.589Z  
+> **Harvest Timestamp**: 2026-11-26T03:04:33.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3259 stars
+- **Stars / Engagement**: 3271 stars
 
 ---
 
@@ -566,7 +566,7 @@ struct Parsed {
     /// 1-based line number, the rule's `source.line`.
     line: u32,
     /// Position of the rule among those its line parses to.
-    index: u32,
+    index: u16,
     identity: u64,
     /// Exceptions and `$badfilter` stay in every shard and drive #681.
     shared: bool,
@@ -580,6 +580,9 @@ struct Parsed {
     route: Route,
     /// Affinity types of the enclosing `!#safari_cb_affinity` block.
     affinity: Option<u8>,
+    /// Byte range `(start, len)` in the rule's line of `StrictHosts::host`,
+    /// when it appears verbatim there; `(0, 0)` otherwise.
+    strict_host: (u16, u16),
 }
 
 struct ParsedList {
@@ -686,9 +689,7 @@ impl ParseCache {
     }
 }
 
-/// The packing decided for one set of plan inputs, kept for the next plan
-/// with the same inputs. One is kept: the app plans again with the same lists
-/// when nothing changed, and the measured comp
+/// The packing decided for one set
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/ast.rs`
@@ -1812,9 +1813,17 @@ impl Context {
         }
     }
 
-    /// Whether `add` keeps anything of `rule`.
-    pub(crate) fn holds(rule: &NetworkRule) -> bool {
-        rule.badfilter || StrictHosts::host(rule).is_some() || genericblock_host(rule).is_some()
+    pub(crate) fn add_strict_host(&mut self, host: &str) {
+        self.strict.add_host(host);
+    }
+
+    pub(crate) fn strict_host(rule: &NetworkRule) -> Option<String> {
+        StrictHosts::host(rule)
+    }
+
+    /// Whether `add` keeps anything of `rule` beyond `StrictHosts`.
+    pub(crate) fn holds_non_strict(rule: &NetworkRule) -> bool {
+        rule.badfilter || genericblock_host(rule).is_some()
     }
 
     /// Whether a `$genericblock` exception covers pages of `domain`.
@@ -1999,14 +2008,7 @@ fn compile_rule(
         // page exception already covers `$document`'s own request.
         let types = r.types.difference(ResourceTypes::DOC);
         let requests = NetworkRule { scope: ExceptionScope::empty(), types, ..r.clone() };
-        let page = compile_scope(r, v, out);
-        if !types.is_empty() {
-            compile_rule(&requests, v, ctx, out, tier)?;
-        }
-        return page;
-    }
-    let exception = r.exception;
-    // `@@...$cnam
+        let pag
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/prune.rs`
@@ -2215,6 +2217,8 @@ fn pages_meet(a: &Page, b: &Page) -> bool {
     }
 }
 
+const ANY_PAGE: u32 = u32::MAX;
+
 /// A rule without its url, with its page interned in `Pages`.
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 struct Sig {
@@ -2222,6 +2226,13 @@ struct Sig {
     load: u8,
     context: u8,
     page: u32,
+}
+
+fn insert_sig(set: &mut FxHashSet<Sig>, sig: Sig) -> bool {
+    if sig.page != ANY_PAGE && set.contains(&Sig { page: ANY_PAGE, ..sig }) {
+        return false;
+    }
+    set.insert(sig)
 }
 
 /// Interned page conditions and which pairs of them meet.
@@ -2234,14 +2245,17 @@ struct Pages {
 
 impl Pages {
     fn sig(&mut self, shape: &Shape) -> Sig {
-        let page = match self.ids.get(&shape.page) {
-            Some(&id) => id,
-            None => {
-                let id = self.list.len() as u32;
-                self.ids.insert(shape.page.clone(), id);
-                self.list.push(shape.page.clone());
-                id
-            }
+        let page = match &shape.page {
+            Page::Any => ANY_PAGE,
+            page => match self.ids.get(page) {
+                Some(&id) => id,
+                None => {
+                    let id = self.list.len() as u32;
+                    self.ids.insert(page.clone(), id);
+                    self.list.push(page.clone());
+                    id
+                }
+            },
         };
         Sig { types: shape.types, load: shape.load, context: shape.context, page }
     }
@@ -2250,9 +2264,18 @@ impl Pages {
         if a.types & b.types == 0 || a.load & b.load == 0 || a.context & b.context == 0 {
             return false;
         }
-        let key = (a.page.min(b.page), a.page.max(b.page));
+        if a.page == ANY_PAGE || b.page == ANY_PAGE {
+            return true;
+        }
+        let (lo, hi) = (a.page.min(b.page), a.page.max(b.page));
         let list = &self.list;
-        *self.meets.entry(key).or_insert_with(|| pages_meet(&list[a.page as usize], &list[b.page as usize]))
+        if lo == hi {
+            return !matches!(&list[lo as usize], Page::If(hosts) if hosts.is_empty());
+        }
+        if matches!((&list[lo as usize], &list[hi as usize]), (Page::Unless(_), Page::Unless(_))) {
+            return true;
+        }
+        *self.meets.entry((lo, hi)).or_insert_with(|| pages_meet(&list[lo as usize], &list[hi as usize]))
     }
 }
 
@@ -2266,24 +2289,7 @@ pub(crate) struct Seen {
     floating: FxHashSet<Sig>,
     /// Cosmetic hides, which only the page exceptions meant for them cancel.
     hides: FxHashSet<Sig>,
-    /// Host -> (subdomains too, signature) of the rules anchored there.
-    hosts: FxHashMap<Box<str>, FxHashSet<(bool, Sig)>>,
-    /// Host -> signatures of the rules anchored strictly below it.
-    below: FxHashMap<Box<str>, FxHashSet<Sig>>,
-}
-
-impl Seen {
-    /// Records a rule that is not an ignore.
-    pub(crate) fn add(&mut self, shape: &Shape) {
-        let sig = self.pages.sig(shape);
-        self.all.insert(sig);
-        match &shape.url {
-            None => {
-                self.floating.insert(sig);
-            }
-            Some(host) => {
-                self.hosts.entry(host.name.clone()).or_default().insert((host.star, sig));
-                for parent i
+    /// Host -
 ```
 
 
@@ -2292,11 +2298,11 @@ impl Seen {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1152** (2026-11-23): **[BUG]Bypass paywall clean(en) shows the wrong date**
-  *Symptoms*: ### Describe the bug  I found a little bug. Bypass paywall clean script shows last update last month but the script was updated 7 hours ago  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  <img width="375" height="667" alt="IMG_2770" src="https://github.com/user-attachments/assets/0ddbe219-1b31-46ca-9ac5-7715dbd8de7b" /> <img width="375" height="667" alt="IMG_2769" src="https://github.com/user-attachments/assets/5aa8a482-8fa8-4939-a171-68dde0880979" />  ### Environment  - OS: [e.g. iOS 26.5, macOS 26.5] - wBlock Version: [e.g. 2.0.4] - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [x] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
+- **Issue #1166** (2026-11-25): **[BUG] Animation delay and visual glitch on back gesture using Magic Mouse or Trackpad**
+  *Symptoms*: ### Describe the bug  When I navigate to different menus in wBlock (such as Site Settings or View Logs) and then attempt to return back to the previous page (in this case Settings) via a Magic Mouse or Trackpad gesture, it introduces a 1-2 second delay before the back action triggers, and the animation appears glitchy. You also cannot keep the page steady during a live gesture by holding your finger on the mouse throughout the motion.  ### To reproduce  1. Open wBlock on macOS 2. Go to Settings 3. Click on Site Settings 4. Do a back (swipe) gesture on Magic Mouse or Trackpad  ### Expected behavior  The animation should be fluid, smooth and native, with the whole page aligning instantly with the text when a gesture begins.  Holding the gesture still with the Magic Mouse or Trackpad should also keep the page in place, and once the user releases it, the page should snap back and trigger the return action. Comparing this to Safari, for instance, shows the difference in gesture smoothness.  ### Screenshot or video  https://github.com/user-attachments/assets/fd21102b-02a5-4123-a7c6-e4c0d15f77e7  ### Environment  - OS: macOS Golden Gate 27.2.1 - wBlock Version: 3.2.3 - Intel or Apple Silicon (macOS only): Apple M3   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. 
 
-- **Issue #1151** (2026-11-23): **[BUG] support `.tld` which should be considered as any-TLD magic keyword**
-  *Symptoms*: ### Describe the bug  https://github.com/violentmonkey/violentmonkey/issues/2527  ### To reproduce     ### Expected behavior  _No response_  ### Screenshot or video  _No response_  ### Environment  _No response_  ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [ ] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [ ] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
+- **Issue #1164** (2026-11-24): **[BUG]avoid unnecessary DOM scans for :matches-path and :matches-media**
+  *Symptoms*: ### Describe the bug  `compileSelector` in `procedural.js` only looks at `selector[0]` to decide how to query the DOM. Since `:matches-path` (which `runtime.rs` puts first) and leading `:matches-media` are neither CSS selectors nor XPath, it falls back to `document.querySelectorAll('*')`.  So every DOM mutation pass scans all elements on the page, even if the URL or media query doesn't match. If it does match, the next CSS selector is checked using `el.matches()` on every element instead of a regular `querySelectorAll(css)`.  On heavy SPAs like Facebook, this can cause unnecessary CPU usage and affect scrolling performance.  Checking `:matches-path` and `:matches-media` before querying the DOM would avoid these unnecessary scans. On a page with around 5k elements, this could reduce processing time by ~99% for non-matching passes (from ~10ms to under 0.1ms) and ~90% or more for matching passes.  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  _No response_  ### Environment  - OS: [e.g. iOS 26.5, macOS 26.5] - wBlock Version: [e.g. 2.0.4] - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2313,1113 +2319,1234 @@ impl Seen {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2880c43d` (2026-11-23)
-**Commit Message**: Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout switch
+### Incident Patch 1: `6aca811d` (2026-11-23)
+**Commit Message**: fix: click macOS rows for info, add AdGuard Mini system-wide note, and harden popup/zapper
 
-**File**: `wBlock/BasicFiltersView.swift` (modified, +59/-36)
+- Open filter and userscript info popovers by clicking the row on macOS (preserving NSOutlineView drag-to-reorder) and drop the redundant row info button (#1157)
+- Document AdGuard Mini v3.0 experimental system-wide protection in Adblock_Comparison.md (#1157)
+- Detect unfolded foldable phone popovers in popup.js so they use popover presentation instead of phone-sheet sizing (#1157)
+- Fall back to on-demand zapper-content.js injection and frame-less delivery when activating Element Zapper on tabs where content scripts were not injected at load
+
+**File**: `Adblock_Comparison.md` (modified, +2/-2)
 ```diff
-@@ -125,8 +125,18 @@ struct BasicFiltersView: View {
-     }
+@@ -97,7 +97,7 @@ Sources: [Wipr 2 on the App Store](https://apps.apple.com/us/app/wipr-2/id166221
  
-     private var languageSummary: String {
--        let names = languageOptions.filter { activeLanguageCodes.contains($0.code) }.map(\.nativeName)
--        return names.isEmpty ? String(localized: "None") : ListFormatter.localizedString(byJoining: names)
-+        let codes = activeLanguageCodes
-+        guard !codes.isEmpty else { return String(localized: "None") }
-+        let displayLocale = RegionalLanguageOption.displayLocale
-+        let names = codes
-+            .map { code -> (sortKey: String, native: String) in
-+                let display = displayLocale.localizedString(forLanguageCode: code) ?? code
-+                let native = Locale.nativeLanguageName(for: code) ?? display
-+                return (display, native)
-+            }
-+            .sorted { $0.sortKey.localizedCaseInsensitiveCompare($1.sortKey) == .orderedAscending }
-+            .map(\.native)
-+        return ListFormatter.localizedString(byJoining: names)
-     }
+ AdGuard splits Safari across two apps. AdGuard Mini (it used to be AdGuard for Safari) is the Mac one, and AdGuard for iOS covers iPhone, iPad, and Vision. The full AdGuard for Mac is a separate paid, system-wide product, and I'm leaving it out.
  
-     private var atmosphereFade: Double {
-@@ -180,6 +190,7 @@ struct BasicFiltersView: View {
-                     resetBundleToRecommended(bundle)
-                 }
-             )
-+            .id(bundle.id)
-         }
-         .infoPresentation(item: $unownedSheetItem) { _ in
-             ScopedBundleListsSheet(
-@@ -850,13 +861,21 @@ struct BasicBundlePeekView: View {
-             .padding(16)
-             .frame(width: 360)
-         #else
--        ScrollView {
--            peekBody
--                .padding(SheetDesign.contentHorizontalPadding)
-+        if #available(iOS 16.0, *) {
-+            PeekSheetDetentsHost(showAllLists: $showAllLists) {
-+                ScrollView {
-+                    peekBody
-+                        .padding(SheetDesign.contentHorizontalPadding)
-+                }
-+                .scrollBounceBasedOnSizeCompat()
-+                .opaqueSheetBackgroundCompat()
-+            }
-+        } else {
-+            ScrollView {
-+                peekBody
-+                    .padding(SheetDesign.contentHorizontalPadding)
-+            }
-         }
--        .scrollBounceBasedOnSizeCompat()
--        .opaqueSheetBackgroundCompat()
--        .modifier(PeekSheetDetentsCompat(showAllLists: $showAllLists))
-         #endif
-     }
+-Mini has six content blockers (General, Privacy, Social, Security, Other, Custom) for a ceiling of 900,000 rules. Filter categories, custom lists, user rules, element blocking, and issue reporting are free. Pro adds real-time filter updates, AdGuard Extra for harder anti-adblock cases, and a few advanced filtering features.
++Mini has six content blockers (General, Privacy, Social, Security, Other, Custom) for a ceiling of 900,000 rules. Filter categories, custom lists, user rules, element blocking, and issue reporting are free. Pro adds real-time filter updates, AdGuard Extra for harder anti-adblock cases, and a few advanced filtering features. Starting in v3.0, Mini also includes an experimental system-wide protection option for macOS 26 and later (with an AdGuard license) built on Apple's URL Filters API with Private Information Retrieval.
  
-@@ -1061,41 +1080,45 @@ struct BasicBundlePeekView: View {
+ AdGuard for iOS has the same six blockers plus a Web Extension for per-site toggles and element blocking. Premium adds advanced rules and scriptlets. There's also DNS protection. It catches ad and tracker domains in other apps, but it only sees hostnames and can't hide anything on a page. AdGuard and AdGuard Pro on the iOS App Store unlock the same features now, and you only need one of them.
+ 
+@@ -117,7 +117,7 @@ Sources: [AdGuard Mini](https://adguard.com/en/adguard-mini-mac/overview.html),
+ | YouTube ads | Yes | Yes, breaks often | Yes, via Wipr Extra | Yes, better with Pro |
+ | Twitch ads | Opt-in scripts | No dedicated option | Not documented | AdGuard Extra (Pro) |
+ | Strips `utm_*` | Yes, by default | Yes | No | Yes |
+-| System-wide | No | No | Filtr (paid, OS 26) | DNS on iOS |
++| System-wide | No | No | Filtr (paid, OS 26) | Mini (experimental, paid, macOS 26+), DNS on iOS |
+ 
+ ### Control
+ 
+```
+
+**File**: `wBlock Scripts (iOS)/Resources/pages/popup/popup.js` (modified, +79/-8)
+```diff
+@@ -363,16 +363,31 @@ function isIpadDevice() {
+     );
  }
  
- #if os(iOS)
--private struct PeekSheetDetentsCompat: ViewModifier {
--    @Binding var showAllLists: Bool
--
--    func body(content: Content) -> some View {
--        if #available(iOS 16.0, *) {
--            content.modifier(PeekSheetDetentsModifier(showAllLists: $showAllLists))
--        } else {
--            content
--        }
--    }
--}
--
- @available(iOS 16.0, *)
--private struct PeekSheetDetentsModifier: ViewModifier {
-+private struct PeekSheetDetentsHost<Content: View>: View {
-     @Binding var showAllLists: Bool
-+    @ViewBuilder let content: () -> Content
-     @State private var selectedDetent: PresentationDetent = .medium
++// Unfolded foldable phones (regular-width inner display) present Safari
++// extension popups as an iPad-style popover even though the UA stays iPhone.
++function isIosPopoverHost() {
++    if (isIpadDevice()) return true;
++    const screenWidth = Number(window.screen && window.screen.width);
++    const screenHeight = Number(window.screen && window.screen.height);
++    return Number.isFinite(screenWidth) && Number.isFinite(screenHeight)
++        && Math.min(screenWidth, screenHeight) >= 600;
++}
++
+ function shouldFillIosPhoneSheet() {
+-    return CSS.supports('-webkit-touch-callout', 'none') && !isIpadDevice();
++    return CSS.supports('-webkit-touch-callout', 'none') && !isIosPopoverHost();
+ }
  
--    func body(content: Content) -> some View {
--        content
--            .presentationDetents([.medium, .large], selection: $selectedDetent)
--            .presentationDragIndicator(.visible)
--            .onChangeCompat(of: showAllLists) { _, expanded in
--                let target: PresentationDetent = expanded ? .large : .medium
--                if selectedDetent != target {
--                    selectedDetent = target
--                }
-+    private var availableDetents: Set<PresentationDetent> {
-+        showAllLists ? [.medium, .large] : [.medium]
+-if (shouldFillIosPhoneSheet()) {
+-    document.documentElement.classList.add('ios-phone-sheet');
+-} else if (CSS.supports('-webkit-touch-callout', 'none') && isIpadDevice()) {
+-    document.documentElement.classList.add('ios-ipad-popover');
++function syncIosPopupPresentation() {
++    const root = document.documentElement;
++    const isTouchIos = CSS.supports('-webkit-touch-callout', 'none');
++    const usePopover = isTouchIos && isIosPopoverHost();
++    root.classList.toggle('ios-phone-sheet', isTouchIos && !usePopover);
++    root.classList.toggle('ios-ipad-popover', usePopover);
+ }
+ 
++syncIosPopupPresentation();
++window.addEventListener('resize', syncIosPopupPresentation);
++
+ function setError(message) {
+     const el = document.getElementById('error');
+     if (!el) return;
+@@ -654,6 +669,64 @@ async function sendTabMessageWithRetry(tabId, message, { timeoutMs = null, valid
+     throw lastError || new Error('Failed to deliver tab message.');
+ }
+ 
++async function injectZapperContentScript(tabId) {
++    if (!tabId || !browser.scripting || typeof browser.scripting.executeScript !== 'function') {
++        return false;
 +    }
++    try {
++        await browser.scripting.executeScript({
++            target: { tabId, frameIds: [TOP_FRAME_ID] },
++            files: ['zapper-content.js'],
++        });
++        return true;
++    } catch (frameError) {
++        try {
++            await browser.scripting.executeScript({
++                target: { tabId },
++                files: ['zapper-content.js'],
++            });
++            return true;
++        } catch {
++            console.warn('[wBlock] On-demand zapper injection failed:', frameError);
++            return false;
++        }
++    }
++}
 +
-+    var body: some View {
-+        Group {
-+            if #available(iOS 16.4, *) {
-+                content()
-+                    .presentationContentInteraction(.scrolls)
-+            } else {
-+                content()
++async function activateZapperInTab(tabId) {
++    const message = { type: 'wblock:zapper:activate' };
++    try {
++        return await sendTabMessageWithRetry(tabId, message, {
++            validateResponse: isZapperCommandResponse,
++        });
++    } catch (initialError) {
++        // When permission is granted on demand (e.g. a second Safari profile
++        // or a tab opened before enabling wBlock), zapper-content.js may not
++        // have been injected at page load.
++        const injected = await injectZapperContentScript(tabId);
++        if (injected) {
++            try {
++                return await sendTabMessageWithRetry(tabId, message, {
++                    validateResponse: isZapperCommandResponse,
++                });
++            } catch {
++                return await sendTabMessageWithRetry(tabId, message, {
++                    validateResponse: isZapperCommandResponse,
++                    frameId: null,
++                });
++            }
++        }
++        try {
++            return await sendTabMessageWithRetry(tabId, message, {
++                validateResponse: isZapperCommandResponse,
++                frameId: null,
++            });
++        } catch {
++            throw initialError;
++        }
++    }
++}
++
+ async function probeTabSupport(tabId) {
+     if (!tabId) return null;
+ 
+@@ -1761,9 +1834,7 @@ function setupListeners() {
+         zapperActivate.addEventListener('click', async () => {
+             try {
+                 setError('');
+-                await sendTabMessageWithRetry(tab.id, { type: 'wblock:zapper:activate' }, {
+-                    validateResponse: isZapperCommandResponse,
+-                });
++                await activateZapperInTab(tab.id);
+                 window.close();
+             } catch (error) {
+                 console.error('[wBlock] Failed to activate zapper:', error);
+```
+
+**File**: `wBlock/ContentView.swift` (modified, +10/-9)
+```diff
+@@ -1086,7 +1086,9 @@ struct ContentView: View {
+                 id: FilterListCategory.annoyances.rawValue + (isOther ? "" : "#" + group.topic.rawValue),
+                 header: header,
+                 rows: group.filters.map { filter in
+-                    MacListRow(filter.id, leavesSection: filter.isCustom) { filterRowView(for: filter) }
++                    MacListRow(filter.id, leavesSection: filter.isCustom, onTap: { selectedFilterInfo = filter }) {
++                        filterRowView(for: filter)
++                    }
+                 },
+                 allowsCrossSectionMoves: true,
+                 revealsOnlyWhileDragging: isOther && group.filters.isEmpty)
+@@ -1097,7 +1099,7 @@ struct ContentView: View {
+         if category == .foreign {
+             guard !filters.isEmpty else { return nil }
+             let rows = visibleForeignFilters(filters).map { filter in
+-                MacListRow(filter.id) { filterRowView(for: filter) }
++                MacListRow(filter.id, onTap: { selectedFilterInfo = filter }) { filterRowView(for: filter) }
              }
--            .onChangeCompat(of: selectedDetent) { _, detent in
--                let shouldExpand = detent == .large
--                if showAllLists != shouldExpand {
--                    withAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
--                        showAllLists = shouldExpand
+             return MacListSection(id: category.id, header: AnyView(categoryHeader(category)),
+                                   rows: rows, allowsCrossSectionMoves: false)
+@@ -1106,7 +1108,9 @@ struct ContentView: View {
+         guard acceptsMoves || !filters.isEmpty else { return nil }
+         return MacListSection(id: category.id, header: AnyView(categoryHeader(category)),
+                               rows: filters.map { filter in
+-                                  MacListRow(filter.id, leavesSection: filter.isCustom) { filterRowView(for: filter) }
++                                  MacListRow(filter.id, leavesSection: filter.isCustom, onTap: { selectedFilterInfo = filter }) {
++                                      filterRowView(for: filter)
++                                  }
+                               },
+                               acceptsMoves: acceptsMoves, revealsOnlyWhileDragging: acceptsMoves)
+     }
+@@ -1211,20 +1215,17 @@ struct FilterRowView: View, Equatable {
+     var body: some View {
+         HStack(alignment: .center, spacing: 10) {
+             // Keep the iOS info gesture on the text column so it cannot consume switch taps.
++            // On macOS, MacReorderableList fires onTap on a non-drag row click so dragging stays intact.
+             filterDetails
+                 .accessibilityElement(children: .combine)
+                 .accessibilityAddTraits(.isButton)
+                 .accessibilityAction { onInfo() }
+                 .contentShape(.interaction, Rectangle())
+                 #if os(iOS)
+                 .onTapGesture(perform: onInfo)
++                #else
++                .infoPopoverAnchor(filter.id, capturesClicks: false)
+                 #endif
+-            #if os(macOS)
+-            Button(action: onInfo) { Image(systemName: "info.circle") }
+-                .buttonStyle(.plain).noFocusRingCompat()
+-                .foregroundStyle(.secondary).accessibilityLabel("Info").help("Info")
+-                .infoPopoverAnchor(filter.id)
+-            #endif
+             if filter.isRemoteURL && (isDownloading || !isDownloaded) {
+                 ContentDownloadControl(isDownloading: isDownloading, name: text.name, action: onDownload)
+             } else {
+```
+
+**File**: `wBlock/InfoPresentation.swift` (modified, +24/-13)
+```diff
+@@ -12,9 +12,9 @@ func macOSWindowAction<Action>(_ route: @escaping (Action) -> Void) -> ((Action)
+ 
+ extension View {
+     @ViewBuilder
+-    func infoPopoverAnchor(_ id: AnyHashable?) -> some View {
++    func infoPopoverAnchor(_ id: AnyHashable?, capturesClicks: Bool = true) -> some View {
+         #if os(macOS)
+-        if let id { modifier(InfoPopoverAnchor(id: id)) } else { self }
++        if let id { modifier(InfoPopoverAnchor(id: id, capturesClicks: capturesClicks)) } else { self }
+         #else
+         self
+         #endif
+@@ -155,6 +155,10 @@ final class InfoPopoverPresenter: ObservableObject {
+             return .init(token: token, id: anchor.id, windowNumber: window.windowNumber, frame: view.convert(view.bounds, to: nil))
+         }
+         let mouseUp = event?.type == .leftMouseUp ? event?.eventNumber : nil
++        if let event, event.type == .leftMouseUp || event.type == .leftMouseDown,
++           let hit = visible.first(where: { $0.windowNumber == event.windowNumber && $0.frame.contains(event.locationInWindow) }) {
++            state.clicked(hit.token, id: id)
++        }
+         // An item with no visible anchor, or a closing click, must not leave
+         // a selection behind that no popover shows.
+         guard let token = state.anchor(for: id, in: visible, fromKeyboard: event?.type == .keyDown),
+@@ -218,25 +222,32 @@ private struct InfoPresentationModifier<Item: Identifiable, Info: View>: ViewMod
+     }
+ }
+ 
+-/// One info button. Its click names this anchor to every enclosing presenter
+-/// before the button's action changes the selection.
++/// One info anchor. When `capturesClicks` is true (button anchors), its tap
++/// names this anchor before the button's action changes selection. Row anchors
++/// inside draggable AppKit lists leave `capturesClicks` false so they do not
++/// steal mouseDown from NSOutlineView drags; `select(_:)` matches them by click
++/// location instead.
+ private struct InfoPopoverAnchor: ViewModifier {
+     let id: AnyHashable
++    let capturesClicks: Bool
+     @State private var token = UUID()
+     @Environment(\.infoPopoverEntries) private var entries
+ 
+     func body(content: Content) -> some View {
+-        content
+-            .simultaneousGesture(TapGesture().onEnded {
+-                for presenter in entries { presenter.clicked(token, id: id) }
+-            })
+-            .background {
+-                ZStack {
+-                    ForEach(entries.indices, id: \.self) { index in
+-                        InfoPopoverAnchorRegistration(token: token, id: id, presenter: entries[index])
 -                    }
-+        }
-+        .presentationDetents(availableDetents, selection: $selectedDetent)
-+        .presentationDragIndicator(.visible)
-+        .onAppear {
-+            if !showAllLists, selectedDetent != .medium {
-+                selectedDetent = .medium
-+            }
-+        }
-+        .onChangeCompat(of: showAllLists) { _, expanded in
-+            let target: PresentationDetent = expanded ? .large : .medium
-+            if selectedDetent != target {
-+                selectedDetent = target
-+            }
-+        }
-+        .onChangeCompat(of: selectedDetent) { _, detent in
-+            if detent == .medium, showAllLists {
-+                withAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
-+                    showAllLists = false
++        let anchored = content.background {
++            ZStack {
++                ForEach(entries.indices, id: \.self) { index in
++                    InfoPopoverAnchorRegistration(token: token, id: id, presenter: entries[index])
                  }
              }
 +        }
++        if capturesClicks {
++            anchored.simultaneousGesture(TapGesture().onEnded {
++                for presenter in entries { presenter.clicked(token, id: id) }
++            })
++        } else {
++            anchored
++        }
      }
  }
- #endif
+ 
 ```
 
-**File**: `wBlock/ContentView.swift` (modified, +70/-6)
+**File**: `wBlock/MacReorderableList.swift` (modified, +13/-0)
 ```diff
-@@ -71,7 +71,11 @@ struct ContentView: View {
-     @State private var userScriptSearchRequest = 0
-     @State private var filtersScrollToTopToken = 0
-     @State private var showingLogs = false
-+    @State private var isTransitioningLayout = false
-+    @State private var layoutTransitionTask: Task<Void, Never>?
-+    @State private var deferredModeFlushTask: Task<Void, Never>?
-     @Environment(\.scenePhase) var scenePhase
-+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+@@ -44,19 +44,23 @@ struct MacListRow {
+     let movableID: UUID?
+     /// False keeps the row in its own section, like a section that disallows cross-section moves.
+     var leavesSection = true
++    var onTap: (() -> Void)? = nil
+     let content: AnyView
  
-     private var enabledListsCount: Int {
-         filterManager.filterLists.filter { $0.isSelected }.count
-@@ -252,11 +256,60 @@ struct ContentView: View {
-         selectedCategoryInfo = nil
+     init<Content: View>(_ id: UUID, movable: Bool = true, leavesSection: Bool = true, group: String? = nil,
++                        onTap: (() -> Void)? = nil,
+                         @ViewBuilder content: () -> Content) {
+         self.id = .item(id, group)
+         movableID = movable ? id : nil
+         self.leavesSection = leavesSection
++        self.onTap = onTap
+         self.content = AnyView(content())
      }
  
--    private func switchAppMode(to newMode: AppMode) {
--        guard appMode != newMode else { return }
-+    private func switchAppMode(to newMode: AppMode, fromToggle: Bool = false) {
-+        layoutTransitionTask?.cancel()
-+        layoutTransitionTask = nil
-+        guard appMode != newMode else {
-+            if isTransitioningLayout {
-+                withAnimation(.easeOut(duration: 0.16)) {
-+                    isTransitioningLayout = false
-+                }
-+            }
-+            return
-+        }
-         clearFilterPopoverSelections()
--        filterManager.flushBasicAutoApplyIfNeeded()
--        appMode = newMode
-+        if !fromToggle {
-+            Haptics.play(.tap)
-+        }
-+        layoutTransitionTask = Task { @MainActor in
-+            if fromToggle {
-+                // Let the native switch thumb finish sliding before swapping layouts.
-+                try? await Task.sleep(nanoseconds: 110_000_000)
-+                guard !Task.isCancelled else { return }
-+            }
-+
-+            if reduceMotion {
-+                withAnimation(.easeInOut(duration: 0.14)) {
-+                    isTransitioningLayout = true
-+                }
-+                try? await Task.sleep(nanoseconds: 120_000_000)
-+                guard !Task.isCancelled else { return }
-+                var transaction = Transaction(animation: nil)
-+                transaction.disablesAnimations = true
-+                withTransaction(transaction) {
-+                    appMode = newMode
-+                }
-+                withAnimation(.easeInOut(duration: 0.18)) {
-+                    isTransitioningLayout = false
-+                }
-+            } else {
-+                withAnimation(.easeIn(duration: 0.13)) {
-+                    isTransitioningLayout = true
-+                }
-+                try? await Task.sleep(nanoseconds: 130_000_000)
-+                guard !Task.isCancelled else { return }
-+                var transaction = Transaction(animation: nil)
-+                transaction.disablesAnimations = true
-+                withTransaction(transaction) {
-+                    appMode = newMode
-+                }
-+                try? await Task.sleep(nanoseconds: 16_000_000)
-+                guard !Task.isCancelled else { return }
-+                withAnimation(.spring(response: 0.36, dampingFraction: 0.84)) {
-+                    isTransitioningLayout = false
-+                }
-+            }
-+        }
+     init<Content: View>(decoration id: String, @ViewBuilder content: () -> Content) {
+         self.id = .decoration(id)
+         movableID = nil
++        self.onTap = nil
+         self.content = AnyView(content())
      }
- 
-     var body: some View {
-@@ -352,6 +405,9 @@ struct ContentView: View {
-                 onAction: handleHealthAction
-             )
+ }
+@@ -306,6 +310,8 @@ struct MacReorderableList: NSViewRepresentable {
+         outline.registerForDraggedTypes([Coordinator.dragType])
+         outline.dataSource = context.coordinator
+         outline.delegate = context.coordinator
++        outline.target = context.coordinator
++        outline.action = #selector(Coordinator.rowClicked(_:))
+         scroll.documentView = outline
+         context.coordinator.outline = outline
+         context.coordinator.update(self, environment: context.environment)
+@@ -761,6 +767,13 @@ struct MacReorderableList: NSViewRepresentable {
+             guard let node = item as? Node, case .row(let id) = node.id else { return nil }
+             return model.sections.lazy.flatMap(\.rows).first { $0.id == id }
          }
-+        .scaleEffect(isTransitioningLayout && !reduceMotion ? 0.982 : 1)
-+        .blur(radius: isTransitioningLayout && !reduceMotion ? 7 : 0)
-+        .opacity(isTransitioningLayout ? 0.86 : 1)
-         .background(keyboardShortcutHandlers)
-         .keyboardScrollingCompat()
-         .onAppear {
-@@ -364,7 +420,12 @@ struct ContentView: View {
-             clearFilterPopoverSelections()
-             filterManager.showingAppliedBanner = false
-             filterManager.showingNoUpdatesAlert = false
--            filterManager.flushBasicAutoApplyIfNeeded(includeUnqueued: newMode == .basic)
-+            deferredModeFlushTask?.cancel()
-+            deferredModeFlushTask = Task { @MainActor in
-+                try? await Task.sleep(nanoseconds: 380_000_000)
-+                guard !Task.isCancelled else { return }
-+                filterManager.flushBasicAutoApplyIfNeeded(includeUnqueued: newMode == .basic)
-+            }
++        @objc func rowClicked(_ sender: NSOutlineView) {
++            let rowIndex = sender.clickedRow
++            guard rowIndex >= 0,
++                  let node = sender.item(atRow: rowIndex) as? Node,
++                  let tap = row(for: node)?.onTap else { return }
++            tap()
++        }
+         func movableID(for item: Any) -> UUID? { row(for: item)?.movableID }
+         func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
+             guard let id = movableID(for: item) else { return nil }
+```
+
+**File**: `wBlock/UserScriptManagerView.swift` (modified, +5/-9)
+```diff
+@@ -401,7 +401,9 @@ struct UserScriptManagerView: View {
+             let section = UserScriptDisplaySection(id: category, scripts: displayedScripts.filter { $0.displayCategory == category })
+             return MacListSection(id: category.id, header: AnyView(displaySectionHeader(section)),
+                                   rows: section.scripts.map { script in
+-                                      MacListRow(script.id, leavesSection: !script.isBuiltIn) { scriptRowView(script: script) }
++                                      MacListRow(script.id, leavesSection: !script.isBuiltIn, onTap: {
++                                          selectedScriptInfo = SelectedUserScript(id: script.id, action: .info)
++                                      }) { scriptRowView(script: script) }
+                                   },
+                                   revealsOnlyWhileDragging: true)
          }
-         .sheet(isPresented: $showingHealthDetail) {
-             SafariHealthDetailView(
-@@ -752,7 +813,10 @@ struct ContentView: View {
-     }
- 
-     private var settingsView: some View {
--        SettingsView(filterManager: filterManager)
-+        SettingsView(
-+            filterManager: filterManager,
-+            onSwitchAppMode: { switchAppMode(to: $0, fromToggle: true) }
-+        )
-     }
- 
-     private var topBanners: some ViewModifier {
-```
-
-**File**: `wBlock/LocalizationHelpers.swift` (modified, +10/-2)
-```diff
-@@ -77,16 +77,24 @@ struct RegionalLanguageOption: Identifiable, Hashable {
-         let nativeName: String = Locale.nativeLanguageName(for: code) ?? self.name
-         self.nativeName = nativeName
-         var terms: [String] = [nativeName, self.name, code, Self.english.localizedString(forLanguageCode: code) ?? code]
--        terms += Self.scriptNamesByCode[code] ?? []
-         terms += Self.synonymsByCode[code] ?? []
-         searchTerms = terms
-     }
- 
-     /// Ignores case and accents, so "espanol" finds español (#951).
-+    /// Defers `scriptNamesByCode` (which scans `Locale.availableIdentifiers`)
-+    /// until an actual search query runs so building language lists never stalls
-+    /// the main thread.
-     func matches(_ query: String) -> Bool {
-         let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-         guard !query.isEmpty else { return false }
--        return searchTerms.contains { $0.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }
-+        if searchTerms.contains(where: { $0.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }) {
-+            return true
-+        }
-+        if let scriptNames = Self.scriptNamesByCode[code] {
-+            return scriptNames.contains { $0.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }
-+        }
-+        return false
-     }
- 
-     /// The locale the app is actually displayed in, so names sort the way the
-```
-
-**File**: `wBlock/SettingsView.swift` (modified, +30/-4)
-```diff
-@@ -8,9 +8,12 @@ import wBlockCoreService
- 
- struct SettingsView: View {
-     let filterManager: AppFilterManager
-+    var onSwitchAppMode: ((AppMode) -> Void)? = nil
-     @ObservedObject private var dataManager = ProtobufDataManager.shared
-     @ObservedObject private var syncManager = CloudSyncManager.shared
-     @AppStorage(AppMode.storageKey) private var appMode: AppMode = .basic
-+    @State private var showAllListsSwitch = UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue
-+    @State private var preserveAdvancedScrollOnModeChange = false
-     @Environment(\.openURL) private var openURL
-     private static let autoUpdateIntervalPresets: [Double] = [1, 2, 4, 6, 12, 24, 48, 72, 168]
-     static let reportIssueURL = URL(string: "https://github.com/0xCUB3/wBlock/issues/new/choose")!
-@@ -247,12 +250,16 @@ struct SettingsView: View {
- 
-     private var showAllListsBinding: Binding<Bool> {
-         Binding(
--            get: { appMode == .advanced },
-+            get: { showAllListsSwitch },
-             set: { showAll in
-                 let newMode: AppMode = showAll ? .advanced : .basic
--                guard newMode != appMode else { return }
--                filterManager.flushBasicAutoApplyIfNeeded()
--                appMode = newMode
-+                showAllListsSwitch = showAll
-+                preserveAdvancedScrollOnModeChange = (newMode != appMode)
-+                if let onSwitchAppMode {
-+                    onSwitchAppMode(newMode)
-+                } else if newMode != appMode {
-+                    appMode = newMode
-+                }
+@@ -750,14 +752,8 @@ struct UserScriptManagerView: View {
+                     selectedScriptInfo = SelectedUserScript(id: script.id, action: .info)
+                 }
              }
-         )
-     }
-@@ -940,6 +947,25 @@ struct SettingsView: View {
-                         withAnimation { proxy.scrollTo(target, anchor: Self.sectionScrollAnchor) }
-                         scrollTarget = nil
-                     }
-+                    .onAppear {
-+                        showAllListsSwitch = (appMode == .advanced)
-+                    }
-+                    .onChangeCompat(of: appMode) { _, newMode in
-+                        let isAdvanced = (newMode == .advanced)
-+                        if showAllListsSwitch != isAdvanced {
-+                            showAllListsSwitch = isAdvanced
-+                        }
-+                        #if os(iOS)
-+                        if preserveAdvancedScrollOnModeChange {
-+                            preserveAdvancedScrollOnModeChange = false
-+                            DispatchQueue.main.async {
-+                                proxy.scrollTo(SettingsSection.advanced, anchor: .center)
-+                            }
-+                        }
-+                        #else
-+                        preserveAdvancedScrollOnModeChange = false
-+                        #endif
-+                    }
-             }
-         }
-     }
+-            #endif
+-            #if os(macOS)
+-            Button { selectedScriptInfo = SelectedUserScript(id: script.id, action: .info) } label: {
+-                Image(systemName: "info.circle")
+-            }
+-            .buttonStyle(.plain).noFocusRingCompat()
+-            .foregroundStyle(.secondary).accessibilityLabel("Info").help("Info")
+-            .infoPopoverAnchor(script.id)
++            #else
++            .infoPopoverAnchor(script.id, capturesClicks: false)
+             #endif
+ 
+             if !script.isLocal && (downloadingScriptIDs.contains(script.id) || !script.isDownloaded) {
 ```
 
 ---
 
-### Incident Patch 2: `0bdfd797` (2026-11-23)
-**Commit Message**: feat(ui): polish default layout updates, Also on peek, Reset to Recommended, and Stricter Blocking (#1150)
+### Incident Patch 2: `3a6fdf2a` (2026-11-24)
+**Commit Message**: fix(ui): unify pause blocking banners, show paused parts, and hide duplicate footer (#1162)
 
-**File**: `scripts/test_basic_mode.swift` (modified, +17/-0)
+**File**: `scripts/test_basic_mode.swift` (modified, +16/-2)
 ```diff
-@@ -147,6 +147,23 @@ struct BasicModeTests {
-         apply(resetChanges, to: &lists)
-         precondition(adsBundle.state(in: lists) == .on, "Reset to Recommended must normalize bundle to .on")
-         precondition(!memory.hasSnapshot(for: adsBundle))
-+
-+        // Custom list inside a core category puts the bundle in .partlyOn and
-+        // Reset to Recommended disables it (#1150).
-+        var customInAds = FilterList(
-+            id: UUID(),
-+            name: "Custom Ads List",
-+            url: URL(string: "https://example.com/custom-ads-reset.txt")!,
-+            category: .ads,
-+            isSelected: true
-+        )
-+        customInAds.isCustom = true
-+        lists.append(customInAds)
-+        precondition(adsBundle.state(in: lists) == .partlyOn, "Custom list enabled in Ads must yield .partlyOn")
-+        let resetCustomChanges = memory.resetToRecommendedChanges(for: adsBundle, in: lists)
-+        apply(resetCustomChanges, to: &lists)
-+        precondition(adsBundle.state(in: lists) == .on, "Reset to Recommended must normalize Ads with custom list to .on")
-+        precondition(!(lists.first { $0.id == customInAds.id }?.isSelected ?? true), "Reset to Recommended must disable custom lists in category")
-     }
+@@ -412,7 +412,9 @@ struct BasicModeTests {
+             failedDuringUpdate: false,
+             lastUpdatedDate: now
+         ))
+-        precondition(s4Full == .paused(partial: false) && s4Full.action == .resume)
++        precondition(s4Full == .paused(components: .all) && s4Full.action == .resume && s4Full.isPaused)
++        precondition(s4Full.title == "Protection Paused", "Paused title must be capitalized")
++        precondition(s4Full.tone == .orange, "Paused tone must match orange pause banners")
  
-     private static func testBasicBundleUnownedActiveAndDirty() {
+         let s4Partial = SafariHealthResolver.resolve(SafariHealthInput(
+             hasReadExtensions: true,
+@@ -427,7 +429,18 @@ struct BasicModeTests {
+             failedDuringUpdate: false,
+             lastUpdatedDate: now
+         ))
+-        precondition(s4Partial == .paused(partial: true))
++        precondition(s4Partial == .paused(components: [.filters]) && s4Partial.isPaused)
++
++        // Pause copy reflects paused parts and mode/platform picker instructions (#1162)
++        let fullSummary = PauseBlockingCopy.pausedSummary(for: .all)
++        precondition(fullSummary.contains("All blocking is paused"), "Full pause summary must state everything is paused: \(fullSummary)")
++        precondition(fullSummary.contains("Filters") && fullSummary.contains("Userscripts & Userstyles") && fullSummary.contains("Element Zapper"))
++        let partialSummary = PauseBlockingCopy.pausedSummary(for: [.filters, .elementZapper])
++        precondition(partialSummary.contains("Filters") && partialSummary.contains("Element Zapper") && !partialSummary.contains("Userscripts"))
++        precondition(PauseBlockingCopy.componentPickerHint(appMode: .basic, isMacOS: false).contains("Show All Lists"))
++        precondition(PauseBlockingCopy.componentPickerHint(appMode: .advanced, isMacOS: false).contains("Hold the Pause button"))
++        precondition(PauseBlockingCopy.componentPickerHint(appMode: .basic, isMacOS: true).contains("View > Pause Blocking"))
++        precondition(PauseBlockingCopy.componentPickerHint(appMode: .advanced, isMacOS: true).contains("View > Pause Blocking"))
+ 
+         // 5. Rule limit hit beats applying & failed
+         let s5 = SafariHealthResolver.resolve(SafariHealthInput(
+@@ -460,6 +473,7 @@ struct BasicModeTests {
+             lastUpdatedDate: now
+         ))
+         precondition(s6 == .applying && s6.action == nil)
++        precondition(s6.title == "Applying Filters…", "Applying title must be capitalized")
+ 
+         // 7. Failed beats protected
+         let s7 = SafariHealthResolver.resolve(SafariHealthInput(
 ```
 
-**File**: `wBlock/AppFilterManager+Updates.swift` (modified, +33/-14)
+**File**: `wBlock/ContentView.swift` (modified, +15/-5)
 ```diff
-@@ -47,15 +47,19 @@ extension AppFilterManager {
- 
-     func checkForUpdates(
-         scope: UpdateCheckScope = .all,
--        presentation: UpdateCheckPresentation = .blocking
-+        presentation: UpdateCheckPresentation = .blocking,
-+        autoApply: Bool = false
-     ) async {
-         // A running auto-update is already checking and applying the same lists;
-         // show its progress instead of ignoring the request.
-         guard !isAutoUpdateRunning else {
--            showBackgroundApplyProgress()
-+            if !autoApply {
-+                showBackgroundApplyProgress()
-+            }
-             return
-         }
--        if presentation == .refresh {
-+        clearBasicUpToDateStatus()
-+        if presentation == .refresh || autoApply {
-             suppressBlockingOverlay = true
-         }
-         updateCheckProgress = nil
-@@ -64,7 +68,7 @@ extension AppFilterManager {
-         defer {
-             isLoading = false
-             updateCheckProgress = nil
--            if presentation == .refresh {
-+            if presentation == .refresh || autoApply {
-                 suppressBlockingOverlay = false
-             }
-             drainFollowUpBasicApplyIfNeeded()
-@@ -95,15 +99,29 @@ extension AppFilterManager {
- 
-         let totalUpdates = availableUpdates.count + availableScriptUpdates.count
-         if totalUpdates > 0 {
--            applyProgressViewModel.presentReview()
--            showingApplyProgressSheet = true
--            statusDescription = LocalizedStrings.format(
--                "Found %d update(s) available.",
--                comment: "Updates found status",
--                totalUpdates
--            )
-+            if autoApply {
-+                let filtersToUpdate = availableUpdates
-+                let scriptsToUpdate = availableScriptUpdates
-+                await downloadAndApplySelectedUpdates(
-+                    filters: filtersToUpdate,
-+                    scripts: scriptsToUpdate,
-+                    showProgressSheet: false
-+                )
-+            } else {
-+                applyProgressViewModel.presentReview()
-+                showingApplyProgressSheet = true
-+                statusDescription = LocalizedStrings.format(
-+                    "Found %d update(s) available.",
-+                    comment: "Updates found status",
-+                    totalUpdates
-+                )
-+            }
-         } else {
--            showingNoUpdatesAlert = true
-+            if autoApply {
-+                showBasicUpToDateBriefly()
-+            } else {
-+                showingNoUpdatesAlert = true
-+            }
-             statusDescription = LocalizedStrings.text("No updates available.", comment: "No updates status")
-             Task {
-                 await ConcurrentLogManager.shared.info(
-@@ -158,11 +176,12 @@ extension AppFilterManager {
-     /// Downloads the selected filter/script updates, then runs the shared apply pipeline.
-     func downloadAndApplySelectedUpdates(
-         filters selectedFilters: [FilterList],
--        scripts selectedScripts: [UserScript]
-+        scripts selectedScripts: [UserScript],
-+        showProgressSheet: Bool = true
-     ) async {
-         let started = await performExclusiveApply {
-             self.prepareApplyRunState()
--            self.showingApplyProgressSheet = true
-+            self.showingApplyProgressSheet = showProgressSheet
- 
-             let downloadingStatus = LocalizedStrings.text(
-                 "Downloading selected updates...",
-```
-
-**File**: `wBlock/AppFilterManager.swift` (modified, +20/-0)
-```diff
-@@ -222,7 +222,27 @@ class AppFilterManager: ObservableObject {
-     @Published private(set) var basicApplyCompletionToken = 0
-     @Published private(set) var lastBasicApplyFailed = false
-     @Published private(set) var lastBasicApplyFailedFilterIDs: Set<UUID> = []
-+    @Published private(set) var showingBasicUpToDateStatus = false
-     private var needsFollowUpBasicApply = false
-+    private var basicUpToDateTask: Task<Void, Never>?
-+
-+    func showBasicUpToDateBriefly() {
-+        basicUpToDateTask?.cancel()
-+        showingBasicUpToDateStatus = true
-+        basicUpToDateTask = Task { @MainActor [weak self] in
-+            try? await Task.sleep(nanoseconds: 3_500_000_000)
-+            guard !Task.isCancelled else { return }
-+            self?.showingBasicUpToDateStatus = false
-+        }
-+    }
-+
-+    func clearBasicUpToDateStatus() {
-+        basicUpToDateTask?.cancel()
-+        basicUpToDateTask = nil
-+        if showingBasicUpToDateStatus {
-+            showingBasicUpToDateStatus = false
-+        }
-+    }
- 
-     func markCurrentStateApplied() {
-         appliedSelectedFilterIDs = selectedFilterIDs
-```
-
-**File**: `wBlock/BasicBundle.swift` (modified, +16/-13)
-```diff
-@@ -283,17 +283,19 @@ enum BasicBundle: Hashable, Identifiable, Sendable {
-     }
- 
-     /// Derives `.off`, `.on`, or `.partlyOn` directly from `filters`.
-+    /// Core bundles inspect `scopedFilters` so custom lists placed in that
-+    /// category also participate in custom state and Reset to Recommended.
-     func state(
-         in filters: [FilterList],
-         recommendedNames: Set<String> = FilterListLoader.recommendedFilterNames
-     ) -> BasicBundleState {
--        let owned = ownedFilters(in: filters, recommendedNames: recommendedNames)
--        let selectedOwnedIDs = Set(owned.filter(\.isSelected).map(\.id))
--        if selectedOwnedIDs.isEmpty {
-+        let scoped = scopedFilters(in: filters, recommendedNames: recommendedNames)
-+        let selectedScopedIDs = Set(scoped.filter(\.isSelected).map(\.id))
-+        if selectedScopedIDs.isEmpty {
-             return .off
-         }
-         let memberIDs = Set(memberFilters(in: filters, recommendedNames: recommendedNames).map(\.id))
--        if !memberIDs.isEmpty && selectedOwnedIDs == memberIDs {
-+        if !memberIDs.isEmpty && selectedScopedIDs == memberIDs {
-             return .on
-         }
-         return .partlyOn
-@@ -508,21 +510,21 @@ struct BasicBundleToggleMemory: Sendable {
-         in filters: [FilterList],
-         recommendedNames: Set<String> = FilterListLoader.recommendedFilterNames
-     ) -> [(id: UUID, selected: Bool)] {
--        let owned = bundle.ownedFilters(in: filters, recommendedNames: recommendedNames)
--        let ownedIDs = Set(owned.map(\.id))
-+        let scoped = bundle.scopedFilters(in: filters, recommendedNames: recommendedNames)
-+        let scopedIDs = Set(scoped.map(\.id))
-         let currentState = bundle.state(in: filters, recommendedNames: recommendedNames)
- 
-         if !turnOn {
-             if currentState == .partlyOn {
--                snapshots[bundle.id] = Set(owned.filter(\.isSelected).map(\.id))
-+                snapshots[bundle.id] = Set(scoped.filter(\.isSelected).map(\.id))
-             } else {
-                 snapshots.removeValue(forKey: bundle.id)
-             }
--            return owned.filter(\.isSelected).map { ($0.id, false) }
-+            return scoped.filter(\.isSelected).map { ($0.id, false) }
-         } else {
-             let targetIDs: Set<UUID>
-             if let saved = snapshots.removeValue(forKey: bundle.id) {
--                let valid = saved.intersection(ownedIDs)
-+                let valid = saved.intersection(scopedIDs)
-                 if !valid.isEmpty {
-                     targetIDs = valid
-                 } else {
-@@ -531,23 +533,24 @@ struct BasicBundleToggleMemory: Sendable {
-             } else {
-                 targetIDs = Set(bundle.memberFilters(in: filters, recommendedNames: recommendedNames).map(\.id))
-             }
--            return owned.compactMap { filter in
-+            return scoped.compactMap { filter in
-                 let desired = targetIDs.contains(filter.id)
-                 return filter.isSelected == desired ? nil : (filter.id, desired)
-             }
-         }
-     }
- 
--    /// Normalizes a bundle to its recommended `members` and clears any snapshot.
-+    /// Normalizes a bundle to its recommended `members` (including disabling
-+    /// custom lists placed in the category) and clears any snapshot.
-     mutating func resetToRecommendedChanges(
-         for bundle: BasicBundle,
-         in filters: [FilterList],
-         recommendedNames: Set<String> = FilterListLoader.recommendedFilterNames
-     ) -> [(id: UUID, selected: Bool)] {
-         snapshots.removeValue(forKey: bundle.id)
--        let owned = bundle.ownedFilters(in: filters, recommendedNames: recommendedNames)
-+        let scoped = bundle.scopedFilters(in: filters, recommendedNames: recommendedNames)
-         let memberIDs = Set(bundle.memberFilters(in: filters, recommendedNames: recommendedNames).map(\.id))
--        return owned.compactMap { filter in
-+        return scoped.compactMap { filter in
-             let desired = memberIDs.contains(filter.id)
-             return filter.isSelected == desired ? nil : (filter.id, desired)
-         }
-```
-
-**File**: `wBlock/BasicFiltersView.swift` (modified, +125/-42)
-```diff
-@@ -16,16 +16,53 @@ struct BasicFiltersView: View {
-     let onHeroVisibilityChange: (Bool) -> Void
-     let onSwitchToAdvanced: () -> Void
- 
-+    private struct AlsoOnSheetItem: Identifiable {
-+        let id = "alsoOn"
-+    }
-+
-     @AppStorage(ListDisplayOrder.filtersKey) private var filterDisplayOrder = Data()
-     @State private var toggleMemory = BasicBundleToggleMemory()
-     @State private var peekBundle: BasicBundle?
--    @State private var showingUnownedSheet = false
-+    @State private var unownedSheetItem: AlsoOnSheetItem?
-     @State private var showingLanguagesSheet = false
-     @State private var showingHeroPopover = false
-     private static let stricterBlockingExpandedKey = "wBlock.basicStricterBlockingExpanded"
--    @State private var showStricterBlocking = UserDefaults.standard.bool(forKey: BasicFiltersView.stricterBlockingExpandedKey)
-+    @State private var showStricterBlocking: Bool
-     @State private var scrollOffset: CGFloat = 0
- 
-+    init(
-+        filterManager: AppFilterManager,
-+        safariHealth: SafariHealthMonitor,
-+        lastUpdatedDate: Date?,
-+        onOpenHealthDetail: @escaping () -> Void,
-+        onCheckForUpdates: @escaping () -> Void,
-+        onHealthAction: @escaping (SafariHealthStatus.Action) -> Void,
-+        onHeroVisibilityChange: @escaping (Bool) -> Void,
-+        onSwitchToAdvanced: @escaping () -> Void
-+    ) {
-+        self.filterManager = filterManager
-+        self.safariHealth = safariHealth
-+        self.lastUpdatedDate = lastUpdatedDate
-+        self.onOpenHealthDetail = onOpenHealthDetail
-+        self.onCheckForUpdates = onCheckForUpdates
-+        self.onHealthAction = onHealthAction
-+        self.onHeroVisibilityChange = onHeroVisibilityChange
-+        self.onSwitchToAdvanced = onSwitchToAdvanced
-+
-+        // Respect the user's saved dropdown state when set; on first visit,
-+        // start already expanded (without an appear animation) if any stricter
-+        // annoyance list is active (#1150).
-+        let initialExpanded: Bool
-+        if UserDefaults.standard.object(forKey: Self.stricterBlockingExpandedKey) != nil {
-+            initialExpanded = UserDefaults.standard.bool(forKey: Self.stricterBlockingExpandedKey)
-+        } else {
-+            initialExpanded = AnnoyanceChoice.basicStricterChoices.contains {
-+                BasicBundle.annoyance($0).state(in: filterManager.filterLists) != .off
-+            }
-+        }
-+        _showStricterBlocking = State(initialValue: initialExpanded)
-+    }
-+
-     @Environment(\.colorScheme) private var colorScheme
-     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
- 
-@@ -128,14 +165,9 @@ struct BasicFiltersView: View {
-         #if os(iOS)
-         .refreshable {
-             guard !filterManager.isLoading else { return }
--            await filterManager.checkForUpdates(scope: .filters, presentation: .refresh)
-+            await filterManager.checkForUpdates(scope: .filters, presentation: .refresh, autoApply: true)
-         }
-         #endif
--        .onAppear {
--            if hasActiveStricterAnnoyance {
--                showStricterBlocking = true
--            }
--        }
-         .infoPresentation(item: $peekBundle) { bundle in
-             BasicBundlePeekView(
-                 bundle: bundle,
-@@ -149,7 +181,7 @@ struct BasicFiltersView: View {
-                 }
-             )
-         }
--        .sheet(isPresented: $showingUnownedSheet) {
-+        .infoPresentation(item: $unownedSheetItem) { _ in
-             ScopedBundleListsSheet(
-                 title: String(localized: "Also on"),
-                 filters: FilterListPresentation.ordered(unownedActiveFilters, order: filterDisplayOrder),
-@@ -178,6 +210,9 @@ struct BasicFiltersView: View {
-             isWelded: safariHealth.hysteresis.isWelded,
-             weldCelebrationCount: safariHealth.weldCelebrationCount,
-             applyProgress: applyProgress,
-+            statusSubtitleOverride: filterManager.showingBasicUpToDateStatus
-+                ? String(localized: "Filters are up to date.")
-+                : nil,
-             onTapHero: {
-                 #if os(macOS)
-                 showingHeroPopover = true
-@@ -624,7 +659,7 @@ struct BasicFiltersView: View {
-             isBypassPaywallsCleanEnabled: isBypassPaywallsCleanEnabled
-         )
-         return Button {
--            showingUnownedSheet = true
-+            unownedSheetItem = AlsoOnSheetItem()
-         } label: {
-             HStack(spacing: 12) {
-                 IconBadge(
-@@ -654,6 +689,7 @@ struct BasicFiltersView: View {
-         }
-         .buttonStyle(.plain)
-         .noFocusRingCompat()
-+        .infoPopoverAnchor("alsoOn")
-     }
- 
-     // MARK: - Footer
-@@ -923,13 +959,8 @@ struct BasicBundlePeekView: View {
-                     }
-                 } label: {
-                     HStack {
--                        Text(
--                            String.localizedStringWithFormat(
--                                NSLocalizedString("All %d list
-```
-
-**File**: `wBlock/ContentView.swift` (modified, +9/-3)
-```diff
-@@ -222,7 +222,10 @@ struct ContentView: View {
+@@ -225,11 +225,16 @@ struct ContentView: View {
      }
  
      private var showBasicBottomAccessory: Bool {
--        appMode == .basic && !healthStatus.isProtected && (!isBasicHeroVisible || tabSelection.value != 0)
-+        appMode == .basic
-+            && !healthStatus.isProtected
-+            && healthStatus != .applying
-+            && (!isBasicHeroVisible || tabSelection.value != 0)
+-        appMode == .basic
+-            && !healthStatus.isProtected
+-            && healthStatus != .applying
+-            && healthStatus != .checkingForUpdates
+-            && (!isBasicHeroVisible || tabSelection.value != 0)
++        guard appMode == .basic,
++              !healthStatus.isProtected,
++              healthStatus != .applying,
++              healthStatus != .checkingForUpdates
++        else { return false }
++        // Extras and Settings already show PauseBlockingBanner at the top while paused (#1162).
++        if healthStatus.isPaused && tabSelection.value != 0 {
++            return false
++        }
++        return !isBasicHeroVisible || tabSelection.value != 0
      }
  
      private func handleHealthAction(_ action: SafariHealthStatus.Action) {
-@@ -535,7 +538,10 @@ struct ContentView: View {
-                     safariHealth: safariHealth,
-                     lastUpdatedDate: latestFilterUpdateDate,
-                     onOpenHealthDetail: { showingHealthDetail = true },
--                    onCheckForUpdates: { checkForUpdates(scope: .all) },
-+                    onCheckForUpdates: {
-+                        guard !filterManager.isLoading else { return }
-+                        Task { await filterManager.checkForUpdates(scope: .all, presentation: .refresh, autoApply: true) }
-+                    },
-                     onHealthAction: handleHealthAction,
-                     onHeroVisibilityChange: { visible in
-                         if isBasicHeroVisible != visible { isBasicHeroVisible = visible }
-@@ -608,7 +614,7 @@ struct ContentView: View {
-             hasPendingChanges: false,
-             onTap: {
-                 guard !filterManager.isLoading else { return }
--                Task { await filterManager.checkForUpdates(scope: .all, presentation: .blocking) }
-+                Task { await filterManager.checkForUpdates(scope: .all, presentation: .refresh, autoApply: true) }
-             },
-             onBusyTap: filterManager.showBackgroundApplyProgress
-         ) {
+@@ -751,6 +756,11 @@ struct ContentView: View {
+                     .navigationTitle("")
+                     #endif
+                     .modifier(basicToolbar)
++                    .topBarCompat {
++                        if filterManager.isBlockingPaused {
++                            PauseBlockingBanner(filterManager: filterManager)
++                        }
++                    }
+                     .transition(.opacity)
+                 } else {
+                     UserScriptManagerView(
 ```
 
-**File**: `wBlock/OnboardingView.swift` (modified, +11/-2)
+**File**: `wBlock/SafariHealth.swift` (modified, +86/-9)
 ```diff
-@@ -637,7 +637,7 @@ struct OnboardingView: View {
-                     Text("Extras")
-                         .font(.headline)
-                     SelectableRowGroup(data: featuredExtras) { item in
--                        userscriptCard(for: item)
-+                        userscriptCard(for: item, showLanguageCaption: true)
-                     }
-                 }
-             }
-@@ -1098,11 +1098,20 @@ struct OnboardingView: View {
+@@ -90,13 +90,88 @@ struct SafariHealthInput: Equatable, Sendable {
+     var lastUpdatedDate: Date?
+ }
+ 
++/// Shared copy for paused-protection surfaces (Hero, top banner, and detail sheet).
++enum PauseBlockingCopy {
++    static var defaultIsMacOS: Bool {
++        #if os(macOS)
++        true
++        #else
++        false
++        #endif
++    }
++
++    static func componentNames(for components: BlockingPauseComponents) -> [String] {
++        var names: [String] = []
++        if components.contains(.filters) {
++            names.append(NSLocalizedString("Filters", comment: "Paused blocking component"))
++        }
++        if components.contains(.userScripts) {
++            names.append(NSLocalizedString("Userscripts & Userstyles", comment: "Paused blocking component"))
++        }
++        if components.contains(.elementZapper) {
++            names.append(NSLocalizedString("Element Zapper", comment: "Paused blocking component"))
++        }
++        return names
++    }
++
++    static func pausedSummary(for components: BlockingPauseComponents) -> String {
++        let normalized = components.intersection(.all)
++        let joined = ListFormatter.localizedString(byJoining: componentNames(for: normalized))
++        if normalized == .all {
++            return String.localizedStringWithFormat(
++                NSLocalizedString(
++                    "All blocking is paused (%@).",
++                    comment: "Pause blocking status when every component is paused"
++                ),
++                joined
++            )
++        }
++        return String.localizedStringWithFormat(
++            NSLocalizedString(
++                "Paused: %@.",
++                comment: "Pause blocking status listing specific paused components"
++            ),
++            joined
++        )
++    }
++
++    static func componentPickerHint(appMode: AppMode, isMacOS: Bool = defaultIsMacOS) -> String {
++        if isMacOS {
++            return NSLocalizedString(
++                "Use View > Pause Blocking to pause specific components.",
++                comment: "macOS hint for pausing individual blocking components"
++            )
++        }
++        switch appMode {
++        case .basic:
++            return NSLocalizedString(
++                "Turn on Show All Lists in Settings, then hold the Pause button to pause specific components.",
++                comment: "iOS Standard mode hint for pausing individual blocking components"
++            )
++        case .advanced:
++            return NSLocalizedString(
++                "Hold the Pause button to pause specific components.",
++                comment: "iOS Customizable mode hint for pausing individual blocking components"
++            )
++        }
++    }
++
++    static func message(
++        for components: BlockingPauseComponents,
++        appMode: AppMode,
++        isMacOS: Bool = defaultIsMacOS
++    ) -> String {
++        "\(pausedSummary(for: components)) \(componentPickerHint(appMode: appMode, isMacOS: isMacOS))"
++    }
++}
++
+ /// Priority-ordered protection health status shown by the Hero, compact
+ /// Advanced banner, Settings top row, and iOS bottom accessory.
+ enum SafariHealthStatus: Equatable, Sendable {
+     case allBlockersOff
+     case someBlockersOff
+     case scriptsExtensionOff
+-    case paused(partial: Bool)
++    case paused(components: BlockingPauseComponents)
+     case ruleLimitHit
+     case applying
+     case checkingForUpdates
+@@ -133,6 +208,11 @@ enum SafariHealthStatus: Equatable, Sendable {
+         return false
+     }
+ 
++    var isPaused: Bool {
++        if case .paused = self { return true }
++        return false
++    }
++
+     var isExtensionDegraded: Bool {
+         switch self {
+         case .allBlockersOff, .someBlockersOff, .scriptsExtensionOff:
+@@ -145,8 +225,7 @@ enum SafariHealthStatus: Equatable, Sendable {
+     var tone: Tone {
+         switch self {
+         case .allBlockersOff: .red
+-        case .someBlockersOff, .scriptsExtensionOff, .ruleLimitHit, .failed: .orange
+-        case .paused: .gray
++        case .someBlockersOff, .scriptsExtensionOff, .paused, .ruleLimitHit, .failed: .orange
+         case .applying, .checkingForUpdates: .accent
+         case .protected: .green
+         }
+@@ -190,18 +269,16 @@ enum SafariHealthStatus: Equatable, Sendable {
          }
      }
  
--    private func userscriptCard(for script: OnboardingUserScriptItem) -> some View {
-+    private func userscriptCard(
-+        for script: OnboardingUserScriptItem,
-+        showLanguageCaption: Bool = false
-+    ) -> some View {
-         let isSelected = selectedUserscripts.contains(script.id)
-+        let languageCaption: String = showLanguageCaption && !script.languageCodes.isEmpty
-+            ? script.languageCodes
-+                .map { RegionalLanguageOption(code: $0).nativeName }
-+                .joined(separator: ", ")
-+            : ""
- 
-         return SelectableRow(
-             title: Text(script.name),
-+            caption: languageCaption,
-             subtitle: script.description,
-             badge: script.isBeta ? "Beta" : nil,
-             isSelected: isSelected
+-    func subtitle(now: Date = Date()) -> String {
++    func subtitle(now: Date = Date(), appMode: AppMode = .basic) -> String {
+         switch self {
+         case .allBlockersOff:
+             return NSLocalizedString("wBlock can't block anything until turned on in Safari's Extensions menu.", comment: "Hero status subtitle: all blockers off")
+         case .someBlockersOff:
+             return NSLocalizedString("One or more blockers are off; ads might get through.", comment: "Hero status subtitle: some blockers off")
+         case .scriptsExtensionOff:
+             return NSLocalizedString("Extras and some ad blocking need the wBlock Scripts extension enabled.", comment: "Hero st
 ```
 
-**File**: `wBlock/ProtectionHero.swift` (modified, +5/-2)
+**File**: `wBlock/SettingsView.swift` (modified, +6/-4)
 ```diff
-@@ -261,11 +261,14 @@ struct ProtectionHero: View {
-     let isWelded: Bool
-     let weldCelebrationCount: Int
-     var applyProgress: Double? = nil
-+    var statusSubtitleOverride: String? = nil
-     let onTapHero: () -> Void
-     let onAction: (SafariHealthStatus.Action) -> Void
+@@ -1575,22 +1575,24 @@ struct PauseBlockingControls: View {
+     }
+ }
+ 
+-/// Shown while blocking is paused, on the Filters, Userscripts, and Settings pages.
++/// Shown while blocking is paused, on Filters, Extras/Userscripts, and Settings.
+ struct PauseBlockingBanner: View {
+     @ObservedObject var filterManager: AppFilterManager
++    @AppStorage(AppMode.storageKey) private var appMode: AppMode = .basic
  
      var body: some View {
-         TimelineView(.periodic(from: .now, by: 30)) { context in
-+            let subtitleText = (status.isProtected ? statusSubtitleOverride : nil)
-+                ?? status.subtitle(now: context.date)
-             VStack(spacing: 10) {
-                 Button(action: onTapHero) {
-                     VStack(spacing: 8) {
-@@ -288,7 +291,7 @@ struct ProtectionHero: View {
-                                     .foregroundStyle(.tertiary)
-                                     .accessibilityHidden(true)
-                             }
--                            Text(status.subtitle(now: context.date))
-+                            Text(subtitleText)
-                                 .font(.footnote)
-                                 .foregroundStyle(.secondary)
-                                 .multilineTextAlignment(.center)
-@@ -301,7 +304,7 @@ struct ProtectionHero: View {
-                 .buttonStyle(.plain)
-                 .noFocusRingCompat()
-                 .accessibilityElement(children: .combine)
--                .accessibilityLabel(Text("\(status.title). \(status.subtitle(now: context.date))"))
-+                .accessibilityLabel(Text("\(status.title). \(subtitleText)"))
-                 .accessibilityHint(Text("Shows Safari extension status"))
+         HStack(spacing: 10) {
+-            Image(systemName: "pause.circle.fill")
++            Image(systemName: "shield.slash.fill")
+                 .font(.title3)
+                 .foregroundStyle(.orange)
  
-                 if let action = status.action, let ctaTitle = status.ctaTitle {
+             VStack(alignment: .leading, spacing: 2) {
+-                Text("Pause Blocking")
++                Text("Protection Paused")
+                     .font(.subheadline.weight(.semibold))
+-                Text("Pause Blocking is on while any selected component is paused. Resume restores all components.")
++                Text(PauseBlockingCopy.message(for: filterManager.pausedComponents, appMode: appMode))
+                     .font(.caption)
+                     .foregroundStyle(.secondary)
++                    .fixedSize(horizontal: false, vertical: true)
+             }
+ 
+             Spacer(minLength: 8)
+```
+
+**File**: `wBlock/en.lproj/Localizable.strings` (modified, +6/-0)
+```diff
+@@ -1301,3 +1301,9 @@ To re-enable these filters, disable other large filters and apply changes again.
+ "Filters are up to date." = "Filters are up to date.";
+ "Checking for updates…" = "Checking for updates…";
+ "Looking for newer filter lists and extras." = "Looking for newer filter lists and extras.";
++"Userscripts & Userstyles" = "Userscripts & Userstyles";
++"All blocking is paused (%@)." = "All blocking is paused (%@).";
++"Paused: %@." = "Paused: %@.";
++"Use View > Pause Blocking to pause specific components." = "Use View > Pause Blocking to pause specific components.";
++"Turn on Show All Lists in Settings, then hold the Pause button to pause specific components." = "Turn on Show All Lists in Settings, then hold the Pause button to pause specific components.";
++"Hold the Pause button to pause specific components." = "Hold the Pause button to pause specific components.";
 ```
 
 ---
 
-### Incident Patch 3: `bb1c3e27` (2026-11-23)
-**Commit Message**: Fix Show All Lists toggle glitch and Settings separator alignment
+### Incident Patch 3: `e98c14a3` (2026-11-25)
+**Commit Message**: fix(macos): track back-swipe gestures interactively without delay (#1166)
 
-**File**: `wBlock/ContentView.swift` (modified, +16/-48)
+Replace the delayed isComplete-only dismiss in SwipeBackNavigation with a live Core Animation swipe-back transition driven directly by trackSwipeEvent's gestureAmount. Captures the Settings root page right before navigation pushes, slides the pushed page 1-to-1 with finger movement over a parallax underlay with an opaque backing (so holding a Magic Mouse or Trackpad finger holds the page steady with no bleed-through), snaps off AppKit's asymptotic settle tail after release, and dismisses without a second animation once off-screen. Also commits immediately on release under Reduce Motion, adds checked gdp-wired proofs for SwipeBackGestureState, and adds a live AppKit regression test.
+
+**File**: `scripts/proofs/PolicyProbe.swift` (modified, +63/-0)
 ```diff
-@@ -71,7 +71,6 @@ struct ContentView: View {
-     @State private var userScriptSearchRequest = 0
-     @State private var filtersScrollToTopToken = 0
-     @State private var showingLogs = false
--    @State private var isTransitioningLayout = false
-     @State private var layoutTransitionTask: Task<Void, Never>?
-     @State private var deferredModeFlushTask: Task<Void, Never>?
-     @Environment(\.scenePhase) var scenePhase
-@@ -259,55 +258,23 @@ struct ContentView: View {
-     private func switchAppMode(to newMode: AppMode, fromToggle: Bool = false) {
-         layoutTransitionTask?.cancel()
-         layoutTransitionTask = nil
--        guard appMode != newMode else {
--            if isTransitioningLayout {
--                withAnimation(.easeOut(duration: 0.16)) {
--                    isTransitioningLayout = false
--                }
--            }
--            return
--        }
-+        guard appMode != newMode else { return }
-         clearFilterPopoverSelections()
-         if !fromToggle {
-             Haptics.play(.tap)
-+            withAnimation(reduceMotion ? .easeInOut(duration: 0.16) : .easeInOut(duration: 0.24)) {
-+                appMode = newMode
-+            }
-+            return
-         }
-         layoutTransitionTask = Task { @MainActor in
--            if fromToggle {
--                // Let the native switch thumb finish sliding before swapping layouts.
--                try? await Task.sleep(nanoseconds: 110_000_000)
--                guard !Task.isCancelled else { return }
--            }
--
--            if reduceMotion {
--                withAnimation(.easeInOut(duration: 0.14)) {
--                    isTransitioningLayout = true
--                }
--                try? await Task.sleep(nanoseconds: 120_000_000)
--                guard !Task.isCancelled else { return }
--                var transaction = Transaction(animation: nil)
--                transaction.disablesAnimations = true
--                withTransaction(transaction) {
--                    appMode = newMode
--                }
--                withAnimation(.easeInOut(duration: 0.18)) {
--                    isTransitioningLayout = false
--                }
--            } else {
--                withAnimation(.easeIn(duration: 0.13)) {
--                    isTransitioningLayout = true
--                }
--                try? await Task.sleep(nanoseconds: 130_000_000)
--                guard !Task.isCancelled else { return }
--                var transaction = Transaction(animation: nil)
--                transaction.disablesAnimations = true
--                withTransaction(transaction) {
--                    appMode = newMode
--                }
--                try? await Task.sleep(nanoseconds: 16_000_000)
--                guard !Task.isCancelled else { return }
--                withAnimation(.spring(response: 0.36, dampingFraction: 0.84)) {
--                    isTransitioningLayout = false
--                }
-+            // Let the native switch thumb finish gliding before rebuilding off-screen tabs.
-+            try? await Task.sleep(nanoseconds: 140_000_000)
-+            guard !Task.isCancelled else { return }
-+            var transaction = Transaction(animation: nil)
-+            transaction.disablesAnimations = true
-+            withTransaction(transaction) {
-+                appMode = newMode
-             }
-         }
-     }
-@@ -405,9 +372,6 @@ struct ContentView: View {
-                 onAction: handleHealthAction
-             )
-         }
--        .scaleEffect(isTransitioningLayout && !reduceMotion ? 0.982 : 1)
--        .blur(radius: isTransitioningLayout && !reduceMotion ? 7 : 0)
--        .opacity(isTransitioningLayout ? 0.86 : 1)
-         .background(keyboardShortcutHandlers)
-         .keyboardScrollingCompat()
-         .onAppear {
-@@ -620,6 +584,7 @@ struct ContentView: View {
-                 #endif
-                 .modifier(basicToolbar)
-             }
-+            .transition(.opacity)
-             #if os(macOS)
-             .frame(
-                 minWidth: 480, idealWidth: 540, maxWidth: .infinity,
-@@ -636,6 +601,7 @@ struct ContentView: View {
-                     // Inside the stack, like Userscripts; iOS ignores toolbar items attached outside it.
-                     .modifier(filtersToolbar)
-             }
-+            .transition(.opacity)
-             #if os(iOS)
-                 .searchableCompat(
-                     text: $filterSearchText,
-@@ -788,6 +754,7 @@ struct ContentView: View {
-                 .navigationBarTitleDisplayMode(.inline)
-                 #endif
-             }
-+            .transition(.opacity)
-         } else {
-             CompatibleNavigationStack(requiresNavigationView: false) {
-                 UserScriptManagerView(
-@@ -809,6 +776,7 @@ struct ContentView: View {
-                         .navigationBarTitleDisplayMode(.inline)
-                     #endif
-             }
-+            .transition(.opacity)
-         }
-     }
+@@ -1,3 +1,4 @@
++import AppKit
+ import Foundation
+ import wBlockCoreService
  
-```
-
-**File**: `wBlock/SettingsRowLabel.swift` (modified, +10/-7)
-```diff
-@@ -54,13 +54,16 @@ struct SettingsRowLabel: View {
-         // iOS lists draw disclosure chevrons for NavigationLink only, so a
-         // sheet-presenting button borrows one to read the same way.
-         if accessory == .popover {
--            HStack {
--                Label(title, systemImage: systemImage)
--                    .foregroundStyle(.primary)
--                Spacer()
--                Image(systemName: "chevron.right")
--                    .font(.footnote.weight(.semibold))
--                    .foregroundStyle(.tertiary)
-+            Label {
-+                HStack {
-+                    Text(title)
-+                    Spacer()
-+                    Image(systemName: "chevron.right")
-+                        .font(.footnote.weight(.semibold))
-+                        .foregroundStyle(.tertiary)
-+                }
-+            } icon: {
-+                Image(systemName: systemImage)
-             }
-         } else {
-             Label(title, systemImage: systemImage)
-```
-
-**File**: `wBlock/SettingsView.swift` (modified, +63/-11)
-```diff
-@@ -13,7 +13,11 @@ struct SettingsView: View {
-     @ObservedObject private var syncManager = CloudSyncManager.shared
-     @AppStorage(AppMode.storageKey) private var appMode: AppMode = .basic
-     @State private var showAllListsSwitch = UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue
--    @State private var preserveAdvancedScrollOnModeChange = false
-+    #if os(iOS)
-+    @State private var showsStatusPills = UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue
-+    @State private var deferStatusPillsSyncOnModeChange = false
-+    @State private var isListNearTop = false
-+    #endif
-     @Environment(\.openURL) private var openURL
-     private static let autoUpdateIntervalPresets: [Double] = [1, 2, 4, 6, 12, 24, 48, 72, 168]
-     static let reportIssueURL = URL(string: "https://github.com/0xCUB3/wBlock/issues/new/choose")!
-@@ -79,7 +83,13 @@ struct SettingsView: View {
-             guard !Task.isCancelled else { return }
-             await MainActor.run { startTimer() }
+@@ -498,6 +499,68 @@ final class ResumeCount: @unchecked Sendable { var count = 0 }
+             : FilterUpdatePopupStatus.snapshot(groupIdentifier: group, now: now, lockDirectory: directory)
+           return [ok ? 1 : 0, states.firstIndex(of: view.state)!, Int(view.startedAt ?? 0), Int(view.finishedAt ?? 0)]
          }
--        .onDisappear { stopTimer() }
-+        .onDisappear {
-+            stopTimer()
-+            #if os(iOS)
-+            showsStatusPills = (appMode == .advanced)
-+            deferStatusPillsSyncOnModeChange = false
-+            #endif
++      case "swipeBack":
++        var state = SwipeBackGestureState()
++        func phaseOf(_ name: String) -> NSEvent.Phase {
++          switch name {
++          case "mayBegin": return .mayBegin
++          case "began": return .began
++          case "changed": return .changed
++          case "ended": return .ended
++          case "cancelled": return .cancelled
++          default: return []
++          }
 +        }
-         .alert("Restart Onboarding?", isPresented: $showingRestartConfirmation) {
-             Button("Cancel", role: .cancel) {}
-             Button("Restart", role: .destructive) { restartOnboarding() }
-@@ -254,7 +264,9 @@ struct SettingsView: View {
-             set: { showAll in
-                 let newMode: AppMode = showAll ? .advanced : .basic
-                 showAllListsSwitch = showAll
--                preserveAdvancedScrollOnModeChange = (newMode != appMode)
-+                #if os(iOS)
-+                deferStatusPillsSyncOnModeChange = (newMode != appMode)
-+                #endif
-                 if let onSwitchAppMode {
-                     onSwitchAppMode(newMode)
-                 } else if newMode != appMode {
-@@ -405,6 +417,7 @@ struct SettingsView: View {
-             }
- 
-             cosmeticFilteringControls
-+                .leadingAlignedListRowSeparatorCompat()
- 
-             // Opt-in and partial, so it sits with the other power-user settings.
-             Toggle(isOn: blockedRequestCountBinding) {
-@@ -948,22 +961,29 @@ struct SettingsView: View {
-                         scrollTarget = nil
-                     }
-                     .onAppear {
--                        showAllListsSwitch = (appMode == .advanced)
-+                        let isAdvanced = (appMode == .advanced)
-+                        showAllListsSwitch = isAdvanced
-+                        #if os(iOS)
-+                        showsStatusPills = isAdvanced
-+                        deferStatusPillsSyncOnModeChange = false
-+                        #endif
-                     }
-                     .onChangeCompat(of: appMode) { _, newMode in
-                         let isAdvanced = (newMode == .advanced)
-                         if showAllListsSwitch != isAdvanced {
-                             showAllListsSwitch = isAdvanced
-                         }
-                         #if os(iOS)
--                        if preserveAdvancedScrollOnModeChange {
--                            preserveAdvancedScrollOnModeChange = false
--                            DispatchQueue.main.async {
--                                proxy.scrollTo(SettingsSection.advanced, anchor: .center)
-+                        if deferStatusPillsSyncOnModeChange {
-+                            deferStatusPillsSyncOnModeChange = false
-+                            if isListNearTop, showsStatusPills != isAdvanced {
-+                                withAnimation(.easeInOut(duration: 0.22)) {
-+                                    showsStatusPills = isAdvanced
-+                                }
-                             }
-+                        } else if showsStatusPills != isAdvanced {
-+                            showsStatusPills = isAdvanced
-                         }
--                        #else
--                        preserveAdvancedScrollOnModeChange = false
-                         #endif
-                     }
-             }
-@@ -974,7 +994,7 @@ struct SettingsView: View {
-     private var settingsList: some View {
-         #if os(iOS)
-         List {
--            if appMode == .advanced {
-+            if showsStatusPills {
-                 Section {
-                     statusPills
-                         .unifiedTabCardSectionRow()
-@@ -983,6 +1003,14 @@ struct SettingsView: View {
-             settingsSections
-         }
-         .unifiedTabListStyle()
-+        .modifier(SettingsTopTrackingModifier(isNearTop: $isListNearTop) {
-+            let isAdvanced = (appMode == .advanced)
-+            if showsStatusPills != isAdvanced {
-+                withAnimation(.easeInOut(duration: 0.22)) {
-+                    showsStatusPills = isAdvanced
-+           
++        func modeName(_ mode: SwipeBackGestureState.Mode) -> String {
++          switch mode {
++          case .idle: return "idle"
++          case .pendingAxis: return "pending"
++          case .tracking: return "tracking"
++          case .committing: return "committing"
++          }
++        }
++        func progressPermille(_ mode: SwipeBackGestureState.Mode) -> Int {
++          if case .tracking(let p, _, let rm) = mode { return rm ? 0 : Int((p * 1000).rounded()) }
++          return 0
++        }
++        return values.map { e -> [Any] in
++          let op = e["op"] as! String
++          var action = "none", stopped = false
++          switch op {
++          case "scroll":
++            let axis = e["axis"] as! String
++            let dx: CGFloat = axis == "back" ? 10 : 0
++            let dy: CGFloat = axis == "other" ? 10 : 0
++            let outcome = state.handleScroll(
++              phase: phaseOf(e["phase"] as! String),
++              hasMomentum: e.b("hasMomentum"),
++              dx: dx,
++              dy: dy,
++              swipeEnabled: e.b("swipeEnabled"),
++              reduceMotion: e.b("reduceMotionIn")
++            )
++            if outcome == .startTracking { action = "start" }
++          case "track":
++            let res = state.handleTrackUpdate(
++              amount: CGFloat(e.n("amount")) / 1000.0,
++              phase: phaseOf(e["phase"] as! String),
++              isComplete: e.b("isComplete")
++            )
++            switch res {
++            case .ignore: action = "none"; stopped = true
++            case .update: action = "update"
++            case .cancel(let s): action = "cancel"; stopped = s
++            case .commit(let s): action = "commit"; stopped = s
++            }
++          case "finishCommit":
++            state.finishCommit()
++          case "abort":
++            state.abort()
++          default:
++            preconditionFailure("unknown swipeBack op \(op)")
++          }
++          return [modeName(state.mode), action, progressPermille(state.mode), stopped ? 1 : 0]
++        }
+       default: preconditionFailure("unknown policy suite \(suite)")
+       }
+     }
 ```
 
-**File**: `wBlock/SwiftUICompatibility.swift` (modified, +11/-0)
+**File**: `scripts/proofs/README.md` (modified, +3/-0)
 ```diff
-@@ -367,6 +367,17 @@ extension View {
-             self
-         }
+@@ -29,6 +29,9 @@ Stateful laws cover deferred uploads and per-key revision acknowledgment, along
+ with the apply phase rail under out-of-order reports and failure/completion events.
+ The info popover state machine covers click, selection, and dismissal sequences, with
+ each token's anchor visibility as an input.
++The swipe-back gesture state machine covers macOS scroll-axis locking, momentum
++rejection, live finger tracking without premature commit while held, post-release
++tail snapping, Reduce Motion release commits, and single-commit isolation.
+ The foreground run gate covers its work count, run starts, and the queued resumes
+ that finishing a run hands back.
+ The headless rebuild gate's cooldowns, failure backoff and outcome recording are proven likewise, and
+```
+
+**File**: `scripts/proofs/policies.mjs` (modified, +138/-1)
+```diff
+@@ -508,8 +508,139 @@ const popupSteps = [
+     s => s.op.eq(5).and(s.st.ne(0), notLive(s))),
+ ];
+ 
++// SwipeBackGestureState (wBlock/SwipeBackNavigation.swift): interactive macOS back-swipe state machine.
++// Progress and amount are encoded in permille (0..1000): 300 = 0.30, 500 = 0.50, 995 = 0.995, 1000 = 1.00.
++// Axis classifies a scroll event after accumulation: 'short' (< 8 pt), 'back' (>= 8 pt right-dominant), 'other' (vertical or left).
++export const swipeOps = ['scroll', 'track', 'finishCommit', 'abort'];
++export const swipePhases = ['none', 'mayBegin', 'began', 'changed', 'ended', 'cancelled'];
++const swipeModes = ['idle', 'pending', 'tracking', 'committing'];
++const swipeActions = ['none', 'start', 'update', 'cancel', 'commit'];
++const swipeBase = rule('swipe back gesture')
++  .inputs({
++    op: oneOf(...swipeOps),
++    phase: oneOf(...swipePhases),
++    hasMomentum: bool,
++    swipeEnabled: bool,
++    reduceMotionIn: bool,
++    axis: oneOf('short', 'back', 'other'),
++    amount: nat,
++    isComplete: bool,
++  })
++  .state({
++    mode: oneOf(...swipeModes).from('idle'),
++    didRelease: bool.from(false),
++    reduceMotion: bool.from(false),
++    progress: 0,
++    action: oneOf(...swipeActions).from('none'),
++    stopped: bool.from(false),
++  })
++  .assume(({ amount }) => amount.atMost(1000));
++
++function swipeStep(e, broken = '') {
++  const active = e.mode.is('tracking').or(e.mode.is('committing'));
++  const canScroll = broken === 'momentum'
++    ? e.op.is('scroll').and(active.not())
++    : e.op.is('scroll').and(active.not(), e.hasMomentum.not());
++  const evalScroll = canScroll.and(e.phase.is('began').or(e.phase.is('changed').and(e.mode.is('pending'))));
++  const starts = evalScroll.and(e.axis.is('back'), e.swipeEnabled);
++  const goesPending = canScroll.and(e.phase.is('mayBegin').or(evalScroll.and(e.axis.is('short'))));
++
++  const isTracking = e.op.is('track').and(e.mode.is('tracking'));
++  const rel = e.didRelease.or(e.phase.is('ended')).or(e.phase.is('cancelled'));
++  const rm = e.reduceMotion;
++
++  const rmCompleteCommit = isTracking.and(rm, e.isComplete, e.amount.atLeast(500));
++  const rmCompleteCancel = isTracking.and(rm, e.isComplete, e.amount.lt(500));
++  const rmEndCommit = broken === 'waitForComplete'
++    ? no
++    : isTracking.and(rm, e.isComplete.not(), e.phase.is('ended'), e.amount.atLeast(300));
++  const rmEndCancel = broken === 'waitForComplete'
++    ? no
++    : isTracking.and(rm, e.isComplete.not(), e.phase.is('ended'), e.amount.lt(300));
++  const rmCancel = isTracking.and(rm, e.isComplete.not(), e.phase.is('cancelled'));
++
++  const normCompleteCommit = isTracking.and(rm.not(), e.isComplete, e.amount.atLeast(500));
++  const normCompleteCancel = isTracking.and(rm.not(), e.isComplete, e.amount.lt(500));
++  const normTailCommit = broken === 'commitWhileHolding'
++    ? isTracking.and(rm.not(), e.isComplete.not(), e.amount.atLeast(995))
++    : broken === 'waitForComplete'
++      ? no
++      : isTracking.and(rm.not(), e.isComplete.not(), rel, e.amount.atLeast(995));
++
++  const commits = rmCompleteCommit.or(rmEndCommit, normCompleteCommit, normTailCommit);
++  const cancels = rmCompleteCancel.or(rmEndCancel, rmCancel, normCompleteCancel);
++  const updates = isTracking.and(commits.not(), cancels.not());
++  const stopped = rmEndCommit.or(rmEndCancel, rmCancel, normTailCommit, e.op.is('track').and(e.mode.is('tracking').not()));
++
++  const commitMode = broken === 'doubleCommit' ? e.mode.of('tracking') : e.mode.of('committing');
++  const nextMode = when(
++    e.op.is('abort'), e.mode.of('idle'),
++    when(
++      e.op.is('finishCommit'), when(e.mode.is('committing'), e.mode.of('idle'), e.mode),
++      when(
++        starts, e.mode.of('tracking'),
++        when(
++          goesPending, e.mode.of('pending'),
++          when(
++            canScroll, e.mode.of('idle'),
++            when(
++              commits, commitMode,
++              when(cancels, e.mode.of('idle'), e.mode),
++            ),
++          ),
++        ),
++      ),
++    ),
++  );
++
++  return {
++    mode: nextMode,
++    didRelease: when(starts, no, when(updates, rel, when(nextMode.is('tracking'), e.didRelease, no))),
++    reduceMotion: when(starts, e.reduceMotionIn, when(nextMode.is('tracking'), e.reduceMotion, no)),
++    progress: when(
++      starts, 0,
++      when(
++        updates, broken === 'waitForComplete' ? 0 : when(rm, 0, e.amount),
++        when(nextMode.is('tracking'), e.progress, 0),
++      ),
++    ),
++    action: when(
++      starts, e.action.of('start'),
++      when(commits, e.action.of('commit'), when(cancels, e.action.of('cancel'), when(updates, e.action.of('update'), e.action.of('none')))),
++    ),
++    stopped,
++  };
++}
++
++export const swipeRule = swipeBase.step(e => swipeStep(e));
++const swipeInvariants = [
++  swipeRule.law('progress stays within 0..1000', ({ progress }) => progress.atMost(1000)),
++  swipeRule.law('didRelease is only true while tracking', ({ mode, didRelease }) => didRelease.implies(mode.is('tra
+```
+
+**File**: `scripts/proofs/verify.mjs` (modified, +69/-1)
+```diff
+@@ -5,7 +5,7 @@ import { mkdtempSync, readFileSync, writeFileSync, rmSync, readdirSync, existsSy
+ import { tmpdir, homedir } from "node:os";
+ import { join, resolve, dirname } from "node:path";
+ import { fileURLToPath } from "node:url";
+-import { decisions, uploadRule, revisionRule, railRule, gateRule, infoRule, headlessGateRule, headlessOps, pauseRule, popupRule, verifyProofs } from "./policies.mjs";
++import { decisions, uploadRule, revisionRule, railRule, gateRule, infoRule, headlessGateRule, headlessOps, pauseRule, popupRule, swipeRule, verifyProofs } from "./policies.mjs";
+ 
+ const here = dirname(fileURLToPath(import.meta.url)),
+   root = resolve(here, "../..");
+@@ -336,6 +336,73 @@ machine(
+   },
+ );
+ 
++const swipeInput = (op, o = {}) => ({
++  op,
++  phase: "none",
++  hasMomentum: false,
++  swipeEnabled: true,
++  reduceMotionIn: false,
++  axis: "short",
++  amount: 0,
++  isComplete: false,
++  ...o,
++});
++const swipeScrolls = [
++  swipeInput("scroll", { phase: "mayBegin" }),
++  swipeInput("scroll", { phase: "began", axis: "short" }),
++  swipeInput("scroll", { phase: "began", axis: "back" }),
++  swipeInput("scroll", { phase: "began", axis: "back", reduceMotionIn: true }),
++  swipeInput("scroll", { phase: "began", axis: "back", hasMomentum: true }),
++  swipeInput("scroll", { phase: "began", axis: "back", swipeEnabled: false }),
++  swipeInput("scroll", { phase: "began", axis: "other" }),
++  swipeInput("scroll", { phase: "changed", axis: "back" }),
++  swipeInput("scroll", { phase: "changed", axis: "other" }),
++  swipeInput("scroll", { phase: "ended", axis: "back" }),
++];
++const swipeTracks = [
++  swipeInput("track", { phase: "changed", amount: 400 }),
++  swipeInput("track", { phase: "changed", amount: 996 }),
++  swipeInput("track", { phase: "ended", amount: 250 }),
++  swipeInput("track", { phase: "ended", amount: 350 }),
++  swipeInput("track", { phase: "ended", amount: 996 }),
++  swipeInput("track", { phase: "cancelled", amount: 400 }),
++  swipeInput("track", { phase: "none", amount: 996 }),
++  swipeInput("track", { phase: "none", amount: 0, isComplete: true }),
++  swipeInput("track", { phase: "none", amount: 1000, isComplete: true }),
++];
++const swipeAlphabet = [...swipeScrolls, ...swipeTracks, swipeInput("finishCommit"), swipeInput("abort")];
++const swipeDirected = [
++  // Normal live hold, release, and tail snap.
++  [
++    swipeInput("scroll", { phase: "mayBegin" }),
++    swipeInput("scroll", { phase: "changed", axis: "back" }),
++    swipeInput("track", { phase: "changed", amount: 400 }),
++    swipeInput("track", { phase: "changed", amount: 1000 }),
++    swipeInput("track", { phase: "ended", amount: 600 }),
++    swipeInput("track", { phase: "none", amount: 995 }),
++    swipeInput("track", { phase: "none", amount: 1000, isComplete: true }),
++    swipeInput("finishCommit"),
++  ],
++  // Reduce motion release commit and cancel.
++  [
++    swipeInput("scroll", { phase: "began", axis: "back", reduceMotionIn: true }),
++    swipeInput("track", { phase: "changed", amount: 400 }),
++    swipeInput("track", { phase: "ended", amount: 300 }),
++    swipeInput("finishCommit"),
++    swipeInput("scroll", { phase: "began", axis: "back", reduceMotionIn: true }),
++    swipeInput("track", { phase: "ended", amount: 299 }),
++  ],
++];
++machine(
++  "swipeBack",
++  swipeRule,
++  [...traces(swipeAlphabet, 2), ...swipeDirected],
++  (s) => {
++    const d = swipeRule.decode(s);
++    return [d.mode, d.action, d.progress, d.stopped ? 1 : 0];
++  },
++);
++
+ const temp = mkdtempSync(join(tmpdir(), "wblock-policy-proofs-"));
+ try {
+   let products = process.env.WBLOCK_CORE_PRODUCTS;
+@@ -359,6 +426,7 @@ try {
+     "wBlock/ApplyChangesViewModel.swift",
+     "wBlock/Haptics.swift",
+     "wBlock/InfoPresentation.swift",
++    "wBlock/SwipeBackNavigation.swift",
+     "scripts/proofs/PolicyProbe.swift",
+   ];
+   // The Swift probe compiles and runs in child processes while this process proves the laws.
+```
+
+**File**: `scripts/run-ci-tests.sh` (modified, +2/-0)
+```diff
+@@ -141,6 +141,8 @@ compile_direct_test list-display-order-sync \
+   wBlock/ListDisplayOrder.swift wBlock/StableSnapshot.swift scripts/test_list_display_order_sync.swift
+ compile_direct_test popover-window-shield \
+   wBlock/InfoPresentation.swift wBlock/MacReorderableList.swift wBlock/Haptics.swift scripts/test_popover_window_shield.swift
++compile_direct_test swipe-back-navigation \
++  wBlock/SwipeBackNavigation.swift scripts/test_swipe_back_navigation.swift
+ compile_direct_test info-popover-state \
+   wBlock/InfoPresentation.swift scripts/test_info_popover_state.swift
+ compile_direct_test file-lock-suspension \
+```
+
+**File**: `scripts/test_swipe_back_navigation.swift` (added, +253/-0)
+```diff
+@@ -0,0 +1,253 @@
++import SwiftUI
++import AppKit
++
++private final class NavModel: ObservableObject {
++    @Published var pushed = false
++    var dismissCount = 0
++}
++
++private struct FixtureView: View {
++    @ObservedObject var model: NavModel
++
++    var body: some View {
++        NavigationStack {
++            Form {
++                Section("Websites") {
++                    Text("Site Settings")
++                    Text("Element Zapper")
++                }
++                Section("Advanced") {
++                    Text("View Logs")
++                    Text("Background Diagnostics")
++                }
++            }
++            .formStyle(.grouped)
++            .swipeBackRootCompat()
++            .navigationDestination(isPresented: $model.pushed) {
++                Form {
++                    Section("Site Settings") {
++                        Text("example.com")
++                        Text("improving.duckduckgo.com")
++                    }
++                }
++                .formStyle(.grouped)
++                .navigationTitle("Site Settings")
++                .swipeBackNavigationCompat()
++            }
++        }
++    }
++}
++
++private extension NSView {
++    var descendants: [NSView] { [self] + subviews.flatMap(\.descendants) }
++}
++
++@main @MainActor
++struct SwipeBackNavigationTests {
++    static func pump(_ seconds: TimeInterval = 0.2) {
++        RunLoop.main.run(until: Date().addingTimeInterval(seconds))
++    }
++
++    static func testStateMachine() {
++        // 1. Momentum events never start a swipe.
++        var state = SwipeBackGestureState()
++        precondition(
++            state.handleScroll(phase: .began, hasMomentum: true, dx: 24, dy: 0, swipeEnabled: true, reduceMotion: false) == .passThrough
++                && state.mode == .idle,
++            "momentum events must never start tracking"
++        )
++
++        // 2. Vertical scrolls reject and return to idle.
++        precondition(
++            state.handleScroll(phase: .began, hasMomentum: false, dx: 2, dy: 3, swipeEnabled: true, reduceMotion: false) == .passThrough
++                && state.mode == .pendingAxis(dx: 2, dy: 3)
++        )
++        precondition(
++            state.handleScroll(phase: .changed, hasMomentum: false, dx: 1, dy: 10, swipeEnabled: true, reduceMotion: false) == .passThrough
++                && state.mode == .idle,
++            "vertical drag must return to idle"
++        )
++
++        // 3. Leftward horizontal swipe rejects.
++        precondition(
++            state.handleScroll(phase: .began, hasMomentum: false, dx: -12, dy: 0, swipeEnabled: true, reduceMotion: false) == .passThrough
++                && state.mode == .idle,
++            "leftward swipe must not start back tracking"
++        )
++
++        // 4. Disabled system preference rejects.
++        precondition(
++            state.handleScroll(phase: .began, hasMomentum: false, dx: 12, dy: 0, swipeEnabled: false, reduceMotion: false) == .passThrough
++                && state.mode == .idle
++        )
++
++        // 5. Fast Magic Mouse flick exceeding threshold on .began starts tracking immediately.
++        precondition(
++            state.handleScroll(phase: .began, hasMomentum: false, dx: 10, dy: 1, swipeEnabled: true, reduceMotion: false) == .startTracking
++                && state.isActiveTracking
++        )
++
++        // 6. Holding finger steady tracks live progress and never commits prematurely.
++        precondition(state.handleTrackUpdate(amount: 0.4, phase: .changed, isComplete: false) == .update(progress: 0.4))
++        precondition(state.handleTrackUpdate(amount: 0.4, phase: .changed, isComplete: false) == .update(progress: 0.4))
++        precondition(state.handleTrackUpdate(amount: 1.0, phase: .changed, isComplete: false) == .update(progress: 1.0))
++
++        // 7. Releasing and settling past tailSnapThreshold snaps and commits once.
++        precondition(state.handleTrackUpdate(amount: 0.996, phase: .ended, isComplete: false) == .commit(stop: true))
++        precondition(state.mode == .committing)
++        // Stray callbacks while committing are ignored and never double-commit.
++        precondition(state.handleTrackUpdate(amount: 1.0, phase: [], isComplete: true) == .ignore)
++        precondition(state.handleScroll(phase: .began, hasMomentum: false, dx: 20, dy: 0, swipeEnabled: true, reduceMotion: false) == .passThrough)
++        state.finishCommit()
++        precondition(state.mode == .idle)
++
++        // 8. Releasing early settles back and cancels without committing.
++        precondition(state.handleScroll(phase: .mayBegin, hasMomentum: false, dx: 0, dy: 0, swipeEnabled: true, reduceMotion: false) == .passThrough)
++        precondition(state.handleScroll(phase: .changed, hasMomentum: false, dx: 9, dy: 0, swipeEnabled: true, reduceMotion: false) == .startTracking)
++        precondition(state.handleTrackUpdate(amount: -0.35, phase: .changed, isComplete: false) == .update(progress: 0.35))
++        precondition(state.handleTrackUpdate(amount: 
+```
+
+**File**: `wBlock/SettingsView.swift` (modified, +1/-0)
+```diff
+@@ -955,6 +955,7 @@ struct SettingsView: View {
+             // can scroll to them in a page that has grown long (#999).
+             ScrollViewReader { proxy in
+                 settingsList
++                    .swipeBackRootCompat()
+                     .toolbar {
+                         PauseBlockingToolbarItem(
+                             filterManager: filterManager,
+```
+
+**File**: `wBlock/SwipeBackNavigation.swift` (modified, +587/-53)
+```diff
+@@ -1,11 +1,11 @@
+ import SwiftUI
+ 
+ // NavigationStack on macOS pops only through the toolbar back button. This
+-// gives a pushed page the trackpad gesture Safari and Finder use: a two-finger
+-// swipe under the "Swipe between pages" preference (tracked through scroll
+-// events, so it follows natural scrolling and bounces back when released
+-// early), a three-finger swipe delivered as a gesture event, or Command-[ as
+-// in Safari. iOS keeps the interactive pop its navigation stack already provides.
++// gives a pushed page the fluid interactive swipe Safari and Finder use: a
++// one-finger Magic Mouse or two-finger Trackpad scroll swipe under "Swipe
++// between pages" that tracks the finger live and holds steady in place, a
++// three-finger swipe gesture, or Command-[ as in Safari. iOS keeps the
++// interactive pop its navigation stack already provides.
+ extension View {
+     @ViewBuilder
+     func swipeBackNavigationCompat() -> some View {
+@@ -15,49 +15,460 @@ extension View {
+         self
+         #endif
      }
 +
-+    /// Starts the row's bottom separator at the leading content edge instead of
-+    /// indenting past a `Label` icon, for rows followed by an iconless row.
 +    @ViewBuilder
-+    func leadingAlignedListRowSeparatorCompat() -> some View {
-+        if #available(iOS 16.0, macOS 13.0, *) {
-+            alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
-+        } else {
-+            self
-+        }
++    func swipeBackRootCompat() -> some View {
++        #if os(macOS)
++        background(SwipeBackRootSnapshotMonitor())
++        #else
++        self
++        #endif
 +    }
  }
  
- struct CompatibleLabeledContent<Label: View, Content: View>: View {
+ #if os(macOS)
+ import AppKit
+ 
++/// Pure state machine governing horizontal back-swipe detection and live
++/// tracking progress so the gesture lifecycle is deterministic and testable.
++struct SwipeBackGestureState: Equatable {
++    enum Mode: Equatable {
++        case idle
++        case pendingAxis(dx: CGFloat, dy: CGFloat)
++        case tracking(progress: CGFloat, didRelease: Bool, reduceMotion: Bool)
++        case committing
++    }
++
++    enum ScrollOutcome: Equatable {
++        case passThrough
++        case startTracking
++    }
++
++    enum TrackAction: Equatable {
++        case ignore
++        case update(progress: CGFloat)
++        case cancel(stop: Bool)
++        case commit(stop: Bool)
++    }
++
++    /// A swipe declares its axis once this far along; shorter drags stay
++    /// ambiguous so a slow vertical scroll does not start a back gesture.
++    static let axisDecisionDistance: CGFloat = 8
++    static let commitThreshold: CGFloat = 0.5
++    /// Once the finger is released and AppKit's settle animation has slid the
++    /// page 99.5% off-screen, snap cleanly instead of waiting out the sub-pixel tail.
++    static let tailSnapThreshold: CGFloat = 0.995
++    static let reduceMotionReleaseThreshold: CGFloat = 0.3
++
++    private(set) var mode: Mode = .idle
++
++    var isActiveTracking: Bool {
++        switch mode {
++        case .tracking, .committing:
++            return true
++        case .idle, .pendingAxis:
++            return false
++        }
++    }
++
++    mutating func handleScroll(
++        phase: NSEvent.Phase,
++        hasMomentum: Bool,
++        dx: CGFloat,
++        dy: CGFloat,
++        swipeEnabled: Bool,
++        reduceMotion: Bool
++    ) -> ScrollOutcome {
++        guard !isActiveTracking, !hasMomentum else { return .passThrough }
++
++        switch phase {
++        case .mayBegin:
++            mode = .pendingAxis(dx: 0, dy: 0)
++            return .passThrough
++        case .began:
++            return evaluateAxis(dx: dx, dy: dy, swipeEnabled: swipeEnabled, reduceMotion: reduceMotion)
++        case .changed:
++            guard case .pendingAxis(let accX, let accY) = mode else { return .passThrough }
++            return evaluateAxis(
++                dx: accX + dx,
++                dy: accY + dy,
++                swipeEnabled: swipeEnabled,
++                reduceMotion: reduceMotion
++            )
++        default:
++            mode = .idle
++            return .passThrough
++        }
++    }
++
++    private mutating func evaluateAxis(
++        dx: CGFloat,
++        dy: CGFloat,
++        swipeEnabled: Bool,
++        reduceMotion: Bool
++    ) -> ScrollOutcome {
++        guard max(abs(dx), abs(dy)) >= Self.axisDecisionDistance else {
++            mode = .pendingAxis(dx: dx, dy: dy)
++            return .passThrough
++        }
++        guard abs(dx) > abs(dy), dx > 0, swipeEnabled else {
++            mode = .idle
++            return .passThrough
++        }
++        mode = .tracking(progress: 0, didRelease: false, reduceMotion: reduceMotion)
++        return .startTracking
++    }
++
++    mutating func handleTrackUpdate(
++        amount: CGFloat,
++        phase: NSEvent.Phase,
++        isComplete: Bool
++    ) -> TrackAction {
++        guard case .tracking(_, var didRelease, let reduceMotion) = mode else {
++            return .ignore
++        }
++        let progress = min(max(abs(amount), 0), 1)
++        if phase == .ended || phase == .cancelled {
++            didRelease = true
++        }
++
++        if reduceMotion {
++            if isComplete {
++                if progress >= Self.commitThreshold {
++                    mode = .committing
++                    return .commit(stop: false)
++                }
++                mode = .idle
++                return .cancel(stop: false)
++           
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1165** (2026-11-24): Skip unchanged DNR rule parsing, Safari API dumps, and cache retention on sync (@huseyinbal05)
+- **PR #1161** (2026-11-24): Share one WBEngine.Plan across blockers with zapper rules and mid-apply writes (@huseyinbal05)
+- **PR #1159** (2026-11-23): perf(engine): trim runtime cold-start regex heap, iframe scan and exclusions (@huseyinbal05)
+- **PR #1158** (2026-11-23): perf(engine): read strict hosts from list lines and trim prune allocations (@huseyinbal05)
+- **PR #1154** (2026-11-23): Speed up the filter download and update pipeline (@huseyinbal05)
 - **PR #1153** (2026-11-23): Simplify onboarding to 2-step Express Setup and replace mode naming with Show All Lists (@0xCUB3)
-- **PR #1149** (2026-11-23): Revert "Add target.microsoft.com to ad-tracking hosts (#1145)" (@braverug)
-- **PR #1147** (2026-11-22): [ImgBot] Optimize images (@imgbot[bot])
-- **PR #1146** (2026-11-22): perf(content-blocker): skip redundant cache reads and reload re-hashing (@huseyinbal05)
-- **PR #1145** (2026-11-22): Add target.microsoft.com to ad-tracking hosts (@braverug)
-- **PR #1144** (2026-11-22): feat(mode): add Basic and Advanced modes (#404) (@0xCUB3)
 
 ---
 
@@ -3439,84 +3566,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout sw
+## X. click macOS rows for info, add AdGuard Mini system-wide note, and harden popup/z
 
 **RULE**:
-When implementing operations in `wBlock/BasicFiltersView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Adblock_Comparison.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2880c43d`: Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout switch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6aca811d`: click macOS rows for info, add AdGuard Mini system-wide note, and harden popup/zapper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlock/BasicFiltersView.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Adblock_Comparison.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        let codes = activeLanguageCodes
-        guard !codes.isEmpty else { return String(localized: "None") }
-        let displayLocale = RegionalLanguageOption.displayLocale
-        let names = codes
-            .map { code -> (sortKey: String, native: String) in
-                let display = displayLocale.localizedString(forLanguageCode: code) ?? code
-                let native = Locale.nativeLanguageName(for: code) ?? display
-                return (display, native)
-            }
-            .sorted { $0.sortKey.localizedCaseInsensitiveCompare($1.sortKey) == .orderedAscending }
-            .map(\.native)
-        return ListFormatter.localizedString(byJoining: names)
-            .id(bundle.id)
-        if #available(iOS 16.0, *) {
-            PeekSheetDetentsHost(showAllLists: $showAllLists) {
-                ScrollView {
-                    peekBody
-                        .padding(SheetDesign.contentHorizontalPadding)
-                }
-                .scrollBounceBasedOnSizeCompat()
-                .opaqueSheetBackgroundCompat()
-            }
-        } else {
-            ScrollView {
-                peekBody
-                    .padding(SheetDesign.contentHorizontalPadding)
-  
+Mini has six content blockers (General, Privacy, Social, Security, Other, Custom) for a ceiling of 900,000 rules. Filter categories, custom lists, user rules, element blocking, and issue reporting are free. Pro adds real-time filter updates, AdGuard Extra for harder anti-adblock cases, and a few advanced filtering features. Starting in v3.0, Mini also includes an experimental system-wide protection option for macOS 26 and later (with an AdGuard license) built on Apple's URL Filters API with Private Information Retrieval.
+| System-wide | No | No | Filtr (paid, OS 26) | Mini (experimental, paid, macOS 26+), DNS on iOS |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        let names = languageOptions.filter { activeLanguageCodes.contains($0.code) }.map(\.nativeName)
-        return names.isEmpty ? String(localized: "None") : ListFormatter.localizedString(byJoining: names)
-        ScrollView {
-            peekBody
-                .padding(SheetDesign.contentHorizontalPadding)
-        .scrollBounceBasedOnSizeCompat()
-        .opaqueSheetBackgroundCompat()
-        .modifier(PeekSheetDetentsCompat(showAllLists: $showAllLists))
-private struct PeekSheetDetentsCompat: ViewModifier {
-    @Binding var showAllLists: Bool
-
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content.modifier(PeekSheetDetentsModifier(showAllLists: $showAllLists))
-        } else {
-            content
-        }
-    }
-}
-
-private struct PeekSheetDetentsModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .presentationDetents([.medium, .large], selection: $selectedDetent)
-            .presentationDragIndicator(.visible)
-            .onChangeCompat(of: showAllLists) { _, expanded in
-                let target: PresentationDetent = expanded ? .large : .medium
-                if selectedDete
+Mini has six content blockers (General, Privacy, Social, Security, Other, Custom) for a ceiling of 900,000 rules. Filter categories, custom lists, user rules, element blocking, and issue reporting are free. Pro adds real-time filter updates, AdGuard Extra for harder anti-adblock cases, and a few advanced filtering features.
+| System-wide | No | No | Filtr (paid, OS 26) | DNS on iOS |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2880c43d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6aca811d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

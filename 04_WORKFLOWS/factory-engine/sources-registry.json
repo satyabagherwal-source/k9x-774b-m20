@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T02:55:23.469Z",
-    "lastVerified": "2026-11-26T02:55:23.469Z",
+    "lastChecked": "2026-11-26T03:04:44.666Z",
+    "lastVerified": "2026-11-26T03:04:44.666Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T02:27:10.632Z",
+    "lastChecked": "2026-11-26T03:04:38.099Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T02:27:10.632Z"
+    "lastVerified": "2026-11-26T03:04:38.099Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1164,14 +1164,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T16:06:06.930Z",
-    "lastVerified": "2026-11-25T16:06:06.930Z",
+    "lastChecked": "2026-11-26T03:04:40.118Z",
+    "lastVerified": "2026-11-26T03:04:40.118Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "3e9b1684e01844c60a4af1bc3acec38df1d7c37d138b5715f33a16370d9597ab",
+    "contentHash": "58a9d2032bac4fee15bf0f9ca058fd7e3ea530bcbf156f65978ed5f8b3c00c0e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3200,9 +3200,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-11-25T01:36:05.968Z",
+    "lastChecked": "2026-11-26T03:04:35.730Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-11-25T01:36:05.968Z"
+    "lastVerified": "2026-11-26T03:04:35.730Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -5936,9 +5936,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-25T02:38:41.105Z",
+    "lastChecked": "2026-11-26T03:04:30.459Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-25T02:38:41.105Z"
+    "lastVerified": "2026-11-26T03:04:30.459Z"
   },
   "apache-zookeeper": {
     "name": "apache/zookeeper",
@@ -6695,9 +6695,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-24T19:44:37.099Z",
+    "lastChecked": "2026-11-26T03:04:22.955Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-24T19:44:37.099Z"
+    "lastVerified": "2026-11-26T03:04:22.955Z"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -11031,14 +11031,14 @@
     "officialUrl": "https://github.com/0xCUB3/wBlock",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-23T17:20:41.589Z",
-    "lastVerified": "2026-11-23T17:20:41.589Z",
+    "lastChecked": "2026-11-26T03:04:33.543Z",
+    "lastVerified": "2026-11-26T03:04:33.543Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-0xcub3-wblock",
-    "contentHash": "5a41822faa312974fc572b6129ce9dbf7c71aecde5a03c8f5fc9843bc98ed882",
+    "contentHash": "10ed56907380abf6d6c983152d1442d186fba5cc56b9596311df94c222917b5f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 24,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14299,12 +14299,12 @@
     "officialUrl": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T06:19:21.156Z",
-    "lastVerified": "2026-11-22T06:19:21.156Z",
+    "lastChecked": "2026-11-26T03:04:25.674Z",
+    "lastVerified": "2026-11-26T03:04:25.674Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-    "contentHash": "7b048fea474a6d7750ef86947c6201c8a9fd037e8556352a56378ad1b0b3f8ba",
+    "contentHash": "0260b28342fdd3e65cc6cba83e8c413bf6c3b4f9fe28864ac32b6053005643ea",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

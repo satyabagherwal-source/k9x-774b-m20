@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T02:55:20.041Z",
+  "last_updated": "2026-11-26T03:04:41.120Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "1966eebdae366d8ce9cbeb3a7700e51ee5efcf6e61c98abb4f73edc1eee2b088",
-      "verified_at": "2026-11-26T01:08:10.313Z",
+      "content_hash": "58a9d2032bac4fee15bf0f9ca058fd7e3ea530bcbf156f65978ed5f8b3c00c0e",
+      "verified_at": "2026-11-26T03:04:41.119Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T01:08:10.313Z"
+      "last_updated": "2026-11-26T03:04:41.119Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -13956,14 +13956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-0xcub3-wblock",
-      "content_hash": "5a41822faa312974fc572b6129ce9dbf7c71aecde5a03c8f5fc9843bc98ed882",
-      "verified_at": "2026-11-23T17:20:42.931Z",
+      "content_hash": "10ed56907380abf6d6c983152d1442d186fba5cc56b9596311df94c222917b5f",
+      "verified_at": "2026-11-26T03:04:35.045Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:20:42.931Z"
+      "last_updated": "2026-11-26T03:04:35.045Z"
     },
     "ArchiveBox/ArchiveBox": {
       "repository": "ArchiveBox/ArchiveBox",
@@ -18501,14 +18501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-      "content_hash": "7b048fea474a6d7750ef86947c6201c8a9fd037e8556352a56378ad1b0b3f8ba",
-      "verified_at": "2026-11-22T06:19:21.788Z",
+      "content_hash": "0260b28342fdd3e65cc6cba83e8c413bf6c3b4f9fe28864ac32b6053005643ea",
+      "verified_at": "2026-11-26T03:04:26.543Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T06:19:21.788Z"
+      "last_updated": "2026-11-26T03:04:26.543Z"
     },
     "yyjeqhc/webcodex": {
       "repository": "yyjeqhc/webcodex",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T02:55:25.679Z",
-  "total_records": 2701,
+  "last_updated": "2026-11-26T03:04:47.786Z",
+  "total_records": 2703,
   "domains": {
     "A": {
       "total": 22,
@@ -1218,7 +1218,7 @@
       ]
     },
     "G": {
-      "total": 467,
+      "total": 469,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1686,7 +1686,9 @@
         "domain_intelligence-architecture-intelligence-authzed-spicedb-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-pimalaya-himalaya-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-core-invariants",
-        "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-0xcub3-wblock-core-invariants",
+        "domain_intelligence-architecture-intelligence-0xcub3-wblock-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8805,10 +8807,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "4b7375aaaa42ad421eb94341a6e91b4fd27d0a6993e7ba3ae9d93431e91105ce",
-      "created_at": "2026-11-26T01:08:10.744Z"
+      "content_hash": "ee776978c3e4e1cea88c3a55190165acb10d808b88064668cf4b804ec29a4c9e",
+      "created_at": "2026-11-26T03:04:41.683Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -10040,8 +10042,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "fac319b9afafcc56ab4de12ad1562cd862603c3b10e37e88a047c4783da8e5cd",
-      "created_at": "2026-11-25T16:06:16.256Z"
+      "content_hash": "d4da2743c1f2a15d8ebae5b5e42b9f123212c306ed85644a19bae546343510ea",
+      "created_at": "2026-11-26T03:04:47.786Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -22916,8 +22918,8 @@
       "title": "Research & Knowledge Intelligence: mradermacher/gemma-4-31B-it-ARA-heretic-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-research-knowledge-intelligence-.md",
       "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
-      "content_hash": "996bfab4de1f28e6c9cc45962bfc08041417aba5f266aa5749d21b4b27edda71",
-      "created_at": "2026-11-22T06:19:21.984Z"
+      "content_hash": "fb28aab47569a905c35e0327a510be36025e26f136229ef311a6b220b53a1544",
+      "created_at": "2026-11-26T03:04:26.836Z"
     },
     "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-core-invariants",
@@ -23027,8 +23029,8 @@
       "title": "Research & Knowledge Intelligence: hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings-research-knowledge-int.md",
       "repository": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings",
-      "content_hash": "10c35e2ffd514bd3f1ecaa217ceb57d9ecd960a6cf41be7d44727b61e1404d93",
-      "created_at": "2026-11-22T06:19:33.685Z"
+      "content_hash": "25399e34b673679ae7d9659e5473134265404cbd329525fa71a1f0903194f0be",
+      "created_at": "2026-11-26T03:04:45.182Z"
     },
     "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-woof-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-woof-core-invariants",
@@ -45561,6 +45563,24 @@
       "repository": "xerj-org-xerj-learnings",
       "content_hash": "b26a667ea8a131a848beccc1555be02dfe6300b1ec41ad811798a9d44c02051f",
       "created_at": "2026-11-26T02:55:24.678Z"
+    },
+    "domain_intelligence-architecture-intelligence-0xcub3-wblock-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-0xcub3-wblock-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: 0xCUB3/wBlock Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-0xcub3-wblock-architecture-intelligence-0xcub3-wblock-core-invariants.md",
+      "repository": "0xCUB3/wBlock",
+      "content_hash": "3599a51ffe9986a3b9e45628de546bb69f984a525f2cb22c1e238f26f30bbff1",
+      "created_at": "2026-11-26T03:04:35.643Z"
+    },
+    "domain_intelligence-architecture-intelligence-0xcub3-wblock-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-0xcub3-wblock-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: 0xcub3-wblock-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-0xcub3-wblock-learnings-architecture-intelligence-0xcub3-wblock-learnings-core-i.md",
+      "repository": "0xcub3-wblock-learnings",
+      "content_hash": "ece431e12bdc00c3b2668a5f2783ac474ba6b0e5285f264162849779c1a7b35c",
+      "created_at": "2026-11-26T03:04:46.331Z"
     }
   }
 }

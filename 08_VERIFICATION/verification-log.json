@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-4RNK",
-    "timestamp": "2026-11-24T12:54:03.008Z",
-    "repository": "software-mansion/react-native-reanimated",
-    "learningId": "learn-github-software-mansion-react-native-reanimated",
-    "contentHash": "155cbc2c514a49a94a78e857617cc5ed0366ec1e28023144cad9cfff01027e67",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-4UPG",
-    "timestamp": "2026-11-24T12:54:06.964Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "301791ea36a28ac44ad05990e80e88e7b678cc7bc44838febce23680d3902da8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-HV6B",
-    "timestamp": "2026-11-24T13:04:14.099Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-SKE8",
     "timestamp": "2026-11-24T13:12:33.344Z",
     "repository": "erkamyaman/rust-anything",
@@ -7490,6 +7445,51 @@
     "repository": "xerj-org/xerj",
     "learningId": "learn-github-xerj-org-xerj",
     "contentHash": "a3712fa62289633276eb9cdce4fdb0ecdefa7418011dede608409ef9260fd1a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-Y8BB",
+    "timestamp": "2026-11-26T03:04:26.519Z",
+    "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+    "contentHash": "0260b28342fdd3e65cc6cba83e8c413bf6c3b4f9fe28864ac32b6053005643ea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-YEV9",
+    "timestamp": "2026-11-26T03:04:35.013Z",
+    "repository": "0xCUB3/wBlock",
+    "learningId": "learn-github-0xcub3-wblock",
+    "contentHash": "10ed56907380abf6d6c983152d1442d186fba5cc56b9596311df94c222917b5f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-YJK7",
+    "timestamp": "2026-11-26T03:04:41.095Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "58a9d2032bac4fee15bf0f9ca058fd7e3ea530bcbf156f65978ed5f8b3c00c0e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

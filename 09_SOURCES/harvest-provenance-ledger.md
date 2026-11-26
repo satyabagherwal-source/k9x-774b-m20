@@ -13247,3 +13247,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-minimaxai-minimax-h3-image` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-26T02:46:38.795Z |
 | `learn-huggingface-comfy-org-minimax-h3-image` | `https://huggingface.co/Comfy-Org/MiniMax-H3-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-26T02:55:04.735Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `35ccd192` | Multi-dimensional audit evidence | 2026-11-26T02:55:20.024Z |
+| `learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | `https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-26T03:04:26.524Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `d439e269` | Multi-dimensional audit evidence | 2026-11-26T03:04:35.018Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9c02ea4e` | Multi-dimensional audit evidence | 2026-11-26T03:04:41.100Z |

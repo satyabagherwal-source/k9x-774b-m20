@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T02:55:24.254Z",
+  "updated_at": "2026-11-26T03:04:45.751Z",
   "stats": {
-    "total_discovered": 9569,
-    "approved_pending_harvest": 9070,
+    "total_discovered": 9572,
+    "approved_pending_harvest": 9073,
     "harvested_count": 0,
     "rejected_count": 499,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9060,
+      "COMMUNITY_AND_EXPERT": 9063,
       "OFFICIAL_DOCUMENTATION": 282,
       "STANDARDS_AND_SPECIFICATIONS": 155,
       "ENGINEERING_BLOGS": 7,
@@ -207052,6 +207052,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
         "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-4EF1BEDA49C6": {
+      "id": "SRC-4EF1BEDA49C6",
+      "url": "https://github.com/user-attachments/assets/fd21102b-02a5-4123-a7c6-e4c0d15f77e7",
+      "title": "https://github.com/user-attachments/assets/fd21102b-02a5-4123-a7c6-e4c0d15f77e7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T03:04:45.590Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-FF0CDBCA9947": {
+      "id": "SRC-FF0CDBCA9947",
+      "url": "https://apps.apple.com/us/app/wipr-2/id166221",
+      "title": "https://apps.apple.com/us/app/wipr-2/id166221",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T03:04:45.672Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-F5D1662C8B64": {
+      "id": "SRC-F5D1662C8B64",
+      "url": "https://adguard.com/en/adguard-mini-mac/overview.html",
+      "title": "https://adguard.com/en/adguard-mini-mac/overview.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T03:04:45.751Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
       }
     }
   }

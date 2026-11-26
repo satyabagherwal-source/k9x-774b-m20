@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T06:19:33.579Z",
+  "timestamp": "2026-11-26T03:04:45.040Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T06:19:33.579Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T03:04:45.040Z`  
 > **Learning ID**: `LEARN-EVO-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-mradermac`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T06:19:21.315Z  
+> **Timestamp**: 2026-11-26T03:04:25.862Z  
 > **Learning ID**: `learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF](https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T06:19:21.156Z  
+> **Harvest Timestamp**: 2026-11-26T03:04:25.674Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 227418 downloads | 324 likes
+- **Stars / Engagement**: 259308 downloads | 329 likes
 
 ---
 

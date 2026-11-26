@@ -13214,3 +13214,6 @@
 | `CYCLE-20261126-BCG6` | `2026-11-26T02:46:38.790Z` | `MiniMaxAI/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md` | Yes (`6fcd38a8...`) |
 | `CYCLE-20261126-M6U2` | `2026-11-26T02:55:04.730Z` | `Comfy-Org/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | Yes (`480b71ed...`) |
 | `CYCLE-20261126-MIMS` | `2026-11-26T02:55:20.020Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10589` | Yes (`a3712fa6...`) |
+| `CYCLE-20261126-Y8BB` | `2026-11-26T03:04:26.519Z` | `mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md` | Yes (`0260b283...`) |
+| `CYCLE-20261126-YEV9` | `2026-11-26T03:04:35.013Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10590` | Yes (`10ed5690...`) |
+| `CYCLE-20261126-YJK7` | `2026-11-26T03:04:41.095Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9414` | Yes (`58a9d203...`) |

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
   "source_version": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T06:19:21.984Z",
+  "timestamp": "2026-11-26T03:04:26.835Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mradermacher/gemma-4-31B-it-ARA-heretic-GGUF](https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF) (Revision: `hf-mraderm`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T06:19:21.984Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T03:04:26.835Z`  
 > **Learning ID**: `learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF](https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T06:19:21.156Z  
+> **Harvest Timestamp**: 2026-11-26T03:04:25.674Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 227418 downloads | 324 likes
+- **Stars / Engagement**: 259308 downloads | 329 likes
 
 ---
 
