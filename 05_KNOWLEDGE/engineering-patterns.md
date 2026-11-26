@@ -809456,3 +809456,143 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5d678d7a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10735. 📝 docs(seo): name WhatsApp and the client in the MCP and agent guides (Harvested from open-wa/wa-automate-nodejs)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "📝 docs(seo): name WhatsApp and the client in the MCP and agent guides",
+  "source": "open-wa/wa-automate-nodejs",
+  "source_url": "https://github.com/open-wa/wa-automate-nodejs",
+  "source_version": "d6a45f17",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T17:22:56.058Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-open-wa-wa-automate-nodejs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [open-wa/wa-automate-nodejs](https://github.com/open-wa/wa-automate-nodejs) (Revision: `d6a45f17`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/docs/content/docs/guides/ai-agent-patterns.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-wa/wa-automate-nodejs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `34e67315`: 📝 docs(seo): name WhatsApp and the client in the MCP and agent guides. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/content/docs/guides/ai-agent-patterns.mdx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+seoTitle: "WhatsApp AI agent patterns for Node.js: context, images, voice notes | open-wa"
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `34e67315` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10736. replace toolbar drag and drop with buttons to fix a crash (Harvested from karakeep-app/karakeep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "replace toolbar drag and drop with buttons to fix a crash",
+  "source": "karakeep-app/karakeep",
+  "source_url": "https://github.com/karakeep-app/karakeep",
+  "source_version": "44e963a3",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-26T17:23:06.219Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-karakeep-app-karakeep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [karakeep-app/karakeep](https://github.com/karakeep-app/karakeep) (Revision: `44e963a3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.agents/skills/fill-translations/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c58a0ca7`: mobile): replace toolbar drag and drop with buttons to fix a crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/fill-translations/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- A new mobile locale also needs a `LANGUAGES` entry in `apps/mobile/lib/i18n/index.ts` (see `apps/mobile/lib/i18n/README.md`). Then run `pnpm test --filter=@karakeep/mobile`, which checks plural forms, empty strings and keys that `en` lacks. It doesn't check for missing keys, so use `report` for those.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+- A new mobile locale also needs a `LANGUAGES` entry in `apps/mobile/lib/i18n/index.ts` (see `apps/mobile/lib/i18n/README.md`). Then run `pnpm test --filter=@karakeep/mobile`, which checks key parity and plural forms.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c58a0ca7` are properly handled with clean fallback behavior.

@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "dc8a41ad37e718e8ea6902ff15108883478f7d283a47b5c3ded29ed3ec34eb28",
-    "lastHarvestedAt": "2026-11-23T00:31:15.193Z",
+    "contentHash": "a2d770d1d92eb6ce82cc8928e5a966bcf8bda009141daeaac2caba0d929ed07a",
+    "lastHarvestedAt": "2026-11-26T17:22:57.894Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -2493,10 +2493,10 @@
     "repository": "karakeep-app/karakeep",
     "platform": "github",
     "sourceUrl": "https://github.com/karakeep-app/karakeep",
-    "sourceVersion": "28ae6752",
+    "sourceVersion": "44e963a3",
     "license": "AGPL-3.0",
-    "contentHash": "9e81e0ff3ca243fa3b32e6e33e32003835abaaf1580c04d6249f24d76a1eafc8",
-    "lastHarvestedAt": "2026-11-24T07:55:41.314Z",
+    "contentHash": "c6c83deeb14955e65401ae4a3c9af5a249f101bcbdc35c75ad764abaa76b7f0d",
+    "lastHarvestedAt": "2026-11-26T17:23:06.801Z",
     "learningId": "learn-github-karakeep-app-karakeep"
   },
   "authzed-spicedb": {
@@ -13558,5 +13558,15 @@
     "contentHash": "65c78f0f823067a6d590c3e0e69b1d0e23e988c475b8f622ef39d0a1d5e887d0",
     "lastHarvestedAt": "2026-11-26T15:37:57.495Z",
     "learningId": "learn-huggingface-llamaindex-ocria-1"
+  },
+  "open-wa-wa-automate-nodejs": {
+    "repository": "open-wa/wa-automate-nodejs",
+    "platform": "github",
+    "sourceUrl": "https://github.com/open-wa/wa-automate-nodejs",
+    "sourceVersion": "d6a45f17",
+    "license": "NOASSERTION",
+    "contentHash": "d2fe9df7d6b869d03e6182a8f179f7b40b4cb53686eaac45f0fade1ebb575865",
+    "lastHarvestedAt": "2026-11-26T17:22:56.636Z",
+    "learningId": "learn-github-open-wa-wa-automate-nodejs"
   }
 }

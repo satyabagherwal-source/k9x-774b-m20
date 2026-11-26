@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:15:05.399Z",
-  "total_cycles_completed": 12797,
-  "total_learnings_persisted": 12797,
-  "total_rules_promoted": 11639,
+  "last_updated": "2026-11-26T17:23:06.814Z",
+  "total_cycles_completed": 12800,
+  "total_learnings_persisted": 12800,
+  "total_rules_promoted": 11641,
   "history": [
-    {
-      "timestamp": "2026-11-26T06:35:24.033Z",
-      "repository": "xevrion/hatchzip",
-      "learningId": "learn-github-xevrion-hatchzip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:43:56.875Z",
-      "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
-      "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:43:59.203Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T06:44:05.046Z",
       "repository": "sozercan/kaset",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T17:15:05.399Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:22:56.650Z",
+      "repository": "open-wa/wa-automate-nodejs",
+      "learningId": "learn-github-open-wa-wa-automate-nodejs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:22:57.905Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:23:06.814Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

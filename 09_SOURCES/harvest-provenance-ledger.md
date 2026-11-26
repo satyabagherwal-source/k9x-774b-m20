@@ -13517,3 +13517,6 @@ Every entry in this ledger must capture:
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `cda74a88` | Multi-dimensional audit evidence | 2026-11-26T17:14:53.104Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `c57c1b1c` | Multi-dimensional audit evidence | 2026-11-26T17:15:00.097Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `5d678d7a` | Multi-dimensional audit evidence | 2026-11-26T17:15:05.385Z |
+| `learn-github-open-wa-wa-automate-nodejs` | `https://github.com/open-wa/wa-automate-nodejs` | `d6a45f17` | Multi-dimensional audit evidence | 2026-11-26T17:22:56.636Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-26T17:22:57.894Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `44e963a3` | Multi-dimensional audit evidence | 2026-11-26T17:23:06.801Z |

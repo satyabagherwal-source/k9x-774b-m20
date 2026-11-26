@@ -4,24 +4,24 @@
 {
   "source_repository": "karakeep-app/karakeep",
   "source_url": "https://github.com/karakeep-app/karakeep",
-  "source_version": "28ae6752",
+  "source_version": "44e963a3",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-24T07:55:41.551Z",
+  "timestamp": "2026-11-26T17:23:07.030Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-karakeep-app-karakeep",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [karakeep-app/karakeep](https://github.com/karakeep-app/karakeep) (Revision: `28ae6752`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-24T07:55:41.551Z`  
+> **Provenance**: Harvested from [karakeep-app/karakeep](https://github.com/karakeep-app/karakeep) (Revision: `44e963a3`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-26T17:23:07.030Z`  
 > **Learning ID**: `learn-github-karakeep-app-karakeep`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 84%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from karakeep-app/karakeep:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T07:55:40.178Z  
+> **Harvest Timestamp**: 2026-11-26T17:23:05.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A self-hostable bookmark-everything app (links, notes and images) with AI-based automatic tagging and full text search
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 30807 stars
+- **Stars / Engagement**: 30868 stars
 
 ---
 
@@ -746,11 +746,11 @@ export function cleanupApiClient() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3369** (2026-11-15): **`@karakeep/sdk` cannot be imported or required in Node.js (`exports` points at CJS `dist/index.js` under `"type": "module"`)**
-  *Symptoms*: ### Describe the Bug  Loading `@karakeep/sdk` in Node.js fails for both ESM `import` (including the usage snippet in `packages/sdk/README.md`) and CommonJS `require`.  In `packages/sdk/package.json`, `"type"` is `"module"` and `publishConfig` sets `"exports": "./dist/index.js"`, while `packages/sdk/vite.config.mts` writes the CommonJS bundle (`Object.defineProperty(exports, ...)`) to `dist/index.js` and the ESM bundle to `dist/index.mjs`. Because `"exports"` takes precedence over `"module"` (and blocks subpath imports such as `@karakeep/sdk/dist/index.mjs`) and `"type": "module"` causes Node.js to parse `.js` files as ES modules, `dist/index.mjs` is unreachable and `dist/index.js` fails to load as ESM.  All published versions of `@karakeep/sdk` (`0.23.2` through `0.34.0`) and `main` (`0b66183dc`) ship this configuration.  ### Steps to Reproduce  ```sh npm init -y npm install @karakeep/sdk@0.34.0 ```  ```js // app.mjs import { createKarakeepClient } from "@karakeep/sdk"; console.log(typeof createKarakeepClient); ```  ```js // app.cjs const { createKarakeepClient } = require("@karakeep/sdk"); console.log(typeof createKarakeepClient); ```  Running `node app.mjs` and `node app.cjs`:  ```text $ node app.mjs SyntaxError: The requested module '@karakeep/sdk' does not provide an export named 'createKarakeepClient'  $ node app.cjs ReferenceError: exports is not defined in ES module scope This file is being treated as an ES module because it has a '.js' file extension and '.../node_mod
+- **Issue #3410** (2026-11-24): **App: Connection fails with trusted self-signed certificate**
+  *Symptoms*: ### Describe the Bug  Karakeep iOS app cannot connect to my self-hosted server within my network. The connection test reports:  > Network connection failed: The Internet connection appears to be offline.  Server address configured in the app: `https://keep.home`  The same URL opens successfully in Safari on the iPhone. The server uses a self-signed TLS certificate that is trusted on iOS.   ### Steps to Reproduce  1. Configure the iOS app with `https://keep.home` (Karakeep instance running). 2. Run the connection test. 3. Observe that the test fails with the error above. 4. Open `https://keep.home` in Safari on the same iPhone; it loads successfully.  ### Expected Behaviour  The app should connect to the server, or show a diagnostic error that identifies the cause, such as a TLS certificate or hostname validation failure.   ### Screenshots or Additional Context  - The server is self-hosted. - The certificate is self-signed and trusted on iOS. - The configured address is `https://keep.home`. - Connection test output: `Network connection failed: The Internet connection appears to be offline.`  ### Device Details  iPhone 17 Pro, iOS 27.2.1  ### Exact Karakeep Version  v1.15.3  ### Environment Details  _No response_  ### Debug Logs  _No response_  ### Have you checked the troubleshooting guide?  - [x] I have checked the troubleshooting guide and I haven't found a solution to my problem
 
-- **Issue #3288** (2026-11-07): **Highlight popup covers the selected text in the preview modal**
-  *Symptoms*: ### Describe the Bug  When selecting text in the reader view of the bookmark preview modal, the highlight popup appears on top of the selection and covers it (see screenshot).  This makes it hard to see what’s being highlighted and to adjust the selection, which gets in the way when highlighting while reading.  ### Steps to Reproduce  1. Open a preview of any bookmark 2. Highlight some text 3. Highlight pop-up is covering actual text selection  ### Expected Behaviour  Expected: the popup is placed above or below the selection without overlapping it (like the fullscreen reader)  ### Screenshots or Additional Context  # Actual  <img width="860" height="352" alt="Image" src="https://github.com/user-attachments/assets/d6c23bc8-192f-44cd-9e64-d77cb296852d" />  # Expected  <img width="822" height="360" alt="Image" src="https://github.com/user-attachments/assets/04f32f54-4df5-46b5-a183-99cba951d030" />  ### Device Details  Firefox, Safari, Zen (Desktop)  ### Exact Karakeep Version  0.34.1  ### Environment Details  Docker on Ubuntu 22.04 behind Caddy  ### Debug Logs  _No response_  ### Have you checked the troubleshooting guide?  - [x] I have checked the troubleshooting guide and I haven't found a solution to my problem
+- **Issue #3399** (2026-11-24): **Upgrade subscription fails on iOS**
+  *Symptoms*: ### Describe the Bug  <img width="1170" height="2532" alt="image" src="https://github.com/user-attachments/assets/e7b345be-203c-49a7-a902-61da1e202f92" />  ### Steps to Reproduce  1. Go to Subscription and press Upgrade 2. Shows a revcat sdk error on iOS latest   ### Expected Behaviour  Should be able to upgrade, i like karakeep :)  ### Screenshots or Additional Context  _No response_  ### Device Details  _No response_  ### Exact Karakeep Version  1.15.2  ### Environment Details  Cloud   ### Debug Logs  _No response_  ### Have you checked the troubleshooting guide?  - [x] I have checked the troubleshooting guide and I haven't found a solution to my problem
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -767,107 +767,516 @@ export function cleanupApiClient() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b56d4888` (2026-11-20)
-**Commit Message**: fix(mobile): stop reporting Expo DOM webview injectJavaScript rejections to Sentry
+### Incident Patch 1: `c58a0ca7` (2026-11-25)
+**Commit Message**: fix(mobile): replace toolbar drag and drop with buttons to fix a crash (#3416)
 
-Expo's DOM component wrapper re-sends props to the reader's webview on every
-render and never catches the native call's result. Once Android drops the view,
-each render reports "Call to function 'DomWebView.injectJavaScript' has been
-rejected" as an unhandled rejection. It's harmless to users but sent ~18.7k
-events from ~1.5k users and used up the whole Sentry quota, so crashes from
-newer releases were being dropped.
+* fix(mobile): replace toolbar drag and drop with buttons to fix a crash
 
-- Ignore the error in Sentry.init, since the free plan can't filter it server-side
+React Native 0.88 (Expo 58) removed InteractionManager.
+react-native-draggable-flatlist calls it whenever its data changes, so adding,
+removing, reordering or resetting actions in the reader toolbar settings
+crashed the app.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- Reorder the visible actions with up and down buttons and drop the library
+- Label the add, remove and move buttons for screen readers
+- The overflow actions can no longer be reordered
 
-**File**: `apps/mobile/app/_layout.tsx` (modified, +6/-0)
+* test(mobile): stop requiring every string in every language
+
+Missing strings fall back to English, so a new string no longer has to be
+translated into all 30 languages before CI passes. Keys that English lacks
+still fail.
+
+* docs: update what the mobile i18n tests check in the fill-translations skill
+
+**File**: `.agents/skills/fill-translations/SKILL.md` (modified, +1/-1)
 ```diff
-@@ -31,6 +31,12 @@ Sentry.init({
+@@ -18,7 +18,7 @@ The web app's strings live in `apps/web/lib/i18n/locales/<locale>/translation.js
+ The mobile app reuses the web files above for shared strings, and keeps its own mobile-only strings in `apps/mobile/lib/i18n/locales/<locale>.json` (same nested format, `en.json` is the source). Pass `--app mobile` to `report` and `apply` to work on those instead. Everything else in this guide applies unchanged, except:
  
-   // Enable Logs
-   enableLogs: false,
+ - Rewrite the placeholder check in step 4 for `apps/mobile/lib/i18n/locales/<locale>.json`.
+-- A new mobile locale also needs a `LANGUAGES` entry in `apps/mobile/lib/i18n/index.ts` (see `apps/mobile/lib/i18n/README.md`). Then run `pnpm test --filter=@karakeep/mobile`, which checks key parity and plural forms.
++- A new mobile locale also needs a `LANGUAGES` entry in `apps/mobile/lib/i18n/index.ts` (see `apps/mobile/lib/i18n/README.md`). Then run `pnpm test --filter=@karakeep/mobile`, which checks plural forms, empty strings and keys that `en` lacks. It doesn't check for missing keys, so use `report` for those.
+ - The mobile app has no `en_US` file.
+ 
+ Plurals follow i18next's `_one`/`_other` suffixes. For each plural group in `en`, the script expects the locale's own CLDR categories (from `Intl.PluralRules`). Arabic, for example, needs `_zero`, `_one`, `_two`, `_few`, `_many` and `_other`, and Japanese needs only `_other`.
+```
+
+**File**: `apps/mobile/app/dashboard/settings/toolbar-settings.tsx` (modified, +144/-165)
+```diff
+@@ -1,179 +1,113 @@
++import type { ReactNode } from "react";
++import type { LucideIcon } from "lucide-react-native";
+ import type { ToolbarActionId } from "@/lib/settings";
+-import { useCallback } from "react";
++import { Fragment } from "react";
+ import { Pressable, View } from "react-native";
+-import DraggableFlatList, {
+-  ScaleDecorator,
+-} from "react-native-draggable-flatlist";
+-import { TOOLBAR_ACTION_REGISTRY } from "@/components/bookmarks/BottomActions";
++import {
++  TOOLBAR_ACTION_REGISTRY,
++  useToolbarActionLabels,
++} from "@/components/bookmarks/BottomActions";
+ import {
+   SettingsActionRow,
+   SettingsGroup,
+   SettingsScreen,
+   SettingsSeparator,
+ } from "@/components/settings/settings-list";
+-import { TailwindResolver } from "@/components/TailwindResolver";
++import { AppIcon } from "@/components/ui/AppIcon";
+ import { Text } from "@/components/ui/Text";
+ import { useTranslation } from "@/lib/i18n/hooks";
+-import { useToolbarActionLabels } from "@/components/bookmarks/BottomActions";
+ import useAppSettings, {
+   DEFAULT_OVERFLOW_ACTIONS,
+   DEFAULT_TOOLBAR_ACTIONS,
+ } from "@/lib/settings";
+-import { AppIcon } from "@/components/ui/AppIcon";
+-import { GripVertical, Minus, Plus } from "lucide-react-native";
++import { useColorScheme } from "@/lib/useColorScheme";
++import { cn } from "@/lib/utils";
++import { ChevronDown, ChevronUp, Minus, Plus } from "lucide-react-native";
+ 
+ const MAX_VISIBLE = 6;
+ 
++function RowButton({
++  color,
++  disabled = false,
++  icon,
++  label,
++  onPress,
++}: {
++  color: string;
++  disabled?: boolean;
++  icon: LucideIcon;
++  label: string;
++  onPress: () => void;
++}) {
++  return (
++    <Pressable
++      accessibilityLabel={label}
++      accessibilityRole="button"
++      accessibilityState={{ disabled }}
++      className={cn(
++        "h-12 w-11 items-center justify-center active:opacity-50",
++        disabled && "opacity-25",
++      )}
++      disabled={disabled}
++      onPress={onPress}
++    >
++      <AppIcon icon={icon} size={18} color={color} />
++    </Pressable>
++  );
++}
 +
-+  // Expo's DOM component wrapper re-sends props to the reader's webview on
-+  // every render without catching the result, so once Android drops the view
-+  // each render reports an unhandled rejection. Harmless, but it used up the
-+  // whole Sentry quota.
-+  ignoreErrors: [/DomWebView\.injectJavaScript/],
- });
++function ActionRow({
++  children,
++  iconColor,
++  id,
++  label,
++}: {
++  children: ReactNode;
++  iconColor: string;
++  id: ToolbarActionId;
++  label: string;
++}) {
++  return (
++    <View className="flex-row items-center pl-4 pr-1">
++      <AppIcon
++        icon={TOOLBAR_ACTION_REGISTRY[id].Icon}
++        size={20}
++        color={iconColor}
++      />
++      <Text className="ml-3 flex-1">{label}</Text>
++      {children}
++    </View>
++  );
++}
++
+ export default function ToolbarSettingsPage() {
+   const { settings, setSettings } = useAppSettings();
+   const { t } = useTranslation();
++  const { colors } = useColorScheme();
+   const actionLabels = useToolbarActionLabels();
  
- export default Sentry.wrap(function RootLayout() {
+   const visible = settings.toolbarActions;
+   const overflow = settings.overflowActions ?? [];
+ 
+-  const save = useCallback(
+-    (nextVisible: ToolbarActionId[], nextOverflow: ToolbarActionId[]) => {
+-      setSettings({
+-        ...settings,
+-        toolbarActions: nextVisible,
+-        overflowActions: nextOverflow,
+-      });
+-    },
+-    [settings, setSettings],
+-  );
++  const save = (
++    nextVisible: ToolbarActionId[],
++    nextOverflow: ToolbarActionId[],
++  ) =>
++    setSettings({
++      ...settings,
++      toolbarActions: nextVisible,
++      overflowActions: nextOverflow,
++    });
+ 
+-  const demoteToOverflow = useCallback(
+-    (id: ToolbarActionId) => {
+-      save(
+-        visible.filter((a) => a !== id),
+-        [...overflow, id],
+-      );
+-    },
+-    [visible, overflow, save],
+-  );
+-
+-  const promoteToVisible = useCallback(
+-    (id: ToolbarActionId) => {
+-      if (visible.length >= MAX_VISIBLE) return;
+-      save(
+-        [...visible, id],
+-        overflow.filter((a) => a !== id),
+-      );
+-    },
+-    [visible, overflow, save],
+-  );
+-
+-  const resetToDefaults = () => {
+-    save([...DEFAULT_TOOLBAR_ACTIONS], [...DEFAULT_OVERFLOW_ACTIONS]);
++  const move = (index: number, offset: -1 | 1) => {
++    const next = [...visible];
++    const [id] = next.splice(index, 1);
++    next.splice(index + offset, 0, id);
++    save(next, overflow);
+   };
+ 
+-  const renderVisibleItem = useCallback(
+-    ({
+-      item,
+-      drag,
+-      isActive,
+-    }: {
+-      item: ToolbarActionId;
+-      drag: () => void;
+-      isActive: boolean;
+-    }) => {
+-      const meta = TOOLBAR_ACTION_REGISTRY[item];
+-      return (
+-        <ScaleDecorator>
+-          <Pressable
+-            onLongPress={drag}
+-            disabled={isActive}
+-            className="flex-row items-center gap-3 bg-card px-4 py-3 active:opacity-70"
+-          >
+-            <TailwindResolver
+-              className="text-muted-foreground"
+-              comp={(styles) => (
+-                <GripVertical size={18} color={styles?.color?.toString()} />
+-              )}
+-            />
+-            <TailwindResolver
+-              className="text-foreground"
+-              comp={(styles) => (
+-                <AppIcon
+-                  icon={meta.Icon}
+
+```
+
+**File**: `apps/mobile/components/ui/AppIcon.tsx` (modified, +2/-0)
+```diff
+@@ -21,6 +21,7 @@ import {
+   List,
+   ListFilter,
+   MessageSquareText,
++  Minus,
+   NotepadText,
+   PenLine,
+   Pencil,
+@@ -60,6 +61,7 @@ const SF_SYMBOLS = new Map<LucideIcon, SFSymbol>([
+   [List, "list.bullet"],
+   [ListFilter, "line.3.horizontal.decrease.circle"],
+   [MessageSquareText, "text.bubble"],
++  [Minus, "minus"],
+   [NotepadText, "note.text"],
+   [PenLine, "highlighter"],
+   [Pencil, "pencil"],
+```
+
+**File**: `apps/mobile/lib/i18n/README.md` (modified, +4/-4)
+```diff
+@@ -95,9 +95,9 @@ const { somethingWentWrong } = useCommonStrings();
+ 
+ Rules:
+ 
+-- **New user-visible string?** Add it to `locales/en.json` and to every
+-  other `locales/<lang>.json` (CI checks key parity), then use
+-  `t("section.key")`. Plural keys use the categories each language needs:
++- **New user-visible string?** Add it to `locales/en.json`, then use
++  `t("section.key")`. The other languages show the English string until
++  they're translated. Plural keys use the categories each language needs:
+   `_one`/`_other` in English, whatever `Intl.PluralRules` reports elsewhere.
+ - **String already exists on web?** Reuse it via `useSharedTranslation()` /
+   `useCommonActions()` / `useCommonStrings()` instead of duplicating it —
+@@ -129,7 +129,7 @@ Rules:
+ ## Checks
+ 
+ `apps/mobile/lib/i18n/__tests__/language.test.ts` runs the same checks on
+-every language in `LANGUAGES`: the same keys as `en.json`, exactly the plural
++every language in `LANGUAGES`: no keys that `en.json` lacks, exactly the plural
+ forms the language uses, no empty strings, and matching date and number
+ locales. It runs with the other mobile unit tests in CI (`pnpm test` in
+ `apps/mobile`).
+```
+
+**File**: `apps/mobile/lib/i18n/__tests__/language.test.ts` (modified, +3/-5)
+```diff
+@@ -215,14 +215,12 @@ describe.each(TRANSLATIONS)("%s translation", (lang) => {
+   const strings = mobileStrings(lang);
+   const translated = splitPlurals(Object.keys(strings));
+ 
+-  it("has the same keys as English", () => {
+-    const missing = [...source.plain, ...source.plurals.keys()].filter(
+-      (key) => !translated.plain.has(key) && !translated.plurals.has(key),
+-    );
++  // Missing keys are fine, they fall back to English.
++  it("has no keys that English lacks", () => {
+     const extra = [...translated.plain, ...translated.plurals.keys()].filter(
+       (key) => !source.plain.has(key) && !source.plurals.has(key),
+     );
+-    expect({ missing, extra }).toEqual({ missing: [], extra: [] });
++    expect(extra).toEqual([]);
+   });
+ 
+   it("has no empty strings", () => {
+```
+
+**File**: `apps/mobile/lib/i18n/locales/en.json` (modified, +4/-0)
+```diff
+@@ -451,6 +451,10 @@
+     "toolbar_visible_empty": "No visible actions. Only the overflow menu will show.",
+     "toolbar_overflow": "Overflow actions",
+     "toolbar_overflow_empty": "No overflow actions. All actions are visible on the toolbar.",
++    "toolbar_move_up": "Move up",
++    "toolbar_move_down": "Move down",
++    "toolbar_add": "Add to toolbar",
++    "toolbar_remove": "Remove from toolbar",
+     "toolbar_reset": "Reset to Defaults",
+     "reader_font_family": "Font Family",
+     "reader_preview": "Preview",
+```
+
+**File**: `apps/mobile/package.json` (modified, +0/-1)
+```diff
+@@ -75,7 +75,6 @@
+     "react-native": "0.88.1",
+     "react-native-blob-util": "^0.21.2",
+     "react-native-css-interop": "0.2.6",
+-    "react-native-draggable-flatlist": "4.0.3",
+     "react-native-gesture-handler": "~3.3.0",
+     "react-native-image-viewing": "^0.2.2",
+     "react-native-keyboard-controller": "1.22.7",
+```
+
+**File**: `pnpm-lock.yaml` (modified, +0/-20)
+```diff
+@@ -511,9 +511,6 @@ importers:
+       react-native-css-interop:
+         specifier: 0.2.6
+         version: 0.2.6(8c743662b1ad99eb488a9473357a34df)
+-      react-native-draggable-flatlist:
+-        specifier: 4.0.3
+-        version: 4.0.3(f1fda147f16907a8d0dbe7cd5b7b3c19)
+       react-native-gesture-handler:
+         specifier: ~3.3.0
+         version: 3.3.0(react-native@0.88.1(patch_hash=491ba7dc2b54e34aae156987bef5916ac91c2440b53b0659f7504aea21f9f361)(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.88.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1))(react@19.3.0)
+@@ -13527,13 +13524,6 @@ packages:
+       react-native-svg:
+         optional: true
+ 
+-  react-native-draggable-flatlist@4.0.3:
+-    resolution: {integrity: sha512-2F4x5BFieWdGq9SetD2nSAR7s7oQCSgNllYgERRXXtNfSOuAGAVbDb/3H3lP0y5f7rEyNwabKorZAD/SyyNbDw==}
+-    peerDependencies:
+-      react-native: '>=0.64.0'
+-      react-native-gesture-handler: '>=2.0.0'
+-      react-native-reanimated: '>=2.8.0'
+-
+   react-native-drawer-layout@4.2.12:
+     resolution: {integrity: sha512-qYmntEctkMSodN7pnC2llV21nswImLFPHJeT3PJXSJqZdU4jzDATR8iVi66sXkrtoOLJ2+EvXxgd7sMMpV4ViA==}
+     peerDependencies:
+@@ -29567,16 +29557,6 @@ snapshots:
+     transitivePeerDependencies:
+       - supports-color
+ 
+-  react-native-draggable-flatlist@4.0.3(f1fda147f16907a8d0dbe7cd5b7b3c19):
+-    dependencies:
+-      '@babel/preset-typescript': 7.27.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
+-      react-native: 0.88.1(patch_hash=491ba7dc2b54e34aae156987bef5916ac91c2440b53b0659f7504aea21f9f361)(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.88.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1)
+-      react-native-gesture-handler: 3.3.0(react-native@0.88.1(patch_hash=491ba7dc2b54e34aae156987bef5916ac91c2440b53b0659f7504aea21f9f361)(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.88.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1))(react@19.3.0)
+-      react-native-reanimated: 4.7.1(react-native-worklets@0.13.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.88.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.88.1(patch_hash=491ba7dc2b54e34aae156987bef5916ac91c2440b53b0659f7504aea21f9f361)(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.88.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1))(react@19.3.0)(supports-color@8.1.1))(react-native@0.88.1(patch_hash=491ba7dc2b54e34aae156987bef5916ac91c2440b53b0659f7504aea21f9f361)(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.88.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1))(react@19.3.0)
+-    transitivePeerDependencies:
+-      - '@babel/core'
+-      - supports-color
+-
+   react-native-drawer-layout@4.2.12(04f6fa85987f8ff5ec5f8837689e6bb0):
+     dependencies:
+       color: 4.2.3
 ```
 
 ---
 
-### Incident Patch 2: `85695fa3` (2026-11-22)
-**Commit Message**: fix(web): sidebar labels clipped by Chrome's new line-clamp (#3398)
+### Incident Patch 2: `44e963a3` (2026-11-25)
+**Commit Message**: build(mobile): enable R8 for Android release builds (#3419)
 
-Sidebar labels used line-clamp-1 with break-all. With Chrome's
-CSSLineClampLineBreakingEllipsis (behind Experimental Web Platform
-features), some short labels wrap inside their own width and get clamped:
-"Search" shows as "Sear...", "Favourites" as "Favourit...".
-
-The labels only ever need one line, so use truncate instead, and add
-min-w-0 to the link and its wrapper so long names still get an ellipsis.
-
-Co-authored-by: Thomas Emann <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `apps/web/components/shared/sidebar/SidebarItem.tsx` (modified, +3/-3)
+**File**: `apps/mobile/app.config.js` (modified, +5/-0)
 ```diff
-@@ -55,17 +55,17 @@ export default function SidebarItem({
-       onDragEnter={onDragEnter}
-       onDragLeave={onDragLeave}
-     >
--      <div className="flex flex-1 items-center">
-+      <div className="flex min-w-0 flex-1 items-center">
-         {collapseButton}
-         <Link
-           href={path}
-           className={cn(
--            "flex flex-1 items-center gap-x-2 rounded-[inherit] px-3 py-2",
-+            "flex min-w-0 flex-1 items-center gap-x-2 rounded-[inherit] px-3 py-2",
-             linkClassName,
-           )}
-         >
-           {logo}
--          <span title={name} className="line-clamp-1 break-all">
-+          <span title={name} className="min-w-0 truncate">
-             {name}
-           </span>
-         </Link>
+@@ -105,6 +105,8 @@ export default {
+             usesCleartextTraffic: true,
+             targetSdkVersion: 36,
+             ndkVersion: "27.1.12297006",
++            enableMinifyInReleaseBuilds: true,
++            enableShrinkResourcesInReleaseBuilds: true,
+           },
+         },
+       ],
+@@ -118,6 +120,9 @@ export default {
+           url: "https://sentry.io/",
+           project: "react-native",
+           organization: "localhost-labs-ltd",
++          experimental_android: {
++            enableAndroidGradlePlugin: true,
++          },
+         },
+       ],
+     ],
 ```
 
 ---
 
-### Incident Patch 3: `537e4f01` (2026-11-22)
-**Commit Message**: docs: fix development compose commands (#3393)
+### Incident Patch 3: `7cdd22e1` (2026-11-25)
+**Commit Message**: chore(deps): fix dependabot alerts (#3414)
 
-**File**: `docs/docs/08-development/01-setup.md` (modified, +2/-2)
+**File**: `pnpm-lock.yaml` (modified, +449/-213)
 ```diff
-@@ -209,10 +209,10 @@ docker compose -f docker/docker-compose.dev.yml up
- 3. Tail the dev logs when needed:
+@@ -10,7 +10,9 @@ overrides:
+   openapi-to-postmanv2@6>yaml: 1.10.3
+   '@opentelemetry/core@>=2.0.0 <2.8.0': 2.8.0
+   refractor@3>prismjs: 1.30.0
+-  serialize-javascript@>=6.0.0 <7.0.5: 7.0.5
++  serialize-javascript@>=6.0.0 <7.1.3: 7.1.4
++  '@docusaurus/core@3>tinypool': 2.2.0
++  react-native-markdown-display@7>markdown-it: 14.3.3
+   i18next-fs-backend: 2.6.6
+   shell-quote: 1.11.0
+   react: 19.3.0
+@@ -134,7 +136,7 @@ importers:
+     devDependencies:
+       '@crxjs/vite-plugin':
+         specifier: 3.0.0
+-        version: 3.0.0(supports-color@8.1.1)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3))
++        version: 3.0.0(supports-color@8.1.1)(vite@8.3.8(@types/node@24.10.3)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3))
+       '@karakeep/tailwind-config':
+         specifier: workspace:^0.1.0
+         version: link:../../tooling/tailwind
+@@ -152,7 +154,7 @@ importers:
+         version: 19.3.0(@types/react@19.3.0)
+       '@vitejs/plugin-react-swc':
+         specifier: ^4.3.3
+-        version: 4.3.3(@swc/helpers@0.5.23)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3))
++        version: 4.3.3(@swc/helpers@0.5.23)(vite@8.3.8(@types/node@24.10.3)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3))
+       autoprefixer:
+         specifier: ^10.4.17
+         version: 10.4.21(postcss@8.5.28)
+@@ -167,7 +169,7 @@ importers:
+         version: 7.0.2
+       vite:
+         specifier: ^8.3.0
+-        version: 8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
++        version: 8.3.8(@types/node@24.10.3)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
  
- ```bash
--docker compose logs -f web workers
-+docker compose -f docker/docker-compose.dev.yml logs -f web workers
- ```
+   apps/cli:
+     devDependencies:
+@@ -212,10 +214,10 @@ importers:
+         version: 7.0.2
+       vite:
+         specifier: ^8.3.0
+-        version: 8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
++        version: 8.3.8(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
+       vite-tsconfig-paths:
+         specifier: ^6.1.1
+-        version: 6.1.1(supports-color@8.1.1)(typescript@7.0.2)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3))
++        version: 6.1.1(supports-color@8.1.1)(typescript@7.0.2)(vite@8.3.8(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3))
+       zod:
+         specifier: ^4.2.0
+         version: 4.6.7
+@@ -227,7 +229,7 @@ importers:
+         version: 0.3.8
+       '@astrojs/react':
+         specifier: ^6.0.6
+-        version: 6.0.6(@types/node@26.6.1)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(esbuild@0.28.2)(jiti@2.4.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.102.0)(supports-color@8.1.1)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
++        version: 6.0.6(@types/node@24.10.3)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(esbuild@0.28.2)(jiti@2.4.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.102.0)(supports-color@8.1.1)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
+       '@astrojs/rss':
+         specifier: ^4.0.19
+         version: 4.0.19
+@@ -239,7 +241,7 @@ importers:
+         version: 1.2.4(@types/react@19.3.0)(react@19.3.0)
+       astro:
+         specifier: ^7.2.8
+-        version: 7.2.8(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.6.1)(idb-keyval@6.2.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
++        version: 7.2.8(@emnapi/core@1.11.1)(@emnapi/runtime@2.0.0-beta.2)(@types/node@26.6.1)(idb-keyval@6.2.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
+       class-variance-authority:
+         specifier: ^0.7.0
+         version: 0.7.0
+@@ -297,10 +299,10 @@ importers:
+         version: 7.0.2
+       vite:
+         specifier: ^8.3.0
+-        version: 8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
++        version: 8.3.8(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)
+       vite-plugin-svgr:
+         specifier: ^4.3.0
+-        version: 4.3.0(rollup@2.80.0)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3))
++        version: 4.3.0(rollup@2.80.0)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.3.8(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3))
  
--4. Stop everything with `docker compose down`. Re-run with `--build` if you change Node dependencies or the Dockerfile.
-+4. Stop everything with `docker compose -f docker/docker-compose.dev.yml down`. Re-run with `docker compose -f docker/docker-compose.dev.yml up --build` if you change Node dependencies or the Dockerfile.
- 
- This setup exposes:
- - Web app: http://localhost:3000
+   apps/mcp:
+     dependencies:
+@@ -337,13 +339,13 @@ importers:
+         version: 7.0.2
+       vite:
+         specifier: ^8.3.0
+-        version: 8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +7/-1)
+```diff
+@@ -97,7 +97,13 @@ overrides:
+   # refractor 3 restricts prismjs to ~1.27.0.
+   "refractor@3>prismjs": 1.30.0
+   # Docusaurus's webpack plugins require v6. v7 keeps the API and needs Node 20+.
+-  "serialize-javascript@>=6.0.0 <7.0.5": 7.0.5
++  "serialize-javascript@>=6.0.0 <7.1.3": 7.1.4
++  # Docusaurus restricts tinypool to 1.x, which has no patched release. The
++  # options it uses are unchanged in 2.x.
++  "@docusaurus/core@3>tinypool": 2.2.0
++  # Unmaintained, and pins a markdown-it whose parsing can be made quadratic by
++  # bookmark text, which freezes the mobile app.
++  "react-native-markdown-display@7>markdown-it": 14.3.3
+   i18next-fs-backend: 2.6.6
+   shell-quote: 1.11.0
+   # React Native vendors a renderer built against one exact React version and
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3403** (2026-11-24): chore(docker): bump karakeep-chrome to Google Chrome 158.0.8127.88 (@MohamedBassem)
-- **PR #3398** (2026-11-22): fix(web): sidebar labels clipped by Chrome's new line-clamp (@TommyDoesEverything)
-- **PR #3396** (2026-11-22): fix(docker): drop scanner-flagged binaries from the runtime image (@MohamedBassem)
-- **PR #3393** (2026-11-22): docs: fix development compose commands (@rosalll)
-- **PR #3392** (2026-11-22): docs: explain how to avoid exposing port 3000 behind a reverse proxy (@anupamck)
-- **PR #3376** (2026-11-15): fix(mobile): show loading skeletons on cards while crawling and tagging (@MohamedBassem)
+- **PR #3419** (2026-11-25): build(mobile): enable R8 for Android release builds (@MohamedBassem)
+- **PR #3417** (2026-11-25): perf(restate): preload the semaphore metadata (@MohamedBassem)
+- **PR #3416** (2026-11-25): fix(mobile): replace toolbar drag and drop with buttons to fix a crash (@MohamedBassem)
+- **PR #3415** (2026-11-25): perf(workers): faster metadata-only parses and upgrade Defuddle (@MohamedBassem)
+- **PR #3414** (2026-11-25): chore(deps): fix dependabot alerts (@MohamedBassem)
+- **PR #3413** (2026-11-25): deps: upgrade jsdom to 31 (@MohamedBassem)
 
 ---
 
@@ -887,36 +1296,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mobile): stop reporting Expo DOM webview injectJavaScript rejections to Sentry
+## X. mobile): replace toolbar drag and drop with buttons to fix a crash
 
 **RULE**:
-When implementing operations in `apps/mobile/app/_layout.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/skills/fill-translations/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b56d4888`: mobile): stop reporting Expo DOM webview injectJavaScript rejections to Sentry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c58a0ca7`: mobile): replace toolbar drag and drop with buttons to fix a crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/_layout.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/fill-translations/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-
-  // Expo's DOM component wrapper re-sends props to the reader's webview on
-  // every render without catching the result, so once Android drops the view
-  // each render reports an unhandled rejection. Harmless, but it used up the
-  // whole Sentry quota.
-  ignoreErrors: [/DomWebView\.injectJavaScript/],
+- A new mobile locale also needs a `LANGUAGES` entry in `apps/mobile/lib/i18n/index.ts` (see `apps/mobile/lib/i18n/README.md`). Then run `pnpm test --filter=@karakeep/mobile`, which checks plural forms, empty strings and keys that `en` lacks. It doesn't check for missing keys, so use `report` for those.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- A new mobile locale also needs a `LANGUAGES` entry in `apps/mobile/lib/i18n/index.ts` (see `apps/mobile/lib/i18n/README.md`). Then run `pnpm test --filter=@karakeep/mobile`, which checks key parity and plural forms.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b56d4888` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c58a0ca7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

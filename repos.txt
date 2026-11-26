@@ -5450,3 +5450,7 @@ https://github.com/zhouxiaoka/autoclip
 # --- Automatically Discovered by AI Scout Engine [2026-11-26T15:37:50.846Z] ---
 # [HUGGINGFACE-AI-MODELS] llamaindex/OCRia-1 (1519 score) - Verified Hugging Face Model: llamaindex/OCRia-1 (110 likes, 419 downloads)
 https://huggingface.co/llamaindex/OCRia-1
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-26T17:22:48.855Z] ---
+# [AI-AGENTS] open-wa/wa-automate-nodejs (2508 score) -  💬 🤖  The most reliable tool for chatbots with advanced features. Be sure to �
+https://github.com/open-wa/wa-automate-nodejs

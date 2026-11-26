@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T17:15:09.106Z",
+  "updated_at": "2026-11-26T17:23:11.800Z",
   "stats": {
-    "total_discovered": 9915,
-    "approved_pending_harvest": 9403,
+    "total_discovered": 9921,
+    "approved_pending_harvest": 9408,
     "harvested_count": 0,
-    "rejected_count": 512,
+    "rejected_count": 513,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9399,
+      "COMMUNITY_AND_EXPERT": 9405,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -214573,6 +214573,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
         "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-9BC8F431D033": {
+      "id": "SRC-9BC8F431D033",
+      "url": "https://github.com/open-wa/wa-automate-nodejs",
+      "title": "https://github.com/open-wa/wa-automate-nodejs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T17:23:10.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-wa-wa-automate-nodejs-learnings.md",
+        "fileName": "open-wa-wa-automate-nodejs-learnings.md"
+      }
+    },
+    "SRC-A8A109644F07": {
+      "id": "SRC-A8A109644F07",
+      "url": "http://127.0.0.1:8080/mcp",
+      "title": "http://127.0.0.1:8080/mcp",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T17:23:10.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-wa-wa-automate-nodejs-learnings.md",
+        "fileName": "open-wa-wa-automate-nodejs-learnings.md"
+      }
+    },
+    "SRC-ECFA0118BE38": {
+      "id": "SRC-ECFA0118BE38",
+      "url": "https://registry.npmjs.org/$%7BencodeURIComponent(pkg.name",
+      "title": "https://registry.npmjs.org/$%7BencodeURIComponent(pkg.name",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T17:23:10.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-wa-wa-automate-nodejs-learnings.md",
+        "fileName": "open-wa-wa-automate-nodejs-learnings.md"
+      }
+    },
+    "SRC-E13077FCD692": {
+      "id": "SRC-E13077FCD692",
+      "url": "https://keep.home`/",
+      "title": "https://keep.home`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T17:23:11.688Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-6A2711A4ACA6": {
+      "id": "SRC-6A2711A4ACA6",
+      "url": "https://github.com/user-attachments/assets/e7b345be-203c-49a7-a902-61da1e202f92",
+      "title": "https://github.com/user-attachments/assets/e7b345be-203c-49a7-a902-61da1e202f92",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T17:23:11.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-5FEF69662643": {
+      "id": "SRC-5FEF69662643",
+      "url": "https://sentry.io/",
+      "title": "https://sentry.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T17:23:11.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
       }
     }
   }

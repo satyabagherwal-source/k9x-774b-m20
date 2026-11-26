@@ -13484,3 +13484,6 @@
 | `CYCLE-20261126-BWOB` | `2026-11-26T17:14:53.099Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10733` | Yes (`5588d190...`) |
 | `CYCLE-20261126-C22K` | `2026-11-26T17:15:00.092Z` | `dosco/deeporg` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dosco-deeporg-learnings.md` | Yes (`46823564...`) |
 | `CYCLE-20261126-C65H` | `2026-11-26T17:15:05.381Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10734` | Yes (`71e5270d...`) |
+| `CYCLE-20261126-M9RS` | `2026-11-26T17:22:56.632Z` | `open-wa/wa-automate-nodejs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10735` | Yes (`d2fe9df7...`) |
+| `CYCLE-20261126-MAQQ` | `2026-11-26T17:22:57.890Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`a2d770d1...`) |
+| `CYCLE-20261126-MHM6` | `2026-11-26T17:23:06.798Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10736` | Yes (`c6c83dee...`) |

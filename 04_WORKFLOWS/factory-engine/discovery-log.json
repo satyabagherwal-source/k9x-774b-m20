@@ -22429,5 +22429,20 @@
     "downloads": 419,
     "qualityScore": 1519,
     "discoveredAt": "2026-11-26T15:35:42.205Z"
+  },
+  {
+    "name": "wa-automate-nodejs",
+    "fullName": "open-wa/wa-automate-nodejs",
+    "url": "https://github.com/open-wa/wa-automate-nodejs",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": " 💬 🤖  The most reliable tool for chatbots with advanced features. Be sure to 🌟 this repository for updates! ",
+    "stars": 3682,
+    "forks": 722,
+    "openIssues": 235,
+    "language": "TypeScript",
+    "qualityScore": 2508,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-26T17:19:20.145Z"
   }
 ]

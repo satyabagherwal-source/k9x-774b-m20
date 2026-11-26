@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T17:15:11.312Z",
-  "total_records": 2763,
+  "last_updated": "2026-11-26T17:23:12.276Z",
+  "total_records": 2765,
   "domains": {
     "A": {
       "total": 23,
@@ -1235,7 +1235,7 @@
       ]
     },
     "G": {
-      "total": 472,
+      "total": 474,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1708,7 +1708,9 @@
         "domain_intelligence-architecture-intelligence-0xcub3-wblock-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-sfu-db-connector-x-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-tauri-apps-tauri-core-invariants",
-        "domain_intelligence-architecture-intelligence-tauri-apps-tauri-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-tauri-apps-tauri-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-core-invariants",
+        "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10882,8 +10884,8 @@
       "title": "Technical Construction Intelligence: karakeep-app/karakeep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-technical-construction-intelligence-karakeep-app-karakeep-.md",
       "repository": "karakeep-app/karakeep",
-      "content_hash": "ee2ac1a423df1db42e36b78db63da3af2844395b6216b5b4f9529700c6b8d63a",
-      "created_at": "2026-11-24T07:55:41.730Z"
+      "content_hash": "f76cf6178fefb993b03990ae2c65e36eec76bdfb6f9e0c09a50d428f93f12db2",
+      "created_at": "2026-11-26T17:23:07.211Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7",
@@ -10900,8 +10902,8 @@
       "title": "Technical Construction Intelligence: karakeep-app-karakeep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-learnings-technical-construction-intelligence-karakeep-app.md",
       "repository": "karakeep-app-karakeep-learnings",
-      "content_hash": "1a79d04f948a5452ec8b79c76eb03fb0c34c5e752536b510d708e0cfeb93afa4",
-      "created_at": "2026-11-24T07:55:52.352Z"
+      "content_hash": "035391fa5392e5d710c1870649eb421715278ec0eb321f3e229f53ef577640a1",
+      "created_at": "2026-11-26T17:23:12.276Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants",
@@ -11143,8 +11145,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-research-knowledg.md",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "content_hash": "9825f7dd3174c529ef22124d1347478c2b0e1f1f5ee3a5ad37ad7625f0aeed1b",
-      "created_at": "2026-11-23T00:31:15.466Z"
+      "content_hash": "3c8e87d483ef9bf6cf86ef9b21205e90e8c76cd4d6a32aaa98adb0ac06f45d31",
+      "created_at": "2026-11-26T17:22:58.114Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants",
@@ -11167,11 +11169,11 @@
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
       "domain_letter": "D",
-      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings-researc.md",
-      "repository": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings",
-      "content_hash": "73de42d2bc127f938bd9e4a3f20fef0bc85c428951840e99555e4df7c44ad905",
-      "created_at": "2026-11-23T16:44:58.312Z"
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
+      "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
+      "content_hash": "dc1ff3f553016a3944e321bbdbb9a1d24545353ca50b551014b7eb0ac66e838e",
+      "created_at": "2026-11-26T17:23:11.400Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -46676,6 +46678,24 @@
       "confidence": 0.69,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T16:41:28.741Z"
+    },
+    "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: open-wa/wa-automate-nodejs Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-open-wa-wa-automate-nodejs-architecture-intelligence-open-wa-wa-automate-nodejs-.md",
+      "repository": "open-wa/wa-automate-nodejs",
+      "content_hash": "5ab1e1bfdbd7d33153dba426ea56d34f15cbea15394e1fe41af024c5620025ad",
+      "created_at": "2026-11-26T17:22:57.087Z"
+    },
+    "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: open-wa-wa-automate-nodejs-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-open-wa-wa-automate-nodejs-learnings-architecture-intelligence-open-wa-wa-automa.md",
+      "repository": "open-wa-wa-automate-nodejs-learnings",
+      "content_hash": "2ef96a1d75c971945608de8a9b8ab61af4e9ea85a8dd468428cdfa6ac6b09429",
+      "created_at": "2026-11-26T17:23:10.829Z"
     }
   }
 }

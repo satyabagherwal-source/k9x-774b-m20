@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-O76E",
-    "timestamp": "2026-11-25T05:28:56.150Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-    "contentHash": "834298adf89d6d23f6624377c2bddb4ba93f9e6a4070f7bf49d90b915a47821d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-YQYD",
-    "timestamp": "2026-11-25T05:37:08.341Z",
-    "repository": "mistralai/Timestral-209M",
-    "learningId": "learn-huggingface-mistralai-timestral-209m",
-    "contentHash": "90960d1588d9a31b40a212b421b544f409aadc6533fbffbf2447b63bce767f64",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-YYLD",
-    "timestamp": "2026-11-25T05:37:18.241Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "7206d60fabff28f244f1954d8c01f07b602b06c168eca49a5ea6aff7d6a40a2d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-9DO8",
     "timestamp": "2026-11-25T05:45:24.344Z",
     "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
@@ -7490,6 +7445,51 @@
     "repository": "weaviate/weaviate",
     "learningId": "learn-github-weaviate-weaviate",
     "contentHash": "71e5270d5be77dfbbafadea8a614d460a63c1ecd33cac2148d33ac35f96d79eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-M9RS",
+    "timestamp": "2026-11-26T17:22:56.632Z",
+    "repository": "open-wa/wa-automate-nodejs",
+    "learningId": "learn-github-open-wa-wa-automate-nodejs",
+    "contentHash": "d2fe9df7d6b869d03e6182a8f179f7b40b4cb53686eaac45f0fade1ebb575865",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-MAQQ",
+    "timestamp": "2026-11-26T17:22:57.890Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+    "contentHash": "a2d770d1d92eb6ce82cc8928e5a966bcf8bda009141daeaac2caba0d929ed07a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-MHM6",
+    "timestamp": "2026-11-26T17:23:06.798Z",
+    "repository": "karakeep-app/karakeep",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "c6c83deeb14955e65401ae4a3c9af5a249f101bcbdc35c75ad764abaa76b7f0d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

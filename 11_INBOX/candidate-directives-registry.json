@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:15:11.113Z",
+  "last_updated": "2026-11-26T17:23:12.031Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66142,6 +66142,57 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-MKL3",
+      "directive_title": "📝 docs(seo): name WhatsApp and the client in the MCP and agent guides",
+      "source_repo": "open-wa-wa-automate-nodejs-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MKL3-docs-seo-name-whatsapp-and-the-client-in-the-mcp-and-agent-guides.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-MHSM",
+      "directive_title": "replace toolbar drag and drop with buttons to fix a crash",
+      "source_repo": "karakeep-app/karakeep",
+      "source_commit": "44e963a3",
+      "staged_file": "11_INBOX/candidate-directives/CD-MHSM-replace-toolbar-drag-and-drop-with-buttons-to-fix-a-crash.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-27241D",
+      "directive_title": "📝 docs(seo): name WhatsApp and the client in the MCP and agent guides",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "open-wa-wa-automate-nodejs",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-27241D--docs-seo-name-whatsapp-and-the-client-i.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-0403B9",
+      "directive_title": "Forensic Learning Record (Deep Inspection): sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0403B9-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-MLNJ",
+      "directive_title": "mobile): replace toolbar drag and drop with buttons to fix a crash",
+      "source_repo": "karakeep-app-karakeep-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MLNJ-mobile-replace-toolbar-drag-and-drop-with-buttons-to-fix-a-crash.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
     }
   ]
 }

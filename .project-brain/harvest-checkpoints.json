@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T17:15:05.407Z",
+  "last_updated": "2026-11-26T17:23:06.821Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -890,14 +890,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "dc8a41ad37e718e8ea6902ff15108883478f7d283a47b5c3ded29ed3ec34eb28",
-      "verified_at": "2026-11-23T00:31:15.203Z",
+      "content_hash": "a2d770d1d92eb6ce82cc8928e5a966bcf8bda009141daeaac2caba0d929ed07a",
+      "verified_at": "2026-11-26T17:22:57.908Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T00:31:15.203Z"
+      "last_updated": "2026-11-26T17:22:57.908Z"
     },
     "google-bert/bert-base-uncased": {
       "repository": "google-bert/bert-base-uncased",
@@ -3876,14 +3876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karakeep-app-karakeep",
-      "content_hash": "9e81e0ff3ca243fa3b32e6e33e32003835abaaf1580c04d6249f24d76a1eafc8",
-      "verified_at": "2026-11-24T07:55:41.330Z",
+      "content_hash": "c6c83deeb14955e65401ae4a3c9af5a249f101bcbdc35c75ad764abaa76b7f0d",
+      "verified_at": "2026-11-26T17:23:06.821Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T07:55:41.330Z"
+      "last_updated": "2026-11-26T17:23:06.821Z"
     },
     "authzed/spicedb": {
       "repository": "authzed/spicedb",
@@ -20459,6 +20459,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-26T15:37:57.512Z"
+    },
+    "open-wa/wa-automate-nodejs": {
+      "repository": "open-wa/wa-automate-nodejs",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-open-wa-wa-automate-nodejs",
+      "content_hash": "d2fe9df7d6b869d03e6182a8f179f7b40b4cb53686eaac45f0fade1ebb575865",
+      "verified_at": "2026-11-26T17:22:56.659Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-26T17:22:56.659Z"
     }
   },
   "repos": {
