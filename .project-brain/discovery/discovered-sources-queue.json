@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T00:09:39.518Z",
+  "updated_at": "2026-11-26T00:18:10.374Z",
   "stats": {
-    "total_discovered": 9534,
-    "approved_pending_harvest": 9037,
+    "total_discovered": 9544,
+    "approved_pending_harvest": 9047,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9030,
+      "COMMUNITY_AND_EXPERT": 9040,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 151,
       "ENGINEERING_BLOGS": 7,
@@ -206296,6 +206296,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
         "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-E85F62FC3D52": {
+      "id": "SRC-E85F62FC3D52",
+      "url": "https://github.com/touchlab/Kermit/milestone/5",
+      "title": "https://github.com/touchlab/Kermit/milestone/5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:09.004Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-7B1EDC55A2F2": {
+      "id": "SRC-7B1EDC55A2F2",
+      "url": "https://github.com/touchlab/Kermit/pull/479",
+      "title": "https://github.com/touchlab/Kermit/pull/479",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:09.068Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-AD15CD9E390C": {
+      "id": "SRC-AD15CD9E390C",
+      "url": "https://github.com/touchlab/Kermit/pull/484",
+      "title": "https://github.com/touchlab/Kermit/pull/484",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:09.126Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-A6EE7EA5C0FC": {
+      "id": "SRC-A6EE7EA5C0FC",
+      "url": "https://github.com/touchlab/Kermit/issues/481",
+      "title": "https://github.com/touchlab/Kermit/issues/481",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:09.192Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-5B74B6E7E492": {
+      "id": "SRC-5B74B6E7E492",
+      "url": "https://github.com/touchlab/Kermit/pull/477",
+      "title": "https://github.com/touchlab/Kermit/pull/477",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:09.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-F94C433FEAD3": {
+      "id": "SRC-F94C433FEAD3",
+      "url": "https://github.com/touchlab/Kermit/issues/474",
+      "title": "https://github.com/touchlab/Kermit/issues/474",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:09.321Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-3E885235C8A4": {
+      "id": "SRC-3E885235C8A4",
+      "url": "https://github.com/touchlab/Kermit/pull/483",
+      "title": "https://github.com/touchlab/Kermit/pull/483",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:09.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-D6A6883EF9A7": {
+      "id": "SRC-D6A6883EF9A7",
+      "url": "https://github.com/touchlab/Kermit/issues/480",
+      "title": "https://github.com/touchlab/Kermit/issues/480",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:09.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-417AC3626276": {
+      "id": "SRC-417AC3626276",
+      "url": "https://github.com/cilium/cilium/actions/runs/45520933278/job/138892286504?pr=50263",
+      "title": "https://github.com/cilium/cilium/actions/runs/45520933278/job/138892286504?pr=50263",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:10.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-C92528C8899E": {
+      "id": "SRC-C92528C8899E",
+      "url": "https://github.com/cilium/cilium/issues/49834",
+      "title": "https://github.com/cilium/cilium/issues/49834",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:18:10.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:09:40.686Z",
+  "last_updated": "2026-11-26T00:18:11.125Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T23:50:13.238Z",
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-25T13:20:42.699Z",
+      "processed_at": "2026-11-26T00:18:10.205Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1358,7 +1358,7 @@
       "staged_for_review": 1
     },
     "touchlab-kermit-learnings.md": {
-      "processed_at": "2026-11-20T11:32:48.476Z",
+      "processed_at": "2026-11-26T00:18:08.756Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2273,7 +2273,7 @@
       "staged_for_review": 0
     },
     "hf-ricursiveai-ripple-65b-preview-learnings.md": {
-      "processed_at": "2026-11-22T03:03:30.752Z",
+      "processed_at": "2026-11-26T00:18:08.316Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3943,7 +3943,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4290,
+  "total_dossiers_evaluated": 4293,
   "total_canonical_promoted": 548,
-  "total_staged_for_review": 3260
+  "total_staged_for_review": 3262
 }

@@ -13200,3 +13200,7 @@ Every entry in this ledger must capture:
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `7a53df4a` | Multi-dimensional audit evidence | 2026-11-26T00:09:28.202Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `fd42a8ca` | Multi-dimensional audit evidence | 2026-11-26T00:09:31.093Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `9af55fa5` | Multi-dimensional audit evidence | 2026-11-26T00:09:33.312Z |
+| `learn-huggingface-ricursiveai-ripple-65b-preview` | `https://huggingface.co/ricursiveAI/Ripple-65B-Preview` | `hf-ricursi` | Multi-dimensional audit evidence | 2026-11-26T00:17:50.461Z |
+| `learn-github-touchlab-kermit` | `https://github.com/touchlab/Kermit` | `21eb2603` | Multi-dimensional audit evidence | 2026-11-26T00:17:57.773Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `f21a2468` | Multi-dimensional audit evidence | 2026-11-26T00:18:04.520Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f2e66637` | Multi-dimensional audit evidence | 2026-11-26T00:18:04.876Z |

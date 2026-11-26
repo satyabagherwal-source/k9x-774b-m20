@@ -13167,3 +13167,7 @@
 | `CYCLE-20261126-P7R8` | `2026-11-26T00:09:28.196Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10564` | Yes (`1299bfdf...`) |
 | `CYCLE-20261126-P9ZJ` | `2026-11-26T00:09:31.087Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10565` | Yes (`a8640c3f...`) |
 | `CYCLE-20261126-PBP6` | `2026-11-26T00:09:33.306Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10566` | Yes (`8268516e...`) |
+| `CYCLE-20261126-ZZAW` | `2026-11-26T00:17:50.456Z` | `ricursiveAI/Ripple-65B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md` | Yes (`bdc2d0f1...`) |
+| `CYCLE-20261126-04Y1` | `2026-11-26T00:17:57.769Z` | `touchlab/Kermit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10567` | Yes (`498de7ae...`) |
+| `CYCLE-20261126-0A5F` | `2026-11-26T00:18:04.515Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md` | Yes (`cad71c92...`) |
+| `CYCLE-20261126-0AFC` | `2026-11-26T00:18:04.872Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10568` | Yes (`ae71faba...`) |

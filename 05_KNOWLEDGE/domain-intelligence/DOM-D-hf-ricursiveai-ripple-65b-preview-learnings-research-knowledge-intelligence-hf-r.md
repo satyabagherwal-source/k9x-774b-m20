@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T03:03:30.857Z",
+  "timestamp": "2026-11-26T00:18:08.429Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-ricursiveai-ripple-65b-preview-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-ricursiveai-ripple-65b-preview-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T03:03:30.857Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T00:18:08.429Z`  
 > **Learning ID**: `LEARN-EVO-hf-ricursiveai-ripple-65b-preview-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-ricursive`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T03:03:12.389Z  
+> **Timestamp**: 2026-11-26T00:17:49.954Z  
 > **Learning ID**: `learn-huggingface-ricursiveai-ripple-65b-preview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ricursiveAI/Ripple-65B-Preview](https://huggingface.co/ricursiveAI/Ripple-65B-Preview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T03:03:12.280Z  
+> **Harvest Timestamp**: 2026-11-26T00:17:49.783Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 17444 downloads | 597 likes
+- **Stars / Engagement**: 18493 downloads | 606 likes
 
 ---
 

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
   "source_version": "hf-ricursiveai-ripple-65b-preview",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T03:03:13.057Z",
+  "timestamp": "2026-11-26T00:17:50.687Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-ricursiveai-ripple-65b-preview",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ricursiveAI/Ripple-65B-Preview](https://huggingface.co/ricursiveAI/Ripple-65B-Preview) (Revision: `hf-ricursi`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T03:03:13.057Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T00:17:50.687Z`  
 > **Learning ID**: `learn-huggingface-ricursiveai-ripple-65b-preview`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ricursiveAI/Ripple-65B-Preview](https://huggingface.co/ricursiveAI/Ripple-65B-Preview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T03:03:12.280Z  
+> **Harvest Timestamp**: 2026-11-26T00:17:49.783Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 17444 downloads | 597 likes
+- **Stars / Engagement**: 18493 downloads | 606 likes
 
 ---
 

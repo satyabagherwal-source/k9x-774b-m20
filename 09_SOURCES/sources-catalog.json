@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "21fc4bdb",
+    "sourceVersion": "f2e66637",
     "license": "Apache-2.0",
-    "contentHash": "ddedc0acb2ba69936b6d6ecc1ceb84c34c640cdd4f8e69f92aea497b8ce38305",
-    "lastHarvestedAt": "2026-11-25T13:20:37.781Z",
+    "contentHash": "ae71faba075db48f2cd5690ed5a965fa193c585fc152425ace7787ef741e0909",
+    "lastHarvestedAt": "2026-11-26T00:18:04.876Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "212cbf3c",
+    "sourceVersion": "f21a2468",
     "license": "Apache-2.0",
-    "contentHash": "bb6c8cdfb7d045a0c31b23163edca8c8655c6fedf7944eca23e257886b912da3",
-    "lastHarvestedAt": "2026-11-24T22:51:07.504Z",
+    "contentHash": "cad71c926823f73e08fa8304cca1238561b63041b0a9cac6fc1b5d87affb637f",
+    "lastHarvestedAt": "2026-11-26T00:18:04.520Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -8913,10 +8913,10 @@
     "repository": "touchlab/Kermit",
     "platform": "github",
     "sourceUrl": "https://github.com/touchlab/Kermit",
-    "sourceVersion": "fb52c4b8",
+    "sourceVersion": "21eb2603",
     "license": "Apache-2.0",
-    "contentHash": "688b612d2e6ae14d071eda6f2095c5c431d04213691815c7cd64fcb64aa4c947",
-    "lastHarvestedAt": "2026-11-20T11:30:45.609Z",
+    "contentHash": "498de7aea36d7683970730ce5429d3061599b5b69faf49a002d7ad128b6a1fdb",
+    "lastHarvestedAt": "2026-11-26T00:17:57.773Z",
     "learningId": "learn-github-touchlab-kermit"
   },
   "gatenlp-ultimate-sitemap-parser": {
@@ -11955,8 +11955,8 @@
     "sourceUrl": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
     "sourceVersion": "hf-ricursiveai-ripple-65b-preview",
     "license": "Open-Source",
-    "contentHash": "26c0d21874ec70e0bdb5c99187f1571d6d6b8d8fdd3f826602a97f9ad23f4d84",
-    "lastHarvestedAt": "2026-11-22T03:03:12.857Z",
+    "contentHash": "bdc2d0f12bd5adf9433f6926a50375ed8b9cd8c2f538a4370f7be438caaf22be",
+    "lastHarvestedAt": "2026-11-26T00:17:50.461Z",
     "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview"
   },
   "apache-pinot": {

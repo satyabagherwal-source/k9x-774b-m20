@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T00:09:40.187Z",
+  "last_updated": "2026-11-26T00:18:10.785Z",
   "total_records": 2693,
   "domains": {
     "A": {
@@ -8436,8 +8436,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "072c255487ae042633a7f94adabcbb9a546aad1bcb61fc2729626614195d9430",
-      "created_at": "2026-11-25T13:20:38.227Z"
+      "content_hash": "feaa107dbf1291ef0332dc7f29cd01e78cbad417b2c1664372f4e5ddb22a9887",
+      "created_at": "2026-11-26T00:18:05.313Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8454,8 +8454,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "bf1eb37cf112026334c3d1952f638240d5d157ac2574d4be49b314bb00cd4243",
-      "created_at": "2026-11-25T13:20:43.408Z"
+      "content_hash": "31eec758a6f5cd1d1774493c0d1db78137cdfef8a7016781577b4ac378c411e6",
+      "created_at": "2026-11-26T00:18:10.785Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -11154,8 +11154,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "d82fbb2f9ee2dd81bb289a3d5c748479b52a1b0b35a87e60d61c3451f889fbb5",
-      "created_at": "2026-11-24T22:51:07.893Z"
+      "content_hash": "f84d0682eabea3f71f25b713154ffea8d45e369c3449930327549cb481cfc290",
+      "created_at": "2026-11-26T00:18:04.999Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -12464,8 +12464,8 @@
       "title": "Research & Knowledge Intelligence: ricursiveAI/Ripple-65B-Preview Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ricursiveai-ripple-65b-preview-research-knowledge-intelligence-ricursiveai-ri.md",
       "repository": "ricursiveAI/Ripple-65B-Preview",
-      "content_hash": "056e939ff4101e59063d3bcd6d1da4b4e7fe3ef9da2efcc31453f48b3e6b553b",
-      "created_at": "2026-11-22T03:03:13.058Z"
+      "content_hash": "b9104a92db1c3215e5414b57ce470f0cc1845f66489b87a314a6bc6ab1775608",
+      "created_at": "2026-11-26T00:17:50.688Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -12542,8 +12542,8 @@
       "title": "Research & Knowledge Intelligence: hf-ricursiveai-ripple-65b-preview-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ricursiveai-ripple-65b-preview-learnings-research-knowledge-intelligence-hf-r.md",
       "repository": "hf-ricursiveai-ripple-65b-preview-learnings",
-      "content_hash": "e1ed21b8aae826db61aa5bba3577bd1b531f4101ab1408bfc9d50e389ede4ba2",
-      "created_at": "2026-11-22T03:03:30.963Z"
+      "content_hash": "56b6e3197f251b6d6d59a0d7704632befde1799bfef3e29daada43b5757279c1",
+      "created_at": "2026-11-26T00:18:08.550Z"
     },
     "DOM-H-E98BDD0E": {
       "record_id": "DOM-H-E98BDD0E",
@@ -36231,8 +36231,8 @@
       "title": "Content & Information Intelligence: touchlab/Kermit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-touchlab-kermit-content-information-intelligence-touchlab-kermit-core-invariants.md",
       "repository": "touchlab/Kermit",
-      "content_hash": "fac1578de9a13a35a23af1d9aa42dd832f91a88a126f942ddc16b0f5fd9cff50",
-      "created_at": "2026-11-20T11:30:45.965Z"
+      "content_hash": "2401e5140a9f8e94f4605eddc661abfda4c15bcfa473401f4c0a51bb343afe4f",
+      "created_at": "2026-11-26T00:17:58.172Z"
     },
     "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-core-invariants",
@@ -36360,8 +36360,8 @@
       "title": "Content & Information Intelligence: touchlab-kermit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-touchlab-kermit-learnings-content-information-intelligence-touchlab-kermit-learn.md",
       "repository": "touchlab-kermit-learnings",
-      "content_hash": "21816555453068d512fdd609876e00ba82fb41cf24e7b422522196cfa97b0139",
-      "created_at": "2026-11-20T11:32:49.178Z"
+      "content_hash": "0190d80706a1e87ef24c4597ebd066805e4c45aa852459cc70c496047246b693",
+      "created_at": "2026-11-26T00:18:09.861Z"
     },
     "domain_intelligence-architecture-intelligence-redisearch-redisearch-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-redisearch-redisearch-learnings-core-invariants",
