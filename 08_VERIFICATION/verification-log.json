@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-M1G0",
-    "timestamp": "2026-11-25T10:35:11.184Z",
-    "repository": "baidu/Unlimited-OCR-2",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-    "contentHash": "931555299c3c6f9753faa542b1b37364208964f75b357938228e446c031c2aba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-M3ZJ",
     "timestamp": "2026-11-25T10:35:14.479Z",
     "repository": "1jehuang/jcode",
@@ -7490,6 +7475,21 @@
     "repository": "baidu/Unlimited-OCR",
     "learningId": "learn-huggingface-baidu-unlimited-ocr",
     "contentHash": "269cf778fa275e3f4d3f91743d823b9405b8e0a92e30b4e3aaf2e4fec0825f7f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-YBF3",
+    "timestamp": "2026-11-26T21:44:15.183Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "12265e77d6e91a6fadf54bc72c3a83f13f28772faec4f4b0044828f557805151",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

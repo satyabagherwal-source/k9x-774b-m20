@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T21:26:15.031Z",
-    "lastVerified": "2026-11-26T21:26:15.031Z",
+    "lastChecked": "2026-11-26T21:44:26.959Z",
+    "lastVerified": "2026-11-26T21:44:26.959Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -287,9 +287,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T20:59:43.217Z",
+    "lastChecked": "2026-11-26T21:44:26.948Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T20:59:43.217Z"
+    "lastVerified": "2026-11-26T21:44:26.948Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1543,9 +1543,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-26T17:30:51.912Z",
+    "lastChecked": "2026-11-26T21:44:22.062Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-26T17:30:51.912Z"
+    "lastVerified": "2026-11-26T21:44:22.062Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3229,9 +3229,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-11-26T03:04:35.730Z",
+    "lastChecked": "2026-11-26T21:44:24.500Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-11-26T03:04:35.730Z"
+    "lastVerified": "2026-11-26T21:44:24.500Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -3433,12 +3433,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "i18next-react-i18next": {
-    "name": "i18next/react-i18next",
+    "name": "react-i18next",
     "officialUrl": "https://github.com/i18next/react-i18next",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-24T13:47:20.375Z",
-    "lastVerified": "2026-11-24T13:47:20.375Z",
+    "lastChecked": "2026-11-26T21:44:17.128Z",
+    "lastVerified": "2026-11-26T21:44:17.128Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-i18next-react-i18next",
@@ -3447,7 +3447,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cbb61e6f"
   },
   "kumahq-kuma": {
     "name": "kuma",
@@ -4462,9 +4463,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-25T14:32:13.669Z",
+    "lastChecked": "2026-11-26T21:44:11.989Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-25T14:32:13.669Z"
+    "lastVerified": "2026-11-26T21:44:11.989Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -5515,12 +5516,12 @@
     "officialUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T09:05:47.525Z",
-    "lastVerified": "2026-11-23T09:05:47.525Z",
+    "lastChecked": "2026-11-26T21:44:14.526Z",
+    "lastVerified": "2026-11-26T21:44:14.526Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-    "contentHash": "37cc39b42dbe118639727c8e25e96105ba7ecdfec05cb8055a39a422abf437dd",
+    "contentHash": "12265e77d6e91a6fadf54bc72c3a83f13f28772faec4f4b0044828f557805151",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6405,8 +6406,8 @@
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T03:55:09.050Z",
-    "lastVerified": "2026-11-26T03:55:09.050Z",
+    "lastChecked": "2026-11-26T21:44:19.461Z",
+    "lastVerified": "2026-11-26T21:44:19.461Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",

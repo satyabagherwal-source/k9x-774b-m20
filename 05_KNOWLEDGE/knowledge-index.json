@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T21:26:17.592Z",
+  "last_updated": "2026-11-26T21:44:29.360Z",
   "total_verified_learnings": 9136,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7dce72028523eed7aec0a95515c83278ccaa11eabaf6596fa6bec5e3045a823b",
+      "content_hash": "1086098305567bf127d5e34645b98ea8d9c94a9972e9b66bb58fa71f90ba866d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T21:26:16.425Z"
+      "persisted_at": "2026-11-26T21:44:29.360Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5bcc7cca32181e9d890b00649e2071a3244186c18e197e677d1537c147cf0c90",
+      "content_hash": "ca90592f11813290a420a3df05083c49e92b82f077e9c3d77421b791f8344399",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T16:49:26.447Z"
+      "persisted_at": "2026-11-26T21:44:28.092Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "27205ba82dc0ffdaa29da1f922051bc4185cd99f3231bed9f5d682aed460a578",
+      "content_hash": "5c6953f0ac4f28a00beb9c6c34ecf146c885ddae9e9f9b8f10bb43b69b0d0af0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:49:26.632Z"
+      "persisted_at": "2026-11-26T21:44:28.280Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -226839,7 +226839,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "37cc39b42dbe118639727c8e25e96105ba7ecdfec05cb8055a39a422abf437dd",
+      "content_hash": "12265e77d6e91a6fadf54bc72c3a83f13f28772faec4f4b0044828f557805151",
       "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "promoted_rules": [],
@@ -226848,7 +226848,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T09:06:38.664Z",
+      "verified_at": "2026-11-26T21:44:14.938Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226865,9 +226865,9 @@
       "title": "Research & Knowledge Intelligence: Aleph-Alpha/Kolibri-1 Core Invariants",
       "repository": "Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "90df88ff1b1dafd5f776c86831759d04db7ec91d8c444f6200acf3e2c9483b06",
+      "content_hash": "12f9957198241072349414f61d9ef9e7ace69a50c21b2618b6699fe23999df68",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T09:06:39.084Z"
+      "persisted_at": "2026-11-26T21:44:15.423Z"
     },
     "learn-github-builderio-builder": {
       "learning_id": "learn-github-builderio-builder",
@@ -227135,9 +227135,9 @@
       "title": "Research & Knowledge Intelligence: hf-aleph-alpha-kolibri-1-learnings Core Invariants",
       "repository": "hf-aleph-alpha-kolibri-1-learnings",
       "source_version": "HEAD",
-      "content_hash": "3aecf9c06c1f12bf794cce854317a6291362cbe2b39c06df389aba376b435e20",
+      "content_hash": "96602ec05e574b996bc398f64948574578fe0b5b934afbeb6c3090c65d4de350",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T09:06:42.118Z"
+      "persisted_at": "2026-11-26T21:44:27.350Z"
     },
     "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants",
@@ -340731,13 +340731,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-F6K9-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YL8D-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "20aca5c4506ac08b99443555ccec9a322e6544821baf8bdde1e79c3111a4c741",
+      "content_hash": "895fcd78ceb9e347aeb817726d001baf15efe26bbad52955563fecb1be842a0b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T16:49:26.270Z"
+      "persisted_at": "2026-11-26T21:44:27.907Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -357665,13 +357665,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-B6R0-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YM0O-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "61aa8500b483d01ed30470ac8ce2bace3032456c4aece6564c0d25af2442373c",
+      "content_hash": "d35cbad453c62ffd829b916d878ba04841d6fbf7aacbe7093b7ea2b64e6c7287",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T21:26:16.047Z"
+      "persisted_at": "2026-11-26T21:44:28.926Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357681,9 +357681,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f47068eae2155dc987b120a52fe3aeef5769b3ffeb0803bdf8d4143b514db73",
+      "content_hash": "071042eff81ae4232e5f99f103ff491f004f8865b151e451bb1a0ceca297c1a6",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T21:26:16.235Z"
+      "persisted_at": "2026-11-26T21:44:29.150Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",

@@ -13565,3 +13565,4 @@
 | `CYCLE-20261126-ZSR9` | `2026-11-26T21:17:24.693Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`63085d38...`) |
 | `CYCLE-20261126-05KS` | `2026-11-26T21:17:41.308Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10779` | Yes (`6cb594bc...`) |
 | `CYCLE-20261126-AWUE` | `2026-11-26T21:26:03.206Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`269cf778...`) |
+| `CYCLE-20261126-YBF3` | `2026-11-26T21:44:15.183Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`12265e77...`) |
