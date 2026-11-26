@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T14:44:42.016Z",
+  "last_updated": "2026-11-26T14:53:28.667Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "8cc5e186676ab25a1f096d199a6752d7ee28c79a7bba9ded5bd631b5fe1404aa",
-      "verified_at": "2026-11-22T21:56:56.048Z",
+      "content_hash": "76c56319cb52f506f79b364fe1e9aa1b81c0e173162ef7d8e77b6d7a31b6b6dd",
+      "verified_at": "2026-11-26T14:53:21.881Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:56:56.048Z"
+      "last_updated": "2026-11-26T14:53:21.881Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "e0825208fd0705fe210c08810e91370a8970beb658d0486d538bf05176429055",
-      "verified_at": "2026-11-26T08:10:15.621Z",
+      "content_hash": "e2a9a46a150a5a8e385c0e1c3d4a575ded97f2883317f70a43a38fe0e6253679",
+      "verified_at": "2026-11-26T14:53:25.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T08:10:15.621Z"
+      "last_updated": "2026-11-26T14:53:25.671Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -19086,14 +19086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metrolistgroup-metrolist",
-      "content_hash": "9564362ff4bb2d3daff9e25baf7e7cf9da8fb0dc60a816a6cb61c3e07728bfef",
-      "verified_at": "2026-11-24T04:37:01.861Z",
+      "content_hash": "eb0de6e690ae358ea2840e9e186249d1755bb54a8efe84783943b6ec866f6793",
+      "verified_at": "2026-11-26T14:53:28.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T04:37:01.861Z"
+      "last_updated": "2026-11-26T14:53:28.666Z"
     },
     "GanymedeNil/document.ai": {
       "repository": "GanymedeNil/document.ai",

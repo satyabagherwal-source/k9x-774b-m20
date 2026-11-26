@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T14:44:47.922Z",
+  "updated_at": "2026-11-26T14:53:36.060Z",
   "stats": {
-    "total_discovered": 9816,
-    "approved_pending_harvest": 9314,
+    "total_discovered": 9818,
+    "approved_pending_harvest": 9316,
     "harvested_count": 0,
     "rejected_count": 502,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9301,
+      "COMMUNITY_AND_EXPERT": 9303,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -212465,6 +212465,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-0D9038F34D3A": {
+      "id": "SRC-0D9038F34D3A",
+      "url": "https://github.com/MetrolistGroup/Metrolist/issues/5243",
+      "title": "https://github.com/MetrolistGroup/Metrolist/issues/5243",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:53:35.988Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
+        "fileName": "metrolistgroup-metrolist-learnings.md"
+      }
+    },
+    "SRC-46CF0A6B41FD": {
+      "id": "SRC-46CF0A6B41FD",
+      "url": "https://aka.ms/download-jdk/microsoft-jdk-25.0.5.1-windows-aarch64.zip",
+      "title": "https://aka.ms/download-jdk/microsoft-jdk-25.0.5.1-windows-aarch64.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:53:36.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
+        "fileName": "metrolistgroup-metrolist-learnings.md"
       }
     }
   }

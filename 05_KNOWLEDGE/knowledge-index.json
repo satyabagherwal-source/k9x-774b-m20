@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T14:44:48.733Z",
+  "last_updated": "2026-11-26T14:53:36.912Z",
   "total_verified_learnings": 9129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25979,
+  "total_items": 25982,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114238,9 +114238,9 @@
       "title": "Research & Knowledge Intelligence: akatz-ai/MiniMax-H3-Character-Swap-LoRA Core Invariants",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "68f347c0cf511d7ba4715f0045b9d5ab8fed72c9ec29e414d04a95b47c114592",
+      "content_hash": "43fba84a01ddf0a9b716f9db58724688703ed61ddd2c9fe1d741eb365fafc252",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T21:56:56.255Z"
+      "persisted_at": "2026-11-26T14:53:22.134Z"
     },
     "candidate_directive-ecosystem-qa-redact-the-run-result-in-a-step-of-its-own-also-after-a-crash": {
       "item_id": "candidate_directive-ecosystem-qa-redact-the-run-result-in-a-step-of-its-own-also-after-a-crash",
@@ -114298,9 +114298,9 @@
       "title": "Research & Knowledge Intelligence: hf-akatz-ai-minimax-h3-character-swap-lora-learnings Core Invariants",
       "repository": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings",
       "source_version": "HEAD",
-      "content_hash": "35fa353da312f2ceb8a608989955d4296903f6e6d8b98e42c4c4030ac1bc95c5",
+      "content_hash": "f7a6eb2d8451ef2c0d9d5c826d86c981533cce4683fd98536f83a483553b6851",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T21:57:11.458Z"
+      "persisted_at": "2026-11-26T14:53:35.624Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
@@ -233118,13 +233118,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "a6682352",
-      "content_hash": "e0825208fd0705fe210c08810e91370a8970beb658d0486d538bf05176429055",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "8838e415",
+      "content_hash": "e2a9a46a150a5a8e385c0e1c3d4a575ded97f2883317f70a43a38fe0e6253679",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -233204,7 +233204,7 @@
         {
           "number": 10628,
           "title": "background facet carries a fn pointer and plain request, not",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233212,7 +233212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T08:10:15.254Z",
+      "verified_at": "2026-11-26T14:53:25.370Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233251,37 +233251,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "a6682352",
-      "content_hash": "00a4eff9dcdafc78e724ad1ed77312f99820766d4885f274a806edcb6a7b5924",
+      "source_version": "8838e415",
+      "content_hash": "78e09723fbf84afa3571d973196af5099f1214f3c53032c9da634e307d6e2d78",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T08:10:16.119Z"
+      "persisted_at": "2026-11-26T14:53:26.187Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "a6682352",
-      "content_hash": "24d53a98a7fa4f8869caefeaf1010abbf7111109fc69fef39c58f1b39945f57c",
+      "source_version": "8838e415",
+      "content_hash": "19e68ec14a88b233ad95a23cf79c395179b0bb035834e5f1bc79ad92b3132584",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T08:10:16.541Z"
+      "persisted_at": "2026-11-26T14:53:26.664Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
+      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "a6682352",
-      "content_hash": "bae69f8167198e3e3d5e2ae642cf7d15aa992230463ebb586244b8e8bfe66cd1",
+      "source_version": "8838e415",
+      "content_hash": "f7caad3b3d2a7527c3a67ef0ebfc596678e1b5edd2ed0576990961032107238d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:10:16.776Z"
+      "persisted_at": "2026-11-26T14:53:26.850Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -242035,13 +242035,13 @@
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale",
       "artifact_type": "architecture_decision",
       "target_folder": "12_DECISIONS",
-      "relative_path": "12_DECISIONS/ADR-codewhale-hq-codewhale-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq.md",
+      "relative_path": "12_DECISIONS/ADR-hmbown-codewhale-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codew.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "a6682352",
-      "content_hash": "01c98cd79ed87ac394854745bbd02e8913ddd3d3a3aabed503126a4aa04e85c6",
+      "source_version": "8838e415",
+      "content_hash": "8db3e8e54269872e0365037c82061872ecc3aa6c45e9863f65b33f0fdaabc612",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T08:10:16.345Z"
+      "persisted_at": "2026-11-26T14:53:26.440Z"
     },
     "learn-github-apollographql-apollo-kotlin": {
       "learning_id": "learn-github-apollographql-apollo-kotlin",
@@ -242191,9 +242191,9 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "254bc44361d2b4c96ba5f213928561c25495630d97ee7242ff8cbf0ee0fc05d5",
+      "content_hash": "175b5c2da24545d12b63eb913724a553a4aad724aa94e9c8c5858e1820ad06e8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:47:57.872Z"
+      "persisted_at": "2026-11-26T14:53:34.506Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings",
@@ -242203,9 +242203,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in hmbown-codewhale-learnings",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "65de8e5dfc5684850b760cd05df6e0c44d602e1fe0954720bf7178427bd793f5",
+      "content_hash": "6209717d458e32a7a85f39bc5646cfc0d0044720b141f7d71ab820865f84abf7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T12:38:14.185Z"
+      "persisted_at": "2026-11-26T14:53:34.742Z"
     },
     "agent_contract-agent-contract-hmbown-codewhale-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-hmbown-codewhale-learnings-autonomous-specialist-persona",
@@ -242215,9 +242215,9 @@
       "title": "Agent Contract: hmbown-codewhale-learnings Autonomous Specialist Persona",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e12e448d1c19742626b3f975053990860f3ffe5151f679b8d5aa3392ce8a11b",
+      "content_hash": "fd216c7da2a3b68728f17f1c64e6decd1020cf7489c8a9b86c9f4787b6e94cfe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:47:58.059Z"
+      "persisted_at": "2026-11-26T14:53:34.931Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings",
@@ -242227,9 +242227,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hmbown-codewhale-learnings",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "aff2cd954f9ccaaa055724ac907e2c870c21a8857dbbd92228429a3d47e3e4d5",
+      "content_hash": "0ef862d7a808a4a54d01a8b659eeaaef162555d2028c59d1012b0a8e8bf42f06",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T06:47:58.204Z"
+      "persisted_at": "2026-11-26T14:53:35.121Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
@@ -255461,8 +255461,8 @@
       "slug": "metrolistgroup-metrolist",
       "platform": "github",
       "source_url": "https://github.com/MetrolistGroup/Metrolist",
-      "source_version": "af3d0533",
-      "content_hash": "9564362ff4bb2d3daff9e25baf7e7cf9da8fb0dc60a816a6cb61c3e07728bfef",
+      "source_version": "6fa4e821",
+      "content_hash": "eb0de6e690ae358ea2840e9e186249d1755bb54a8efe84783943b6ec866f6793",
       "dossier_path": "07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
       "promoted_rules": [
@@ -255480,6 +255480,11 @@
           "number": 10199,
           "title": "support pure Wayland sessions on Linux",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10707,
+          "title": "load single Room relations as lists to avoid iOS crash",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -255487,7 +255492,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T04:37:01.634Z",
+      "verified_at": "2026-11-26T14:53:28.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255529,10 +255534,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-architecture-intelligence-metrolistgroup-metrolist-core.md",
       "title": "Architecture Intelligence: MetrolistGroup/Metrolist Core Invariants",
       "repository": "MetrolistGroup/Metrolist",
-      "source_version": "af3d0533",
-      "content_hash": "b1a85919a8c46c39dba57e82339e267fb38ffec1078eed096fb957887ef4d477",
+      "source_version": "6fa4e821",
+      "content_hash": "248bd07e005fce8b2be85d7a26290c98ae44e8170b970c25aaf4aa26dcc042b6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T04:37:02.255Z"
+      "persisted_at": "2026-11-26T14:53:29.199Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist",
@@ -255541,10 +255546,10 @@
       "relative_path": "08_VERIFICATION/metrolistgroup-metrolist-verification-protocol-empirical-defect-shield-for-metro.md",
       "title": "Verification Protocol: Empirical Defect Shield for MetrolistGroup/Metrolist",
       "repository": "MetrolistGroup/Metrolist",
-      "source_version": "af3d0533",
-      "content_hash": "60fd924d2182045bebf6a5d8734c1efc73c8babd6f265c6c29e8a6cbb778d1f0",
+      "source_version": "6fa4e821",
+      "content_hash": "ecc6e112773b3481ecfd014608d3ba7e50f8d47983d5c00f7192d7de5d9f0eac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:37:02.425Z"
+      "persisted_at": "2026-11-26T14:53:29.417Z"
     },
     "learn-github-ehpanda-team-ehpanda": {
       "learning_id": "learn-github-ehpanda-team-ehpanda",
@@ -255782,9 +255787,9 @@
       "title": "Architecture Intelligence: metrolistgroup-metrolist-learnings Core Invariants",
       "repository": "metrolistgroup-metrolist-learnings",
       "source_version": "HEAD",
-      "content_hash": "c82e12ee9da2701c95b1a02e976fc4d941b021b85a6d4dcca35c66c3a0e90927",
+      "content_hash": "e3073107c9d4052fa5dde44b957bbeadc4c2356b2bcf527bc0367332a9f7b24c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T04:37:06.234Z"
+      "persisted_at": "2026-11-26T14:53:36.658Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist-learn",
@@ -255794,9 +255799,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metrolistgroup-metrolist-learnings",
       "repository": "metrolistgroup-metrolist-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c3c647afa5cd7c3d5149ef93b9b645e7f646ae23af45bcd268208b01e52b6c9",
+      "content_hash": "582f31b3d562c38da49af5d79c3794b3ac43b8babd80ab62aeb3a1958d17cb67",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:37:06.402Z"
+      "persisted_at": "2026-11-26T14:53:36.912Z"
     },
     "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",
@@ -288769,7 +288774,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "8cc5e186676ab25a1f096d199a6752d7ee28c79a7bba9ded5bd631b5fe1404aa",
+      "content_hash": "76c56319cb52f506f79b364fe1e9aa1b81c0e173162ef7d8e77b6d7a31b6b6dd",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [],
@@ -288778,7 +288783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T21:56:55.806Z",
+      "verified_at": "2026-11-26T14:53:21.516Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -353067,26 +353072,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10628,
       "title": "background facet carries a fn pointer and plain request, not",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "a6682352",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "8838e415",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-26T08:10:15.254Z"
+      "verified_at": "2026-11-26T14:53:25.370Z"
     },
     "candidate_directive-background-facet-carries-a-fn-pointer-and-plain-request-not": {
       "item_id": "candidate_directive-background-facet-carries-a-fn-pointer-and-plain-request-not",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VIS1-background-facet-carries-a-fn-pointer-and-plain-request-not.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-9ZY4-background-facet-carries-a-fn-pointer-and-plain-request-not.md",
       "title": "background facet carries a fn pointer and plain request, not",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "a6682352",
-      "content_hash": "1c7b7ed80329879f1579f6f27e3defa8746affff8dbb53cdb941932e0c284073",
+      "source_version": "8838e415",
+      "content_hash": "e65e40ed837f65e1fb8b179b5f2da6ee57ac4ef339fcd3ebf23d02455ea33861",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T08:10:15.895Z"
+      "persisted_at": "2026-11-26T14:53:25.957Z"
     },
     "rule-10629": {
       "learning_id": "rule-10629",
@@ -353118,13 +353123,13 @@
       "item_id": "candidate_directive-command-contract-background-facet-carries-a-fn-pointer-and-plain-request-not",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VQJ5-command-contract-background-facet-carries-a-fn-pointer-and-plain-request-not.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-A6C3-command-contract-background-facet-carries-a-fn-pointer-and-plain-request-not.md",
       "title": "command-contract): background facet carries a fn pointer and plain request, not",
-      "repository": "codewhale-hq-codewhale-learnings",
+      "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "be5bcc9d79d4bacb8a307ceac1ef9918917bd8debce5852246449af9d9c9f115",
+      "content_hash": "9b5eaf6e4ecc1a57360bb6a742cc244db082e441318ccc850ba807e1dd9be87c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T08:10:25.944Z"
+      "persisted_at": "2026-11-26T14:53:34.234Z"
     },
     "rule-10630": {
       "learning_id": "rule-10630",
@@ -356042,6 +356047,44 @@
       "content_hash": "58bb63249d9b87506e051da682b9a51ca0bc8889225127be1b7e12a200932c1a",
       "domain_letter": "I",
       "persisted_at": "2026-11-26T14:44:47.043Z"
+    },
+    "rule-10707": {
+      "learning_id": "rule-10707",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10707,
+      "title": "load single Room relations as lists to avoid iOS crash",
+      "source_url": "https://github.com/MetrolistGroup/Metrolist",
+      "source_version": "6fa4e821",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T14:53:28.373Z"
+    },
+    "candidate_directive-load-single-room-relations-as-lists-to-avoid-ios-crash": {
+      "item_id": "candidate_directive-load-single-room-relations-as-lists-to-avoid-ios-crash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A28O-load-single-room-relations-as-lists-to-avoid-ios-crash.md",
+      "title": "load single Room relations as lists to avoid iOS crash",
+      "repository": "MetrolistGroup/Metrolist",
+      "source_version": "6fa4e821",
+      "content_hash": "deb509464adc96198dcbad74d80b91ec14fc11ef0ce2701ef0872f42d7d15e70",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T14:53:28.926Z"
+    },
+    "candidate_directive-db-load-single-room-relations-as-lists-to-avoid-ios-crash": {
+      "item_id": "candidate_directive-db-load-single-room-relations-as-lists-to-avoid-ios-crash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A7ZR-db-load-single-room-relations-as-lists-to-avoid-ios-crash.md",
+      "title": "db): load single Room relations as lists to avoid iOS crash",
+      "repository": "metrolistgroup-metrolist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aa1a75a427e79ff5a578a81dcc7067ff7fdb1dadbdfe9f5aa9e5063c536e6f2d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T14:53:36.380Z"
     }
   },
   "ai-builder-brain": {

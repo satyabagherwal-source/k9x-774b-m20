@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T14:44:48.401Z",
+  "last_updated": "2026-11-26T14:53:36.658Z",
   "total_records": 2754,
   "domains": {
     "A": {
@@ -9850,8 +9850,8 @@
       "title": "Research & Knowledge Intelligence: akatz-ai/MiniMax-H3-Character-Swap-LoRA Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-research-knowledge-intelligence-akatz.md",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "content_hash": "68f347c0cf511d7ba4715f0045b9d5ab8fed72c9ec29e414d04a95b47c114592",
-      "created_at": "2026-11-22T21:56:56.255Z"
+      "content_hash": "43fba84a01ddf0a9b716f9db58724688703ed61ddd2c9fe1d741eb365fafc252",
+      "created_at": "2026-11-26T14:53:22.134Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants",
@@ -9910,8 +9910,8 @@
       "title": "Research & Knowledge Intelligence: hf-akatz-ai-minimax-h3-character-swap-lora-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-learnings-research-knowledge-intellig.md",
       "repository": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings",
-      "content_hash": "35fa353da312f2ceb8a608989955d4296903f6e6d8b98e42c4c4030ac1bc95c5",
-      "created_at": "2026-11-22T21:57:11.458Z"
+      "content_hash": "f7a6eb2d8451ef2c0d9d5c826d86c981533cce4683fd98536f83a483553b6851",
+      "created_at": "2026-11-26T14:53:35.624Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
@@ -16593,10 +16593,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "00a4eff9dcdafc78e724ad1ed77312f99820766d4885f274a806edcb6a7b5924",
-      "created_at": "2026-11-26T08:10:16.119Z"
+      "content_hash": "78e09723fbf84afa3571d973196af5099f1214f3c53032c9da634e307d6e2d78",
+      "created_at": "2026-11-26T14:53:26.187Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -19086,8 +19086,8 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
       "repository": "hmbown-codewhale-learnings",
-      "content_hash": "254bc44361d2b4c96ba5f213928561c25495630d97ee7242ff8cbf0ee0fc05d5",
-      "created_at": "2026-11-25T06:47:57.872Z"
+      "content_hash": "175b5c2da24545d12b63eb913724a553a4aad724aa94e9c8c5858e1820ad06e8",
+      "created_at": "2026-11-26T14:53:34.506Z"
     },
     "DOM-D-D6B073D5": {
       "record_id": "DOM-D-D6B073D5",
@@ -23499,8 +23499,8 @@
       "title": "Architecture Intelligence: MetrolistGroup/Metrolist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-architecture-intelligence-metrolistgroup-metrolist-core.md",
       "repository": "MetrolistGroup/Metrolist",
-      "content_hash": "b1a85919a8c46c39dba57e82339e267fb38ffec1078eed096fb957887ef4d477",
-      "created_at": "2026-11-24T04:37:02.255Z"
+      "content_hash": "248bd07e005fce8b2be85d7a26290c98ae44e8170b970c25aaf4aa26dcc042b6",
+      "created_at": "2026-11-26T14:53:29.199Z"
     },
     "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants",
@@ -23526,8 +23526,8 @@
       "title": "Architecture Intelligence: metrolistgroup-metrolist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-learnings-architecture-intelligence-metrolistgroup-metr.md",
       "repository": "metrolistgroup-metrolist-learnings",
-      "content_hash": "c82e12ee9da2701c95b1a02e976fc4d941b021b85a6d4dcca35c66c3a0e90927",
-      "created_at": "2026-11-24T04:37:06.234Z"
+      "content_hash": "e3073107c9d4052fa5dde44b957bbeadc4c2356b2bcf527bc0367332a9f7b24c",
+      "created_at": "2026-11-26T14:53:36.658Z"
     },
     "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",

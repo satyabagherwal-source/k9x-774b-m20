@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T04:37:05.928Z",
+  "timestamp": "2026-11-26T14:53:36.243Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-metrolistgroup-metrolist-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [metrolistgroup-metrolist-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T04:37:05.928Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T14:53:36.243Z`  
 > **Learning ID**: `LEARN-EVO-metrolistgroup-metrolist-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md`  
 > **Source**: github ([https://github.com/MetrolistGroup/Metrolist](https://github.com/MetrolistGroup/Metrolist))  
-> **Source Version**: `af3d0533`  
+> **Source Version**: `6fa4e821`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T04:37:00.762Z  
+> **Timestamp**: 2026-11-26T14:53:27.382Z  
 > **Learning ID**: `learn-github-metrolistgroup-metrolist`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MetrolistGroup/Metrolist](https://github.com/MetrolistGroup/Metrolist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T04:37:00.482Z  
+> **Harvest Timestamp**: 2026-11-26T14:53:27.377Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Material Design YouTube Music client for Android, iOS and desktop
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14899 stars
+- **Stars / Engagement**: 15210 stars
 
 ---
 
@@ -854,10 +854,16 @@ internal suspend fun nextOfflineQueueIndex(
     songs: List<SongItem>,
     currentIndex: Int,
     repeatAll: Boolean,
+    backward: Boolean = false,
     isPlayable: suspend (SongItem) -> Boolean,
 ): Int? {
     if (currentIndex !in songs.indices) return null
-    val indices = (currentIndex + 1 until songs.size) + if (repeatAll) (0 until currentIndex).toList() else emptyList()
+    val indices =
+        if (backward) {
+            (currentIndex - 1 downTo 0) + if (repeatAll) (songs.lastIndex downTo currentIndex + 1) else emptyList()
+        } else {
+            (currentIndex + 1 until songs.size) + if (repeatAll) (0 until currentIndex) else emptyList()
+        }
     return indices.firstOrNull { isPlayable(songs[it]) }
 }
 
@@ -1088,14 +1094,14 @@ internal fun queuePlaybackResolveBudget(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5269** (2026-11-24): **Tempo and pitch inputs accept different decimal separators depending on language**
-  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Android  ### Version  Nightly  ### Issue  The tempo and pitch inputs behave differently depending on the app language.  Some languages accept `,` but reject `.`. Others accept `.` but reject `,`.  Both `.` and `,` should be accepted for tempo and pitch in all languages.  Tested with English, Indonesian, and Spanish.   | Indonesian | Spanish | English | |:---:|:---:|:---:| | <img src="https://github.com/user-attachments/assets/6f746613-a0a8-4bd2-86f1-9c017f2e4008" width="230" /> | <img src="https://github.com/user-attachments/assets/6ca500b5-eac8-43a3-8581-7915c37b61af" width="230" /> | <img src="https://github.com/user-attachments/assets/8283d5ca-5762-42e9-b2d0-918641a61c42" width="230" /> |   ### Logs  ```shell  ```
+- **Issue #5391** (2026-11-26): **[Linux / AUR] Hardcoded /home/hussien/ icon path in Metrolist.desktop**
+  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Linux  ### Version  Linux (CachyOS / Arch) / metrolist-desktop-bin (version 14.0.0-2 or 14.0.1)  ### Issue  When installing metrolist-desktop-bin from the AUR on Arch/CachyOS, the application icon is broken in app launchers and taskbars because /usr/share/applications/Metrolist.desktop contains a hardcoded user directory path:  [Desktop Entry] Type=Application Name=Metrolist Exec=env "/opt/metrolist-desktop-bin/metrolist.AppImage" %u Icon=/home/hussien/.local/share/icons/hicolor/512x512/apps/Metrolist.png StartupWMClass=Metrolist Comment=Metrolist music client Categories=AudioVideo;Player; Terminal=false MimeType=x-scheme-handler/metrolist;x-scheme-handler/metrolist-auth; X-Metrolist-AppImage=true  Cause: It looks like a .desktop file generated by Metrolist's AppImage integration (X-Metrolist-AppImage=true) on the packager's local environment (/home/hussien/...) was bundled directly into the AUR package, while PKGBUILD installs the actual system icon to /usr/share/icons/hicolor/512x512/apps/metrolist.png (lowercase).  Suggested Fix: Set Icon=metrolist in the packaged Metrolist.desktop (or run sed -i 's|^Icon=.*|Icon=metrolist|' "$pkgdir/usr/share/applications/Metrolist
 
-- **Issue #5265** (2026-11-23): **Songs keep stopping**
-  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Android  ### Version  14.0.1  ### Issue  When a song is playing, it will sporadically stop for a few seconds  ### Logs  ```shell  ```
+- **Issue #5378** (2026-11-26): **No Sound**
+  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  iOS  ### Version  ios 16.7.16 / v14.0.1  ### Issue  No Sound Coming Out of the app at full volumeOn iPhone 8, on ios 16.7.16 with metrolist version 14.0.1  ### Logs  ```shell  ```
   **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated issue plan by CodeRabbit -->  <details> <summary>⚠️ Possible Duplicate Issue(s)</summary> <dl> <dd> <br>  - https://github.com/MetrolistGroup/Metrolist/issues/5057 </dd> </dl> </details> <details> <summary>🔗 Related PRs</summary> <dl> <dd> <br>  MetrolistGroup/Metrolist#5155 - fix(android): rearm watchdog after offload fallback [closed] </dd> </dl> </details>  --- <details> <summary>📝 Issue Planner</summary> <dl> <dd> <br>  <sub>Check the box below or use the `@coderabbitai plan` command to generate an implementation plan and prompts that you can use with your favorite coding assistant.</sub>  - [ ] <!-- {"checkboxId":"8d4f2b9c-3e1a-4f7c-a9b2-d5e8f1c4a7b9"} --> Create Plan </dd> </dl> </details>   --- <details> <summary> 🧪 Issue enrichment is currently in open beta.</summary> <dl> <dd> <br>   You can configure auto-planning by selecting labels in the issue_enrichment configuration.  To disable automatic issue enrich
-  > Duplicate of #5057. Playback stopping for a few seconds on 14.0.1 comes from the next track preloading in a player that shares the current audio session, which stalls on some phones. dfb737eda fixed it after 14.0.1. Please install the nightly (https://github.com/MetrolistGroup/Metrolist/releases/download/nightly/Metrolist.apk) and comment here if songs still stop.
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated issue plan by CodeRabbit -->  <details> <summary>⚠️ Possible Duplicate Issue(s)</summary> <dl> <dd> <br>  - https://github.com/MetrolistGroup/Metrolist/issues/5243 </dd> </dl> </details>  --- <details> <summary>📝 Issue Planner</summary> <dl> <dd> <br>  <sub>Check the box below or use the `@coderabbitai plan` command to generate an implementation plan and prompts that you can use with your favorite coding assistant.</sub>  - [ ] <!-- {"checkboxId":"8d4f2b9c-3e1a-4f7c-a9b2-d5e8f1c4a7b9"} --> Create Plan </dd> </dl> </details>   --- <details> <summary> 🧪 Issue enrichment is currently in open beta.</summary> <dl> <dd> <br>   You can configure auto-planning by selecting labels in the issue_enrichment configuration.  To disable automatic issue enrichment, add the following to your `.coderabbit.yaml`: ```yaml issue_enrichment:   auto_enrich:     enabled: false ``` </dd> </dl> </details>  💬 Have feedback or questions? Drop 
+  > Duplicate of #5243.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1112,696 +1118,576 @@ internal fun queuePlaybackResolveBudget(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17f78c37` (2026-11-23)
-**Commit Message**: feat(desktop): support pure Wayland sessions on Linux (#5264)
+### Incident Patch 1: `4018eb76` (2026-11-25)
+**Commit Message**: fix(db): load single Room relations as lists to avoid iOS crash (#5346)
 
-* feat(desktop): support pure Wayland sessions on Linux
+Opening Library on iOS crashed with ConcurrentModificationException once the database held more than 999 songs. The 14.0.1 dSYM resolves the stack to Room's recursiveFetchMap, reached from songsByCreateDateAsc while loading the album relation. For single-value relations, Room calls putAll on the result map while it is still iterating that map's keys after each 999-key batch. JVM HashMap tolerates this; the Kotlin/Native HashMap throws.
 
-* feat(desktop): use Nucleus Tao backend for pure Wayland on JVM and native image
+Song.album, Song.format, EventWithSong.song, EventWithSong.snapshot and PlaylistSong.song are now list relations, which Room fills without that putAll. Getters with the old names return the last element, the row the single-value relation used to keep, so callers are unchanged. The same crash would also have hit history and playlists with more than 999 rows.
 
-* fix(desktop): make the Tao Wayland backend compile and start
+fixes: #5253
 
-The Tao branch did not compile: Tao exposes isFocused and isMinimized as
-properties, KMP dependency blocks need string notation for exclusions,
-FileKit's directory picker takes its title through dialog settings, and
-WindowDraggableArea needs a WindowScope that Tao windows lack.
+AI usage: Claude Opus 5.5 (claude-opus-5-5)
 
-At startup Tao's Dispatchers.Main ran launched coroutines inline on its
-own thread, so PlayerState's init collected settings before its history
-field existed and crashed. Main now always queues work as Swing does,
-while Main.immediate keeps Tao's inline behaviour.
-
-related to: #5222
-
-* feat(desktop): embed WebKitGTK views on native Wayland
-
-wry attaches WebKitGTK to an X11 window, so YouTube sign-in and the
-other embedded pages were unavailable when Metrolist ran on Wayland
-without XWayland. Under native Wayland a WebKitGTK 4.1 view is now
-created through JNA and embedded in the Tao window as a GTK widget.
-
-DesktopBrowser chooses that view or wr
-
-**File**: `.github/tests/test_desktop_launcher.py` (modified, +20/-5)
+**File**: `shared/src/commonMain/kotlin/com/metrolist/shared/db/HistorySong.kt` (modified, +17/-15)
 ```diff
-@@ -58,11 +58,26 @@ def launch(self, native=False):
-         return result.stdout.splitlines()
- 
-     def test_webview_uses_x11_and_preserves_explicit_backend(self):
--        self.executable(self.bin / "Metrolist.bin", 'printf "%s\n" "$GDK_BACKEND"')
--        self.environment.update(XCURSOR_THEME="Theme", XCURSOR_SIZE="24")
--        self.assertEqual(["x11"], self.launch())
--        self.environment["GDK_BACKEND"] = "x11,wayland"
--        self.assertEqual(["x11,wayland"], self.launch())
-+        probe = 'printf "%s\n" "${GDK_BACKEND-unset}"'
-+        self.executable(self.bin / "Metrolist.bin", probe)
-+        self.executable(self.bin.parent / "lib/native/Metrolist", probe)
-+        for native in (False, True):
-+            with self.subTest(native=native):
-+                self.environment.pop("GDK_BACKEND", None)
-+                self.environment.pop("WAYLAND_DISPLAY", None)
-+                self.environment.pop("METROLIST_USE_WAYLAND", None)
-+                self.environment.pop("METROLIST_USE_WAKEFIELD", None)
-+                self.environment.update(DISPLAY=":77", XCURSOR_THEME="Theme", XCURSOR_SIZE="24")
-+                self.assertEqual(["x11"], self.launch(native))
-+                self.environment["GDK_BACKEND"] = "x11,wayland"
-+                self.assertEqual(["x11,wayland"], self.launch(native))
-+                del self.environment["GDK_BACKEND"]
-+                del self.environment["DISPLAY"]
-+                self.environment["WAYLAND_DISPLAY"] = "wayland-0"
-+                self.assertEqual(["wayland"], self.launch(native))
-+                self.environment["DISPLAY"] = ":77"
-+                self.environment["METROLIST_USE_WAYLAND"] = "1"
-+                self.assertEqual(["wayland"], self.launch(native))
- 
-     def test_missing_display_is_not_guessed_from_global_sockets(self):
-         self.executable(self.bin / "Metrolist.bin", 'printf "%s\\n" "${DISPLAY-unset}"')
-```
-
-**File**: `desktopApp/build.gradle.kts` (modified, +27/-5)
-```diff
-@@ -329,6 +329,15 @@ kotlin {
-                 implementation(libs.sharesheet)
-                 implementation(libs.windowstaskbar)
-                 implementation(libs.mediacontrols)
-+                // KMP's dependency handler takes exclusions only with string notation.
-+                implementation(
-+                    libs.decorated.window.tao
-+                        .get()
-+                        .toString(),
-+                ) {
-+                    exclude(group = "dev.nucleusframework", module = "nucleus.angle-natives")
-+                    exclude(group = "org.jetbrains.compose.desktop")
-+                }
-             }
+@@ -53,21 +53,23 @@ internal fun EventWithSong.withHistoricalMetadata(): EventWithSong {
+                 ?: ArtistEntity(id = "history-artist:$name", name = name, isLocal = true)
          }
- 
-@@ -418,7 +427,7 @@ val syncExternalResources =
- val desktopJavaLauncher =
-     extensions.getByType<JavaToolchainService>().launcherFor {
-         languageVersion.set(JavaLanguageVersion.of(25))
--        vendor.set(jdkVendor)
-+        jdkVendor?.let(vendor::set)
-     }
- 
- tasks.withType<JavaExec>().configureEach {
-@@ -464,10 +473,23 @@ tasks.withType<JavaExec>().configureEach {
-         }
- 
-         environment("LC_NUMERIC", "C")
--        environment(
--            "GDK_BACKEND",
--            providers.environmentVariable("GDK_BACKEND").orNull ?: "x11",
--        )
-+        val hasDisplay = !providers.environmentVariable("DISPLAY").orNull.isNullOrBlank()
-+        val runtimeDir = providers.environmentVariable("XDG_RUNTIME_DIR").orNull
-+        val hasWaylandDisplay =
-+            !providers.environmentVariable("WAYLAND_DISPLAY").orNull.isNullOrBlank() ||
-+                (!runtimeDir.isNullOrBlank() && File(runtimeDir, "wayland-0").exists())
-+        val wantsWayland =
-+            providers.environmentVariable("METROLIST_USE_WAYLAND").orNull == "1" ||
-+                providers.environmentVariable("METROLIST_USE_WAKEFIELD").orNull == "1"
-+        val gdkBackend =
-+            providers.environmentVariable("GDK_BACKEND").orNull
-+                ?: when {
-+                    wantsWayland && hasWaylandDisplay -> "wayland"
-+                    hasDisplay -> "x11"
-+                    hasWaylandDisplay -> "wayland"
-+                    else -> "x11"
-+                }
-+        environment("GDK_BACKEND", gdkBackend)
-         environment("_JAVA_AWT_WM_NONREPARENTING", "1")
-         environment(
-             "SKIKO_WAYLAND",
-```
-
-**File**: `desktopApp/packaging-integrity.gradle.kts` (modified, +1/-1)
-```diff
-@@ -340,7 +340,7 @@ private class VerifyReleaseDistributableAction(
-             when (platform) {
-                 "win" -> listOf("nucleus_windows_theme.dll", "nucleus_share.dll", "nucleus_media_control_windows.dll")
-                 "mac" -> listOf("libnucleus_darkmode.dylib", "libnucleus_share.dylib", "libnucleus_media_control_macos.dylib")
--                else -> listOf("libnucleus_linux_theme.so", "libnucleus_share.so", "libnucleus_media_control_linux.so")
-+                else -> listOf("libnucleus_linux_theme.so", "libnucleus_share.so", "libnucleus_media_control_linux.so", "libnucleus_tao.so")
-             }
-         requiredNatives.forEach { native ->
-             check("$nucleusPlatform$native" in packagedEntries) { "Release distributable is missing $nucleusPlatform$native" }
-```
-
-**File**: `desktopApp/packaging-launchers.gradle.kts` (modified, +11/-2)
-```diff
-@@ -171,8 +171,17 @@ tasks.register("patchLinuxLauncher") {
- # Wayland support in Skiko
- export SKIKO_WAYLAND="${SKIKO_WAYLAND:-1}"
- 
--# Embedded GTK login windows are X11 children of AWT windows
--export GDK_BACKEND="${GDK_BACKEND:-x11}"
-+# Embedded GTK login windows are X11 children of AWT windows; use Wayland when X11 is absent or native Wayland is requested.
-+if [ -n "${WAYLAND_DISPLAY:-}" ] || [ -S "${XDG_RUNTIME_DIR:-}/wayland-0" ]; then has_wayland=1; else has_wayland=0; fi
-+if [ -z "${GDK_BACKEND:-}" ]; then
-+    if [ "$has_wayland" = "1" ] && { [ "${METROLIST_USE_WAYLAND:-0}" = "1" ] || [ "${METROLIST_USE_WAKEFIELD:-0}" = "1" ]; }; then
-+        export GDK_BACKEND=wayland
-+    elif [ -n "${DISPLAY:-}" ]; then
-+        export GDK_BACKEND=x11
-+    elif [ "$has_wayland" = "1" ]; then
-+        export GDK_BACKEND=wayland
-+    fi
-+fi
- 
- # Prevent AWT from reparenting (needed for some tiling WMs)
- export _JAVA_AWT_WM_NONREPARENTING="${_JAVA_AWT_WM_NONREPARENTING:-1}"
-```
-
-**File**: `desktopApp/proguard-rules.pro` (modified, +8/-1)
-```diff
-@@ -15,6 +15,7 @@
- -keep class * implements com.sun.jna.Library { *; }
- -keep class io.github.kdroidfilter.** { *; }
- -keep class dev.nucleusframework.** { *; }
-+-keep interface dev.nucleusframework.** { *; }
- -keep interface io.github.kdroidfilter.** { *; }
- -keep class uniffi.** { *; }
- -keep interface uniffi.** { *; }
-@@ -40,19 +41,23 @@
-     public static ** valueOf(java.lang.String);
+     return copy(
+-        song =
+-            song.copy(
+-                song =
+-                    song.song.copy(
+-                        title = snapshot.title,
+-                        customTitle = null,
+-                        customArtist = null,
+-                        albumId = snapshot.albumId,
+-                        albumName = snapshot.album,
+-                        duration = snapshot.duration?.toInt() ?: -1,
+-                        thumbnailUrl = snapshot.thumbnailUrl,
+-                    ),
+-                artists = artists,
+-                artistMaps = artists.mapIndexed { index, artist -> SongArtistMap(event.songId, artist.id, index) },
+-                album = song.album?.takeIf { it.id == snapshot.albumId },
++        songs =
++            listOf(
++                song.copy(
++                    song =
++                        song.song.copy(
++                            title = snapshot.title,
++                            customTitle = null,
++                            customArtist = null,
++                            albumId = snapshot.albumId,
++                            albumName = snapshot.album,
++                            duration = snapshot.duration?.toInt() ?: -1,
++                            thumbnailUrl = snapshot.thumbnailUrl,
++                        ),
++                    artists = artists,
++                    artistMaps = artists.mapIndexed { index, artist -> SongArtistMap(event.songId, artist.id, index) },
++                    albums = listOfNotNull(song.album?.takeIf { it.id == snapshot.albumId }),
++                ),
+             ),
+     )
  }
- 
--# Compose internals used by the custom window hit-test bridge.
-+# Compose internals used by the custom window hit-test bridge and Tao scene host.
- -keep class androidx.compose.ui.node.HitTestResult { *; }
- -keep class androidx.compose.ui.node.PointerInputModifierNode { *; }
-+-keep class androidx.compose.ui.node.TaoLayerTreeAccess { *; }
-+-keep class androidx.compose.ui.platform.TaoGraphicsResourceCacheAccess { *; }
- -keep class androidx.compose.ui.scene.CanvasLayersComposeSceneImpl { *; }
- -keep class androidx.compose.ui.scene.CanvasLayersComposeSceneImpl$AttachedComposeSceneLayer { *; }
- -keep class androidx.compose.ui.scene.CopiedList { *; }
- -keep class androidx.compose.ui.scene.PlatformLayersComposeSceneImpl { *; }
-+-keep class androidx.compose.ui.scene.TaoComposeSceneContextAccess { *; }
- 
- # ServiceLoader providers.
- -keep class coil3.network.okhttp.internal.OkHttpNetworkFetcherServiceLoaderTarget { *; }
- -keep class io.ktor.client.engine.cio.CIOEngineContainer { *; }
- -keep class io.ktor.client.engine.okhttp.OkHttpEngineContainer { *; }
- -keep class io.ktor.serialization.kotlinx.json.KotlinxSerializationJsonExtensionProvider { *; }
-+-keep class kotlinx.coroutines.internal.MainDispatcherFactory
- -keep class kotlinx.coroutines.swing.SwingDispatcherFactory { *; }
- -keep class org.freedesktop.dbus.transport.jre.NativeTransportProvider { *; }
- -keep class org.slf4j.simple.SimpleServiceProvider { *; }
-@@ -73,5 +78,7 @@
- -dontwarn io.github.kdroidfilter.**
- -dontwarn uniffi.**
- -dontwarn com.charleskorn.kaml.**
-+-dontwarn org.jetbrains.compose.devtools.**
-+-dontwarn org.jetbrains.compose.reload.**
- 
- -keepattributes Exceptions,InnerClasses,Signature,EnclosingMethod,*Annotation*
 ```
 
-**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/Main.kt` (modified, +225/-153)
+**File**: `shared/src/commonMain/kotlin/com/metrolist/shared/db/entities/EventWithSong.kt` (modified, +9/-3)
 ```diff
-@@ -72,16 +72,15 @@ import androidx.compose.ui.graphics.luminance
- import androidx.compose.ui.graphics.painter.Painter
- import androidx.compose.ui.graphics.toArgb
- import androidx.compose.ui.input.pointer.pointerInput
-+import androidx.compose.ui.platform.LocalClipboard
- import androidx.compose.ui.platform.LocalDensity
- import androidx.compose.ui.res.painterResource
- import androidx.compose.ui.text.font.FontFamily
- import androidx.compose.ui.unit.DpSize
- import androidx.compose.ui.unit.dp
--import androidx.compose.ui.window.Window
-+import androidx.compose.ui.window.DialogProperties
- import androidx.compose.ui.window.WindowPlacement
- import androidx.compose.ui.window.WindowPosition
--import androidx.compose.ui.window.WindowScope
--import androidx.compose.ui.window.application
- import androidx.compose.ui.window.rememberWindowState
- import coil3.compose.setSingletonImageLoaderFactory
- import com.materialkolor.ktx.isLight
-@@ -156,12 +155,18 @@ import com.metrolist.desktop.utils.isDesktopPlatformSupported
- import com.metrolist.desktop.utils.isOmarchy
- import com.metrolist.desktop.utils.openStopOmarchy
- import com.metrolist.desktop.web.DesktopWebViewError
-+import com.metrolist.desktop.window.DesktopWindow
-+import com.metrolist.desktop.window.DesktopWindowScope
- import com.metrolist.desktop.window.IconResources
- import com.metrolist.desktop.window.LinuxWindowFrame
- import com.metrolist.desktop.window.WindowFrame
- import com.metrolist.desktop.window.WindowVisibility
-+import com.metrolist.desktop.window.asComposeFrameWindowScope
-+import com.metrolist.desktop.window.desktopApplication
-+import com.metrolist.desktop.window.findRenderApi
- import com.metrolist.desktop.window.findSkiaLayer
- import com.metrolist.desktop.window.restoreWindowPosition
-+import com.metrolist.desktop.window.runOnDesktopUiThread
- import com.metrolist.desktop.window.setWindowPlacement
- import com.metrolist.desktop.youtube.DesktopPageBoundTokenHost
- import com.metrolist.desktop.youtube.DesktopPageBoundTokenRuntime
-@@ -213,11 +218,13 @@ import com.metrolist.shared.state.applyContentRegion
- import com.metrolist.shared.state.coreModule
- import com.metrolist.shared.ui.YouTubeSyncSnackbar
- import com.metrolist.shared.ui.components.AlertDialog
-+import com.metrolist.shared.ui.components.Dialog
- import com.metrolist.shared.ui.components.HomeLoadingPlaceholder
- import com.metrolist.shared.ui.components.LoadingScreen
- import com.metrolist.shared.ui.components.LocalDownloadedSongIds
- import com.metrolist.shared.ui.components.LocalVisualWorkActive
- import com.metrolist.shared.ui.components.PopupVisibility
-+import com.metrolist.shared.ui.crash.CrashLogsScreen
- import com.metrolist.shared.ui.navigation.LocalNavigationContainerState
- import com.metrolist.shared.ui.navigation.LocalNavigator
- import com.metrolist.shared.ui.navigation.NavigationContentProvider
-@@ -256,7 +263,6 @@ import org.koin.core.context.stopKoin
- import sun.misc.Signal
- import sun.misc.SignalHandler
- import java.awt.Desktop
--import java.awt.EventQueue
- import java.awt.Frame
- import java.awt.GraphicsEnvironment
- import java.awt.Toolkit
-@@ -276,13 +282,18 @@ import kotlin.system.exitProcess
- import java.awt.Color as AwtColor
- 
- @Composable
--fun WindowScope.App(
-+fun DesktopWindowScope.App(
-     navigator: Navigator,
-     onMaximized: () -> Unit,
-     toggleWindowFullscreen: () -> Unit,
-     checkDarkMode: (Boolean) -> Unit,
-     isLinux: Boolean = false,
- ) {
-+    val clipboard = LocalClipboard.current
-+    DisposableEffect(clipboard) {
-+        AppState.bindClipboard(clipboard)
-+        onDispose { AppState.unbindClipboard(clipboard) }
-+    }
-     val playbackController = remember { DesktopPlaybackController(AppState.scope) }
-     val downloadStates = LibraryState.downloadStates
-     val downloadedSongIds = remember(downloadStates) { downloadStates.filterValues { it == DownloadState.DOWNLOADED }.keys }
-@@ -299,7 +310,7 @@ fun WindowScope.App(
- }
- 
- @Composable
--private fun WindowScope.AppContent(
-+private fun DesktopWindowScope.AppContent(
-     navigator: Navigator,
-     onMaximized: () -> Unit,
-     toggleWindowFullscreen: () -> Unit,
-@@ -358,7 +369,7 @@ private fun WindowScope.AppContent(
-                 val dark = colorScheme.background.luminance() < 0.5f
-                 ComposeTrayManager.setThemeColors(bg, fg, border, dark)
-                 if (!isLinux) {
--                    window.background = colorScheme.background.toAwtColor()
-+                    awtWindow?.background = colorScheme.background.toAwtColor()
-                 }
-             } catch (_: Exception) {
-             }
-@@ -407,17 +418,6 @@ private fun WindowScope.AppContent(
-                     .clip(RoundedCornerShape(windowCornerRadius)),
-         ) {
-             LastFmArtistBrowserHost(lastFmBrowser)
--            Box(
--                Modifier
--                    .fillMaxSize()
--                    .windowInsetsPadding(LocalCaptionBarInsets.current.only(WindowInsetsSides.Top))
--                    .focusRequester(rootFocusR
+@@ -16,7 +16,13 @@ data class EventWithSong(
+         parentColumns = ["songId"],
+         entityColumns = ["id"],
+     )
+-    val song: Song,
++    val songs: List<Song>,
+     @Relation(parentColumns = ["id"], entityColumns = ["eventId"])
+-    val snapshot: HistorySnapshot? = null,
+-)
++    val snapshots: List<HistorySnapshot> = emptyList(),
++) {
++    // Lists avoid Room's iOS ConcurrentModificationException for single-value relations above 999 rows.
++    val song: Song
++        get() = songs.last()
++    val snapshot: HistorySnapshot?
++        get() = snapshots.lastOrNull()
++}
 ```
 
-**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/crash/DesktopCrashRecovery.kt` (modified, +93/-59)
+**File**: `shared/src/commonMain/kotlin/com/metrolist/shared/db/entities/PlaylistSong.kt` (modified, +6/-2)
 ```diff
-@@ -1,8 +1,10 @@
- package com.metrolist.desktop.crash
+@@ -16,8 +16,12 @@ data class PlaylistSong(
+         entityColumns = ["id"],
+         entity = SongEntity::class,
+     )
+-    val song: Song,
+-)
++    val songs: List<Song>,
++) {
++    // A list avoids Room's iOS ConcurrentModificationException for single-value relations above 999 rows.
++    val song: Song
++        get() = songs.last()
++}
  
- import com.metrolist.desktop.update.DesktopUpdateManager
-+import com.metrolist.desktop.utils.WaylandScale
- import com.metrolist.desktop.utils.desktopRestartCommand
- import com.metrolist.desktop.utils.prepareDesktopRelaunch
-+import com.metrolist.desktop.utils.saveDesktopFile
- import com.metrolist.shared.BuildConfig
- import com.metrolist.shared.crash.CrashReport
- import com.metrolist.shared.crash.FatalCrashHandler
-@@ -18,19 +20,26 @@ import com.metrolist.shared.generated.resources.crash_menu_reload
- import com.metrolist.shared.generated.resources.crash_no_log
- import com.metrolist.shared.generated.resources.crash_restart
- import com.metrolist.shared.generated.resources.crash_share_logs
-+import com.metrolist.shared.generated.resources.crash_share_title
- import com.metrolist.shared.generated.resources.crash_title
- import com.metrolist.shared.generated.resources.crash_updates_action
- import com.metrolist.shared.generated.resources.crash_updates_checking
- import com.metrolist.shared.generated.resources.crash_updates_error
- import com.metrolist.shared.generated.resources.crash_updates_no_updates
- import com.metrolist.shared.utils.XdgUtils
- import com.metrolist.shared.utils.openUrl
-+import kotlinx.coroutines.CoroutineScope
-+import kotlinx.coroutines.Dispatchers
-+import kotlinx.coroutines.SupervisorJob
-+import kotlinx.coroutines.launch
- import kotlinx.coroutines.runBlocking
- import org.jetbrains.compose.resources.StringResource
- import org.jetbrains.compose.resources.getString
-+import java.awt.AWTError
- import java.awt.BorderLayout
- import java.awt.EventQueue
- import java.awt.GraphicsEnvironment
-+import java.awt.HeadlessException
- import java.awt.Toolkit
- import java.awt.datatransfer.StringSelection
- import java.awt.event.WindowAdapter
-@@ -50,6 +59,8 @@ object DesktopCrashRecovery {
-     const val ARGUMENT = "--crash-report"
-     val store get() = FileCrashStore(File(XdgUtils.getXdgDataHome(), "metrolist/crashes"))
+ fun PlaylistSong.toSongItem(): SongItem =
+     song.toSongItem().copy(
+```
+
+**File**: `shared/src/commonMain/kotlin/com/metrolist/shared/db/entities/Song.kt` (modified, +8/-2)
+```diff
+@@ -39,13 +39,19 @@ data class Song(
+                 entityColumns = ["albumId"],
+             ),
+     )
+-    val album: AlbumEntity? = null,
++    val albums: List<AlbumEntity> = emptyList(),
+     @Relation(
+         parentColumns = ["id"],
+         entityColumns = ["id"],
+     )
+-    val format: FormatEntity? = null,
++    val formats: List<FormatEntity> = emptyList(),
+ ) : LocalItem() {
++    // Single-value relations crash on iOS above 999 rows: Room's recursiveFetchMap calls putAll while iterating the map.
++    // last matches the row Room's single-value relation kept, since it overwrote the map entry per row.
++    val album: AlbumEntity?
++        get() = albums.lastOrNull()
++    val format: FormatEntity?
++        get() = formats.lastOrNull()
+     override val id: String
+         get() = song.id
+     override val title: String
+```
+
+---
+
+### Incident Patch 2: `788fb64b` (2026-11-25)
+**Commit Message**: fix(listen-together): keep guests in sync and suggestions reliable (#5380)
+
+Users reported that Listen Together drifts out of sync, breaks on track changes and reconnects, and loses suggestions. Host playback actions now carry the server time when the position was read, and guests anchor pong drift reports to the ping's own position and capture time, ignore reports from before a newer host action, and let a newer correction replace a running one. Hosts reconcile reconnects under the publication mutex, so a track changed while offline is published. Guests acknowledge buffer readiness with the newest `change_track` revision, including same-track restarts during loading, which removes a 25-second stall.
+
+Hosts publish at most 1,000 upcoming tracks within the server's 200 KiB estimate, because larger queues failed to encode and track changes never reached guests. Guests can suggest a track again after a lost decision, the newest suggestion ID replaces the stale one, and the server deduplicates pending suggestions. On desktop, a track loaded before joining counts as ready and readiness resets when playback switches tracks. docs/listen-together.md is updated, and the server side is Metro
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/listentogether/DesktopListenTogetherPlayback.kt` (modified, +19/-3)
+```diff
+@@ -14,6 +14,7 @@ import com.metrolist.shared.model.SongItem
+ import kotlinx.coroutines.flow.MutableStateFlow
+ import kotlinx.coroutines.flow.StateFlow
+ import kotlinx.coroutines.flow.collectLatest
++import kotlinx.coroutines.flow.combine
+ import kotlinx.coroutines.launch
  
-+    private val shareScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+ class DesktopListenTogetherPlayback : ListenTogetherPlayback {
+@@ -28,9 +29,24 @@ class DesktopListenTogetherPlayback : ListenTogetherPlayback {
+ 
+     init {
+         AppState.scope.launch {
+-            currentSong.collectLatest { song ->
+-                if (song == null) readiness.value = PlaybackReadiness.IDLE
+-            }
++            combine(currentSong, PlayerState.player.currentPlaybackResource) { song, resource -> song to resource }
++                .collectLatest { (song, resource) ->
++                    when {
++                        song == null -> {
++                            readiness.value = PlaybackReadiness.IDLE
++                        }
 +
-     fun install() {
-         val fallback =
-             Thread.getDefaultUncaughtExceptionHandler() ?: Thread.UncaughtExceptionHandler { _, error ->
-@@ -78,8 +89,8 @@ object DesktopCrashRecovery {
- 
-     private fun prompt(report: String): DesktopCrashChoice =
-         awaitDesktopCrashChoice(
--            isHeadless = GraphicsEnvironment.isHeadless(),
--            isDispatchThread = EventQueue.isDispatchThread(),
-+            isHeadless = runCatching { GraphicsEnvironment.isHeadless() }.getOrDefault(true),
-+            isDispatchThread = runCatching { EventQueue.isDispatchThread() }.getOrDefault(false),
-             dispatch = EventQueue::invokeLater,
-         ) { onVisible ->
-             val reload = label(Res.string.crash_menu_reload)
-@@ -114,67 +125,83 @@ object DesktopCrashRecovery {
-     fun show(id: String) {
-         store.acknowledge(id)
-         val report = store.list().firstOrNull { it.id == id }?.text ?: label(Res.string.crash_no_log)
--        EventQueue.invokeLater {
--            val frame = JFrame(label(Res.string.crash_title))
--            frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
--            installCrashScreenshotHint(frame, onCopy = { copy(report) }, onShare = { share(report) })
--            frame.add(
--                JScrollPane(
--                    JTextArea(report).apply {
--                        isEditable = false
--                        caretPosition = 0
--                    },
--                ),
--                BorderLayout.CENTER,
--            )
--            val actions = JPanel()
-+        val headless = runCatching { GraphicsEnvironment.isHeadless() }.getOrDefault(true)
-+        if (headless) {
-+            System.err.println(report)
-+            return
-+        }
-+        runCatching {
-+            EventQueue.invokeLater {
-+                val frame =
-+                    try {
-+                        JFrame(label(Res.string.crash_title))
-+                    } catch (error: Throwable) {
-+                        if (error !is HeadlessException && error !is AWTError && error !is LinkageError) throw error
-+                        System.err.println(report)
-+                        exitProcess(1)
-+                    }
-+                frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-+                installCrashScreenshotHint(frame, onCopy = { copy(report) }, onShare = { share(report) })
-+                frame.add(
-+                    JScrollPane(
-+                        JTextArea(report).apply {
-+                            isEditable = false
-+                            caretPosition = 0
-+                        },
-+                    ),
-+                    BorderLayout.CENTER,
-+                )
-+                val actions = JPanel()
- 
--            fun action(
--                resource: StringResource,
--                block: () -> Unit,
--            ): JButton =
--                JButton(lab
-```
-
-**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/input/DesktopShortcuts.kt` (modified, +83/-12)
-```diff
-@@ -14,13 +14,27 @@ import androidx.compose.runtime.remember
- import androidx.compose.runtime.rememberUpdatedState
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.input.key.Key
-+import androidx.compose.ui.input.key.KeyEventType
-+import androidx.compose.ui.input.key.isAltPressed
-+import androidx.compose.ui.input.key.isCtrlPressed
-+import androidx.compose.ui.input.key.isMetaPressed
-+import androidx.compose.ui.input.key.isShiftPressed
-+import androidx.compose.ui.input.key.key
-+import androidx.compose.ui.input.key.onPreviewKeyEvent
-+import androidx.compose.ui.input.key.type
-+import androidx.compose.ui.input.pointer.PointerEventPass
-+import androidx.compose.ui.input.pointer.PointerEventType
-+import androidx.compose.ui.input.pointer.isForwardPressed
-+import androidx.compose.ui.input.pointer.isPrimaryPressed
-+import androidx.compose.ui.input.pointer.pointerInput
- import androidx.compose.ui.platform.InterceptPlatformTextInput
- import androidx.compose.ui.platform.PlatformTextInputInterceptor
- import com.metrolist.desktop.deviceconnect.DesktopDeviceConnect
- import com.metrolist.desktop.state.app.DesktopNavigation
- import com.metrolist.desktop.state.app.UiState
- import com.metrolist.desktop.state.playback.LyricsState
- import com.metrolist.desktop.state.playback.PlayerState
-+import com.metrolist.desktop.utils.WaylandScale
- import com.metrolist.desktop.web.DesktopWebViewAvailability
- import com.metrolist.shared.settings.Settings
- import com.metrolist.shared.ui.navigation.NavigationBackHandler
-@@ -110,24 +124,81 @@ fun DesktopShortcutLayer(
-                 }
-             }
-         }
--    DisposableEffect(Unit) {
--        val dispatcher =
--            installGlobalShortcutDispatcher(
--                keyFocus,
--                { backgroundFocused() },
--                { refresh() },
--                { toggleFullscreen() },
--                { forward() },
--                { clearFocus() },
--            )
--        onDispose { dispatcher.close() }
-+    val useTaoWayland = WaylandScale.isNativeWaylandActive()
-+    if (!useTaoWayland) {
-+        DisposableEffect(Unit) {
-+            val dispatcher =
-+                installGlobalShortcutDispatcher(
-+                    keyFocus,
-+                    { backgroundFocused() },
-+                    { refresh() },
-+                    { toggleFullscreen() },
-+                    { forward() },
-+                    { clearFocus() },
-+                )
-+            onDispose { dispatcher.close() }
-+        }
-     }
- 
-+    val boxModifier =
-+        if (useTaoWayland) {
-+            // Matches the AWT mouse queue: a primary click leaves keyboard navigation.
-+            modifier
-+                .pointerInput(keyFocus) {
-+                    awaitPointerEventScope {
-+                        var forwardHeld = false
-+                        while (true) {
-+                            val event = awaitPointerEvent(PointerEventPass.Initial)
-+                            // buttons is the held state, so only the transition to held counts as a forward press.
-+                            val forwardPressed = event.buttons.isForwardPressed && !forwardHeld
-+                            forwardHeld = event.buttons.isForwardPressed
-+                            if (event.type != PointerEventType.Press) continue
-+                            if (event.buttons.isPrimaryPressed) keyFocus.keyboardNavigation = false
-+                            // The AWT forward-button handler is not installed on Tao.
-+                            if (forwardPressed && !isComposeModalActive()) {
-+                                event.changes.forEach { it.consume() }
-+                                forward()
-+                            }
++                        // A track prepared before joining never passes through playQueueFromRemote.
++                        resource?.videoId == song.id && readiness.value == PlaybackReadiness.IDLE -> {
++                            readiness.value = PlaybackReadiness.READY
++                        }
++
++                        // A direct switch to another track leaves the old resource's READY behind.
++                        resource?.videoId != song.id && readiness.value == PlaybackReadiness.READY -> {
++                            readiness.value = PlaybackReadiness.IDLE
 +                        }
 +                    }
-+                }.onPreviewKeyEvent { event ->
-+                    if (event.type != KeyEventType.KeyDown || event.key == Key.Escape) return@onPreviewKeyEvent false
-+                    if (event.key == Key.Tab ||
-+                        ((event.key == Key.DirectionUp || event.key == Key.DirectionDown) && !backgroundFocused())
-+                    ) {
-+                        keyFocus.keyboardNavigation = true
-+                    }
-+                    val editableInputActive = keyFocus.textInputActive || UiState.isTextInputFocused || UiState.isSearchFocused
-+                    val modalActive = isComposeModalActive()
-+                    if (event.key == Key.F5 && modalActive) return@onPreviewKeyEvent false
-+                    val pairingApprovalPending =
-+                        DesktopDeviceConnect.manager.state.value.pairingRequests
-+                            .any { it.requiresApproval }
-+                    handleShortcut(
-+                        ctrl = event.isCtrlPressed,
-+                        meta = event.isMetaPressed,
-+                        shift = event.isShiftPressed,
-+                        keyCode = ShortcutKeyCode.Compose(event.key),
-+                        suppressUnmodified = editableIn
-```
-
----
-
-### Incident Patch 2: `39fa99bf` (2026-11-23)
-**Commit Message**: fix(desktop): stop applying video frame snapshots on the decoder thread
-
-Every decoded video frame was published through Snapshot.withMutableSnapshot
-on the decoder thread. Applying it there made Compose run layer
-invalidation off the UI thread, and the next frame on the event thread
-crashed with "Detected multithreaded access to SnapshotStateObserver".
-This is the most frequent fatal desktop crash on 14.0.1 in Sentry and
-matches crashes with music videos and animated covers on screen.
-
-related to: #4563
-related to: #4625
-
-**File**: `shared/src/desktopMain/kotlin/com/metrolist/shared/playback/VideoPlayer.kt` (modified, +3/-4)
-```diff
-@@ -1,6 +1,5 @@
- package com.metrolist.shared.playback
- 
--import androidx.compose.runtime.snapshots.Snapshot
- import com.metrolist.shared.playback.ffmpeg.FFmpegFrameGrabber
- import com.metrolist.shared.playback.ffmpeg.Frame
- import com.metrolist.shared.playback.ffmpeg.HttpRangeInputStream
-@@ -1044,9 +1043,9 @@ actual class VideoPlayer actual constructor(
-                 videoFrame.close()
-                 return false
-             }
--            Snapshot.withMutableSnapshot {
--                onFrame(videoFrame)
--            }
-+            // A global state write lets Compose send the change from the UI thread. Applying a snapshot here
-+            // sent it from the decoder thread, and Compose then crashed on cross-thread layer observation.
-+            onFrame(videoFrame)
-         }
-         val renderDuration = processDuration + (System.nanoTime() - emitStartNanos)
- 
-```
-
----
-
-### Incident Patch 3: `54dea630` (2026-11-23)
-**Commit Message**: fix(library): wait for the network instead of reporting offline sync failures
-
-When the device lost its connection, every library refresh failed with
-UnknownHostException, the retries ran out within a minute and the app
-showed "Could not sync with YouTube Music" although nothing was out of
-sync. Network failures now keep the cached library, skip the warning and
-refresh again once Android reports a new connection, or after five
-minutes.
-
-related to: #5260
-
-**File**: `shared/src/commonMain/kotlin/com/metrolist/shared/viewmodels/LibraryViewModel.kt` (modified, +32/-3)
-```diff
-@@ -24,13 +24,15 @@ import com.metrolist.shared.model.SongItem
- import com.metrolist.shared.model.YTItem
- import com.metrolist.shared.model.librarySearchKey
- import com.metrolist.shared.model.parseDisplayCount
-+import com.metrolist.shared.network.isHttpTransportException
- import com.metrolist.shared.playlist.LibraryBookmarkMutations
- import com.metrolist.shared.playlist.LibraryBookmarkSnapshot
- import com.metrolist.shared.playlist.LibraryDeletionTracker
- import com.metrolist.shared.settings.Settings
- import com.metrolist.shared.state.GlobalYouTubeRepository
- import com.metrolist.shared.state.PodcastLibrary
- import com.metrolist.shared.youtube.logging.YtLogger
-+import com.metrolist.shared.youtube.playback.PlaybackNetworkStateStore
- import kotlinx.coroutines.CancellationException
- import kotlinx.coroutines.CoroutineScope
- import kotlinx.coroutines.Dispatchers
-@@ -53,6 +55,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
- import kotlinx.coroutines.flow.update
- import kotlinx.coroutines.launch
- import kotlinx.coroutines.withContext
-+import kotlinx.coroutines.withTimeoutOrNull
- import kotlinx.datetime.LocalDateTime
- import kotlinx.datetime.TimeZone
- import kotlinx.datetime.toInstant
-@@ -64,6 +67,7 @@ import kotlinx.serialization.json.Json
- import kotlin.time.Clock
- import kotlin.time.Duration
- import kotlin.time.Duration.Companion.milliseconds
-+import kotlin.time.Duration.Companion.minutes
- import kotlin.time.Duration.Companion.seconds
- 
- const val LIBRARY_REFRESH_TTL_MILLIS = 5 * 60 * 1000L
-@@ -72,6 +76,7 @@ internal const val LIBRARY_SEARCH_PAGE_SIZE = 200
- 
- // A refresh makes ~100 requests; retry the whole sync quietly before reporting a blip as a failure.
- private val LIBRARY_SYNC_RETRY_DELAYS = listOf(5.seconds, 15.seconds, 45.seconds)
-+private val OFFLINE_SYNC_RETRY_INTERVAL = 5.minutes
- 
- fun shouldRefreshLibrary(
-     nowEpochMillis: Long,
-@@ -500,7 +505,12 @@ class LibraryViewModel(
-                     Settings.shared.lastLibraryRefreshAccount = accountKey
-                     YouTubeSyncState.succeeded("library")
-                 } else {
--                    onRefreshFailed(accountKey, retryAttempt)
-+                    val networkFailure =
-+                        listOfNotNull(
-+                            podcastsResult.exceptionOrNull(),
-+                            episodesResult.exceptionOrNull(),
-+                        ).any { it.isHttpTransportException() }
-+                    onRefreshFailed(accountKey, retryAttempt, networkFailure)
-                 }
-                 localReloads.trySend(Unit)
-                 countResolutionJob =
-@@ -565,7 +575,7 @@ class LibraryViewModel(
-             } catch (e: Exception) {
-                 if (generation == refreshGeneration && currentLibraryAccountKey() == accountKey) {
-                     YtLogger.e("LibrarySync", "Refresh failed type=${e::class.simpleName}")
--                    onRefreshFailed(accountKey, retryAttempt)
-+                    onRefreshFailed(accountKey, retryAttempt, e.isHttpTransportException())
-                 }
-             } finally {
-                 refreshInProgress = false
-@@ -580,10 +590,29 @@ class LibraryViewModel(
-     private fun onRefreshFailed(
-         accountKey: String,
-         retryAttempt: Int,
-+        networkFailure: Boolean,
-     ) {
-         val retryDelay = syncRetryDelays.getOrNull(retryAttempt)
-+        // Without a connection the library is not out of sync, so wait for the network instead of reporting a failure.
-+        val offline = networkFailure || !PlaybackNetworkStateStore.current.connected
-         _uiState.update {
--            it.copy(isLoading = retryDelay != null && it.items.isEmpty(), isRefreshing = false, error = retryDelay == null)
-+            it.copy(
-+                isLoading = retryDelay != null && it.items.isEmpty(),
-+                isRefreshing = false,
-+                error = retryDelay == null && (!offline || it.items.isEmpty()),
-+            )
-+        }
-+        if (retryDelay == null && offline) {
-+            val failedNetwork = PlaybackNetworkStateStore.current
-+            syncRetryJob =
-+                scope.launch {
-+                    withTimeoutOrNull(OFFLINE_SYNC_RETRY_INTERVAL) {
-+                        PlaybackNetworkStateStore.state.first { it.connected && it != failedNetwork }
-+                    }
-+                    syncRetryJob = null
-+                    if (currentLibraryAccountKey() == accountKey) refresh(force = true)
 +                }
-+            return
          }
-         if (retryDelay == null) {
-             YouTubeSyncState.failed("library") { if (currentLibraryAccountKey() == accountKey) refresh(force = true) }
+         AppState.scope.launch {
+             PlayerState.player.loadFailure.collectLatest { failure ->
+```
+
+**File**: `docs/listen-together.md` (modified, +2/-2)
+```diff
+@@ -31,13 +31,13 @@ Encode on `Dispatchers.Default` in send order, capturing negotiated compression.
+ 
+ Retain the committed queue and station metadata until room audio preparation succeeds. Prepare remote queues paused. Guests resume after synchronization; host imports explicitly start playback. Failed or canceled loads preserve committed state. Recovery stays paused even if the host sends play. Empty sync snapshots cancel pending loads and pause without discarding the loaded track. A confirmed idle room with an empty queue clears upcoming entries and, when no track is loaded, the saved Android queue.
+ 
+-Read the player's queue snapshot and current occurrence for publication. Serialize server updates with host publication and preserve unpublished host edits. Preserve duplicate occurrences, canonical upcoming order and empty replacements. Consume legacy host queue acknowledgements once.
++Read the player's queue snapshot and current occurrence for publication. Hosts publish at most 1,000 upcoming tracks within metroserver's 200 KiB queue estimate, so every snapshot fits the 256 KiB envelope; later tracks stay in the host's local queue. Serialize server updates with host publication and preserve unpublished host edits. Preserve duplicate occurrences, canonical upcoming order and empty replacements. Consume legacy host queue acknowledgements once.
+ 
+ Publish host track changes when the player's current song changes. Keep periodic timeline updates. Guests reuse matching tracks from the player queue with the host's metadata before requesting metadata for an unfamiliar track, and still wait for buffer synchronization before playing.
+ 
+ Removing the final host track pauses guests and clears the upcoming queue. The server retains last-track metadata because `change_track` requires a track; clearing it needs an upstream action.
+ 
+-Pending joins can be canceled and resubmitted after reconnect. Keep approval rows until acknowledgement, and failed decisions until retry. With `suggestion_ack`, retry unacknowledged guest sends after authentication; coalesce repeated taps. `duplicate_suggestion` confirms an existing pending send. Leaving clears unsent suggestions.
++Pending joins can be canceled and resubmitted after reconnect. Keep approval rows until acknowledgement, and failed decisions until retry. With `suggestion_ack`, retry unacknowledged guest sends after authentication; coalesce repeated taps. Guests can resend a submitted suggestion, and the server answers with the pending suggestion's ID, so a lost decision never blocks the track. `duplicate_suggestion` confirms an existing pending send on older servers. Leaving clears unsent suggestions.
+ 
+ Notify hosts of automatic approvals only after confirmation. Rejection, manual decisions, leaving or host-role loss discard pending automatic feedback. Guest volume and mute are local; Sync host volume controls whether host volume overrides them.
+ 
+```
+
+**File**: `shared/src/commonMain/kotlin/com/metrolist/shared/listentogether/ListenTogetherManager.kt` (modified, +147/-62)
+```diff
+@@ -181,6 +181,14 @@ class ListenTogetherManager(
+         }
+     }
+ 
++    /** A sent ping and, when it reported a position, the guest timeline it described. */
++    private data class OutstandingPing(
++        val clientTime: Long,
++        val position: Long? = null,
++        val positionCapturedAt: Long = 0L,
++        val playbackGeneration: Long = 0L,
++    )
++
+     private data class PendingBarrier(
+         val trackId: String,
+         val position: Long,
+@@ -300,7 +308,7 @@ class ListenTogetherManager(
+     private var sessionReconnectRejected = false
+     private var pingSequence = 0L
+     private var lastPongSequence = 0L
+-    private val outstandingPings = LinkedHashMap<Long, Long>()
++    private val outstandingPings = LinkedHashMap<Long, OutstandingPing>()
+     private val pendingHostQueues = ArrayDeque<List<TrackInfo>>()
+     private var connectionGeneration = 0L
+     private var authenticatedConnectionGeneration = -1L
+@@ -316,13 +324,19 @@ class ListenTogetherManager(
+     private var upcomingCurrentId: String? = null
+     private var upcomingCurrentIndex: Int? = null
+     private var upcomingTrackInfo = emptyList<TrackInfo>()
++    private var publishedQueueInput: List<TrackInfo>? = null
++    private var publishedQueue = emptyList<TrackInfo>()
+     private var lastVolume: Float? = null
+     private var lastTrackId: String? = null
+     private var lastTrackInstanceId: Long? = null
+     private var lastPlaying: Boolean? = null
+     private var lastPositionBucket: Long? = null
+     private var driftGeneration = 0L
+ 
++    // The newest change_track revision; readiness acknowledges it even when the host restarts the
++    // same track while it is still loading.
++    private var latestTrackRevision = 0L
++
+     @Volatile
+     private var serverFeatures: Set<String> = emptySet()
+     private var requestSequence = 0L
+@@ -647,10 +661,9 @@ class ListenTogetherManager(
+ 
+     fun suggestTrack(track: TrackInfo) {
+         if (_role.value != ListenTogetherRoomRole.GUEST || !_isInRoom.value) return
+-        synchronized(participationLock) {
+-            if (_submittedSuggestions.value.values.any { it.id == track.id }) return
+-            outgoingSuggestions.getOrPut(track.id) { PendingSuggestion(track) }
+-        }
++        // The server deduplicates pending suggestions and returns the existing ID, so a decision lost
++        // in transit never blocks suggesting the track again.
++        synchronized(participationLock) { outgoingSuggestions.getOrPut(track.id) { PendingSuggestion(track) } }
+         sendPendingSuggestions()
+     }
+ 
+@@ -977,9 +990,11 @@ class ListenTogetherManager(
+             val instanceId = playback.playbackInstanceId()
+             val playing = playback.playing.value
+             val position = playback.currentPositionMs()
++            // Sends below can wait on delivery, so the server must age the position from when it was read.
++            val capturedAt = serverClock.serverTimeNow()
+             val observedSequence = nextHostSequence()
+             val positionBucket = position / 3_000L
+-            val upcoming = currentUpcomingTrackInfo()
++            val upcoming = publishedUpcomingTrackInfo()
+             val previousTrackId = lastTrackId ?: _roomState.value?.currentTrack?.id
+             _roomState.value =
+                 _roomState.value?.copy(
+@@ -993,7 +1008,13 @@ class ListenTogetherManager(
+                 )
+             if (trackId == null && previousTrackId != null) {
+                 if (sendPlaybackAction(
+-                        PlaybackActionPayload(PlaybackActions.PAUSE, previousTrackId, position, hostSequence = observedSequence),
++                        PlaybackActionPayload(
++                            PlaybackActions.PAUSE,
++                            previousTrackId,
++                            position,
++                            hostSequence = observedSequence,
++                            capturedAtServerTime = capturedAt,
++                        ),
+                     )
+                 ) {
+                     lastTrackId = null
+@@ -1017,6 +1038,7 @@ class ListenTogetherManager(
+                             queue = upcoming,
+                             queueTitle = playback.currentQueueTitle(),
+                             replaceQueue = true,
++                            capturedAtServerTime = capturedAt,
+                         ),
+                     )
+                 ) {
+@@ -1042,18 +1064,38 @@ class ListenTogetherManager(
+                             trackId,
+                             position,
+                             hostSequence = observedSequence,
++                            capturedAtServerTime = capturedAt,
+                         ),
+                     )
+                 ) {
+                     lastPlaying = playing
+                 }
+             } else if (trackId != null && playing && lastPositionBucket != positionBucket) {
+-                if (sendPlaybackAction(PlaybackActionPayload(PlaybackActions.PLAY, trackId, p
+```
+
+**File**: `shared/src/commonMain/kotlin/com/metrolist/shared/listentogether/ListenTogetherPolicies.kt` (modified, +23/-0)
+```diff
+@@ -197,6 +197,29 @@ internal fun reconcileHostQueue(
+     return retained.map { (key, track) -> if (key in publishedSet) canonicalByKey[key] ?: track else track }
+ }
+ 
++private const val MAX_PUBLISHED_QUEUE_TRACKS = 1_000
++private const val MAX_PUBLISHED_QUEUE_BYTES = 200 * 1024
++
++/**
++ * Keeps the published upcoming queue within metroserver's queue limits so every snapshot fits the
++ * clients' 256 KiB envelope. The byte estimate matches the server's queueWireSize. Tracks past the
++ * limit stay in the host's local queue because reconcileHostQueue keeps unpublished entries.
++ */
++internal fun publishableQueue(queue: List<TrackInfo>): List<TrackInfo> {
++    var bytes = 0
++    val count =
++        queue
++            .asSequence()
++            .take(MAX_PUBLISHED_QUEUE_TRACKS)
++            .takeWhile { track ->
++                bytes += 32 +
++                    listOf(track.id, track.title, track.artist, track.album, track.thumbnail, track.suggestedBy)
++                        .sumOf { it?.encodeToByteArray()?.size ?: 0 }
++                bytes <= MAX_PUBLISHED_QUEUE_BYTES
++            }.count()
++    return if (count == queue.size) queue else queue.take(count)
++}
++
+ sealed interface DriftCorrection {
+     data object None : DriftCorrection
+ 
+```
+
+**File**: `shared/src/desktopTest/kotlin/com/metrolist/shared/listentogether/ListenTogetherManagerLifecycleTest.kt` (modified, +19/-7)
+```diff
+@@ -391,7 +391,9 @@ class ListenTogetherManagerLifecycleTest {
+                 assertEquals(listOf(first, second), host.pendingSuggestions.value.map { it.trackInfo })
+                 assertEquals(listOf(first, second), server.suggestedTracks.value)
+ 
++                server.pendingSuggestionIds.value -= "first"
+                 guest.handleBinary(MessageCodec().encode(MessageTypes.SUGGESTION_APPROVED, SuggestionApprovedPayload("first", first)))
++                assertEquals(setOf("second"), guest.submittedSuggestions.value.keys)
+                 guest.suggestTrack(first)
+                 withTimeout(5_000L.milliseconds) { server.suggestedTracks.first { it.size == 3 } }
+                 assertEquals(listOf(first, second, first), server.suggestedTracks.value)
+@@ -1813,6 +1815,9 @@ class ListenTogetherManagerLifecycleTest {
+         private val dropFirstSuggestionAck: Boolean = false,
+     ) {
+         val suggestedTracks = MutableStateFlow<List<TrackInfo>>(emptyList())
++
++        /** Track IDs awaiting a host decision; the real server deduplicates only these. */
++        val pendingSuggestionIds = MutableStateFlow<Set<String>>(emptySet())
+         val kickedUsers = MutableStateFlow<List<String>>(emptyList())
+         val suggestionAttempts = AtomicInteger(0)
+         private val activeSession = AtomicBoolean(false)
+@@ -1920,20 +1925,27 @@ class ListenTogetherManagerLifecycleTest {
+                         MessageTypes.SUGGEST_TRACK -> {
+                             val track = (codec.decodePayload(type, envelope.payload) as SuggestTrackPayload).trackInfo
+                             suggestionAttempts.incrementAndGet()
+-                            if (dropFirstSuggestionAck && suggestedTracks.value.any { it.id == track.id }) {
+-                                session.send(
+-                                    Frame.Binary(
+-                                        true,
++                            if (track.id in pendingSuggestionIds.value) {
++                                // Servers with suggestion_ack return the pending suggestion's ID; older ones report a duplicate.
++                                val reply =
++                                    if (dropFirstSuggestionAck) {
+                                         codec.encode(
+                                             MessageTypes.ERROR,
+                                             ErrorPayload("duplicate_suggestion", "Already pending"),
+                                             envelope.requestId,
+-                                        ),
+-                                    ),
+-                                )
++                                        )
++                                    } else {
++                                        codec.encode(
++                                            MessageTypes.SUGGESTION_SUBMITTED,
++                                            SuggestionSubmittedPayload(track.id, track),
++                                            envelope.requestId,
++                                        )
++                                    }
++                                session.send(Frame.Binary(true, reply))
+                                 continue
+                             }
+                             suggestedTracks.value += track
++                            pendingSuggestionIds.value += track.id
+                             receiveSuggestion?.invoke(SuggestionReceivedPayload(track.id, "room-user", "Guest", track))
+                             if (dropFirstSuggestionAck && suggestedTracks.value.size == 1) {
+                                 session.close()
+```
+
+---
+
+### Incident Patch 3: `299737f2` (2026-11-25)
+**Commit Message**: fix(build): require Java 25.0.5.1 for CVE-2026-114938 (#5371)
+
+CVE-2026-114938 is a Java 25 HotSpot C2 Base64 intrinsic bounds bug fixed in Java 25.0.5.1; this pins build, CI and packaging JDKs to fixed versions.
+
+- `build.gradle.kts` fails the build when Gradle runs on Java 25 older than 25.0.5.1. Desktop packaging checks the packaging JDK's release file the same way, including `metrolist.desktop.javaHome` overrides.
+- `gradle-daemon-jvm.properties` downloads Temurin 25.0.5.1+2 for every platform.
+- `setup-java` steps in the prepare-ci-gradle action, `reusable-desktop-macos.yml` and `verify-aur-package.yml` use `check-latest` so runners do not reuse an older cached JDK. Windows ARM64 installs Microsoft's 25.0.5.1 zip with its SHA-256, because setup-java's Microsoft manifest stops at 25.0.5.
+- The GraalVM native-image builder is pinned to 25.0.5.1 with Oracle's SHA-256 hashes; `native_image.py` rejects an older builder, and `package.py` rejects an older macOS packaging JDK.
+- The Flatpak manifest pins Temurin 25.0.5.1+2 for x64 and ARM64 with checksums.
+- AUR PKGBUILD and .SRCINFO require `jdk25-temurin>=25.0.5.1` and `jdk21-openjdk>=21.0.13.1`.
+- `scripts/deps.sh` treats Java olde
+
+**File**: `.github/actions/prepare-ci-gradle/action.yml` (modified, +13/-2)
+```diff
+@@ -7,7 +7,7 @@ inputs:
+     required: false
+     default: ''
+   java-distribution:
+-    description: JDK distribution; Temurin has no Windows ARM64 JDK 25
++    description: JDK distribution; Temurin has no Windows ARM64 JDK 25, so microsoft installs the pinned Windows ARM64 build
+     required: false
+     default: temurin
+   cache-strict-match:
+@@ -45,11 +45,22 @@ runs:
+         CACHE_SCOPE: ${{ inputs.cache-scope }}
+       run: test -n "$CACHE_SCOPE" || { echo "cache-scope is required" >&2; exit 1; }
+ 
++    # setup-java's Microsoft manifest stops before 25.0.5.1, the CVE-2026-114938 fix.
++    - name: Download Microsoft JDK 25
++      if: inputs.java-distribution == 'microsoft'
++      shell: bash
++      working-directory: ${{ runner.temp }}
++      run: |
++        curl -fsSL -o microsoft-jdk.zip https://aka.ms/download-jdk/microsoft-jdk-25.0.5.1-windows-aarch64.zip
++        echo 'a0fc659c6770e2c1a59329ae7dc5d080d4cc83230a62d78f7ffc77502ac3bba8  microsoft-jdk.zip' | sha256sum -c -
++
+     - name: Set up JDK 25
+       uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
+       with:
+-        distribution: ${{ inputs.java-distribution }}
++        distribution: ${{ inputs.java-distribution == 'microsoft' && 'jdkfile' || inputs.java-distribution }}
++        jdkFile: ${{ inputs.java-distribution == 'microsoft' && format('{0}/microsoft-jdk.zip', runner.temp) || '' }}
+         java-version: '25'
++        check-latest: true
+         architecture: ${{ inputs.java-architecture }}
+ 
+     - name: Set up Gradle
+```
+
+**File**: `.github/workflows/reusable-desktop-macos.yml` (modified, +1/-0)
+```diff
+@@ -90,6 +90,7 @@ jobs:
+         with:
+           distribution: temurin
+           java-version: '25'
++          check-latest: true
+           architecture: x64
+ 
+       - name: Prepare CI Gradle
+```
+
+**File**: `.github/workflows/verify-aur-package.yml` (modified, +1/-0)
+```diff
+@@ -31,6 +31,7 @@ jobs:
+         with:
+           distribution: temurin
+           java-version: '25'
++          check-latest: true
+ 
+       - name: Prepare unprivileged package builder
+         run: |
+```
+
+**File**: `aur/.SRCINFO` (modified, +2/-2)
+```diff
+@@ -6,8 +6,8 @@ pkgbase = metrolist-git
+ 	arch = x86_64
+ 	license = GPL-3.0-only
+ 	makedepends = git
+-	makedepends = jdk21-openjdk
+-	makedepends = jdk25-temurin
++	makedepends = jdk21-openjdk>=21.0.13.1
++	makedepends = jdk25-temurin>=25.0.5.1
+ 	depends = alsa-lib
+ 	depends = dbus
+ 	depends = fontconfig
+```
+
+**File**: `aur/PKGBUILD` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ arch=('x86_64')
+ url='https://github.com/MetrolistGroup/Metrolist'
+ license=('GPL-3.0-only')
+ depends=('alsa-lib' 'dbus' 'fontconfig' 'gtk3' 'hicolor-icon-theme' 'libglvnd' 'libsecret' 'libxi' 'libxrender' 'libxtst' 'webkit2gtk-4.1')
+-makedepends=('git' 'jdk21-openjdk' 'jdk25-temurin')
++makedepends=('git' 'jdk21-openjdk>=21.0.13.1' 'jdk25-temurin>=25.0.5.1')
+ provides=('metrolist')
+ conflicts=('metrolist')
+ options=('!strip' '!debug')
+```
+
+**File**: `build.gradle.kts` (modified, +5/-0)
+```diff
+@@ -18,6 +18,11 @@ plugins {
+     alias(libs.plugins.sentry.jvm) apply false
+ }
+ 
++val minimumJavaVersion = Runtime.Version.parse("25.0.5.1")
++require(Runtime.version().feature() == 25 && Runtime.version() >= minimumJavaVersion) {
++    "Java $minimumJavaVersion or a newer Java 25 update is required to fix CVE-2026-114938. Update the Gradle JVM."
++}
++
+ tasks.register<Delete>("clean") {
+     delete(rootProject.layout.buildDirectory)
+ }
+```
+
+**File**: `desktopApp/build.gradle.kts` (modified, +17/-9)
+```diff
+@@ -726,17 +726,25 @@ compose.desktop {
+ 
+         mainClass = "com.metrolist.desktop.MainKt"
+         javaHome =
+-            providers.gradleProperty("metrolist.desktop.javaHome").orNull?.let { home ->
++            (
++                providers.gradleProperty("metrolist.desktop.javaHome").orNull?.let { home ->
++                    val release = Properties().apply { file("$home/release").inputStream().use(::load) }
++                    val architecture = release.getProperty("OS_ARCH").trim('"')
++                    val expectedArchitectures = if (isArm64) setOf("aarch64", "arm64") else setOf("x86_64", "amd64")
++                    require(architecture in expectedArchitectures) {
++                        "Packaging JDK architecture $architecture does not match $targetArchitecture"
++                    }
++                    home
++                } ?: desktopJavaLauncher
++                    .get()
++                    .metadata.installationPath.asFile.absolutePath
++            ).also { home ->
+                 val release = Properties().apply { file("$home/release").inputStream().use(::load) }
+-                val architecture = release.getProperty("OS_ARCH").trim('"')
+-                val expectedArchitectures = if (isArm64) setOf("aarch64", "arm64") else setOf("x86_64", "amd64")
+-                require(architecture in expectedArchitectures) {
+-                    "Packaging JDK architecture $architecture does not match $targetArchitecture"
++                val javaVersion = Runtime.Version.parse(release.getProperty("JAVA_VERSION").trim('"'))
++                require(javaVersion.feature() == 25 && javaVersion >= Runtime.Version.parse("25.0.5.1")) {
++                    "Packaging requires Java 25.0.5.1 or a newer Java 25 update to fix CVE-2026-114938; found $javaVersion."
+                 }
+-                home
+-            } ?: desktopJavaLauncher
+-                .get()
+-                .metadata.installationPath.asFile.absolutePath
++            }
+         jvmArgs +=
+             listOf(
+                 "--enable-native-access=ALL-UNNAMED",
+```
+
+**File**: `docs/checks.md` (modified, +0/-1)
+```diff
+@@ -264,7 +264,6 @@ python3 -m unittest discover -s scripts -p 'test_collect_android_apks.py'
+ python3 scripts/test_generate_android_strings.py
+ 
+ # Not run in CI
+-python3 scripts/test_deps.py
+ python3 scripts/test_find_unused_strings.py
+ ```
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5291** (2026-11-24): fix(android): keep mini-player visible during floating navigation drags (@nyxiereal)
-- **PR #5274** (2026-11-24): feat(cast): add a volume step setting for the phone volume buttons (@CrackedOnTiti)
-- **PR #5273** (2026-11-24): fix(ui): stop repeating the playlist name in the Add to playlist dialog (@CrackedOnTiti)
-- **PR #5272** (2026-11-23): fix(android): restore resume on Bluetooth connect (@nyxiereal)
-- **PR #5271** (2026-11-23): feat(updates): install updates through root or Shizuku (@nyxiereal)
-- **PR #5270** (2026-11-24): fix(player): accept both decimal separators in tempo and pitch inputs (@alfa-reza)
+- **PR #5393** (2026-11-26): fix(artwork): restore retained covers in offline app (@nyxiereal)
+- **PR #5382** (2026-11-26): fix(android): check raw TAKE_AUDIO_FOCUS app op mode (@sahuadarsh0)
+- **PR #5380** (2026-11-25): fix(listen-together): fix reconnect reconciliation, drift handling and queue publishing (@nyxiereal)
+- **PR #5371** (2026-11-25): fix(build): require Java 25.0.5.1 for CVE-2026-114938 (@nyxiereal)
+- **PR #5367** (2026-11-25): fix(desktop): stop WebView2 error dialog for hidden WebViews (@nyxiereal)
+- **PR #5362** (2026-11-25): fix(home): detect signed-out YouTube Music responses (@nyxiereal)
 
 ---
 
@@ -1821,54 +1707,61 @@ related to: #5260
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): support pure Wayland sessions on Linux
+## X. db): load single Room relations as lists to avoid iOS crash
 
 **RULE**:
-When implementing operations in `.github/tests/test_desktop_launcher.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MetrolistGroup/Metrolist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/src/commonMain/kotlin/com/metrolist/shared/db/HistorySong.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MetrolistGroup/Metrolist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17f78c37`: desktop): support pure Wayland sessions on Linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4018eb76`: db): load single Room relations as lists to avoid iOS crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/tests/test_desktop_launcher.py`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/kotlin/com/metrolist/shared/db/HistorySong.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        probe = 'printf "%s\n" "${GDK_BACKEND-unset}"'
-        self.executable(self.bin / "Metrolist.bin", probe)
-        self.executable(self.bin.parent / "lib/native/Metrolist", probe)
-        for native in (False, True):
-            with self.subTest(native=native):
-                self.environment.pop("GDK_BACKEND", None)
-                self.environment.pop("WAYLAND_DISPLAY", None)
-                self.environment.pop("METROLIST_USE_WAYLAND", None)
-                self.environment.pop("METROLIST_USE_WAKEFIELD", None)
-                self.environment.update(DISPLAY=":77", XCURSOR_THEME="Theme", XCURSOR_SIZE="24")
-                self.assertEqual(["x11"], self.launch(native))
-                self.environment["GDK_BACKEND"] = "x11,wayland"
-                self.assertEqual(["x11,wayland"], self.launch(native))
-                del self.environment["GDK_BACKEND"]
-                del self.environment["DISPLAY"]
-                self.environment["WAYLAND_DISPLAY"] = "wayland-0"
-                self.assertEqual(["wayland"], self.launch(native))
-                self.environment["DISPLAY"] = ":77"
-                self.environment["METROLIST_USE_WAYLAND"] = "1"
-                self.assertE
+        songs =
+            listOf(
+                song.copy(
+                    song =
+                        song.song.copy(
+                            title = snapshot.title,
+                            customTitle = null,
+                            customArtist = null,
+                            albumId = snapshot.albumId,
+                            albumName = snapshot.album,
+                            duration = snapshot.duration?.toInt() ?: -1,
+                            thumbnailUrl = snapshot.thumbnailUrl,
+                        ),
+                    artists = artists,
+                    artistMaps = artists.mapIndexed { index, artist -> SongArtistMap(event.songId, artist.id, index) },
+                    albums = listOfNotNull(song.album?.takeIf { it.id == snapshot.albumId }),
+                ),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-        self.executable(self.bin / "Metrolist.bin", 'printf "%s\n" "$GDK_BACKEND"')
-        self.environment.update(XCURSOR_THEME="Theme", XCURSOR_SIZE="24")
-        self.assertEqual(["x11"], self.launch())
-        self.environment["GDK_BACKEND"] = "x11,wayland"
-        self.assertEqual(["x11,wayland"], self.launch())
+        song =
+            song.copy(
+                song =
+                    song.song.copy(
+                        title = snapshot.title,
+                        customTitle = null,
+                        customArtist = null,
+                        albumId = snapshot.albumId,
+                        albumName = snapshot.album,
+                        duration = snapshot.duration?.toInt() ?: -1,
+                        thumbnailUrl = snapshot.thumbnailUrl,
+                    ),
+                artists = artists,
+                artistMaps = artists.mapIndexed { index, artist -> SongArtistMap(event.songId, artist.id, index) },
+                album = song.album?.takeIf { it.id == snapshot.albumId },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17f78c37` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4018eb76` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

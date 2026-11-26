@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T14:44:42.009Z",
-  "total_cycles_completed": 12746,
-  "total_learnings_persisted": 12746,
-  "total_rules_promoted": 11607,
+  "last_updated": "2026-11-26T14:53:28.657Z",
+  "total_cycles_completed": 12749,
+  "total_learnings_persisted": 12749,
+  "total_rules_promoted": 11609,
   "history": [
-    {
-      "timestamp": "2026-11-26T03:13:03.969Z",
-      "repository": "Louis-CFM/coucou",
-      "learningId": "learn-github-louis-cfm-coucou",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T03:13:10.775Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T03:13:13.204Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T03:13:14.414Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T14:44:42.009Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T14:53:21.878Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T14:53:25.667Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T14:53:28.657Z",
+      "repository": "MetrolistGroup/Metrolist",
+      "learningId": "learn-github-metrolistgroup-metrolist",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

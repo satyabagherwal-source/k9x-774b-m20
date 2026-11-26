@@ -13463,3 +13463,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-26T14:44:28.834Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `c0803f04` | Multi-dimensional audit evidence | 2026-11-26T14:44:39.117Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `f2c57796` | Multi-dimensional audit evidence | 2026-11-26T14:44:41.996Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-26T14:53:21.864Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `8838e415` | Multi-dimensional audit evidence | 2026-11-26T14:53:25.638Z |
+| `learn-github-metrolistgroup-metrolist` | `https://github.com/MetrolistGroup/Metrolist` | `6fa4e821` | Multi-dimensional audit evidence | 2026-11-26T14:53:28.643Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T06:47:57.546Z",
+  "timestamp": "2026-11-26T14:53:34.090Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hmbown-codewhale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hmbown-codewhale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T06:47:57.546Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T14:53:34.090Z`  
 > **Learning ID**: `LEARN-EVO-hmbown-codewhale-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `b4f71726`  
+> **Source Version**: `8838e415`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T06:47:43.362Z  
+> **Timestamp**: 2026-11-26T14:53:24.733Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T06:47:43.356Z  
+> **Harvest Timestamp**: 2026-11-26T14:53:24.726Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: Open-source Rust coding agent for terminal, web, and desktop. Any model, multi-agent fleets, MCP & plugins, OS sandboxing, and session receipts.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41205 stars
+- **Stars / Engagement**: 41215 stars
 
 ---
 
@@ -1992,14 +1992,14 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7561** (2026-11-25): **fix(util,engine): resolve remaining R5 durability, grep timeout cancel, and bounded review read defects**
+  *Symptoms*: ## What and why  Resolves the remaining unaddressed R5 audit gaps from #7461 (on top of `1fa6548ce` and `7e003749f` already landed on `main`) and adds missing behavioral regression tests:  - **R5-L10-01** (`crates/util/src/{utils,fs_confined}.rs`, `crates/engine/src/tools/workflow/journal.rs`): Exported shared best-effort `codewhale_util::utils::sync_directory`, added `codewhale_util::fs_confined::append_durable` (data `sync_all` + best-effort parent directory sync on create), and routed `WorkflowRunJournal::append_record` through it. - **R5-L10-02** (`crates/engine/src/session_manager.rs`, `test_cases_04.rs`): Replaced hard-failing `File::open(...)?.sync_all()?` calls left by `1fa6548ce` (which break on network/FUSE mounts) with shared best-effort `sync_directory` across all session/sidecar/checkpoint/archive unlink paths, with regression test `delete_session_removes_sidecars_and_preserves_shared_runtime_store`. - **R5-L7-01** (`crates/engine/src/tools/search.rs`, `tests.rs`): Derived a child `worker_cancel_token` with `drop_guard` in `run_blocking_grep` (matching `run_blocking_file_search`) so timeouts cancel the worker without cancelling the caller's parent token, with regression test `test_grep_blocking_wrapper_cancels_worker_on_timeout`. - **R5-L9-02** (`crates/engine/src/tools/review.rs`): Passed caller `max_chars` into `resolve_review_source` / `resolve_file_target`, pre-checked size against `max_chars * 4`, read boundedly via `File::take(max_bytes + 1)` inside `spawn_
+
 - **Issue #7557** (2026-11-24): **fix(tui): use the engine catalog effort parser and add the Ollama Cloud effort ladder**
   *Symptoms*: The model picker had its own catalog-token parser (`catalog_effort_value`) duplicating one the engine already owns.  - Use `ReasoningEffort::from_catalog_token` and `ReasoningEffort::catalog_effort_values_for_offering` instead, and always keep `Auto` first in the resulting list. - Add an explicit Ollama Cloud effort ladder (`Auto`, `Off`, `Low`, `Medium`, `High`, `Max`).  Rebased onto current `main`. The branch's separate skills commit was dropped: that work is already on `main` via #7544, and re-applying it would have reverted the merged version.  Net effect: `crates/tui/src/tui/model_picker.rs`, one file. <!-- devin-review-badge-begin -->  ---  <a href="https://app.devin.ai/review/codewhale-hq/codewhale/pull/7557" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://static.devin.ai/assets/gh-devin-review-dark.svg?v=4"><img src="https://static.devin.ai/assets/gh-devin-review-light.svg?v=4" alt="Devin Review"></picture></a> <!-- devin-review-badge-end -->
   **Post-Mortem & Fix Analysis**:
   > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"942707f524abff1409e2682fc600857967ae4775","has_any_findings":true,"has_unresolved_findings":true,"status":"failed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ❌ Failed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ❌ **Failed** <relative-time datetime="2026-11-24T19:35:39.042376Z">2026-11-24T19:35:39.042376Z</relative-time><br/>We couldn’t complete this review. Comment `@codex review` to try again. | `942707f` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when yo
   > You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage). To continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/settings/code-review).
-
-- **Issue #7555** (2026-11-24): **fix(security): hardening batch — grants, secrets, runtime probes, execpolicy deny bypasses**
-  *Symptoms*: Security hardening for 0.10.5, rebased onto current `main` (four commits already landed there, including the CodeQL fixes, dropped out):  - Fail closed on grant/posture persist failures and redact tool logs. - Harden the runtime bundle secrets path, URL redaction and webhook TLS. - Harden the remote runtime probe against loopback and metadata targets. - Harden read-only and auto-approved git commands against repo config helpers. - Reject elevated automation permissions and unattended full-access dispatch. - Port 7 execpolicy deny-bypass fixes (from #7397) and fail closed on dynamic `PermitLocalCommand` and unsplit `screen -X`. - Stabilise heartbeat and unbound-thread respawn flakes (CW-8242), gate unix-only test imports on Windows, gate the unix-only `is_secret_env` binding in the remote_setup bundle. - Record post-0.10.4 contributor credits and the unreleased changelog.  Net effect: 30 files, +2432/−281.  Rebased onto current `main`; the one conflicting hunk (`config/tests.rs`, `Runtime` vs `Full` env policy) was resolved in favour of `main`, where that repair already landed. <!-- devin-review-badge-begin -->  ---  <a href="https://app.devin.ai/review/codewhale-hq/codewhale/pull/7555" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://static.devin.ai/assets/gh-devin-review-dark.svg?v=4"><img src="https://static.devin.ai/assets/gh-devin-review-light.svg?v=4" alt="Devin Review"></picture></a> <!-- devin-review-badge-end -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2016,563 +2016,1472 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3235e2ec` (2026-11-24)
-**Commit Message**: docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web tests
+### Incident Patch 1: `84b57765` (2026-11-26)
+**Commit Message**: fix(command-contract): background facet carries a fn pointer and plain request, not a boxed future
 
-- Refresh docs/DSH_COMPATIBILITY.md and docs/DSH_PLUGIN_COMPAT.md with verified 0.10.5 source-build receipts (13/33 pinned full local lifecycle, 3/33 pinned BLOCKED, 17/33 npm-approval gated, 0 scan-limit failures; 15/36 direct extension-host cold-activate; codewhale web shared-dist HTTP 200).
-- Consolidate CHANGELOG.md [Unreleased], restore @Goldloli (#7521), @jperla (#7350 TrustedRouter), @WTFitsmemyself (#7496), and @Serendo (#7451, Refs #6225, #6418) receipts with zero §284 forbidden mentions, and sync crates/tui/CHANGELOG.md.
-- Fix all 3 web.yml test failures: export gt-catalog/{en,zh}.json, align docs/public-surface-facts.json sourceCandidate telemetry version (0.10.4 pre-bump) and public-surface-contract.test.ts policy notice version 6, and filter agent-docs.test.ts mainOnly lines against released snapshot text so paragraph re-wraps do not false-positive.
+What: the background-command facet (issue 7468, /update and /init off the UI
+task) now transports `BackgroundJob = fn(BackgroundRequest, BackgroundCancel)
+-> BackgroundCommandResult`. `BackgroundRequest` is plain owned data
+(workspace, language, updater path, the raw /update argument) and
+`BackgroundCancel` is an `Arc<AtomicBool>` the host owns. The contract no
+longer names `Pin<Box<dyn Future>>`.
 
-Checks:
-- §284 forbidden grep: 0 matches
-- python3 scripts/check-contributor-credit.py: PASS (10/10 contributors)
-- ./scripts/release/check-versions.sh --range-audit-advisory: PASS (4/4 linked issue receipts, workspace=0.10.4)
-- sh scri
+Why: the hosted Lint gate check-command-crate-boundaries.py failed on
+facets/background.rs:7 (rule D1: no boxed storage in the contract; transport
+is fn pointers and plain data). The gate is unchanged.
 
-**File**: `CHANGELOG.md` (modified, +9/-21)
+Host (commands/background_host.rs): runs the job with spawn_blocking, keeps
+one run per command with the localized refusal, delivers through the
+existing completion drain, and cancels (Esc / Ctrl-C / `/update cancel` /
+`/init cancel` / closed mailbox) by setting the run's flag and discarding its
+result. /update's job spawns the updater with std::process::Command, drains
+stdout/stderr on reader threads, polls try_wait and the flag every 50 ms and
+kills and reaps the child on cancel; this rep
+
+**File**: `crates/command-contract/src/facets/background.rs` (modified, +16/-5)
 ```diff
-@@ -10,44 +10,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Added
+@@ -1,16 +1,27 @@
+-use std::future::Future;
+-use std::pin::Pin;
++use std::path::PathBuf;
++use std::sync::Arc;
++use std::sync::atomic::AtomicBool;
  
- - **DSH P1/P2 host shims, client frame allowlist, and seat table lockstep:** added `@deepseek-ai/dsh-agent` and `@deepseek-ai/dsh-app-boot` module singletons plus read-only/owner-scoped `sessionPersistence`, `storageDomain`, `invariants`, and `permissionPresets` services in the extension host (keeping all mutating/escalation paths fail-closed); admitted `@deepseek-ai/dsh-settings`, `@deepseek-ai/dsh-tools`, and `@deepseek-ai/dsh-credentials` in `DSH_FRAME_MODULES`, synced `DSH_SEAT_TABLE` with desktop DSH slot aliases, and listed `npm:`/`git:`/`dsh:` sources in the plugin install error hint (§280).
-+- **Serve the shared web app build from `codewhale web`:** `codewhale web` now serves a built `codewhale-app/apps/web/dist` directory when `CODEWHALE_WEB_DIST` points to a valid directory containing `index.html`, including `/plugin-host.html` (with sandboxed `connect-src 'none'` / `frame-ancestors 'self'` CSP), immutable `/static/*` hashed assets, bounded SPA route fallback, path-traversal/symlink refusal, and preserved auth-bootstrap cookie sessions; falls back to the embedded web client when unset. (#7237)
-+- **Choose an external ACP agent in the terminal:** `/model` now lists installed external ACP agents (`antigravity`, `opencode`, `copilot`, `dsh`, and others) alongside Codewhale models, showing why non-runnable agents are blocked and what to run, and `codewhale --agent <id>` / `codewhale exec --agent <id>` starts an interactive or headless session through the Engine ACP executor. (CW-8361)
- - **Verified candidate evaluator for experimental search workflows:** `workflows/operate_best_of_n.workflow.js` now supports an optional host-owned `args.evaluator` (`task.verifyCandidate`) that freezes a clean Git baseline, seals candidate diffs, and replays public and held-out gates inside Linux bubblewrap with `proposal_only` receipts. Thanks [@axobase001](https://github.com/axobase001). (#7294)
-+- **TrustedRouter bundled provider and inclusion bar:** added `TrustedRouter` (`trustedrouter`, `TRUSTEDROUTER_API_KEY`) as a bundled OpenAI-compatible provider and documented the bundled-provider inclusion bar. Thanks [@jperla](https://github.com/jperla). (#7350)
-+- **Simplified Chinese Auto-Review documentation:** added `docs/zh_hans/AUTO_REVIEW.md` covering Auto-Review posture, approval flow, and configuration. Thanks [@Goldloli](https://github.com/Goldloli). (#7521)
+ use crate::outcome::BackgroundCommandResult;
+ 
+-pub type BackgroundCommandWork =
+-    Pin<Box<dyn Future<Output = BackgroundCommandResult> + Send + 'static>>;
++#[derive(Debug, Clone, Default, PartialEq, Eq)]
++pub struct BackgroundRequest {
++    pub workspace: PathBuf,
++    pub language: String,
++    pub updater: PathBuf,
++    pub argument: String,
++}
 +
- ### Changed
++pub type BackgroundCancel = Arc<AtomicBool>;
++
++pub type BackgroundJob = fn(BackgroundRequest, BackgroundCancel) -> BackgroundCommandResult;
  
- - **Full Access is selected through `Shift+Tab` instead of the legacy yolo-compat funnel:** removed `Alt+Y`, `Alt+Shift+Y`, and the `/mode yolo|bypass|4` permission shortcut; `/mode yolo` now points to `Shift+Tab` (or `/auto`), and `/zidong` is now an alias for `/auto` (Auto-Review). Launch flags (`--yolo`, `--full-access`, `CODEWHALE_YOLO`, `default_mode = "yolo"`) keep their startup behavior.
-+- **Test-only Fleet methods gated behind `#[cfg(test)]`:** gated the five remaining test-only `pub` methods in `crates/engine/src/fleet/` (`FleetLedger::{claim_next,record_alert,mark_task_terminal_status_if_unchanged}`, `FleetScheduler::cancel_run`, `FleetExecutor::all_terminal`) under `#[cfg(test)]` so production builds expose no unused Fleet helpers. Thanks [@luochen211](https://github.com/luochen211). (Refs #7270)
-+- **Updated `0.10.5` DSH compatibility documentation:** refreshed `docs/DSH_COMPATIBILITY.md` and `docs/DSH_PLUGIN_COMPAT.md` with verified `0.10.5` pinned 33-row Engine lifecycle receipts (13 full local lifecycle, 3 pinned blocked, 17 npm-approval gated, 0 scan-limit failures), 15/36 direct extension-host cold-activate results, and `codewhale web` loopback dist verification (§280).
+ pub trait CommandBackgroundContext {
+     fn start(
+         &mut self,
+         command: &'static str,
+-        work: BackgroundCommandWork,
++        job: BackgroundJob,
++        request: BackgroundRequest,
+     ) -> Result<String, String>;
  
- ### Fixed
- 
-+- **Adopt a populated Runtime store on session switch:** switching sessions in the TUI now adopts an already-populated Runtime session store instead of dropping live Runtime thread state. Thanks [@Serendo](https://github.com/Serendo). (#7451, Refs #6225, #6418)
-+- **Treat `find -delete` as a destructive action in execution policy:** `execpolicy` now classifies `find ... -delete` as destructive so Auto-Review and Ask postures gate it consistently. Thanks [@WTFitsmemyself](https://github.com/WTFitsmemyself). (#7496)
- - **Composer vim mode no longer swallows typing after pressing `v`:** removed the unfinished `VimMode::Visual` state that absorbed all keys until `Esc` with no on-screen indicator or operators.
- - **Lone non-ASCII keys now reach normal key routing on untrusted terminals:** single IME/non-ASCII commits in paste-burst detection keep their Enter-suppression window while falling through to the main key match (vim Normal mode, Esc-Esc backtrack reset, and ordinary insertion) instead of bypassing it.
- - **Launch-card resume always opens confirmation from mouse and keyboard:** unified mouse and keyboard launch-action dispatchers into one `apply_launch_action` path and removed the unreachable direct-resume mouse arm.
--### Adde
+     fn cancel(&mut self, command: &'static str) -> Result<String, String>;
 ```
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +9/-21)
+**File**: `crates/command-contract/src/tests.rs` (modified, +56/-32)
 ```diff
-@@ -10,44 +10,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Added
+@@ -3945,46 +3945,68 @@ fn status_facet_is_object_safe_and_construction_never_observes_or_grants_mutatio
+     assert!(parts.workspace.is_none());
+ }
  
- - **DSH P1/P2 host shims, client frame allowlist, and seat table lockstep:** added `@deepseek-ai/dsh-agent` and `@deepseek-ai/dsh-app-boot` module singletons plus read-only/owner-scoped `sessionPersistence`, `storageDomain`, `invariants`, and `permissionPresets` services in the extension host (keeping all mutating/escalation paths fail-closed); admitted `@deepseek-ai/dsh-settings`, `@deepseek-ai/dsh-tools`, and `@deepseek-ai/dsh-credentials` in `DSH_FRAME_MODULES`, synced `DSH_SEAT_TABLE` with desktop DSH slot aliases, and listed `npm:`/`git:`/`dsh:` sources in the plugin install error hint (§280).
-+- **Serve the shared web app build from `codewhale web`:** `codewhale web` now serves a built `codewhale-app/apps/web/dist` directory when `CODEWHALE_WEB_DIST` points to a valid directory containing `index.html`, including `/plugin-host.html` (with sandboxed `connect-src 'none'` / `frame-ancestors 'self'` CSP), immutable `/static/*` hashed assets, bounded SPA route fallback, path-traversal/symlink refusal, and preserved auth-bootstrap cookie sessions; falls back to the embedded web client when unset. (#7237)
-+- **Choose an external ACP agent in the terminal:** `/model` now lists installed external ACP agents (`antigravity`, `opencode`, `copilot`, `dsh`, and others) alongside Codewhale models, showing why non-runnable agents are blocked and what to run, and `codewhale --agent <id>` / `codewhale exec --agent <id>` starts an interactive or headless session through the Engine ACP executor. (CW-8361)
- - **Verified candidate evaluator for experimental search workflows:** `workflows/operate_best_of_n.workflow.js` now supports an optional host-owned `args.evaluator` (`task.verifyCandidate`) that freezes a clean Git baseline, seals candidate diffs, and replays public and held-out gates inside Linux bubblewrap with `proposal_only` receipts. Thanks [@axobase001](https://github.com/axobase001). (#7294)
-+- **TrustedRouter bundled provider and inclusion bar:** added `TrustedRouter` (`trustedrouter`, `TRUSTEDROUTER_API_KEY`) as a bundled OpenAI-compatible provider and documented the bundled-provider inclusion bar. Thanks [@jperla](https://github.com/jperla). (#7350)
-+- **Simplified Chinese Auto-Review documentation:** added `docs/zh_hans/AUTO_REVIEW.md` covering Auto-Review posture, approval flow, and configuration. Thanks [@Goldloli](https://github.com/Goldloli). (#7521)
++type ParkedJob = (
++    &'static str,
++    crate::BackgroundJob,
++    crate::BackgroundRequest,
++    crate::BackgroundCancel,
++);
 +
- ### Changed
+ #[derive(Default)]
+ struct BackgroundFixture {
+-    running: Vec<&'static str>,
+-    parked: Vec<crate::BackgroundCommandWork>,
++    parked: Vec<ParkedJob>,
++}
++
++impl BackgroundFixture {
++    fn running(&self, command: &str) -> Option<&crate::BackgroundCancel> {
++        self.parked
++            .iter()
++            .find(|(name, _, _, cancel)| {
++                *name == command && !cancel.load(std::sync::atomic::Ordering::SeqCst)
++            })
++            .map(|(_, _, _, cancel)| cancel)
++    }
+ }
  
- - **Full Access is selected through `Shift+Tab` instead of the legacy yolo-compat funnel:** removed `Alt+Y`, `Alt+Shift+Y`, and the `/mode yolo|bypass|4` permission shortcut; `/mode yolo` now points to `Shift+Tab` (or `/auto`), and `/zidong` is now an alias for `/auto` (Auto-Review). Launch flags (`--yolo`, `--full-access`, `CODEWHALE_YOLO`, `default_mode = "yolo"`) keep their startup behavior.
-+- **Test-only Fleet methods gated behind `#[cfg(test)]`:** gated the five remaining test-only `pub` methods in `crates/engine/src/fleet/` (`FleetLedger::{claim_next,record_alert,mark_task_terminal_status_if_unchanged}`, `FleetScheduler::cancel_run`, `FleetExecutor::all_terminal`) under `#[cfg(test)]` so production builds expose no unused Fleet helpers. Thanks [@luochen211](https://github.com/luochen211). (Refs #7270)
-+- **Updated `0.10.5` DSH compatibility documentation:** refreshed `docs/DSH_COMPATIBILITY.md` and `docs/DSH_PLUGIN_COMPAT.md` with verified `0.10.5` pinned 33-row Engine lifecycle receipts (13 full local lifecycle, 3 pinned blocked, 17 npm-approval gated, 0 scan-limit failures), 15/36 direct extension-host cold-activate results, and `codewhale web` loopback dist verification (§280).
+ impl CommandBackgroundContext for BackgroundFixture {
+     fn start(
+         &mut self,
+         command: &'static str,
+-        work: crate::BackgroundCommandWork,
++        job: crate::BackgroundJob,
++        request: crate::BackgroundRequest,
+     ) -> Result<String, String> {
+-        if self.running.contains(&command) {
++        if self.running(command).is_some() {
+             return Err(format!("/{command} is already running"));
+         }
+-        self.running.push(command);
+-        self.parked.push(work);
++        self.parked
++            .push((command, job, request, crate::BackgroundCancel::default()));
+         Ok(format!("/{command} started"))
+     }
  
- ### Fixed
+     fn cancel(&mut self, command: &'static str) -> Result<String, String> {
+-        let Some(index) = self.running.iter().position(|name| *name == command) else {
++        let Some(cancel) = self.running(command) else {
+             return Err(format!("/{command} is not running"));
+         };
+-        self.running.remove(index);
+-        drop(self.parked.remove(index));
++        cancel.store(true, std::sync::atomic::Ordering::SeqCst);
+         Ok(format!("/{command} cancelled"))
+     }
+ }
  
-+- **Adopt a populated Runtime store on session switch:** switching sessions in the TUI now adopts an already-populated Runtime session store instead of dropping live Runtime thread state. Thanks [@Serendo](https://github.com/Serendo). (#7451, Refs #6225, #6418)
-+- **Treat `find -delete` as a destructive action in execution policy:** `execpolicy` now classifies `find ... -delete` as destructive so Auto-Review and Ask postures gate it consistently. Thanks [@WTFitsmemyself](https://github.com/WTFitsmemyself). (#7496)
- - **Composer vim mode no longer swallows typing after pressing `v`:** removed the unfinished `VimMode::Visual` state that absorbed all keys until `Esc` with no on-screen indicator or operators.
- - **Lone non-ASCII keys now reach normal key routing on untrusted terminals:** single IME/non-ASCII commits in paste-burst detection keep their Enter-suppression window while falling through to the main key match (vim Normal mode, Esc-Esc backtrack reset, and ordinary insertion) instead of bypassing it.
- - **Launch-card resume always opens confirmation from mouse and keyboard:** unified mouse and keyboard launch-action dispatchers into one `apply_launch_action` path and removed the unreachable direct-resume mouse arm.
--### Adde
-```
-
-**File**: `docs/DSH_COMPATIBILITY.md` (modified, +91/-70)
-```diff
-@@ -1,39 +1,52 @@
- # Published DeepSeek Harness packages in Codewhale
- 
--Of the 32 published DeepSeek Harness packages we tried unmodified, 2
--activate in the Codewhale terminal with the default network policy.
--`@michengai/dsh-code-review` 1.0.9 registers its `dsh_code_review` tool and
--three commands, and its tool ran end to end in one terminal turn against a
--scripted local model: the plugin was called, started its reviewer sub-agent
--and returned its report. Review quality with a real model was not tested.
--`dsh-anchored-standard` 1.2.1 activates and registers nothing. A third,
--`dsh-plugin-model-proxy` 0.1.6, activates once `registry.npmjs.org` is allowed
--and registers nothing. The other 29 do not activate; each now reports the
--service, module or export it is missing, or stops at import review and says
--why.
+-struct DropFlag(std::sync::Arc<std::sync::atomic::AtomicBool>);
 -
--This page lists every published DeepSeek Harness (DSH) package we tried,
--unmodified, in the terminal. The services and limits behind each row are in
-+On the `0.10.5` source build (`6f093967ae3`, macOS arm64, default network
-+policy, no model provider calls):
+-impl Drop for DropFlag {
+-    fn drop(&mut self) {
+-        self.0.store(true, std::sync::atomic::Ordering::SeqCst);
++fn echo_job(
++    request: crate::BackgroundRequest,
++    cancel: crate::BackgroundCancel,
++) -> crate::outcome::BackgroundCommandResult {
++    if cancel.load(std::sync::atomic::Ordering::SeqCst) {
++        return crate::outcome::BackgroundCommandResult::error("cancelled");
+     }
++    crate::outcome::BackgroundCommandResult::message(request.argument)
+ }
+ 
+-fn background_work(message: &'static str) -> crate::BackgroundCommandWork {
+-    Box::pin(async move { crate::outcome::BackgroundCommandResult::message(message) })
++fn echo_request(argument: &str) -> crate::BackgroundRequest {
++    crate::BackgroundRequest {
++        argument: argument.to_string(),
++        ..crate::BackgroundRequest::default()
++    }
+ }
+ 
+ #[test]
+@@ -4012,7 +4034,7 @@ fn background_slot_is_optional_and_taken_once() {
+     assert!(parts.workspace.is_none());
+     assert!(parts.presentation.is_none());
+     assert_eq!(
+-        background.start("update", background_work("done")),
++        background.start("update", echo_job, echo_request("done")),
+         Ok("/update started".to_string())
+     );
+ }
+@@ -4028,32 +4050,34 @@ fn background_duplicate_slot_fails_loudly() {
+ }
+ 
+ #[test]
+-fn background_facet_refuses_a_second_run_and_cancel_drops_the_work() {
++fn background_facet_refuses_a_second_run_and_cancel_signals_the_job() {
+     let mut fixture = BackgroundFixture::default();
+     let facet: &mut dyn CommandBackgroundContext = &mut fixture;
+-    let dropped = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+-    let flag = DropFlag(dropped.clone());
+-    let work: crate::BackgroundCommandWork = Box::pin(async move {
+-        let _held = flag;
+-        crate::outcome::BackgroundCommandResult::ok()
+-    });
+-    assert!(facet.start("init", work).is_ok());
++    assert!(facet.start("init", echo_job, echo_request("first")).is_ok());
+     assert_eq!(
+-        facet.start("init", background_work("second")),
++        facet.start("init", echo_job, echo_request("second")),
+         Err("/init is already running".to_string())
+     );
+-    assert!(facet.start("update", background_work("other")).is_ok());
+-    assert!(!dropped.load(std::sync::atomic::Ordering::SeqCst));
+-    assert_eq!(facet.cancel("init"), Ok("/init cancelled".to_string()));
+     assert!(
+-        dropped.load(std::sync::atomic::Ordering::SeqCst),
+-        "cancelling drops the unfinished work"
++        facet
++            .start("update", echo_job, echo_request("other"))
++            .is_ok()
+     );
++    assert_eq!(facet.cancel("init"), Ok("/init cancelled".to_string()));
+     assert_eq!(
+         facet.cancel("init"),
+         Err("/init is not running".to_string())
+     );
+-    assert!(facet.start("init", background_work("again")).is_ok());
++    assert!(facet.start("init", echo_job, echo_request("again")).is_ok());
 +
-+- **Pinned 33-row Engine lifecycle (`dsh_acceptance.py run`):** **13 of 33**
-+  packages pass every local Engine lifecycle step (`admission.preview`,
-+  `install`, `trust`, `enable`, `restart_retained`, `revoke`, `uninstall`, and
-+  `security.no_key_leak`; provider and desktop slot steps remain `UNAVAILABLE`),
-+  **3 of 33** match their pinned `BLOCKED` admission refusals
-+  (`dsh-agent-squad`, `dsh-im`, `dsh-archive-manager`), and **17 of 33** stop
-+  cleanly at `registry.npmjs.org` network approval (**0** stop at the 2 MiB
-+  scan limit).
-+- **Direct extension-host cold-activate (all 36 surveyed tarballs, without
-+  `npm install`):** **15 of 36** activate cleanly in the extension host,
-+  registering **18 tools**, **9 commands**, and **2 hooks** (`dsh-image-gen` 6
-+  tools, `dsh-client-ui-task-board` 8 tools + 1 hook, `modsearch` 2 tools,
-+  `modlens` 1 tool, `dsh-code-review` 1 tool + 3 commands, `dsh-btw` 3 commands
-+  + 1 hook, `dsh-pet` 3 commands, plus 8 zero-registration plugins). Of the
-+  remaining 21: **14** fail only on missing third-party npm packages in the raw
-+  tarball (zero missing `@deepseek-ai/*` peers prior to npm staging), **6** hit
-+  explicit policy or runtime boundaries, and **1** (`dsh-web-ui`) has no server
-+  entry.
-+- **Prior `0.10.3` scripted-turn check:** `@michengai/dsh-code-review` 1.0.9
-+  ran its `dsh_code_review` tool end to end in one terminal turn against a
-+  scripted local model (starting its reviewer sub-agent and returning its
-+  report). Review quality with a real model was not tested.
++    let results: Vec<_> = fixtu
+```
+
+**File**: `crates/tui/src/commands/background_host.rs` (modified, +123/-80)
+```diff
+@@ -1,8 +1,11 @@
+ use std::collections::HashMap;
+ use std::path::PathBuf;
++use std::sync::atomic::Ordering;
+ use std::sync::{Arc, Mutex, MutexGuard, OnceLock, PoisonError};
+ 
+-use codewhale_command_contract::facets::{BackgroundCommandWork, CommandBackgroundContext};
++use codewhale_command_contract::facets::{
++    BackgroundCancel, BackgroundJob, BackgroundRequest, CommandBackgroundContext,
++};
+ use codewhale_command_contract::handler::CommandCapabilities;
+ use codewhale_command_contract::outcome::{BackgroundAction, BackgroundCommandResult};
+ use codewhale_localization::{Locale, MessageId, tr};
+@@ -12,7 +15,7 @@ use crate::tui::app::{App, AppAction, DispatchApplyFn};
+ 
+ struct Running {
+     id: u64,
+-    abort: tokio::task::AbortHandle,
++    cancel: BackgroundCancel,
+ }
+ 
+ #[derive(Default)]
+@@ -50,7 +53,7 @@ impl BackgroundCommands {
+         let running = self.lock().running.remove(command);
+         match running {
+             Some(running) => {
+-                running.abort.abort();
++                running.cancel.store(true, Ordering::SeqCst);
+                 true
+             }
+             None => false,
+@@ -63,7 +66,7 @@ impl BackgroundCommands {
+             .running
+             .drain()
+             .map(|(command, running)| {
+-                running.abort.abort();
++                running.cancel.store(true, Ordering::SeqCst);
+                 command
+             })
+             .collect();
+@@ -152,27 +155,35 @@ impl CommandBackgroundContext for BackgroundHost {
+     fn start(
+         &mut self,
+         command: &'static str,
+-        work: BackgroundCommandWork,
++        job: BackgroundJob,
++        request: BackgroundRequest,
+     ) -> Result<String, String> {
+         let mut state = self.commands.lock();
+         if state.running.contains_key(command) {
+             return Err(self.line(MessageId::CmdBackgroundAlreadyRunning, command));
+         }
+         state.next_id += 1;
+         let id = state.next_id;
+-        let task = self.runtime.spawn(work);
++        let cancel = BackgroundCancel::default();
+         state.running.insert(
+             command,
+             Running {
+                 id,
+-                abort: task.abort_handle(),
++                cancel: cancel.clone(),
+             },
+         );
+         drop(state);
++        let job_cancel = cancel.clone();
++        let task = self
++            .runtime
++            .spawn_blocking(move || job(request, job_cancel));
+         self.runtime.spawn(supervise(
+-            self.commands.clone(),
+-            command,
+-            id,
++            Supervised {
++                commands: self.commands.clone(),
++                command,
++                id,
++                cancel,
++            },
+             task,
+             self.completion.clone(),
+             Delivery {
+@@ -199,14 +210,25 @@ struct Delivery {
+     stale: String,
+ }
+ 
+-async fn supervise(
++struct Supervised {
+     commands: BackgroundCommands,
+     command: &'static str,
+     id: u64,
++    cancel: BackgroundCancel,
++}
 +
-+This page lists the published DeepSeek Harness (DSH) packages we qualified,
-+unmodified, in Codewhale. The services and limits behind each row are in
- [DSH plugin compatibility](DSH_PLUGIN_COMPAT.md).
++async fn supervise(
++    supervised: Supervised,
+     mut task: tokio::task::JoinHandle<BackgroundCommandResult>,
+     completion: tokio::sync::mpsc::Sender<DispatchApplyFn>,
+     delivery: Delivery,
+ ) {
++    let Supervised {
++        commands,
++        command,
++        id,
++        cancel,
++    } = supervised;
+     let Delivery {
+         workspace,
+         failed,
+@@ -216,10 +238,10 @@ async fn supervise(
+         joined = &mut task => Some(joined),
+         () = completion.closed() => None,
+     };
+-    let current = commands.finish(command, id);
++    let current = commands.finish(command, id) && !cancel.load(Ordering::SeqCst);
+     let result = match joined {
+         None => {
+-            task.abort();
++            cancel.store(true, Ordering::SeqCst);
+             return;
+         }
+         Some(Ok(result)) => result,
+@@ -245,20 +267,11 @@ async fn supervise(
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+-    use std::sync::atomic::{AtomicBool, Ordering};
+-    use std::time::Duration;
++    use std::time::{Duration, Instant};
  
- ## How this was tested
+     use codewhale_engine::core::engine::mock_engine_handle;
+     use codewhale_runtime::config::Config;
  
--Built from source on 2026-11-22 (codewhale 0.10.3 dev build of this change,
--macOS arm64, Node 26.10). Each package got its own throwaway Codewhale home
--with `[features] extension_host = true`, telemetry and update checks off, and
--the provider pointed at a closed local port, so no model provider was called.
--For each package: `codewhale plugins import dsh <dir>`, `plugins import dsh
--approve <dir> <hash>`, `plugins trust <name> --review-token <token> --yes`,
--`plugins enable <name>`, then the terminal UI was started once and the
--extension host's line for the plugin was read from the log. Packages marked
--"npm approved" were run again with `registry.npmjs.org` in `allow` under
--`[network]`, which fetches their declared npm dependencies. For
--`dsh-code-review`, the terminal UI was then pointed at a local scripted
--OpenAI-compatible endpoint that asks for one `dsh_code_review` call and
--answers the reviewer sub-agent with fixed text; both approval cards (the
--plugin tool and the sub-agent start) were approved by hand. The packages are
--the SHA-256-pinned tarballs of the 0.10.3 survey. Nothing here was run on
--Windows, Linux, Bun or the desktop app.
-+Built from source on 2026-11-24 (`0.10.5` wave-3 build `6f093967ae3`, macOS
-+arm64, Node runtime). Two checks ran with zero model-provider calls:
+-    struct DropFlag(Arc<AtomicBool>);
+-
+-    impl Drop for DropFlag {
+-        fn drop(&mut self) {
+-            self.0.store(true, Ordering::SeqCst);
+-        }
+-    }
+-
+     type Mailbox = tokio::sync::mpsc::Receiver<DispatchApplyFn>;
+ 
+     fn test_host(workspace: &std::path::Path) -> (BackgroundHost, Mailbox) {
+@@ -282,17 +295,44 @@ mod tests {
+         (app, config)
+     }
+ 
+-    fn held(flag: &Arc<AtomicBool>) -> BackgroundCommandWork {
+-        let flag = DropFlag(flag.clone());
+-        Box::pin(async move {
+-            let _held = flag;
+-            std::future::pending::<BackgroundCommandResult>().await
+-        })
++    fn held(_request: BackgroundRequest, cancel: BackgroundCancel) -> BackgroundCommandResult {
++        let deadline = Instant::now() + Duration::from_secs(10);
++        while
+```
+
+**File**: `crates/tui/src/commands/groups/project/init.rs` (modified, +25/-20)
+```diff
+@@ -9,6 +9,7 @@
+ use std::io::Read;
+ use std::path::{Path, PathBuf};
+ 
++use codewhale_command_contract::facets::{BackgroundCancel, BackgroundRequest};
+ use codewhale_command_contract::handler::CommandContexts;
+ use codewhale_command_contract::outcome::{BackgroundAction, BackgroundCommandResult};
+ 
+@@ -887,23 +888,21 @@ fn init_contextual(mut contexts: CommandContexts<'_>, arg: Option<&str>) -> Comm
+     background
+         .start(
+             INIT_INFO.name,
+-            Box::pin(async move {
+-                match codewhale_runtime::runtime_control::owner_work(move || {
+-                    Ok(prepare_init(&workspace, &language))
+-                })
+-                .await
+-                {
+-                    Ok((message, prompt)) => BackgroundCommandResult::with_message_and_action(
+-                        message,
+-                        BackgroundAction::SendMessage(prompt),
+-                    ),
+-                    Err(error) => BackgroundCommandResult::error(error.to_string()),
+-                }
+-            }),
++            init_job,
++            BackgroundRequest {
++                workspace,
++                language,
++                ..BackgroundRequest::default()
++            },
+         )
+         .map_or_else(CommandResult::error, CommandResult::message)
+ }
+ 
++fn init_job(request: BackgroundRequest, _cancel: BackgroundCancel) -> BackgroundCommandResult {
++    let (message, prompt) = prepare_init(&request.workspace, &request.language);
++    BackgroundCommandResult::with_message_and_action(message, BackgroundAction::SendMessage(prompt))
++}
 +
-+1. **Pinned 33-row Engine lifecycle:** `scripts/dsh-plugin-acceptance/dsh_acceptance.py`
-+   (`selftest` 15/15 passed; `pins` 33/33 SHA-256 verified) drove every pinned
-+   row through `/v1/apps/plugins` on a throwaway `CODEWHALE_HOME` with
-+   `--enable extension_host` and default network policy (no `--allow-provider`).
-+2. **Direct extension-host cold-activate:** each of the 36 SHA-256-pinned
-+   survey tarballs was extracted without `npm install` and activated directly
-+   against `crates/engine/extension-host/dist/codewhale-extension-host.mjs`
-+   with an isolated `data_dir`.
+ // ---------------------------------------------------------------------------
+ // Tests
+ // ---------------------------------------------------------------------------
+@@ -992,20 +991,24 @@ mod tests {
+     }
+ 
+     struct Background {
+-        started: Vec<codewhale_command_contract::facets::BackgroundCommandWork>,
++        started: Vec<(
++            codewhale_command_contract::facets::BackgroundJob,
++            BackgroundRequest,
++        )>,
+         cancelled: usize,
+     }
+ 
+     impl codewhale_command_contract::facets::CommandBackgroundContext for Background {
+         fn start(
+             &mut self,
+             command: &'static str,
+-            work: codewhale_command_contract::facets::BackgroundCommandWork,
++            job: codewhale_command_contract::facets::BackgroundJob,
++            request: BackgroundRequest,
+         ) -> Result<String, String> {
+             if !self.started.is_empty() {
+                 return Err(format!("/{command} is already running"));
+             }
+-            self.started.push(work);
++            self.started.push((job, request));
+             Ok(format!("/{command} started"))
+         }
+ 
+@@ -1059,8 +1062,8 @@ mod tests {
+         }
+     }
+ 
+-    #[tokio::test]
+-    async fn init_returns_at_once_and_delivers_the_prompt_as_the_background_result() {
++    #[test]
++    fn init_returns_at_once_and_delivers_the_prompt_as_the_background_result() {
+         let tmpdir = TempDir::new().unwrap();
+         let mut workspace = Workspace(tmpdir.path().to_path_buf());
+         let mut presentation = Presentation;
+@@ -1093,8 +1096,10 @@ mod tests {
+         assert!(refused.is_error, "{refused:?}");
+         assert!(refused.message.unwrap().contains("already running"));
+ 
+-        let work = background.started.pop().expect("background work");
+-        let finished = work.await;
++        let (job, request) = background.started.pop().expect("background job");
++        assert_eq!(request.workspace, tmpdir.path());
++        assert_eq!(request.language, "English");
++        let finished = job(request, BackgroundCancel::default());
+         assert!(!finished.is_error, "{finished:?}");
+         assert!(finished.message.unwrap().contains("Creating AGENTS.md"));
+         assert!(matches!(
+```
+
+**File**: `crates/tui/src/commands/groups/utility/update.rs` (modified, +126/-10)
+```diff
+@@ -18,9 +18,14 @@
+ //!   Telling the user to restart is the honest slice; that is also the only
+ //!   possible answer on Windows, where the replaced image is the one running.
+ 
++use std::io::Read;
+ use std::path::{Path, PathBuf};
+-use std::process::{Command, Output};
++use std::process::{Command, Output, Stdio};
++use std::sync::atomic::{AtomicBool, Ordering};
++use std::thread::JoinHandle;
++use std::time::Duration;
+ 
++use codewhale_command_contract::facets::{BackgroundCancel, BackgroundRequest};
+ use codewhale_command_contract::handler::{CommandCapabilities, CommandContexts, CommandHandler};
+ use codewhale_command_contract::metadata::{CommandInfo, RegisterCommand};
+ use codewhale_command_contract::outcome::BackgroundCommandResult;
+@@ -199,7 +204,12 @@ fn update(mut contexts: CommandContexts<'_>, arg: Option<&str>) -> CommandResult
+             Some(background) => background
+                 .start(
+                     COMMAND_INFO.name,
+-                    Box::pin(run_updater_in_background(updater, mode)),
++                    update_job,
++                    BackgroundRequest {
++                        updater,
++                        argument: arg.unwrap_or_default().to_string(),
++                        ..BackgroundRequest::default()
++                    },
+                 )
+                 .map_or_else(CommandResult::error, CommandResult::message),
+             None => crate::commands::contract::run_owner_blocking(move || {
+@@ -223,10 +233,72 @@ fn run_updater(updater: &Path, mode: UpdateMode) -> CommandResult {
+     updater_result(updater, mode, updater_command(updater, mode).output())
+ }
+ 
+-async fn run_updater_in_background(updater: PathBuf, mode: UpdateMode) -> BackgroundCommandResult {
+-    let mut command = tokio::process::Command::from(updater_command(&updater, mode));
+-    command.kill_on_drop(true);
+-    updater_result(&updater, mode, command.output().await)
++fn update_job(request: BackgroundRequest, cancel: BackgroundCancel) -> BackgroundCommandResult {
++    let mode = match parse_mode(Some(&request.argument)) {
++        Ok(mode) => mode,
++        Err(message) => return BackgroundCommandResult::error(message),
++    };
++    let updater = request.updater;
++    match run_until_cancelled(updater_command(&updater, mode), &cancel) {
++        Some(output) => updater_result(&updater, mode, output),
++        None => {
++            BackgroundCommandResult::error(format!("`{} update` was cancelled.", updater.display()))
++        }
++    }
++}
 +
-+Earlier `0.10.3` npm-approved terminal checks and the scripted local-model turn
-+for `dsh-code-review` are marked where carried forward. Nothing here was run on
-+Windows, Linux, Bun, or live Desktop slot mounts.
++const CANCEL_POLL: Duration = Duration::from_millis(50);
++
++fn run_until_cancelled(
++    mut command: Command,
++    cancel: &AtomicBool,
++) -> Option<std::io::Result<Output>> {
++    command
++        .stdin(Stdio::null())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped());
++    let mut child = match command.spawn() {
++        Ok(child) => child,
++        Err(err) => return Some(Err(err)),
++    };
++    let stdout = child.stdout.take().map(drain);
++    let stderr = child.stderr.take().map(drain);
++    loop {
++        if cancel.load(Ordering::SeqCst) {
++            let _ = child.kill();
++            let _ = child.wait();
++            return None;
++        }
++        match child.try_wait() {
++            Ok(Some(status)) => {
++                return Some(Ok(Output {
++                    status,
++                    stdout: collected(stdout),
++                    stderr: collected(stderr),
++                }));
++            }
++            Ok(None) => std::thread::sleep(CANCEL_POLL),
++            Err(err) => {
++                let _ = child.kill();
++                let _ = child.wait();
++                return Some(Err(err));
++            }
++        }
++    }
++}
++
++fn drain(mut pipe: impl Read + Send + 'static) -> JoinHandle<Vec<u8>> {
++    std::thread::spawn(move || {
++        let mut bytes = Vec::new();
++        let _ = pipe.read_to_end(&mut bytes);
++        bytes
++    })
++}
++
++fn collected(reader: Option<JoinHandle<Vec<u8>>>) -> Vec<u8> {
++    reader
++        .and_then(|reader| reader.join().ok())
++        .unwrap_or_default()
+ }
  
-```
-
-**File**: `docs/DSH_PLUGIN_COMPAT.md` (modified, +12/-4)
-```diff
-@@ -102,6 +102,9 @@ walkthroughs below.
- | `subagents.getProvider('fork')`, `inheritsParentContext`, command `invocation.agent.session` | not provided | Not implemented |
- | `agents`, `systemPrompt` | injectable so plugins that name them activate; `agents` offers nothing and `systemPrompt` methods refuse outside a child's `agent/created` context | Verified with the child-agent probe |
- | `llm`, `credentials` | grant-gated brokered host services in `compatibility.json` v3 | Grant-gated brokered |
-+| `sessionPersistence`, `storageDomain`, `invariants`, `permissionPresets` | read-only / owner-scoped `0.10.5` P1/P2 host services (bounded JSON-serializable `storageDomain` values at 64 KiB, 64-entry per-owner `invariants` cap, fail-closed on mutating/escalation paths; all 4 in `refused_services` so plugins cannot override them) | Verified by focused extension-host tests (`e42ec6f09f0`, `e5571935a95`) |
-+| `@deepseek-ai/dsh-agent`, `@deepseek-ai/dsh-app-boot` | `0.10.5` P1/P2 module singletons (`assembleContextFor`, `installModelSelection`, `getDshRuntimeVersion`; fail-closed `loadProfileDirectory`, `resolveBundleDir`, `createRuntimeResolution`) | Verified by focused extension-host tests (`e42ec6f09f0`) |
-+| `agentPresets`, `agentDefaultModel`, `sessionProjections`, `workspaceRegistry`, `typertGateway`, `web` | `0.10.5` read-only/scoped adapters plus pure-API module exports (`ReasoningEffortId`, `deriveEventMessage`, `KNOWN_SESSION_EVENT_TYPES`, `credentialRef`, `settingsNamespace`, `resolveDshHome`, `writeFileAtomic`, `Remote`, `TypertRemoteService`) | Verified by focused extension-host tests and `0.10.5` 36-tarball cold-activate survey (15/36 pass) |
- | `approval`, `fs`, `subprocess` | refused by design until each maps to Engine authority | Not implemented |
- | Rich or media tool output | dropped | Not implemented |
- | Git review scopes | Bounded `execFile` metadata requests use the Engine Git tool and its approval path; the Native host still cannot read the repository directly | Current-source qualification pending |
-@@ -110,11 +113,13 @@ walkthroughs below.
+ fn updater_result<A>(
+@@ -456,7 +528,8 @@ mod tests {
+         fn start(
+             &mut self,
+             command: &'static str,
+-            _work: codewhale_command_contract::facets::BackgroundCommandWork,
++            _job: codewhale_command_contract::facets::BackgroundJob,
++            _request: BackgroundRequest,
+         ) -> Result<String, String> {
+             Err(format!("/{command} must not start in this test"))
+         }
+@@ -504,10 +577,17 @@ mod tests {
+         assert!(message.contains("no such file"), "{message}");
+     }
  
- The same DSH-format probe plugin (a tool that saves the session and asks one
- question, plus two commands), run against a local fake model provider on
--macOS with no account or spend:
-+macOS with no account or spend, plus the `0.10.5` loopback `codewhale web`
-+dist check (`6f093967ae3`):
- 
- | Surface | What was seen | Status |
- | --- | --- | --- |
--| Runtime API | preview → exact-hash install → review → trust → enable; first-turn tool; approval; question answered through `POST /v1/user-input`; command result | Verified |
-+| Runtime API | preview → exact-hash install → review → trust → enable; first-turn tool; approval; question answered through `POST /v1/user-input`; command result; plus `0.10.5` pinned 33-row lifecycle (`13` full local lifecycle pass, `3` pinned `BLOCKED`, `17` npm-approval gated) | Verified |
-+| `codewhale web` (`CODEWHALE_WEB_DIST`) | `GET /` HTTP 200 (byte-for-byte match with `codewhale-app/apps/web/dist/index.html`) and `GET /v1/apps/plugins` HTTP 200 on loopback (`6f093967ae3`) | Verified |
- | `codewhale exec --auto` | first-turn tool runs and saves the session; the plugin's question is refused with `NO_PROVIDER` because no person is present to answer | Verified |
- | Desktop app | the tool's approval card; the plugin's question rendered as a native card (option descriptions, your own answer, Skip, Send answers); the answer reaches the plugin; `/probe-count` in the command palette with plugin attribution | Verified (plugin installed through the Runtime API, not the app's own settings flow) |
- | Terminal UI (interactive) | — | Not walked through; its question and approval code is covered by focused tests only |
-@@ -154,8 +159,11 @@ An imported DSH plugin's client UI is served, on the seats the Engine admits.
- The importer retains the reviewed client closure; at serve time the Engine
- re-verifies it byte for byte against the reviewed hashes, maps each declared
- slot key to a seat, and loads one Engine-generated bootstrap built from those
--bytes. A native client is admitted only on `customize.plugins.detail`. A slot
--key with no seat answers `plugin_ui_seat_unsupported`; several keys on one seat
-+bytes. A native client is admitted only on `customize.plugins.detail`. In `0.10.5`,
-+`DSH_FRAME_MODULES` admits `@deepseek-ai/dsh-settings`,
-+`@deepseek-ai/dsh-tools`, and `@deepseek-ai/dsh-credentials`, and
-+`DSH_SEAT_TABLE` is synced to 41 entries matching desktop `DSH_SLOT_ALIASES`
-+(`5cdf092bc77`). A slot key with no seat answers `plugin_ui_seat_unsupported`; several keys on one seat
- need the caller to name one (`plugin_ui_dsh_slot_required`). A closure that needs
- a host module the frame does not provide, uses ES module syntax or is not valid
- JSON answers `plugin_ui_unsupported`. Code Review 1.0.8's client decorates
+-    #[tokio::test]
+-    async fn a_background_updater_run_reports_a_missing_binary_without_blocking() {
++    #[test]
++    fn a_background_updater_job_reports_a_missing_binary() {
+         let missing = std::env::temp_dir().join("codewhale-update-test-missing-binary");
+-        let result = run_updater_in_background(missing.clone(), UpdateMode::Check).await;
++        let result = u
 ```
 
-**File**: `docs/public-surface-facts.json` (modified, +1/-1)
+**File**: `scripts/check-blocking-calls-budget.json` (modified, +3/-0)
 ```diff
-@@ -198,7 +198,7 @@
-     "localRuntime": "runtime, workspace state, and audit log stay on the user's machine",
-     "hostedProviderBoundary": "the selected hosted provider receives turn context required for inference",
-     "localInference": "a loopback local-model route can keep inference local",
--    "telemetry": "Codewhale 0.10.5 counts anonymous usage by default and discloses it at first launch (policy notice version 6, naming Codewhale as the sole first-party collector), while the earlier 0.9.11 release asked first; turning it off is a saved choice that later versions keep, an opt-out recorded under the earlier opt-in policy stays off, and showing the notice never records any acceptance on the user's behalf; Codewhale does not collect conversations, code, prompts, files, file/repo/branch names, model content, credentials, or per-turn/per-tool timelines; while on, sessions post aggregate counts and closed enums (including provider families, public catalog models, token totals, and built-in tool counts) to the first-party endpoint https://telemetry.codewhale.net/v1/telemetry, whose storage has no IP, country, or geo column and a fixed three-month retention; counts are first-party only and not forwarded to any third-party analytics processor; telemetry_endpoint = \"\" writes only to a local dry-run file; no mandatory hosted relay",
-+    "telemetry": "Codewhale 0.10.4 counts anonymous usage by default and discloses it at first launch (policy notice version 6, naming Codewhale as the sole first-party collector), while the earlier 0.9.11 release asked first; turning it off is a saved choice that later versions keep, an opt-out recorded under the earlier opt-in policy stays off, and showing the notice never records any acceptance on the user's behalf; Codewhale does not collect conversations, code, prompts, files, file/repo/branch names, model content, credentials, or per-turn/per-tool timelines; while on, sessions post aggregate counts and closed enums (including provider families, public catalog models, token totals, and built-in tool counts) to the first-party endpoint https://telemetry.codewhale.net/v1/telemetry, whose storage has no IP, country, or geo column and a fixed three-month retention; counts are first-party only and not forwarded to any third-party analytics processor; telemetry_endpoint = \"\" writes only to a local dry-run file; no mandatory hosted relay",
-     "account": "no account required for the local runtime",
-     "plan": "Plan centrally refuses file mutation and shell execution; policy-allowed research may contact external services and local session state can still be persisted.",
-     "sandbox": "Seatbelt is used on macOS when available; Linux bubblewrap is on by default once installed and verified working, and prefer_bwrap = false opts out; Windows currently reports no OS sandbox",
-```
-
-**File**: `web/gt-catalog/en.json` (modified, +1/-1)
-```diff
-@@ -2237,7 +2237,7 @@
-               ],
-               [
-                 "Sent while on",
--                "Version and platform classes, session length and outcome, feature and error counts as fixed categories, and a random install id that changes every 90 days."
-+                "Version and platform classes, session length and outcome, built-in provider IDs, bundled public-catalog model IDs (custom/private/local models map to \"other\"), aggregate token totals, built-in tool call and error counts, feature and error counts as fixed categories, and a random install id that changes every 90 days."
-               ],
-               [
-                 "Where it goes",
-```
-
-**File**: `web/gt-catalog/zh.json` (modified, +1/-1)
-```diff
-@@ -2234,7 +2234,7 @@
-               ],
-               [
-                 "开启时发送",
--                "版本与平台类别、会话时长与结果、以固定类别统计的功能与错误计数，以及一个每 90 天更换一次的随机安装 id。"
-+                "版本与平台类别、会话时长与结果、内置提供商 ID、内置公开目录中的模型 ID（自定义/私有/本地模型记为 \"other\"）、汇总 token 数量、内置工具调用与错误计数、以固定类别统计的功能与错误计数，以及一个每 90 天更换一次的随机安装 id。"
-               ],
-               [
-                 "发往哪里",
-```
-
-**File**: `web/lib/agent-docs.test.ts` (modified, +2/-2)
-```diff
-@@ -12,9 +12,9 @@ import { REPO_URL } from "./i18n/links";
- const release = FACTS.latestPublishedRelease!;
- const SNAPSHOT: typeof RELEASE_DOCS = JSON.parse(readFileSync(new URL("../data/agent-docs.release.json", import.meta.url), "utf8"));
- const SERVED = SNAPSHOT.topics.filter((topic) => topic.slug !== "install");
--const releasedLines = new Set(SNAPSHOT.topics.flatMap((topic) => topic.sources.flatMap((source) => source.content.split("\n"))));
-+const releasedText = SNAPSHOT.topics.flatMap((topic) => topic.sources.map((source) => source.content)).join("\n");
- const mainOnly = [...new Set(AGENT_DOCS.filter((topic) => topic.slug !== "install").flatMap((topic) => topic.sources.flatMap((source) => source.content.split("\n"))))]
--  .filter((line) => line.trim().length >= 40 && !releasedLines.has(line));
-+  .filter((line) => line.trim().length >= 40 && !releasedText.includes(line));
- 
- async function topicBody(slug: string): Promise<string> {
-   const topic = `${slug}.md`;
+@@ -467,6 +467,9 @@
+   "crates/tui/src/commands/groups/project/init.rs": {
+     "std_fs": 13
+   },
++  "crates/tui/src/commands/groups/utility/update.rs": {
++    "thread_sleep": 1
++  },
+   "crates/tui/src/commands/session_acceptance.rs": {
+     "std_fs": 6
+   },
 ```
 
 ---
 
-### Incident Patch 2: `7f0497a5` (2026-11-24)
-**Commit Message**: fix(wave2): resolve clippy, conformance golden, strict skills test, quarantine guard, flake, and @jperla credit
+### Incident Patch 2: `c6493898` (2026-11-25)
+**Commit Message**: fix(tui): approval Enter re-arms on reveal, says when it is ignored, and keeps the command readable
 
-- Fix clippy contains() lints in child_host.rs tests.
-- Update provider_error_after_tool_call.golden.jsonl line 10 for structured ProviderFailureCause (#7328).
-- Update extension_creator_skills_config_cannot_be_set_from_config_toml for #[serde(deny_unknown_fields)] on [skills].
-- Align default_launch allow_shell value assertion in runtime_api tests with Config::default().
-- Guard rebuild_thread_from_event_log when a pending seed journal exists so startup quarantine is preserved.
-- Bump sleep 0.2 -> 0.8 in consumed_worker_exit_is_not_recorded_as_a_timeout.
-- Credit @jperla (#7350) in AUTHOR_MAP, CONTRIBUTORS.md, CHANGELOG.md, and release-credits.ts; sync facts.generated.ts and crates/tui/CHANGELOG.md.
+Review should_fix findings on the Enter-allows approval bar (decision
+292.1):
 
-Checks:
-- extension_creator_skills_config_cannot_be_set_from_config_toml: PASS
-- startup_quarantines_only_the_thread_whose_seed_journal_is_uncertain: PASS
-- damaged_thread_record_rebuilds_from_event_log_on_load_and_list: PASS
-- settings_schema_allow_shell_reports_interactive_default_and_explicit_opt_out: PASS
-- settings_schema_telemetry_config_toggle_persists_and_validates:
+- approval/view.rs:383, re-arming: ModalView gains on_became_top, which
+  ViewStack::note_top_change calls whenever the top view changes. The
+  approval card resets its arming clock there, so a card revealed again
+  after another prompt covered it is armed again.
+- approval/view.rs:384, rejected Enter: the process-wide last-Enter stamp
+  is gone. The card keeps its own last Enter and compares it with the
+  200 ms quiet gap, so a held key never commits and a human retry after
+  the 750 ms arming delay does. An ignored Enter emits a localized status
+  notice (ApprovalEnterIgnored) instead of doing nothing visibly.
+- external_agent.rs:547: external-agent cards take
+  config.approval_default_selection() like native cards.
+- widgets/mod.rs:2065, 80 columns: below 100 columns the controls drop
+  their padding, glyphs and the scope arrow
+  (`[d] Allow [Enter] [m] Deny [n]`), so the action text keeps its room.
+  A new test renders a critical rm -rf card at 80 columns and checks the
+  command and every key are on 
 
-**File**: `.github/AUTHOR_MAP` (modified, +2/-0)
+**File**: `crates/tui/src/tui/approval/tests.rs` (modified, +93/-69)
 ```diff
-@@ -336,3 +336,5 @@ River (Codex) = axobase001 <138223345+axobase001@users.noreply.github.com>
- river@users.noreply.github.com = axobase001 <138223345+axobase001@users.noreply.github.com>
- samhandsome = SamhandsomeLee <135809116+SamhandsomeLee@users.noreply.github.com>
- samhandsome@vip.qq.com = SamhandsomeLee <135809116+SamhandsomeLee@users.noreply.github.com>
-+Joseph Perla = jperla <3724+jperla@users.noreply.github.com>
-+claude@jperla.com = jperla <3724+jperla@users.noreply.github.com>
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -1534,111 +1534,113 @@ fn is_approved(action: &ViewAction) -> bool {
+     )
+ }
  
- - **Cross-process item index cache and owner-only indexing:** cached the item index across processes and skipped non-owner records during indexing. Thanks [@gaord](https://github.com/gaord). (#7446, #7522)
- - **Simplified Chinese Auto-Review documentation:** added `docs/zh_hans/AUTO_REVIEW.md`. Thanks [@Goldloli](https://github.com/Goldloli). (#7521)
--- **Bundled Onomeo and AtmoRouter providers:** added Onomeo (`ONOMEO_API_KEY`, thanks [@Owaid0723666](https://github.com/Owaid0723666), #7525) and AtmoRouter (`ATMOROUTER_API_KEY`, thanks [@BeckleyTenriajeng](https://github.com/BeckleyTenriajeng), #7506) as bundled OpenAI-compatible provider descriptors.
-+- **Bundled Onomeo, AtmoRouter, and TrustedRouter providers:** added Onomeo (`ONOMEO_API_KEY`, thanks [@Owaid0723666](https://github.com/Owaid0723666), #7525), AtmoRouter (`ATMOROUTER_API_KEY`, thanks [@BeckleyTenriajeng](https://github.com/BeckleyTenriajeng), #7506), and TrustedRouter (`TRUSTEDROUTER_API_KEY`, thanks [@jperla](https://github.com/jperla), #7350) as bundled OpenAI-compatible provider descriptors.
- - **One paste path in the terminal and off-thread clipboard reads:** simplified Ctrl+V handling to a single press/release edge rule and moved clipboard file reads off the UI thread. (#7516)
- - **`/model` splits use-now from saving the default:** pressing `Enter` switches the current session's model immediately while `Shift+D` saves it as the default route. (#7517)
- - **Standalone `/pet` dot whale:** every terminal draws the dot whale directly from its own session activity without depending on the companion source session. (#7514)
++fn enter_was_refused(action: &ViewAction) -> bool {
++    matches!(
++        action,
++        ViewAction::Emit(ViewEvent::StatusToast { message, .. })
++            if message == tr(Locale::En, MessageId::ApprovalEnterIgnored).as_ref()
++    )
++}
++
++fn at(base: std::time::Instant, millis: u64) -> std::time::Instant {
++    base + std::time::Duration::from_millis(millis)
++}
++
+ #[test]
+ fn enter_does_not_allow_a_card_that_only_just_became_answerable() {
+-    let _serial = ENTER_GUARD_TESTS
+-        .lock()
+-        .unwrap_or_else(std::sync::PoisonError::into_inner);
+     for request in one_request_per_card_shape() {
+-        super::view::clear_last_approval_enter();
+         let mut untouched = guarded_view(request.clone());
+-        assert!(matches!(
+-            untouched.handle_key(create_key_event(KeyCode::Enter)),
+-            ViewAction::None
++        assert!(enter_was_refused(
++            &untouched.handle_key(create_key_event(KeyCode::Enter))
+         ));
+ 
+-        super::view::clear_last_approval_enter();
+         let mut ticked = guarded_view(request.clone());
+         assert!(matches!(ticked.tick(), ViewAction::None));
+         assert!(ticked.answerable_since.is_some());
+-        assert!(matches!(
+-            ticked.handle_key(create_key_event(KeyCode::Enter)),
+-            ViewAction::None
++        assert!(enter_was_refused(
++            &ticked.handle_key(create_key_event(KeyCode::Enter))
+         ));
+ 
+-        super::view::clear_last_approval_enter();
+         let mut settled = guarded_view(request);
+         settled.answerable_since = long_ago();
+         assert!(is_approved(
+             &settled.handle_key(create_key_event(KeyCode::Enter))
+         ));
+     }
+-    super::view::clear_last_approval_enter();
+ }
+ 
+ #[test]
+-fn held_enter_does_not_allow_the_next_card() {
+-    let _serial = ENTER_GUARD_TESTS
+-        .lock()
+-        .unwrap_or_else(std::sync::PoisonError::into_inner);
+-    super::view::clear_last_approval_enter();
+-
+-    let mut first = guarded_view(shell_request());
+-    first.answerable_since = long_ago();
+-    assert!(is_approved(
+-        &first.handle_key(create_key_event(KeyCode::Enter))
+-    ));
++fn a_refused_enter_does_not_postpone_the_next_one() {
++    let base = std::time::Instant::now();
++    let mut view = guarded_view(shell_request());
++    ModalView::on_became_top(&mut view, base);
++    assert!(!view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 400)));
++    assert!(view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 900)));
+ 
+-    // An older card revealed by that answer was answerable long ago.
+-    let mut revealed = guarded_view(shell_request());
+-    revealed.answerable_since = long_ago();
+-    for _ in 0..40 {
+-        assert!(matches!(
+-            revealed.handle_key(create_key_event(KeyCode::Enter)),
+-            ViewAction::None
+-        ));
+-    }
++    let mut steady = guarded_view(shell_request());
++    ModalView::on_became_top(&mut steady, base);
++    assert!(!steady.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 300)));
++    assert!(!steady.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 600)));
++    assert!(steady.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 900)));
++}
+ 
+-    let mut fresh = guarded_view(shell_request());
+-    for _ in 0..40 {
+-        assert!(matches!(
+-            fresh.handle_key(create_key_event(KeyCode::Enter)),
+-            ViewAction::None
+-        ));
++#[test]
++fn held_enter_never_allows() {
++    let base = std::time::Instant::now();
++    let mut view = guarded_view(shell_request());
++    ModalView::on_became_top(&mut view, base);
++    for repeat in 0..200 {
++        assert!(
++            !view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, repeat * 33)),
++            "repeat {repeat}"
++        );
+     }
++    assert!(view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 200 * 33 + 250)));
+ 
+-    // A held Enter that refused the first card does not allow the next.
+-    super::view::clear_last_approval_enter();
+-    let mut denied = ApprovalView::new_with_default_selection(
++    let mut deny = ApprovalView::new_with_default_selection(
+         shell_request(),
+         Locale::En,
+         ApprovalDefaultSelection::Deny,
+     );
+-    denied.enter_guard = true;
++    deny.enter_guard = true;
+     assert!(matches!(
+-        denied.handle_key(create_key_event(KeyCode::Enter)),
++        deny.handle_key(create_key_event(KeyCode::Enter)),
+         ViewAction::EmitAndClose(ViewEvent::ApprovalDecision {
+             decision: ReviewDecision::Denied,
+             ..
+         })
+     ));
+-    let mut after_denial = guarded_view(shell_request());
+-    after_denial.answerable_since = long_ago();
+-    assert!(matches!(
+-        after_denial.handle_key(create_key_event(KeyCode::Enter)),
+-        ViewAction::None
+-    ));
+ 
+-    // The explicit key still answers at once, and so does a later Enter.
++    let
 ```
 
-**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +1/-1)
+**File**: `crates/tui/src/tui/approval/view.rs` (modified, +23/-30)
 ```diff
-@@ -14143,7 +14143,7 @@ async fn settings_schema_allow_shell_reports_interactive_default_and_explicit_op
-         .iter()
-         .find(|row| row["key"] == "allow_shell")
-         .expect("allow_shell row present");
--    assert_eq!(default_launch_row["value"], "false");
-+    assert_eq!(default_launch_row["value"], "true");
-     assert_eq!(default_launch_row["persisted"], true);
-     Ok(())
+@@ -5,17 +5,16 @@
+ //! authority boundaries.
+ //!
+ //! Enter allows the highlighted action by default, so an Enter that approves
+-//! is admitted only after the card has been the answerable prompt for
+-//! `ENTER_ARMING_DELAY`, that long after the previous Enter on any approval
+-//! card, and `ENTER_QUIET_GAP` after the last character key. Known limits:
+-//! a key-repeat delay longer than the arming delay, a repeat slower than the
+-//! quiet gap, an Enter held on a non-approval prompt that closes onto an
+-//! older approval card, and the letter shortcuts (`y`, `a`, `1`) are not
+-//! covered by this guard. Unit tests answer a card the instant it is built,
+-//! so the guard starts off under `cfg(test)` and a test turns it on.
++//! is admitted only after the card has been the top prompt for
++//! `ENTER_ARMING_DELAY` (the view stack re-arms it each time the card becomes
++//! the top view again) and `ENTER_QUIET_GAP` after the previous Enter or
++//! character key on this card. A refused Enter says so in a status notice.
++//! Known limits: a key-repeat delay longer than the arming delay, a repeat
++//! slower than the quiet gap, and the letter shortcuts (`y`, `a`, `1`) are
++//! not covered by this guard. Unit tests answer a card the instant it is
++//! built, so the guard starts off under `cfg(test)` and a test turns it on.
+ 
+ use std::cell::{Cell, RefCell};
+-use std::sync::{Mutex, PoisonError};
+ use std::time::{Duration, Instant};
+ 
+ use codewhale_config::ToolAskRule;
+@@ -38,22 +37,6 @@ use codewhale_engine::core::authority::RiskLevel;
+ pub(super) const ENTER_ARMING_DELAY: Duration = Duration::from_millis(750);
+ pub(super) const ENTER_QUIET_GAP: Duration = Duration::from_millis(200);
+ 
+-static LAST_APPROVAL_ENTER: Mutex<Option<Instant>> = Mutex::new(None);
+-
+-fn replace_last_approval_enter(at: Option<Instant>) -> Option<Instant> {
+-    std::mem::replace(
+-        &mut *LAST_APPROVAL_ENTER
+-            .lock()
+-            .unwrap_or_else(PoisonError::into_inner),
+-        at,
+-    )
+-}
+-
+-#[cfg(test)]
+-pub(super) fn clear_last_approval_enter() {
+-    replace_last_approval_enter(None);
+-}
+-
+ /// Indices into the option list shared by both variants.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum ApprovalOption {
+@@ -150,6 +133,7 @@ pub struct ApprovalView {
+     pub(crate) scopes_open: bool,
+     pub(crate) details_expanded: bool,
+     pub(super) answerable_since: Option<Instant>,
++    pub(super) last_enter_at: Option<Instant>,
+     pub(super) last_char_key_at: Option<Instant>,
+     pub(super) enter_guard: bool,
+ }
+@@ -196,6 +180,7 @@ impl ApprovalView {
+             scopes_open: false,
+             details_expanded: false,
+             answerable_since: None,
++            last_enter_at: None,
+             last_char_key_at: None,
+             enter_guard: !cfg!(test),
+         }
+@@ -376,18 +361,17 @@ impl ApprovalView {
+         self.locale
+     }
+ 
+-    fn enter_may_commit(&mut self, option: ApprovalOption, now: Instant) -> bool {
++    pub(super) fn enter_may_commit(&mut self, option: ApprovalOption, now: Instant) -> bool {
+         if !self.enter_guard {
+             return true;
+         }
+         let answerable_since = *self.answerable_since.get_or_insert(now);
+-        let previous_enter = replace_last_approval_enter(Some(now));
++        let previous_enter = self.last_enter_at.replace(now);
+         if !option.grants() {
+             return true;
+         }
+         now.saturating_duration_since(answerable_since) >= ENTER_ARMING_DELAY
+-            && previous_enter
+-                .is_none_or(|at| now.saturating_duration_since(at) >= ENTER_ARMING_DELAY)
++            && previous_enter.is_none_or(|at| now.saturating_duration_since(at) >= ENTER_QUIET_GAP)
+             && self
+                 .last_char_key_at
+                 .is_none_or(|at| now.saturating_duration_since(at) >= ENTER_QUIET_GAP)
+@@ -551,7 +535,10 @@ impl ModalView for ApprovalView {
+         if key.code == KeyCode::Enter {
+             let option = self.current_option();
+             if !self.enter_may_commit(option, now) {
+-                return ViewAction::None;
++                return ViewAction::Emit(ViewEvent::StatusToast {
++                    message: tr(self.locale, MessageId::ApprovalEnterIgnored).into_owned(),
++                    level: crate::tui::app::StatusToastLevel::Info,
++                });
+             }
+             return self.commit_option(option);
+         }
+@@ -709,6 +696,12 @@ impl ModalView for ApprovalView {
+         ApprovalWidget::new(&self.request, self).docked_height(width)
+     }
+ 
++    fn on_became_top(&mut self, at: Instant) {
++        self.answerable_since = Some(at);
++        self.last_enter_at = None;
++        self.last_char_key_at = None;
++    }
++
+     fn tick(&mut self) -> ViewAction {
+         self.answerable_since.get_or_insert_with(Instant::now);
+         if self.is_timed_out() {
+```
+
+**File**: `crates/tui/src/tui/external_agent.rs` (modified, +14/-4)
+```diff
+@@ -335,7 +335,10 @@ pub(crate) fn handle_external_approval_decision(
+     Some(true)
+ }
+ 
+-pub(crate) fn drain_external_agent_events(app: &mut App) -> bool {
++pub(crate) fn drain_external_agent_events(
++    app: &mut App,
++    default_selection: codewhale_runtime::config::ApprovalDefaultSelection,
++) -> bool {
+     let Some(session) = app.external_agent.as_mut() else {
+         return false;
+     };
+@@ -395,7 +398,7 @@ pub(crate) fn drain_external_agent_events(app: &mut App) -> bool {
+     }
+ 
+     for record in records {
+-        apply_external_event(app, &agent_name, record);
++        apply_external_event(app, &agent_name, record, default_selection);
+         changed = true;
+     }
+ 
+@@ -432,7 +435,12 @@ fn finish_streaming_assistant(app: &mut App) {
+     }
+ }
+ 
+-fn apply_external_event(app: &mut App, agent_name: &str, record: RuntimeEventRecord) {
++fn apply_external_event(
++    app: &mut App,
++    agent_name: &str,
++    record: RuntimeEventRecord,
++    default_selection: codewhale_runtime::config::ApprovalDefaultSelection,
++) {
+     match record.event.as_str() {
+         "turn.started" => {
+             if let Some(turn_id) = record.turn_id
+@@ -547,7 +555,7 @@ fn apply_external_event(app: &mut App, agent_name: &str, record: RuntimeEventRec
+                 .push(ApprovalView::new_with_default_selection(
+                     request,
+                     app.ui_locale,
+-                    Default::default(),
++                    default_selection,
+                 ));
+         }
+         "turn.completed" => {
+@@ -784,6 +792,7 @@ mod tests {
+                     }
+                 }),
+             },
++            Default::default(),
+         );
+         assert!(!app.is_loading);
+         assert!(app.history.iter().any(|cell| matches!(
+@@ -810,6 +819,7 @@ mod tests {
+                     }
+                 }),
+             },
++            Default::default(),
+         );
+         assert!(!app.is_loading);
+         assert!(
+```
+
+**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +4/-1)
+```diff
+@@ -2814,7 +2814,10 @@ pub(crate) async fn run_event_loop(
+         if crate::tui::external_agent::poll_external_agent_discovery(app, config) {
+             app.needs_redraw = true;
+         }
+-        if crate::tui::external_agent::drain_external_agent_events(app) {
++        if crate::tui::external_agent::drain_external_agent_events(
++            app,
++            config.approval_default_selection(),
++        ) {
+             app.needs_redraw = true;
+         }
+ 
+```
+
+**File**: `crates/tui/src/tui/views/mod.rs` (modified, +13/-1)
+```diff
+@@ -1502,6 +1502,7 @@ pub trait ModalView: std::any::Any {
+     fn tick(&mut self) -> ViewAction {
+         ViewAction::None
+     }
++    fn on_became_top(&mut self, _at: std::time::Instant) {}
+     /// Erased downcast hook for views that need a typed reference back from
+     /// the boxed trait object (e.g. the live transcript overlay needs `&mut`
+     /// access from outside the trait so it can refresh its snapshot of the
+@@ -1591,7 +1592,11 @@ impl ViewStack {
+     /// Restamp `top_since` when the top view changed since `before`.
+     fn note_top_change(&mut self, before: Option<(*const (), usize)>) {
+         if self.top_identity() != before {
+-            self.top_since = Some(std::time::Instant::now());
++            let now = std::time::Instant::now();
++            self.top_since = Some(now);
++            if let Some(view) = self.views.last_mut() {
++                view.on_became_top(now);
++            }
+         }
+     }
+ 
+@@ -1813,6 +1818,13 @@ impl ViewStack {
+         tracing::debug!(target: "codewhale_tui::view_stack", action = "push_boxed", kind = ?kind, depth = self.views.len(), "view pushed");
+     }
+ 
++    #[cfg(test)]
++    pub(crate) fn top_approval_for_test(
++        &mut self,
++    ) -> Option<&mut crate::tui::approval::ApprovalView> {
++        self.views.last_mut()?.as_any_mut().downcast_mut()
++    }
++
+     pub fn pop(&mut self) -> Option<Box<dyn ModalView>> {
+         let top = self.top_identity();
+         let popped = self.views.pop();
+```
+
+**File**: `crates/tui/src/tui/widgets/mod.rs` (modified, +3/-3)
+```diff
+@@ -2062,8 +2062,8 @@ impl<'a> ApprovalWidget<'a> {
+         };
+ 
+         let selected_pill = menu_style::selected_row_style().add_modifier(Modifier::REVERSED);
+-        let wide = bar_area.width >= 72;
+-        let padded = bar_area.width >= 56;
++        let wide = bar_area.width >= 100;
++        let padded = wide;
+         let allow_text = if workflow_plan {
+             "Approve"
+         } else if wide {
+@@ -2099,7 +2099,7 @@ impl<'a> ApprovalWidget<'a> {
+         );
+         let m_label = if workflow_plan {
+             String::new()
+-        } else if !padded {
++        } else if !wide {
+             "[m]".to_string()
+         } else if self.view.scopes_open {
+             if ascii { "[^ m]" } else { "[▴ m]" }.to_string()
+```
+
+**File**: `docs/CONFIGURATION.md` (modified, +4/-3)
+```diff
+@@ -2478,9 +2478,10 @@ reasoning contract, and all four membership ids omit generic sampling fields.
+   (default) or `deny`. Enter commits the highlighted control, which is tagged
+   `[Enter]`, so by default Enter allows the one action shown, once; `n` denies
+   and `Esc` refuses the action and stops the turn. An Enter that would allow
+-  is ignored for the first three quarters of a second and straight after
+-  another Enter or typed characters, so a key in flight, a held key or pasted
+-  text does not approve. Set `deny` to make Enter refuse the call instead
++  is ignored, with a notice saying so, for the first three quarters of a
++  second after the bar becomes the prompt in front and straight after another
++  Enter or typed characters, so an Enter in flight, held or pasted does not
++  approve. The letter keys (`y`, `a`, `1`) are not delayed. Set `deny` to make Enter refuse the call instead
+   (the earlier default, #5293); `y` still allows once. It moves the
+   highlight only: which calls are prompted for is still `approval_policy`
+   plus the rules in `permissions.toml`. The sandbox elevation prompt is not
+```
+
+**File**: `docs/MODES.md` (modified, +6/-4)
+```diff
+@@ -280,10 +280,12 @@ will run, then `Details [d]`, `Allow [Enter]`, `[▾ m]` and `Deny [n]`.
+   their numbers: `[1] Allow once`, `[2] Allow in this conversation` and, where
+   it is offered, `[3] Always allow in this repo`.
+ - An `Enter` that would allow is ignored for the first three quarters of a
+-  second the bar is the prompt in front of you, for the same time after
+-  another `Enter` on an approval, and straight after typed characters. A key
+-  already in flight, a held key or text pasted into the terminal therefore
+-  does not approve. Denying is never delayed, and `y` answers at once.
++  second the bar is the prompt in front of you (again each time it comes back
++  to the front after another prompt covered it), and straight after another
++  `Enter` or typed characters. An `Enter` already in flight, held or pasted
++  therefore does not approve, and a notice says the key was ignored and why;
++  press `Enter` again to allow. Denying is never delayed, and the letter keys
++  (`y`, `a`, `1`) answer at once.
+ - To make `Enter` deny instead, set `[approval] default_selection = "deny"`
+   (see [Configuration](CONFIGURATION.md)).
+ 
+```
+
+---
+
+### Incident Patch 3: `2d6e57d5` (2026-11-26)
+**Commit Message**: fix(engine): expand prompt-bound user commands on the Runtime turn path (CW-8421)
+
+A plugin, project or global command such as /ship sent as a Runtime API
+turn reached the model as the literal "/ship": only the terminal's
+user_registry::try_dispatch applied the command template, so every such
+command was broken in Desktop and other Runtime clients.
+
+try_dispatch is split into lookup (registry resolution plus dispatch_error)
+and expand_template (plugin authority plus apply_template). The
+CommandCatalog trait gains expands_user_commands/expand_user_command;
+CommandTable implements them with the same registry view /v1/commands
+lists, so the terminal and the Runtime share one implementation and the
+terminal's precedence (user commands before builtins; skills never own a
+slash spelling on the Runtime path).
+
+The Runtime turn endpoint expands /name args before admission: the model
+gets the template, input_summary keeps the typed text, the command's
+allowed_tools only narrows the request's or thread's tools, a denied
+plugin command is a 422 user_command_denied (never sent raw), and the
+response's user_command names what ran. Steer expands too and refuses a
+tool-restricting command mid-tur
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
+```diff
+@@ -69,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Ask asks before every command, read-only ones included:** in Ask, a shell command the Engine classes as read-only (such as `ls` or `git status -s`) ran without a card, while its description promises it asks before every edit and command. It now opens the card like any other command, and a code-mode program with no session permission gate refuses shell calls in Ask because it cannot ask. Sub-agents still run their bounded read-only commands without a card, so read-only scouts keep working when no one can answer. Accept Edits, Auto-Review, Full Access and Plan are unchanged.
+ - **A slow Codewhale account service no longer holds up the start of a turn or Stop:** a signed-in turn waited up to 10 seconds for the account profile read before it started, and Stop did nothing until that read ended. A turn now waits at most one second for it, never past Stop, reuses a read of the same account for 30 seconds, and otherwise uses the last read for that account or the local constitution while a slower read finishes in the background (5 second limit).
+ - **A slow Codewhale account service no longer holds up the start of a turn or Stop:** a signed-in turn waited up to 10 seconds for the account profile read before it started, and Stop did nothing until that read ended. Each turn still reads the account profile, but waits at most one second for it and never past Stop; a slower read (5 second limit) finishes in the background and the next turn uses it. Until then the turn uses the last profile loaded for that account, or the local constitution with a one-time notice that account preferences are still loading. A signed-out local constitution is read fresh every turn. Why the account service is slow for the Engine in production is still being investigated.
++
++- **Plugin, project and global commands such as `/ship` now run in the Desktop:** a turn sent over the Runtime API as `/name args` is expanded with the same command registry and template the terminal uses, so the model gets the command's instructions instead of the bare text. The command's tool list can only narrow the turn's tools, a plugin command whose plugin is no longer trusted is refused, the turn's response names the command that ran, and the command catalog marks these commands `runtime_expands` so clients stop showing them as terminal only.
++
+ ### Removed
+ 
+ - **The shared pet companion (`codewhale pet serve`)** and, in the terminal, sound, replay export, the browser appearance studio, source selection, the pixel, particle, cove, braille and whale-girl views, view cycling and avatar packs; `/pet inspect|status|appearance|style|source|export|sound|avatar|action|view` and the F6 and F8 keys. F5 still opens replies and agents. Files left in `~/.codewhale/pet-shared` are neither read nor deleted. Plugins can still register avatar packs; the terminal no longer draws them.
+```
+
+**File**: `crates/app-server/src/runtime_api.rs` (modified, +97/-2)
+```diff
+@@ -2086,6 +2086,45 @@ struct StartTurnResponse {
+     /// byte-identical — a client that never sends a key sees no change.
+     #[serde(skip_serializing_if = "replay_flag_is_absent")]
+     idempotent_replay: bool,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    user_command: Option<UserCommandRun>,
++}
++
++#[derive(Debug, Serialize)]
++struct UserCommandRun {
++    name: String,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    plugin_id: Option<String>,
++}
++
++async fn expand_user_command(
++    state: &RuntimeApiState,
++    workspace: &std::path::Path,
++    prompt: &str,
++) -> Result<Option<codewhale_engine::command_catalog::ExpandedUserCommand>, ApiError> {
++    if !prompt.trim_start().starts_with('/') {
++        return Ok(None);
++    }
++    let Some(catalog) = codewhale_engine::command_catalog::installed()
++        .filter(|catalog| catalog.expands_user_commands())
++    else {
++        return Ok(None);
++    };
++    let discovery = Arc::clone(&state.plugin_discovery);
++    let workspace = workspace.to_path_buf();
++    let input = prompt.to_string();
++    #[cfg(any(test, feature = "test-support"))]
++    let env_ticket = codewhale_engine::test_support::env_scope_ticket();
++    tokio::task::spawn_blocking(move || {
++        #[cfg(any(test, feature = "test-support"))]
++        let _membership = codewhale_engine::test_support::join_env_scope(env_ticket);
++        let plugins = discovery.registry_for_workspace(&workspace);
++        catalog.expand_user_command(&workspace, &plugins, &input)
++    })
++    .await
++    .map_err(|error| ApiError::internal(error.to_string()))?
++    .transpose()
++    .map_err(|reason| ApiError::unprocessable(reason).with_code("user_command_denied"))
+ }
+ 
+ fn replay_flag_is_absent(replayed: &bool) -> bool {
+@@ -6142,7 +6181,9 @@ struct CommandCatalogEntry {
+     /// `builtin` and `extension` are registered code; `user` expands a stored template.
+     kind: &'static str,
+     /// `host` runs locally, `extension` invokes the Runtime command endpoint,
+-    /// and `prompt` expands into the request the model sees.
++    /// and `prompt` is a template that expands into the request the model
++    /// sees: in the terminal always, and through the Runtime turn endpoint
++    /// when `runtime_expands` is set.
+     binding: &'static str,
+     /// `primary` | `advanced` | `compatibility` — builtins only; `hidden`
+     /// covers rows the product does not advertise anywhere.
+@@ -6161,6 +6202,8 @@ struct CommandCatalogEntry {
+     plugin_id: Option<String>,
+     #[serde(skip_serializing_if = "std::ops::Not::not")]
+     workspace_sourced: bool,
++    #[serde(skip_serializing_if = "std::ops::Not::not")]
++    runtime_expands: bool,
+     #[serde(skip_serializing_if = "Option::is_none")]
+     registration_id: Option<String>,
+ }
+@@ -6173,6 +6216,7 @@ struct CommandsResponse {
+ fn command_catalog(
+     builtins: &[codewhale_engine::command_catalog::BuiltinCommand],
+     users: &[codewhale_engine::command_catalog::UserCommand],
++    runtime_expands: bool,
+ ) -> Vec<CommandCatalogEntry> {
+     let mut commands = Vec::new();
+     for info in builtins {
+@@ -6222,6 +6266,7 @@ fn command_catalog(
+             origin: None,
+             plugin_id: None,
+             workspace_sourced: false,
++            runtime_expands: false,
+             registration_id: None,
+         });
+     }
+@@ -6247,6 +6292,7 @@ fn command_catalog(
+             origin: None,
+             plugin_id: command.plugin_id.clone(),
+             workspace_sourced: command.workspace_sourced,
++            runtime_expands,
+             registration_id: None,
+         });
+     }
+@@ -6291,6 +6337,7 @@ async fn list_commands(
+         let mut commands = command_catalog(
+             &catalog.builtins(),
+             &catalog.user_commands_with_plugins(&workspace, &plugins),
++            catalog.expands_user_commands(),
+         );
+         let mut counts = std::collections::HashMap::new();
+         for entry in &extensions {
+@@ -6335,6 +6382,7 @@ async fn list_commands(
+                 origin: Some(reference.origin.clone()),
+                 plugin_id: Some(reference.plugin_id.clone()),
+                 workspace_sourced: false,
++                runtime_expands: false,
+                 registration_id: query
+                     .thread_id
+                     .as_deref()
+@@ -10949,6 +10997,7 @@ async fn start_thread_watch_turn(
+             thread,
+             turn,
+             idempotent_replay: replayed,
++            user_command: None,
+         }),
+     ))
+ }
+@@ -11041,6 +11090,35 @@ async fn start_thread_turn_for_caller(
+     if scope.is_some() {
+         sanitize_remote_turn_request(&mut req)?;
+     }
++    let target = state
++        .runtime_threads
++        .get_thread(&id)
++        .await
++        .map_err(map_thread_err)?;
++    let expanded = expand_user_command(&state, &target.workspace, &req.prompt).await?;
++    let user_command = expanded.map(|expanded| {
++        if req.input_summary.is_none() {
++            req.input_s
+```
+
+**File**: `crates/app-server/src/runtime_api/review.rs` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ pub(super) async fn start_thread_review(
+             thread,
+             turn,
+             idempotent_replay: replayed,
++            user_command: None,
+         }),
+     ))
  }
 ```
 
-**File**: `crates/engine/src/core/engine/tests/child_host.rs` (modified, +2/-12)
+**File**: `crates/app-server/src/runtime_api/tests/command_catalog.rs` (modified, +120/-1)
 ```diff
-@@ -2567,12 +2567,7 @@ async fn child_engine_inherits_parent_tools_overrides_and_excludes_disabled_tool
-         )
-         .await;
-     assert!(
--        baseline
--            .surface
--            .registry
--            .names()
--            .iter()
--            .any(|name| *name == "diagnostics"),
-+        baseline.surface.registry.names().contains(&"diagnostics"),
-         "control: worker child includes diagnostics without overrides"
-     );
+@@ -67,7 +67,7 @@ fn command_catalog_marks_user_shadowing_of_builtin_names_and_aliases() {
+         builtin("subagents", vec!["agents".to_string()]),
+     ];
+     let users = [user("model"), user("agents")];
+-    let commands = command_catalog(&builtins, &users);
++    let commands = command_catalog(&builtins, &users, false);
  
-@@ -2618,12 +2613,7 @@ async fn child_engine_inherits_parent_tools_overrides_and_excludes_disabled_tool
-             .await;
-         for disabled in ["diagnostics", "tasks"] {
-             assert!(
--                !restricted
--                    .surface
--                    .registry
--                    .names()
--                    .iter()
--                    .any(|name| *name == disabled),
-+                !restricted.surface.registry.names().contains(&disabled),
-                 "child registry must exclude disabled tool {disabled}"
-             );
-             assert!(
+     let model = entry(&commands, "model");
+     assert_eq!(model.shadowed_by.as_deref(), Some("model"));
+@@ -976,3 +976,122 @@ async fn post_thread_builtin_command_serves_only_the_host_allowlist() -> Result<
+     handle.abort();
+     Ok(())
+ }
++
++struct ShipCatalog;
++impl CommandCatalog for ShipCatalog {
++    fn answers_to(&self, _name: &str) -> bool {
++        false
++    }
++    fn builtins(&self) -> Vec<BuiltinCommand> {
++        Vec::new()
++    }
++    fn user_commands(&self, _workspace: &Path) -> Vec<UserCommand> {
++        let mut ship = user("ship");
++        ship.builtin_bindings.clear();
++        ship.plugin_id = Some("user/fixture/release-kit".into());
++        vec![ship]
++    }
++    fn expands_user_commands(&self) -> bool {
++        true
++    }
++    fn expand_user_command(
++        &self,
++        _workspace: &Path,
++        _plugins: &codewhale_plugins::PluginRegistry,
++        input: &str,
++    ) -> Option<Result<codewhale_engine::command_catalog::ExpandedUserCommand, String>> {
++        (input.split_whitespace().next() == Some("/ship")).then(|| {
++            Ok(codewhale_engine::command_catalog::ExpandedUserCommand {
++                name: "ship".into(),
++                message: "Reply with the single word shipped. Do not use tools.".into(),
++                allowed_tools: Some(vec!["read_file".into()]),
++                plugin_id: Some("user/fixture/release-kit".into()),
++            })
++        })
++    }
++}
++
++#[tokio::test]
++async fn a_runtime_turn_sends_a_prompt_bound_user_command_as_its_expanded_template() -> Result<()> {
++    let _env = lock_test_env();
++    let temp = tempfile::tempdir()?;
++    let workspace = temp.path().join("workspace");
++    fs::create_dir_all(&workspace)?;
++    let _catalog = codewhale_engine::command_catalog::CatalogGuard::install(Arc::new(ShipCatalog));
++    let config = Config::default().with_legacy_root(
++        Some("ship-fixture-key".into()),
++        Some("http://127.0.0.1:1/v1".into()),
++    );
++    let Some((addr, runtime_threads, handle)) =
++        spawn_test_server_with_root_token_mobile_workspace_and_overrides(
++            temp.path().join("runtime"),
++            temp.path().join("sessions"),
++            None,
++            false,
++            workspace,
++            TestServerOverrides {
++                config: Some(config),
++                ..TestServerOverrides::default()
++            },
++        )
++        .await?
++    else {
++        return Ok(());
++    };
++    let client = codewhale_release::tls::reqwest_client();
++    let model = Arc::new(codewhale_engine::llm_client::mock::MockLlmClient::new(
++        vec![codewhale_engine::llm_client::mock::canned::simple_text_turn("shipped")],
++    ));
++    runtime_threads.set_test_model_client(model.clone());
++    let thread = runtime_threads
++        .create_thread(CreateThreadRequest {
++            model: Some("deepseek-v4-pro".into()),
++            ..Default::default()
++        })
++        .await?;
++
++    let catalog: Value = client
++        .get(format!("http://{addr}/v1/commands?thread_id={}", thread.id))
++        .send()
++        .await?
++        .error_for_status()?
++        .json()
++        .await?;
++    let ship = catalog["commands"]
++        .as_array()
++        .and_then(|rows| rows.iter().find(|row| row["name"] == "ship"))
++        .context("ship row")?;
++    assert_eq!(ship["binding"], "prompt");
++    assert_eq!(ship["runtime_expands"], true);
++
++    let started: Value = client
++        .post(format!("http://{addr}/v1/threads/{}/turns", thread.id))
++        .json(&json!({ "prompt": "/ship" }))
++        .send()
++        .await?
++        .error_for_status()?
++        .json()
++        .await?;
++    assert_eq!(started["user_command"]["name"], "ship");
++    assert_eq!(
++        started["user_command"]["plugin_id"],
++        "user/fixture/release-kit"
++    );
++    assert_eq!(started["turn"]["input_summary"], "/ship");
++    let turn_id = started["turn"]["id"].as_str().context("turn id")?;
++    assert_eq!(
++        wait_for_terminal_turn_status(&client, addr, &thread.id, turn_id, Duration::from_secs(20))
++            .await?,
++        "completed"
++    );
++    let requests = model.captured_requests();
++    assert_eq!(requests.len(), 1);
++    let sent = format!("{:?}", requests[0]);
++    assert!(
++        sent.contains("Reply with the single word shipped. Do not use tools."),
++        "the model must receive the command template: {sent}"
++    );
++    assert!(!sent.contains("\"/ship\""), "{sent}");
++    handle.abort();
++    Ok(())
++}
 ```
 
-**File**: `crates/engine/src/fleet/manager.rs` (modified, +2/-2)
+**File**: `crates/engine/src/command_catalog.rs` (modified, +20/-0)
 ```diff
-@@ -4429,7 +4429,7 @@ sleep 30
-         let fake = fake_codewhale(
-             &tmp,
-             r#"#!/bin/sh
--sleep 0.2
-+sleep 0.8
- printf '{"type":"done"}\n'
- exit 0
- "#,
-@@ -4473,7 +4473,7 @@ exit 0
-         let fake = fake_codewhale(
-             &tmp,
-             r#"#!/bin/sh
--sleep 0.2
-+sleep 0.8
- printf '{"type":"done"}\n'
- exit 0
- "#,
-```
-
-**File**: `crates/engine/src/runtime_threads.rs` (modified, +6/-0)
-```diff
-@@ -3393,6 +3393,12 @@ impl RuntimeThreadStore {
+@@ -34,6 +34,14 @@ pub struct UserCommand {
+     pub builtin_bindings: Vec<String>,
+ }
  
-     pub fn rebuild_thread_from_event_log(&self, thread_id: &str) -> Result<Option<ThreadRecord>> {
-         validated_record_id(thread_id, "thread id")?;
-+        if self
-+            .seed_journal_path(thread_id)
-+            .is_ok_and(|journal_path| journal_path.exists())
-+        {
-+            return Ok(None);
-+        }
-         let mut rebuilt: Option<ThreadRecord> = None;
-         let mut latest_turn_id: Option<String> = None;
-         let mut latest_ts: Option<DateTime<Utc>> = None;
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- - **Cross-process item index cache and owner-only indexing:** cached the item index across processes and skipped non-owner records during indexing. Thanks [@gaord](https://github.com/gaord). (#7446, #7522)
- - **Simplified Chinese Auto-Review documentation:** added `docs/zh_hans/AUTO_REVIEW.md`. Thanks [@Goldloli](https://github.com/Goldloli). (#7521)
--- **Bundled Onomeo and AtmoRouter providers:** added Onomeo (`ONOMEO_API_KEY`, thanks [@Owaid0723666](https://github.com/Owaid0723666), #7525) and AtmoRouter (`ATMOROUTER_API_KEY`, thanks [@BeckleyTenriajeng](https://github.com/BeckleyTenriajeng), #7506) as bundled OpenAI-compatible provider descriptors.
-+- **Bundled Onomeo, AtmoRouter, and TrustedRouter providers:** added Onomeo (`ONOMEO_API_KEY`, thanks [@Owaid0723666](https://github.com/Owaid0723666), #7525), AtmoRouter (`ATMOROUTER_API_KEY`, thanks [@BeckleyTenriajeng](https://github.com/BeckleyTenriajeng), #7506), and TrustedRouter (`TRUSTEDROUTER_API_KEY`, thanks [@jperla](https://github.com/jperla), #7350) as bundled OpenAI-compatible provider descriptors.
- - **One paste path in the terminal and off-thread clipboard reads:** simplified Ctrl+V handling to a single press/release edge rule and moved clipboard file reads off the UI thread. (#7516)
- - **`/model` splits use-now from saving the default:** pressing `Enter` switches the current session's model immediately while `Shift+D` saves it as the default route. (#7517)
- - **Standalone `/pet` dot whale:** every terminal draws the dot whale directly from its own session activity without depending on the companion source session. (#7514)
-```
-
-**File**: `crates/tui/tests/fixtures/conformance/events/provider_error_after_tool_call.golden.jsonl` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
- {"event":"tool_request_snapshot","snapshot":{"active_tool_catalog_sha256":"511d2f86960858be97eeec3cb89937ebced084359012281aad9bb5cc0ccfb4d5","capture_source":"prepared model-client request","delivery_status":"unknown (capture does not prove provider delivery)","omitted_tool_count":0,"payload_json_bytes":15275,"payload_measurement_status":"exact (within 1048576-byte measurement bound)","provider":{"model":"deepseek-v4-pro","provider":"Deepseek","status":"available"},"registry_facts_present":true,"registry_only_tools":{"status":"known","value":{"count":43,"omitted":11,"rendered":[{"truncated":false,"value":"Git"},{"truncated":false,"value":"Run"},{"truncated":false,"value":"Web"},{"truncated":false,"value":"apply_patch"},{"truncated":false,"value":"automation"},{"truncated":false,"value":"context_archive_get"},{"truncated":false,"value":"context_archive_search"},{"truncated":false,"value":"diagnostics"},{"truncated":false,"value":"finance"},{"truncated":false,"value":"get_goal"},{"truncated":false,"value":"github"},{"truncated":false,"value":"handle_read"},{"truncated":false,"value":"harness"},{"truncated":false,"value":"image_ocr"},{"truncated":false,"value":"note"},{"truncated":false,"value":"notify"},{"truncated":false,"value":"pandoc_convert"},{"truncated":false,"value":"project_map"},{"truncated":false,"value":"registry_sync"},{"truncated":false,"value":"request_plugin_install"},{"truncated":false,"value":"request_user_input"},{"truncated":false,"value":"retrieve_tool_result"},{"truncated":false,"value":"revert_turn"},{"truncated":false,"value":"review"},{"truncated":false,"value":"rlm"},{"truncated":false,"value":"send_later"},{"truncated":false,"value":"session_get"},{"truncated":false,"value":"session_search"},{"truncated":false,"value":"show_data"},{"truncated":false,"value":"start_mcp_server"},{"truncated":false,"value":"start_registry_mcp_server"},{"truncated":false,"value":"task_shell_wait"}]}},"registry_tool_count":{"status":"known","value":70},"rendered_tool_count":13,"schema_version":1,"step":0,"tool_count":13,"tools":[{"allowed_callers":{"status":"known","value":{"count":1,"omitted":0,"rendered":[{"truncated":false,"value":"direct"}]}},"approval":{"status":"known","value":{"truncated":false,"value":"Required"}},"cache_control_type":{"reason":"request field absent","status":"unknown"},"capabilities":{"status":"known","value":{"count":3,"omitted":0,"rendered":[{"truncated":false,"value":"ExecutesCode"},{"truncated":false,"value":"Sandboxable"},{"truncated":false,"value":"RequiresApproval"}]}},"defer_loading":{"status":"known","value":false},"description":{"truncated":true,"value":"Execute a shell command in the workspace (optional cwd) and return stdout and stderr (last 400 lines or 16KB; the full output is saved as an artifact). Optional timeout is foreground seconds (default 30 seconds); a command still running then moves to the background by itself — never killed for time — returning output so far, last-output age, build phase, and a task_id. Set background=true for >5s or parallel jobs, and description for a short UI label. Call task_shell_wait with that task_id to read more or w"},"input_examples":{"reason":"request field absent","status":"unknown"},"input_schema_json":{"truncated":true,"value":"{\"additionalProperties\":false,\"properties\":{\"background\":{\"description\":\"Run immediately in the background and return a task_id (good for >5s or parallel jobs; incompatible with read_only=true). Call task_shell_wait to wait or cancel.\",\"type\":\"boolean\"},\"command\":{\"description\":\"The command to execute. Actual execution shell: `/bin/bash`. Use Bash syntax: pipelines, redirections, $(command), and && / || are supported. Quote paths and variable expansions, such as \\\"$path\\\"; use single quotes for literal text. For literal multiline input, use a quoted heredoc delimiter (<<'EOF') with its closing delimiter on a separate line. Use only installed programs; do not assume GNU-specific flags on macOS/BSD. Example: printf '%s\\\\n' 'sample'.\",\"type\":\"string\"},\"cwd\":{\"description\":\"Optional workspace-relative working directory.\",\"type\":\"string\"},\"description\":{\"description\":\"Optional few-word summary shown to the user beside the command.\",\"type\":\"string\"},\"justification\":{\"description\":\"Required with sandbox_permissions: one sentence explaining why this exact command needs wider access.\",\"type\":\"string\"},\"read_only\":{\"description\":\"Set true to run analysis code (including Python/SQLite) or a network fetch (curl) with mandatory native filesystem read-only isolation. Outbound network is on only in Full Access when the session sandbox, the network policy and your network grant allow it. Available during peer writes. Refused when native enforcement is unavailable; no background, stdin, external backend, or sandbox escalation.\",\"type\":\"boolean\"},\"sandbox_permissions\":{\"description\":\"The wider sandbox mode this exact command n
-```
-
----
-
-### Incident Patch 3: `9874729a` (2026-11-24)
-**Commit Message**: fix(tui): box run_event_loop and fat handle_view_events futures to prevent debug stack overflow
-
-- Box run_event_loop inside run_tui so startup and poll frames never
-  coexist on the codewhale-main stack.
-- Box apply_model_picker_choice, open_provider_picker,
-  open_model_connection_setup, apply_plan_handoff, switch_provider, and
-  apply_range_undo inside handle_view_events.
-
-Verified locally:
-- cargo fmt --all -- --check
-- sh scripts/sync-changelog.sh --check
-- python3 scripts/check-contributor-credit.py (exit 0)
-
-**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +2/-2)
-```diff
-@@ -1535,7 +1535,7 @@ pub async fn run_tui(
-     if let Some(millis) = codewhale_runtime::startup_trace::cold_start_ms() {
-         codewhale_telemetry::set_cold_start_ms(millis);
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct ExpandedUserCommand {
++    pub name: String,
++    pub message: String,
++    pub allowed_tools: Option<Vec<String>>,
++    pub plugin_id: Option<String>,
++}
++
+ /// The host’s read-only command metadata and collision checks, implemented
+ /// by the commands side.
+ pub trait CommandCatalog: Send + Sync {
+@@ -50,6 +58,18 @@ pub trait CommandCatalog: Send + Sync {
+     ) -> Vec<UserCommand> {
+         self.user_commands(workspace)
      }
--    let result = run_event_loop(
-+    let result = Box::pin(run_event_loop(
-         &mut terminal,
-         &mut app,
-         config,
-@@ -1545,7 +1545,7 @@ pub async fn run_tui(
-         translation_client,
-         pending_telemetry_notice,
-         dispatch_completion_rx,
--    )
-+    ))
-     .await;
-     automation_cancel.cancel();
-     automation_scheduler.abort();
++    fn expands_user_commands(&self) -> bool {
++        false
++    }
++    fn expand_user_command(
++        &self,
++        workspace: &Path,
++        plugins: &codewhale_plugins::PluginRegistry,
++        input: &str,
++    ) -> Option<Result<ExpandedUserCommand, String>> {
++        let _ = (workspace, plugins, input);
++        None
++    }
+     /// Whether this host executes `name` remotely at all. Checked before any
+     /// thread state is assembled, so a name outside the remote surface is
+     /// refused exactly like a name no host knows. `false` is the default: a
 ```
 
-**File**: `crates/tui/src/tui/ui/handlers.rs` (modified, +47/-17)
+**File**: `crates/engine/src/runtime_threads/manager.rs` (modified, +1/-1)
 ```diff
-@@ -1982,13 +1982,13 @@ pub(crate) async fn handle_view_events(
-                         let identity = config
-                             .builtin_provider_identity(ProviderKind::Codewhale)
-                             .map_err(anyhow::Error::msg)?;
--                        let switched = switch_provider(
-+                        let switched = Box::pin(switch_provider(
-                             app,
-                             engine_handle,
-                             config,
-                             identity,
-                             Some(model.clone()),
--                        )
-+                        ))
-                         .await;
-                         if switched {
-                             if app.onboarding == OnboardingState::Provider {
-@@ -2026,7 +2026,7 @@ pub(crate) async fn handle_view_events(
-                                 app.ui_locale,
-                             ))
-                     }
--                    Some(false) => open_provider_picker(app, config, engine_handle).await,
-+                    Some(false) => Box::pin(open_provider_picker(app, config, engine_handle)).await,
-                     None if app.onboarding == OnboardingState::Provider => {
-                         back_from_provider_onboarding(app)
-                     }
-@@ -2084,7 +2084,13 @@ pub(crate) async fn handle_view_events(
-                 app.push_status_toast(message, level, Some(8_000));
-                 if needs_model {
-                     begin_first_connection_setup(app);
--                    open_model_connection_setup(app, config, engine_handle, false).await;
-+                    Box::pin(open_model_connection_setup(
-+                        app,
-+                        config,
-+                        engine_handle,
-+                        false,
-+                    ))
-+                    .await;
-                 }
-                 app.needs_redraw = true;
-             }
-@@ -2182,17 +2188,24 @@ pub(crate) async fn handle_view_events(
-                 if is_plan_handoff_request(app, &tool_id) =>
-             {
-                 let choice = crate::tui::plan_handoff::choice(app.ui_locale, &response);
--                apply_plan_handoff(app, config, engine_handle, &tool_id, choice).await?;
-+                Box::pin(apply_plan_handoff(
-+                    app,
-+                    config,
-+                    engine_handle,
-+                    &tool_id,
-+                    choice,
-+                ))
-+                .await?;
-             }
-             // Esc follows the same owned-seed cleanup as Keep planning.
-             ViewEvent::UserInputCancelled { tool_id } if is_plan_handoff_request(app, &tool_id) => {
--                apply_plan_handoff(
-+                Box::pin(apply_plan_handoff(
-                     app,
-                     config,
-                     engine_handle,
-                     &tool_id,
-                     crate::tui::plan_handoff::PlanHandoffChoice::KeepPlanning,
--                )
-+                ))
-                 .await?;
-             }
-             ViewEvent::UserInputSubmitted { tool_id, response } => {
-@@ -3125,7 +3138,7 @@ pub(crate) async fn handle_view_events(
-                         .replace("{model}", &model);
-                     app.add_message(HistoryCell::System { content: notice });
-                 }
--                apply_model_picker_choice(
-+                Box::pin(apply_model_picker_choice(
-                     app,
-                     engine_handle,
-                     config,
-@@ -3135,7 +3148,7 @@ pub(crate) async fn handle_view_events(
-                     previous_model,
-                     previous_effort,
-                     save_as_startup_default,
--                )
-+                ))
-                 .await;
-                 refresh_parked_fleet_roster(app, config);
-             }
-@@ -3265,7 +3278,7 @@ pub(crate) async fn handle_view_events(
-                 apply_status_toast_event(app, message, level);
-             }
-             ViewEvent::TopbarRoutePickerRequested => {
--                open_provider_picker(app, config, engine_handle).await;
-+                Box::pin(open_provider_picker(app, config, engine_handle)).await;
-             }
-             ViewEvent::TopbarModelPickerRequested => {
-                 if app.view_stack.top_kind() != Some(ModalKind::ModelPicker) {
-@@ -3296,8 +3309,14 @@ pub(crate) async fn handle_view_events(
-             ViewEvent::ProviderPickerApplied { identity } => {
-                 let provider = identity.provider;
-                 let model_override = provider_picker_model_override(app, config, &identity);
--                let switched =
--                    switch_provider(app, engine_handle, config, identity, model_override).await;
-+                let switched = Box::pin(switch_provider(
-+                    app,
-+                    engine_handle,
-+                    config,
-+                    identity,
-+                    model_override,
-+                ))
-+   
+@@ -12,7 +12,7 @@ pub use permission_rules::{
+ pub(super) const EVENT_CHANNEL_CAPACITY: usize = 1024;
+ pub(super) const MAX_ACTIVE_THREADS_DEFAULT: usize = 8;
+ pub(super) const MAX_PENDING_DYNAMIC_TOOL_CALLS: usize = 128;
+-pub(super) const SUMMARY_LIMIT: usize = 280;
++pub const SUMMARY_LIMIT: usize = 280;
+ pub(super) const STREAM_DELTA_BATCH_MAX_LATENCY: Duration = Duration::from_millis(32);
+ pub(super) const STREAM_DELTA_BATCH_MAX_BYTES: usize = 16 * 1024;
+ /// How long `steer_turn` observes the engine's verdict before answering with
+```
+
+**File**: `crates/runtime/src/config.rs` (modified, +1/-1)
+```diff
+@@ -3093,7 +3093,7 @@ pub fn approval_policy_baseline_from_permission_posture(
+ impl Config {
+     #[must_use]
+     pub fn catalog_auto_refresh_enabled(&self) -> bool {
+-        self.catalog.as_ref().map_or(true, |c| c.auto_refresh)
++        self.catalog.as_ref().is_none_or(|c| c.auto_refresh)
+     }
+     /// Whether Linux shell commands prefer bubblewrap confinement.
+     ///
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +3/-0)
+```diff
+@@ -69,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Ask asks before every command, read-only ones included:** in Ask, a shell command the Engine classes as read-only (such as `ls` or `git status -s`) ran without a card, while its description promises it asks before every edit and command. It now opens the card like any other command, and a code-mode program with no session permission gate refuses shell calls in Ask because it cannot ask. Sub-agents still run their bounded read-only commands without a card, so read-only scouts keep working when no one can answer. Accept Edits, Auto-Review, Full Access and Plan are unchanged.
+ - **A slow Codewhale account service no longer holds up the start of a turn or Stop:** a signed-in turn waited up to 10 seconds for the account profile read before it started, and Stop did nothing until that read ended. A turn now waits at most one second for it, never past Stop, reuses a read of the same account for 30 seconds, and otherwise uses the last read for that account or the local constitution while a slower read finishes in the background (5 second limit).
+ - **A slow Codewhale account service no longer holds up the start of a turn or Stop:** a signed-in turn waited up to 10 seconds for the account profile read before it started, and Stop did nothing until that read ended. Each turn still reads the account profile, but waits at most one second for it and never past Stop; a slower read (5 second limit) finishes in the background and the next turn uses it. Until then the turn uses the last profile loaded for that account, or the local constitution with a one-time notice that account preferences are still loading. A signed-out local constitution is read fresh every turn. Why the account service is slow for the Engine in production is still being investigated.
++
++- **Plugin, project and global commands such as `/ship` now run in the Desktop:** a turn sent over the Runtime API as `/name args` is expanded with the same command registry and template the terminal uses, so the model gets the command's instructions instead of the bare text. The command's tool list can only narrow the turn's tools, a plugin command whose plugin is no longer trusted is refused, the turn's response names the command that ran, and the command catalog marks these commands `runtime_expands` so clients stop showing them as terminal only.
++
+ ### Removed
+ 
+ - **The shared pet companion (`codewhale pet serve`)** and, in the terminal, sound, replay export, the browser appearance studio, source selection, the pixel, particle, cove, braille and whale-girl views, view cycling and avatar packs; `/pet inspect|status|appearance|style|source|export|sound|avatar|action|view` and the F6 and F8 keys. F5 still opens replies and agents. Files left in `~/.codewhale/pet-shared` are neither read nor deleted. Plugins can still register avatar packs; the terminal no longer draws them.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7561** (2026-11-25): fix(util,engine): resolve remaining R5 durability, grep timeout cancel, and bounded review read defects (@NieZhuZhu)
+- **PR #7560** (2026-11-25): chore(release): cut 0.10.5 (@Hmbown)
 - **PR #7559** (closed): docs(changelog): consolidate and deduplicate the 0.10.5 Unreleased notes (@Hmbown)
 - **PR #7558** (2026-11-24): feat(0.10.5): DSH 0.2.2 host services, per-plugin settings, telemetry honesty, and Wave 2 runtime (@Hmbown)
 - **PR #7557** (2026-11-24): fix(tui): use the engine catalog effort parser and add the Ollama Cloud effort ladder (@Hmbown)
 - **PR #7556** (2026-11-24): test(engine): match the strict [skills] contract in the creator-skills test (@Hmbown)
-- **PR #7555** (2026-11-24): fix(security): hardening batch — grants, secrets, runtime probes, execpolicy deny bypasses (@Hmbown)
-- **PR #7554** (2026-11-24): fix(tui): guard background session persistence while dispatch_in_flight (@Hmbown)
 
 ---
 
@@ -2592,34 +3501,50 @@ Verified locally:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web
+## X. command-contract): background facet carries a fn pointer and plain request, not 
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/command-contract/src/facets/background.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3235e2ec`: docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84b57765`: command-contract): background facet carries a fn pointer and plain request, not a boxed future. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/command-contract/src/facets/background.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Serve the shared web app build from `codewhale web`:** `codewhale web` now serves a built `codewhale-app/apps/web/dist` directory when `CODEWHALE_WEB_DIST` points to a valid directory containing `index.html`, including `/plugin-host.html` (with sandboxed `connect-src 'none'` / `frame-ancestors 'self'` CSP), immutable `/static/*` hashed assets, bounded SPA route fallback, path-traversal/symlink refusal, and preserved auth-bootstrap cookie sessions; falls back to the embedded web client when unset. (#7237)
-- **Choose an external ACP agent in the terminal:** `/model` now lists installed external ACP agents (`antigravity`, `opencode`, `copilot`, `dsh`, and others) alongside Codewhale models, showing why non-runnable agents are blocked and what to run, and `codewhale --agent <id>` / `codewhale exec --agent <id>` starts an interactive or headless session through the Engine ACP executor. (CW-8361)
-- **TrustedRouter bundled provider and inclusion bar:** added `TrustedRouter` (`trustedrouter`, `TRUSTEDROUTER_API_KEY`) as a bundled OpenAI-compatible provider and documented the bundled-provider inclusion bar. Thanks [@jperla](https://github.com/jperla). (#7350)
-- **Simplified Chinese Auto
+use std::path::PathBuf;
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct BackgroundRequest {
+    pub workspace: PathBuf,
+    pub language: String,
+    pub updater: PathBuf,
+    pub argument: String,
+}
+
+pub type BackgroundCancel = Arc<AtomicBool>;
+
+pub type BackgroundJob = fn(BackgroundRequest, BackgroundCancel) -> BackgroundCommandResult;
+        job: BackgroundJob,
+        request: BackgroundRequest,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-### Adde
+use std::future::Future;
+use std::pin::Pin;
+pub type BackgroundCommandWork =
+    Pin<Box<dyn Future<Output = BackgroundCommandResult> + Send + 'static>>;
+        work: BackgroundCommandWork,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3235e2ec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84b57765` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

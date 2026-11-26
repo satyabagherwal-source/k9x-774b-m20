@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-Y9SP",
-    "timestamp": "2026-11-25T01:52:49.177Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "89b48509c4e84459b6269f1062180d9be0f301689fe7b322e8d64a158f954e29",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-YAIY",
-    "timestamp": "2026-11-25T01:52:50.122Z",
-    "repository": "mochajs/mocha",
-    "learningId": "learn-github-mochajs-mocha",
-    "contentHash": "d2e8a97fe0e050a6f77bf7f7e44cdeaf65ac58f05cf54cc2be06f0c252297cf3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-YCKZ",
-    "timestamp": "2026-11-25T01:52:52.787Z",
-    "repository": "microsoft/react-native-windows",
-    "learningId": "learn-github-microsoft-react-native-windows",
-    "contentHash": "7b3df9c74a1bc2ff4fb45797ce89fb24f91626c5d8ce776f0b5f686b206c90db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-A2DE",
     "timestamp": "2026-11-25T02:01:59.426Z",
     "repository": "zed-industries/zed",
@@ -7490,6 +7445,51 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "5527c92c32c24896e10268d88ace457014665aef42881a4a067d52f26db32a0f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-9WSK",
+    "timestamp": "2026-11-26T14:53:21.860Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "76c56319cb52f506f79b364fe1e9aa1b81c0e173162ef7d8e77b6d7a31b6b6dd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-9ZPD",
+    "timestamp": "2026-11-26T14:53:25.633Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "e2a9a46a150a5a8e385c0e1c3d4a575ded97f2883317f70a43a38fe0e6253679",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-A20V",
+    "timestamp": "2026-11-26T14:53:28.639Z",
+    "repository": "MetrolistGroup/Metrolist",
+    "learningId": "learn-github-metrolistgroup-metrolist",
+    "contentHash": "eb0de6e690ae358ea2840e9e186249d1755bb54a8efe84783943b6ec866f6793",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -13430,3 +13430,6 @@
 | `CYCLE-20261126-YHI5` | `2026-11-26T14:44:28.829Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`4f380e66...`) |
 | `CYCLE-20261126-YPFR` | `2026-11-26T14:44:39.112Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10706` | Yes (`c5b901a9...`) |
 | `CYCLE-20261126-YRNR` | `2026-11-26T14:44:41.991Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`5527c92c...`) |
+| `CYCLE-20261126-9WSK` | `2026-11-26T14:53:21.860Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`76c56319...`) |
+| `CYCLE-20261126-9ZPD` | `2026-11-26T14:53:25.633Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10628` | Yes (`e2a9a46a...`) |
+| `CYCLE-20261126-A20V` | `2026-11-26T14:53:28.639Z` | `MetrolistGroup/Metrolist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10707` | Yes (`eb0de6e6...`) |

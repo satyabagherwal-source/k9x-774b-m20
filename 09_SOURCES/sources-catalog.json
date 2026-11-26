@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "8cc5e186676ab25a1f096d199a6752d7ee28c79a7bba9ded5bd631b5fe1404aa",
-    "lastHarvestedAt": "2026-11-22T21:56:56.040Z",
+    "contentHash": "76c56319cb52f506f79b364fe1e9aa1b81c0e173162ef7d8e77b6d7a31b6b6dd",
+    "lastHarvestedAt": "2026-11-26T14:53:21.864Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "b4f71726",
+    "sourceVersion": "8838e415",
     "license": "MIT",
-    "contentHash": "e1decd0ddd4da9a2cb34bf70efa3e8224cae19a912abcd4369be7bdea63bba17",
-    "lastHarvestedAt": "2026-11-25T06:47:43.891Z",
+    "contentHash": "e2a9a46a150a5a8e385c0e1c3d4a575ded97f2883317f70a43a38fe0e6253679",
+    "lastHarvestedAt": "2026-11-26T14:53:25.638Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -12663,10 +12663,10 @@
     "repository": "MetrolistGroup/Metrolist",
     "platform": "github",
     "sourceUrl": "https://github.com/MetrolistGroup/Metrolist",
-    "sourceVersion": "af3d0533",
+    "sourceVersion": "6fa4e821",
     "license": "GPL-3.0",
-    "contentHash": "9564362ff4bb2d3daff9e25baf7e7cf9da8fb0dc60a816a6cb61c3e07728bfef",
-    "lastHarvestedAt": "2026-11-24T04:37:01.844Z",
+    "contentHash": "eb0de6e690ae358ea2840e9e186249d1755bb54a8efe84783943b6ec866f6793",
+    "lastHarvestedAt": "2026-11-26T14:53:28.643Z",
     "learningId": "learn-github-metrolistgroup-metrolist"
   },
   "ganymedenil-document.ai": {
