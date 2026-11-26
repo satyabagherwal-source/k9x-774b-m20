@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:14:43.955Z",
+  "last_updated": "2026-11-26T18:24:32.081Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66458,6 +66458,72 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "B"
+    },
+    {
+      "id": "CD-T7KE",
+      "directive_title": "Revised the documentation to match the ServiceMethods interface",
+      "source_repo": "feathersjs/feathers",
+      "source_commit": "61e15794",
+      "staged_file": "11_INBOX/candidate-directives/CD-T7KE-revised-the-documentation-to-match-the-servicemethods-interface.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-T978",
+      "directive_title": "Bump hcl/v2 to 2.25.0",
+      "source_repo": "hashicorp/terraform",
+      "source_commit": "b07e3171",
+      "staged_file": "11_INBOX/candidate-directives/CD-T978-bump-hcl-v2-to-2-25-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TBBS",
+      "directive_title": "save through a temp file of the save's own",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "90b55382",
+      "staged_file": "11_INBOX/candidate-directives/CD-TBBS-save-through-a-temp-file-of-the-save-s-own.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TF5K",
+      "directive_title": "docs: Revised the documentation to match the ServiceMethods interface",
+      "source_repo": "feathersjs-feathers-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TF5K-docs-revised-the-documentation-to-match-the-servicemethods-interface.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-TG8N",
+      "directive_title": "deps: Bump hcl/v2 to 2.25.0",
+      "source_repo": "hashicorp-terraform-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TG8N-deps-bump-hcl-v2-to-2-25-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TH71",
+      "directive_title": "index): save through a temp file of the save's own",
+      "source_repo": "projectdiscovery-nuclei-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TH71-index-save-through-a-temp-file-of-the-save-s-own.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
     }
   ]
 }

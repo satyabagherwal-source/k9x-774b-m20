@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T18:14:41.339Z",
-    "lastVerified": "2026-11-26T18:14:41.339Z",
+    "lastChecked": "2026-11-26T18:24:28.316Z",
+    "lastVerified": "2026-11-26T18:24:28.316Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -194,12 +194,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T17:48:22.829Z",
-    "lastVerified": "2026-11-26T17:48:22.829Z",
+    "lastChecked": "2026-11-26T18:24:23.130Z",
+    "lastVerified": "2026-11-26T18:24:23.130Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -208,7 +208,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "50d1f268"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1604,9 +1605,9 @@
   "seaql-sea-orm": {
     "name": "sea-orm",
     "officialUrl": "https://github.com/SeaQL/sea-orm",
-    "lastChecked": "2026-11-25T23:50:09.226Z",
+    "lastChecked": "2026-11-26T18:24:20.915Z",
     "revisionIdentifier": "c453c64e",
-    "lastVerified": "2026-11-25T23:50:09.226Z"
+    "lastVerified": "2026-11-26T18:24:20.915Z"
   },
   "software-mansion-argent": {
     "name": "software-mansion/argent",
@@ -1930,11 +1931,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "feathersjs-feathers": {
-    "name": "feathers",
+    "name": "feathersjs/feathers",
     "officialUrl": "https://github.com/feathersjs/feathers",
-    "lastChecked": "2026-11-24T09:28:43.311Z",
-    "revisionIdentifier": "8c007bc4",
-    "lastVerified": "2026-11-24T09:28:43.311Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-26T18:24:17.584Z",
+    "lastVerified": "2026-11-26T18:24:17.584Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-feathersjs-feathers",
+    "contentHash": "3c20016017f8ddcbd203cb80207108e0ae147ea94f54cae086ee5e782eed4b7b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "siderolabs-talos": {
     "name": "siderolabs/talos",
@@ -2061,14 +2072,14 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T14:04:11.367Z",
-    "lastVerified": "2026-11-26T14:04:11.367Z",
+    "lastChecked": "2026-11-26T18:24:22.531Z",
+    "lastVerified": "2026-11-26T18:24:22.531Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "c4dc07246ac4a6b0a9a81596243989e8b88faf6678dbb8dfa31bb12ed6bc05f3",
+    "contentHash": "e99435686fc2639bb54b00c270e1dc79ea1879e13aeeab3189f4639f646bb077",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 17,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3103,9 +3114,9 @@
   "asciinema-asciinema": {
     "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
-    "lastChecked": "2026-11-25T11:11:11.474Z",
+    "lastChecked": "2026-11-26T18:24:07.878Z",
     "revisionIdentifier": "e2c66002",
-    "lastVerified": "2026-11-25T11:11:11.474Z"
+    "lastVerified": "2026-11-26T18:24:07.878Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -4123,12 +4134,12 @@
     "officialUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T04:08:09.415Z",
-    "lastVerified": "2026-11-23T04:08:09.415Z",
+    "lastChecked": "2026-11-26T18:24:10.817Z",
+    "lastVerified": "2026-11-26T18:24:10.817Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "16f591b27f73fac2acabed66aa06b627e15fa82254dc46c0b4196c7bc21babfd",
+    "contentHash": "1cd4aa796b5befa6755b8e54b344e92fa84b0f673ba0b2a75f19baf556d7fe42",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4961,14 +4972,14 @@
     "officialUrl": "https://github.com/hashicorp/terraform",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T00:46:32.934Z",
-    "lastVerified": "2026-11-26T00:46:32.934Z",
+    "lastChecked": "2026-11-26T18:24:19.750Z",
+    "lastVerified": "2026-11-26T18:24:19.750Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "714b5e86ebe610c222a118afabd926f583bb5857c23d1791a930ca7c6cbdffef",
+    "contentHash": "675d54f1ccdb27b6c9f29759e31d03ad1f46731e41e1a2c78120b8a9018c8d6a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T18:14:44.371Z",
-  "total_verified_learnings": 9131,
+  "last_updated": "2026-11-26T18:24:32.661Z",
+  "total_verified_learnings": 9132,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26102,
+  "total_items": 26116,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219022,7 +219022,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "16f591b27f73fac2acabed66aa06b627e15fa82254dc46c0b4196c7bc21babfd",
+      "content_hash": "1cd4aa796b5befa6755b8e54b344e92fa84b0f673ba0b2a75f19baf556d7fe42",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [],
@@ -219031,7 +219031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T04:08:09.796Z",
+      "verified_at": "2026-11-26T18:24:11.397Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219048,9 +219048,9 @@
       "title": "Research & Knowledge Intelligence: timm/mobilenetv3_small_100.lamb_in1k Core Invariants",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "39f2f41771fff749849a2137416c33efcbc2f79e036ab7e062af244dfd1a943e",
+      "content_hash": "9f54dd3bb01ed32b7c6b37558b9729bb91fd32364991394ac6c5621716bf56ca",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T04:08:10.202Z"
+      "persisted_at": "2026-11-26T18:24:12.149Z"
     },
     "learn-github-infiniflow-infinity": {
       "learning_id": "learn-github-infiniflow-infinity",
@@ -232255,8 +232255,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "fc120870",
-      "content_hash": "c4dc07246ac4a6b0a9a81596243989e8b88faf6678dbb8dfa31bb12ed6bc05f3",
+      "source_version": "90b55382",
+      "content_hash": "e99435686fc2639bb54b00c270e1dc79ea1879e13aeeab3189f4639f646bb077",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -232344,6 +232344,11 @@
           "number": 10700,
           "title": "use the configured HTTP client in reporting and verify TLS",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10752,
+          "title": "save through a temp file of the save's own",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232351,7 +232356,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T14:04:12.340Z",
+      "verified_at": "2026-11-26T18:24:23.798Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232393,10 +232398,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "fc120870",
-      "content_hash": "8035e34a0b0e13669a1364945db3b1daa3067aef2c7c0594bcba44106bef196e",
+      "source_version": "90b55382",
+      "content_hash": "591dc3e9ca05f8c8dfe63606f47d820d04b5d74b0f5527b3836ebd85bb4d85be",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T14:04:13.078Z"
+      "persisted_at": "2026-11-26T18:24:24.907Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -232405,10 +232410,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "fc120870",
-      "content_hash": "7e077f589e275bc6c4db5d9c98a136d4ff418dc611fe6e26efce9604272ebdc8",
+      "source_version": "90b55382",
+      "content_hash": "7433d0fd19e6898c6218e0520569a3e2c865c89f4ecc3c18a754370a11dbc2f9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:04:13.280Z"
+      "persisted_at": "2026-11-26T18:24:25.366Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -238130,8 +238135,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "279a0c24",
-      "content_hash": "714b5e86ebe610c222a118afabd926f583bb5857c23d1791a930ca7c6cbdffef",
+      "source_version": "b07e3171",
+      "content_hash": "675d54f1ccdb27b6c9f29759e31d03ad1f46731e41e1a2c78120b8a9018c8d6a",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -238184,6 +238189,11 @@
           "number": 10571,
           "title": "Reduce number of ways mocked ui input can be configured, add helper for ca",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10751,
+          "title": "Bump hcl/v2 to 2.25.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238191,7 +238201,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T00:46:33.880Z",
+      "verified_at": "2026-11-26T18:24:21.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238233,10 +238243,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "repository": "hashicorp/terraform",
-      "source_version": "279a0c24",
-      "content_hash": "b69106985b06115b8e929faa167faf34a5ab076a9eac7fff597a48d760c4f4f5",
+      "source_version": "b07e3171",
+      "content_hash": "e3cfba4a5734305780e24b14e90274eaf0a026fbd7a753630150dd3b75b9a29a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T00:46:34.612Z"
+      "persisted_at": "2026-11-26T18:24:22.021Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform",
@@ -238245,10 +238255,10 @@
       "relative_path": "08_VERIFICATION/hashicorp-terraform-verification-protocol-empirical-defect-shield-for-hashicorp-.md",
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp/terraform",
       "repository": "hashicorp/terraform",
-      "source_version": "279a0c24",
-      "content_hash": "e14642444ef902b66d33907f5a65d7bec0d24d641f892f3a9a7a70c731a34759",
+      "source_version": "b07e3171",
+      "content_hash": "731e7237e04d29103ddffe0186fee9ed63892350849d0fd5a4f9b732408efcb0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:46:34.851Z"
+      "persisted_at": "2026-11-26T18:24:22.331Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
@@ -238270,9 +238280,9 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb338da61c8ae9aecd35ca534f6cd311dd6f0ae387e95d5533da34c1bcf73f6d",
+      "content_hash": "3fdc2e1e3fd4e7805b5f69b664773c0635e49e1cb25d00bde84e57d9b806c033",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T00:46:46.737Z"
+      "persisted_at": "2026-11-26T18:24:31.119Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings",
@@ -238282,9 +238292,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp-terraform-learnings",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c6ccccd6516559309d33fc698f0ec9659bed5b161dde957996229762a0784d9",
+      "content_hash": "0b1fcb0b7f30dcd57243e21b0de1b0502c99dfa5a181af38437a806e494dc845",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:46:46.932Z"
+      "persisted_at": "2026-11-26T18:24:31.403Z"
     },
     "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -247014,9 +247024,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c3c31fea9b56d2effc43ba542df53c25e73b092b87f717475d4035aeaa17673",
+      "content_hash": "58379b6077ca6682d435d9554de1a175959c770067941d72db81a8ae5a216814",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T09:13:07.504Z"
+      "persisted_at": "2026-11-26T18:24:32.373Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -247026,9 +247036,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery-nuclei-learnings",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "eebb23e5481ea33546849c94d05f7ebac2a2970367e96ed577ae7738fdc06a59",
+      "content_hash": "6f4c79df42877aa2c7761704a675b3e003414cf60bddb90686627ac6e034d02b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:13:07.764Z"
+      "persisted_at": "2026-11-26T18:24:32.661Z"
     },
     "learn-huggingface-liquidai-lfm3-omni-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
@@ -357850,6 +357860,201 @@
       "content_hash": "e9ca0c33585b448f3df0854dfec4ae36b0a47c610339296efbfef705d424945e",
       "domain_letter": "B",
       "persisted_at": "2026-11-26T18:14:43.955Z"
+    },
+    "learn-github-feathersjs-feathers": {
+      "learning_id": "learn-github-feathersjs-feathers",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "feathersjs/feathers",
+      "repository": "feathersjs/feathers",
+      "slug": "feathersjs-feathers",
+      "platform": "github",
+      "source_url": "https://github.com/feathersjs/feathers",
+      "source_version": "61e15794",
+      "content_hash": "3c20016017f8ddcbd203cb80207108e0ae147ea94f54cae086ee5e782eed4b7b",
+      "dossier_path": "07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10750,
+          "title": "Revised the documentation to match the ServiceMethods interface",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-26T18:24:18.868Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10750": {
+      "learning_id": "rule-10750",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10750,
+      "title": "Revised the documentation to match the ServiceMethods interface",
+      "source_url": "https://github.com/feathersjs/feathers",
+      "source_version": "61e15794",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T18:24:18.868Z"
+    },
+    "candidate_directive-revised-the-documentation-to-match-the-servicemethods-interface": {
+      "item_id": "candidate_directive-revised-the-documentation-to-match-the-servicemethods-interface",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T7KE-revised-the-documentation-to-match-the-servicemethods-interface.md",
+      "title": "Revised the documentation to match the ServiceMethods interface",
+      "repository": "feathersjs/feathers",
+      "source_version": "61e15794",
+      "content_hash": "63d49884164de3dcc0a423c7829d24ad40bffd027ee84ed8563165d9c7a83edd",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T18:24:19.600Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-feathersjs-feathers-technical-construction-intelligence-feathersjs-feathers-core.md",
+      "title": "Technical Construction Intelligence: feathersjs/feathers Core Invariants",
+      "repository": "feathersjs/feathers",
+      "source_version": "61e15794",
+      "content_hash": "f41ff672872c1795c66289f9236fdff139611d5f4fb3a8d4fc6e58df6fcba2ae",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T18:24:19.890Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-feathersjs-feathers": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-feathersjs-feathers",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/feathersjs-feathers-verification-protocol-empirical-defect-shield-for-feathersjs.md",
+      "title": "Verification Protocol: Empirical Defect Shield for feathersjs/feathers",
+      "repository": "feathersjs/feathers",
+      "source_version": "61e15794",
+      "content_hash": "b0d832495a409d044f1a24971d1a54764b8fb3b433ae3532b962d41a3f64631c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T18:24:20.345Z"
+    },
+    "rule-10751": {
+      "learning_id": "rule-10751",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10751,
+      "title": "Bump hcl/v2 to 2.25.0",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "b07e3171",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T18:24:21.047Z"
+    },
+    "candidate_directive-bump-hcl-v2-to-2-25-0": {
+      "item_id": "candidate_directive-bump-hcl-v2-to-2-25-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T978-bump-hcl-v2-to-2-25-0.md",
+      "title": "Bump hcl/v2 to 2.25.0",
+      "repository": "hashicorp/terraform",
+      "source_version": "b07e3171",
+      "content_hash": "7b057589688f9e707a24677287b95590039437b33fc008ee01941f8ed28d93b7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T18:24:21.718Z"
+    },
+    "rule-10752": {
+      "learning_id": "rule-10752",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10752,
+      "title": "save through a temp file of the save's own",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "90b55382",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T18:24:23.798Z"
+    },
+    "candidate_directive-save-through-a-temp-file-of-the-save-s-own": {
+      "item_id": "candidate_directive-save-through-a-temp-file-of-the-save-s-own",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TBBS-save-through-a-temp-file-of-the-save-s-own.md",
+      "title": "save through a temp file of the save's own",
+      "repository": "projectdiscovery/nuclei",
+      "source_version": "90b55382",
+      "content_hash": "3fcfe4699f1e41d32973aec9cffd74a375132536cb59eb43db124cd0d16f5390",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T18:24:24.477Z"
+    },
+    "candidate_directive-docs-revised-the-documentation-to-match-the-servicemethods-interface": {
+      "item_id": "candidate_directive-docs-revised-the-documentation-to-match-the-servicemethods-interface",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TF5K-docs-revised-the-documentation-to-match-the-servicemethods-interface.md",
+      "title": "docs: Revised the documentation to match the ServiceMethods interface",
+      "repository": "feathersjs-feathers-learnings",
+      "source_version": "HEAD",
+      "content_hash": "199926f8b2cfa429dca8cc1881e195de331996ff74b178df7021d45fe55ec256",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T18:24:29.433Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-feathersjs-feathers-learnings-technical-construction-intelligence-feathersjs-fea.md",
+      "title": "Technical Construction Intelligence: feathersjs-feathers-learnings Core Invariants",
+      "repository": "feathersjs-feathers-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3a1415dac4fa25c36b8d429a9cbe5b74f56c3f435ed48d95f062a5d03e62152d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T18:24:29.739Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-feathersjs-feathers-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-feathersjs-feathers-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/feathersjs-feathers-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for feathersjs-feathers-learnings",
+      "repository": "feathersjs-feathers-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b4f0bdc1ad6c2eb9f762b3d15d4b3d87d6807f6fe658dfbe445ca6ee18bca23c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T18:24:30.025Z"
+    },
+    "candidate_directive-deps-bump-hcl-v2-to-2-25-0": {
+      "item_id": "candidate_directive-deps-bump-hcl-v2-to-2-25-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TG8N-deps-bump-hcl-v2-to-2-25-0.md",
+      "title": "deps: Bump hcl/v2 to 2.25.0",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "931f1c4118184a717dc145471ab83b0febaae620411cdce5ed9cb42a2be0a9c5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T18:24:30.843Z"
+    },
+    "candidate_directive-index-save-through-a-temp-file-of-the-save-s-own": {
+      "item_id": "candidate_directive-index-save-through-a-temp-file-of-the-save-s-own",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TH71-index-save-through-a-temp-file-of-the-save-s-own.md",
+      "title": "index): save through a temp file of the save's own",
+      "repository": "projectdiscovery-nuclei-learnings",
+      "source_version": "HEAD",
+      "content_hash": "463f5cff28f05c9e4642dcfa177e4043f2112056f37861c9f6293269cbf36632",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T18:24:32.081Z"
     }
   },
   "ai-builder-brain": {

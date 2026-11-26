@@ -13539,3 +13539,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-26T18:14:23.685Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `08733868` | Multi-dimensional audit evidence | 2026-11-26T18:14:26.971Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `b2d0110f` | Multi-dimensional audit evidence | 2026-11-26T18:14:37.952Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-26T18:24:11.847Z |
+| `learn-github-feathersjs-feathers` | `https://github.com/feathersjs/feathers` | `61e15794` | Multi-dimensional audit evidence | 2026-11-26T18:24:19.267Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `b07e3171` | Multi-dimensional audit evidence | 2026-11-26T18:24:21.404Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `90b55382` | Multi-dimensional audit evidence | 2026-11-26T18:24:24.157Z |

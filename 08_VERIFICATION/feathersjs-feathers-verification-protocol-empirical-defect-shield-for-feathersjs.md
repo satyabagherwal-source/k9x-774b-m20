@@ -4,45 +4,31 @@
 {
   "source_repository": "feathersjs/feathers",
   "source_url": "https://github.com/feathersjs/feathers",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "61e15794",
+  "license": "MIT",
+  "timestamp": "2026-11-26T18:24:19.599Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-feathersjs-feathers",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [feathersjs/feathers](https://github.com/feathersjs/feathers) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [feathersjs/feathers](https://github.com/feathersjs/feathers) (Revision: `61e15794`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T18:24:19.599Z`  
+> **Learning ID**: `learn-github-feathersjs-feathers`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `feathersjs/feathers` (Commit: `historical`)
+- **Target Repository**: `feathersjs/feathers` (Commit: `61e15794`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/feathersjs-feathers-learnings.md`  
-> **Source**: github ([https://github.com/feathersjs/feathers](https://github.com/feathersjs/feathers))  
-> **Source Version**: `8c007bc4`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:00:27.008Z  
-> **Learning ID**: `learn-github-feathersjs-feathers`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): feathersjs/feathers
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/feathersjs-feathers-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/feathersjs/feathers](https://github.com/feathersjs/feathers))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:00:27.001Z  
+> **Harvest Timestamp**: 2026-11-26T18:24:17.584Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The API and real-time application framework
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15257 stars
+- **Stars / Engagement**: 15260 stars
 
 ---
 
@@ -1154,394 +1140,43 @@ export default (event: ConnectionEvent) => async (context: HookContext, next: Ne
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c77e7f2` (2026-10-28)
-**Commit Message**: docs: add a security policy
+### Incident Patch 1: `61e15794` (2026-11-25)
+**Commit Message**: docs: Revised the documentation to match the ServiceMethods interface (#3735)
 
-**File**: `SECURITY.md` (added, +11/-0)
+Co-authored-by: Mathew Thompson <[REDACTED_EMAIL]>
+
+**File**: `docs/guides/basics/services.md` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,11 @@
-+# Security Policy
-+
-+## Supported versions
-+
-+Security fixes are released for the latest Feathers 5 (`dove`) version.
-+
-+## Reporting a vulnerability
-+
-+Please do not report security vulnerabilities in public issues, discussions or Discord.
-+
-+Report them privately through [GitHub's private vulnerability reporting](https://github.com/feathersjs/feathers/security/advisories/new). We will confirm the report, work on a fix in a private advisory, and credit you when the advisory is published unless you prefer otherwise.
-```
-
----
-
-### Incident Patch 2: `04633b4e` (2026-10-28)
-**Commit Message**: docs: fix broken anchors to application API sections (#3714)
-
-**File**: `docs/api/application.md` (modified, +1/-1)
-```diff
-@@ -135,7 +135,7 @@ messageService.on('created', (message: Message) => {
- 
- <BlockQuote type="info" label="Note">
- 
--Note that a server side `app.service(path)` only allows the original service name (e.g. `app.service(':userId/messages')`) and does not parse placeholders. To get a service with route paramters use [.lookup](#lookuppath)
-+Note that a server side `app.service(path)` only allows the original service name (e.g. `app.service(':userId/messages')`) and does not parse placeholders. To get a service with route paramters use [.lookup](#lookup-path)
- 
- </BlockQuote>
- 
-```
-
-**File**: `docs/api/databases/common.md` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ The following options are available for all database adapters:
- 
- The following legacy options are still available but should be avoided:
- 
--- `events {string[]}` (_optional_, **deprecated**) - A list of [custom service events](../events.md#custom-events) sent by this service. Use the `events` option when [registering the service with app.use](../application.md#usepath-service--options) instead.
-+- `events {string[]}` (_optional_, **deprecated**) - A list of [custom service events](../events.md#custom-events) sent by this service. Use the `events` option when [registering the service with app.use](../application.md#use-path-service-options) instead.
- - `operators {string[]}` (_optional_, **deprecated**) - A list of additional non-standard query parameters to allow (e.g `[ '$regex' ]`). Prefer a [query schema](../schema/validators.md#validatequery) instead.
- - `filters {Object}` (_optional_, **deprecated**) - An object of additional top level query filters, e.g. `{ $populate: true }`. Can also be a converter function like `{ $ignoreCase: (value) => value === 'true' ? true : false }`. Prefer a [query schema](../schema/validators.md#validatequery) instead.
- 
-```
-
-**File**: `docs/api/events.md` (modified, +1/-1)
-```diff
-@@ -151,7 +151,7 @@ messages.remove(1)
- 
- ## Custom events
- 
--By default, real-time clients will only receive the [standard events](#service-events). However, it is possible to define a list of custom events that should also be sent to the client when registering the service with [app.use](./application.md##use-path-service-options), when `service.emit('customevent', data)` is called on the server. The `context` for custom events won't be a full hook context but just an object containing `{ app, service, path, result }`.
-+By default, real-time clients will only receive the [standard events](#service-events). However, it is possible to define a list of custom events that should also be sent to the client when registering the service with [app.use](./application.md#use-path-service-options), when `service.emit('customevent', data)` is called on the server. The `context` for custom events won't be a full hook context but just an object containing `{ app, service, path, result }`.
- 
- <BlockQuote type="warning" label="important">
- 
-```
-
-**File**: `docs/api/hooks.md` (modified, +2/-2)
-```diff
-@@ -312,7 +312,7 @@ app.service('servicename').hooks({
- 
- <BlockQuote type="warning">
- 
--Hooks will only be available for the standard service methods or methods passed in `options.methods` to [app.use](application.md#usepath-service--options). See the [documentation for @feathersjs/hooks](https://github.com/feathersjs/hooks) how to use hooks on other methods.
-+Hooks will only be available for the standard service methods or methods passed in `options.methods` to [app.use](application.md#use-path-service-options). See the [documentation for @feathersjs/hooks](https://github.com/feathersjs/hooks) how to use hooks on other methods.
- 
- </BlockQuote>
- 
-@@ -374,7 +374,7 @@ app.hooks({
- 
- ### Setup and teardown
- 
--A special kind of application hooks are [app.setup](./application.md#setupserver) and [app.teardown](./application.md#teardownserver) hooks. They are around hooks that can be used to initialize database connections etc. and only run once when the application starts or shuts down. Setup and teardown hooks only have `context.app` and `context.server` available in the hook context.
-+A special kind of application hooks are [app.setup](./application.md#setup-server) and [app.teardown](./application.md#teardown-server) hooks. They are around hooks that can be used to initialize database connections etc. and only run once when the application starts or shuts down. Setup and teardown hooks only have `context.app` and `context.server` available in the hook context.
- 
- ```ts
- import { MongoClient } from 'mongodb'
-```
-
-**File**: `docs/api/koa.md` (modified, +2/-2)
-```diff
-@@ -49,7 +49,7 @@ If no Feathers application is passed, `koa() -> app` returns a plain Koa applica
- 
- ## app.listen(port)
- 
--`app.listen(port) -> HttpServer` will first call Koa [app.listen](https://github.com/koajs/koa/blob/master/docs/api/index.md#applisten) and then internally also call the [Feathers app.setup(server)](./application.md#setupserver).
-+`app.listen(port) -> HttpServer` will first call Koa [app.listen](https://github.com/koajs/koa/blob/master/docs/api/index.md#applisten) and then internally also call the [Feathers app.setup(server)](./application.md#setup-server).
- 
- ```js
- // Listen on port 3030
-@@ -181,7 +181,7 @@ app.listen(3030)
- 
- ## Service middleware
- 
--When registering a service, it is also possible to pass custom Koa middleware that should run `before` the specific service method in the `koa` [service option](./application.md#usepath-service--options):
-+When registering a service, it is also possible to pass custom Koa middleware that should run `before` the specific service method in the `koa` [service option](./application.md#use-path-service-options):
- 
- ```ts
- app.use('/todos', new TodoService(), {
-```
-
-**File**: `docs/api/services.md` (modified, +5/-5)
-```diff
-@@ -59,7 +59,7 @@ Always use the service returned by `app.service(path)` not the service object or
- 
- <BlockQuote type="tip">
- 
--Methods are optional and if a method is not implemented Feathers will automatically emit a `NotImplemented` error. At least one standard service method must be implemented to be considered a service. If you used `methods` option when registering the service via [app.use](./application.md#usepath-service--options), all methods listed must be available.
-+Methods are optional and if a method is not implemented Feathers will automatically emit a `NotImplemented` error. At least one standard service method must be implemented to be considered a service. If you used `methods` option when registering the service via [app.use](./application.md#use-path-service-options), all methods listed must be available.
- 
- </BlockQuote>
- 
-@@ -69,7 +69,7 @@ Service methods must use [async/await](https://developer.mozilla.org/en-US/docs/
- - `data` — The resource data.
- - `params` - Additional parameters for the method call (see [params](#params))
- 
--Once registered, the service can be retrieved and used via [app.service()](./application.md#servicepath):
-+Once registered, the service can be retrieved and used via [app.service()](./application.md#service-path):
- 
- ```js
- const myService = app.service('my-service')
-@@ -230,17 +230,17 @@ With [database adapters](./databases/adapters.md) the [`multi` option](./databas
- 
- `service.setup(app, path) -> Promise` is a special method that initializes the service, passing an instance of the Feathers application and the path it has been registered on.
- 
--When calling [app.listen](application.md#listenport) or [app.setup](application.md#setupserver) all registered services `setup` methods will be called. If a service is registered afterwards, the `setup` method will be called immediately.
-+When calling [app.listen](application.md#listen-port) or [app.setup](application.md#setup-server) all registered services `setup` methods will be called. If a service is registered afterwards, the `setup` method will be called immediately.
- 
- ### .teardown(app, path)
- 
--`service.teardown(app, path) -> Promise` is a special method that shuts down the service, passing an instance of the Feathers application and the path it has been registered on. If a service implements a `teardown` method, it will be called during [app.teardown()](application.md#teardownserver) or when unregistering the service via [app.unuse](./application.md#unusepath).
-+`service.teardown(app, path) -> Promise` is a special method that shuts down the service, passing an instance of the Feathers application and the path it has been registered on. If a service implements a `teardown` method, it will be called during [app.teardown()](application.md#teardown-server) or when unregistering the service via [app.unuse](./application.md#unuse-path).
- 
- ## Custom Methods
- 
- A custom method is any other service method you want to expose publicly. A custom method **must have** the signature of `(data, params)` with the same semantics as standard service methods (`data` is the payload, `params` is the service [params](#params)). They can be used with [hooks](./hooks.md) (including authentication) and must be `async` or return a Promise.
- 
--In order to register a public custom method, the names of _all methods_ have to be passed as the `methods` option when registering the service with [app.use()](./application.md#usepath-service--options)
-+In order to register a public custom method, the names of _all methods_ have to be passed as the `methods` option when registering the service with [app.use()](./application.md#use-path-service-options)
- 
- ```ts
- import type { Id, Params } from '@feathersjs/feathers'
-```
-
-**File**: `docs/api/socketio.md` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ This page describes how to set up a Socket.io server. The [Socket.io client chap
- 
- ### socketio()
- 
--`app.configure(socketio())` sets up the Socket.io transport with the default configuration using either the server provided by [app.listen](./application.md#listenport) or passed in [app.setup(server)](./application.md#setupserver).
-+`app.configure(socketio())` sets up the Socket.io transport with the default configuration using either the server provided by [app.listen](./application.md#listen-port) or passed in [app.setup(server)](./application.md#setup-server).
- 
- ```ts
- import { feathers } from '@feathersjs/feathers'
-```
-
-**File**: `docs/guides/basics/services.md` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ Service methods are [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_an
- - `setup` - Called when the application is started
- - `teardown` - Called when the application is shut down
- 
--Below is an example of Feathers service interface as a class and basic registration on a Feathers application via [app.use(name, service[, options])](../../api/application.md#use-path-service):
-+Below is an example of Feathers service interface as a class and basic registration on a Feathers application via [app.use(name, service[, options])](../../api/application.md#use-path-service-options):
- 
- ```ts
- import { feathers } from '@feathersjs/feathers'
-```
-
----
-
-### Incident Patch 3: `1f1e4b3b` (2026-10-28)
-**Commit Message**: fix(authentication-oauth): validate redirects for a relative oauth.redirect
-
-**File**: `docs/api/authentication/oauth.md` (modified, +2/-0)
-```diff
-@@ -219,6 +219,8 @@ Dynamic redirects to the same URL are possible by setting the `redirect` query p
- 
- With the above configuration will redirect to `https://app.mydomain.com/dashboard` after the OAuth flow.
- 
-+The `redirect` query parameter has to stay on the same origin as the configured `redirect` or allowed origin, otherwise the OAuth flow fails with an `Invalid redirect path.` error. With a relative `redirect` like `/`, use `?redirect=dashboard` instead of `?redirect=/dashboard`, since `//dashboard` points to a different host.
-+
- ## Options
- 
- Options are usually set under the registered name via [Feathers configuration](../configuration.md) in `config/default.json` or `config/<environment>.json` under the `authentication.oauth` section. Available options are:
-```
-
-**File**: `packages/authentication-oauth/src/service.ts` (modified, +2/-1)
-```diff
-@@ -199,7 +199,8 @@ export class OAuthService {
-         location
-       }
-     } catch (error: any) {
--      const location = strategy ? await strategy.getRedirect(error, authParams) : null
-+      // The redirect itself can be invalid, the session still has to be destroyed
-+      const location = strategy ? await strategy.getRedirect(error, authParams).catch((): null => null) : null
-       const e = new OAuthError(error.message, error.data, location)
- 
-       if (typeof params.session.destroy === 'function') {
-```
-
-**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +9/-10)
-```diff
-@@ -57,35 +57,34 @@ function originNotAllowedMessage(refererOrigin: string, origins: string[]) {
-   )
+@@ -42,8 +42,8 @@ class MyService {
+   async update(id: NullableId, data: any, params: Params) {}
+   async patch(id: NullableId, data: any, params: Params) {}
+   async remove(id: NullableId, params: Params) {}
+-  async setup(path: string, app: Application) {}
+-  async teardown(path: string, app: Application) {}
++  async setup(app: Application, path: string) {}
++  async teardown(app: Application, path: string) {}
  }
  
-+// Relative redirects are checked against a placeholder origin that can never be a real host
-+const RELATIVE_ORIGIN = 'http://feathers.invalid'
-+
- /**
-  * Validates that appending a user-supplied path to a base URL does not change the origin.
-  * Uses both URL resolution and string concatenation checks to catch all open redirect vectors:
-  * authority injection (@), protocol-relative (//), backslash, and domain suffix attacks.
-+ * A relative base URL (e.g. `/`) is resolved against a placeholder origin and checked the same way.
-  *
-  * @throws NotAuthenticated if the redirect path would change the URL origin
-  */
- function validateRedirectOrigin(baseUrl: string, redirectPath: string) {
--  let allowedOrigin: string
--
-   try {
--    allowedOrigin = new URL(baseUrl).origin
--  } catch {
--    // baseUrl is a relative path (e.g. /home) — no open redirect risk
--    return
--  }
-+    // A relative baseUrl is checked too, since '/' + '/evil.com' is //evil.com
-+    const base = new URL(baseUrl, RELATIVE_ORIGIN)
-+    const allowedOrigin = base.origin
+ const app = feathers<{ myservice: MyService }>()
+@@ -59,8 +59,8 @@ The parameters for service methods are:
  
--  try {
-     // URL resolution catches protocol-relative (//) and backslash attacks
-     // e.g. new URL('//attacker.com', 'https://target.com') → https://attacker.com
--    const resolvedUrl = new URL(redirectPath, baseUrl)
-+    const resolvedUrl = new URL(redirectPath, base)
+ For `setup` and `teardown` (which are only called once on application startup and shutdown) we have
  
-     if (resolvedUrl.origin !== allowedOrigin) {
-       throw new NotAuthenticated('Invalid redirect path.')
-     }
+-- `path` - The path the service is registered on
+ - `app` - The [Feathers application](./../../api/application.md)
++- `path` - The path the service is registered on
  
-     // String concatenation check catches domain suffix attacks
-     // e.g. 'https://target.com' + '.evil.com' → https://target.com.evil.com
--    const concatenatedUrl = new URL(`${baseUrl}${redirectPath}`)
-+    const concatenatedUrl = new URL(`${baseUrl}${redirectPath}`, RELATIVE_ORIGIN)
+ Usually those methods can be used for most API functionality but it is also possible to add your own [custom service methods](../../api/services.md#custom-methods).
  
-     if (concatenatedUrl.origin !== allowedOrigin) {
-       throw new NotAuthenticated('Invalid redirect path.')
-```
-
-**File**: `packages/authentication-oauth/test/service.test.ts` (modified, +21/-0)
-```diff
-@@ -549,6 +549,27 @@ describe('OAuth callback validation for other providers', () => {
-     )
-   })
- 
-+  it('destroys the session when the redirect is invalid', async () => {
-+    const authService = app.service('authentication')
-+    let destroyed = false
-+    const params = callbackParams('github', { code: 'code' }, { response: { profile: { id: 'redirect' } } })
-+
-+    params.session.redirect = '/evil.example'
-+    params.session.destroy = async () => {
-+      destroyed = true
-+    }
-+    authService.configuration.oauth.redirect = '/'
-+
-+    try {
-+      await assert.rejects(() => oauthService.authenticate(params, null as any), {
-+        message: 'Invalid redirect path.'
-+      })
-+      assert.ok(destroyed, 'Session should be destroyed')
-+    } finally {
-+      delete authService.configuration.oauth.redirect
-+    }
-+  })
-+
-   it('takes the Apple identity from the verified id_token, not the callback body', async () => {
-     const victim = await app.service('users').create({ appleId: 'victim', email: 'victim@example.com' })
-     const result: any = await oauthService.authenticate(
-```
-
-**File**: `packages/authentication-oauth/test/strategy.test.ts` (modified, +81/-0)
-```diff
-@@ -86,6 +86,87 @@ describe('@feathersjs/authentication-oauth/strategy security', () => {
-     })
-   })
- 
-+  describe('open redirect with a relative oauth.redirect', () => {
-+    afterEach(() => {
-+      delete app.get('authentication').oauth.redirect
-+    })
-+
-+    it('should reject a redirect parameter that makes a protocol-relative URL', async () => {
-+      app.get('authentication').oauth.redirect = '/'
-+
-+      await assert.rejects(
-+        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '/evil.example/steal' }),
-+        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
-+      )
-+    })
-+
-+    it('should reject a redirect parameter starting with a backslash', async () => {
-+      app.get('authentication').oauth.redirect = '/'
-+
-+      await assert.rejects(
-+        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '\\evil.example/steal' }),
-+        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
-+      )
-+    })
-+
-+    it('should reject a protocol-relative redirect hidden by a tab', async () => {
-+      app.get('authentication').oauth.redirect = '/'
-+
-+      await assert.rejects(
-+        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '/\t/evil.example' }),
-+        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
-+      )
-+    })
-+
-+    it('should reject an error redirect that leaves the origin', async () => {
-+      app.get('authentication').oauth.redirect = '/'
-+
-+      await assert.rejects(() => strategy.getRedirect(new Error('failed'), { redirect: '/evil.example' }), {
-+        name: 'NotAuthenticated',
-+        message: 'Invalid redirect path.'
-+      })
-+    })
-+
-+    it('should allow same origin redirects', async () => {
-+      app.get('authentication').oauth.redirect = '/'
-+
-+      assert.equal(
-+        await strategy.getRedirect({ accessToken: 'testing' }, { redirect: 'dashboard' }),
-+        '/dashboard#access_token=testing'
-+      )
-+      assert.equal(await strategy.getRedirect({ accessToken: 'testing' }), '/#access_token=testing')
-+
-+      app.get('authentication').oauth.redirect = '/home'
-+
-+      assert.equal(
-+        await strategy.getRedirect({ accessToken: 'testing' }, { redirect: '/hi-there' }),
-+        '/home/hi-there#access_token=testing'
-+      )
-+    })
-+
-+    it('should reject a protocol-relative redirect with a relative path base', async () => {
-+      app.get('authentication').oauth.redirect = '/home'
-+
-+      await assert.rejects(
-+        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '//evil.example' }),
-+        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
-+      )
-+    })
-+
-+    it('should validate redirects against a protocol-relative oauth.redirect', async () => {
-+      app.get('authentication').oauth.redirect = '//app.example.com'
-+
-+      assert.equal(
-+        await strategy.getRedirect({ accessToken: 'testing' }, { redirect: '/dashboard' }),
-+        '//app.example.com/dashboard#access_token=testing'
-+      )
-+      await assert.rejects(
-+        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '.evil.example' }),
-+        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
-+      )
-+    })
-+  })
-+
-   describe('open redirect via domain suffix attack', () => {
-     beforeEach(() => {
-       app.get('authentication').oauth.origins = ['https://target.com']
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3735** (2026-11-25): Revised the documentation to match the ServiceMethods interface as defined in declarations.ts (@methompson)
 - **PR #3725** (2026-10-27): fix(knex): omit queries from all database error messages (@marshallswain)
 - **PR #3722** (2026-10-28): chore: Update to Vitest 5 and move hook benchmarks to vitest bench (v6) (@fratzinger)
 - **PR #3720** (2026-10-28): chore: Require Node.js 24 or later (v6) (@fratzinger)
 - **PR #3719** (2026-10-23): fix(create-feathers): Call app.setup in Deno and Bun apps (v6) (@fratzinger)
 - **PR #3718** (2026-10-23): fix(client): Stringify dates in queries as ISO strings (v6) (@fratzinger)
-- **PR #3717** (2026-10-23): fix(hooks): Allow synchronous functions to return null or undefined (v6) (@fratzinger)
 
 ---
 
@@ -1561,41 +1196,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add a security policy
+## X. docs: Revised the documentation to match the ServiceMethods interface
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in feathersjs/feathers. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guides/basics/services.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in feathersjs/feathers. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c77e7f2`: docs: add a security policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61e15794`: docs: Revised the documentation to match the ServiceMethods interface. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/basics/services.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-# Security Policy
-
-## Supported versions
-
-Security fixes are released for the latest Feathers 5 (`dove`) version.
-
-## Reporting a vulnerability
-
-Please do not report security vulnerabilities in public issues, discussions or Discord.
-
-Report them privately through [GitHub's private vulnerability reporting](https://github.com/feathersjs/feathers/security/advisories/new). We will confirm the report, work on a fix in a private advisory, and credit you when the advisory is published unless you prefer otherwise.
+  async setup(app: Application, path: string) {}
+  async teardown(app: Application, path: string) {}
+- `path` - The path the service is registered on
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+  async setup(path: string, app: Application) {}
+  async teardown(path: string, app: Application) {}
+- `path` - The path the service is registered on
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c77e7f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61e15794` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

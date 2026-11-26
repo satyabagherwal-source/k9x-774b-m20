@@ -3,7 +3,7 @@
 > **Source Version**: `hf-timm-mobi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T04:08:09.554Z  
+> **Timestamp**: 2026-11-26T18:24:10.994Z  
 > **Learning ID**: `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k](https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T04:08:09.415Z  
+> **Harvest Timestamp**: 2026-11-26T18:24:10.817Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6175782 downloads | 160 likes
+- **Stars / Engagement**: 4484110 downloads | 160 likes
 
 ---
 

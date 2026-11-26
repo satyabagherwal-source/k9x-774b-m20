@@ -13506,3 +13506,7 @@
 | `CYCLE-20261126-GFR4` | `2026-11-26T18:14:23.680Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`16ffb404...`) |
 | `CYCLE-20261126-GIAF` | `2026-11-26T18:14:26.967Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10748` | Yes (`28b6ae4a...`) |
 | `CYCLE-20261126-GQRF` | `2026-11-26T18:14:37.947Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10749` | Yes (`ad5ea98e...`) |
+| `CYCLE-20261126-T1KY` | `2026-11-26T18:24:11.842Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`1cd4aa79...`) |
+| `CYCLE-20261126-T7B2` | `2026-11-26T18:24:19.262Z` | `feathersjs/feathers` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10750` | Yes (`3c200160...`) |
+| `CYCLE-20261126-T8YE` | `2026-11-26T18:24:21.398Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10751` | Yes (`675d54f1...`) |
+| `CYCLE-20261126-TB2V` | `2026-11-26T18:24:24.151Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10752` | Yes (`e9943568...`) |

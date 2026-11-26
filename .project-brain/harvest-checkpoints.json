@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T18:14:37.973Z",
+  "last_updated": "2026-11-26T18:24:24.183Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1010,14 +1010,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "content_hash": "16f591b27f73fac2acabed66aa06b627e15fa82254dc46c0b4196c7bc21babfd",
-      "verified_at": "2026-11-23T04:08:10.009Z",
+      "content_hash": "1cd4aa796b5befa6755b8e54b344e92fa84b0f673ba0b2a75f19baf556d7fe42",
+      "verified_at": "2026-11-26T18:24:11.866Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T04:08:10.009Z"
+      "last_updated": "2026-11-26T18:24:11.866Z"
     },
     "amazon/chronos-2": {
       "repository": "amazon/chronos-2",
@@ -4491,14 +4491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-feathersjs-feathers",
-      "content_hash": "7b769367c8dc270c6ffc88f1437a79b324263de20ca1db5e22cc9614e2fd030e",
-      "verified_at": "2026-10-31T02:00:27.255Z",
+      "content_hash": "3c20016017f8ddcbd203cb80207108e0ae147ea94f54cae086ee5e782eed4b7b",
+      "verified_at": "2026-11-26T18:24:19.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:00:27.255Z"
+      "last_updated": "2026-11-26T18:24:19.292Z"
     },
     "litmuschaos/litmus": {
       "repository": "litmuschaos/litmus",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "c4dc07246ac4a6b0a9a81596243989e8b88faf6678dbb8dfa31bb12ed6bc05f3",
-      "verified_at": "2026-11-26T14:04:12.633Z",
+      "content_hash": "e99435686fc2639bb54b00c270e1dc79ea1879e13aeeab3189f4639f646bb077",
+      "verified_at": "2026-11-26T18:24:24.182Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T14:04:12.633Z"
+      "last_updated": "2026-11-26T18:24:24.182Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "714b5e86ebe610c222a118afabd926f583bb5857c23d1791a930ca7c6cbdffef",
-      "verified_at": "2026-11-26T00:46:34.130Z",
+      "content_hash": "675d54f1ccdb27b6c9f29759e31d03ad1f46731e41e1a2c78120b8a9018c8d6a",
+      "verified_at": "2026-11-26T18:24:21.431Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T00:46:34.130Z"
+      "last_updated": "2026-11-26T18:24:21.431Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",

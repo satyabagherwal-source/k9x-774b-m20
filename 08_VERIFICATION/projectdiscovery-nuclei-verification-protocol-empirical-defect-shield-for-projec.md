@@ -4,22 +4,22 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "fc120870",
+  "source_version": "90b55382",
   "license": "MIT",
-  "timestamp": "2026-11-26T14:04:12.875Z",
+  "timestamp": "2026-11-26T18:24:24.476Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `fc120870`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T14:04:12.875Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `90b55382`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T18:24:24.476Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `projectdiscovery/nuclei` (Commit: `fc120870`)
+- **Target Repository**: `projectdiscovery/nuclei` (Commit: `90b55382`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T14:04:11.367Z  
+> **Harvest Timestamp**: 2026-11-26T18:24:22.531Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33317 stars
+- **Stars / Engagement**: 33326 stars
 
 ---
 
@@ -1669,581 +1669,528 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc120870` (2026-11-26)
-**Commit Message**: use the configured HTTP client in reporting and verify TLS (#8038)
+### Incident Patch 1: `cdf93a80` (2026-11-26)
+**Commit Message**: fix(index): save through a temp file of the save's own (#8215)
 
-* tracker client
+* fix(index): save through a temp file of the save's own
 
-* tls verify
+Save wrote its snapshot to the fixed path cacheFile + ".tmp" under the
+Index's own mutex, so two indexes over one cache directory (two SDK
+engines in one process, or two nuclei processes of one user) truncated
+and renamed the same file: one save failed on its rename with "no such
+file or directory", and the file left in place could hold bytes of
+both snapshots.
 
-* tls dialer
+Each save now creates its temp file with os.CreateTemp beside the cache
+file and renames it into place.
 
-* all trackers
+Fixes #8212
 
-* review fixes
+* test(index): compare the saved cache with one index's whole snapshot
 
-* unwrap sharing
+The concurrent-save test checked only the saved file's entry count,
+which a file mixing both indexes' entries could also meet. It now
+compares the decoded data, keys and metadata, with what each index of
+the last round set, and passes only where it equals one of them.
 
-**File**: `pkg/protocols/http/httpcache/httpcache.go` (modified, +6/-0)
+**File**: `pkg/catalog/index/index.go` (modified, +4/-2)
 ```diff
-@@ -122,6 +122,12 @@ func newCachingTransport(base *cache.Transport, next http.RoundTripper) *transpo
- 	return &transport{cache: base.WithNext(originMarker{next: next}), next: next}
- }
+@@ -225,11 +225,13 @@ func (i *Index) Save() error {
+ 	maps.Insert(snapshot.Data, i.cache.All())
  
-+// Unwrap returns the transport the cache wraps, so code that must not use the
-+// cache, such as reporting clients that need TLS verification, can reach it.
-+func (t *transport) Unwrap() http.RoundTripper {
-+	return t.next
-+}
-+
- // carriesIdentity reports whether req has a credential or browser-origin
- // field the cache key does not include. Header keys are compared
- // case-insensitively because a builder can store a non-canonical key.
-```
-
-**File**: `pkg/protocols/http/httpcache/httpcache_test.go` (modified, +23/-0)
-```diff
-@@ -1,6 +1,7 @@
- package httpcache
- 
- import (
-+	"crypto/tls"
- 	"errors"
- 	"fmt"
- 	"io"
-@@ -11,6 +12,7 @@ import (
- 	"sync/atomic"
- 	"testing"
- 
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/tlsverify"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/httpbody"
- 	"go.dw1.io/x/net/http/cache"
- )
-@@ -382,3 +384,24 @@ func bodyOf(t *testing.T, resp *http.Response) string {
+ 	// NOTE(dwisiswant0): write to temp for atomic op.
+-	tmpFile := i.cacheFile + ".tmp"
+-	file, err := os.OpenFile(tmpFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
++	// The temp file is this save's own: the mutex is per Index, so two indexes
++	// over one cache file would otherwise truncate and rename the same path.
++	file, err := os.CreateTemp(filepath.Dir(i.cacheFile), filepath.Base(i.cacheFile)+".*.tmp")
+ 	if err != nil {
+ 		return err
  	}
- 	return string(body)
- }
-+
-+// Reporting clients send tokens, so tlsverify must reach the scan transport
-+// under the cache wrapper and turn certificate verification on.
-+func TestTransportWrapperUnwrapsForTLSVerification(t *testing.T) {
-+	c, err := cache.New(nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	base := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
-+	var wrapped http.RoundTripper = newCachingTransport(c, base)
-+	u, ok := wrapped.(interface{ Unwrap() http.RoundTripper })
-+	if !ok || u.Unwrap() != base {
-+		t.Fatal("the cache wrapper does not unwrap to the scan transport")
-+	}
-+
-+	got, ok := tlsverify.Client(&http.Client{Transport: wrapped}).Transport.(*http.Transport)
-+	if !ok || got.TLSClientConfig.InsecureSkipVerify {
-+		t.Fatal("tlsverify did not turn verification on under the cache wrapper")
-+	}
-+}
++	tmpFile := file.Name()
+ 	if err := file.Chmod(0o600); err != nil {
+ 		_ = file.Close()
+ 		_ = os.Remove(tmpFile)
 ```
 
-**File**: `pkg/protocols/http/httpclientpool/clientpool.go` (modified, +5/-0)
+**File**: `pkg/catalog/index/index_test.go` (modified, +67/-8)
 ```diff
-@@ -166,6 +166,11 @@ func (t *connTrackingTransport) RoundTrip(req *http.Request) (*http.Response, er
- 	return resp, err
- }
+@@ -1,10 +1,13 @@
+ package index
  
-+// Unwrap returns the underlying transport.
-+func (t *connTrackingTransport) Unwrap() http.RoundTripper {
-+	return t.base
-+}
-+
- func (t *connTrackingTransport) CloseIdleConnections() {
- 	type closeIdler interface{ CloseIdleConnections() }
- 	if ci, ok := t.base.(closeIdler); ok {
-```
-
-**File**: `pkg/protocols/http/httpclientpool/shared_responses.go` (modified, +6/-0)
-```diff
-@@ -124,6 +124,12 @@ func (t *sharingTransport) RoundTrip(req *http.Request) (*http.Response, error)
- 	return entry.response.copyFor(req), nil
- }
- 
-+// Unwrap returns the underlying transport, so reporting clients that need TLS
-+// verification reach the scan transport and never share responses.
-+func (t *sharingTransport) Unwrap() http.RoundTripper {
-+	return t.base
-+}
-+
- func (t *sharingTransport) CloseIdleConnections() {
- 	type closeIdler interface{ CloseIdleConnections() }
- 	if ci, ok := t.base.(closeIdler); ok {
-```
-
-**File**: `pkg/protocols/http/httpclientpool/shared_responses_test.go` (modified, +13/-0)
-```diff
-@@ -3,6 +3,7 @@ package httpclientpool
  import (
- 	"container/list"
- 	"context"
-+	"crypto/tls"
- 	"errors"
++	"encoding/gob"
  	"fmt"
- 	"io"
-@@ -14,6 +15,7 @@ import (
+ 	"os"
+ 	"path/filepath"
++	"reflect"
+ 	"runtime"
++	"slices"
  	"testing"
  	"time"
  
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/tlsverify"
- 	"github.com/projectdiscovery/retryablehttp-go"
- 	"github.com/projectdiscovery/useragent"
- 	"github.com/stretchr/testify/require"
-@@ -306,3 +308,14 @@ func TestSharedResponsesDoNotKeepShortReads(t *testing.T) {
- 	_ = second.Body.Close()
- 	require.EqualValues(t, 2, base.hits.Load(), "a short read is not reused")
- }
-+
-+// Reporting clients send tokens, so tlsverify must reach the scan transport
-+// under the sharing wrapper and turn certificate verification on.
-+func TestSharingTransportUnwrapsForTLSVerification(t *testing.T) {
-+	base := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
-+	wrapped := newSharingTransport(&connTrackingTransport{base: base})
-+
-+	got, ok := tlsverify.Client(&http.Client{Transport: wrapped}).Transport.(*http.Transport)
-+	require.True(t, ok, "tlsverify did not reach the scan transport under the sharing wrapper")
-+	require.False(t, got.TLSClientConfig.InsecureSkipVerify)
-+}
-```
-
-**File**: `pkg/reporting/reporting.go` (modified, +13/-0)
-```diff
-@@ -21,13 +21,15 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/pdf"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/sarif"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/splunk"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/tlsverify"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/filters"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/gitea"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/github"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/gitlab"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/jira"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/linear"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/yaml"
-+	"github.com/projectdiscovery/retryablehttp-go"
- 	"github.com/projectdiscovery/utils/errkit"
- 	fileutil "github.com/projectdiscovery/utils/file"
- 	"go.uber.org/multierr"
-@@ -77,6 +79,17 @@ type IssueTrackerStats struct {
- func New(options *Options, db string, doNotDedupe bool) (Client, error) {
- 	client := &ReportingClient{options: options}
+@@ -188,9 +191,9 @@ func TestCachePersistence(t *testing.T) {
+ 		require.NoError(t, err)
  
-+	// The caller can pass the scan client, which skips TLS verification;
-+	// trackers and exporters send tokens and passwords, so they get a copy
-+	// that verifies certificates.
-+	if options.HttpClient != nil && options.HttpClient.HTTPClient != nil {
-+		if hc := tlsverify.Client(options.HttpClient.HTTPClient); hc != options.HttpClient.HTTPClient {
-+			opts := retryablehttp.DefaultOptionsSingle
-+			opts.Timeout = hc.Timeout // keep the caller's timeout, also when it is 0
-+			options.HttpClient = retryablehttp.NewWithHTTPClient(hc, opts)
+ 		// Verify no .tmp file left behind
+-		tmpFile := filepath.Join(tmpDir, IndexFileName+".tmp")
+-		_, err = os.Stat(tmpFile)
+-		require.True(t, os.IsNotExist(err), "Temporary file should not exist after save")
++		tmpFiles, err := filepath.Glob(filepath.Join(tmpDir, IndexFileName+".*.tmp"))
++		require.NoError(t, err)
++		require.Empty(t, tmpFiles, "Temporary file should not exist after save")
+ 
+ 		// Verify actual cache file exists
+ 		cacheFile := filepath.Join(tmpDir, IndexFileName)
+@@ -662,6 +665,64 @@ func TestCacheConcurrency(t *testing.T) {
+ 	})
+ }
+ 
++// Two indexes over one cache directory, as two SDK engines in one process
++// have, each hold their own mutex, so their saves can run at the same time.
++func TestCacheConcurrentSaveAcrossIndexes(t *testing.T) {
++	tmpDir := t.TempDir()
++
++	const (
++		rounds  = 20
++		indexes = 2
++		entries = 2000
++	)
++
++	// What each index of the last round set, by index.
++	var written []map[string]*Metadata
++	for round := range rounds {
++		written = make([]map[string]*Metadata, indexes)
++		errs := make(chan error, indexes)
++		for id := range indexes {
++			own := make(map[string]*Metadata, entries)
++			written[id] = own
++			go func() {
++				cache, err := NewIndex(tmpDir)
++				if err != nil {
++					errs <- err
++					return
++				}
++				for n := range entries {
++					path := filepath.Join("/tmp", fmt.Sprintf("%d-%d-%d.yaml", round, id, n))
++					own[path] = &Metadata{ID: fmt.Sprintf("t-%d", n), FilePath: path}
++					cache.Set(path, own[path])
++				}
++				errs <- cache.Save()
++			}()
++		}
++
++		for range indexes {
++			require.NoError(t, <-errs, "Concurrent saves of two indexes should both succeed")
 +		}
 +	}
 +
- 	if options.GitHub != nil {
- 		options.GitHub.HttpClient = options.HttpClient
- 		options.GitHub.OmitRaw = options.OmitRaw
++	tmpFiles, err := filepath.Glob(filepath.Join(tmpDir, IndexFileName+".*.tmp"))
++	require.NoError(t, err)
++	require.Empty(t, tmpFiles, "Temporary files should not exist after the saves")
++
++	// The file left in place is one index's whole snapshot of the last round,
++	// never a mix of the two.
++	file, err := os.Open(filepath.Join(tmpDir, IndexFileName))
++	require.NoError(t, err)
++	defer func() { _ = file.Close() }()
++
++	var snapshot cacheSnapshot
++	require.NoError(t, gob.NewDecoder(file).Decode(&snapshot))
++	require.Len(t, snapshot.Data, entries)
++	whole := slices.ContainsFunc(written, func(own map[string]*Metadata) bool {
++		return reflect.DeepEqual(own, snapshot.Data)
++	})
++	require.True(t, whole, "The cache file should hold exactly what one index of the last round set")
++}
++
+ func TestCacheSize(t *testing.T) {
+ 	tmpDir := t.TempDir()
+ 	cache, err := NewIndex(tmpDir)
+@@ -730,11 +791,9 @@ func TestCacheSaveErrorHandling(t *testing.T) {
+ 	}
+ 	cache.Set(metadata.FilePath, metadata)
+ 
+-	// Create a directory where the temp file would be created to force an error
+-	// The Save method creates a file at cacheFile + ".tmp"
+-	conflictPath := filepath.Join(tmpDir, IndexFileName+".tmp")
+-	err = os.Mkdir(conflictPath, 0755)
+-	require.NoError(t, err)
++	// Remove the cache directory to force an error: Save creates its temp
++	// file beside the cache file.
++	require.NoError(t, os.RemoveAll(tmpDir))
+ 
+ 	err = cache.Save()
+ 	require.Error(t, err, "Save should fail when temp file cannot be created")
 ```
 
-**File**: `pkg/reporting/reporting_tls_test.go` (added, +98/-0)
+---
+
+### Incident Patch 2: `3cca9ee0` (2026-11-26)
+**Commit Message**: fix(jira): close response bodies go-jira leaves open (#8248)
+
+* fix(jira): close response bodies go-jira leaves open
+
+go-jira does not close the response of a transition it does not decode, and it returns the response unread when issue creation or a raw request fails. Close those bodies so the connections can be reused.
+
+* fix(jira): bound the response body drain
+
+* skip drain
+
+---------
+
+Co-authored-by: review <[REDACTED_EMAIL]>
+
+**File**: `pkg/reporting/trackers/jira/jira.go` (modified, +28/-13)
 ```diff
-@@ -0,0 +1,98 @@
-+package reporting_test
+@@ -337,12 +337,7 @@ func (i *Integration) CreateNewIssue(event *output.ResultEvent) (*filters.Create
+ 	}
+ 	createdIssue, resp, err := i.jira.Issue.Create(issueData)
+ 	if err != nil {
+-		var data string
+-		if resp != nil && resp.Body != nil {
+-			d, _ := io.ReadAll(resp.Body)
+-			data = string(d)
+-		}
+-		return nil, fmt.Errorf("%w => %s", err, data)
++		return nil, fmt.Errorf("%w => %s", err, readAndCloseBody(resp))
+ 	}
+ 	return i.getIssueResponseFromJira(createdIssue)
+ }
+@@ -426,9 +421,12 @@ func (i *Integration) CloseIssueByID(issueID string) error {
+ 		if transition.To.Name != i.options.StatusNot {
+ 			continue
+ 		}
+-		_, err = i.jira.Issue.DoTransitionWithPayload(issueID, jira.CreateTransitionPayload{
++		resp, err := i.jira.Issue.DoTransitionWithPayload(issueID, jira.CreateTransitionPayload{
+ 			Transition: jira.TransitionPayload{ID: transition.ID},
+ 		})
++		// go-jira does not decode the transition response, so it leaves the
++		// body open on success. Close it so the connection can be reused.
++		closeBody(resp)
+ 		if err != nil {
+ 			return fmt.Errorf("transition Jira issue %s: %w", issueID, err)
+ 		}
+@@ -480,12 +478,7 @@ func (i *Integration) FindExistingIssue(event *output.ResultEvent, useStatus boo
+ 
+ 		resp, err := i.jira.Do(req, &searchResult)
+ 		if err != nil {
+-			var data string
+-			if resp != nil && resp.Body != nil {
+-				d, _ := io.ReadAll(resp.Body)
+-				data = string(d)
+-			}
+-			return jira.Issue{}, fmt.Errorf("%w => %s", err, data)
++			return jira.Issue{}, fmt.Errorf("%w => %s", err, readAndCloseBody(resp))
+ 		}
+ 
+ 		if len(searchResult.Issues) == 0 {
+@@ -538,3 +531,25 @@ func (i *Integration) ShouldFilter(event *output.ResultEvent) bool {
+ 
+ 	return true
+ }
++
++// readAndCloseBody returns the body of a failed go-jira response and closes it.
++// go-jira hands the response back unread on some error paths, so the caller
++// has to close it.
++func readAndCloseBody(resp *jira.Response) string {
++	if resp == nil || resp.Response == nil || resp.Body == nil {
++		return ""
++	}
++	defer closeBody(resp)
++	data, _ := io.ReadAll(resp.Body)
++	return string(data)
++}
++
++// closeBody closes a go-jira response body. It does not drain it: a server
++// that stalls mid-body would otherwise block the caller, and an empty
++// response, which is what go-jira leaves open, returns to the pool on close.
++func closeBody(resp *jira.Response) {
++	if resp == nil || resp.Response == nil || resp.Body == nil {
++		return
++	}
++	_ = resp.Body.Close()
++}
+```
+
+**File**: `pkg/reporting/trackers/jira/jira_body_test.go` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++package jira
 +
 +import (
 +	"io"
-+	"net"
 +	"net/http"
 +	"net/http/httptest"
-+	"sync/atomic"
++	"strings"
++	"sync"
 +	"testing"
 +
 +	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
 +	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpclientpool"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/es"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/splunk"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/gitea"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/github"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/gitlab"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/jira"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/projectdiscovery/retryablehttp-go"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// connectProxy tunnels every CONNECT to target, whatever host the client asked
-+// for, so no name is resolved and nothing leaves 127.0.0.1.
-+func connectProxy(t *testing.T, target string) *httptest.Server {
-+	p := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if r.Method != http.MethodConnect {
-+			http.Error(w, "connect only", http.StatusMethodNotAllowed)
-+			return
-+		}
-+		up, err := net.Dial("tcp", target)
-+		if err != nil {
-+			http.Error(w, err.Error(), http.StatusBadGateway)
-+			return
-+		}
-+		c, _, err := w.(http.Hijacker).Hijack()
-+		if err != nil {
-+			_ = up.Close()
-+			return
-+		}
-+		_, _ = c.Write([]byte("HTTP/1.1 200 Connection established\r\n\r\n"))
-+		go func() { _, _ = io.Copy(up, c); _ = up.Close() }()
-+		go func() { _, _ = io.Copy(c, up); _ = c.Close() }()
-+	}))
-+	t.Cleanup(p.Close)
-+	return p
++// bodyTracker is a transport that records whether every response body it
++// hands out gets closed.
++type bodyTracker struct {
++	mu     sync.Mutex
++	bodies []*trackedBody
 +}
 +
-+// With -pi and a proxy, the runner gives reporting the scan client, which skips
-+// TLS verification. No tracker or exporter may send its secret to a server with
-+// an untrusted certificate.
-+func TestNewVerifiesTLSWithScanClient(t *testing.T) {
-+	var hits atomic.Int32
-+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		hits.Add(1)
-+		w.WriteHeader(http.StatusUnauthorized)
-+	}))
-+	t.Cleanup(srv.Close)
-+	proxy := connectProxy(t, srv.Listener.Addr().String())
++type trackedBody struct {
++	io.ReadCloser
++	path   string
++	closed bool
++}
 +
-+	opts := types.DefaultOptions()
-+	opts.SetExecutionID("reporting-tls-test")
-+	opts.ProxyInternal = true
-+	opts.AliveHttpProxy = proxy.URL
-+	require.NoError(t, protocolstate.Init(opts))
-+	t.Cleanup(func() { protocolstate.Close(opts.ExecutionId) })
-+	scanClient, err := httpclientpool.Get(opts, &httpclientpool.Configuration{}, "")
++func (b *trackedBody) Close() error {
++	b.closed = true
++	return b.ReadCloser.Close()
++}
++
++func (t *bodyTracker) RoundTrip(req *http.Request) (*http.Response, error) {
++	resp, err := http.DefaultTransport.RoundTrip(req)
++	if err != nil {
++		return nil, err
++	}
++	body := &trackedBody{ReadCloser: resp.Body, path: req.Method + " " + req.URL.Path}
++	t.mu.Lock()
++	t.bodies = append(t.bodies, body)
++	t.mu.Unlock()
++	resp.Body = body
++	return resp, nil
++}
++
++func (t *bodyTracker) requireAllClosed(tb testing.TB) {
++	tb.Helper()
++	t.mu.Lock()
++	defer t.mu.Unlock()
++	require.NotEmpty(tb, t.bodies)
++	for _, body := range t.bodies {
++		require.Truef(tb, body.closed, "response body of %s was not closed", body.path)
++	}
++}
++
++func newTrackedIntegration(t *testing.T, serverURL string, cloud bool) (*Integration, *bodyTracker) {
++	t.Helper()
++	tracker := &bodyTracker{}
++	client := retryablehttp.NewClient(retryablehttp.DefaultOptionsSingle)
++	client.HTTPClient.Transport = tracker
++	integration, err := New(&Options{
++		URL:         serverURL,
++		Cloud:       cloud,
++		AccountID:   "test",
++		Email:       "test@example.test",
++		Token:       "test",
++		ProjectName: "TEST",
++		IssueType:   "Bug",
++		StatusNot:   "Done",
++		HttpClient:  client,
++	})
 +	require.NoError(t, err)
-+
-+	event := &output.ResultEvent{
-+		TemplateID: "test-template",
-+		Host:       "https://target.example",
-+		Matched:    "https://target.example/",
-+		Info:       model.Info{Name: "test", SeverityHolder: severity.Holder{Severity: severity.High}},
-+	}
-+	configs := map[string]*reporting.Options{
-+		"github":        {GitHub: &github.Options{BaseURL: "https://github.victim.example/", Username: "u", Owner: "o", ProjectName: "r", Token: "test-token"}},
-+		"gitlab":        {GitLab: &gitlab.Options{BaseURL: "https://gitlab.victim.example/", Username: "u", Token: "test-token", ProjectName: "1"}},
-+		"gitea":         {Gitea: &gitea.Options{BaseURL: "https://gitea.victim.example/", Token: "test-token", ProjectOwner: "o", ProjectName: "r"}},
-+		"jira":          {Jira: &jira.Options{Cloud: true, URL: "https://jira.victim.example", AccountID: "a", Email: "u@victim.example", Token: "test-token", ProjectName: "P", IssueType: "Bug"}},
-+		"elasticsearch": {ElasticsearchExporter: &es.Options{Host: "es.victim.example", Port: 443, SSL: true, Username: "u", Password: "test-password", IndexName: "n"}},
-+		"splunk":        {SplunkExporter: &splunk.Options{Host: "splunk.victim.example", Port: 443, SSL: true, Token: "test-token", IndexName: "n"}},
-+	}
-+	for name, ro := range configs {
-+		ro.HttpClient = scanClient
-+		ro.ExecutionId = opts.ExecutionId
-+		client, err := reporting.New(ro, "", true)
-+		if err == nil {
-+			_ = client.CreateIssue(event)
-+			client.Close()
-+		}
-+		require.Zero(t, hits.Load(), "%s sent a request to a server with an untrusted certificate", name)
-+	}
-+}
-```
-
-**File**: `pkg/reporting/tlsverify/tlsverify.go` (added, +68/-0)
-```diff
-@@ -0,0 +1,68 @@
-+// Package tlsverify gives trackers and exporters an HTTP client that verifies
-+// TLS certificates, since they send tokens and passwords.
-+package tlsverify
-+
-+import (
-+	"crypto/tls"
-+	"errors"
-+	"net/http"
-+)
-+
-+// errTLSDialerOnly is returned when a transport dials HTTPS only through a
-+// custom TLS dialer: dropping that dialer would also drop its route or address
-+// policy, so the copy refuses requests instead.
-+var errTLSDialerOnly = errors.New("tlsverify: the transport has a custom TLS dialer and no DialContext, so certificate verification cannot be enforced")
-+
-+type refusingTransport struct{}
-+
-+func (refusingTransport) RoundTrip(*http.Request) (*http.Response, error) {
-+	return nil, errTLSDialerOnly
++	return integration, tracker
 +}
 +
-+// Client returns c, or a copy of c whose transport verifies TLS certificates
-+// when c can skip verification (the scan client can). The copy keeps the proxy
-+// and the dialer, so the address policy still applies, but it drops a custom
-+// TLS dialer, because that dialer can use the scan TLS config. So the token
-+// never goes over an unverified connection.
-+//
-+// A transport with an Unwrap() http.RoundTripper method declares that its
-+// RoundTrip only observes or caches requests and enforces no policy; the copy
-+// uses the unwrapped transport. Other transports are returned unchanged.
-+func Client(c *http.Client) *http.Client {
-+	rt := c.Transport
-+	for {
-+		u, ok := rt.(interface{ Unwrap() http.RoundTripper })
-+		if !ok {
-+			break
++func TestCloseIssueByIDClosesTransitionResponse(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		switch {
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/issue/10001/transitions"):
++			_, _ = w.Write([]byte(`{"transitions":[{"id":"5","to":{"name":"Done"}}]}`))
++		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/issue/10001/transitions"):
++			w.WriteHeader(http.StatusNoContent)
++		default:
++			http.Error(w, "unexpected endpoint", http.StatusNotFound)
 +		}
-+		rt = u.Unwrap()
-+	}
-+	t, ok := rt.(*http.Transport)
-+	if !ok {
-+		return c
-+	}
-+	insecure := t.TLSClientConfig != nil && t.TLSClientConfig.InsecureSkipVerify
-+	tlsDialer := t.DialTLSContext != nil || t.DialTLS != nil //nolint:staticcheck // DialTLS is deprecated but still used
-+	if !insecure && !tlsDialer {
-+		return c
-+	}
-+	copied := *c
-+	if tlsDialer && t.DialContext == nil && t.Dial == nil { //nolint:staticcheck // Dial is deprecated but still used
-+		copied.Transport = refusingTransport{}
-+		return &copied
-+	}
-+	verifying := t.Clone()
-+	verifying.DialTLSContext = nil
-+	verifying.DialTLS = nil //nolint:staticcheck // DialTLS is deprecated but still used
-+	if insecure {
-+		// Keep the caller's roots, client certificates and checks; the server
-+		// name of the scan config belongs to a scan target, not to this host.
-+		verifying.TLSClientConfig.InsecureSkipVerify = false
-+		verifying.TLSClientConfig.ServerName = ""
-+		if verifying.TLSClientConfig.MinVersion < tls.VersionTLS12 {
-+			verifying.TLSClientConfig.MinVersion = tls.VersionTLS12
++	}))
++	defer server.Close()
++
++	integration, tracker := newTrackedIntegration(t, server.URL, false)
++	require.NoError(t, integration.CloseIssueByID("10001"))
++	tracker.requireAllClosed(t)
++}
++
++func TestCreateNewIssueClosesErrorResponse(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/rest/api/2/issue") {
++			http.Error(w, `{"errorMessages":["Field 'priority' cannot be set"]}`, http.StatusBadRequest)
++			return
 +		}
-+	}
-+	copied.Transport = verifying
-+	return &copied
++		http.Error(w, "unexpected endpoint", http.StatusNotFound)
++	}))
++	defer server.Close()
++
++	integration, tracker := newTrackedIntegration(t, server.URL, false)
++	_, err := integration.CreateNewIssue(&output.ResultEvent{TemplateID: "test", Host: "example.test", Info: model.Info{Name: "Test issue"}})
++	require.ErrorContains(t, err, "cannot be set")
++	tracker.requireAllClosed(t)
++}
++
++func TestFindExistingIssueCloudClosesErrorResponse(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/rest/api/3/search/jql") {
++			http.Error(w, "jql rejected", http.StatusBadRequest)
++			return
++		}
++		http.Error(w, "unexpected endpoint", http.StatusNotFound)
++	}))
++	defer server.Close()
++
++	integration, tracker := newTrackedIntegration(t, server.URL, true)
++	_, err := integration.FindExistingIssue(&output.ResultEvent{TemplateID: "test", Host: "example.test", Info: model.Info{Name: "Test issue"}}, true)
++	require.ErrorContains(t, err, "jql rejected")
++	tracker.requireAllClosed(t)
 +}
 ```
 
 ---
 
-### Incident Patch 2: `6bfd9dfa` (2026-11-26)
-**Commit Message**: Switch to projectdiscovery rod fork (#8127)
+### Incident Patch 3: `13dc1941` (2026-11-26)
+**Commit Message**: fix(js/ssh): bracket IPv6 hosts when joining host and port (#8302)
 
-* rod module
+* fix(js/ssh): bracket IPv6 hosts when joining host and port
 
-* bump rod
+connect() and connectSSHInfoMode() built the dial address with
+fmt.Sprintf("%s:%d", ...), so an IPv6 host such as 2001:db8::1 became
+"2001:db8::1:22" and the dial failed with "too many colons in address".
+Use net.JoinHostPort, which brackets IPv6 literals and leaves IPv4
+addresses and hostnames unchanged.
 
-* bump rod
+Add TestConnectIPv6, which connects to an SSH server on [::1] through
+both Connect and ConnectSSHInfoMode.
 
-* bump rod
+* Update pkg/js/libs/ssh/ssh.go
 
-* bump rod
+Co-authored-by: coderabbitai[bot] <136622811+coderabbitai[bot]@users.noreply.github.com>
 
-**File**: `go.mod` (modified, +2/-6)
+* fix(js/ssh): strip IPv6 brackets before dialing in connect
+
+connect() passed opts.Host straight to net.JoinHostPort, so a bracketed
+host such as [::1] was dialed as [[::1]]:22 and failed with "missing
+port in address". The previous fmt.Sprintf form handled it. Strip one
+surrounding bracket pair first, as connectSSHInfoMode already does.
+
+Extend TestConnectIPv6 to run Connect and ConnectSSHInfoMode with both
+the bare and the bracketed IPv6 loopback address.
+
+---------
+
+Co-authored-by: coderabbitai[bot] <136622811+coderabbita
+
+**File**: `pkg/js/libs/ssh/ssh.go` (modified, +6/-3)
 ```diff
-@@ -1,6 +1,6 @@
- module github.com/projectdiscovery/nuclei/v3
+@@ -2,8 +2,9 @@ package ssh
  
--go 1.27.3
-+go 1.27.4
- 
- require (
- 	carvel.dev/ytt v0.52.0
-@@ -46,7 +46,6 @@ require (
- 	github.com/go-pdf/fpdf v0.9.0
- 	github.com/go-pg/pg/v10 v10.15.0
- 	github.com/go-playground/validator/v10 v10.26.0
--	github.com/go-rod/rod v0.116.2
- 	github.com/go-sql-driver/mysql v1.10.0
- 	github.com/gobwas/ws v1.4.0
- 	github.com/goccy/go-json v0.10.5
-@@ -101,6 +100,7 @@ require (
- 	github.com/projectdiscovery/rawhttp v0.3.1
- 	github.com/projectdiscovery/retryabledns v1.0.119
- 	github.com/projectdiscovery/retryablehttp-go v1.3.35
-+	github.com/projectdiscovery/rod v0.116.3-0.20261113214723-dd0abeca2a24
- 	github.com/projectdiscovery/sarif v0.1.0
- 	github.com/projectdiscovery/tlsx v1.5.0
- 	github.com/projectdiscovery/uncover v1.2.1
-@@ -425,11 +425,7 @@ require (
- 	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
- 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
--	github.com/ysmood/fetchup v0.2.3 // indirect
--	github.com/ysmood/goob v0.4.0 // indirect
--	github.com/ysmood/got v0.40.0 // indirect
- 	github.com/ysmood/gson v0.7.3 // indirect
--	github.com/ysmood/leakless v0.9.0 // indirect
- 	github.com/yuin/goldmark v1.8.6 // indirect
- 	github.com/yuin/goldmark-emoji v1.0.6 // indirect
- 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-```
-
-**File**: `go.sum` (modified, +6/-12)
-```diff
-@@ -491,8 +491,6 @@ github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJn
- github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
- github.com/go-playground/validator/v10 v10.26.0 h1:SP05Nqhjcvz81uJaRfEV0YBSSSGMc/iMaVtFbr3Sw2k=
- github.com/go-playground/validator/v10 v10.26.0/go.mod h1:I5QpIEbmr8On7W0TktmJAumgzX4CA1XNl4ZmDuVHKKo=
--github.com/go-rod/rod v0.116.2 h1:A5t2Ky2A+5eD/ZJQr1EfsQSe5rms5Xof/qj296e+ZqA=
--github.com/go-rod/rod v0.116.2/go.mod h1:H+CMO9SCNc2TJ2WfrG+pKhITz57uGNYU43qYHh438Mg=
- github.com/go-sourcemap/sourcemap v2.1.4+incompatible h1:a+iTbH5auLKxaNwQFg0B+TCYl6lbukKPc7b5x0n1s6Q=
- github.com/go-sourcemap/sourcemap v2.1.4+incompatible/go.mod h1:F8jJfvm2KbVjc5NqelyYJmf/v5J0dwNLS2mL4sNA1Jg=
- github.com/go-sql-driver/mysql v1.10.0 h1:Q+1LV8DkHJvSYAdR83XzuhDaTykuDx0l6fkXxoWCWfw=
-@@ -981,6 +979,8 @@ github.com/projectdiscovery/retryabledns v1.0.119 h1:QljvfDIQ9qw3qtsgyl3g5dkW87R
- github.com/projectdiscovery/retryabledns v1.0.119/go.mod h1:DzJqF5OpIgjSm4fR087gHSDYC05JsTRi1RTbbpvrJo8=
- github.com/projectdiscovery/retryablehttp-go v1.3.35 h1:u4ZnTMh7ZE46buZRBrFL3Yyk0uCrDudcVOlT/VkDWGU=
- github.com/projectdiscovery/retryablehttp-go v1.3.35/go.mod h1:+UvjTjyTxKJRfPgm023lb84MjAjpDT3jjs1ZO5KuAIE=
-+github.com/projectdiscovery/rod v0.116.3-0.20261113214723-dd0abeca2a24 h1:Hot/bpOreHagjzK10d939dAzEuiDsbScyz/JQ4OTolA=
-+github.com/projectdiscovery/rod v0.116.3-0.20261113214723-dd0abeca2a24/go.mod h1:FLVLMgXw6OFcOU5nd4Il8cdSWgDfAlDeRZMol3drmGs=
- github.com/projectdiscovery/sarif v0.1.0 h1:O541T+a448nSJsmIMnXXSOeDQEzpnCAYvRfe0eG5h74=
- github.com/projectdiscovery/sarif v0.1.0/go.mod h1:LBC+reM3bkI3qIIhE0rZaINaYX6VG+En6u2hHa5mA7E=
- github.com/projectdiscovery/stringsutil v0.0.2 h1:uzmw3IVLJSMW1kEg8eCStG/cGbYYZAja8BH3LqqJXMA=
-@@ -1205,20 +1205,14 @@ github.com/yl2chen/cidranger v1.0.2 h1:lbOWZVCG1tCRX4u24kuM1Tb4nHqWkDxwLdoS+Seva
- github.com/yl2chen/cidranger v1.0.2/go.mod h1:9U1yz7WPYDwf0vpNWFaeRh0bjwz5RVgRy/9UEQfHl0g=
- github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 h1:ilQV1hzziu+LLM3zUTJ0trRztfwgjqKnBWNtSRkbmwM=
- github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78/go.mod h1:aL8wCCfTfSfmXjznFBSZNN13rSJjlIOI1fUNAtF7rmI=
--github.com/ysmood/fetchup v0.2.3 h1:ulX+SonA0Vma5zUFXtv52Kzip/xe7aj4vqT5AJwQ+ZQ=
--github.com/ysmood/fetchup v0.2.3/go.mod h1:xhibcRKziSvol0H1/pj33dnKrYyI2ebIvz5cOOkYGns=
--github.com/ysmood/goob v0.4.0 h1:HsxXhyLBeGzWXnqVKtmT9qM7EuVs/XOgkX7T6r1o1AQ=
--github.com/ysmood/goob v0.4.0/go.mod h1:u6yx7ZhS4Exf2MwciFr6nIM8knHQIE22lFpWHnfql18=
--github.com/ysmood/gop v0.2.0 h1:+tFrG0TWPxT6p9ZaZs+VY+opCvHU8/3Fk6BaNv6kqKg=
--github.com/ysmood/gop v0.2.0/go.mod h1:rr5z2z27oGEbyB787hpEcx4ab8cCiPnKxn0SUHt6xzk=
--github.com/ysmood/got v0.40.0 h1:ZQk1B55zIvS7zflRrkGfPDrPG3d7+JOza1ZkNxcc74Q=
--github.com/ysmood/got v0.40.0/go.mod h1:W7DdpuX6skL3NszLmAsC5hT7JAhuLZhByVzHTq874Qg=
-+github.com/ysmood/gop v0.4.2 h1:KtW1/RugapWs1iW9ynQdk52BK6TWdP9zC0qDOhW8EDE=
-+github.com/ysmood/gop v0.4.2/go.mod h1:K4LAB/BdLArknXrVSy+DyXcfb8P85JwAtwYM8zlb0mU=
-+github.com/ysmood/got v0.43.0 h1:bcHlKg+qnhFz5JxNZ+j4fIfxxB8WWjTh6qdqeS8FfZw=
-+github.com/ysmood/got v0.43.0/go.mod h1:rsfH2KJ5rcS/5n9pmybIGodoHlT/NTYxjgh3ob7UdSU=
- github.com/ysmood/gotrace v0.6.0 h1:SyI1d4jclswLhg7SWTL6os3L1WOKeNn/ZtzVQF8QmdY=
- github.com/ysmood/gotrace v0.6.0/go.mod h1:TzhIG7nHDry5//eYZDYcTzuJLYQIkykJzCRIo4/dzQM=
- github.com/ysmood/gson v0.7.3 h1:QFkWbTH8MxyUTKPkVWAENJhxqdBa4lYTQWqZCiLG6kE=
- github.com/ysmood/gson v0.7.3/go.mod h1:3Kzs5zDl21g5F/BlLTNcuAGAYLKt2lV5G8D1zF3RNmg=
--github.com/ysmood/leakless v0.9.0 h1:qxCG5VirSBvmi3uynXFkcnLMzkphdh3xx5FtrORwDCU=
--github.com/ysmood/leakless v0.9.0/go.mod h1:R8iAXPRaG97QJwqxs74RdwzcRHT1SWCGTNqY8q0JvMQ=
- github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
- github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
- github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
-```
-
-**File**: `pkg/protocols/common/protocolstate/headless.go` (modified, +2/-2)
-```diff
-@@ -7,10 +7,10 @@ import (
- 	"strings"
- 	"sync"
- 
--	"github.com/go-rod/rod"
--	"github.com/go-rod/rod/lib/proto"
- 	"github.com/projectdiscovery/networkpolicy"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-+	"github.com/projectdiscovery/rod"
-+	"github.com/projectdiscovery/rod/lib/proto"
- 	"github.com/projectdiscovery/utils/errkit"
- 	stringsutil "github.com/projectdiscovery/utils/strings"
- 	urlutil "github.com/projectdiscovery/utils/url"
-```
-
-**File**: `pkg/protocols/common/protocolstate/memguardian_test.go` (modified, +2/-2)
-```diff
-@@ -15,7 +15,7 @@ func TestMemGuardianGoroutineLeak(t *testing.T) {
- 	defer goleak.VerifyNone(t,
- 		goleak.IgnoreAnyContainingPkg("go.opencensus.io/stats/view"),
- 		goleak.IgnoreAnyContainingPkg("github.com/syndtr/goleveldb"),
--		goleak.IgnoreAnyContainingPkg("github.com/go-rod/rod"),
-+		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/rod"),
- 		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/interactsh/pkg/server"),
- 		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/ratelimit"),
- 		// expirable LRU cache creates a background goroutine for TTL expiration that persists
-@@ -104,7 +104,7 @@ func TestMemGuardianReset(t *testing.T) {
- 	defer goleak.VerifyNone(t,
- 		goleak.IgnoreAnyContainingPkg("go.opencensus.io/stats/view"),
- 		goleak.IgnoreAnyContainingPkg("github.com/syndtr/goleveldb"),
--		goleak.IgnoreAnyContainingPkg("github.com/go-rod/rod"),
-+		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/rod"),
- 		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/interactsh/pkg/server"),
- 		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/ratelimit"),
- 		// expirable LRU cache creates a background goroutine for TTL expiration that persists
-```
-
-**File**: `pkg/protocols/headless/engine/engine.go` (modified, +3/-3)
-```diff
-@@ -7,10 +7,10 @@ import (
- 	"strings"
- 	"sync"
- 
--	"github.com/go-rod/rod"
--	"github.com/go-rod/rod/lib/launcher"
--	"github.com/go-rod/rod/lib/launcher/flags"
- 	"github.com/pkg/errors"
-+	"github.com/projectdiscovery/rod"
-+	"github.com/projectdiscovery/rod/lib/launcher"
-+	"github.com/projectdiscovery/rod/lib/launcher/flags"
- 
- 	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-```
-
-**File**: `pkg/protocols/headless/engine/hijack.go` (modified, +2/-2)
-```diff
-@@ -5,8 +5,8 @@ package engine
  import (
- 	"encoding/base64"
- 
--	"github.com/go-rod/rod"
--	"github.com/go-rod/rod/lib/proto"
-+	"github.com/projectdiscovery/rod"
-+	"github.com/projectdiscovery/rod/lib/proto"
- )
- 
- // NewHijack create hijack from page.
-```
-
-**File**: `pkg/protocols/headless/engine/instance.go` (modified, +2/-2)
-```diff
-@@ -5,11 +5,11 @@ import (
- 	"errors"
+ 	"context"
+-	"fmt"
++	"net"
+ 	"regexp"
++	"strconv"
+ 	"strings"
  	"time"
  
--	"github.com/go-rod/rod"
--	"github.com/go-rod/rod/lib/utils"
- 	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/render"
-+	"github.com/projectdiscovery/rod"
-+	"github.com/projectdiscovery/rod/lib/utils"
- )
+@@ -227,7 +228,8 @@ func connectSSHInfoMode(opts *connectOptions) (*ssh.HandshakeLog, error) {
+ 		data.Banner = strings.TrimSpace(banner)
+ 		return nil
+ 	}
+-	rhost := fmt.Sprintf("%s:%d", opts.Host, opts.Port)
++	host := strings.TrimSuffix(strings.TrimPrefix(opts.Host, "["), "]")
++	rhost := net.JoinHostPort(host, strconv.Itoa(opts.Port))
+ 	client, err := ssh.Dial("tcp", rhost, sshConfig)
+ 	if err != nil {
+ 		return nil, err
+@@ -281,7 +283,8 @@ func connect(opts *connectOptions) (*ssh.Client, error) {
+ 		conf.Auth = append(conf.Auth, ssh.PublicKeys(signer))
+ 	}
  
- // Instance is an isolated browser instance opened for doing operations with it.
+-	client, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", opts.Host, opts.Port), conf)
++	host := strings.TrimSuffix(strings.TrimPrefix(opts.Host, "["), "]")
++	client, err := ssh.Dial("tcp", net.JoinHostPort(host, strconv.Itoa(opts.Port)), conf)
+ 	if err != nil {
+ 		return nil, err
+ 	}
 ```
 
-**File**: `pkg/protocols/headless/engine/instance_test.go` (modified, +3/-3)
+**File**: `pkg/js/libs/ssh/ssh_test.go` (modified, +41/-5)
 ```diff
-@@ -5,9 +5,9 @@ import (
- 	"testing"
- 	"time"
+@@ -69,6 +69,35 @@ func TestCloseConnected(t *testing.T) {
+ 	closeClient(t, client)
+ }
  
--	"github.com/go-rod/rod"
--	"github.com/go-rod/rod/lib/cdp"
--	"github.com/go-rod/rod/lib/proto"
-+	"github.com/projectdiscovery/rod"
-+	"github.com/projectdiscovery/rod/lib/cdp"
-+	"github.com/projectdiscovery/rod/lib/proto"
- 	"github.com/stretchr/testify/require"
- )
++func TestConnectIPv6(t *testing.T) {
++	t.Parallel()
++
++	listener, err := new(net.ListenConfig).Listen(t.Context(), "tcp", "[::1]:0")
++	if err != nil {
++		t.Skipf("IPv6 loopback is unavailable: %v", err)
++	}
++
++	ip, port := serveSSH(t, listener)
++
++	for _, host := range []string{ip, "[" + ip + "]"} {
++		t.Run("Connect/"+host, func(t *testing.T) {
++			t.Parallel()
++
++			client := new(libssh.SSHClient)
++			connect(t, client, host, port)
++			closeClient(t, client)
++		})
++		t.Run("ConnectSSHInfoMode/"+host, func(t *testing.T) {
++			t.Parallel()
++
++			_, err := new(libssh.SSHClient).ConnectSSHInfoMode(executionContext(t), host, port)
++			if err != nil {
++				t.Fatalf("ConnectSSHInfoMode() error = %v", err)
++			}
++		})
++	}
++}
++
+ func connect(t *testing.T, client *libssh.SSHClient, host string, port int) {
+ 	t.Helper()
  
+@@ -98,6 +127,18 @@ func executionContext(t *testing.T) context.Context {
+ func startServer(t *testing.T) (string, int) {
+ 	t.Helper()
+ 
++	listener, err := new(net.ListenConfig).Listen(t.Context(), "tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	return serveSSH(t, listener)
++}
++
++// serveSSH serves SSH on listener and returns its host and port.
++func serveSSH(t *testing.T, listener net.Listener) (string, int) {
++	t.Helper()
++
+ 	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+ 	if err != nil {
+ 		t.Fatal(err)
+@@ -112,11 +153,6 @@ func startServer(t *testing.T) (string, int) {
+ 	config.PasswordCallback = checkPassword
+ 	config.AddHostKey(signer)
+ 
+-	listener, err := new(net.ListenConfig).Listen(t.Context(), "tcp", "127.0.0.1:0")
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-
+ 	t.Cleanup(func() { _ = listener.Close() })
+ 
+ 	go func() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8313** (closed): fix(jira): close HTTP response bodies to prevent socket leaks (@DhyaanKanoja11)
-- **PR #8310** (closed): fix: read full KDC reply length prefix over TCP (@CJstate)
-- **PR #8309** (closed): fix: report invalid JSON extractor queries with query and error (@CJstate)
-- **PR #8308** (2026-11-23): chore(deps): bump the modules group with 9 updates (@dependabot[bot])
-- **PR #8300** (2026-11-21): fix(resume): keep the loaded progress of templates not yet reached (@dwisiswant0)
-- **PR #8299** (2026-11-21): fix(input): let a template port replace a reserved port in a URL target (@dwisiswant0)
+- **PR #8325** (2026-11-26): fix(raw): keep an unsafe request line with no path instead of panicking (@hakarrr)
+- **PR #8323** (2026-11-26): fix(fuzz): return an error for non-string entries in a fuzz map (@hakarrr)
+- **PR #8321** (2026-11-26): fix(utils): return an error for non-string YAML keys in InsertionOrderedStringMap (@hakarrr)
+- **PR #8319** (2026-11-26): chore(deps): bump dsl to v0.9.4 (@dogancanbakir)
+- **PR #8317** (closed): fix(core): enforce size limits on certificate, key, dump and swagger inputs (@DhyaanKanoja11)
+- **PR #8316** (2026-11-26): fix(templates): fire caller's callback from a clustered step (@micheal0034)
 
 ---
 
@@ -2263,36 +2210,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use the configured HTTP client in reporting and verify TLS
+## X. index): save through a temp file of the save's own
 
 **RULE**:
-When implementing operations in `pkg/protocols/http/httpcache/httpcache.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/catalog/index/index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc120870`: use the configured HTTP client in reporting and verify TLS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cdf93a80`: index): save through a temp file of the save's own. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/httpcache/httpcache.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/catalog/index/index.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// Unwrap returns the transport the cache wraps, so code that must not use the
-// cache, such as reporting clients that need TLS verification, can reach it.
-func (t *transport) Unwrap() http.RoundTripper {
-	return t.next
-}
-
+	// The temp file is this save's own: the mutex is per Index, so two indexes
+	// over one cache file would otherwise truncate and rename the same path.
+	file, err := os.CreateTemp(filepath.Dir(i.cacheFile), filepath.Base(i.cacheFile)+".*.tmp")
+	tmpFile := file.Name()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	tmpFile := i.cacheFile + ".tmp"
+	file, err := os.OpenFile(tmpFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc120870` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cdf93a80` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

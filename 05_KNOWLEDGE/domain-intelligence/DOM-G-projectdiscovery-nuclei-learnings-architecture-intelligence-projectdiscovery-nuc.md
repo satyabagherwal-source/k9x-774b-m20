@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T09:13:07.073Z",
+  "timestamp": "2026-11-26T18:24:31.913Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-projectdiscovery-nuclei-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [projectdiscovery-nuclei-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T09:13:07.073Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T18:24:31.913Z`  
 > **Learning ID**: `LEARN-EVO-projectdiscovery-nuclei-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 85%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from projectdiscovery-nuclei-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `dd2df86c`  
+> **Source Version**: `90b55382`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T09:12:28.170Z  
+> **Timestamp**: 2026-11-26T18:24:22.542Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T09:12:28.164Z  
+> **Harvest Timestamp**: 2026-11-26T18:24:22.531Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33308 stars
+- **Stars / Engagement**: 33326 stars
 
 ---
 
@@ -1686,104 +1686,528 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd2df86c` (2026-11-26)
-**Commit Message**: Merge pull request #8110 from projectdiscovery/bump-goja-fixes
+### Incident Patch 1: `cdf93a80` (2026-11-26)
+**Commit Message**: fix(index): save through a temp file of the save's own (#8215)
 
-bump goja to pick up the nesting depth limit and the context argument fix
+* fix(index): save through a temp file of the save's own
 
-**File**: `go.mod` (modified, +2/-2)
+Save wrote its snapshot to the fixed path cacheFile + ".tmp" under the
+Index's own mutex, so two indexes over one cache directory (two SDK
+engines in one process, or two nuclei processes of one user) truncated
+and renamed the same file: one save failed on its rename with "no such
+file or directory", and the file left in place could hold bytes of
+both snapshots.
+
+Each save now creates its temp file with os.CreateTemp beside the cache
+file and renames it into place.
+
+Fixes #8212
+
+* test(index): compare the saved cache with one index's whole snapshot
+
+The concurrent-save test checked only the saved file's entry count,
+which a file mixing both indexes' entries could also meet. It now
+compares the decoded data, keys and metadata, with what each index of
+the last round set, and passes only where it equals one of them.
+
+**File**: `pkg/catalog/index/index.go` (modified, +4/-2)
 ```diff
-@@ -85,7 +85,7 @@ require (
- 	github.com/projectdiscovery/gcache v0.0.0-20241015120333-12546c6e3f4c
- 	github.com/projectdiscovery/goflags v0.2.1
- 	github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb
--	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
-+	github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed
- 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
- 	github.com/projectdiscovery/gologger v1.1.76
- 	github.com/projectdiscovery/gostruct v0.0.2
-@@ -234,7 +234,7 @@ require (
- 	github.com/dimchansky/utfbom v1.1.1 // indirect
- 	github.com/distribution/reference v0.6.0 // indirect
- 	github.com/djherbis/times v1.6.0 // indirect
--	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
-+	github.com/dlclark/regexp2/v2 v2.11.0 // indirect
- 	github.com/docker/cli v29.2.0+incompatible // indirect
- 	github.com/docker/go-connections v0.7.0 // indirect
- 	github.com/dop251/goja v0.0.0-20260311135729-065cd970411c // indirect
+@@ -225,11 +225,13 @@ func (i *Index) Save() error {
+ 	maps.Insert(snapshot.Data, i.cache.All())
+ 
+ 	// NOTE(dwisiswant0): write to temp for atomic op.
+-	tmpFile := i.cacheFile + ".tmp"
+-	file, err := os.OpenFile(tmpFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
++	// The temp file is this save's own: the mutex is per Index, so two indexes
++	// over one cache file would otherwise truncate and rename the same path.
++	file, err := os.CreateTemp(filepath.Dir(i.cacheFile), filepath.Base(i.cacheFile)+".*.tmp")
+ 	if err != nil {
+ 		return err
+ 	}
++	tmpFile := file.Name()
+ 	if err := file.Chmod(0o600); err != nil {
+ 		_ = file.Close()
+ 		_ = os.Remove(tmpFile)
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `pkg/catalog/index/index_test.go` (modified, +67/-8)
 ```diff
-@@ -356,8 +356,8 @@ github.com/djherbis/times v1.6.0 h1:w2ctJ92J8fBvWPxugmXIv7Nz7Q3iDMKNx9v5ocVH20c=
- github.com/djherbis/times v1.6.0/go.mod h1:gOHeRAz2h+VJNZ5Gmc/o7iD9k4wW7NMVqieYCY99oc0=
- github.com/dlclark/regexp2 v1.11.5 h1:Q/sSnsKerHeCkc/jSTNq1oCm7KiVgUMZRDUoRu0JQZQ=
- github.com/dlclark/regexp2 v1.11.5/go.mod h1:DHkYz0B9wPfa6wondMfaivmHpzrQ3v9q8cnmRbL6yW8=
--github.com/dlclark/regexp2/v2 v2.2.1 h1:mf4KkFUj0gJuarK8P+LgiS+Lit7m9N1yAwEfPbee7R0=
--github.com/dlclark/regexp2/v2 v2.2.1/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
-+github.com/dlclark/regexp2/v2 v2.11.0 h1:z5uRPHav+eTVpoffDSuUP2KPS4f1ONZaPDK73S8HA0w=
-+github.com/dlclark/regexp2/v2 v2.11.0/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
- github.com/docker/cli v29.2.0+incompatible h1:9oBd9+YM7rxjZLfyMGxjraKBKE4/nVyvVfN4qNl9XRM=
- github.com/docker/cli v29.2.0+incompatible/go.mod h1:JLrzqnKDaYBop7H2jaqPtU4hHvMKP+vjCwu2uszcLI8=
- github.com/docker/go-connections v0.7.0 h1:6SsRfJddP22WMrCkj19x9WKjEDTB+ahsdiGYf0mN39c=
-@@ -943,8 +943,8 @@ github.com/projectdiscovery/goflags v0.2.1 h1:XnSYvsCjUwHbZaaJUZ3YznCJPoXRk/IhTF
- github.com/projectdiscovery/goflags v0.2.1/go.mod h1:7nAP1r2Dqgn/rwmOE3EWbZWUCEJKNIhVSBGpuzJAIns=
- github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb h1:+L1yW2PblRHSSHQRTmvxLkGDPZnM52N62oeBd2xHKF0=
- github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb/go.mod h1:bfgULaYf+6pjjcLCekpXIYElnLJbmhvTttxMAbQJvhY=
--github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c h1:4H/CfVNlue9PIwsCM1IGxOynDI7cir+emXuDvGJTLJs=
--github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c/go.mod h1:SO0AP+uKfYeeoR6jyVH/PKRYJE/f5gJrPMAM00iGEMc=
-+github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed h1:h6aBYgIrjnapch77HWnpCPPz+bTU2OMfWOrr1fr0knA=
-+github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed/go.mod h1:sjYPrVMMCZNujHasGmCZGs3Hx8DymbJA2plsJjlC3LA=
- github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d h1:fqqH9LHpN2WDz9QuxFrhKNxXSRtzk+Sa6jAhbB7tXcQ=
- github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d/go.mod h1:Ezmbgdaw4EunGGBU4MQViLoGMJc37LA3ip55YV3KeRI=
- github.com/projectdiscovery/gologger v1.1.76 h1:QeIZ2VT9ZdRNx+XBuE7XkH3S33plPYtKA4l/TgsSsks=
+@@ -1,10 +1,13 @@
+ package index
+ 
+ import (
++	"encoding/gob"
+ 	"fmt"
+ 	"os"
+ 	"path/filepath"
++	"reflect"
+ 	"runtime"
++	"slices"
+ 	"testing"
+ 	"time"
+ 
+@@ -188,9 +191,9 @@ func TestCachePersistence(t *testing.T) {
+ 		require.NoError(t, err)
+ 
+ 		// Verify no .tmp file left behind
+-		tmpFile := filepath.Join(tmpDir, IndexFileName+".tmp")
+-		_, err = os.Stat(tmpFile)
+-		require.True(t, os.IsNotExist(err), "Temporary file should not exist after save")
++		tmpFiles, err := filepath.Glob(filepath.Join(tmpDir, IndexFileName+".*.tmp"))
++		require.NoError(t, err)
++		require.Empty(t, tmpFiles, "Temporary file should not exist after save")
+ 
+ 		// Verify actual cache file exists
+ 		cacheFile := filepath.Join(tmpDir, IndexFileName)
+@@ -662,6 +665,64 @@ func TestCacheConcurrency(t *testing.T) {
+ 	})
+ }
+ 
++// Two indexes over one cache directory, as two SDK engines in one process
++// have, each hold their own mutex, so their saves can run at the same time.
++func TestCacheConcurrentSaveAcrossIndexes(t *testing.T) {
++	tmpDir := t.TempDir()
++
++	const (
++		rounds  = 20
++		indexes = 2
++		entries = 2000
++	)
++
++	// What each index of the last round set, by index.
++	var written []map[string]*Metadata
++	for round := range rounds {
++		written = make([]map[string]*Metadata, indexes)
++		errs := make(chan error, indexes)
++		for id := range indexes {
++			own := make(map[string]*Metadata, entries)
++			written[id] = own
++			go func() {
++				cache, err := NewIndex(tmpDir)
++				if err != nil {
++					errs <- err
++					return
++				}
++				for n := range entries {
++					path := filepath.Join("/tmp", fmt.Sprintf("%d-%d-%d.yaml", round, id, n))
++					own[path] = &Metadata{ID: fmt.Sprintf("t-%d", n), FilePath: path}
++					cache.Set(path, own[path])
++				}
++				errs <- cache.Save()
++			}()
++		}
++
++		for range indexes {
++			require.NoError(t, <-errs, "Concurrent saves of two indexes should both succeed")
++		}
++	}
++
++	tmpFiles, err := filepath.Glob(filepath.Join(tmpDir, IndexFileName+".*.tmp"))
++	require.NoError(t, err)
++	require.Empty(t, tmpFiles, "Temporary files should not exist after the saves")
++
++	// The file left in place is one index's whole snapshot of the last round,
++	// never a mix of the two.
++	file, err := os.Open(filepath.Join(tmpDir, IndexFileName))
++	require.NoError(t, err)
++	defer func() { _ = file.Close() }()
++
++	var snapshot cacheSnapshot
++	require.NoError(t, gob.NewDecoder(file).Decode(&snapshot))
++	require.Len(t, snapshot.Data, entries)
++	whole := slices.ContainsFunc(written, func(own map[string]*Metadata) bool {
++		return reflect.DeepEqual(own, snapshot.Data)
++	})
++	require.True(t, whole, "The cache file should hold exactly what one index of the last round set")
++}
++
+ func TestCacheSize(t *testing.T) {
+ 	tmpDir := t.TempDir()
+ 	cache, err := NewIndex(tmpDir)
+@@ -730,11 +791,9 @@ func TestCacheSaveErrorHandling(t *testing.T) {
+ 	}
+ 	cache.Set(metadata.FilePath, metadata)
+ 
+-	// Create a directory where the temp file would be created to force an error
+-	// The Save method creates a file at cacheFile + ".tmp"
+-	conflictPath := filepath.Join(tmpDir, IndexFileName+".tmp")
+-	err = os.Mkdir(conflictPath, 0755)
+-	require.NoError(t, err)
++	// Remove the cache directory to force an error: Save creates its temp
++	// file beside the cache file.
++	require.NoError(t, os.RemoveAll(tmpDir))
+ 
+ 	err = cache.Save()
+ 	require.Error(t, err, "Save should fail when temp file cannot be created")
 ```
 
-**File**: `pkg/js/compiler/goja_regression_test.go` (added, +33/-0)
+---
+
+### Incident Patch 2: `3cca9ee0` (2026-11-26)
+**Commit Message**: fix(jira): close response bodies go-jira leaves open (#8248)
+
+* fix(jira): close response bodies go-jira leaves open
+
+go-jira does not close the response of a transition it does not decode, and it returns the response unread when issue creation or a raw request fails. Close those bodies so the connections can be reused.
+
+* fix(jira): bound the response body drain
+
+* skip drain
+
+---------
+
+Co-authored-by: review <[REDACTED_EMAIL]>
+
+**File**: `pkg/reporting/trackers/jira/jira.go` (modified, +28/-13)
 ```diff
-@@ -0,0 +1,33 @@
-+package compiler
+@@ -337,12 +337,7 @@ func (i *Integration) CreateNewIssue(event *output.ResultEvent) (*filters.Create
+ 	}
+ 	createdIssue, resp, err := i.jira.Issue.Create(issueData)
+ 	if err != nil {
+-		var data string
+-		if resp != nil && resp.Body != nil {
+-			d, _ := io.ReadAll(resp.Body)
+-			data = string(d)
+-		}
+-		return nil, fmt.Errorf("%w => %s", err, data)
++		return nil, fmt.Errorf("%w => %s", err, readAndCloseBody(resp))
+ 	}
+ 	return i.getIssueResponseFromJira(createdIssue)
+ }
+@@ -426,9 +421,12 @@ func (i *Integration) CloseIssueByID(issueID string) error {
+ 		if transition.To.Name != i.options.StatusNot {
+ 			continue
+ 		}
+-		_, err = i.jira.Issue.DoTransitionWithPayload(issueID, jira.CreateTransitionPayload{
++		resp, err := i.jira.Issue.DoTransitionWithPayload(issueID, jira.CreateTransitionPayload{
+ 			Transition: jira.TransitionPayload{ID: transition.ID},
+ 		})
++		// go-jira does not decode the transition response, so it leaves the
++		// body open on success. Close it so the connection can be reused.
++		closeBody(resp)
+ 		if err != nil {
+ 			return fmt.Errorf("transition Jira issue %s: %w", issueID, err)
+ 		}
+@@ -480,12 +478,7 @@ func (i *Integration) FindExistingIssue(event *output.ResultEvent, useStatus boo
+ 
+ 		resp, err := i.jira.Do(req, &searchResult)
+ 		if err != nil {
+-			var data string
+-			if resp != nil && resp.Body != nil {
+-				d, _ := io.ReadAll(resp.Body)
+-				data = string(d)
+-			}
+-			return jira.Issue{}, fmt.Errorf("%w => %s", err, data)
++			return jira.Issue{}, fmt.Errorf("%w => %s", err, readAndCloseBody(resp))
+ 		}
+ 
+ 		if len(searchResult.Issues) == 0 {
+@@ -538,3 +531,25 @@ func (i *Integration) ShouldFilter(event *output.ResultEvent) bool {
+ 
+ 	return true
+ }
++
++// readAndCloseBody returns the body of a failed go-jira response and closes it.
++// go-jira hands the response back unread on some error paths, so the caller
++// has to close it.
++func readAndCloseBody(resp *jira.Response) string {
++	if resp == nil || resp.Response == nil || resp.Body == nil {
++		return ""
++	}
++	defer closeBody(resp)
++	data, _ := io.ReadAll(resp.Body)
++	return string(data)
++}
++
++// closeBody closes a go-jira response body. It does not drain it: a server
++// that stalls mid-body would otherwise block the caller, and an empty
++// response, which is what go-jira leaves open, returns to the pool on close.
++func closeBody(resp *jira.Response) {
++	if resp == nil || resp.Response == nil || resp.Body == nil {
++		return
++	}
++	_ = resp.Body.Close()
++}
+```
+
+**File**: `pkg/reporting/trackers/jira/jira_body_test.go` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++package jira
 +
 +import (
++	"io"
++	"net/http"
++	"net/http/httptest"
 +	"strings"
++	"sync"
 +	"testing"
 +
++	"github.com/projectdiscovery/nuclei/v3/pkg/model"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/retryablehttp-go"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// A Set that contains itself used to overflow the Go stack on export and kill the process.
-+func TestExecuteSelfReferencingSetResult(t *testing.T) {
-+	result, err := executeScript(t, t.Name(), false, `var s = new Set(); s.add(s); s`)
++// bodyTracker is a transport that records whether every response body it
++// hands out gets closed.
++type bodyTracker struct {
++	mu     sync.Mutex
++	bodies []*trackedBody
++}
++
++type trackedBody struct {
++	io.ReadCloser
++	path   string
++	closed bool
++}
++
++func (b *trackedBody) Close() error {
++	b.closed = true
++	return b.ReadCloser.Close()
++}
++
++func (t *bodyTracker) RoundTrip(req *http.Request) (*http.Response, error) {
++	resp, err := http.DefaultTransport.RoundTrip(req)
++	if err != nil {
++		return nil, err
++	}
++	body := &trackedBody{ReadCloser: resp.Body, path: req.Method + " " + req.URL.Path}
++	t.mu.Lock()
++	t.bodies = append(t.bodies, body)
++	t.mu.Unlock()
++	resp.Body = body
++	return resp, nil
++}
++
++func (t *bodyTracker) requireAllClosed(tb testing.TB) {
++	tb.Helper()
++	t.mu.Lock()
++	defer t.mu.Unlock()
++	require.NotEmpty(tb, t.bodies)
++	for _, body := range t.bodies {
++		require.Truef(tb, body.closed, "response body of %s was not closed", body.path)
++	}
++}
++
++func newTrackedIntegration(t *testing.T, serverURL string, cloud bool) (*Integration, *bodyTracker) {
++	t.Helper()
++	tracker := &bodyTracker{}
++	client := retryablehttp.NewClient(retryablehttp.DefaultOptionsSingle)
++	client.HTTPClient.Transport = tracker
++	integration, err := New(&Options{
++		URL:         serverURL,
++		Cloud:       cloud,
++		AccountID:   "test",
++		Email:       "test@example.test",
++		Token:       "test",
++		ProjectName: "TEST",
++		IssueType:   "Bug",
++		StatusNot:   "Done",
++		HttpClient:  client,
++	})
 +	require.NoError(t, err)
-+	require.NotNil(t, result["response"])
++	return integration, tracker
 +}
 +
-+// Deeply nested source used to overflow the Go stack in the parser.
-+func TestCompileDeepNesting(t *testing.T) {
-+	const n = 1000000
-+	_, err := SourceAutoMode(strings.Repeat("(", n)+"a"+strings.Repeat(")", n), false)
-+	require.ErrorContains(t, err, "Maximum nesting depth exceeded")
++func TestCloseIssueByIDClosesTransitionResponse(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		switch {
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/issue/10001/transitions"):
++			_, _ = w.Write([]byte(`{"transitions":[{"id":"5","to":{"name":"Done"}}]}`))
++		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/issue/10001/transitions"):
++			w.WriteHeader(http.StatusNoContent)
++		default:
++			http.Error(w, "unexpected endpoint", http.StatusNotFound)
++		}
++	}))
++	defer server.Close()
++
++	integration, tracker := newTrackedIntegration(t, server.URL, false)
++	require.NoError(t, integration.CloseIssueByID("10001"))
++	tracker.requireAllClosed(t)
 +}
 +
-+// A context-first Go function called with fewer arguments used to panic in reflect.
-+// The missing port must reach GetServerInfo as 0, so its dial error names 127.0.0.1:0.
-+func TestContextFunctionMissingArguments(t *testing.T) {
-+	result, err := executeScript(t, t.Name(), false, `require("nuclei/redis").GetServerInfo("127.0.0.1")`)
-+	require.ErrorContains(t, err, "127.0.0.1:0")
-+	errText, _ := result["error"].(string)
-+	require.Contains(t, errText, "127.0.0.1:0")
-+	require.NotContains(t, errText, "reflect")
-+	require.NotContains(t, errText, "panic")
++func TestCreateNewIssueClosesErrorResponse(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/rest/api/2/issue") {
++			http.Error(w, `{"errorMessages":["Field 'priority' cannot be set"]}`, http.StatusBadRequest)
++			return
++		}
++		http.Error(w, "unexpected endpoint", http.StatusNotFound)
++	}))
++	defer server.Close()
++
++	integration, tracker := newTrackedIntegration(t, server.URL, false)
++	_, err := integration.CreateNewIssue(&output.ResultEvent{TemplateID: "test", Host: "example.test", Info: model.Info{Name: "Test issue"}})
++	require.ErrorContains(t, err, "cannot be set")
++	tracker.requireAllClosed(t)
++}
++
++func TestFindExistingIssueCloudClosesErrorResponse(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/rest/api/3/search/jql") {
++			http.Error(w, "jql rejected", http.StatusBadRequest)
++			return
++		}
++		http.Error(w, "unexpected endpoint", http.StatusNotFound)
++	}))
++	defer server.Close()
++
++	integration, tracker := newTrackedIntegration(t, server.URL, true)
++	_, err := integration.FindExistingIssue(&output.ResultEvent{TemplateID: "test", Host: "example.test", Info: model.Info{Name: "Test issue"}}, true)
++	require.ErrorContains(t, err, "jql rejected")
++	tracker.requireAllClosed(t)
 +}
 ```
 
+---
+
+### Incident Patch 3: `13dc1941` (2026-11-26)
+**Commit Message**: fix(js/ssh): bracket IPv6 hosts when joining host and port (#8302)
+
+* fix(js/ssh): bracket IPv6 hosts when joining host and port
+
+connect() and connectSSHInfoMode() built the dial address with
+fmt.Sprintf("%s:%d", ...), so an IPv6 host such as 2001:db8::1 became
+"2001:db8::1:22" and the dial failed with "too many colons in address".
+Use net.JoinHostPort, which brackets IPv6 literals and leaves IPv4
+addresses and hostnames unchanged.
+
+Add TestConnectIPv6, which connects to an SSH server on [::1] through
+both Connect and ConnectSSHInfoMode.
+
+* Update pkg/js/libs/ssh/ssh.go
+
+Co-authored-by: coderabbitai[bot] <136622811+coderabbitai[bot]@users.noreply.github.com>
+
+* fix(js/ssh): strip IPv6 brackets before dialing in connect
+
+connect() passed opts.Host straight to net.JoinHostPort, so a bracketed
+host such as [::1] was dialed as [[::1]]:22 and failed with "missing
+port in address". The previous fmt.Sprintf form handled it. Strip one
+surrounding bracket pair first, as connectSSHInfoMode already does.
+
+Extend TestConnectIPv6 to run Connect and ConnectSSHInfoMode with both
+the bare and the bracketed IPv6 loopback address.
+
+---------
+
+Co-authored-by: coderabbitai[bot] <136622811+coderabbita
+
+**File**: `pkg/js/libs/ssh/ssh.go` (modified, +6/-3)
+```diff
+@@ -2,8 +2,9 @@ package ssh
+ 
+ import (
+ 	"context"
+-	"fmt"
++	"net"
+ 	"regexp"
++	"strconv"
+ 	"strings"
+ 	"time"
+ 
+@@ -227,7 +228,8 @@ func connectSSHInfoMode(opts *connectOptions) (*ssh.HandshakeLog, error) {
+ 		data.Banner = strings.TrimSpace(banner)
+ 		return nil
+ 	}
+-	rhost := fmt.Sprintf("%s:%d", opts.Host, opts.Port)
++	host := strings.TrimSuffix(strings.TrimPrefix(opts.Host, "["), "]")
++	rhost := net.JoinHostPort(host, strconv.Itoa(opts.Port))
+ 	client, err := ssh.Dial("tcp", rhost, sshConfig)
+ 	if err != nil {
+ 		return nil, err
+@@ -281,7 +283,8 @@ func connect(opts *connectOptions) (*ssh.Client, error) {
+ 		conf.Auth = append(conf.Auth, ssh.PublicKeys(signer))
+ 	}
+ 
+-	client, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", opts.Host, opts.Port), conf)
++	host := strings.TrimSuffix(strings.TrimPrefix(opts.Host, "["), "]")
++	client, err := ssh.Dial("tcp", net.JoinHostPort(host, strconv.Itoa(opts.Port)), conf)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+```
+
+**File**: `pkg/js/libs/ssh/ssh_test.go` (modified, +41/-5)
+```diff
+@@ -69,6 +69,35 @@ func TestCloseConnected(t *testing.T) {
+ 	closeClient(t, client)
+ }
+ 
++func TestConnectIPv6(t *testing.T) {
++	t.Parallel()
++
++	listener, err := new(net.ListenConfig).Listen(t.Context(), "tcp", "[::1]:0")
++	if err != nil {
++		t.Skipf("IPv6 loopback is unavailable: %v", err)
++	}
++
++	ip, port := serveSSH(t, listener)
++
++	for _, host := range []string{ip, "[" + ip + "]"} {
++		t.Run("Connect/"+host, func(t *testing.T) {
++			t.Parallel()
++
++			client := new(libssh.SSHClient)
++			connect(t, client, host, port)
++			closeClient(t, client)
++		})
++		t.Run("ConnectSSHInfoMode/"+host, func(t *testing.T) {
++			t.Parallel()
++
++			_, err := new(libssh.SSHClient).ConnectSSHInfoMode(executionContext(t), host, port)
++			if err != nil {
++				t.Fatalf("ConnectSSHInfoMode() error = %v", err)
++			}
++		})
++	}
++}
++
+ func connect(t *testing.T, client *libssh.SSHClient, host string, port int) {
+ 	t.Helper()
+ 
+@@ -98,6 +127,18 @@ func executionContext(t *testing.T) context.Context {
+ func startServer(t *testing.T) (string, int) {
+ 	t.Helper()
+ 
++	listener, err := new(net.ListenConfig).Listen(t.Context(), "tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	return serveSSH(t, listener)
++}
++
++// serveSSH serves SSH on listener and returns its host and port.
++func serveSSH(t *testing.T, listener net.Listener) (string, int) {
++	t.Helper()
++
+ 	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+ 	if err != nil {
+ 		t.Fatal(err)
+@@ -112,11 +153,6 @@ func startServer(t *testing.T) (string, int) {
+ 	config.PasswordCallback = checkPassword
+ 	config.AddHostKey(signer)
+ 
+-	listener, err := new(net.ListenConfig).Listen(t.Context(), "tcp", "127.0.0.1:0")
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-
+ 	t.Cleanup(func() { _ = listener.Close() })
+ 
+ 	go func() {
+```
+
 #### Recent Merged Pull Requests:
-- **PR #8313** (closed): fix(jira): close HTTP response bodies to prevent socket leaks (@DhyaanKanoja11)
-- **PR #8310** (closed): fix: read full KDC reply length prefix over TCP (@CJstate)
-- **PR #8309** (closed): fix: report invalid JSON extractor queries with query and error (@CJstate)
-- **PR #8308** (2026-11-23): chore(deps): bump the modules group with 9 updates (@dependabot[bot])
-- **PR #8300** (2026-11-21): fix(resume): keep the loaded progress of templates not yet reached (@dwisiswant0)
-- **PR #8299** (2026-11-21): fix(input): let a template port replace a reserved port in a URL target (@dwisiswant0)
+- **PR #8325** (2026-11-26): fix(raw): keep an unsafe request line with no path instead of panicking (@hakarrr)
+- **PR #8323** (2026-11-26): fix(fuzz): return an error for non-string entries in a fuzz map (@hakarrr)
+- **PR #8321** (2026-11-26): fix(utils): return an error for non-string YAML keys in InsertionOrderedStringMap (@hakarrr)
+- **PR #8319** (2026-11-26): chore(deps): bump dsl to v0.9.4 (@dogancanbakir)
+- **PR #8317** (closed): fix(core): enforce size limits on certificate, key, dump and swagger inputs (@DhyaanKanoja11)
+- **PR #8316** (2026-11-26): fix(templates): fire caller's callback from a clustered step (@micheal0034)
 
 ---
 
@@ -1803,33 +2227,35 @@ bump goja to pick up the nesting depth limit and the context argument fix
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in go.mod
+## X. index): save through a temp file of the save's own
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/catalog/index/index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd2df86c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cdf93a80`: index): save through a temp file of the save's own. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/catalog/index/index.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed
-	github.com/dlclark/regexp2/v2 v2.11.0 // indirect
+	// The temp file is this save's own: the mutex is per Index, so two indexes
+	// over one cache file would otherwise truncate and rename the same path.
+	file, err := os.CreateTemp(filepath.Dir(i.cacheFile), filepath.Base(i.cacheFile)+".*.tmp")
+	tmpFile := file.Name()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
-	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
+	tmpFile := i.cacheFile + ".tmp"
+	file, err := os.OpenFile(tmpFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd2df86c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cdf93a80` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

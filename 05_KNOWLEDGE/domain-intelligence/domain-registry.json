@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T18:14:44.164Z",
-  "total_records": 2767,
+  "last_updated": "2026-11-26T18:24:32.373Z",
+  "total_records": 2769,
   "domains": {
     "A": {
       "total": 23,
@@ -1714,7 +1714,7 @@
       ]
     },
     "H": {
-      "total": 670,
+      "total": 672,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2385,7 +2385,9 @@
         "domain_intelligence-technical-construction-intelligence-apache-pinot-core-invariants",
         "DOM-H-CC34C8D8",
         "domain_intelligence-technical-construction-intelligence-apache-pinot-learnings-core-invariants",
-        "DOM-H-7DD90772"
+        "DOM-H-7DD90772",
+        "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-learnings-core-invariant"
       ]
     },
     "I": {
@@ -12044,8 +12046,8 @@
       "title": "Research & Knowledge Intelligence: timm/mobilenetv3_small_100.lamb_in1k Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-timm-mobilenetv3_small_100-lamb_in1k-research-knowledge-intelligence-timm-mob.md",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "39f2f41771fff749849a2137416c33efcbc2f79e036ab7e062af244dfd1a943e",
-      "created_at": "2026-11-23T04:08:10.202Z"
+      "content_hash": "9f54dd3bb01ed32b7c6b37558b9729bb91fd32364991394ac6c5621716bf56ca",
+      "created_at": "2026-11-26T18:24:12.149Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants",
@@ -16116,8 +16118,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "8035e34a0b0e13669a1364945db3b1daa3067aef2c7c0594bcba44106bef196e",
-      "created_at": "2026-11-26T14:04:13.078Z"
+      "content_hash": "591dc3e9ca05f8c8dfe63606f47d820d04b5d74b0f5527b3836ebd85bb4d85be",
+      "created_at": "2026-11-26T18:24:24.907Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -18042,8 +18044,8 @@
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "repository": "hashicorp/terraform",
-      "content_hash": "b69106985b06115b8e929faa167faf34a5ab076a9eac7fff597a48d760c4f4f5",
-      "created_at": "2026-11-26T00:46:34.612Z"
+      "content_hash": "e3cfba4a5734305780e24b14e90274eaf0a026fbd7a753630150dd3b75b9a29a",
+      "created_at": "2026-11-26T18:24:22.021Z"
     },
     "DOM-D-666917A5": {
       "record_id": "DOM-D-666917A5",
@@ -18102,8 +18104,8 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-learnings-architecture-intelligence-hashicorp-terraform-lear.md",
       "repository": "hashicorp-terraform-learnings",
-      "content_hash": "bb338da61c8ae9aecd35ca534f6cd311dd6f0ae387e95d5533da34c1bcf73f6d",
-      "created_at": "2026-11-26T00:46:46.737Z"
+      "content_hash": "3fdc2e1e3fd4e7805b5f69b664773c0635e49e1cb25d00bde84e57d9b806c033",
+      "created_at": "2026-11-26T18:24:31.119Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
@@ -20665,8 +20667,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "1c3c31fea9b56d2effc43ba542df53c25e73b092b87f717475d4035aeaa17673",
-      "created_at": "2026-11-26T09:13:07.504Z"
+      "content_hash": "58379b6077ca6682d435d9554de1a175959c770067941d72db81a8ae5a216814",
+      "created_at": "2026-11-26T18:24:32.373Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -46716,6 +46718,24 @@
       "repository": "zulip-zulip-learnings",
       "content_hash": "f8ce144225140033a973bb8b4fedef0ff596cb043832658d3f2a8d629a96f336",
       "created_at": "2026-11-26T17:39:35.819Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: feathersjs/feathers Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-feathersjs-feathers-technical-construction-intelligence-feathersjs-feathers-core.md",
+      "repository": "feathersjs/feathers",
+      "content_hash": "f41ff672872c1795c66289f9236fdff139611d5f4fb3a8d4fc6e58df6fcba2ae",
+      "created_at": "2026-11-26T18:24:19.890Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: feathersjs-feathers-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-feathersjs-feathers-learnings-technical-construction-intelligence-feathersjs-fea.md",
+      "repository": "feathersjs-feathers-learnings",
+      "content_hash": "3a1415dac4fa25c36b8d429a9cbe5b74f56c3f435ed48d95f062a5d03e62152d",
+      "created_at": "2026-11-26T18:24:29.739Z"
     }
   }
 }

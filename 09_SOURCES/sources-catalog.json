@@ -785,8 +785,8 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "16f591b27f73fac2acabed66aa06b627e15fa82254dc46c0b4196c7bc21babfd",
-    "lastHarvestedAt": "2026-11-23T04:08:10.002Z",
+    "contentHash": "1cd4aa796b5befa6755b8e54b344e92fa84b0f673ba0b2a75f19baf556d7fe42",
+    "lastHarvestedAt": "2026-11-26T18:24:11.847Z",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k"
   },
   "hf-amazon-chronos-2": {
@@ -2903,10 +2903,10 @@
     "repository": "feathersjs/feathers",
     "platform": "github",
     "sourceUrl": "https://github.com/feathersjs/feathers",
-    "sourceVersion": "8c007bc4",
+    "sourceVersion": "61e15794",
     "license": "MIT",
-    "contentHash": "7b769367c8dc270c6ffc88f1437a79b324263de20ca1db5e22cc9614e2fd030e",
-    "lastHarvestedAt": "2026-10-31T02:00:27.241Z",
+    "contentHash": "3c20016017f8ddcbd203cb80207108e0ae147ea94f54cae086ee5e782eed4b7b",
+    "lastHarvestedAt": "2026-11-26T18:24:19.267Z",
     "learningId": "learn-github-feathersjs-feathers"
   },
   "litmuschaos-litmus": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "fc120870",
+    "sourceVersion": "90b55382",
     "license": "MIT",
-    "contentHash": "c4dc07246ac4a6b0a9a81596243989e8b88faf6678dbb8dfa31bb12ed6bc05f3",
-    "lastHarvestedAt": "2026-11-26T14:04:12.612Z",
+    "contentHash": "e99435686fc2639bb54b00c270e1dc79ea1879e13aeeab3189f4639f646bb077",
+    "lastHarvestedAt": "2026-11-26T18:24:24.157Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "279a0c24",
+    "sourceVersion": "b07e3171",
     "license": "NOASSERTION",
-    "contentHash": "714b5e86ebe610c222a118afabd926f583bb5857c23d1791a930ca7c6cbdffef",
-    "lastHarvestedAt": "2026-11-26T00:46:34.113Z",
+    "contentHash": "675d54f1ccdb27b6c9f29759e31d03ad1f46731e41e1a2c78120b8a9018c8d6a",
+    "lastHarvestedAt": "2026-11-26T18:24:21.404Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {

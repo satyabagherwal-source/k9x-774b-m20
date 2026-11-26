@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:14:37.966Z",
-  "total_cycles_completed": 12819,
-  "total_learnings_persisted": 12819,
-  "total_rules_promoted": 11654,
+  "last_updated": "2026-11-26T18:24:24.173Z",
+  "total_cycles_completed": 12823,
+  "total_learnings_persisted": 12823,
+  "total_rules_promoted": 11657,
   "history": [
-    {
-      "timestamp": "2026-11-26T07:57:55.980Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T08:10:13.572Z",
-      "repository": "apple/FastFrames-L",
-      "learningId": "learn-huggingface-apple-fastframes-l",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T08:10:15.618Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T08:10:21.706Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T08:22:14.921Z",
       "repository": "tencent/Hy4-flash",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T18:14:37.966Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:24:11.862Z",
+      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:24:19.289Z",
+      "repository": "feathersjs/feathers",
+      "learningId": "learn-github-feathersjs-feathers",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:24:21.427Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:24:24.173Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
