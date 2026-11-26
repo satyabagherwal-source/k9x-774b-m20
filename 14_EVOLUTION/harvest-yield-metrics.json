@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:26:53.486Z",
-  "total_cycles_completed": 12596,
-  "total_learnings_persisted": 12596,
-  "total_rules_promoted": 11509,
+  "last_updated": "2026-11-26T06:35:24.033Z",
+  "total_cycles_completed": 12598,
+  "total_learnings_persisted": 12598,
+  "total_rules_promoted": 11510,
   "history": [
-    {
-      "timestamp": "2026-11-25T11:51:25.732Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:59:41.484Z",
-      "repository": "thinkingmachines/TML-d24-varloop-research",
-      "learningId": "learn-huggingface-thinkingmachines-tml-d24-varloop-research",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T11:59:44.033Z",
       "repository": "LiquidAI/LFM3-VL-2B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T06:26:53.486Z",
       "repository": "oshai/kotlin-logging",
       "learningId": "learn-github-oshai-kotlin-logging",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:35:20.865Z",
+      "repository": "n4ze3m/tiny-voca",
+      "learningId": "learn-huggingface-n4ze3m-tiny-voca",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:35:24.033Z",
+      "repository": "xevrion/hatchzip",
+      "learningId": "learn-github-xevrion-hatchzip",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

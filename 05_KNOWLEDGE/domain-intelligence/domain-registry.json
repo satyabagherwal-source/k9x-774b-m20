@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T06:27:07.017Z",
+  "last_updated": "2026-11-26T06:35:35.275Z",
   "total_records": 2715,
   "domains": {
     "A": {
@@ -8485,8 +8485,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ac088cd2b207b619bdf80172332b2e05ac615ea19080a02e3154d768e0afe0b8",
-      "created_at": "2026-11-26T05:38:43.509Z"
+      "content_hash": "22de63c9d4a53a3e61daf59091fa63e3c22ac72f414cf16df9cf9318bf5bffe5",
+      "created_at": "2026-11-26T06:35:35.275Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -24886,8 +24886,8 @@
       "title": "Research & Knowledge Intelligence: n4ze3m/tiny-voca Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-n4ze3m-tiny-voca-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invari.md",
       "repository": "n4ze3m/tiny-voca",
-      "content_hash": "943827916fc0e7307e7993e12e28ad2318158c70ea9a48d453e2875923433936",
-      "created_at": "2026-11-22T11:14:15.877Z"
+      "content_hash": "580cfac7bb751613872ee3bc6b1bee5fb05743018c3d5d52d2f757774bc4f792",
+      "created_at": "2026-11-26T06:35:21.088Z"
     },
     "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants",
@@ -24946,8 +24946,8 @@
       "title": "Research & Knowledge Intelligence: hf-n4ze3m-tiny-voca-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-n4ze3m-tiny-voca-learnings-research-knowledge-intelligence-hf-n4ze3m-tiny-voc.md",
       "repository": "hf-n4ze3m-tiny-voca-learnings",
-      "content_hash": "dc4b0e5c389f77d9f87ad8acb64a22768c43df8a1c345113f369ad72c9eea323",
-      "created_at": "2026-11-22T11:14:28.583Z"
+      "content_hash": "9295f69a1e2c5472614afc7c00a785696e8a416ea058ceca999ec4454fbae0c7",
+      "created_at": "2026-11-26T06:35:34.393Z"
     },
     "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants",
@@ -39906,8 +39906,8 @@
       "title": "Architecture Intelligence: xevrion/hatchzip Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-architecture-intelligence-xevrion-hatchzip-core-invariants.md",
       "repository": "xevrion/hatchzip",
-      "content_hash": "96742b51e7917503d8e666debe85cab97c9529c5e7d040518788e0ba667a2876",
-      "created_at": "2026-11-23T21:14:35.854Z"
+      "content_hash": "6a5e85908540154287dca9014477411c6876890bdac33753d6711681e6e4298f",
+      "created_at": "2026-11-26T06:35:24.490Z"
     },
     "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants",
@@ -39915,8 +39915,8 @@
       "title": "Architecture Intelligence: xevrion-hatchzip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-learnings-architecture-intelligence-xevrion-hatchzip-learnings-.md",
       "repository": "xevrion-hatchzip-learnings",
-      "content_hash": "b5dd98d1b5d269b244f5aec72e05e17fbc738d9fd7e580cd522aa22667d133a5",
-      "created_at": "2026-11-23T21:14:51.926Z"
+      "content_hash": "7bd0ab47720e4c2890234f28394586d50ac236ae235328463d6ced643c3a182e",
+      "created_at": "2026-11-26T06:35:33.759Z"
     },
     "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants",

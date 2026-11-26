@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/n4ze3m/tiny-voca",
   "source_version": "hf-n4ze3m-tiny-voca",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T11:14:15.876Z",
+  "timestamp": "2026-11-26T06:35:21.088Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [n4ze3m/tiny-voca](https://huggingface.co/n4ze3m/tiny-voca) (Revision: `hf-n4ze3m-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T11:14:15.876Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T06:35:21.088Z`  
 > **Learning ID**: `learn-huggingface-n4ze3m-tiny-voca`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/n4ze3m/tiny-voca](https://huggingface.co/n4ze3m/tiny-voca))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T11:14:15.036Z  
+> **Harvest Timestamp**: 2026-11-26T06:35:20.160Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 10768 downloads | 384 likes
+- **Stars / Engagement**: 15278 downloads | 444 likes
 
 ---
 

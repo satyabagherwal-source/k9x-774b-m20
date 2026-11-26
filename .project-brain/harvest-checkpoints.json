@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T06:26:53.490Z",
+  "last_updated": "2026-11-26T06:35:24.036Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19161,14 +19161,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
-      "content_hash": "4b264235e1fb10c6991ee890d0b72f61bb69a4b5654e5d7fbde32c64adde8048",
-      "verified_at": "2026-11-22T11:14:15.689Z",
+      "content_hash": "905c4867e9140fa0fbb4b31565abb4f73672c9c76602227451d25d0486133e8e",
+      "verified_at": "2026-11-26T06:35:20.867Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T11:14:15.689Z"
+      "last_updated": "2026-11-26T06:35:20.867Z"
     },
     "yazinsai/OpenOats": {
       "repository": "yazinsai/OpenOats",
@@ -19551,14 +19551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xevrion-hatchzip",
-      "content_hash": "f8a36f15f12d4c6620c85e01a12801ba3cbc2ff06877073e3d91dee818ef39b9",
-      "verified_at": "2026-11-23T21:14:35.329Z",
+      "content_hash": "566d4b3ddea164674332ac25b6b9b3bac002bd598633b4f78053e6aad0a5a4d3",
+      "verified_at": "2026-11-26T06:35:24.036Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:14:35.329Z"
+      "last_updated": "2026-11-26T06:35:24.036Z"
     },
     "thejagstudio/tessera-small": {
       "repository": "thejagstudio/tessera-small",

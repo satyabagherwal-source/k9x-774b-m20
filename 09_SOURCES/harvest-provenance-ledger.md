@@ -13308,3 +13308,5 @@ Every entry in this ledger must capture:
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `81531859` | Multi-dimensional audit evidence | 2026-11-26T06:18:30.445Z |
 | `learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf` | `https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | `hf-hauhauc` | Multi-dimensional audit evidence | 2026-11-26T06:26:51.607Z |
 | `learn-github-oshai-kotlin-logging` | `https://github.com/oshai/kotlin-logging` | `0eeeba0c` | Multi-dimensional audit evidence | 2026-11-26T06:26:53.472Z |
+| `learn-huggingface-n4ze3m-tiny-voca` | `https://huggingface.co/n4ze3m/tiny-voca` | `hf-n4ze3m-` | Multi-dimensional audit evidence | 2026-11-26T06:35:20.851Z |
+| `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `07c0e5ca` | Multi-dimensional audit evidence | 2026-11-26T06:35:24.019Z |

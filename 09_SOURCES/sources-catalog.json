@@ -12715,8 +12715,8 @@
     "sourceUrl": "https://huggingface.co/n4ze3m/tiny-voca",
     "sourceVersion": "hf-n4ze3m-tiny-voca",
     "license": "Open-Source",
-    "contentHash": "4b264235e1fb10c6991ee890d0b72f61bb69a4b5654e5d7fbde32c64adde8048",
-    "lastHarvestedAt": "2026-11-22T11:14:15.681Z",
+    "contentHash": "905c4867e9140fa0fbb4b31565abb4f73672c9c76602227451d25d0486133e8e",
+    "lastHarvestedAt": "2026-11-26T06:35:20.851Z",
     "learningId": "learn-huggingface-n4ze3m-tiny-voca"
   },
   "yazinsai-openoats": {
@@ -12973,10 +12973,10 @@
     "repository": "xevrion/hatchzip",
     "platform": "github",
     "sourceUrl": "https://github.com/xevrion/hatchzip",
-    "sourceVersion": "f1fe89a9",
+    "sourceVersion": "07c0e5ca",
     "license": "Apache-2.0",
-    "contentHash": "f8a36f15f12d4c6620c85e01a12801ba3cbc2ff06877073e3d91dee818ef39b9",
-    "lastHarvestedAt": "2026-11-23T21:14:35.317Z",
+    "contentHash": "566d4b3ddea164674332ac25b6b9b3bac002bd598633b4f78053e6aad0a5a4d3",
+    "lastHarvestedAt": "2026-11-26T06:35:24.019Z",
     "learningId": "learn-github-xevrion-hatchzip"
   },
   "hf-thejagstudio-tessera-small": {

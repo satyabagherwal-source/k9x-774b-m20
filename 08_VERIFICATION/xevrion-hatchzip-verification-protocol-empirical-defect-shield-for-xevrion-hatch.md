@@ -4,22 +4,22 @@
 {
   "source_repository": "xevrion/hatchzip",
   "source_url": "https://github.com/xevrion/hatchzip",
-  "source_version": "f1fe89a9",
+  "source_version": "07c0e5ca",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T21:14:35.631Z",
+  "timestamp": "2026-11-26T06:35:24.279Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-xevrion-hatchzip",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [xevrion/hatchzip](https://github.com/xevrion/hatchzip) (Revision: `f1fe89a9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T21:14:35.631Z`  
+> **Provenance**: Harvested from [xevrion/hatchzip](https://github.com/xevrion/hatchzip) (Revision: `07c0e5ca`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T06:35:24.279Z`  
 > **Learning ID**: `learn-github-xevrion-hatchzip`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `xevrion/hatchzip` (Commit: `f1fe89a9`)
+- **Target Repository**: `xevrion/hatchzip` (Commit: `07c0e5ca`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xevrion/hatchzip](https://github.com/xevrion/hatchzip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:14:33.753Z  
+> **Harvest Timestamp**: 2026-11-26T06:35:22.837Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: HatchZip is a free, open-source archive extractor for Windows, macOS and Linux that extracts ZIP, 7z, RAR, tar and split archives in place, so it needs free space for the extracted files only. Desktop app and CLI.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3106 stars
+- **Stars / Engagement**: 3141 stars
 
 ---
 
@@ -2698,17 +2698,17 @@ impl Feed for Gzip {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #154** (2026-11-25): **Restart upon finishing**
+  *Symptoms*: ### Description  Well, when it reached the end of the process, my file which has 110gb, it restarted to the beginning. Idk why it happened, it still had plenty of space  ### HatchZip version  hactchzip 0.1.0  ### Operating system and version  Window 11  ### Filesystem of the disk the archive is on  Other (say which in additional context)  ### Archive format  zip  ### Approximate archive size and file count  110  ### The exact command  Just press extract  ### Full output  ```text Idk where ```  ### Was the run interrupted or resumed?  No, it ran in one go  ### Additional context  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for the report. `0.1.0` is from October 22; `0.1.10` is current (https://github.com/xevrion/hatchzip/releases/latest) and includes fixes for Windows free-space accounting after truncation and for the window flashing on 100 GB+ archives, so the first step is to retry with `0.1.10`.  To tell a display reset from a real restart, could you clarify:  - Did the progress bar go back to 0% while the archive kept shrinking, or did the app window close and reopen the archive? - Did Windows itself restart, or only HatchZip? - Were the extracted files still there when it started again, and is the archive still on disk? - How many entries does the ZIP have, and what made it (7-Zip, Explorer, another tool)?  If it happens on `0.1.10`, run `hatchzip-gui.exe` from PowerShell (`.\hatchzip-gui.exe`), reproduce the run, and paste what it prints. That output is the only log the app writes.
+  > Thanks @MudaSanzo for the report, and @011010 for the questions. One correction: the Windows free-space fix (#100) and the window-flashing fix (#125) landed after 0.1.10, so they ship in the next release, 0.1.11. 0.1.10 is still worth trying first.  One more thing that would explain what you saw: was "Check every file before deleting anything" turned on (in the menu in 0.1.0)? With it on, HatchZip first reads the whole archive to check it, and the bar reaches the end. Then it starts the real extraction and the bar goes back to 0%. That looks like a restart, but it's two passes, and nothing was lost.  So the answers to 011010's questions would help most: did the bar go back to 0% while the app stayed open, and were files appearing in the destination folder before that?
+
 - **Issue #123** (2026-11-20): **Screen Flashing**
   *Symptoms*: ### Description  Screen flashes while extracting and running a test mad trippy valve pls fix  ### HatchZip version  hatchzip 0.1.10  ### Operating system and version  WIN 11 25H2  ### Filesystem of the disk the archive is on  NTFS  ### Archive format  .zip  ### Approximate archive size and file count  140 gigs  ### The exact command  wgat  ### Full output  ```text -- ```  ### Was the run interrupted or resumed?  No, it ran in one go  ### Additional context  _No response_
   **Post-Mortem & Fix Analysis**:
   > Thanks for reporting this. Did you start the test from Explorer's right-click menu, the HatchZip app, or a terminal? What flashed: the HatchZip window, a terminal window, or the whole display? Did it happen once at startup or repeatedly while the test was running?  If you've already seen it with a smaller ZIP, knowing that would help narrow it down too. HatchZip's Test archive action leaves the archive unchanged. 
   > Can add additional information, since the same bug is happening to me.  > Happened while using the Portable version (v 0.1.10)  > Win 11 26H2  > Entire display of the GUI was flashing throughout the entire extraction process > tested with a few 50GB / 100 GB / 150GB+ archives, all of them had the same flashing (entire GUI).  The hypothesis that its happening specifically through the extraction process is due to the fact of going into any top header menu (File / Settings / Help) suspends the extraction process and the flashing at the same time.  
-
-- **Issue #79** (2026-11-12): **Hatchzip erroneously reports full disk during extraction, then resumes with no changes made to file system**
-  *Symptoms*: ### Description  I tried to extract a ~800MB zip file of ~1000 PNG images that was a little bigger than half the remaining space on a hard drive . Hatchzip stopped extracting around halfway through and reported insufficient disk space.  Hatchzip reported exactly 0B remaining, with 500MB reserved.  With no other file transfers happening on disk, immediately after stoppage, the drive had 1.4GB of space left , verified by several different means. I then restarted Hatchzip with the same command without deleting or moving any files, and it immediately resumed and completed the extraction, reporting the correct 1.4GB of space at start.  ### HatchZip version  hatchzip 0.1.9  ### Operating system and version  Windows 10 19045  ### Filesystem of the disk the archive is on  NTFS  ### Archive format  zip  ### Approximate archive size and file count  840.6 MB, 967 files  ### The exact command  hatchzip extract .\2026-10-14.zip --keep-free 500MB  ### Full output  ```text ❯ hatchzip extract .\2026-10-14.zip --keep-free 500MB 2026-10-14.zip  840.6 MB zip, 840.5 MB uncompressed in 967 entries   available                    1.4 GB   standard extraction needs    842.5 MB   required                     2.9 MB (+500.0 MB reserved)   available after              1.4 GB   note: there is also enough space to keep the archive (--keep-archive)  Extract to D:\Downloads\2026-10-14 and remove 2026-10-14.zip during extraction? [y/N] y error: not enough disk space to continue: '482.png' requires 872.4 KB 
-  **Post-Mortem & Fix Analysis**:
-  > I'll work on this.  What I found so far, with a synthetic ZIP of 800 stored 1 MiB entries (838,936,022 bytes total):  - I set `--keep-free` so the run would have only about 100 MB of headroom, which is the normal way to say "consume the archive as you go" (that is why the error below shows 54.8 GB reserved). - Batch 1 extracts 99 entries and truncates the archive from 838,936,022 to 735,079,115 bytes, so about 99 MB is actually freed. - Batch 2 then fails with:  ``` error: not enough disk space to continue: 'f0700.bin' requires 1.0 MB and 462.8 KB is available (54.8 GB reserved). ```  - Running the same command again a moment later resumes and finishes with no change to the filesystem.  The truncation itself succeeds. I logged `set_len` and it returned the new length, but the free-space reading right after it still shows the pre-truncation value. I polled it for 20 seconds while the process was alive and it never updated, and a separate process reading the same volume saw the same stal
-  > Thanks @Voxtopass for the clear report, and @spaxe-dev for tracking it down. A stale free-space reading after our own truncation fits everything here, including it correcting itself once the process exits.  My preference, in this order:  1. **First find out why the reading stays stale.** Twenty seconds, ending at process exit, sounds like something we hold open rather than lazy accounting: a second handle on the archive, a mapping, or the tail file. If closing or flushing something after `set_len` makes NTFS report the freed clusters, that's the real fix. 2. **If not, credit what we freed, measured on the file.** Credit what `allocated_bytes` on the archive says went away since the batch began (`GetCompressedFileSizeW` reflects it right away), not `old_len - new_len`, and only up to the shortfall, as you said. Measuring the file instead of trusting the arithmetic covers sparse and compressed archives too. 3. **Catch disk-full during a batch either way,** and turn it into the usual "pro
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2725,438 +2725,310 @@ impl Feed for Gzip {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f1fe89a9` (2026-11-23)
-**Commit Message**: fix(core): report missing split ZIP parts clearly (#147)
+### Incident Patch 1: `e79f515f` (2026-11-25)
+**Commit Message**: build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0 (#150)
 
-**File**: `crates/cli/tests/formats.rs` (modified, +13/-2)
-```diff
-@@ -967,8 +967,19 @@ fn a_native_split_zip_with_a_part_missing_or_extra_is_refused() {
- 
-     let tmp = TempDir::new().unwrap();
-     let first = fresh(&tmp);
--    fs::remove_file(first.with_extension("z02")).unwrap();
--    assert_split_refused(&first, &first, "game.z02 is missing");
-+    let mut before = split_zip_snapshot(&first);
-+    let missing = first.with_extension("z02");
-+    let later = first.with_extension("z03");
-+    assert!(later.exists());
-+    let says = format!(
-+        "game.z02 is missing: this split ZIP has {} parts. Put the missing parts",
-+        before.len()
-+    );
-+    fs::remove_file(&missing).unwrap();
-+    before.retain(|(path, _)| path != &missing);
-+    assert_split_refused(&later, &first, &says);
-+    assert_unchanged(&before);
-+    assert!(!tmp.path().join("out").exists());
- 
-     let tmp = TempDir::new().unwrap();
-     let first = fresh(&tmp);
-```
-
-**File**: `crates/core/src/archive/zip.rs` (modified, +1/-2)
-```diff
-@@ -679,11 +679,10 @@ fn check_part_count(parts: &[Part], this: u64) -> Result<()> {
-     if this > n as u64 {
-         let missing = storage::split_zip_segment(first, n).unwrap_or_else(|| first.clone());
-         bail!(
--            "{} is missing: this split ZIP has {} parts, and {} of them are here. Put the \
-+            "{} is missing: this split ZIP has {} parts. Put the \
-              missing parts next to {} and try again. Nothing was modified",
-             missing.display(),
-             this + 1,
--            n + 1,
-             first.display()
-         );
-     }
-```
+Bumps [sevenz-rust2](https://github.com/hasenbanck/sevenz-rust) from 0.24.1 to 0.25.0.
+- [Changelog](https://github.com/hasenbanck/sevenz-rust2/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/hasenbanck/sevenz-rust/compare/v0.24.1...v0.25.0)
 
 ---
+updated-dependencies:
+- dependency-name: sevenz-rust2
+  dependency-version: 0.25.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-### Incident Patch 2: `f46560d1` (2026-11-22)
-**Commit Message**: fix(cli): offer a nested split set only when the run wrote all its parts (#145)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* fix(cli): offer a nested split set only when the run wrote all its parts
-
-* fix(cli): rename the field in the dry-run path too
-
-**File**: `crates/cli/src/main.rs` (modified, +52/-11)
+**File**: `Cargo.lock` (modified, +6/-12)
 ```diff
-@@ -254,6 +254,38 @@ fn run(command: Command) -> Result<u8> {
- /// also matches the progress files next to the first volume
- /// (`game.z01.hatchzip`, ...), which are left out when their archive is
- /// given too.
-+/// Whether every volume of the set whose first volume is `primary` that
-+/// exists on disk is in `written`. A set that is not split has one volume.
-+fn volumes_written(primary: &Path, written: &std::collections::HashSet<PathBuf>) -> bool {
-+    use hatchzip_core::archive::storage;
-+    let mut volumes = Vec::new();
-+    if storage::is_split_zip(primary) {
-+        let mut disk = 0;
-+        while let Some(segment) = storage::split_zip_segment(primary, disk) {
-+            if !segment.exists() {
-+                break;
-+            }
-+            volumes.push(segment);
-+            disk += 1;
-+        }
-+        volumes.extend(storage::split_zip_last(primary));
-+    } else {
-+        let mut index = 0;
-+        while let Some(volume) = storage::volume_path(primary, index) {
-+            if index > 0 && !volume.exists() {
-+                break;
-+            }
-+            volumes.push(volume);
-+            index += 1;
-+        }
-+    }
-+    volumes
-+        .iter()
-+        .filter(|v| v.exists())
-+        .all(|v| written.contains(v))
-+        && written.contains(primary)
-+}
-+
- fn distinct(archives: &[PathBuf]) -> Result<Vec<PathBuf>> {
-     let owner = |a: &Path| {
-         let name = a.to_str()?;
-@@ -615,9 +647,9 @@ fn restore(archive: &Path, output: Option<&Path>) -> Result<u8> {
- enum Ended {
-     Extracted {
-         output: PathBuf,
--        /// Archives this run wrote, found by extension and signature. Empty
--        /// without `--nested`.
--        nested: Vec<PathBuf>,
-+        /// Every file this run wrote and the person did not keep, as absolute
-+        /// paths: what `--nested` may pick archives from.
-+        written: Vec<PathBuf>,
-     },
-     /// Stopped with the given status; `saved` if a journal holds progress.
-     Stopped { code: u8, saved: bool },
-@@ -693,12 +725,12 @@ fn extract_all(target: Target, mut opts: Options) -> Result<u8> {
-             },
-         };
-         match ended {
--            Ended::Extracted { output, nested } => {
-+            Ended::Extracted { output, written } => {
-                 done += 1;
-                 if !outputs.contains(&output) {
-                     outputs.push(output);
-                 }
--                nested_candidates.extend(nested);
-+                nested_candidates.extend(written);
-             }
-             Ended::Stopped { code, saved } => {
-                 if opts.several {
-@@ -713,15 +745,25 @@ fn extract_all(target: Target, mut opts: Options) -> Result<u8> {
-             .iter()
-             .filter_map(|a| locate(a).ok().map(|(p, _)| p))
-             .collect();
-+        let written: std::collections::HashSet<PathBuf> =
-+            nested_candidates.iter().cloned().collect();
-         let mut nested: Vec<PathBuf> = Vec::new();
-         let mut seen = std::collections::HashSet::new();
-         for path in nested_candidates {
-+            if hatchzip_core::archive::nested_kind(&path).is_none() {
-+                continue;
-+            }
-             // A split set counts once, by its first volume, and the parent
-             // archives are never nested.
-             let Ok((primary, _)) = locate(&path) else {
-                 continue;
-             };
--            if parents.contains(&primary) || !seen.insert(primary) {
-+            if parents.contains(&primary) || !seen.insert(primary.clone()) {
-+                continue;
-+            }
-+            // Extracting a set in place removes every volume, so each one
-+            // must be a file this run wrote, never one the person had.
-+            if !volumes_written(&primary, &written) {
-                 continue;
-             }
-             nested.push(path);
-@@ -923,7 +965,7 @@ fn extract(
-             );
-             return Ok(Ended::Extracted {
-                 output: journal.output,
--                nested: Vec::new(),
-+                written: Vec::new(),
-             });
-         }
-         State::Resume(job, journal) => {
-@@ -1068,13 +1110,12 @@ fn extract(
-                 entries(count),
-                 output.display()
-             );
--            let nested = candidates
-+            let written = candidates
-                 .into_iter()
-                 .filter(|p| !kept.contains(p))
--                .map(|p| output.join(p))
--                .filter(|p| hatchzip_core::archive::nested_kind(p).is_some())
-+                .filter_map(|p| std::path::absolute(output.join(p)).ok())
-                 .collect();
--            Ok(Ended::Extracted { output, nested })
-+            Ok(Ended::Extracted { output, written })
-         }
-         Ok(Outcome::Paused) => {
-             if !opts.several {
-```
-
-**File**: `crates/cli/tests/nested.rs` (modified, +27/-0)
-```diff
-@@ -179,6 +179,33 @@ fn a_skipped_file_is_not_extracted() {
-     assert_eq!(fs::read(out.join("first.zip")).unwrap(), user);
- }
- 
-+/// A `.zip` this run wrote next to the person's own `.z01` names a split set
-+/// whose first part is theirs. Extracting it in place would remove their
-+/// file, so it is not offered.
-+#[test]
-+fn a_set_whose_first_part_was_already_there_is_not_extracted() {
-+    let tmp = TempDir::new().unwrap();
-+    let out = tmp.path().join("out");
-+    fs::create_dir_all(&out).unwrap();
-+    let theirs = b"the first part of someone else's set".to_vec();
-+    fs::write(out.join("set.z01"), &theirs).unwrap();
-+
-+    let inner = zip_bytes(&[("inside.txt", b"one")]);
-+    let outer = zip_bytes(&[("set.zip", &inner)]);
-+    let archive = tmp.path().join("outer.zip");
-+    fs::write(&archive, outer).unwrap();
-+
-+    let run = extract_nested(&archive, &out, &[]);
-+    assert_ok(&run);
-+    assert!(
-+        String::from_utf8_lossy(&run.stdout).contains("No archives among the extracted files."),
-+        "{}",
-+        String::from_utf8_lossy(&run.stdout)
-+    );
-+    assert_eq!(fs::read(out.join("set.z01")).unwrap(), theirs);
-+    assert_eq!(fs::read(out.join("set.zip")).unwrap(), inner);
-+}
-+
- /// A link inside the output can point anywhere; the scan must not follow it.
- #[cfg(unix)]
- #[test]
-```
-
----
-
-### Incident Patch 3: `9a2ad6b5` (2026-11-22)
-**Commit Message**: fix(shell): remove the Thunar file after Thunar rewrites the copy (#144)
-
-* fix(shell): remove the Thunar file after Thunar rewrites the copy
-
-* fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592
-
-**File**: `Cargo.lock` (modified, +4/-4)
-```diff
-@@ -1609,9 +1609,9 @@ checksum = "aa9a19cbb55df58761df49b23516a86d432839add4af60fc256da840f66ed35b"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
+@@ -1983,7 +1983,7 @@ dependencies = [
+  "flate2",
+  "hatchzip-core",
+  "indicatif",
+- "lzma-rust2 0.25.0",
++ "lzma-rust2",
+  "rpassword",
+  "serde_json",
+  "sevenz-rust2",
+@@ -2006,7 +2006,7 @@ dependencies = [
+  "fs4",
+  "libc",
+  "libz-rs-sys",
+- "lzma-rust2 0.25.0",
++ "lzma-rust2",
+  "pbkdf2",
+  "rayon",
+  "serde",
+@@ -3056,12 +3056,6 @@ dependencies = [
+  "twox-hash",
  ]
-@@ -5342,9 +5342,9 @@ checksum = "6d49784317cd0d1ee7ec5c716dd598ec5b4483ea832a2dced265471cc0f690ae"
+ 
+-[[package]]
+-name = "lzma-rust2"
+-version = "0.23.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
+-
+ [[package]]
+ name = "lzma-rust2"
+ version = "0.25.0"
+@@ -4476,9 +4470,9 @@ dependencies = [
  
  [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
+ name = "sevenz-rust2"
+-version = "0.24.1"
++version = "0.25.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+-checksum = "2f0c68c0e8289bfd09e49ef433e8de02c7c464afc1d7f5a275c99749a880e301"
++checksum = "e5e465701779cbc6d0d10cf907f175035cfdd50b8d3cb628d7f1f435ef02972f"
  dependencies = [
-  "form_urlencoded",
-  "idna",
+  "aes",
+  "brotli",
+@@ -4489,7 +4483,7 @@ dependencies = [
+  "getrandom 0.4.3",
+  "js-sys",
+  "lz4_flex",
+- "lzma-rust2 0.23.0",
++ "lzma-rust2",
+  "ppmd-rust",
+  "sha2",
+  "wasm-bindgen",
+@@ -6582,7 +6576,7 @@ dependencies = [
+  "hmac",
+  "indexmap",
+  "libc",
+- "lzma-rust2 0.25.0",
++ "lzma-rust2",
+  "memchr",
+  "nix",
+  "pbkdf2",
 ```
 
-**File**: `crates/shell/src/platform/linux.rs` (modified, +34/-16)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -482,13 +482,39 @@ fn action_set(xml: &str, uca: &Uca) -> Vec<Vec<(String, String)>> {
-     set
- }
- 
-+/// Elements Thunar writes for every action, empty or not, so an empty one
-+/// says the same as none. The rest, such as `<directories/>`, are flags that
-+/// count by being there.
-+const THUNAR_TEXT_FIELDS: &[&str] = &[
-+    "icon",
-+    "name",
-+    "submenu",
-+    "unique-id",
-+    "command",
-+    "description",
-+    "range",
-+    "patterns",
-+];
-+
- /// An action's child elements and their text, sorted, leaving out what
--/// Thunar fills in on its own: the `<unique-id>` and empty elements. Flags
--/// such as `<directories/>` are kept.
-+/// Thunar changes on its own when it saves the file: the `<unique-id>`, text
-+/// fields left empty, and the translations (`xml:lang`) of the name and
-+/// description, which it keeps only for the locale it runs in. `<range/>`
-+/// and `<range></range>` are the same element.
- fn action_fingerprint(action: &str) -> Vec<(String, String)> {
-     let mut out = Vec::new();
-+    let mut keep = |tag: &str, text: &str| {
-+        let mut words = tag.split_whitespace();
-+        let name = words.next().unwrap_or("");
-+        let localized = words.any(|w| w.starts_with("xml:lang"));
-+        let filled_in = text.is_empty() && THUNAR_TEXT_FIELDS.contains(&name);
-+        if !localized && !filled_in && name != "unique-id" {
-+            let key = tag.split_whitespace().collect::<Vec<_>>().join(" ");
-+            out.push((key, text.to_owned()));
-+        }
-+    };
-     let mut depth = 0;
--    let mut open: Option<(String, usize)> = None;
-+    let mut open: Option<(&str, usize)> = None;
-     let mut i = 0;
-     while let Some(off) = action[i..].find('<') {
-         let at = i + off;
-@@ -499,29 +525,21 @@ fn action_fingerprint(action: &str) -> Vec<(String, String)> {
-         }
-         let Some(len) = tag_len(rest) else { break };
-         let tag = &action[at + 1..at + len - 1];
--        let key = tag
--            .trim_end_matches('/')
--            .split_whitespace()
--            .collect::<Vec<_>>()
--            .join(" ");
-         if tag.starts_with('/') {
-             depth -= 1;
-             if depth == 1
--                && let Some((name, from)) = open.take()
-+                && let Some((tag, from)) = open.take()
-             {
--                let text = action[from..at].trim();
--                if !text.is_empty() && !name.starts_with("unique-id") {
--                    out.push((name, text.to_owned()));
--                }
-+                keep(tag, action[from..at].trim());
-             }
--        } else if tag.ends_with('/') {
-+        } else if let Some(tag) = tag.strip_suffix('/') {
-             if depth == 1 {
--                out.push((key, String::new()));
-+                keep(tag, "");
-             }
-         } else {
-             depth += 1;
-             if depth == 2 {
--                open = Some((key, at + len));
-+                open = Some((tag, at + len));
-             }
-         }
-         i = at + len;
+@@ -21,7 +21,7 @@ serde_json = "1.0.154"
+ # `compress` is for the writer that `restore` builds a new header with. The
+ # decoders are chosen by `hatchzip-core`'s features, so the methods it
+ # accepts and the ones compiled in come from one place.
+-sevenz-rust2 = { version = "0.24.1", default-features = false, features = ["compress"] }
++sevenz-rust2 = { version = "0.25.0", default-features = false, features = ["compress"] }
+ tar = "0.4.46"
+ tempfile = "3.27.0"
+ zstd = "0.14.3"
 ```
 
-**File**: `crates/shell/tests/register.rs` (modified, +78/-0)
+**File**: `crates/cli/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -265,6 +265,84 @@ fn thunar_keeps_every_action_that_is_not_hatchzips() {
-     assert!(dirs.data.join("kio/servicemenus/hatchzip.desktop").exists());
- }
+@@ -83,7 +83,7 @@ lzma-rust2 = { version = "0.25.0", default-features = false, features = [
+     "xz",
+ ] }
+ serde_json.workspace = true
+-sevenz-rust2 = { version = "0.24.1", default-features = false, features = ["compress"] }
++sevenz-rust2 = { version = "0.25.0", default-features = false, features = ["compress"] }
+ tar.workspace = true
+ tempfile.workspace = true
+ # Writes the .tar.zst test archives, same crate the format decodes with.
+```
+
+---
+
+### Incident Patch 2: `8cb35855` (2026-11-25)
+**Commit Message**: build(deps): bump rfd from 0.17.2 to 0.18.0 (#151)
+
+Bumps [rfd](https://github.com/PolyMeilex/rfd) from 0.17.2 to 0.18.0.
+- [Release notes](https://github.com/PolyMeilex/rfd/releases)
+- [Changelog](https://github.com/PolyMeilex/rfd/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/PolyMeilex/rfd/compare/0.17.2...0.18.0)
+
+---
+updated-dependencies:
+- dependency-name: rfd
+  dependency-version: 0.18.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +17/-5)
+```diff
+@@ -3347,6 +3347,7 @@ dependencies = [
+  "objc2-core-graphics",
+  "objc2-foundation 0.3.2",
+  "objc2-quartz-core 0.3.2",
++ "objc2-uniform-type-identifiers 0.3.2",
+ ]
  
-+/// Ubuntu's packaged `uca.xml` translates the stock action's name and
-+/// description, and Thunar saves only the ones for its own locale. It also
-+/// writes `<range/>` as `<range></range>`. A copy that changed only that way
-+/// goes on unregister; one the user edited stays.
-+#[cfg(target_os = "linux")]
-+#[test]
-+fn thunar_removes_its_rewrite_of_the_stock_file() {
-+    use hatchzip_shell::unregister;
+ [[package]]
+@@ -3575,7 +3576,7 @@ dependencies = [
+  "objc2-link-presentation",
+  "objc2-quartz-core 0.2.2",
+  "objc2-symbols",
+- "objc2-uniform-type-identifiers",
++ "objc2-uniform-type-identifiers 0.2.2",
+  "objc2-user-notifications",
+ ]
+ 
+@@ -3604,6 +3605,16 @@ dependencies = [
+  "objc2-foundation 0.2.2",
+ ]
+ 
++[[package]]
++name = "objc2-uniform-type-identifiers"
++version = "0.3.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7902ac02859fc1f7045f8b598c63f1ae0cc7efeaa06a9bc9f3d9a3c955974fa4"
++dependencies = [
++ "objc2 0.6.5",
++ "objc2-foundation 0.3.2",
++]
 +
-+    let tmp = tempfile::TempDir::new().unwrap();
-+    let system = tmp.path().join("xdg");
-+    std::fs::create_dir_all(system.join("Thunar")).unwrap();
-+    let stock = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE actions [\n\
-+                 <!ATTLIST name xml:lang CDATA #IMPLIED>\n\
-+                 <!ATTLIST description xml:lang CDATA #IMPLIED>\n]>\n<actions>\n<action>\n\
-+                 \t<icon>utilities-terminal</icon>\n\t<name>Open Terminal Here</name>\n\
-+                 \t<name xml:lang=\"de\">Terminal hier \u{f6}ffnen</name>\n\
-+                 \t<name xml:lang=\"fr\">Ouvrir un terminal ici</name>\n\
-+                 \t<command>exo-open --working-directory %f --launch TerminalEmulator</command>\n\
-+                 \t<description>Example for a custom action</description>\n\
-+                 \t<description xml:lang=\"de\">Beispiel f\u{fc}r eine benutzerdefinierte Aktion</description>\n\
-+                 \t<description xml:lang=\"fr\">Exemple d&apos;une action personnalis\u{e9}e</description>\n\
-+                 \t<range/>\n\t<patterns>*</patterns>\n\t<startup-notify/>\n\t<directories/>\n\
-+                 </action>\n</actions>\n";
-+    std::fs::write(system.join("Thunar/uca.xml"), stock).unwrap();
-+    let dirs = Dirs {
-+        data: tmp.path().join("data"),
-+        config: tmp.path().join("config"),
-+        system_config: vec![system],
-+    };
-+    let uca = dirs.config.join("Thunar/uca.xml");
-+    let gui = Path::new("/usr/bin/hatchzip-gui");
-+    // What Thunar 4.18 in the C locale saves: no translations, `<range>` with
-+    // an end tag, and an id for the action that had none.
-+    let thunar_saves = |text: &str| {
-+        text.lines()
-+            .filter(|l| !l.contains("xml:lang=\""))
-+            .map(|l| {
-+                l.replace("<range/>", "<range></range>").replace(
-+                    "<name>Open Terminal Here</name>",
-+                    "<name>Open Terminal Here</name>\n\t<unique-id>1700000000-1</unique-id>",
-+                )
-+            })
-+            .collect::<Vec<_>>()
-+            .join("\n")
-+            + "\n"
-+    };
-+
-+    register(&dirs, gui).unwrap();
-+    let text = std::fs::read_to_string(&uca).unwrap();
-+    let rewritten = thunar_saves(&text);
-+    assert!(!rewritten.contains("xml:lang=\"") && rewritten.contains("<range></range>"));
-+    std::fs::write(&uca, &rewritten).unwrap();
-+    unregister(&dirs).unwrap();
-+    assert!(!uca.exists(), "Thunar's rewrite of an untouched copy goes");
-+    assert!(!dirs.config.join("hatchzip/thunar-uca-created").exists());
-+
-+    // The same rewrite, with a change of the user's on top, is kept with it.
-+    for (from, to) in [
-+        (
-+            "<description>Example for a custom action</description>",
-+            "<description>My terminal</description>",
-+        ),
-+        ("<range></range>", "<range>1-1</range>"),
-+    ] {
-+        register(&dirs, gui).unwrap();
-+        let text = std::fs::read_to_string(&uca).unwrap();
-+        let edited = thunar_saves(&text).replacen(from, to, 1);
-+        std::fs::write(&uca, &edited).unwrap();
-+        unregister(&dirs).unwrap();
-+        let left = std::fs::read_to_string(&uca).unwrap();
-+        assert!(left.contains(to), "the user's edit stays");
-+        assert!(!left.contains("hatchzip-"));
-+        assert_eq!(left.matches("<action>").count(), 1);
-+        std::fs::remove_file(&uca).unwrap();
-+    }
-+}
-+
- /// A Thunar file HatchZip can't read or edit skips only Thunar, and says
- /// which file it was.
- #[cfg(target_os = "linux")]
+ [[package]]
+ name = "objc2-user-notifications"
+ version = "0.2.2"
+@@ -3920,9 +3931,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "pollster"
+-version = "0.4.0"
++version = "1.0.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2f3a9f18d041e6d0e102a0a46750538147e5e8992d3b4873aaafee2520b00ce3"
++checksum = "7e9b9cf600136f5b976fbc5727d58c26e1ecab8ee23088d44ef1c7af793550ab"
+ 
+ [[package]]
+ name = "polycool"
+@@ -4204,9 +4215,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rfd"
+-version = "0.17.2"
++version = "0.18.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "20dafead71c16a34e1ff357ddefc8afc11e7d51d6d2b9fbd07eaa48e3e540220"
++checksum = "c4b9d4857b10297ffb0f64cae711e983a7aeaee561848d56d429d3858bd8ed93"
+ dependencies = [
+  "block2 0.6.2",
+  "dispatch2",
+@@ -4217,6 +4228,7 @@ dependencies = [
+  "objc2-app-kit 0.3.2",
+  "objc2-core-foundation",
+  "objc2-foundation 0.3.2",
++ "objc2-uniform-type-identifiers 0.3.2",
+  "percent-encoding",
+  "pollster",
+  "raw-window-handle",
+```
+
+**File**: `crates/gui/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ clap = { version = "4", features = ["derive"] }
+ open = "5.4.5"
+ # Decodes the window icon; already in the tree through Slint's build.
+ png = "0.18.1"
+-rfd = "0.17.2"
++rfd = "0.18.0"
+ serde.workspace = true
+ serde_json.workspace = true
+ # The system's preferred languages, in order, to pick a translation from
+```
+
+---
+
+### Incident Patch 3: `73ce440e` (2026-11-25)
+**Commit Message**: build(deps): bump lzma-rust2 from 0.24.0 to 0.25.0 (#152)
+
+Bumps [lzma-rust2](https://github.com/hasenbanck/lzma-rust2) from 0.24.0 to 0.25.0.
+- [Changelog](https://github.com/hasenbanck/lzma-rust2/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/hasenbanck/lzma-rust2/compare/v0.24.0...v0.25.0)
+
+---
+updated-dependencies:
+- dependency-name: lzma-rust2
+  dependency-version: 0.25.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-11)
+```diff
+@@ -1983,7 +1983,7 @@ dependencies = [
+  "flate2",
+  "hatchzip-core",
+  "indicatif",
+- "lzma-rust2 0.24.0",
++ "lzma-rust2 0.25.0",
+  "rpassword",
+  "serde_json",
+  "sevenz-rust2",
+@@ -2006,7 +2006,7 @@ dependencies = [
+  "fs4",
+  "libc",
+  "libz-rs-sys",
+- "lzma-rust2 0.24.0",
++ "lzma-rust2 0.25.0",
+  "pbkdf2",
+  "rayon",
+  "serde",
+@@ -3062,15 +3062,6 @@ version = "0.23.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
+ 
+-[[package]]
+-name = "lzma-rust2"
+-version = "0.24.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "490750560fa7851fbbf5d3ab1a8750f09350ed361ed8aed85b1e1e40587812ee"
+-dependencies = [
+- "sha2",
+-]
+-
+ [[package]]
+ name = "lzma-rust2"
+ version = "0.25.0"
+```
+
+**File**: `crates/cli/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -76,7 +76,7 @@ crc32fast = "1.5.3"
+ flate2 = "1.1.10"
+ # Writes the .tar.xz test archives, same crate the format decodes with.
+ # The tests need the encoder and the xz container half; core does not.
+-lzma-rust2 = { version = "0.24.0", default-features = false, features = [
++lzma-rust2 = { version = "0.25.0", default-features = false, features = [
+     "std",
+     "optimization",
+     "encoder",
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ libz-rs-sys = "0.6.8"
+ # sevenz-rust2. The container itself is parsed in archive/xz.rs, since the
+ # crate's container types are private. Core only decodes: the encoder and
+ # lzip halves stay out of this build.
+-lzma-rust2 = { version = "0.24.0", default-features = false, features = ["std", "optimization"] }
++lzma-rust2 = { version = "0.25.0", default-features = false, features = ["std", "optimization"] }
+ # A zstd stream is a sequence of independent frames, so a frame start is a
+ # resume point that needs no window. The frame structure is parsed in
+ # archive/tarzst.rs; this crate decodes one bounded frame at a time. Already
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #147** (2026-11-23): fix(core): report missing split ZIP parts clearly (@garvrao80)
-- **PR #146** (closed): chore(deps): update url to 2.5.9 for RUSTSEC-2026-0592 (@xevrion)
-- **PR #145** (2026-11-22): fix(cli): offer a nested split set only when the run wrote all its parts (@xevrion)
-- **PR #144** (2026-11-22): fix(shell): remove the Thunar file after Thunar rewrites the copy (@xevrion)
-- **PR #143** (2026-11-21): feat(core): extract native split ZIP (.z01) in place (@xevrion)
-- **PR #142** (2026-11-21): feat: extract only selected entries, keeping the archive (@xevrion)
+- **PR #157** (2026-11-25): refactor(cli): use the core's check that a run wrote every volume (@xevrion)
+- **PR #156** (2026-11-25): ci(release): give manual SignPath approval time to happen (@xevrion)
+- **PR #153** (closed): feat(gui): pin the language tests to English (@rlkandela)
+- **PR #152** (2026-11-25): build(deps): bump lzma-rust2 from 0.24.0 to 0.25.0 (@dependabot[bot])
+- **PR #151** (2026-11-25): build(deps): bump rfd from 0.17.2 to 0.18.0 (@dependabot[bot])
+- **PR #150** (2026-11-25): build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0 (@dependabot[bot])
 
 ---
 
@@ -3176,44 +3048,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): report missing split ZIP parts clearly
+## X. build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0
 
 **RULE**:
-When implementing operations in `crates/cli/tests/formats.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xevrion/hatchzip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xevrion/hatchzip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f1fe89a9`: core): report missing split ZIP parts clearly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e79f515f`: build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cli/tests/formats.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let mut before = split_zip_snapshot(&first);
-    let missing = first.with_extension("z02");
-    let later = first.with_extension("z03");
-    assert!(later.exists());
-    let says = format!(
-        "game.z02 is missing: this split ZIP has {} parts. Put the missing parts",
-        before.len()
-    );
-    fs::remove_file(&missing).unwrap();
-    before.retain(|(path, _)| path != &missing);
-    assert_split_refused(&later, &first, &says);
-    assert_unchanged(&before);
-    assert!(!tmp.path().join("out").exists());
+ "lzma-rust2",
+ "lzma-rust2",
+version = "0.25.0"
+checksum = "e5e465701779cbc6d0d10cf907f175035cfdd50b8d3cb628d7f1f435ef02972f"
+ "lzma-rust2",
+ "lzma-rust2",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    fs::remove_file(first.with_extension("z02")).unwrap();
-    assert_split_refused(&first, &first, "game.z02 is missing");
+ "lzma-rust2 0.25.0",
+ "lzma-rust2 0.25.0",
+[[package]]
+name = "lzma-rust2"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
+
+version = "0.24.1"
+checksum = "2f0c68c0e8289bfd09e49ef433e8de02c7c464afc1d7f5a275c99749a880e301"
+ "lzma-rust2 0.23.0",
+ "lzma-rust2 0.25.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f1fe89a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e79f515f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

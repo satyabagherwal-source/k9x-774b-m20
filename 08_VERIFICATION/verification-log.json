@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-U09J",
-    "timestamp": "2026-11-24T16:01:38.263Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "7e7bb60c2ef463633115a4e7ade8c13da8511f3da856265b10929f0384f300b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-U61O",
-    "timestamp": "2026-11-24T16:01:45.756Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "011cd001946301e67f48467420c7f99c6e5a3aa5e7963c18bda848d4d81ee88b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-HFCK",
     "timestamp": "2026-11-24T16:19:50.900Z",
     "repository": "ArchiveBox/ArchiveBox",
@@ -7490,6 +7460,36 @@
     "repository": "oshai/kotlin-logging",
     "learningId": "learn-github-oshai-kotlin-logging",
     "contentHash": "9b77a41a56726bcfb6d9eea39f556df3520ee95c3a7430b7e4247d32d0ff0858",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-HGGE",
+    "timestamp": "2026-11-26T06:35:20.846Z",
+    "repository": "n4ze3m/tiny-voca",
+    "learningId": "learn-huggingface-n4ze3m-tiny-voca",
+    "contentHash": "905c4867e9140fa0fbb4b31565abb4f73672c9c76602227451d25d0486133e8e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-HIWF",
+    "timestamp": "2026-11-26T06:35:24.015Z",
+    "repository": "xevrion/hatchzip",
+    "learningId": "learn-github-xevrion-hatchzip",
+    "contentHash": "566d4b3ddea164674332ac25b6b9b3bac002bd598633b4f78053e6aad0a5a4d3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

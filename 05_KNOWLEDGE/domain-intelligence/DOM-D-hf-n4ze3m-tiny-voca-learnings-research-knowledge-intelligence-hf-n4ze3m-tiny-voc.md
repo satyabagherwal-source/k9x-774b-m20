@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T11:14:28.483Z",
+  "timestamp": "2026-11-26T06:35:34.273Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-n4ze3m-tiny-voca-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-n4ze3m-tiny-voca-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T11:14:28.483Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T06:35:34.273Z`  
 > **Learning ID**: `LEARN-EVO-hf-n4ze3m-tiny-voca-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-n4ze3m-ti`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T11:14:15.206Z  
+> **Timestamp**: 2026-11-26T06:35:20.276Z  
 > **Learning ID**: `learn-huggingface-n4ze3m-tiny-voca`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/n4ze3m/tiny-voca](https://huggingface.co/n4ze3m/tiny-voca))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T11:14:15.036Z  
+> **Harvest Timestamp**: 2026-11-26T06:35:20.160Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 10768 downloads | 384 likes
+- **Stars / Engagement**: 15278 downloads | 444 likes
 
 ---
 

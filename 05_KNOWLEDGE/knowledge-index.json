@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T06:27:07.233Z",
+  "last_updated": "2026-11-26T06:35:35.656Z",
   "total_verified_learnings": 9123,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25710,
+  "total_items": 25712,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac088cd2b207b619bdf80172332b2e05ac615ea19080a02e3154d768e0afe0b8",
+      "content_hash": "22de63c9d4a53a3e61daf59091fa63e3c22ac72f414cf16df9cf9318bf5bffe5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T05:38:43.509Z"
+      "persisted_at": "2026-11-26T06:35:35.275Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "abdc2db2ce1242591c59132140da35cf5e9e01ebde72920ec5e74d4a40737cf2",
+      "content_hash": "325bbf41f684fed57c057d33d6e4a29827cd5f682be4d29ec15ee65adc016fe0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T05:38:43.707Z"
+      "persisted_at": "2026-11-26T06:35:35.480Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "67125bc5647cea327b2b187ceab870a0bda0f0b9babd5931070fbb23c92df612",
+      "content_hash": "28c1dc57d6946551c51cf2419ee6446def9ce6739efabc21fb8cab41a0c6eb74",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T05:38:43.867Z"
+      "persisted_at": "2026-11-26T06:35:35.656Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -262675,7 +262675,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/n4ze3m/tiny-voca",
       "source_version": "hf-n4ze3m-tiny-voca",
-      "content_hash": "4b264235e1fb10c6991ee890d0b72f61bb69a4b5654e5d7fbde32c64adde8048",
+      "content_hash": "905c4867e9140fa0fbb4b31565abb4f73672c9c76602227451d25d0486133e8e",
       "dossier_path": "07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md",
       "promoted_rules": [],
@@ -262684,7 +262684,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T11:14:15.458Z",
+      "verified_at": "2026-11-26T06:35:20.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262701,9 +262701,9 @@
       "title": "Research & Knowledge Intelligence: n4ze3m/tiny-voca Core Invariants",
       "repository": "n4ze3m/tiny-voca",
       "source_version": "hf-n4ze3m-tiny-voca",
-      "content_hash": "943827916fc0e7307e7993e12e28ad2318158c70ea9a48d453e2875923433936",
+      "content_hash": "580cfac7bb751613872ee3bc6b1bee5fb05743018c3d5d52d2f757774bc4f792",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T11:14:15.877Z"
+      "persisted_at": "2026-11-26T06:35:21.088Z"
     },
     "learn-github-yazinsai-openoats": {
       "learning_id": "learn-github-yazinsai-openoats",
@@ -262842,9 +262842,9 @@
       "title": "Research & Knowledge Intelligence: hf-n4ze3m-tiny-voca-learnings Core Invariants",
       "repository": "hf-n4ze3m-tiny-voca-learnings",
       "source_version": "HEAD",
-      "content_hash": "dc4b0e5c389f77d9f87ad8acb64a22768c43df8a1c345113f369ad72c9eea323",
+      "content_hash": "9295f69a1e2c5472614afc7c00a785696e8a416ea058ceca999ec4454fbae0c7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T11:14:28.583Z"
+      "persisted_at": "2026-11-26T06:35:34.393Z"
     },
     "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants",
@@ -300006,8 +300006,8 @@
       "slug": "xevrion-hatchzip",
       "platform": "github",
       "source_url": "https://github.com/xevrion/hatchzip",
-      "source_version": "f1fe89a9",
-      "content_hash": "f8a36f15f12d4c6620c85e01a12801ba3cbc2ff06877073e3d91dee818ef39b9",
+      "source_version": "07c0e5ca",
+      "content_hash": "566d4b3ddea164674332ac25b6b9b3bac002bd598633b4f78053e6aad0a5a4d3",
       "dossier_path": "07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
       "promoted_rules": [
@@ -300040,6 +300040,11 @@
           "number": 10123,
           "title": "report missing split ZIP parts clearly",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10616,
+          "title": "build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -300047,7 +300052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:14:35.052Z",
+      "verified_at": "2026-11-26T06:35:23.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -300101,10 +300106,10 @@
       "relative_path": "08_VERIFICATION/xevrion-hatchzip-verification-protocol-empirical-defect-shield-for-xevrion-hatch.md",
       "title": "Verification Protocol: Empirical Defect Shield for xevrion/hatchzip",
       "repository": "xevrion/hatchzip",
-      "source_version": "f1fe89a9",
-      "content_hash": "ffcb7a472d16c00c2e34547e2d6dcf5d8f87a6dd0553dd75330856de68d0ee30",
+      "source_version": "07c0e5ca",
+      "content_hash": "4fc9b76723dc577c8ca8c13ff66af1be9f8d2e37ca0bf992c0e7a6cb1de2220a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:14:36.088Z"
+      "persisted_at": "2026-11-26T06:35:24.727Z"
     },
     "rule-9378": {
       "learning_id": "rule-9378",
@@ -300164,9 +300169,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for xevrion-hatchzip-learnings",
       "repository": "xevrion-hatchzip-learnings",
       "source_version": "HEAD",
-      "content_hash": "09ce374c50965e76b1aff14dd0131c2095c7cff41c3535c1fcfcfbce5169d36c",
+      "content_hash": "5252ff319c761175489be148493b19265715c57f78e1dff0a68eb5577a47902c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:14:52.154Z"
+      "persisted_at": "2026-11-26T06:35:33.974Z"
     },
     "rule-9379": {
       "learning_id": "rule-9379",
@@ -323678,10 +323683,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-architecture-intelligence-xevrion-hatchzip-core-invariants.md",
       "title": "Architecture Intelligence: xevrion/hatchzip Core Invariants",
       "repository": "xevrion/hatchzip",
-      "source_version": "f1fe89a9",
-      "content_hash": "96742b51e7917503d8e666debe85cab97c9529c5e7d040518788e0ba667a2876",
+      "source_version": "07c0e5ca",
+      "content_hash": "6a5e85908540154287dca9014477411c6876890bdac33753d6711681e6e4298f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:14:35.854Z"
+      "persisted_at": "2026-11-26T06:35:24.490Z"
     },
     "rule-9921": {
       "learning_id": "rule-9921",
@@ -323729,9 +323734,9 @@
       "title": "Architecture Intelligence: xevrion-hatchzip-learnings Core Invariants",
       "repository": "xevrion-hatchzip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5dd98d1b5d269b244f5aec72e05e17fbc738d9fd7e580cd522aa22667d133a5",
+      "content_hash": "7bd0ab47720e4c2890234f28394586d50ac236ae235328463d6ced643c3a182e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:14:51.926Z"
+      "persisted_at": "2026-11-26T06:35:33.759Z"
     },
     "rule-9922": {
       "learning_id": "rule-9922",
@@ -351694,13 +351699,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GMWP-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HRFY-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3edc9f4311a2dce50e13c9bbb5594433cbdb1fb6638597f2010ffc594068fb61",
+      "content_hash": "1a77423412e11e20fd1b28b7818b678f11a3d2e9dc1c2c35c2c95df637ee1dcb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T05:38:43.322Z"
+      "persisted_at": "2026-11-26T06:35:35.086Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",
@@ -352076,6 +352081,32 @@
       "content_hash": "35dcc169cab4ba899358741c27b55287e52cdb68a117761fb9c5cbc82ae6ad02",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T06:27:05.617Z"
+    },
+    "rule-10616": {
+      "learning_id": "rule-10616",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10616,
+      "title": "build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0",
+      "source_url": "https://github.com/xevrion/hatchzip",
+      "source_version": "07c0e5ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T06:35:23.766Z"
+    },
+    "candidate_directive-build-deps-bump-sevenz-rust2-from-0-24-1-to-0-25-0": {
+      "item_id": "candidate_directive-build-deps-bump-sevenz-rust2-from-0-24-1-to-0-25-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HQ9D-build-deps-bump-sevenz-rust2-from-0-24-1-to-0-25-0.md",
+      "title": "build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0",
+      "repository": "xevrion-hatchzip-learnings",
+      "source_version": "HEAD",
+      "content_hash": "46c53928e1764ecbb7d91fe9d8a62b348a3c38469ec13cb3cac44b6b0c4b750a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T06:35:33.557Z"
     }
   },
   "ai-builder-brain": {

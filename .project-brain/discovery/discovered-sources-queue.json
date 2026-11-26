@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T06:27:04.837Z",
+  "updated_at": "2026-11-26T06:35:33.298Z",
   "stats": {
-    "total_discovered": 9655,
-    "approved_pending_harvest": 9155,
+    "total_discovered": 9666,
+    "approved_pending_harvest": 9166,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9144,
+      "COMMUNITY_AND_EXPERT": 9155,
       "OFFICIAL_DOCUMENTATION": 283,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -208937,6 +208937,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
         "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-602D6037F5BE": {
+      "id": "SRC-602D6037F5BE",
+      "url": "https://github.com/xevrion/hatchzip/releases/latest",
+      "title": "https://github.com/xevrion/hatchzip/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:32.628Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-3FD1C943798C": {
+      "id": "SRC-3FD1C943798C",
+      "url": "https://github.com/hasenbanck/sevenz-rust",
+      "title": "https://github.com/hasenbanck/sevenz-rust",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:32.697Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-CD7553940337": {
+      "id": "SRC-CD7553940337",
+      "url": "https://github.com/hasenbanck/sevenz-rust2/blob/main/CHANGELOG.md",
+      "title": "https://github.com/hasenbanck/sevenz-rust2/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:32.763Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-29B92745739F": {
+      "id": "SRC-29B92745739F",
+      "url": "https://github.com/hasenbanck/sevenz-rust/compare/v0.24.1...v0.25.0",
+      "title": "https://github.com/hasenbanck/sevenz-rust/compare/v0.24.1...v0.25.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:32.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-39C2DF956930": {
+      "id": "SRC-39C2DF956930",
+      "url": "https://github.com/PolyMeilex/rfd",
+      "title": "https://github.com/PolyMeilex/rfd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:32.929Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-F554AB1E899B": {
+      "id": "SRC-F554AB1E899B",
+      "url": "https://github.com/PolyMeilex/rfd/releases",
+      "title": "https://github.com/PolyMeilex/rfd/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:32.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-4649CE5CC658": {
+      "id": "SRC-4649CE5CC658",
+      "url": "https://github.com/PolyMeilex/rfd/blob/master/CHANGELOG.md",
+      "title": "https://github.com/PolyMeilex/rfd/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:33.053Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-6B9EE923B30A": {
+      "id": "SRC-6B9EE923B30A",
+      "url": "https://github.com/PolyMeilex/rfd/compare/0.17.2...0.18.0",
+      "title": "https://github.com/PolyMeilex/rfd/compare/0.17.2...0.18.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:33.115Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-86B6C1DE3770": {
+      "id": "SRC-86B6C1DE3770",
+      "url": "https://github.com/hasenbanck/lzma-rust2",
+      "title": "https://github.com/hasenbanck/lzma-rust2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:33.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-16DD4E2102A4": {
+      "id": "SRC-16DD4E2102A4",
+      "url": "https://github.com/hasenbanck/lzma-rust2/blob/master/CHANGELOG.md",
+      "title": "https://github.com/hasenbanck/lzma-rust2/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:33.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-F4C7B4C2AE29": {
+      "id": "SRC-F4C7B4C2AE29",
+      "url": "https://github.com/hasenbanck/lzma-rust2/compare/v0.24.0...v0.25.0",
+      "title": "https://github.com/hasenbanck/lzma-rust2/compare/v0.24.0...v0.25.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:35:33.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
       }
     }
   }

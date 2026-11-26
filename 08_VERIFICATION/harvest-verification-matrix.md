@@ -13275,3 +13275,5 @@
 | `CYCLE-20261126-VSTM` | `2026-11-26T06:18:30.442Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10614` | Yes (`dabac014...`) |
 | `CYCLE-20261126-6JIQ` | `2026-11-26T06:26:51.602Z` | `HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md` | Yes (`e3adb7fc...`) |
 | `CYCLE-20261126-6KYK` | `2026-11-26T06:26:53.468Z` | `oshai/kotlin-logging` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10615` | Yes (`9b77a41a...`) |
+| `CYCLE-20261126-HGGE` | `2026-11-26T06:35:20.846Z` | `n4ze3m/tiny-voca` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md` | Yes (`905c4867...`) |
+| `CYCLE-20261126-HIWF` | `2026-11-26T06:35:24.015Z` | `xevrion/hatchzip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10616` | Yes (`566d4b3d...`) |
