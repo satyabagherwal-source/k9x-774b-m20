@@ -13397,3 +13397,9 @@
 | `CYCLE-20261126-663S` | `2026-11-26T13:26:28.456Z` | `zhouxiaoka/autoclip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10686` | Yes (`40497fb0...`) |
 | `CYCLE-20261126-68LI` | `2026-11-26T13:26:31.686Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | Yes (`198c9689...`) |
 | `CYCLE-20261126-6JQJ` | `2026-11-26T13:26:46.123Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10687` | Yes (`f5297890...`) |
+| `CYCLE-20261126-I8MG` | `2026-11-26T13:35:51.592Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`2da64f18...`) |
+| `CYCLE-20261126-IE3W` | `2026-11-26T13:35:58.700Z` | `Jarvis322/macos-sysdata` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10688` | Yes (`4caf90df...`) |
+| `CYCLE-20261126-IG8O` | `2026-11-26T13:36:01.464Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10689` | Yes (`b2a8de13...`) |
+| `CYCLE-20261126-IH1T` | `2026-11-26T13:36:02.513Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | Yes (`f4fbdf3c...`) |
+| `CYCLE-20261126-IJP7` | `2026-11-26T13:36:05.947Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10690` | Yes (`2b9e961d...`) |
+| `CYCLE-20261126-ILT1` | `2026-11-26T13:36:08.677Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10691` | Yes (`e0649035...`) |

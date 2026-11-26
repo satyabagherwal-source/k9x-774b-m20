@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T13:26:51.876Z",
+  "last_updated": "2026-11-26T13:36:14.077Z",
   "total_verified_learnings": 9129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25932,
+  "total_items": 25942,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113110,9 +113110,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "1f80fec818201b85048898c956fbd569b69468c20e0e76debd32584d07a0b7cb",
+      "content_hash": "50cb585c9da624daf86d9a0457e56b487c70ba0dc62d4129c614690a5a03be06",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:27:31.305Z"
+      "persisted_at": "2026-11-26T13:35:51.825Z"
     },
     "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099": {
       "item_id": "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099",
@@ -113194,9 +113194,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5cde790620015b044a20ac42efdf029df82b6ae45fe7b7cfc50c0389e6c220e",
+      "content_hash": "8611da0ee69c522ffcf76248079ce9c6980daa0dee551ec2e488e29318958df8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:27:48.964Z"
+      "persisted_at": "2026-11-26T13:36:12.348Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
@@ -213566,8 +213566,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "aba54549",
-      "content_hash": "9fa330493200d7b457460eb06bc104398acb8b1482959025f0e589c84ea5ffe1",
+      "source_version": "2910d1e2",
+      "content_hash": "f4fbdf3c2b302a6aeca151ccb3dc909471431b461c78e8e9ccaa0e3d77623b23",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213662,7 +213662,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T23:59:22.556Z",
+      "verified_at": "2026-11-26T13:36:02.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213704,10 +213704,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "aba54549",
-      "content_hash": "1e8fcd1b797f0529bd142dfba00de2f694cd7d9581842be37156e2f7a6345a78",
+      "source_version": "2910d1e2",
+      "content_hash": "7265a35715ca9b51e232fe59d690397408fa1c59d5e893a6ef1b774662c8e2a4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T23:59:23.416Z"
+      "persisted_at": "2026-11-26T13:36:02.756Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213716,10 +213716,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "aba54549",
-      "content_hash": "f3500c6e99f3628372bf40c98a19c297fbbaafca01fd76be3d59decae150a2c0",
+      "source_version": "2910d1e2",
+      "content_hash": "7212cb7b15e037183cb24c775d5a10201a1de334a8b344b43c1fed2e0ec790ad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:59:23.650Z"
+      "persisted_at": "2026-11-26T13:36:02.950Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -228970,8 +228970,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "7a416142",
-      "content_hash": "dfcf0bc5794a2ad7b72073c665b9bb0b33072d3aa0872eeb0b96a4bece8ec5b3",
+      "source_version": "18aa13cc",
+      "content_hash": "b2a8de1309423d139f69614fa7a585280d2665d59ea3b8d5e3cf3e5013bd3ad3",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -229019,6 +229019,11 @@
           "number": 10533,
           "title": "expose cluster device inventory",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10689,
+          "title": "unblock fixed-MAC Overlay Pod recovery",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229026,7 +229031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T13:20:35.420Z",
+      "verified_at": "2026-11-26T13:36:01.229Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229054,10 +229059,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "7a416142",
-      "content_hash": "79e11295a4b4b217fdae4fff54c914404cd43c74cf4ed22e8833ad72df80094e",
+      "source_version": "18aa13cc",
+      "content_hash": "138f224e0bf4d045e98f9bd26ee06331e5a98629e5e88d80daa085a7beed7507",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:20:36.144Z"
+      "persisted_at": "2026-11-26T13:36:01.894Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -229103,9 +229108,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7ed63e8b52b1f97a3f21aa36b6d2eb2a84e3daf71ec95ea52b93beb98ff787a",
+      "content_hash": "9b46e9c2d8674204881bb691ef860d8a21b9f339e269d0c557df158326c77cf2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:20:42.325Z"
+      "persisted_at": "2026-11-26T13:36:13.896Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -229115,9 +229120,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb4160f4343d53adbfd67319715db49c0a385d5f800a7d650b78031751e9c313",
+      "content_hash": "3db6fb90315ddedfbcdd5909444ceff7e1aa595f9cc8d1edd20966c19b4adba8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:20:42.522Z"
+      "persisted_at": "2026-11-26T13:36:14.077Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -230961,8 +230966,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "d536eec8",
-      "content_hash": "3aa7761bb2efac9458d2e158b028251e0d2f4d0e5fe99576223c49b7c1c88015",
+      "source_version": "a8825a25",
+      "content_hash": "e0649035044e4ebea4360f06be6336fa841baa5b933617bab1ad04f79c15e705",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231265,6 +231270,11 @@
           "number": 10573,
           "title": "Draft NUC 152 Falsy Value Assignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10691,
+          "title": "Rework ARC 27a28665 dataset to fail on unknown kinds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231272,7 +231282,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T03:13:14.169Z",
+      "verified_at": "2026-11-26T13:36:08.449Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231314,10 +231324,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "d536eec8",
-      "content_hash": "9e2df54d5b2983aec963bcb262e06b98cfa7886e7f7058fdca9406976d370c1d",
+      "source_version": "a8825a25",
+      "content_hash": "07d1aac06efb993d7a0c0b013b8c912a99d658b86a063119d3b1f7fd898ad150",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T03:13:14.847Z"
+      "persisted_at": "2026-11-26T13:36:09.110Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231326,10 +231336,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "d536eec8",
-      "content_hash": "a2ab58058dcff2d8187bb53385fc90b7d8373041aec7918add6b379f874ed139",
+      "source_version": "a8825a25",
+      "content_hash": "5d8117d947fcbfd0958cc9158a7744fd97d309295c280197920f9c8357f7e4ac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:13:15.192Z"
+      "persisted_at": "2026-11-26T13:36:09.293Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -251248,14 +251258,19 @@
       "slug": "jarvis322-macos-sysdata",
       "platform": "github",
       "source_url": "https://github.com/Jarvis322/macos-sysdata",
-      "source_version": "e06a5803",
-      "content_hash": "2c82cb0e832815be5f43b2d6ad5023561255ba4677f45e0b7be739519742f48f",
+      "source_version": "63fb10a2",
+      "content_hash": "4caf90df2317367dda64bf71c832b36e3bd392799f9b8ac0cfe39e3adb82acce",
       "dossier_path": "07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
       "promoted_rules": [
         {
           "number": 8627,
           "title": "make the icon switch take effect from the window",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10688,
+          "title": "count each hard-linked file once",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -251264,7 +251279,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T16:50:27.654Z",
+      "verified_at": "2026-11-26T13:35:58.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251306,10 +251321,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jarvis322-macos-sysdata-technical-construction-intelligence-jarvis322-macos-sysd.md",
       "title": "Technical Construction Intelligence: Jarvis322/macos-sysdata Core Invariants",
       "repository": "Jarvis322/macos-sysdata",
-      "source_version": "e06a5803",
-      "content_hash": "65ac7b968b3e43ef08586d63d026cdb39323194f60536c2caad58b1f45f97d67",
+      "source_version": "63fb10a2",
+      "content_hash": "39ede6e6ecc53e77ba6f565eacb79ddc7f32b344c0328f2791a6d7729f551a47",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T16:50:28.047Z"
+      "persisted_at": "2026-11-26T13:35:59.155Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-jarvis322-macos-sysdata": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jarvis322-macos-sysdata",
@@ -251318,10 +251333,10 @@
       "relative_path": "08_VERIFICATION/jarvis322-macos-sysdata-verification-protocol-empirical-defect-shield-for-jarvis.md",
       "title": "Verification Protocol: Empirical Defect Shield for Jarvis322/macos-sysdata",
       "repository": "Jarvis322/macos-sysdata",
-      "source_version": "e06a5803",
-      "content_hash": "93c74bfa6a7f4eb837e84d3dac9bd1e895567b1e960bd8aac5af0dcf928f48cc",
+      "source_version": "63fb10a2",
+      "content_hash": "0a2ed7264f2d8e7242c8f5e76fef462177e0acf920512c4eab9957fbd616b430",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T16:50:28.145Z"
+      "persisted_at": "2026-11-26T13:35:59.346Z"
     },
     "rule-8628": {
       "learning_id": "rule-8628",
@@ -251381,9 +251396,9 @@
       "title": "Technical Construction Intelligence: jarvis322-macos-sysdata-learnings Core Invariants",
       "repository": "jarvis322-macos-sysdata-learnings",
       "source_version": "HEAD",
-      "content_hash": "86ba50153d3ea37de91a9f731193771af9da3fd10476c960fa6192fe4bd73d94",
+      "content_hash": "1be33db3a82c8a21c9d678fed024e83de43d5ddaef59964cf69b6509969b2258",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T16:50:39.421Z"
+      "persisted_at": "2026-11-26T13:36:13.062Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-jarvis322-macos-sysdata-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jarvis322-macos-sysdata-learni",
@@ -251393,9 +251408,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for jarvis322-macos-sysdata-learnings",
       "repository": "jarvis322-macos-sysdata-learnings",
       "source_version": "HEAD",
-      "content_hash": "53b833e8c462468973698d2db43916c17c5290765c46dea48d0db11233807761",
+      "content_hash": "4d6efcdbd85e460b041cb9efad542a599ac11bed64afd5c5d1f42829340f98a4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T16:50:39.514Z"
+      "persisted_at": "2026-11-26T13:36:13.257Z"
     },
     "candidate_directive-prober-deflake-testhttpbandwidth-on-coarse-clock-machines": {
       "item_id": "candidate_directive-prober-deflake-testhttpbandwidth-on-coarse-clock-machines",
@@ -259403,8 +259418,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "3bfa11a6",
-      "content_hash": "03ffe91e33cc6ceabdc9a1f7a8f4455158881c7d333ed936cf50780f8f241f99",
+      "source_version": "aa4f044b",
+      "content_hash": "2b9e961d75c217e3e1c9a15a29e24acc7b7534edc83effe22655fb9dab16e14a",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -259437,6 +259452,11 @@
           "number": 10314,
           "title": "rust-port Amp plugin reviewer creation for the current Amp API",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10690,
+          "title": "[MOD-21589] Add a nonblocking worker pause for assertion builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -259444,7 +259464,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:13:48.973Z",
+      "verified_at": "2026-11-26T13:36:05.711Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278318,10 +278338,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "repository": "RediSearch/RediSearch",
-      "source_version": "7a24743f",
-      "content_hash": "19ed04e5dde6156eb78210dd2f6eddc518300cc3cf1aac2d6c03439f640a74fa",
+      "source_version": "aa4f044b",
+      "content_hash": "a9f3884d51d268e515dae42ab6d9eca558f06a0daaea17f03165062436acd773",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:19:40.284Z"
+      "persisted_at": "2026-11-26T13:36:06.377Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch",
@@ -278330,10 +278350,10 @@
       "relative_path": "08_VERIFICATION/redisearch-redisearch-verification-protocol-empirical-defect-shield-for-redisear.md",
       "title": "Verification Protocol: Empirical Defect Shield for RediSearch/RediSearch",
       "repository": "RediSearch/RediSearch",
-      "source_version": "7a24743f",
-      "content_hash": "d3bddf34937520dcd4fb400de249eb8d58da56f03b06eba41003c96cd3f372af",
+      "source_version": "aa4f044b",
+      "content_hash": "b7e71e807d5b7f9f8e9adb9c1c5f5a69e68b6c8e711108d1eee798e0afca528b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:19:40.522Z"
+      "persisted_at": "2026-11-26T13:36:06.561Z"
     },
     "learn-huggingface-autogluon-chronos-2": {
       "learning_id": "learn-huggingface-autogluon-chronos-2",
@@ -287634,7 +287654,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "464fa7e99c897d7164b46a88e9eb50d6dc505178a777582194eb289be4501c76",
+      "content_hash": "2da64f18f7ba7626d8a4a26c22f477fedc691b068969b523be60b88a08759d04",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [],
@@ -287643,7 +287663,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:27:30.744Z",
+      "verified_at": "2026-11-26T13:35:51.338Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -355345,6 +355365,134 @@
       "content_hash": "cd5e9a5ac7ebd565274d464f4c96b1cd7213785c3e3636382a66746d804f603b",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T13:26:50.322Z"
+    },
+    "rule-10688": {
+      "learning_id": "rule-10688",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10688,
+      "title": "count each hard-linked file once",
+      "source_url": "https://github.com/Jarvis322/macos-sysdata",
+      "source_version": "63fb10a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:35:58.464Z"
+    },
+    "candidate_directive-count-each-hard-linked-file-once": {
+      "item_id": "candidate_directive-count-each-hard-linked-file-once",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IEAR-count-each-hard-linked-file-once.md",
+      "title": "count each hard-linked file once",
+      "repository": "Jarvis322/macos-sysdata",
+      "source_version": "63fb10a2",
+      "content_hash": "91f0019c37f4cd9b72e5c22dcdae1288b3ff90062083de6c891b4ccd18c8e039",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T13:35:58.950Z"
+    },
+    "rule-10689": {
+      "learning_id": "rule-10689",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10689,
+      "title": "unblock fixed-MAC Overlay Pod recovery",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "18aa13cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:36:01.229Z"
+    },
+    "candidate_directive-unblock-fixed-mac-overlay-pod-recovery": {
+      "item_id": "candidate_directive-unblock-fixed-mac-overlay-pod-recovery",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IGFG-unblock-fixed-mac-overlay-pod-recovery.md",
+      "title": "unblock fixed-MAC Overlay Pod recovery",
+      "repository": "beclab/Olares",
+      "source_version": "18aa13cc",
+      "content_hash": "cbc70a6112f43c1b47108c5d05be6f197635abdba8465a32a66b8c311c2f361d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T13:36:01.712Z"
+    },
+    "rule-10690": {
+      "learning_id": "rule-10690",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10690,
+      "title": "[MOD-21589] Add a nonblocking worker pause for assertion builds",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "aa4f044b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:36:05.711Z"
+    },
+    "candidate_directive-mod-21589-add-a-nonblocking-worker-pause-for-assertion-builds": {
+      "item_id": "candidate_directive-mod-21589-add-a-nonblocking-worker-pause-for-assertion-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IJVT-mod-21589-add-a-nonblocking-worker-pause-for-assertion-builds.md",
+      "title": "[MOD-21589] Add a nonblocking worker pause for assertion builds",
+      "repository": "RediSearch/RediSearch",
+      "source_version": "aa4f044b",
+      "content_hash": "f38f603ee12553f716d065b6235d4381ac83dae3c6be6be4b7cedd9205e0c3b6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T13:36:06.189Z"
+    },
+    "rule-10691": {
+      "learning_id": "rule-10691",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10691,
+      "title": "Rework ARC 27a28665 dataset to fail on unknown kinds",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "a8825a25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:36:08.449Z"
+    },
+    "candidate_directive-rework-arc-27a28665-dataset-to-fail-on-unknown-kinds": {
+      "item_id": "candidate_directive-rework-arc-27a28665-dataset-to-fail-on-unknown-kinds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ILZX-rework-arc-27a28665-dataset-to-fail-on-unknown-kinds.md",
+      "title": "Rework ARC 27a28665 dataset to fail on unknown kinds",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "a8825a25",
+      "content_hash": "7f0daa4f0eef6c95a1d5098a8d2e90f7f649b79e7cf6c3b412d27f5bfac615e3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T13:36:08.929Z"
+    },
+    "candidate_directive-size-count-each-hard-linked-file-once": {
+      "item_id": "candidate_directive-size-count-each-hard-linked-file-once",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IP1C-size-count-each-hard-linked-file-once.md",
+      "title": "size): count each hard-linked file once",
+      "repository": "jarvis322-macos-sysdata-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4ead2db2c23c726eb6ee78ede4ddd776112c70c9193da1b7719e33a5fb053dd4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T13:36:12.867Z"
+    },
+    "candidate_directive-app-service-unblock-fixed-mac-overlay-pod-recovery": {
+      "item_id": "candidate_directive-app-service-unblock-fixed-mac-overlay-pod-recovery",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IPOX-app-service-unblock-fixed-mac-overlay-pod-recovery.md",
+      "title": "app-service): unblock fixed-MAC Overlay Pod recovery",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fb68bb5ad0570672973ee367a55c69bc69a341f06b8d4f34232844c4c976dc72",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T13:36:13.716Z"
     }
   },
   "ai-builder-brain": {

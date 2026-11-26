@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "464fa7e99c897d7164b46a88e9eb50d6dc505178a777582194eb289be4501c76",
-    "lastHarvestedAt": "2026-11-22T20:27:31.023Z",
+    "contentHash": "2da64f18f7ba7626d8a4a26c22f477fedc691b068969b523be60b88a08759d04",
+    "lastHarvestedAt": "2026-11-26T13:35:51.597Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "d536eec8",
+    "sourceVersion": "a8825a25",
     "license": "Apache-2.0",
-    "contentHash": "3aa7761bb2efac9458d2e158b028251e0d2f4d0e5fe99576223c49b7c1c88015",
-    "lastHarvestedAt": "2026-11-26T03:13:14.402Z",
+    "contentHash": "e0649035044e4ebea4360f06be6336fa841baa5b933617bab1ad04f79c15e705",
+    "lastHarvestedAt": "2026-11-26T13:36:08.682Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "7a416142",
+    "sourceVersion": "18aa13cc",
     "license": "AGPL-3.0",
-    "contentHash": "dfcf0bc5794a2ad7b72073c665b9bb0b33072d3aa0872eeb0b96a4bece8ec5b3",
-    "lastHarvestedAt": "2026-11-25T13:20:35.664Z",
+    "contentHash": "b2a8de1309423d139f69614fa7a585280d2665d59ea3b8d5e3cf3e5013bd3ad3",
+    "lastHarvestedAt": "2026-11-26T13:36:01.469Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "aba54549",
+    "sourceVersion": "2910d1e2",
     "license": "NOASSERTION",
-    "contentHash": "9fa330493200d7b457460eb06bc104398acb8b1482959025f0e589c84ea5ffe1",
-    "lastHarvestedAt": "2026-11-25T23:59:22.845Z",
+    "contentHash": "f4fbdf3c2b302a6aeca151ccb3dc909471431b461c78e8e9ccaa0e3d77623b23",
+    "lastHarvestedAt": "2026-11-26T13:36:02.517Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "7a24743f",
+    "sourceVersion": "aa4f044b",
     "license": "NOASSERTION",
-    "contentHash": "3c06bdd8dfb893713e667d5f3e01caab50a7f6be6f37cef92af541a6f6a55884",
-    "lastHarvestedAt": "2026-11-25T12:19:39.707Z",
+    "contentHash": "2b9e961d75c217e3e1c9a15a29e24acc7b7534edc83effe22655fb9dab16e14a",
+    "lastHarvestedAt": "2026-11-26T13:36:05.951Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -11933,10 +11933,10 @@
     "repository": "Jarvis322/macos-sysdata",
     "platform": "github",
     "sourceUrl": "https://github.com/Jarvis322/macos-sysdata",
-    "sourceVersion": "e06a5803",
+    "sourceVersion": "63fb10a2",
     "license": "NOASSERTION",
-    "contentHash": "2c82cb0e832815be5f43b2d6ad5023561255ba4677f45e0b7be739519742f48f",
-    "lastHarvestedAt": "2026-11-15T16:50:27.791Z",
+    "contentHash": "4caf90df2317367dda64bf71c832b36e3bd392799f9b8ac0cfe39e3adb82acce",
+    "lastHarvestedAt": "2026-11-26T13:35:58.705Z",
     "learningId": "learn-github-jarvis322-macos-sysdata"
   },
   "hf-nvidia-nvidia-nemotronlabs-re-use": {

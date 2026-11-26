@@ -13430,3 +13430,9 @@ Every entry in this ledger must capture:
 | `learn-github-zhouxiaoka-autoclip` | `https://github.com/zhouxiaoka/autoclip` | `2f511907` | Multi-dimensional audit evidence | 2026-11-26T13:26:28.460Z |
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-26T13:26:31.690Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `4537d179` | Multi-dimensional audit evidence | 2026-11-26T13:26:46.127Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-26T13:35:51.597Z |
+| `learn-github-jarvis322-macos-sysdata` | `https://github.com/Jarvis322/macos-sysdata` | `63fb10a2` | Multi-dimensional audit evidence | 2026-11-26T13:35:58.705Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `18aa13cc` | Multi-dimensional audit evidence | 2026-11-26T13:36:01.469Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `2910d1e2` | Multi-dimensional audit evidence | 2026-11-26T13:36:02.517Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `aa4f044b` | Multi-dimensional audit evidence | 2026-11-26T13:36:05.951Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a8825a25` | Multi-dimensional audit evidence | 2026-11-26T13:36:08.682Z |

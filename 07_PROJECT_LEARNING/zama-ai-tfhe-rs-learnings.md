@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `aba54549`  
+> **Source Version**: `2910d1e2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T23:59:21.406Z  
+> **Timestamp**: 2026-11-26T13:36:01.934Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:59:21.399Z  
+> **Harvest Timestamp**: 2026-11-26T13:36:01.928Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1938,74 +1938,487 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83659c4c` (2026-11-25)
-**Commit Message**: fix: remove in python ci parser the slab.toml parsing
+### Incident Patch 1: `2910d1e2` (2026-11-26)
+**Commit Message**: chore(ci): integer CI cleanups
 
-**File**: `ci/parse_benchmark_profile.py` (modified, +2/-35)
+* chore(ci): run tier 0 by default for CPU integer tests
+
+The CPU integer CI selects its tests by tier since the tier system,
+the rest of the old test selection only remains for the GPU backend.
+
+* integer-tests.sh runs tier 0 (prod params) when no tier is given on
+  CPU (the long run tests are not part of the tiers), so the old filter
+  now only serves GPU and test_filtering.py rejects a CPU run without
+  --tier or --long-tests. A local make test_integer_ci without TIERS
+  now runs tier 0, TIERS=0,1,2,3 runs every param.
+* Remove what no CI job uses anymore:
+    * the CPU multi-bit make targets
+    * --no-big-params (NO_BIG_PARAMS),
+    * the CPU part of --all-but-noise and the unused ALL_BUT_NOISE variable,
+    * NIGHTLY_TESTS which was not used by either GPU nor CPU
+* Remove the exclusion patterns that match no test, or only tests the
+  filter already leaves out.
+
+* chore: remove ci_test_filter from test names
+
+**File**: `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml` (modified, +0/-1)
 ```diff
-@@ -1,7 +1,6 @@
- #!/usr/bin/env python3
- import argparse
- import sys
--import tomllib
+@@ -11,7 +11,6 @@ env:
+   RUST_BACKTRACE: "full"
+   RUST_MIN_STACK: "8388608"
+   FAST_TESTS: TRUE
+-  NIGHTLY_TESTS: FALSE
+   IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+   CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+   # Secrets will be available only to zama-ai organization members
+```
+
+**File**: `.github/workflows/gpu_noise_level_checks.yml` (modified, +0/-1)
+```diff
+@@ -16,7 +16,6 @@ env:
+   CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+   GPU_FEATURE: gpu-debug-noise-check
+   FAST_TESTS: TRUE
+-  NIGHTLY_TESTS: FALSE
+   # Secrets will be available only to zama-ai organization members
+   SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+ 
+```
+
+**File**: `.github/workflows/gpu_unsigned_integer_tests.yml` (modified, +0/-8)
+```diff
+@@ -7,7 +7,6 @@ env:
+   RUST_BACKTRACE: "full"
+   RUST_MIN_STACK: "8388608"
+   FAST_TESTS: TRUE
+-  NIGHTLY_TESTS: FALSE
+   IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+   CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+   # Secrets will be available only to zama-ai organization members
+@@ -119,13 +118,6 @@ jobs:
+       - name: Enable nvidia multi-process service
+         run: |
+           nvidia-cuda-mps-control -d
+-      - name: Should run nightly tests
+-        if: github.event_name == 'schedule'
+-        run: |
+-          {
+-            echo "FAST_TESTS=FALSE";
+-            echo "NIGHTLY_TESTS=TRUE";
+-          } >> "${GITHUB_ENV}"
+ 
+       - name: Run unsigned integer classical tests
+         run: |
+```
+
+**File**: `Makefile` (modified, +2/-41)
+```diff
+@@ -19,10 +19,8 @@ GEN_KEY_CACHE_COVERAGE_ONLY?=FALSE
+ PARSE_INTEGER_BENCH_CSV_FILE?=tfhe_rs_integer_benches.csv
+ FAST_TESTS?=FALSE
+ BIT_SIZES_SET?=ALL
+-NIGHTLY_TESTS?=FALSE
+-# Comma separated parameter tiers of the CPU integer tests to run, e.g. 0 or 1,2.
+-# When empty, the FAST_TESTS and NIGHTLY_TESTS selection applies. When set, NIGHTLY_TESTS does
+-# not apply and FAST_TESTS keeps only the default operations of the tiers
++# Comma separated parameter tiers of the CPU integer tests to run, e.g. 0 or 1,2. When empty,
++# tier 0 (prod params). FAST_TESTS keeps only the default operations of the tiers
+ TIERS?=
+ # Test profile of the radix test harness: cpu_light, cpu_baseline, cpu_extensive or cpu_fhevm.
+ # When empty, the harness uses cpu_baseline
+@@ -1225,7 +1223,6 @@ test_integer_compression_gpu:
+ test_integer_gpu_ci: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 		./scripts/integer-tests.sh \
+ 		--cargo-profile "$(CARGO_PROFILE)" --backend "gpu" \
+ 		--tfhe-package "tfhe"
+@@ -1234,7 +1231,6 @@ test_integer_gpu_ci: install_cargo_nextest
+ test_unsigned_integer_gpu_ci: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 		./scripts/integer-tests.sh \
+ 		--cargo-profile "$(CARGO_PROFILE)" --backend "gpu" \
+ 		--unsigned-only --tfhe-package "tfhe"
+@@ -1243,7 +1239,6 @@ test_unsigned_integer_gpu_ci: install_cargo_nextest
+ test_signed_integer_gpu_ci: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 		./scripts/integer-tests.sh \
+ 		--cargo-profile "$(CARGO_PROFILE)" --backend "gpu" \
+ 		--signed-only --tfhe-package "tfhe"
+@@ -1259,7 +1254,6 @@ test_integer_goldschmidt_golden_trace_gpu:
+ test_signed_integer_fake_multi_gpu: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 		./scripts/integer-tests.sh \
+ 		--cargo-profile "$(CARGO_PROFILE)" --backend "gpu" --gpufeature "gpu-debug-fake-multi-gpu" \
+ 		--signed-only --tfhe-package "tfhe"
+@@ -1269,7 +1263,6 @@ test_signed_integer_fake_multi_gpu: install_cargo_nextest
+ test_integer_multi_bit_gpu_ci: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 		./scripts/integer-tests.sh \
+ 		--cargo-profile "$(CARGO_PROFILE)" --multi-bit --backend "gpu" \
+ 		--tfhe-package "tfhe"
+@@ -1278,7 +1271,6 @@ test_integer_multi_bit_gpu_ci: install_cargo_nextest
+ test_unsigned_integer_multi_bit_gpu_ci: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 		./scripts/integer-tests.sh \
+ 		--cargo-profile "$(CARGO_PROFILE)" --multi-bit --backend "gpu" \
+ 		--unsigned-only --tfhe-package "tfhe"
+@@ -1287,7 +1279,6 @@ test_unsigned_integer_multi_bit_gpu_ci: install_cargo_nextest
+ test_signed_integer_multi_bit_gpu_ci: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 		./scripts/integer-tests.sh \
+ 		--cargo-profile "$(CARGO_PROFILE)" --multi-bit --backend "gpu" \
+ 		--signed-only --tfhe-package "tfhe"
+@@ -1407,7 +1398,6 @@ test_shortint_cov: install_tarpaulin
+ test_integer_ci: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 	TIERS="$(TIERS)" \
+ 	TFHE_RS_TEST_PROFILE="$(TFHE_RS_TEST_PROFILE)" \
+ 		./scripts/integer-tests.sh \
+@@ -1418,7 +1408,6 @@ test_integer_ci: install_cargo_nextest
+ test_unsigned_integer_ci: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 	TIERS="$(TIERS)" \
+ 	TFHE_RS_TEST_PROFILE="$(TFHE_RS_TEST_PROFILE)" \
+ 		./scripts/integer-tests.sh \
+@@ -1429,40 +1418,12 @@ test_unsigned_integer_ci: install_cargo_nextest
+ test_signed_integer_ci: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+ 	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+ 	TIERS="$(TIERS)" \
+ 	TFHE_RS_TEST_PROFILE="$(TFHE_RS_TEST_PROFILE)" \
+ 		./scripts/integer-tests.sh \
+ 		--cargo-profile "$(CARGO_PROFILE)" --avx512-support "$(AVX512_SUPPORT)" \
+ 		--signed-only --tfhe-package "tfhe"
+ 
+-.PHONY: test_integer_multi_bit_ci # Run the tests for integer ci running only multibit tests
+-test_integer_multi_bit_ci: install_cargo_nextest
+-	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
+-	FAST_TESTS="$(FAST_TESTS)" \
+-	NIGHTLY_TESTS="$(NIGHTLY_TESTS)" \
+-		./scripts/integer-tests.sh \
+-		--cargo-profile "$(CARGO_PROFILE)" --multi-bit --avx512-support "$(AVX512_SUPPORT)" \
+-		--tfhe-package "tfhe"
+-
+-.PHONY: test_unsigned_integer_multi_bit_ci # Run the tests for unsigned integer ci running only multibit te
+```
+
+**File**: `scripts/integer-tests.sh` (modified, +10/-26)
+```diff
+@@ -7,13 +7,12 @@ function usage() {
+     echo
+     echo "--help                    Print this message"
+     echo "--rust-toolchain          The toolchain to run the tests with default: stable"
+-    echo "--multi-bit               Run multi-bit tests only: default off"
++    echo "--multi-bit               Run multi-bit tests only (gpu backend only), default off"
+     echo "--unsigned-only           Run only unsigned integer tests, by default both signed and unsigned tests are run"
+     echo "--signed-only             Run only signed integer tests, by default both signed and unsigned tests are run"
+-    echo "--nightly-tests           Run integer tests configured for nightly runs (3_3 params)"
+     echo "--fast-tests              Run integer set but skip a subset of longer tests"
+     echo "--long-tests              Run only long run integer tests"
+-    echo "--all-but-noise           Run all tests except noise tests"
++    echo "--all-but-noise           Run every integer test except the noise tests (gpu backend only)"
+     echo "--cargo-profile           The cargo profile used to build tests"
+     echo "--backend                 Backend to use with tfhe-rs"
+     echo "--avx512-support          Set to ON to enable avx512"
+@@ -26,9 +25,7 @@ multi_bit_argument=
+ sign_argument=
+ fast_tests_argument=
+ long_tests_argument=
+-nightly_tests_argument=
+ all_but_noise_argument=
+-no_big_params_argument=
+ no_big_params_argument_gpu=
+ tier_arguments=()
+ cargo_profile="release"
+@@ -113,24 +110,17 @@ if [[ "${LONG_TESTS}" == TRUE ]]; then
+     long_tests_argument=--long-tests
+ fi
+ 
+-if [[ "${NIGHTLY_TESTS}" == TRUE ]]; then
+-    nightly_tests_argument=--nightly-tests
+-fi
+-
+-if [[ "${ALL_BUT_NOISE}" == TRUE ]]; then
+-    all_but_noise_argument=--all-but-noise
+-fi
+-
+-if [[ "${NO_BIG_PARAMS}" == TRUE ]]; then
+-    no_big_params_argument=--no-big-params
+-fi
+-
+ if [[ "${NO_BIG_PARAMS_GPU}" == TRUE ]]; then
+     no_big_params_argument_gpu=--no-big-params-gpu
+ fi
+ 
+-# Comma separated parameter tiers, e.g. TIERS=0 or TIERS=1,2
++# Comma separated parameter tiers of the CPU tests, e.g. TIERS=0 or TIERS=1,2
+ TIERS="${TIERS// /}"
++# The CPU tests are selected by tier, tier 0 (prod params) when none is given.
++# The long run tests are not part of the tiers
++if [[ "${backend}" == "cpu" && -z "${TIERS}" && "${LONG_TESTS}" != TRUE ]]; then
++    TIERS=0
++fi
+ for tier in ${TIERS//,/ }; do
+     tier_arguments+=(--tier "${tier}")
+ done
+@@ -182,24 +172,18 @@ if [[ -n "${DOCTEST_THREADS}" ]]; then
+     doctest_threads="${DOCTEST_THREADS}"
+ fi
+ 
+-filter_expression=$(/usr/bin/python3 scripts/test_filtering.py --layer integer --backend "${backend}" ${fast_tests_argument:+$fast_tests_argument} ${long_tests_argument:+$long_tests_argument} ${nightly_tests_argument:+$nightly_tests_argument} ${all_but_noise_argument:+$all_but_noise_argument} ${no_big_params_argument_gpu:+$no_big_params_argument_gpu} ${multi_bit_argument:+$multi_bit_argument} ${sign_argument:+$sign_argument} ${no_big_params_argument:+$no_big_params_argument} "${tier_arguments[@]}")
++filter_expression=$(/usr/bin/python3 scripts/test_filtering.py --layer integer --backend "${backend}" ${fast_tests_argument:+$fast_tests_argument} ${long_tests_argument:+$long_tests_argument} ${all_but_noise_argument:+$all_but_noise_argument} ${no_big_params_argument_gpu:+$no_big_params_argument_gpu} ${multi_bit_argument:+$multi_bit_argument} ${sign_argument:+$sign_argument} "${tier_arguments[@]}")
+ 
+ if [[ "${FAST_TESTS}" == "TRUE" ]]; then
+     echo "Running 'fast' test set"
+-elif [[ "${LONG_TESTS}" == "FALSE" ]]; then
+-    echo "Running 'slow' test set"
+ fi
+ 
+ if [[ "${LONG_TESTS}" == "TRUE" ]]; then
+     echo "Running 'long run' test set"
+ fi
+ 
+-if [[ "${NIGHTLY_TESTS}" == "TRUE" ]]; then
+-    echo "Running 'nightly' test set"
+-fi
+-
+ if [[ -n "${TIERS}" ]]; then
+-    echo "Running tier(s) ${TIERS} test set, with the ${TFHE_RS_TEST_PROFILE:-default} test profile"
++    echo "Running tier(s) ${TIERS} test set, with the ${TFHE_RS_TEST_PROFILE:-cpu_baseline} test profile"
+ 
+     # Run the check that checks that no CPU integer test is left behind (not run)
+     # due to bad filtering
+```
+
+**File**: `scripts/test_filtering.py` (modified, +48/-102)
+```diff
+@@ -73,12 +73,6 @@
+     action="store_true",
+     help="Run only the long tests suite",
+ )
+-parser.add_argument(
+-    "--nightly-tests",
+-    dest="nightly_tests",
+-    action="store_true",
+-    help="Run only a subset of test suite",
+-)
+ parser.add_argument(
+     "--big-instance",
+     dest="big_instance",
+@@ -103,12 +97,6 @@
+     action="store_true",
+     help="Include only unsigned integer tests",
+ )
+-parser.add_argument(
+-    "--no-big-params",
+-    dest="no_big_params",
+-    action="store_true",
+-    help="Do not run tests with big parameters set (e.g. 4bits message with 4 bits carry)",
+-)
+ parser.add_argument(
+     "--no-big-params-gpu",
+     dest="no_big_params_gpu",
+@@ -119,7 +107,7 @@
+     "--all-but-noise",
+     dest="all_but_noise",
+     action="store_true",
+-    help="Run all tests except noise tests",
++    help="Run all tests except noise tests (gpu backend)",
+ )
+ parser.add_argument(
+     "--tier",
+@@ -137,111 +125,67 @@
+     "`cargo nextest list --message-format json` (read on stdin)",
+ )
+ 
+-# block PBS are too slow for high params
+-# mul_crt_4_4 is extremely flaky (~80% failure)
+-# test_integer_default_add_sequence_multi_thread_param_message_4_carry_4_ks_pbs_gaussian_2m64 is too slow
+-EXCLUDED_INTEGER_TESTS = [
+-    "/.*_block_pbs(_base)?_param_message_[34]_carry_[34]_ks_pbs_gaussian_2m64$/",
+-    "~mul_crt_param_message_4_carry_4_ks_pbs_gaussian_2m64",
+-    "/.*test_integer_default_add_sequence_multi_thread_param_message_4_carry_4_ks_pbs_gaussian_2m64$/",
+-    "/.*::tests_long_run::.*/",
+-]
+-
+-EXCLUDED_INTEGER_FAST_TESTS = [
+-    "/.*_param_message_[14]_carry_[14]_ks_pbs_gaussian_2m64$/",
+-    "/.*default_add_sequence_multi_thread_param_message_3_carry_3_ks_pbs_gaussian_2m64$/",
+-]
+-
+-EXCLUDED_BIG_PARAMETERS = [
+-    "/.*_param_message_4_carry_4_ks_pbs_gaussian_2m64$/",
+-]
+-
+ EXCLUDED_BIG_PARAMETERS_GPU = [
+     "/.*_message_3_carry_3.*$/",
+     "/.*_group_3_message_2_carry_2.*$/",
+ ]
  
  
- BACKEND_MAP = {
-@@ -14,7 +13,7 @@
+ def filter_integer_tests(input_args):
+-    if input_args.tiers:
++    if input_args.long_tests:
++        if input_args.backend == "gpu":
++            return "test(/^integer::gpu::server_key::radix::tests_long_run.*/)"
++        return "test(/^integer::server_key::radix_parallel::tests_long_run.*/)"
++
++    if input_args.backend == "cpu":
+         return filter_cpu_integer_tests_by_tier(input_args)
+ 
+-    # Run all tests except noise tests if all_but_noise is specified on GPU
+-    if input_args.all_but_noise and input_args.backend == "gpu":
++    return filter_gpu_integer_tests(input_args)
++
++
++def filter_gpu_integer_tests(input_args):
++    # Run all tests except noise tests
++    if input_args.all_but_noise:
+         filter_expression = [
+-            f"test(/^integer::gpu::.*/)",
+-            f"not test(/^integer::gpu::server_key::radix::tests_noise_distribution::.*/)"
++            "test(/^integer::gpu::.*/)",
++            "not test(/^integer::gpu::server_key::radix::tests_noise_distribution::.*/)",
+         ]
+         return " and ".join(filter_expression)
+ 
++    # For now, GPU only has specific parameters set for multi-bit
+     (multi_bit_filter, group_filter) = (
+-        ("_multi_bit", "_group_[0-9]") if input_args.multi_bit else ("", "")
++        ("_gpu_multi_bit", "_group_[0-9]") if input_args.multi_bit else ("", "")
+     )
+-    backend_filter = ""
+-    if not input_args.long_tests:
+-        if input_args.backend == "gpu":
+-            backend_filter = "gpu::"
+-            if multi_bit_filter:
+-                # For now, GPU only has specific parameters set for multi-bit
+-                multi_bit_filter = "_gpu_multi_bit"
+ 
+-        filter_expression = [f"test(/^integer::{backend_filter}.*/)"]
+-
+-        if input_args.multi_bit:
+-            filter_expression.append("test(~_multi_bit)")
+-        else:
+-            filter_expression.append("not test(~_multi_bit)")
++    filter_expression = ["test(/^integer::gpu::.*/)"]
+ 
+-        if input_args.signed_only:
+-            filter_expression.append("test(~_signed)")
+-        if input_args.unsigned_only:
+-            filter_expression.append("not test(~_signed)")
+-
+-        if input_args.no_big_params:
+-            for pattern in EXCLUDED_BIG_PARAMETERS:
+-                filter_expression.append(f"not test({pattern})")
++    if input_args.multi_bit:
++        filter_expression.append("test(~_multi_bit)")
++    else:
++        filter_expression.append("not test(~_multi_bit)")
+ 
+-        if input_args.no_big_params_gpu:
+-            for pattern in EXCLUDED_BIG_PARAMETERS_GPU:
+-                filter_expression.append(f"not test({pattern})")
++    if input_args.signed_only:
++        filter_expression.append("test(~_signed)")
++    if input_args.unsigned_only:
++        filter_expression.append("not test(~_signed)")
+ 
+-        if input_args.fast_tests and input_args.nightly_tests:
+-            filter_expression.append(
+-                f"test(/.*_default_.*?_param{multi_bit_filter}{group_filter}_message_[2-3]_carry_[2-3]_.*/)"
+-            )
+-        elif input_args.fast
+```
+
+**File**: `tfhe/src/integer/ciphertext/compact_list.rs` (modified, +1/-1)
+```diff
+@@ -1891,7 +1891,7 @@ mod zk_pok_tests {
+ 
+     /// Test a compact list encryption proven with the v1 zk scheme
+     #[test]
+-    fn test_zkv1_compact_ciphertext_list_encryption_ci_run_filter() {
++    fn test_zkv1_compact_ciphertext_list_encryption() {
+         let pke_params = TEST_PARAM_PKE_TO_BIG_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128_ZKV1;
+         let ksk_params =
+             TEST_PARAM_KEYSWITCH_PKE_TO_BIG_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128_ZKV1;
+```
+
+**File**: `tfhe/src/integer/key_switching_key/test.rs` (modified, +6/-6)
+```diff
+@@ -18,7 +18,7 @@ use crate::shortint::parameters::{
+ };
+ 
+ #[test]
+-fn gen_multi_keys_test_rdxinteger_to_rdxinteger_ci_run_filter() {
++fn gen_multi_keys_test_rdxinteger_to_rdxinteger() {
+     let num_block = 4;
+ 
+     let client_key_1 = RadixClientKey::new(
+@@ -61,7 +61,7 @@ fn gen_multi_keys_test_rdxinteger_to_rdxinteger_ci_run_filter() {
  }
  
+ #[test]
+-fn gen_multi_keys_test_crtinteger_to_crtinteger_ci_run_filter() {
++fn gen_multi_keys_test_crtinteger_to_crtinteger() {
+     let basis = vec![2, 3, 5, 7, 11];
  
--def parse_profile(profile_string, output_file, slab_toml):
-+def parse_profile(profile_string, output_file):
-     parts = profile_string.split("::", 1)
-     if len(parts) != 2:
-         print(
-@@ -50,33 +49,6 @@ def parse_profile(profile_string, output_file, slab_toml):
-     else:
-         profile = profile_name
+     let client_key_1 = CrtClientKey::new(
+@@ -107,7 +107,7 @@ fn gen_multi_keys_test_crtinteger_to_crtinteger_ci_run_filter() {
+ #[should_panic(
+     expected = "Attempt to build a KeySwitchingKey between integer key pairs with different message modulus and carry"
+ )]
+-fn gen_multi_keys_test_crtinteger_to_crtinteger_fail_ci_run_filter() {
++fn gen_multi_keys_test_crtinteger_to_crtinteger_fail() {
+     let basis = vec![2, 3, 5, 7, 11];
  
--    with open(slab_toml, "rb") as f:
--        slab = tomllib.load(f)
--
--    available = slab.get("backend", {}).get(slab_backend, {})
--    if profile not in available:
--        print(
--            f"Error: profile '{profile}' not found under [backend.{slab_backend}] in {slab_toml}.\n"
--            f"Known profiles: {', '.join(sorted(available.keys()))}",
--            file=sys.stderr,
--        )
--        sys.exit(1)
--
--    entry = available[profile]
--    expected_hardware = (
--        entry.get("hardware_name") or entry.get("flavor_name") or entry.get("instance_type")
--    )
--    assert expected_hardware is not None, (
--        f"profile '{profile}' in {slab_toml} has none of 'hardware_name', 'flavor_name' or 'instance_type'"
--    )
--    if hardware_name != expected_hardware:
--        print(
--            f"Error: hardware '{hardware_name}' does not match expected '{expected_hardware}' "
--            f"for profile '{profile}' in {slab_toml}.",
--            file=sys.stderr,
--        )
--        sys.exit(1)
--
-     with open(output_file, "a") as f:
-         for var_name, value in [
-             ("backend", slab_backend),
-@@ -99,10 +71,5 @@ def parse_profile(profile_string, output_file, slab_toml):
-         "output_file",
-         help="File to append the parsed key=value pairs to (e.g. $GITHUB_OUTPUT)",
-     )
--    parser.add_argument(
--        "--slab-toml",
--        default="ci/slab.toml",
--        help="Path to slab.toml (default: ci/slab.toml)",
--    )
-     args = parser.parse_args()
--    parse_profile(args.profile_string, args.output_file, args.slab_toml)
-+    parse_profile(args.profile_string, args.output_file)
+     let (client_key_1, server_key_1) = KEY_CACHE.get_from_params(
+@@ -142,7 +142,7 @@ fn gen_multi_keys_test_crtinteger_to_crtinteger_fail_ci_run_filter() {
+ }
+ 
+ #[test]
+-fn gen_multi_keys_test_integer_to_integer_ci_run_filter() {
++fn gen_multi_keys_test_integer_to_integer() {
+     // We generate a set of client keys, using the default parameters:
+     let client_key_1 = ClientKey::new(TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_GAUSSIAN_2M128);
+ 
+@@ -247,7 +247,7 @@ fn test_case_cpk_encrypt_cast_compute(
+ }
+ 
+ #[test]
+-fn test_cpk_encrypt_cast_to_small_compute_big_ci_run_filter() {
++fn test_cpk_encrypt_cast_to_small_compute_big() {
+     test_case_cpk_encrypt_cast_compute(
+         TEST_PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+         TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+@@ -256,7 +256,7 @@ fn test_cpk_encrypt_cast_to_small_compute_big_ci_run_filter() {
+ }
+ 
+ #[test]
+-fn test_cpk_encrypt_cast_to_big_compute_big_ci_run_filter() {
++fn test_cpk_encrypt_cast_to_big_compute_big() {
+     test_case_cpk_encrypt_cast_compute(
+         TEST_PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+         TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2028,67 +2441,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. remove in python ci parser the slab.toml parsing
-
-**RULE**:
-When implementing operations in `ci/parse_benchmark_profile.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `83659c4c`: remove in python ci parser the slab.toml parsing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/parse_benchmark_profile.py`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-def parse_profile(profile_string, output_file):
-    parse_profile(args.profile_string, args.output_file)
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-import tomllib
-def parse_profile(profile_string, output_file, slab_toml):
-    with open(slab_toml, "rb") as f:
-        slab = tomllib.load(f)
-
-    available = slab.get("backend", {}).get(slab_backend, {})
-    if profile not in available:
-        print(
-            f"Error: profile '{profile}' not found under [backend.{slab_backend}] in {slab_toml}.\n"
-            f"Known profiles: {', '.join(sorted(available.keys()))}",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    entry = available[profile]
-    expected_hardware = (
-        entry.get("hardware_name") or entry.get("flavor_name") or entry.get("instance_type")
-    )
-    assert expected_hardware is not None, (
-        f"profile '{profile}' in {slab_toml} has none of 'hardware_name', 'flavor_name' or 'instance_type'"
-    )
-    if hardware_name != expected_hardware:
-        print(
-            f"Error: hardware '{hardware_name}' does not match expected '{expected_hardware}' "
-            f"for profile '{profile}' in {slab_toml}.",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    parser.add_argument(
-        "--slab-toml",
-        default="ci/slab.toml",
-        help="Path to slab.toml (default: ci/slab.to
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83659c4c` are properly handled with clean fallback behavior.

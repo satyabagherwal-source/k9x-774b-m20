@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:26:46.137Z",
-  "total_cycles_completed": 12714,
-  "total_learnings_persisted": 12714,
-  "total_rules_promoted": 11585,
+  "last_updated": "2026-11-26T13:36:08.694Z",
+  "total_cycles_completed": 12720,
+  "total_learnings_persisted": 12720,
+  "total_rules_promoted": 11589,
   "history": [
-    {
-      "timestamp": "2026-11-26T01:08:12.892Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:17:49.412Z",
-      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
-      "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:17:52.073Z",
-      "repository": "cloudwego/volo",
-      "learningId": "learn-github-cloudwego-volo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:17:59.544Z",
-      "repository": "saltstack/salt",
-      "learningId": "learn-github-saltstack-salt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:18:04.603Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:26:19.011Z",
-      "repository": "NousResearch/Arete-27B",
-      "learningId": "learn-huggingface-nousresearch-arete-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T01:26:21.025Z",
       "repository": "ntex-rs/ntex",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-11-26T13:26:46.137Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:35:51.609Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:35:58.720Z",
+      "repository": "Jarvis322/macos-sysdata",
+      "learningId": "learn-github-jarvis322-macos-sysdata",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:36:01.481Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:36:02.529Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:36:05.963Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:36:08.694Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

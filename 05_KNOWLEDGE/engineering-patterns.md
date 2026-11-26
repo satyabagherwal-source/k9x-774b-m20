@@ -805452,3 +805452,378 @@ func (a *A
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `4537d179` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10688. count each hard-linked file once (Harvested from Jarvis322/macos-sysdata)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "count each hard-linked file once",
+  "source": "Jarvis322/macos-sysdata",
+  "source_url": "https://github.com/Jarvis322/macos-sysdata",
+  "source_version": "63fb10a2",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T13:35:58.106Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jarvis322-macos-sysdata",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Jarvis322/macos-sysdata](https://github.com/Jarvis322/macos-sysdata) (Revision: `63fb10a2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/SysDataMenu/Services/DiskSize.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Jarvis322/macos-sysdata. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1bdf2df1`: size): count each hard-linked file once. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SysDataMenu/Services/DiskSize.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// Files a walk has already counted that have more than one hard link.
+    ///
+    /// Every link to a file reports the file's full allocated size, so a walk
+    /// that summed them all counted the same blocks once per link: Spotlight's
+    /// store under ~/Library/Metadata showed 11 GB for 2.5 GB on disk (#31).
+    /// Like `du`, the first link a walk meets is counted and the rest are not.
+    /// Only multi-link files reach the `lstat`, so an ordinary tree pays nothing.
+    struct HardLinks {
+        private struct Inode: Hashable {
+            let device: dev_t
+            let inode: ino_t
+        }
+
+        private var seen: Set<Inode> = []
+
+        /// Whether this is the first time the walk meets the file at `url`.
+        mutating func isFirstSighting(of url: URL, linkCount: Int?) -> Bool {
+            guard let linkCount, linkCount > 1 else { return true }
+            var info = stat()
+            guard lstat(url.path, &info) == 0 else { return true }
+            return seen.insert(Inode(device: info.st_dev, inode: info.st_ino)).inserted
+        }
+    }
+
+            .totalFileAllocatedSizeKey, .isRegularFileKey, .contentModificationDateKey, .linkCountKey,
+           
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+            .totalFileAllocatedSizeKey, .isRegularFileKey, .contentModificationDateKey,
+            return measure(of: url, keys: keys, cutoff: cutoff)
+            let child = measure(of: child, keys: keys, cutoff: cutoff)
+            .totalFileAllocatedSizeKey, .isRegularFileKey, .volumeIdentifierKey,
+            guard let size = values.totalFileAllocatedSize, size > 0 else { continue }
+    private static func measure(of url: URL, keys: Set<URLResourceKey>, cutoff: Date?) -> Measurement {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1bdf2df1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10689. unblock fixed-MAC Overlay Pod recovery (Harvested from beclab/Olares)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "unblock fixed-MAC Overlay Pod recovery",
+  "source": "beclab/Olares",
+  "source_url": "https://github.com/beclab/Olares",
+  "source_version": "18aa13cc",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-26T13:36:00.875Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-beclab-olares",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `18aa13cc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `framework/app-service/controllers/terminated_overlay_pod_gc_envtest_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `78aa03a6`: app-service): unblock fixed-MAC Overlay Pod recovery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/app-service/controllers/terminated_overlay_pod_gc_envtest_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+package controllers
+
+import (
+	"encoding/json"
+	"strings"
+	"time"
+
+	"github.com/beclab/Olares/framework/app-service/pkg/constants"
+	"github.com/beclab/Olares/framework/app-service/pkg/utils/maclease"
+	"github.com/beclab/Olares/framework/app-service/pkg/webhook"
+	appv1 "github.com/beclab/api/api/app.bytetrade.io/v1alpha1"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+	admissionv1 "k8s.io/api/admission/v1"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+)
+
+var _ = Describe("Overlay terminal Pod recovery", func() {
+	It("reclaims the Jellyfin migration failure and hands off its fixed MAC after deletion", func() {
+		now := time.Now()
+		d, _ := terminatedPodGCFixture(now, terminatedPodGCTestCase{replicas: 1})
+		d.Name, d.Namespace, d.UID = "jellyfin", "default", ""
+		labels := map[string]string{constants.Appli
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `78aa03a6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10690. [MOD-21589] Add a nonblocking worker pause for assertion builds (Harvested from RediSearch/RediSearch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[MOD-21589] Add a nonblocking worker pause for assertion builds",
+  "source": "RediSearch/RediSearch",
+  "source_url": "https://github.com/RediSearch/RediSearch",
+  "source_version": "aa4f044b",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T13:36:05.379Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-redisearch-redisearch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [RediSearch/RediSearch](https://github.com/RediSearch/RediSearch) (Revision: `aa4f044b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/debug_commands.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `342b7521`: [MOD-21589] Add a nonblocking worker pause for assertion builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/debug_commands.c`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  bool pause = !strcasecmp(op, "pause");
+  bool pauseNoWait = false;
+#ifdef ENABLE_ASSERT
+  // A test may need to stop dispatch before releasing a worker held at a sync point.
+  pauseNoWait = !strcasecmp(op, "pause_nowait");
+#endif
+  if (pause || pauseNoWait) {
+    if (workersThreadPool_pause(pause) != REDISMODULE_OK) {
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+  if (!strcasecmp(op, "pause")) {
+    if (workersThreadPool_pause() != REDISMODULE_OK) {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `342b7521` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10691. Rework ARC 27a28665 dataset to fail on unknown kinds (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Rework ARC 27a28665 dataset to fail on unknown kinds",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "a8825a25",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T13:36:08.127Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `a8825a25`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a8825a25`: Rework ARC 27a28665 dataset to fail on unknown kinds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+shape, as in `kind=l4262`, and every other implementation leaves it out, so
+`canvas_width` and `canvas_height`. Inside the value of an `is` assignment,
+the item words of [NUC 95](../docs/nuc-0095.md) read the same way, so the
+named arguments of the implementations in `dataset.27a28665.json` pass bare
+kinds, as in `kind=l1707`, while the object keys of its `fill_color` rule are
+names, as in `{l4262: 1, l2404: 2, l3743: 3, l1707: 6}`, which an object
+literal reads as the same keys. Only the default of the `kind` parameter keeps
+its quotes, such as `kind: str = 'l9100'`: accepted Nucleoid takes only a
+literal as a parameter default and rejects the bare `kind: str = l9100` with
+`SyntaxError: Expected a scalar literal parameter default`.
+property, such as `kind=l4262` for the first training input, with no color,
+`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]`: the object
+literal states each shape's code once, keyed by the name of its kind, and
+object bracket access reads the code of the block's input kind, anchored with
+`@first` because the kind rule turns the kind into `l7544`. A kind that is not
+a key of the table reads `null` there, as an absent key does, so a class-level
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+shape, as in `kind='l4262'`, and every other implementation leaves it out, so
+`canvas_width` and `canvas_height`. Other strings keep their quotes, such as
+the object keys of the `fill_color` rule in `dataset.27a28665.json`, keyword
+arguments such as `kind='l1707'`, which are not assignments, and the default
+of the `kind` parameter, such as `kind: str = 'l9100'`: accepted Nucleoid takes
+only a literal as a parameter default and rejects the bare `kind: str = l9100`
+with `SyntaxError: Expected a scalar literal parameter default`.
+property, such as `kind='l4262'` for the first training input, with no color,
+`{'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.kind@first]`: the object
+literal states each shape's code once, and object bracket access reads the
+code of the block's input kind, anchored with `@first` because the kind rule
+turns the kind into `l7544`. `$Obj.volume is $Obj.width * $Obj.height` counts
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a8825a25` are properly handled with clean fallback behavior.

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T16:50:39.227Z",
+  "timestamp": "2026-11-26T13:36:12.728Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-jarvis322-macos-sysdata-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [jarvis322-macos-sysdata-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T16:50:39.227Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T13:36:12.728Z`  
 > **Learning ID**: `LEARN-EVO-jarvis322-macos-sysdata-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from jarvis322-macos-sysdata-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md`  
 > **Source**: github ([https://github.com/Jarvis322/macos-sysdata](https://github.com/Jarvis322/macos-sysdata))  
-> **Source Version**: `e06a5803`  
+> **Source Version**: `63fb10a2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T16:50:26.998Z  
+> **Timestamp**: 2026-11-26T13:35:57.503Z  
 > **Learning ID**: `learn-github-jarvis322-macos-sysdata`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Jarvis322/macos-sysdata](https://github.com/Jarvis322/macos-sysdata))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T16:50:25.839Z  
+> **Harvest Timestamp**: 2026-11-26T13:35:57.498Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: See what is really inside macOS System Data and delete it item by item. A free menu bar app that explains every category and shows each command before it runs.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2221 stars
+- **Stars / Engagement**: 2345 stars
 
 ---
 
@@ -411,7 +411,14 @@ final class ScanModel {
     /// that laid rows out again was also making filesystem calls. The disk
     /// changes between scans far less often than the list redraws.
     @ObservationIgnored private var rowFacts: [String: RowFacts] = [:]
-    var selectedIDs: Set<String> = []
+    var selectedIDs: Set<String> = [] {
+        // A plan ends the moment the selection stops being it. Checking only
+        // at read time kept an empty plan ("nothing here can be freed") alive
+        // whenever nothing was ticked, so its Clear button did nothing.
+        didSet {
+            if let plan = spacePlan, selectedIDs != Set(plan.items.map(\.id)) { spacePlan = nil }
+        }
+    }
     /// Narrows the list to matching items. The selection survives it: ticking
     /// "Select safe" and then typing a filter to untick two of them is the
     /// obvious way to use the two together, and dropping the selection on the
@@ -524,7 +531,7 @@ final class ScanModel {
     private static let hiddenKey = "hiddenItemIDs"
     private static let shrunkKey = "shrunkItemDates"
     private static let sortKey = "sortOrder"
-    private static let historyKey = "keepsHistory"
+    private static let historyKey = ScanHistory.enabledKey
     private static let menuBarKey = "menuBarContent"
     /// Read by the app scene too, which needs `@AppStorage` to notice the
     /// change: an app scene does not track this model the way a view does.
@@ -540,15 +547,7 @@ final class ScanModel {
     init(scansAutomatically: Bool = true, items: [StorageItem] = []) {
         self.scansAutomatically = scansAutomatically
         self.items = items
-        hiddenIDs = Set(UserDefaults.standard.stringArray(forKey: Self.hiddenKey) ?? [])
-        if scansAutomatically {
-            // Before the first scan measures them as part of their folders.
-            Task.detached(priority: .utility) { FolderCompression.removeLeftovers() }
-            Task { await runBackgroundScans() }
-        }
-    }
-
-    /// Scans on launch and once a day after that, so the me
+        hiddenIDs = Set(UserDefaults.s
 ```
 
 ### Core Architecture Module: `Sources/SysDataMenu/Model/SpacePlan.swift`
@@ -1160,7 +1159,10 @@ struct DeveloperToolProbe: StorageProbe {
         Known("anaconda3", "Anaconda", "Conda environments and packages.", .review),
         Known(".conda/pkgs", "Conda package cache", "Downloaded packages.", .safe, tool: ("conda", ["clean", "--all", "-y"])),
         Known(".m2/repository", "Maven repository", "Downloaded jars. Re-fetched on the next build.", .safe),
-        Known(".ivy2", "Ivy cache", "Downloaded jars for sbt.", .safe),
+        // Only the cache: the rest of ~/.ivy2 holds `sbt publishLocal`
+        // artifacts that exist nowhere else, and the credentials file sbt's
+        // documentation tells people to keep there.
+        Known(".ivy2/cache", "Ivy cache", "Downloaded jars for sbt.", .safe),
         Known(".cocoapods/repos", "CocoaPods specs repos", "`pod setup` rebuilds them.", .safe),
         Known(".gradle/wrapper/dists", "Gradle distributions", "Downloaded Gradle versions.", .safe),
         Known(".android/cache", "Android SDK download cache", "Re-downloaded on demand.", .safe),
@@ -1169,7 +1171,10 @@ struct DeveloperToolProbe: StorageProbe {
         // Found unexplained under "Other large folders" at 0.8 GB. `npm cache
         // clean` does not touch it.
         Known(".npm/_npx", "npx cache", "Packages npx downloaded to run once. npx fetches them again the next time.", .safe),
-        Known(".deno", "Deno cache", "Cached modules.", .safe),
+        // Deno's installer puts the deno binary and `deno install -g` tools
+        // here; its module cache is ~/Library/Caches/deno, which the app cache
+        // scan already lists. Safe would have let auto-clean uninstall Deno.
+        Known(".deno", "Deno installation", "The deno binary and globally installed Deno tools. Run the installer again to get them back.", .review),
         Known(".vscode/extensions", "VS Code extensions", "Installed extensions. Reinstall from the marketplace.", .review),
         Known(".cursor/extensions", "Cursor extensions", "Installed extensions.", .review),
         Known(".docker", "Docker CLI data", "Contexts and build history, not images.", .review),
@@ -1248,8 +1253,11 @@ struct DeveloperToolProbe: StorageProbe {
             if let item = await ProbeSupport.directoryItem(
                 id: "tool-cache-\(folder.lastPathComponent)", category: .tools,
                 name: "Cache: \(folder.lastPathComponent)",
-                detail: "~/.cache entry. Tools rebuild their caches on demand.",
-                url: folder, safety: .safe, action: .removePaths([folder]), minimumBytes: Self.threshold
+                detail: "~/.cache entry. Usually a cache, but some tools keep downloaded models or their own data here.",
+                // Review, not Safe: unknown tools use ~/.cache for models
+                // (Whisper) and even chats (older LM Studio), and Safe rows are
+                // what the unattended clean deletes without asking.
+                url: folder, safety: .review, action: .removePaths([folder]), minimumBytes: Self.threshold
             ) {
                 items.append(item)
             }
@@ -1274,22 +1282,7 @@ struct LargeFolderProbe: StorageProbe {
         URL(fileURLWithPath: "/private/var"),
         URL(fileURLWithPath: "/opt"),
         URL(fileURLWithPath: "/usr/local"),
-        URL(fileURLWithPath: "/Users/Shared"),
-    ]
-
-    /// Locations Finder attributes to their own category (Photos, Music,
-    /// Messages, Mail, Applications), so they are not System Data.
-    ///
-    /// Desktop, Documents and Downloads are on the list for a second reason:
-    /// Storage settings counts them as Documents, and what is in them is the
-    /// user's own work, which no delete regenerates. Listing "~/Desktop" at
-    /// 102 GB beside a Delete button is one wrong click away from a very bad
-    /// afternoon. The probes that have business there still run — build
-    /// folders, virtual machines and Final Cut render files each have their
-    /// own item, with a name that says what it is.
-    private static let excluded: [URL] = [
-        .home("Pictures"), .home("Music"), .home("Movies"),
-    
+        URL(fileURLWithPath
 ```
 
 ### Core Architecture Module: `Sources/SysDataMenu/Probes/DeveloperProbes.swift`
@@ -1521,275 +1514,405 @@ struct RuntimeProbe: StorageProbe {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1553cbcd` (2026-11-12)
-**Commit Message**: fix(menu-bar): make the icon switch take effect from the window (#30)
+### Incident Patch 1: `1bdf2df1` (2026-11-24)
+**Commit Message**: fix(size): count each hard-linked file once
 
-* fix(menu-bar): apply the icon switch when the window changes it
+Every link to a file reports the file's whole allocated size, so both
+walks counted the same blocks once per link. Spotlight's store under
+~/Library/Metadata showed 11 GB for 2.5 GB on disk. Like du, a walk now
+counts the first link it meets and skips the rest, keyed by device and
+inode; only files with more than one link pay for the extra lstat.
 
-MenuBarExtra applies `isInserted` when the scene is built. Changing the
-preference afterwards did not remove the icon, so the switch in the window
-looked dead; it also went through the panel hand-off and waited three
-seconds for a panel that was not open.
+Fixes #31
 
-Keep the extra inserted and hide its status item instead. SwiftUI has no
-public accessor for that item, so it is found through the status bar window
-the extra creates. While the icon is hidden a short timer re-applies that,
-because a label update can rebuild the item visible; the label itself is
-static while hidden so scans do not rebuild it. The window switch applies
-the preference immediately; the panel path still waits for the panel to
-close.
-
-The window and the panel share the same model, so both switches and the
-"Menu bar shows" picker stay in step.
-
-* fix(app): keep one model for the menu bar panel and the window
-
-The App created a ScanModel in its state initializer and handed that to
-MainWindow, while the panel's environment used whichever model the scene
-had. Re-initializing the App cou
-
-**File**: `Sources/SysDataMenu/Services/MainWindow.swift` (modified, +12/-0)
+**File**: `Sources/SysDataMenu/Services/DiskSize.swift` (modified, +40/-6)
 ```diff
-@@ -40,6 +40,7 @@ final class MainWindow: NSObject, NSWindowDelegate {
-     /// and nothing to show in it.
-     func use(_ model: ScanModel) {
-         self.model = model
-+        MenuBarIcon.apply(model.showsMenuBarIcon)
-         syncActivationPolicy(windowIsOpen: window?.isVisible ?? false)
+@@ -29,6 +29,30 @@ enum DiskSize {
+         var count: Int { entries.withLock { $0 } }
      }
  
-@@ -129,16 +130,27 @@ final class MainWindow: NSObject, NSWindowDelegate {
-     private var hasOpenMenuBarPanel: Bool {
-         NSApplication.shared.windows.contains {
-             $0 !== window && $0 !== prompt && $0.isVisible
-+                // The status item's own windows are always visible; they are
-+                // not the panel this waits for.
-+                && !$0.className.contains("NSStatusBarWindow")
++    /// Files a walk has already counted that have more than one hard link.
++    ///
++    /// Every link to a file reports the file's full allocated size, so a walk
++    /// that summed them all counted the same blocks once per link: Spotlight's
++    /// store under ~/Library/Metadata showed 11 GB for 2.5 GB on disk (#31).
++    /// Like `du`, the first link a walk meets is counted and the rest are not.
++    /// Only multi-link files reach the `lstat`, so an ordinary tree pays nothing.
++    struct HardLinks {
++        private struct Inode: Hashable {
++            let device: dev_t
++            let inode: ino_t
++        }
++
++        private var seen: Set<Inode> = []
++
++        /// Whether this is the first time the walk meets the file at `url`.
++        mutating func isFirstSighting(of url: URL, linkCount: Int?) -> Bool {
++            guard let linkCount, linkCount > 1 else { return true }
++            var info = stat()
++            guard lstat(url.path, &info) == 0 else { return true }
++            return seen.insert(Inode(device: info.st_dev, inode: info.st_ino)).inserted
++        }
++    }
++
+     /// How many walks read the disk at once. The concurrency pool used to
+     /// set this by having one thread per core; dispatch has no such limit,
+     /// and forty walks at once made the scan slower, not faster.
+@@ -138,11 +162,12 @@ enum DiskSize {
          }
-     }
  
-     /// Re-reads the menu bar preference. Turning the icon off has to put the
-     /// app in the Dock: an app with no icon and no Dock tile cannot be
-     /// reached again, which is not a preference, it is a disappearance.
-     func menuBarPreferenceChanged() {
-+        applyMenuBarIconPreference()
-         syncActivationPolicy(windowIsOpen: window?.isVisible ?? false)
-     }
+         let keys: Set<URLResourceKey> = [
+-            .totalFileAllocatedSizeKey, .isRegularFileKey, .contentModificationDateKey,
++            .totalFileAllocatedSizeKey, .isRegularFileKey, .contentModificationDateKey, .linkCountKey,
+         ]
  
-+    /// Puts the status item in the state the preference asks for. Called after
-+    /// launch as well as on the switch, because the item does not exist yet
-+    /// when the app is being built.
-+    func applyMenuBarIconPreference() {
-+        MenuBarIcon.apply(model?.showsMenuBarIcon ?? true)
-+    }
-+
-     func windowWillClose(_ notification: Notification) {
-         let closing = notification.object as AnyObject?
-         if closing === prompt {
-```
-
-**File**: `Sources/SysDataMenu/Services/MenuBarIcon.swift` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+import AppKit
-+
-+/// The menu bar icon as a status item the app can hide and show.
-+///
-+/// `MenuBarExtra(isInserted:)` is read when the scene is built: changing the
-+/// preference afterwards did not take the icon out of the menu bar on macOS
-+/// 26, and a published scene value did not either. The extra now stays
-+/// inserted and the status item behind it is hidden instead.
-+///
-+/// SwiftUI has no public accessor for that status item. It is reached through
-+/// the window `MenuBarExtra` creates for it, the same way the menu bar extra
-+/// helpers do. A status item can be rebuilt when SwiftUI updates the extra,
-+/// so the preference is also re-applied by a short timer and by KVO on the
-+/// item's own `isVisible`; keep all of that in this one place.
-+@MainActor
-+enum MenuBarIcon {
-+    /// What the preference asks for, even while no item exists yet.
-+    private static var isWanted = true
-+    private static var timer: Timer?
-+
-+    static func apply(_ visible: Bool, attempt: Int = 0) {
-+        isWanted = visible
-+        enforce()
-+        if visible {
-+            stopWatching()
-+        } else {
-+            startWatching()
-+        }
-+
-+        // The item is created with the scene, a moment after launch.
-+        if items().isEmpty, attempt < 40 {
-+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-+                MainActor.assumeIsolated {
-+                    apply(visible, attempt: attempt + 1)
-+                }
-+            }
-+        }
-+    }
-+
-+    private static func enforce() {
-+        for item in items() where item.isVisible != isWanted {
-+            item.isVisible = isWanted
-+        }
-+    }
-+
-+    /// The status item can be replaced when SwiftUI rebuilds the extra. The
-+    /// timer is what hides a replacement; a few times a second is enough, and
-+    /// it only changes an item that is in the wrong state.
-+    private static func startWatching() {
-+        guard timer == nil else { return }
-+        let timer = Timer(timeInterval: 0.25, repeats: true) { _ in
-+            Task { @MainActor in
-+                enforce()
-+            }
-+        }
-+        RunLoop.main.add(timer, forMode: .common)
-+        self.timer = timer
-+    }
-+
-+    private static func stopWatching() {
-+        timer?.invalidate()
-+        timer = nil
-+    }
-+
-+    private static func items() -> [NSStatusItem] {
-+        NSApplication.shared.windows
-+            .filter { $0.className.contains("NSStatusBarWindow") }
-+            .compactMap { window in
-+                window.value(forKey: "statusItem") as? NSStatusItem
-+            }
-+            .filter { item in
-+                // A second display gets a replicant, which is not the item
-+                // that can be hidden.
-+                item.className == "NSStatusItem" || item.className == "NSSceneStatusItem"
-+            }
-+    }
-+}
-```
-
-**File**: `Sources/SysDataMenu/Services/PowerOffGuard.swift` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ final class PowerOffGuard: NSObject, NSApplicationDelegate {
+         if !isDirectory.boolValue {
+-            return measure(of: url, keys: keys, cutoff: cutoff)
++            var hardLinks = HardLinks()
++            return measure(of: url, keys: keys, cutoff: cutoff, hardLinks: &hardLinks)
+         }
  
-     func applicationDidFinishLaunching(_ notification: Notification) {
-         MainWindow.shared.showIfMenuBarIsHidden()
-+        MainWindow.shared.applyMenuBarIconPreference()
-         MainWindow.shared.askWherePresentationBelongs()
-         NSWorkspace.shared.notificationCenter.addObserver(
-             self,
-```
-
-**File**: `Sources/SysDataMenu/SysDataMenuApp.swift` (modified, +32/-21)
-```diff
-@@ -30,12 +30,18 @@ enum Entry {
-     }
- }
+         guard let enumerator = fileManager.enumerator(
+@@ -153,9 +178,10 @@ enum DiskSize {
+         ) else { return Measurement(bytes: 0, lastModified: nil) }
  
-+/// The one model the menu bar panel and the window both use. A fresh
-+/// `ScanModel()` per App initialization gave the window and the panel
-+/// separate settings, which is how the icon switch could take effect while
-+/// the other surface still showed the old state.
-+@MainActor
-+private enum AppModel {
-+    static let shared = ScanModel()
-+}
-+
- struct SysDataMenuApp: App {
-     @NSApplicationDelegateAdaptor(PowerOffGuard.self) private var powerOffGuard
--    @State private var model = ScanModel()
--    /// The same preference `ScanModel` stores, read through `@AppStorage`
--    /// because that is what makes this scene re-evaluate when it changes.
--    @AppStorage(ScanModel.menuBarIconKey) private var showsMenuBarIcon = true
-+    @State private var model = AppModel.shared
+         var total = Measurement(bytes: 0, lastModified: nil)
++        var hardLinks = HardLinks()
+         for case let child as URL in enumerator {
+             progress?.advance()
+-            let child = measure(of: child, keys: keys, cutoff: cutoff)
++            let child = measure(of: child, keys: keys, cutoff: cutoff, hardLinks: &hardLinks)
+             total.bytes += child.bytes
+             if let modified = child.lastModified,
+                modified > (total.lastModified ?? .distantPast) {
+@@ -185,7 +211,7 @@ enum DiskSize {
+         let rootPath = realPath(root.path)
+         let skipped = Set(skipping.map(realPath))
+         let keys: Set<URLResourceKey> = [
+-            .totalFileAllocatedSizeKey, .isRegularFileKey, .volumeIdentifierKey,
++            .totalFileAllocatedSizeKey, .isRegularFileKey, .volumeIdentifierKey, .linkCountKey,
+         ]
+         let rootURL = URL(fileURLWithPath: rootPath)
+         // The walk stays on the volume it started on. A directory on another
+@@ -202,6 +228,7 @@ enum DiskSize {
+         ) else { return [:] }
  
-     init() {
-         // No Dock icon while the app is only a menu bar item; MainWindow puts
-@@ -47,12 +53,10 @@ struct SysDataMenuApp: App {
-     }
- 
-     var body: some Scene {
--        // Read here, so the scene re-evaluates when the preference changes,
--        // and hand the binding a value it cannot write back to: the icon is
--        // switched where the person switches it, and SwiftUI writing its own
--        // idea of the state into the preference would undo that.
--        let showsIcon = showsMenuBarIcon
--        MenuBarExtra(isInserted: Binding(get: { showsIcon }, set: { _ in })) {
-+        // Always inserted. The icon is hidden through the status item itself
-+        // (MenuBarIcon), because changing isInserted after the scene is built
-+        // did not take the icon out of the menu bar.
-+        MenuBarExtra(isInserted: .constant(true)) {
-             MenuView()
-                 .environment(model)
-         } label: {
-@@ -66,19 +70,26 @@ struct SysDataMenuApp: App {
-     /// app exists to surface; free space and icon-only are the alternatives.
-     @ViewBuilder
-     private var menuBarLabel: some View {
--        switch model.menuBarContent {
--        case .systemData:
--            if model.measuredBytes >= 100 * ProbeSupport.megabyte {
--                labelWithValue(model.measuredBytes.byteString,
--                               help: L("System Data found: %@", model.measuredBytes.byteString))
--            } else {
-+        if !model.showsMenuBarIcon {
-+            // Hidden. Keep the label static: one that changes with every scan
-+            // rebuilds the status item, and a rebuilt item comes back visible
-+            // even though the preference says otherwise.
-+            Image(systemName: "internaldrive")
-+        } else {
-+            switch model.menuBarContent {
-+            case .systemData:
-+                if model.measuredBytes >= 100 * ProbeSupport.megabyte {
-+                    labelWithValue(model.measuredBytes.byteString,
-+                                   help: L("System Data found: %@", model.measuredBytes.byteString))
-+                } else {
-+                    Image(systemName: "internaldrive")
-+                }
-+            case .freeSpace:
-+                labelWithValue(model.freeBytes.byteString,
-+                               help: L("%@ free on disk", model.freeBytes.byteString))
-+            case .iconOnly:
-                 Image(systemName: "internaldrive")
+         var sizes: [String: Int64] = [:]
++        var hardLinks = HardLinks()
+         for case let file as URL in enumerator {
+             progress?.advance()
+             guard let values = try? file.resourceValues(forKeys: keys) else { continue }
+@@ -215,7 +242,9 @@ enum DiskSize {
+                 }
+                 continue
              }
--        case .freeSpace:
--            labelWithValue(model.freeBytes.byteString,
--                           help: L("%@ free on disk", model.freeBytes.byteString))
--        case .iconOnly:
--            Image(systemName: "internaldrive")
+-            guard let size = values.totalFileAllocatedSize, size > 0 else { continue }
++            guard let size = values.totalFileAllocatedSize, size > 0,
++                  hardLinks.isFirstSighting(of: file, linkCount: values.linkCount)
++            else { continue }
+ 
+             let relative = file.path.dropFirst(rootPath.count + 1)
+             let components = relative.split(separator: "/", omittingEmptySubsequences: true).dropLast()
+@@ -302,12 +331,17 @@ enum DiskSize {
+     /// One file's contribution. A file excluded by `cutoff` contributes
+     /// neither its bytes nor its date, so a pruning item's age describes what
+     /// it would actually delete.
+-    private static func measure(of url: URL, keys: Set<URLResourceKey>, cutoff: Date?) -> Measurement {
++    private static func measure(
++        of url: URL, keys: Set<URLResourceKey>, cutoff: Date?, hardLinks: inout HardLinks
++    ) -> Measurement {
+         guard let values = try? url.resourceValues(forKeys: keys),
+               values.isRegularFile == true else { return Measurement(bytes: 0, lastModified: nil) }
+         if let cutoff, let modified = values.contentModificationDate, modified > cutoff {
+             return Measurement(bytes: 0, lastModified: nil)
          }
++        guard hardLinks.isFirstSighting(of: url, linkCount: values.linkCount) else {
++            return Measurement(bytes: 0, lastModified: nil)
++        }
+         return Measuremen
+```
+
+**File**: `Tests/SysDataMenuTests/HardLinkSizeTests.swift` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++import Foundation
++import Testing
++@testable import SysDataMenu
++
++/// Every link to a file reports the file's whole size, so a walk that added
++/// them up counted the same blocks once per link (#31).
++@Suite struct HardLinkSizeTests {
++    private func makeTree() throws -> (root: URL, single: Int64) {
++        let fileManager = FileManager.default
++        let root = fileManager.temporaryDirectory.appending(path: "sysdata-links-\(UUID().uuidString)")
++        for path in ["a", "b"] {
++            try fileManager.createDirectory(at: root.appending(path: path), withIntermediateDirectories: true)
++        }
++        let original = root.appending(path: "a/data.bin")
++        try Data(count: 200_000).write(to: original)
++        for link in ["a/second.bin", "b/third.bin"] {
++            try fileManager.linkItem(at: original, to: root.appending(path: link))
++        }
++        let single = Int64(try #require(original.resourceValues(forKeys: [.totalFileAllocatedSizeKey])
++            .totalFileAllocatedSize))
++        return (root, single)
++    }
++
++    @Test func aWalkCountsAHardLinkedFileOnce() throws {
++        let (root, single) = try makeTree()
++        defer { try? FileManager.default.removeItem(at: root) }
++
++        #expect(DiskSize.allocatedSync(at: root) == single)
++    }
++
++    @Test func directorySizesCountAHardLinkedFileOnce() throws {
++        let (root, single) = try makeTree()
++        defer { try? FileManager.default.removeItem(at: root) }
++
++        let sizes = DiskSize.directorySizes(under: root, maxDepth: 2)
++        let rootPath = DiskSize.realPath(root.path)
++        #expect(sizes[rootPath] == single)
++        #expect((sizes[rootPath + "/a"] ?? 0) + (sizes[rootPath + "/b"] ?? 0) == single)
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `1ee7de79` (2026-11-24)
+**Commit Message**: fix(history): keep the log and its views accurate
+
+A scan finishing after history was turned off wrote the file again;
+writers now check the setting under the lock. Rows deleted in one batch
+shared a ForEach id and drew wrong or repeated names. The charts wrote
+an English GB and showed days under half a gigabyte as 0 GB. The weekly
+summary named the item that grew most over months under a this-week
+title.
+
+**File**: `Sources/SysDataMenu/Model/ScanModel.swift` (modified, +3/-2)
+```diff
+@@ -149,7 +149,7 @@ final class ScanModel {
+     private static let hiddenKey = "hiddenItemIDs"
+     private static let shrunkKey = "shrunkItemDates"
+     private static let sortKey = "sortOrder"
+-    private static let historyKey = "keepsHistory"
++    private static let historyKey = ScanHistory.enabledKey
+     private static let menuBarKey = "menuBarContent"
+     /// Read by the app scene too, which needs `@AppStorage` to notice the
+     /// change: an app scene does not track this model the way a view does.
+@@ -658,7 +658,8 @@ final class ScanModel {
+             await Task.detached(priority: .utility) {
+                 ScanHistory.record(measured, freeBytes: free)
+             }.value
+-            setHistory(ScanHistory.load())
++            // Switched off while the record was being written: keep it empty.
++            if keepsHistory { setHistory(ScanHistory.load()) }
+         }
+         await LowSpaceAlert.check(freeBytes: freeBytes, reclaimable: safeBytes)
+         publishToWidget()
+```
+
+**File**: `Sources/SysDataMenu/Services/ScanHistory.swift` (modified, +15/-2)
+```diff
+@@ -105,10 +105,21 @@ enum ScanHistory {
+ 
+     // MARK: Writing
+ 
++    /// The setting the app writes when history is switched on or off.
++    static let enabledKey = "keepsHistory"
++
++    /// Read under the write lock by every writer. A scan that began while
++    /// history was on records from a background task when it ends; checking
++    /// only at the start let it write the file again after it was turned off
++    /// and deleted.
++    private static var isEnabled: Bool {
++        UserDefaults.standard.object(forKey: enabledKey) as? Bool ?? true
++    }
++
+     static func record(_ items: [StorageItem], freeBytes: Int64, at date: Date = .now) {
+         writeLock.lock()
+         defer { writeLock.unlock() }
+-        guard var log = loadForWriting() else { return }
++        guard isEnabled, var log = loadForWriting() else { return }
+         var sizes: [String: Int64] = [:]
+         var names: [String: String] = [:]
+         var categories: [String: String] = [:]
+@@ -138,7 +149,7 @@ enum ScanHistory {
+         guard !batch.isEmpty else { return }
+         writeLock.lock()
+         defer { writeLock.unlock() }
+-        guard var log = loadForWriting() else { return }
++        guard isEnabled, var log = loadForWriting() else { return }
+         for (item, bytes) in batch {
+             log.deletions.append(Deletion(
+                 date: date,
+@@ -153,6 +164,8 @@ enum ScanHistory {
+     }
+ 
+     static func forget() {
++        writeLock.lock()
++        defer { writeLock.unlock() }
+         try? FileManager.default.removeItem(at: fileURL)
      }
  
 ```
 
-**File**: `Sources/SysDataMenu/Views/MenuView.swift` (modified, +10/-6)
+**File**: `Sources/SysDataMenu/Services/WeeklyDigest.swift` (modified, +6/-2)
 ```diff
-@@ -973,13 +973,17 @@ struct MenuView: View {
-             Toggle(L("Show in menu bar"), isOn: Binding(
-                 get: { model.showsMenuBarIcon },
-                 set: { wanted in
--                    // Taking the icon away while it is the only way into the
--                    // app would leave it with nowhere to appear, so the window
--                    // opens before the icon goes — and when the switch is
--                    // thrown from the menu bar panel, the icon waits for that
--                    // panel to close.
-                     guard wanted else {
--                        MainWindow.shared.openWindowLeavingTheMenuBar()
-+                        // From the panel, the window opens first: the icon is
-+                        // the panel's anchor, and the switch waits for the
-+                        // panel to close. From the window there is nothing to
-+                        // wait for.
-+                        if presentation == .menuBar {
-+                            MainWindow.shared.openWindowLeavingTheMenuBar()
-+                            return
-+                        }
-+                        model.showsMenuBarIcon = false
-+                        MainWindow.shared.menuBarPreferenceChanged()
-                         return
+@@ -33,8 +33,12 @@ enum WeeklyDigest {
+ 
+         let content = UNMutableNotificationContent()
+         content.title = L("System Data grew %@ this week", change.delta.byteString)
+-        if let top = ScanHistory.fastestGrowing(in: log, limit: 1).first {
+-            content.body = L("Mostly %@, up %@.", top.name, top.bytes.byteString)
++        // Measured against the same week-old scan as the title. The all-time
++        // leader could have grown 40 GB over months and none of it this week.
++        if let top = ScanHistory.itemChanges(overPastDays: 7, in: log).max(by: { $0.value < $1.value }),
++           top.value > 0 {
++            let name = log.scans.last?.names[top.key] ?? top.key
++            content.body = L("Mostly %@, up %@.", name, top.value.byteString)
+         } else {
+             content.body = L("Open Unpacked to see what grew.")
+         }
+```
+
+**File**: `Sources/SysDataMenu/Views/HistoryPanel.swift` (modified, +9/-5)
+```diff
+@@ -123,7 +123,7 @@ struct HistoryPanel: View {
+                 .chartYAxis {
+                     AxisMarks(position: .trailing, values: .automatic(desiredCount: 3)) { value in
+                         AxisGridLine().foregroundStyle(.quaternary)
+-                        AxisValueLabel { if let gb = value.as(Double.self) { Text(verbatim: "\(Int(gb.rounded())) GB") } }
++                        AxisValueLabel { if let gb = value.as(Double.self) { Text(verbatim: Int64(gb * 1e9).byteString) } }
                      }
-                     model.showsMenuBarIcon = true
+                 }
+                 .chartXAxis {
+@@ -147,7 +147,9 @@ struct HistoryPanel: View {
+                     }
+                     .chartYAxis {
+                         AxisMarks(position: .trailing, values: .automatic(desiredCount: 2)) { value in
+-                            AxisValueLabel { if let gb = value.as(Double.self) { Text(verbatim: String(format: "%.0f GB", gb)) } }
++                            // Formatted like every other size in the app: in the reader's
++                            // locale, and a day that freed 300 MB no longer reads "0 GB".
++                            AxisValueLabel { if let gb = value.as(Double.self) { Text(verbatim: Int64(gb * 1e9).byteString) } }
+                         }
+                     }
+                     .chartXAxis(.hidden)
+@@ -171,7 +173,8 @@ struct HistoryPanel: View {
+     /// the app around rather than clean once and forget.
+     private var returnedSection: some View {
+         HistoryCard {
+-            ForEach(returned, id: \.name) { entry in
++            // Names repeat (two projects' node_modules), so position is the identity.
++            ForEach(Array(returned.enumerated()), id: \.offset) { _, entry in
+                 row(
+                     entry.name,
+                     detail: L("Deleted %@, back by %@", Self.day(entry.deleted), Self.day(entry.seen)),
+@@ -192,7 +195,7 @@ struct HistoryPanel: View {
+ 
+     private var growthSection: some View {
+         HistoryCard {
+-            ForEach(growth, id: \.name) { entry in
++            ForEach(Array(growth.enumerated()), id: \.offset) { _, entry in
+                 row(
+                     entry.name,
+                     detail: L("Since %@", Self.day(entry.since)),
+@@ -209,7 +212,8 @@ struct HistoryPanel: View {
+ 
+     private var deletionsSection: some View {
+         HistoryCard {
+-            ForEach(log.deletions.reversed(), id: \.date) { entry in
++            // A batch shares one timestamp, so the date cannot tell its rows apart.
++            ForEach(Array(log.deletions.reversed().enumerated()), id: \.offset) { _, entry in
+                 row(
+                     entry.name,
+                     detail: entry.paths.isEmpty
+```
+
+---
+
+### Incident Patch 3: `8d632de5` (2026-11-24)
+**Commit Message**: fix(probes): keep tools and user data out of Safe
+
+Safe rows are what the weekly clean deletes unasked. ~/.deno is
+Deno's install, not its cache; ~/.ivy2 holds publishLocal artifacts
+and credentials beside the cache; unknown ~/.cache folders hold models
+and chats. With the Command Line Tools selected the only Xcode read as
+inactive. brew cleanup also removed old Cellar versions the row never
+measured, so the row now empties the download cache itself.
+
+**File**: `Sources/SysDataMenu/Probes/CatchAllProbes.swift` (modified, +13/-4)
+```diff
+@@ -45,7 +45,10 @@ struct DeveloperToolProbe: StorageProbe {
+         Known("anaconda3", "Anaconda", "Conda environments and packages.", .review),
+         Known(".conda/pkgs", "Conda package cache", "Downloaded packages.", .safe, tool: ("conda", ["clean", "--all", "-y"])),
+         Known(".m2/repository", "Maven repository", "Downloaded jars. Re-fetched on the next build.", .safe),
+-        Known(".ivy2", "Ivy cache", "Downloaded jars for sbt.", .safe),
++        // Only the cache: the rest of ~/.ivy2 holds `sbt publishLocal`
++        // artifacts that exist nowhere else, and the credentials file sbt's
++        // documentation tells people to keep there.
++        Known(".ivy2/cache", "Ivy cache", "Downloaded jars for sbt.", .safe),
+         Known(".cocoapods/repos", "CocoaPods specs repos", "`pod setup` rebuilds them.", .safe),
+         Known(".gradle/wrapper/dists", "Gradle distributions", "Downloaded Gradle versions.", .safe),
+         Known(".android/cache", "Android SDK download cache", "Re-downloaded on demand.", .safe),
+@@ -54,7 +57,10 @@ struct DeveloperToolProbe: StorageProbe {
+         // Found unexplained under "Other large folders" at 0.8 GB. `npm cache
+         // clean` does not touch it.
+         Known(".npm/_npx", "npx cache", "Packages npx downloaded to run once. npx fetches them again the next time.", .safe),
+-        Known(".deno", "Deno cache", "Cached modules.", .safe),
++        // Deno's installer puts the deno binary and `deno install -g` tools
++        // here; its module cache is ~/Library/Caches/deno, which the app cache
++        // scan already lists. Safe would have let auto-clean uninstall Deno.
++        Known(".deno", "Deno installation", "The deno binary and globally installed Deno tools. Run the installer again to get them back.", .review),
+         Known(".vscode/extensions", "VS Code extensions", "Installed extensions. Reinstall from the marketplace.", .review),
+         Known(".cursor/extensions", "Cursor extensions", "Installed extensions.", .review),
+         Known(".docker", "Docker CLI data", "Contexts and build history, not images.", .review),
+@@ -133,8 +139,11 @@ struct DeveloperToolProbe: StorageProbe {
+             if let item = await ProbeSupport.directoryItem(
+                 id: "tool-cache-\(folder.lastPathComponent)", category: .tools,
+                 name: "Cache: \(folder.lastPathComponent)",
+-                detail: "~/.cache entry. Tools rebuild their caches on demand.",
+-                url: folder, safety: .safe, action: .removePaths([folder]), minimumBytes: Self.threshold
++                detail: "~/.cache entry. Usually a cache, but some tools keep downloaded models or their own data here.",
++                // Review, not Safe: unknown tools use ~/.cache for models
++                // (Whisper) and even chats (older LM Studio), and Safe rows are
++                // what the unattended clean deletes without asking.
++                url: folder, safety: .review, action: .removePaths([folder]), minimumBytes: Self.threshold
+             ) {
+                 items.append(item)
+             }
+```
+
+**File**: `Sources/SysDataMenu/Probes/DeveloperProbes.swift` (modified, +4/-0)
+```diff
+@@ -344,6 +344,10 @@ struct XcodeProbe: StorageProbe {
+         // Without an answer there is no telling which Xcode is in use, and
+         // offering the active one for deletion is the mistake to avoid.
+         guard let active = await ProbeSupport.activeDeveloperDirectory() else { return items }
++        // With the Command Line Tools selected no Xcode is the active one, but
++        // none is unused either: calling the only Xcode "Inactive" offered it
++        // for deletion.
++        guard !active.hasPrefix("/Library/Developer/CommandLineTools") else { return items }
+         // Compared with symlinks resolved: Xcodes.app can make Xcode.app a
+         // link to Xcode-16.0.app and select the link, and the real bundle
+         // behind it must not read as inactive.
+```
+
+**File**: `Sources/SysDataMenu/Probes/PackageProbe.swift` (modified, +4/-1)
+```diff
+@@ -19,8 +19,11 @@ struct PackageProbe: StorageProbe {
+ 
+     func probe() async -> [StorageItem] {
+         var caches: [Cache] = [
++            // The folder itself rather than `brew cleanup`, which also
++            // uninstalls older versions of installed formulae from the Cellar:
++            // more than this row measures, and more than a Safe row should do.
+             Cache(id: "brew", name: "Homebrew downloads", url: .home("Library/Caches/Homebrew"),
+-                  tool: "brew", arguments: ["cleanup", "--prune=all", "-s"], detail: "Bottles and source tarballs."),
++                  tool: nil, arguments: [], detail: "Bottles and source tarballs. Homebrew downloads them again when needed."),
+             Cache(id: "npm", name: "npm cache", url: .home(".npm/_cacache"),
+                   tool: "npm", arguments: ["cache", "clean", "--force"], detail: "Package tarballs and metadata."),
+             Cache(id: "yarn", name: "Yarn cache", url: .home("Library/Caches/Yarn"),
 ```
 
 #### Recent Merged Pull Requests:
@@ -1818,42 +1941,61 @@ had. Re-initializing the App cou
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. menu-bar): make the icon switch take effect from the window
+## X. size): count each hard-linked file once
 
 **RULE**:
-When implementing operations in `Sources/SysDataMenu/Services/MainWindow.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Jarvis322/macos-sysdata. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/SysDataMenu/Services/DiskSize.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Jarvis322/macos-sysdata. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1553cbcd`: menu-bar): make the icon switch take effect from the window. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bdf2df1`: size): count each hard-linked file once. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SysDataMenu/Services/MainWindow.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SysDataMenu/Services/DiskSize.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        MenuBarIcon.apply(model.showsMenuBarIcon)
-                // The status item's own windows are always visible; they are
-                // not the panel this waits for.
-                && !$0.className.contains("NSStatusBarWindow")
-        applyMenuBarIconPreference()
-    /// Puts the status item in the state the preference asks for. Called after
-    /// launch as well as on the switch, because the item does not exist yet
-    /// when the app is being built.
-    func applyMenuBarIconPreference() {
-        MenuBarIcon.apply(model?.showsMenuBarIcon ?? true)
+    /// Files a walk has already counted that have more than one hard link.
+    ///
+    /// Every link to a file reports the file's full allocated size, so a walk
+    /// that summed them all counted the same blocks once per link: Spotlight's
+    /// store under ~/Library/Metadata showed 11 GB for 2.5 GB on disk (#31).
+    /// Like `du`, the first link a walk meets is counted and the rest are not.
+    /// Only multi-link files reach the `lstat`, so an ordinary tree pays nothing.
+    struct HardLinks {
+        private struct Inode: Hashable {
+            let device: dev_t
+            let inode: ino_t
+        }
+
+        private var seen: Set<Inode> = []
+
+        /// Whether this is the first time the walk meets the file at `url`.
+        mutating func isFirstSighting(of url: URL, linkCount: Int?) -> Bool {
+            guard let linkCount, linkCount > 1 else { return true }
+            var info = stat()
+            guard lstat(url.path, &info) == 0 else { return true }
+            return seen.insert(Inode(device: info.st_dev, inode: info.st_ino)).inserted
+        }
     }
 
+            .totalFileAllocatedSizeKey, .isRegularFileKey, .contentModificationDateKey, .linkCountKey,
+           
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            .totalFileAllocatedSizeKey, .isRegularFileKey, .contentModificationDateKey,
+            return measure(of: url, keys: keys, cutoff: cutoff)
+            let child = measure(of: child, keys: keys, cutoff: cutoff)
+            .totalFileAllocatedSizeKey, .isRegularFileKey, .volumeIdentifierKey,
+            guard let size = values.totalFileAllocatedSize, size > 0 else { continue }
+    private static func measure(of url: URL, keys: Set<URLResourceKey>, cutoff: Date?) -> Measurement {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1553cbcd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bdf2df1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

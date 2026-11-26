@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `7a24743f`  
+> **Source Version**: `aa4f044b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T12:19:38.120Z  
+> **Timestamp**: 2026-11-26T13:36:04.795Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:19:38.112Z  
+> **Harvest Timestamp**: 2026-11-26T13:36:04.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6245 stars
+- **Stars / Engagement**: 6247 stars
 
 ---
 
@@ -73,6 +73,8 @@ export interface CheckResult extends Check {
   log: string;
   /** Why the check failed: its exit code, or what its log shows. */
   problem?: string;
+  /** Markdown saved with the candidate's evidence and included in its PR. */
+  report?: string;
 }
 
 /** Where checks and trials run: the checkout, a directory for their logs, and the claim's signal and environment. */
@@ -100,16 +102,17 @@ export async function runChecks(run: CheckEnv, checks: Check[]): Promise<CheckRe
     const started = Date.now();
     const exitCode = run.signal.aborted ? null : await execute(run, check.command, log);
     const result: CheckResult = { ...check, exitCode, started, ms: Date.now() - started, log };
-    result.problem =
+    const verdict =
       exitCode === null
-        ? 'timed out'
+        ? { problem: 'timed out' }
         : exitCode !== 0
-          ? `exited ${exitCode}`
+          ? { problem: `exited ${exitCode}` }
           : await run.judges[check.kind]?.({
               check: result,
               log: await readLog(log),
               root: run.root,
             });
+    Object.assign(result, verdict);
     run.debug(`check \`${check.command}\` ${result.problem ?? 'passed'} in ${result.ms}ms: ${log}`);
     results.push(result);
     if (result.problem) break;
@@ -1652,6 +1655,7 @@ export function pullRequest<X extends object>(
   profile: Profile<X>,
   stage: Stage,
   record: string,
+  reports = '',
 ) {
   const { title, body } = plan.stages[stage];
   return {
@@ -1661,7 +1665,7 @@ export function pullRequest<X extends object>(
 #### Behavior changes from ${profile.languages.from}
 
 ${describeDivergences(plan, profile.languages)}
-
+${reports ? `\n${reports}\n` : ''}
 <details><summary>How this port ran</summary>
 
 ${describePlan(plan, profile, false)}
@@ -1763,6 +1767,11 @@ export interface Forge {
     existing?: PR;
   }): Promise<PR>;
   /**
+   * Registers `prs`, the job's stage PRs bottom to top, as one stack into `base`. A stack the
+   * forge cannot record is left unregistered: the PRs still chain through their bases.
+   */
+  linkStack(o: { base: string; prs: PR[] }): Promise<void>;
+  /**
    * The review comments and the CI verdict of a stage PR. `posted` are the comments the plugin
    * wrote; `head` is the revision it published.
    */
@@ -1802,7 +1811,7 @@ export type Judge = (o: {
   check: CheckResult;
   log: string;
   root: string;
-}) => Promise<string | undefined> | string | undefined;
+}) => Promise<Pick<CheckResult, 'problem' | 'report'>> | Pick<CheckResult, 'problem' | 'report'>;
 
 /** What a project brings: its stages, layout, rules, runners, judges, reviewers and hooks. */
 export interface Profile<X = {}> {
@@ -1871,634 +1880,465 @@ export interface Profile<X = {}> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a24743f` (2026-11-25)
-**Commit Message**: [MOD-20693] Stop the query pipeline on memory pressure (#12378)
+### Incident Patch 1: `342b7521` (2026-11-25)
+**Commit Message**: [MOD-21589] Add a nonblocking worker pause for assertion builds (#12533)
 
-* Check query memory at build, before execution
+* Allow assertion builds to pause worker dispatch without waiting
 
-Carried from https://github.com/RediSearch/RediSearch/pull/12122
+* Cover the nonblocking worker pause debug command
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Stop the sorter and score normalizer on memory pressure
-
-Carried from https://github.com/RediSearch/RediSearch/pull/12123
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Stop the grouper on memory pressure
-
-Carried from https://github.com/RediSearch/RediSearch/pull/12124
-
-Conflicts with master resolved: master rewrote the GROUPBY key expansion
-(extractGroups recursion became invokeGroupReducers with a combination
-loop), so the per-row expansion checkpoint moved into that loop. A test
-addition conflicted with a neighbouring master test; both are kept.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Stop the safe loader on memory pressure
-
-Carried from https://github.com/RediSearch/RediSearch/pull/12125
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Stop the WITHCOUNT depleter and APPLY/FILTER on memory pressure
-
-Carried from https://github.com/RediSearch/RediSearch/pull/12126
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EM
-
-**File**: `src/aggregate/aggregate_exec.c` (modified, +34/-3)
+**File**: `src/debug_commands.c` (modified, +8/-2)
 ```diff
-@@ -24,6 +24,7 @@
- #include "search_ctx.h"
- #include "aggregate.h"
- #include "aggregate_exec_common.h"
-+#include "query_memory.h"
- #include "cursor.h"
- #include "concurrent_ctx.h"
- #include "rmutil/util.h"
-@@ -435,8 +436,19 @@ static inline void debugPauseStoreResults(AREQ *req, bool before) {
- }
- #endif
- static int applyOomStop(AREQ *req, int rc) {
--  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy,
--                      AREQ_QueryProcessingCtx(req)->err, rc);
-+  QueryError *err = AREQ_QueryProcessingCtx(req)->err;
-+  // A buffering stage that kept its rows past an OOM stop may hold enough of them to fill the
-+  // reply's limit or a pager's, so the reply ends without reading the stop's RS_RESULT_STOPPED.
-+  // When no later cursor read reports the stop, the reply is cut.
-+  const bool lastReply =
-+      rc == RS_RESULT_EOF || (rc == RS_RESULT_OK && !(AREQ_RequestFlags(req) & QEXEC_F_IS_CURSOR));
-+  // A blocked-client timeout that fired in the meantime owns the reply, as in ApplyOomStop.
-+  if (lastReply && req->base.reqConfig.oomPolicy != OomPolicy_Fail &&
-+      AREQ_QueryProcessingCtx(req)->oomCut &&
-+      !QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
-+    QueryError_SetQueryOOMWarning(err);
-+  }
-+  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy, err, rc);
- }
- 
- static void startPipeline(AREQ *req, ResultProcessor *rp, SearchResult ***results, SearchResult *r, int *rc) {
-@@ -722,7 +734,8 @@ static bool shouldSetCursorDone(AREQ *req, int rc) {
-   if (rc == RS_RESULT_STOPPED) {
-     switch (req->base.limits.timeout.config.timeoutPolicy) {
-       case TimeoutPolicy_Return:
--        return false;
-+        // A memory stop ends the request even when its outcome is reported as a timeout.
-+        return QueryRequestLimits_IsMemoryStopped(&req->base.limits);
-       case TimeoutPolicy_ReturnStrict:
-       case TimeoutPolicy_Fail:
-         return true;
-@@ -1406,6 +1419,15 @@ void AREQ_Execute_Callback(blockedClientReqCtx *BCRctx) {
-   blockedClientReqCtx_destroy(BCRctx);
- }
- 
-+// Memory checkpoint once the query is built, which also covers the wait for a worker. FT.EXPLAIN
-+// builds a plan it never runs, so it is exempt.
-+static int checkBuildMemory(AREQ *req, QueryError *status) {
-+  if (!IsSearch(req) && !IsAggregate(req)) {
-+    return REDISMODULE_OK;
-+  }
-+  return QueryMemory_CheckBeforeExecution(&req->base.limits, req->base.reqConfig.oomPolicy, status);
-+}
-+
- // Assumes the spec is guarded by its own lock (for read), such that races with
- // main-thread/GC updates are avoided.
- static int prepareExecutionPlan(AREQ *req, QueryError *status) {
-@@ -1471,6 +1493,15 @@ static int prepareExecutionPlan(AREQ *req, QueryError *status) {
-     req->profileClocks.profilePipelineBuildTime = rs_wall_clock_elapsed_ns(&parseClock);
+@@ -2205,8 +2205,14 @@ DEBUG_COMMAND(WorkerThreadsSwitch) {
+     return RedisModule_WrongArity(ctx);
    }
- 
-+  if (rc == REDISMODULE_OK && checkBuildMemory(req, status) != REDISMODULE_OK) {
-+    return REDISMODULE_ERR;
-+  }
-+  // A build checkpoint that stopped the query under ON_OOM RETURN leaves the pipeline to run:
-+  // its row source, built only now, must end at its first read.
-+  if (rc == REDISMODULE_OK && QueryRequestLimits_IsMemoryStopped(&req->base.limits)) {
-+    RP_EndRowSourceOnStop(AREQ_QueryProcessingCtx(req));
-+  }
-+
-   if (IsDebug(req)) {
-     rc = parseAndCompileDebug((AREQ_Debug *)req, status);
-     if (rc != REDISMODULE_OK) {
-```
-
-**File**: `src/aggregate/aggregate_exec_common.c` (modified, +34/-6)
-```diff
-@@ -49,15 +49,23 @@
- 
- int ApplyOomStop(const QueryRequestLimits *limits, RSOomPolicy oomPolicy, QueryError *err,
-                  int rc) {
--  if (rc != RS_RESULT_STOPPED || !QueryRequestLimits_IsMemoryStopped(limits)) {
-+  // A blocked-client timeout's callback owns the reply, so it wins over an earlier OOM stop.
-+  if (rc != RS_RESULT_STOPPED || !QueryRequestLimits_IsMemoryStopped(limits) ||
-+      QueryRequestLimits_IsBlockedClientTimedOut(limits)) {
-     return rc;
-   }
-   if (oomPolicy == OomPolicy_Fail) {
-     QueryError_SetCode(err, QUERY_ERROR_CODE_OUT_OF_MEMORY);
-     return RS_RESULT_ERROR;
-   }
-   QueryError_SetQueryOOMWarning(err);
--  // Not STOPPED: that replies as a timeout, and a cursor would read again into the same stop.
-+  // A timeout that also fired outranks the stop: ON_TIMEOUT FAIL replies its error (the OOM
-+  // warning is then unused) and RETURN replies both warnings, the timeout one derived from rc.
-+  if (QueryRequestLimits_IsTimedOutExact(limits)) {
-+    return RS_RESULT_STOPPED;
-+  }
-+  // Without a timeout, EOF rather than STOPPED: STOPPED replies as a timeout, and a cursor would
-+  // read again into the same stop.
-   return RS_RESULT_EOF;
- }
- 
-@@ -102,6 +110,13 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {
- static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
- #endif
- 
-+static bool oomStopKeepsBufferedRows(const AREQ *areq) {
-+  const QueryRequestLimits *timeout = &areq->base.limits;
-+  return QueryRequestLimits_IsMemoryStopped(timeout) &&
-+         areq->base.reqConfig.oomPolicy != OomPolicy_Fail &&
-+         !QueryRequestLimits_IsBlockedClientTimedOut(timeout);
-+}
-+
-  SearchResult **AggregateResults(ResultProcessor *rp, AREQ *areq, int *rc) {
-    SearchResult **results = array_new(SearchResult *, 8);
-    SearchResult r = SearchResult_New();
-@@ -119,8 +134,19 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
-      // Honour a memory stop or a main-thread timeout flag at the row
-      // boundary: buffering stages (safe loader, sorter yield) can keep emitting
-      // from internal buffers without re-touching upstream's per-row timeout check.
--     if (areq && (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
--                  QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits))) {
-+     // An OOM stop under ON_OOM RETURN is the exception: those stages then hand
-+     // over the rows they already hold (see RP_StopPolicy), and read nothing new.
-+     if (areq &&
-+         (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
-+          QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)) &&
-+         !oomStopKeepsBufferedRows(areq)) {
-+       *rc = RS_RESULT_STOPPED;
-+       break;
-+     }
-+     // Rows handed over after an OOM stop read nothing upstream, so no per-row check there sees
-+     // a clock deadline: this one ends the drain on it.
-+     if (areq && oomStopKeepsBufferedRows(areq) &&
-+         QueryRequestLimits_IsTimedOut(&areq->base.limits)) {
-        *rc = RS_RESULT_STOPPED;
-        break;
-      }
-@@ -138,8 +164,10 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
-      // Aggregate all results before populating the response
-      *results = AggregateResults(rp, ctx->areq, rc);
-      // Check timeout after aggregation; a memory stop raised while filling the limit ends it the
--     // same way.
--     if (QueryRequestLimits_ShouldStopExact(ctx->limits)) {
-+     // same way, except under ON_OOM RETURN, where the held rows keep coming over the next reads.
-+     if (QueryRequestLimits_IsTimedOutExact(ctx->limits) ||
-+         (QueryRequestLimits_IsMemoryStopped(ctx->limits) &&
-+          !(ctx->areq && oomStopKeepsBufferedRows(ctx->areq)))) {
-        *rc = RS_RESULT_STOPPED;
-      }
-    } else {
-```
-
-**File**: `src/aggregate/aggregate_exec_common.h` (modified, +3/-0)
-```diff
-@@ -35,6 +35,9 @@ void ReplyWithTimeoutError(RedisModule_Reply *reply);
-  *   startPipelineCommon buffers under FAIL.
-  * - Otherwise: the query OOM warning in `err` and RS_RESULT_EOF, so the rows
-  *   produced so far are the final, partial result instead of a timeout.
-+ *   If the request's timeout also fired (QueryRequestLimits_IsTimedOutExact),
-+ *   RS_RESULT_STOPPED is returned instead, so the timeout outcome is kept: an
-+ *   error under ON_TIMEOUT FAIL, a warning beside the OOM one otherwise.
-  */
- int ApplyOomStop(const struct QueryRequestLimits *limits, RSOomPolicy oomPolicy,
-                  QueryError *err, int rc);
-```
-
-**File**: `src/aggregate/aggregate_request.c` (modified, +6/-1)
-```diff
-@@ -1945,7 +1945,12 @@ int AREQ_BuildPipelineWithAggregationParams(AREQ *req,
-                                             QueryError *status) {
-   // Build errors go to the caller's `status`; the running pipeline reports into the request's own
-   // error slot, which the reply phase reads whenever (and on whichever thread) it runs.
--  Pipeline_Initialize(&req->pipeline, req->base.limits.timeout.config.timeoutPolicy, &req->base.reply.err);
-+  Pipeline_Initialize(&req->pipeline, &req->base);
-+  if (IsHybrid(req)) {
-+    // The hybrid reply does not map an OOM stop yet, so hybrid pipelines run without memory
-+    // checkpoints: a stop there would reply as a timeout.
-+    req->pipeline.qctx.limits = NULL;
-+  }
-   if (!IsCoordinator(req)) {
-     QueryPipelineParams params = {
-       .common = {
-```
-
-**File**: `src/aggregate/expr/expression.c` (modified, +4/-0)
-```diff
-@@ -481,6 +481,10 @@ typedef struct RPEvaluator {
- #define RESULT_EVAL_ERR RS_RESULT_MAX + 1
- 
- static int rpevalCommon(RPEvaluator *pc, SearchResult *r) {
-+  // Checked before the next row, so the arena growth of the previous evaluation is counted.
-+  if (RP_FillShouldCut(&pc->base)) {
-+    return RS_RESULT_STOPPED;
-+  }
-   /** Get the upstream result */
-   int rc = pc->base.upstream->Next(pc->base.upstream, r);
-   if (rc != RS_RESULT_OK) {
-```
-
-**File**: `src/aggregate/group_by.c` (modified, +21/-2)
-```diff
-@@ -16,6 +16,7 @@
- #include "value_ffi.h"
- #include "search_result_ffi.h"
- #include "pipeline/pipeline.h"
-+#include "query_memory.h"
- #include "reducer.h"
- #include "query_error.h"
- #include "query_error_ffi.h"
-@@ -281,6 +282,13 @@ static int invokeGroupReducers(Grouper *g, RLookupRow *srcrow, t_docId docId) {
- 
-   // Rows without multi-valued keys belong to one group, so skip the scan for more.
-   do {
-+    // The array values of one row can reach up to maxGroups groups, new or existing, before the
-+    // per-row check.
-+    if (combinations > 1 && g->base.parent->limits &&
-+        QueryMemory_Checkpoint(g->base.parent->limits)) {
-+      RP_EndRowSourceOnStop(g->base.parent);
-+      return RS_RESULT_STOPPED;
-+    }
-     int rc = addToGroup(g, nkeys ? g->cursors[nkeys - 1].hash : 0, srcrow, docId);
-     if (rc != RS_RESULT_OK) {
-       return rc;
-@@ -298,6 +306,12 @@ static int Grouper_rpAccum(ResultProcessor *base, SearchResult *res) {
-   while ((rc = base->upstream->Next(base->upstream, res)) == RS_RESULT_OK) {
-     rc = invokeGroupReducers(g, SearchResult_GetRowDataMut(res), SearchResult_GetDocId(res));
-     SearchResult_Clear(res);
-+    if (rc == RS_RESULT_OK && base->parent->limits &&
-+        QueryMemory_Checkpoint(base->parent->limits)) {
-+      // No partial groups: like a timeout, the stop yields none, and Grouper_rpFree frees them.
-+      RP_EndRowSourceOnStop(base->parent);
-+      rc = RS_RESULT_STOPPED;
-+    }
-     if (rc != RS_RESULT_OK) {
-       break;
+   const char* op = RedisModule_StringPtrLen(argv[2], NULL);
+-  if (!strcasecmp(op, "pause")) {
+-    if (workersThreadPool_pause() != REDISMODULE_OK) {
++  bool pause = !strcasecmp(op, "pause");
++  bool pauseNoWait = false;
++#ifdef ENABLE_ASSERT
++  // A test may need to stop dispatch before releasing a worker held at a sync point.
++  pauseNoWait = !strcasecmp(op, "pause_nowait");
++#endif
++  if (pause || pauseNoWait) {
++    if (workersThreadPool_pause(pause) != REDISMODULE_OK) {
+       return RedisModule_ReplyWithError(ctx, "Operation failed: workers thread pool doesn't exists"
+                                       " or is not running");
      }
-@@ -311,9 +325,14 @@ static int Grouper_rpAccum(ResultProcessor *base, SearchResult *res) {
-     base->parent->skippedResults = 0;
-     g->iter = kh_begin(khid);
-     return Grouper_rpYield(base, res);
--  } else {
--    return rc;
-   }
-+  if (rc == RS_RESULT_STOPPED && base->parent->limits &&
-+      QueryRequestLimits_IsMemoryStopped(base->parent->limits)) {
-+    // No group is replied, so none is counted either.
-+    base->parent->totalResults = 0;
-+    base->parent->skippedResults = 0;
-+  }
-+  return rc;
+```
+
+**File**: `src/util/workers.c` (modified, +6/-2)
+```diff
+@@ -283,11 +283,15 @@ int workerThreadPool_isPaused() {
+   return _workers_thpool && redisearch_thpool_paused(_workers_thpool);
  }
  
- static void Grouper_rpFree(ResultProcessor *grrp) {
+-int workersThreadPool_pause() {
++int workersThreadPool_pause(bool wait) {
+   if (!_workers_thpool || workersThreadPool_NumThreads() == 0 || workerThreadPool_isPaused()) {
+     return REDISMODULE_ERR;
+   }
+-  redisearch_thpool_pause_threads(_workers_thpool);
++  if (wait) {
++    redisearch_thpool_pause_threads(_workers_thpool);
++  } else {
++    redisearch_thpool_pause_threads_no_wait(_workers_thpool);
++  }
+   return REDISMODULE_OK;
+ }
+ 
 ```
 
-**File**: `src/coord/dist_aggregate.c` (modified, +5/-0)
+**File**: `src/util/workers.h` (modified, +1/-1)
 ```diff
-@@ -724,6 +724,11 @@ void printAggProfile(RedisModule_Reply *reply, void *ctx) {
-     do {
-       MRReply_Free(rpnet->current.root);
-       RPNet_resetCurrent(rpnet);
-+      // A memory stop, possibly requested mid-drain, aborts the pop on an empty channel with
-+      // RS_RESULT_STOPPED forever. Take only what is queued, so the next call ends with EOF.
-+      if (QueryRequestLimits_IsMemoryStopped(&req->base.limits)) {
-+        rpnet->drainOnly = true;
-+      }
-     } while (getNextReply(rpnet) != RS_RESULT_EOF);
-     rpnet->breakdown.waitTime = waitTime;
-     rpnet->breakdown.convertTime = convertTime;
+@@ -69,7 +69,7 @@ int workersThreadPool_OnEventEnd(bool wait);
+ 
+ int workerThreadPool_isPaused();
+ 
+-int workersThreadPool_pause();
++int workersThreadPool_pause(bool wait);
+ 
+ int workersThreadPool_resume();
+ 
 ```
 
-**File**: `src/hybrid/hybrid_request.c` (modified, +11/-2)
+**File**: `tests/cpptests/test_cpp_workers_admin_jobs.cpp` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,7 @@
+@@ -171,7 +171,7 @@ class WorkersDeferredShrinkTest : public WorkersAdminJobsMetricTest {
+ };
  
- #include "hybrid/hybrid_request.h"
- #include "config.h"
-+#include "query_memory.h"
- #include <stdatomic.h>
- #include <stdint.h>
- #include <string.h>
-@@ -127,6 +128,12 @@ int HybridRequest_BuildDepletionPipeline(HybridRequest *req, bool depleteInBackg
-         if (isProfile) {
-           areq->profileClocks.profilePipelineBuildTime = rs_wall_clock_elapsed_ns(&parseClock);
-         }
-+        // Only FAIL is decided here: the hybrid reply does not map an OOM stop yet, so under
-+        // RETURN a stop requested now would reply as a timeout.
-+        if (rc == REDISMODULE_OK && areq->base.reqConfig.oomPolicy == OomPolicy_Fail) {
-+          rc = QueryMemory_CheckBeforeExecution(&areq->base.limits, areq->base.reqConfig.oomPolicy,
-+                                                &areq->base.reply.err);
-+        }
-         if (rc != REDISMODULE_OK) {
-             break;
-         }
-@@ -351,7 +358,9 @@ void HybridRequest_Init(HybridRequest *hybridReq, RedisSearchCtx *sctx, AREQ **r
-     // Initialize the tail pipeline that will merge results from all requests
-     hybridReq->tailPipeline = rm_calloc(1, sizeof(Pipeline));
-     AGPLN_Init(&hybridReq->tailPipeline->ap);
--    Pipeline_Initialize(hybridReq->tailPipeline, hybridReq->base.limits.timeout.config.timeoutPolicy, &hybridReq->base.reply.err);
-+    Pipeline_Initialize(hybridReq->tailPipeline, &hybridReq->base);
-+    // No memory checkpoints in hybrid pipelines (see AREQ_BuildPipelineWithAggregationParams).
-+    hybridReq->tailPipeline->qctx.limits = NULL;
-     QueryRequest_SetEndProcRef(&hybridReq->base, &hybridReq->tailPipeline->qctx.endProc);
-     // Capture the background-scan-OOM warning flag while the spec is guaranteed
-     // alive (main-thread command handling). The reply path reads only this
-@@ -364,7 +373,7 @@ void HybridRequest_Init(HybridRequest *hybridReq, RedisSearchCtx *sctx, AREQ **r
-     // Initialize pipelines for each individual request
-     for (size_t i = 0; i < nrequests; i++) {
-         initializeAREQ(requests[i]);
--        Pipeline_Initialize(&requests[i]->pipeline, requests[i]->base.limits.timeout.config.timeoutPolicy, &requests[i]->base.reply.err);
-+        Pipeline_Initialize(&requests[i]->pipeline, &requests[i]->base);
-     }
-     hybridReq->profileClocks.initClock = now;
+ TEST_F(WorkersDeferredShrinkTest, ResumeKeepsAllWorkersUntilQueuedJobsStart) {
+-  ASSERT_EQ(workersThreadPool_pause(), REDISMODULE_OK);
++  ASSERT_EQ(workersThreadPool_pause(true), REDISMODULE_OK);
+   for (size_t i = 0; i < workerCount; ++i) {
+     ASSERT_EQ(workersThreadPool_AddWork(busyJobWithFlag, &flags[i]), 0);
+   }
+```
+
+**File**: `tests/pytests/test_multithread.py` (modified, +53/-0)
+```diff
+@@ -6,13 +6,66 @@
+ # GNU Affero General Public License v3 (AGPLv3).
  
+ from common import *
++from concurrent.futures import ThreadPoolExecutor
+ import threading
+ 
+ def initEnv(moduleArgs: str = 'WORKERS 1', **kwargs):
+     assert(moduleArgs != '')
+     env = Env(enableDebugCommand=True, moduleArgs=moduleArgs, **kwargs)
+     return env
+ 
++
++@skip(cluster=True)
++def test_workers_pause_nowait():
++    """Pause dispatch while a query is parked and keep the next query queued until resume."""
++    env = initEnv(moduleArgs='WORKERS 1 TIMEOUT 0')
++    if not isEnableAssertEnabled(env):
++        env.expect(debug_cmd(), 'WORKERS', 'PAUSE_NOWAIT').error().contains(
++            "Invalid argument for 'WORKERS' subcommand")
++        return
++
++    env.expect('FT.CREATE', 'idx', 'SCHEMA', 'title', 'TEXT').ok()
++    conn = getConnectionByEnv(env)
++    conn.execute_command('HSET', 'doc:1', 'title', 'one')
++    expected_reply = [1, 'doc:1']
++    sync_point = 'BeforeSpecLock'
++
++    def search():
++        return conn.execute_command('FT.SEARCH', 'idx', '*', 'NOCONTENT')
++
++    def workers_have_jobs(active, pending):
++        stats = getWorkersThpoolStats(env)
++        return (stats['numJobsInProgress'] == active and stats['totalPendingJobs'] == pending,
++                stats)
++
++    # A content-free query can finish after the sync point times out even if PAUSE holds the GIL.
++    env.expect(debug_cmd(), 'SYNC_POINT', 'ARM', sync_point, 5000).ok()
++    with ThreadPoolExecutor(max_workers=2) as queries:
++        first = queries.submit(search)
++        paused = False
++        try:
++            wait_for_condition(
++                lambda: (env.cmd(debug_cmd(), 'SYNC_POINT', 'IS_WAITING', sync_point) == 1, {}),
++                'First query did not park', timeout=5)
++            env.assertEqual(env.cmd(debug_cmd(), 'WORKERS', 'PAUSE_NOWAIT'), 'OK')
++            paused = True
++            assert env.cmd(debug_cmd(), 'SYNC_POINT', 'IS_WAITING', sync_point) == 1, (
++                'PAUSE_NOWAIT returned after the parked query was released')
++
++            second = queries.submit(search)
++            wait_for_condition(lambda: workers_have_jobs(1, 1),
++                               'Second query did not queue while the first was parked', timeout=5)
++            env.expect(debug_cmd(), 'SYNC_POINT', 'SIGNAL', sync_point).ok()
++            env.assertEqual(first.result(timeout=5), expected_reply)
++            wait_for_condition(lambda: workers_have_jobs(0, 1),
++                               'Second query did not stay queued after the first finished', timeout=5)
++        finally:
++            env.cmd(debug_cmd(), 'SYNC_POINT', 'CLEAR')
++            if paused:
++                env.expect(debug_cmd(), 'WORKERS', 'RESUME').ok()
++
++        env.assertEqual(second.result(timeout=5), expected_reply)
++
+ # Regression helper for MOD-18356: a query is parsed (capturing a field index) on the main
+ # thread, but its job only runs later on a worker thread. A concurrent FT.ALTER can reallocate
+ # IndexSpec.fields in between, so the query must resolve fields through their stable index at
 ```
 
 ---
 
-### Incident Patch 2: `4fefcf22` (2026-11-25)
-**Commit Message**: [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (#12455)
+### Incident Patch 2: `f5167228` (2026-11-26)
+**Commit Message**: [MOD-20897] Fix Rocky 10 snapshot builds: expect rhel10 packages, record rhel10 metadata (#12555)
 
-* Fix a crash on DIALECT 1 tag queries on non-TAG fields
+* [MOD-20897] Record rhel10 in Rocky 10 package metadata
 
-DIALECT 1 builds a tag node on any field, and the tag evaluator only
-debug-asserted the field type before reading tagOpts. A debug build
-aborted the server on a query such as `@vec:{x}` on a VECTOR field; a
-release build read that field's own options (vector parameters, a
-geometry index) as a tag index pointer. The evaluator now checks the
-type, and such a query matches nothing.
-
-The flow test runs the query on VECTOR and GEOSHAPE fields, whose
-options put a non-null pointer where a TAG field keeps its tag index.
-On master it crashes the server; with the fix it returns no results.
+ramp-packer 2.5.17 has no Rocky 10 entry in its OS map, so Rocky 10
+packages are named rhel10 (sbin/get-platform) but their module.json
+says rocky10. 2.5.20 maps rocky10, almalinux10 and centos10 to rhel10.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* Check field types in the DIALECT 1 parser for tag, numeric and geo queries
+* [MOD-20897] CI: expect rhel10 Rocky 10 packages in snapshot builds
 
-DIALECT 1 built a tag, numeric range or geo filter node on a field of any
-type. DIALECT 2 and the legacy FILTER/GEOFILTER arguments reject or nullify
-such queries when they are built. Do the same in the DIALECT 1 grammar: a
-query on a field of the wrong type becomes a null node, which matches nothing,
-also inside an intersection.
+sbin/get-platform names Rocky 10 packages rhel10 since #12322, but the
+package list still expected Linux-rocky10, so the snapshot build's
+package check failed on both architectures and nothing was uploaded.
 
-The eva
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/query_parser/v1/parser.c` (modified, +15/-1)
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/generate-matrix.yml` (modified, +1/-1)
 ```diff
-@@ -1562,6 +1562,11 @@ static YYACTIONTYPE yy_reduce(
-             if (!fs) {
-                 QueryNode_Free(yylhsminor.yy17);
-                 yylhsminor.yy17 = NULL;
-+            } else if (!FIELD_IS(fs, INDEXFLD_T_TAG)) {
-+                // DIALECT 2 rejects this; DIALECT 1 keeps it valid but matching nothing. It becomes
-+                // a null node rather than a dropped clause, so an intersection with it stays empty.
-+                QueryNode_Free(yylhsminor.yy17);
-+                yylhsminor.yy17 = NewQueryNode(QN_NULL);
-             } else {
-                 yylhsminor.yy17->tag.fieldIndex = fs->index;
-             }
-@@ -1605,8 +1610,13 @@ static YYACTIONTYPE yy_reduce(
-     // we keep the capitalization as is
-     yylhsminor.yy17 = NULL;
-     const FieldSpec *fs = ctx->sctx->spec ? IndexSpec_GetFieldWithLength(ctx->sctx->spec, yymsp[-2].minor.yy0.s, yymsp[-2].minor.yy0.len) : NULL;
--    if (fs) {
-+    if (fs && FIELD_IS(fs, INDEXFLD_T_NUMERIC)) {
-         yylhsminor.yy17 = NewNumericNode(yymsp[0].minor.yy86, fs);
-+    } else if (fs) {
-+        // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
-+        QueryParam_Free(yymsp[0].minor.yy86);
-+        yymsp[0].minor.yy86 = NULL;
-+        yylhsminor.yy17 = NewQueryNode(QN_NULL);
-     } else if (yymsp[0].minor.yy86) {
-         QueryParam_Free(yymsp[0].minor.yy86);
-         yymsp[0].minor.yy86 = NULL;
-@@ -1630,6 +1640,10 @@ static YYACTIONTYPE yy_reduce(
-         if (!fs) {
-             QueryNode_Free(yylhsminor.yy17);
-             yylhsminor.yy17 = NULL;
-+        } else if (!FIELD_IS(fs, INDEXFLD_T_GEO)) {
-+            // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
-+            QueryNode_Free(yylhsminor.yy17);
-+            yylhsminor.yy17 = NewQueryNode(QN_NULL);
-         }
+@@ -115,7 +115,7 @@ jobs:
+               'ubuntu:jammy': 'Linux-ubuntu22.04',
+               'rockylinux:8': 'Linux-rhel8',
+               'rockylinux:9': 'Linux-rhel9',
+-              'rockylinux:10': 'Linux-rocky10',
++              'rockylinux:10': 'Linux-rhel10',
+               'debian:bookworm': 'Linux-bookworm',
+               'debian:trixie': 'Linux-trixie',
+               'alpine:3.23': 'Linux-alpine3',
+```
+
+**File**: `.install/build_package_requirements.txt` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+ addict
+ toml
+ jinja2
+-ramp-packer==2.5.17
++ramp-packer==2.5.20
+```
+
+---
+
+### Incident Patch 3: `bd2933e9` (2026-11-25)
+**Commit Message**: [MOD-6936] Fix JSON documents failing to index when a SORTABLE field holds an empty array (#12514)
+
+* [MOD-21392] Index nothing for a JSON GEO array with no points
+
+A JSON GEO field holding `[]`, `[null]` or `[null, null]` (nulls are
+dropped at load) reached `geoPreprocessor` as an array of length 0. No
+branch handled it, so the field stayed single-valued with value 0 and
+the indexer stored geohash 0, near (-180, -85.05). The document then
+matched radius queries around that point and any `+inf` radius.
+
+Treat it as multi-valued with no values, as NUMERIC does for an empty
+array.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* [MOD-6936] Index a JSON document whose SORTABLE field holds `[]`
+
+A SORTABLE JSON field precomputes its sort value from the first element
+of an array match. `jsonIterToValue` returned an error when the array was
+empty, so the whole document failed to index ("Failed to get value from
+iterator"). Writing `[]` over an indexed document removed it from the
+index, other fields included. This hit every field type on a path whose
+only match is `[]`.
+
+Return success with no value instead, as the query-time loader already
+does for an empty array. The field then g
+
+**File**: `src/json.c` (modified, +10/-2)
+```diff
+@@ -1128,6 +1128,8 @@ static RSValue* jsonIterToValueExpanded(RedisModuleCtx *ctx, JSONResultsIterator
+ 
+ // Get the value from an iterator and free the iterator
+ // Return REDISMODULE_OK, and set rsv to the value, if value exists
++// Return REDISMODULE_OK, and set rsv to NULL, if the first value is an empty
++// array, which has no element to compare by
+ // Return REDISMODULE_ERR otherwise
+ //
+ // Multi value is supported with apiVersion >= APIVERSION_RETURN_MULTI_CMP_FIRST
+@@ -1176,8 +1178,14 @@ int jsonIterToValue(RedisModuleCtx *ctx, JSONResultsIterator iter, unsigned int
+       RSValue *expand = jsonIterToValueExpanded(ctx, iter);
+       *rsv = RSValue_NewTrio(val, otherval, expand);
+       res = REDISMODULE_OK;
+-    } else if (serialized) {
+-      RedisModule_FreeString(ctx, serialized);
++    } else {
++      if (serialized) {
++        RedisModule_FreeString(ctx, serialized);
++      }
++      if (type == JSONType_Array) {
++        *rsv = NULL;
++        res = REDISMODULE_OK;
++      }
      }
+ 
+     if (json_alloc) {
+```
+
+**File**: `tests/pytests/test_empty.py` (modified, +2/-15)
+```diff
+@@ -1490,14 +1490,6 @@ def testemptyfuzzy():
+     '$.f[*]': {'one_empty', 'all_empty', 'null_and_empty', 'mixed'},
  }
+ 
+-# (path, field type, SORTABLE) -> docs that fail to index; absent keys mean none.
+-# SORTABLE on `$.f` builds its sort key from the array's first element, so `[]`
+-# fails.
+-JSON_MULTI_VALUE_INDEXING_FAILURES = {
+-    ('$.f', 'TAG', True): {'empty_arr'},
+-    ('$.f', 'TEXT', True): {'empty_arr'},
+-}
+-
+ @skip(cluster=True, no_json=True)
+ def testJsonMultiValueEmpty():
+     """Pins which JSON multi-value shapes INDEXEMPTY indexes as the empty value,
+@@ -1515,15 +1507,10 @@ def testJsonMultiValueEmpty():
+                 case = f'{path} {field_type} {options}'
+                 env.expect('FT.CREATE', 'idx', 'ON', 'JSON', 'PREFIX', '1', 'doc:', 'SCHEMA',
+                            path, 'AS', 'f', field_type, 'INDEXEMPTY', *options).ok()
+-                # A doc that fails to index also looks like a non-match, so check each insert.
+-                failed = JSON_MULTI_VALUE_INDEXING_FAILURES.get(
+-                    (path, field_type, bool(options)), set())
+-                failures = 0
+                 for suffix, doc in JSON_MULTI_VALUE_EMPTY_DOCS.items():
+                     conn.execute_command('JSON.SET', f'doc:{suffix}', '$', json.dumps(doc))
+-                    total = index_info(env, 'idx')['hash_indexing_failures']
+-                    env.assertEqual(total > failures, suffix in failed, message=f'{case} {suffix}')
+-                    failures = total
++                # A doc that fails to index also looks like a non-match, so rule that out.
++                env.assertEqual(index_info(env, 'idx')['hash_indexing_failures'], 0, message=case)
+ 
+                 for query, expected in ((empty_query, expected_empty),
+                                         (value_query, {'mixed', 'non_empty'})):
 ```
 
-**File**: `src/query_parser/v1/parser.y` (modified, +15/-1)
+**File**: `tests/pytests/test_json.py` (modified, +80/-0)
 ```diff
-@@ -513,6 +513,11 @@ expr(A) ::= modifier(B) COLON tag_list(C) . {
-             if (!fs) {
-                 QueryNode_Free(A);
-                 A = NULL;
-+            } else if (!FIELD_IS(fs, INDEXFLD_T_TAG)) {
-+                // DIALECT 2 rejects this; DIALECT 1 keeps it valid but matching nothing. It becomes
-+                // a null node rather than a dropped clause, so an intersection with it stays empty.
-+                QueryNode_Free(A);
-+                A = NewQueryNode(QN_NULL);
-             } else {
-                 A->tag.fieldIndex = fs->index;
-             }
-@@ -574,8 +579,13 @@ expr(A) ::= modifier(B) COLON numeric_range(C). {
-     // we keep the capitalization as is
-     A = NULL;
-     const FieldSpec *fs = ctx->sctx->spec ? IndexSpec_GetFieldWithLength(ctx->sctx->spec, B.s, B.len) : NULL;
--    if (fs) {
-+    if (fs && FIELD_IS(fs, INDEXFLD_T_NUMERIC)) {
-         A = NewNumericNode(C, fs);
-+    } else if (fs) {
-+        // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
-+        QueryParam_Free(C);
-+        C = NULL;
-+        A = NewQueryNode(QN_NULL);
-     } else if (C) {
-         QueryParam_Free(C);
-         C = NULL;
-@@ -602,6 +612,10 @@ expr(A) ::= modifier(B) COLON geo_filter(C). {
-         if (!fs) {
-             QueryNode_Free(A);
-             A = NULL;
-+        } else if (!FIELD_IS(fs, INDEXFLD_T_GEO)) {
-+            // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
-+            QueryNode_Free(A);
-+            A = NewQueryNode(QN_NULL);
-         }
-     }
+@@ -1751,3 +1751,83 @@ def testNegativeZero(env):
+ 
+         res = env.cmd('FT.SEARCH', 'idx', '*')
+         env.assertEqual(res, [2, 'doc1', ['$', '{"num":-0.0}'], 'doc2', ['$', '{"num":-0.0}']])
++
++
++@skip(no_json=True)
++def testSortableEmptyArrayIndexesDocument(env):
++    """
++    A SORTABLE field whose single match is `[]` indexes and returns the document
++    the same as the field without SORTABLE, and has no sort value, so it sorts
++    after a document with a value in both directions, in FT.SEARCH and
++    FT.AGGREGATE.
++    """
++    conn = getConnectionByEnv(env)
++    # Per field type: a valid non-empty array value.
++    values = {'NUMERIC': [1], 'TAG': ['a'], 'TEXT': ['a'], 'GEO': ['1,2']}
++    for field_type, value in values.items():
++        sortable = {'sortable': ['SORTABLE']}
++        if field_type in ('TAG', 'TEXT'):
++            # UNF makes the query loader read the sort value instead of the document.
++            sortable['sortable_unf'] = ['SORTABLE', 'UNF']
++        for path in ('$.f', '$..f'):
++            case = f'{field_type} {path}'
++            # All indexes exist before any write, so no background scan races the writes.
++            for idx, options in (*sortable.items(), ('plain', [])):
++                env.expect('FT.CREATE', idx, 'ON', 'JSON', 'SCHEMA',
++                           path, 'AS', 'f', field_type, *options, '$.t', 'AS', 't', 'TAG').ok()
++            conn.execute_command('JSON.SET', 'doc:value', '$', json.dumps({'f': value, 't': 'value'}))
++            conn.execute_command('JSON.SET', 'doc:empty', '$', json.dumps({'f': [], 't': 'empty'}))
++            # Overwriting an indexed value with `[]` keeps the document indexed.
++            conn.execute_command('JSON.SET', 'doc:overwritten', '$',
++                                 json.dumps({'f': value, 't': 'overwritten'}))
++            conn.execute_command('JSON.SET', 'doc:overwritten', '$.f', '[]')
++
++            env.assertEqual(int(index_info(env, 'plain')['hash_indexing_failures']), 0,
++                            message=case)
++            plain = env.cmd('FT.SEARCH', 'plain', '*', 'NOCONTENT')
++            env.assertEqual(plain[0], 3, message=[case, plain])
++            if field_type == 'GEO':
++                # `[]` holds no point, so only the document with a value matches any radius.
++                env.expect('FT.SEARCH', 'plain', '@f:[0 0 +inf km]', 'NOCONTENT')\
++                    .equal([1, 'doc:value'])
++
++            for idx in sortable:
++                idx_case = [case, idx]
++                env.assertEqual(int(index_info(env, idx)['hash_indexing_failures']), 0,
++                                message=idx_case)
++                res = env.cmd('FT.SEARCH', idx, '*', 'NOCONTENT')
++                env.assertEqual(sorted(res[1:]), sorted(plain[1:]), message=[idx_case, res])
++
++                for dialect in (2, 3):
++                    env.assertEqual(
++                        env.cmd('FT.SEARCH', idx, '@t:{empty}', 'RETURN', '1', 'f',
++                                'DIALECT', dialect),
++                        env.cmd('FT.SEARCH', 'plain', '@t:{empty}', 'RETURN', '1', 'f',
++                                'DIALECT', dialect),
++                        message=[idx_case, dialect])
++
++                if field_type == 'GEO':
++                    env.expect('FT.SEARCH', idx, '@f:[0 0 +inf km]', 'NOCONTENT')\
++                        .equal([1, 'doc:value'])
++
++                # `plain` sorts the same only in DIALECT 3: without SORTABLE the sort value
++                # is loaded from the document per query dialect, and DIALECT 2 sorts `[]`
++                # as the string "[]".
++                for order in ('ASC', 'DESC'):
++                    for sort_idx, dialect_args in ((idx, []), ('plain', ['DIALECT', 3])):
++                        res = env.cmd('FT.SEARCH', sort_idx, '*', 'NOCONTENT',
++                                      'SORTBY', 'f', order, *dialect_args)
++                        sort_case = [idx_case, sort_idx, order, res]
++                        env.assertEqual(res[:2], [3, 'doc:value'], message=sort_case)
++                        # The documents with no sort value tie, so their relative order is
++                        # unspecified.
++                        env.assertEqual(sorted(res[2:]), ['doc:empty', 'doc:overwritten'],
++                                        message=sort_case)
++
++                    res = env.cmd('FT.AGGREGATE', idx, '*', 'LOAD', '1', '@t',
++                                  'SORTBY', '2', '@f', order)
++                    rows = [to_dict(row)['t'] for row in res[1:]]
++                    env.assertEqual(rows[0], 'value', message=[idx_case, order, res])
++                    env.assertEqual(sorted(rows[1:]), ['empty', 'overwritten'],
++                                    message=[idx_case, order, res])
++            env.flush()
+```
+
+**File**: `tests/pytests/test_json_multi_geo.py` (modified, +3/-6)
+```diff
+@@ -307,19 +307,16 @@ def testGeoArrayWithNoPointsSortable(env):
+     env.expect('FT.CREATE', 'idx', 'ON', 'JSON',
+                'SCHEMA', '$.f', 'AS', 'f', 'GEO', 'SORTABLE').ok()
+     conn.execute_command('JSON.SET', 'doc:control', '$', '{"f":"1,2"}')
+-    # `[]` is left out: a SORTABLE field holding `[]` fails the whole document
+-    # for every field type (MOD-6936).
+-    values = [v for v in no_point_values if v != '[]']
+-    for (j, value) in enumerate(values):
++    for (j, value) in enumerate(no_point_values):
+         conn.execute_command('JSON.SET', f'doc:{j}', '$', f'{{"f":{value}}}')
+ 
+     env.assertEqual(int(index_info(env, 'idx')['hash_indexing_failures']), 0)
+     env.expect('FT.SEARCH', 'idx', '@f:[0 0 +inf km]', 'NOCONTENT').equal([1, 'doc:control'])
+     for order in ['ASC', 'DESC']:
+         res = env.cmd('FT.SEARCH', 'idx', '*', 'NOCONTENT', 'SORTBY', 'f', order)
+-        env.assertEqual(res[:2], [3, 'doc:control'], message=[order, res])
++        env.assertEqual(res[:2], [4, 'doc:control'], message=[order, res])
+         # The documents with no point tie, so their relative order is unspecified.
+-        env.assertEqual(sorted(res[2:]), ['doc:0', 'doc:1'], message=[order, res])
++        env.assertEqual(sorted(res[2:]), ['doc:0', 'doc:1', 'doc:2'], message=[order, res])
+ 
+ 
+ @skip(cluster=True, no_json=True)
+```
+
+**File**: `tests/pytests/test_missing.py` (modified, +2/-26)
+```diff
+@@ -793,13 +793,10 @@ def test_alter_add_sortable_noindex_field_indexes_existing_docs(env):
  }
-```
-
-**File**: `src/redisearch_rs/query_eval/src/nodes/geo.rs` (modified, +15/-0)
-```diff
-@@ -48,6 +48,21 @@ pub(crate) fn eval<'index>(
-         field_index < ctx.spec().numFields,
-         "fieldIndex must be within the spec's current field count"
-     );
-+    if cfg!(debug_assertions) {
-+        let spec = ctx.spec();
-+        // SAFETY: `field_index` is within `spec.numFields` (asserted above), so this
-+        // stays within the bounds of the `numFields`-sized array `spec.fields` points to.
-+        let field_ptr = unsafe { spec.fields.add(field_index as usize) };
-+        // SAFETY: `field_ptr` points into the live spec's field array, which the
-+        // query's spec read lock keeps alive and unmodified throughout evaluation.
-+        let field = unsafe { &*field_ptr };
-+        // Both query parsers and the legacy `GEOFILTER` argument build a geo node only on a
-+        // GEO field.
-+        assert!(
-+            field.types() & ffi::FieldType_INDEXFLD_T_GEO != 0,
-+            "a geo node must reference a geo field"
-+        );
-+    }
  
-     // Disk-index path: when the spec is backed by an on-disk index, delegate to
-     // the enterprise geo iterator instead of opening the in-memory range tree.
-```
-
-**File**: `src/redisearch_rs/query_eval/src/nodes/numeric.rs` (modified, +19/-0)
-```diff
-@@ -40,6 +40,25 @@ pub(crate) fn eval<'index>(
-         "numeric node must have a resolved field index"
-     );
-     let field_index = nf.field_index;
-+    if cfg!(debug_assertions) {
-+        let spec = ctx.spec();
-+        assert!(
-+            field_index < spec.numFields,
-+            "field_index must be within the spec's current field count"
-+        );
-+        // SAFETY: `field_index` is within `spec.numFields` (checked above), so this
-+        // stays within the bounds of the `numFields`-sized array `spec.fields` points to.
-+        let field_ptr = unsafe { spec.fields.add(field_index as usize) };
-+        // SAFETY: `field_ptr` points into the live spec's field array, which the
-+        // query's spec read lock keeps alive and unmodified throughout evaluation.
-+        let field = unsafe { &*field_ptr };
-+        // Both query parsers and the legacy `FILTER` argument build a numeric node only on a
-+        // NUMERIC field.
-+        assert!(
-+            field.types() & ffi::FieldType_INDEXFLD_T_NUMERIC != 0,
-+            "a numeric node must reference a numeric field"
-+        );
-+    }
- 
-     // Disk-index path: when the spec is backed by an on-disk index, delegate to
-     // the enterprise numeric iterator instead of opening the in-memory range
-```
-
-**File**: `src/redisearch_rs/query_eval/src/nodes/tag.rs` (modified, +2/-1)
-```diff
-@@ -99,11 +99,12 @@ pub(crate) fn eval<'index>(
-     // Going through the raw pointer detaches the borrow from `ctx`, which the
-     // children's evaluation needs exclusively.
-     let field = unsafe { &*field_ptr };
-+    // Both query parsers build a tag node only on a TAG field.
-     debug_assert!(
-         field.types() & ffi::FieldType_INDEXFLD_T_TAG != 0,
-         "a tag node must reference a tag field"
-     );
--    // SAFETY: the field is a tag field, so `tagOpts` is the active union member.
-+    // SAFETY: the field is a tag field (asserted above), so `tagOpts` is the active union member.
-     let index = NonNull::new(unsafe { field.__bindgen_anon_1.tagOpts.tagIndex })?;
-     // SAFETY: the tag index belongs to the field; the query's spec read lock keeps
-     // it alive and excludes writers, so it is not restructured during evaluation.
-```
-
-**File**: `tests/pytests/test_geo.py` (modified, +20/-0)
-```diff
-@@ -241,3 +241,23 @@ def testGeoParseTrailingWhitespace(env):
-   conn.execute_command('HSET', 'ws2', 'g', '1.23, 4.56 ')
- 
-   assertInfoField(env, 'idx', 'hash_indexing_failures', 0)
-+
-+
-+@skip(cluster=True)
-+def testDialect1GeoQueryOnANonGeoFieldMatchesNothing(env):
-+    # DIALECT 2 rejects a geo filter on a non-GEO field. DIALECT 1 accepts it and it matches
-+    # nothing, also inside an intersection. A NUMERIC field's range tree holds plain numbers, which
-+    # the filter's geohash ranges used to be matched against.
-+    conn = getConnectionByEnv(env)
-+    env.expect('FT.CREATE', 'idx', 'SCHEMA', 'n', 'NUMERIC', 't', 'TAG', 'loc', 'GEO').ok()
-+    # `n` holds the geohash score of the query center, so matching the filter's geohash ranges
-+    # against the numeric tree would find the document.
-+    conn.execute_command('GEOADD', 'geohash_probe', 1, 1, 'p')
-+    center_score = conn.execute_command('ZSCORE', 'geohash_probe', 'p')
-+    conn.execute_command('DEL', 'geohash_probe')
-+    conn.execute_command('HSET', 'doc:1', 'n', center_score, 't', 'red', 'loc', '1,1')
-+    for field in ['n', 't']:
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:[1 1 10 km]', 'DIALECT', 1).equal([0])
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:[1 1 10 km] @loc:[1 1 10 km]',
-+                   'DIALECT', 1).equal([0])
-+    env.expect('FT.SEARCH', 'idx', '@loc:[1 1 10 km]', 'NOCONTENT', 'DIALECT', 1).equal([1, 'doc:1'])
-```
-
-**File**: `tests/pytests/test_numbers.py` (modified, +14/-0)
-```diff
-@@ -893,3 +893,17 @@ def validate_subtree(subtree):
-     cause_split(1) # to the left (of 2, right of 0)
- 
-     validate_tree(env.cmd(debug_cmd(), 'DUMP_NUMIDXTREE', idx, field, 'MINIMAL'))
-+
-+
-+@skip(cluster=True)
-+def testDialect1NumericQueryOnANonNumericFieldMatchesNothing(env):
-+    # DIALECT 2 rejects a numeric range on a non-NUMERIC field. DIALECT 1 accepts it and it matches
-+    # nothing, also inside an intersection. A GEO field keeps its points in a numeric range tree,
-+    # which an unbounded range used to match.
-+    conn = getConnectionByEnv(env)
-+    env.expect('FT.CREATE', 'idx', 'SCHEMA', 'loc', 'GEO', 't', 'TAG', 'n', 'NUMERIC').ok()
-+    conn.execute_command('HSET', 'doc:1', 'loc', '1,1', 't', 'red', 'n', 5)
-+    for field in ['loc', 't']:
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:[-inf +inf]', 'DIALECT', 1).equal([0])
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:[-inf +inf] @n:[5 5]', 'DIALECT', 1).equal([0])
-+    env.expect('FT.SEARCH', 'idx', '@n:[5 5]', 'NOCONTENT', 'DIALECT', 1).equal([1, 'doc:1'])
-```
-
-**File**: `tests/pytests/test_tags.py` (modified, +18/-0)
-```diff
-@@ -1352,3 +1352,21 @@ def testSortableTagIndexingInvalidUtf8LoweringOverflow(env):
-     env.assertEqual(errors['last indexing error key'], 'doc2')
- 
-     env.expect('FT.SEARCH', 'idx_sortable', '*', 'NOCONTENT').equal([1, 'doc1'])
-+
-+
-+@skip(cluster=True)
-+def testDialect1TagQueryOnANonTagFieldMatchesNothing(env):
-+    # DIALECT 2 rejects a tag query on a non-TAG field. DIALECT 1 accepts it and it matches
-+    # nothing, also inside an intersection, which a dropped clause would not. VECTOR and GEOSHAPE
-+    # keep their own options where a TAG field keeps its tag index.
-+    conn = getConnectionByEnv(env)
-+    env.expect('FT.CREATE', 'idx', 'SCHEMA',
-+               'v', 'VECTOR', 'FLAT', 6, 'TYPE', 'FLOAT32', 'DIM', 2, 'DISTANCE_METRIC', 'L2',
-+               'g', 'GEOSHAPE', 'FLAT',
-+               't', 'TAG').ok()
-+    conn.execute_command('HSET', 'doc:1', 'v', np.array([1.0, 2.0], dtype=np.float32).tobytes(),
-+                         'g', 'POINT (1 1)', 't', 'red')
-+    for field in ['v', 'g']:
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:{{red}}', 'DIALECT', 1).equal([0])
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:{{red}} @t:{{red}}', 'DIALECT', 1).equal([0])
-+    env.expect('FT.SEARCH', 'idx', '@t:{red}', 'NOCONTENT', 'DIALECT', 1).equal([1, 'doc:1'])
+ # (path, field type, SORTABLE) -> docs that fail to index; absent keys mean none.
+-# NUMERIC rejects the string values. SORTABLE on `$.f` builds its sort key from
+-# the array's first element, so `[]` fails.
++# NUMERIC rejects the string values.
+ JSON_MULTI_VALUE_INDEXING_FAILURES = {
+-    ('$.f', 'TAG', True): {'empty_arr'},
+-    ('$.f', 'TEXT', True): {'empty_arr'},
+     ('$.f', 'NUMERIC', False): {'empty_str', 'non_empty'},
+-    ('$.f', 'NUMERIC', True): {'empty_str', 'non_empty', 'empty_arr'},
++    ('$.f', 'NUMERIC', True): {'empty_str', 'non_empty'},
+     ('$.f[*]', 'NUMERIC', False): {'non_empty'},
+     ('$.f[*]', 'NUMERIC', True): {'non_empty'},
+ }
+@@ -833,24 +830,3 @@ def testJsonMultiValueMissing():
+                 env.assertEqual(res[0], len(expected), message=f'{case}: {res}')
+                 env.assertEqual(set(res[1:]), {f'doc:{s}' for s in expected}, message=case)
+                 env.flush()
+-
+-@skip(cluster=True, no_json=True)
+-def testJsonEmptyArraySortableIndexingFailure():
+-    """SORTABLE on a `$.f` path builds its sort key from the array's first
+-    element, so `[]` fails to index. A failed document is not reported as
+-    missing either."""
+-
+-    env = Env(moduleArgs='DEFAULT_DIALECT 2')
+-    conn = getConnectionByEnv(env)
+-
+-    for field_type in ('TAG', 'TEXT'):
+-        env.expect('FT.CREATE', 'idx', 'ON', 'JSON', 'PREFIX', '1', 'doc:', 'SCHEMA',
+-                   '$.f', 'AS', 'f', field_type, 'INDEXMISSING', 'SORTABLE').ok()
+-        conn.execute_command('JSON.SET', 'doc:empty_arr', '$', '{"f": []}')
+-
+-        info = index_info(env, 'idx')
+-        env.assertEqual(info['hash_indexing_failures'], 1, message=field_type)
+-        env.assertEqual(to_dict(info['Index Errors'])['last indexing error key'],
+-                        'doc:empty_arr', message=field_type)
+-        env.expect('FT.SEARCH', 'idx', 'ismissing(@f)', 'NOCONTENT').equal([0])
+-        env.flush()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12545** (closed): [MOD-20990] Stop TAG dictionary walks when a query reaches its limits (@nonirosenfeldredis)
-- **PR #12543** (closed): [2.6] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
-- **PR #12542** (closed): [2.8] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
-- **PR #12541** (closed): [8.2] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
-- **PR #12540** (closed): [8.4] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
-- **PR #12539** (closed): [8.6] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
+- **PR #12599** (2026-11-26): [8.8-rse] Fix nightly yield and HNSW checkpoint tests (@redisearch-backport-pull-request[bot])
+- **PR #12598** (2026-11-26): [MOD-21189] Find the heap union's score-skipping pivot without rescanning its children (@JoanFM)
+- **PR #12590** (2026-11-26): rust-port: hand off to the next stage worker at turn end (@gdesmott)
+- **PR #12585** (2026-11-26): Fix nightly yield and HNSW checkpoint tests (@dor-forer)
+- **PR #12572** (2026-11-26): Add AVX2 and AVX-512 kernels for TQ2/TQ3 scoring (@dor-forer)
+- **PR #12567** (2026-11-26): rust-port: include C/Rust benchmark comparisons in port PRs (@gdesmott)
 
 ---
 
@@ -2518,48 +2358,36 @@ The eva
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-20693] Stop the query pipeline on memory pressure
+## X. [MOD-21589] Add a nonblocking worker pause for assertion builds
 
 **RULE**:
-When implementing operations in `src/aggregate/aggregate_exec.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/debug_commands.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a24743f`: [MOD-20693] Stop the query pipeline on memory pressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `342b7521`: [MOD-21589] Add a nonblocking worker pause for assertion builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/aggregate/aggregate_exec.c`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/debug_commands.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#include "query_memory.h"
-  QueryError *err = AREQ_QueryProcessingCtx(req)->err;
-  // A buffering stage that kept its rows past an OOM stop may hold enough of them to fill the
-  // reply's limit or a pager's, so the reply ends without reading the stop's RS_RESULT_STOPPED.
-  // When no later cursor read reports the stop, the reply is cut.
-  const bool lastReply =
-      rc == RS_RESULT_EOF || (rc == RS_RESULT_OK && !(AREQ_RequestFlags(req) & QEXEC_F_IS_CURSOR));
-  // A blocked-client timeout that fired in the meantime owns the reply, as in ApplyOomStop.
-  if (lastReply && req->base.reqConfig.oomPolicy != OomPolicy_Fail &&
-      AREQ_QueryProcessingCtx(req)->oomCut &&
-      !QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
-    QueryError_SetQueryOOMWarning(err);
-  }
-  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy, err, rc);
-        // A memory stop ends the request even when its outcome is reported as a timeout.
-        return QueryRequestLimits_IsMemoryStopped(&req->base.limits);
-// Memory checkpoint once the query is built, which also covers the wait for a worker. FT.EXPLAIN
-// builds a plan it never runs, so it is exempt.
-static int checkBuild
+  bool pause = !strcasecmp(op, "pause");
+  bool pauseNoWait = false;
+#ifdef ENABLE_ASSERT
+  // A test may need to stop dispatch before releasing a worker held at a sync point.
+  pauseNoWait = !strcasecmp(op, "pause_nowait");
+#endif
+  if (pause || pauseNoWait) {
+    if (workersThreadPool_pause(pause) != REDISMODULE_OK) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy,
-                      AREQ_QueryProcessingCtx(req)->err, rc);
-        return false;
+  if (!strcasecmp(op, "pause")) {
+    if (workersThreadPool_pause() != REDISMODULE_OK) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a24743f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `342b7521` are properly handled with clean fallback behavior.

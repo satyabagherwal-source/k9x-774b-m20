@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T13:26:46.145Z",
+  "last_updated": "2026-11-26T13:36:08.702Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -530,14 +530,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "464fa7e99c897d7164b46a88e9eb50d6dc505178a777582194eb289be4501c76",
-      "verified_at": "2026-11-22T20:27:31.034Z",
+      "content_hash": "2da64f18f7ba7626d8a4a26c22f477fedc691b068969b523be60b88a08759d04",
+      "verified_at": "2026-11-26T13:35:51.612Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:27:31.034Z"
+      "last_updated": "2026-11-26T13:35:51.612Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "3aa7761bb2efac9458d2e158b028251e0d2f4d0e5fe99576223c49b7c1c88015",
-      "verified_at": "2026-11-26T03:13:14.417Z",
+      "content_hash": "e0649035044e4ebea4360f06be6336fa841baa5b933617bab1ad04f79c15e705",
+      "verified_at": "2026-11-26T13:36:08.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T03:13:14.417Z"
+      "last_updated": "2026-11-26T13:36:08.701Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "dfcf0bc5794a2ad7b72073c665b9bb0b33072d3aa0872eeb0b96a4bece8ec5b3",
-      "verified_at": "2026-11-25T13:20:35.681Z",
+      "content_hash": "b2a8de1309423d139f69614fa7a585280d2665d59ea3b8d5e3cf3e5013bd3ad3",
+      "verified_at": "2026-11-26T13:36:01.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T13:20:35.681Z"
+      "last_updated": "2026-11-26T13:36:01.488Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "9fa330493200d7b457460eb06bc104398acb8b1482959025f0e589c84ea5ffe1",
-      "verified_at": "2026-11-25T23:59:22.865Z",
+      "content_hash": "f4fbdf3c2b302a6aeca151ccb3dc909471431b461c78e8e9ccaa0e3d77623b23",
+      "verified_at": "2026-11-26T13:36:02.532Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T23:59:22.865Z"
+      "last_updated": "2026-11-26T13:36:02.532Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "3c06bdd8dfb893713e667d5f3e01caab50a7f6be6f37cef92af541a6f6a55884",
-      "verified_at": "2026-11-25T12:19:39.728Z",
+      "content_hash": "2b9e961d75c217e3e1c9a15a29e24acc7b7534edc83effe22655fb9dab16e14a",
+      "verified_at": "2026-11-26T13:36:05.969Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T12:19:39.728Z"
+      "last_updated": "2026-11-26T13:36:05.969Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -17961,14 +17961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jarvis322-macos-sysdata",
-      "content_hash": "2c82cb0e832815be5f43b2d6ad5023561255ba4677f45e0b7be739519742f48f",
-      "verified_at": "2026-11-15T16:50:27.798Z",
+      "content_hash": "4caf90df2317367dda64bf71c832b36e3bd392799f9b8ac0cfe39e3adb82acce",
+      "verified_at": "2026-11-26T13:35:58.727Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T16:50:27.798Z"
+      "last_updated": "2026-11-26T13:35:58.727Z"
     },
     "nvidia/NVIDIA-NemotronLabs-RE-USE": {
       "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
