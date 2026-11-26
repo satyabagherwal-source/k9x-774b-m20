@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "62f5458d8defdfdd1c7e26706a3e06af9d7ab568cebbeebabf729024a68820c2",
-    "lastHarvestedAt": "2026-11-22T18:44:02.726Z",
+    "contentHash": "db478ca832313c7e3a12897565e320dc86ab16897dbf439345ffd53898c7b658",
+    "lastHarvestedAt": "2026-11-26T11:49:25.272Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "26919e55",
+    "sourceVersion": "b5e057ba",
     "license": "MIT",
-    "contentHash": "d60b6fdc416464aa7d2ba4272908be7c826b1c0873fc2f844dd1767185539408",
-    "lastHarvestedAt": "2026-11-24T01:15:41.960Z",
+    "contentHash": "b095a4aebab7415c8af9999c648f7e223b1bd78cced10cb1bfb9337f7e97cb5a",
+    "lastHarvestedAt": "2026-11-26T11:49:33.397Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {

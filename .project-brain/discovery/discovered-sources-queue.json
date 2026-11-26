@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T11:40:00.927Z",
+  "updated_at": "2026-11-26T11:49:38.179Z",
   "stats": {
-    "total_discovered": 9745,
-    "approved_pending_harvest": 9245,
+    "total_discovered": 9748,
+    "approved_pending_harvest": 9248,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9232,
+      "COMMUNITY_AND_EXPERT": 9235,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210917,6 +210917,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
         "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-6A158AEA3B36": {
+      "id": "SRC-6A158AEA3B36",
+      "url": "https://github.com/electron/electron/actions/runs/45749462512",
+      "title": "https://github.com/electron/electron/actions/runs/45749462512",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:49:38.006Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-077A1AFB5151": {
+      "id": "SRC-077A1AFB5151",
+      "url": "https://chromium.googlesource.com/chromium/src/+log/156.0.8078.109..156.0.8078.114?n=10000&pretty=fuller",
+      "title": "https://chromium.googlesource.com/chromium/src/+log/156.0.8078.109..156.0.8078.114?n=10000&pretty=fuller",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:49:38.092Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-278F8ABBB532": {
+      "id": "SRC-278F8ABBB532",
+      "url": "https://claude.ai/code/session_01NayLZn2pYDgpeB93Q5mWyf",
+      "title": "https://claude.ai/code/session_01NayLZn2pYDgpeB93Q5mWyf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:49:38.179Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
       }
     }
   }

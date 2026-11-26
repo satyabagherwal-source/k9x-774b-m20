@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T11:40:01.691Z",
+  "last_updated": "2026-11-26T11:49:41.099Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-26T09:37:52.344Z",
+      "processed_at": "2026-11-26T11:49:39.419Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1818,7 +1818,7 @@
       "staged_for_review": 1
     },
     "hf-qwen-qwen-image-2.1-learnings.md": {
-      "processed_at": "2026-11-22T18:44:15.801Z",
+      "processed_at": "2026-11-26T11:49:37.267Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -1913,7 +1913,7 @@
       "staged_for_review": 0
     },
     "electron-electron-learnings.md": {
-      "processed_at": "2026-11-24T01:15:46.363Z",
+      "processed_at": "2026-11-26T11:49:37.923Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3968,7 +3968,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4494,
+  "total_dossiers_evaluated": 4497,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3394
+  "total_staged_for_review": 3396
 }

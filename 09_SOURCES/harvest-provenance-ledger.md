@@ -13398,3 +13398,5 @@ Every entry in this ledger must capture:
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `394c7561` | Multi-dimensional audit evidence | 2026-11-26T11:39:50.253Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `79d1cfe3` | Multi-dimensional audit evidence | 2026-11-26T11:39:52.741Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `1810e35c` | Multi-dimensional audit evidence | 2026-11-26T11:39:55.032Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-26T11:49:25.272Z |
+| `learn-github-electron-electron` | `https://github.com/electron/electron` | `b5e057ba` | Multi-dimensional audit evidence | 2026-11-26T11:49:33.397Z |

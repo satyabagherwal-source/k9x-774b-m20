@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T11:39:55.056Z",
+  "last_updated": "2026-11-26T11:49:33.425Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -365,14 +365,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "62f5458d8defdfdd1c7e26706a3e06af9d7ab568cebbeebabf729024a68820c2",
-      "verified_at": "2026-11-22T18:44:02.737Z",
+      "content_hash": "db478ca832313c7e3a12897565e320dc86ab16897dbf439345ffd53898c7b658",
+      "verified_at": "2026-11-26T11:49:25.291Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:44:02.737Z"
+      "last_updated": "2026-11-26T11:49:25.291Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -12711,14 +12711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-electron-electron",
-      "content_hash": "d60b6fdc416464aa7d2ba4272908be7c826b1c0873fc2f844dd1767185539408",
-      "verified_at": "2026-11-24T01:15:41.969Z",
+      "content_hash": "b095a4aebab7415c8af9999c648f7e223b1bd78cced10cb1bfb9337f7e97cb5a",
+      "verified_at": "2026-11-26T11:49:33.424Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:15:41.969Z"
+      "last_updated": "2026-11-26T11:49:33.424Z"
     },
     "mistralai/Timestral-209M": {
       "repository": "mistralai/Timestral-209M",

@@ -13365,3 +13365,5 @@
 | `CYCLE-20261126-D17T` | `2026-11-26T11:39:50.249Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10666` | Yes (`0d0455ec...`) |
 | `CYCLE-20261126-D34X` | `2026-11-26T11:39:52.737Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10667` | Yes (`e32925df...`) |
 | `CYCLE-20261126-D4WK` | `2026-11-26T11:39:55.028Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10668` | Yes (`7fb4ff4a...`) |
+| `CYCLE-20261126-PCWI` | `2026-11-26T11:49:25.266Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`db478ca8...`) |
+| `CYCLE-20261126-PJ68` | `2026-11-26T11:49:33.392Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10669` | Yes (`b095a4ae...`) |

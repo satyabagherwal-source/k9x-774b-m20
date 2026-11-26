@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-79LS",
-    "timestamp": "2026-11-24T22:15:51.904Z",
-    "repository": "miso-belica/jusText",
-    "learningId": "learn-github-miso-belica-justext",
-    "contentHash": "eab67422a4233fb0ae7242ade3a136690a4f3d421688b4748e063c43bf3b156c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-7GE2",
-    "timestamp": "2026-11-24T22:16:00.698Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "22499c457cdb9dac5b72b788fab55dfadcca1542a76d84eb2a2b0ffcdf010eec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-PM6F",
     "timestamp": "2026-11-24T22:30:08.007Z",
     "repository": "medialab/xan",
@@ -7490,6 +7460,36 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "7fb4ff4a74cb436c73e237ec57b16b566973c96b53d56c0a32854e9ddccdf7ae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-PCWI",
+    "timestamp": "2026-11-26T11:49:25.266Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "db478ca832313c7e3a12897565e320dc86ab16897dbf439345ffd53898c7b658",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-PJ68",
+    "timestamp": "2026-11-26T11:49:33.392Z",
+    "repository": "electron/electron",
+    "learningId": "learn-github-electron-electron",
+    "contentHash": "b095a4aebab7415c8af9999c648f7e223b1bd78cced10cb1bfb9337f7e97cb5a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

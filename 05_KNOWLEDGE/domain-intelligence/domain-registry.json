@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T11:40:01.342Z",
+  "last_updated": "2026-11-26T11:49:40.356Z",
   "total_records": 2744,
   "domains": {
     "A": {
@@ -8514,8 +8514,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "569a818cb152ffaac4664e96a9d884b553e56a697f6fe378206a41c6806518a7",
-      "created_at": "2026-11-26T09:37:53.013Z"
+      "content_hash": "4559cc436fa90bd8f75a97cf2dfaa071c9806cf2a7ba6b08bf4f7b3bd2b360c1",
+      "created_at": "2026-11-26T11:49:40.356Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -26477,8 +26477,8 @@
       "title": "Technical Construction Intelligence: electron/electron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-electron-electron-technical-construction-intelligence-electron-electron-core-inv.md",
       "repository": "electron/electron",
-      "content_hash": "2f872f2b564be163bb10efc42ba8824d6646b81dfae1f092aeb9c9f8e50c9e21",
-      "created_at": "2026-11-21T02:08:36.893Z"
+      "content_hash": "abb7928ae5f1c70ef5065626627edf98180a0371f80c908bfb39cbfe5bc4eea8",
+      "created_at": "2026-11-26T11:49:33.997Z"
     },
     "DOM-D-2B088993": {
       "record_id": "DOM-D-2B088993",
@@ -26537,8 +26537,8 @@
       "title": "Technical Construction Intelligence: electron-electron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-electron-electron-learnings-technical-construction-intelligence-electron-electro.md",
       "repository": "electron-electron-learnings",
-      "content_hash": "b6adea46555fa38e534fa9990e4451b589e3cc9ad8cced532cfab279ae20d2a6",
-      "created_at": "2026-11-21T02:13:40.353Z"
+      "content_hash": "69cd7f4add1e1b95fb6343cf2eba6c7b0dbbbae3951581531af13f74d6123509",
+      "created_at": "2026-11-26T11:49:38.859Z"
     },
     "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants",
@@ -31777,8 +31777,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen-Image-2.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-research-knowledge-intelligence-qwen-qwen-image-2-1-core-.md",
       "repository": "Qwen/Qwen-Image-2.1",
-      "content_hash": "98469e76146e4f211039ba8090bbe0f0267f960e0d6239b22081410906362691",
-      "created_at": "2026-11-22T18:44:03.009Z"
+      "content_hash": "39f5755c85ded62a307cf5b8aab183d54aa1126af5cbaebbaaa2188e89b59196",
+      "created_at": "2026-11-26T11:49:25.590Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
@@ -31786,8 +31786,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen-image-2.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-qwen-qwen-im.md",
       "repository": "hf-qwen-qwen-image-2.1-learnings",
-      "content_hash": "6fa5e775c2c2a04087674717b2bcfaba3181118761f7acdc0b3dda2c3bdc40ba",
-      "created_at": "2026-11-22T18:44:16.068Z"
+      "content_hash": "516904915e1924b6e78d040e0252beeb00636eced5621b437134df47e6f56a52",
+      "created_at": "2026-11-26T11:49:37.616Z"
     },
     "domain_intelligence-quality-verification-intelligence-sharkdp-fd-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sharkdp-fd-core-invariants",

@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T11:03:50.417Z",
-    "lastVerified": "2026-11-26T11:03:50.417Z",
+    "lastChecked": "2026-11-26T11:49:36.933Z",
+    "lastVerified": "2026-11-26T11:49:36.933Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T11:39:58.388Z",
-    "lastVerified": "2026-11-26T11:39:58.388Z",
+    "lastChecked": "2026-11-26T11:49:37.086Z",
+    "lastVerified": "2026-11-26T11:49:37.086Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -841,9 +841,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-26T06:35:27.420Z",
+    "lastChecked": "2026-11-26T11:49:31.810Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-26T06:35:27.420Z"
+    "lastVerified": "2026-11-26T11:49:31.810Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -1308,12 +1308,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T18:44:01.736Z",
-    "lastVerified": "2026-11-22T18:44:01.736Z",
+    "lastChecked": "2026-11-26T11:49:24.425Z",
+    "lastVerified": "2026-11-26T11:49:24.425Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "62f5458d8defdfdd1c7e26706a3e06af9d7ab568cebbeebabf729024a68820c2",
+    "contentHash": "db478ca832313c7e3a12897565e320dc86ab16897dbf439345ffd53898c7b658",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2386,12 +2386,12 @@
     "lastVerified": "2026-11-24T10:43:52.077Z"
   },
   "kubeedge-kubeedge": {
-    "name": "kubeedge/kubeedge",
+    "name": "kubeedge",
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T11:30:11.115Z",
-    "lastVerified": "2026-11-25T11:30:11.115Z",
+    "lastChecked": "2026-11-26T11:49:29.355Z",
+    "lastVerified": "2026-11-26T11:49:29.355Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
@@ -2400,7 +2400,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8a61b67f"
   },
   "aleo-labs-protocol-snarkos": {
     "name": "snarkOS",
@@ -6435,9 +6436,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-25T10:21:26.415Z",
+    "lastChecked": "2026-11-26T11:49:34.732Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-25T10:21:26.415Z"
+    "lastVerified": "2026-11-26T11:49:34.732Z"
   },
   "golutra-golutra": {
     "name": "golutra",
@@ -9165,8 +9166,8 @@
     "officialUrl": "https://github.com/vercel-labs/agent-desktop",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T04:07:28.897Z",
-    "lastVerified": "2026-11-25T04:07:28.897Z",
+    "lastChecked": "2026-11-26T11:49:21.823Z",
+    "lastVerified": "2026-11-26T11:49:21.823Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vercel-labs-agent-desktop",
@@ -12260,14 +12261,14 @@
     "officialUrl": "https://github.com/electron/electron",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-24T01:15:40.851Z",
-    "lastVerified": "2026-11-24T01:15:40.851Z",
+    "lastChecked": "2026-11-26T11:49:31.919Z",
+    "lastVerified": "2026-11-26T11:49:31.919Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-electron-electron",
-    "contentHash": "d60b6fdc416464aa7d2ba4272908be7c826b1c0873fc2f844dd1767185539408",
+    "contentHash": "b095a4aebab7415c8af9999c648f7e223b1bd78cced10cb1bfb9337f7e97cb5a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

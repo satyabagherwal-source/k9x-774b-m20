@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T11:39:55.046Z",
-  "total_cycles_completed": 12682,
-  "total_learnings_persisted": 12682,
-  "total_rules_promoted": 11565,
+  "last_updated": "2026-11-26T11:49:33.413Z",
+  "total_cycles_completed": 12684,
+  "total_learnings_persisted": 12684,
+  "total_rules_promoted": 11566,
   "history": [
-    {
-      "timestamp": "2026-11-25T23:24:12.017Z",
-      "repository": "RustCrypto/hashes",
-      "learningId": "learn-github-rustcrypto-hashes",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:32:24.686Z",
-      "repository": "moonshotai/Kimi-K3.1-Pro",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T23:32:33.785Z",
       "repository": "dosco/deeporg",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T11:39:55.046Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:49:25.287Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:49:33.413Z",
+      "repository": "electron/electron",
+      "learningId": "learn-github-electron-electron",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
