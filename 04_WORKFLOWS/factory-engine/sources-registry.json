@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T11:49:37.086Z",
-    "lastVerified": "2026-11-26T11:49:37.086Z",
+    "lastChecked": "2026-11-26T12:02:05.841Z",
+    "lastVerified": "2026-11-26T12:02:05.841Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T11:15:47.372Z",
-    "lastVerified": "2026-11-26T11:15:47.372Z",
+    "lastChecked": "2026-11-26T12:02:05.829Z",
+    "lastVerified": "2026-11-26T12:02:05.829Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -923,9 +923,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-26T06:44:03.478Z",
+    "lastChecked": "2026-11-26T12:02:00.847Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-26T06:44:03.478Z"
+    "lastVerified": "2026-11-26T12:02:00.847Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -1390,12 +1390,12 @@
     "officialUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T18:52:36.095Z",
-    "lastVerified": "2026-11-22T18:52:36.095Z",
+    "lastChecked": "2026-11-26T12:01:53.541Z",
+    "lastVerified": "2026-11-26T12:01:53.541Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "b7310708f163ff873e2c39a84d60db2ef537b61257d3b5924fd69082307233ad",
+    "contentHash": "e52c0f2cb3a91f41313abf3c4f945937c3d19866056d51164d9c2993a587dad8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2472,9 +2472,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-25T11:42:27.169Z",
+    "lastChecked": "2026-11-26T12:01:58.391Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-25T11:42:27.169Z"
+    "lastVerified": "2026-11-26T12:01:58.391Z"
   },
   "volcengine-minecontext": {
     "name": "MineContext",
@@ -6492,9 +6492,9 @@
   "olric-data-olric": {
     "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-11-25T10:35:20.203Z",
+    "lastChecked": "2026-11-26T12:02:03.294Z",
     "revisionIdentifier": "9092df94",
-    "lastVerified": "2026-11-25T10:35:20.203Z"
+    "lastVerified": "2026-11-26T12:02:03.294Z"
   },
   "yvgude-lean-ctx": {
     "name": "lean-ctx",
@@ -9208,8 +9208,8 @@
     "officialUrl": "https://github.com/matthart1983/netwatch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T04:15:43.938Z",
-    "lastVerified": "2026-11-25T04:15:43.938Z",
+    "lastChecked": "2026-11-26T12:01:50.813Z",
+    "lastVerified": "2026-11-26T12:01:50.813Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matthart1983-netwatch",
@@ -12293,9 +12293,9 @@
   "maxrave-dev-kotlin-footguns": {
     "name": "kotlin-footguns",
     "officialUrl": "https://github.com/maxrave-dev/kotlin-footguns",
-    "lastChecked": "2026-11-24T01:28:50.517Z",
+    "lastChecked": "2026-11-26T12:01:55.928Z",
     "revisionIdentifier": "2c391bc9",
-    "lastVerified": "2026-11-24T01:28:50.517Z"
+    "lastVerified": "2026-11-26T12:01:55.928Z"
   },
   "dubzzz-fast-check": {
     "name": "dubzzz/fast-check",

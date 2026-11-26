@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-PM6F",
-    "timestamp": "2026-11-24T22:30:08.007Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "928ed21ade5926461a651206980fbc018d2c54069025fd69e68ce8b4501c23c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-PP0J",
     "timestamp": "2026-11-24T22:30:11.683Z",
     "repository": "kotest/kotest",
@@ -7492,6 +7477,21 @@
     "contentHash": "b095a4aebab7415c8af9999c648f7e223b1bd78cced10cb1bfb9337f7e97cb5a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-5EVQ",
+    "timestamp": "2026-11-26T12:01:54.326Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "e52c0f2cb3a91f41313abf3c4f945937c3d19866056d51164d9c2993a587dad8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

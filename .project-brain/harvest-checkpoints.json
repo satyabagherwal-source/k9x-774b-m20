@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T11:49:33.425Z",
+  "last_updated": "2026-11-26T12:01:54.349Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -380,14 +380,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "b7310708f163ff873e2c39a84d60db2ef537b61257d3b5924fd69082307233ad",
-      "verified_at": "2026-11-22T18:52:36.764Z",
+      "content_hash": "e52c0f2cb3a91f41313abf3c4f945937c3d19866056d51164d9c2993a587dad8",
+      "verified_at": "2026-11-26T12:01:54.348Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:52:36.764Z"
+      "last_updated": "2026-11-26T12:01:54.348Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",

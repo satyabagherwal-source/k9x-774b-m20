@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T18:52:56.863Z",
+  "timestamp": "2026-11-26T12:02:06.177Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-contrastive-lm-clm-v0.1-8b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-contrastive-lm-clm-v0.1-8b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T18:52:56.863Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T12:02:06.177Z`  
 > **Learning ID**: `LEARN-EVO-hf-contrastive-lm-clm-v0.1-8b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-contrasti`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T18:52:36.230Z  
+> **Timestamp**: 2026-11-26T12:01:53.675Z  
 > **Learning ID**: `learn-huggingface-contrastive-lm-clm-v0-1-8b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Contrastive-LM/CLM-v0.1-8B](https://huggingface.co/Contrastive-LM/CLM-v0.1-8B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T18:52:36.095Z  
+> **Harvest Timestamp**: 2026-11-26T12:01:53.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-ranking
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 868 downloads | 795 likes
+- **Stars / Engagement**: 862 downloads | 799 likes
 
 ---
 

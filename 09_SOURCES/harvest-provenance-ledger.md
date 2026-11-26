@@ -13400,3 +13400,4 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `1810e35c` | Multi-dimensional audit evidence | 2026-11-26T11:39:55.032Z |
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-26T11:49:25.272Z |
 | `learn-github-electron-electron` | `https://github.com/electron/electron` | `b5e057ba` | Multi-dimensional audit evidence | 2026-11-26T11:49:33.397Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-26T12:01:54.331Z |

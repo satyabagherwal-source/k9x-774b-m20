@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
   "source_version": "hf-contrastive-lm-clm-v0.1-8b",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T18:52:36.970Z",
+  "timestamp": "2026-11-26T12:01:54.607Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Contrastive-LM/CLM-v0.1-8B](https://huggingface.co/Contrastive-LM/CLM-v0.1-8B) (Revision: `hf-contras`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T18:52:36.970Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T12:01:54.607Z`  
 > **Learning ID**: `learn-huggingface-contrastive-lm-clm-v0-1-8b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Contrastive-LM/CLM-v0.1-8B](https://huggingface.co/Contrastive-LM/CLM-v0.1-8B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T18:52:36.095Z  
+> **Harvest Timestamp**: 2026-11-26T12:01:53.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-ranking
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 868 downloads | 795 likes
+- **Stars / Engagement**: 862 downloads | 799 likes
 
 ---
 

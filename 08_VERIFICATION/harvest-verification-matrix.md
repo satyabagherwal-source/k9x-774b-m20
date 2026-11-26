@@ -13367,3 +13367,4 @@
 | `CYCLE-20261126-D4WK` | `2026-11-26T11:39:55.028Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10668` | Yes (`7fb4ff4a...`) |
 | `CYCLE-20261126-PCWI` | `2026-11-26T11:49:25.266Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`db478ca8...`) |
 | `CYCLE-20261126-PJ68` | `2026-11-26T11:49:33.392Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10669` | Yes (`b095a4ae...`) |
+| `CYCLE-20261126-5EVQ` | `2026-11-26T12:01:54.326Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`e52c0f2c...`) |

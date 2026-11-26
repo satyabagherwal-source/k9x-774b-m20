@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T11:49:33.413Z",
-  "total_cycles_completed": 12684,
-  "total_learnings_persisted": 12684,
+  "last_updated": "2026-11-26T12:01:54.345Z",
+  "total_cycles_completed": 12685,
+  "total_learnings_persisted": 12685,
   "total_rules_promoted": 11566,
   "history": [
-    {
-      "timestamp": "2026-11-25T23:32:33.785Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T23:32:38.776Z",
       "repository": "t8y2/dbx",
@@ -1403,6 +1396,13 @@
       "repository": "electron/electron",
       "learningId": "learn-github-electron-electron",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:01:54.345Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

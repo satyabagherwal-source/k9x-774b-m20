@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T11:49:40.356Z",
+  "last_updated": "2026-11-26T12:02:08.802Z",
   "total_records": 2744,
   "domains": {
     "A": {
@@ -8514,8 +8514,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "4559cc436fa90bd8f75a97cf2dfaa071c9806cf2a7ba6b08bf4f7b3bd2b360c1",
-      "created_at": "2026-11-26T11:49:40.356Z"
+      "content_hash": "7a8e529977df61a5c5afd77ef3996da8cb568059e72153c437d5dd1d42806eab",
+      "created_at": "2026-11-26T12:02:07.452Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -12135,8 +12135,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "ad12d53318fc82e846c8d21d94deeecb353f3e0b3a8646e71ff190e3b90a1ebc",
-      "created_at": "2026-11-26T05:38:44.988Z"
+      "content_hash": "5a7b6eaa7502e69d51c52aa90827adb7384b98a94465b88439938c8075155570",
+      "created_at": "2026-11-26T12:02:08.802Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -29985,8 +29985,8 @@
       "title": "Research & Knowledge Intelligence: Contrastive-LM/CLM-v0.1-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-research-knowledge-intelligence-contrastive-lm-clm.md",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "content_hash": "220923c8c4ca5ae9adfc43019bea15c857825880ac6f1ad4ea1d10bba3e6de82",
-      "created_at": "2026-11-22T18:52:36.971Z"
+      "content_hash": "d4cda33bfd50cd23621516330d1a65a4c0631d43148af0679170c5e15859ce27",
+      "created_at": "2026-11-26T12:01:54.659Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv",
@@ -29994,8 +29994,8 @@
       "title": "Research & Knowledge Intelligence: hf-contrastive-lm-clm-v0.1-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-learnings-research-knowledge-intelligence-hf-contr.md",
       "repository": "hf-contrastive-lm-clm-v0.1-8b-learnings",
-      "content_hash": "3bed8d9f3075b6570398555064c8524a5c004eb36461dfcebae9fbc76066e053",
-      "created_at": "2026-11-22T18:52:56.970Z"
+      "content_hash": "1542cf29e705447133d0d4c6978ebc81be57db2d436bdd9c7a32575f2b3c6ee9",
+      "created_at": "2026-11-26T12:02:06.301Z"
     },
     "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants",
