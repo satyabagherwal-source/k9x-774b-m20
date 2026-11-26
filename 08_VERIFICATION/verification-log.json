@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-6LHR",
-    "timestamp": "2026-11-24T12:27:28.719Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "27a33864491c84db9f2a9c3443cb7ac36dc64cf09f442a4b6fd3d5deda62ef69",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-6PJZ",
     "timestamp": "2026-11-24T12:27:33.983Z",
     "repository": "slatedb/slatedb",
@@ -7492,6 +7477,21 @@
     "contentHash": "ef0784269b4bc41e9bb8008b464da90ec7536176dd31a3a8256b0f86ee972972",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-M29O",
+    "timestamp": "2026-11-26T02:26:59.196Z",
+    "repository": "tencent/Qwen3.8-27B-DSpine-b16",
+    "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
+    "contentHash": "13c0bac3d3c42d1d38d3a440fb7212408b755827ee2a3f50071f78ab3cf93194",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

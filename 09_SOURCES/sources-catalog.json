@@ -12265,8 +12265,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16",
     "sourceVersion": "hf-tencent-qwen3.8-27b-dspine-b16",
     "license": "Open-Source",
-    "contentHash": "3db6329d5209b6d696cf39402d1acbe08c7595e03c0a51a6d5a6f04c5c9e665c",
-    "lastHarvestedAt": "2026-11-22T05:39:40.569Z",
+    "contentHash": "13c0bac3d3c42d1d38d3a440fb7212408b755827ee2a3f50071f78ab3cf93194",
+    "lastHarvestedAt": "2026-11-26T02:26:59.200Z",
     "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16"
   },
   "hf-videorebirthai-hyperflow-h3-flash": {
