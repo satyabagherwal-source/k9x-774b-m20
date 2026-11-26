@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T06:46:57.338Z",
+  "timestamp": "2026-11-26T16:41:29.485Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-react-hook-form-react-hook-form-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [react-hook-form-react-hook-form-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T06:46:57.338Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:41:29.485Z`  
 > **Learning ID**: `LEARN-EVO-react-hook-form-react-hook-form-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source**: github ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
-> **Source Version**: `074d1748`  
+> **Source Version**: `b91c1ab9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T06:46:17.105Z  
+> **Timestamp**: 2026-11-26T16:40:36.057Z  
 > **Learning ID**: `learn-github-react-hook-form-react-hook-form`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:46:17.101Z  
+> **Harvest Timestamp**: 2026-11-26T16:40:36.049Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 📋 React Hooks for form state management and validation (Web + React Native)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 44926 stars
+- **Stars / Engagement**: 44928 stars
 
 ---
 
@@ -806,340 +806,306 @@ export default <T extends FieldValues, K extends ReadFormState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `074d1748` (2026-11-22)
-**Commit Message**: 🐞 fix(trigger): await form validation before validating named fields- #14024 (#14055)
+### Incident Patch 1: `72f5fbbe` (2026-11-26)
+**Commit Message**: 🐞 fix(Controller): fail required when a file input has no files (#14061)
 
-**File**: `src/__tests__/logic/createFormControl.test.ts` (modified, +84/-0)
+Since #13289, field.onChange stores target.files for a file input. When
+the selection is cleared the value is an empty FileList, which
+validateField did not count as empty, so `required` passed for a
+Controller file input while the same input with register failed it.
+
+Count an empty FileList as empty, with the same FileList guard as
+cloneObject, formData and flatten.
+
+**File**: `src/__tests__/controller.test.tsx` (modified, +39/-0)
 ```diff
-@@ -19,6 +19,90 @@ jest.mock('../../logic/getDirtyFields', () => {
- });
+@@ -809,6 +809,45 @@ describe('Controller', () => {
+     expect(await screen.findByText('Input is invalid.')).toBeVisible();
+   });
  
- describe('createFormControl', () => {
-+  describe('trigger with form-level validate', () => {
-+    it('pass the trigger name to form-level validation', async () => {
-+      const validate = jest.fn(({ name }: { name?: string | string[] }) =>
-+        name === 'email' ? 'Email is required' : true,
-+      );
-+      const form = createFormControl({
-+        defaultValues: { email: '' },
-+        validate,
++  it('show invalid input when a required file input has no files', async () => {
++    const Component = () => {
++      const { control } = useForm({
++        mode: 'onChange',
 +      });
-+      form.register('email');
 +
-+      expect(await form.trigger('email')).toBe(false);
-+      expect(validate).toHaveBeenCalledTimes(1);
-+      expect(form.getErrors().form?.message).toBe('Email is required');
-+    });
-+
-+    it('run form-level validation once for multiple fields', async () => {
-+      const validate = jest.fn(async () => 'Invalid account');
-+      const validateEmail = jest.fn(() => true);
-+      const validatePassword = jest.fn(() => true);
-+      const form = createFormControl({
-+        defaultValues: { email: '', password: '' },
-+        validate,
-+      });
-+      form.register('email', { validate: validateEmail });
-+      form.register('password', { validate: validatePassword });
-+
-+      expect(await form.trigger(['email', 'password'])).toBe(false);
-+      expect(validate).toHaveBeenCalledTimes(1);
-+      expect(validate).toHaveBeenCalledWith(
-+        expect.objectContaining({ name: ['email', 'password'] }),
++      return (
++        <Controller
++          name="test"
++          render={({ field: { name, onBlur, onChange, ref }, fieldState }) => (
++            <>
++              <input
++                type="file"
++                data-testid="file"
++                name={name}
++                onBlur={onBlur}
++                onChange={onChange}
++                ref={ref}
++              />
++              {fieldState.invalid && <p>Input is invalid.</p>}
++            </>
++          )}
++          control={control}
++          rules={{
++            required: true,
++          }}
++        />
 +      );
-+      expect(validateEmail).toHaveBeenCalledTimes(1);
-+      expect(validatePassword).toHaveBeenCalledTimes(1);
-+    });
++    };
 +
-+    it.each([true, false])(
-+      'wait for async form validation before validating fields: %s',
-+      async (formValid) => {
-+        let resolveForm!: (valid: boolean) => void;
-+        const form = createFormControl({
-+          defaultValues: { email: '' },
-+          validate: () =>
-+            new Promise<boolean>((resolve) => {
-+              resolveForm = resolve;
-+            }),
-+        });
-+        const validateEmail = jest.fn(async () => true);
-+        form.register('email', { validate: validateEmail });
++    render(<Component />);
 +
-+        const result = form.trigger(['email']);
-+        expect(validateEmail).not.toHaveBeenCalled();
++    // jsdom gives the input an empty FileList, as a browser does when the
++    // user clears the selection.
++    fireEvent.change(screen.getByTestId('file'));
 +
-+        resolveForm(formValid);
-+        expect(await result).toBe(formValid);
-+        expect(validateEmail).toHaveBeenCalledTimes(1);
-+      },
++    expect(await screen.findByText('Input is invalid.')).toBeVisible();
++  });
++
+   it('show input has been touched.', async () => {
+     const Component = () => {
+       const { control } = useForm();
+```
+
+**File**: `src/logic/validateField.ts` (modified, +4/-1)
+```diff
+@@ -87,7 +87,10 @@ export default async <T extends FieldValues>(
+       isUndefined(inputValue)) ||
+     (isHTMLElement(ref) && ref.value === '' && !_c) ||
+     inputValue === '' ||
+-    (Array.isArray(inputValue) && !inputValue.length);
++    (Array.isArray(inputValue) && !inputValue.length) ||
++    (typeof FileList !== 'undefined' &&
++      inputValue instanceof FileList &&
++      !inputValue.length);
+   const appendErrorsCurry = appendErrors.bind(
+     null,
+     name,
+```
+
+---
+
+### Incident Patch 2: `b91c1ab9` (2026-11-26)
+**Commit Message**: 🐞 fix(isValid): skip native validation when a resolver only checks validity (#14064)
+
+_setValid ran the resolver with shouldUseNativeValidation on, so
+resolvers such as zodResolver reported every invalid field to the
+browser while computing isValid: error bubbles showed on mount and on
+every change before submit. The built-in rules already pass
+shouldUseNativeValidation && !onlyCheckValid for the same check; the
+resolver path now does too.
+
+Co-authored-by: Bill <[REDACTED_EMAIL]>
+
+**File**: `src/__tests__/useForm/resolver.test.tsx` (modified, +46/-0)
+```diff
+@@ -283,6 +283,52 @@ describe('resolver', () => {
+     );
+   });
+ 
++  it('be called with shouldUseNativeValidation false when only checking isValid', async () => {
++    const test = jest.fn();
++    const resolver = (a: any, b: any, c: any) => {
++      test(a, b, c);
++      return {
++        errors: {},
++        values: {},
++      };
++    };
++
++    const App = () => {
++      const {
++        register,
++        handleSubmit,
++        formState: { isValid },
++      } = useForm({
++        resolver: async (data, context, options) =>
++          resolver(data, context, options),
++        shouldUseNativeValidation: true,
++      });
++
++      return (
++        <form onSubmit={handleSubmit(noop)}>
++          <input {...register('test')} />
++          <p>{isValid ? 'valid' : 'invalid'}</p>
++          <button>Submit</button>
++        </form>
++      );
++    };
++
++    render(<App />);
++
++    expect(await screen.findByText('valid')).toBeVisible();
++    expect(test.mock.calls[0][2]).toEqual(
++      expect.objectContaining({ shouldUseNativeValidation: false }),
 +    );
 +
-+    it.each(['reset', 'unregister'] as const)(
-+      'not validate a field registered again after %s during pending form validation',
-+      async (action) => {
-+        let resolveForm!: (valid: boolean) => void;
-+        const form = createFormControl({
-+          defaultValues: { email: '' },
-+          validate: () =>
-+            new Promise<boolean>((resolve) => {
-+              resolveForm = resolve;
-+            }),
-+        });
-+        form.register('email');
-+        const result = form.trigger('email');
-+        action === 'reset' ? form.reset() : form.unregister('email');
-+        const validateEmail = jest.fn(() => 'New field error');
-+        form.register('email', { validate: validateEmail });
++    fireEvent.click(screen.getByRole('button'));
 +
-+        resolveForm(true);
-+        await result;
-+        expect(validateEmail).not.toHaveBeenCalled();
-+        expect(form.getErrors()).toEqual({});
-+      },
++    await waitFor(() =>
++      expect(test.mock.calls.at(-1)?.[2]).toEqual(
++        expect.objectContaining({ shouldUseNativeValidation: true }),
++      ),
 +    );
 +  });
 +
-   it.each([
-     { values: [] },
-     { values: [''] },
+   it('avoid the problem of race condition', async () => {
+     jest.useFakeTimers();
+ 
 ```
 
-**File**: `src/logic/createFormControl.ts` (modified, +22/-11)
+**File**: `src/logic/createFormControl.ts` (modified, +6/-3)
 ```diff
-@@ -1626,17 +1626,28 @@ export function createFormControl<
-         ? !fieldNames.some((name) => get(errors, name))
-         : isValid;
-     } else if (name) {
--      validationResult = (
--        await Promise.all(
--          fieldNames.map(async (fieldName) => {
--            const field: FieldRefs = get(_fields, fieldName);
--            return await executeBuiltInValidation({
--              fields: field && field._f ? { [fieldName]: field } : field,
--              eventType: EVENTS.TRIGGER,
--            });
--          }),
--        )
--      ).every(Boolean);
-+      const fields = fieldNames.map((fieldName) => {
-+        const field: FieldRefs = get(_fields, fieldName);
-+        return field && field._f ? { [fieldName]: field } : field;
-+      });
-+      const formValid =
-+        !_options.validate ||
-+        (await validateForm({
-+          name: name as FieldPath<TFieldValues>,
-+          eventType: EVENTS.TRIGGER,
-+        }));
-+      validationResult =
-+        (
-+          await Promise.all(
-+            fields.map((field) =>
-+              executeBuiltInValidation({
-+                fields: field,
-+                context: { valid: true, runRootValidation: true },
-+                eventType: EVENTS.TRIGGER,
-+              }),
-+            ),
-+          )
-+        ).every(Boolean) && formValid;
-       !(!validationResult && !_formState.isValid) && _setValid();
-     } else {
-       validationResult = isValid = await executeBuiltInValidation({
+@@ -280,7 +280,7 @@ export function createFormControl<
+       const resetCallId = _resetCallId;
+       let isValid: boolean;
+       if (_options.resolver) {
+-        isValid = isEmptyObject((await _runSchema()).errors);
++        isValid = isEmptyObject((await _runSchema(undefined, true)).errors);
+         callId === _setValidCallId && _updateIsValidating();
+       } else {
+         isValid = await executeBuiltInValidation({
+@@ -778,7 +778,10 @@ export function createFormControl<
+     }
+   };
+ 
+-  const _runSchema = async (name?: InternalFieldName[]) => {
++  const _runSchema = async (
++    name?: InternalFieldName[],
++    onlyCheckValid?: boolean,
++  ) => {
+     _updateIsValidating(name, true);
+     return await _options.resolver!(
+       _formValues,
+@@ -787,7 +790,7 @@ export function createFormControl<
+         name || _names.mount,
+         _fields,
+         _options.criteriaMode,
+-        _options.shouldUseNativeValidation,
++        _options.shouldUseNativeValidation && !onlyCheckValid,
+       ),
+     );
+   };
 ```
 
 ---
 
-### Incident Patch 2: `b2299175` (2026-11-22)
-**Commit Message**: 🐞 fix(useFieldArray): defer resolver row errors of untouched rows with mode onTouched- #14041 (#14054)
+### Incident Patch 3: `f7a6f91d` (2026-11-25)
+**Commit Message**: 📝 docs: fix broken demo gif in translated READMEs (#14056)
 
-**File**: `src/__tests__/useFieldArray.test.tsx` (modified, +71/-0)
+Co-authored-by: Bill <[REDACTED_EMAIL]>
+
+**File**: `docs/README.de-DE.md` (modified, +1/-1)
 ```diff
-@@ -1131,6 +1131,77 @@ describe('useFieldArray', () => {
-       );
-     });
- 
-+    it('should not publish resolver row errors after append until the field is touched when mode is onTouched', async () => {
-+      type FormValues = {
-+        test: { value: string }[];
-+      };
-+
-+      const App = () => {
-+        const {
-+          register,
-+          control,
-+          formState: { errors },
-+        } = useForm<FormValues>({
-+          mode: 'onTouched',
-+          resolver: async (data): Promise<ResolverResult<FormValues>> => {
-+            const fieldErrors: { test?: any } = {};
-+            for (const [index, item] of data.test.entries()) {
-+              if (item.value === '') {
-+                fieldErrors.test = fieldErrors.test || [];
-+                fieldErrors.test[index] = {
-+                  value: {
-+                    type: 'required',
-+                    message: `Item ${index} is required`,
-+                  },
-+                };
-+              }
-+            }
-+
-+            if (Object.keys(fieldErrors).length === 0) {
-+              return { values: data, errors: {} };
-+            }
-+
-+            return { values: {}, errors: fieldErrors };
-+          },
-+          defaultValues: {
-+            test: [],
-+          },
-+        });
-+        const { fields, append } = useFieldArray({
-+          name: 'test',
-+          control,
-+        });
-+
-+        return (
-+          <form>
-+            {fields.map((item, i) => (
-+              <div key={item.id}>
-+                <input {...register(`test.${i}.value` as const)} />
-+                {errors.test?.[i]?.value && (
-+                  <span>{errors.test[i]?.value?.message}</span>
-+                )}
-+              </div>
-+            ))}
-+            <button type="button" onClick={() => append({ value: '' })}>
-+              append
-+            </button>
-+          </form>
-+        );
-+      };
-+
-+      render(<App />);
-+
-+      await act(async () => {
-+        fireEvent.click(screen.getByRole('button', { name: 'append' }));
-+      });
-+
-+      expect(screen.queryByText('Item 0 is required')).not.toBeInTheDocument();
-+
-+      fireEvent.blur(screen.getByRole('textbox'));
-+
-+      expect(await screen.findByText('Item 0 is required')).toBeVisible();
-+    });
-+
-     describe('with an async resolver', () => {
-       type FormValues = { test: { value: string }[] };
- 
+@@ -22,7 +22,7 @@
+ <div align="center">
+     <p align="center">
+         <a href="https://react-hook-form.com" title="React Hook Form - Einfache React Formular Eingabeprüfung">
+-            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif" alt="React Hook Form video - React einstellbare Hook für Formulareingabeprüfung" width="100%" />
++            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif" alt="React Hook Form video - React einstellbare Hook für Formulareingabeprüfung" width="100%" />
+         </a>
+     </p>
+ </div>
 ```
 
-**File**: `src/useFieldArray.ts` (modified, +9/-1)
+**File**: `docs/README.es-ES.md` (modified, +1/-1)
 ```diff
-@@ -406,7 +406,15 @@ export function useFieldArray<
-             return;
-           }
-           const error: FieldError | undefined = get(result.errors, name);
--          if (!deepEqual(get(control._formState.errors, name), error, true)) {
-+          const isUntouchedRowError =
-+            validationModes.isOnTouch &&
-+            !control._formState.isSubmitted &&
-+            error &&
-+            Object.keys(error).some((key) => !Number.isNaN(+key));
-+          if (
-+            !isUntouchedRowError &&
-+            !deepEqual(get(control._formState.errors, name), error, true)
-+          ) {
-             if (error) {
-               isObject(error) &&
-               !Object.keys(error).some((key) => !Number.isNaN(+key))
+@@ -22,7 +22,7 @@
+ <div align="center">
+     <p align="center">
+         <a href="https://react-hook-form.com" title="React Hook Form - Validación de formularios de reacción simple">
+-            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif" alt="React Hook Form video - React hook personalizado para la validacion de formularios" width="100%" />
++            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif" alt="React Hook Form video - React hook personalizado para la validacion de formularios" width="100%" />
+         </a>
+     </p>
+ </div>
 ```
 
----
-
-### Incident Patch 3: `8d7bd6c2` (2026-11-21)
-**Commit Message**: 📝 docs: fix dead package.json links (#14049)
-
-* docs: fix package.json links
-
-Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
-
-* docs: fix package.json links
-
-Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
-
-* docs: fix package.json links
-
-Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
-
-* docs: fix package.json links
-
-Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
-
-**File**: `docs/README.V7.ja-JP.md` (modified, +1/-1)
+**File**: `docs/README.fr-FR.md` (modified, +1/-1)
 ```diff
-@@ -26,7 +26,7 @@ Version 7 | [Version 6(日本語)](/docs/README.ja-JP.md)
- - パフォーマンスと UX/DX を念頭に構築
- - 非制御フォームバリデーション
- - [UIライブラリ](https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5)と統合し、すぐに利用が可能
--- [依存関係](./package.json)がなく、[小さいサイズ](https://bundlephobia.com/result?p=react-hook-form@latest)
-+- [依存関係](../package.json)がなく、[小さいサイズ](https://bundlephobia.com/result?p=react-hook-form@latest)
- - ブラウザのネイティブ[バリデーション](https://react-hook-form.com/get-started#Applyvalidation)をサポート
- - [Yup](https://github.com/jquense/yup), [Zod](https://github.com/vriad/zod), [Superstruct](https://github.com/ianstormtaylor/superstruct), [Joi](https://github.com/hapijs/joi), [Vest](https://github.com/ealush/vest), [class-validator](https://github.com/typestack/class-validator), [io-ts](https://github.com/gcanti/io-ts), [nope](https://github.com/bvego/nope-validator) また custom をサポート
- 
+@@ -22,7 +22,7 @@
+ <div align="center">
+     <p align="center">
+         <a href="https://react-hook-form.com" title="React Hook Form - Simple React forms validation">
+-            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
++            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
+         </a>
+     </p>
+ </div>
 ```
 
-**File**: `docs/README.V7.zh-CN.md` (modified, +1/-1)
+**File**: `docs/README.it-IT.md` (modified, +1/-1)
 ```diff
-@@ -33,7 +33,7 @@
- - 以性能和开发体验为基础构建
- - 支持浏览器原生校验
- - [UI库](https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5)开箱即用
--- [小巧](https://bundlephobia.com/result?p=react-hook-form@latest)无[依赖](./package.json)
-+- [小巧](https://bundlephobia.com/result?p=react-hook-form@latest)无[依赖](../package.json)
- - 遵循 HTML 标准进行[校验](https://react-hook-form.com/get-started#Applyvalidation)
- - 支持[Yup](https://github.com/jquense/yup), [Zod](https://github.com/vriad/zod), [Superstruct](https://github.com/ianstormtaylor/superstruct), [Joi](https://github.com/hapijs/joi), [Vest](https://github.com/ealush/vest), [class-validator](https://github.com/typestack/class-validator), [io-ts](https://github.com/gcanti/io-ts), [nope](https://github.com/bvego/nope-validator)或自定义
- 
+@@ -22,7 +22,7 @@
+ <div align="center">
+     <p align="center">
+         <a href="https://react-hook-form.com" title="React Hook Form - Simple React forms validation">
+-            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
++            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
+         </a>
+     </p>
+ </div>
 ```
 
-**File**: `docs/README.ar-AR.md` (modified, +1/-1)
+**File**: `docs/README.ja-JP.md` (modified, +1/-1)
 ```diff
-@@ -29,7 +29,7 @@ https://user-images.githubusercontent.com/10513364/152621466-59a41c65-52b4-4518-
- - تم تصميمه مع مراعاة الأداء وتجربة المستخدم وسهولة التطوير
- - يدعم التحقق من صحة استمارة الأساسي في HTML [validation](https://react-hook-form.com/get-started#Applyvalidation)
- - اندماج مباشر مع مكتبات واجهة المستخدم [UI libraries](https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5)
--- [Small size] (https://bundlephobia.com/result?p=react-hook-form@latest) ولا [dependencies](./package.json)
-+- [Small size] (https://bundlephobia.com/result?p=react-hook-form@latest) ولا [dependencies](../package.json)
- - دعم [Yup](https://github.com/jquense/yup), [Zod](https://github.com/colinhacks/zod), [AJV](https://github.com/ajv-validator/ajv), [Superstruct](https://github.com/ianstormtaylor/superstruct), [Joi](https://github.com/hapijs/joi), [Vest](https://github.com/ealush/vest), [class-validator](https://github.com/typestack/class-validator), [io-ts](https://github.com/gcanti/io-ts), [nope](https://github.com/bvego/nope-validator) وبناء مخصص
- 
- ### التثبيت
+@@ -22,7 +22,7 @@
+ <div align="center">
+     <p align="center">
+         <a href="https://react-hook-form.com" title="React Hook Form - Simple React forms validation">
+-            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
++            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
+         </a>
+     </p>
+ </div>
 ```
 
-**File**: `docs/Template.md` (modified, +1/-1)
+**File**: `docs/README.ko-KR.md` (modified, +1/-1)
 ```diff
-@@ -29,7 +29,7 @@ https://user-images.githubusercontent.com/10513364/152621466-59a41c65-52b4-4518-
- - Built with performance, UX and DX in mind
- - Embraces native HTML form [validation](https://react-hook-form.com/get-started#Applyvalidation)
- - Out of the box integration with [UI libraries](https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5)
--- [Small size](https://bundlephobia.com/result?p=react-hook-form@latest) and no [dependencies](./package.json)
-+- [Small size](https://bundlephobia.com/result?p=react-hook-form@latest) and no [dependencies](../package.json)
- - Supports [Yup](https://github.com/jquense/yup), [Zod](https://github.com/colinhacks/zod), [AJV](https://github.com/ajv-validator/ajv), [Superstruct](https://github.com/ianstormtaylor/superstruct), [Joi](https://github.com/hapijs/joi), [Vest](https://github.com/ealush/vest), [class-validator](https://github.com/typestack/class-validator), [io-ts](https://github.com/gcanti/io-ts), [nope](https://github.com/bvego/nope-validator) and custom builds
- 
- ### Install
+@@ -22,7 +22,7 @@
+ <div align="center">
+     <p align="center">
+         <a href="https://react-hook-form.com" title="React Hook Form - Simple React forms validation">
+-            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
++            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
+         </a>
+     </p>
+ </div>
+```
+
+**File**: `docs/README.pt-BR.md` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+ <div align="center">
+     <p align="center">
+         <a href="https://react-hook-form.com" title="React Hook Form - Simple React forms validation">
+-            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
++            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
+         </a>
+     </p>
+ </div>
+```
+
+**File**: `docs/README.ru-RU.md` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+ <div align="center">
+     <p align="center">
+         <a href="https://react-hook-form.com" title="React Hook Form - Simple React forms validation">
+-            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
++            <img src="https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif" alt="React Hook Form video - React custom hook for form validation" width="100%" />
+         </a>
+     </p>
+ </div>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14055** (2026-11-22): fix(trigger): await form validation before validating named fields- #14024 (@bluebill1049)
-- **PR #14054** (2026-11-22): 🐞 fix(useFieldArray): defer resolver row errors of untouched rows with mode onTouched- #14041 (@bluebill1049)
-- **PR #14053** (2026-11-22): 🩻 close #14035 ignore validation after nested value changes (@bluebill1049)
-- **PR #14052** (closed): 🐞 fix(formData): skip null values instead of stringifying them (@anubhavlal07)
-- **PR #14051** (2026-11-22): ⚡️ perf(cloneObject): iterate own keys with Object.keys (@g4lb)
-- **PR #14050** (closed): docs: validate the whole age value in the quickstart (@akzarma)
+- **PR #14064** (2026-11-26): 🐞 fix(isValid): skip native validation when a resolver only checks validity (@oyobbeb)
+- **PR #14063** (2026-11-26): ♻️ refactor(utils): share one isFileList check (@oyobbeb)
+- **PR #14062** (2026-11-26): fix(register): clear deps removed from register options at runtime (@dfedoryshchev)
+- **PR #14061** (2026-11-26): 🐞 fix(Controller): fail required when a file input has no files (@oyobbeb)
+- **PR #14060** (closed): 🧪 test: cover the FieldArray component (@candymask0712)
+- **PR #14058** (2026-11-25): 🧹 chore(jest): fix coverage config that reported 0% for every file (@candymask0712)
 
 ---
 
@@ -1159,50 +1125,59 @@ Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐞 fix(trigger): await form validation before validating named fields- #14024
+## X. 🐞 fix(Controller): fail required when a file input has no files
 
 **RULE**:
-When implementing operations in `src/__tests__/logic/createFormControl.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/__tests__/controller.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `074d1748`: 🐞 fix(trigger): await form validation before validating named fields- #14024. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72f5fbbe`: 🐞 fix(Controller): fail required when a file input has no files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/logic/createFormControl.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/controller.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  describe('trigger with form-level validate', () => {
-    it('pass the trigger name to form-level validation', async () => {
-      const validate = jest.fn(({ name }: { name?: string | string[] }) =>
-        name === 'email' ? 'Email is required' : true,
+  it('show invalid input when a required file input has no files', async () => {
+    const Component = () => {
+      const { control } = useForm({
+        mode: 'onChange',
+      });
+
+      return (
+        <Controller
+          name="test"
+          render={({ field: { name, onBlur, onChange, ref }, fieldState }) => (
+            <>
+              <input
+                type="file"
+                data-testid="file"
+                name={name}
+                onBlur={onBlur}
+                onChange={onChange}
+                ref={ref}
+              />
+              {fieldState.invalid && <p>Input is invalid.</p>}
+            </>
+          )}
+          control={control}
+          rules={{
+            required: true,
+          }}
+        />
       );
-      const form = createFormControl({
-        defaultValues: { email: '' },
-        validate,
-      });
-      form.register('email');
+    };
 
-      expect(await form.trigger('email')).toBe(false);
-      expect(validate).toHaveBeenCalledTimes(1);
-      expect(form.getErrors().form?.message).toBe('Email is required');
-    });
+    render(<Component />);
 
-    it('run form-level validation once for multiple fields', async () => {
-      const validate = jest.fn(async () => 'Invalid account');
-      const validateEmail = jest.fn(() => true);
-      const validatePassword = jest.fn(() => true);
-      const form = createFormControl({
-        defaultValues: { email: '', password: '' },
-        validate,
-      });
-      form.register('email', { validate: validateEmail });
-      form.register('password', { validate: validatePassword });
+    // jsdom gives the input an empty FileList, as a browser does when the
+    // user clears the selection.
+    fireEvent.change(screen.getByTestId('file'));
 
-      expect(await form.trigger(['email', 'password'])).toBe(false);
-      expect(validate).toHaveBeenCalledTimes(1);
-      expect(
+    expect(await screen.findByText('Input is invalid.')).toBeVisible();
+  });
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1212,7 +1187,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `074d1748` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72f5fbbe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

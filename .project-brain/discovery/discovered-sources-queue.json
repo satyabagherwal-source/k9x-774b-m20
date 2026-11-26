@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T16:31:09.811Z",
+  "updated_at": "2026-11-26T16:41:29.295Z",
   "stats": {
-    "total_discovered": 9906,
-    "approved_pending_harvest": 9395,
+    "total_discovered": 9911,
+    "approved_pending_harvest": 9399,
     "harvested_count": 0,
-    "rejected_count": 511,
+    "rejected_count": 512,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9390,
+      "COMMUNITY_AND_EXPERT": 9395,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -214382,6 +214382,109 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
         "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-9754F3C615B2": {
+      "id": "SRC-9754F3C615B2",
+      "url": "https://github.com/fallow-rs/fallow/blob/main/crates/cli/src/setup_hooks/fallow-gate.sh",
+      "title": "https://github.com/fallow-rs/fallow/blob/main/crates/cli/src/setup_hooks/fallow-gate.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T16:40:48.203Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-BBF193F3C247": {
+      "id": "SRC-BBF193F3C247",
+      "url": "https://github.com/fallow-rs/fallow/issues/5278",
+      "title": "https://github.com/fallow-rs/fallow/issues/5278",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:40:48.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-28D45813188A": {
+      "id": "SRC-28D45813188A",
+      "url": "https://react-hook-form.com/",
+      "title": "https://react-hook-form.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:41:29.043Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-D43E6E2521CF": {
+      "id": "SRC-D43E6E2521CF",
+      "url": "https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif",
+      "title": "https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/example.gif",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:41:29.176Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-1CB6F3BE99FC": {
+      "id": "SRC-1CB6F3BE99FC",
+      "url": "https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif",
+      "title": "https://raw.githubusercontent.com/bluebill1049/react-hook-form/master/docs/v6_example.gif",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:41:29.295Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
       }
     }
   }

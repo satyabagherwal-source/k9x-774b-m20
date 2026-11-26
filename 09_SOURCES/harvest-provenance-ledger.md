@@ -13500,3 +13500,8 @@ Every entry in this ledger must capture:
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `a701192d` | Multi-dimensional audit evidence | 2026-11-26T16:30:49.700Z |
 | `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `b3e2f3e3` | Multi-dimensional audit evidence | 2026-11-26T16:30:52.946Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `3aef432d` | Multi-dimensional audit evidence | 2026-11-26T16:30:57.295Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-26T16:40:30.787Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `79b93ba6` | Multi-dimensional audit evidence | 2026-11-26T16:40:33.427Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `b91c1ab9` | Multi-dimensional audit evidence | 2026-11-26T16:40:37.712Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `bd95fd9b` | Multi-dimensional audit evidence | 2026-11-26T16:40:44.140Z |
+| `learn-dom-h-7dd90772` | `project://react-hook-form-react-hook-form` | `b91c1ab9` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-26T16:41:28.835Z |

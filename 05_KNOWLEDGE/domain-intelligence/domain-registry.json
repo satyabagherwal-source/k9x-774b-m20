@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T16:31:10.454Z",
-  "total_records": 2762,
+  "last_updated": "2026-11-26T16:41:29.995Z",
+  "total_records": 2763,
   "domains": {
     "A": {
       "total": 23,
@@ -1712,7 +1712,7 @@
       ]
     },
     "H": {
-      "total": 669,
+      "total": 670,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2382,7 +2382,8 @@
         "domain_intelligence-technical-construction-intelligence-zhouxiaoka-autoclip-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-apache-pinot-core-invariants",
         "DOM-H-CC34C8D8",
-        "domain_intelligence-technical-construction-intelligence-apache-pinot-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-apache-pinot-learnings-core-invariants",
+        "DOM-H-7DD90772"
       ]
     },
     "I": {
@@ -10365,8 +10366,8 @@
       "title": "Technical Construction Intelligence: react-hook-form/react-hook-form Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-technical-construction-intelligence-react-hook-f.md",
       "repository": "react-hook-form/react-hook-form",
-      "content_hash": "ef033fb1026460f96129b751496a2869f36837be9372d357564adae49422eb2b",
-      "created_at": "2026-11-24T06:46:18.426Z"
+      "content_hash": "fafe90e4f47423d46b64e017d950a79c89a8ce7885c66511dbd299d12df0eb23",
+      "created_at": "2026-11-26T16:40:38.327Z"
     },
     "DOM-D-D194A6F7": {
       "record_id": "DOM-D-D194A6F7",
@@ -10785,8 +10786,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-27B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-research-knowledge-intelligence-unsloth-qwen3-8-27b-.md",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "content_hash": "7047be6fb49935851c8c7961ba9961d5de3937a2427756915a2da58722834b1e",
-      "created_at": "2026-11-22T23:33:16.735Z"
+      "content_hash": "f0b808a03af299e7dae96b1645474c1dd63ae4aee5c88d5a18a6ae7af4f19159",
+      "created_at": "2026-11-26T16:40:31.106Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants",
@@ -10854,8 +10855,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-27b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-learnings-research-knowledge-intelligence-hf-unsloth.md",
       "repository": "hf-unsloth-qwen3.8-27b-gguf-learnings",
-      "content_hash": "b85953b1d57dbb69acbdc5a48e0fc9554db464d9ab41a333722802250c69dc34",
-      "created_at": "2026-11-22T23:33:31.919Z"
+      "content_hash": "2719c1a218f98456579cb98bd002e5a179ff774fe253f42ec55eab1b778befb2",
+      "created_at": "2026-11-26T16:40:49.916Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria",
@@ -25020,8 +25021,8 @@
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "repository": "rustls/rustls",
-      "content_hash": "6706838a5eebbfcfd34c5a6794a09d1cf0bdabc17b2b304782388f21d29ca0c6",
-      "created_at": "2026-11-24T17:13:46.591Z"
+      "content_hash": "afe80c2a49cd9270fdb46ea5b275f3975cd6681509aee71ab04ec567d1674fea",
+      "created_at": "2026-11-26T16:40:44.772Z"
     },
     "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
@@ -25494,8 +25495,8 @@
       "title": "Quality & Verification Intelligence: fallow-rs/fallow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-quality-verification-intelligence-fallow-rs-fallow-core-invaria.md",
       "repository": "fallow-rs/fallow",
-      "content_hash": "5e8a93ffa365b5cd18ce38666ab4a0315a4cabf7730978cbb8d43bc3a5408127",
-      "created_at": "2026-11-25T08:29:19.243Z"
+      "content_hash": "f4890c83fa88954655790c4204654173e4d68681b7ffbfb936b7df41996aa709",
+      "created_at": "2026-11-26T16:40:34.094Z"
     },
     "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants",
@@ -25512,8 +25513,8 @@
       "title": "Quality & Verification Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-learnings-quality-verification-intelligence-fallow-rs-fallow-le.md",
       "repository": "fallow-rs-fallow-learnings",
-      "content_hash": "df2ebe31b9b299a982d172c72f3a3540c4e50be068373b09c50566c088e3a5e7",
-      "created_at": "2026-11-25T08:29:33.240Z"
+      "content_hash": "7d82ec3d489e1c71c63e3276dd2029008ae671948102274444454a0c92d69d4a",
+      "created_at": "2026-11-26T16:40:48.995Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear",
@@ -27366,8 +27367,8 @@
       "title": "Technical Construction Intelligence: react-hook-form-react-hook-form-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-learnings-technical-construction-intelligence-re.md",
       "repository": "react-hook-form-react-hook-form-learnings",
-      "content_hash": "496ff346e22de8dd4a2ea7ae3f92bfb9a88c3dc69524d57db91f8ef86086a156",
-      "created_at": "2026-11-24T06:46:57.611Z"
+      "content_hash": "47e4739c9192d6c16b2cb41a5016d712c05d350f69680161aa79c0c5045cee7d",
+      "created_at": "2026-11-26T16:41:29.995Z"
     },
     "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants",
@@ -46633,6 +46634,48 @@
       "repository": "appwrite-appwrite-learnings",
       "content_hash": "f7d1bd34cd01d1b6a2a6796cb40651f7f62801f3db36d93ebfc92b9cd710ca4d",
       "created_at": "2026-11-26T16:00:21.504Z"
+    },
+    "DOM-H-7DD90772": {
+      "record_id": "DOM-H-7DD90772",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "🐞 fix(Controller): fail required when a file input has no files",
+      "content": "When implementing operations in `src/__tests__/controller.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "39076f83e6b8da769e706dbea9a0210eb5101e082f01b761b214542da4bdcb12",
+      "summary": "Prevents defects observed in production commit `72f5fbbe`: 🐞 fix(Controller): fail required when a file input has no files. Unvalidated exe -> When implementing operations in `src/__tests__/controller.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transit",
+      "provenance": {
+        "source_uri": "project://react-hook-form-react-hook-form/react-hook-form-react-hook-form-learnings.md",
+        "source_version": "b91c1ab9",
+        "observed_at": "2026-11-26T16:40:36.057Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-hook-form-react-hook-form)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-hook-form-react-hook-form"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.69,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T16:41:28.741Z"
     }
   }
 }

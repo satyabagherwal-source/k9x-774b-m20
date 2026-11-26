@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-LT8Y",
-    "timestamp": "2026-11-25T04:31:05.554Z",
-    "repository": "yyjeqhc/webcodex",
-    "learningId": "learn-github-yyjeqhc-webcodex",
-    "contentHash": "c4cacd3ddc16d318fc5f5396ce0edee873ff670fb37af9c167b54dd30439d5ca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-LY8Z",
-    "timestamp": "2026-11-25T04:31:12.035Z",
-    "repository": "darrylmorley/whatcable",
-    "learningId": "learn-github-darrylmorley-whatcable",
-    "contentHash": "13fc8620da9625427e235272d83e74fddc99e40f2c0e0f037ca16565229b8f06",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-M0YP",
-    "timestamp": "2026-11-25T04:31:15.553Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "965ecf469398c93a9f75fa4bd12b49fbdffa81a77c0d75e607fc90beb0bb7125",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-WMD7",
-    "timestamp": "2026-11-25T04:39:29.851Z",
-    "repository": "tuist/tuist",
-    "learningId": "learn-github-tuist-tuist",
-    "contentHash": "170f8e3c43976c895e0021a55b3c5005cac4180e23cd810a64699913d6075a34",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-WOS5",
     "timestamp": "2026-11-25T04:39:32.981Z",
     "repository": "XcodesOrg/XcodesApp",
@@ -7490,6 +7430,66 @@
     "repository": "VectifyAI/PageIndex",
     "learningId": "learn-github-vectifyai-pageindex",
     "contentHash": "9a4f0fbf4d62786c12b3fe2cae1e1f5b158c2f5b8d7dbf65e76718920c0e3ce4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3PDP",
+    "timestamp": "2026-11-26T16:40:30.781Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "253b41f19f3c917998b6a7cbf3a3a0f04817cb5791bb301db2a2f93adecd84a2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3RF1",
+    "timestamp": "2026-11-26T16:40:33.421Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "ac68a36a0c9b9ce018a419fad17267bd172544943ff183a50499baa9830e7a1a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3UQ2",
+    "timestamp": "2026-11-26T16:40:37.706Z",
+    "repository": "react-hook-form/react-hook-form",
+    "learningId": "learn-github-react-hook-form-react-hook-form",
+    "contentHash": "3c6e5c55aa98c84f9394b847f5552ab7ea108dd2a6d34baecf05247ea729ea47",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3ZON",
+    "timestamp": "2026-11-26T16:40:44.135Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "e5381e48e8cd19f2aafe04496d843e971b2c4c286af26be3f9aff80de6f24fe5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

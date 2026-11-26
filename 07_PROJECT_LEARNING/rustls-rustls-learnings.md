@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `e11f9809`  
+> **Source Version**: `bd95fd9b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T17:13:44.611Z  
+> **Timestamp**: 2026-11-26T16:40:42.492Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:13:44.604Z  
+> **Harvest Timestamp**: 2026-11-26T16:40:42.485Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7793 stars
+- **Stars / Engagement**: 7804 stars
 
 ---
 
@@ -2248,17 +2248,14 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3454** (2026-11-24): **client: reject invalid 0 early data max for QUIC**
-  *Symptoms*: Fixes #3451.  (Backport but no immediate release?)
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client | 2381073 | 2368021 | ✅ [-13052](https://bench.rustls.dev/comparisons/a40acf9d3bcc413a0860f174ef71f049f20be7d9:bbe92daa6e57e7ff38e5b4292b846721db68efc3/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client) (-0.55%) | 0.46% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server | 1339456 | 1332968 | ✅ [-6488](https://bench.rustls.dev/comparisons/a40acf9d3bcc413a0860f174ef71f049f20be7d9:bbe92daa6e57e7ff38e5b4292b846721db68efc3/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server) (-0.48%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scen
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3454?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.11%. Comparing base ([`a40acf9`](https://app.codecov.io/gh/rustls/rustls/commit/a40acf9d3bcc413a0860f174ef71f049f20be7d9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`bbe92da`](https://app.codecov.io/gh/rustls/rustls/commit/bbe92daa6e57e7ff38e5b4292b846721db68efc3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3454   +/-   ## ======================================= 
+- **Issue #3460** (2026-11-26): **chore(deps): update dependency rust to 1.100**
+  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [rust](https://rust-lang.org/) ([source](https://redirect.github.com/rust-lang/rust), [changelog](https://redirect.github.com/rust-lang/rust/blob/main/RELEASES.md)) | uses-with | minor | `1.85` → `1.100` |  ---  ### Release Notes  <details> <summary>rust-lang/rust (rust)</summary>  ### [`v1.100.0`](https://redirect.github.com/rust-lang/rust/blob/HEAD/RELEASES.md#Version-11000-2026-11-12)  [Compare Source](https://redirect.github.com/rust-lang/rust/compare/1.99.1...1.100.0)  \==========================  <a id="1.100.0-Language"></a>  ## Language  - [Stabilize never type](https://redirect.github.com/rust-lang/rust/pull/155499) - [Lint against repeated `#[repr(..)]` attributes](https://redirect.github.com/rust-lang/rust/pull/157036) - [Stabilize `extern "custom"`](https://redirect.github.com/rust-lang/rust/pull/158504) - [Extend `dropping_references`, `dropping_copy_types` and `undropped_manually_drops` lints to `drop_in_place`](https://redirect.github.com/rust-lang/rust/pull/160229) - [`unfulfilled_lint_expectations` no longer fires on `#[expect(dead_code)]` inside code that is covered by a dead parent's diagnostic](https://redirect.github.com/rust-lang/rust/pull/161005) - [Turn the error for `repr(align)` fields in a `repr(packed)` type into a deny-by-default lint `aligned_fields_in_packed`](https://redirect.github.co
 
-- **Issue #3453** (2026-11-23): **Remove meaningless benchmark**
-  *Symptoms*: This was benchmarking how fast a `VecInput::read` could report an IO error.  That is both not interesting and also not related to rustls-ring.
+- **Issue #3458** (2026-11-25): **Periodic maintenance of rel-0.23 branch**
+  *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client | 2372926 | 2360230 | [-12696](https://bench.rustls.dev/comparisons/8b0a810da770acbae47fb7d4aaf1ca41bdd7d3d1:74b3a6960387266ebbddec2fc23aa4d065b855e5/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client) (-0.54%) | 2.17% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8781746 | 8740315 | [-41431](https://bench.rustls.dev/comparisons/8b0a810da770acbae47fb7d4aaf1ca41bdd7d3d1:74b3a6960387266ebbddec2fc23aa4d065b855e5/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.47%) | 0.82% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10912370 | 10943196 | [30826](
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3453?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`8b0a810`](https://app.codecov.io/gh/rustls/rustls/commit/8b0a810da770acbae47fb7d4aaf1ca41bdd7d3d1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`74b3a69`](https://app.codecov.io/gh/rustls/rustls/commit/74b3a6960387266ebbddec2fc23aa4d065b855e5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3453   +/-   ## ======================================= 
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_aes_server | 1384676 | 1389339 | ⚠️ [4663](https://bench.rustls.dev/comparisons/9cff01a6f08b12386fc6739d6c8025b063d5e1ed:4b0a01d7bb90fb2fed0ac3c315b985c473722300/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_aes_server) (0.34%) | 0.20% | | handshake_session_id_1.2_no_crypto_server | 863601 | 865851 | ⚠️ [2250](https://bench.rustls.dev/comparisons/9cff01a6f08b12386fc6739d6c8025b063d5e1ed:4b0a01d7bb90fb2fed0ac3c315b985c473722300/cachegrind-diff/handshake_session_id_1.2_no_crypto_server) (0.26%) | 0.20% | | handshake_tickets_1.2_no_crypto_server | 999071 | 1001321 | ⚠️ [2250](https://bench.rustls.dev/comparisons/9cff01a6f08b12386fc6739d6c802
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3458?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.38%. Comparing base ([`9cff01a`](https://app.codecov.io/gh/rustls/rustls/commit/9cff01a6f08b12386fc6739d6c8025b063d5e1ed?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`4b0a01d`](https://app.codecov.io/gh/rustls/rustls/commit/4b0a01d7bb90fb2fed0ac3c315b985c473722300?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##           rel-0.23    #3458      +/-   ## ==============================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2275,132 +2272,248 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e11f9809` (2026-11-24)
-**Commit Message**: client: reject invalid 0 early data max for QUIC
+### Incident Patch 1: `bd95fd9b` (2026-11-24)
+**Commit Message**: quic: take space to ensure splitting key epochs
 
-**File**: `rustls-test/src/lib.rs` (modified, +1/-0)
+**File**: `rustls-test/tests/api/quic.rs` (modified, +192/-73)
 ```diff
-@@ -2471,6 +2471,7 @@ pub mod encoding {
- 
-         pub const ELLIPTIC_CURVES: u16 = 0x000a;
-         pub const SIGNATURE_ALGORITHMS: u16 = 0x000d;
-+        pub const EARLY_DATA: u16 = 0x002a;
-         pub const SUPPORTED_VERSIONS: u16 = 0x002b;
-         pub const KEY_SHARE: u16 = 0x0033;
-         pub const TRANSPORT_PARAMETERS: u16 = 0x0039;
-```
-
-**File**: `rustls-test/tests/api/quic.rs` (modified, +46/-3)
-```diff
-@@ -7,7 +7,7 @@ use std::sync::Arc;
- 
- use rustls::client::Resumption;
- use rustls::crypto::{CipherSuite, CryptoProvider};
--use rustls::enums::ProtocolVersion;
-+use rustls::enums::{HandshakeType, ProtocolVersion};
- use rustls::error::{
+@@ -12,7 +12,7 @@ use rustls::error::{
      AlertDescription, ApiMisuse, CertificateError, Error, InvalidMessage, PeerIncompatible,
      PeerMisbehaved,
-@@ -709,7 +709,7 @@ fn test_quic_acceptor_read_error_is_terminal() {
-     let err = needs_input
-         .process(
-             &mut SliceInput::new(&mut encoding::handshake_framing(
--                rustls::enums::HandshakeType::ClientHello,
-+                HandshakeType::ClientHello,
-                 vec![0x00; 32],
-             )),
-             &mut vec![],
-@@ -817,7 +817,7 @@ fn test_quic_read_deframer_failure() {
+ };
+-use rustls::quic::{self, ClientHandshake, Quic, QuicEvent, ServerHandshake, Side};
++use rustls::quic::{self, ClientHandshake, Quic, QuicEvent, ServerHandshake, Side, Space};
+ use rustls::server::Tls13Tickets;
+ use rustls::{
+     CipherSuiteCommon, ClientSide, Connection, HandshakeKind, ServerSide, SideData, SliceInput,
+@@ -282,14 +282,22 @@ fn test_quic_acceptor() {
+         println!("client_initial: {client_initial:x?}");
  
-     let err = server
-         .read_hs(&mut SliceInput::new(&mut encoding::handshake_framing(
--            rustls::enums::HandshakeType::ClientHello,
-+            HandshakeType::ClientHello,
-             vec![0x00; 32],
-         )))
-         .err()
-@@ -1536,6 +1536,49 @@ fn server_rejects_client_choosing_non_quic_suite() {
-     );
- }
+         let ServerHandshake::NeedsInput(needs_input) = needs_input
+-            .process(&mut SliceInput::new(&mut client_initial[..8]), &mut vec![])
++            .process(
++                &mut SliceInput::new(&mut client_initial[..8]),
++                &mut vec![],
++                Space::Initial,
++            )
+             .unwrap()
+         else {
+             panic!("unexpected state after partial hello");
+         };
  
-+#[test]
-+fn quic_client_rejects_ticket_with_invalid_max_early_data_size() {
-+    let provider = provider::DEFAULT_TLS13_PROVIDER;
-+    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
-+    let server_config = Arc::new(make_server_config(KeyType::default(), &provider));
-+
-+    for (max_early_data_size, expected) in [
-+        (0xffff_ffff_u32, Ok(())),
-+        (0, Err(PeerMisbehaved::InvalidMaxEarlyDataSize.into())),
-+        (16_384, Err(PeerMisbehaved::InvalidMaxEarlyDataSize.into())),
-+    ] {
-+        let mut client = client_config
-+            .connect(server_name("localhost"))
-+            .build_quic(quic::Version::V1, b"client params".to_vec())
-+            .unwrap();
-+        let mut server = Connection::new_quic(
-+            server_config.clone(),
-+            quic::Version::V1,
-+            b"server params".to_vec(),
+         let ServerHandshake::Accepted(accepted) = needs_input
+-            .process(&mut SliceInput::new(&mut client_initial), &mut vec![])
++            .process(
++                &mut SliceInput::new(&mut client_initial),
++                &mut vec![],
++                Space::Initial,
++            )
+             .unwrap()
+         else {
+             panic!("unexpected state after full hello");
+@@ -349,7 +357,7 @@ fn test_quic_acceptor() {
+         let mut data = flatten_events(&mut client);
+         let mut server_input = SliceInput::new(&mut data);
+         let server = server
+-            .process(&mut server_input, &mut server_flight)
++            .process(&mut server_input, &mut server_flight, Space::Handshake)
+             .unwrap();
+ 
+         let mut server = match server {
+@@ -369,7 +377,7 @@ fn test_quic_acceptor() {
+                     panic!("unexpected state");
+                 };
+                 let ServerHandshake::Complete(server) = server
+-                    .process(&mut server_input, &mut server_flight)
++                    .process(&mut server_input, &mut server_flight, Space::Handshake)
+                     .unwrap()
+                 else {
+                     panic!("unexpected state");
+@@ -428,9 +436,10 @@ fn test_quic_client_handshake() {
+         let ClientHandshake::NeedsInput(needs_input) = state else {
+             panic!("unexpected state {state:?}");
+         };
++        let space = space(&message);
+         let mut input = SliceInput::new(&mut message);
+         state = needs_input
+-            .process(&mut input, &mut client_flight)
++            .process(&mut input, &mut client_flight, space)
+             .unwrap();
+ 
+         if let ClientHandshake::VerifyServerIdentity(verify) = state {
+@@ -441,7 +450,7 @@ fn test_quic_client_handshake() {
+                 .unwrap()
+             {
+                 ClientHandshake::NeedsInput(needs_input) => needs_input
+-                    .process(&mut input, &mut client_flight)
++                    .process(&mut input, &mut client_flight, space)
+                     .unwrap(),
+                 other => other,
+             };
+@@ -507,7 +516,11 @@ fn test_quic_acceptor_exposes_zero_rtt_keys_before_completion() {
+     let mut client_initial = flatten_events(&mut client);
+     assert!(client.zero_rtt_keys().is_some());
+     let ServerHandshake::Accepted(accepted) = ServerHandshake::start(quic::Version::V1)
+-        .process(&mut SliceInput::new(&mut client_initial), &mut vec![])
++        .process(
++            &mut SliceInput::new(&mut client_initial),
++            &mut vec![],
++            Space::Initial,
 +        )
-+        .unwrap();
-+        do_quic_handshake(&mut client, &mut server);
-+
-+        let mut body = vec![];
-+        body.extend_from_slice(&3600u32.to_be_bytes()); // ticket_lifetime
-+        body.extend_from_slice(&[0; 4]); // ticket_age_add
-+        body.extend(encoding::len_u8(vec![0])); // ticket_nonce
-+        body.extend(encoding::len_u16(vec![0x12; 32])); // ticket
-+        let mut exts = vec![];
-+        exts.extend_from_slice(&encoding::Extension::EARLY_DATA.to_be_bytes());
-+        exts.extend_from_slice(&4u16.to_be_bytes());
-+        exts.extend_from_slice(&max_early_data_size.to_be_bytes());
-+        body.extend(encoding::len_u16(exts));
-+        let mut ticket = encoding::handshake_framing(HandshakeType::NewSessionTicket, body);
-+
-+        assert_eq!(
-+            client.read_hs(&mut SliceInput::new(&mut ticket)),
-+            expected,
-+            "max_early_data_size {max_early_data_size:#x}"
-+        );
-+    }
-+}
-+
- // A session stored from a TCP connection may name a cipher suite that cannot be
- // used for QUIC.  Such a session is simply not resumable on a QUIC connection:
- // it must not prevent the connection being made at all.
+         .unwrap()
+     else {
+         panic!("unexpected state after ClientHello");
+@@ -539,7 +552,11 @@ fn test_quic_acceptor_external_verifier_rejects_client_cert() {
+         let mut client_initial = flatten_events(&mut client);
+ 
+         let ServerHandshake::Accepted(accepted) = needs_input
+-            .process(&mut SliceInput::new(&mut client_initial), &mut vec![])
++            .process(
++                &mut SliceInput::new(&mut client_initial),
++                &mut vec![],
++                Space::Initial,
++            )
+             .unwrap()
+         else {
+             panic!("unexpected state after full hello");
+@@ -557,7 +574,7 @@ fn test_quic_acceptor_external_verifier_rejects_client_cert() {
+         let mut data = flatten_events(&mut client);
+         let mut server_input = SliceInput::new(&mut data);
+         let ServerHandshake::VerifyClientIdentity(verify_client) = server
+-            .process(&mut server_input, &mut server_flight)
++            .process(&mut server_input, &mut server_flight, Space::Handshake)
+             .unwrap()
+         else {
+             panic!("unexpected state");
+@@ -605,7 +622,11 @@ fn test_quic_acceptor_continues_with_server_config_chosen_from_client_hello() {
+     let mut client_initial = flatten_events(&mut client);
+ 
+     let ServerHandshake::Accepted(accepted) = needs_input
 ```
 
-**File**: `rustls/src/client/tls13.rs` (modified, +3/-2)
+**File**: `rustls/src/quic.rs` (modified, +46/-13)
 ```diff
-@@ -1607,15 +1607,16 @@ pub(super) struct ExpectTraffic {
+@@ -13,7 +13,7 @@ use crate::conn::{
+ };
+ use crate::crypto::cipher::{AeadKey, Iv, Payload};
+ use crate::crypto::tls13::{Hkdf, HkdfExpander, Label, OkmBlock};
+-use crate::error::{ApiMisuse, Error};
++use crate::error::{ApiMisuse, Error, PeerMisbehaved};
+ use crate::msgs::{Message, MessagePayload, ServerExtensionsInput, TransportParameters};
+ use crate::server::{ServerConfig, ServerSide};
+ use crate::suites::SupportedCipherSuite;
+@@ -214,7 +214,10 @@ impl<Side: SideData> NeedsInput<Side> {
+     ///
+     /// The input should be ordered QUIC CRYPTO stream data for one encryption level.
+     ///
+-    /// Handshake data obtained from separate encryption levels should be supplied in separate calls.
++    /// Handshake data obtained from separate encryption levels should be supplied in separate calls,
++    /// with `space` set to the packet number space the data was received in. A handshake message
++    /// must not span packet number spaces, so supplying data for a different `space` while a
++    /// previously supplied handshake message is incomplete is an error.
+     ///
+     /// How much of the `input` buffer is consumed is recorded by a call to
+     /// [`TlsInputBuffer::discard()`].  Unconsumed data should be presented again on the next call.
+@@ -231,12 +234,9 @@ impl<Side: SideData> NeedsInput<Side> {
+         mut self,
+         input: &mut dyn TlsInputBuffer,
+         output: &mut Vec<QuicEvent>,
++        space: Space,
+     ) -> Result<Side::QuicHandshake, Error> {
+-        self.0
+-            .common
+-            .recv
+-            .deframer
+-            .input_quic(input.slice_mut())?;
++        self.0.input_hs(input, space)?;
  
- impl ExpectTraffic {
-     fn handle_new_ticket_impl(&self, nst: &NewSessionTicketPayloadTls13) -> Result<(), Error> {
-+        // RFC 9001 section 4.6.1: the only valid `max_early_data_size` is 0xffffffff.
-         if self.key_schedule_recv.is_quic() {
-             if let Some(sz) = nst.extensions.max_early_data_size {
--                if sz != 0 && sz != 0xffff_ffff {
-+                if sz != 0xffff_ffff {
-                     return Err(PeerMisbehaved::InvalidMaxEarlyDataSize.into());
-                 }
-             }
-         }
+         Side::QuicHandshake::from_conn(
+             self.0
+@@ -302,15 +302,15 @@ pub enum QuicEvent {
+ impl<Side: SideData> Connection<Side, Quic> {
+     /// Consume unencrypted TLS handshake data.
+     ///
+-    /// Handshake data obtained from separate encryption levels should be supplied in separate calls.
++    /// Handshake data obtained from separate encryption levels should be supplied in separate calls,
++    /// with `space` set to the packet number space the data was received in.  A handshake message
++    /// must not span packet number spaces, so supplying data for a different `space` while a
++    /// previously supplied handshake message is incomplete is an error.
+     ///
+     /// How much of the `input` buffer is consumed is recorded by a call to
+     /// [`TlsInputBuffer::discard()`].  Unconsumed data should be presented again on the next call.
+-    pub fn read_hs(&mut self, input: &mut dyn TlsInputBuffer) -> Result<(), Error> {
+-        self.common
+-            .recv
+-            .deframer
+-            .input_quic(input.slice_mut())?;
++    pub fn read_hs(&mut self, input: &mut dyn TlsInputBuffer, space: Space) -> Result<(), Error> {
++        self.input_hs(input, space)?;
  
--        // RFC 9846 section 4.6.1: a zero `ticket_lifetime` means the ticket
-+        // RFC 9846 section 4.7.1: a zero `ticket_lifetime` means the ticket
-         // should be discarded immediately.
-         if nst.lifetime.is_zero() {
-             return Ok(());
+         let mut tls = Vec::new();
+         let mut iter = MessageIter::new(input, &mut tls, self, MessageIterMode::All);
+@@ -324,6 +324,28 @@ impl<Side: SideData> Connection<Side, Quic> {
+         result
+     }
+ 
++    fn input_hs(&mut self, input: &mut dyn TlsInputBuffer, space: Space) -> Result<(), Error> {
++        if space != self.transport.space {
++            // Changing the packet number space must not split a handshake message.
++            if self
++                .common
++                .recv
++                .deframer
++                .aligned()
++                .is_none()
++            {
++                return Err(PeerMisbehaved::KeyEpochWithPendingFragment.into());
++            }
++            self.transport.space = space;
++        }
++
++        self.common
++            .recv
++            .deframer
++            .input_quic(input.slice_mut())?;
++        Ok(())
++    }
++
+     /// Obtain pending events that the caller should process.
+     ///
+     /// All pending events are returned as an iterator.
+@@ -352,6 +374,7 @@ impl<Side: SideData> Connection<Side, Quic> {
+ #[derive(Default)]
+ pub struct Quic {
+     pub(crate) version: Version,
++    pub(crate) space: Space,
+     /// QUIC transport parameters received from the peer during the handshake
+     pub(crate) params: Option<Vec<u8>>,
+     pub(crate) events: Vec<QuicEvent>,
+@@ -980,6 +1003,16 @@ impl Version {
+     }
+ }
+ 
++/// QUIC packet number space.
++#[allow(clippy::exhaustive_enums, missing_docs)]
++#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
++pub enum Space {
++    #[default]
++    Initial,
++    Handshake,
++    ApplicationData,
++}
++
+ #[cfg(all(test, any(target_arch = "aarch64", target_arch = "x86_64")))]
+ mod tests {
+     use super::*;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3460** (closed): chore(deps): update dependency rust to 1.100 (@renovate-bot)
+- **PR #3458** (2026-11-25): Periodic maintenance of rel-0.23 branch (@ctz)
+- **PR #3456** (2026-11-25): client: reject invalid 0 early data max for QUIC (0.23) (@djc)
+- **PR #3455** (2026-11-26): quic: take space to ensure splitting key epochs (@djc)
 - **PR #3454** (2026-11-24): client: reject invalid 0 early data max for QUIC (@djc)
 - **PR #3453** (2026-11-23): Remove meaningless benchmark (@ctz)
-- **PR #3452** (2026-11-23): client: keep the original epoch of a resumed TLS1.2 session (@ctz)
-- **PR #3450** (2026-11-22): Take semver-compatible dependency updates (@djc)
-- **PR #3449** (2026-11-21): Fix typos in test and example comments (@CharoenwitKunna)
-- **PR #3448** (2026-11-21): Fix doubled word and article in doc comments (@CharoenwitKunna)
 
 ---
 
@@ -2420,28 +2533,63 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. client: reject invalid 0 early data max for QUIC
+## X. quic: take space to ensure splitting key epochs
 
 **RULE**:
-When implementing operations in `rustls-test/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls-test/tests/api/quic.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e11f9809`: client: reject invalid 0 early data max for QUIC. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bd95fd9b`: quic: take space to ensure splitting key epochs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/quic.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        pub const EARLY_DATA: u16 = 0x002a;
+use rustls::quic::{self, ClientHandshake, Quic, QuicEvent, ServerHandshake, Side, Space};
+            .process(
+                &mut SliceInput::new(&mut client_initial[..8]),
+                &mut vec![],
+                Space::Initial,
+            )
+            .process(
+                &mut SliceInput::new(&mut client_initial),
+                &mut vec![],
+                Space::Initial,
+            )
+            .process(&mut server_input, &mut server_flight, Space::Handshake)
+                    .process(&mut server_input, &mut server_flight, Space::Handshake)
+        let space = space(&message);
+            .process(&mut input, &mut client_flight, space)
+                    .process(&mut input, &mut client_flight, space)
+        .process(
+            &mut SliceInput::new(&mut client_initial),
+            &mut vec![],
+            Space::Initial,
+        )
+            .process(
+                &mut SliceInput::new(&mut client_initial),
+                &mut vec![],
+                Space::Initial,
+            )
+            .process(&mut server_input, &mut server_flight, Space::Handshake)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+use rustls::quic::{self, ClientHandshake, Quic, QuicEvent, ServerHandshake, Side};
+            .process(&mut SliceInput::new(&mut client_initial[..8]), &mut vec![])
+            .process(&mut SliceInput::new(&mut client_initial), &mut vec![])
+            .process(&mut server_input, &mut server_flight)
+                    .process(&mut server_input, &mut server_flight)
+            .process(&mut input, &mut client_flight)
+                    .process(&mut input, &mut client_flight)
+        .process(&mut SliceInput::new(&mut client_initial), &mut vec![])
+            .process(&mut SliceInput::new(&mut client_initial), &mut vec![])
+            .process(&mut server_input, &mut server_flight)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e11f9809` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bd95fd9b` are properly handled with clean fallback behavior.

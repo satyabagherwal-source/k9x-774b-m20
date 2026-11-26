@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "4243452edc30f36da1b94137e17a604f16c33229fe6138bc43d7afb828645499",
-    "lastHarvestedAt": "2026-11-22T23:33:16.495Z",
+    "contentHash": "253b41f19f3c917998b6a7cbf3a3a0f04817cb5791bb301db2a2f93adecd84a2",
+    "lastHarvestedAt": "2026-11-26T16:40:30.787Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "074d1748",
+    "sourceVersion": "b91c1ab9",
     "license": "MIT",
-    "contentHash": "a3961a0de6da642a68f797d9512fb5fa957e261f2470ebc075c3bbe3d218ff8d",
-    "lastHarvestedAt": "2026-11-24T06:46:18.051Z",
+    "contentHash": "3c6e5c55aa98c84f9394b847f5552ab7ea108dd2a6d34baecf05247ea729ea47",
+    "lastHarvestedAt": "2026-11-26T16:40:37.712Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "e11f9809",
+    "sourceVersion": "bd95fd9b",
     "license": "NOASSERTION",
-    "contentHash": "d49c43ced8480e5afeb20d54f56faece3efdb46edfaf3aced6f4c4cb27612290",
-    "lastHarvestedAt": "2026-11-24T17:13:46.016Z",
+    "contentHash": "e5381e48e8cd19f2aafe04496d843e971b2c4c286af26be3f9aff80de6f24fe5",
+    "lastHarvestedAt": "2026-11-26T16:40:44.140Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "cec86af5",
+    "sourceVersion": "79b93ba6",
     "license": "MIT",
-    "contentHash": "03ced384e98823133ab14d5023005109aa19d8e9ddbd0a34ae313dc78864941c",
-    "lastHarvestedAt": "2026-11-25T08:29:18.768Z",
+    "contentHash": "ac68a36a0c9b9ce018a419fad17267bd172544943ff183a50499baa9830e7a1a",
+    "lastHarvestedAt": "2026-11-26T16:40:33.427Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {

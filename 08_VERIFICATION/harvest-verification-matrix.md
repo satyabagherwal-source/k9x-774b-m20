@@ -13467,3 +13467,8 @@
 | `CYCLE-20261126-R90E` | `2026-11-26T16:30:49.694Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3068` | Yes (`e84cfca1...`) |
 | `CYCLE-20261126-RBIL` | `2026-11-26T16:30:52.941Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9295` | Yes (`3f16d94c...`) |
 | `CYCLE-20261126-REVD` | `2026-11-26T16:30:57.289Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10725` | Yes (`9a4f0fbf...`) |
+| `CYCLE-20261126-3PDP` | `2026-11-26T16:40:30.781Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`253b41f1...`) |
+| `CYCLE-20261126-3RF1` | `2026-11-26T16:40:33.421Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10726` | Yes (`ac68a36a...`) |
+| `CYCLE-20261126-3UQ2` | `2026-11-26T16:40:37.706Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10727` | Yes (`3c6e5c55...`) |
+| `CYCLE-20261126-3ZON` | `2026-11-26T16:40:44.135Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10728` | Yes (`e5381e48...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T16:41:28.835Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7DD90772` [Domain H] | Yes (`39076f83...`) |

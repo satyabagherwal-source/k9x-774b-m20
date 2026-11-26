@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:30:57.313Z",
-  "total_cycles_completed": 12781,
-  "total_learnings_persisted": 12781,
-  "total_rules_promoted": 11630,
+  "last_updated": "2026-11-26T16:40:44.155Z",
+  "total_cycles_completed": 12785,
+  "total_learnings_persisted": 12785,
+  "total_rules_promoted": 11633,
   "history": [
-    {
-      "timestamp": "2026-11-26T05:38:33.062Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T05:48:34.761Z",
-      "repository": "ConceptCountry/qwen-concept-27b",
-      "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T05:48:45.890Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T05:57:00.658Z",
-      "repository": "Abiray/MiniMax-H3-Image-GGUF",
-      "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T05:57:10.233Z",
       "repository": "envoyproxy/envoy",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T16:30:57.313Z",
       "repository": "VectifyAI/PageIndex",
       "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:40:30.803Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:40:33.444Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:40:37.738Z",
+      "repository": "react-hook-form/react-hook-form",
+      "learningId": "learn-github-react-hook-form-react-hook-form",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:40:44.155Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

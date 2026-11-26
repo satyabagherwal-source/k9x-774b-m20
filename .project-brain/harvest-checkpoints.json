@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T16:30:57.324Z",
+  "last_updated": "2026-11-26T16:40:44.165Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "4243452edc30f36da1b94137e17a604f16c33229fe6138bc43d7afb828645499",
-      "verified_at": "2026-11-22T23:33:16.504Z",
+      "content_hash": "253b41f19f3c917998b6a7cbf3a3a0f04817cb5791bb301db2a2f93adecd84a2",
+      "verified_at": "2026-11-26T16:40:30.807Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:33:16.504Z"
+      "last_updated": "2026-11-26T16:40:30.807Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "a3961a0de6da642a68f797d9512fb5fa957e261f2470ebc075c3bbe3d218ff8d",
-      "verified_at": "2026-11-24T06:46:18.067Z",
+      "content_hash": "3c6e5c55aa98c84f9394b847f5552ab7ea108dd2a6d34baecf05247ea729ea47",
+      "verified_at": "2026-11-26T16:40:37.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:46:18.067Z"
+      "last_updated": "2026-11-26T16:40:37.742Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "d49c43ced8480e5afeb20d54f56faece3efdb46edfaf3aced6f4c4cb27612290",
-      "verified_at": "2026-11-24T17:13:46.037Z",
+      "content_hash": "e5381e48e8cd19f2aafe04496d843e971b2c4c286af26be3f9aff80de6f24fe5",
+      "verified_at": "2026-11-26T16:40:44.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:13:46.037Z"
+      "last_updated": "2026-11-26T16:40:44.164Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "03ced384e98823133ab14d5023005109aa19d8e9ddbd0a34ae313dc78864941c",
-      "verified_at": "2026-11-25T08:29:18.806Z",
+      "content_hash": "ac68a36a0c9b9ce018a419fad17267bd172544943ff183a50499baa9830e7a1a",
+      "verified_at": "2026-11-26T16:40:33.455Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T08:29:18.806Z"
+      "last_updated": "2026-11-26T16:40:33.455Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",

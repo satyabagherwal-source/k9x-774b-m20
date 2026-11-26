@@ -4,22 +4,22 @@
 {
   "source_repository": "fallow-rs/fallow",
   "source_url": "https://github.com/fallow-rs/fallow",
-  "source_version": "cec86af5",
+  "source_version": "79b93ba6",
   "license": "MIT",
-  "timestamp": "2026-11-25T08:29:19.059Z",
+  "timestamp": "2026-11-26T16:40:33.760Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-fallow-rs-fallow",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `cec86af5`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T08:29:19.059Z`  
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `79b93ba6`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T16:40:33.760Z`  
 > **Learning ID**: `learn-github-fallow-rs-fallow`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `fallow-rs/fallow` (Commit: `cec86af5`)
+- **Target Repository**: `fallow-rs/fallow` (Commit: `79b93ba6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T08:29:15.787Z  
+> **Harvest Timestamp**: 2026-11-26T16:40:31.732Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5402 stars
+- **Stars / Engagement**: 5411 stars
 
 ---
 
@@ -422,11 +422,11 @@ export { default as Orphan } from "./Orphan.vue";
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5205** (2026-11-24): **fix(release): cover every shipped binary in the target SBOM**
-  *Symptoms*: Closes #5190  ## What  The release SBOM of each target now covers every binary of the `fallow-<target>` archive: `fallow`, `fallow-lsp`, `fallow-mcp` and `fallow-similar-code`.  - The `sbom` job runs `cargo cyclonedx` for the workspace and for `tools/similar-code-sidecar`. - It runs one `cargo tree -p fallow-cli -p fallow-lsp -p fallow-mcp` and one `cargo tree` for the sidecar manifest. - `.github/scripts/filter-sbom.mjs` merges the four package SBOMs into one file. That file has a root component `fallow@<version>` that depends on each package. - The script keeps only the crates that a tree lists. It removes the bin components that the archive does not ship, such as `stub_sidecar` and `fallow-schema-emit`. - The script fails, and writes no file, in these cases: a tree crate has no component, a shipped bin is in no package, a dependency ref has no component, or the inputs have different targets.  The file name `fallow-<target>.cdx.json` and the artifact name do not change.  ## Why  Before, the SBOM covered only `fallow-cli`. Crates that only the other binaries link, such as `tower-lsp-server`, `rmcp`, `rquickjs` and `candle-core`, were not in it. A scan of the SBOM gave no advisories for those crates.  ## Test plan  - [x] `node --test .github/scripts/filter-sbom.test.mjs scripts/workflow-policy.test.mjs` passes. - [x] The SBOM policy test fails on the workflow of `main`. It also fails for a dropped `--bin`, a dropped `-p fallow-lsp`, a wrong package name, a missing sidecar SBO
+- **Issue #5278** (2026-11-25): **[BUG] VSCode: Fallow Analyze loop after only one change to .fallowrc.json**
+  *Symptoms*: ## Repeated analysis loop after one `.fallowrc.json` edit  I believe someone noted this same behaviour before in a comment or Issue, but can't find it. Not sure if editing `.fallowrc.json` is the _only_ trigger but it is one confirmed reproducible trigger.  ### Environment  - OS: Windows 11 - VS Code extension: Fallow 3.48.0 - Fallow LSP binary version: 3.48 - Project: TypeScript monorepo; 7 workspaces, about 849 files  ### Steps to reproduce  1. Start VS Code and open the workspace that has `.fallowrc.json`. 2. Change and save only the root `.fallowrc.json`. 3. Make no further changes.  ### Actual behavior  Fallow repeatedly sends `workspace/didChangeWatchedFiles` notifications and starts full analyses constantly. New notifications sometimes arrive during an analysis; Fallow cancels that run and starts another. I reproduced this after a fresh VS Code start, changing only `.fallowrc.json`.  Example from the trace (paths and username redacted):  ```text 18:36:32.005 Analysis complete 18:36:32.972 Sending notification 'workspace/didChangeWatchedFiles' 18:36:33.180 Running fallow analysis... 18:36:36.400 Sending notification 'workspace/didChangeWatchedFiles' 18:36:37.251 Analysis complete 18:36:37.252 Running fallow analysis... 18:36:37.552 Sending notification 'workspace/didChangeWatchedFiles' 18:36:38.092 Cancelled a fallow analysis that a newer workspace event superseded 18:36:38.093 Running fallow analysis... ... ```  Each run logs that it loaded the root `.fallowrc.json`. T
 
-- **Issue #5204** (2026-11-24): **fix(cli): refresh a stale .agents skill on agent install**
-  *Symptoms*: Closes #5132  ## What  `fallow agent install` now also refreshes each `.agents/skills/<name>` skill that has the fallow marker, whatever harness it detects. This applies to user scope and project scope. The install does not create an absent `.agents` skill. It does not change an `.agents` skill without the fallow marker, also with `--force`.  ## Why  With a `.claude` folder, harness detection returns only Claude Code, so the install wrote only `.claude/skills/`. A stale fallow copy in `.agents/skills/` stayed stale. `fallow agent status` showed that row as `stale` and suggested `fallow agent install --user`, but that command did not change the row.  `agent uninstall` keeps its old targets. A Claude-only uninstall does not remove an `.agents` copy that Codex or Cursor can still read.  ## Test plan  - [x] New tests `claude_install_refreshes_stale_managed_agents_skill_in_user_scope` and `..._in_project_scope` fail on `main` and pass with the change. The user-scope test also checks that `--dry-run` writes nothing. - [x] New tests check that the install creates no absent `.agents` skill and leaves an unmarked `.agents` skill alone. - [x] `cargo test -p fallow-cli --lib agent_` and `cargo test -p fallow-cli --test integration agent_` pass. - [x] Real binary with an isolated `HOME`, with the steps of the issue: the row is `stale` before the install and `installed` after it. 
+- **Issue #5218** (2026-11-25): **mutation: baseline fails with TanStack Router autoCodeSplitting because the instrumented copy rewrites string literals in codeSplitGroupings (regression since 3.41.0)**
+  *Symptoms*: ### What happened?  With fallow 3.43.1, the baseline (dry run without an active mutant) fails in a project that uses the TanStack Router Vite plugin (`@tanstack/router-plugin` 1.169.0, `autoCodeSplitting: true`). It does not happen with 3.41.0.  Every test file that imports the mutated route (through `routeTree.gen.ts`) fails in the baseline with:  ``` You must provide a string literal for the codeSplitGroupings ```  The run ends with `completion.status = "partial"`, reasons `baseline-failure` and `unloaded-files`. Files only reachable through the route tree end up in `unloaded_paths`. In the real project this was 35 failing test files. With `string-literal` removed from the operators, there are 0 failures; with 3.41.0, the same route file gives 0 failures.  **What I found:**  1. In the mutant-schemata copy, the string inside `codeSplitGroupings` is replaced with a conditional expression:     ```ts    codeSplitGroupings: [[(typeof __fallow_m_a === "function" && __fallow_m_a("<id>") ? ("") : (… , ("component")))]]    ```     The report lists this mutant as `status: "pruned"` with `prune_reason: "framework-config"`, but it is still embedded in the copy. The path string in `createFileRoute("/posts")` is treated the same way. A `// fallow-ignore-next-line` comment above the line did not remove it from the copy either.  2. Since 3.43.x, the companion overlay plugin (`fallow-mutation-overlay`, `enforce: "pre"`, in `crates/api/src/mutation/companion/adapters/vitest.mjs`) serves the 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -443,1280 +443,1486 @@ export { default as Orphan } from "./Orphan.vue";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6dcee9b2` (2026-11-24)
-**Commit Message**: fix(extract): scan SFC script and style blocks in linear time (#5184)
+### Incident Patch 1: `134bd42d` (2026-11-26)
+**Commit Message**: fix(core): read project files inside the project scope (#5277)
 
-* fix(extract): scan SFC script and style blocks in linear time
+* fix(cache): rebuild a graph cache whose modules differ from the discovered files
 
-The `<script>` and `<style>` block regexes of Vue and Svelte files took
-quadratic time on a file with many unclosed attribute quotes. A tag start
-whose quoted value does not close keeps a regex thread alive. Each search
-then reads far past the block that it reports, and the next search reads
-that text again. An OSS-Fuzz test case of 125 KB took about 40 s in a local
-ASan build of the `fuzz_sfc` target, and ClusterFuzz reported it as a
-timeout.
+The graph cache manifest describes the inputs of a run, not the graph that
+the cache file holds. A cache hit now also checks that the graph has one
+module for each discovered file, with the same path, and that each index
+is in bounds. A failed check rebuilds the graph.
 
-The new `sfc_blocks` scan finds each tag start and the closing tags with
-small regexes. It then walks the attributes by hand and stores each
-position that cannot reach a usable `>`. It gives the same blocks as the
-old regexes, with the same quoted `>` and brace expression rules (#4828).
-The SFC script, style and template-region scans, the Svelte template mask
-and the scoped style scan use it.
-
-The tests compare the scan with the old regexes on generated input. Two
-more tests check the time of the scans on 8000 unclosed tags.
-
-Refs OSS-Fuzz test case 4953632655867904.
-
-Signed-off-by: Bart Waardenburg <[REDACT
-
-**File**: `changelog.d/fix-oss-fuzz-sfc-blocks.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Fixed
-+
-+- **A Vue or Svelte file with many unclosed attribute quotes can no longer slow the analysis to a crawl.** Fallow found the `<script>` and `<style>` blocks of a single-file component with regexes. A tag start whose quoted attribute value did not close made each search read far past its block, and the next search read that text again, so the time grew with the square of the file size. A 125 KB file took minutes in a fuzz build. Fallow now finds the blocks with a scan that reads each position a bounded number of times. The blocks that it finds do not change.
-```
-
-**File**: `crates/extract/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ mod parse;
- mod parse_degradation;
- mod parse_options;
- pub mod sfc;
-+mod sfc_blocks;
- pub mod sfc_css;
- mod sfc_props;
- mod sfc_template;
-```
-
-**File**: `crates/extract/src/sfc.rs` (modified, +48/-57)
-```diff
-@@ -1,6 +1,7 @@
- //! Vue/Svelte Single File Component (SFC) script and style extraction.
- //!
--//! Extracts `<script>` block content from `.vue` and `.svelte` files using regex,
-+//! Extracts `<script>` block content from `.vue` and `.svelte` files with the
-+//! linear block scan of `sfc_blocks`,
- //! handling `lang`, `src` metadata, and `generic` attributes, and filtering
- //! HTML comments. Vue external script references are emitted as graph edges;
- //! Svelte markup-level script `src` references are treated as runtime HTML.
-@@ -20,6 +21,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
- 
- use crate::asset_url::normalize_asset_url;
- use crate::parse::compute_import_binding_usage;
-+use crate::sfc_blocks::{script_blocks, style_blocks};
- use crate::sfc_template::{SfcKind, collect_template_usage_with_bound_targets};
- use crate::source_map::ExtractionResult;
- use crate::visitor::ModuleInfoExtractor;
-@@ -28,14 +30,6 @@ use fallow_types::discover::FileId;
- use fallow_types::extract::{FunctionComplexity, byte_offset_to_line_col, compute_line_offsets};
- use oxc_span::Span;
- 
--/// Regex to extract `<script>` block content from Vue/Svelte SFCs.
--/// The attrs pattern skips `>` in quoted values and in brace expressions up to 3 levels deep (#4828).
--static SCRIPT_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
--    crate::static_regex(
--        r#"(?is)<script\b(?P<attrs>(?:[^>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{[^{}]*\})*\})*\}|\{)*)>(?P<body>[\s\S]*?)</script>"#,
--    )
--});
--
- /// Regex to extract the `lang` attribute value from a script tag.
- static LANG_ATTR_RE: LazyLock<regex::Regex> =
-     LazyLock::new(|| crate::static_regex(r#"lang\s*=\s*["'](\w+)["']"#));
-@@ -94,15 +88,6 @@ static PROPS_ATTRS_SPREAD_RE: LazyLock<regex::Regex> =
- static SVELTE_TEMPLATE_DATA_WHOLE_USE_RE: LazyLock<regex::Regex> =
-     LazyLock::new(|| crate::static_regex(r"(?:=\s*\{\s*data\s*\}|\{\s*\.\.\.\s*data\s*\})"));
- 
--/// Regex to extract `<style>` block content from Vue/Svelte SFCs.
--/// Mirrors `SCRIPT_BLOCK_RE`: handles `>` inside quoted attribute values and
--/// captures the body so `@import` / `@use` / `@forward` directives can be parsed.
--static STYLE_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
--    crate::static_regex(
--        r#"(?is)<style\b(?P<attrs>(?:[^>"']|"[^"]*"|'[^']*')*)>(?P<body>[\s\S]*?)</style>"#,
--    )
--});
--
- /// Static asset references in SFC markup: `<img src="./logo.png">`,
- /// `<source src="...">`, `<video poster="...">`, etc.
- ///
-@@ -128,16 +113,32 @@ static TEMPLATE_ASSET_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
- /// offsets still map 1:1 into the original source for line/col reporting.
- fn mask_non_markup_regions(source: &str) -> String {
-     let mut masked = source.to_string();
--    for re in [&*SCRIPT_BLOCK_RE, &*STYLE_BLOCK_RE, &*HTML_COMMENT_RE] {
--        masked = re
--            .replace_all(&masked, |caps: &regex::Captures<'_>| {
--                " ".repeat(caps[0].len())
--            })
--            .into_owned();
--    }
-+    let spans: Vec<_> = script_blocks(&masked).into_iter().map(|b| b.span).collect();
-+    mask_spans(&mut masked, spans);
-+    let spans: Vec<_> = style_blocks(&masked).into_iter().map(|b| b.span).collect();
-+    mask_spans(&mut masked, spans);
-+    let spans: Vec<_> = HTML_COMMENT_RE
-+        .find_iter(&masked)
-+        .map(|m| m.range())
-+        .collect();
-+    mask_spans(&mut masked, spans);
-     masked
- }
- 
-+/// Replace each of `spans` with spaces of the same byte length.
-+fn mask_spans(text: &mut String, spans: Vec<std::ops::Range<usize>>) {
-+    for span in spans {
-+        let len = span.len();
-+        text.replace_range(span, &" ".repeat(len));
-+    }
-+}
-+
-+/// Whether `pos` is inside one of the sorted, disjoint `ranges`.
-+fn in_ranges(ranges: &[(usize, usize)], pos: usize) -> bool {
-+    let index = ranges.partition_point(|&(_, end)| end <= pos);
-+    ranges.get(index).is_some_and(|&(start, _)| start <= pos)
-+}
-+
- /// Collect static relative asset references from SFC markup as
- /// `(normalized_specifier, value_span)` pairs. See [`TEMPLATE_ASSET_RE`].
- fn collect_template_asset_refs(source: &str) -> Vec<(String, Span)> {
-@@ -190,19 +191,13 @@ pub fn extract_sfc_scripts(source: &str) -> Vec<SfcScript> {
-         .map(|m| (m.start(), m.end()))
-         .collect();
- 
--    SCRIPT_BLOCK_RE
--        .captures_iter(source)
--        .filter(|cap| {
--            let start = cap.get(0).map_or(0, |m| m.start());
--            !comment_ranges
--                .iter()
--                .any(|&(cs, ce)| start >= cs && start < ce)
--        })
--        .map(|cap| {
--            let attrs = cap.name("attrs").map_or("", |m| m.as_str());
--            let body_match = cap.name("body");
--            let byte_offset = body_match.map_or(0, |m| m.start());
--            let body = body_match.map_or("", |m| m.as_str()).to_string();
-+    script_blocks(source)
-+        .into_iter()
-+        .filter(|block| !in_r
-```
-
-**File**: `crates/extract/src/sfc_blocks.rs` (added, +220/-0)
-```diff
-@@ -0,0 +1,220 @@
-+//! Linear-time scan of `<script>` and `<style>` blocks in Vue and Svelte files.
-+//!
-+//! The scan gives the same blocks as these leftmost-first regexes:
-+//!
-+//! ```text
-+//! (?is)<script\b(?P<attrs>(?:[^>"'{]|"[^"]*"|'[^']*'|BRACE|\{)*)>(?P<body>[\s\S]*?)</script>
-+//! (?is)<style\b(?P<attrs>(?:[^>"']|"[^"]*"|'[^']*')*)>(?P<body>[\s\S]*?)</style>
-+//! ```
-+//!
-+//! `BRACE` is a brace expression up to 3 levels deep. Its quoted values (with
-+//! `"`, `'` or a backtick) can hold `>` (#4828). The innermost level is
-+//! `\{[^{}]*\}`.
-+//!
-+//! A regex search keeps a thread alive for each tag start whose quoted value
-+//! is not closed. Each search then reads far past the block that it reports,
-+//! and the next search reads that text again. On a file with many unclosed
-+//! quotes, the cost is quadratic. This scan stores each attribute position
-+//! that cannot reach a usable `>`, so it reads each position a bounded number
-+//! of times.
-+
-+use std::ops::Range;
-+use std::sync::LazyLock;
-+
-+static SCRIPT_OPEN_RE: LazyLock<regex::Regex> =
-+    LazyLock::new(|| crate::static_regex(r"(?i)<script\b"));
-+static SCRIPT_CLOSE_RE: LazyLock<regex::Regex> =
-+    LazyLock::new(|| crate::static_regex(r"(?i)</script>"));
-+static STYLE_OPEN_RE: LazyLock<regex::Regex> =
-+    LazyLock::new(|| crate::static_regex(r"(?i)<style\b"));
-+static STYLE_CLOSE_RE: LazyLock<regex::Regex> =
-+    LazyLock::new(|| crate::static_regex(r"(?i)</style>"));
-+
-+/// Deepest brace level that a script attribute expression can have.
-+const MAX_BRACE_DEPTH: u8 = 3;
-+
-+/// Memo value for a frame position that has no result yet.
-+const UNKNOWN: usize = 0;
-+/// Memo value for a frame position whose brace does not close.
-+const UNCLOSED: usize = usize::MAX;
-+
-+/// One `<script>` or `<style>` block. All ranges are byte ranges in the source.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct SfcBlock {
-+    /// Byte range of the whole block, from `<` of the opening tag to the end
-+    /// of the closing tag.
-+    pub span: Range<usize>,
-+    /// Byte range of the opening-tag attributes, without the final `>`.
-+    pub attrs: Range<usize>,
-+    /// Byte range of the block body.
-+    pub body: Range<usize>,
-+}
-+
-+/// All `<script>` blocks of `source`, in source order.
-+pub fn script_blocks(source: &str) -> Vec<SfcBlock> {
-+    scan(source, &SCRIPT_OPEN_RE, &SCRIPT_CLOSE_RE, true)
-+}
-+
-+/// All `<style>` blocks of `source`, in source order.
-+pub fn style_blocks(source: &str) -> Vec<SfcBlock> {
-+    scan(source, &STYLE_OPEN_RE, &STYLE_CLOSE_RE, false)
-+}
-+
-+fn scan(source: &str, open: &regex::Regex, close: &regex::Regex, braces: bool) -> Vec<SfcBlock> {
-+    let closes: Vec<Range<usize>> = close.find_iter(source).map(|m| m.range()).collect();
-+    let Some(last_close) = closes.last() else {
-+        return Vec::new();
-+    };
-+    let mut attrs = AttrScan::new(source.as_bytes(), last_close.start, braces);
-+    let mut blocks = Vec::new();
-+    let mut cursor = 0;
-+    for opening in open.find_iter(source) {
-+        if opening.start() < cursor {
-+            continue;
-+        }
-+        let Some(gt) = attrs.end_from(opening.end()) else {
-+            continue;
-+        };
-+        let index = closes.partition_point(|range| range.start <= gt);
-+        let Some(closing) = closes.get(index) else {
-+            continue;
-+        };
-+        blocks.push(SfcBlock {
-+            span: opening.start()..closing.end,
-+            attrs: opening.end()..gt,
-+            body: gt + 1..closing.start,
-+        });
-+        cursor = closing.end;
-+    }
-+    blocks
-+}
-+
-+/// Finds the `>` that ends the attributes of an opening tag.
-+///
-+/// The attributes match only at a `>` before `limit`, the start of the last
-+/// closing tag, because a block needs a closing tag after its `>`.
-+struct AttrScan<'a> {
-+    bytes: &'a [u8],
-+    limit: usize,
-+    braces: bool,
-+    /// Attribute positions that a scan visited. A visited position cannot
-+    /// reach a usable `>`: the scan stops at the first usable `>`, and the
-+    /// next search starts after the block that it found.
-+    visited: Vec<u64>,
-+    /// Frame results for depths 2 and 3, filled on the first brace.
-+    frames: [Vec<usize>; 2],
-+}
-+
-+impl<'a> AttrScan<'a> {
-+    fn new(bytes: &'a [u8], limit: usize, braces: bool) -> Self {
-+        Self {
-+            bytes,
-+            limit,
-+            braces,
-+            visited: vec![0; limit / 64 + 1],
-+            frames: [Vec::new(), Vec::new()],
-+        }
-+    }
-+
-+    /// The position of the `>` that ends attributes starting at `start`.
-+    ///
-+    /// A `{` is the only choice point: the regex first tries a closed brace
-+    /// expression, then a plain `{`. The scan tries them in that order and
-+    /// keeps the plain-`{` alternatives on a stack.
-+    fn end_from(&mut self, start: usize) -> Option<usize> {
-+        let mut alternatives = Vec::new();
-+        let mut pos = start;
-+        loop {
-+            if let Some(gt) = self.walk(po
-```
-
-**File**: `crates/extract/src/sfc_css.rs` (modified, +14/-30)
-```diff
-@@ -16,15 +16,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
- 
- use crate::ExportName;
- use crate::css::extract_css_module_exports;
--
--/// Matches `<style ...>BODY</style>` blocks, capturing the opening-tag
--/// attributes and the body. Mirrors the SFC style scanner: handles `>` inside
--/// quoted attribute values.
--static STYLE_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
--    crate::static_regex(
--        r#"(?is)<style\b(?P<attrs>(?:[^>"']|"[^"]*"|'[^']*')*)>(?P<body>[\s\S]*?)</style>"#,
--    )
--});
-+use crate::sfc_blocks::style_blocks;
- 
- /// Returns `true` when an opening-`<style>` attribute string carries a bare
- /// `scoped` attribute.
-@@ -106,21 +98,16 @@ pub fn scoped_unused_classes_at(source: &str) -> Option<ScopedUnusedClasses> {
-     // class's own definition does not count as a use of itself.
-     let mut style_ranges: Vec<(usize, usize)> = Vec::new();
- 
--    for caps in STYLE_BLOCK_RE.captures_iter(source) {
--        if let Some(whole) = caps.get(0) {
--            style_ranges.push((whole.start(), whole.end()));
--        }
--        let attrs = caps.name("attrs").map_or("", |m| m.as_str());
--        let Some(body) = caps.name("body") else {
--            continue;
--        };
--        if !has_scoped_attr(attrs) || has_non_css_lang(attrs) || block_escapes_scope(body.as_str())
--        {
-+    for block in style_blocks(source) {
-+        style_ranges.push((block.span.start, block.span.end));
-+        let attrs = &source[block.attrs];
-+        let body = &source[block.body.clone()];
-+        if !has_scoped_attr(attrs) || has_non_css_lang(attrs) || block_escapes_scope(body) {
-             continue;
-         }
--        for export in extract_css_module_exports(body.as_str(), false) {
-+        for export in extract_css_module_exports(body, false) {
-             if let ExportName::Named(name) = export.name {
--                let offset = body.start() + export.span.start as usize;
-+                let offset = block.body.start + export.span.start as usize;
-                 scoped_classes
-                     .entry(name)
-                     .and_modify(|first| *first = (*first).min(offset))
-@@ -327,25 +314,22 @@ fn virtual_stylesheet(source: &str, keep: impl Fn(&str) -> bool) -> Option<Strin
-     let mut out = String::new();
-     let mut current_line: usize = 1;
-     let mut found = false;
--    for caps in STYLE_BLOCK_RE.captures_iter(source) {
--        let attrs = caps.name("attrs").map_or("", |m| m.as_str());
--        if !keep(attrs) {
-+    for block in style_blocks(source) {
-+        if !keep(&source[block.attrs]) {
-             continue;
-         }
--        let Some(body) = caps.name("body") else {
--            continue;
--        };
-+        let body = &source[block.body.clone()];
-         found = true;
--        let block_line = 1 + source[..body.start()]
-+        let block_line = 1 + source[..block.body.start]
-             .bytes()
-             .filter(|&b| b == b'\n')
-             .count();
-         while current_line < block_line {
-             out.push('\n');
-             current_line += 1;
-         }
--        out.push_str(body.as_str());
--        current_line += body.as_str().bytes().filter(|&b| b == b'\n').count();
-+        out.push_str(body);
-+        current_line += body.bytes().filter(|&b| b == b'\n').count();
-     }
-     found.then_some(out)
- }
-```
-
-**File**: `crates/extract/src/sfc_template/svelte.rs` (modified, +8/-18)
-```diff
-@@ -11,16 +11,6 @@ use super::shared::{
-     merge_statement_usage_allow_dollar_refs_with_bound_targets, parse_tag_attrs,
- };
- 
--static STYLE_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
--    crate::static_regex(r#"(?is)<style\b(?:[^>"']|"[^"]*"|'[^']*')*>(?P<body>[\s\S]*?)</style>"#)
--});
--
--static SCRIPT_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
--    crate::static_regex(
--        r#"(?is)<script\b(?:[^>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{[^{}]*\})*\})*\}|\{)*>(?P<body>[\s\S]*?)</script>"#,
--    )
--});
--
- static SVELTE_EACH_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
-     crate::static_regex(
-         r"(?is)^#each\s+(?P<iterable>.+?)\s+as\s+(?P<bindings>.+?)(?:\s*\((?P<key>.+)\))?$",
-@@ -225,15 +215,15 @@ pub(super) fn strip_non_template_content(source: &str) -> String {
-     // Only the script body is hidden. The opening tag stays visible, because a
-     // `<script>` element in markup can read component state in its attribute
-     // expressions, for example `onload={handleLoad}`.
--    hidden_ranges.extend(SCRIPT_BLOCK_RE.captures_iter(source).filter_map(|caps| {
--        let whole = caps.get(0)?;
--        let body = caps.name("body")?;
--        Some((body.start(), whole.end()))
--    }));
-     hidden_ranges.extend(
--        STYLE_BLOCK_RE
--            .find_iter(source)
--            .map(|m| (m.start(), m.end())),
-+        crate::sfc_blocks::script_blocks(source)
-+            .into_iter()
-+            .map(|block| (block.body.start, block.span.end)),
-+    );
-+    hidden_ranges.extend(
-+        crate::sfc_blocks::style_blocks(source)
-+            .into_iter()
-+            .map(|block| (block.span.start, block.span.end)),
-     );
-     hidden_ranges.sort_unstable_by_key(|range| range.0);
- 
-```
-
-**File**: `crates/extract/src/tests/mod.rs` (modified, +1/-0)
-```diff
-@@ -13,6 +13,7 @@ mod nesting;
- mod object_pattern_defaults;
- mod regex_compile;
- mod sfc;
-+mod sfc_blocks;
- mod sfc_complexity;
- mod store_aliases;
- mod suppress_literals;
-```
-
-**File**: `crates/extract/src/tests/sfc_blocks.rs` (added, +164/-0)
-```diff
-@@ -0,0 +1,164 @@
-+//! The `<script>` and `<style>` block scans of Vue and Svelte files must cost
-+//! linear time on input with many unclosed attribute quotes.
-+
-+use std::time::{Duration, Instant};
-+
-+use crate::sfc::{extract_sfc_scripts, extract_sfc_styles, extract_sfc_template_regions};
-+
-+/// Number of repeated units in each input below.
-+const UNITS: usize = 8_000;
-+
-+/// Time limit for the scans of one input. A scan that reads the rest of the
-+/// file again for each block takes many seconds on these inputs.
-+const BUDGET: Duration = Duration::from_secs(2);
-+
-+/// Each unit opens a tag whose quoted attribute value closes only in the next
-+/// unit, so that tag never ends. The inner tag of each unit is a valid block.
-+/// The leading non-ASCII character makes the input non-ASCII.
-+fn unclosed_attribute_units(tag: &str) -> String {
-+    format!("é{}", format!("<{tag} '<{tag}>x</{tag}>'").repeat(UNITS))
-+}
-+
-+#[test]
-+fn repeated_unclosed_script_attributes_remain_fast() {
-+    let source = unclosed_attribute_units("script");
-+    let start = Instant::now();
-+    let scripts = extract_sfc_scripts(&source);
-+    let regions = extract_sfc_template_regions(&source);
-+    let elapsed = start.elapsed();
-+    assert_eq!(scripts.len(), UNITS);
-+    assert!(scripts.iter().all(|script| script.body == "x"));
-+    assert_eq!(scripts[0].byte_offset, "é<script '<script>".len());
-+    assert_eq!(regions[0].body, "é<script '");
-+    assert!(
-+        elapsed < BUDGET,
-+        "the script block scan took {elapsed:?} on {} bytes",
-+        source.len()
-+    );
-+}
-+
-+#[test]
-+fn repeated_unclosed_style_attributes_remain_fast() {
-+    let source = unclosed_attribute_units("style");
-+    let start = Instant::now();
-+    let styles = extract_sfc_styles(&source);
-+    let regions = extract_sfc_template_regions(&source);
-+    let elapsed = start.elapsed();
-+    assert_eq!(styles.len(), UNITS);
-+    assert!(styles.iter().all(|style| style.body == "x"));
-+    assert_eq!(styles[0].byte_offset, "é<style '<style>".len());
-+    assert_eq!(regions[0].body, "é<style '");
-+    assert!(
-+        elapsed < BUDGET,
-+        "the style block scan took {elapsed:?} on {} bytes",
-+        source.len()
-+    );
-+}
-+
-+mod regex_parity {
-+    use std::sync::LazyLock;
-+
-+    use proptest::prelude::*;
-+
-+    use crate::sfc_blocks::{SfcBlock, script_blocks, style_blocks};
-+
-+    /// The script block regex that the scan replaces. It is quadratic on
-+    /// some input, so it is safe only on the short input of these tests.
-+    static SCRIPT_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
-+        crate::static_regex(
-+            r#"(?is)<script\b(?P<attrs>(?:[^>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{[^{}]*\})*\})*\}|\{)*)>(?P<body>[\s\S]*?)</script>"#,
-+        )
-+    });
-+
-+    /// The style block regex that the scan replaces.
-+    static STYLE_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
-+        crate::static_regex(
-+            r#"(?is)<style\b(?P<attrs>(?:[^>"']|"[^"]*"|'[^']*')*)>(?P<body>[\s\S]*?)</style>"#,
-+        )
-+    });
-+
-+    /// Source fragments that change the result of a tag scan.
-+    const FRAGMENTS: &[&str] = &[
-+        "<script",
-+        "<SCRIPT",
-+        "<scripts",
-+        "<\u{17f}\x63ript",
-+        "</script>",
-+        "</SCRIPT>",
-+        "</script",
-+        "<style",
-+        "<STYLE",
-+        "<styled",
-+        "</style>",
-+        "</STYLE>",
-+        ">",
-+        "\"",
-+        "'",
-+        "`",
-+        "{",
-+        "}",
-+        "{}",
-+        "{{{",
-+        "}}}",
-+        "`>`",
-+        " ",
-+        "a",
-+        "\n",
-+        "é",
-+        "_",
-+        "<!--",
-+        "-->",
-+    ];
-+
-+    fn regex_blocks(regex: &regex::Regex, source: &str) -> Vec<SfcBlock> {
-+        regex
-+            .captures_iter(source)
-+            .map(|caps| SfcBlock {
-+                span: caps.get(0).expect("whole match").range(),
-+                attrs: caps.name("attrs").expect("attrs group").range(),
-+                body: caps.name("body").expect("body group").range(),
-+            })
-+            .collect()
-+    }
-+
-+    fn assert_parity(source: &str) {
-+        assert_eq!(
-+            script_blocks(source),
-+            regex_blocks(&SCRIPT_BLOCK_RE, source),
-+            "script blocks differ for {source:?}"
-+        );
-+        assert_eq!(
-+            style_blocks(source),
-+            regex_blocks(&STYLE_BLOCK_RE, source),
-+            "style blocks differ for {source:?}"
-+        );
-+    }
-+
-+    #[test]
-+    fn the_scan_matches_the_regex_on_known_shapes() {
-+        for source in [
-+            "<script>const a = 1;</script>",
-+            "<script setup lang=\"ts\" generic=\"T extends Record<string, { a: number }>\">x</script>",
-+            "<script src=\"/x.js\" onload={() => { if (a > 1) {} }}></script>",
-+            "<script src=\"/y.js\" data-x={`>${'}'}`}></script>",
-+            "<script data-x={ lang=\"ts\">const a: n
-```
-
----
-
-### Incident Patch 2: `93889daa` (2026-11-24)
-**Commit Message**: fix(mutation): detect Vitest in a Vite+ project (#5206)
-
-Runner auto-detection did not see Vite+ as Vitest. A Vite+ project
-lists `vite-plus` and its tests import `vite-plus/test`. In a Vite+
-project with a `bun.lock`, detection selected `bun test`, which does
-not read the Vite config, so the run failed while `vp test` passed.
-
-An import of `vite-plus/test` now counts as a Vitest import. A
-`vite-plus` dependency selects Vitest after the test imports and
-before the Bun files. A project can use Vite+ only to build, lint or
-format, so its `node:test` or `bun:test` imports still win.
-
-Closes #5199
+The CI suggestion reader and the SARIF snippet reader now read a finding
+file only when it resolves to a regular file inside the project root.
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-**File**: `crates/api/src/doctor.rs` (modified, +5/-4)
+* fix(audit): read diff-risk head files only inside the project
+
+The diff-risk rules read the head text of each changed file, of the config
+chain and of clone siblings. Each read now goes through the bounded read
+helper. A file that resolves outside the root, is not a regular file or is
+too large is skipped.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix(ci): refuse a ci input file link that leaves the working directory
+
+The ci post-pr-comment, plan-pr-comment and check-run commands read
+--body, --envelope and similar files. A path below the working directory
+must no
+
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -424,10 +424,11 @@ fn graph_cache_check(config: &fallow_config::ResolvedConfig) -> DoctorCheck {
- /// opt-in. The check reads the `package.json` of the installed package, the
- /// same file that the companion reads before it loads Vitest, so it runs no
- /// project code. The check is skipped when `mutation.runner` does not select
--/// Vitest, the root `package.json` declares no Vitest, and the companion
--/// finds no installed Vitest. A workspace package can declare a Vitest that
--/// the package manager installs at the root, and a toolchain such as Vite+
--/// can bring its own Vitest, so each install that the companion finds counts.
-+/// Vitest, the root `package.json` declares neither `vitest` nor `vite-plus`,
-+/// and the companion finds no installed Vitest. A workspace package can
-+/// declare a Vitest that the package manager installs at the root, and a
-+/// toolchain such as Vite+ can bring its own Vitest, so each install that the
-+/// companion finds counts.
- /// The `node-test` and `bun-test` runners skip the check too: their range
- /// applies to the runtime that a run selects.
- fn mutation_runner_check(root: &Path, configured: fallow_config::MutationRunner) -> DoctorCheck {
+@@ -1533,6 +1533,7 @@ dependencies = [
+  "oxc_span",
+  "proptest",
+  "rustc-hash",
++ "rustix",
+  "schemars",
+  "serde",
+  "serde_json",
 ```
 
-**File**: `crates/api/src/mutation/runner_select.rs` (modified, +104/-25)
+**File**: `crates/api/src/diff_risk/mod.rs` (modified, +20/-8)
 ```diff
-@@ -58,20 +58,36 @@ impl Runner {
- /// The most test files that the detection reads.
- const MAX_SCANNED_TEST_FILES: usize = 200;
+@@ -34,6 +34,7 @@ use fallow_output::{
+     DiffRiskRule, DiffRiskSeverity, DiffRiskSuppression, WeakenedTestsKind,
+ };
+ use fallow_types::duplicates::CloneGroup;
++use fallow_types::read_guard::{self, ReadRefusal};
+ use fallow_types::suppress::{IssueKind, Suppression, SuppressionTarget};
+ use rustc_hash::{FxHashMap, FxHashSet};
  
-+/// The Vitest package.
-+const RUNNER_PACKAGE: &str = "vitest";
-+
-+/// The Vite+ toolchain package. It runs Vitest through `vp test`, but a
-+/// project can also use it only to build, lint or format, so its dependency
-+/// is a weaker signal than a `vitest` dependency.
-+const VITE_PLUS_PACKAGE: &str = "vite-plus";
-+
-+/// The `package.json` fields of the root that declare a dependency.
-+const DEPENDENCY_FIELDS: [&str; 3] = ["dependencies", "devDependencies", "optionalDependencies"];
-+
-+/// The test modules that Vitest tests import: Vitest itself, and the Vite+
-+/// module that re-exports it.
-+const VITEST_TEST_MODULES: &[&str] = &["vitest", "vite-plus/test"];
-+
- /// The Bun files at the project root that mark a Bun project.
- const BUN_ROOT_FILES: &[&str] = &["bunfig.toml", "bun.lock", "bun.lockb"];
+@@ -211,6 +212,17 @@ fn is_rule_relevant(root: &Path, rel: &str) -> bool {
+         || crate::dependency_deltas::is_manifest_path(rel)
+ }
  
- /// Selects the runner. An explicit config value wins. `auto` reads the
- /// project at `root`, in this order:
- ///
- /// 1. `vitest` in the root `package.json` dependencies gives Vitest.
--/// 2. The import of `vitest`, `bun:test` or `node:test` that the most test
--///    files have. A tie goes to Vitest, then `bun test`.
--/// 3. A Bun file at the root (`bunfig.toml`, `bun.lock`, `bun.lockb`) gives
-+/// 2. The import of `vitest` (or `vite-plus/test`), `bun:test` or `node:test`
-+///    that the most test files have. A tie goes to Vitest, then `bun test`.
-+/// 3. `vite-plus` in the root `package.json` dependencies gives Vitest.
-+/// 4. A Bun file at the root (`bunfig.toml`, `bun.lock`, `bun.lockb`) gives
- ///    `bun test`.
--/// 4. A `node --test` or `borp` command in a `package.json` script gives
-+/// 5. A `node --test` or `borp` command in a `package.json` script gives
- ///    `node:test`.
--/// 5. Otherwise Vitest.
-+/// 6. Otherwise Vitest.
- pub fn select_runner(configured: MutationRunner, root: &Path, test_files: &[String]) -> Runner {
-     match configured {
-         MutationRunner::Vitest => Runner::Vitest,
-@@ -83,12 +99,21 @@ pub fn select_runner(configured: MutationRunner, root: &Path, test_files: &[Stri
- 
- fn detect_runner(root: &Path, test_files: &[String]) -> Runner {
-     let manifest = read_manifest(root);
--    if manifest.as_ref().is_some_and(has_vitest_dependency) {
-+    if manifest
-+        .as_ref()
-+        .is_some_and(|manifest| has_dependency(manifest, RUNNER_PACKAGE))
-+    {
-         return Runner::Vitest;
-     }
-     if let Some(runner) = runner_by_imports(root, test_files) {
-         return runner;
-     }
-+    if manifest
-+        .as_ref()
-+        .is_some_and(|manifest| has_dependency(manifest, VITE_PLUS_PACKAGE))
-+    {
-+        return Runner::Vitest;
++/// The head text of `abs`, or `None` when the file does not exist. A file
++/// that resolves outside `root`, is not a regular file or is too large is
++/// refused, and the caller skips it.
++fn read_head(root: &Path, abs: &Path) -> Result<Option<String>, ReadRefusal> {
++    match read_guard::read_bytes_inside(root, abs, read_guard::DEFAULT_MAX_READ_BYTES) {
++        Ok(bytes) => Ok(Some(String::from_utf8_lossy(&bytes).into_owned())),
++        Err(refusal) if refusal.is_not_found() => Ok(None),
++        Err(refusal) => Err(refusal),
 +    }
-     if BUN_ROOT_FILES.iter().any(|file| root.join(file).is_file()) {
-         return Runner::BunTest;
++}
++
+ fn read_files(input: &DiffRiskInput<'_>, source: &mut BaseSource) -> Vec<FileTexts> {
+     let rename_sources: FxHashSet<&Path> = input
+         .renames
+@@ -246,10 +258,8 @@ fn read_files(input: &DiffRiskInput<'_>, source: &mut BaseSource) -> Vec<FileTex
+         if !is_rule_relevant(input.root, &rel) {
+             continue;
+         }
+-        let head = match std::fs::read(abs) {
+-            Ok(bytes) => Some(String::from_utf8_lossy(&bytes).into_owned()),
+-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+-            Err(_) => continue,
++        let Ok(head) = read_head(input.root, abs) else {
++            continue;
+         };
+         let base = match source.read(base_abs) {
+             BaseRead::Content(base) => Some(base),
+@@ -350,9 +360,11 @@ fn detect_config_changes(
+     source: &mut BaseSource,
+     raw: &mut Vec<RawFinding>,
+ ) {
+-    let mut read_head = |abs: &Path| match std::fs::read(abs) {
+-        Ok(bytes) => ConfigRead::Content(String::from_utf8_lossy(&bytes).into_owned()),
+-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => ConfigRead::Missing,
++    // The config chain can reach above the analysis root, up to the git root.
++    let git_root = source.git_root.clone();
++    let mut read_head = |abs: &Path| match read_head(&git_root, abs) {
++        Ok(Some(text)) => ConfigRead::Content(text),
++        Ok(None) => ConfigRead::Missing,
+         Err(_) => ConfigRead::Unreadable,
+     };
+     // Changed-file paths start at the canonical git root, so the chain paths
+@@ -816,7 +828,7 @@ fn detect_diverged_clones(
+     };
+     let mut head_text = |rel: &str| match head_by_rel.get(rel) {
+         Some(head) => head.map(str::to_owned),
+-        None => std::fs::read_to_string(root.join(rel)).ok(),
++        None => read_head(root, &root.join(rel)).ok().flatten(),
+     };
+     let found = clones::diverged_clone_siblings(
+         base_groups,
+```
+
+**File**: `crates/api/src/type_aware/client/mod.rs` (modified, +74/-181)
+```diff
+@@ -4,6 +4,7 @@ mod call_evidence;
+ mod empty;
+ mod queries;
+ mod reconcile;
++mod response_path;
+ 
+ use std::collections::{BTreeMap, BTreeSet};
+ use std::path::{Component, Path, PathBuf};
+@@ -42,6 +43,9 @@ use queries::{build_dead_code_queries, query_supports_guarded_fix};
+ use reconcile::apply_dead_code_response;
+ #[cfg(test)]
+ use reconcile::semantic_only_candidate_stays_hidden;
++use response_path::{
++    ResponseScope, contract_paths_in_scope, impact_paths, reference_paths_in_scope,
++};
+ 
+ const EVIDENCE_LIMIT: usize = 40;
+ /// A type-coupling result is one project-wide report, not one symbol, so it
+@@ -732,14 +736,21 @@ pub fn trace_symbol(
+     let result = response.results.first().ok_or_else(|| {
+         TypeAwareError::from("type-aware trace response omitted its query result".to_string())
+     })?;
+-    decode_symbol_trace(&response, &request, result, symbol)
++    decode_symbol_trace(
++        &response,
++        &request,
++        result,
++        symbol,
++        &ResponseScope::new(root),
++    )
+ }
+ 
+ fn decode_symbol_trace(
+     response: &SemanticResponse,
+     request: &SemanticRequest,
+     result: &SemanticQueryResponse,
+     symbol: SemanticSymbol,
++    scope: &ResponseScope,
+ ) -> Result<SemanticSymbolTrace, TypeAwareError> {
+     let identity = semantic_identity(response, request, result.status);
+     if result.status == SemanticCompleteness::Unavailable {
+@@ -774,7 +785,7 @@ fn decode_symbol_trace(
+             "type-aware symbol trace totals are smaller than returned evidence".to_string(),
+         ));
      }
-@@ -101,27 +126,26 @@ fn detect_runner(root: &Path, test_files: &[String]) -> Runner {
-     Runner::Vitest
+-    let references = decode_symbol_trace_evidence(result)?;
++    let references = decode_symbol_trace_evidence(result, scope)?;
+     Ok(SemanticSymbolTrace {
+         target: data.symbol,
+         identity,
+@@ -808,14 +819,21 @@ pub fn symbol_impact(
+     let result = response.results.first().ok_or_else(|| {
+         TypeAwareError::from("type-aware impact response omitted its query result".to_string())
+     })?;
+-    decode_symbol_impact(&response, &request, result, symbol)
++    decode_symbol_impact(
++        &response,
++        &request,
++        result,
++        symbol,
++        &ResponseScope::new(root),
++    )
  }
  
--/// True when the root `package.json` declares `vitest` as a dependency.
-+/// True when the root `package.json` declares `vitest` or `vite-plus` as a
-+/// dependency.
- pub fn declares_vitest(root: &Path) -> bool {
--    read_manifest(root)
--        .as_ref()
--        .is_some_and(has_vitest_dependency)
-+    read_manifest(root).as_ref().is_some_and(|manifest| {
-+        has_dependency(manifest, RUNNER_PACKAGE) || has_dependency(manifest, VITE_PLUS_PACKAGE)
-+    })
- }
- 
- fn read_manifest(root: &Path) -> Option<serde_json::Value> {
-     let text = fs::read_to_string(root.join("package.json")).ok()?;
-     serde_json::from_str(&text).ok()
- }
- 
--fn has_vitest_dependency(manifest: &serde_json::Value) -> bool {
--    ["dependencies", "devDependencies", "optionalDependencies"]
+ fn decode_symbol_impact(
+     response: &SemanticResponse,
+     request: &SemanticRequest,
+     result: &SemanticQueryResponse,
+     symbol: SemanticSymbol,
++    scope: &ResponseScope,
+ ) -> Result<SemanticSymbolImpact, TypeAwareError> {
+     let identity = semantic_identity(response, request, result.status);
+     if result.status == SemanticCompleteness::Unavailable {
+@@ -846,19 +864,6 @@ fn decode_symbol_impact(
+         ))
+     })?;
+     validate_returned_symbol(&symbol, &data.symbol, result.query_id)?;
+-    for consumer in &data.direct_consumers {
+-        validate_semantic_response_path(&consumer.path, result.query_id)?;
+-    }
+-    for path in data
+-        .transitive_affected_files
 -        .iter()
--        .any(|field| {
--            manifest
--                .get(field)
--                .and_then(|deps| deps.get("vitest"))
--                .is_some()
--        })
-+fn has_dependency(manifest: &serde_json::Value, name: &str) -> bool {
-+    DEPENDENCY_FIELDS.iter().any(|field| {
-+        manifest
-+            .get(field)
-+            .and_then(|deps| deps.get(name))
-+            .is_some()
-+    })
+-        .chain(&data.targeted_tests)
+-    {
+-        validate_semantic_response_path(&path.path, result.query_id)?;
+-        for provenance in &path.provenance {
+-            validate_semantic_response_path(provenance, result.query_id)?;
+-        }
+-    }
+     if data.confidence == SemanticImpactConfidence::Unavailable {
+         return Err(TypeAwareError::from(format!(
+             "type-aware query {} returned an unsupported impact confidence",
+@@ -876,15 +881,16 @@ fn decode_symbol_impact(
+     let direct_consumers = data
+         .direct_consumers
+         .into_iter()
++        .filter(|consumer| scope.allows(&consumer.path))
+         .map(|consumer| SemanticImpactPath {
+             path: consumer.path,
+             relation: format!("direct-{}-consumer", namespace_name(consumer.namespace)),
+             distance: 1,
+             via: Vec::new(),
+         })
+         .collect();
+-    let affected_files = impact_paths(data.transitive_affected_files, "transitive-consumer");
+-    let targeted_tests = impact_paths(data.targeted_tests, "targeted-test");
++    let affected_files = impact_paths(data.transitive_affected_files, "transitive-consumer", scope);
++    let targeted_tests = impact_paths(data.targeted_tests, "targeted-test", scope);
+     Ok(SemanticSymbolImpact {
+         target: data.symbol,
+         identity,
+@@ -993,7 +999,9 @@ pub fn inspect_symbol(
+         .ok_or_else(|| {
+             TypeAwareError::from("semantic inspect omitted symbol impact".to_string())
+         })?;
+-    let trace = decode_symbol_trace(&response, &request, trace_result, symbol.clone())?;
++    // One scope for the whole request, because the decoders share it.
++    let scope = ResponseScope::new(Path::new(&request.root));
++    let trace = decode_symbol_trace(&response, &request, trace_result, symbol.clone(), &scope)?;
+     let api_query = request
+         .queries
+         .iter()
+@@ -1002,7 +1010,7 @@ pub fn inspect_symbol(
+             TypeAwareError::from("semantic inspect omitted its API surface query".to_string())
+         })?;
+     let api_surface = decode_api_surface(api_q
+```
+
+**File**: `crates/api/src/type_aware/client/reconcile.rs` (modified, +18/-2)
+```diff
+@@ -201,6 +201,7 @@ fn plan_response_results(
+     let mut type_coupling = None;
+     let mut query_summaries = Vec::new();
+     let mut source_cache = FxHashMap::default();
++    let scope = super::response_path::ResponseScope::new(root);
+     let reachable_files = results
+         .semantic_reachable_files
+         .iter()
+@@ -229,6 +230,7 @@ fn plan_response_results(
+                 let decision = retain_non_crediting_evidence(
+                     decode_candidate_decision(
+                         root,
++                        &scope,
+                         query,
+                         result,
+                         fix_supported,
+@@ -241,15 +243,29 @@ fn plan_response_results(
+             }
+             QueryTarget::UnusedExport(index) => {
+                 let decision = retain_non_crediting_evidence(
+-                    decode_candidate_decision(root, query, result, false, &mut source_cache)?,
++                    decode_candidate_decision(
++                        root,
++                        &scope,
++                        query,
++                        result,
++                        false,
++                        &mut source_cache,
++                    )?,
+                     &reachable_files,
+                     &mut summary,
+                 );
+                 candidates.record_export(results, *index, decision)?;
+             }
+             QueryTarget::UnusedType(index) => {
+                 let decision = retain_non_crediting_evidence(
+-                    decode_candidate_decision(root, query, result, false, &mut source_cache)?,
++                    decode_candidate_decision(
++                        root,
++                        &scope,
++                        query,
++                        result,
++                        false,
++                        &mut source_cache,
++                    )?,
+                     &reachable_files,
+                     &mut summary,
+                 );
+```
+
+**File**: `crates/api/src/type_aware/client/response_path.rs` (added, +387/-0)
+```diff
+@@ -0,0 +1,387 @@
++//! Check the file paths that the type-aware companion returns.
++//!
++//! The companion reports each path relative to the analysis root. The
++//! companion can read files above the root: the files of the read scope base
++//! (the Git work tree of the root), also a hoisted
++//! `../../node_modules/@angular/core/index.d.ts` of that work tree. The
++//! companion also reads the library files of its compiler package, which can
++//! be installed outside the project (`npx`, `npm -g`). A returned path, with
++//! its `..` segments applied to the root, must stay inside one of those
++//! directories. The caller drops each entry with a path that does not.
++
++use std::path::{Component, Path, PathBuf};
++
++/// The directories that a returned path may name for one analysis root.
++pub(super) struct ResponseScope {
++    root: PathBuf,
++    allowed: Vec<PathBuf>,
++}
++
++impl ResponseScope {
++    /// The scope of `root`: its read scope base and the compiler package
++    /// directories of the companion.
++    pub(super) fn new(root: &Path) -> Self {
++        Self::with_compiler_dirs(
++            root,
++            crate::type_aware::transport::companion_compiler_dirs(root),
++        )
++    }
++
++    /// The scope of `root` with the given compiler package directories.
++    pub(super) fn with_compiler_dirs(root: &Path, compiler_dirs: Vec<PathBuf>) -> Self {
++        let root = dunce::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
++        let mut allowed = vec![fallow_config::project_scope_base(&root)];
++        allowed.extend(compiler_dirs);
++        Self { root, allowed }
++    }
++
++    /// True when the root-relative `path`, with each `..` and `.` applied to
++    /// the root by text, stays inside an allowed directory. An absolute path
++    /// is never allowed, because the protocol names root-relative paths.
++    pub(super) fn allows(&self, path: &Path) -> bool {
++        let mut joined = self.root.clone();
++        for component in path.components() {
++            match component {
++                Component::Normal(part) => joined.push(part),
++                Component::CurDir => {}
++                Component::ParentDir => {
++                    if !joined.pop() {
++                        return false;
++                    }
++                }
++                Component::RootDir | Component::Prefix(_) => return false,
++            }
++        }
++        self.allowed.iter().any(|dir| joined.starts_with(dir))
++    }
++}
++
++/// True when each contract declaration of `data` stays inside `scope`.
++pub(super) fn contract_paths_in_scope(data: &super::SymbolUseData, scope: &ResponseScope) -> bool {
++    data.contract_relations
++        .iter()
++        .map(|contract| &contract.declaration.path)
++        .chain(
++            data.framework_contract_relations
++                .iter()
++                .map(|contract| &contract.declaration.path),
++        )
++        .all(|path| scope.allows(path))
++}
++
++/// True when the path and each alias hop of `evidence` stay inside `scope`.
++pub(super) fn reference_paths_in_scope(
++    evidence: &super::SemanticReferenceData,
++    scope: &ResponseScope,
++) -> bool {
++    scope.allows(&evidence.path) && evidence.via.iter().all(|hop| scope.allows(&hop.path))
++}
++
++/// The impact paths whose path and provenance stay inside `scope`. The
++/// other paths are dropped.
++pub(super) fn impact_paths(
++    paths: Vec<super::ImpactPathData>,
++    relation: &str,
++    scope: &ResponseScope,
++) -> Vec<super::SemanticImpactPath> {
++    paths
++        .into_iter()
++        .filter(|path| {
++            scope.allows(&path.path) && path.provenance.iter().all(|hop| scope.allows(hop))
++        })
++        .map(|path| super::SemanticImpactPath {
++            distance: path.provenance.len().max(1),
++            via: path.provenance,
++            path: path.path,
++            relation: relation.to_string(),
++        })
++        .collect()
++}
++
++#[cfg(test)]
++mod tests {
++    use super::super::tests::symbol;
++    use super::super::*;
++    use super::*;
++    use serde_json::json;
++
++    #[test]
++    #[cfg_attr(miri, ignore = "tempdir is blocked by Miri isolation")]
++    fn a_package_root_accepts_paths_into_the_work_tree_and_hoisted_node_modules() {
++        let dir = tempfile::tempdir().expect("temp dir");
++        let outer = dunce::canonicalize(dir.path()).expect("canonical");
++        let top = outer.join("repo");
++        let root = top.join("packages/app");
++        std::fs::create_dir_all(&root).expect("mkdir");
++        std::fs::create_dir(top.join(".git")).expect("mkdir");
++        std::fs::create_dir_all(top.join("node_modules/@angular/core")).expect("mkdir");
++        let scope = ResponseScope::new(&root);
++
++        for path in [
++            "src/a.ts",
++            "./src/a.ts",
++            "src/../lib/a.ts",
++            "../lib/src/a.ts",
++            "../../node_modules/@angular/core/index.d.ts",
++        ] {
++            assert!(scope.allows(Path::new(path)), "{path}");
++     
+```
+
+**File**: `crates/api/src/type_aware/transport/discovery.rs` (modified, +34/-0)
+```diff
+@@ -217,3 +217,37 @@ pub(super) fn binary_names(binary: &str) -> Vec<String> {
+         vec![binary.to_owned()]
+     }
+ }
++/// The directories of the compiler package that the companion at `sidecar`
++/// loads, found the way Node resolves `package` from the companion: the
++/// first `node_modules/<package>` at or above the resolved companion path.
++/// The list holds the resolved package directory and its enclosing
++/// `node_modules` directories, the same set that the companion allows its
++/// checker to read. The list is empty when no package is found.
++pub(super) fn companion_compiler_dirs(sidecar: &Path, package: &str) -> Vec<PathBuf> {
++    let Some(start) = dunce::canonicalize(sidecar)
++        .ok()
++        .and_then(|real| real.parent().map(Path::to_path_buf))
++    else {
++        return Vec::new();
++    };
++    let Some(package_dir) = start.ancestors().find_map(|dir| {
++        let candidate = dir.join("node_modules").join(package);
++        candidate
++            .join("package.json")
++            .is_file()
++            .then(|| dunce::canonicalize(&candidate).ok())
++            .flatten()
++    }) else {
++        return Vec::new();
++    };
++    let mut dirs = vec![package_dir.clone()];
++    dirs.extend(
++        package_dir
++            .ancestors()
++            .skip(1)
++            .take(2)
++            .filter(|dir| dir.file_name() == Some(std::ffi::OsStr::new("node_modules")))
++            .map(Path::to_path_buf),
++    );
++    dirs
++}
+```
+
+**File**: `crates/api/src/type_aware/transport/mod.rs` (modified, +17/-0)
+```diff
+@@ -397,6 +397,23 @@ impl From<discovery::DiscoveryError> for TypeAwareError {
+     }
  }
  
- fn has_node_test_script(manifest: &serde_json::Value) -> bool {
-@@ -230,14 +254,20 @@ fn runner_by_imports(root: &Path, test_files: &[String]) -> Option<Runner> {
-         .map(|(runner, _)| *runner)
++/// The compiler package directories of the companion that a semantic
++/// request for `root` runs. The companion reads the library files of the
++/// compiler there, also when it is installed outside the project. The list
++/// is empty when no companion or no compiler package is found.
++pub(in crate::type_aware) fn companion_compiler_dirs(root: &Path) -> Vec<PathBuf> {
++    let (Ok(backend), Ok(sidecar)) = (selected_backend(), discover_type_aware_sidecar(root)) else {
++        return Vec::new();
++    };
++    discovery::companion_compiler_dirs(&sidecar, backend.package)
++}
++
++/// [`discovery::companion_compiler_dirs`] for a test.
++#[cfg(test)]
++pub(in crate::type_aware) fn compiler_dirs_of(sidecar: &Path, package: &str) -> Vec<PathBuf> {
++    discovery::companion_compiler_dirs(sidecar, package)
++}
++
+ pub fn run_semantic_request<Request, Response>(
+     root: &Path,
+     request: &Request,
+```
+
+**File**: `crates/api/src/type_aware/transport/process.rs` (modified, +32/-0)
+```diff
+@@ -132,6 +132,10 @@ pub(super) fn sidecar_command_with_script(
+     Ok(command)
  }
  
--/// True when the text imports the test module of the runner, as an import
--/// or a `require` call with a quoted specifier.
-+/// True when the text imports a test module of the runner, as an import or a
-+/// `require` call with a quoted specifier.
- fn imports_runner(text: &str, runner: Runner) -> bool {
--    let specifier = match runner {
--        Runner::Vitest => "vitest",
--        Runner::NodeTest => "node:test",
--        Runner::BunTest => "bun:test",
-+    let specifiers: &[&str] = match runner {
-+        Runner::Vitest => VITEST_TEST_MODULES,
-+        Runner::NodeTest => &["node:test"],
-+        
-```
-
-**File**: `crates/config/src/config/mutation.rs` (modified, +2/-2)
-```diff
-@@ -6,8 +6,8 @@ use serde::{Deserialize, Deserializer, Serialize};
- #[serde(rename_all = "kebab-case")]
- pub enum MutationRunner {
-     /// Detect the runner from the project: the `vitest` dependency, the
--    /// test module that the test files import, a Bun file at the root, or a
--    /// `node --test` script.
-+    /// test module that the test files import, the `vite-plus` dependency, a
-+    /// Bun file at the root, or a `node --test` script.
-     #[default]
-     Auto,
-     /// Vitest 4.1 to 5 from the project `node_modules`.
-```
-
-**File**: `docs/mutation-testing.md` (modified, +8/-5)
-```diff
-@@ -1382,13 +1382,16 @@ selects one. The default `auto` reads the project in this order:
- 
- 1. `vitest` in the root `package.json` dependencies selects Vitest.
- 2. Otherwise the test module that the most static test files import:
--   `vitest`, `bun:test` or `node:test`. A tie goes to Vitest, then
-+   `vitest` or `vite-plus/test`, `bun:test` or `node:test`. A tie goes to
-+   Vitest, then `bun test`.
-+3. Otherwise `vite-plus` in the root `package.json` dependencies selects
-+   Vitest. Vite+ runs Vitest through `vp test`, but a project can use Vite+
-+   only to build, lint or format, so the test imports come first.
-+4. Otherwise a `bunfig.toml`, `bun.lock` or `bun.lockb` at the root selects
-    `bun test`.
--3. Otherwise a `bunfig.toml`, `bun.lock` or `bun.lockb` at the root selects
--   `bun test`.
--4. Otherwise a `node --test` or `borp` command in a `package.json` script
-+5. Otherwise a `node --test` or `borp` command in a `package.json` script
-    selects `node:test`.
--5. Otherwise Vitest.
-+6. Otherwise Vitest.
- 
- | Runner | Config value | Versions | Runtime of the companion |
- |---|---|---|---|
-```
-
-**File**: `schema.json` (modified, +1/-1)
-```diff
-@@ -1314,7 +1314,7 @@
-       "description": "The test runner of `fallow mutation`.",
-       "oneOf": [
-         {
--          "description": "Detect the runner from the project: the `vitest` dependency, the\ntest module that the test files import, a Bun file at the root, or a\n`node --test` script.",
-+          "description": "Detect the runner from the project: the `vitest` dependency, the\ntest module that the test files import, the `vite-plus` dependency, a\nBun file at the root, or a `node --test` script.",
-           "type": "string",
-           "const": "auto"
-         },
++/// The environment variable that names the read scope base of the checker.
++/// The companion accepts it only when it is the root or a directory above it.
++pub(super) const SCOPE_ROOT_ENV: &str = "FALLOW_TYPE_AWARE_SCOPE_ROOT";
++
+ fn restrict_sidecar_environment(command: &mut Command, root: &Path) {
+     const ALLOWED_ENV: &[&str] = &[
+         "HOME",
+@@ -151,8 +155,10 @@ fn restrict_sidecar_environment(command: &mut Command, root: &Path) {
+     let path = fallow_process::HostPaths::from_env()
+         .search_path
+         .and_then(|value| sanitize_search_path(root, &value));
++    let scope_root = fallow_config::project_scope_base(root);
+     command.env_clear();
+     command.envs(values);
++    command.env(SCOPE_ROOT_ENV, scope_root);
+     if let Ok(backend) = selected_backend() {
+         command.env(BACKEND_ENV, backend.family);
+     }
+@@ -295,3 +301,29 @@ pub(super) fn bounded_text(bytes: &[u8], max_chars: usize) -> String {
+         .trim()
+         .to_owned()
+ }
++
++#[cfg(test)]
++mod scope_root_tests {
++    use super::*;
++
++    /// The companion gets the Git work tree of the root as its read scope
++    /// base, so a package root can read the shared configs of the work tree.
++    #[test]
++    fn the_sidecar_command_names_the_work_tree_as_the_scope_root() {
++        let dir = tempfile::tempdir().expect("temp dir");
++        let top = dunce::canonicalize(dir.path()).expect("canonical");
++        std::fs::create_dir(top.join(".git")).expect("mkdir");
++        let root = top.join("packages/app");
++        std::fs::create_dir_all(&root).expect("mkdir");
++        let sidecar = top.join("install/fallow-type-aware.mjs");
++
++        let command = sidecar_command(&sidecar, &root).expect("configure sidecar command");
++        let scope_root = command
++            .get_envs()
++            .find(|(key, _)| *key == std::ffi::OsStr::new(SCOPE_ROOT_ENV))
++            .and_then(|(_, value)| value)
++            .map(PathBuf::from);
++
++        assert_eq!(scope_root, Some(top));
++    }
++}
 ```
 
 ---
 
-### Incident Patch 3: `9572041d` (2026-11-24)
-**Commit Message**: fix(release): cover every shipped binary in the target SBOM (#5205)
+### Incident Patch 2: `ac4f860e` (2026-11-25)
+**Commit Message**: fix(agent): run only install-time programs from the agent gate and install (#5245)
 
-The fallow-<target> archive ships fallow, fallow-lsp, fallow-mcp and
-fallow-similar-code. The SBOM of the target covered only the fallow-cli
-package. Crates that only the LSP, MCP or similar-code binaries link,
-such as tower-lsp-server, rmcp, rquickjs and candle-core, were missing.
-The SBOM also listed the stub_sidecar and fallow-schema-emit bins, which
-need features that the release does not enable.
+* fix(agent): run only install-time programs from the agent gate
 
-The sbom job now runs cargo cyclonedx for the workspace and for the
-similar-code sidecar workspace. It runs one cargo tree for fallow-cli,
-fallow-lsp and fallow-mcp, as the build job builds them together, and
-one cargo tree for the sidecar. filter-sbom.mjs merges the four package
-SBOMs into one file with a release root component. It deduplicates the
-components by bom-ref and joins the dependency entries. It removes the
-bin components that the archive does not ship and the crates that no
-tree lists. It fails when a tree crate has no component, when a shipped
-bin is in no package, or when a dependency ref names no component.
+The agent gate now runs only a fallow that the install records or that
+the install root holds:
 
-The file name and the artifact name do not change, so release-assets
-stages the SBOM as before
+- A user-scope gate runs the fallow path that the install records in
+  the script, else the fallow on PATH. The install records the first
+  fallow on PATH, as found, that is outside the project and has no
+  node_modules component, else the running binary under the same rule.
+- A project-scope gate runs the launcher of its install root (two
+  directories above the script), else the fallow on PATH, else Yarn or
+  npx in the install root.
+- Before the first program runs, the gate removes from PATH each empty
+  or relative entry and each entry with a node_modules component, in
+  any letter case. git, jq and the other helpers use the same PATH.
 
-**File**: `.github/scripts/filter-sbom.mjs` (modified, +210/-24)
+Other changes to the gate:
+
+- The gate reads the hook input with the read builtin, and the plain
+  prefilter for a command that is not a git write runs before the gate
+  starts any program or subshell.
+- A small built-in reader gets tool_input.command, and the exact
+  git-write check runs before any fall
+
+**File**: `.agents/skills/fallow/references/cli-reference.md` (modified, +2/-2)
 ```diff
-@@ -1,29 +1,48 @@
--// Release step: remove the components of a CycloneDX SBOM that are not in the
--// fallow-cli build of the target (#5131).
-+// Release step: merge the CycloneDX SBOMs of the packages that one release
-+// archive ships, and keep only the crates of those builds (#5131, #5190).
- //
--// `cargo cyclonedx --target` resolves features over the whole workspace, so its
--// SBOM also lists crates that only other workspace members enable. A consumer
--// that scans the SBOM then gets advisories for crates that are not in the
--// build. `cargo tree -p fallow-cli --target <target> -e normal,build` gives
--// the crates of the build, including proc-macros and build-dependencies. This
--// script keeps only those components, and it fails when a crate of the tree
-+// The `fallow-<target>` archive ships the binaries of several packages:
-+// `fallow-cli`, `fallow-lsp`, `fallow-mcp` and the similar-code sidecar, which
-+// is a separate Cargo workspace. `cargo cyclonedx` writes one SBOM per package.
-+// This script merges them into one SBOM with one root component for the
-+// release. Each shipped package is a component of that SBOM.
-+//
-+// `cargo cyclonedx --target` resolves features over the whole workspace, so
-+// its SBOM also lists crates that only other workspace members enable. A
-+// consumer that scans the SBOM then gets advisories for crates that are not in
-+// the build. `cargo tree --target <target> -e normal,build` gives the crates of
-+// the build, including proc-macros and build-dependencies. This script keeps
-+// only the components that a tree lists, and it fails when a crate of a tree
- // has no component.
- //
-+// A package SBOM also lists each bin target of the package as a nested
-+// component. This script removes the bin components that the archive does not
-+// ship, for example bins that need a feature that the release does not enable.
-+//
- // Usage:
--//   node filter-sbom.mjs <sbom.cdx.json> <cargo-tree.txt>
-+//   node filter-sbom.mjs --out <merged.cdx.json> --tree <cargo-tree.txt>...
-+//     --bin <shipped-bin>... <package.cdx.json>...
- //
--// <cargo-tree.txt> is the output of
--//   cargo tree -p fallow-cli --target <target> -e normal,build --prefix none --format '{p}' --locked
--// The script rewrites the SBOM in place. It exits 1, with the SBOM untouched,
--// when the tree is empty or when a crate of the tree has no component.
-+// Each <cargo-tree.txt> is the output of
-+//   cargo tree <packages> --target <target> -e normal,build --prefix none --format '{p}' --locked
-+// The script writes <merged.cdx.json>. It exits 1, and writes nothing, when an
-+// input is not valid, when a crate of a tree has no component, when a shipped
-+// bin is in no package, or when a dependency entry names an unknown component.
+@@ -545,7 +545,7 @@ Steps per harness:
+ | `mcp` | `mcpServers.fallow` in `.mcp.json` (`--approve` also lists it in `.claude/settings.local.json`) | `[mcp_servers.fallow]` in `.codex/config.toml` (applies once the project is trusted; the `codex mcp add` next step works immediately) | `mcpServers.fallow` in `.cursor/mcp.json` |
+ | `hooks` | `.claude/settings.json` PreToolUse gate plus `.claude/hooks/fallow-gate.sh` | `.codex/hooks.json` PreToolUse gate plus `.codex/hooks/fallow-gate.sh` (Codex runs it after you trust it in `/hooks`), and a marked routing block in `AGENTS.md` | skipped (`unsupported_harness`) |
  
-+import { randomUUID } from "node:crypto";
- import { readFileSync, writeFileSync } from "node:fs";
- import { pathToFileURL } from "node:url";
-+import { parseArgs } from "node:util";
+-The step writes each released skill: `fallow` for analysis and `fallow-setup` for setting up code-quality tooling. Each skill is a small pointer to `node_modules/fallow/skills/<name>` when that copy exists (so it never drifts from the installed binary); otherwise the tree embedded in the binary is written. Each skill picks its source on its own, so an older npm package without `fallow-setup` still gets the embedded copy of that skill. The MCP command is probed before anything is written: `npx --no fallow-mcp` for an npm-installed project, `fallow-mcp` from `PATH`, or the running multicall binary; when none exists the step is `skipped` with `mcp_entry_unavailable` rather than writing a config that cannot start.
++The step writes each released skill: `fallow` for analysis and `fallow-setup` for setting up code-quality tooling. Each skill is a small pointer to `node_modules/fallow/skills/<name>` when that copy exists (so it never drifts from the installed binary); otherwise the tree embedded in the binary is written. Each skill picks its source on its own, so an older npm package without `fallow-setup` still gets the embedded copy of that skill. The MCP command is probed before anything is written: `npx --no fallow-mcp` for an npm-installed project, `fallow-mcp` from `PATH`, or the running multicall binary. A user-level entry (`--user`) and the printed `codex mcp add` and `claude mcp add --scope user` commands never use `npx`, because a user-level server starts in every project: they use the absolute path of the first `fallow-mcp` on `PATH`, as found, that is outside the project and has no `node_modules` component, or of the running multicall binary under the same rule. `agent status` reports a user-level `npx` entry and a user-level gate script from an older fallow as `stale`. When no launcher exists the step is `skipped` with `mcp_entry_unavailable` rather than writing a config that cannot start.
  
- // A `cargo tree --format '{p}'` line is `<name> v<version>`, optionally
- // followed by a source path, `(proc-macro)` or `(*)`.
- const TREE_LINE_PATTERN = /^(\S+) v(\S+)/;
+ Every file or block carries a `<!-- fallow:agent-install v1 ... -->` marker. Re-running is byte-stable. An existing skill named `fallow` or `fallow-setup` without a marker is `refused` (`skill_name_taken`) unless `--force`; the other skill is still written. JSON and TOML cannot carry a marker, so a `fallow` MCP entry counts as fallow-managed only when its command is one fallow writes; any other entry is `refused` (`mcp_entry_foreign`) and never removed without `--force`. `--force` on an unparsable config file saves the old bytes as `<file>.fallow-bak` before rewriting. `uninstall` removes managed content, deletes a config file it emptied (and an emptied `.cursor/` or `.codex/` directory), and deletes `AGENTS.md` or `CLAUDE.md` only while the file still matches what fallow authored.
  
-+/** The name of the root component that describes the release. */
-+export const RELEASE_NAME = "fallow";
-+
-+const TARGET_PROPERTY = "cdx:rustc:sbom:target:triple";
-+
- const keyOf = (name, version) => `${name}@${version}`;
+@@ -582,7 +582,7 @@ Human output groups paths under "Shared with your team (commit these)" and "Loca
+     {"harness": null, "step": "guide", "status": "written", "scope": "shared", "path": "AGENTS.md"},
+     {"harness": "claude", "step": "mcp", "status": "skipped", "scope": "local", "path": ".claude/settings.local.json", "reason": "approval_not_requested"}
+   ],
+-  "next_actions": [{"id": "codex-mcp-add", "command": "codex mcp add fallow -- npx --no fallow-mcp", "reason": "...", "mutating": true}]
++  "next_actions": [{"id": "codex-mcp-add", "command": "codex mcp add fallow -- /usr/local/bin/fallow-mcp", "reason": "...", "mutating": true}]
+ }
+ ```
  
- /** Returns the `name@version` keys of the crates in a `cargo tree` output. */
-@@ -36,6 +55,112 @@ export const parseCargoTree = (text) => {
-   return keys;
- };
- 
-+const targetOf = (sbom) =>
-+  sbom.metadata?.properties?.find((property) => property.name === TARGET_PROPERTY)?.value;
-+
-+const unionDependencies = (sboms) => {
-+  const byRef = new Map();
-+  for (const sbom of sboms) {
-+    for (const entry of sbom.dependencies ?? []) {
-+      const dependsOn = byRef.get(entry.ref) ?? new Set();
-+      for (const ref of entry.dependsOn ?? []) dependsOn.add(ref);
-+      byRef.set(entry.ref, dependsOn);
-+    }
-+  }
-+  return [...byRef].map(([ref, dependsOn]) => ({ ref, dependsOn: [...dependsOn] }));
-+};
-+
-+const assertMergeable = (sboms) => {
-+  if (sboms.length === 0) throw new Error("no SBOM to merge");
-+  const [first] = sboms;
-+  for (const sbom of sboms) {
-+    const root = sbom.metadata?.component;
-+    if (!root?.["bom-ref"]) throw new Error("an SBOM has no root component");
-+    if (!Array.isArray(sbom.components)) {
-+      throw new Error(`the SBOM of ${root.name} has no components array`);
-+    }
-+    if (sbom.specVersion !== first.specVersion) {
-+      throw new Error(`the SBOM of ${root.name} has another specVersion`);
-+    }
-+    if (targetOf(sbom) !== targetOf(first)) {
-+      throw new Error(`the SBOM of ${root.name} is for another target`);
-+    }
-+  }
-+};
-+
-+const unionComponents = (sboms, packages) => {
-+  const components = new Map(packages.map((root) => [root["bom-ref"], root]));
-+  for (const sbom of sboms) {
-+    for (const component of sbom.components) {
-+      if (!components.has(component["bom
 ```
 
-**File**: `.github/scripts/filter-sbom.test.mjs` (modified, +205/-21)
+**File**: `.agents/skills/fallow/references/patterns.md` (modified, +11/-5)
 ```diff
-@@ -1,17 +1,24 @@
--// Tests for filter-sbom.mjs, the release step that removes the SBOM components
--// that the release binary does not link (#5131).
-+// Tests for filter-sbom.mjs, the release step that merges the SBOMs of the
-+// shipped packages and removes the components that the release binaries do
-+// not link (#5131, #5190).
- //
- // Run: node --test .github/scripts/filter-sbom.test.mjs
+@@ -782,18 +782,24 @@ Manual files:
+ Prefer `fallow hooks install --target agent` to install this file. The script is written and maintained by fallow itself; the canonical source is [`crates/cli/src/setup_hooks/fallow-gate.sh`](https://github.com/fallow-rs/fallow/blob/main/crates/cli/src/setup_hooks/fallow-gate.sh).
  
- import assert from "node:assert/strict";
- import { execFileSync } from "node:child_process";
--import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
- import { tmpdir } from "node:os";
- import { join } from "node:path";
- import { test } from "node:test";
- import { fileURLToPath } from "node:url";
+ Behavior you can rely on:
+-- The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
++- The handler runs only the script under `$CLAUDE_PROJECT_DIR`, never a `.claude/hooks/fallow-gate.sh` that a nested repository, submodule or package supplies. It walks up from the session directory and checks for a `.git` entry before it reaches `$CLAUDE_PROJECT_DIR`. When it reaches that directory, it runs the script there, so a session in a package directory audits the install root. When a nested worktree or repository comes first, it runs the same script from the session directory.
+ - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
+ - A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
+ - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
+-- Prefers a native Fallow JSON reader discovered from PATH, the process directory or the script's project root; jq remains a compatibility fallback. Audit runner lookup tries project-local `node_modules/.bin/fallow`, PATH, Yarn Plug'n'Play, then `npx --no-install fallow`. A missing JSON reader or audit runner causes a stderr skip notice. Check `fallow agent status --format json --quiet` after setup for missing or unverified runtimes. Approve project trust and the hook in the harness before relying on the gate.
++- Reads `tool_input.command` and decides if the command is a git write before it starts any program. Most hook inputs need no helper. A hook input that the small built-in reader cannot decode uses the reader order below.
++- Runs only a fallow that the install trusts, never a launcher of the audited tree or its parents. A project-scope gate tries the `node_modules/.bin/fallow` of its install root (two directories above the script), then the `fallow` on PATH, then Yarn Plug'n'Play and `npx --no-install fallow` in t
+```
+
+**File**: `.claude/skills/fallow/references/cli-reference.md` (modified, +2/-2)
+```diff
+@@ -545,7 +545,7 @@ Steps per harness:
+ | `mcp` | `mcpServers.fallow` in `.mcp.json` (`--approve` also lists it in `.claude/settings.local.json`) | `[mcp_servers.fallow]` in `.codex/config.toml` (applies once the project is trusted; the `codex mcp add` next step works immediately) | `mcpServers.fallow` in `.cursor/mcp.json` |
+ | `hooks` | `.claude/settings.json` PreToolUse gate plus `.claude/hooks/fallow-gate.sh` | `.codex/hooks.json` PreToolUse gate plus `.codex/hooks/fallow-gate.sh` (Codex runs it after you trust it in `/hooks`), and a marked routing block in `AGENTS.md` | skipped (`unsupported_harness`) |
  
--import { filterSbom, parseCargoTree } from "./filter-sbom.mjs";
-+import {
-+  danglingRefs,
-+  dropUnshippedBins,
-+  filterSbom,
-+  mergeSboms,
-+  parseCargoTree,
-+} from "./filter-sbom.mjs";
+-The step writes each released skill: `fallow` for analysis and `fallow-setup` for setting up code-quality tooling. Each skill is a small pointer to `node_modules/fallow/skills/<name>` when that copy exists (so it never drifts from the installed binary); otherwise the tree embedded in the binary is written. Each skill picks its source on its own, so an older npm package without `fallow-setup` still gets the embedded copy of that skill. The MCP command is probed before anything is written: `npx --no fallow-mcp` for an npm-installed project, `fallow-mcp` from `PATH`, or the running multicall binary; when none exists the step is `skipped` with `mcp_entry_unavailable` rather than writing a config that cannot start.
++The step writes each released skill: `fallow` for analysis and `fallow-setup` for setting up code-quality tooling. Each skill is a small pointer to `node_modules/fallow/skills/<name>` when that copy exists (so it never drifts from the installed binary); otherwise the tree embedded in the binary is written. Each skill picks its source on its own, so an older npm package without `fallow-setup` still gets the embedded copy of that skill. The MCP command is probed before anything is written: `npx --no fallow-mcp` for an npm-installed project, `fallow-mcp` from `PATH`, or the running multicall binary. A user-level entry (`--user`) and the printed `codex mcp add` and `claude mcp add --scope user` commands never use `npx`, because a user-level server starts in every project: they use the absolute path of the first `fallow-mcp` on `PATH`, as found, that is outside the project and has no `node_modules` component, or of the running multicall binary under the same rule. `agent status` reports a user-level `npx` entry and a user-level gate script from an older fallow as `stale`. When no launcher exists the step is `skipped` with `mcp_entry_unavailable` rather than writing a config that cannot start.
  
- const SCRIPT_PATH = fileURLToPath(new URL("./filter-sbom.mjs", import.meta.url));
+ Every file or block carries a `<!-- fallow:agent-install v1 ... -->` marker. Re-running is byte-stable. An existing skill named `fallow` or `fallow-setup` without a marker is `refused` (`skill_name_taken`) unless `--force`; the other skill is still written. JSON and TOML cannot carry a marker, so a `fallow` MCP entry counts as fallow-managed only when its command is one fallow writes; any other entry is `refused` (`mcp_entry_foreign`) and never removed without `--force`. `--force` on an unparsable config file saves the old bytes as `<file>.fallow-bak` before rewriting. `uninstall` removes managed content, deletes a config file it emptied (and an emptied `.cursor/` or `.codex/` directory), and deletes `AGENTS.md` or `CLAUDE.md` only while the file still matches what fallow authored.
  
-@@ -94,40 +101,217 @@ test("filterSbom refuses an empty tree", () => {
-   assert.throws(() => filterSbom(makeSbom(), new Set()), /lists no crates/);
- });
+@@ -582,7 +582,7 @@ Human output groups paths under "Shared with your team (commit these)" and "Loca
+     {"harness": null, "step": "guide", "status": "written", "scope": "shared", "path": "AGENTS.md"},
+     {"harness": "claude", "step": "mcp", "status": "skipped", "scope": "local", "path": ".claude/settings.local.json", "reason": "approval_not_requested"}
+   ],
+-  "next_actions": [{"id": "codex-mcp-add", "command": "codex mcp add fallow -- npx --no fallow-mcp", "reason": "...", "mutating": true}]
++  "next_actions": [{"id": "codex-mcp-add", "command": "codex mcp add fallow -- /usr/local/bin/fallow-mcp", "reason": "...", "mutating": true}]
+ }
+ ```
  
--const runCli = (sbom, tree) => {
-+const TARGET = "x86_64-unknown-linux-gnu";
-+
-+const pathRef = (name) => `path+file:///work/${name}#${name}@1.0.0`;
-+
-+const packageSbom = (name, bins, deps, target = TARGET) => ({
-+  bomFormat: "CycloneDX",
-+  specVersion: "1.5",
-+  version: 1,
-+  metadata: {
-+    properties: [{ name: "cdx:rustc:sbom:target:triple", value: target }],
-+    component: {
-+      type: "application",
-+      "bom-ref": pathRef(name),
-+      name,
-+      version: "1.0.0",
-+      components: [
-+        {
-+          type: "library",
-+          "bom-ref": `${pathRef(name)} bin-target-0`,
-+          name: name.replaceAll("-", "_"),
+```
+
+**File**: `.claude/skills/fallow/references/patterns.md` (modified, +11/-5)
+```diff
+@@ -782,18 +782,24 @@ Manual files:
+ Prefer `fallow hooks install --target agent` to install this file. The script is written and maintained by fallow itself; the canonical source is [`crates/cli/src/setup_hooks/fallow-gate.sh`](https://github.com/fallow-rs/fallow/blob/main/crates/cli/src/setup_hooks/fallow-gate.sh).
+ 
+ Behavior you can rely on:
+-- The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
++- The handler runs only the script under `$CLAUDE_PROJECT_DIR`, never a `.claude/hooks/fallow-gate.sh` that a nested repository, submodule or package supplies. It walks up from the session directory and checks for a `.git` entry before it reaches `$CLAUDE_PROJECT_DIR`. When it reaches that directory, it runs the script there, so a session in a package directory audits the install root. When a nested worktree or repository comes first, it runs the same script from the session directory.
+ - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
+ - A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
+ - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
+-- Prefers a native Fallow JSON reader discovered from PATH, the process directory or the script's project root; jq remains a compatibility fallback. Audit runner lookup tries project-local `node_modules/.bin/fallow`, PATH, Yarn Plug'n'Play, then `npx --no-install fallow`. A missing JSON reader or audit runner causes a stderr skip notice. Check `fallow agent status --format json --quiet` after setup for missing or unverified runtimes. Approve project trust and the hook in the harness before relying on the gate.
++- Reads `tool_input.command` and decides if the command is a git write before it starts any program. Most hook inputs need no helper. A hook input that the small built-in reader cannot decode uses the reader order below.
++- Runs only a fallow that the install trusts, never a launcher of the audited tree or its parents. A project-scope gate tries the `node_modules/.bin/fallow` of its install root (two directories above the script), then the `fallow` on PATH, then Yarn Plug'n'Play and `npx --no-install fallow` in t
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +2/-0)
+```diff
+@@ -186,6 +186,8 @@ jobs:
+               - 'crates/core/tests/integration_test/workspace_hoisted_package_imports.rs'
+               - 'crates/core/tests/integration_test/workspace_cross_imports.rs'
+               - 'crates/core/tests/integration_test/workspaces.rs'
++              - 'crates/cli/src/setup_hooks_render.rs'
++              - 'crates/cli/src/user_launcher.rs'
+               - 'crates/engine/src/changed_files.rs'
+               - 'crates/engine/src/churn.rs'
+               - 'crates/engine/src/churn_cache_path.rs'
+```
+
+**File**: `crates/cli/src/agent_install/mcp.rs` (modified, +129/-2)
+```diff
+@@ -7,6 +7,12 @@
+ //! first two are resolved on disk. A launcher that would only work on this machine is never
+ //! written into a file the team commits.
+ //!
++//! A user-level entry applies in every project. It never uses `npx`, which
++//! runs the `fallow-mcp` of the project that the harness opens. It uses the
++//! absolute path of the `fallow-mcp` on `PATH`, as found, or of the running
++//! binary when that binary serves MCP. A launcher of the current project
++//! never counts, see [`crate::setup_hooks::user_launcher`].
++//!
+ //! JSON cannot carry a marker comment, so ownership of the `fallow` entry is
+ //! recognized by shape: an entry whose command and args match one of the
+ //! launchers fallow writes, with no extra keys, is fallow-managed. The one
+@@ -37,6 +43,9 @@ const MCP_VERSION_PREFIX: &str = "fallow-mcp ";
+ /// The version line is short; the probe reads no more than this many bytes.
+ const PROBE_OUTPUT_LIMIT: u64 = 4096;
+ const NO_LAUNCHER_DETAIL: &str = "no fallow-mcp launcher found. Install fallow through npm (npm i -D fallow), or put fallow-mcp on PATH. cargo install fallow-mcp and the GitHub release archive both supply fallow-mcp";
++/// A user-level entry starts in every project, so it needs a launcher outside
++/// each project: a global install.
++const NO_USER_LAUNCHER_DETAIL: &str = "no fallow-mcp launcher outside the project found. A user-level entry needs a global install: npm install -g fallow, or cargo install fallow-mcp";
+ 
+ /// How the MCP server should be started.
+ #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+@@ -91,7 +100,12 @@ impl McpCommand {
+     }
+ }
+ 
+-pub fn resolve_command(root: &Path) -> Option<McpCommand> {
++/// The launcher for a project-level entry (`user` false) or a user-level
++/// entry (`user` true).
++pub fn resolve_command(root: &Path, user: bool) -> Option<McpCommand> {
++    if user {
++        return resolve_user_command(root);
++    }
+     resolve_command_with(
+         node_modules_launcher_present(root),
+         || find_on_path("fallow-mcp"),
+@@ -143,6 +157,47 @@ pub fn resolve_command_with(
+     })
+ }
+ 
++/// The launcher for a user-level entry and for a printed user-scope command
++/// of the project at `root`.
++pub fn resolve_user_command(root: &Path) -> Option<McpCommand> {
++    resolve_user_command_with(
++        crate::setup_hooks::user_launcher::search_dirs(),
++        &crate::setup_hooks::user_launcher::project_dirs(root),
++        || {
++            let exe = std::env::current_exe().ok()?;
++            serves_mcp(&exe).then_some(exe)
 +        },
-+        ...bins.map((bin, index) => ({
-+          type: "application",
-+          "bom-ref": `${pathRef(name)} bin-target-${index + 1}`,
-+          name: bin,
-+        })),
-+      ],
-+    },
-+  },
-+  components: deps.map(([dep, version]) => component(dep, version)),
-+  dependencies: [
-+    { ref: pathRef(name), dependsOn: deps.map(([dep, version]) => ref(dep, version)) },
-+    ...deps.map(([dep, version]) => ({ ref: ref(dep, version), dependsOn: [] })),
-+  ],
-+});
++    )
++}
 +
-+const cliSbom = () =>
-+  packageSbom(
-+    "fallow-cli",
-+    ["fallow", "stub_sidecar"],
-+    [
-+      ["serde", "1.0.0"],
-+      ["time", "0.3.55"],
-+    ],
-+  );
-+const lspSbom = () =>
-+  packageSbom(
-+    "fallow-lsp",
-+    ["fallow-lsp"],
-+    [
-+      ["serde", "1.0.0"],
-+      ["tower-lsp-server", "0.22.0"],
-+    ],
-+  );
++/// The user-level launcher: the first `fallow-mcp` in `search_dirs` that
++/// [`crate::setup_hooks::user_launcher::is_user_launcher`] accepts, as found, else the
++/// running binary when it serves MCP and is accepted too.
++pub fn resolve_user_command_with(
++    search_dirs: impl IntoIterator<Item = PathBuf>,
++    project_dirs: &[PathBuf],
++    self_probe: impl FnOnce() -> Option<PathBuf>,
++) -> Option<McpCommand> {
++    if let Some(found) = crate::setup_hooks::user_launcher::find_user_launcher(
++        "fallow-mcp",
++        search_dirs,
++        project_dirs,
++    ) {
++        return Some(McpCommand {
++            command: found.display().to_string(),
++            args: Vec::new(),
++            source: McpSource::Path,
++        });
++    }
++    self_probe()
++        .filter(|exe| crate::setup_hooks::user_launcher::is_user_launcher(exe, project_dirs))
++        .map(|exe| McpCommand {
++            command: exe.display().to_string(),
++            args: vec!["mcp-server".to_string()],
++            source: McpSource::SelfBinary,
++        })
++}
 +
-+test("mergeSboms gives one release root with each package as a component", () => {
-+  const merged = mergeSboms([cliSbom(), lspSbom()]);
+ /// Resolve a bare command name against `PATH`, the way the agent gate does.
+ pub(super) fn find_on_path(name: &str) -> Option<PathBuf> {
+     let candidates: &[&str] = if cfg!(windows) {
+@@ -315,7 +370,11 @@ fn install_for(
+             StepReport::new(Some(harness), Step::Mcp, StepStatus::Skipped, ctx.scope())
+                 .path(ctx, &path)
+                 .reason(Reason::McpEntryUnavailable)
+-                .detail(NO_LAUNCHER_DETAIL),
++                .detail(if ctx.user {
++                    NO_USER_LAUNCHER_DETAIL
++                } else {
++                    NO_LAUNCHER_DETAIL
++                }),
+         ];
+     };
+     if harness == Harness::Claude && ctx.user {
+@@ -1047,6 +1106,74 @@ pub fn merge_codex(
+     Ok(backup.map_or(FileOutcome::Changed, FileOutcome::ChangedAfterBackup))
+ }
+ 
++/// The warning for a Codex project gate in a repository nested in another
++/// work tree. The Codex handler runs no gate there.
++pub(super) const NESTED_CODEX_GATE_WARNING: &str = "warning: the Codex gate does not run in a repository nested in another work tree; install in the outer repository";
 +
-+  assert.equal(merged.metadata.component.name, "fallow");
-+  assert.equal(merged.metadata.component["bom-ref"], "fallow@1.0.0");
-+  assert.equal(merged.metadata.properties[0].value, TARGET);
-+  assert.deepEqual(
-+    merged.components.map((c) => c.name),
-+    ["fallow-cli", "fallow-lsp", "serde", "time", "tower-lsp-server"],
-+  );
-+  assert.deepEqual(merged.dependencies[0], {
-+    ref: "fallow@1.0.0",
-+    dependsOn: [pathRef("fallow-cli"), pathRef("fallow-lsp")],
-+  });
-+  assert.deepEqual(danglingRefs(merged), []);
-+});
-+
-+test("mergeSboms joins the dependency entries of a shared crate", () => {
-+  const cli = cliSbom();
-+  const lsp = lspSbom();
-+  cli.dependencies.find((d) => d.ref === ref("serde", "1.0.0")).dependsOn = [ref("time", "0.3.55")];
-+  lsp.dependencies.find((d) => d.ref === ref("serde", "1.0.0")).dependsOn = [
-+    ref("tower-lsp-server", "0.22.0"),
-+  ];
-+  const merged = mergeSboms([cli, lsp]);
-+
-+  const serde = merged.dependencies.filter((d) => d.ref === ref("serde", "1.0.0"));
-+  assert.equal(serde.length, 1);
-+  assert.deepEqual(serde[0].dependsOn, [ref("time", "0.3.55"), ref("tower-lsp-server", "0.22.0")]);
-+});
-+
-+test("mergeSboms keeps the package root when another SBOM lists it as a library", () => {
-+  const lsp = lspSbom();
-+  lsp.components.push({
-+    type: "library",
-+    "bom-ref": pathRef("fallow-cli"),
-+    name: "fallow-cli",
-+    version: "1.0.0",
-+  });
-+  const merged = mergeSboms([cliSbom(), lsp]);
-+
-+  const cli = merged.components.filter((c) => c["bom-ref"] === pathRef("fallow-cli"));
-+  assert.equal(cli.length, 1);
-+  assert.equal(cli[0].type, "application");
-+  assert.ok(Array.isArray(cli[0].components));
-+});
-+
-+test("mergeSboms refuses SBOMs of different targets", () => {
-+  const lsp = packageSbom("fallow-lsp", ["fallow-lsp"], [], "aarch64-apple-darwin");
-+  assert.throws(() => mergeSboms([cliSbom(), lsp]), /another target/);
-+});
-+
-+test("dropUnshippedBins removes bins that do not ship and keeps library targets", () => {
-+  const result = dropUnshippedBins(
-+    mergeSboms([cliSbom(), lspSbom()]),
-+    new Set(["fallow", "fallow-lsp"]),
-+  );
-+
-+  assert.deepEqual(resu
++/// True when the git work tree of `root` lies inside the work tree of
++/// another repository (for example a submodule or a nested clone), and the
++/// outer repository does not list it as a linked worktree. A work tree at
++/// `home` does not count as the out
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +32/-11)
+**File**: `crates/cli/src/agent_install/mod.rs` (modified, +47/-8)
 ```diff
-@@ -1510,10 +1510,14 @@ jobs:
-           retention-days: 30
-           include-hidden-files: false
+@@ -408,11 +408,15 @@ struct Report {
+ /// directory still writes `.mcp.json` and `AGENTS.md` where the harnesses
+ /// read them.
+ pub fn resolve_root(root: &Path, root_explicit: bool) -> PathBuf {
++    let canonical = dunce::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
+     if root_explicit {
+-        return dunce::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
++        return canonical;
+     }
++    // The git top level must contain the directory itself. Any other answer
++    // names a path that git did not mean, so the directory stays the root.
+     crate::base_worktree::git_toplevel(root)
+-        .unwrap_or_else(|| dunce::canonicalize(root).unwrap_or_else(|_| root.to_path_buf()))
++        .filter(|top| canonical.starts_with(top))
++        .unwrap_or(canonical)
+ }
  
--  # One CycloneDX SBOM per target. `cargo cyclonedx` resolves features over the
--  # whole workspace, so its SBOM also lists crates that only other members
--  # enable. `filter-sbom.mjs` keeps only the crates that `cargo tree` gives for
--  # the fallow-cli build of that target, and it fails when a crate of that tree
-+  # One CycloneDX SBOM per target. It covers each binary of the
-+  # `fallow-<target>` archive: fallow, fallow-lsp, fallow-mcp and the
-+  # similar-code sidecar, which is a separate Cargo workspace (#5190).
-+  # `cargo cyclonedx` writes one SBOM per package and resolves features over
-+  # the whole workspace, so each SBOM also lists crates that only other members
-+  # enable. `filter-sbom.mjs` merges the package SBOMs and keeps only the crates
-+  # that `cargo tree` gives for the builds of that target. It removes the bin
-+  # components that the archive does not ship. It fails when a crate of a tree
-   # has no component (#5131). The `fallow-*` artifact name makes
-   # `release-assets` stage it with the binaries.
-   sbom:
-@@ -1554,15 +1558,32 @@ jobs:
-           FALLOW_TARGET: ${{ matrix.target }}
-         run: |
-           set -euo pipefail
--          cargo cyclonedx --manifest-path crates/cli/Cargo.toml \
--            --format json --spec-version 1.5 --target "$FALLOW_TARGET" \
--            --override-filename "fallow-${FALLOW_TARGET}.cdx"
--          cargo tree -p fallow-cli --target "$FALLOW_TARGET" -e normal,build \
-+          sidecar=tools/similar-code-sidecar/Cargo.toml
-+          for manifest in crates/cli/Cargo.toml "$sidecar"; do
-+            cargo cyclonedx --manifest-path "$manifest" \
-+              --format json --spec-version 1.5 --target "$FALLOW_TARGET" \
-+              --override-filename "fallow-${FALLOW_TARGET}.cdx"
-+          done
-+          # The build job builds these packages with fallow-multicall in one
-+          # cargo invocation on most targets. One tree of the shipped packages
-+          # gives the same crates as that build. fallow-multicall is not in the
-+          # archive, so the tree leaves it out.
-+          cargo tree -p fallow-cli -p fallow-lsp -p fallow-mcp \
-+            --target "$FALLOW_TARGET" -e normal,build \
-             --prefix none --format '{p}' --locked > "$RUNNER_TEMP/cargo-tree.txt"
--          node .github/scripts/filter-sbom.mjs \
--            "crates/cli/fallow-${FALLOW_TARGET}.cdx.json" "$RUNNER_TEMP/cargo-tree.txt"
-+          cargo tree --manifest-path "$sidecar" \
-+            --target "$FALLOW_TARGET" -e normal,build \
-+            --prefix none --format '{p}' --locked > "$RUNNER_TEMP/cargo-tree-similar-code.txt"
-           mkdir sbom
--          cp "crates/cli/fallow-${FALLOW_TARGET}.cdx.json" sbom/
-+          node .github/scripts/filter-sbom.mjs \
-+            --out "sbom/fallow-${FALLOW_TARGET}.cdx.json" \
-+            --tree "$RUNNER_TEMP/cargo-tree.txt" \
-+            --tree "$RUNNER_TEMP/cargo-tree-similar-code.txt" \
-+            --bin fallow --bin fallow-lsp --bin fallow-mcp --bin fallow-similar-code \
-+            "crates/cli/fallow-${FALLOW_TARGET}.cdx.json" \
-+            "crates/lsp/fallow-${FALLOW_TARGET}.cdx.json" \
-+            "crates/mcp/fallow-${FALLOW_TARGET}.cdx.json" \
-+            "tools/similar-code-sidecar/fallow-${FALLOW_TARGET}.cdx.json"
+ fn select_harnesses(
+@@ -472,7 +476,7 @@ pub fn run_agent_install(
+     let mcp_command = if skip(Step::Mcp) {
+         None
+     } else {
+-        let command = mcp::resolve_command(&root);
++        let command = mcp::resolve_command(&root, ctx.user);
+         steps.extend(mcp::install(
+             &ctx,
+             &harnesses,
+@@ -483,14 +487,35 @@ pub fn run_agent_install(
+     };
+     if !skip(Step::Hooks) {
+         steps.extend(hooks::install(&ctx, &harnesses));
++        if !ctx.user
++            && harnesses.contains(&Harness::Codex)
++            && mcp::is_nested_repository(&root, ctx.home.as_deref())
++        {
++            eprintln!("{}", mcp::NESTED_CODEX_GATE_WARNING);
++        }
+     }
  
-       - name: Upload SBOM
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
++    // `codex mcp add` writes a user-level entry, so the printed command uses
++    // the user-level launcher, also in a project-scope install.
++    let user_mcp_command = match &mcp_command {
++        Some(_) if !ctx.user && harnesses.contains(&Harness::Codex) => {
++            mcp::resolve_user_command(&root)
++        }
++        _ => None,
++    };
+     let mut next_actions = next_actions(
+         &ctx,
+         FollowUp { opts, root: &root },
+         &harnesses,
+         detected,
+-        mcp_command.as_ref(),
++        McpCommands {
++            entry: mcp_command.as_ref(),
++            user: if ctx.user {
++                mcp_command.as_ref()
++            } else {
++                user_mcp_command.as_ref()
++            },
++        },
+         &steps,
+     );
+     if let Some(apply) = apply_dry_run_action(opts, &root, &harnesses, &steps) {
+@@ -651,12 +676,20 @@ impl FollowUp<'_> {
+     }
+ }
+ 
++/// The MCP launchers of one install: the launcher of the written entries, and
++/// the user-level launcher for the printed user-scope commands.
++#[derive(Clone, Copy)]
++struct McpCommands<'a> {
++    entry: Option<&'a mcp::McpCommand>,
++    user: Option<&'a mcp::McpCommand>,
++}
++
+ fn next_actions(
+     ctx: &Ctx,
+     follow_up: FollowUp<'_>,
+     harnesses: &[Harness],
+     detected: bool,
+-    mcp_command: Option<&mcp::McpCommand>,
++    mcp: McpCommands<'_>,
+     steps: &[StepReport],
+ ) -> Vec<NextAction> {
+     let mut next: Vec<NextAction> = Vec::new();
+@@ -669,8 +702,11 @@ fn next_actions(
+             mutating: true,
+         });
+     }
+-    if let Some(command) = mcp_command {
+-        if harnesses.contains(&Harness::Codex) && !ctx.user {
++    if mcp.entry.is_some() {
++        if let Some(command) = mcp.user
++            && harnesses.contains(&Harness::Codex)
++            && !ctx.user
++        {
+             next.push(NextAction {
+                 id: "codex-mcp-add",
+                 command: format!("codex mcp add fallow -- {}", command.shell_words()),
+@@ -679,7 +715,10 @@ fn next_actions(
+                 mutating: true,
+             });
+         }
+-        if harnesses.contains(&Harness::Claude) && ctx.user {
++        if let Some(command) = mcp.user
++            && harnesses.contains(&Harness::Claude)
++            && ctx.user
++        {
+             next.push(NextAction {
+                 id: "claude-mcp-add-user",
+                 command: format!("claude mcp add --scope user fallow -- {}", command.shell_words()),
 ```
 
-**File**: `changelog.d/fix-sbom-all-shipped-binaries.md` (added, +4/-0)
+**File**: `crates/cli/src/agent_install/skill.rs` (modified, +60/-2)
 ```diff
-@@ -0,0 +1,4 @@
+@@ -238,9 +238,11 @@ impl Source {
+     /// has no usable `SKILL.md`. pnpm and `npm link` make the package directory
+     /// a link, so the check resolves it first and then accepts only files whose
+     /// real path stays inside it. A file that links out of the package could
+-    /// otherwise copy any readable file into the working tree.
++    /// otherwise copy any readable file into the working tree. The resolved
++    /// directory must also be an installed fallow package, see
++    /// [`installed_package`].
+     fn shipped(root: &Path, skill: &'static ReleasedSkill) -> Option<Self> {
+-        let package = dunce::canonicalize(root.join(NODE_MODULES_PACKAGE)).ok()?;
++        let package = installed_package(root)?;
+         let shipped = root.join(skill.node_modules_dir());
+         let PackageFile::Text(text) = read_package_file(&package, &shipped.join("SKILL.md")) else {
+             return None;
+@@ -302,6 +304,62 @@ impl Source {
+     }
+ }
+ 
++/// The canonical `node_modules/fallow` of `root`, when it is an installed
++/// fallow package: a directory named `fallow` in a `node_modules` directory,
++/// with a `package.json` whose name is `fallow`. Inside the project or its
++/// git work tree, only a package below the `node_modules` of the project or
++/// of the work tree top counts (for example the pnpm store), not a directory
++/// elsewhere. Git must not track the `node_modules/fallow` entry or the
++/// package files: a package manager writes them, a commit does not. When git
++/// cannot answer, or a nested repository or submodule below the work tree top
++/// holds the package, the package does not count.
++fn installed_package(root: &Path) -> Option<PathBuf> {
++    let package = dunce::canonicalize(root.join(NODE_MODULES_PACKAGE)).ok()?;
++    let project = dunce::canonicalize(root).ok()?;
++    let top = match super::mcp::git_top(&project) {
++        super::mcp::GitTop::Outside => None,
++        super::mcp::GitTop::Top(top) => Some(top),
++        super::mcp::GitTop::Unknown => return None,
++    };
++    let trees: Vec<&Path> = std::iter::once(project.as_path())
++        .chain(top.as_deref())
++        .collect();
++    let inside_tree = trees.iter().any(|tree| package.starts_with(tree));
++    let in_node_modules = trees
++        .iter()
++        .any(|tree| package.starts_with(tree.join("node_modules")));
++    if project.starts_with(&package)
++        || package.file_name()? != "fallow"
++        || package.parent()?.file_name()? != "node_modules"
++        || (inside_tree && !in_node_modules)
++    {
++        return None;
++    }
++    if let Some(top) = &top {
++        // Git lists no path inside a nested repository or submodule.
++        if package
++            .ancestors()
++            .take_while(|dir| dir != top)
++            .any(|dir| dir.join(".git").symlink_metadata().is_ok())
++        {
++            return None;
++        }
++        let mut tracked = vec![project.strip_prefix(top).ok()?.join(NODE_MODULES_PACKAGE)];
++        if let Ok(inside) = package.strip_prefix(top) {
++            tracked.push(inside.to_path_buf());
++        }
++        if super::mcp::git_tracks_any(top, &tracked)? {
++            return None;
++        }
++    }
++    let PackageFile::Text(manifest) = read_package_file(&package, &package.join("package.json"))
++    else {
++        return None;
++    };
++    let manifest: serde_json::Value = serde_json::from_str(&manifest).ok()?;
++    (manifest.get("name")?.as_str()? == "fallow").then_some(package)
++}
++
+ enum PackageFile {
+     Missing,
+     Text(String),
+```
+
+---
+
+### Incident Patch 3: `72cbf77c` (2026-11-25)
+**Commit Message**: fix(lsp): start no run for a watched-file event without a content change (#5284)
+
+* fix(lsp): start no run for a watched-file event without a content change
+
+A watched-file event does not prove that a file changed. The VS Code
+watcher also reports timestamp and attribute changes, and one editor
+save sends `didSave` and then a watched-file event for the same content.
+Each event started a run, so a steady stream of events kept the server
+analyzing without end, and each save started two runs.
+
+The server now keeps the length and a hash of the last known content of
+each saved or watched file. A watched-file event for the same content
+starts no run. The Output channel names the files that start a run and
+counts the skipped events.
+
+The server also writes only WARN and ERROR tracing lines to stderr,
+because VS Code labels each stderr line `[error]`. `RUST_LOG` selects
+more detail.
+
+The VS Code status bar count now agrees with the sidebar. It leaves out
+the categories that `fallow.issueTypes` turns off, and with a workspace
+scope it keeps the count of the scoped CLI run.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix(lsp): count created files and align the status bar with the 
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -1409,6 +1409,7 @@ dependencies = [
+  "tokio",
+  "tower",
+  "tower-lsp-server",
++ "tracing",
+  "tracing-subscriber",
+ ]
+ 
+```
+
+**File**: `changelog.d/fix-vscode-watcher-loop.md` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
 +### Fixed
 +
-+- **The release SBOM of each target now covers every binary of the `fallow-<target>` archive.** Before, the SBOM covered only the `fallow` binary. Crates that only `fallow-lsp`, `fallow-mcp` or `fallow-similar-code` link, such as `tower-lsp-server`, `rmcp`, `rquickjs` and `candle-core`, were not in it. The SBOM also listed the `stub_sidecar` and `fallow-schema-emit` bins, which the release does not ship. The release job now merges the SBOMs of the four packages into one file with the same name, and it lists only the crates of their builds.
-+  (Closes [#5190](https://github.com/fallow-rs/fallow/issues/5190))
++- **The language server no longer runs again for a watched-file event that changes no content.** The server compares the content of the file with the content that it saw last. A file watcher can report events for a file that a scanner, a sync client or another tool touches, and each event started a new analysis, so the analysis never came to rest. One editor save also started two runs, because the watched-file event of the save cancelled the run of `didSave`. The Output channel now names the files that start a run, and it counts the skipped events.
++  (Closes [#5278](https://github.com/fallow-rs/fallow/issues/5278))
++- **The VS Code status bar count now agrees with the sidebar and the analysis notification.** The status bar now counts the same categories as the sidebar, and it leaves out the categories that `fallow.issueTypes` turns off. With a workspace scope, the status bar keeps the count of the scoped sidebar analysis. The `fallow/analysisComplete` notification now also sends the counts of policy violations, the React Server Components checks and the route checks.
++- **The language server no longer writes INFO progress lines to stderr.** VS Code labels each stderr line `[error]` in the Output channel. The server now writes only warnings and errors there. Set `RUST_LOG` (for example `RUST_LOG=fallow_core=info`) in the environment of the editor to see more detail.
 ```
 
-**File**: `scripts/workflow-policy.test.mjs` (modified, +83/-11)
+**File**: `crates/lsp/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -1237,23 +1237,95 @@ test("release runs Zed verification on macOS and Windows without credentials", (
-   assert.match(job, /cargo fmt --check --manifest-path editors\/zed\/Cargo.toml/);
- });
- 
--test("release SBOMs list only the crates of the target build", () => {
-+/** The binary names that the unix archive step of the release build packs. */
-+const archivedBinaries = (build) => {
-+  const step = workflowSteps(build).find((s) => s.startsWith("name: Package binaries (unix)"));
-+  assert.ok(step, "missing step Package binaries (unix)");
-+  const tar = step.match(/tar czf "[^"]+" (.+)$/mu);
-+  assert.ok(tar, "the archive step runs no tar command");
-+  const entry = matrixEntry(build, "x86_64-unknown-linux-gnu");
-+  return tar[1].split(/\s+/u).map((word) => {
-+    const variable = word.match(/^"\$(\w+)"$/u);
-+    if (!variable) return word;
-+    const key = step.match(new RegExp(`${variable[1]}: \\$\\{\\{ matrix\\.(\\w+) \\}\\}`, "u"));
-+    assert.ok(key, `the archive step does not set ${variable[1]} from the matrix`);
-+    const value = entry.match(new RegExp(`^\\s*${key[1]}: (\\S+)$`, "mu"));
-+    assert.ok(value, `the build matrix has no ${key[1]}`);
-+    return value[1];
-+  });
-+};
+@@ -39,6 +39,8 @@ proptest = { workspace = true }
+ # The runtime stack probe drives the global Rayon pool that analysis uses.
+ rayon = { workspace = true }
+ tempfile = { workspace = true }
++# The stderr filter tests ask the filter about tracing levels.
++tracing = { workspace = true }
+ # `io-util` (duplex pipes, BufReader, AsyncRead/WriteExt) is test-only: the
+ # `Server::serve` integration test drives the LSP over framed duplex streams.
+ # The production bin keeps the slimmer workspace tokio feature set.
+```
+
+**File**: `crates/lsp/src/disk_fingerprints.rs` (added, +233/-0)
+```diff
+@@ -0,0 +1,233 @@
++//! The last known content of each file that a save or a watched-file event
++//! reported.
++//!
++//! A watched-file event does not prove that the content of a file changed.
++//! A client reports one event for a save that `didSave` already reported, and
++//! a file watcher also reports a changed timestamp or attribute, for example
++//! when a virus scanner, a sync client or another tool touches the file. When
++//! such events keep coming, each one starts a new run, and the server never
++//! comes to rest (#5278). The server therefore compares the content of the
++//! file with the content that it recorded last, and a changed event for
++//! unchanged content starts no run.
 +
-+/** The manifest directory and the package name of the Cargo package with bin `name`. */
-+const packageOfBinary = (name) => {
-+  const manifests = [
-+    ...readdirSync("crates").map((dir) => `crates/${dir}`),
-+    "tools/similar-code-sidecar",
-+  ].filter((dir) => existsSync(`${dir}/Cargo.toml`));
-+  for (const dir of manifests) {
-+    const manifest = readFileSync(`${dir}/Cargo.toml`, "utf8");
-+    if (!manifest.includes(`[[bin]]\nname = "${name}"\n`)) continue;
-+    return { dir, name: manifest.match(/^\[package\]\nname = "([^"]+)"/mu)[1] };
-+  }
-+  assert.fail(`no Cargo package has the bin ${name}`);
-+};
++use std::hash::Hasher as _;
++use std::io::Read as _;
++use std::path::{Path, PathBuf};
++use std::time::{Duration, Instant};
 +
-+test("release SBOMs cover every binary of the target archive and only its crates", () => {
-   const workflow = readWorkflow(".github/workflows/release.yml");
-   const sbom = indentedBlock(workflow, "sbom", 2);
-+  const script = stepScript(sbom, "Generate SBOM");
- 
-   assert.match(sbom, /permissions:\n\s+contents: read/);
-   assert.match(sbom, /actions\/setup-node@[0-9a-f]{40}/);
--  assert.match(
--    sbom,
--    /set -euo pipefail[\s\S]*cargo cyclonedx[\s\S]*cargo tree -p fallow-cli --target "\$FALLOW_TARGET" -e normal,build[\s\S]*--locked[\s\S]*node \.github\/scripts\/filter-sbom\.mjs[\s\S]*mkdir sbom/u,
--  );
--  // The filter must rewrite the same file that the job uploads.
--  const sbomFile = '"crates/cli/fallow-${FALLOW_TARGET}.cdx.json"';
--  assert.ok(
--    sbom.includes(`filter-sbom.mjs \\\n            ${sbomFile}`),
--    "the filter reads the SBOM",
-+  assert.match(script, /^set -euo pipefail\n/u);
++use rustc_hash::{FxHashMap, FxHasher};
 +
-+  const shipped = archivedBinaries(indentedBlock(workflow, "build", 2));
-+  assert.deepEqual(
-+    shipped.toSorted(),
-+    ["fallow", "fallow-lsp", "fallow-mcp", "fallow-similar-code"],
-+    "the archive ships these binaries",
-   );
--  assert.ok(sbom.includes(`cp ${sbomFile} sbom/`), "the job uploads the filtered SBOM");
-+  const bins = Array.from(script.matchAll(/--bin (\S+)/gu), (match) => match[1]);
-+  assert.deepEqual(bins.toSorted(), shipped.toSorted(), "the SBOM keeps the shipped bins only");
++/// Most paths that the store keeps. The store starts again when it is full,
++/// so memory stays bounded in a large workspace.
++const MAX_RECORDED_FILES: usize = 4_096;
 +
-+  const trees = script.match(/cargo tree [^>]+/gu) ?? [];
-+  for (const tree of trees) {
-+    assert.match(tree, /--target "\$FALLOW_TARGET" -e normal,build/u);
-+    assert.match(tree, /--locked/u);
-+  }
-+  const sidecar = script.match(/^sidecar=(\S+)$/mu)?.[1];
-+  for (const binary of shipped) {
-+    const pkg = packageOfBinary(binary);
-+    assert.ok(
-+      script.includes(`"${pkg.dir}/fallow-\${FALLOW_TARGET}.cdx.json"`),
-+      `the merge reads the SBOM of ${pkg.name}`,
-+    );
-+    if (sidecar === `${pkg.dir}/Cargo.toml`) {
-+      assert.ok(
-+        trees.some((tree) => tree.includes('--manifest-path "$sidecar"')),
-+        `a cargo tree covers ${pkg.name}`,
-+      );
-+      assert.match(
-+        script,
-+        /for manifest in [^\n]*"\$sidecar"; do\n\s+cargo cyclonedx --manifest-path "\$manifest"/u,
-+      );
-+    } else {
-+      assert.ok(
-+        trees.some((tree) => new RegExp(`-p ${pkg.name}(?![\\w-])`, "u").test(tree)),
-+        `a cargo tree covers ${pkg.name}`,
-+      );
++/// Largest file that the store reads. An event for a larger file always
++/// counts as a change.
++const MAX_FINGERPRINT_BYTES: u64 = 8 * 1024 * 1024;
++
++/// Most events of one notification that the server compares. A larger batch,
++/// for example a branch switch, always counts as a change.
++pub const MAX_COMPARED_EVENTS: usize = 256;
++
++/// The length and a hash of the content of one file.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub struct Fingerprint {
++    len: u64,
++    hash: u64,
++}
++
++/// Read the fingerprint of `path`. `None` when the path is not a readable
++/// file of at most [`MAX_FINGERPRINT_BYTES`].
++pub fn read_fingerprint(path: &Path) -> Option<Fingerprint> {
++    let file = std::fs::File::open(path).ok()?;
++    let metadata = file.metadata().ok()?;
++    if !metadata.is_file() || metadata.len() > MAX_FINGERPRINT_BYTES {
++        return None;
 +    }
-+  }
++    let mut content = Vec::new();
++    file.take(MAX_FINGERPRINT_BYTES + 1)
++        .read_to_end(&mut content)
++        .ok()?;
++    let mut hasher = FxHasher::default();
++    hasher.write(&content);
++    Some(Fingerprint {
++        len: content.len() as u64,
++        hash: hasher.finish(),
++    })
++}
 +
-+  // The merge writes the file that the job uploads, and every tree feeds it.
-+  const out = '"sbom/fallow-${FALLOW_TARGET}.cdx.json"';
-+  assert.match(script, /mkdir sbom\nnode \.github\/scripts\/filter-sbom\.mjs/u);
-+  assert.ok(script.includes(`--out ${out}`), "the merge writes the uploaded SBOM");
-+  assert.ok(sbom.includes("path: sbom/fallow-${{ matrix.target }}.cdx.json"));
-+  const treeFiles = Array.from(script.matchAll(/> "(\$RUNNER_TEMP\/[^"]+)"/gu), (m) => m[1]);
-+  assert.equal(treeFiles.length, trees.length);
-+  for (const file of treeFiles) {
-+    assert.ok(script.includes(`--tree "${file}"`), `the merge reads ${file}`);
-+  }
- });
++/// The last known content of the reported files.
++#[derive(Debug, Default)]
++pub struct DiskFingerprints {
++    /// Each fingerprint with the number of the read that gave it.
++    known: FxHashMap<PathBuf, (Fingerprint, u64)>,
++    reads: u64,
++}
++
++impl DiskFingerprints {
++    /// Number a read that starts now. Two notifications can read the same
++    /// file at the same time, and the newer read must win.
++    pub fn begin_read(&mut self) -> u64 {
++        self.reads += 1;
++        self.reads
++    }
++
++    /// Store the fingerprint that read `read` gave for `path`. Returns
++    /// whether the content differs from the last record, or whether the
++    /// store cannot tell.
++    pub fn update(&mut self, path: &Path, fingerprint: Option<Fingerprint>, read: u64) -> bool {
++        let Some(fingerprint) = fingerprint else {
++            self.known.remove(path);
++            return true;
++        };
++        match self.known.get(path) {
++            Some((_, newer)) if *newer > read => return true,
++            Some((known, _)) if *known == fingerprint => return false,
++            _ => {}
++        }
++        if self.known.len() >= MAX_RECORDED_FILES && !self.known.contains_key(path) {
++            self.known.clear();
++        }
++        self.known.insert(path.to_path_buf(), (fingerprint, read));
++        true
++    }
++
++    /// Forget `path` and every recorded path below it. A client can report
++    /// one event for a deleted directory and none for its files.
++    pub fn forget(&mut self, path: &Path) {
++        self.known.retain(|known, _| !known.starts_with(path));
++    }
++
++    /// Forget every record.
++    pub fn clear(&mut self) {
++        self.known.clear();
++    }
++}
++
++/// Shortest time between two log lines about skipped events. A steady
++/// stream of events would otherwise write one line per notification.
++const SKIPPED_LOG_INTERVAL: Duration = Duration::from_secs(10);
++
++/// Counts the skipped events between two log lines.
++#[derive(Debug, Default)]
++pub struct SkippedEventLog {
++    pending: usize,
++    last_logged: Option<Instant>,
++}
++
++impl SkippedEventLog {
++    /// Add `skipped` events. Returns the count to log now, or `None` while
++    /// the last log line is newer than [`SKIPPED_LOG_INTERVAL`].
++    pub fn note(&mut self, skipped: usize, now: Instant) -> Option<usize> {
++        self.pending += skipped;
++        if self.pending == 0 {
++            return None;
++        }
++        if self
++            .last_logged
++            .is_some_and(|last| now.duration_since(last) < SKIPPED_LOG_INTERVAL)
++        {
++            return None;
++        }
++        self.last_logged = Some(now);
++        Some(std::mem::take(&mut self.pending))
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
+```
+
+**File**: `crates/lsp/src/lib.rs` (modified, +153/-8)
+```diff
+@@ -15,6 +15,7 @@ mod code_lens;
+ mod config_patterns;
+ mod diagnostic_filter;
+ mod diagnostics;
++mod disk_fingerprints;
+ mod document_state;
+ mod hover;
+ mod initialization;
+@@ -28,6 +29,7 @@ mod runtime;
+ mod schedule;
+ mod server_capabilities;
+ mod session_store;
++mod stderr_log;
  
- test("release publication waits for the aggregate verification gate",
+ use rustc_hash::{FxHashMap, FxHashSet};
+ use std::path::{Path, PathBuf};
+@@ -369,6 +371,11 @@ struct FallowLspServer {
+     /// `initializationOptions.prewarm`: parse the project at `initialized`.
+     prewarm: Arc<AtomicBool>,
+     pending_type_aware_changes: Arc<StdMutex<fallow_api::TypeAwareFileChanges>>,
++    /// The last known content of saved and watched files. See
++    /// `disk_fingerprints.rs`.
++    disk_fingerprints: Arc<StdMutex<disk_fingerprints::DiskFingerprints>>,
++    /// The skipped watched-file events since the last log line about them.
++    skipped_event_log: Arc<StdMutex<disk_fingerprints::SkippedEventLog>>,
+     /// Canonical git toplevel for the workspace `root`, resolved on first
+     /// analysis run and reused thereafter. Cached so we do not pay for an
+     /// extra `git rev-parse --show-toplevel` subprocess on every save.
+@@ -607,6 +614,9 @@ impl LanguageServer for FallowLspServer {
+     async fn did_save(&self, params: DidSaveTextDocumentParams) {
+         self.mark_document_saved(&params.text_document.uri).await;
+         if let Some(path) = params.text_document.uri.to_file_path() {
++            // A save always starts a run. The record lets the watched-file
++            // event of the same save start none.
++            self.record_disk_contents(vec![path.to_path_buf()]).await;
+             if session_input_file(&path) {
+                 self.lock_sessions().mark_stale();
+             }
+@@ -633,21 +643,25 @@ impl LanguageServer for FallowLspServer {
+     }
+ 
+     async fn did_change_watched_files(&self, params: DidChangeWatchedFilesParams) {
+-        self.mark_documents_changed_on_disk(params.changes.iter().map(|change| &change.uri))
++        let changes = self.changed_content_events(params.changes).await;
++        if changes.is_empty() {
++            return;
++        }
++        self.mark_documents_changed_on_disk(changes.iter().map(|change| &change.uri))
+             .await;
+         {
+-            let mut changes = self
++            let mut pending = self
+                 .pending_type_aware_changes
+                 .lock()
+                 .unwrap_or_else(|error| error.into_inner());
+-            for change in params.changes {
++            for change in changes {
+                 let Some(path) = change.uri.to_file_path() else {
+                     continue;
+                 };
+                 if session_input_file(&path) {
+                     self.lock_sessions().mark_stale();
+                 }
+-                record_type_aware_file_change(&mut changes, path.into_owned(), change.typ);
++                record_type_aware_file_change(&mut pending, path.into_owned(), change.typ);
+             }
+         }
+         self.note_workspace_event();
+@@ -817,6 +831,8 @@ impl FallowLspServer {
+             pending_type_aware_changes: Arc::new(StdMutex::new(
+                 fallow_api::TypeAwareFileChanges::default(),
+             )),
++            disk_fingerprints: Arc::default(),
++            skipped_event_log: Arc::default(),
+             git_toplevel: Arc::new(RwLock::new(None)),
+             cached_diagnostics: Arc::new(RwLock::new(DiagnosticCache::default())),
+             client_pulls: Arc::new(AtomicBool::new(false)),
+@@ -1329,6 +1345,136 @@ impl FallowLspServer {
+         drop(documents);
+     }
+ 
++    /// Record the current content of `paths`. Returns for each path whether
++    /// the content differs from the last record.
++    async fn record_disk_contents(&self, paths: Vec<PathBuf>) -> Vec<bool> {
++        let count = paths.len();
++        let read_number = self
++            .disk_fingerprints
++            .lock()
++            .unwrap_or_else(|error| error.into_inner())
++            .begin_read();
++        // The reads run without the store lock, so an event handler that
++        // takes the lock never waits for disk reads.
++        let Ok(read) = tokio::task::spawn_blocking(move || {
++            paths
++                .into_iter()
++                .map(|path| {
++                    let fingerprint = disk_fingerprints::read_fingerprint(&path);
++                    (path, fingerprint)
++                })
++                .collect::<Vec<_>>()
++        })
++        .await
++        else {
++            return vec![true; count];
++        };
++        let mut store = self
++            .disk_fingerprints
++            .lock()
++            .unwrap_or_else(|error| error.into_inner());
++        read.into_iter()
++            .map(|(path, fingerprint)| store.update(&path, fingerprint, read_number))
++            .collect()
++    }
++
++    /// Keep the watched-file events that change a file. A changed event for
++    /// the same content as the last record starts no run. A created or
++    /// deleted file, a
+```
+
+**File**: `crates/lsp/src/protocol.rs` (modified, +12/-0)
+```diff
+@@ -98,6 +98,12 @@ pub struct AnalysisCompleteParams {
+     pub unresolved_catalog_references: usize,
+     pub unused_dependency_overrides: usize,
+     pub misconfigured_dependency_overrides: usize,
++    pub policy_violations: usize,
++    pub invalid_client_exports: usize,
++    pub mixed_client_server_barrels: usize,
++    pub misplaced_directives: usize,
++    pub route_collisions: usize,
++    pub dynamic_segment_name_conflicts: usize,
+     pub duplication_percentage: f64,
+     pub clone_groups: usize,
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+@@ -199,6 +205,12 @@ pub fn analysis_complete_params(input: AnalysisCompleteInput<'_>) -> AnalysisCom
+         unresolved_catalog_references: results.unresolved_catalog_references.len(),
+         unused_dependency_overrides: results.unused_dependency_overrides.len(),
+         misconfigured_dependency_overrides: results.misconfigured_dependency_overrides.len(),
++        policy_violations: results.policy_violations.len(),
++        invalid_client_exports: results.invalid_client_exports.len(),
++        mixed_client_server_barrels: results.mixed_client_server_barrels.len(),
++        misplaced_directives: results.misplaced_directives.len(),
++        route_collisions: results.route_collisions.len(),
++        dynamic_segment_name_conflicts: results.dynamic_segment_name_conflicts.len(),
+         duplication_percentage: duplication.stats.duplication_percentage,
+         clone_groups: duplication.stats.clone_groups,
+         changed_since_scope: changed_since_scope.cloned(),
+```
+
+**File**: `crates/lsp/src/stderr_log.rs` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++//! The filter for the tracing lines that the server writes to stderr.
++//!
++//! Editors show the stderr of a language server as error output. VS Code
++//! labels each stderr line `[error]` in the Output channel. INFO progress
++//! lines of the analysis therefore look like failures, and one run writes
++//! one line per workspace for some of them. The server writes warnings and
++//! errors only. `RUST_LOG` selects more detail when a user debugs a run.
++
++use tracing_subscriber::filter::{LevelFilter, Targets};
++
++/// Build the stderr filter from the value of `RUST_LOG`.
++///
++/// Without `RUST_LOG`, the filter keeps WARN and ERROR of the `fallow*`
++/// targets, so dependency crates add no lines. A `RUST_LOG` value
++/// replaces the default. The filter skips a directive that it cannot read,
++/// such as a span or field filter, and keeps the others.
++pub fn stderr_log_filter(rust_log: Option<&str>) -> Targets {
++    let Some(value) = rust_log.map(str::trim) else {
++        return Targets::new().with_target("fallow", LevelFilter::WARN);
++    };
++    let readable: Vec<&str> = value
++        .split(',')
++        .map(str::trim)
++        .filter(|directive| !directive.is_empty() && directive.parse::<Targets>().is_ok())
++        .collect();
++    // An empty directive list parses to a filter that enables every target.
++    if readable.is_empty() {
++        return Targets::new();
++    }
++    readable.join(",").parse().unwrap_or_default()
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use tracing::Level;
++
++    const PLUGIN_TARGET: &str = "fallow_extract::cache";
++
++    #[test]
++    fn default_filter_drops_info_progress_lines() {
++        let filter = stderr_log_filter(None);
++        assert!(!filter.would_enable(PLUGIN_TARGET, &Level::INFO));
++        assert!(!filter.would_enable("fallow_graph::resolve", &Level::INFO));
++    }
++
++    #[test]
++    fn default_filter_keeps_warnings_and_errors() {
++        let filter = stderr_log_filter(None);
++        assert!(filter.would_enable(PLUGIN_TARGET, &Level::WARN));
++        assert!(filter.would_enable("fallow_config", &Level::ERROR));
++    }
++
++    #[test]
++    fn default_filter_drops_dependency_lines() {
++        let filter = stderr_log_filter(None);
++        assert!(!filter.would_enable("tower_lsp_server::service", &Level::WARN));
++    }
++
++    #[test]
++    fn rust_log_selects_more_detail() {
++        let filter = stderr_log_filter(Some("fallow_extract=info"));
++        assert!(filter.would_enable(PLUGIN_TARGET, &Level::INFO));
++        assert!(!filter.would_enable("fallow_graph::resolve", &Level::INFO));
++    }
++
++    #[test]
++    fn empty_rust_log_disables_every_line() {
++        let filter = stderr_log_filter(Some(""));
++        assert!(!filter.would_enable(PLUGIN_TARGET, &Level::ERROR));
++    }
++
++    #[test]
++    fn unreadable_directive_keeps_the_readable_ones() {
++        let filter = stderr_log_filter(Some("fallow_extract[span{a=1}]=debug,fallow_graph=info"));
++        assert!(filter.would_enable("fallow_graph::resolve", &Level::INFO));
++    }
++}
+```
+
+**File**: `crates/lsp/src/tests.rs` (modified, +24/-2)
+```diff
+@@ -4853,6 +4853,7 @@ async fn edit_or_watched_change_after_save_needs_a_disk_read_again() {
+             }],
+         })
+         .await;
++    write_open_document_fixture(dir.path(), "touched.ts", "export const b = 2;\n");
+     backend
+         .did_change_watched_files(DidChangeWatchedFilesParams {
+             changes: vec![FileEvent::new(touched.clone(), FileChangeType::CHANGED)],
+@@ -4866,11 +4867,32 @@ async fn edit_or_watched_change_after_save_needs_a_disk_read_again() {
+         "the edited buffer differs from disk"
+     );
+     assert!(
+-        snapshot[&touched].matches_disk,
+-        "the buffer still equals the file after the watched event",
++        !snapshot[&touched].matches_disk,
++        "another tool changed the file under the buffer",
+     );
+ }
+ 
++#[tokio::test(flavor = "current_thread")]
++async fn watched_event_without_a_content_change_keeps_the_saved_buffer_proven() {
++    let dir = tempfile::tempdir().expect("temp dir");
++    let (service, _socket) = LspService::build(FallowLspServer::new).finish();
++    let backend = service.inner();
++    backend
++        .startup_analysis_started
++        .store(true, Ordering::SeqCst);
++    let touched = write_open_document_fixture(dir.path(), "touched.ts", "export const b = 1;\n");
++    open_document(backend, &touched, 1, "export const b = 1;\n").await;
++    save_document(backend, &touched).await;
++    backend
++        .did_change_watched_files(DidChangeWatchedFilesParams {
++            changes: vec![FileEvent::new(touched.clone(), FileChangeType::CHANGED)],
++        })
++        .await;
++
++    assert_eq!(pending_disk_reads(backend).await, 0);
++    assert!(backend.snapshot_document_versions().await[&touched].matches_disk);
++}
++
+ #[tokio::test(flavor = "current_thread")]
+ async fn a_confirmed_disk_match_is_not_read_again() {
+     let dir = tempfile::tempdir().expect("temp dir");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5220** (2026-11-25): docs(ship): search for a competing pull request before the merge (@BartWaardenburg)
-- **PR #5219** (2026-11-25): ci: run the walltime jobs once for a ci:walltime label (@BartWaardenburg)
-- **PR #5217** (2026-11-24): refactor(core): move the barrel predicate into unused_files (@BartWaardenburg)
-- **PR #5214** (2026-11-24): refactor: remove two-way module use in the engine and CLI crates (@BartWaardenburg)
-- **PR #5213** (2026-11-24): fix(pinia): credit reads through a property typed with an inline store ReturnType (@BartWaardenburg)
-- **PR #5212** (2026-11-24): fix(config): report stale ignore globs in dupes and health runs (@BartWaardenburg)
+- **PR #5305** (2026-11-26): docs(skills): describe MCP tasks in the fallow skill references (@BartWaardenburg)
+- **PR #5304** (2026-11-26): fix(engine): refuse a link into the Git directory of a superproject (@BartWaardenburg)
+- **PR #5302** (2026-11-26): ci(dependabot): hand major updates to a maintainer (@BartWaardenburg)
+- **PR #5300** (2026-11-26): docs(changelog): add the fragment for the type-aware protocol 10 and the read scope fixes (@BartWaardenburg)
+- **PR #5296** (2026-11-26): fix(types): apply the owner rule of the read scope on Windows (@BartWaardenburg)
+- **PR #5293** (2026-11-26): chore: post-release sync for v3.49.0 (@BartWaardenburg)
 
 ---
 
@@ -1736,23 +1942,21 @@ stages the SBOM as before
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. extract): scan SFC script and style blocks in linear time
+## X. core): read project files inside the project scope
 
 **RULE**:
-When implementing operations in `changelog.d/fix-oss-fuzz-sfc-blocks.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6dcee9b2`: extract): scan SFC script and style blocks in linear time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `134bd42d`: core): read project files inside the project scope. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-oss-fuzz-sfc-blocks.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-
-- **A Vue or Svelte file with many unclosed attribute quotes can no longer slow the analysis to a crawl.** Fallow found the `<script>` and `<style>` blocks of a single-file component with regexes. A tag start whose quoted attribute value did not close made each search read far past its block, and the next search read that text again, so the time grew with the square of the file size. A 125 KB file took minutes in a fuzz build. Fallow now finds the blocks with a scan that reads each position a bounded number of times. The blocks that it finds do not change.
+ "rustix",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1762,7 +1966,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6dcee9b2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `134bd42d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
