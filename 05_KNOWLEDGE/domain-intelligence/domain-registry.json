@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T14:13:44.043Z",
-  "total_records": 2753,
+  "last_updated": "2026-11-26T14:22:57.482Z",
+  "total_records": 2754,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1023,
+      "total": 1024,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1096,7 +1096,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria",
         "DOM-D-439581EA",
         "DOM-D-68A82B80",
-        "domain_intelligence-research-knowledge-intelligence-goodrain-rainbond-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-goodrain-rainbond-core-invariants",
+        "DOM-D-15A70146"
       ]
     },
     "E": {
@@ -8962,10 +8963,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "175e41fa632094ce6f62a74f3819afe4b3afd4b1a7b8856f8596ea0fa8e58c13",
-      "created_at": "2026-11-25T23:11:55.909Z"
+      "content_hash": "8921a2d50b5ed0befd56728eebe04b51754f3d9c7abe808b08b1b04d09b8de27",
+      "created_at": "2026-11-26T14:22:22.705Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -9495,8 +9496,8 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-research-knowledge-intelligence-xiaomimi.md",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "content_hash": "aab10d1e66706238eae9db2bf30d39f9a38fa8179251dfdf55ae54be645aaf7f",
-      "created_at": "2026-11-22T21:31:58.023Z"
+      "content_hash": "f73ac0a9ea35d1a90f9ae03ce29ab171003895047a08f7e36c004c66377754b8",
+      "created_at": "2026-11-26T14:22:05.646Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants",
@@ -9564,8 +9565,8 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings",
-      "content_hash": "85d916f643e20fdd8c61e9f18618da75cd99a68fff239b257319c8e6d99b10ac",
-      "created_at": "2026-11-22T21:32:10.952Z"
+      "content_hash": "74c84f2477c25318686be93ef59e897df7e3f088f6a1f05385e5c173b87388c6",
+      "created_at": "2026-11-26T14:22:25.833Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
@@ -15058,8 +15059,8 @@
       "title": "Technical Construction Intelligence: lingyired/status-trio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-technical-construction-intelligence-lingyired-status-trio-.md",
       "repository": "lingyired/status-trio",
-      "content_hash": "175c9ac605666710c129ccb44618276de8add99819f1e8a2fb394a9e2c04dbd1",
-      "created_at": "2026-11-24T03:58:35.068Z"
+      "content_hash": "134c3b47e547c7bc2552093c0af4a72cba8f9c2aa547bc1dee34de0309d0db39",
+      "created_at": "2026-11-26T14:22:13.917Z"
     },
     "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants",
@@ -15076,8 +15077,8 @@
       "title": "Technical Construction Intelligence: lingyired-status-trio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-learnings-technical-construction-intelligence-lingyired-st.md",
       "repository": "lingyired-status-trio-learnings",
-      "content_hash": "c0eb8b935b412b892b2223f334c7ae36d3c6d38a698dacf54ff3b4cd8a7c5478",
-      "created_at": "2026-11-24T03:58:45.200Z"
+      "content_hash": "71237e129ded1161ab67fd0cc9b1cab93d9975583867454701f6397847dee9fd",
+      "created_at": "2026-11-26T14:22:26.618Z"
     },
     "DOM-H-87566B56": {
       "record_id": "DOM-H-87566B56",
@@ -24425,8 +24426,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-limbo-learnings",
-      "content_hash": "dc0eb702fcf6265e9d461cfe606750d98f91b9dec51c14b12dc46ad2698bc0bc",
-      "created_at": "2026-11-25T13:06:51.244Z"
+      "content_hash": "15f7aa0406c820c346fc9111c7c3ff2e38edacd2dad05743a9d2c5e3c2e1be75",
+      "created_at": "2026-11-26T14:22:57.482Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants",
@@ -46444,6 +46445,48 @@
       "repository": "a2ui-project-a2ui-learnings",
       "content_hash": "75be1800f05b22ca0972bed821ad8fcdcff6a058ae1055e3447773550aa72cd1",
       "created_at": "2026-11-26T13:44:59.208Z"
+    },
+    "DOM-D-15A70146": {
+      "record_id": "DOM-D-15A70146",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): tursodatabase/turso",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  \n> **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  \n> **Source Version**: `519c09cd`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-sy",
+      "content_hash": "f37e127b1946bc02463510ec8f3b1770dddece0c9a18a84a657fb8c918e55744",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  \n> **Source**: github ([https://github.com/tursod -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  \n> **Source**: github ([https://github.com/tursod",
+      "provenance": {
+        "source_uri": "project://tursodatabase-limbo/tursodatabase-limbo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T14:22:27.018Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tursodatabase-limbo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of tursodatabase-limbo"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T14:22:56.851Z"
     }
   }
 }

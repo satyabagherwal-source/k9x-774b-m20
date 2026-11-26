@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-EE4H",
-    "timestamp": "2026-11-25T01:09:22.049Z",
-    "repository": "infracost/infracost",
-    "learningId": "learn-github-infracost-infracost",
-    "contentHash": "415eee6a5e6c06855d8967ec2f4bc4089f075b1cbfbfa1edc45cb5bb1d5307a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-Q411",
-    "timestamp": "2026-11-25T01:18:28.837Z",
-    "repository": "encoredev/encore",
-    "learningId": "learn-github-encoredev-encore",
-    "contentHash": "cba3a969ada7a63c91335a51ec4ff2cb4438eb55f1eb6e6b75ea2358ae6c6b3b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-125B",
-    "timestamp": "2026-11-25T01:26:59.615Z",
-    "repository": "NativeScript/NativeScript",
-    "learningId": "learn-github-nativescript-nativescript",
-    "contentHash": "659e620f1c19b992a2a41750f7f88fa181d83d5c3605d22222481af93545ddd9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-12UL",
     "timestamp": "2026-11-25T01:27:00.525Z",
     "repository": "crossplane/crossplane",
@@ -7492,6 +7447,51 @@
     "contentHash": "dea73e48a51f287187376ce0b9c3c54ce1ad1b0d968f7317eae1bc3b8a1e041f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-5OWQ",
+    "timestamp": "2026-11-26T14:22:05.402Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+    "contentHash": "68a72ae472a5882e4bd68c707a5ffe7b987933cd9e864b8976d8c1436873a717",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-5V4A",
+    "timestamp": "2026-11-26T14:22:13.450Z",
+    "repository": "lingyired/status-trio",
+    "learningId": "learn-github-lingyired-status-trio",
+    "contentHash": "7aeebdff00ad8a28337942d8808a827fd114d649c9b09c57bd3fb5a21fcfa186",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-621X",
+    "timestamp": "2026-11-26T14:22:22.437Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "45be5df87da36fb967cf80e5207389fe86692ed66aa89abd7d5837d1d5fb3a19",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

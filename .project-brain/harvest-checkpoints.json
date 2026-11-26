@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T14:13:37.173Z",
+  "last_updated": "2026-11-26T14:22:22.459Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -605,14 +605,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "441eebfe5d3035eb69980f45c148729653f2b9bfd36b479d8dbe2c3145ccfd25",
-      "verified_at": "2026-11-22T21:31:57.708Z",
+      "content_hash": "68a72ae472a5882e4bd68c707a5ffe7b987933cd9e864b8976d8c1436873a717",
+      "verified_at": "2026-11-26T14:22:05.421Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:31:57.708Z"
+      "last_updated": "2026-11-26T14:22:05.421Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "c771ab7a789d144aff6a3e5cb712e375f5eeeacd8b800191eacc6de562fe1581",
-      "verified_at": "2026-11-25T23:11:55.500Z",
+      "content_hash": "45be5df87da36fb967cf80e5207389fe86692ed66aa89abd7d5837d1d5fb3a19",
+      "verified_at": "2026-11-26T14:22:22.459Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T23:11:55.500Z"
+      "last_updated": "2026-11-26T14:22:22.459Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -18831,14 +18831,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingyired-status-trio",
-      "content_hash": "9d123b9184778504abed3e9679f93b6d9b8674b564f30052483b214d77960bf7",
-      "verified_at": "2026-11-24T03:58:34.571Z",
+      "content_hash": "7aeebdff00ad8a28337942d8808a827fd114d649c9b09c57bd3fb5a21fcfa186",
+      "verified_at": "2026-11-26T14:22:13.474Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:58:34.571Z"
+      "last_updated": "2026-11-26T14:22:13.474Z"
     },
     "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",

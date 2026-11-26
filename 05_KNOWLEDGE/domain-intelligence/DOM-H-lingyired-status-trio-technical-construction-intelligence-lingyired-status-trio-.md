@@ -4,24 +4,24 @@
 {
   "source_repository": "lingyired/status-trio",
   "source_url": "https://github.com/lingyired/status-trio",
-  "source_version": "56ec144e",
+  "source_version": "3d68fcd8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T03:58:34.816Z",
+  "timestamp": "2026-11-26T14:22:13.696Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lingyired-status-trio",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lingyired/status-trio](https://github.com/lingyired/status-trio) (Revision: `56ec144e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T03:58:34.816Z`  
+> **Provenance**: Harvested from [lingyired/status-trio](https://github.com/lingyired/status-trio) (Revision: `3d68fcd8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T14:22:13.696Z`  
 > **Learning ID**: `learn-github-lingyired-status-trio`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lingyired/status-trio:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingyired-status-trio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingyired/status-trio](https://github.com/lingyired/status-trio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:58:33.267Z  
+> **Harvest Timestamp**: 2026-11-26T14:22:12.250Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Status Trio — a native macOS app that combines Wi-Fi, battery, and volume into one compact, configurable status icon for the menu bar, the Dock, or both, inspired by the iPhone Duo combined status bar.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2085 stars
+- **Stars / Engagement**: 2153 stars
 
 ---
 
@@ -729,6 +729,7 @@ final class AppEnvironment {
     private var chargingEffectCancellables = Set<AnyCancellable>()
     private var inputSourceLifecycleCancellables = Set<AnyCancellable>()
     private var hardwareRingDemandWiring: IconHardwareDemandWiring?
+    private var airPodsDemandWiring: IconAirPodsDemandWiring?
     private var hardwareSamplingSettingsCancellables = Set<AnyCancellable>()
     private var localIconDemandWiring: IconLiveDemandWiring?
     private var localIconPluginCancellables = Set<AnyCancellable>()
@@ -804,6 +805,7 @@ final class AppEnvironment {
         memoryPressureMonitor.start()
         iconPresentation.start()
         startHardwareRingDemand()
+        startAirPodsDemand()
         startHardwareSamplingSettings()
         startLocalIconPluginRuntime()
         hardwareBackgroundDemandController.start()
@@ -899,9 +901,7 @@ final class AppEnvironment {
         inputSourceLifecycleCancellables.removeAll()
         inputSourceController.stop()
         appIconController.stop()
-        mainMenuController.stop()
-        store.stop()
-        hardwareBackgroundDemandControlle
+     
 ```
 
 ### Core Architecture Module: `Sources/StatusTrioCore/App/AppIconController.swift`
@@ -1426,14 +1426,17 @@ final class BluetoothNearbyBatteryOptOutSynchronizer {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #370** (2026-11-22): **[Bug] 内存详情页「内存占用排行」未按占用降序，2.0 GB 排在 294 MB 之后**
-  *Symptoms*: ## 现象 内存详情页的「内存占用排行（RSS）」顺序不对，不是按占用从大到小。截图示例： - Google Chrome 4.9 GB → Antigravity 1.2 GB → QQ 音乐 636 MB → Gemini 328 MB → Clash Verge 294 MB → **ChatGPT 2.0 GB** → 腾讯视频 1.3 GB → Bob 242 MB  2.0 GB 和 1.3 GB 排在 294 MB 后面，说明排序失效。  ## 根因（代码已确认） `Sources/StatusTrioCore/Monitoring/TopAppsService.swift:265-293` 的 `mergedRows(previous:incoming:limit:)`：  ```swift var result: [TopAppRow] = [] for old in previous {                       // 先按上一次的顺序     if let updated = byID.removeValue(forKey: old.id) {         result.append(updated)              // 只更新数值，不动位置     } else {         result.append(... value: 0 ...)     // 旧行保留但置 0     } } for row in incoming where byID[row.id] != nil {     result.append(row)                      // 新出现的应用直接追加到末尾     byID.removeValue(forKey: row.id) } // 只在超限时移除 0 值行，全程没有按 value 排序 ```  设计初衷是“保持列表高度稳定、避免每次刷新抖动”，但代价是**顺序永远冻结在第一次出现的顺序**： - 已经在列表里的应用，占用变大变小都不会换位； - 新出现的高占用应用只能排在末尾（ChatGPT 2.0 GB 就是这样掉到 294 MB 后面）。  CPU、GPU、网络排行共用这个合并逻辑，同样有这个问题。  ## 建议修复 1. 合并后**按当前数值降序排序**再输出：`value` 降序；网络类可用 `value + upload`（或按现有展示字段）排序；相同值用名称/pid 稳定排序。 2. 保留“掉到 0 的行不立刻消失”的意图：排序后 0 值行自然落到末尾，超限时优先剔除 0 值行（现有剔除逻辑可保留）。 3. 可选：为避免每秒刷新时轻微数值抖动引起行来回跳，可加一个**很小的重排阈值**（例如只有在与相邻行差距超过 5% 或顺序计算有变化时才重排），但不要因此让 2.0 GB 排在 294 MB 后面。 4. 如果担心频繁重排导致视觉抖动，可对行加入 `.animation`/稳定 id（id 已是应用身份），而不是冻结顺序。 5. 排序逻辑建议放在纯函数里（如 `TopAppRanking.sorted(_:)`），便于测试；`mergedRows` 只负责合并与保留。  ## 验收 - 内存排行严格按占用降序显示；截图中的 ChatGPT 2.0 GB、腾讯视频 1.3 GB 应排在 294 MB 之前。 - 应用占用上升/下降会相应移动位置；新出现的高占用应用出现在正确位置。 - CPU、GPU、网络排行同样按数值
+- **Issue #385** (2026-11-25): **[Bug]非macbook麦克风，调节音量滑块显示异常**
+  *Symptoms*: 现象如下：  <img width="1278" height="263" alt="image" src="https://github.com/user-attachments/assets/78325f85-723b-41d0-9c0b-0c95ea93f47d" />
   **Post-Mortem & Fix Analysis**:
-  > 已确认：**所有应用排行（内存 / CPU / GPU / 网络）都要一起修**，每次数据更新都必须重新按数值排序。  因此去掉“为保持列表高度稳定而冻结顺序”的做法：合并只负责补 0 值行与截断，输出前统一按当前数值降序重排。不要加会阻止重排的阈值；如果担心行跳动，用固定 id + 轻量动画解决，而不是保留旧顺序。  验收补充： - 任意一次刷新后，四个排行都严格降序； - 占用上升/下降会立即换位，新出现的高占用应用出现在正确位置； - 0 值行仍按原策略短暂保留在末尾，不影响排序。
-  > 已在 v1.10.4（build 71） 修复：高占用应用排行每次刷新按当前数值重新排序。
+  > 这个会在下个版本修复。 这个是当没有输入输出设备的时候显示异常
+  > 已在 v1.10.5（构建 73）修复：无输入 / 输出设备时的显示异常（隐藏滑杆并显示「无可用…」提示）。可在 v1.10.5 更新验证。
 
-- **Issue #367** (2026-11-22): **[Bug] 电源 Helper 每 30 秒轮询状态触发系统代码签名校验，导致持续磁盘读取**
-  *Symptoms*: ## 用户反馈 系统某个核心后台守护进程出现很高的异常磁盘读取量；让 agent 排查后反馈：**Status Trio 每 30 秒计算一次代码签名**，累计造成大量读取。  ## 代码上最可能的来源（待用户现场证据确认） `Sources/StatusTrioCore/App/PrivilegedHelperManager.swift`： - `defaultEnabledStatusPollInterval = .seconds(30)`（同文件 182-188 行注释：状态只在用户操作时变，30 秒是“重读系统状态”的节奏）。 - `refresh()`（312 行起）会调用 `publishSystemState()` 和 `updateStatusPolling()`，读取 `SMAppService.daemon(plistName:)` 的 `status`。 - `SystemPrivilegedHelperService.service` 是**计算属性**，每次访问都会新建一个 `SMAppService.daemon(...)` 实例。  `SMAppService` 查询注册状态时，macOS 会去校验 LaunchDaemon 的注册与**代码签名**（涉及 `syspolicyd` / `taskgated` 等系统进程）；这与“守护进程磁盘读取高、且与代码签名相关”的描述吻合。也就是说：**不是我们自己调 `SecCode*` 每 30 秒读签名**，而是 30 秒一次的 `SMAppService.status` 触发了系统侧的签名校验。  另外 `Sources/StatusTrioCore/App/AppSigningIdentity.swift` 的 `SecCodeCopySigningInformation` 也会读签名信息，但它目前只在 `SystemPrivilegedHelperService.isSupported` 里通过 `lazy resolvedAvailability` 调一次（理论上不是每 30 秒）；如果现场证据显示是这条，则应加进程内缓存（签名在进程生命周期内不会变）。  ## 建议修复方向 1. **拉长“已启用”状态的轮询**：`enabledStatusPollInterval` 从 30 秒改为例如 **5 分钟**；状态只会因用户在系统设置里操作而变化，并且已有 `refreshAfterActivation()`（从系统设置返回时刷新）和面板打开时的刷新兜底。 2. **缓存 `SMAppService` 实例**：把 `service` 改为 `lazy var`，避免每次 `status` 查询都新建对象。 3. **确认静默模式生效**：`isQuiescent` 时状态轮询已是 1800 秒；需确认“面板关闭、helper 已启用”确实进入 quiescent，而不是仍在 30 秒轮询。 4. **缓存签名身份**：`AppSigningIdentity.current()` 增加进程内 memo（含 nil 结果），避免任何重复调用；并在注释里写明“运行期不变”。 5. 任何改动都保留现有安全语义：Ad-hoc/开发构建仍然 `nil`、不可用；helper 审批状态仍能在用户操作后及时刷新。 6. 若确认磁盘读取来自 `SMAppService.status` 的签名校验，应避免在后台无 UI 需求时轮询；只在以下时机读：应用启动、面板/设置可见、从系统设
+- **Issue #383** (2026-11-25): **[Bug] 开启「合盖不睡眠」提示「暂时无法读取状态，未做修改」，实为辅助程序冷启动/读取失败被误报**
+  *Symptoms*: ## 现象 点击「合盖不睡眠」时，下方出现提示：**「暂时无法读取「合盖不睡眠」状态，未做修改。」**，开关保持关闭。用户截图见反馈。  ## 代码路径 `Sources/StatusTrioCore/Monitoring/SleepControlController.swift:558-565`（`performEnableLidSleep`）：  ```swift let current: Bool? do { current = try await client.readDisableSleep() } catch { current = nil } guard let current else {     lidSleepExternalState = .stateUnreadable   // ← 所有错误都归到这里     return .failed } ```  `readDisableSleep()`（`HighPowerModeClient.swift:170-178`）会抛 `HighPowerModeClientError.helperUnavailable`（XPC 超时/连不上）等错误。这里**捕获所有错误后统一当作“状态不可读”**，于是提示成了「暂时无法读取…未做修改」。  ## 为什么会读失败（可能原因，按可能性） 1. **辅助程序冷启动**：Helper 空闲会退出，点击时第一次 XPC 请求要把它拉起来；`request(timeoutError:)` 超时（通常 1–2 秒）就抛错。表现为“第一次点没反应/提示读不到，再点一次又好了”。 2. Helper 版本/权限边界：`canEnableLidSleep` 在 `helperCapability == .undetected/.detecting` 时是放行的（乐观），没等版本握手完成就发读写请求，失败就被误报为“状态不可读”。 3. 辅助程序刚安装/授权后服务尚未就绪。  ## 建议修复 1. **区分错误类型**，不要都显示“暂时无法读取状态”：    - `helperUnavailable` / 超时 → 提示「辅助程序正在启动，请稍后重试」，并可自动重试；    - `helperNeedsUpdate` → 提示更新辅助程序；    - 只有真正读回了无法解析的值，才用“状态不可读”。 2. **读取失败自动重试**：冷启动场景下重试 1–2 次（例如间隔 0.5s / 1s），成功则继续开启流程；仍失败再提示。 3. **确保 Helper 就绪再写入**：点击时先 `await helperReadiness.waitUntilReady(timeout:)`（或复用现有 probe），避免在 `.undetected/.detecting` 状态直接发请求。 4. **状态清理**：后续任一次成功读取后清除 `lidSleepExternalState = .stateUnreadable`，不要让提示一直挂着。 5. 可选：面板打开且「合盖不睡眠」行可见时，做一次**有界的** helper 预热（只读、停止路径明确），减少首次点击失败率；注意不要变成常驻轮询。 6. 帮助文案补充：提示里可以加一句「再点一次即可」或在重试中显示进度。  ## 需要用户补充 - 再点一次是否能成功开启？ - 设置里的「特权辅助程序」状态（已就绪 / 未安装 / 需更新）？ - 是否只在面板刚打开后的第一次点击出现，之后正常？ - 是否安装了新版 A
+  **Post-Mortem & Fix Analysis**:
+  > 已在分支 `dsh-a150ceba-f00c` 修复，待验收：  - 首次读取 `disablesleep` 遇到 helper 冷启动（XPC 超时）会按 0.5s / 1s 自动重试两次，成功则继续开启，不再误报「暂时无法读取状态」。 - 区分提示：helper 未响应 →「辅助程序正在启动，请稍后重试」；daemon 明确拒绝/无法解析 →「暂时无法读取…」；helper 需更新 → 沿用原有提示。 - 读取前按需等待 helper 就绪；任一次成功读取会清除残留提示。 - 已补 12 种语言文案与回归测试。本地 `verify-local.sh full` 通过（4007 tests / 0 failures）。  请在冷启动后首次点击确认能正常开启。
+  > 补充：失败不再只有一句笼统文案，已加稳定诊断码（提交 4c2353c7，仍在本分支待验收）。  提示会变成「…（错误码 DS-R4）」这种，码表：  读取侧： - DS-R0 未分类/旧 helper 无码 - DS-R1 pmset 启动失败 - DS-R2 pmset -g 超时 - DS-R3 pmset -g 退出码非 0（带 stderr） - DS-R4 输出无 SleepDisabled 行 - DS-R5 SleepDisabled 值不是 0/1 - DS-H1 helper 未响应（冷启动重试后仍失败）  写入侧： - DS-W1 pmset 启动失败 / DS-W2 超时 / DS-W3 退出码非 0（带 pmset 原文）/ DS-W4 写入后状态不一致  实现要点：码走现有 XPC 错误串，不改方法签名、不升协议版本；旧 helper 无码时回退 DS-R0，保持原文案。app 同时用统一日志（category=SleepControl）记录码与 detail，排障可用： `log show --predicate 'category == "SleepControl"' --last 1h`  本地 `verify-local.sh full` 通过（4009 tests / 0 failures），另跑 docs profile 通过。码表见 docs/issue-383-lid-sleep-diagnostics.md。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1450,477 +1453,1182 @@ final class BluetoothNearbyBatteryOptOutSynchronizer {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a833d6a0` (2026-11-23)
-**Commit Message**: fix(power): interpret backlight calibration as microamps
+### Incident Patch 1: `4e387e5e` (2026-11-26)
+**Commit Message**: fix: 修复未发布功能的导入兼容、详情缓存与配色覆盖
 
-AppleARMBacklight's current-for-max-backlight is reported in microamps
-(904383 on Mac15,9 = 904.383 mA). The estimator was treating it as milliamps
-and rejecting it as out of range, so #374 produced no display branch at all.
+- 设置导入兼容旧的 hardwarePanelRefreshSeconds：按各分组下限与 8s 上限
+  播种六个分组；文档里显式给出的新键优先；越界值告警且不修改。
+- 详情页 clearDetailPayloads 同时清 stored 与 panelStored，避免关闭面板
+  停在详情页后重开时，panelSnapshot 把上一份 detail 当缓存继续展示。
+- 图标设计器语义色新增 connected：充电中/已连接电源可分别配色；旧配置
+  只有 powered 覆盖时仍回退 powered，观感不变。
+- 新增 schema 产物一致性测试，比对已提交的 skill references 与最新导出，
+  防止目录改动后忘记重新生成。
 
-Compute watts as fraction × calibrationMicroAmps / 1,000,000 × 6 V, add a
-live-value regression (3199/13799 × 904383 µA ≈ 1.26 W), and bump the test
-candidate to Build 73.
+验证：bash scripts/verify-local.sh quick（相关图标、详情、设置目录、schema
+测试全部通过；UI/真机/签名/发布未覆盖）。
 
-**File**: `Sources/StatusTrioCore/Monitoring/DisplayPowerProvenance.swift` (modified, +18/-14)
+**File**: `Sources/StatusTrioCore/Monitoring/HardwareMetricsService.swift` (modified, +21/-8)
 ```diff
-@@ -56,7 +56,7 @@ final class AppleARMBacklightPowerEstimator: BacklightPowerEstimating, @unchecke
+@@ -265,16 +265,29 @@ final class HardwareMonitorObservable: ObservableObject {
  
-     private let lock = NSLock()
-     private var service: io_service_t = 0
--    private var calibrationMilliamps: Double?
-+    private var calibrationMicroAmps: Double?
-     private var retryAfter: Date = .distantPast
- 
-     deinit {
-@@ -69,7 +69,7 @@ final class AppleARMBacklightPowerEstimator: BacklightPowerEstimating, @unchecke
-             IOObjectRelease(service)
-             service = 0
-         }
--        calibrationMilliamps = nil
-+        calibrationMicroAmps = nil
-         retryAfter = .distantPast
-         lock.unlock()
+     /// Drops every detail payload that does not belong to the page now on screen,
+     /// so switching pages cannot show another page's stale per-core/breakdown data.
++    /// Both snapshots are cleared: the panel renders `panelStored`, so clearing
++    /// only the live copy would leave a previous page's payload to be shown as
++    /// cached data (it has no freshness expiry of its own) until the next merge.
+     func clearDetailPayloads(except kind: HardwareDetailKind?) {
+-        var changed = false
+-        if kind != .cpu, stored.cpuDetail != nil { stored.cpuDetail = nil; changed = true }
+-        if kind != .gpu, stored.gpuDetail != nil { stored.gpuDetail = nil; changed = true }
+-        if kind != .memory, stored.memoryDetail != nil { stored.memoryDetail = nil; changed = true }
+-        if kind != .network, stored.networkDetail != nil { stored.networkDetail = nil; changed = true }
+-        if kind != .disk, stored.diskDetail != nil { stored.diskDetail = nil; changed = true }
+-        guard changed else { return }
++        func clear(in snapshot: inout HardwareMetricsSnapshot) -> Bool {
++            var didChange = false
++            func drop<Value>(_ keyPath: WritableKeyPath<HardwareMetricsSnapshot, Value?>) {
++                guard snapshot[keyPath: keyPath] != nil else { return }
++                snapshot[keyPath: keyPath] = nil
++                didChange = true
++            }
++            if kind != .cpu { drop(\.cpuDetail) }
++            if kind != .gpu { drop(\.gpuDetail) }
++            if kind != .memory { drop(\.memoryDetail) }
++            if kind != .network { drop(\.networkDetail) }
++            if kind != .disk { drop(\.diskDetail) }
++            return didChange
++        }
++        let liveChanged = clear(in: &stored)
++        let panelChanged = clear(in: &panelStored)
++        guard liveChanged || panelChanged else { return }
+         objectWillChange.send()
+-        snapshotSubject.send(stored)
++        if liveChanged { snapshotSubject.send(stored) }
      }
-@@ -87,11 +87,12 @@ final class AppleARMBacklightPowerEstimator: BacklightPowerEstimating, @unchecke
-               current.value > 0, current.max > 0, calibration > 0 else {
-             return nil
+ }
+ 
+```
+
+**File**: `Sources/StatusTrioCore/Presentation/Icon/Configuration/IconAppearanceConfiguration.swift` (modified, +4/-0)
+```diff
+@@ -51,6 +51,10 @@ enum IconSemanticColorRole: String, Codable, CaseIterable, Hashable, Sendable {
+     case critical
+     case lowPower
+     case powered
++    /// Connected to power without charging (#389). Separate from `powered` so a
++    /// slot using semantic overrides can colour the two states differently,
++    /// matching the battery-status palette.
++    case connected
+     case bluetooth
+ }
+ 
+```
+
+**File**: `Sources/StatusTrioCore/Presentation/Icon/Resolution/IconPaletteResolver.swift` (modified, +10/-3)
+```diff
+@@ -16,8 +16,15 @@ enum IconPaletteResolver {
+                 alpha: color.alpha * IconColorRole.inactiveTrackOpacity
+             ))
+         case let .semanticOverrides(colors):
+-            guard let semanticRole, let color = colors[semanticRole] else { return role }
+-            return .custom(color.normalized())
++            guard let semanticRole else { return role }
++            if let color = colors[semanticRole] { return .custom(color.normalized()) }
++            // #389: `connected` now has its own semantic role. An older override
++            // that only coloured `powered` (before the split) keeps covering the
++            // connected state, so an existing configuration never changes look.
++            if semanticRole == .connected, let color = colors[.powered] {
++                return .custom(color.normalized())
++            }
++            return role
          }
--        let fraction = min(max(current.value / current.max, 0), 1)
--        let milliamps = fraction * calibration
--        let watts = milliamps / 1000 * Self.assumedVoltage
--        guard watts.isFinite,
--              (Self.minimumVisibleWatts...Self.maximumPlausibleWatts).contains(watts) else {
-+        guard let watts = Self.estimatedWatts(currentMicroAmps: current.value,
-+                                              maximumMicroAmps: current.max,
-+                                              calibrationMicroAmps: calibration) else {
+     }
+ 
+@@ -126,7 +133,7 @@ private extension IconColorRole {
+         case .critical: .critical
+         case .lowPower: .lowPower
+         case .powered: .powered
+-        case .connected: .powered
++        case .connected: .connected
+         case .bluetooth: .bluetooth
+         case .bluetoothIcon: .bluetooth
+         case .highPower: .powered
+```
+
+**File**: `Sources/StatusTrioCore/Settings/SettingsPreferenceCatalog.swift` (modified, +38/-0)
+```diff
+@@ -32,6 +32,10 @@ enum SettingsPreferenceCatalog {
+         var result: [String: Value] = [:]
+         var warnings: [String] = []
+         for key in values.keys.sorted() {
++            if key == Self.legacyPanelRefreshKey {
++                warnings.append(contentsOf: Self.migrateLegacyPanelRefresh(values[key], into: &result, existing: values))
++                continue
++            }
+             guard let preference = catalog[key] else {
+                 warnings.append("Unknown preference: \(key)")
+                 continue
+@@ -66,6 +70,40 @@ enum SettingsPreferenceCatalog {
+             + bluetoothPreferences + brightnessPreferences + panelPreferences
+     }
+ 
++    /// The single pre-#392 hardware refresh interval, retired in favour of the
++    /// six per-group settings. An export made before the split still carries it;
++    /// fold it into the group settings instead of reporting it as unknown.
++    private static let legacyPanelRefreshKey = "hardwarePanelRefreshSeconds"
++
++    private static let refreshGroupStorageKeys: [(group: HardwareRefreshGroup, key: String)] = [
++        (.cpuUsage, "hardwareCPUUsageRefreshSeconds"),
++        (.gpuUsage, "hardwareGPUUsageRefreshSeconds"),
++        (.memory, "hardwareMemoryRefreshSeconds"),
++        (.network, "hardwareNetworkRefreshSeconds"),
++        (.temperature, "hardwareTemperatureRefreshSeconds"),
++        (.disk, "hardwareDiskRefreshSeconds"),
++    ]
++
++    /// Seeds each group the document does not set explicitly, clamped to the
++    /// group's own floor and the shared 8 s cap — the same rule the store applies
++    /// when it seeds a legacy value on first launch. Explicit new keys win.
++    private static func migrateLegacyPanelRefresh(
++        _ value: Value?, into result: inout [String: Value], existing: [String: Value]
++    ) -> [String] {
++        guard let value, case let .number(seconds) = value, seconds.isFinite else {
++            return ["Invalid preference; using default: \(legacyPanelRefreshKey)"]
++        }
++        let rounded = Int(seconds.rounded())
++        guard (1...8).contains(rounded) else {
++            return ["Invalid preference; using default: \(legacyPanelRefreshKey)"]
++        }
++        for entry in refreshGroupStorageKeys where existing[entry.key] == nil {
++            let seeded = min(max(rounded, entry.group.defaultSeconds), 8)
++            result[entry.key] = .number(Double(seeded))
++        }
++        return []
++    }
++
+     private static var brightnessPreferences: [Preference] {
+         [
+             boolean(
+```
+
+**File**: `Sources/StatusTrioCore/UI/Settings/IconDesigner/IconAppearanceColorConversion.swift` (modified, +3/-1)
+```diff
+@@ -35,7 +35,9 @@ enum IconAppearanceColorEditing {
+         case let .fixed(color):
+             color
+         case let .semanticOverrides(colors):
+-            colors[role] ?? colors[.primary] ?? .white
++            colors[role]
++                ?? (role == .connected ? colors[.powered] : nil)
++                ?? colors[.primary] ?? .white
+         }
+     }
+ 
+```
+
+**File**: `Tests/StatusTrioCoreTests/HardwareDetailTests.swift` (modified, +26/-0)
+```diff
+@@ -317,6 +317,32 @@ final class HardwareDetailTests: XCTestCase {
+         XCTAssertTrue(observable.historyRowsForDetail.isEmpty)
+     }
+ 
++    /// The panel renders `panelSnapshot`, so clearing only the live copy would
++    /// leave a previous page's detail payload to reappear as cached data.
++    @MainActor
++    func testClearDetailPayloadsAlsoClearsPanelSnapshot() {
++        let observable = HardwareMonitorObservable(snapshot: .empty)
++        var snapshot = HardwareMetricsSnapshot.empty
++        snapshot.cpuDetail = CPUDetailReading(
++            usage: 42,
++            breakdown: CPUTimeBreakdown(user: 20, system: 5, idle: 75, nice: 0),
++            perCoreUsage: [40, 44],
++            topology: nil,
++            groupUsage: nil,
++            frequency: nil,
++            sampledAt: start)
++        snapshot.samples[.cpuUsage] = HardwareMetricSample(value: 42, unit: .percent,
++                                                           sampledAt: start, source: .mach, availability: .measured)
++        observable.update(snapshot, now: start)
++        XCTAssertNotNil(observable.snapshot.cpuDetail)
++        XCTAssertNotNil(observable.panelSnapshot.cpuDetail)
++
++        observable.clearDetailPayloads(except: nil)
++
++        XCTAssertNil(observable.snapshot.cpuDetail)
++        XCTAssertNil(observable.panelSnapshot.cpuDetail)
++    }
++
+     // MARK: - Chart geometry
+ 
+     private func geometryPoints(_ offsets: [TimeInterval], now: Date) -> [HardwareDetailHistoryPoint] {
+```
+
+**File**: `Tests/StatusTrioCoreTests/IconPaletteResolverTests.swift` (modified, +18/-0)
+```diff
+@@ -20,6 +20,24 @@ final class IconPaletteResolverTests: XCTestCase {
+         XCTAssertEqual(IconPaletteResolver.resolve(role: .lowPower, style: style), .lowPower)
+     }
+ 
++    func testConnectedAndPoweredCanCarryIndependentSemanticOverrides() {
++        let connected = IconRGBA(red: 0.1, green: 0.2, blue: 0.9, alpha: 1)
++        let powered = IconRGBA(red: 0.9, green: 0.6, blue: 0.1, alpha: 1)
++        let style = SlotColorStyle.semanticOverrides([.connected: connected, .powered: powered])
++
++        XCTAssertEqual(IconPaletteResolver.resolve(role: .connected, style: style), .custom(connected))
++        XCTAssertEqual(IconPaletteResolver.resolve(role: .powered, style: style), .custom(powered))
++    }
++
++    func testConnectedSemanticOverrideFallsBackToPoweredForOlderConfigurations() {
++        let powered = IconRGBA(red: 0.9, green: 0.6, blue: 0.1, alpha: 1)
++        let style = SlotColorStyle.semanticOverrides([.powered: powered])
++
++        // Before #389 split connected from powered, an override that only set
++        // `powered` also coloured the connected state; keep that look.
++        XCTAssertEqual(IconPaletteResolver.resolve(role: .connected, style: style), .custom(powered))
++    }
++
+     func testOnlySlotBeingStyledChangesAndColorParticipatesInSceneIdentity() {
+         let red = IconRGBA(red: 1, green: 0, blue: 0, alpha: 1)
+         let blue = IconRGBA(red: 0, green: 0, blue: 1, alpha: 1)
+```
+
+**File**: `Tests/StatusTrioCoreTests/SettingsPreferenceCatalogTests.swift` (modified, +45/-0)
+```diff
+@@ -536,6 +536,51 @@ final class SettingsPreferenceCatalogTests: XCTestCase {
+         }
+     }
+ 
++    func testLegacyPanelRefreshImportsIntoPerGroupCadences() {
++        withStore { target, _ in
++            let prepared = SettingsPreferenceCatalog.prepare([
++                "hardwarePanelRefreshSeconds": .number(5),
++            ])
++            XCTAssertTrue(prepared.warnings.isEmpty)
++            // 5 s is above every group's floor, so each group adopts it.
++            for key in [
++                "hardwareCPUUsageRefreshSeconds", "hardwareGPUUsageRefreshSeconds",
++                "hardwareMemoryRefreshSeconds", "hardwareNetworkRefreshSeconds",
++                "hardwareTemperatureRefreshSeconds", "hardwareDiskRefreshSeconds",
++            ] {
++                XCTAssertEqual(prepared.values[key], .number(5), key)
++            }
++
++            SettingsPreferenceCatalog.apply(prepared.values, to: target)
++            XCTAssertEqual(target.hardwareCPUUsageRefreshSeconds, 5)
++            XCTAssertEqual(target.hardwareGPUUsageRefreshSeconds, 5)
++            XCTAssertEqual(target.hardwareMemoryRefreshSeconds, 5)
++            XCTAssertEqual(target.hardwareNetworkRefreshSeconds, 5)
++            XCTAssertEqual(target.hardwareTemperatureRefreshSeconds, 5)
++            XCTAssertEqual(target.hardwareDiskRefreshSeconds, 5)
++        }
++    }
++
++    func testLegacyPanelRefreshRespectsExplicitNewKeysAndGroupFloors() {
++        let prepared = SettingsPreferenceCatalog.prepare([
++            "hardwarePanelRefreshSeconds": .number(1),
++            "hardwareCPUUsageRefreshSeconds": .number(3),
++        ])
++        // Explicit new value wins over the legacy seed.
++        XCTAssertEqual(prepared.values["hardwareCPUUsageRefreshSeconds"], .number(3))
++        // A legacy 1 s cannot go below a group's floor (CPU 2 s, temperature 4 s).
++        XCTAssertEqual(prepared.values["hardwareGPUUsageRefreshSeconds"], .number(2))
++        XCTAssertEqual(prepared.values["hardwareTemperatureRefreshSeconds"], .number(4))
++    }
++
++    func testLegacyPanelRefreshOutsideRangeWarnsAndDoesNotMutate() {
++        let prepared = SettingsPreferenceCatalog.prepare([
++            "hardwarePanelRefreshSeconds": .number(0),
++        ])
++        XCTAssertEqual(prepared.warnings.count, 1)
++        XCTAssertNil(prepared.values["hardwareCPUUsageRefreshSeconds"])
++    }
++
+     private func withStore(_ body: (SettingsStore, UserDefaults) -> Void) {
+         let name = "SettingsPreferenceCatalogTests.\(UUID().uuidString)"
+         let defaults = UserDefaults(suiteName: name)!
+```
+
+---
+
+### Incident Patch 2: `eac2229a` (2026-11-25)
+**Commit Message**: Merge remote-tracking branch 'origin/main' into fix-392-topapps-refresh-interval
+
+**File**: `Sources/StatusTrioCore/App/AppEnvironment.swift` (modified, +6/-4)
+```diff
+@@ -561,10 +561,12 @@ final class AppEnvironment {
+             refreshInterval: refreshInterval,
+             bluetoothDevices: BluetoothDeviceController(
+                 // The accessory power sources are the second battery source, read
+-                // only for the devices the paired-device report carries no level
+-                // for; accessory notifications are what make a level refresh
+-                // between the safety-net polls.
+-                accessoryBatteryReader: PmsetAccessoryBatteryWorker(),
++                // only for a level the paired-device report cannot supply and for
++                // the charging state the summary rows draw. IOKit is the cheap
++                // path; `pmset` stays as the fallback when the private symbol or
++                // its coverage is not there. Accessory notifications are what
++                // make a refresh happen between the safety-net polls.
++                accessoryBatteryReader: SystemAccessoryBatteryWorker(),
+                 connectionEvents: IOBluetoothConnectionEventMonitor(),
+                 accessoryBatteryEvents: AccessoryPowerNotifyEventMonitor(),
+                 // Constructing the adapter is inert; its CBCentralManager is
+```
+
+**File**: `Sources/StatusTrioCore/Models/BluetoothBatteryLevelFallback.swift` (modified, +51/-11)
+```diff
+@@ -50,13 +50,21 @@ enum BluetoothBatteryLevelFallback {
+     /// A report that could not be read is the other case this covers: with no
+     /// levels to compare against, the only way to show anything is to ask the
+     /// second source.
++    ///
++    /// `needsChargingState` adds the other reason to read: a surface that draws
++    /// the bolt wants the accessory state for devices whose level the primary
++    /// report already carries. It must be driven by an actual consumer (the
++    /// panel/detail rows), never by the mere fact that a level exists, so a
++    /// menu-bar-only demand does not start a second read.
+     static func isNeeded(
+         levels: [String: BluetoothBatteryLevel]?,
+-        devices: [BluetoothDevice]
++        devices: [BluetoothDevice],
++        needsChargingState: Bool = false
+     ) -> Bool {
+         let connected = devices.filter(\.isConnected)
+         guard !connected.isEmpty else { return false }
+         guard let levels else { return true }
++        if needsChargingState { return true }
+         return connected.contains {
+             levels[BluetoothBatteryReader.normalizedAddress($0.id)] == nil
+         }
+@@ -68,6 +76,12 @@ enum BluetoothBatteryLevelFallback {
+     ///
+     /// A disconnected device is never given a level here: it has no live session,
+     /// so an accessory source that still names it is stale, not a reading.
++    ///
++    /// The accessory source also owns the charging state the primary report never
++    /// carries. For a device that already has a level, only the four charging
++    /// fields are filled in, and only where they are still unknown: the level
++    /// itself is never changed or removed, and a channel without a level is not
++    /// given a state the row could not draw.
+     static func merged(
+         levels: [String: BluetoothBatteryLevel],
+         accessories: [BluetoothAccessoryBatteryLevel],
+@@ -77,10 +91,13 @@ enum BluetoothBatteryLevelFallback {
+         let attributed = attributedReadings(accessories: accessories, devices: devices)
+         for device in devices where device.isConnected {
+             let address = BluetoothBatteryReader.normalizedAddress(device.id)
+-            guard !address.isEmpty, merged[address] == nil else { continue }
+-            guard let readings = attributed[address] else { continue }
+-            guard let level = channelLevel(for: device, readings: readings) else { continue }
+-            merged[address] = level
++            guard !address.isEmpty, let readings = attributed[address] else { continue }
++            guard let accessoryLevel = channelLevel(for: device, readings: readings) else { continue }
++            if let existing = merged[address] {
++                merged[address] = existing.fillingCharging(from: accessoryLevel)
++            } else {
++                merged[address] = accessoryLevel
++            }
+         }
+         return merged
+     }
+@@ -391,21 +408,44 @@ enum BluetoothBatteryLevelFallback {
+         var left: Int?
+         var right: Int?
+         var caseLevel: Int?
++        var mainIsCharging: Bool?
++        var leftIsCharging: Bool?
++        var rightIsCharging: Bool?
++        var caseIsCharging: Bool?
+         for accessory in readings {
+             switch accessory.part {
+-            case .none: main = main ?? accessory.percentage
+-            case .left: left = left ?? accessory.percentage
+-            case .right: right = right ?? accessory.percentage
+-            case .caseLevel: caseLevel = caseLevel ?? accessory.percentage
++            case .none:
++                main = main ?? accessory.percentage
++                mainIsCharging = mainIsCharging ?? accessory.isCharging
++            case .left:
++                left = left ?? accessory.percentage
++                leftIsCharging = leftIsCharging ?? accessory.isCharging
++            case .right:
++                right = right ?? accessory.percentage
++                rightIsCharging = rightIsCharging ?? accessory.isCharging
++            case .caseLevel:
++                caseLevel = caseLevel ?? accessory.percentage
++                caseIsCharging = caseIsCharging ?? accessory.isCharging
+             }
+         }
+-        guard main != nil || left != nil || right != nil || caseLevel != nil else { return nil }
++        // A charging-only reading is a valid result: it can add the bolt to a
++        // level the primary report already carries, so only a reading with neither
++        // a capacity nor a state is discarded.
++        guard main != nil || left != nil || right != nil || caseLevel != nil
++            || mainIsCharging != nil || leftIsCharging != nil
++            || rightIsCharging != nil || caseIsCharging != nil else {
 +            return nil
 +        }
-+        guard (Self.minimumVisibleWatts...Self.maximumPlausibleWatts).contains(watts) else {
-             return nil
-         }
-         return DisplayPowerSample(watts: watts, readAt: date, provenance: .estimated,
-@@ -117,13 +118,15 @@ final class AppleARMBacklightPowerEstimator: BacklightPowerEstimating, @unchecke
-     }
- 
-     private func calibrationLocked(from properties: [String: Any]) -> Double? {
--        if let calibrationMilliamps { return calibrationMilliamps }
-+        if let calibrationMicroAmps { return calibrationMicroAmps }
-         guard let parameters = properties["backlight-calibration-parameters"] as? [String: Any],
-               let value = Self.number(parameters["current-for-max-backlight"]),
--              value.isFinite, (1...20_000).contains(value) else {
-+              value.isFinite, (1_000...2_000_000).contains(value) else {
-             return nil
-         }
--        calibrationMilliamps = value
-+        // The key is in microamps (904383 on Mac15,9 = 904.383 mA for the
-+        // maximum backlight), matching BrightnessMicroAmps' scale.
-+        calibrationMicroAmps = value
-         return value
-     }
- 
-@@ -144,12 +147,13 @@ final class AppleARMBacklightPowerEstimator: BacklightPowerEstimating, @unchecke
-     }
- 
-     static func estimatedWatts(currentMicroAmps value: Double, maximumMicroAmps maximum: Double,
--                               calibrationMilliamps: Double,
-+                               calibrationMicroAmps: Double,
-                                assumedVoltage: Double = AppleARMBacklightPowerEstimator.assumedVoltage) -> Double? {
--        guard value.isFinite, maximum.isFinite, calibrationMilliamps.isFinite,
--              value > 0, maximum > 0, calibrationMilliamps > 0 else { return nil }
-+        guard value.isFinite, maximum.isFinite, calibrationMicroAmps.isFinite,
-+              value > 0, maximum > 0, calibrationMicroAmps > 0 else { return nil }
-         let fraction = min(max(value / maximum, 0), 1)
--        let watts = fraction * calibrationMilliamps / 1000 * assumedVoltage
-+        // microamps -> amps; the 6 V string voltage is the named assumption.
-+        let watts = fraction * calibrationMicroAmps / 1_000_000 * assumedVoltage
-         guard watts.isFinite else { return nil }
-         return watts
-     }
+         return BluetoothBatteryLevel(
+             deviceAddress: device.id,
+             main: main,
+             left: left,
+             right: right,
+-            caseLevel: caseLevel
++            caseLevel: caseLevel,
++            mainIsCharging: 
 ```
 
-**File**: `Support/Info.plist` (modified, +1/-1)
+**File**: `Sources/StatusTrioCore/Monitoring/BluetoothAccessoryBatteryReader.swift` (modified, +205/-10)
 ```diff
-@@ -21,7 +21,7 @@
- 	<key>CFBundleShortVersionString</key>
- 	<string>1.10.5</string>
- 	<key>CFBundleVersion</key>
--	<string>72</string>
-+	<string>73</string>
- 	<key>LSMinimumSystemVersion</key>
- 	<string>13.0</string>
- 	<key>LSUIElement</key>
-```
-
-**File**: `Tests/StatusTrioCoreTests/SystemPowerReaderTests.swift` (modified, +7/-3)
-```diff
-@@ -333,13 +333,17 @@ extension SystemPowerReaderTests {
-     func testBacklightEstimateFormulaUsesCalibrationAndNamedVoltage() {
-         let watts = AppleARMBacklightPowerEstimator.estimatedWatts(
-             currentMicroAmps: 500, maximumMicroAmps: 1_000,
--            calibrationMilliamps: 800, assumedVoltage: 6)
-+            calibrationMicroAmps: 800_000, assumedVoltage: 6)
-         XCTAssertEqual(watts ?? 0, 2.4, accuracy: 0.0001)
-         XCTAssertNil(AppleARMBacklightPowerEstimator.estimatedWatts(
-             currentMicroAmps: 500, maximumMicroAmps: 0,
--            calibrationMilliamps: 800))
-+            calibrationMicroAmps: 800_000))
-         XCTAssertNil(AppleARMBacklightPowerEstimator.estimatedWatts(
-             currentMicroAmps: 500, maximumMicroAmps: 1_000,
--            calibrationMilliamps: 0))
-+            calibrationMicroAmps: 0))
-+        // Mac15,9 live values: 3199/13799 × 904383 µA × 6 V ≈ 1.26 W.
-+        XCTAssertEqual(AppleARMBacklightPowerEstimator.estimatedWatts(
-+            currentMicroAmps: 3_199, maximumMicroAmps: 13_799,
-+            calibrationMicroAmps: 904_383) ?? 0, 1.258, accuracy: 0.01)
-     }
+@@ -1,4 +1,6 @@
++import Darwin
+ import Foundation
++import IOKit.ps
+ 
+ /// One accessory battery reading from the system's power-management accessory
+ /// sources — the data macOS's own accessory battery UI is built from.
+@@ -22,7 +24,33 @@ struct BluetoothAccessoryBatteryLevel: Equatable, Sendable {
+     let vendorID: Int?
+     let productID: Int?
+     let part: BluetoothAccessoryPart?
+-    let percentage: Int
++    /// The charge left, or `nil` when the source reports a charging state for
++    /// this part but no readable capacity. Such a reading is still useful: it can
++    /// supply the charging flag for a level another source already carries, so a
++    /// missing capacity must not throw the state away.
++    let percentage: Int?
++    /// The accessory's explicit charging state, or `nil` when the source does not
++    /// report one. Only a real boolean counts: a missing field, a number, or a
++    /// string is unknown, never `false`.
++    let isCharging: Bool?
++
++    init(
++        identifier: String?,
++        name: String,
++        vendorID: Int?,
++        productID: Int?,
++        part: BluetoothAccessoryPart?,
++        percentage: Int?,
++        isCharging: Bool? = nil
++    ) {
++        self.identifier = identifier
++        self.name = name
++        self.vendorID = vendorID
++        self.productID = productID
++        self.part = part
++        self.percentage = percentage
++        self.isCharging = isCharging
++    }
  }
-```
-
----
-
-### Incident Patch 2: `9041c25e` (2026-11-23)
-**Commit Message**: fix(power): use panel-class backlight profiles for XDR and SDR Air
-
-The 3.34 V calibration derived from M3 Max XDR is not valid for MacBook Air.
-XDR panels keep the fixed-point/3.34 V model; SDR panels keep macpow's 6 V
-model with microamp calibration. Air still needs real-device calibration.
-
-**File**: `Sources/StatusTrioCore/Monitoring/DisplayPowerProvenance.swift` (modified, +48/-13)
-```diff
-@@ -53,12 +53,15 @@ final class AppleARMBacklightPowerEstimator: BacklightPowerEstimating, @unchecke
-         self.panelIsOn = panelIsOn
+ 
+ /// Which part of an accessory a power source describes.
+@@ -57,7 +85,15 @@ enum BluetoothAccessoryBatteryReader {
+     /// whole read: this source is a refinement, and one unreadable document must
+     /// not cost the readings that can be read.
+     static func parse(xml: String) -> [BluetoothAccessoryBatteryLevel] {
+-        documents(in: xml).compactMap(level(from:))
++        parse(documents: documents(in: xml))
++    }
++
++    /// The one parser both sources feed. IOKit hands back the same property
++    /// dictionaries the XML decodes to, so a second field-parsing implementation
++    /// is not needed: the only difference between the sources is how the
++    /// dictionaries are obtained.
++    static func parse(documents: [[String: Any]]) -> [BluetoothAccessoryBatteryLevel] {
++        documents.flatMap(levels(from:))
      }
  
--    /// Effective backlight rail voltage used for the estimate. macpow's generic
--    /// 6 V assumption underestimates Apple Silicon XDR panels by roughly 8×:
--    /// on Mac15,9 the calibration-derived 3.199 A and the measured 10.69 W PDBR
--    /// imply ≈3.34 V, so use that explicitly as an estimate parameter. It is
--    /// still an assumption, never presented as a measured voltage.
--    static let assumedVoltage: Double = 3.34
-+    /// Effective backlight rail voltage used for an XDR estimate. macpow's
-+    /// generic 6 V assumption underestimates Apple Silicon XDR panels by
-+    /// roughly 8×: on Mac15,9 the calibration-derived 3.199 A and the measured
-+    /// 10.69 W PDBR imply ≈3.34 V. It is still an assumption, never presented
-+    /// as a measured voltage.
-+    static let xdrAssumedVoltage: Double = 3.34
-+    /// SDR panels (including MacBook Air) use macpow's original 6 V model; it
-+    /// was designed for this class and there is no XDR HDR current scaling.
-+    static let sdrAssumedVoltage: Double = 6.0
-     /// A branch below this is not drawn; it is a UI visibility threshold, not a
-     /// sensor validity threshold.
-     static let minimumVisibleWatts: Double = 0.05
-@@ -104,17 +107,20 @@ final class AppleARMBacklightPowerEstimator: BacklightPowerEstimating, @unchecke
-               current.value > 0, current.max > 0, calibration > 0 else {
-             return nil
+     static func documents(in xml: String) -> [[String: Any]] {
+@@ -72,24 +108,75 @@ enum BluetoothAccessoryBatteryReader {
          }
-+        let profile = Self.panelProfile(maxNits: Self.maxNits(from: properties))
-+        let voltage = Self.assumedVoltage(for: profile)
-         guard let watts = Self.estimatedWatts(currentMicroAmps: current.value,
-                                               maximumMicroAmps: current.max,
--                                              calibrationFixedPoint: calibration) else {
-+                                              calibrationFixedPoint: calibration,
-+                                              profile: profile) else {
-             return nil
-         }
-         guard (Self.minimumVisibleWatts...Self.maximumPlausibleWatts).contains(watts) else {
-             return nil
-         }
-         return DisplayPowerSample(watts: watts, readAt: date, provenance: .estimated,
-                                   source: "AppleARMBacklight",
--                                  assumedVoltage: Self.assumedVoltage)
-+                                  assumedVoltage: voltage)
      }
  
-     private func propertiesLocked() -> [String: Any]? {
-@@ -163,16 +169,45 @@ final class AppleARMBacklightPowerEstimator: BacklightPowerEstimating, @unchecke
-         return (value, maximum)
-     }
- 
-+    enum PanelProfile: String, Equatable, Sendable {
-+        case xdr
-+        case sdr
+-    private static func level(from document: [String: Any]) -> BluetoothAccessoryBatteryLevel? {
++    /// Every reading one power-source document yields.
++    ///
++    /// A document is either a whole accessory, or — when macOS nests its parts
++    /// under `Combined Parts` — the parent of several part records. Each nested
++    /// part is parsed as its own reading, inheriting the parent's identity only
++    /// for the keys the part itself leaves out; capacity and charging state are
++    /// never inherited, so a parent's charge cannot be handed to a bud.
++    private static func levels(from document: [String: Any]) -> [BluetoothAccessoryBatteryLevel] {
+         // The Mac's own battery is a power source too, and it is not an
+         // accessory: its type is what keeps it out of this list.
+-        guard document["Type"] as? String == "Accessory Source",
+-              let percentage = percentage(of: document) else {
+-            return nil
++        guard document["Type"] as? String == "Accessory Source" else { return [] }
++        if let combined = document["Combined Parts"] as? [[String: Any]] {
++            return combined.compactMap { part in
++                level(from: mergingIdentity(of: document, into: part))
++            }
+         }
++        return level(from: document).map { [$0] } ?? []
 +    }
 +
-+    static func panelProfile(maxNits: Double?) -> PanelProfile {
-+        (maxNits ?? 0) >= 1_000 ? .xdr : .sdr
-+    }
-+
-+    static func assumedVoltage(for profile: PanelProfile) -> Double {
-+        profile == .xdr ? xdrAssumedVoltage : sdrAssumedVoltage
-+    }
-+
-+    /// `BrightnessMilliNits.max` is the panel's peak (HDR) nits. It separates
-+    /// XDR panels (where BrightnessMicroAmps' max is the HDR peak current) from
-+    /// SDR Air-style panels (where macpow's 6 V model applies).
-+    static func maxNits(from properties: [String: Any]) -> Double? {
-+        guard let display = properties["IODisplayParameters"] as? [String: Any],
-+              let nits = display["BrightnessMilliNits"] as? [String: Any],
-+              let maximum = number(nits["max"]), maximum.isFinite else { return nil }
-+        return maximum / 1000
-+    }
-+
-     static func estimatedWatts(currentMicroAmps value: Double, maximumMicroAmps maximum: Double,
-                                calibrationFixedPoint: Double,
--                               assumedVoltage: Double = AppleARMBacklightPowerEstimator.assumedVoltage) -> Double? {
-+                               profile: PanelProfile = .xdr,
-+                               assumedVoltage: Double? = nil) -> Double? {
-         guard value.isFinite, maximum.isFinite, calibrationFixedPoint.isFinite,
-               value > 0, maximum > 0, calibrationFixedPoint > 0 else { return nil }
-         let fraction = min(max(value / maximum, 0), 1)
--        // Calibration is 16.16 fixed-point amps; BrightnessMicroAmps is the same
--        // fraction at millamp scale. Power uses the named effective rail voltage.
--        let maxAmps = calibrationFixedPoint / 65_536
--        let watts = fraction * maxAmps * assumedVoltage
-+        // XDR calibration is 16.16 fixed-point amps; SDR keeps macpow's
-+        // microamp/milliamp interpretation. Power uses the named profile voltage.
-+        let maxAmps: Double
-+        switch profile {
-+        case .xdr: maxAmps = calibrationFixedPoint / 65_536
-+        case .sdr: maxAmps = calibrationFixedPoint / 1_000_000
++    /// A nested part, with the parent's identity filled in for any identity key
++    /// the part omits. Capacity and charging state are deliberately excluded: the
++    /// part owns those, and inheriting the parent's would misattribute them.
++    private static func mergingIdentity(
++        of parent: [String: Any],
++        into part: [String: Any]
++    ) -> [String: Any] {
++        var merged = part
++        if merged["Type"] == nil { merged["Type"] = parent["Type"] }
++        for key in ["Accessory Identifier", "Group Identifier", "Name",
++                    "Vendor ID", "Product ID", "Accessory Category"] {
++            if merged[key] == nil, let value = parent[key] { merged[key] = value }
 +        }
-+        let voltage 
++        return merged
++    }
++
++    private static func level(from document: [String: Any]) -> BluetoothAccessoryBatteryLevel? {
++        guard document["Type"] as? String == "Accessory Source" else { return nil }
++        let percentage = percentage(of: document)
++        let isCharging = boolean(of: document["Is Charging"])
++        // A reading is worth keeping when it carries a capacity or an explicit
++        // charging state; a charging-only record still supplements a level another
++        // s
 ```
 
-**File**: `Tests/StatusTrioCoreTests/SystemPowerReaderTests.swift` (modified, +7/-0)
+**File**: `Sources/StatusTrioCore/Monitoring/BluetoothBatteryReader.swift` (modified, +96/-15)
 ```diff
-@@ -346,6 +346,13 @@ extension SystemPowerReaderTests {
-         XCTAssertEqual(AppleARMBacklightPowerEstimator.estimatedWatts(
-             currentMicroAmps: 3_199, maximumMicroAmps: 13_799,
-             calibrationFixedPoint: 904_383) ?? 0, 10.66, accuracy: 0.05)
-+        // SDR/Air profile keeps macpow's 6 V model; full-scale is 0.904 A × 6 V.
-+        XCTAssertEqual(AppleARMBacklightPowerEstimator.estimatedWatts(
-+            currentMicroAmps: 13_799, maximumMicroAmps: 13_799,
-+            calibrationFixedPoint: 904_383, profile: .sdr) ?? 0, 5.426, accuracy: 0.01)
-+        XCTAssertEqual(AppleARMBacklightPowerEstimator.panelProfile(maxNits: 1_600), .xdr)
-+        XCTAssertEqual(AppleARMBacklightPowerEstimator.panelProfile(maxNits: 500), .sdr)
-+        XCTAssertEqual(AppleARMBacklightPowerEstimator.panelProfile(maxNits: nil), .sdr)
+@@ -39,34 +39,93 @@ struct BluetoothBatteryLevel: Equatable, Sendable {
+     let right: Int?
+     let caseLevel: Int?
+ 
++    /// Each channel's explicit charging state, or `nil` when unknown. The primary
++    /// report never supplies this; the accessory power sources add it after the
++    /// level is published, and the four fields are merged independently so one
++    /// bud's state is never inferred from another's.
++    var mainIsCharging: Bool? = nil
++    var leftIsCharging: Bool? = nil
++    var rightIsCharging: Bool? = nil
++    var caseIsCharging: Bool? = nil
++
+     /// The level as the pieces a row draws, or `nil` when the report carries no
+     /// channel for this device at all.
+     ///
+     /// The charging case is a glyph rather than the word "Case"; the percentage
+-    /// beside it stays text, because the word was the part with no room.
++    /// beside it stays text, because the word was the part with no room. A channel
++    /// that is charging draws a bolt between its label and its percentage. A
++    /// channel with no level is not drawn at all, so a charging flag never becomes
++    /// an empty bolt with no charge to point at.
+     var segments: [BluetoothBatterySegment]? {
+-        var pieces: [BluetoothBatterySegment] = []
+-        func append(_ piece: BluetoothBatterySegment) {
+-            if !pieces.isEmpty {
+-                pieces.append(.text(Self.separator))
+-            }
+-            pieces.append(piece)
+-        }
+-
++        var channels: [[BluetoothBatterySegment]] = []
+         if let main {
+-            append(.text("\(main)%"))
++            channels.append(Self.channel(prefix: nil, value: main, isCharging: mainIsCharging))
+         }
+         if let left {
+-            append(.text("L \(left)%"))
++            channels.append(Self.channel(prefix: "L ", value: left, isCharging: leftIsCharging))
+         }
+         if let right {
+-            append(.text("R \(right)%"))
++            channels.append(Self.channel(prefix: "R ", value: right, isCharging: rightIsCharging))
+         }
+         if let caseLevel {
+-            append(.symbol(name: Self.caseSymbolName, label: Self.caseTextLabel))
+-            pieces.append(.text(" \(caseLevel)%"))
++            channels.append(Self.caseChannel(value: caseLevel, isCharging: caseIsCharging))
++        }
++        guard !channels.isEmpty else { return nil }
++        var pieces: [BluetoothBatterySegment] = []
++        for (index, channel) in channels.enumerated() {
++            if index > 0 { pieces.append(.text(Self.separator)) }
++            pieces.append(contentsOf: channel)
++        }
++        return pieces
++    }
++
++    /// Whether any channel that is actually drawn is charging. The drawn text
++    /// hides its glyph from accessibility, so the row asks this to add the
++    /// localized word a screen reader otherwise misses.
++    var hasVisibleCharging: Bool {
++        (main != nil && mainIsCharging == true)
++            || (left != nil && leftIsCharging == true)
++            || (right != nil && rightIsCharging == true)
++            || (caseLevel != nil && caseIsCharging == true)
++    }
++
++    /// One labelled channel's pieces: optional "L "/"R " prefix, a bolt when it is
++    /// charging, then the percentage. The bolt's text label is empty on purpose —
++    /// it is decoration, and the spelling a text surface needs is added once for
++    /// the whole row by `hasVisibleCharging`, in the localized UI layer.
++    private static func channel(
++        prefix: String?,
++        value: Int,
++        isCharging: Bool?
++    ) -> [BluetoothBatterySegment] {
++        // Not charging (or unknown) keeps the original single text piece, so the
++        // existing wording and its pinned segments do not change.
++        guard isCharging == true else {
++            return [.text("\(prefix ?? "")\(value)%")]
++        }
++        var pieces: [BluetoothBatterySegment] = []
++        if let prefix { pieces.append(.text(prefix)) }
++        pieces.append(.symbol(name: chargingSymbolName, label: ""))
++        pieces.append(.text("\(value)%"))
++        return pieces
++    }
++
++    /// The charging-case channel: its glyph stands in for the word "Case", the
++    /// bolt follows a space when charging, then the percentage — so the bolt sits
++    /// right against the number exactly as it does for L/R, and the case glyph
++    /// stays the label rather than being glued to the bolt.
++    private static func caseChannel(value: Int, isCharging: Bool?) -> [BluetoothBatterySegment] {
++        var pieces: [BluetoothBatterySegment] = [
++            .symbol(name: caseSymbolName, label: caseTextLabel)
++        ]
++        guard isCharging == true else {
++            pieces.append(.text(" \(value)%"))
++            return pieces
+         }
+-        return pieces.isEmpty ? nil : pieces
++        pieces.append(.text(" "))
++        pieces.append(.symbol(name: chargingSymbolName, label: ""))
++        pieces.append(.text("\(value)%"))
++        return pieces
      }
- }
  
+     /// The s
 ```
 
-**File**: `docs/battery-power-flow.md` (modified, +4/-2)
+**File**: `Sources/StatusTrioCore/Monitoring/BluetoothDeviceController.swift` (modified, +9/-1)
 ```diff
-@@ -31,8 +31,10 @@
- M3 Air（Mac15,12）没有 `PDBR`，`PBLR` 恒为 0。旧逻辑把 0 当成有效背光并绘制“显示器 0.00 W”。现在按以下顺序：
- 
- 1. 实测 SMC 背光轨道：新代际先 `PBwo`，再 `PDBR`，最后 `PBLR`；任一读数大于 0.05 W 即使用实测值。
--2. 若实测轨道全部缺失或为 0，读取 `AppleARMBacklight` 的 `BrightnessMicroAmps` 与 `backlight-calibration-parameters.current-for-max-backlight`，按 macpow 方法估算：`电流比例 × (校准最大电流 ÷ 65,536) A × 3.34 V`。
--3. 3.34 V 是按本机 PDBR 反推的等效估算参数，不是实测电压；macpow 通用的 6 V 假设在 Apple Silicon XDR 上会低约 8 倍；估算值在流向图显示 `≈`，悬停提示标 “Estimated”，并让系统 residual 也标记为估算（因为 residual = source − charging − display − usb）。
-+2. 若实测轨道全部缺失或为 0，读取 `AppleARMBacklight` 的 `BrightnessMicroAmps` 与 `backlight-calibration-parameters.current-for-max-backlight`，按面板类型估算：
-+   - XDR：`电流比例 × (校准值 ÷ 65,536) A × 3.34 V`（3.34 V 是按本机 PDBR 反推的等效参数）。
-+   - SDR / MacBook Air：保留 macpow 的 6 V 模型（校准值按微安解释），100% 上限约 5.4 W；Air 尚未实机校准。
-+3. 这些电压都是估算假设，不是实测电压；估算值在流向图显示 `≈`，悬停提示标 “Estimated”，并让系统 residual 也标记为估算（因为 residual = source − charging − display − usb）。
- 4. 没有有效电流/校准数据时不发布估算分支；估算超出预算或导致 residual 超出容差时，丢弃估算分支并保留其余拆分，不伪造负 residual。内建屏不在线或已休眠（例如合盖只用外接显示器）时也不发布内建背光估算，因为 `AppleARMBacklight` 会保留旧电流值，不能把陈旧值当成当前功耗。
- 5. `DISP/DISPEXT` 只代表 SoC 显示控制器，不能冒充背光功率。
- 
+@@ -1299,7 +1299,15 @@ final class BluetoothDeviceController: ObservableObject {
+         levels: [String: BluetoothBatteryLevel]?
+     ) {
+         guard let accessoryBatteryReader else { return }
+-        guard BluetoothBatteryLevelFallback.isNeeded(levels: levels, devices: devices) else {
++        // The summary rows are the only surface that draws the charging bolt, so
++        // they are the only thing that makes the accessory state worth reading
++        // for a device whose level the primary report already carries. A menu-bar
++        // icon that only needs levels must not start this second read.
++        guard BluetoothBatteryLevelFallback.isNeeded(
++            levels: levels,
++            devices: devices,
++            needsChargingState: hasBluetoothSummarySurface
++        ) else {
+             return
+         }
+         accessoryBatteryReader.read { [weak self] accessories in
 ```
 
-**File**: `docs/sensor-capability-matrix.md` (modified, +4/-1)
+**File**: `Sources/StatusTrioCore/UI/BluetoothBatteryLevelText.swift` (modified, +21/-1)
 ```diff
-@@ -67,7 +67,10 @@
- 优先级：**SMC 实测（PBwo → PDBR → PBLR）→ AppleARMBacklight 估算 → 不可用**。
+@@ -22,9 +22,29 @@ enum BluetoothBatteryLevelText {
+                 // A symbol Apple drops in a later release must not take the
+                 // meaning with it: the label stands in for the glyph, the way
+                 // the row's other icon lookups fall back rather than draw blank.
+-                guard symbolImage(name) != nil else {
++                guard let image = symbolImage(name) else {
+                     return run + Text(verbatim: label)
+                 }
++                // The charging mark is decoration, not a digit, and the battery
++                // glyph is wider than tall: a fixed 11pt symbol image keeps its
++                // own aspect (no square stretch) and its own size, because the
++                // row's outer `.font(...)` cannot shrink a `Text(Image)` run.
++                if name == BluetoothBatteryLevel.chargingSymbolName {
++                    let small = image.withSymbolConfiguration(
++                        NSImage.SymbolConfiguration(pointSize: 11, weight: .regular)
++                    ) ?? image
++                    if small.size.height > 0 {
++                        small.size = NSSize(
++                            width: 11 * (small.size.width / small.size.height),
++                            height: 11
++                        )
++                    }
++                    // A `Text(Image(...))` sits on the text baseline by its bottom
++                    // edge; the battery is taller than a digit, so it reads high.
++                    // A small negative baseline offset drops it to be vertically
++                    // centred with the percentage beside it.
++                    return run + Text(Image(nsImage: small)).baselineOffset(-2)
++                }
+                 return run + Text(Image(systemName: name))
+             }
+         }
+```
+
+**File**: `Sources/StatusTrioCore/UI/BluetoothDeviceRow.swift` (modified, +10/-5)
+```diff
+@@ -316,13 +316,18 @@ struct BluetoothDeviceRow: View {
+             )
+         }
+         let state = stateAccessibilityValue
+-        guard let level = BluetoothDevicePresentation.batteryLevelSegments(
+-            for: device,
+-            batteryLevels: batteryLevels
+-        )?.plainText else {
++        guard let level = BluetoothDevicePresentation.batteryLevel(for: device, batteryLevels: batteryLevels) else {
+             return state
+         }
+-        return "\(state), \(level)"
++        guard let text = level.segments?.plainText else { return state }
++        // The bolt is drawn inside the text run but carries no word of its own, so
++        // the charging state is announced here, localized, instead of leaving a
++        // silent glyph. Non-charging and unknown levels read exactly as before.
++        guard level.hasVisibleCharging else {
++            return "\(state), \(text)"
++        }
++        let charging = localization.string(.settingsBatteryMarkerCharging)
++        return "\(state), \(text), \(charging)"
+     }
  
- - M3 Air（Mac15,12）`PDBR` 不存在、`PBLR` 恒为 0：0 不再作为有效背光分支发布，改为尝试 `AppleARMBacklight` 估算。
--- 估算值 = `BrightnessMicroAmps.value / max × (current-for-max-backlight ÷ 65,536) A × 3.34 V`；3.34 V 是由本机 PDBR 与校准电流反推的等效估算参数（macpow 的通用 6 V 假设在 Apple Silicon XDR 上明显偏低），不是实测电压，UI 以 `≈` 和 “Estimated” 标注。
-+- 估算值按面板类型分开：
-+  - XDR（`BrightnessMilliNits.max ≥ 1000`）：`BrightnessMicroAmps.value / max × (current-for-max-backlight ÷ 65,536) A × 3.34 V`；3.34 V 是由 Mac15,9 PDBR 与校准电流反推的等效估算参数（macpow 的通用 6 V 在 XDR 上明显偏低），不是实测电压。
-+  - SDR / MacBook Air（`max < 1000`）：保留 macpow 的 6 V 模型，`current-for-max-backlight` 按微安解释，100% SDR 背光上限约 5.4 W；Air 仍未实机验证，不能宣称准确。
-+  - 两种情况都以 `≈` 和 “Estimated” 标注。
- - 缺少有效电流或校准数据时返回 `nil`，不伪造功耗；估算导致 residual 超出容差时丢弃估算分支，而不是发布异常负 residual。
- - `DISP/DISPEXT` 不作为背光功率；它们只代表 SoC 显示控制器。
- - 显示器、USB 汇总、逐端口低于 `BatteryPowerFlowState.minimumVisibleWatts`（0.05 W）的 0 分支不绘制。
+     /// What this row's status says, for the accessibility value that replaced the
+```
+
+**File**: `Tests/StatusTrioCoreTests/BluetoothAccessoryBatteryWorkerTests.swift` (added, +72/-0)
+```diff
+@@ -0,0 +1,72 @@
++import XCTest
++@testable import StatusTrioCore
++
++/// The app's accessory reader is IOKit-first with a `pmset` fallback. These pin
++/// the selection rule: IOKit answers only when it actually reports an accessory;
++/// a missing or empty result falls through to the fallback.
++final class BluetoothAccessoryBatteryWorkerTests: XCTestCase {
++    private final class CountingReader: BluetoothAccessoryBatteryReading, @unchecked Sendable {
++        private let lock = NSLock()
++        private let answer: [BluetoothAccessoryBatteryLevel]?
++        private(set) var calls = 0
++
++        init(answer: [BluetoothAccessoryBatteryLevel]?) {
++            self.answer = answer
++        }
++
++        func read(completion: @escaping @Sendable ([BluetoothAccessoryBatteryLevel]?) -> Void) {
++            lock.lock()
++            calls += 1
++            lock.unlock()
++            completion(answer)
++        }
++
++        var callCount: Int {
++            lock.lock(); defer { lock.unlock() }
++            return calls
++        }
++    }
++
++    private func reading(name: String, charging: Bool?) -> BluetoothAccessoryBatteryLevel {
++        BluetoothAccessoryBatteryLevel(
++            identifier: "ID", name: name, vendorID: nil, productID: nil,
++            part: nil, percentage: 80, isCharging: charging
++        )
++    }
++
++    private func awaitAnswer(
++        _ worker: SystemAccessoryBatteryWorker
++    ) async -> [BluetoothAccessoryBatteryLevel]? {
++        await withCheckedContinuation { continuation in
++            worker.read { continuation.resume(returning: $0) }
++        }
++    }
++
++    func testUsesIOKitWhenItReportsAnAccessory() async {
++        let fallback = CountingReader(answer: [reading(name: "Fallback", charging: false)])
++        let worker = SystemAccessoryBatteryWorker(
++            iokitProvider: {
++                [BluetoothAccessoryBatteryLevel(
++                    identifier: "ID", name: "IOKit", vendorID: nil, productID: nil,
++                    part: nil, percentage: 80, isCharging: true
++                )]
++            },
++            fallback: fallback
++        )
++        let result = await awaitAnswer(worker)
++        XCTAssertEqual(result?.first?.name, "IOKit")
++        XCTAssertEqual(fallback.callCount, 0)
++    }
++
++    func testFallsBackWhenIOKitIsUnavailableOrEmpty() async {
++        let fallback = CountingReader(answer: [reading(name: "Fallback", charging: false)])
++        let unavailable = SystemAccessoryBatteryWorker(iokitProvider: { nil }, fallback: fallback)
++        let first = await awaitAnswer(unavailable)
++        XCTAssertEqual(first?.first?.name, "Fallback")
++
++        let empty = SystemAccessoryBatteryWorker(iokitProvider: { [] }, fallback: fallback)
++        let second = await awaitAnswer(empty)
++        XCTAssertEqual(second?.first?.name, "Fallback")
++        XCTAssertEqual(fallback.callCount, 2)
++    }
++}
 ```
 
 ---
 
-### Incident Patch 3: `ef75d72d` (2026-11-23)
-**Commit Message**: fix(panel): 优化英文文案与详情行换行，避免截断 (#379)
+### Incident Patch 3: `26f4bdaf` (2026-11-25)
+**Commit Message**: fix(settings): 接入设置语义目录与 CoreSettingsProvider 的七项刷新设置 (#392)
 
-- 缩短英文文案：Wi-Fi 副标题、功耗信息条 Charging/Discharging、流向图 Charger、刷新间隔值 10s
-- 功耗信息条输入卡统一为“数值放瓦数、状态放底部标签”（拔电显示 0.0 W · No adapter）
-- 详情行值列允许换行，Time remaining 等长值不再被截断
+- SettingsSemanticCatalog 用 7 项按指标/高占用刷新替换旧 hardware.refresh.intervalSeconds
+- CoreSettingsProvider 读写新键
+- 重新生成 skill schema 产物；更新 settings-inventory
 
-**File**: `Sources/StatusTrioCore/Presentation/Panel/PanelPresentationMapper.swift` (modified, +4/-1)
+**File**: `.agents/skills/status-trio-settings/references/modules/hardware.md` (modified, +7/-1)
 ```diff
-@@ -93,9 +93,12 @@ enum PanelPresentationMapper {
-             // keeps its real reading.
-             let unplugged = status.isPresent && !status.isConnectedToPower && abs(inputPower.watts) < 0.05
-             if unplugged {
-+                // The descriptor "No adapter" moves to the label line (via the
-+                // .inputDisconnected kind title); the number slot keeps the
-+                // truthful 0.0 W reading so every card reads "number + note".
-                 items.append(PowerInfoBarItem(
-                     kind: .inputDisconnected,
--                    value: localization.string(.powerInfoBarNoInput)
-+                    value: watts(inputPower.watts)
-                 ))
-             } else {
-                 items.append(PowerInfoBarItem(kind: .input, value: watts(inputPower.watts)))
+@@ -10,7 +10,12 @@ Generated from `SettingsSemanticCatalog`. Do not edit by hand.
+ | `hardware.metricColors` | 硬件指标颜色 | `map` | — | hardwareMonitorMetricColorsV1 |
+ | `hardware.network.downloadCapMbps` | 下载速度上限（Mbps） | `number` | — | hardwareDownloadCapMbps |
+ | `hardware.network.uploadCapMbps` | 上传速度上限（Mbps） | `number` | — | hardwareUploadCapMbps |
+-| `hardware.refresh.intervalSeconds` | 刷新频率（秒） | `integer` | — | hardwarePanelRefreshSeconds |
++| `hardware.refresh.cpuUsage` | CPU 占用刷新频率（秒） | `integer` | — | hardwareCPUUsageRefreshSeconds |
++| `hardware.refresh.disk` | 磁盘刷新频率（秒） | `integer` | — | hardwareDiskRefreshSeconds |
++| `hardware.refresh.gpuUsage` | GPU 占用刷新频率（秒） | `integer` | — | hardwareGPUUsageRefreshSeconds |
++| `hardware.refresh.memory` | 内存刷新频率（秒） | `integer` | — | hardwareMemoryRefreshSeconds |
++| `hardware.refresh.network` | 网络刷新频率（秒） | `integer` | — | hardwareNetworkRefreshSeconds |
++| `hardware.refresh.temperature` | 温度刷新频率（秒） | `integer` | — | hardwareTemperatureRefreshSeconds |
+ | `hardware.ring.memoryDisplayMode` | 内存环显示模式 | `enumeration` | — | memoryRingDisplayModeV1 |
+ | `hardware.ring.ssdDisplayMode` | SSD 环显示模式 | `enumeration` | — | ssdRingDisplayModeV1 |
+ | `hardware.rings.enabled` | 显示硬件圆环 | `boolean` | true | showsHardwareRings |
+@@ -20,3 +25,4 @@ Generated from `SettingsSemanticCatalog`. Do not edit by hand.
+ | `hardware.summaryMetrics` | 启用的硬件摘要指标 | `set` | — | enabledHardwareSummaryMetricsV1 |
+ | `hardware.temperature.enabled` | 温度监控 | `boolean` | true | hardwareTemperatureMonitoringEnabledV1 |
+ | `hardware.topApps.enabled` | 显示占用最高的 App | `boolean` | true | showsHardwareTopApps |
++| `hardware.topApps.refreshSeconds` | 高占用应用刷新频率（秒） | `integer` | — | hardwareTopAppsRefreshSeconds |
 ```
 
-**File**: `Sources/StatusTrioCore/Presentation/Panel/PowerInfoBarState.swift` (modified, +5/-1)
+**File**: `.agents/skills/status-trio-settings/references/settings-schema.json` (modified, +192/-6)
 ```diff
-@@ -17,7 +17,11 @@ enum PowerInfoBarKind: String, Equatable, Hashable, Sendable {
- 
-     var title: LocalizationKey {
-         switch self {
--        case .input, .inputDisconnected: return .powerInfoBarInput
-+        case .input: return .powerInfoBarInput
-+        // No adapter is a state, not a rail reading: keep the big number slot
-+        // for the (zero) wattage and put the explanation on the wide label line,
-+        // exactly as the battery rail does for "Not charging".
-+        case .inputDisconnected: return .powerInfoBarNoInput
-         case .batteryCharging: return .powerInfoBarBattery
-         case .batteryDischarging: return .powerInfoBarDischarging
-         case .batteryIdle: return .powerInfoBarNotCharging
+@@ -1657,8 +1657,8 @@
+         "uiAccessible" : true
+       },
+       "category" : "hardware",
+-      "description" : "硬件监控面板的刷新间隔。",
+-      "id" : "hardware.refresh.intervalSeconds",
++      "description" : "面板上 CPU 占用指标多久刷新一次。",
++      "id" : "hardware.refresh.cpuUsage",
+       "performanceImpact" : {
+         "activation" : "periodic",
+         "resources" : [
+@@ -1667,13 +1667,168 @@
+       },
+       "provider" : "core",
+       "range" : {
+-        "max" : 60,
++        "max" : 8,
++        "min" : 2
++      },
++      "storageKey" : "hardwareCPUUsageRefreshSeconds",
++      "title" : "CPU 占用刷新频率（秒）",
++      "type" : "integer",
++      "uiPath" : "设置 › 监控 › 面板更新频率",
++      "unit" : "s"
++    },
++    {
++      "accessPolicy" : {
++        "containsSensitiveInfo" : false,
++        "developmentProfile" : true,
++        "externalRead" : true,
++        "externalWrite" : false,
++        "requiresConfirmation" : false,
++        "systemSideEffect" : false,
++        "transferable" : false,
++        "uiAccessible" : true
++      },
++      "category" : "hardware",
++      "description" : "面板上磁盘读写指标多久刷新一次。",
++      "id" : "hardware.refresh.disk",
++      "performanceImpact" : {
++        "activation" : "periodic",
++        "resources" : [
++          "hardwareSampling"
++        ]
++      },
++      "provider" : "core",
++      "range" : {
++        "max" : 8,
++        "min" : 1
++      },
++      "storageKey" : "hardwareDiskRefreshSeconds",
++      "title" : "磁盘刷新频率（秒）",
++      "type" : "integer",
++      "uiPath" : "设置 › 监控 › 面板更新频率",
++      "unit" : "s"
++    },
++    {
++      "accessPolicy" : {
++        "containsSensitiveInfo" : false,
++        "developmentProfile" : true,
++        "externalRead" : true,
++        "externalWrite" : false,
++        "requiresConfirmation" : false,
++        "systemSideEffect" : false,
++        "transferable" : false,
++        "uiAccessible" : true
++      },
++      "category" : "hardware",
++      "description" : "面板上 GPU 占用指标多久刷新一次。",
++      "id" : "hardware.refresh.gpuUsage",
++      "performanceImpact" : {
++        "activation" : "periodic",
++        "resources" : [
++          "hardwareSampling"
++        ]
++      },
++      "provider" : "core",
++      "range" : {
++        "max" : 8,
++        "min" : 2
++      },
++      "storageKey" : "hardwareGPUUsageRefreshSeconds",
++      "title" : "GPU 占用刷新频率（秒）",
++      "type" : "integer",
++      "uiPath" : "设置 › 监控 › 面板更新频率",
++      "unit" : "s"
++    },
++    {
++      "accessPolicy" : {
++        "containsSensitiveInfo" : false,
++        "developmentProfile" : true,
++        "externalRead" : true,
++        "externalWrite" : false,
++        "requiresConfirmation" : false,
++        "systemSideEffect" : false,
++        "transferable" : false,
++        "uiAccessible" : true
++      },
++      "category" : "hardware",
++      "description" : "面板上内存指标多久刷新一次。",
++      "id" : "hardware.refresh.memory",
++      "performanceImpact" : {
++        "activation" : "periodic",
++        "resources" : [
++          "hardwareSampling"
++        ]
++      },
++      "provider" : "core",
++      "range" : {
++        "max" : 8,
++        "min" : 2
++      },
++      "storageKey" : "hardwareMemoryRefreshSeconds",
++      "title" : "内存刷新频率（秒）",
++      "type" : "integer",
++      "uiPath" : "设置 › 监控 › 面板更新频率",
++      "unit" : "s"
++    },
++    {
++      "accessPolicy" : {
++        "containsSensitiveInfo" : false,
++        "developmentProfile" : true,
++        "externalRead" : true,
++        "externalWrite" : false,
++        "requiresConfirmation" : false,
++        "systemSideEffect" : false,
++        "transferable" : false,
++        "uiAccessible" : true
++      },
++      "category" : "hardware",
++      "description" : "面板上网络速度指标多久刷新一次。",
++      "id" : "hardware.refresh.network",
++      "performanceImpact" : {
++        "activation" : "periodic",
++        "resources" : [
++          "hardwareSampling"
++        ]
++      },
++      "provider" : "core",
++      "range" : {
++        "max" : 8,
+         "min" : 1
+       },
+-      "storageKey" : "hardwarePanelRefreshSeconds",
+-      "title" : "刷新频率（秒）",
++      "storageKey" : "hardwareNetworkRefreshSeconds",
++      "title" : "网络刷新频率（秒）",
+       "type" : "integer",
+-      "uiPath" : "设置 › 监控 › 刷新频率",
++      "uiPath" : "设置 › 监控 › 面板更新频率",
++      "unit" : "s"
++    },
++    {
++      "accessPolicy" : {
++        "containsSensitiveInfo" : false,
++        "developmentProfile" : true,
++        "externalRead" : true,
++        "externalWrite" : false,
++        "requiresConfirmation" : false,
++        "systemSideEffect" : false,
++        "transferable" : false,
++        "uiAccessible" : true
++      },
++      "category" : "hardware",
++      "description" : "面板上温度指标多久刷新一次。",
++      "id" : "hardware.refresh.temperature",
++      "performanceImpact" : {
++        "activation" : "periodic",
++        "resources" : [
++          "hardwareSampling"
++        ]
++      },
++      "provider" : "core",
++      "range" : {
++        "max" : 8,
++        "min" : 4
++      },
++      "storageKey" : "hardwareTemp
 ```
 
-**File**: `Sources/StatusTrioCore/Resources/en.lproj/Localizable.strings` (modified, +6/-6)
+**File**: `Sources/StatusTrioCore/Settings/Core/CoreSettingsProvider.swift` (modified, +28/-4)
 ```diff
-@@ -438,7 +438,7 @@
- "settings.refreshInterval.onBattery" = "On battery";
- "settings.refreshInterval.onPower" = "Plugged in";
- "settings.refreshInterval.description" = "Periodically checks battery, Wi-Fi, and volume status. Shorter intervals check more often.";
--"settings.refreshInterval.value" = "%d seconds";
-+"settings.refreshInterval.value" = "%ds";
- "settings.popup.order" = "Displayed Items";
- "settings.popup.order.description" = "Choose which items appear in the status panel and drag to change their order.";
- "settings.popup.order.battery" = "Battery";
-@@ -707,7 +707,7 @@
- "wifi.summary.band" = "%@ GHz";
- "wifi.summary.signal" = "%d dBm";
- "wifi.summary.bandAndSignal" = "%@ · %@";
--"wifi.summary.nameAccessHint" = "Tap to allow location to show the Wi-Fi name";
-+"wifi.summary.nameAccessHint" = "Allow location to show Wi-Fi name";
- "settings.bluetooth.hideDevice" = "Hide device";
- "settings.bluetooth.showDevice" = "Show device";
- "settings.bluetooth.permissionRequired" = "Bluetooth permission required";
-@@ -980,16 +980,16 @@
- "settings.battery.powerInfoBarDescription" = "Shows input, battery and system power below the battery module while the panel is open. Off by default.";
- "settings.battery.energyRefreshInterval" = "Background sampling interval";
- "settings.battery.energyRefreshInterval.description" = "Used while the panel is closed. The battery detail page still refreshes every 5 seconds.";
--"battery.power.input" = "Charger input";
-+"battery.power.input" = "Charger";
- "battery.power.source.battery" = "Battery";
- "battery.power.charging" = "To battery";
- "battery.power.system" = "System power";
- "battery.power.system.help" = "System power (incl. SoC)";
- "battery.power.system.explanation" = "“System” is what remains after battery charging, the display and USB: it covers the SoC, memory, display controllers and other loads that are not measured on their own.";
- "power.infoBar.input" = "Charger input";
--"power.infoBar.noInput" = "No power adapter";
--"power.infoBar.battery" = "Battery charging";
--"power.infoBar.discharging" = "Battery discharging";
-+"power.infoBar.noInput" = "No adapter";
-+"power.infoBar.battery" = "Charging";
-+"power.infoBar.discharging" = "Discharging";
- "power.infoBar.system" = "System power";
- "power.infoBar.notCharging" = "Not charging";
- "battery.power.display" = "Display";
+@@ -62,8 +62,20 @@ final class CoreSettingsProvider: SettingsStateProvider {
+             return .bool(store.hardwareTemperatureMonitoringEnabled)
+         case "hardware.history.backgroundEnabled":
+             return .bool(store.hardwareBackgroundHistoryEnabled)
+-        case "hardware.refresh.intervalSeconds":
+-            return .number(Double(store.hardwarePanelRefreshSeconds))
++        case "hardware.refresh.cpuUsage":
++            return .number(Double(store.hardwareCPUUsageRefreshSeconds))
++        case "hardware.refresh.gpuUsage":
++            return .number(Double(store.hardwareGPUUsageRefreshSeconds))
++        case "hardware.refresh.memory":
++            return .number(Double(store.hardwareMemoryRefreshSeconds))
++        case "hardware.refresh.network":
++            return .number(Double(store.hardwareNetworkRefreshSeconds))
++        case "hardware.refresh.temperature":
++            return .number(Double(store.hardwareTemperatureRefreshSeconds))
++        case "hardware.refresh.disk":
++            return .number(Double(store.hardwareDiskRefreshSeconds))
++        case "hardware.topApps.refreshSeconds":
++            return .number(Double(store.hardwareTopAppsRefreshSeconds))
+         case "hardware.history.windowMinutes":
+             return .number(Double(store.hardwareHistoryWindowMinutes))
+         case "hardware.network.downloadCapMbps":
+@@ -219,8 +231,20 @@ final class CoreSettingsProvider: SettingsStateProvider {
+             if case .bool(let flag) = value { store.hardwareTemperatureMonitoringEnabled = flag }
+         case "hardware.history.backgroundEnabled":
+             if case .bool(let flag) = value { store.hardwareBackgroundHistoryEnabled = flag }
+-        case "hardware.refresh.intervalSeconds":
+-            if let number = Self.number(value) { store.hardwarePanelRefreshSeconds = Int(number) }
++        case "hardware.refresh.cpuUsage":
++            if let number = Self.number(value) { store.hardwareCPUUsageRefreshSeconds = Int(number) }
++        case "hardware.refresh.gpuUsage":
++            if let number = Self.number(value) { store.hardwareGPUUsageRefreshSeconds = Int(number) }
++        case "hardware.refresh.memory":
++            if let number = Self.number(value) { store.hardwareMemoryRefreshSeconds = Int(number) }
++        case "hardware.refresh.network":
++            if let number = Self.number(value) { store.hardwareNetworkRefreshSeconds = Int(number) }
++        case "hardware.refresh.temperature":
++            if let number = Self.number(value) { store.hardwareTemperatureRefreshSeconds = Int(number) }
++        case "hardware.refresh.disk":
++            if let number = Self.number(value) { store.hardwareDiskRefreshSeconds = Int(number) }
++        case "hardware.topApps.refreshSeconds":
++            if let number = Self.number(value) { store.hardwareTopAppsRefreshSeconds = Int(number) }
+         case "hardware.history.windowMinutes":
+             if let number = Self.number(value) { store.hardwareHistoryWindowMinutes = Int(number) }
+         case "hardware.network.downloadCapMbps":
 ```
 
-**File**: `Sources/StatusTrioCore/UI/PanelPresentationStyle.swift` (modified, +14/-4)
+**File**: `Sources/StatusTrioCore/Settings/Semantic/SettingsSemanticCatalog.swift` (modified, +58/-4)
 ```diff
-@@ -140,14 +140,24 @@ struct PanelDetailRowsView: View {
-                     Text(row.label).foregroundStyle(.secondary)
-                     Spacer(minLength: 8)
-                     if row.isCopyable {
--                        Button(row.value) { onCopyValue(row.value) }
--                            .buttonStyle(.plain)
--                            .textSelection(.enabled)
--                            .accessibilityLabel("\(row.label): \(row.accessibilityValue)")
-+                        Button {
-+                            onCopyValue(row.value)
-+                        } label: {
-+                            Text(row.value)
-+                                .multilineTextAlignment(.trailing)
-+                                .fixedSize(horizontal: false, vertical: true)
-+                        }
-+                        .buttonStyle(.plain)
-+                        .textSelection(.enabled)
-+                        .accessibilityLabel("\(row.label): \(row.accessibilityValue)")
-                     } else {
-                         Text(row.value)
-                             .multilineTextAlignment(.trailing)
-                             .textSelection(.enabled)
-+                            // Let a long value (e.g. the full "About 1 hour, 48
-+                            // minutes remaining") take the height it needs and
-+                            // wrap onto a second line instead of truncating.
-+                            .fixedSize(horizontal: false, vertical: true)
-                     }
-                 }
-                 .foregroundStyle(row.tint.color())
+@@ -353,11 +353,65 @@ enum SettingsSemanticCatalog {
+             d.accessPolicy = .profileSafe
+             d.provider = "core"
+         },
+-        pref("hardware.refresh.intervalSeconds", "刷新频率（秒）", "hardware", .integer, "硬件监控面板的刷新间隔。") { d in
+-            d.uiPath = "设置 › 监控 › 刷新频率"
+-            d.range = SettingsNumericRange(min: 1, max: 60)
++        pref("hardware.refresh.cpuUsage", "CPU 占用刷新频率（秒）", "hardware", .integer, "面板上 CPU 占用指标多久刷新一次。") { d in
++            d.uiPath = "设置 › 监控 › 面板更新频率"
++            d.range = SettingsNumericRange(min: 2, max: 8)
+             d.unit = "s"
+-            d.storageKey = "hardwarePanelRefreshSeconds"
++            d.storageKey = "hardwareCPUUsageRefreshSeconds"
++            d.performanceImpact = SettingsPerformanceImpact(resources: ["hardwareSampling"], activation: .periodic)
++            d.accessPolicy = .profileSafe
++            d.provider = "core"
++        },
++        pref("hardware.refresh.gpuUsage", "GPU 占用刷新频率（秒）", "hardware", .integer, "面板上 GPU 占用指标多久刷新一次。") { d in
++            d.uiPath = "设置 › 监控 › 面板更新频率"
++            d.range = SettingsNumericRange(min: 2, max: 8)
++            d.unit = "s"
++            d.storageKey = "hardwareGPUUsageRefreshSeconds"
++            d.performanceImpact = SettingsPerformanceImpact(resources: ["hardwareSampling"], activation: .periodic)
++            d.accessPolicy = .profileSafe
++            d.provider = "core"
++        },
++        pref("hardware.refresh.memory", "内存刷新频率（秒）", "hardware", .integer, "面板上内存指标多久刷新一次。") { d in
++            d.uiPath = "设置 › 监控 › 面板更新频率"
++            d.range = SettingsNumericRange(min: 2, max: 8)
++            d.unit = "s"
++            d.storageKey = "hardwareMemoryRefreshSeconds"
++            d.performanceImpact = SettingsPerformanceImpact(resources: ["hardwareSampling"], activation: .periodic)
++            d.accessPolicy = .profileSafe
++            d.provider = "core"
++        },
++        pref("hardware.refresh.network", "网络刷新频率（秒）", "hardware", .integer, "面板上网络速度指标多久刷新一次。") { d in
++            d.uiPath = "设置 › 监控 › 面板更新频率"
++            d.range = SettingsNumericRange(min: 1, max: 8)
++            d.unit = "s"
++            d.storageKey = "hardwareNetworkRefreshSeconds"
++            d.performanceImpact = SettingsPerformanceImpact(resources: ["hardwareSampling"], activation: .periodic)
++            d.accessPolicy = .profileSafe
++            d.provider = "core"
++        },
++        pref("hardware.refresh.temperature", "温度刷新频率（秒）", "hardware", .integer, "面板上温度指标多久刷新一次。") { d in
++            d.uiPath = "设置 › 监控 › 面板更新频率"
++            d.range = SettingsNumericRange(min: 4, max: 8)
++            d.unit = "s"
++            d.storageKey = "hardwareTemperatureRefreshSeconds"
++            d.performanceImpact = SettingsPerformanceImpact(resources: ["hardwareSampling"], activation: .periodic)
++            d.accessPolicy = .profileSafe
++            d.provider = "core"
++        },
++        pref("hardware.refresh.disk", "磁盘刷新频率（秒）", "hardware", .integer, "面板上磁盘读写指标多久刷新一次。") { d in
++            d.uiPath = "设置 › 监控 › 面板更新频率"
++            d.range = SettingsNumericRange(min: 1, max: 8)
++            d.unit = "s"
++            d.storageKey = "hardwareDiskRefreshSeconds"
++            d.performanceImpact = SettingsPerformanceImpact(resources: ["hardwareSampling"], activation: .periodic)
++            d.accessPolicy = .profileSafe
++            d.provider = "core"
++        },
++        pref("hardware.topApps.refreshSeconds", "高占用应用刷新频率（秒）", "hardware", .integer, "详情页底部高占用应用列表多久刷新一次；内存列表受自身 6 秒下限限制。") { d in
++            d.uiPath = "设置 › 监控 › 高占用应用刷新频率"
++            d.range = SettingsNumericRange(min: 1, max: 30)
++            d.unit = "s"
++            d.storageKey = "hardwareTopAppsRefreshSeconds"
+             d.performanceImpact = SettingsPerformanceImpact(resources: ["hardwareSampling"], activation: .periodic)
+             d.accessPolicy = .profileSafe
+             d.provider = "core"
 ```
 
-**File**: `Tests/StatusTrioCoreTests/PanelPresentationMapperTests.swift` (modified, +8/-8)
+**File**: `docs/settings/settings-inventory.md` (modified, +7/-1)
 ```diff
-@@ -181,9 +181,9 @@ final class PanelPresentationMapperTests: XCTestCase {
-         )
- 
-         let inputItem = row.powerInfoBar?.items.first { $0.kind == .inputDisconnected }
--        XCTAssertEqual(inputItem?.value, localization.string(.powerInfoBarNoInput),
--                       "A fresh 0 W adapter sample on battery must not read as an idle charger")
--        XCTAssertEqual(inputItem?.title, .powerInfoBarInput)
-+        XCTAssertEqual(inputItem?.value, "0.0 W",
-+                       "A fresh 0 W adapter sample on battery keeps the number slot; the 'No adapter' note lives in the title")
-+        XCTAssertEqual(inputItem?.title, .powerInfoBarNoInput)
-         XCTAssertNil(row.powerInfoBar?.items.first { $0.kind == .input },
-                      "The connected-input card must not also be present")
-     }
-@@ -408,7 +408,7 @@ final class PanelPresentationMapperTests: XCTestCase {
-             localization: localization
-         )
-         XCTAssertEqual(needsPermission.title, "Connected")
--        XCTAssertEqual(needsPermission.subtitle, "Tap to allow location to show the Wi-Fi name")
-+        XCTAssertEqual(needsPermission.subtitle, "Allow location to show Wi-Fi name")
-         XCTAssertEqual(needsPermission.intent, .requestWiFiNameAccess)
- 
-         let denied = PanelPresentationMapper.network(
-@@ -420,7 +420,7 @@ final class PanelPresentationMapperTests: XCTestCase {
-             localization: localization
-         )
-         XCTAssertEqual(denied.title, "Connected")
--        XCTAssertEqual(denied.subtitle, "Tap to allow location to show the Wi-Fi name")
-+        XCTAssertEqual(denied.subtitle, "Allow location to show Wi-Fi name")
-         XCTAssertEqual(denied.intent, .locationSettings)
-     }
- 
-@@ -442,7 +442,7 @@ final class PanelPresentationMapperTests: XCTestCase {
-                 localization: localization
-             )
-             XCTAssertEqual(row.title, "Connected")
--            XCTAssertEqual(row.subtitle, "Tap to allow location to show the Wi-Fi name")
-+            XCTAssertEqual(row.subtitle, "Allow location to show Wi-Fi name")
-             XCTAssertNil(row.measurements)
-             XCTAssertEqual(row.accessibilityValue, "")
-             XCTAssertEqual(
-@@ -550,7 +550,7 @@ final class PanelPresentationMapperTests: XCTestCase {
-         )
- 
-         XCTAssertEqual(row.title, "Connected")
--        XCTAssertEqual(row.subtitle, "Tap to allow location to show the Wi-Fi name")
-+        XCTAssertEqual(row.subtitle, "Allow location to show Wi-Fi name")
-         XCTAssertEqual(row.intent, .requestWiFiNameAccess)
-     }
- 
-@@ -572,7 +572,7 @@ final class PanelPresentationMapperTests: XCTestCase {
-         )
- 
-         XCTAssertEqual(row.title, "Connected")
--        XCTAssertEqual(row.subtitle, "Tap to allow location to show the Wi-Fi name")
-+        XCTAssertEqual(row.subtitle, "Allow location to show Wi-Fi name")
-         XCTAssertEqual(row.intent, .locationSettings)
-     }
- 
+@@ -181,7 +181,13 @@ This document is the authoritative inventory of every persisted / user-visible s
+ | `hardwareHistoryWindowMinutes` | `Int` | `SettingsStore.defaultHardwareHistoryWindowMinutes` | `hardwareHistoryWindowMinutes` | SettingsStore.swift:1395 | `publicPreference` | ✅ |
+ | `hardwareMonitorMetricColors` | `[HardwareMonitorMetric: IconRGBA]` | `[:]` | `hardwareMonitorMetricColorsV1` | SettingsStore.swift:1320 | `publicPreference` | ✅ |
+ | `hardwareMonitorMetricOrder` | `[HardwareMonitorMetric]` | `init` | `hardwareMonitorMetricOrder` | SettingsStore.swift:1943 | `publicPreference` | — |
+-| `hardwarePanelRefreshSeconds` | `Int` | `SettingsStore.defaultHardwarePanelRefreshSeconds` | `hardwarePanelRefreshSeconds` | SettingsStore.swift:1383 | `publicPreference` | ✅ |
++| `hardwareCPUUsageRefreshSeconds` | `Int` | `HardwareRefreshGroup.cpuUsage.defaultSeconds` | `hardwareCPUUsageRefreshSeconds` | SettingsStore.swift:1414 | `publicPreference` | ✅ |
++| `hardwareGPUUsageRefreshSeconds` | `Int` | `HardwareRefreshGroup.gpuUsage.defaultSeconds` | `hardwareGPUUsageRefreshSeconds` | SettingsStore.swift:1424 | `publicPreference` | ✅ |
++| `hardwareMemoryRefreshSeconds` | `Int` | `HardwareRefreshGroup.memory.defaultSeconds` | `hardwareMemoryRefreshSeconds` | SettingsStore.swift:1434 | `publicPreference` | ✅ |
++| `hardwareNetworkRefreshSeconds` | `Int` | `HardwareRefreshGroup.network.defaultSeconds` | `hardwareNetworkRefreshSeconds` | SettingsStore.swift:1444 | `publicPreference` | ✅ |
++| `hardwareTemperatureRefreshSeconds` | `Int` | `HardwareRefreshGroup.temperature.defaultSeconds` | `hardwareTemperatureRefreshSeconds` | SettingsStore.swift:1454 | `publicPreference` | ✅ |
++| `hardwareDiskRefreshSeconds` | `Int` | `HardwareRefreshGroup.disk.defaultSeconds` | `hardwareDiskRefreshSeconds` | SettingsStore.swift:1464 | `publicPreference` | ✅ |
++| `hardwareTopAppsRefreshSeconds` | `Int` | `SettingsStore.defaultHardwareTopAppsRefreshSeconds` | `hardwareTopAppsRefreshSeconds` | SettingsStore.swift:1476 | `publicPreference` | ✅ |
+ | `hardwareSSDIncludeExternalInPercent` | `Bool` | `false` | `hardwareSSDIncludeExternalInPercentV1` | SettingsStore.swift:1480 | `publicPreference` | ✅ |
+ | `metricBottomIndicatorStyle` | `VolumeDisplayStyle` | `init` | `metricBottomIndicatorStyle` | SettingsStore.swift:1642 | `publicPreference` | ✅ |
+ | `refreshIntervalSeconds` | `Double` | `init` | `statusRefreshIntervalSeconds` | SettingsStore.swift:1687 | `publicPreference` | — |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #394** (2026-11-25): feat(settings): 设置语义基础设施（Settings Semantic Infrastructure） (@lingyired)
+- **PR #386** (2026-11-24): feat: add memory pressure to the bottom indicator / 底部指示器新增内存压力 (@kongyuna)
+- **PR #382** (2026-11-24): 精简设置文案并修复音频、强退和发布验证 (@lingyired)
 - **PR #373** (2026-11-22): fix(release): verify the public appcast through the GitHub API first (@lingyired)
 - **PR #372** (2026-11-22): docs(release): note M1 sensor temperature monitoring cost (@lingyired)
 - **PR #371** (2026-11-22): fix(settings): preserve bottom indicator preferences for 1.10.4 (@lingyired)
-- **PR #343** (2026-11-14): feat(update): 新增 Gitee 国内镜像和一次性 Gitee 优先更新 (@lingyired)
-- **PR #340** (2026-11-13): fix(bluetooth): 多副 AirPods 聆听模式匹配与附加控件补位 (@lingyired)
-- **PR #335** (closed): feat(wifi): add opt-in in-app joining for open and personal networks (@KryptonGao)
 
 ---
 
@@ -1940,61 +2648,58 @@ model with microamp calibration. Air still needs real-device calibration.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. power): interpret backlight calibration as microamps
+## X. 修复未发布功能的导入兼容、详情缓存与配色覆盖
 
 **RULE**:
-When implementing operations in `Sources/StatusTrioCore/Monitoring/DisplayPowerProvenance.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingyired/status-trio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/StatusTrioCore/Monitoring/HardwareMetricsService.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingyired/status-trio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a833d6a0`: power): interpret backlight calibration as microamps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e387e5e`: 修复未发布功能的导入兼容、详情缓存与配色覆盖. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/StatusTrioCore/Monitoring/DisplayPowerProvenance.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/StatusTrioCore/Monitoring/HardwareMetricsService.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    private var calibrationMicroAmps: Double?
-        calibrationMicroAmps = nil
-        guard let watts = Self.estimatedWatts(currentMicroAmps: current.value,
-                                              maximumMicroAmps: current.max,
-                                              calibrationMicroAmps: calibration) else {
-            return nil
+    /// Both snapshots are cleared: the panel renders `panelStored`, so clearing
+    /// only the live copy would leave a previous page's payload to be shown as
+    /// cached data (it has no freshness expiry of its own) until the next merge.
+        func clear(in snapshot: inout HardwareMetricsSnapshot) -> Bool {
+            var didChange = false
+            func drop<Value>(_ keyPath: WritableKeyPath<HardwareMetricsSnapshot, Value?>) {
+                guard snapshot[keyPath: keyPath] != nil else { return }
+                snapshot[keyPath: keyPath] = nil
+                didChange = true
+            }
+            if kind != .cpu { drop(\.cpuDetail) }
+            if kind != .gpu { drop(\.gpuDetail) }
+            if kind != .memory { drop(\.memoryDetail) }
+            if kind != .network { drop(\.networkDetail) }
+            if kind != .disk { drop(\.diskDetail) }
+            return didChange
         }
-        guard (Self.minimumVisibleWatts...Self.maximumPlausibleWatts).contains(watts) else {
-        if let calibrationMicroAmps { return calibrationMicroAmps }
-              value.isFinite, (1_000...2_000_000).contains(value) else {
-        // The key is in microamps (904383 on Mac15,9 = 904.383 mA for the
-        // maximum backlight), matching BrightnessMicroAmps' scale.
-        calibrationMicroAmps = value
-                               calibrationMicroAmps: Double,
-        guard value.isFinite, maximum.isFinite, calibrationMicroAmps.isFinite,
-              value > 0, maximum > 0, calibrationMicroAmps > 0 else { return nil }
-        // microamps -> amps; the 6 V string voltage is the named assumption.
-        let watts = fraction * calibrationMicroAmps / 1_000_000 * assumedVoltage
+        let liveChanged = clear(in: &stored)
+        let panelChanged = clear(in: &panelStored)
+        guard liveChanged || panelChanged else { return }
+        if liveChanged { snapshotSubject.send(stored) }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-    private var calibrationMilliamps: Double?
-        calibrationMilliamps = nil
-        let fraction = min(max(current.value / current.max, 0), 1)
-        let milliamps = fraction * calibration
-        let watts = milliamps / 1000 * Self.assumedVoltage
-        guard watts.isFinite,
-              (Self.minimumVisibleWatts...Self.maximumPlausibleWatts).contains(watts) else {
-        if let calibrationMilliamps { return calibrationMilliamps }
-              value.isFinite, (1...20_000).contains(value) else {
-        calibrationMilliamps = value
-                               calibrationMilliamps: Double,
-        guard value.isFinite, maximum.isFinite, calibrationMilliamps.isFinite,
-              value > 0, maximum > 0, calibrationMilliamps > 0 else { return nil }
-        let watts = fraction * calibrationMilliamps / 1000 * assumedVoltage
+        var changed = false
+        if kind != .cpu, stored.cpuDetail != nil { stored.cpuDetail = nil; changed = true }
+        if kind != .gpu, stored.gpuDetail != nil { stored.gpuDetail = nil; changed = true }
+        if kind != .memory, stored.memoryDetail != nil { stored.memoryDetail = nil; changed = true }
+        if kind != .network, stored.networkDetail != nil { stored.networkDetail = nil; changed = true }
+        if kind != .disk, stored.diskDetail != nil { stored.diskDetail = nil; changed = true }
+        guard changed else { return }
+        snapshotSubject.send(stored)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a833d6a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e387e5e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

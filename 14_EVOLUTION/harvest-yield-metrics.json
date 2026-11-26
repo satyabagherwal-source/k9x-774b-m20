@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T14:13:37.161Z",
-  "total_cycles_completed": 12736,
-  "total_learnings_persisted": 12736,
-  "total_rules_promoted": 11601,
+  "last_updated": "2026-11-26T14:22:22.456Z",
+  "total_cycles_completed": 12739,
+  "total_learnings_persisted": 12739,
+  "total_rules_promoted": 11602,
   "history": [
-    {
-      "timestamp": "2026-11-26T02:26:59.215Z",
-      "repository": "tencent/Qwen3.8-27B-DSpine-b16",
-      "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T02:38:10.881Z",
-      "repository": "VideoRebirthAI/hyperflow-h3-flash",
-      "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T02:38:17.467Z",
-      "repository": "RevenueCat/purchases-ios",
-      "learningId": "learn-github-revenuecat-purchases-ios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T02:46:38.808Z",
       "repository": "MiniMaxAI/MiniMax-H3-Image",
@@ -1403,6 +1382,27 @@
       "repository": "sceneview/sceneview",
       "learningId": "learn-github-sceneview-sceneview",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T14:22:05.419Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T14:22:13.467Z",
+      "repository": "lingyired/status-trio",
+      "learningId": "learn-github-lingyired-status-trio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T14:22:22.456Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

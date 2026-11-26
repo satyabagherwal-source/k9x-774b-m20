@@ -495,8 +495,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
     "license": "Open-Source",
-    "contentHash": "441eebfe5d3035eb69980f45c148729653f2b9bfd36b479d8dbe2c3145ccfd25",
-    "lastHarvestedAt": "2026-11-22T21:31:57.696Z",
+    "contentHash": "68a72ae472a5882e4bd68c707a5ffe7b987933cd9e864b8976d8c1436873a717",
+    "lastHarvestedAt": "2026-11-26T14:22:05.406Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
   },
   "hf-inclusionai-ming-image-0.1-design": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "13b96ffe",
+    "sourceVersion": "519c09cd",
     "license": "MIT",
-    "contentHash": "4160571aa48fb1daed1bdc42a0286c2e427add6e49cc4dbd21da35b8533a22df",
-    "lastHarvestedAt": "2026-11-25T13:06:05.598Z",
+    "contentHash": "45be5df87da36fb967cf80e5207389fe86692ed66aa89abd7d5837d1d5fb3a19",
+    "lastHarvestedAt": "2026-11-26T14:22:22.442Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -12513,10 +12513,10 @@
     "repository": "lingyired/status-trio",
     "platform": "github",
     "sourceUrl": "https://github.com/lingyired/status-trio",
-    "sourceVersion": "56ec144e",
+    "sourceVersion": "3d68fcd8",
     "license": "Apache-2.0",
-    "contentHash": "9d123b9184778504abed3e9679f93b6d9b8674b564f30052483b214d77960bf7",
-    "lastHarvestedAt": "2026-11-24T03:58:34.555Z",
+    "contentHash": "7aeebdff00ad8a28337942d8808a827fd114d649c9b09c57bd3fb5a21fcfa186",
+    "lastHarvestedAt": "2026-11-26T14:22:13.455Z",
     "learningId": "learn-github-lingyired-status-trio"
   },
   "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf": {

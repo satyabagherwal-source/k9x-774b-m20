@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `13b96ffe`  
+> **Source Version**: `519c09cd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T13:06:04.110Z  
+> **Timestamp**: 2026-11-26T14:22:21.843Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T13:06:04.102Z  
+> **Harvest Timestamp**: 2026-11-26T14:22:21.838Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25355 stars
+- **Stars / Engagement**: 25372 stars
 
 ---
 
@@ -1432,11 +1432,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12472** (2026-11-25): **core/mvcc: bind the frame position in encrypted log chunks**
-  *Symptoms*: ## Description  Each transaction frame of the MVCC logical log (`-log` file) ends with a running CRC-32C. The CRC is chained over the frames and starts from the salt in the log header. It does not use a key and it is stored in plaintext. In an encrypted log, the AEAD associated data of each chunk bound only the salt, the payload size, `op_count`, `commit_ts` and the chunk index. Nothing bound a frame to its place in the log.  A person who could write the log file, but who did not have the key, could remove, replay or reorder complete frames and then calculate the CRCs again. Recovery accepted the changed log without an error. When the frame of a `DELETE` was removed, the deleted row came back, and the later transactions stayed. The next commit continued the CRC chain, so the change stayed after the next reopen.  This bug was found in an audit of Turso's at-rest encryption (finding 20).  ## Fix  New encrypted logs use log version 4. The frame layout is the same as in version 3. The associated data of each encrypted chunk also holds the position of its frame:  ``` salt(8) | plaintext_size_or_0(8) | op_count(4) | commit_ts(8) | chunk_index(4)    (versions 2 and 3)   + frame_offset(8) | frame_start_crc(4)                                          (version 4) ```  `frame_offset` is the file offset of the frame header. `frame_start_crc` is the running CRC before the frame: the trailer CRC of the previous frame, or the CRC of the salt for the first frame.  - A frame authenticates onl
+- **Issue #12537** (2026-11-26): **sync/engine: do not rename a generated column to a re-added name**
+  *Symptoms*: ## Bug  An MVCC logical pull replays each remote transaction that changed a table as one table refresh with the final CREATE TABLE text, and matches the local and the remote columns by position.  A remote transaction can drop two generated columns and add them again at the end of the table, for example to change a generated column and the generated column that uses it:  ```sql -- t (id INTEGER PRIMARY KEY, a TEXT, k TEXT AS (lower(a)), x TEXT, u TEXT AS (k || '!')) ALTER TABLE t DROP COLUMN u; ALTER TABLE t DROP COLUMN k; ALTER TABLE t ADD COLUMN k TEXT AS (upper(a)); ALTER TABLE t ADD COLUMN u TEXT AS (k || '!'); ```  The refresh dropped `k`, kept `x`, and took `u` as renamed to `k`, because `k` was not a later local column. It ran the renames before the drops, so the pull failed with ``ALTER TABLE t RENAME COLUMN u TO k: duplicate column name: "k"``. The two generated columns did not need to depend on each other: any regular column between them was enough. Every later pull failed on the same transaction, and a new replica whose checkpoint was older than the transaction could not open.  ## Fix  When the remote column at a place has the name of a local column that the match already drops, a local generated column at that place is dropped too, and the refresh adds it again from the remote table. The remote dropped that name and added it again at the end, so it added the remote columns from there on after it. A generated column keeps no values.  - A regular column at such a pla
 
-- **Issue #12471** (2026-11-25): **core/storage: bind encrypted pages to their page numbers**
-  *Symptoms*: ## Description  Built-in encryption encrypted pages 2..N with empty AEAD associated data. Only page 1 used its header as associated data. So the ciphertext of page N also decrypted at any other page number.  A person who could write the database files, but who did not have the key, could swap the root pages of two tables in the database file. They could also swap the page numbers of two WAL frames and write the WAL checksums again, because the WAL checksums do not use a key. In both cases, each table returned the rows of the other table, and `PRAGMA integrity_check` reported `ok`.  This bug was found in an audit of Turso's at-rest encryption (finding 3).  ## Fix  This PR adds an encryption format. The version byte of the Turso header on page 1 stores its version.  - In encryption format version 1, the associated data of each page 2..N is its page number as 4 big-endian bytes. A page decrypts only at its own page number. A page that moves in the database file or in the WAL fails with a decryption error. - Version 0 is the format of all existing encrypted databases. Its pages 2..N have no associated data. - The version byte is already part of the associated data of page 1. A changed version byte makes page 1 fail to decrypt, so Turso never reads a database in the wrong format. - An encrypted open reads the version byte from page 1 on disk and makes its `EncryptionContext` in that format. Decrypting page 1 then authenticates the byte. The pager records the format in the shared p
+- **Issue #12534** (2026-11-26): **postgres: refuse unsupported statements with 0A000 and suggest workarounds**
+  *Symptoms*: Closes #11778 and #12056.  <img width="758" height="792" alt="Screenshot 2026-11-26 at 7 00 06" src="https://github.com/user-attachments/assets/ac51e683-c019-426f-bd7c-8e4adec274a2" />  tursopg answered valid PostgreSQL it can't run with 42601 (syntax error). It now answers with 0A000 (feature not supported). Where a workaround gives the same result, the error carries it in the HINT field. Error messages are unchanged.  Statements that PostgreSQL rejects too can also get 0A000 instead of PostgreSQL's own code. tursopg doesn't copy PostgreSQL's checks of invalid input just to match its code.  How it was done: - Each error now gets its code where it is raised, in the translator and in the frontend. The rules in `postgres/frontend/error.rs` that guessed the code from the message text are gone for these errors. `ParseError` can no longer be built from a plain string, so a new refusal can't fall back to 42601. - Every hint's workaround was run in tursopg and in PostgreSQL. Hints that gave a different result were dropped (e.g. `round(x, s)` for `numeric(p,s)`: `round(1.005, 2)` is 1.0 in tursopg, 1.01 in PostgreSQL).  The hints are a commit of their own (`postgres: suggest a workaround in the hint of refusals`) and can be reviewed apart from the SQLSTATE changes.  **NOTE:** this PR does not fix #11054. Errors raised in core still get their SQLSTATE guessed from their message text, so an error whose message happens to contain a matching word, such as a table name, can get the wrong 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1453,724 +1453,922 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bdc0c062` (2026-11-25)
-**Commit Message**: Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react-native' from app/dependabot
+### Incident Patch 1: `12f5cab4` (2026-11-26)
+**Commit Message**: postgres/conformance: remove the gap marker of bigint-column-overflow
 
-Bumps [fast-xml-parser](https://github.com/NaturalIntelligence/fast-xml-
-parser) from 5.11.1 to 5.12.1. <details> <summary>Release
-notes</summary> <p><em>Sourced from <a
-href="https://github.com/NaturalIntelligence/fast-xml-
-parser/releases">fast-xml-parser's releases</a>.</em></p> <blockquote>
-<h2>v5.12.1</h2> <h2>What's Changed</h2> <ul> <li>fix: correct demo
-parser and builder options by <a href="https://github.com/arba-
-octo"><code>@​arba-octo</code></a> in <a
-href="https://redirect.github.com/NaturalIntelligence/fast-xml-
-parser/pull/897">NaturalIntelligence/fast-xml-parser#897</a></li>
-<li>Bump github/codeql-action/init from 4.36.2 to 4.39.1 by <a
-href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
-in <a href="https://redirect.github.com/NaturalIntelligence/fast-xml-
-parser/pull/907">NaturalIntelligence/fast-xml-parser#907</a></li>
-<li>Bump github/codeql-action/analyze from 4.36.2 to 4.39.1 by <a
-href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
-in <a href="https://redirect.github.com/NaturalIntelligence/fast-xml-
-parser/pull
+A number above the range of bigint written to a bigint column now fails
+with 22003, as in PostgreSQL, because the assignment cast checks the
+range. The test no longer needs @compat-gap or the tursopg expectation.
 
-**File**: `examples/react-native/package-lock.json` (modified, +24/-23)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `postgres/conformance/pg-sqltests/gaps/errors.sqltest` (modified, +0/-5)
 ```diff
-@@ -42,7 +42,7 @@
-     },
-     "../../bindings/react-native": {
-       "name": "@tursodatabase/sync-react-native",
--      "version": "0.9.0-pre.2",
-+      "version": "0.9.0-pre.6",
-       "license": "MIT",
-       "dependencies": {
-         "@babel/runtime": "^7.25.0"
-@@ -53,8 +53,9 @@
-         "eslint": "^10.2.0",
-         "react": "^18.2.0",
-         "react-native": "^0.76.0",
--        "react-native-builder-bob": "^0.30.0",
--        "typescript": "^5.3.0"
-+        "react-native-builder-bob": "^0.44.1",
-+        "typescript": "^5.3.0",
-+        "vitest": "^4.1.11"
-       },
-       "engines": {
-         "node": ">=18"
-@@ -2789,9 +2790,9 @@
-       }
-     },
-     "node_modules/@nodable/entities": {
--      "version": "3.0.0",
--      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
--      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
-+      "version": "3.1.0",
-+      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
-+      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -6335,9 +6336,9 @@
-       "license": "MIT"
-     },
-     "node_modules/fast-xml-builder": {
--      "version": "1.3.1",
--      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
--      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
-+      "version": "1.3.2",
-+      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
-+      "integrity": "sha512-OX91VSlShLPDgRZV7tk/YQ4l8tT75QziF5Ixg8g4PFbCVPjuTWwN+yQfAxLJ0dufJpprdOd6HlM74Jhd39TcBQ==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -6352,9 +6353,9 @@
-       }
-     },
-     "node_modules/fast-xml-parser": {
--      "version": "5.11.1",
--      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.1.tgz",
--      "integrity": "sha512-TBw6K/fxoQGGjCmZDw9w/ZwP3uDcnTM4YH/g+PFRWr8sbe5idXtxNN6vITh4+1ruCZaho6uBFurElsA7F0zzgw==",
-+      "version": "5.12.1",
-+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
-+      "integrity": "sha512-wR8dO/fx+z8C5exuem1e7BKOWvjsuzvjS/tvA/Xu3Z1zQqJGcXrPzXbcAiaMgp2KjreEROcTkmnnisrcmJ2hYQ==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -6364,11 +6365,11 @@
-       ],
-       "license": "MIT",
-       "dependencies": {
--        "@nodable/entities": "^3.0.0",
--        "fast-xml-builder": "^1.2.0",
--        "is-unsafe": "^2.0.0",
-+        "@nodable/entities": "^3.1.0",
-+        "fast-xml-builder": "^1.3.2",
-+        "is-unsafe": "^2.0.3",
-         "path-expression-matcher": "^1.6.2",
--        "strnum": "^2.4.2",
-+        "strnum": "^2.5.1",
-         "xml-naming": "^0.3.0"
-       },
-       "bin": {
-@@ -7571,9 +7572,9 @@
-       }
-     },
-     "node_modules/is-unsafe": {
--      "version": "2.0.2",
--      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
--      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
-+      "version": "2.0.3",
-+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
-+      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -11314,9 +11315,9 @@
-       }
-     },
-     "node_modules/strnum": {
--      "version": "2.4.2",
--      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.4.2.tgz",
--      "integrity": "sha512-rDG3Ah4TV0k1hWvLSzkZtMmLN9+eS+h3knq4MP6A42Y3Yh5qGNnOUs1jJkoSr8FG5dsL28c7KgkIBzSEykqtuw==",
-+      "version": "2.5.1",
-+      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.5.1.tgz",
-+      "integrity": "sha512-UM4nTLWzQiDBseVxUGxN0wJzIk0UU89Qi7pKXz9qISo+lhviJikTuikBsK/oFRlpvYHvSdz0TVoLyQ+sEpYwxA==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -11677,7 +11678,7 @@
-       "version": "5.9.3",
-       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
-       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
--      "dev": true,
-+      "devOptional": true,
-       "license": "Apache-2.0",
-       "bin": {
-         "tsc": "bin/tsc",
+@@ -335,17 +335,12 @@ test smallint-column-overflow {
+ @sqlstate 22003
+ expect error {}
+ 
+-# PostgreSQL reads the number as numeric and refuses it for the bigint column.
+-# tursopg reads a number above the range of bigint as a float.
+-@compat-gap "type:int8"
+ test bigint-column-overflow {
+     CREATE TABLE t (n bigint);
+     INSERT INTO t VALUES (9223372036854775808);
+ }
+ @sqlstate 22003
+ expect error {}
+-@sqlstate 23000
+-expect @tursopg error {}
+ 
+ # D-35: undefined table
+ test undefined-table {
 ```
 
 ---
 
-### Incident Patch 2: `4f61bc74` (2026-11-25)
-**Commit Message**: Merge 'build(deps): bump addressable from 2.9.0 to 2.9.1 in /examples/react-native' from app/dependabot
+### Incident Patch 2: `297600f8` (2026-11-26)
+**Commit Message**: Merge 'postgres: refuse unsupported statements with 0A000 and suggest workarounds' from Jussi Saurio
 
-Bumps [addressable](https://github.com/sporkmonger/addressable) from
-2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced
-from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANG
-ELOG.md">addressable's changelog</a>.</em></p> <blockquote>
-<h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2>
-<h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service
-in <code>Addressable::URI.normalize_path</code>, which took quadratic
-time on paths with many dot segments; <code>URI#normalize</code>,
-<code>#join</code>, <code>#==</code> and <code>#===</code> were affected
-([GHSA-qq38-m9mg-xjj5])</li> <li>fixes
-<code>Addressable::URI.normalize_path</code> keeping segments that a
-<code>..</code> should have removed after a <code>..</code> above the
-root, e.g. <code>/../../public/x/../../secret</code> normalized to
-<code>/public/x/secret</code> instead of <code>/secret</code>
-([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes
-<code>Addressable::URI.normalize_path</code> treating a raw line feed as
-a segment boundary, e.g. joining <code>..\n/secret</code> onto
-<code>/
+Closes #11778 and #12056.
 
-**File**: `examples/react-native/Gemfile.lock` (modified, +2/-2)
+<img width="758" height="792" alt="Screenshot 2026-11-26 at 7 00 06"
+src="https://github.com/user-
+attachments/assets/ac51e683-c019-426f-bd7c-8e4adec274a2" />
+
+tursopg answered valid PostgreSQL it can't run with 42601 (syntax
+error). It now answers with 0A000 (feature not supported). Where a
+workaround gives the same result, the error carries it in the HINT
+field. Error messages are unchanged.
+
+Statements that PostgreSQL rejects too can also get 0A000 instead of
+PostgreSQL's own code. tursopg doesn't copy PostgreSQL's checks of
+invalid input just to match its code.
+
+How it was done:
+- Each error now gets its code where it is raised, in the translator and
+in the frontend. The rules in `postgres/frontend/error.rs` that guessed
+the code from the message text are gone for these errors. `ParseError`
+can no longer be built from a plain string, so a new refusal can't fall
+back to 42601.
+- Every hint's workaround was run in tursopg and in PostgreSQL. Hints
+that gave a different result were dropped (e.g. `round(x, s)` for
+`numeric(p,s)`: `round(1.005, 2)` is 1.0 i
+
+**File**: `postgres/conformance/pg-sqltests/catalog.sqltest` (modified, +8/-0)
 ```diff
-@@ -14,7 +14,7 @@ GEM
-       minitest (>= 5.1, < 6)
-       securerandom (>= 0.3)
-       tzinfo (~> 2.0, >= 2.0.5)
--    addressable (2.9.0)
-+    addressable (2.9.1)
-       public_suffix (>= 2.0.2, < 8.0)
-     algoliasearch (1.27.5)
-       httpclient (~> 2.8, >= 2.8.3)
-@@ -118,7 +118,7 @@ DEPENDENCIES
- CHECKSUMS
-   CFPropertyList (3.0.8) sha256=2c99d0d980536d3d7ab252f7bd59ac8be50fbdd1ff487c98c949bb66bb114261
-   activesupport (7.2.3.1) sha256=11ebed516a43a0bb47346227a35ebae4d9427465a7c9eb197a03d5c8d283cb34
--  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
-+  addressable (2.9.1) sha256=f1212365945455c84e8d031eea40fc6bedf0c663a78d95b3ab93591040bc5c35
-   algoliasearch (1.27.5) sha256=26c1cddf3c2ec4bd60c148389e42702c98fdac862881dc6b07a4c0b89ffec853
-   atomos (0.1.3) sha256=7d43b22f2454a36bace5532d30785b06de3711399cb1c6bf932573eda536789f
-   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
+@@ -2622,6 +2622,14 @@ expect error {
+     permission denied: "pg_description" is a system catalog
+ }
+ 
++test system-catalog-rejects-policies {
++    CREATE POLICY p ON pg_description USING (true);
++}
++@sqlstate 42501
++expect error {
++    permission denied: "pg_description" is a system catalog
++}
++
+ test pg-depend-has-the-relations-that-a-view-reads {
+     CREATE TABLE dep_base (a int);
+     CREATE TABLE dep_other (a int);
+```
+
+**File**: `postgres/conformance/pg-sqltests/copy.sqltest` (modified, +3/-0)
+```diff
+@@ -124,12 +124,14 @@ expect {
+ test copy-missing-table-errors {
+     COPY missing TO STDOUT;
+ }
++@sqlstate 42P01
+ expect error {}
+ 
+ @setup users
+ test copy-missing-column-errors {
+     COPY users (missing) TO STDOUT;
+ }
++@sqlstate 42703
+ expect error {}
+ 
+ @setup users
+@@ -143,6 +145,7 @@ test copy-view-errors {
+     CREATE VIEW user_view AS SELECT id FROM users;
+     COPY user_view TO STDOUT;
+ }
++@sqlstate 42809
+ expect error {}
+ 
+ test copy-bytea-array-elements-as-hex {
+```
+
+**File**: `postgres/conformance/pg-sqltests/errors.sqltest` (modified, +178/-0)
+```diff
+@@ -106,3 +106,181 @@ test error-drop-type-used-by-a-cast-in-a-policy {
+ }
+ @sqlstate 2BP01
+ expect error {}
++
++# The statements below are valid PostgreSQL that tursopg refuses. A refusal
++# has SQLSTATE 0A000, never a syntax error or an internal error.
++
++@compat-gap "syntax:select"
++test error-unsupported-select-without-columns {
++    CREATE TABLE t (a int);
++    SELECT FROM t;
++}
++expect {
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:values"
++test error-unsupported-values-in-a-set-operation {
++    VALUES (1) UNION VALUES (2) ORDER BY 1;
++}
++expect {
++    1
++    2
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:create-function"
++test error-unsupported-function-cost-with-underscores {
++    CREATE FUNCTION f() RETURNS int LANGUAGE sql COST 1_000.5 AS 'SELECT 1';
++}
++expect {
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:select-into"
++test error-unsupported-select-into-in-a-set-operation {
++    SELECT 1 AS a INTO t UNION SELECT 2;
++}
++expect {
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:array-slice"
++test error-unsupported-array-slice-without-lower-bound {
++    SELECT (ARRAY[1, 2, 3])[:2];
++}
++expect {
++    {1,2}
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:from-function"
++test error-unsupported-coalesce-in-from {
++    SELECT * FROM coalesce(1, 2);
++}
++expect {
++    1
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:drop-cast"
++test error-unsupported-drop-cast {
++    DROP CAST IF EXISTS (int AS text);
++}
++expect {
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:drop-operator"
++test error-unsupported-drop-operator {
++    DROP OPERATOR IF EXISTS ### (int, int);
++}
++expect {
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:copy"
++test error-unsupported-copy-to-program {
++    CREATE TABLE t (a int);
++    COPY t TO PROGRAM 'cat';
++}
++expect {
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:with-search"
++test error-unsupported-search-depth-first {
++    WITH RECURSIVE r(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM r WHERE n < 2)
++        SEARCH DEPTH FIRST BY n SET ord
++    SELECT n FROM r ORDER BY ord;
++}
++expect {
++    1
++    2
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++test error-drop-policy-on-a-table-of-another-database {
++    DROP POLICY p ON db.s.t;
++}
++@sqlstate 0A000
++expect error {}
++
++test error-json-to-record-with-two-arguments {
++    SELECT * FROM json_to_record('{"a": 1}', 1) AS x(a int);
++}
++@sqlstate 42883
++expect error {}
++
++test error-distinct-on-a-function-that-is-not-an-aggregate {
++    SELECT int4(DISTINCT a) FROM (VALUES (1)) AS t(a);
++}
++@sqlstate 42809
++expect error {}
++
++# The statements below fail in PostgreSQL with an error other than
++# feature_not_supported, and tursopg reports the same SQLSTATE.
++
++test error-update-assigns-a-column-twice {
++    CREATE TABLE t (a int);
++    UPDATE t SET a = 1, a = 2;
++}
++@sqlstate 42601
++expect error {}
++
++test error-on-conflict-assigns-a-column-twice {
++    CREATE TABLE t (a int PRIMARY KEY);
++    INSERT INTO t VALUES (1) ON CONFLICT (a) DO UPDATE SET a = 2, a = 3;
++}
++@sqlstate 42601
++expect error {}
++
++@compat-gap "syntax:copy"
++test copy-to-with-freeze-false {
++    CREATE TABLE t (a int);
++    COPY t TO STDOUT (FREEZE false);
++}
++expect {
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++test error-alter-sequence-owned-by-one-name {
++    CREATE SEQUENCE s;
++    ALTER SEQUENCE s OWNED BY x;
++}
++@sqlstate 42601
++expect error {}
++
++@compat-gap "syntax:row-star"
++test union-of-a-row-star-and-two-columns {
++    CREATE TABLE u2(a int, b int);
++    INSERT INTO u2 VALUES (1, 2);
++    SELECT (u2).* FROM u2 UNION ALL SELECT 3, 4 ORDER BY 1;
++}
++expect {
++    1|2
++    3|4
++}
++@sqlstate 0A000
++expect @tursopg error {}
++
++@compat-gap "syntax:row-field"
++test field-of-a-row-constructor {
++    SELECT (ROW(1, 2)).f1;
++}
++expect {
++    1
++}
++@sqlstate 0A000
++expect @tursopg error {}
+```
+
+**File**: `postgres/conformance/pg-sqltests/explain.sqltest` (modified, +1/-0)
+```diff
+@@ -64,6 +64,7 @@ expect {
+ test explain-analyze-errors {
+     EXPLAIN ANALYZE SELECT 1;
+ }
++@sqlstate 0A000
+ expect error {}
+ 
+ test explain-options-error {
+```
+
+**File**: `postgres/conformance/pg-sqltests/gaps/ddl-catalog.sqltest` (modified, +8/-8)
+```diff
+@@ -95,7 +95,7 @@ test alter-column-set-default {
+ }
+ expect {
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # E-05: ALTER COLUMN DROP DEFAULT
+@@ -106,7 +106,7 @@ test alter-column-drop-default {
+ }
+ expect {
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # E-06: ALTER COLUMN SET NOT NULL
+@@ -117,7 +117,7 @@ test alter-column-set-not-null {
+ }
+ expect {
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # E-07: ALTER COLUMN DROP NOT NULL
+@@ -128,7 +128,7 @@ test alter-column-drop-not-null {
+ }
+ expect {
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # E-08: ALTER COLUMN TYPE
+@@ -150,7 +150,7 @@ test add-constraint-unique {
+ }
+ expect {
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # E-10: ADD CONSTRAINT FOREIGN KEY
+@@ -162,7 +162,7 @@ test add-constraint-foreign-key {
+ }
+ expect {
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # E-11: ADD CONSTRAINT CHECK
+@@ -173,7 +173,7 @@ test add-constraint-check {
+ }
+ expect {
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # E-12: DROP CONSTRAINT
+@@ -184,7 +184,7 @@ test drop-constraint {
+ }
+ expect {
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # E-13: ALTER TABLE RENAME TO
+```
+
+**File**: `postgres/conformance/pg-sqltests/gaps/operators-functions.sqltest` (modified, +10/-10)
+```diff
+@@ -165,7 +165,7 @@ expect {
+     3
+     4
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-16: ILIKE ALL(array)
+@@ -179,7 +179,7 @@ expect {
+     3
+     4
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-17: ~ regex is case-sensitive
+@@ -262,7 +262,7 @@ test all-any-non-equality {
+ expect {
+     t|t
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-28: = ANY(array) with NULL element
+@@ -511,7 +511,7 @@ test to-tsvector-plainto-tsquery {
+ expect {
+     t
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-56: websearch_to_tsquery
+@@ -522,7 +522,7 @@ test websearch-to-tsquery {
+ expect {
+     t
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-57: to_tsquery / phraseto_tsquery
+@@ -533,7 +533,7 @@ test to-tsquery-phraseto-tsquery {
+ expect {
+     t|t
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-58: text col @@ to_tsquery
+@@ -545,7 +545,7 @@ test text-col-to-tsquery {
+ expect {
+     1
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-59: to_tsvector output
+@@ -578,7 +578,7 @@ test range-overlap-strictly-left-adjacent {
+ expect {
+     t|t|t
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-62: tstzrange contains
+@@ -815,7 +815,7 @@ test caret-is-the-power-operator {
+ expect {
+     8
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-84: || with NULL and int
+@@ -1152,7 +1152,7 @@ test with-insert-returning-data-modifying-cte {
+ expect {
+     9
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # B-110: row comparison (a,b) > (x,y) (keyset pagination)
+```
+
+**File**: `postgres/conformance/pg-sqltests/jsonb-operators.sqltest` (modified, +2/-2)
+```diff
+@@ -775,7 +775,7 @@ test jsonb-matches-jsonpath {
+ expect {
+     t
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ @compat-gap "operator:jsonb #- _text"
+@@ -785,7 +785,7 @@ test jsonb-delete-path {
+ expect {
+     {"a": {}}
+ }
+-@sqlstate 42601
++@sqlstate 0A000
+ expect @tursopg error {}
+ 
+ # jsonb_insert() of tursopg is the function of SQLite, which takes a JSON
+```
+
+**File**: `postgres/conformance/pg-sqltests/schema.sqltest` (modified, +18/-0)
+```diff
+@@ -89,6 +89,24 @@ expect error {
+     different from the one being created
+ }
+ 
++# tursopg runs the elements of CREATE SCHEMA as separate statements, which it
++# cannot do inside a transaction block.
++@compat-gap "syntax:create-schema"
++test create-schema-with-elements-in-a-transaction {
++    BEGIN;
++    CREATE SCHEMA elements_in_tx CREATE TABLE t (a int);
++    INSERT INTO elements_in_tx.t VALUES (1);
++    COMMIT;
++    SELECT a FROM elements_in_tx.t;
++}
++expect {
++    1
++}
++@sqlstate 0A000
++expect @tursopg error {
++    CREATE SCHEMA with schema elements cannot run inside a transaction block
++}
++
+ # Both tests create the same schema: on an in-memory server each must get its
+ # own empty schema, not a file left by the other test.
+ test create-schema-starts-empty {
 ```
 
 ---
 
-### Incident Patch 3: `03dccb7c` (2026-11-25)
-**Commit Message**: Merge 'core/insert: build the NEW row of BEFORE triggers the way SQLite does' from Glauber Costa
+### Incident Patch 3: `a1d89887` (2026-11-26)
+**Commit Message**: Merge 'core/stats: handle null and non-text sqlite_stat1 values' from Ravi kumar
 
-This PR started as a one-line change: do not apply affinity to the
-temporary table of `INSERT ... SELECT`. Three review rounds then each
-found one more place where Turso converts the values of an INSERT in a
-different order than SQLite, relative to the BEFORE INSERT triggers.
-This version stops fixing them one by one. It makes `translate_insert`
-follow the order and the register layout of `sqlite3Insert`.
+When `sqlite_stat1` contained a row with a `NULL` or non-text `tbl`
+value, loading ANALYZE statistics failed with `Conversion error:
+Expected text value` and discarded every statistic in the database. Non-
+text `idx` values were also treated as `NULL` instead of matching the
+index by its text name, and non-text `stat` values were ignored.
 
-## What SQLite does
+```sql
+CREATE TABLE t(a, b);
+CREATE INDEX ia ON t(a);
+CREATE INDEX ib ON t(b);
+ANALYZE;
+INSERT INTO sqlite_stat1 VALUES
+    ('t', 'ia', '2000 2000'),
+    ('t', 'ib', '2000 1'),
+    (NULL, NULL, NULL);
+-- reopen the database, then:
+EXPLAIN QUERY PLAN SELECT * FROM t WHERE a = 1 AND b > 5;
+```
 
-Read from `src/insert.c` of 3.51.0 (`sqlite3Insert`), and checked with
-`EXPLAIN`.
+- Before: `SEARCH t USING INDEX ia (a=?)` (all statistics were
+discarded)
+- After: `SEARCH t USING INDEX ib (b>?)` (matches SQLite)
 
-SQLite keeps the row in one block of registers (`regRowid`,
-`regData...`) and does not convert it until the BEFORE triggers are
-done. For the triggers it makes a copy (`regCols`) and converts the
-copy:
+`load_sqlite_stat1_row` in `core/stats.rs` read `tbl` with
+`row.get::<&str>(0)?`, which aborted the whole scan on `NULL` or non-
+text values, and only matched `Value::Text` for `idx` and `stat`. This
+change converts `tbl`, `idx`, and `stat` with `Value::cast_text_ref` so
+`NULL` `tbl`/`stat` rows are skipped and non-NULL values are coerced to
+text,
 
-1. rowid of the copy: NULL becomes -1, then `MustBeInt`
-2. `Copy` the columns
-3. `Affinity`, or `TypeCheck` for a STRICT table
-(`sqlite3TableAffinity`)
-4. generated columns, computed from the copy
-(`sqlite3ComputeGeneratedColumns`)
-5. `Program`: the triggers read NEW from the copy
-
-Then it continues with the row itself: rowid (`NewRowid` or
-`MustBeInt`), NOT NULL, conversion to the 
-
-**File**: `core/translate/insert.rs` (modified, +173/-149)
+**File**: `core/stats.rs` (modified, +17/-20)
 ```diff
-@@ -608,32 +608,13 @@ pub fn translate_insert(
- 
-     let has_user_provided_rowid = ctx.table.has_rowid && insertion.key.is_provided_by_user();
- 
--    // For non-STRICT tables, apply column affinity to the values early.
--    // This must happen before BEFORE triggers (matching SQLite's order) so that
--    // trigger bodies see affinity-applied values. Affinity is idempotent, so
--    // applying it here means we can skip the per-trigger Copy+Affinity in fire_trigger.
--    if !ctx.table.is_strict {
--        let affinity = insertion
--            .col_mappings
--            .iter()
--            .filter(|cm| !cm.column.is_virtual_generated())
--            .map(|col_mapping| col_mapping.column.affinity());
+@@ -326,42 +326,39 @@ fn load_sqlite_stat1_row(
+     schema: &Schema,
+     stats: &mut AnalyzeStats,
+ ) -> Result<()> {
+-    let (namespace, table_name) = schema.demangle_name(row.get::<&str>(0)?);
+-    let idx_value = row.get::<&Value>(1)?;
+-    let stat_value = row.get::<&Value>(2)?;
 -
--        // Only emit Affinity if there's meaningful affinity to apply
--        // (i.e., not all BLOB/NONE affinity)
--        if affinity.clone().any(|a| a != Affinity::Blob) {
--            if let Ok(count) = NonZeroUsize::try_from(insertion.num_non_virtual_cols) {
--                program.emit_insn(Insn::Affinity {
--                    start_reg: insertion.first_col_register(),
--                    count,
--                    affinities: affinity.map(|a| a.aff_mask()).collect(),
--                });
--            }
--        }
+-    let idx_name = match idx_value {
+-        Value::Null => None,
+-        Value::Text(s) => Some(s.as_str()),
+-        _ => None,
++    // Match SQLite's analysisLoader (sqlite3_exec / sqlite3_column_text):
++    // skip rows with NULL tbl or stat and coerce non-NULL values to text
++    // instead of failing the whole scan on a type mismatch.
++    let Some(tbl_text) = row.get::<&Value>(0)?.cast_text_ref() else {
++        return Ok(());
+     };
+-    let stat = match stat_value {
+-        Value::Text(s) => s.as_str(),
+-        _ => return Ok(()),
++    let (namespace, table_name) = schema.demangle_name(&tbl_text);
++    let idx_name = row.get::<&Value>(1)?.cast_text_ref();
++    let Some(stat) = row.get::<&Value>(2)?.cast_text_ref() else {
++        return Ok(());
+     };
+ 
+     // Skip if table is not a regular B-tree.
+     if schema.get_btree_table(namespace, table_name).is_none() {
+         return Ok(());
+     }
+-    let Some(numbers) = parse_stat_numbers(stat) else {
++    let Some(numbers) = parse_stat_numbers(&stat) else {
+         return Ok(());
+     };
+     if numbers.is_empty() {
+         return Ok(());
+     }
+-    if idx_name.is_none() {
++    // Match SQLite's analysisLoader: if idx is NULL or does not name an index
++    // on this table, record the first number as the table's row count.
++    let idx_name = idx_name
++        .map(|name| normalize_ident(&name))
++        .filter(|name| schema.get_index(namespace, table_name, name).is_some());
++    let Some(idx_name) = idx_name else {
+         if let Some(total_rows) = numbers.first().copied() {
+             stats.table_stats_mut(namespace, table_name).row_count = Some(total_rows);
+         }
+         return Ok(());
 -    }
 -
--    // Fire BEFORE INSERT triggers
--
-+    // The row is now in the registers of `insertion`, as the source gave it. The rest follows
-+    // the order of sqlite3Insert:
-+    //   1. BEFORE triggers, which see a converted copy of the row
-+    //   2. rowid: NewRowid or MustBeInt
-+    //   3. NOT NULL, conversion to the column types, generated columns
-+    //   4. CHECK, uniqueness, foreign keys
-+    //   5. MakeRecord, Insert, AFTER triggers
-     let relevant_before_triggers = get_triggers_including_temp(
-         resolver,
-         namespace,
-@@ -643,75 +624,15 @@ pub fn translate_insert(
-         &btree_table,
-         connection,
-     );
--
--    // The inserted values are the user's values until ENCODE runs below.
--    let dml_ctx = DmlColumnContext::from_column_reg_mapping(
--        insertion.col_mappings.iter().map(|cm| {
--            (
--                cm.column,
--                if cm.column.is_rowid_alias() {
--                    insertion.key_register()
--                } else {
--                    cm.register
--                },
--            )
--        }),
--        DmlRowForm::UserFacing,
--    );
--
-     let has_before_triggers = !relevant_before_triggers.is_empty();
-     if has_before_triggers {
--        compute_generated_columns(
-+        let new_registers = emit_new_row_for_before_triggers(
-             program,
--            &ctx.table.columns_topo_sort()?,
--            &dml_ctx,
-             resolver,
-+            &insertion,
-             &btree_table,
-+            has_user_provided_rowid,
-         )?;
--
--        // In SQLite, NEW.<rowid_alias> returns -1 in BEFORE INSERT triggers when the rowid
--        // hasn't been assigned yet (i.e., it's NULL). We need to temporarily set the key
--        // register to -1 so the trigger sees the correct value.
--        let saved_key_reg = if has_user_provided_rowid {
--            // User provided a value that might be NULL. Save original value, replace NULL with -1.
--            let save_reg = program.alloc_register();
--            program.emit_insn(Insn::Copy {
--                src_reg: insertion.key_register(),
--                dst_reg: save_reg,
--                extra_amount: 0,
--            });
--            let skip_label = program.allocate_label();
--            program.emit_insn(Insn::NotNull {
--                reg: insertion.key_register(),
--                target_pc: skip_label,
--            });
--            program.emit_insn(Insn::Integer {
--                value: -1,
--                dest: insertion.key_register(),
--            });
--            program.preassign_label_to_next_insn(skip_label);
--            Some(save_reg)
--        } else {
--            // Key is auto-generated, register is uninitialized. Set to -1.
--            program.emit_insn(Insn::Integer {
--                value: -1,
--                dest: insertion.key_register(),
--            });
--            None
--        };
--        // Build NEW registers: for rowid alias columns, use the rowid register; otherwise use column register
--        let new_registers: Vec<usize> = insertion
--            .col_mappings
--            .iter()
--            .map(|col_mapping| {
--                if col_mapping.column.is_rowid_alias() {
--                    insertion.key_register()
--                } else {
--                    col_mapping.register
--                }
--            })
--            .chain(std::iter::once(insertion.key_register()))
--            .collect();
-         // Determine the conflict resolution to propagate to triggers:
-         // 1. If there's already an override from UPSERT DO UPDATE context, use it (forces ABORT)
-         // 2. If the INSERT uses an explicit ON CONFLICT clause, propagate it to
-@@ -742,17 +663,23 @@ pub fn translate_insert(
-            
+-    // Index-level entry: only keep if the index exists on this table.
+-    let idx_name = normalize_ident(idx_name.unwrap());
+-    if schema.get_index(namespace, table_name, &idx_name).is_none() {
+-        return Ok(());
+-    }
++    };
+ 
+     let total_rows = numbers.first().copied();
+     {
 ```
 
-**File**: `core/translate/upsert.rs` (modified, +13/-37)
+**File**: `sqlite/conformance/sqlite-sqltests/analyze-stat1-non-text-rows.sqltest` (added, +125/-0)
 ```diff
-@@ -24,8 +24,8 @@ use crate::translate::fkeys::{
-     fire_fk_update_actions, ParentKeyNewProbeMode,
- };
- use crate::translate::insert::{
--    emit_remember_written_rowid, emit_returning_subqueries, expr_contains_subquery,
--    format_unique_violation_desc, InsertEmitCtx,
-+    emit_column_type_conversion, emit_remember_written_rowid, emit_returning_subqueries,
-+    expr_contains_subquery, format_unique_violation_desc, InsertEmitCtx,
- };
- use crate::translate::plan::ColumnMask;
- use crate::translate::planner::ROWID_STRS;
-@@ -61,7 +61,6 @@ use crate::{
-     },
-     util::{exprs_are_equivalent, normalize_ident},
-     vdbe::{
--        affinity::Affinity,
-         builder::{DmlColumnContext, DmlRowForm, ProgramBuilder},
-         insn::{IdxInsertFlags, InsertFlags, Insn},
-     },
-@@ -826,40 +825,13 @@ pub fn emit_upsert(
-     }
- 
-     if let Some(bt) = table.btree() {
--        if bt.is_strict {
--            // Pre-encode TypeCheck: all columns are decoded (user-facing) at this point.
--            // We need to do this before regenerating virtual columns, because TypeCheck applies
--            // affinity in-place to its registers, which could affect virtual columns.
--            program.emit_insn(Insn::TypeCheck {
--                start_reg: new_start,
--                count: layout.num_non_virtual_cols(),
--                check_generated: false,
--                table_reference: BTreeTable::input_type_check_table_ref(
--                    &bt,
--                    resolver.schema(),
--                    None,
--                )?,
--            });
--        } else {
--            // For non-STRICT tables, apply column affinity to the values.
--            // This must happen early so that both index records and the table record
--            // use the converted values.
--            let affinity = bt
--                .columns()
--                .iter()
--                .filter(|c| !c.is_virtual_generated())
--                .map(|c| c.affinity());
--
--            if affinity.clone().any(|a| a != Affinity::Blob) {
--                if let Ok(count) = NonZeroUsize::try_from(layout.num_non_virtual_cols()) {
--                    program.emit_insn(Insn::Affinity {
--                        start_reg: new_start,
--                        count,
--                        affinities: affinity.map(|a| a.aff_mask()).collect(),
--                    });
--                }
--            }
--        }
-+        emit_column_type_conversion(
-+            program,
-+            resolver,
-+            &bt,
-+            new_start,
-+            layout.num_non_virtual_cols(),
-+        )?;
-     }
- 
-     // Recompute generated columns for the new row after SET clauses have modified base columns.
-@@ -2197,6 +2169,10 @@ fn rewrite_expr_to_registers(
-                             if ROWID_STRS.iter().any(|s| s.eq_ignore_ascii_case(&c)) {
-                                 *expr = Expr::register(ins.key_register());
-                             } else if let Some(cm) = ins.get_col_mapping_by_name(&c) {
-+                                if cm.column.is_rowid_alias() {
-+                                    *expr = Expr::register(ins.key_register());
-+                                    return Ok(WalkControl::Continue);
-+                                }
-                                 // Use decoded excluded registers when available
-                                 // to prevent double-encoding of custom type values
-                                 if let Some(decoded_start) = excluded_decoded_start {
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/insert-select-temp-table-affinity.sqltest` (added, +297/-0)
-```diff
-@@ -0,0 +1,297 @@
-+# INSERT ... SELECT from the table it writes to, or into a table with an insert trigger, goes through a temporary table. The target column affinity applies when the row is read back from it, before triggers see the row.
-+
+@@ -0,0 +1,125 @@
 +@database :memory:
 +
-+test issue-2040-integer-column-direct {
-+    CREATE TABLE t(x INTEGER);
-+    INSERT INTO t VALUES (9.00), ('xthjqehemf'), (NULL);
-+    SELECT min(x), typeof(min(x)) FROM t;
++# Regression tests for https://github.com/tursodatabase/turso/issues/12397:
++# loading sqlite_stat1 must coerce non-text tbl, idx, and stat values to text
++# like SQLite's analysisLoader instead of failing with a conversion error and
++# discarding every statistic.
++
++test stat1-non-text-unmatched-tbl-rows-do-not-discard-other-stats {
++    CREATE TABLE t(a, b);
++    CREATE INDEX ia ON t(a);
++    CREATE INDEX ib ON t(b);
++    CREATE TABLE other(x);
++    ANALYZE;
++    INSERT INTO sqlite_stat1 VALUES
++        (123, 'x', '10 1'),
++        (1.5, 'x', '10 1'),
++        (X'fffe', 'x', '10 1'),
++        ('t', 'ia', '2000 2000'),
++        ('t', 'ib', '2000 1');
++    ANALYZE other;
++    EXPLAIN QUERY PLAN SELECT * FROM t WHERE a = 1 AND b > 5;
 +}
-+expect {
-+    9|integer
++expect pattern {
++    SEARCH t USING INDEX ib \(b>\?\)
 +}
 +
-+test issue-2040-integer-column-through-temp-table {
-+    CREATE TABLE t(x INTEGER);
-+    INSERT INTO t VALUES (9.00), ('xthjqehemf'), (NULL);
-+    INSERT INTO t SELECT x FROM t;
-+    SELECT min(x), typeof(min(x)), count(*) FROM t;
++test stat1-integer-tbl-coerced-to-text {
++    CREATE TABLE "123"(a, b);
++    CREATE INDEX ia ON "123"(a);
++    CREATE INDEX ib ON "123"(b);
++    CREATE TABLE other(x);
++    ANALYZE;
++    INSERT INTO sqlite_stat1 VALUES
++        (123, 'ia', '2000 2000'),
++        (123, 'ib', '2000 1');
++    ANALYZE other;
++    EXPLAIN QUERY PLAN SELECT * FROM "123" WHERE a = 1 AND b > 5;
 +}
-+expect {
-+    9|integer|6
-+}
-+
-+test issue-2041-text-column-direct {
-+    CREATE TABLE t(x TEXT);
-+    INSERT INTO t VALUES (-3.90), (-611), (199);
-+    SELECT min(x), typeof(min(x)) FROM t;
-+}
-+expect {
-+    -3.9|text
++expect pattern {
++    SEARCH 123 USING INDEX ib \(b>\?\)
 +}
 +
-+test issue-2041-text-column-through-temp-table {
-+    CREATE TABLE s(a);
-+    INSERT INTO s VALUES (-3.90), (-611), (199);
-+    CREATE TABLE t(x TEXT);
-+    INSERT INTO t SELECT a FROM s;
-+    INSERT INTO t SELECT x FROM t;
-+    SELECT min(x), typeof(min(x)), count(*) FROM t;
++test stat1-real-tbl-coerced-to-text {
++    CREATE TABLE "1.5"(a, b);
++    CREATE INDEX ia ON "1.5"(a);
++    CREATE INDEX ib ON "1.5"(b);
++    CREATE TABLE other(x);
++    ANALYZE;
++    INSERT INTO sqlite_stat1 VALUES
++        (1.5, 'ia', '2000 2000'),
++        (1.5, 'ib', '2000 1');
++    ANALYZE other;
++    EXPLAIN QUERY PLAN SELECT * FROM "1.5" WHERE a = 1 AND b > 5;
 +}
-+expect {
-+    -3.9|text|6
-+}
-+
-+test temp-table-with-column-list-and-different-affinity {
-+    CREATE TABLE t(a INTEGER, b TEXT, c REAL);
-+    INSERT INTO t(a, b, c) VALUES ('5', 6, '7');
-+    INSERT INTO t(c, a, b) SELECT a, b, c FROM t;
-+    SELECT a, typeof(a), b, typeof(b), CAST(c AS TEXT), typeof(c) FROM t ORDER BY rowid;
-+}
-+expect {
-+    5|integer|6|text|7.0|real
-+    6|integer|7.0|text|5.0|real
++expect pattern {
++    SEARCH 1\.5 USING INDEX ib \(b>\?\)
 +}
 +
-+test temp-table-with-after-insert-trigger {
-+    CREATE TABLE s(a);
-+    INSERT INTO s VALUES ('12'), (3.5), ('abc');
-+    CREATE TABLE t(x INTEGER);
-+    CREATE TABLE log(v);
-+    CREATE TRIGGER tr AFTER INSERT ON t BEGIN INSERT INTO log VALUES (typeof(new.x)); END;
-+    INSERT INTO t SELECT a FROM s;
-+    SELECT x, typeof(x) FROM t ORDER BY rowid;
-+    SELECT v FROM log ORDER BY rowid;
++test stat1-integer-idx-coerced-to-text {
++    CREATE TABLE t(a, b);
++    CREATE INDEX "111" ON t(a);
++    CREATE INDEX "222" ON t(b);
++    CREATE TABLE other(x);
++    ANALYZE;
++    INSERT INTO sqlite_stat1 VALUES
++        ('t', 111, '2000 2000'),
++        ('t', 222, '2000 1');
++    ANALYZE other;
++    EXPLAIN QUERY PLAN SELECT * FROM t WHERE a = 1 AND b > 5;
 +}
-+expect {
-+    12|integer
-+    3.5|real
-+    abc|text
-+    integer
-+    real
-+    text
++expect pattern {
++    SEARCH t USING INDEX 222 \(b>\?\)
 +}
 +
-+@requires strict "uses STRICT tables"
-+test strict-before-trigger-sees-converted-values-from-insert-select {
-+    CREATE TABLE st(a INTEGER, b REAL) STRICT;
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER tr BEFORE INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
-+    CREATE TRIGGER tr2 BEFORE INSERT ON st WHEN new.a = 3 BEGIN INSERT INTO lg VALUES ('when'); END;
-+    INSERT INTO st SELECT '3', 4;
-+    SELECT v FROM lg ORDER BY rowid;
++test stat1-blob-columns-coerced-to-text {
++    CREATE TABLE t(a, b);
++    CREATE INDEX ia ON t(a);
++    CREATE INDEX ib ON t(b);
++    CREATE TABLE other(x);
++    ANALYZE;
++    INSERT INTO sqlite_stat1 VALUES
++        (X'74', X'6961', X'323030302032303030'),
++        (X'74', X'6962', X'323030302031');
++    ANALYZE other;
++    EXPLAIN QUERY PLAN SELECT * FROM t WHERE a = 1 AND b > 5;
 +}
-+expect {
-+    when
-+    integerreal
-+}
-+
-+@requires strict "uses STRICT tables"
-+test strict-before-trigger-sees-converted-values-from-values {
-+    CREATE TABLE st(a INTEGER, b REAL) STRICT;
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER tr BEFORE INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
-+    CREATE TRIGGER tr2 BEFORE INSERT ON st WHEN new.a = 3 BEGIN INSERT INTO lg VALUES ('when'); END;
-+    INSERT INTO st VALUES ('3', 4);
-+    SELECT v FROM lg ORDER BY rowid;
-+}
-+expect {
-+    when
-+    integerreal
++expect pattern {
++    SEARCH t USING INDEX ib \(b>\?\)
 +}
 +
-+@requires strict "uses STRICT tables"
-+test strict-before-trigger-sees-converted-values-when-reading-the-target {
-+    CREATE TABLE st(a INTEGER, b REAL) STRICT;
-+    CREATE TABLE lg(v);
-+    INSERT INTO st VALUES (1, 1.5);
-+    CREATE TRIGGER tr BEFORE INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
-+    INSERT INTO st SELECT '3', 4 FROM st;
-+    SELECT v FROM lg ORDER BY rowid;
++test stat1-unmatched-idx-sets-table-row-count {
++    CREATE TABLE x(a);
++    CREATE TABLE y(a);
++    CREATE INDEX xa ON x(a);
++    CREATE INDEX ya ON y(a);
++    CREATE TABLE other(k);
++    ANALYZE;
++    DELETE FROM sqlite_stat1;
++    INSERT INTO sqlite_stat1 VALUES
++        ('x', 1, '1000000'),
++        ('y', 1, '10');
++    ANALYZE other;
++    EXPLAIN QUERY PLAN SELECT * FROM x, y WHERE x.a = y.a;
 +}
-+expect {
-+    integerreal
-+}
-+
-+@requires strict "uses STRICT tables"
-+test strict-after-trigger-sees-converted-values-from-insert-select {
-+    CREATE TABLE st(a INTEGER, b REAL) STRICT;
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER tr AFTER INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
-+    INSERT INTO st SELECT '3', 4;
-+    SELECT v FROM lg ORDER BY rowid;
-+}
-+expect {
-+    integerreal
++expect pattern {
++    SCAN y[\s\S]*SEARCH x USING COVERING INDEX xa \(a=\?\)
 +}
 +
-+test non-strict-before-and-after-triggers-see-converted-values-from-insert-select {
-+    CREATE TABLE nt(a INTEGER, b REAL, c TEXT);
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER trb BEFORE INSERT ON nt BEGIN INSERT INTO lg VALUES ('before ' || typeof(new.a) || typeof(new.b) || typeof(new.c)); END;
-+    CREATE TRIGGER trw BEFORE INSERT ON nt WHEN new.a = 3 BEGIN INSERT INTO lg VALUES ('when'); END;
-+    CREATE TRIGGER tra AFTER INSERT ON nt BEGIN INSERT INTO lg VALUES ('after ' || typeof(new.a) || typeof(new.b) || typeof(new.c)); END;
-+    INSERT INTO nt SELECT '3', 4, 5;
-+    SELECT v FROM lg ORDER BY rowid;
++test stat1-unmatched-text-idx-sets-table-row-count {
++    CREATE TABLE x(a);
++    CREATE TABLE y(a);
++    CREATE INDEX xa ON x(a);
++    CREATE INDEX ya ON y(a);
++    CREATE TABLE other(k);
++    ANALYZE;
++    DELETE FROM sqlite_stat1;
++    INSERT INTO sqlite_stat1 VALUES
++        ('x', 'nosuchidx', '1000000'),
++        ('y', 'nosuchidx', '10');
++    ANALYZE other;
++    EXPLAIN QUERY PLAN SELECT * FROM x, y WHERE x.a = y.a;
 +}
-+expect {
-+    when
-+    before integerrealtext
-+    after integerrealtext
++expect pattern {
++    SCAN y[\s\S]*SEARCH x USING COVERING INDEX xa \(a=\?\)
 +}
-+
-+test before-trigger-sees-integer-rowid-alias-from-values {
-+    CREATE TABLE t(id INTEGER PRIMARY KEY);
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER tr BEFORE INSERT ON t BEGIN INSERT INTO lg VALUES (new.id); END;
-+    INSERT INTO t VALUES ('10'), ('3.0'), (' 7 '), (12.0), (NULL);
-+    SELECT v, typeof(v) FROM lg ORDER BY ro
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-multiple-rows.snap` (modified, +8/-8)
+**File**: `tests/integration/stats.rs` (modified, +310/-5)
 ```diff
-@@ -49,14 +49,14 @@ addr  opcode           p1  p2  p3  p4              p5  comment
-   27    Copy            6  12   0                   0  r[12]=r[6]
-   28    Copy            7  13   0                   0  r[13]=r[7]
-   29    OpenWrite       0  11   0                   0  root=11; iDb=0
--  30    Affinity        9   5   0                   0  r[9..14] = D, B, E, D, B
--  31    NotNull         8  33   0                   0  r[8]!=NULL -> goto 33
--  32    Goto            0  35   0                   0
--  33    MustBeInt       8   0   0                   0
--  34    Goto            0  36   0                   0
--  35    NewRowid        1   8   0                   0  r[8]=rowid
--  36    HaltIfNull   1299   0  10  products.name    0
--  37    HaltIfNull   1299   0  11  products.price   0
-+  30    NotNull         8  32   0                   0  r[8]!=NULL -> goto 32
-+  31    Goto            0  34   0                   0
-+  32    MustBeInt       8   0   0                   0
-+  33    Goto            0  35   0                   0
-+  34    NewRowid        1   8   0                   0  r[8]=rowid
-+  35    HaltIfNull   1299   0  10  products.name    0
-+  36    HaltIfNull   1299   0  11  products.price   0
-+  37    Affinity        9   5   0                   0  r[9..14] = D, B, E, D, B
-   38    NotExists       1  40   8                   0
-   39    Halt         1555   0   0  products.id      0
-   40    MakeRecord      9   5  14                   0  r[14]=mkrec(r[9..13])
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-abort-multi-unique.snap` (modified, +8/-8)
-```diff
-@@ -23,14 +23,14 @@ addr  opcode         p1  p2  p3  p4             p5  comment
-    6  String8         0   6   0  Widget          0  r[6]='Widget'
-    7  OpenWrite       0  10   0                  0  root=10; iDb=0
-    8  OpenWrite       1   9   0                  0  root=9; iDb=0
--   9  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
--  10  NotNull         2  12   0                  0  r[2]!=NULL -> goto 12
--  11  Goto            0  14   0                  0
--  12  MustBeInt       2   0   0                  0
--  13  Goto            0  15   0                  0
--  14  NewRowid        2   2   0                  0  r[2]=rowid
--  15  HaltIfNull   1299   0   4  items.sku       0
--  16  HaltIfNull   1299   0   5  items.barcode   0
-+   9  NotNull         2  11   0                  0  r[2]!=NULL -> goto 11
-+  10  Goto            0  13   0                  0
-+  11  MustBeInt       2   0   0                  0
-+  12  Goto            0  14   0                  0
-+  13  NewRowid        2   2   0                  0  r[2]=rowid
-+  14  HaltIfNull   1299   0   4  items.sku       0
-+  15  HaltIfNull   1299   0   5  items.barcode   0
-+  16  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
-   17  NotExists       2  19   2                  0
-   18  Halt         1555   0   0  items.id        0
-   19  Copy            5   8   0                  0  r[8]=r[5]
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-fail-multi-unique.snap` (modified, +8/-8)
-```diff
-@@ -23,14 +23,14 @@ addr  opcode         p1  p2  p3  p4             p5  comment
-    6  String8         0   6   0  Widget          0  r[6]='Widget'
-    7  OpenWrite       0  10   0                  0  root=10; iDb=0
-    8  OpenWrite       1   9   0                  0  root=9; iDb=0
--   9  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
--  10  NotNull         2  12   0                  0  r[2]!=NULL -> goto 12
--  11  Goto            0  14   0                  0
--  12  MustBeInt       2   0   0                  0
--  13  Goto            0  15   0                  0
--  14  NewRowid        2   2   0                  0  r[2]=rowid
--  15  HaltIfNull   1299   0   4  items.sku       0
--  16  HaltIfNull   1299   0   5  items.barcode   0
-+   9  NotNull         2  11   0                  0  r[2]!=NULL -> goto 11
-+  10  Goto            0  13   0                  0
-+  11  MustBeInt       2   0   0                  0
-+  12  Goto            0  14   0                  0
-+  13  NewRowid        2   2   0                  0  r[2]=rowid
-+  14  HaltIfNull   1299   0   4  items.sku       0
-+  15  HaltIfNull   1299   0   5  items.barcode   0
-+  16  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
-   17  NotExists       2  19   2                  0
-   18  Halt         1555   0   0  items.id        0
-   19  Copy            5   8   0                  0  r[8]=r[5]
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-ignore-multi-unique.snap` (modified, +8/-8)
-```diff
-@@ -23,14 +23,14 @@ addr  opcode       p1  p2  p3  p4       p5  comment
-    6  String8       0   6   0  Widget    0  r[6]='Widget'
-    7  OpenWrite     0  10   0            0  root=10; iDb=0
-    8  OpenWrite     1   9   0            0  root=9; iDb=0
--   9  Affinity      3   4   0            0  r[3..7] = D, B, B, B
--  10  NotNull       2  12   0            0  r[2]!=NULL -> goto 12
--  11  Goto          0  14   0            0
--  12  MustBeInt     2   0   0            0
--  13  Goto          0  15   0            0
--  14  NewRowid      2   2   0            0  r[2]=rowid
--  15  IsNull        4  40   0            0  if (r[4]==NULL) goto 40
--  16  IsNull        5  40   0            0  if (r[5]==NULL) goto 40
-+   9  NotNull       2  11   0            0  r[2]!=NULL -> goto 11
-+  10  Goto          0  13   0            0
-+  11  MustBeInt     2   0   0            0
-+  12  Goto          0  14   0            0
-+  13  NewRowid      2   2   0            0  r[2]=rowid
-+  14  IsNull        4  40   0            0  if (r[4]==NULL) goto 40
-+  15  IsNull        5  40   0            0  if (r[5]==NULL) goto 40
-+  16  Affinity      3   4   0            0  r[3..7] = D, B, B, B
-   17  NotExists     2  19   2            0
-   18  Goto          0  40   0            0
-   19  Copy          5   8   0            0  r[8]=r[5]
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-ignore.snap` (modified, +8/-8)
-```diff
-@@ -22,14 +22,14 @@ addr  opcode       p1  p2  p3  p4                p5  comment
-    5  String8       0   5   0  Jane Doe           0  r[5]='Jane Doe'
-    6  String8       0   6   0  active             0  r[6]='active'
-    7  OpenWrite     0   4   0                     0  root=4; iDb=0
--   8  Affinity      3   4   0                     0  r[3..7] = D, B, B, B
--   9  NotNull       2  11   0                     0  r[2]!=NULL -> goto 11
--  10  Goto          0  13   0                     0
--  11  MustBeInt     2   0   0                     0
--  12  Goto          0  14   0                     0
--  13  NewRowid      1   2   0                     0  r[2]=rowid
--  14  IsNull        4  30   0                     0  if (r[4]==NULL) goto 30
--  15  IsNull        5  30   0                     0  if (r[5]==NULL) goto 30
-+   8  NotNull       2  10   0                     0  r[2]!=NULL -> goto 10
-+   9  Goto          0  12   0                     0
-+  10  MustBeInt     2   0   0                     0
-+  11  Goto          0  13   0                     0
-+  12  NewRowid      1   2   0                     0  r[2]=rowid
-+  13  IsNull        4  30   0                     0  if (r[4]==NULL) goto 30
-+  14  IsNull        5  30   0                     0  if (r[5]==NULL) goto 30
-+  15  Affinity      3   4   0                     0  r[3..7] = D, B, B, B
-   16  NotExists     1  18   2                     0
-   17  Goto          0  30   0                     0
-   18  Copy          4   8   0                     0  r[8]=r[4]
+@@ -1,3 +1,4 @@
++use asserting::prelude::*;
+ use turso_core::namespace::NamespaceId;
+ use turso_core::schema::Schema;
+ use turso_core::security::roles::SessionRole;
+@@ -10,6 +11,9 @@ use turso_core::PlatformIO;
+ use turso_core::IO;
+ use turso_sqlite::SqliteDialect;
+ 
++use crate::assertions::AssertQueryPlan;
++use crate::common::limbo_exec_rows;
++
+ /// Regression test for #11581: once a database has `sqlite_stat1`, opening
+ /// a new connection must not deep-clone the whole schema just to install
+ /// the ANALYZE stats. Every connection keeps sharing the database schema.
+@@ -168,21 +172,322 @@ fn connections_share_schema_without_stat1() {
+     assert_eq!(connections.len(), 5);
+ }
+ 
++/// Regression test for #12397: a NULL `tbl` row in `sqlite_stat1` must not
++/// fail stats loading on reopen and discard valid statistics.
++#[test]
++fn reopen_loads_valid_stats_when_stat1_has_null_tbl_row() {
++    let dir = tempfile::tempdir().unwrap();
++    let path = dir.path().join("stat1_null_tbl.db");
++    let path_str = path.to_str().unwrap();
++
++    {
++        let db = open_db_at(path_str, DatabaseOpts::new());
++        let conn = db
++            .connect(ConnectOpts::new(SessionRole::Superuser))
++            .unwrap();
++        conn.execute(
++            "CREATE TABLE t(a, b);
++             CREATE INDEX ia ON t(a);
++             CREATE INDEX ib ON t(b);
++             ANALYZE;
++             INSERT INTO sqlite_stat1 VALUES
++                 ('t', 'ia', '2000 2000'),
++                 ('t', 'ib', '2000 1'),
++                 (NULL, NULL, NULL);",
++        )
++        .unwrap();
++    }
++
++    let db = open_db_at(path_str, DatabaseOpts::new());
++    let conn = db
++        .connect(ConnectOpts::new(SessionRole::Superuser))
++        .unwrap();
++    let schema = conn.current_schema();
++    let t = schema
++        .analyze_stats
++        .table_stats(NamespaceId::ROOT, "t")
++        .expect("valid stats for table t must survive a NULL tbl row");
++    assert_eq!(t.row_count, Some(2000));
++    assert_eq!(
++        t.index_stats
++            .get("ia")
++            .unwrap()
++            .avg_rows_per_distinct_prefix,
++        vec![2000]
++    );
++    assert_eq!(
++        t.index_stats
++            .get("ib")
++            .unwrap()
++            .avg_rows_per_distinct_prefix,
++        vec![1]
++    );
++
++    assert_that!(limbo_exec_rows(
++        &conn,
++        "EXPLAIN QUERY PLAN SELECT * FROM t WHERE a = 1 AND b > 5",
++    ))
++    .uses_index("ib");
++}
++
++/// Regression test for #12397: non-text `tbl` rows that do not match any table
++/// must be skipped instead of failing stats loading on reopen.
++#[test]
++fn reopen_loads_valid_stats_when_stat1_has_non_text_tbl_rows() {
++    let dir = tempfile::tempdir().unwrap();
++    let path = dir.path().join("stat1_non_text_tbl.db");
++    let path_str = path.to_str().unwrap();
++
++    {
++        let db = open_db_at(path_str, DatabaseOpts::new());
++        let conn = db
++            .connect(ConnectOpts::new(SessionRole::Superuser))
++            .unwrap();
++        conn.execute(
++            "CREATE TABLE t(a, b);
++             CREATE INDEX ia ON t(a);
++             CREATE INDEX ib ON t(b);
++             ANALYZE;
++             INSERT INTO sqlite_stat1 VALUES
++                 (123, 'x', '10 1'),
++                 (1.5, 'x', '10 1'),
++                 (X'fffe', 'x', '10 1'),
++                 ('t', 'ia', '2000 2000'),
++                 ('t', 'ib', '2000 1');",
++        )
++        .unwrap();
++    }
++
++    let db = open_db_at(path_str, DatabaseOpts::new());
++    let conn = db
++        .connect(ConnectOpts::new(SessionRole::Superuser))
++        .unwrap();
++    let schema = conn.current_schema();
++    let t = schema
++        .analyze_stats
++        .table_stats(NamespaceId::ROOT, "t")
++        .expect("valid stats for table t must survive non-text tbl rows");
++    assert_eq!(
++        t.index_stats
++            .get("ib")
++            .unwrap()
++            .avg_rows_per_distinct_prefix,
++        vec![1]
++    );
++
++    assert_that!(limbo_exec_rows(
++        &conn,
++        "EXPLAIN QUERY PLAN SELECT * FROM t WHERE a = 1 AND b > 5",
++    ))
++    .uses_index("ib");
++}
++
++/// Regression test for #12397: non-text `tbl`, `idx`, and `stat` values in
++/// `sqlite_stat1` are coerced to text on reopen (like SQLite's analysisLoader).
++#[test]
++fn reopen_coerces_non_text_stat1_columns_to_text() {
++    let dir = tempfile::tempdir().unwrap();
++    let path = dir.path().join("stat1_coerced.db");
++    let path_str = path.to_str().unwrap();
++
++    {
++        let db = open_db_at(path_str, DatabaseOpts::new());
++        let conn = db
++            .connect(ConnectOpts::new(SessionRole::Superuser))
++            .unwrap();
++        conn.execute(
++            "CREATE TABLE \"123\"(a, b);
++             CREATE INDEX \"111\" ON \"123\"(a);
++             CREATE INDEX \"222\" ON \"123\"(b);
++             CREATE TABLE counts(x);
++             CREATE TABLE blob_t(a, b);
++             CREATE INDEX bia ON blob_t(a);
++             CRE
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12472** (closed): core/mvcc: bind the frame position in encrypted log chunks (@avinassh)
-- **PR #12471** (closed): core/storage: bind encrypted pages to their page numbers (@avinassh)
-- **PR #12468** (2026-11-25): bindings/javascript: bump vitest to 4.1.12 (@penberg)
-- **PR #12464** (2026-11-25): build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react-native (@dependabot[bot])
-- **PR #12459** (2026-11-25): build(deps): bump addressable from 2.9.0 to 2.9.1 in /examples/react-native (@dependabot[bot])
-- **PR #12454** (2026-11-25): core/translate/optimizer: read the value of a string literal in constant conditions (@Waterpine)
+- **PR #12537** (2026-11-26): sync/engine: do not rename a generated column to a re-added name (@avinassh)
+- **PR #12534** (2026-11-26): postgres: refuse unsupported statements with 0A000 and suggest workarounds (@jussisaurio)
+- **PR #12533** (2026-11-26): core/translate: show MATERIALIZE for subqueries stored in a table (@turso-github-handyman[bot])
+- **PR #12522** (2026-11-26): postgres: list PostgreSQL's functions in pg_proc (@glommer)
+- **PR #12512** (2026-11-26): core/translate: fix the build of main after the UPDATE OR REPLACE CDC change (@jussisaurio)
+- **PR #12511** (2026-11-26): postgres: add the integer types to the frontend (@glommer)
 
 ---
 
@@ -2184,72 +2382,3 @@ Then it continues with the row itself: rowid (`NewRowid` or
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/reac
-
-**RULE**:
-When implementing operations in `examples/react-native/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `bdc0c062`: Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react-native' from app/dependabot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/react-native/package-lock.json`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-      "version": "0.9.0-pre.6",
-        "react-native-builder-bob": "^0.44.1",
-        "typescript": "^5.3.0",
-        "vitest": "^4.1.11"
-      "version": "3.1.0",
-      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
-      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
-      "version": "1.3.2",
-      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
-      "integrity": "sha512-OX91VSlShLPDgRZV7tk/YQ4l8tT75QziF5Ixg8g4PFbCVPjuTWwN+yQfAxLJ0dufJpprdOd6HlM74Jhd39TcBQ==",
-      "version": "5.12.1",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
-      "integrity": "sha512-wR8dO/fx+z8C5exuem1e7BKOWvjsuzvjS/tvA/Xu3Z1zQqJGcXrPzXbcAiaMgp2KjreEROcTkmnnisrcmJ2hYQ==",
-        "@nodable/entities": "^3.1.0",
-        "fast-xml-builder": "^1.3.2",
-        "is-unsafe": "^2.0.3",
-        "strnum": "^2.5.1",
-      "version": "2.0.3",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
-      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeF
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-      "version": "0.9.0-pre.2",
-        "react-native-builder-bob": "^0.30.0",
-        "typescript": "^5.3.0"
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
-      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
-      "version": "1.3.1",
-      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
-      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
-      "version": "5.11.1",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.1.tgz",
-      "integrity": "sha512-TBw6K/fxoQGGjCmZDw9w/ZwP3uDcnTM4YH/g+PFRWr8sbe5idXtxNN6vITh4+1ruCZaho6uBFurElsA7F0zzgw==",
-        "@nodable/entities": "^3.0.0",
-        "fast-xml-builder": "^1.2.0",
-        "is-unsafe": "^2.0.0",
-        "strnum": "^2.4.2",
-      "version": "2.0.2",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
-      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
-      "version": "2.4.2
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bdc0c062` are properly handled with clean fallback behavior.

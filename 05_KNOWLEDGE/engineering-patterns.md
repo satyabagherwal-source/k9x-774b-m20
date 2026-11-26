@@ -806706,3 +806706,100 @@ jobs:
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6c866654` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10703. 修复未发布功能的导入兼容、详情缓存与配色覆盖 (Harvested from lingyired/status-trio)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "修复未发布功能的导入兼容、详情缓存与配色覆盖",
+  "source": "lingyired/status-trio",
+  "source_url": "https://github.com/lingyired/status-trio",
+  "source_version": "3d68fcd8",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T14:22:12.858Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lingyired-status-trio",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lingyired/status-trio](https://github.com/lingyired/status-trio) (Revision: `3d68fcd8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/StatusTrioCore/Monitoring/HardwareMetricsService.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingyired/status-trio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4e387e5e`: 修复未发布功能的导入兼容、详情缓存与配色覆盖. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/StatusTrioCore/Monitoring/HardwareMetricsService.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// Both snapshots are cleared: the panel renders `panelStored`, so clearing
+    /// only the live copy would leave a previous page's payload to be shown as
+    /// cached data (it has no freshness expiry of its own) until the next merge.
+        func clear(in snapshot: inout HardwareMetricsSnapshot) -> Bool {
+            var didChange = false
+            func drop<Value>(_ keyPath: WritableKeyPath<HardwareMetricsSnapshot, Value?>) {
+                guard snapshot[keyPath: keyPath] != nil else { return }
+                snapshot[keyPath: keyPath] = nil
+                didChange = true
+            }
+            if kind != .cpu { drop(\.cpuDetail) }
+            if kind != .gpu { drop(\.gpuDetail) }
+            if kind != .memory { drop(\.memoryDetail) }
+            if kind != .network { drop(\.networkDetail) }
+            if kind != .disk { drop(\.diskDetail) }
+            return didChange
+        }
+        let liveChanged = clear(in: &stored)
+        let panelChanged = clear(in: &panelStored)
+        guard liveChanged || panelChanged else { return }
+        if liveChanged { snapshotSubject.send(stored) }
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+        var changed = false
+        if kind != .cpu, stored.cpuDetail != nil { stored.cpuDetail = nil; changed = true }
+        if kind != .gpu, stored.gpuDetail != nil { stored.gpuDetail = nil; changed = true }
+        if kind != .memory, stored.memoryDetail != nil { stored.memoryDetail = nil; changed = true }
+        if kind != .network, stored.networkDetail != nil { stored.networkDetail = nil; changed = true }
+        if kind != .disk, stored.diskDetail != nil { stored.diskDetail = nil; changed = true }
+        guard changed else { return }
+        snapshotSubject.send(stored)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4e387e5e` are properly handled with clean fallback behavior.

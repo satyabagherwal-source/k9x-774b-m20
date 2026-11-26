@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T14:13:41.886Z",
+  "updated_at": "2026-11-26T14:22:57.166Z",
   "stats": {
-    "total_discovered": 9807,
-    "approved_pending_harvest": 9306,
+    "total_discovered": 9811,
+    "approved_pending_harvest": 9310,
     "harvested_count": 0,
     "rejected_count": 501,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9292,
+      "COMMUNITY_AND_EXPERT": 9296,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -212274,6 +212274,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
         "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-AF958203F13E": {
+      "id": "SRC-AF958203F13E",
+      "url": "https://github.com/user-attachments/assets/78325f85-723b-41d0-9c0b-0c95ea93f47d",
+      "title": "https://github.com/user-attachments/assets/78325f85-723b-41d0-9c0b-0c95ea93f47d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:22:26.148Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
+        "fileName": "lingyired-status-trio-learnings.md"
+      }
+    },
+    "SRC-C039576C1C47": {
+      "id": "SRC-C039576C1C47",
+      "url": "https://github.com/user-attachments/assets/ac51e683-c019-426f-bd7c-8e4adec274a2",
+      "title": "https://github.com/user-attachments/assets/ac51e683-c019-426f-bd7c-8e4adec274a2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:22:57.006Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-7360549217C6": {
+      "id": "SRC-7360549217C6",
+      "url": "https://github.com/user-",
+      "title": "https://github.com/user-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:22:57.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-20866462A91D": {
+      "id": "SRC-20866462A91D",
+      "url": "https://github.com/tursodatabase/turso/issues/12397",
+      "title": "https://github.com/tursodatabase/turso/issues/12397",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:22:57.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
       }
     }
   }

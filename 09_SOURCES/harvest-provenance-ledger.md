@@ -13452,3 +13452,7 @@ Every entry in this ledger must capture:
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `327564b0` | Multi-dimensional audit evidence | 2026-11-26T14:04:17.151Z |
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-26T14:13:29.145Z |
 | `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `3adac593` | Multi-dimensional audit evidence | 2026-11-26T14:13:37.144Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-26T14:22:05.406Z |
+| `learn-github-lingyired-status-trio` | `https://github.com/lingyired/status-trio` | `3d68fcd8` | Multi-dimensional audit evidence | 2026-11-26T14:22:13.455Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `519c09cd` | Multi-dimensional audit evidence | 2026-11-26T14:22:22.442Z |
+| `learn-dom-d-15a70146` | `project://tursodatabase-limbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md` | 2026-11-26T14:22:56.885Z |

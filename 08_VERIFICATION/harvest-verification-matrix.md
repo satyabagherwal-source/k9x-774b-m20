@@ -13419,3 +13419,7 @@
 | `CYCLE-20261126-ISMY` | `2026-11-26T14:04:17.146Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10701` | Yes (`c6802b61...`) |
 | `CYCLE-20261126-UMK4` | `2026-11-26T14:13:29.140Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`f0f2a723...`) |
 | `CYCLE-20261126-USQB` | `2026-11-26T14:13:37.139Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10702` | Yes (`dea73e48...`) |
+| `CYCLE-20261126-5OWQ` | `2026-11-26T14:22:05.402Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | Yes (`68a72ae4...`) |
+| `CYCLE-20261126-5V4A` | `2026-11-26T14:22:13.450Z` | `lingyired/status-trio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10703` | Yes (`7aeebdff...`) |
+| `CYCLE-20261126-621X` | `2026-11-26T14:22:22.437Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md` | Yes (`45be5df8...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T14:22:56.885Z` | `tursodatabase-limbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-15A70146` [Domain D] | Yes (`f37e127b...`) |
