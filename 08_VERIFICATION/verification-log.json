@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-QDHC",
-    "timestamp": "2026-11-24T13:38:50.688Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "443fc7a1126f797fd6dfa18f4ff8c3ec619a376831f4921281b2c565e5895320",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-1BWJ",
     "timestamp": "2026-11-24T13:47:21.859Z",
     "repository": "i18next/react-i18next",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/RelayVSR",
     "learningId": "learn-huggingface-comfy-org-relayvsr",
     "contentHash": "f4a211814f7d6f697cc0371cc20f25f30914a0753e507f6d9ec485d095910e39",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-5POS",
+    "timestamp": "2026-11-26T03:38:15.244Z",
+    "repository": "Zyphra/ZONOS3-Mini",
+    "learningId": "learn-huggingface-zyphra-zonos3-mini",
+    "contentHash": "47b697125ec47875099ea838d89a2340d9a5e892db2bd5b3373c1828a24ff949",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

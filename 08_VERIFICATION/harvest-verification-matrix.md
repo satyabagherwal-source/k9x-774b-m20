@@ -13225,3 +13225,4 @@
 | `CYCLE-20261126-K1PD` | `2026-11-26T03:21:24.385Z` | `Cactus-Compute/mirage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | Yes (`6371256b...`) |
 | `CYCLE-20261126-K2GS` | `2026-11-26T03:21:25.372Z` | `graphprotocol/graph-node` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10593` | Yes (`d3a71333...`) |
 | `CYCLE-20261126-UZL6` | `2026-11-26T03:29:54.858Z` | `Comfy-Org/RelayVSR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md` | Yes (`f4a21181...`) |
+| `CYCLE-20261126-5POS` | `2026-11-26T03:38:15.244Z` | `Zyphra/ZONOS3-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md` | Yes (`47b69712...`) |

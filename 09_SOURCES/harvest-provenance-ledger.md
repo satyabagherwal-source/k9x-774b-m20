@@ -13258,3 +13258,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-26T03:21:24.389Z |
 | `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `abab8260` | Multi-dimensional audit evidence | 2026-11-26T03:21:25.376Z |
 | `learn-huggingface-comfy-org-relayvsr` | `https://huggingface.co/Comfy-Org/RelayVSR` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-26T03:29:54.863Z |
+| `learn-huggingface-zyphra-zonos3-mini` | `https://huggingface.co/Zyphra/ZONOS3-Mini` | `hf-zyphra-` | Multi-dimensional audit evidence | 2026-11-26T03:38:15.249Z |
