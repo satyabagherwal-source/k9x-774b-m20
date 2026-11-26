@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T13:08:32.524Z",
+  "last_updated": "2026-11-26T13:18:14.976Z",
   "total_verified_learnings": 9128,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25918,
+  "total_items": 25922,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "5108f34d",
-      "content_hash": "b3b5a1f9d1f754501113ad863d021cdf0ffe061502c9dfc19657ddee4ffde4a1",
+      "source_version": "8fd5aa1b",
+      "content_hash": "790dc913f4a96edfe501ccbab0358b6a69c87a8d15514d686741eac518007215",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:11:58.169Z"
+      "persisted_at": "2026-11-26T13:18:07.792Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2386467dc52d85b52f63c00b768b70bc3785a6b66e0285fa936198cb5383322",
+      "content_hash": "5261e78e213f24eb2c283a21cd265d822ccb47802cb7f168bbee00afbb107092",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:05:16.926Z"
+      "persisted_at": "2026-11-26T13:18:14.976Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -112750,9 +112750,9 @@
       "title": "Research & Knowledge Intelligence: fastino/GLiNER2.5-Decide Core Invariants",
       "repository": "fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "51dded46265f5784d2f6c48f3e23ad00bda3fe949dbc8f7ac595b25c7921c550",
+      "content_hash": "700c01afcf862333d7136fa5db648096ab20b1b27b11314f77503bd0e510f029",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:08:57.663Z"
+      "persisted_at": "2026-11-26T13:17:49.385Z"
     },
     "candidate_directive-mac-sai-website-in-13-languages-on-github-pages-275": {
       "item_id": "candidate_directive-mac-sai-website-in-13-languages-on-github-pages-275",
@@ -112846,9 +112846,9 @@
       "title": "Research & Knowledge Intelligence: hf-fastino-gliner2.5-decide-learnings Core Invariants",
       "repository": "hf-fastino-gliner2.5-decide-learnings",
       "source_version": "HEAD",
-      "content_hash": "112b76c60a98309166b51b94176a32f20afbbe762d70253c329d13241725e36b",
+      "content_hash": "f768b453731b077caaab0220883fb73ce3bd679b553f7b6cadecb41d3c7d7c28",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:09:10.518Z"
+      "persisted_at": "2026-11-26T13:18:11.186Z"
     },
     "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants",
@@ -113974,9 +113974,9 @@
       "title": "Technical Construction Intelligence: kirillzyusko-react-native-keyboard-controller-learnings Core Invariants",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "ef40fbd8acb268939b25beab285f6c46f30e83e797702e336b883183a580d00b",
+      "content_hash": "effed210430494f0d02749ed7f03de1fe3f5ef229dffe15bcc9cf21427c7e27f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:53:37.267Z"
+      "persisted_at": "2026-11-26T13:18:12.449Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kirillzyusko-react-native-keyb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kirillzyusko-react-native-keyb",
@@ -113986,9 +113986,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kirillzyusko-react-native-keyboard-controller-learnings",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "57bf6570d2c2f2720520b6cb2820533739eeb704b61b8883f62b37ca51789029",
+      "content_hash": "41ccc44fcb63bc7583f4893bb79efe061f69de7a6e919c45f610a9be94f4ea92",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:53:37.464Z"
+      "persisted_at": "2026-11-26T13:18:12.718Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants": {
       "item_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
@@ -220524,8 +220524,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "5108f34d",
-      "content_hash": "d02f523e0044f7b17f6f8769f75821f263916ce20521c0b9476389da2e193514",
+      "source_version": "8fd5aa1b",
+      "content_hash": "e9694e1c8fb735a3dbb160128766b0ee3ea36b7a8a719240ad9636e27d93ce11",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220743,6 +220743,11 @@
           "number": 10557,
           "title": "make --nulls match empty join keys, as documented",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10685,
+          "title": "--coalesce keeps right-only keys with key transformations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220750,7 +220755,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T23:11:57.355Z",
+      "verified_at": "2026-11-26T13:18:06.580Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221872,10 +221877,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "c9b35465",
-      "content_hash": "7a885113e0d0930ffbcef94f063791694ce3247b0b19973b7e3dd5e61f98e300",
+      "source_version": "8fd5aa1b",
+      "content_hash": "fb7f0642256d42c1fea6cf79ad29b125cc40cf7a6728b94ff6ff6d6347ddb6fa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:05:10.260Z"
+      "persisted_at": "2026-11-26T13:18:07.532Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -221945,9 +221950,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "4111e7e15ca5ab8a1e2cc318df35b11989f52cbe08dc0e5e4c9a95863bc0ac0c",
+      "content_hash": "9c03e163ceef7d125dda289576b4016e05a09e97af38d127a23528b7e2253ceb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:05:16.685Z"
+      "persisted_at": "2026-11-26T13:18:14.705Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -273100,8 +273105,8 @@
       "slug": "kirillzyusko-react-native-keyboard-controller",
       "platform": "github",
       "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-      "source_version": "dd4ffd54",
-      "content_hash": "183a3e1820374f7d0913bfaee0d6550adec3ec14731addeb81f0b7867cd56f03",
+      "source_version": "3edb89b3",
+      "content_hash": "09cdafbbe5629de4d448c2f6c6c7c74a06b4b6e1711e0717c3fc7082191ed0c4",
       "dossier_path": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "promoted_rules": [
@@ -273121,7 +273126,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T02:53:32.188Z",
+      "verified_at": "2026-11-26T13:17:57.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287337,7 +287342,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "18614aecff8f79f3a5c49f6df934b96a21c6a523d47a216ab86d04d72433e4f8",
+      "content_hash": "05546c80ae569bbec6e3ebcef98be788637ca9b3ba111ec1bdcee70bde039b19",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [],
@@ -287346,7 +287351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:08:57.101Z",
+      "verified_at": "2026-11-26T13:17:48.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -355140,6 +355145,56 @@
       "content_hash": "c1432433dcd81a8d34ba41c4af95ed5d594a305be940c304a0d2c07f93e5fc5b",
       "domain_letter": "D",
       "persisted_at": "2026-11-26T13:08:30.585Z"
+    },
+    "candidate_directive-sync-in-usekeyboardhandler": {
+      "item_id": "candidate_directive-sync-in-usekeyboardhandler",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VJ66-sync-in-usekeyboardhandler.md",
+      "title": "sync in `useKeyboardHandler`",
+      "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f2600d89f97f98b2be7217b6546c59a6b917b95103a7c5a93eb305594630d2b8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T13:18:12.175Z"
+    },
+    "rule-10685": {
+      "learning_id": "rule-10685",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10685,
+      "title": "--coalesce keeps right-only keys with key transformations",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "8fd5aa1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:18:06.580Z"
+    },
+    "candidate_directive-coalesce-keeps-right-only-keys-with-key-transformations": {
+      "item_id": "candidate_directive-coalesce-keeps-right-only-keys-with-key-transformations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VFDO-coalesce-keeps-right-only-keys-with-key-transformations.md",
+      "title": "--coalesce keeps right-only keys with key transformations",
+      "repository": "dathere/qsv",
+      "source_version": "8fd5aa1b",
+      "content_hash": "6879434c82c97137760ce5dea1b09e0b12c4cb4f2ad9c7528e884bcb75a5cee8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T13:18:07.267Z"
+    },
+    "candidate_directive-joinp-coalesce-keeps-right-only-keys-with-key-transformations": {
+      "item_id": "candidate_directive-joinp-coalesce-keeps-right-only-keys-with-key-transformations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VKWE-joinp-coalesce-keeps-right-only-keys-with-key-transformations.md",
+      "title": "joinp): --coalesce keeps right-only keys with key transformations",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5598db1df1854f2e53f6bdd238881e41e53a592d7f99170777f4b0510d8ece31",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T13:18:14.420Z"
     }
   },
   "ai-builder-brain": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "c9b35465",
+  "source_version": "8fd5aa1b",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T14:05:10.023Z",
+  "timestamp": "2026-11-26T13:18:07.260Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `c9b35465`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T14:05:10.023Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `8fd5aa1b`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T13:18:07.260Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:05:08.881Z  
+> **Harvest Timestamp**: 2026-11-26T13:18:05.394Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3856 stars
+- **Stars / Engagement**: 3862 stars
 
 ---
 
@@ -2293,60 +2293,311 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9b35465` (2026-11-25)
-**Commit Message**: test(mcp): classify stats/validate --quote as not a path (#5115)
+### Incident Patch 1: `7bfaf596` (2026-11-26)
+**Commit Message**: fix(joinp): --coalesce keeps right-only keys with key transformations (#5117)
 
-* test(mcp): classify stats/validate --quote as not a path
+* fix(joinp): --coalesce keeps right-only keys with key transformations
 
-#5104 added --quote to stats and validate. It takes a quote character,
-but its description mentions the file being read, so the
-path-classification test flagged it and has failed on every PR since.
-List it with the other options that aren't paths.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #5115 in MCP CHANGELOG
+With -i, -z or -N, the join runs on temporary key columns, so Polars can't
+coalesce the original keys, and --coalesce dropped the right copy. Right-only
+rows of a full or right join then lost their key. Now each left key is filled
+from its right copy before --sql-filter runs and before that copy is dropped.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
----------
+* docs: cite #5117 in CHANGELOG
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +3/-0)
+* fix(joinp): coalesce only same-named transformed keys, drop only their copies
+
+The fill step looked for `<left key>_right` whatever the right key was named,
+so a right payload column sharing the left key's name was mistaken for the
+key. The cleanup dropped any `<left key>_right` column, and its
+trim_end_matches stripped every `_right`, so a key named `id_right` was
+dropped too. Both now use the exact `<key>_right` copy of each key joined to
+a same-named right key.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(joinp): no right-copy cleanup in semi/anti joins; drop copies before --
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
+@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `synthesize`: under `QSV_NO_HEADERS`, `stats` numbers columns from 0 and `frequency` from 1, so each column was paired with the next column's frequency table: a column could be filled with its neighbor's values, and the first fell back to filler text. Frequency's column numbers are now shifted to match. ([#5068](https://github.com/dathere/qsv/pull/5068))
+ - `synthesize`: relationship learning read source columns by their position in the `stats` output, so `--stats-options` that selected or reordered columns (e.g. `--select city,zip`) made `joint`, `ordered` and `correlated` groups learn from the wrong columns, such as pairing IDs with cities. Source columns are now mapped by position when the stats output matches the header, by unique header name under a selection, and by index for headerless input (`QSV_NO_HEADERS`). `--stats-options` may no longer include `--select`/`-s` or `--weight`, which change which columns `stats` reports; run `qsv select` on the input first. ([#5067](https://github.com/dathere/qsv/pull/5067))
+ - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
++- `joinp`: with a key transformation (`-i`, `-z` or `-N`) and `--coalesce`, right-only rows of a `--full` or `--right` join on same-named keys lost their key, written as empty. The cleanup also dropped any column named `<left key>_right`, even one that wasn't a key copy, and when selected key names collided, such as `id` and `id_right`, it dropped a key. Now the left key is filled from its same-named right key before `--sql-filter` runs, and only that key's right copy is dropped, in joins that output right columns. ([#5117](https://github.com/dathere/qsv/pull/5117))
  
-+### Fixed
-+- **Path-classification test: `stats --quote` and `validate --quote` are not paths.** Since #5104 the test that every skill option whose description mentions files is classified failed on every PR: these options take a quote character, and their descriptions mention the file being read. They are now listed with the other options that aren't paths. Test-only change. ([#5115](https://github.com/dathere/qsv/pull/5115))
-+
- ## [29.0.2] - 2026-11-23
- Patch release of the MCP server and the Claude Cowork / Claude Code plugin, for use with qsv 29.0.0 (`minimum_qsv_version` stays 29.0.0). It carries the security fixes below, published as advisory [GHSA-5763-32xg-7rh3](https://github.com/dathere/qsv/security/advisories/GHSA-5763-32xg-7rh3); update now. As in 29.0.1, the bundled skill files also describe `qsv-synthesize` options from the next qsv release (listed under [Unreleased]); with qsv 29.0.0 those options are rejected as unknown flags.
- 
+ ### Changed
+ - **deps: Polars bumped to upstream rev [`08b2814`](https://github.com/pola-rs/polars/commit/08b2814ce6386c0efe0fea512912353f42a8b7b6)** (94 commits past `93d31f0`; crates stay 0.55.1). Some `sqlp` results that already worked change:
 ```
 
-**File**: `.claude/skills/tests/file-operations.test.ts` (modified, +1/-1)
+**File**: `src/cmd/joinp.rs` (modified, +49/-12)
 ```diff
-@@ -730,7 +730,7 @@ describe("path confinement", () => {
-     const NOT_A_PATH = new Set([
-       "--agg", "--align", "--cities-url", "--compression", "--delimiter", "--denominator-key",
-       "--denominator-unit", "--feature-id-key", "--feature-name-key", "--filter",
--      "--group", "--languages", "--rnull-values", "--select", "--sentinels-as", "--shard",
-+      "--group", "--languages", "--quote", "--rnull-values", "--select", "--sentinels-as", "--shard",
-       "--table-name", "--template",
-       // handled elsewhere: the output_file alias, and luau's inline-or-path scripts
-       "--output", "--begin", "--end",
+@@ -906,6 +906,53 @@ impl JoinStruct {
+             }
+         };
+ 
++        // Transformed keys are joined through temporary columns, so Polars can't coalesce the
++        // original key columns. With --coalesce, fill each left key from its right copy, which
++        // is dropped below, so right-only rows keep their key. Only a key joined to a
++        // same-named right key has such a copy, `<key>_right`.
++        let same_name_keys: Vec<&str> = left_col_names
++            .iter()
++            .zip(&right_col_names)
++            .filter(|(left, right)| left == right)
++            .map(|(left, _)| *left)
++            .collect();
++        // Semi and anti joins output only left columns, so there is no right copy there.
++        // The copies are dropped here, before --sql-filter, so the filter sees the same
++        // columns as in a join without key transformations.
++        let join_lf = if keys_transformed
++            && self.coalesce
++            && !matches!(jointype, JoinType::Semi | JoinType::Anti)
++        {
++            let mut join_lf = join_lf;
++            let schema = join_lf.collect_schema()?;
++            let copied: Vec<&str> = same_name_keys
++                .iter()
++                .copied()
++                .filter(|name| schema.contains(&format!("{name}_right")))
++                .collect();
++            if copied.is_empty() {
++                join_lf
++            } else {
++                let coalesced: Vec<Expr> = copied
++                    .iter()
++                    .map(|name| {
++                        polars::lazy::dsl::coalesce(&[col(*name), col(format!("{name}_right"))])
++                            .alias(*name)
++                    })
++                    .collect();
++                let copies: Vec<String> =
++                    copied.iter().map(|name| format!("{name}_right")).collect();
++                let keep: Vec<Expr> = schema
++                    .iter_names()
++                    .filter(|name| !copies.iter().any(|copy| copy == name.as_str()))
++                    .map(|name| col(name.as_str()))
++                    .collect();
++                join_lf.with_columns(coalesced).select(keep)
++            }
++        } else {
++            join_lf
++        };
++
+         let mut results_lf = match &self.sql_filter {
+             Some(sql_filter) => {
+                 let mut ctx = util::new_sql_context();
+@@ -916,21 +963,11 @@ impl JoinStruct {
+         };
+ 
+         if keys_transformed {
+-            // Remove temporary transformed columns and
+-            // duplicate right-side join columns if coalesce is true
+-            let left_join_cols: Vec<&str> = self.left_sel.split(',').collect();
++            // Remove temporary transformed columns
+             let keep_cols: Vec<Expr> = results_lf
+                 .collect_schema()?
+                 .iter_names()
+-                .filter(|col| {
+-                    if col.contains("-transformed") {
+-                        return false;
+-                    }
+-                    // For join columns, only keep the left version if coalesce is true
+-                    !(self.coalesce
+-                        && col.ends_with("_right")
+-                        && left_join_cols.contains(&col.trim_end_matches("_right")))
+-                })
++                .filter(|col| !col.contains("-transformed"))
+                 .map(|col| polars::lazy::dsl::col(col.as_str()))
+                 .collect();
+             results_lf = results_lf.select(keep_cols);
+```
+
+**File**: `tests/test_joinp.rs` (modified, +130/-0)
+```diff
+@@ -3322,6 +3322,136 @@ fn joinp_cache_schema_floats_keep_f64_precision_issue_4752() {
+ }
+ 
+ // joinp decompresses both inputs into one temp dir before running the join;
++// with a key transformation, --coalesce must keep the key of right-only rows
++#[test]
++fn joinp_coalesce_transformed_keys_keeps_right_only_keys() {
++    let wrk = Workdir::new("joinp_coalesce_transformed_keys_keeps_right_only_keys");
++    wrk.create_from_string("left.csv", "k,a\nX,1\nZ,2\n");
++    wrk.create_from_string("right.csv", "k,b\nx,p\nY,q\n");
++
++    let join = |extra: &[&str]| -> Vec<Vec<String>> {
++        let mut cmd = wrk.command("joinp");
++        cmd.args(["k", "left.csv", "k", "right.csv", "-i", "--coalesce"])
++            .args(["--maintain-order", "left_right"])
++            .args(extra);
++        wrk.read_stdout(&mut cmd)
++    };
++
++    // matched rows keep the left key, right-only rows get the right key
++    assert_eq!(
++        join(&["--full"]),
++        vec![
++            svec!["k", "a", "b"],
++            svec!["X", "1", "p"],
++            svec!["Z", "2", ""],
++            svec!["Y", "", "q"]
++        ]
++    );
++    assert_eq!(
++        join(&["--right"]),
++        vec![
++            svec!["k", "a", "b"],
++            svec!["X", "1", "p"],
++            svec!["Y", "", "q"]
++        ]
++    );
++    // --sql-filter sees the coalesced key
++    assert_eq!(
++        join(&[
++            "--full",
++            "--sql-filter",
++            "SELECT * FROM join_result WHERE k = 'Y'"
++        ]),
++        vec![svec!["k", "a", "b"], svec!["Y", "", "q"]]
++    );
++    // only same-named key pairs are coalesced: a right column that merely shares the
++    // left key's name is left alone
++    wrk.create_from_string("payload.csv", "rk,k,b\nx,pay1,p\nY,pay2,q\n");
++    let mut cmd = wrk.command("joinp");
++    cmd.args([
++        "k",
++        "left.csv",
++        "rk",
++        "payload.csv",
++        "-i",
++        "--coalesce",
++        "--full",
++    ])
++    .args(["--maintain-order", "left_right"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["k", "a", "rk", "k_right", "b"],
++            svec!["X", "1", "x", "pay1", "p"],
++            svec!["Z", "2", "", "", ""],
++            svec!["", "", "Y", "pay2", "q"]
++        ]
++    );
++
++    // a key whose name ends in _right keeps its right-only value
++    wrk.create_from_string("ids1.csv", "id,id_right,a\nA,B,1\n");
++    wrk.create_from_string("ids2.csv", "rid,id_right,b\na,b,p\nC,D,q\n");
++    let mut cmd = wrk.command("joinp");
++    cmd.args(["id,id_right", "ids1.csv", "rid,id_right", "ids2.csv"])
++        .args([
++            "-i",
++            "--coalesce",
++            "--full",
++            "--maintain-order",
++            "left_right",
++        ]);
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["id", "id_right", "a", "rid", "b"],
++            svec!["A", "B", "1", "a", "p"],
++            svec!["", "D", "", "C", "q"]
++        ]
++    );
++    // a semi join outputs only left columns, so a left column named like a right copy stays
++    wrk.create_from_string("semi1.csv", "id_right,id_right_right,a\nA,keep,1\n");
++    wrk.create_from_string("semi2.csv", "id_right,b\na,p\n");
++    let mut cmd = wrk.command("joinp");
++    cmd.args(["id_right", "semi1.csv", "id_right", "semi2.csv"])
++        .args(["--left-semi", "-i", "--coalesce"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["id_right", "id_right_right", "a"],
++            svec!["A", "keep", "1"]
++        ]
++    );
++
++    // the right copies are dropped before --sql-filter, so a column it names like one stays
++    wrk.create_from_string("sql1.csv", "id_right,a\nA,1\n");
++    wrk.create_from_string("sql2.csv", "id_right,b\na,p\nC,q\n");
++    let mut cmd = wrk.command("joinp");
++    cmd.args(["id_right", "sql1.csv", "id_right", "sql2.csv"])
++        .args([
++            "--full",
++            "-i",
++            "--coalesce",
++            "--maintain-order",
++            "left_right",
++        ])
++        .args([
++            "--sql-filter",
++            "SELECT id_right, b AS id_right_right FROM join_result",
++        ]);
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["id_right", "id_right_right"],
++            svec!["A", "p"],
++            svec!["C", "q"]
++        ]
++    );
++}
++
+ // same-named .sz inputs, snappy or not, must not overwrite each other (#4779).
+ #[test]
+ fn joinp_same_named_sz_inputs() {
+```
+
+---
+
+### Incident Patch 2: `8fd5aa1b` (2026-11-26)
+**Commit Message**: build(deps): bump msys2/setup-msys2 from 2.33.0 to 2.34.0 (#5113)
+
+Bumps [msys2/setup-msys2](https://github.com/msys2/setup-msys2) from 2.33.0 to 2.34.0.
+- [Release notes](https://github.com/msys2/setup-msys2/releases)
+- [Changelog](https://github.com/msys2/setup-msys2/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/msys2/setup-msys2/compare/ec48f7c5447b3140e2b088413ae3a55687bccb6e...3c51bf698df1e37b2261f53cb67797b97761185c)
+
+---
+updated-dependencies:
+- dependency-name: msys2/setup-msys2
+  dependency-version: 2.34.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/publish-aarch64-pc-windows-msvc.yml` (modified, +1/-1)
+```diff
+@@ -77,7 +77,7 @@ jobs:
+     - name: Install Windows ARM64 GNU-family toolchain
+       if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
+       id: msys2
+-      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
++      uses: msys2/setup-msys2@3c51bf698df1e37b2261f53cb67797b97761185c # v2.34.0
+       with:
+         msystem: CLANGARM64
+         update: true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5117** (2026-11-26): fix(joinp): --coalesce keeps right-only keys with key transformations (@jqnatividad)
+- **PR #5116** (2026-11-25): fix(joinp): make --nulls match empty join keys, as documented (@jqnatividad)
 - **PR #5115** (2026-11-25): test(mcp): classify stats/validate --quote as not a path (@jqnatividad)
-- **PR #5111** (2026-11-24): deps: bump Polars to upstream rev 08b2814 (@jqnatividad)
-- **PR #5110** (2026-11-24): deps: drop unused direct deps bytemuck and spreadsheet-ods (@jqnatividad)
-- **PR #5108** (2026-11-24): build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (@dependabot[bot])
-- **PR #5107** (2026-11-24): build(deps): bump anthropics/claude-code-action from 1.0.284 to 1.0.286 (@dependabot[bot])
-- **PR #5106** (2026-11-24): fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (@jqnatividad)
+- **PR #5114** (2026-11-25): docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null (@jqnatividad)
+- **PR #5113** (2026-11-26): build(deps): bump msys2/setup-msys2 from 2.33.0 to 2.34.0 (@dependabot[bot])
+- **PR #5112** (2026-11-25): feat: add timebucketp, Polars-powered time-window aggregation (@jqnatividad)
 
 ---
 
@@ -2366,23 +2617,21 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(mcp): classify stats/validate --quote as not a path
+## X. joinp): --coalesce keeps right-only keys with key transformations
 
 **RULE**:
-When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9b35465`: test(mcp): classify stats/validate --quote as not a path. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7bfaf596`: joinp): --coalesce keeps right-only keys with key transformations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-- **Path-classification test: `stats --quote` and `validate --quote` are not paths.** Since #5104 the test that every skill option whose description mentions files is classified failed on every PR: these options take a quote character, and their descriptions mention the file being read. They are now listed with the other options that aren't paths. Test-only change. ([#5115](https://github.com/dathere/qsv/pull/5115))
-
+- `joinp`: with a key transformation (`-i`, `-z` or `-N`) and `--coalesce`, right-only rows of a `--full` or `--right` join on same-named keys lost their key, written as empty. The cleanup also dropped any column named `<left key>_right`, even one that wasn't a key copy, and when selected key names collided, such as `id` and `id_right`, it dropped a key. Now the left key is filled from its same-named right key before `--sql-filter` runs, and only that key's right copy is dropped, in joins that output right columns. ([#5117](https://github.com/dathere/qsv/pull/5117))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2392,7 +2641,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9b35465` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7bfaf596` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

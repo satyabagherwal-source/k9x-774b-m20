@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:08:25.379Z",
-  "total_cycles_completed": 12708,
-  "total_learnings_persisted": 12708,
-  "total_rules_promoted": 11582,
+  "last_updated": "2026-11-26T13:18:06.931Z",
+  "total_cycles_completed": 12711,
+  "total_learnings_persisted": 12711,
+  "total_rules_promoted": 11583,
   "history": [
-    {
-      "timestamp": "2026-11-26T00:46:42.038Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T00:59:23.577Z",
-      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T00:59:24.706Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T01:07:57.454Z",
       "repository": "baidu/ERNIE-5.5-Flash-Base",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T13:08:25.379Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:17:49.081Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:17:57.581Z",
+      "repository": "kirillzyusko/react-native-keyboard-controller",
+      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:18:06.931Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

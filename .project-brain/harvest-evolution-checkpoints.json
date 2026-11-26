@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:08:32.716Z",
+  "last_updated": "2026-11-26T13:18:15.205Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -748,7 +748,7 @@
       "staged_for_review": 0
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-25T14:05:15.370Z",
+      "processed_at": "2026-11-26T13:18:12.972Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1933,7 +1933,7 @@
       "staged_for_review": 1
     },
     "hf-fastino-gliner2.5-decide-learnings.md": {
-      "processed_at": "2026-11-22T20:09:10.259Z",
+      "processed_at": "2026-11-26T13:18:10.829Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2018,7 +2018,7 @@
       "staged_for_review": 0
     },
     "kirillzyusko-react-native-keyboard-controller-learnings.md": {
-      "processed_at": "2026-11-24T02:53:36.474Z",
+      "processed_at": "2026-11-26T13:18:11.489Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3973,7 +3973,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4521,
+  "total_dossiers_evaluated": 4524,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3412
+  "total_staged_for_review": 3414
 }

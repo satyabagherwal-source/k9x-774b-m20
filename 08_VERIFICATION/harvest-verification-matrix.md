@@ -13391,3 +13391,6 @@
 | `CYCLE-20261126-7L0A` | `2026-11-26T12:59:34.810Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10683` | Yes (`084ff4c7...`) |
 | `CYCLE-20261126-ILR8` | `2026-11-26T13:08:08.996Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md` | Yes (`3fcfd0fc...`) |
 | `CYCLE-20261126-IYDR` | `2026-11-26T13:08:25.359Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10684` | Yes (`00b7e332...`) |
+| `CYCLE-20261126-V1C4` | `2026-11-26T13:17:49.060Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`05546c80...`) |
+| `CYCLE-20261126-V7V2` | `2026-11-26T13:17:57.518Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md` | Yes (`09cdafbb...`) |
+| `CYCLE-20261126-VF3U` | `2026-11-26T13:18:06.906Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10685` | Yes (`e9694e1c...`) |

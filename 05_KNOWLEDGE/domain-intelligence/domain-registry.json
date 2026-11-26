@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T13:08:32.288Z",
+  "last_updated": "2026-11-26T13:18:14.705Z",
   "total_records": 2749,
   "domains": {
     "A": {
@@ -8828,8 +8828,8 @@
       "title": "Research & Knowledge Intelligence: fastino/GLiNER2.5-Decide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-research-knowledge-intelligence-fastino-gliner2-5-de.md",
       "repository": "fastino/GLiNER2.5-Decide",
-      "content_hash": "51dded46265f5784d2f6c48f3e23ad00bda3fe949dbc8f7ac595b25c7921c550",
-      "created_at": "2026-11-22T20:08:57.663Z"
+      "content_hash": "700c01afcf862333d7136fa5db648096ab20b1b27b11314f77503bd0e510f029",
+      "created_at": "2026-11-26T13:17:49.385Z"
     },
     "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants",
@@ -8906,8 +8906,8 @@
       "title": "Research & Knowledge Intelligence: hf-fastino-gliner2.5-decide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-learnings-research-knowledge-intelligence-hf-fastino.md",
       "repository": "hf-fastino-gliner2.5-decide-learnings",
-      "content_hash": "112b76c60a98309166b51b94176a32f20afbbe762d70253c329d13241725e36b",
-      "created_at": "2026-11-22T20:09:10.518Z"
+      "content_hash": "f768b453731b077caaab0220883fb73ce3bd679b553f7b6cadecb41d3c7d7c28",
+      "created_at": "2026-11-26T13:18:11.186Z"
     },
     "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants",
@@ -9605,8 +9605,8 @@
       "title": "Technical Construction Intelligence: kirillzyusko-react-native-keyboard-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kirillzyusko-react-native-keyboard-controller-learnings-technical-construction-i.md",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
-      "content_hash": "ef40fbd8acb268939b25beab285f6c46f30e83e797702e336b883183a580d00b",
-      "created_at": "2026-11-24T02:53:37.267Z"
+      "content_hash": "effed210430494f0d02749ed7f03de1fe3f5ef229dffe15bcc9cf21427c7e27f",
+      "created_at": "2026-11-26T13:18:12.449Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
@@ -12806,8 +12806,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "7a885113e0d0930ffbcef94f063791694ce3247b0b19973b7e3dd5e61f98e300",
-      "created_at": "2026-11-25T14:05:10.260Z"
+      "content_hash": "fb7f0642256d42c1fea6cf79ad29b125cc40cf7a6728b94ff6ff6d6347ddb6fa",
+      "created_at": "2026-11-26T13:18:07.532Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12875,8 +12875,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "4111e7e15ca5ab8a1e2cc318df35b11989f52cbe08dc0e5e4c9a95863bc0ac0c",
-      "created_at": "2026-11-25T14:05:16.685Z"
+      "content_hash": "9c03e163ceef7d125dda289576b4016e05a09e97af38d127a23528b7e2253ceb",
+      "created_at": "2026-11-26T13:18:14.705Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",

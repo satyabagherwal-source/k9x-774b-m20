@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T13:08:30.293Z",
+  "updated_at": "2026-11-26T13:18:14.082Z",
   "stats": {
-    "total_discovered": 9769,
-    "approved_pending_harvest": 9268,
+    "total_discovered": 9778,
+    "approved_pending_harvest": 9277,
     "harvested_count": 0,
     "rejected_count": 501,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9254,
+      "COMMUNITY_AND_EXPERT": 9263,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -211438,6 +211438,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
         "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-F3D902C37DF2": {
+      "id": "SRC-F3D902C37DF2",
+      "url": "https://github.com/Nezz/expo-repro/tree/e299109d8b565d6d2dc6f71fdb5041429ac0bdbd",
+      "title": "https://github.com/Nezz/expo-repro/tree/e299109d8b565d6d2dc6f71fdb5041429ac0bdbd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:18:11.667Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-F3A465B922D5": {
+      "id": "SRC-F3A465B922D5",
+      "url": "https://github.com/kirillzyusko/react-native-keyboard-controller/issues/1800",
+      "title": "https://github.com/kirillzyusko/react-native-keyboard-controller/issues/1800",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:18:11.754Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-8DCC86A77E3A": {
+      "id": "SRC-8DCC86A77E3A",
+      "url": "https://github.com/kirillzyusko/react-native-keyboard-controller/pull/1685",
+      "title": "https://github.com/kirillzyusko/react-native-keyboard-controller/pull/1685",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:18:11.844Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-DCFABAAE15FD": {
+      "id": "SRC-DCFABAAE15FD",
+      "url": "https://github.com/dathere/qsv/pull/5117",
+      "title": "https://github.com/dathere/qsv/pull/5117",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:18:13.662Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-CED1DA11A51A": {
+      "id": "SRC-CED1DA11A51A",
+      "url": "https://github.com/pola-rs/polars/commit/08b2814ce6386c0efe0fea512912353f42a8b7b6",
+      "title": "https://github.com/pola-rs/polars/commit/08b2814ce6386c0efe0fea512912353f42a8b7b6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:18:13.748Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-32B425144522": {
+      "id": "SRC-32B425144522",
+      "url": "https://github.com/msys2/setup-msys2",
+      "title": "https://github.com/msys2/setup-msys2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:18:13.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-C9BB4C762AD7": {
+      "id": "SRC-C9BB4C762AD7",
+      "url": "https://github.com/msys2/setup-msys2/releases",
+      "title": "https://github.com/msys2/setup-msys2/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:18:13.915Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-964C2E2EF526": {
+      "id": "SRC-964C2E2EF526",
+      "url": "https://github.com/msys2/setup-msys2/blob/main/CHANGELOG.md",
+      "title": "https://github.com/msys2/setup-msys2/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:18:13.998Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-0494E188521C": {
+      "id": "SRC-0494E188521C",
+      "url": "https://github.com/msys2/setup-msys2/compare/ec48f7c5447b3140e2b088413ae3a55687bccb6e...3c51bf698df1e37b2261f53cb67797b97761185c",
+      "title": "https://github.com/msys2/setup-msys2/compare/ec48f7c5447b3140e2b088413ae3a55687bccb6e...3c51bf698df1e37b2261f53cb67797b97761185c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:18:14.081Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

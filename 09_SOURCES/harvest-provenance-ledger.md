@@ -13424,3 +13424,6 @@ Every entry in this ledger must capture:
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `e6521ee6` | Multi-dimensional audit evidence | 2026-11-26T12:59:34.815Z |
 | `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-26T13:08:09.001Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `83e98ce8` | Multi-dimensional audit evidence | 2026-11-26T13:08:25.364Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-26T13:17:49.065Z |
+| `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `3edb89b3` | Multi-dimensional audit evidence | 2026-11-26T13:17:57.523Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8fd5aa1b` | Multi-dimensional audit evidence | 2026-11-26T13:18:06.912Z |

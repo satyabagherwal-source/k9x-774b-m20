@@ -425,8 +425,8 @@
     "sourceUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceVersion": "hf-fastino-gliner2.5-decide",
     "license": "Open-Source",
-    "contentHash": "18614aecff8f79f3a5c49f6df934b96a21c6a523d47a216ab86d04d72433e4f8",
-    "lastHarvestedAt": "2026-11-22T20:08:57.385Z",
+    "contentHash": "05546c80ae569bbec6e3ebcef98be788637ca9b3ba111ec1bdcee70bde039b19",
+    "lastHarvestedAt": "2026-11-26T13:17:49.065Z",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "5108f34d",
+    "sourceVersion": "8fd5aa1b",
     "license": "NOASSERTION",
-    "contentHash": "d02f523e0044f7b17f6f8769f75821f263916ce20521c0b9476389da2e193514",
-    "lastHarvestedAt": "2026-11-25T23:11:57.572Z",
+    "contentHash": "e9694e1c8fb735a3dbb160128766b0ee3ea36b7a8a719240ad9636e27d93ce11",
+    "lastHarvestedAt": "2026-11-26T13:18:06.912Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -11343,10 +11343,10 @@
     "repository": "kirillzyusko/react-native-keyboard-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-    "sourceVersion": "dd4ffd54",
+    "sourceVersion": "3edb89b3",
     "license": "MIT",
-    "contentHash": "183a3e1820374f7d0913bfaee0d6550adec3ec14731addeb81f0b7867cd56f03",
-    "lastHarvestedAt": "2026-11-24T02:53:32.401Z",
+    "contentHash": "09cdafbbe5629de4d448c2f6c6c7c74a06b4b6e1711e0717c3fc7082191ed0c4",
+    "lastHarvestedAt": "2026-11-26T13:17:57.523Z",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller"
   },
   "margelo-react-native-blur": {

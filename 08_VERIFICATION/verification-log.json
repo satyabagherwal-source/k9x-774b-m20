@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-LOOA",
-    "timestamp": "2026-11-24T23:51:03.466Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-VECD",
-    "timestamp": "2026-11-24T23:58:36.637Z",
-    "repository": "str4d/rage",
-    "learningId": "learn-github-str4d-rage",
-    "contentHash": "8caecbbe2857583e926fe76b5a4631f3954a347572462d1aa74a5726dd6d9b61",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-VFTX",
-    "timestamp": "2026-11-24T23:58:38.565Z",
-    "repository": "TanStack/router",
-    "learningId": "learn-github-tanstack-router",
-    "contentHash": "ddd5dc783e87b91bed147ffc12a76ee45030c1ef61c6b6f87bb3713487c6b849",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-VIHC",
     "timestamp": "2026-11-24T23:58:42.000Z",
     "repository": "necolas/react-native-web",
@@ -7490,6 +7445,51 @@
     "repository": "vespa-engine/vespa",
     "learningId": "learn-github-vespa-engine-vespa",
     "contentHash": "00b7e33243bd6224113a1f4568a8dba7e1ef670362fb573b6129a73b8b47328a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-V1C4",
+    "timestamp": "2026-11-26T13:17:49.060Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+    "contentHash": "05546c80ae569bbec6e3ebcef98be788637ca9b3ba111ec1bdcee70bde039b19",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-V7V2",
+    "timestamp": "2026-11-26T13:17:57.518Z",
+    "repository": "kirillzyusko/react-native-keyboard-controller",
+    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+    "contentHash": "09cdafbbe5629de4d448c2f6c6c7c74a06b4b6e1711e0717c3fc7082191ed0c4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-VF3U",
+    "timestamp": "2026-11-26T13:18:06.906Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "e9694e1c8fb735a3dbb160128766b0ee3ea36b7a8a719240ad9636e27d93ce11",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
