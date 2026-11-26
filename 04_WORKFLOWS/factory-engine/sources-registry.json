@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T07:48:47.218Z",
-    "lastVerified": "2026-11-26T07:48:47.218Z",
+    "lastChecked": "2026-11-26T07:57:59.631Z",
+    "lastVerified": "2026-11-26T07:57:59.631Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T07:19:10.012Z",
+    "lastChecked": "2026-11-26T07:57:58.686Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T07:19:10.012Z"
+    "lastVerified": "2026-11-26T07:57:58.686Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -827,12 +827,12 @@
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T07:39:26.055Z",
-    "lastVerified": "2026-11-25T07:39:26.055Z",
+    "lastChecked": "2026-11-26T07:57:54.452Z",
+    "lastVerified": "2026-11-26T07:57:54.452Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "fed1202f2bb351da8371b3d8b94b759b2c078654505e33904625f5ef8b8ac958",
+    "contentHash": "8dd9c65e7aab16bd2c12e8119de6544652feb59f450d9eeecd467f9fa736862c",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -1591,9 +1591,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-26T03:46:47.795Z",
+    "lastChecked": "2026-11-26T07:57:53.566Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-26T03:46:47.795Z"
+    "lastVerified": "2026-11-26T07:57:53.566Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -5255,9 +5255,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-11-25T06:47:48.908Z",
+    "lastChecked": "2026-11-26T07:57:56.075Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-11-25T06:47:48.908Z"
+    "lastVerified": "2026-11-26T07:57:56.075Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc",
@@ -8470,9 +8470,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-25T01:26:46.708Z",
+    "lastChecked": "2026-11-26T07:57:43.549Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-25T01:26:46.708Z"
+    "lastVerified": "2026-11-26T07:57:43.549Z"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
     "name": "openbmb/MiniCPM-V-4.7-1B",
@@ -11771,9 +11771,9 @@
   "pointfreeco-sqlite-data": {
     "name": "sqlite-data",
     "officialUrl": "https://github.com/pointfreeco/sqlite-data",
-    "lastChecked": "2026-11-23T22:05:08.974Z",
+    "lastChecked": "2026-11-26T07:57:48.696Z",
     "revisionIdentifier": "e72164ce",
-    "lastVerified": "2026-11-23T22:05:08.974Z"
+    "lastVerified": "2026-11-26T07:57:48.696Z"
   },
   "vitejs-vite": {
     "name": "vitejs/vite",
@@ -14893,12 +14893,12 @@
     "officialUrl": "https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T14:40:33.547Z",
-    "lastVerified": "2026-11-22T14:40:33.547Z",
+    "lastChecked": "2026-11-26T07:57:46.190Z",
+    "lastVerified": "2026-11-26T07:57:46.190Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
-    "contentHash": "7ded80e004fe294f6371c72d554f948ad957f31c56dda61f8d60825b9074748b",
+    "contentHash": "05467ae18678d432e6049e70e75faad3204b974c975aa237ba01563f6b2e2361",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

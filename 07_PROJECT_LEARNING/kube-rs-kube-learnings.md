@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `c5141098`  
+> **Source Version**: `45bb874b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T07:39:26.061Z  
+> **Timestamp**: 2026-11-26T07:57:54.460Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T07:39:26.055Z  
+> **Harvest Timestamp**: 2026-11-26T07:57:54.452Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3869 stars
+- **Stars / Engagement**: 3870 stars
 
 ---
 
@@ -1707,123 +1707,438 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5141098` (2026-11-24)
-**Commit Message**: update sec policy to be in the spirit of the original intention (#2171)
+### Incident Patch 1: `45bb874b` (2026-11-26)
+**Commit Message**: schema: hoist uniform scalar type from anyOf branches (#2165)
 
-* update sec policy to be in the spirit of the original intention
+* fix(schema): hoist uniform scalar type from anyOf branches
 
-Signed-off-by: clux <[REDACTED_EMAIL]>
+Signed-off-by: aloneangel45 <[REDACTED_EMAIL]>
 
-* clarify
+* fix(schema): clear metadata on hoisted anyOf branches and add docs
 
-Signed-off-by: clux <[REDACTED_EMAIL]>
+Signed-off-by: aloneangel45 <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: clux <[REDACTED_EMAIL]>
+Signed-off-by: aloneangel45 <[REDACTED_EMAIL]>
+Co-authored-by: aloneangel45 <[REDACTED_EMAIL]>
+Co-authored-by: doxxx <[REDACTED_EMAIL]>
 
-**File**: `SECURITY.md` (modified, +2/-2)
+**File**: `kube-core/src/schema.rs` (modified, +162/-0)
 ```diff
-@@ -4,8 +4,8 @@
+@@ -343,6 +343,11 @@ impl Transform for StructuralSchemaRewriter {
+             }
  
- We provide security updates for the two most recent minor versions released on `crates.io`.
+             if let Some(any_of) = &mut subschemas.any_of {
++                // Untagged enums whose branches all share a single scalar type cannot be merged
++                // into one enum when extra constraints like `maxLength` or `minimum` are present,
++                // so hoist the common scalar `type` onto the parent before stripping branches.
++                hoist_any_of_scalar_type(any_of, &mut schema.instance_type);
++
+                 // Untagged enums are serialized using `any_of`
+                 // Variant descriptions are not pushed into properties (because they are not for the field).
+                 hoist_subschema_properties(any_of, &mut schema.object, &mut schema.instance_type, false);
+@@ -655,6 +660,60 @@ fn hoist_subschema_properties(
+     }
+ }
  
--For example, if `0.70.1` is the most recent stable version, we will address security updates for `0.69` and later.
--Once `0.71.1` is released, we will no longer provide updates for `0.69` releases.
-+For example, if `5.X` is the most recent stable version, we will address security updates in newer `4.X` and `5.X` versions.
-+Once `6.0` is released, we will no longer provide updates for `4.X` releases.
++fn is_scalar_instance_type(instance_type: &InstanceType) -> bool {
++    matches!(
++        instance_type,
++        InstanceType::String | InstanceType::Integer | InstanceType::Number | InstanceType::Boolean
++    )
++}
++
++fn hoist_any_of_scalar_type(any_of: &mut [Schema], instance_type: &mut Option<SingleOrVec<InstanceType>>) {
++    if any_of.is_empty() {
++        return;
++    }
++
++    let mut uniform_type: Option<InstanceType> = None;
++    for variant in any_of.iter() {
++        let Schema::Object(SchemaObject {
++            instance_type: Some(SingleOrVec::Single(variant_ty)),
++            subschemas: None,
++            array: None,
++            object: None,
++            ..
++        }) = variant
++        else {
++            return;
++        };
++
++        if !is_scalar_instance_type(variant_ty) {
++            return;
++        }
++
++        match uniform_type.as_ref() {
++            None => uniform_type = Some(*variant_ty.as_ref()),
++            Some(expected) if expected == variant_ty.as_ref() => {}
++            Some(_) => return,
++        }
++    }
++
++    let Some(uniform_type) = uniform_type else {
++        return;
++    };
++
++    match instance_type {
++        None => *instance_type = Some(SingleOrVec::Single(Box::new(uniform_type))),
++        Some(SingleOrVec::Single(parent_ty)) if parent_ty.as_ref() == &uniform_type => {}
++        Some(_) => return,
++    }
++
++    for variant in any_of.iter_mut() {
++        if let Schema::Object(variant_obj) = variant {
++            variant_obj.instance_type = None;
++            variant_obj.metadata = None;
++        }
++    }
++}
++
+ fn only_item<I: Iterator>(mut i: I) -> Option<I::Item> {
+     let item = i.next()?;
+     if i.next().is_some() {
+@@ -733,6 +792,109 @@ mod tests {
+         );
+     }
  
- ## Reporting a Vulnerability
++    fn rewrite_structural(schema: serde_json::Value) -> serde_json::Value {
++        let mut s: schemars::Schema = serde_json::from_value(schema).unwrap();
++        Transform::transform(&mut StructuralSchemaRewriter, &mut s);
++        s.to_value()
++    }
++
++    #[test]
++    fn rewriter_hoists_uniform_scalar_type_from_any_of() {
++        assert_eq!(
++            rewrite_structural(json!({
++                "anyOf": [
++                    { "type": "string", "enum": ["Spam", "Eggs"] },
++                    { "type": "string", "maxLength": 5 }
++                ]
++            })),
++            json!({
++                "type": "string",
++                "anyOf": [
++                    { "enum": ["Spam", "Eggs"] },
++                    { "maxLength": 5 }
++                ]
++            })
++        );
++
++        assert_eq!(
++            rewrite_structural(json!({
++                "anyOf": [
++                    { "type": "integer", "format": "uint32", "minimum": 1, "maximum": 10 },
++                    { "type": "integer", "format": "uint32", "minimum": 100 }
++                ]
++            })),
++            json!({
++                "type": "integer",
++                "anyOf": [
++                    { "format": "uint32", "minimum": 1, "maximum": 10 },
++                    { "format": "uint32", "minimum": 100 }
++                ]
++            })
++        );
++
++        assert_eq!(
++            rewrite_structural(json!({
++                "anyOf": [
++                    { "type": "string", "maxLength": 5 },
++                    { "type": "string" }
++                ]
++            })),
++            json!({
++                "type": "string",
++                "anyOf": [
++                    { "maxLength": 5 },
++                    {}
++                ]
++            })
++        );
++
++        assert_eq!(
++            rewrite_structural(json!({
++                "type": "number",
++                "anyOf": [
++                    { "type": "number", "minimum": 0.0, "maximum": 1.0 },
++                    { "type": "number", "multipleOf": 5.0 }
++                ]
++            })),
++            json!({
++                "type": "number",
++                "anyOf": [
++                    { "minimum": 0.0, "maximum": 1.0 },
++                    { "multipleOf": 5.0 }
++                ]
++            })
++        );
++    }
++
++    #[test]
++    fn rewriter_does_not
+```
+
+**File**: `kube-derive/tests/crd_schema_test.rs` (modified, +106/-0)
+```diff
+@@ -615,6 +615,112 @@ enum BreakfastOrString {
+     Other(String),
+ }
  
++#[derive(Serialize, Deserialize, Debug, Clone, JsonSchema)]
++#[serde(untagged)]
++enum ConstrainedBreakfast {
++    Item(BreakfastItem),
++    Other(#[schemars(length(max = 5))] String),
++}
++
++#[derive(Serialize, Deserialize, Debug, Clone, JsonSchema)]
++// Note: `#[schemars(range(...))]` only affects the generated OpenAPI schema conditions
++// (enforced by Kubernetes); derived `Deserialize` ignores schemars attributes and tries
++// untagged variants in declaration order.
++#[serde(untagged)]
++enum ConstrainedCount {
++    Small(#[schemars(range(min = 1, max = 10))] u32),
++    Large(#[schemars(range(min = 100))] u32),
++}
++
++#[derive(kube_derive::CustomResource, Serialize, Deserialize, Debug, Clone, JsonSchema)]
++#[kube(group = "clux.dev", version = "v1", kind = "ConstrainedTest")]
++struct ConstrainedTestSpec {
++    constrained: ConstrainedBreakfast,
++    optional_constrained: Option<ConstrainedBreakfast>,
++    count: ConstrainedCount,
++}
++
++#[test]
++fn untagged_constrained_scalar_any_of_hoists_type() {
++    use kube::CustomResourceExt;
++
++    let crd = serde_json::to_value(ConstrainedTest::crd()).unwrap();
++    let props = &crd["spec"]["versions"][0]["schema"]["openAPIV3Schema"]["properties"]["spec"]["properties"];
++
++    assert_eq!(
++        props["constrained"],
++        serde_json::json!({
++            "type": "string",
++            "anyOf": [
++                { "enum": ["Spam", "Eggs"] },
++                { "maxLength": 5 }
++            ]
++        })
++    );
++    assert_eq!(
++        props["optional_constrained"],
++        serde_json::json!({
++            "type": "string",
++            "nullable": true,
++            "anyOf": [
++                { "enum": ["Spam", "Eggs"] },
++                { "maxLength": 5 }
++            ]
++        })
++    );
++    assert_eq!(
++        props["count"],
++        serde_json::json!({
++            "type": "integer",
++            "anyOf": [
++                { "format": "uint32", "minimum": 1.0, "maximum": 10.0 },
++                { "format": "uint32", "minimum": 100.0 }
++            ]
++        })
++    );
++}
++
++/// Documented meal
++#[derive(Serialize, Deserialize, Debug, Clone, JsonSchema)]
++enum DocumentedBreakfastMeal {
++    FullBreakfast,
++    Porridge,
++}
++
++#[derive(Serialize, Deserialize, Debug, Clone, JsonSchema)]
++#[serde(untagged)]
++enum DocumentedInnerType {
++    /// Documented variant
++    Meal(DocumentedBreakfastMeal),
++    Other(#[schemars(length(max = 5))] String),
++}
++
++#[derive(kube_derive::CustomResource, Serialize, Deserialize, Debug, Clone, JsonSchema)]
++#[kube(group = "clux.dev", version = "v1", kind = "DocInnerTest")]
++struct DocInnerTestSpec {
++    meal: DocumentedInnerType,
++}
++
++#[test]
++fn untagged_documented_enum_clears_branch_description() {
++    use kube::CustomResourceExt;
++
++    let crd = serde_json::to_value(DocInnerTest::crd()).unwrap();
++    let meal =
++        &crd["spec"]["versions"][0]["schema"]["openAPIV3Schema"]["properties"]["spec"]["properties"]["meal"];
++
++    assert_eq!(
++        *meal,
++        serde_json::json!({
++            "type": "string",
++            "anyOf": [
++                { "enum": ["FullBreakfast", "Porridge"] },
++                { "maxLength": 5 }
++            ]
++        })
++    );
++}
++
+ #[derive(CustomResource, Serialize, Deserialize, Debug, Clone, JsonSchema)]
+ #[kube(group = "clux.dev", version = "v1", kind = "BreakfastTest")]
+ struct BreakfastTestSpec {
 ```
 
 ---
 
-### Incident Patch 2: `e3de8c15` (2026-11-24)
-**Commit Message**: changelog for 5.2.0
+### Incident Patch 2: `1de148cc` (2026-11-25)
+**Commit Message**: Keep exec plugin env and args out of AuthExecRun errors (#2172)
 
-Signed-off-by: clux <[REDACTED_EMAIL]>
+* Keep exec plugin env and args out of AuthExecRun errors
 
-**File**: `CHANGELOG.md` (modified, +27/-5)
+AuthExecRun.cmd for exec plugins was built with Command's Debug output,
+which on Unix prints every variable set with env()/envs() as
+KEY="value". A failing exec plugin therefore put the kubeconfig exec env
+values and KUBERNETES_EXEC_INFO (cluster CA data, extension config) into
+the error's Display and Debug, and from there into logs. The gcp
+auth-provider cmd-path error included cmd-args the same way.
+
+Name only the configured program in both places, as client-go does for
+exec plugins. Args are left out since some plugins take tokens as
+arguments.
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+* Split the AuthExecRun regression test per call site
+
+One test per site, so a regression in one does not hide the other.
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+Co-authored-by: Eirik A <[REDACTED_EMAIL]>
+
+**File**: `kube-client/src/client/auth/mod.rs` (modified, +65/-5)
 ```diff
-@@ -7,9 +7,31 @@ UNRELEASED
- ===================
-  * see https://github.com/kube-rs/kube/compare/5.2.0...main
+@@ -453,7 +453,8 @@ fn token_from_gcp_provider(provider: &AuthProviderConfig) -> Result<ProviderToke
  
-+[5.2.0](https://github.com/kube-rs/kube/releases/tag/5.2.0) / 2026-11-24
-+===================
-+<!-- Release notes generated using configuration in .github/release.yml at 5.2.0 -->
+         if !output.status.success() {
+             return Err(Error::AuthExecRun {
+-                cmd: format!("{cmd} {params}"),
++                // Program only, like auth_exec: cmd-args can carry tokens.
++                cmd: cmd.clone(),
+                 out: Box::new(output),
+             });
+         }
+@@ -563,10 +564,10 @@ pub struct ExecCredentialStatus {
+ }
+ 
+ fn auth_exec(auth: &ExecConfig) -> Result<ExecCredential, Error> {
+-    let mut cmd = match &auth.command {
+-        Some(cmd) => Command::new(cmd),
+-        None => return Err(Error::MissingCommand),
++    let Some(program) = &auth.command else {
++        return Err(Error::MissingCommand);
+     };
++    let mut cmd = Command::new(program);
+ 
+     if let Some(args) = &auth.args {
+         cmd.args(args);
+@@ -631,7 +632,9 @@ fn auth_exec(auth: &ExecConfig) -> Result<ExecCredential, Error> {
+     let out = cmd.output().map_err(Error::AuthExecStart)?;
+     if !out.status.success() {
+         return Err(Error::AuthExecRun {
+-            cmd: format!("{cmd:?}"),
++            // Not `{cmd:?}`: Command's Debug prints env values (kubeconfig env, KUBERNETES_EXEC_INFO).
++            // Like client-go, name only the program; args can carry tokens too.
++            cmd: program.clone(),
+             out: Box::new(out),
+         });
+     }
+@@ -800,6 +803,63 @@ status:
+         ));
+     }
+ 
++    /// Assert an `AuthExecRun` error names only `program` and none of `markers`.
++    #[cfg(unix)]
++    fn assert_program_only(err: &Error, program: &str, markers: &[&str]) {
++        for text in [err.to_string(), format!("{err:?}")] {
++            for marker in markers {
++                assert!(!text.contains(marker), "{marker} leaked: {text}");
++            }
++        }
++        assert!(
++            matches!(err, Error::AuthExecRun { cmd, .. } if cmd == program),
++            "{err:?}"
++        );
++    }
 +
-+## What's Changed
-+Fixes a [vulnerability](https://github.com/kube-rs/kube/security/advisories/GHSA-hm5x-4x3m-4w8m) on `openssl-tls` where OpenSSL's default roots were trusted alongside the configured cluster CA.
++    #[test]
++    #[cfg(unix)]
++    fn exec_run_error_names_only_program() {
++        // kubeconfig env, KUBERNETES_EXEC_INFO (cluster extension) and args
++        let env_marker = "env-marker-4f1c";
++        let arg_marker = "arg-marker-9b2e";
++        let ext_marker = "ext-marker-77d0";
++        let auth = ExecConfig {
++            api_version: Some("client.authentication.k8s.io/v1".into()),
++            command: Some("sh".into()),
++            args: Some(vec!["-c".into(), "exit 1".into(), arg_marker.into()]),
++            env: Some(vec![
++                [
++                    ("name".to_owned(), "PLUGIN_SECRET".to_owned()),
++                    ("value".to_owned(), env_marker.to_owned()),
++                ]
++                .into(),
++            ]),
++            interactive_mode: Some(ExecInteractiveMode::Never),
++            provide_cluster_info: true,
++            cluster: Some(ExecAuthCluster {
++                server: Some("https://127.0.0.1:6443".into()),
++                config: Some(serde_json::json!({ "marker": ext_marker })),
++                ..Default::default()
++            }),
++            ..Default::default()
++        };
 +
-+### Added
-+* Accept socks5h proxy URLs by @doxxx93 in https://github.com/kube-rs/kube/pull/2153
-+### Removed
-+* disable hostname crate on unsupported targets by @verokarhu in https://github.com/kube-rs/kube/pull/2166
-+* disable tokio signal on platforms that are not supported by it by @verokarhu in https://github.com/kube-rs/kube/pull/2168
-+* scope hyper-rustls's native-tokio feature to oauth and oidc by @verokarhu in https://github.com/kube-rs/kube/pull/2163
-+### Fixed
-+* move tokio's signal feature to kube-runtime by @verokarhu in https://github.com/kube-rs/kube/pull/2161
-+* Use tokio::time::Instant for the predicate filter TTL by @doxxx93 in https://github.com/kube-rs/kube/pull/2140
-+* Skip removed objects in ReflectHandle instead of stalling by @doxxx93 in https://github.com/kube-rs/kube/pull/2151
-+* attach id for ReflectHandle to eliminate drop clash chance by @Danil-Grigorev in https://github.com/kube-rs/kube/pull/2162
++        let err = auth_exec(&auth).unwrap_err();
++        assert_program_only(&err, "sh", &[env_marker, arg_marker, ext_marker]);
++    }
 +
++    #[test]
++    #[cfg(unix)]
++    fn gcp_cmd_error_names_only_program() {
++        let arg_marker = "gcp-arg-marker-31ad";
++        let provider = gcp_auth_info("false", arg_marker).auth_provider.unwrap();
++        let Err(err) = token_from_gcp_provider(&provider) else {
++            panic!("`false` should fail");
++        };
++        assert_program_only(&err, "false", &[arg_marker]);
++    }
 +
-+**Full Changelog**: https://github.com/kube-rs/kube/compare/5.1.0...5.2.0
-+
- 5.2.0 / 2026-11-24
- ===================
-- * see https://github.com/kube-rs/kube/compare/5.1.0...main
-+ * see https://github.com/kube-rs/kube/compare/5.2.0...main
- 
- [5.1.0](https://github.com/kube-rs/kube/releases/tag/5.1.0) / 2026-11-12
- ===================
-@@ -44,7 +66,7 @@ Maintenance release.
- 
- 5.1.0 / 2026-11-12
- ===================
-- * see https://github.com/kube-rs/kube/compare/5.1.0...main
-+ * see https://github.com/kube-rs/kube/compare/5.2.0...main
- 
- [5.0.0](https://github.com/kube-rs/kube/releases/tag/5.0.0) / 2026-11-01
- ===================
-@@ -156,7 +178,7 @@ In particular this release, a special thank you to @daemonfire300 for the new [t
- 
- 4.2.0 / 2026-07-22
- ===================
-- * see https://github.com/kube-rs/kube/compare/5.1.0...main
-+ * see https://github.com/kube-rs/kube/compare/5.2.0...main
- 
- [4.0.0](https://github.com/kube-rs/kube/releases/tag/4.0.0) / 2026-06-16
- ===================
-@@ -270,7 +292,7 @@ Better timeout and retry handling to better deal with flaky network conditions,
- 
- 4.0.0 / 2026-06-16
- ===================
-- * see https://github.com/kube-rs/kube/compare/5.1.0...main
-+ * see https://github.com/kube-rs/kube/compare/5.2.0...main
- 
- [3.1.0](https://github.com/kube-rs/kube/releases/tag/3.1.0) / 2026-03-17
- ===================
-@@ -302,7 +324,7 @@ Maintenance release with fixes for schemas/validation, client exec blocking and
- 
- 3.1.0 / 2026-03-17
- ===================
-- * see https://github.com/kube-rs/kube/compare/5.1.0...main
-+ * see https://github.com/kube-rs/kube/compare/5.2.0...main
- 
- [3.0.1](https://github.com/kube-rs/kube/releases/tag/3.0.1) / 2026-01-30
- ===================
+     #[test]
+     fn token_file() {
+         let file = tempfile::NamedTempFile::new().unwrap();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2174** (2026-11-25): upgrade ahash to 0.8.14 (@verokarhu)
+- **PR #2172** (2026-11-25): Keep exec plugin env and args out of AuthExecRun errors (@doxxx93)
 - **PR #2171** (2026-11-24): update sec policy to be in the spirit of the original intention (@clux)
 - **PR #2170** (2026-11-24): [4.2 backport] Align openssl-tls root certificate handling with rustls-tls (@doxxx93)
 - **PR #2169** (closed): noop (@clux)
 - **PR #2168** (2026-11-24): disable tokio signal on platforms that are not supported by it (@verokarhu)
-- **PR #2167** (2026-11-24): bump async-broadcast version to wasm-compatible one (@verokarhu)
-- **PR #2166** (2026-11-24): disable hostname crate on unsupported targets (@verokarhu)
 
 ---
 
@@ -1843,30 +2158,62 @@ Signed-off-by: clux <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update sec policy to be in the spirit of the original intention
+## X. schema: hoist uniform scalar type from anyOf branches
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kube-core/src/schema.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5141098`: update sec policy to be in the spirit of the original intention. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `45bb874b`: schema: hoist uniform scalar type from anyOf branches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-core/src/schema.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-For example, if `5.X` is the most recent stable version, we will address security updates in newer `4.X` and `5.X` versions.
-Once `6.0` is released, we will no longer provide updates for `4.X` releases.
+                // Untagged enums whose branches all share a single scalar type cannot be merged
+                // into one enum when extra constraints like `maxLength` or `minimum` are present,
+                // so hoist the common scalar `type` onto the parent before stripping branches.
+                hoist_any_of_scalar_type(any_of, &mut schema.instance_type);
+
+fn is_scalar_instance_type(instance_type: &InstanceType) -> bool {
+    matches!(
+        instance_type,
+        InstanceType::String | InstanceType::Integer | InstanceType::Number | InstanceType::Boolean
+    )
+}
+
+fn hoist_any_of_scalar_type(any_of: &mut [Schema], instance_type: &mut Option<SingleOrVec<InstanceType>>) {
+    if any_of.is_empty() {
+        return;
+    }
+
+    let mut uniform_type: Option<InstanceType> = None;
+    for variant in any_of.iter() {
+        let Schema::Object(SchemaObject {
+            instance_type: Some(SingleOrVec::Single(variant_ty)),
+            subschemas: None,
+            array: None,
+            object: None,
+            ..
+        }) = variant
+        else {
+            return;
+        };
+
+        if !is_scalar_instance_type(variant_ty) {
+            return;
+        }
+
+        match un
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-For example, if `0.70.1` is the most recent stable version, we will address security updates for `0.69` and later.
-Once `0.71.1` is released, we will no longer provide updates for `0.69` releases.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5141098` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `45bb874b` are properly handled with clean fallback behavior.

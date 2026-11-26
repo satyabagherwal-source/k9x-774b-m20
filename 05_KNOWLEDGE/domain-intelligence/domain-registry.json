@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T07:48:49.213Z",
-  "total_records": 2721,
+  "last_updated": "2026-11-26T07:58:02.966Z",
+  "total_records": 2722,
   "domains": {
     "A": {
       "total": 22,
@@ -2354,7 +2354,7 @@
       ]
     },
     "I": {
-      "total": 160,
+      "total": 161,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2515,7 +2515,8 @@
         "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria",
         "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants",
         "DOM-I-F9C7458B",
-        "domain_intelligence-content-information-intelligence-helixdb-helix-db-core-invariants"
+        "domain_intelligence-content-information-intelligence-helixdb-helix-db-core-invariants",
+        "domain_intelligence-content-information-intelligence-kube-rs-kube-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8491,8 +8492,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "447e11b39fca9d66eb350dd3048eec97f33e03a7cf240bcfd0ac0a396506c3c5",
-      "created_at": "2026-11-26T07:28:58.519Z"
+      "content_hash": "0d6a005265fb7aa8ce9607919e78b9469c12d359dfbfb7d97a8cf30846729fe5",
+      "created_at": "2026-11-26T07:58:02.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -29611,8 +29612,8 @@
       "title": "Research & Knowledge Intelligence: harness-hub/Qwen3.8-27B-pi-adapted Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-pi-adapted-research-knowledge-intelligence-harness-hu.md",
       "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
-      "content_hash": "d6d4e449fe5976ed05bbace52980bf7e5dce0d129bd42e524572aa3be9392cd0",
-      "created_at": "2026-11-22T14:45:35.126Z"
+      "content_hash": "5572725eb60993f8a66d4ad3aca7399f8ae8e04b1ef77ec3d20745b671a28ce0",
+      "created_at": "2026-11-26T07:57:47.413Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants",
@@ -29671,8 +29672,8 @@
       "title": "Research & Knowledge Intelligence: hf-harness-hub-qwen3.8-27b-pi-adapted-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-pi-adapted-learnings-research-knowledge-intelligence-.md",
       "repository": "hf-harness-hub-qwen3.8-27b-pi-adapted-learnings",
-      "content_hash": "59d88a8a2d534de20c61eb7217db0e75ae7ab425acd480a16d358db59ab320b1",
-      "created_at": "2026-11-22T14:45:39.056Z"
+      "content_hash": "3340d89061506b6e1e349b083b7f3b78ad8c343e174e81c23aff86dd2f33271c",
+      "created_at": "2026-11-26T07:58:00.154Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core",
@@ -38526,8 +38527,8 @@
       "title": "Content & Information Intelligence: kube-rs/kube Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kube-rs-kube-content-information-intelligence-kube-rs-kube-core-invariants.md",
       "repository": "kube-rs/kube",
-      "content_hash": "e56ba0f0485dcad9fd6c942629b30f7fb84b1716fcdb68fe3384ed4977af15de",
-      "created_at": "2026-11-21T17:49:58.758Z"
+      "content_hash": "1cfe7603e4a40464eebf552be4b321899f014984269dd604bc73b897ff850ac1",
+      "created_at": "2026-11-26T07:57:56.578Z"
     },
     "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-core-invariants",
@@ -45992,6 +45993,15 @@
       "repository": "nexu-io-openmotion-learnings",
       "content_hash": "06344630dbd3523fc999e3f40da434a03bbcd97c57a3f59bedabe858d9650e69",
       "created_at": "2026-11-26T07:48:47.936Z"
+    },
+    "domain_intelligence-content-information-intelligence-kube-rs-kube-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kube-rs-kube-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: kube-rs-kube-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kube-rs-kube-learnings-content-information-intelligence-kube-rs-kube-learnings-c.md",
+      "repository": "kube-rs-kube-learnings",
+      "content_hash": "0a8459cee7cbd4876a8d7ec1aa367a6545649c4179d1f323d7f4964a04297418",
+      "created_at": "2026-11-26T07:58:01.505Z"
     }
   }
 }

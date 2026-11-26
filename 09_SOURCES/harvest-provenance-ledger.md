@@ -13330,3 +13330,5 @@ Every entry in this ledger must capture:
 | `learn-github-nexu-io-openmotion` | `https://github.com/nexu-io/openmotion` | `40617226` | Multi-dimensional audit evidence | 2026-11-26T07:48:27.090Z |
 | `learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored` | `https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | `hf-moonmat` | Multi-dimensional audit evidence | 2026-11-26T07:48:30.139Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `a5225084` | Multi-dimensional audit evidence | 2026-11-26T07:48:43.872Z |
+| `learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-26T07:57:47.065Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `45bb874b` | Multi-dimensional audit evidence | 2026-11-26T07:57:55.965Z |

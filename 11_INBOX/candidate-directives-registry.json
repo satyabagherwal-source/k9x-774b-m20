@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T07:48:49.009Z",
+  "last_updated": "2026-11-26T07:58:02.695Z",
   "directives": [
     {
       "id": "CD-001",
@@ -63405,11 +63405,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-EEYT",
+      "id": "CD-FT1I",
       "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-EEYT-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-FT1I-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -63951,6 +63951,37 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-FO44",
+      "directive_title": "hoist uniform scalar type from anyOf branches",
+      "source_repo": "kube-rs/kube",
+      "source_commit": "45bb874b",
+      "staged_file": "11_INBOX/candidate-directives/CD-FO44-hoist-uniform-scalar-type-from-anyof-branches.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-FRX1",
+      "directive_title": "schema: hoist uniform scalar type from anyOf branches",
+      "source_repo": "kube-rs-kube-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FRX1-schema-hoist-uniform-scalar-type-from-anyof-branches.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-3F73E2",
+      "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3F73E2-daemon-drain-buffered-watcher-changes-be.md",
+      "staged_date": "2026-11-26"
     }
   ]
 }

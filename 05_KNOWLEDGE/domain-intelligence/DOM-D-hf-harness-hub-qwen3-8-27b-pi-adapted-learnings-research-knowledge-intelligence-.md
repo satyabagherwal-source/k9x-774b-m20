@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T14:45:38.954Z",
+  "timestamp": "2026-11-26T07:58:00.011Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-harness-hub-qwen3.8-27b-pi-adapted-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-harness-hub-qwen3.8-27b-pi-adapted-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T14:45:38.954Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T07:58:00.011Z`  
 > **Learning ID**: `LEARN-EVO-hf-harness-hub-qwen3.8-27b-pi-adapted-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-harness-h`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T14:45:34.419Z  
+> **Timestamp**: 2026-11-26T07:57:46.329Z  
 > **Learning ID**: `learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:40:33.547Z  
+> **Harvest Timestamp**: 2026-11-26T07:57:46.190Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2831 downloads | 955 likes
+- **Stars / Engagement**: 3844 downloads | 1122 likes
 
 ---
 

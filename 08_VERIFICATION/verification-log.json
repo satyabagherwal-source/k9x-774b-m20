@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-QV66",
-    "timestamp": "2026-11-24T17:23:10.542Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "2a068f8f8239bafb7d2d6b8f2228056c07ad4f370a3f4afdb8d04e5fc4c10698",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-3OR5",
-    "timestamp": "2026-11-24T17:33:08.753Z",
-    "repository": "inikulin/parse5",
-    "learningId": "learn-github-inikulin-parse5",
-    "contentHash": "67a00917a32a1bd2244a6f8dded3ae91410335da1120f8eab7596e0394d7afb6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-3TMB",
     "timestamp": "2026-11-24T17:33:15.059Z",
     "repository": "kubeedge/kubeedge",
@@ -7490,6 +7460,36 @@
     "repository": "gluesql/gluesql",
     "learningId": "learn-github-gluesql-gluesql",
     "contentHash": "08135c98fe82274f52598a859b897a511754d83e924b09b93fbc1761d57a048b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-FGZ7",
+    "timestamp": "2026-11-26T07:57:47.059Z",
+    "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
+    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
+    "contentHash": "05467ae18678d432e6049e70e75faad3204b974c975aa237ba01563f6b2e2361",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-FNUF",
+    "timestamp": "2026-11-26T07:57:55.959Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "8dd9c65e7aab16bd2c12e8119de6544652feb59f450d9eeecd467f9fa736862c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

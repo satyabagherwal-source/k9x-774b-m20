@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T07:48:43.889Z",
+  "last_updated": "2026-11-26T07:57:55.985Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "fed1202f2bb351da8371b3d8b94b759b2c078654505e33904625f5ef8b8ac958",
-      "verified_at": "2026-11-25T07:39:27.209Z",
+      "content_hash": "8dd9c65e7aab16bd2c12e8119de6544652feb59f450d9eeecd467f9fa736862c",
+      "verified_at": "2026-11-26T07:57:55.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T07:39:27.209Z"
+      "last_updated": "2026-11-26T07:57:55.984Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",
@@ -19326,14 +19326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
-      "content_hash": "7ded80e004fe294f6371c72d554f948ad957f31c56dda61f8d60825b9074748b",
-      "verified_at": "2026-11-22T14:45:34.933Z",
+      "content_hash": "05467ae18678d432e6049e70e75faad3204b974c975aa237ba01563f6b2e2361",
+      "verified_at": "2026-11-26T07:57:47.099Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T14:45:34.933Z"
+      "last_updated": "2026-11-26T07:57:47.099Z"
     },
     "apple/FastFrames-L": {
       "repository": "apple/FastFrames-L",

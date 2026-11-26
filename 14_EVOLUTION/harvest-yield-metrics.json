@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T07:48:43.885Z",
-  "total_cycles_completed": 12618,
-  "total_learnings_persisted": 12618,
-  "total_rules_promoted": 11521,
+  "last_updated": "2026-11-26T07:57:55.980Z",
+  "total_cycles_completed": 12620,
+  "total_learnings_persisted": 12620,
+  "total_rules_promoted": 11522,
   "history": [
-    {
-      "timestamp": "2026-11-25T12:56:31.663Z",
-      "repository": "Nasiko-Labs/nasiko",
-      "learningId": "learn-github-nasiko-labs-nasiko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T12:56:41.011Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T13:05:48.016Z",
       "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T07:48:43.885Z",
       "repository": "gluesql/gluesql",
       "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:57:47.093Z",
+      "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
+      "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:57:55.980Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
