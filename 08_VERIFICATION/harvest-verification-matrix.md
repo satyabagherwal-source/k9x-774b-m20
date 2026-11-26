@@ -13549,3 +13549,7 @@
 | `CYCLE-20261126-1Y72` | `2026-11-26T20:23:05.822Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10771` | Yes (`7cc86e05...`) |
 | `CYCLE-20261126-CY8I` | `2026-11-26T20:31:39.090Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`6842696e...`) |
 | `CYCLE-20261126-D9JH` | `2026-11-26T20:31:53.741Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10772` | Yes (`5b079f74...`) |
+| `CYCLE-20261126-O4SP` | `2026-11-26T20:40:20.809Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`8b864472...`) |
+| `CYCLE-20261126-OASF` | `2026-11-26T20:40:28.575Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10773` | Yes (`cf7b697b...`) |
+| `CYCLE-20261126-OI8V` | `2026-11-26T20:40:38.239Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10774` | Yes (`a02824aa...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T20:41:10.560Z` | `software-mansion-react-native-reanimated` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-82FF7827` [Domain H] | Yes (`5d0cc909...`) |

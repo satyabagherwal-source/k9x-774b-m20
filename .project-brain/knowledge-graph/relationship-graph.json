@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T19:16:48.332Z",
+  "updated_at": "2026-11-26T20:41:10.557Z",
   "statistics": {
-    "total_nodes": 566,
-    "total_edges": 232,
+    "total_nodes": 567,
+    "total_edges": 233,
     "domain_distribution": {
       "D": 341,
       "M": 1,
-      "H": 105,
+      "H": 106,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -22,7 +22,7 @@
       "A": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 228,
+      "CONSTRAINED_BY_ARCHITECTURE": 229,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12630,6 +12630,29 @@
       ],
       "created_at": "2026-11-26T19:16:48.332Z",
       "updated_at": "2026-11-26T19:16:48.332Z"
+    },
+    "DOM-H-82FF7827": {
+      "id": "DOM-H-82FF7827",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Worklets): assert that the runtime id is a number",
+      "summary": "Prevents defects observed in production commit `2dbb6b4a`: Worklets): assert that the runtime id is a number. Unvalidated execution paths ca -> When implementing operations in `packages/react-native-worklets/Common/cpp/worklets/NativeModules/JSIWorkletsModuleProxy.cpp`, engineers MUS",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://software-mansion-react-native-reanimated/software-mansion-react-native-reanimated-learnings.md",
+        "source_version": "2d381dba",
+        "observed_at": "2026-11-26T20:40:27.418Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (software-mansion-react-native-reanimated)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-26T20:41:10.557Z",
+      "updated_at": "2026-11-26T20:41:10.557Z"
     }
   },
   "edges": [
@@ -14952,6 +14975,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-2C3FC3C9 [D] with Domain M",
       "created_at": "2026-11-26T15:38:42.058Z"
+    },
+    {
+      "id": "EDGE-EFDFBA1DFC18",
+      "sourceId": "DOM-H-82FF7827",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-82FF7827 [H] with Domain G",
+      "created_at": "2026-11-26T20:41:10.557Z"
     }
   ]
 }

@@ -935,8 +935,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "4f8e3326db41b135fc3ce537830ffbd427839e6c1f57dae0fdaeadde0562392b",
-    "lastHarvestedAt": "2026-11-23T07:18:26.500Z",
+    "contentHash": "8b864472b4b53fbb5843a5c2aced0cff86a82926f5f88dc703385abb1a2da226",
+    "lastHarvestedAt": "2026-11-26T20:40:20.813Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium"
   },
   "hf-bigscience-bloom": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "ec2ea636",
+    "sourceVersion": "e09ae3b9",
     "license": "MIT",
-    "contentHash": "3b839d981083341d954c2990c3a73e7aa8aca39ddfd6de00eececb9ea1c0b411",
-    "lastHarvestedAt": "2026-11-26T20:04:34.592Z",
+    "contentHash": "a02824aa867360119e6c199af326d8d19e9ae1844d5aa7cd1a111ed20eba5601",
+    "lastHarvestedAt": "2026-11-26T20:40:38.243Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3803,10 +3803,10 @@
     "repository": "software-mansion/react-native-reanimated",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-reanimated",
-    "sourceVersion": "22cbff88",
+    "sourceVersion": "2d381dba",
     "license": "MIT",
-    "contentHash": "155cbc2c514a49a94a78e857617cc5ed0366ec1e28023144cad9cfff01027e67",
-    "lastHarvestedAt": "2026-11-24T12:54:03.013Z",
+    "contentHash": "cf7b697b2455de311de303b1b858cf52fc57d178f6e7d3df1f3d1d4580ff8e84",
+    "lastHarvestedAt": "2026-11-26T20:40:28.579Z",
     "learningId": "learn-github-software-mansion-react-native-reanimated"
   },
   "liftbridge-io-liftbridge": {

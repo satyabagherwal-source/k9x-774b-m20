@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T16:54:52.666Z",
+  "timestamp": "2026-11-26T20:41:12.340Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-bitterbot-ai-bitterbot-desktop-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [bitterbot-ai-bitterbot-desktop-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T16:54:52.666Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T20:41:12.340Z`  
 > **Learning ID**: `LEARN-EVO-bitterbot-ai-bitterbot-desktop-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from bitterbot-ai-bitterbot-desktop-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `a0d01b11`  
+> **Source Version**: `e09ae3b9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:54:46.887Z  
+> **Timestamp**: 2026-11-26T20:40:37.060Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:54:46.881Z  
+> **Harvest Timestamp**: 2026-11-26T20:40:37.054Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2481 stars
+- **Stars / Engagement**: 2483 stars
 
 ---
 
@@ -1598,235 +1598,316 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aaebb1f6` (2026-11-24)
-**Commit Message**: fix(media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown (#395)
+### Incident Patch 1: `e09ae3b9` (2026-11-26)
+**Commit Message**: chore(deps): bump pdfjs-dist from 5.4.624 to 6.5.438 (#362)
 
-OpenAI retires whisper-1, gpt-4o-transcribe and gpt-4o-mini-transcribe on
-2027-02-26. gpt-transcribe is the documented replacement on
-/v1/audio/transcriptions and accepts the fields we already send (verified
-with real calls: model only, language, prompt, response_format=text).
+Bumps [pdfjs-dist](https://github.com/mozilla/pdf.js) from 5.4.624 to 6.5.438.
+- [Release notes](https://github.com/mozilla/pdf.js/releases)
+- [Commits](https://github.com/mozilla/pdf.js/compare/v5.4.624...v6.5.438)
 
-gpt-transcribe reports usage as audio seconds, not tokens, so those rows
-now store seconds and are priced at $0.0045 per minute. The bundled
-openai-whisper-api skill script defaults to the new model too.
+---
+updated-dependencies:
+- dependency-name: pdfjs-dist
+  dependency-version: 6.5.438
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
 
-Refs #391
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `docs/gateway/configuration-examples.md` (modified, +1/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -136,7 +136,7 @@ Save to `~/.bitterbot/bitterbot.json` and you can DM the bot from that number.
-         enabled: true,
-         maxBytes: 20971520,
-         models: [
--          { provider: "openai", model: "gpt-4o-mini-transcribe" },
-+          { provider: "openai", model: "gpt-transcribe" },
-           // Optional CLI fallback (Whisper binary):
-           // { type: "cli", command: "whisper", args: ["--model", "base", "{{MediaPath}}"] }
-         ],
+@@ -212,7 +212,7 @@
+     "node-edge-tts": "^1.2.10",
+     "nodemailer": "^10.0.15",
+     "osc-progress": "^0.3.4",
+-    "pdfjs-dist": "^5.4.624",
++    "pdfjs-dist": "^6.5.438",
+     "playwright": "1.65.1",
+     "playwright-core": "1.65.1",
+     "proper-lockfile": "^4.1.2",
 ```
 
-**File**: `docs/gateway/configuration-reference.md` (modified, +1/-1)
+**File**: `pnpm-lock.yaml` (modified, +130/-14)
 ```diff
-@@ -1414,7 +1414,7 @@ Configures inbound media understanding (image/audio/video):
-           rules: [{ action: "allow", match: { chatType: "direct" } }],
-         },
-         models: [
--          { provider: "openai", model: "gpt-4o-mini-transcribe" },
-+          { provider: "openai", model: "gpt-transcribe" },
-           { type: "cli", command: "whisper", args: ["--model", "base", "{{MediaPath}}"] },
-         ],
-       },
-```
-
-**File**: `skills/openai-whisper-api/SKILL.md` (modified, +2/-2)
-```diff
-@@ -25,13 +25,13 @@ Transcribe an audio file via OpenAI’s `/v1/audio/transcriptions` endpoint.
+@@ -187,8 +187,8 @@ importers:
+         specifier: ^0.3.4
+         version: 0.3.4
+       pdfjs-dist:
+-        specifier: ^5.4.624
+-        version: 5.4.624
++        specifier: ^6.5.438
++        version: 6.5.438
+       playwright:
+         specifier: 1.65.1
+         version: 1.65.1
+@@ -1690,75 +1690,150 @@ packages:
+     cpu: [arm64]
+     os: [android]
  
- Defaults:
- 
--- Model: `whisper-1`
-+- Model: `gpt-transcribe` (OpenAI retires `whisper-1` on 2027-02-26)
- - Output: `<input>.txt`
- 
- ## Useful flags
- 
- ```bash
--{baseDir}/scripts/transcribe.sh /path/to/audio.ogg --model whisper-1 --out /tmp/transcript.txt
-+{baseDir}/scripts/transcribe.sh /path/to/audio.ogg --model gpt-transcribe --out /tmp/transcript.txt
- {baseDir}/scripts/transcribe.sh /path/to/audio.m4a --language en
- {baseDir}/scripts/transcribe.sh /path/to/audio.m4a --prompt "Speaker names: Peter, Daniel"
- {baseDir}/scripts/transcribe.sh /path/to/audio.m4a --json --out /tmp/transcript.json
-```
-
-**File**: `skills/openai-whisper-api/scripts/transcribe.sh` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@ set -euo pipefail
- usage() {
-   cat >&2 <<'EOF'
- Usage:
--  transcribe.sh <audio-file> [--model whisper-1] [--out /path/to/out.txt] [--language en] [--prompt "hint"] [--json]
-+  transcribe.sh <audio-file> [--model gpt-transcribe] [--out /path/to/out.txt] [--language en] [--prompt "hint"] [--json]
- EOF
-   exit 2
- }
-@@ -16,7 +16,7 @@ fi
- in="${1:-}"
- shift || true
- 
--model="whisper-1"
-+model="gpt-transcribe"
- out=""
- language=""
- prompt=""
-```
-
-**File**: `src/infra/model-pricing.ts` (modified, +25/-0)
-```diff
-@@ -80,6 +80,16 @@ export const TTS_PRICES_PER_MILLION_CHARS: Readonly<Record<string, number>> = {
-   "openai/tts-1-hd": 30,
- };
- 
-+/**
-+ * USD per 1M SECONDS of audio for duration-billed transcription (`kind: "audio"` rows whose
-+ * provider reported `usage.type: "duration"` store seconds in `input`). Source:
-+ * https://developers.openai.com/api/docs/pricing (gpt-transcribe $0.0045 / minute = $75 per 1M
-+ * seconds). Token-billed transcription models are priced from the model catalog instead.
-+ */
-+export const AUDIO_PRICES_PER_MILLION_SECONDS: Readonly<Record<string, number>> = {
-+  "openai/gpt-transcribe": 75,
-+};
++  '@napi-rs/canvas-android-arm64@1.1.1':
++    resolution: {integrity: sha512-rSEp3y+/YXw6TxSx4/NHSAFxumZrkMoXy2WiVqpKGT8oF5GHOUDzTKj45e5cvzophX4iFaxwKs3+/gNkJ7FmzQ==}
++    engines: {node: '>= 10'}
++    cpu: [arm64]
++    os: [android]
 +
- const ZERO_PRICE: ModelPrice = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
- const MEMO_TTL_MS = 5 * 60_000;
- const memo = new Map<string, { at: number; value: ResolvedPricing }>();
-@@ -155,6 +165,15 @@ function lookupTtsCatalog(provider: string, model: string): ModelPrice | undefin
-   return { input: perMillion, output: 0, cacheRead: 0, cacheWrite: 0 };
- }
+   '@napi-rs/canvas-darwin-arm64@0.1.92':
+     resolution: {integrity: sha512-4PT6GRGCr7yMRehp42x0LJb1V0IEy1cDZDDayv7eKbFUIGbPFkV7CRC9Bee5MPkjg1EB4ZPXXUyy3gjQm7mR8Q==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [darwin]
  
-+function lookupAudioDurationCatalog(provider: string, model: string): ModelPrice | undefined {
-+  const key = `${provider.toLowerCase()}/${normalizeModelIdForPricing(provider, model)}`;
-+  const perMillion = AUDIO_PRICES_PER_MILLION_SECONDS[key];
-+  if (typeof perMillion !== "number") {
-+    return undefined;
-+  }
-+  return { input: perMillion, output: 0, cacheRead: 0, cacheWrite: 0 };
-+}
++  '@napi-rs/canvas-darwin-arm64@1.1.1':
++    resolution: {integrity: sha512-NrPTZWpu0ywOGdp9JBDi46gABUzDJK6IzlP7cOEwaAuVVFM8KRakUWk12RK3YQ/Ea5FrNVTWUFTmkXVk4RfHqg==}
++    engines: {node: '>= 10'}
++    cpu: [arm64]
++    os: [darwin]
 +
- async function lookupCatalog(
-   provider: string,
-   model: string,
-@@ -216,6 +235,12 @@ export async function resolveModelPricing(params: {
-       value = { price: tts, source: "embedding-catalog" };
-     }
-   }
-+  if (!value && kind === "audio") {
-+    const audio = lookupAudioDurationCatalog(provider, model);
-+    if (audio) {
-+      value = { price: audio, source: "embedding-catalog" };
-+    }
-+  }
-   if (!value && isLocalModelProvider(provider)) {
-     value = { price: ZERO_PRICE, source: "local" };
-   }
+   '@napi-rs/canvas-darwin-x64@0.1.92':
+     resolution: {integrity: sha512-5e/3ZapP7CqPtDcZPtmowCsjoyQwuNMMD7c0GKPtZQ8pgQhLkeq/3fmk0HqNSD1i227FyJN/9pDrhw/UMTkaWA==}
+     engines: {node: '>= 10'}
+     cpu: [x64]
+     os: [darwin]
+ 
++  '@napi-rs/canvas-darwin-x64@1.1.1':
++    resolution: {integrity: sha512-p3DOT8VBfu8cR3SVBUs6cEzJmzwOUQkNfo1S4nKLgeKDsSlvn2oZsRaa9m0lfMccn1WbwtgKCEpJXmHhp++Zrg==}
++    engines: {node: '>= 10'}
++    cpu: [x64]
++    os: [darwin]
++
+   '@napi-rs/canvas-linux-arm-gnueabihf@0.1.92':
+     resolution: {integrity: sha512-j6KaLL9iir68lwpzzY+aBGag1PZp3+gJE2mQ3ar4VJVmyLRVOh+1qsdNK1gfWoAVy5w6U7OEYFrLzN2vOFUSng==}
+     engines: {node: '>= 10'}
+     cpu: [arm]
+     os: [linux]
+ 
++  '@napi-rs/canvas-linux-arm-gnueabihf@1.1.1':
++    resolution: {integrity: sha512-YWGJfMa8TtEhsHd/kDiyBFwT/dAbRQiXwsm0tDev4H5cJiyOk08CC83JihrwnUsePGjIvxC8/8g/zqKKuqjpQA==}
++    engines: {node: '>= 10'}
++    cpu: [arm]
++    os: [linux]
++
+   '@napi-rs/canvas-linux-arm64-gnu@0.1.92':
+     resolution: {integrity: sha512-s3NlnJMHOSotUYVoTCoC1OcomaChFdKmZg0VsHFeIkeHbwX0uPHP4eCX1irjSfMykyvsGHTQDfBAtGYuqxCxhQ==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
+ 
++  '@napi-rs/canvas-linux-arm64-gnu@1.1.1':
++    resolution: {integrity: sha512-q1HBkNmB9mc6SF6uSz2492qSgsB46MqS+n3bPbPCE0kUXmWAPkH9vDADeawbhepQYn8RhlV2V/P5u6nykFXbuQ==}
++    engines: {node: '>= 10'}
++    cpu: [arm64]
++    os: [linux]
++    libc: [glibc]
++
+   '@napi-rs/canvas-linux-arm64-musl@0.1.92':
+     resolution: {integrity: sha512-xV0GQnukYq5qY+ebkAwHjnP2OrSGBxS3vSi1zQNQj0bkXU6Ou+Tw7JjCM7pZcQ28MUyEBS1yKfo7rc7ip2IPFQ==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
+ 
++  '@napi-rs/canvas-linux-arm64-musl@1.1.1':
++    resolution: {integrity: sha512-aF4RkTp2T45fERFPCIqbxeKVhvhHuXeyyk5/jdJ+N0tGLZy4NvMkIrBWt6GOCmAQ7H0G3M/O03hAsc4Li52q4A==}
++    engines: {node: '>= 10'}
++    cpu: [arm64]
++    os: [linux]
++    libc: [musl]
++
+   '@napi-rs/canvas-linux-riscv64-gnu@0.1.92':
+     resolution: {integrity: sha512-+GKvIFbQ74eB/TopEdH6XIXcvOGcuKvCITLGXy7WLJAyNp3Kdn1ncjxg91ihatBaPR+t63QOE99yHuIWn3UQ9w==}
+     engines: {node: '>= 10'}
+     cpu: [riscv64]
+     os: [linux]
+     libc: [glibc]
+ 
++  '@napi-rs/canvas-linux-riscv64-gnu@1.1.1':
++    resolution: {integrity: sha512-rCU4Xo5h0AQFEaa9dNr7Kxbk4gke9Uyi/I6ZXuBGYPSNWxYmWRS6DkrxaSKUJyCgA7c8l6lZBYfx/FtbJo3fMA==}
++    engines: {node: '>= 10'}
++    cpu: [riscv64]
++    os: [linux]
++    libc: [glibc]
++
+   '@napi-rs/canvas-linux-x64-gnu@0.1.92':
+     resolution: {integrity: sha512-tFd6MwbEhZ1g64iVY2asV+dOJC+GT3Yd6UH4G3Hp0/VHQ6qikB+nvXEULskFYZ0+wFqlGPtXjG1Jmv7sJy+3Ww==}
+     engines: {node: '>= 10'}
+     cpu: [x64]
+     os: [linux]
+     libc: [glibc]
+ 
++  '@napi-rs/canvas-linux-x64-gnu@1.1.1':
++    resolution: {integrity: sha512-7bZfDI9lxKqj9wJRHiSQBimCRanxDGHYE7TugnOmFJ9ScpgFSsLHFQtOH9wvmbQvBwv5nBuDBGJlG0+7iGkN+w==}
++    engines: {node: '>= 10'}
++    cpu: [x64]
++    os: [linux]
++    libc: [glibc]
++
+   '@napi-rs/canvas-linux-x64-musl@0.1.92':
+     resolution: {integrity: sha512-uSuqeSveB/ZGd72VfNbHCSXO9sArpZTvznMVsb42nqPP7gBGEH6NJQ0+hmF+w24unEmxBhPYakP/Wiosm16KkA==}
+     engines: {node: '>= 10'}
+     cpu: [x64]
+     os: [linux]
+     libc: [musl]
+ 
++  '@napi-rs/canvas-linux-x64-musl@1.1.1':
++    resolution: {integrity: sha512-xaFof2p0aO7C7ziMCLeueve09PVEKYCebljLTL3nyxoaRsYpEnBrUBP1aVpfD1Nk464dc7/wPV23fkHdOBie2g==}
++    engines: {node: '>= 10'}
++    cpu: [x64]
++    os: [linux]
++    libc: [musl]
++
+   '@napi-rs/canvas-win32-arm64-msvc@0.1.92':
+     resolution: {integrity: sha512-20SK5AU/OUNz9ZuoAPj5ekWai45EIBDh/XsdrVZ8le/pJVlhjFU3olbumSQUXRFn7lBRS+qwM8kA//uLaDx6iQ==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [win32]
+ 
++  '@napi-rs/canvas-win32-arm64-msvc@1.1.1':
++    resolution: {integrity: sha512-wOLX/WRwWr0xGj2hnDf/t3tZfPlzzL9rGPsO1UnYSuNbRzwas/hC8JXnuhaEs8eCw+J+W4zxOJiVF4RxkvcMfw==}
++    engines: {node: '>= 10
 ```
 
-**File**: `src/media-understanding/defaults.ts` (modified, +1/-1)
+---
+
+### Incident Patch 2: `f64a0e3e` (2026-11-26)
+**Commit Message**: chore(deps): bump react-markdown from 9.1.0 to 10.1.0 (#406)
+
+Bumps [react-markdown](https://github.com/remarkjs/react-markdown) from 9.1.0 to 10.1.0.
+- [Release notes](https://github.com/remarkjs/react-markdown/releases)
+- [Changelog](https://github.com/remarkjs/react-markdown/blob/main/changelog.md)
+- [Commits](https://github.com/remarkjs/react-markdown/compare/9.1.0...10.1.0)
+
+---
+updated-dependencies:
+- dependency-name: react-markdown
+  dependency-version: 10.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `desktop/package.json` (modified, +1/-1)
 ```diff
-@@ -29,7 +29,7 @@ export const DEFAULT_PROMPT: Record<MediaUnderstandingCapability, string> = {
- export const DEFAULT_VIDEO_MAX_BASE64_BYTES = 70 * MB;
- export const DEFAULT_AUDIO_MODELS: Record<string, string> = {
-   groq: "whisper-large-v3-turbo",
--  openai: "gpt-4o-mini-transcribe",
-+  openai: "gpt-transcribe",
-   deepgram: "nova-3",
- };
- 
+@@ -47,7 +47,7 @@
+     "mermaid": "^11.16.0",
+     "react": "^18.3.1",
+     "react-dom": "^18.3.1",
+-    "react-markdown": "^9.0.1",
++    "react-markdown": "^10.1.0",
+     "react-router-dom": "^7.18.4",
+     "remark-gfm": "^4.0.0",
+     "shiki": "^4.5.0",
 ```
 
-**File**: `src/media-understanding/providers/openai/audio.test.ts` (modified, +2/-2)
+**File**: `pnpm-lock.yaml` (modified, +213/-114)
 ```diff
-@@ -55,7 +55,7 @@ describe("transcribeOpenAiCompatibleAudio", () => {
-       fetchFn,
-     });
+@@ -401,8 +401,8 @@ importers:
+         specifier: ^18.3.1
+         version: 18.3.1(react@18.3.1)
+       react-markdown:
+-        specifier: ^9.0.1
+-        version: 9.1.0(@types/react@18.3.28)(react@18.3.1)
++        specifier: ^10.1.0
++        version: 10.1.0(@types/react@18.3.28)(react@18.3.1)
+       react-router-dom:
+         specifier: ^7.18.4
+         version: 7.18.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+@@ -4946,6 +4946,9 @@ packages:
+   '@types/estree-jsx@1.0.5':
+     resolution: {integrity: sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg==}
  
--    expect(result.model).toBe("gpt-4o-mini-transcribe");
-+    expect(result.model).toBe("gpt-transcribe");
-     expect(result.text).toBe("hello");
-     expect(seenUrl).toBe("https://api.example.com/v1/audio/transcriptions");
-     expect(seenInit?.method).toBe("POST");
-@@ -67,7 +67,7 @@ describe("transcribeOpenAiCompatibleAudio", () => {
++  '@types/estree@1.0.10':
++    resolution: {integrity: sha512-lTyOMnOcmRBzdCv6/4zUZCrEhV0xrqQiUZBZtVcbmLHBXKLnN8q89v/wKRF/Q0HbwVsqbIG3o5HDoFl9sduM+g==}
++
+   '@types/estree@1.0.8':
+     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
  
-     const form = seenInit?.body as FormData;
-     expect(form).toBeInstanceOf(FormData);
--    expect(form.get("model")).toBe("gpt-4o-mini-transcribe");
-+    expect(form.get("model")).toBe("gpt-transcribe");
-     expect(form.get("language")).toBe("en");
-     expect(form.get("prompt")).toBe("hello");
-     const file = form.get("file") as Blob | { type?: string; name?: string } | null;
-```
-
-**File**: `src/media-understanding/providers/openai/audio.ts` (modified, +22/-8)
-```diff
-@@ -5,7 +5,9 @@ import type { AudioTranscriptionRequest, AudioTranscriptionResult } from "../../
- import { assertOkOrThrowHttpError, fetchWithTimeoutGuarded, normalizeBaseUrl } from "../shared.js";
+@@ -4958,9 +4961,6 @@ packages:
+   '@types/geojson@7946.0.16':
+     resolution: {integrity: sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==}
  
- export const DEFAULT_OPENAI_AUDIO_BASE_URL = "https://api.openai.com/v1";
--const DEFAULT_OPENAI_AUDIO_MODEL = "gpt-4o-mini-transcribe";
-+// OpenAI retires whisper-1, gpt-4o-transcribe and gpt-4o-mini-transcribe on 2027-02-26;
-+// gpt-transcribe is the documented replacement on this endpoint and takes the same fields.
-+const DEFAULT_OPENAI_AUDIO_MODEL = "gpt-transcribe";
+-  '@types/hast@3.0.4':
+-    resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
+-
+   '@types/hast@3.0.5':
+     resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
  
- function resolveModel(model?: string): string {
-   const trimmed = model?.trim();
-@@ -71,18 +73,30 @@ export async function transcribeOpenAiCompatibleAudio(
-     if (!text) {
-       throw new Error("Audio transcription response missing text");
-     }
--    // PLAN-50 Phase 5: gpt-4o-transcribe reports token usage; whisper reports nothing (or
--    // seconds), in which case the call is recorded as one billable item and stays unpriced.
-+    // PLAN-50 Phase 5: token-billed models report token usage. Duration-billed models
-+    // (gpt-transcribe, whisper) report `{type: "duration", seconds}`; those rows store SECONDS
-+    // in `input` and are priced per second (AUDIO_PRICES_PER_MILLION_SECONDS). No usage at all
-+    // is recorded as one billable item and stays unpriced.
-+    const seconds =
-+      payload.usage?.type === "duration" &&
-+      typeof payload.usage.seconds === "number" &&
-+      Number.isFinite(payload.usage.seconds) &&
-+      payload.usage.seconds >= 0
-+        ? payload.usage.seconds
-+        : undefined;
-     recordUsage({
-       kind: "audio",
-       feature: USAGE_FEATURES.mediaAudio,
-       provider: /groq/i.test(baseUrl) ? "groq" : "openai",
-       model,
--      usage: {
--        input: payload.usage?.input_tokens,
--        output: payload.usage?.output_tokens,
--        total: payload.usage?.total_tokens,
--      },
-+      usage:
-+        seconds !== undefined
-+          ? { input: seconds, total: seconds }
-+          : {
-+              input: payload.usage?.input_tokens,
-+              output: payload.usage?.output_tokens,
-+              total: payload.usage?.total_tokens,
-+            },
-       items: 1,
-       durationMs: Date.now() - transcribeStartedAt,
-     });
+@@ -5104,9 +5104,8 @@ packages:
+     resolution: {integrity: sha512-grs0BbJyPR7VLNerBVteEToPku1InMKVKVKBUTJi19LfK+LU3+pkU6/fsTfZhH3xmIzIxD/sNRQHLt4x/Yb9yg==}
+     hasBin: true
+ 
+-  '@ungap/structured-clone@1.3.0':
+-    resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
+-    deprecated: Potential CWE-502 - Update to 1.3.1 or higher
++  '@ungap/structured-clone@1.4.0':
++    resolution: {integrity: sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==}
+ 
+   '@uniswap/token-lists@1.0.0-beta.33':
+     resolution: {integrity: sha512-JQkXcpRI3jFG8y3/CGC4TS8NkDgcxXaOQuYW8Qdvd6DcDiIyg2vVYCG9igFEzF0G6UvxgHkBKC7cWCgzZNYvQg==}
+@@ -6993,8 +6992,8 @@ packages:
+   hast-util-to-html@9.0.5:
+     resolution: {integrity: sha512-OguPdidb+fbHQSU4Q4ZiLKnzWo8Wwsf5bZfbvu7//a9oTYoqD/fWpe96NuHkoS9h0ccGOTe0C4NGXdtS0iObOw==}
+ 
+-  hast-util-to-jsx-runtime@2.3.6:
+-    resolution: {integrity: sha512-zl6s8LwNyo1P9uw+XJGvZtdFF1GdAkOg8ujOw+4Pyb76874fLps4ueHXDhXWdk6YHQ6OgUtinliG7RsYvCbbBg==}
++  hast-util-to-jsx-runtime@2.3.7:
++    resolution: {integrity: sha512-F7DNV2NMcTxA4GqPVHnXzX+mpoPHAIY9rJAVH3CZ1FdBZOcBUEjUuvMkMpHVs/sicEtznh9tMGj5WUR9S4E2rg==}
+ 
+   hast-util-whitespace@3.0.0:
+     resolution: {integrity: sha512-88JUN06ipLwsnv+dVn+OIYOvAuvBMy/Qoi6O7mQHxdPXpjy+Cd6xRkWwux7DKO+4sYILtLBRIKgsdpS2gQc7qw==}
+@@ -7106,8 +7105,8 @@ packages:
+   ini@1.3.8:
+     resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
+ 
+-  inline-style-parser@0.2.7:
+-    resolution: {integrity: sha512-Nb2ctOyNR8DqQoR0OwRG95uNWIC0C1lCgf5Naz5H6Ji72KZ8OcFZLz2P5sNgwlyoJ8Yif11oMuYs5pBQa86csA==}
++  inline-style-parser@0.2.9:
++    resolution: {integrity: sha512-IttN8BqKLxzUrnTqHI+/hwAJQItBAUjdoHERCDv+oOuX48VP6bzW8+QjOXSfoevzq3YrYAwX1uLHp8TqO9yIeg==}
+ 
+   inquirer@8.2.7:
+     resolution: {integrity: sha512-UjOaSel/iddGZJ5xP/Eixh6dY1XghiBw4XK13rCCIJcJfyhhoul/7KhLLUGtebEj6GDYM6Vnx/mVsjx2L/mFIA==}
+@@ -7726,6 +7725,9 @@ packages:
+   mdast-util-from-markdown@2.0.2:
+     resolution: {integrity: sha512-uZhTV/8NBuw0WHkPTrCqDOl0zVe1BIng5ZtHoDk49ME1qqcjYmmLmOf0gELgcRMxN4w2iuIeVso5/6QymSrgmA==}
+ 
++  mdast-util-from-markdown@2.1.0:
++    resolution: {integrity: sha512-KRLgmPaP2H1ul2bpoJkOS+9pAcDAAj9Nu1mqLnh8NLeJG5tlvj42TH80PIGBpROWlRXLk0lDrWNuZCFy/tsB4A==}
++
+   mdast-util-gfm-autolink-literal@2.0.1:
+     resolution: {integrity: sha512-5HVP2MKaP6L+G6YaxPNjuL0BPrq9orG3TsrZ9YXbA3vDw/ACI4MEsnoDpn6ZNm7GnZgtAcONJyPhOP8tNJQavQ==}
+ 
+@@ -7747,21 +7749,24 @@ packages:
+   mdast-util-mdx-expression@2.0.1:
+     resolution: {integrity: sha512-J6f+9hUp+ldTZqKRSg7Vw5V6MqjATc+3E4gf3CFNcuZNWD8XdyI6zQ8GqH7f8169MM6P7hMBRDVGnn7oHB9kXQ==}
+ 
+-  mdast-util-mdx-jsx@3.2.0:
+-    resolution: {integrity: sha512-lj/z8v0r6ZtsN/cGNNtemmmfoLAFZnjMbNyLzBafjzikOM+glrjNHPlf6lQDOTccj9n5b0PPihEBbhneMyGs1Q==}
++  mdast-util-mdx-jsx@3.2.2:
++    resolution: {integrity: sha512-/0FHaZMv2fSjIL3z/NYmXnQTSdzYyamPpI1BXpSCngTUqpSvMNIlERa26ABz+Z6UFQbrh3I5Yhzp448WZsPfMA==}
+ 
+   mdast-util-mdxjs-esm@2.0.1:
+     resolution: {integrity: sha512-EcmOpxsZ96CvlP03NghtH1EsLtr0n9Tm4lPUJUBccV9RwUOneqSycg19n5HGzCf+10LozMRSObtVr3ee1WoHtg==}
+ 
+   mdast-util-phrasing@4.1.0:
+     resolution: {integrity: sha512-TqICwyvJJpBwvGAMZjj4J2n0X8QWp21b9l0o7eXyVJ25YNWYbJDVIyD1bZXE6WtV6RmKJVYmQAKWa0zWOABz2w==}
+ 
+-  mdast-util-to-hast@13.2.1:
+-    resolution: {integrity: sha512-cctsq2wp5vTsLIcaymblUriiTcZd0CwWtCbLvrOzYCDZoWyMNV8sZ7krj09FSnsiJi3WVsHLM4k6Dq/yaPyCXA==}
++  mdast-util-to-hast@13.2.2:
++    res
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #396** (2026-11-24): feat(tts): speak through the OpenAI Realtime API ahead of the speech model shutdown (@VGIL77)
-- **PR #395** (2026-11-24): fix(media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown (@VGIL77)
-- **PR #393** (2026-11-22): fix(deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes (@VGIL77)
-- **PR #392** (2026-11-22): chore(main): release 1.14.3 (@github-actions[bot])
-- **PR #389** (2026-11-22): fix(agents): retry one-shot completions with thinking between_tools when a model rejects disabled (@VGIL77)
-- **PR #388** (2026-11-19): chore(main): release 1.14.2 (@github-actions[bot])
+- **PR #408** (2026-11-26): fix(memory): name the wiki page to retire explicitly in the semantic lint (@VGIL77)
+- **PR #407** (2026-11-26): fix(wallet): stop telling the agent and users that gas is sponsored (@VGIL77)
+- **PR #406** (2026-11-26): chore(deps): bump react-markdown from 9.1.0 to 10.1.0 (@dependabot[bot])
+- **PR #404** (2026-11-26): chore(deps): bump lru from 0.19.0 to 0.19.2 in /orchestrator in the cargo-minor-patch group (@dependabot[bot])
+- **PR #403** (2026-11-26): chore(deps): bump env_logger from 0.11.11 to 0.11.12 in /desktop/src-tauri in the cargo-minor-patch group (@dependabot[bot])
+- **PR #402** (2026-11-26): chore(deps): bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
 
 ---
 
@@ -1846,31 +1927,31 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. media): default OpenAI transcription to gpt-transcribe ahead of the model shutdo
+## X. deps): bump pdfjs-dist from 5.4.624 to 6.5.438
 
 **RULE**:
-When implementing operations in `docs/gateway/configuration-examples.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aaebb1f6`: media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e09ae3b9`: deps): bump pdfjs-dist from 5.4.624 to 6.5.438. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gateway/configuration-examples.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-          { provider: "openai", model: "gpt-transcribe" },
+    "pdfjs-dist": "^6.5.438",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-          { provider: "openai", model: "gpt-4o-mini-transcribe" },
+    "pdfjs-dist": "^5.4.624",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aaebb1f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e09ae3b9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

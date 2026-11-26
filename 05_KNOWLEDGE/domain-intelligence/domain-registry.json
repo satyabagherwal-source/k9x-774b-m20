@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T20:31:59.922Z",
-  "total_records": 2774,
+  "last_updated": "2026-11-26T20:41:12.704Z",
+  "total_records": 2775,
   "domains": {
     "A": {
       "total": 23,
@@ -1717,7 +1717,7 @@
       ]
     },
     "H": {
-      "total": 674,
+      "total": 675,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2392,7 +2392,8 @@
         "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
         "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-learnings-core-invarian"
+        "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-learnings-core-invarian",
+        "DOM-H-82FF7827"
       ]
     },
     "I": {
@@ -13697,8 +13698,8 @@
       "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-3-medium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-research-knowledge-intelligence-stabili.md",
       "repository": "stabilityai/stable-diffusion-3-medium",
-      "content_hash": "6b84890ec20bf069aa62e10c0d4bfcab0eb91da0c4730475868435e0ebcf5334",
-      "created_at": "2026-11-23T07:18:26.698Z"
+      "content_hash": "99f8e189de59d5ef9303e50bd175abe959ee3cf86a7d8f0e62fa5a3aeae92a7a",
+      "created_at": "2026-11-26T20:40:21.033Z"
     },
     "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants",
@@ -13775,8 +13776,8 @@
       "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-3-medium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-learnings-research-knowledge-intelligen.md",
       "repository": "hf-stabilityai-stable-diffusion-3-medium-learnings",
-      "content_hash": "e32e59d13c35f0a70ff9c88a4fe0ddd72ecdb5df07e040cf53905e8d97c08349",
-      "created_at": "2026-11-23T07:18:39.861Z"
+      "content_hash": "73f5ad28d2e2ba3af41c815b6fb513f5776e39df147d459054a4e586935bbd21",
+      "created_at": "2026-11-26T20:40:42.042Z"
     },
     "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants",
@@ -19052,8 +19053,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "66de67b970684a4cd513b097328f1347450aefee340f75db24cd671473c2fce0",
-      "created_at": "2026-11-26T20:04:35.204Z"
+      "content_hash": "1fc5e6b630c32c945a29f34930073d93aea45a1a1a3933e4794303a44d75ef8a",
+      "created_at": "2026-11-26T20:40:38.697Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -28592,8 +28593,8 @@
       "title": "Technical Construction Intelligence: software-mansion/react-native-reanimated Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-technical-construction-intelligence-sof.md",
       "repository": "software-mansion/react-native-reanimated",
-      "content_hash": "125e96299645eaf49fe470dea42d0da7ddbf70618133e23a32e0b64de7a55cf9",
-      "created_at": "2026-11-24T12:54:03.437Z"
+      "content_hash": "08f24b8111012f8ee2ac0e8154b40441e22eb101d74de88b8a3360450ae50fd0",
+      "created_at": "2026-11-26T20:40:29.005Z"
     },
     "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants",
@@ -28619,8 +28620,8 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-learnings-technical-construction-intell.md",
       "repository": "software-mansion-react-native-reanimated-learnings",
-      "content_hash": "3dc9901fa5ed8895f667f83c971b36357786be5b667f405557c5efde8551a345",
-      "created_at": "2026-11-24T12:54:41.593Z"
+      "content_hash": "affefd01f5ffc2defc0d118bc0d9484c67d1baf73dda1465e5d0cae7e1b89fec",
+      "created_at": "2026-11-26T20:41:11.127Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar",
@@ -28664,8 +28665,8 @@
       "title": "Architecture Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-learnings-architecture-intelligence-bitterbot-ai-.md",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
-      "content_hash": "9696d0353802923374df1397dd92e79e0d7a6245b548b5cb084f8c3237ba455f",
-      "created_at": "2026-11-24T16:54:52.965Z"
+      "content_hash": "29155edf974df1107c9f121209b331c23a92022705397274fc673ba60167dcca",
+      "created_at": "2026-11-26T20:41:12.704Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants",
@@ -46819,6 +46820,48 @@
       "repository": "caviraoss-longmemory-learnings",
       "content_hash": "a52ed4d6607a4b60465556b84e802334f7b7cc04227201adb2c3e93cc11cf755",
       "created_at": "2026-11-26T20:14:14.225Z"
+    },
+    "DOM-H-82FF7827": {
+      "record_id": "DOM-H-82FF7827",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Worklets): assert that the runtime id is a number",
+      "content": "When implementing operations in `packages/react-native-worklets/Common/cpp/worklets/NativeModules/JSIWorkletsModuleProxy.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "5d0cc909da85c7648991a30d7e40c92a1a7bae2844ac0eac25b5cc1d6b96af47",
+      "summary": "Prevents defects observed in production commit `2dbb6b4a`: Worklets): assert that the runtime id is a number. Unvalidated execution paths ca -> When implementing operations in `packages/react-native-worklets/Common/cpp/worklets/NativeModules/JSIWorkletsModuleProxy.cpp`, engineers MUS",
+      "provenance": {
+        "source_uri": "project://software-mansion-react-native-reanimated/software-mansion-react-native-reanimated-learnings.md",
+        "source_version": "2d381dba",
+        "observed_at": "2026-11-26T20:40:27.418Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (software-mansion-react-native-reanimated)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of software-mansion-react-native-reanimated"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T20:41:10.527Z"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T20:31:53.771Z",
+  "last_updated": "2026-11-26T20:40:38.264Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1220,14 +1220,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "4f8e3326db41b135fc3ce537830ffbd427839e6c1f57dae0fdaeadde0562392b",
-      "verified_at": "2026-11-23T07:18:26.507Z",
+      "content_hash": "8b864472b4b53fbb5843a5c2aced0cff86a82926f5f88dc703385abb1a2da226",
+      "verified_at": "2026-11-26T20:40:20.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T07:18:26.507Z"
+      "last_updated": "2026-11-26T20:40:20.827Z"
     },
     "bigscience/bloom": {
       "repository": "bigscience/bloom",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "3b839d981083341d954c2990c3a73e7aa8aca39ddfd6de00eececb9ea1c0b411",
-      "verified_at": "2026-11-26T20:04:34.619Z",
+      "content_hash": "a02824aa867360119e6c199af326d8d19e9ae1844d5aa7cd1a111ed20eba5601",
+      "verified_at": "2026-11-26T20:40:38.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T20:04:34.619Z"
+      "last_updated": "2026-11-26T20:40:38.264Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -5826,14 +5826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
-      "content_hash": "155cbc2c514a49a94a78e857617cc5ed0366ec1e28023144cad9cfff01027e67",
-      "verified_at": "2026-11-24T12:54:03.030Z",
+      "content_hash": "cf7b697b2455de311de303b1b858cf52fc57d178f6e7d3df1f3d1d4580ff8e84",
+      "verified_at": "2026-11-26T20:40:28.598Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T12:54:03.030Z"
+      "last_updated": "2026-11-26T20:40:28.598Z"
     },
     "liftbridge-io/liftbridge": {
       "repository": "liftbridge-io/liftbridge",

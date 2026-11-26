@@ -13582,3 +13582,7 @@ Every entry in this ledger must capture:
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `92486c78` | Multi-dimensional audit evidence | 2026-11-26T20:23:05.826Z |
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-11-26T20:31:39.094Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `0cc7bd5b` | Multi-dimensional audit evidence | 2026-11-26T20:31:53.745Z |
+| `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-26T20:40:20.813Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `2d381dba` | Multi-dimensional audit evidence | 2026-11-26T20:40:28.579Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `e09ae3b9` | Multi-dimensional audit evidence | 2026-11-26T20:40:38.243Z |
+| `learn-dom-h-82ff7827` | `project://software-mansion-react-native-reanimated` | `2d381dba` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md` | 2026-11-26T20:41:10.560Z |

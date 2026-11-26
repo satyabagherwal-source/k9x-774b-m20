@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T12:54:41.250Z",
+  "timestamp": "2026-11-26T20:41:10.776Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-software-mansion-react-native-reanimated-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [software-mansion-react-native-reanimated-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T12:54:41.250Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T20:41:10.776Z`  
 > **Learning ID**: `LEARN-EVO-software-mansion-react-native-reanimated-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Source Version**: `22cbff88`  
+> **Source Version**: `2d381dba`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T12:54:01.842Z  
+> **Timestamp**: 2026-11-26T20:40:27.418Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:54:01.668Z  
+> **Harvest Timestamp**: 2026-11-26T20:40:27.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: React Native's Animated library reimplemented
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11094 stars
+- **Stars / Engagement**: 11101 stars
 
 ---
 
@@ -923,461 +923,8 @@ export const getCodeWithOverrides = <C extends object, O extends object>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cec3cdc5` (2026-11-24)
-**Commit Message**: fix(Reanimated): stop reading React's shadow node wrapper on the UI thread (#11464)
-
-> [!NOTE]
-> This pull request was authored by AI on behalf of @tjzel.
-
-## Summary
-
-### Why
-
-The ThreadSanitizer nightly reports a data race in every run since #120
-(2026-11-17), for example
-[#123](https://github.com/software-mansion/react-native-reanimated/actions/runs/44677618659).
-The same race is reported in #11232, and #11449 proposed the same fix
-before it was closed in favor of this PR.
-
-Reanimated hands React Native's own shadow node wrappers to the UI
-thread, through animated styles and `useAnimatedRef`. React Native
-updates the node a wrapper points to on the JS thread whenever it clones
-that node itself, for example when a child is appended. The UI thread
-can read the same pointer at the same time. That is undefined behavior
-and can lead to a use-after-free.
-
-### What
-
-The UI thread no longer reads React Native's wrappers. It gets its own
-detached copy of each wrapper, which points at the same node and which
-React Native never updates. Nothing changes in the public API.
-
-### How
-
-```
-JS thread:  React Native's wrapper ──copy──▶ detached wrapper (same node, not known to React Native)
-UI th
-
-**File**: `apps/common-app/runtime-tests/reanimated/suites.ts` (modified, +10/-2)
-```diff
-@@ -52,6 +52,7 @@ const SUITES: RuntimeTestSuite[] = [
-     importTest: () => {
-       require('./tests/core/useAnimatedRef.test');
-       require('./tests/core/useAnimatedRefRetention.test');
-+      require('./tests/core/useAnimatedRefNewestClone.test');
-       require('./tests/core/getAnimatableRef.test');
-       // TODO: update expected values
-       // require('./tests/core/cancelAnimation.test');
-@@ -78,6 +79,12 @@ const SUITES: RuntimeTestSuite[] = [
-       // require('./tests/core/onLayout.test');
-     },
-   },
-+  {
-+    testSuiteName: 'shadow node wrapper race',
-+    importTest: () => require('./tests/core/shadowNodeWrapperRace.test'),
-+    // A stress test for TSan, which runs in the nightly full runs.
-+    fullRunOnly: true,
-+  },
-   {
-     testSuiteName: 'event handlers',
-     importTest: () => {
-@@ -310,7 +317,8 @@ export const REANIMATED_TEST_SUITES: RuntimeTestSuite[] = SUITES.map(
-   (suite) => ({
-     ...suite,
-     fullRunOnly:
--      !isBundleModeEnabled() &&
--      !LEGACY_EVAL_SHORT_RUN_SUITES.includes(suite.testSuiteName),
-+      suite.fullRunOnly ||
-+      (!isBundleModeEnabled() &&
-+        !LEGACY_EVAL_SHORT_RUN_SUITES.includes(suite.testSuiteName)),
-   })
- );
-```
-
-**File**: `apps/common-app/runtime-tests/reanimated/tests/core/shadowNodeWrapperRace.test.tsx` (added, +196/-0)
-```diff
-@@ -0,0 +1,196 @@
-+import type { ReactNode } from 'react';
-+import { memo, useEffect, useState } from 'react';
-+import { ScrollView, StyleSheet, Text, View } from 'react-native';
-+import type { AnimatedRef, SharedValue } from 'react-native-reanimated';
-+import Animated, {
-+  measure,
-+  scrollTo,
-+  useAnimatedRef,
-+  useAnimatedStyle,
-+  useFrameCallback,
-+  useSharedValue,
-+  withRepeat,
-+  withTiming,
-+} from 'react-native-reanimated';
-+
-+import {
-+  describe,
-+  expect,
-+  render,
-+  test,
-+  wait,
-+} from '../../../ReJest/RuntimeTestsApi';
-+
-+// Run under TSan. React Native writes shadow node wrappers on the JS thread,
-+// these tests read them on the UI thread (#11232).
-+
-+const STRESS_DURATION_MS = 8000;
-+const BOX_COUNT = 24;
-+const SCROLL_BOX_COUNT = 12;
-+
-+function useJSCommitEveryFrame() {
-+  const [tick, setTick] = useState(0);
-+  useEffect(() => {
-+    let frame = requestAnimationFrame(function loop() {
-+      setTick((value) => value + 1);
-+      frame = requestAnimationFrame(loop);
-+    });
-+    return () => cancelAnimationFrame(frame);
-+  }, []);
-+  return tick;
-+}
-+
-+// Each React commit relayouts the boxes while the UI thread measures them.
-+const MeasuredBox = memo(function MeasuredBox({
-+  index,
-+  onRef,
-+}: {
-+  index: number;
-+  onRef: (index: number, ref: AnimatedRef<View>) => void;
-+}) {
-+  const ref = useAnimatedRef<View>();
-+  useEffect(() => {
-+    onRef(index, ref);
-+  }, [index, onRef, ref]);
-+  return <View ref={ref} style={styles.measuredBox} />;
-+});
-+
-+function MeasureStress({ framesOnUI }: { framesOnUI: SharedValue<number> }) {
-+  const tick = useJSCommitEveryFrame();
-+  const [refs] = useState<AnimatedRef<View>[]>(() => []);
-+  const [onRef] = useState(
-+    () => (index: number, ref: AnimatedRef<View>) => (refs[index] = ref)
-+  );
-+  const [boxRefs, setBoxRefs] = useState<AnimatedRef<View>[]>([]);
-+
-+  useEffect(() => {
-+    // The refs are registered in child effects, which run first.
-+    setBoxRefs([...refs]);
-+  }, [refs]);
-+
-+  useFrameCallback(() => {
-+    for (const ref of boxRefs) {
-+      measure(ref);
-+    }
-+    framesOnUI.value += 1;
-+  });
-+
-+  return (
-+    <View style={styles.container}>
-+      <View style={{ height: 10 + (tick % 2) * 10 }} />
-+      {Array.from({ length: BOX_COUNT }, (_, index) => (
-+        <MeasuredBox key={index} index={index} onRef={onRef} />
-+      ))}
-+    </View>
-+  );
-+}
-+
-+// Scrolling updates the ScrollView state, so each React commit clones the
-+// animated box while the UI thread updates its props.
-+const ScrollBox = memo(function ScrollBox({
-+  framesOnUI,
-+}: {
-+  framesOnUI: SharedValue<number>;
-+}) {
-+  const scrollRef = useAnimatedRef<ScrollView>();
-+  const opacity = useSharedValue(1);
-+
-+  useEffect(() => {
-+    opacity.value = withRepeat(withTiming(0.5, { duration: 200 }), -1, true);
-+  }, [opacity]);
-+
-+  const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
-+
-+  useFrameCallback((frameInfo) => {
-+    scrollTo(scrollRef, (frameInfo.timeSinceFirstFrame / 4) % 200, 0, false);
-+    framesOnUI.value += 1;
-+  });
-+
-+  return (
-+    <Animated.View style={[styles.scrollBox, animatedStyle]}>
-+      <Animated.ScrollView ref={scrollRef} horizontal>
-+        <View style={styles.scrollContent}>
-+          <Text>scroll</Text>
-+        </View>
-+      </Animated.ScrollView>
-+    </Animated.View>
-+  );
-+});
-+
-+function ScrollStress({ framesOnUI }: { framesOnUI: SharedValue<number> }) {
-+  const tick = useJSCommitEveryFrame();
-+  return (
-+    <View style={styles.container}>
-+      <View style={{ height: 10 + (tick % 2) * 10 }} />
-+      {Array.from({ length: SCROLL_BOX_COUNT }, (_, index) => (
-+        <ScrollBox key={index} framesOnUI={framesOnUI} />
-+      ))}
-+    </View>
-+  );
-+}
-+
-+function FramesCounter({
-+  children,
-+  onFramesOnUI,
-+}: {
-+  children: (framesOnUI: SharedValue<number>) => ReactNode;
-+  onFramesOnUI: (framesOnUI: SharedValue<number>) => void;
-+}) {
-+  const framesOnUI = useSharedValue(0);
-+  useEffect(() => {
-+    onFramesOnUI(framesOnUI);
-+  }, [framesOnUI, onFramesOnUI]);
-+  return <>{children(framesOnUI)}</>;
-+}
-+
-+async function runStress(
-+  build: (framesOnUI: SharedValue<number>) => ReactNode
-+) {
-+  let framesOnUI: SharedValue<number> | null = null;
-+  await render(
-+    <FramesCounter onFramesOnUI={(value) => (framesOnUI = value)}>
-+      {build}
-+    </FramesCounter>
-+  );
-+  await wait(STRESS_DURATION_MS);
-+  const frames = framesOnUI!.value;
-+  await render(null);
-+  return frames;
-+}
-+
-+describe('shadow node wrapper race (#11232)', () => {
-+  test('measure on the UI thread while React relayouts the views', async () => {
-+    const frames = await runStress((framesOnUI) => (
-+      <MeasureStress framesOnUI={framesOnUI} />
-+    ));
-+    expect(frames > 0).toBe(true);
-+  });
-+
-+  test('animated style and scrollTo on the UI thread while React progresses state', async () => {
-+    const frames = await runStress((framesOnUI) => (
-+      <ScrollStress framesOnUI={framesOnUI} />
-+   
-```
-
-**File**: `apps/common-app/runtime-tests/reanimated/tests/core/useAnimatedRefNewestClone.test.tsx` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+import React from 'react';
-+import { findNodeHandle, TextInput, View } from 'react-native';
-+import type { AnimatedRef, MeasuredDimensions } from 'react-native-reanimated';
-+import Animated, {
-+  dispatchCommand,
-+  measure,
-+  setNativeProps,
-+  useAnimatedRef,
-+} from 'react-native-reanimated';
-+import { runOnRuntimeAsyncWithId, UIRuntimeId } from 'react-native-worklets';
-+
-+import {
-+  describe,
-+  expect,
-+  notify,
-+  render,
-+  test,
-+  waitForFrames,
-+  waitForNotification,
-+} from '../../../ReJest/RuntimeTestsApi';
-+
-+const WIDTHS = [10, 20, 30, 40, 50];
-+const SET_NATIVE_PROPS_OPACITY = 0.5;
-+const FOCUSED = 'NEWEST_CLONE_INPUT_FOCUSED';
-+const BLURRED = 'NEWEST_CLONE_INPUT_BLURRED';
-+
-+let viewRef: AnimatedRef<Animated.View> | undefined;
-+let inputRef: AnimatedRef<TextInput> | undefined;
-+
-+function ResizedView({ width }: { width: number }) {
-+  const animatedRef = useAnimatedRef<Animated.View>();
-+  viewRef = animatedRef;
-+  return (
-+    <View>
-+      <Animated.View
-+        ref={animatedRef}
-+        style={{ width, height: 10, backgroundColor: 'red' }}
-+      />
-+    </View>
-+  );
-+}
-+
-+function ResizedInput({ width }: { width: number }) {
-+  const animatedRef = useAnimatedRef<TextInput>();
-+  inputRef = animatedRef;
-+  return (
-+    <View style={{ marginTop: 100 }}>
-+      <TextInput
-+        ref={animatedRef}
-+        style={{ width, height: 40, borderWidth: 1 }}
-+        onFocus={() => notify(FOCUSED)}
-+        onBlur={() => notify(BLURRED)}
-+      />
-+    </View>
-+  );
-+}
-+
-+function measureOnUI(animatedRef: AnimatedRef<Animated.View>) {
-+  return runOnRuntimeAsyncWithId(UIRuntimeId, () => {
-+    'worklet';
-+    return measure(animatedRef);
-+  }) as Promise<MeasuredDimensions | null>;
-+}
-+
-+async function renderEveryWidth(renderWidth: (width: number) => Promise<void>) {
-+  for (const width of WIDTHS) {
-+    await renderWidth(width);
-+    await waitForFrames(2);
-+  }
-+}
-+
-+describe('useAnimatedRef on the UI runtime after React clones the view', () => {
-+  test('measure returns the layout of the newest clone', async () => {
-+    await renderEveryWidth((width) => render(<ResizedView width={width} />));
-+    await waitForFrames(3);
-+
-+    const measured = await measureOnUI(viewRef!);
-+    expect(measured?.width).toBe(WIDTHS[WIDTHS.length - 1]);
-+
-+    await render(null);
-+  });
-+
-+  test('setNativeProps updates the newest clone', async () => {
-+    await renderEveryWidth((width) => render(<ResizedView width={width} />));
-+    await waitForFrames(3);
-+    const animatedRef = viewRef!;
-+    const tag = findNodeHandle(animatedRef.current) ?? -1;
-+
-+    await runOnRuntimeAsyncWithId(UIRuntimeId, () => {
-+      'worklet';
-+      setNativeProps(animatedRef, { opacity: SET_NATIVE_PROPS_OPACITY });
-+      global._maybeFlushUIUpdatesQueue();
-+    });
-+    await waitForFrames(3);
-+
-+    const mounted = await runOnRuntimeAsyncWithId(UIRuntimeId, () => {
-+      'worklet';
-+      return global._obtainMountedViewProps(tag, false);
-+    });
-+    expect(mounted?.opacity).toBe(SET_NATIVE_PROPS_OPACITY);
-+    expect(mounted?.width).toBe(WIDTHS[WIDTHS.length - 1]);
-+
-+    await render(null);
-+  });
-+
-+  test('dispatchCommand reaches the native view of the newest clone', async () => {
-+    await renderEveryWidth((width) =>
-+      render(<ResizedInput width={width * 4} />)
-+    );
-+    await waitForFrames(3);
-+    const animatedRef = inputRef!;
-+
-+    await runOnRuntimeAsyncWithId(UIRuntimeId, () => {
-+      'worklet';
-+      dispatchCommand(animatedRef, 'focus');
-+    });
-+    await waitForNotification(FOCUSED);
-+
-+    await runOnRuntimeAsyncWithId(UIRuntimeId, () => {
-+      'worklet';
-+      dispatchCommand(animatedRef, 'blur');
-+    });
-+    await waitForNotification(BLURRED);
-+
-+    await render(null);
-+  });
-+});
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/NativeModules/ReanimatedModuleProxy.cpp` (modified, +5/-0)
-```diff
-@@ -1676,6 +1676,11 @@ jsi::Object ReanimatedModuleProxy::toOptimizedObject(jsi::Runtime &rt) {
-         strongThis->setViewStyle(rt, at<0>(args), at<1>(args));
-       });
- 
-+  addMethod<1>(
-+      rt, obj, "createDetachedShadowNodeWrapper", [](jsi::Runtime &rt, const jsi::Value &, const jsi::Value(&args)[1]) {
-+        return Bridging<std::shared_ptr<const ShadowNode>>::toJs(rt, shadowNodeFromValue(rt, at<0>(args)));
-+      });
-+
-   addMethod<1>(
-       rt,
-       obj,
-```
-
-**File**: `packages/react-native-reanimated/changelog/reanimated-ui-shadow-node-wrapper-race.fix.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Fix a data race between the UI thread reading a view and the JS thread cloning it, which could crash an app that animates a view while React re-renders it.
-```
-
-**File**: `packages/react-native-reanimated/src/ReanimatedModule/NativeReanimated.ts` (modified, +6/-0)
-```diff
-@@ -184,6 +184,12 @@ See https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshooti
-     this.#reanimatedModuleProxy.setCSSEventHandler(handler);
-   }
- 
-+  createDetachedShadowNodeWrapper(shadowNodeWrapper: ShadowNodeWrapper) {
-+    return this.#reanimatedModuleProxy.createDetachedShadowNodeWrapper(
-+      shadowNodeWrapper
-+    );
-+  }
-+
-   markNodeAsRemovable(shadowNodeWrapper: ShadowNodeWrapper) {
-     this.#reanimatedModuleProxy.markNodeAsRemovable(shadowNodeWrapper);
-   }
-```
-
-**File**: `packages/react-native-reanimated/src/ReanimatedModule/js-reanimated/JSReanimated.ts` (modified, +6/-0)
-```diff
-@@ -274,6 +274,12 @@ class JSReanimated implements IReanimatedModule {
-     );
-   }
- 
-+  createDetachedShadowNodeWrapper(
-+    shadowNodeWrapper: ShadowNodeWrapper
-+  ): ShadowNodeWrapper {
-+    return shadowNodeWrapper;
-+  }
-+
-   markNodeAsRemovable(_shadowNodeWrapper: ShadowNodeWrapper): void {
-     throw new Error(
-       '[Reanimated] markNodeAsRemovable is not available in JSReanimated.'
-```
-
-**File**: `packages/react-native-reanimated/src/ReanimatedModule/reanimatedModuleProxy.ts` (modified, +4/-0)
-```diff
-@@ -68,6 +68,10 @@ export interface ReanimatedModuleProxy {
-   /** Registers the single handler receiving every CSS event batch. */
-   setCSSEventHandler(handler: CSSEventHandler): void;
- 
-+  createDetachedShadowNodeWrapper(
-+    shadowNodeWrapper: ShadowNodeWrapper
-+  ): ShadowNodeWrapper;
-+
-   markNodeAsRemovable(shadowNodeWrapper: ShadowNodeWrapper): void;
-   unmarkNodeAsRemovable(viewTag: number): void;
- 
-```
-
----
-
-### Incident Patch 2: `aa4506c7` (2026-11-23)
-**Commit Message**: fix: stabilize Synchronizable benchmark resources (#11492)
+### Incident Patch 1: `2dbb6b4a` (2026-11-24)
+**Commit Message**: fix(Worklets): assert that the runtime id is a number (#11512)
 
 > [!NOTE]
 > This pull request was authored by AI on behalf of @tjzel.
@@ -1386,328 +933,294 @@ UI th
 
 ### Why
 
-The Synchronizable performance example recreated both Synchronizable
-objects and its Worker Runtime on every React rerender. Retaining those
-resources makes repeated measurements comparable. Overlapping button
-presses could also reset and share the same counter while a run was
-active.
+Small debugging aid. When a Worklets API that takes a runtime id
+(`abortWorkletRuntime`, `scheduleOnRuntimeWithId`,
+`runOnRuntimeSyncWithId`, `runOnRuntimeAsyncWithId`) gets something
+other than a number, a Debug build aborts inside JSI with a generic
+assertion, without saying which Worklets check failed. The other runtime
+id checks (finite, integer, not negative, below 2^64) already have
+Worklets messages.
 
-This change was split from pull request
-[#11491](https://github.com/software-mansion/react-native-reanimated/pull/11491)
-following review feedback.
+It was found through a type error in a test written for #11488, where
+the runtime object was passed instead of its id. TypeScript rejects that
+call, so this only helps callers that bypass the types.
+
+### What
+
+A non-number runtime id now fails a Worklets assertion with the message
+"[Worklets] Runtime id must be a number." in Debug builds, next to the
+existing runtime id assertions. Release builds are unchanged.
 
 ### How
 
-The example now creates its two Synchronizable objects and Worker
-Runtime once per mount, resets the selected counter before each run, and
-rejects overlapping runs until all three runtimes finish. Benchmark
-buttons are disabled while a run is active.
+One debug assertion is added before the id is read as a number, in the
+same place and style as the four existing runtime id assertions.
 
-### Testing
+### Test plan
 
-A focused native Jest regression verifies that 30 rerenders still create
-exactly two Synchronizable objects and one Worker Runtime. Another
-regression verifies that rapid repeated presses schedule only one run.
-The common-app native type check and focused formatting checks pass
-locally.
+No automated test: the assertion aborts the app, wh
 
-### Performance
-
-Across 30 controlled rerende
-
-**File**: `apps/common-app/src/apps/worklets/examples/SynchronizableExample.tsx` (modified, +29/-13)
+**File**: `packages/react-native-worklets/Common/cpp/worklets/NativeModules/JSIWorkletsModuleProxy.cpp` (modified, +1/-0)
 ```diff
-@@ -39,18 +39,18 @@ export default function SynchronizablePerformanceExample() {
-   const [selectedVariant, setSelectedVariant] =
-     React.useState<VariantKey>('dynamic');
-   const [runningRuntimes, setRunningRuntimes] = React.useState(0);
--
--  const fixedSynchronizable: FixedSynchronizable<number> = createSynchronizable(
--    initialValue,
--    { fixedType: true }
--  );
--
--  const synchronizables: Record<VariantKey, Synchronizable<number>> = {
-+  const runInProgress = React.useRef(false);
-+  const [synchronizables] = React.useState<
-+    Record<VariantKey, Synchronizable<number>>
-+  >(() => ({
-     dynamic: createSynchronizable(initialValue),
--    fixed: fixedSynchronizable,
--  };
--
--  const runtime = createWorkletRuntime({ name: 'SynchronizableExample' });
-+    fixed: createSynchronizable(initialValue, { fixedType: true }),
-+  }));
-+  const fixedSynchronizable =
-+    synchronizables.fixed as FixedSynchronizable<number>;
-+  const [runtime] = React.useState(() =>
-+    createWorkletRuntime({ name: 'SynchronizableExample' })
-+  );
+@@ -321,6 +321,7 @@ std::shared_ptr<void> makePromiseDropGuard(
+ }
  
-   function setResult(
-     variant: VariantKey,
-@@ -64,7 +64,14 @@ export default function SynchronizablePerformanceExample() {
-     }));
-   }
- 
--  const decrementRuntimes = () => setRunningRuntimes((prev) => prev - 1);
-+  const decrementRuntimes = () =>
-+    setRunningRuntimes((prev) => {
-+      const next = prev - 1;
-+      if (next === 0) {
-+        runInProgress.current = false;
-+      }
-+      return next;
-+    });
- 
-   function setValueAndDuration(
-     variant: VariantKey,
-@@ -159,7 +166,12 @@ export default function SynchronizablePerformanceExample() {
-   }
- 
-   function runBenchmark(benchmark: (variant: VariantKey) => void) {
-+    if (runInProgress.current) {
-+      return;
-+    }
-+    runInProgress.current = true;
-     const variant = selectedVariant;
-+    synchronizables[variant].setBlocking(initialValue);
-     resetVariant(variant);
-     setRunningRuntimes(3);
- 
-@@ -212,23 +224,27 @@ export default function SynchronizablePerformanceExample() {
-         title={`Selected variant: ${selectedVariant}`}
-       />
-       <Button
-+        disabled={runningRuntimes > 0}
-         onPress={() => runBenchmark(getDirtySetBlocking)}
-         title=".getDirty() & .setBlocking() on two threads"
-       />
-       <Button
-+        disabled={runningRuntimes > 0}
-         onPress={() => runBenchmark(getBlockingSetBlocking)}
-         title=".getBlocking() & .setBlocking() on two threads"
-       />
-       <Button
-+        disabled={runningRuntimes > 0}
-         onPress={() => runBenchmark(setBlockingSetBlockingTransaction)}
-         title=".setBlocking() with setter on two threads - transaction"
-       />
-       <Button
--        disabled={selectedVariant !== 'fixed'}
-+        disabled={selectedVariant !== 'fixed' || runningRuntimes > 0}
-         onPress={() => runBenchmark(getDirtySetDirty)}
-         title=".getDirty() & .setDirty() on two threads - fixed only"
-       />
-       <Button
-+        disabled={runningRuntimes > 0}
-         onPress={() => runBenchmark(imperativeLocking)}
-         title="Imperative locking"
-       />
+ RuntimeData::RuntimeId runtimeIdFromJS(const jsi::Value &value) {
++  react_native_assert(value.isNumber() && "[Worklets] Runtime id must be a number.");
+   const auto runtimeId = value.getNumber();
+   react_native_assert(std::isfinite(runtimeId) && "[Worklets] Runtime id must be a finite number.");
+   react_native_assert(std::trunc(runtimeId) == runtimeId && "[Worklets] Runtime id must be an integer.");
 ```
 
-**File**: `packages/react-native-reanimated/__tests__/synchronizableExample.test.tsx` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+import { act, fireEvent, render, screen } from '@testing-library/react-native';
-+import {
-+  createSynchronizable,
-+  createWorkletRuntime,
-+  scheduleOnRuntime,
-+  scheduleOnUI,
-+} from 'react-native-worklets';
-+
-+import SynchronizablePerformanceExample from '../../../apps/common-app/src/apps/worklets/examples/SynchronizableExample';
-+
-+jest.mock('react-native-worklets', () => ({
-+  createSynchronizable: jest.fn(() => ({
-+    getBlocking: jest.fn(),
-+    getDirty: jest.fn(),
-+    lock: jest.fn(),
-+    setBlocking: jest.fn(),
-+    setDirty: jest.fn(),
-+    unlock: jest.fn(),
-+  })),
-+  createWorkletRuntime: jest.fn(() => ({ runtimeId: 3 })),
-+  scheduleOnRN: jest.fn(),
-+  scheduleOnRuntime: jest.fn(),
-+  scheduleOnUI: jest.fn(),
-+}));
-+
-+test('retains benchmark resources across React rerenders', () => {
-+  render(<SynchronizablePerformanceExample />);
-+
-+  expect(createSynchronizable).toHaveBeenCalledTimes(2);
-+  expect(createWorkletRuntime).toHaveBeenCalledTimes(1);
-+
-+  for (let i = 0; i < 30; i++) {
-+    fireEvent.press(
-+      screen.getByText(`Selected variant: ${i % 2 === 0 ? 'dynamic' : 'fixed'}`)
-+    );
-+  }
-+
-+  expect(createSynchronizable).toHaveBeenCalledTimes(2);
-+  expect(createWorkletRuntime).toHaveBeenCalledTimes(1);
-+  expect(screen.getByText('Selected variant: dynamic')).toBeOnTheScreen();
-+});
-+
-+test('does not start overlapping benchmark runs', () => {
-+  jest.useFakeTimers();
-+  render(<SynchronizablePerformanceExample />);
-+
-+  const benchmarkButton = screen.getByText(
-+    '.getDirty() & .setBlocking() on two threads'
-+  );
-+  fireEvent.press(benchmarkButton);
-+  fireEvent.press(benchmarkButton);
-+  act(() => jest.advanceTimersByTime(50));
-+
-+  expect(scheduleOnUI).toHaveBeenCalledTimes(1);
-+  expect(scheduleOnRuntime).toHaveBeenCalledTimes(1);
-+  jest.useRealTimers();
-+});
-```
-
-**File**: `packages/react-native-reanimated/changelog/stable-synchronizable-benchmark.fix.md` (added, +1/-0)
+**File**: `packages/react-native-worklets/changelog/invalid-runtime-id-js-error.fix.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Stabilize the Synchronizable performance example resources and prevent overlapping benchmark runs.
++Report "\[Worklets] Runtime id must be a number." in Debug builds when a Worklets API receives a runtime id that is not a number.
 ```
 
 ---
 
-### Incident Patch 3: `a896ab65` (2026-11-23)
-**Commit Message**: ci: run the Android nightlies on JDK 17 to fix the JVM crash on ubuntu-26.04 (#11461)
+### Incident Patch 2: `28a0c38b` (2026-11-26)
+**Commit Message**: fix(CI): prefer the pinned LLVM for clang-tidy (#11557)
 
 > [!NOTE]
-> This pull request was authored by AI on behalf of @tjzel.
+> This pull request was authored by AI on behalf of @tshmieldev.
 
 ## Summary
 
-### Why
-
-The React Native nightly fails every night. Runs #1001 and #1002 crashed
-in Gradle with `java.lang.ExceptionInInitializerError` / `Cannot invoke
-"jdk.internal.platform.CgroupInfo.getMountPoint()" because
-"anyController" is null`. Both ran on the new `ubuntu-26.04` image
-behind `ubuntu-latest`, with Zulu Java 18, which no longer receives
-updates.
-
-### How
-
-The three workflows that pinned Java 18
-(`react-native-nightly-reanimated-build-check-nightly.yml`,
-`reanimated-compatibility-check-nightly.yml`,
-`reanimated-worklets-compatibility-check.yml`) now use Java 17, like the
-Android runtime tests and the Windows build check. The Android
-compatibility result cache is keyed by the Java version, so the matrix
-runs again with the new JDK.
-
-The testimonial avatar fix for the URL validation nightly moved to
-#11467.
-
-### Performance
-
-Not applicable.
-
-### Alternatives
-
-- Pin `runs-on: ubuntu-24.04` for these jobs: hides the JVM problem
-until that image is retired.
+CI installs `llvm@22`, but `clang-tidy-lint.sh` preferred `$PATH` and
+the unversioned `llvm`. On a machine that also has another LLVM, lint
+ran with that one. On a Namespace macOS runner (image ships `llvm`,
+`llvm@15` and `llvm@21`) iOS lint failed on a folly
+`char_traits<unsigned char>` deprecation. The pinned major now lives in
+`scripts/llvm-tools/llvm-version`: the workflow installs it, the script
+uses it first and warns when it falls back to another LLVM.
 
 ## Test plan
 
-The React Native nightly dispatched on t
+Script run against a fake Homebrew prefix:
 
-**File**: `.github/workflows/react-native-nightly-reanimated-build-check-nightly.yml` (modified, +2/-2)
+- `llvm@22` and `llvm` installed, `llvm` on `$PATH`: picks `llvm@22`.
+- No `llvm@22`: falls back to `llvm` and prints the warning.
+- Android compile database with the NDK `clang++`: the NDK `clang-tidy`
+still wins, the runner comes from `llvm@22`.
+- Old `run-clang-tidy` on `$PATH` without `clang-tidy`: runs the
+`llvm@22` runner.
+- `Example iOS build check` on this PR.
+
+## Changelog
+
+- [x] I added a changelog fragment with `yarn changelog:add` for each
+changed package, or this PR does not change `react-native-reanimated` or
+`re
+
+**File**: `.github/workflows/example-ios-build-check.yml` (modified, +1/-1)
 ```diff
-@@ -43,12 +43,12 @@ jobs:
-         # Sometimes `npx @react-native-community/cli init` fails at random.
-         # Pre-installing it with Yarn seems to improve stability.
-         run: corepack enable && yarn init
--      - name: Set up JDK 18
-+      - name: Set up JDK 17
-         if: ${{ matrix.platform == 'Android' }}
-         uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62
-         with:
-           distribution: 'zulu'
--          java-version: '18'
-+          java-version: '17'
-       - name: Load "next" tag if available
-         run: |
-           if npm view react-native dist-tags | grep -q 'next:' ; then
+@@ -54,7 +54,7 @@ jobs:
+ 
+       - name: Install LLVM tools (xcode-build-server + llvm clang-tidy)
+         if: steps.result-cache.outputs.cache-hit != 'true'
+-        run: brew install xcode-build-server llvm@22
++        run: brew install xcode-build-server "llvm@$(cat scripts/llvm-tools/llvm-version)"
+ 
+       - name: Use Node.js
+         if: steps.result-cache.outputs.cache-hit != 'true'
 ```
 
-**File**: `.github/workflows/reanimated-compatibility-check-nightly.yml` (modified, +2/-2)
+**File**: `scripts/llvm-tools/README.md` (modified, +5/-0)
 ```diff
-@@ -56,12 +56,12 @@ jobs:
-     steps:
-       - name: Checkout
-         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
--      - name: Set up JDK 18
-+      - name: Set up JDK 17
-         if: ${{ matrix.platform == 'Android' }}
-         uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62
-         with:
-           distribution: 'zulu'
--          java-version: '18'
-+          java-version: '17'
-       - name: Setup Node
-         uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610
-         with:
+@@ -49,6 +49,11 @@ Scripts in this repository automatically pick the right clang-tidy binary
+ based on the file being linted, so you don't have to worry about it as
+ long as both LLVM and NDK clang-tidy binaries are available.
+ 
++CI lints with the LLVM major version in `scripts/llvm-tools/llvm-version`.
++Install the same version (`brew install llvm@22`) to get the same
++diagnostics locally. When it is installed, the lint script uses it even if
++another LLVM is on `$PATH`.
++
+ ### xcode-build-server (only for iOS)
+ 
+ xcode-build-server is a utility tool that parses Xcode's build logs into a
 ```
 
-**File**: `.github/workflows/reanimated-worklets-compatibility-check.yml` (modified, +5/-4)
+**File**: `scripts/llvm-tools/clang-tidy-lint.sh` (modified, +20/-5)
 ```diff
-@@ -65,6 +65,7 @@ jobs:
-       APP_NAME: app
-       CACHE_KEY: ${{ matrix.reactNativeVersion }}-${{ matrix.reanimatedVersion }}-${{ matrix.workletsVersion }}
-       BUILD_MARKER_DIR: .compatibility-build-markers
-+      JAVA_VERSION: '17'
-     steps:
-       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+@@ -111,9 +111,16 @@ run_clang_tidy="${run_clang_tidy:-run-clang-tidy}"
+ # `/usr/local/bin`, and Homebrew's `llvm` formulae are keg-only, so none of
+ # them is auto-symlinked into `<prefix>/bin`. Search common install locations
+ # explicitly so the script works without the user having to fiddle with their
+-# shell rc. Versioned formulae (`llvm@22`, `llvm@21`, ...) live next to the
+-# unversioned one under `<prefix>/opt`; they are appended newest major first,
+-# after the unversioned `llvm` and within their own Homebrew prefix.
++# shell rc. The LLVM major pinned in `llvm-version` wins over $PATH and every
++# other install, so the lint matches CI. Other versioned formulae (`llvm@22`,
++# `llvm@21`, ...) live next to the unversioned one under `<prefix>/opt`; they
++# are appended newest major first, after the unversioned `llvm` and within
++# their own Homebrew prefix.
++llvm_major="$(cat "$script_dir/llvm-version")"
++LLVM_PINNED=(
++  "/opt/homebrew/opt/llvm@${llvm_major}/bin"
++  "/usr/local/opt/llvm@${llvm_major}/bin"
++)
+ LLVM_FALLBACKS=(
+   "/opt/homebrew/opt/llvm/bin"
+   "/usr/local/opt/llvm/bin"
+@@ -134,7 +141,12 @@ LLVM_FALLBACKS+=(
+ resolve_binary() {
+   local name="$1"
+   local first="$2"
+-  local found
++  local found dir
++  if [ "${first#/}" = "$first" ]; then
++    for dir in "${LLVM_PINNED[@]}"; do
++      if [ -x "$dir/$name" ]; then printf '%s' "$dir/$name"; return; fi
++    done
++  fi
+   found="$(command -v "$first" 2>/dev/null || true)"
+   if [ -n "$found" ]; then printf '%s' "$found"; return; fi
+   for dir in "${LLVM_FALLBACKS[@]}"; do
+@@ -148,6 +160,9 @@ if [ -z "$resolved_tidy" ]; then
+   echo "error: clang-tidy not found on PATH or under ${LLVM_FALLBACKS[*]}" >&2
+   exit 1
+ fi
++if [ "${clang_tidy_binary#/}" = "$clang_tidy_binary" ] && [[ " ${LLVM_PINNED[*]} " != *" $(dirname "$resolved_tidy") "* ]]; then
++  echo "warning: $resolved_tidy is not from llvm@${llvm_major}, results can differ from CI (brew install llvm@${llvm_major})" >&2
++fi
  
-@@ -73,18 +74,18 @@ jobs:
-         with:
-           node-version-file: '.nvmrc'
+ # Prepend the resolved tool's dir so run-clang-tidy's child clang-tidy invocations also see it.
+ tidy_dir="$(dirname "$resolved_tidy")"
+@@ -157,7 +172,7 @@ resolved_runner="$(resolve_binary run-clang-tidy "$run_clang_tidy")"
  
--      - name: Set up JDK 18
-+      - name: Set up JDK 17
-         uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
-         with:
-           distribution: 'zulu'
--          java-version: '18'
-+          java-version: ${{ env.JAVA_VERSION }}
+ if [ -z "$resolved_runner" ]; then
+   echo "error: run-clang-tidy not found on PATH or under ${LLVM_FALLBACKS[*]}" >&2
+-  echo "       install LLVM (brew install llvm) or use an NDK that ships clang-tidy" >&2
++  echo "       install LLVM (brew install llvm@${llvm_major}) or use an NDK that ships clang-tidy" >&2
+   exit 1
+ fi
  
-       - name: Restore result cache
-         id: result-cache
-         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
-         with:
-           path: ${{ env.BUILD_MARKER_DIR }}/${{ env.CACHE_KEY }}.success
--          key: reanimated-worklets-compat-android-${{ env.CACHE_KEY }}
-+          key: reanimated-worklets-compat-android-jdk${{ env.JAVA_VERSION }}-${{ env.CACHE_KEY }}
+```
+
+**File**: `scripts/llvm-tools/llvm-version` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++22
+```
+
+---
+
+### Incident Patch 3: `8f6a2fa2` (2026-11-26)
+**Commit Message**: fix(Reanimated): build with USE_ANIMATION_BACKEND on Android (#11555)
+
+> [!NOTE]
+> This pull request was authored by AI on behalf of @pawicao.
+
+## Summary
+
+Fixes #11554
+
+With `USE_ANIMATION_BACKEND` on, the Android build failed with
+`-Werror,-Wunneeded-internal-declaration` in
+`AnimatedPropsRegistry.cpp`. React Native adds `-Wall -Werror` through
+`target_compile_reactnative_options`. The two `static` overloads of
+`roundTextMetrics` are each called in only one branch of `if constexpr`,
+so one of them is always unused. I moved both overloads to
+`Tools/TextMetrics.h` as `inline` functions next to `roundTextMetric`.
+That also removed the `[[maybe_unused]]` on the JSI overload.
+
+## Test plan
+
+`./gradlew :app:assembleDebug` in `apps/fabric-example` passes with
+`USE_ANIMATION_BACKEND: true` (and
+`FORCE_REACT_RENDER_FOR_SETTLED_ANIMATIONS: false`) and with the default
+flags. Before the fix, the build with the flag on failed with the error
+from the issue.
+
+## Changelog
+
+- [x] I added a changelog fragment with `yarn changelog:add` for each
+changed package, or this PR does not change `react-native-reanimated` or
+`react-native-worklets`.
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/updates/AnimatedPropsRegistry.cpp` (modified, +0/-20)
+```diff
+@@ -19,26 +19,6 @@ static inline std::shared_ptr<const ShadowNode> shadowNodeFromValue(
+   return Bridging<std::shared_ptr<const ShadowNode>>::fromJs(rt, shadowNodeWrapper);
+ }
  
-       - name: Skip already validated combination
-         if: steps.result-cache.outputs.cache-hit == 'true'
-@@ -122,7 +123,7 @@ jobs:
-         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
-         with:
-           path: ${{ env.BUILD_MARKER_DIR }}/${{ env.CACHE_KEY }}.success
--          key: reanimated-worklets-compat-android-${{ env.CACHE_KEY }}
-+          key: reanimated-worklets-compat-android-jdk${{ env.JAVA_VERSION }}-${{ env.CACHE_KEY }}
+-// Rounds in place. Used only with USE_ANIMATION_BACKEND, where the props are read from JSI directly.
+-[[maybe_unused]] static void roundTextMetrics(jsi::Runtime &rt, const jsi::Value &updates) {
+-  const auto object = updates.asObject(rt);
+-  for (const auto *propName : TEXT_METRIC_PROP_NAMES) {
+-    const auto value = object.getProperty(rt, propName);
+-    if (value.isNumber()) {
+-      object.setProperty(rt, propName, roundTextMetric(value.asNumber()));
+-    }
+-  }
+-}
+-
+-static void roundTextMetrics(folly::dynamic &updates) {
+-  for (const auto *propName : TEXT_METRIC_PROP_NAMES) {
+-    auto *value = updates.get_ptr(propName);
+-    if (value != nullptr && value->isNumber()) {
+-      *value = roundTextMetric(value->asDouble());
+-    }
+-  }
+-}
+-
+ void AnimatedPropsRegistry::update(jsi::Runtime &rt, const jsi::Value &operations, const double timestamp) {
+   react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
+   auto operationsArray = operations.asObject(rt).asArray(rt);
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Tools/TextMetrics.h` (modified, +21/-0)
+```diff
+@@ -1,5 +1,7 @@
+ #pragma once
  
-   reanimated-worklets-compatibility-check-ios:
-     if: github.repository == 'software-mansion/react-native-reanimated'
++#include <folly/dynamic.h>
++#include <jsi/jsi.h>
+ #include <react/utils/FloatComparison.h>
+ 
+ #include <array>
+@@ -19,4 +21,23 @@ inline double roundTextMetric(const double value) {
+   return std::round(value * stepsPerUnit) / stepsPerUnit;
+ }
+ 
++inline void roundTextMetrics(facebook::jsi::Runtime &rt, const facebook::jsi::Value &props) {
++  const auto object = props.asObject(rt);
++  for (const auto *propName : TEXT_METRIC_PROP_NAMES) {
++    const auto value = object.getProperty(rt, propName);
++    if (value.isNumber()) {
++      object.setProperty(rt, propName, roundTextMetric(value.asNumber()));
++    }
++  }
++}
++
++inline void roundTextMetrics(folly::dynamic &props) {
++  for (const auto *propName : TEXT_METRIC_PROP_NAMES) {
++    auto *value = props.get_ptr(propName);
++    if (value != nullptr && value->isNumber()) {
++      *value = roundTextMetric(value->asDouble());
++    }
++  }
++}
++
+ } // namespace reanimated
+```
+
+**File**: `packages/react-native-reanimated/changelog/animation-backend-unneeded-function.fix.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Fix the Android build failing with `-Wunneeded-internal-declaration` when `USE_ANIMATION_BACKEND` is enabled.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11522** (2026-11-24): chore: upgrade React Native to 0.89.0-rc.3 (@pawicao)
-- **PR #11515** (2026-11-24): docs(Worklets): turn off both Expo preset plugins in every Bundle Mode setup (@tshmieldev)
-- **PR #11513** (2026-11-24): docs(Worklets): turn off the Expo preset's plugin in the Bundle Mode setup (@tshmieldev)
-- **PR #11500** (2026-11-23): Fix Worklets sidebar scrollbar color (@tjzel)
-- **PR #11492** (2026-11-23): fix: stabilize Synchronizable benchmark resources (@tjzel)
-- **PR #11467** (2026-11-20): docs(Reanimated): serve testimonial avatars from the docs site (@tjzel)
+- **PR #11566** (2026-11-26): ci: set WORKLETS_STABLE_API_TARGET for expo-modules-core (@tshmieldev)
+- **PR #11561** (2026-11-26): docs: list Namespace as the CI sponsor (@tshmieldev)
+- **PR #11558** (2026-11-26): ci: run iOS workflows on Namespace runners (@tshmieldev)
+- **PR #11557** (2026-11-26): fix(CI): prefer the pinned LLVM for clang-tidy (@tshmieldev)
+- **PR #11556** (2026-11-26): docs(Worklets): Add SwiftPM integration example (@tshmieldev)
+- **PR #11555** (2026-11-26): fix(Reanimated): build with USE_ANIMATION_BACKEND on Android (@pawicao)
 
 ---
 
@@ -1727,41 +1240,31 @@ The React Native nightly dispatched on t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reanimated): stop reading React's shadow node wrapper on the UI thread
+## X. Worklets): assert that the runtime id is a number
 
 **RULE**:
-When implementing operations in `apps/common-app/runtime-tests/reanimated/suites.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-worklets/Common/cpp/worklets/NativeModules/JSIWorkletsModuleProxy.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cec3cdc5`: Reanimated): stop reading React's shadow node wrapper on the UI thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dbb6b4a`: Worklets): assert that the runtime id is a number. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/reanimated/suites.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-worklets/Common/cpp/worklets/NativeModules/JSIWorkletsModuleProxy.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      require('./tests/core/useAnimatedRefNewestClone.test');
-  {
-    testSuiteName: 'shadow node wrapper race',
-    importTest: () => require('./tests/core/shadowNodeWrapperRace.test'),
-    // A stress test for TSan, which runs in the nightly full runs.
-    fullRunOnly: true,
-  },
-      suite.fullRunOnly ||
-      (!isBundleModeEnabled() &&
-        !LEGACY_EVAL_SHORT_RUN_SUITES.includes(suite.testSuiteName)),
+  react_native_assert(value.isNumber() && "[Worklets] Runtime id must be a number.");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      !isBundleModeEnabled() &&
-      !LEGACY_EVAL_SHORT_RUN_SUITES.includes(suite.testSuiteName),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cec3cdc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dbb6b4a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

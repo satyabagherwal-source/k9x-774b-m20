@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T20:32:00.372Z",
+  "last_updated": "2026-11-26T20:41:12.920Z",
   "total_verified_learnings": 9134,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26175,
+  "total_items": 26181,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219223,8 +219223,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "ec2ea636",
-      "content_hash": "3b839d981083341d954c2990c3a73e7aa8aca39ddfd6de00eececb9ea1c0b411",
+      "source_version": "e09ae3b9",
+      "content_hash": "a02824aa867360119e6c199af326d8d19e9ae1844d5aa7cd1a111ed20eba5601",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -219292,6 +219292,11 @@
           "number": 10768,
           "title": "name the wiki page to retire explicitly in the semantic lint",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10774,
+          "title": "bump pdfjs-dist from 5.4.624 to 6.5.438",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219299,7 +219304,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T20:04:34.265Z",
+      "verified_at": "2026-11-26T20:40:37.996Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219350,13 +219355,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bitterbot-ai-bitterbot-desktop",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/bitterbot-ai-bitterbot-desktop-verification-protocol-empirical-defect-shield-for.md",
-      "title": "Verification Protocol: Empirical Defect Shield for Bitterbot-AI/bitterbot-desktop",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "ec2ea636",
-      "content_hash": "c00b892db5435d48f2d82aaab3bdb81b30757f6f081f6f15b1fd1374e97ce227",
+      "relative_path": "08_VERIFICATION/bitterbot-ai-bitterbot-desktop-learnings-verification-protocol-empirical-defect-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for bitterbot-ai-bitterbot-desktop-learnings",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "105b9498689e6cb95dc4ef5946709f20ddafb4fc806910b0b50400f4aa40e521",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:04:35.471Z"
+      "persisted_at": "2026-11-26T20:41:12.920Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -222116,8 +222121,8 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "22cbff88",
-      "content_hash": "155cbc2c514a49a94a78e857617cc5ed0366ec1e28023144cad9cfff01027e67",
+      "source_version": "2d381dba",
+      "content_hash": "cf7b697b2455de311de303b1b858cf52fc57d178f6e7d3df1f3d1d4580ff8e84",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
@@ -222145,6 +222150,11 @@
           "number": 10260,
           "title": "stop reading React's shadow node wrapper on the UI thread",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10773,
+          "title": "assert that the runtime id is a number",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222152,7 +222162,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T12:54:02.784Z",
+      "verified_at": "2026-11-26T20:40:28.343Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222203,13 +222213,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-software-mansion-react-native-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/software-mansion-react-native-screens-learnings-verification-protocol-empirical-.md",
-      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-screens-learnings",
-      "repository": "software-mansion-react-native-screens-learnings",
+      "relative_path": "08_VERIFICATION/software-mansion-react-native-reanimated-learnings-verification-protocol-empiric.md",
+      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-reanimated-learnings",
+      "repository": "software-mansion-react-native-reanimated-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa1524eb85d978fb618dc5dde44ee00f829a2f8c317e8670dc5466da86d64264",
+      "content_hash": "41f94bc60995bfb2558253601e98b11d9a04ec0d93254b490bb683abdc1bff1b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:29:15.737Z"
+      "persisted_at": "2026-11-26T20:41:11.344Z"
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -224702,7 +224712,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "4f8e3326db41b135fc3ce537830ffbd427839e6c1f57dae0fdaeadde0562392b",
+      "content_hash": "8b864472b4b53fbb5843a5c2aced0cff86a82926f5f88dc703385abb1a2da226",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "promoted_rules": [],
@@ -224711,7 +224721,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T07:18:26.297Z",
+      "verified_at": "2026-11-26T20:40:20.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224728,9 +224738,9 @@
       "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-3-medium Core Invariants",
       "repository": "stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "6b84890ec20bf069aa62e10c0d4bfcab0eb91da0c4730475868435e0ebcf5334",
+      "content_hash": "99f8e189de59d5ef9303e50bd175abe959ee3cf86a7d8f0e62fa5a3aeae92a7a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T07:18:26.698Z"
+      "persisted_at": "2026-11-26T20:40:21.033Z"
     },
     "learn-github-sceneview-sceneview": {
       "learning_id": "learn-github-sceneview-sceneview",
@@ -225170,9 +225180,9 @@
       "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-3-medium-learnings Core Invariants",
       "repository": "hf-stabilityai-stable-diffusion-3-medium-learnings",
       "source_version": "HEAD",
-      "content_hash": "e32e59d13c35f0a70ff9c88a4fe0ddd72ecdb5df07e040cf53905e8d97c08349",
+      "content_hash": "73f5ad28d2e2ba3af41c815b6fb513f5776e39df147d459054a4e586935bbd21",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T07:18:39.861Z"
+      "persisted_at": "2026-11-26T20:40:42.042Z"
     },
     "candidate_directive-demo-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back": {
       "item_id": "candidate_directive-demo-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back",
@@ -242070,10 +242080,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "ec2ea636",
-      "content_hash": "66de67b970684a4cd513b097328f1347450aefee340f75db24cd671473c2fce0",
+      "source_version": "e09ae3b9",
+      "content_hash": "1fc5e6b630c32c945a29f34930073d93aea45a1a1a3933e4794303a44d75ef8a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T20:04:35.204Z"
+      "persisted_at": "2026-11-26T20:40:38.697Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -279867,10 +279877,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-technical-construction-intelligence-sof.md",
       "title": "Technical Construction Intelligence: software-mansion/react-native-reanimated Core Invariants",
       "repository": "software-mansion/react-native-reanimated",
-      "source_version": "22cbff88",
-      "content_hash": "125e96299645eaf49fe470dea42d0da7ddbf70618133e23a32e0b64de7a55cf9",
+      "source_version": "2d381dba",
+      "content_hash": "08f24b8111012f8ee2ac0e8154b40441e22eb101d74de88b8a3360450ae50fd0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T12:54:03.437Z"
+      "persisted_at": "2026-11-26T20:40:29.005Z"
     },
     "rule-8990": {
       "learning_id": "rule-8990",
@@ -279954,9 +279964,9 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
       "repository": "software-mansion-react-native-reanimated-learnings",
       "source_version": "HEAD",
-      "content_hash": "3dc9901fa5ed8895f667f83c971b36357786be5b667f405557c5efde8551a345",
+      "content_hash": "affefd01f5ffc2defc0d118bc0d9484c67d1baf73dda1465e5d0cae7e1b89fec",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T12:54:41.593Z"
+      "persisted_at": "2026-11-26T20:41:11.127Z"
     },
     "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd": {
       "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
@@ -280232,9 +280242,9 @@
       "title": "Architecture Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "9696d0353802923374df1397dd92e79e0d7a6245b548b5cb084f8c3237ba455f",
+      "content_hash": "29155edf974df1107c9f121209b331c23a92022705397274fc673ba60167dcca",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T16:54:52.965Z"
+      "persisted_at": "2026-11-26T20:41:12.704Z"
     },
     "learn-huggingface-lodestones-kromoss": {
       "learning_id": "learn-huggingface-lodestones-kromoss",
@@ -358939,6 +358949,82 @@
       "content_hash": "68dd53d7533c8fdfb7a8d27a2f347847bf049eaca7d1fcf36826b7ae36f817a8",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T20:31:58.380Z"
+    },
+    "rule-10773": {
+      "learning_id": "rule-10773",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10773,
+      "title": "assert that the runtime id is a number",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "2d381dba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T20:40:28.343Z"
+    },
+    "candidate_directive-assert-that-the-runtime-id-is-a-number": {
+      "item_id": "candidate_directive-assert-that-the-runtime-id-is-a-number",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OAYX-assert-that-the-runtime-id-is-a-number.md",
+      "title": "assert that the runtime id is a number",
+      "repository": "software-mansion/react-native-reanimated",
+      "source_version": "2d381dba",
+      "content_hash": "2b970e30939feee8160c00ee4a6ad19de947e990eee6e8218445d95649e5f1bc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T20:40:28.810Z"
+    },
+    "rule-10774": {
+      "learning_id": "rule-10774",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10774,
+      "title": "bump pdfjs-dist from 5.4.624 to 6.5.438",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "e09ae3b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T20:40:37.996Z"
+    },
+    "candidate_directive-bump-pdfjs-dist-from-5-4-624-to-6-5-438": {
+      "item_id": "candidate_directive-bump-pdfjs-dist-from-5-4-624-to-6-5-438",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OIFY-bump-pdfjs-dist-from-5-4-624-to-6-5-438.md",
+      "title": "bump pdfjs-dist from 5.4.624 to 6.5.438",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "source_version": "e09ae3b9",
+      "content_hash": "99366afecda6176703aa821411de45840696a4121ab038673dd1f0650ae51e15",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T20:40:38.498Z"
+    },
+    "candidate_directive-worklets-assert-that-the-runtime-id-is-a-number": {
+      "item_id": "candidate_directive-worklets-assert-that-the-runtime-id-is-a-number",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P7GF-worklets-assert-that-the-runtime-id-is-a-number.md",
+      "title": "Worklets): assert that the runtime id is a number",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d427b9728acba462ba61ea928e98cc60d8b98a6ce5249ab4c6905d894d66489",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T20:41:10.912Z"
+    },
+    "candidate_directive-deps-bump-pdfjs-dist-from-5-4-624-to-6-5-438": {
+      "item_id": "candidate_directive-deps-bump-pdfjs-dist-from-5-4-624-to-6-5-438",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P8NO-deps-bump-pdfjs-dist-from-5-4-624-to-6-5-438.md",
+      "title": "deps): bump pdfjs-dist from 5.4.624 to 6.5.438",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "28223f2efb17efb39682a1e7c3a3ef5cd63ba63ebfedec19127f0696c7104ec0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T20:41:12.480Z"
     }
   },
   "ai-builder-brain": {

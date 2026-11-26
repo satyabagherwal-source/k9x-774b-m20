@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-I2CQ",
-    "timestamp": "2026-11-25T09:08:06.890Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "9cac9c74de3c8172b1837b4639cb4038e542a86313a1069571b3037f3d0c3be8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-3P6L",
-    "timestamp": "2026-11-25T09:24:56.253Z",
-    "repository": "briaai/Fibo-2.0-dev",
-    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-    "contentHash": "b4261bcfbd4dca53734bbacc1b6c83af77265e044a9b71b660afc1c8bd2fd920",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-3SPV",
-    "timestamp": "2026-11-25T09:25:00.835Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "525933856b8125c59ef8d717fe85bb315470d460ca4acfb03109fc775bbf8215",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-JPQZ",
     "timestamp": "2026-11-25T09:37:23.483Z",
     "repository": "modelcontextprotocol/kotlin-sdk",
@@ -7490,6 +7445,51 @@
     "repository": "Ontos-AI/knowhere",
     "learningId": "learn-github-ontos-ai-knowhere",
     "contentHash": "5b079f745e4d8ade7c71164387b508b2cb5b9cb9e9fcdad711da255973c3560a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-O4SP",
+    "timestamp": "2026-11-26T20:40:20.809Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "8b864472b4b53fbb5843a5c2aced0cff86a82926f5f88dc703385abb1a2da226",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-OASF",
+    "timestamp": "2026-11-26T20:40:28.575Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "cf7b697b2455de311de303b1b858cf52fc57d178f6e7d3df1f3d1d4580ff8e84",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-OI8V",
+    "timestamp": "2026-11-26T20:40:38.239Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "a02824aa867360119e6c199af326d8d19e9ae1844d5aa7cd1a111ed20eba5601",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

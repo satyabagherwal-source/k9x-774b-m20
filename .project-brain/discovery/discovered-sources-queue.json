@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T20:23:11.966Z",
+  "updated_at": "2026-11-26T20:41:12.202Z",
   "stats": {
-    "total_discovered": 10025,
-    "approved_pending_harvest": 9503,
+    "total_discovered": 10032,
+    "approved_pending_harvest": 9510,
     "harvested_count": 0,
     "rejected_count": 522,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9508,
+      "COMMUNITY_AND_EXPERT": 9515,
       "OFFICIAL_DOCUMENTATION": 286,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -216923,6 +216923,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
         "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-98382D1444D0": {
+      "id": "SRC-98382D1444D0",
+      "url": "https://github.com/mozilla/pdf.js",
+      "title": "https://github.com/mozilla/pdf.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:41:11.768Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-4023739E07B9": {
+      "id": "SRC-4023739E07B9",
+      "url": "https://github.com/mozilla/pdf.js/releases",
+      "title": "https://github.com/mozilla/pdf.js/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:41:11.844Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-AF6724C47AA6": {
+      "id": "SRC-AF6724C47AA6",
+      "url": "https://github.com/mozilla/pdf.js/compare/v5.4.624...v6.5.438",
+      "title": "https://github.com/mozilla/pdf.js/compare/v5.4.624...v6.5.438",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:41:11.918Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-AD8C686FF30F": {
+      "id": "SRC-AD8C686FF30F",
+      "url": "https://github.com/remarkjs/react-markdown",
+      "title": "https://github.com/remarkjs/react-markdown",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:41:11.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-7288537BC683": {
+      "id": "SRC-7288537BC683",
+      "url": "https://github.com/remarkjs/react-markdown/releases",
+      "title": "https://github.com/remarkjs/react-markdown/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:41:12.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-2DD5EBDD1F51": {
+      "id": "SRC-2DD5EBDD1F51",
+      "url": "https://github.com/remarkjs/react-markdown/blob/main/changelog.md",
+      "title": "https://github.com/remarkjs/react-markdown/blob/main/changelog.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:41:12.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-D02A3B17D4D0": {
+      "id": "SRC-D02A3B17D4D0",
+      "url": "https://github.com/remarkjs/react-markdown/compare/9.1.0...10.1.0",
+      "title": "https://github.com/remarkjs/react-markdown/compare/9.1.0...10.1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:41:12.202Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
       }
     }
   }
