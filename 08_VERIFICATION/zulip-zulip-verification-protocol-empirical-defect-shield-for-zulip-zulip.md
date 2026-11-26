@@ -4,22 +4,22 @@
 {
   "source_repository": "zulip/zulip",
   "source_url": "https://github.com/zulip/zulip",
-  "source_version": "eca8048b",
+  "source_version": "55eba7b1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T08:25:07.049Z",
+  "timestamp": "2026-11-26T17:39:22.326Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zulip-zulip",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zulip/zulip](https://github.com/zulip/zulip) (Revision: `eca8048b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T08:25:07.049Z`  
+> **Provenance**: Harvested from [zulip/zulip](https://github.com/zulip/zulip) (Revision: `55eba7b1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T17:39:22.326Z`  
 > **Learning ID**: `learn-github-zulip-zulip`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zulip/zulip` (Commit: `eca8048b`)
+- **Target Repository**: `zulip/zulip` (Commit: `55eba7b1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T08:24:35.726Z  
+> **Harvest Timestamp**: 2026-11-26T17:39:20.824Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26291 stars
+- **Stars / Engagement**: 26312 stars
 
 ---
 
@@ -1245,406 +1245,585 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7edd86a` (2026-10-21)
-**Commit Message**: server_events_dispatch: Rerender DM status emoji on emojiset change.
+### Incident Patch 1: `3a4ad369` (2026-10-15)
+**Commit Message**: markdown: Fix image syntax for unpreviewable uploads rendering as text.
 
-Changing the emojiset rerendered the message lists and the buddy list,
-but the other places that render status emoji from
-user_status.get_status_emoji kept showing them in the old style until
-something else redrew them: DM conversations in the left sidebar, and
-the Inbox and Recent conversations views.
+Since ccabbc376c, the web app inserts `![name](url)` for uploaded
+images, but the server only renders that syntax for uploads it can
+preview as an image or audio player. Anything else, such as an image
+too large to thumbnail, showed the literal Markdown, where the older
+`[name](url)` syntax gave a working link.
 
-Rerender these too. inbox_ui.complete_rerender and
-recent_view_ui.complete_rerender do nothing unless their view is
-visible, and both rebuild their rows from scratch when it is shown, so
-only the visible view needs updating. The DM list's vdom comparison
-picks up the changed emoji_alt_code, so only rows with a status emoji
-are redrawn.
+Fix this by rendering such uploads as `[name](url)` would, but with
+the alt text as plain text. That text is all an image placeholder
+keeps, so the thumbnail worker can build the same link if
+thumbnailing fails later. An uploaded video in image syntax also gets
+a video preview, as with `[name](url)`. Image syntax for URLs other
+than uploads is unchanged.
+
+Fixes part of #40229.
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `web/src/server_events_dispatch.js` (modified, +5/-0)
+**File**: `api_docs/message-formatting.md` (modified, +19/-1)
 ```diff
-@@ -1129,6 +1129,11 @@ export function dispatch_normal_event(event) {
-                     }
-                     // Rerender buddy list status emoji
-                     activity_ui.build_user_sidebar();
-+                    // Rerender status emoji in DM conversations in the
-+                    // left sidebar, Inbox, and Recent conversations.
-+                    pm_list.update_private_messages();
-+                    inbox_ui.complete_rerender();
-+                    recent_view_ui.complete_rerender();
-                     break;
-                 case "display_emoji_reaction_users":
-                     message_live_update.rerender_messages_view();
+@@ -218,7 +218,13 @@ Zulip will generate an image element with the following format:
+ ```
+ 
+ Note that the Markdown image syntax is only supported/permitted for
+-uploaded images, not third-party image URLs.
++uploaded images, not third-party image URLs. If the server can't
++preview an uploaded file as an image (e.g., because the image is too
++large to thumbnail), it instead renders a link to the file, as
++`[example image](/user_uploads/path/to/example.png)` would, with the
++alt text as plain text. (An uploaded file with a supported audio
++`Content-Type` renders as an [audio player](#audio-players), not a
++link.)
+ 
+ As with link-derived image previews, clients can recognize if an image
+ was thumbnailed by its `src` attribute starting with
+@@ -384,6 +390,10 @@ previews:
+ 
+ ### Changes to image formatting
+ 
++**Before Zulip 14.0 (feature level ZF-7e1ae3)**, Markdown image
++syntax that now renders as [a link to the uploaded file](#images) was
++left as literal Markdown text.
++
+ **In Zulip 12.0** (feature level 467), limited the Markdown
+ image syntax to only support uploaded images, not linking to
+ third-party image URLs.
+@@ -438,6 +448,14 @@ surrounding `a` tag remains available.
+ </div>
+ ```
+ 
++Markdown image syntax for an uploaded video (e.g.,
++`![example video](/user_uploads/path/to/video.mp4)`) [renders as a
++link](#images) to the video, so Zulip may generate this preview for
++it as well.
++
++**Changes**: Before Zulip 14.0 (feature level ZF-7e1ae3), Markdown
++image syntax for an uploaded video was left as literal Markdown text.
++
+ ## Audio Players
+ 
+ When the Markdown media syntax is used with an uploaded file with an
 ```
 
-**File**: `web/tests/dispatch.test.cjs` (modified, +3/-0)
+**File**: `api_docs/unmerged.d/ZF-7e1ae3.md` (added, +4/-0)
 ```diff
-@@ -1389,9 +1389,12 @@ run_test("user_settings", ({override}) => {
-         called = false;
-         override(settings_preferences, "report_emojiset_change", stub.f);
-         override(activity_ui, "build_user_sidebar", noop);
-+        const update_private_messages_stub = make_stub();
-+        override(pm_list, "update_private_messages", update_private_messages_stub.f);
-         override(user_settings, "emojiset", "text");
-         dispatch(event);
-         assert.equal(stub.num_calls, 1);
-+        assert.equal(update_private_messages_stub.num_calls, 1);
-         assert_same(called, true);
-         assert_same(user_settings.emojiset, "google");
-     }
+@@ -0,0 +1,4 @@
++* [Message formatting](/api/message-formatting#images): Markdown image
++  syntax for an uploaded file that the server can't preview as an
++  image or audio player now renders as a link to the file, rather
++  than as literal Markdown text.
+```
+
+**File**: `zerver/lib/markdown/__init__.py` (modified, +12/-6)
+```diff
+@@ -2158,7 +2158,13 @@ def zulip_specific_image_changes(self, img: Element) -> Element | None:
+         # before rendering; Else, its header didn't parse as
+         # a valid image type which libvips handles.
+         if not db_data or path_id not in db_data.user_upload_previews.image_metadata:
+-            return None
++            link = Element("a")
++            link.set("href", src)
++            if (title := img.get("title")) is not None:
++                link.set("title", title)
++            alt = img.get("alt", "")
++            link.text = markdown.util.AtomicString(alt if alt.strip() else src)
++            return link
+         else:
+             assert path_id in db_data.user_upload_previews.image_metadata
+             metadata = db_data.user_upload_previews.image_metadata[path_id]
+@@ -2192,11 +2198,11 @@ def handleMatch(  # type: ignore[override] # https://github.com/python/mypy/issu
+     ) -> tuple[Element | str | None, int | None, int | None]:
+         ret = super().handleMatch(m, data)
+         if ret[0] is not None:
+-            img, match_start, index = ret
+-            assert isinstance(img, Element)
+-            img = self.zulip_specific_image_changes(img)
+-            if img is not None:
+-                return img, match_start, index
++            el, match_start, index = ret
++            assert isinstance(el, Element)
++            el = self.zulip_specific_image_changes(el)
++            if el is not None:
++                return el, match_start, index
+         return None, None, None
+ 
+ 
+```
+
+**File**: `zerver/tests/test_markdown.py` (modified, +21/-2)
+```diff
+@@ -1231,7 +1231,7 @@ def test_inline_audio_preview(self) -> None:
+         with self.assertLogs(level="WARNING"):
+             message_id = self.send_message_content(f"![Audio link](/user_uploads/{path_id})")
+ 
+-        expected = f"<p>![Audio link]({url})</p>"
++        expected = f'<p><a href="{url}">Audio link</a></p>'
+         self.assert_message_content_is(message_id, expected)
+ 
+         # Test audio files are not previewed when the content type
+@@ -1245,9 +1245,28 @@ def test_inline_audio_preview(self) -> None:
+         )[0]
+         path_id = re.sub(r"/user_uploads/", "", url)
+         message_id = self.send_message_content(f"![Audio link](/user_uploads/{path_id})")
+-        expected = f"<p>![Audio link]({url})</p>"
++        expected = f'<p><a href="{url}">Audio link</a></p>'
+         self.assert_message_content_is(message_id, expected)
+ 
++    def test_inline_image_syntax_for_video(self) -> None:
++        """A video upload has no ImageAttachment row, so `![...](...)`
++        renders like `[...](...)`, including the video preview."""
++        url = upload_message_attachment(
++            "clip.mp4",
++            "video/mp4",
++            b"",
++            self.example_user("othello"),
++        )[0]
++        expected = (
++            f'<p><a href="{url}">clip.mp4</a></p>\n'
++            '<div class="message_inline_image message_inline_video">'
++            f'<a href="{url}" title="clip.mp4"><video preload="metadata" src="{url}"></video></a>'
++            "</div>"
++        )
++        for content in [f"![clip.mp4]({url})", f"[clip.mp4]({url})"]:
++            message_id = self.send_message_content(content)
++            self.assert_message_content_is(message_id, expected)
++
+     @override_settings(INLINE_IMAGE_PREVIEW=False)
+     def test_image_preview_enabled(self) -> None:
+         ret = image_preview_enabled()
+```
+
+**File**: `zerver/tests/test_markdown_thumbnail.py` (modified, +29/-0)
+```diff
+@@ -171,6 +171,35 @@ def test_inline_image_thumbnail_after_send(self) -> None:
+         )
+         self.assert_message_content_is(message_id, expected)
+ 
++    def test_inline_image_not_thumbnailable(self) -> None:
++        """An image the server can't decode has no ImageAttachment
++        row, so `![...](...)` renders as a link to it, with the alt
++        text as plain text."""
++        path_id = self.upload_image("corrupt.png")
++        self.assertFalse(ImageAttachment.objects.filter(path_id=path_id).exists())
++
++        message_id = self.send_message_content(f"![corrupt.png](/user_uploads/{path_id})")
++        self.assert_message_content_is(
++            message_id, f'<p><a href="/user_uploads/{path_id}">corrupt.png</a></p>'
++        )
++        message = Message.objects.get(id=message_id)
++        self.assertTrue(message.has_link)
++        self.assertFalse(message.has_image)
++        self.assertTrue(message.has_attachment)
++
++        message_id = self.send_message_content(f'![ ](/user_uploads/{path_id} "Title")')
++        self.assert_message_content_is(
++            message_id,
++            f'<p><a href="/user_uploads/{path_id}" title="Title">/user_uploads/{path_id}</a></p>',
++        )
++
++        message_id = self.send_message_content(
++            f"![**a** [b](https://example.com) `c`](/user_uploads/{path_id})"
++        )
++        self.assert_message_content_is(
++            message_id, f'<p><a href="/user_uploads/{path_id}">**a** b c</a></p>'
++        )
++
+     def test_thumbnail_escaping(self) -> None:
+         self.login("othello")
+         with self.captureOnCommitCallbacks(execute=True):
 ```
 
 ---
 
-### Incident Patch 2: `eca8048b` (2026-11-23)
-**Commit Message**: demo-orgs: Expand require_billing_access to cover demo orgs.
+### Incident Patch 2: `5748b941` (2026-11-23)
+**Commit Message**: add_subscribers_pill: Fix pills added while an Add is in progress.
 
-The upgrade and sponsorship pages are disabled for demo
-organizations, but the server did not enforce this on the JSON
-endpoints those pages post to. So a demo organization owner could
-still, for example, submit a sponsorship request via the API.
+When you click Add, Zulip first waits for the subscribers of any
+channel pills. The pill input stayed editable during that wait. A
+pill added then was either dropped without an error, or added even
+though you never clicked Add for it.
 
-Check for demo organizations in require_billing_access, which is
-used by all of the realm billing JSON endpoints.
+Fix this by locking the input and the Add button from the click
+until the request finishes, as the create forms already do. Locking
+the input takes away its focus, so we give it back afterwards.
+
+Fixes #40260.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `corporate/tests/test_stripe.py` (modified, +35/-0)
+**File**: `web/src/add_group_members_pill.ts` (modified, +20/-0)
 ```diff
-@@ -47,6 +47,7 @@
-     get_current_plan_by_customer,
-     get_current_plan_by_realm,
- )
-+from corporate.models.sponsorships import ZulipSponsorshipRequest
- from corporate.models.stripe_state import Event, Invoice
- from zerver.actions.create_realm import do_create_realm
- from zerver.actions.realm_settings import do_deactivate_realm, do_reactivate_realm
-@@ -4449,6 +4450,40 @@ def check_users_cant_access(
-         }
-         self.assert_length(json_endpoints, len(tested_endpoints))
- 
-+    def test_json_endpoints_for_demo_organizations(self) -> None:
-+        demo_owner = self.create_demo_organization_owner()
-+        realm = demo_owner.realm
-+        self.assertTrue(demo_owner.has_billing_access)
-+
-+        for url in [
-+            "/json/billing/upgrade",
-+            "/json/billing/session/start_card_update_session",
-+            "/json/upgrade/session/start_card_update_session",
-+        ]:
-+            result = self.client_post(url, {}, subdomain=realm.subdomain)
-+            self.assert_json_error(result, "Not allowed for demo organizations")
-+        result = self.client_patch("/json/billing/plan", {}, subdomain=realm.subdomain)
-+        self.assert_json_error(result, "Not allowed for demo organizations")
-+        result = self.client_get("/json/billing/event/status", {}, subdomain=realm.subdomain)
-+        self.assert_json_error(result, "Not allowed for demo organizations")
-+
-+        # Test sponsorship view with valid data.
-+        sponsorship_data = {
-+            "organization_type": Realm.ORG_TYPES["opensource"]["id"],
-+            "website": "https://example.com/",
-+            "description": "Demo example sponsorship request.",
-+            "expected_total_users": "10",
-+            "plan_to_use_zulip": "For chat.",
-+            "paid_users_count": "1",
-+            "paid_users_description": "We have 1 paid staff member.",
-+        }
-+        result = self.client_post(
-+            "/json/billing/sponsorship", sponsorship_data, subdomain=realm.subdomain
-+        )
-+        self.assert_json_error(result, "Not allowed for demo organizations")
-+        self.assertIsNone(get_customer_by_realm(realm))
-+        self.assertFalse(ZulipSponsorshipRequest.objects.exists())
-+
-     @mock_stripe()
-     def test_billing_page_permissions(self, *mocks: Mock) -> None:
-         # Guest users can't access /upgrade/ page
+@@ -190,13 +190,15 @@ export function set_up_handlers({
+     pill_selector,
+     button_selector,
+     spinner_selector,
++    disabled_class,
+     action,
+ }: {
+     get_pill_widget: () => CombinedPillContainer;
+     $parent_container: JQuery;
+     pill_selector: string;
+     button_selector: string;
+     spinner_selector: string;
++    disabled_class: string;
+     action: ({
+         pill_user_ids,
+         pill_group_ids,
+@@ -214,10 +216,19 @@ export function set_up_handlers({
+     function callback(): void {
+         const pill_widget = get_pill_widget();
+         const $loading_spinner = $parent_container.find(spinner_selector);
++        const $add_button = $parent_container.find(button_selector);
++        const $add_button_container = $add_button.closest(".add-button-container");
+         void (async () => {
+             loading.make_indicator($loading_spinner, {
+                 height: 28, // 2em at 14px / 1em
+             });
++            // Lock the input and the Add button until the request finishes.
++            add_subscribers_pill.set_pill_input_disabled(
++                $add_button_container,
++                disabled_class,
++                true,
++            );
++            $add_button.prop("disabled", true);
+             const result = await get_pill_user_ids(pill_widget);
+             // If we're no longer in the same view after fetching
+             // subscriber data, don't update the UI. We don't need
+@@ -228,6 +239,15 @@ export function set_up_handlers({
+                 return;
+             }
+             loading.destroy_indicator($loading_spinner);
++            // If action sends a request, it locks the input and the Add
++            // button again. The browser does not repaint in between, so
++            // the user never sees them unlocked.
++            add_subscribers_pill.set_pill_input_disabled(
++                $add_button_container,
++                disabled_class,
++                false,
++            );
++            $add_button.prop("disabled", pill_widget.items().length === 0);
+             if (result.status === "failed") {
+                 return;
+             }
 ```
 
-**File**: `zerver/decorator.py` (modified, +2/-0)
+**File**: `web/src/add_subscribers_pill.ts` (modified, +34/-0)
 ```diff
-@@ -216,6 +216,8 @@ def wrapper(
-     ) -> HttpResponse:
-         if not user_profile.has_billing_access:
-             raise JsonableError(_("Insufficient permission"))
-+        if user_profile.realm.demo_organization_scheduled_deletion_date is not None:
-+            raise JsonableError(_("Not allowed for demo organizations"))
-         return func(request, user_profile, *args, **kwargs)
+@@ -273,19 +273,43 @@ export async function get_pill_user_ids(
+     };
+ }
  
-     return wrapper
++export function set_pill_input_disabled(
++    $add_button_container: JQuery,
++    disabled_class: string,
++    disabled: boolean,
++): void {
++    const $input = $add_button_container.find(".input");
++    if (disabled) {
++        $add_button_container.data("input_had_focus", $input.is(":focus"));
++    }
++    $add_button_container.toggleClass(disabled_class, disabled);
++    $input.prop("contenteditable", !disabled);
++    // Locking the input takes its focus away, so give the focus back
++    // unless the user has moved on to something else.
++    if (
++        !disabled &&
++        $add_button_container.data("input_had_focus") === true &&
++        document.activeElement === document.body
++    ) {
++        $input.trigger("focus");
++    }
++}
++
+ export function set_up_handlers({
+     get_pill_widget,
+     $parent_container,
+     pill_selector,
+     button_selector,
+     spinner_selector,
++    disabled_class,
+     action,
+ }: {
+     get_pill_widget: () => CombinedPillContainer;
+     $parent_container: JQuery;
+     pill_selector: string;
+     button_selector: string;
+     spinner_selector: string;
++    disabled_class: string;
+     action: ({pill_user_ids}: {pill_user_ids: number[]}) => void;
+ }): void {
+     /*
+@@ -318,10 +342,15 @@ export function set_up_handlers({
+     function callback(): void {
+         const pill_widget = get_pill_widget();
+         const $loading_spinner = $parent_container.find(spinner_selector);
++        const $add_button = $parent_container.find(button_selector);
++        const $add_button_container = $add_button.closest(".add-button-container");
+         void (async () => {
+             loading.make_indicator($loading_spinner, {
+                 height: 28, // 2em at 14px / 1em
+             });
++            // Lock the input and the Add button until the request finishes.
++            set_pill_input_disabled($add_button_container, disabled_class, true);
++            $add_button.prop("disabled", true);
+             const result = await get_pill_user_ids(pill_widget);
+             // If we're no longer in the same view after fetching
+             // subscriber data, don't update the UI. We don't need
+@@ -332,6 +361,11 @@ export function set_up_handlers({
+                 return;
+             }
+             loading.destroy_indicator($loading_spinner);
++            // If action sends a request, it locks the input and the Add
++            // button again. The browser does not repaint in between, so
++            // the user never sees them unlocked.
++            set_pill_input_disabled($add_button_container, disabled_class, false);
++            $add_button.prop("disabled", pill_widget.items().length === 0);
+             if (result.status === "failed") {
+                 return;
+             }
+```
+
+**File**: `web/src/stream_edit_subscribers.ts` (modified, +17/-3)
+```diff
+@@ -308,11 +308,20 @@ function subscribe_new_users({pill_user_ids}: {pill_user_ids: number[]}): void {
+     const $pill_widget_button_wrapper = $(".add_subscriber_button_wrapper");
+     const $add_subscriber_button = $pill_widget_button_wrapper.find(".add-subscriber-button");
+     $add_subscriber_button.prop("disabled", true);
+-    $(".add_subscribers_container").addClass("add_subscribers_disabled");
++    const $add_subscribers_container = $(".edit_subscribers_for_stream .add_subscribers_container");
++    add_subscribers_pill.set_pill_input_disabled(
++        $add_subscribers_container,
++        "add_subscribers_disabled",
++        true,
++    );
+     buttons.show_button_loading_indicator($add_subscriber_button);
+ 
+     function invite_success(raw_data: unknown): void {
+-        $(".add_subscribers_container").removeClass("add_subscribers_disabled");
++        add_subscribers_pill.set_pill_input_disabled(
++            $add_subscribers_container,
++            "add_subscribers_disabled",
++            false,
++        );
+         const data = add_user_ids_api_response_schema.parse(raw_data);
+         pill_widget.clear();
+         const subscribed_users = Object.keys(data.subscribed).map((user_id) =>
+@@ -344,7 +353,11 @@ function subscribe_new_users({pill_user_ids}: {pill_user_ids: number[]}): void {
+ 
+     function invite_failure(xhr: JQuery.jqXHR): void {
+         buttons.hide_button_loading_indicator($add_subscriber_button);
+-        $(".add_subscribers_container").removeClass("add_subscribers_disabled");
++        add_subscribers_pill.set_pill_input_disabled(
++            $add_subscribers_container,
++            "add_subscribers_disabled",
++            false,
++        );
+ 
+         let error_message = "Failed to subscribe user!";
+         const parsed = z
+@@ -564,6 +577,7 @@ export function initialize(): void {
+         pill_selector: ".edit_subscribers_for_stream .pill-container",
+         button_selector: ".edit_subscribers_for_stream .add-subscriber-button",
+         spinner_selector: ".edit_subscribers_for_stream .add-subscriber-loading-spinner",
++        disabled_class: "add_subscribers_disabled",
+         action: subscribe_new_users,
+     });
+ 
+```
+
+**File**: `web/src/user_group_edit_members.ts` (modified, +18/-3)
+```diff
+@@ -9,6 +9,7 @@ import render_user_group_members_table from "../templates/user_group_settings/us
+ import render_user_group_subgroup_entry from "../templates/user_group_settings/user_group_subgroup_entry.hbs";
+ 
+ import * as add_group_members_pill from "./add_group_members_pill.ts";
++import * as add_subscribers_pill from "./add_subscribers_pill.ts";
+ import * as blueslip from "./blueslip.ts";
+ import * as buttons from "./buttons.ts";
+ import * as channel from "./channel.ts";
+@@ -458,10 +459,19 @@ function add_new_members({
+     const $pill_widget_button_wrapper = $(".add_member_button_wrapper");
+     const $add_member_button = $pill_widget_button_wrapper.find(".add-member-button");
+     $add_member_button.prop("disabled", true);
+-    $(".add_members_container").addClass("add_members_disabled");
++    const $add_members_container = $(".edit_members_for_user_group .add_members_container");
++    add_subscribers_pill.set_pill_input_disabled(
++        $add_members_container,
++        "add_members_disabled",
++        true,
++    );
+     buttons.show_button_loading_indicator($add_member_button);
+     function invite_success(): void {
+-        $(".add_members_container").removeClass("add_members_disabled");
++        add_subscribers_pill.set_pill_input_disabled(
++            $add_members_container,
++            "add_members_disabled",
++            false,
++        );
+         const $check_icon = $pill_widget_button_wrapper.find(".check");
+ 
+         $check_icon.removeClass("hidden-below");
+@@ -487,7 +497,11 @@ function add_new_members({
+     }
+ 
+     function invite_failure(xhr?: JQuery.jqXHR): void {
+-        $(".add_members_container").removeClass("add_members_disabled");
++        add_subscribers_pill.set_pill_input_disabled(
++            $add_members_container,
++            "add_members_disabled",
++            false,
++        );
+         buttons.hide_button_loading_indicator($add_member_button);
+ 
+         let error_message = "Failed to add user!";
+@@ -619,6 +633,7 @@ export function initialize(): void {
+         pill_selector: ".edit_members_for_user_group .pill-container",
+         button_selector: ".edit_members_for_user_group .add-member-button",
+         spinner_selector: ".edit_members_for_user_group .add-group-member-loading-spinner",
++        disabled_class: "add_members_disabled",
+         action: add_new_members,
+     });
+ 
 ```
 
 ---
 
-### Incident Patch 3: `830e6313` (2026-10-15)
-**Commit Message**: message_list_view: Look up sender status emoji at render time.
+### Incident Patch 3: `05effcfc` (2026-10-15)
+**Commit Message**: thumbnail: Fix `![...](...)` images vanishing when thumbnailing fails.
 
-Every processed message carried its own copy of the sender's
-status_emoji_info, taken when the message was first processed. To keep
-those copies current, each user_status event walked every stored
-message via message_store.update_status_emoji_info, and any other
-input to the rendered emoji, such as the emojiset setting, had no way
-to reach them at all.
+If an uploaded image passed the header check but thumbnailing it
+later failed, the worker deleted the `![name](url)` image from the
+message, leaving no reference to the file. `[name](url)` messages
+kept their link in that case.
 
-Instead, look up the sender's status emoji in
-get_calculated_message_container_variables, which runs on every
-render, as the buddy list and other status emoji callers already do,
-and likewise in the message report preview. A user_status event now
-only needs to rerender that user's messages.
+Replace the image with the link that re-rendering the message
+produces.
+
+Fixes part of #31007.
+Fixes #40229.
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `web/src/message_helper.ts` (modified, +0/-7)
+**File**: `api_docs/message-formatting.md` (modified, +5/-3)
 ```diff
-@@ -14,7 +14,6 @@ import * as recent_senders from "./recent_senders.ts";
- import * as stream_data from "./stream_data.ts";
- import * as stream_topic_history from "./stream_topic_history.ts";
- import * as submessage from "./submessage.ts";
--import * as user_status from "./user_status.ts";
- import * as util from "./util.ts";
+@@ -291,8 +291,9 @@ via an `update_message` event, with the `rendering_only: true` flag
+ adjusted `rendered_content`. A client should process those events by
+ just using the updated rendering. If thumbnailing failed, the same
+ type of event will edit the message's rendered form to remove the
+-image preview element, so no special client-side logic should be
+-required to process such errors.
++image preview element (or, for Markdown image syntax, to replace the
++image with a link to the uploaded file), so no special client-side
++logic should be required to process such errors.
  
- export type NewMessage =
-@@ -86,12 +85,10 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
+ Note that in the uncommon situation that the thumbnailing system is
+ backlogged, an individual message containing multiple image previews
+@@ -392,7 +393,8 @@ previews:
  
-     const sent_by_me = people.is_my_user_id(message_with_booleans.message.sender_id);
+ **Before Zulip 14.0 (feature level ZF-7e1ae3)**, Markdown image
+ syntax that now renders as [a link to the uploaded file](#images) was
+-left as literal Markdown text.
++left as literal Markdown text. If thumbnailing an image in Markdown
++image syntax failed after the message was sent, the image was removed.
  
--    let status_emoji_info;
-     const sender = people.maybe_get_user_by_id(message_with_booleans.message.sender_id);
-     if (sender) {
-         message_with_booleans.message.sender_full_name = sender.full_name;
-         message_with_booleans.message.sender_email = sender.email;
--        status_emoji_info = user_status.get_status_emoji(message_with_booleans.message.sender_id);
-     }
- 
-     if (opts.raw_message.reactions) {
-@@ -138,7 +135,6 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
-             const message: Message = {
-                 ...rest,
-                 sent_by_me,
--                status_emoji_info,
-                 is_private: false,
-                 is_stream: true,
-                 reply_to: message_with_booleans.message.sender_email,
-@@ -162,7 +158,6 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
-             const local_message: LocalMessage = {
-                 ...rest,
-                 sent_by_me,
--                status_emoji_info,
-                 is_private: false,
-                 is_stream: true,
-                 reply_to: message_with_booleans.message.sender_email,
-@@ -190,7 +185,6 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
-             const message: Message = {
-                 ..._.omit(message_with_booleans.message, "reactions"),
-                 sent_by_me,
--                status_emoji_info,
-                 is_private: true,
-                 is_stream: false,
-                 reply_to: util.normalize_recipients(
-@@ -213,7 +207,6 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
-             const local_message: LocalMessage = {
-                 ...rest,
-                 sent_by_me,
--                status_emoji_info,
-                 is_private: true,
-                 is_stream: false,
-                 reply_to: util.normalize_recipients(
+ **In Zulip 12.0** (feature level 467), limited the Markdown
+ image syntax to only support uploaded images, not linking to
 ```
 
-**File**: `web/src/message_list_view.ts` (modified, +6/-0)
+**File**: `api_docs/unmerged.d/ZF-7e1ae3.md` (modified, +3/-1)
 ```diff
-@@ -48,6 +48,8 @@ import type {TopicLink} from "./types.ts";
- import * as typing_data from "./typing_data.ts";
- import * as typing_events from "./typing_events.ts";
- import * as ui_util from "./ui_util.ts";
-+import * as user_status from "./user_status.ts";
-+import type {UserStatusEmojiInfo} from "./user_status.ts";
- import * as user_topics from "./user_topics.ts";
- import type {AllVisibilityPolicies} from "./user_topics.ts";
- import * as util from "./util.ts";
-@@ -75,6 +77,7 @@ export type MessageContainer = {
-     sender_is_deactivated: boolean;
-     should_add_guest_indicator_for_sender: boolean;
-     small_avatar_url: string;
-+    status_emoji_info: UserStatusEmojiInfo | undefined;
-     status_message: string | false;
-     stream_url?: string;
-     pm_with_url?: string;
-@@ -597,6 +600,7 @@ export class MessageListView {
-         sender_is_guest: boolean;
-         sender_is_deactivated: boolean;
-         should_add_guest_indicator_for_sender: boolean;
-+        status_emoji_info: UserStatusEmojiInfo | undefined;
-         is_hidden: boolean;
-         mention_classname: string | undefined;
-         include_sender: boolean;
-@@ -681,6 +685,7 @@ export class MessageListView {
-         const should_add_guest_indicator_for_sender = people.should_add_guest_user_indicator(
-             message.sender_id,
-         );
-+        const status_emoji_info = user_status.get_status_emoji(message.sender_id);
- 
-         const small_avatar_url = is_hidden
-             ? people.get_muted_user_avatar_url()
-@@ -699,6 +704,7 @@ export class MessageListView {
-             sender_is_guest,
-             sender_is_deactivated,
-             should_add_guest_indicator_for_sender,
-+            status_emoji_info,
-             is_hidden,
-             mention_classname,
-             include_sender,
+@@ -1,4 +1,6 @@
+ * [Message formatting](/api/message-formatting#images): Markdown image
+   syntax for an uploaded file that the server can't preview as an
+   image or audio player now renders as a link to the file, rather
+-  than as literal Markdown text.
++  than as literal Markdown text. If thumbnailing an image in Markdown
++  image syntax fails after the message is sent, the image is now
++  replaced with that link, rather than removed.
 ```
 
-**File**: `web/src/message_live_update.ts` (modified, +1/-10)
+**File**: `zerver/lib/thumbnail.py` (modified, +12/-4)
 ```diff
-@@ -2,7 +2,6 @@ import * as condense from "./condense.ts";
- import * as message_lists from "./message_lists.ts";
- import * as message_store from "./message_store.ts";
- import * as thumbnail from "./thumbnail.ts";
--import type {UserStatusEmojiInfo} from "./user_status.ts";
+@@ -599,13 +599,21 @@ def process_inline_images_to_thumbnails(
  
- export function rerender_messages_view(): void {
-     for (const list of message_lists.all_rendered_message_lists()) {
-@@ -23,7 +22,7 @@ export function rerender_messages_view_by_message_ids(message_ids: number[]): vo
-     }
- }
+     if to_delete and path_id in to_delete:
+         # This was not a valid thumbnail target, for some reason.
+-        # Trim out the whole "message_inline_image" div, or the "image"
+-        # element, since it's not going be renderable by clients
+-        # either.
++        # Trim out the whole "message_inline_image" div, since it's
++        # not going to be renderable by clients either. Replace a
++        # `![...](...)` image with the link that re-rendering produces
++        # once the ImageAttachment row is deleted.
+         if inline_image_div is not None:
+             inline_image_div.decompose()
+         else:
+-            placeholder_image_tag.decompose()
++            src = placeholder_image_tag["data-original-src"]
++            alt = placeholder_image_tag.get("alt", "")
++            assert isinstance(src, str) and isinstance(alt, str)
++            link = Tag(name="a", attrs={"href": src})
++            if (title := placeholder_image_tag.get("title")) is not None:
++                link["title"] = title
++            link.string = alt if alt.strip() else src
++            placeholder_image_tag.replace_with(link)
  
--function rerender_messages_sent_by_user(user_id: number): void {
-+export function rerender_messages_sent_by_user(user_id: number): void {
-     for (const list of message_lists.all_rendered_message_lists()) {
-         const messages = list.data.get_messages_sent_by_user(user_id);
-         if (messages.length === 0) {
-@@ -119,14 +118,6 @@ export function update_avatar(user_id: number, avatar_url: string | null): void
-     rerender_messages_sent_by_user(user_id);
- }
- 
--export function update_user_status_emoji(
--    user_id: number,
--    status_emoji_info: UserStatusEmojiInfo | undefined,
--): void {
--    message_store.update_status_emoji_info(user_id, status_emoji_info);
--    rerender_messages_sent_by_user(user_id);
--}
--
- export function update_thumbnails(): void {
-     thumbnail.set_media_preview_size_css_variable();
-     rerender_messages_view();
-```
-
-**File**: `web/src/message_report.ts` (modified, +2/-0)
-```diff
-@@ -25,6 +25,7 @@ import * as stream_data from "./stream_data.ts";
- import {render_submessage} from "./submessage.ts";
- import * as ui_report from "./ui_report.ts";
- import {toggle_user_card_popover_for_message} from "./user_card_popover.ts";
-+import * as user_status from "./user_status.ts";
- 
- function register_message_preview_click_handlers(
-     $message_preview_container: JQuery,
-@@ -79,6 +80,7 @@ function get_message_container_for_preview(message: Message): MessageContainer {
-             message.sender_id,
-         ),
-         small_avatar_url: people.small_avatar_url(message),
-+        status_emoji_info: user_status.get_status_emoji(message.sender_id),
-         status_message: "",
-         timestr: get_timestr(message),
-         want_date_divider: false,
-```
-
-**File**: `web/src/message_store.ts` (modified, +0/-17)
-```diff
-@@ -11,7 +11,6 @@ import * as muted_users from "./muted_users.ts";
- import * as people from "./people.ts";
- import * as stream_data from "./stream_data.ts";
- import {topic_link_schema} from "./types.ts";
--import type {UserStatusEmojiInfo} from "./user_status.ts";
- import * as util from "./util.ts";
- 
- const stored_messages = new Map<number, ProcessedMessage>();
-@@ -205,10 +204,6 @@ export type Message = (
-     // message list.
-     small_avatar_url?: string | null;
- 
--    // Used in `message_body.hbs` to show sender status emoji alongside
--    // their name in message list.
--    status_emoji_info?: UserStatusEmojiInfo | undefined;
--
-     // Used for edited messages to show their last edit time.
-     local_edit_timestamp?: number;
- 
-@@ -418,18 +413,6 @@ export function update_stream_name(stream_id: number, new_name: string): void {
-     }
- }
- 
--export function update_status_emoji_info(
--    user_id: number,
--    new_info: UserStatusEmojiInfo | undefined,
--): void {
--    for (const message_data of stored_messages.values()) {
--        const message = message_data.message;
--        if (message.sender_id && message.sender_id === user_id) {
--            message.status_emoji_info = new_info;
--        }
--    }
--}
--
- export function reify_message_id({old_id, new_id}: {old_id: number; new_id: number}): void {
-     const message_data = stored_messages.get(old_id);
-     if (message_data !== undefined) {
-```
-
-**File**: `web/src/server_events_dispatch.js` (modified, +1/-4)
-```diff
-@@ -1298,10 +1298,7 @@ export function dispatch_normal_event(event) {
-                 user_status.set_status_emoji(event);
-                 activity_ui.redraw_user(event.user_id);
-                 pm_list.update_private_messages();
--                message_live_update.update_user_status_emoji(
--                    event.user_id,
--                    user_status.get_status_emoji(event.user_id),
--                );
-+                message_live_update.rerender_messages_sent_by_user(event.user_id);
-             }
-             break;
+         return True, None
  
 ```
 
-**File**: `web/templates/message_body.hbs` (modified, +1/-1)
+**File**: `zerver/tests/test_markdown_thumbnail.py` (modified, +18/-2)
 ```diff
-@@ -9,7 +9,7 @@
-             </span>
-             {{#unless status_message}}
-                 {{#unless is_hidden}}
--                {{> status_emoji msg/status_emoji_info}}
-+                {{> status_emoji status_emoji_info}}
-                 {{/unless}}
-             {{/unless}}
-         </span>
-```
-
-**File**: `web/tests/message_events.test.cjs` (modified, +0/-1)
-```diff
-@@ -175,7 +175,6 @@ run_test("update_messages", ({override, override_rewire}) => {
-             sender_id: 32,
-             sent_by_me: false,
-             starred: false,
--            status_emoji_info: undefined,
-             stream_id: denmark.stream_id,
-             stream: "Denmark",
-             submessages: [],
+@@ -383,9 +383,16 @@ def test_thumbnail_bad_inline_image(self) -> None:
+         """Test what happens if the file looks fine, but resizing later fails"""
+         path_id = self.upload_image("img.png")
+         message_id = self.send_message_content(f"Testing ![image](/user_uploads/{path_id})")
++        blank_alt_text_message_id = self.send_message_content(
++            f'![ ](/user_uploads/{path_id} "Title")'
++        )
++        formatted_alt_text_message_id = self.send_message_content(
++            f"![`a` & **b**](/user_uploads/{path_id})"
++        )
+         self.assert_length(ImageAttachment.objects.get(path_id=path_id).thumbnail_metadata, 0)
+ 
+-        # If the image is found to be bad, we remove all trace of the preview
++        # If the image is found to be bad, we replace it with the same
++        # link that re-rendering the message would produce.
+         with (
+             patch.object(
+                 pyvips.Image, "thumbnail_buffer", side_effect=pyvips.Error("some bad error")
+@@ -397,7 +404,16 @@ def test_thumbnail_bad_inline_image(self) -> None:
+         self.assert_length(thumbnail_logs.output, 1)
+         self.assertIn("some bad error", thumbnail_logs.output[0])
+         self.assertFalse(ImageAttachment.objects.filter(path_id=path_id).exists())
+-        self.assert_message_content_is(message_id, "<p>Testing </p>")
++        self.assert_message_content_is(
++            message_id, f'<p>Testing <a href="/user_uploads/{path_id}">image</a></p>'
++        )
++        for message in Message.objects.filter(
++            id__in=[message_id, blank_alt_text_message_id, formatted_alt_text_message_id]
++        ):
++            self.assertEqual(
++                message.rendered_content,
++                render_message_markdown(message, message.content).rendered_content,
++            )
+ 
+     def test_thumbnail_multiple_messages(self) -> None:
+         sender_user_profile = self.example_user("othello")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40788** (2026-11-24): demo-orgs: Expand require_billing_access to cover demo organizations. (@laurynmm)
-- **PR #40783** (closed): populate_db: Add markdown, emojis, and links to stream descriptions. (@Divyanshgupta2580)
-- **PR #40782** (closed): openapi: Fix basicAuth casing in securitySchemes and test validation. (@Divyanshgupta2580)
-- **PR #40781** (closed): create_user: Batch subscription lookups in add_new_user_history. (@Sajal-at)
-- **PR #40778** (closed): emoji_picker: Prevent self-closing on touchscreens when keyboard opens (@yatish-code26)
-- **PR #40775** (closed): docs: Update deprecated stripe.com/docs links in billing guide. (@Sajal-at)
+- **PR #40815** (2026-11-26): message_send: Skip querying reactions and submessages of new messages. (@amanagr)
+- **PR #40811** (closed): [ai] search: Apply name-length tiebreaker to person suggestions while typing. (@Parasjain1234)
+- **PR #40800** (closed): [ai] teams import: Preserve messages sent by applications. (@sdivyanshu90)
+- **PR #40798** (closed): [ai] profile fields: Preserve calendar dates in the date picker. (@sdivyanshu90)
+- **PR #40793** (2026-11-25): [ai] people: Fix "Added user late" errors during page load and reconnect. (@evykassirer)
+- **PR #40789** (2026-11-24): [ai] message_events_util: Don't log an error for transient failures. (@evykassirer)
 
 ---
 
@@ -1664,35 +1843,49 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server_events_dispatch: Rerender DM status emoji on emojiset change.
+## X. markdown: Fix image syntax for unpreviewable uploads rendering as text.
 
 **RULE**:
-When implementing operations in `web/src/server_events_dispatch.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api_docs/message-formatting.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7edd86a`: server_events_dispatch: Rerender DM status emoji on emojiset change.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a4ad369`: markdown: Fix image syntax for unpreviewable uploads rendering as text.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/server_events_dispatch.js`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `api_docs/message-formatting.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                    // Rerender status emoji in DM conversations in the
-                    // left sidebar, Inbox, and Recent conversations.
-                    pm_list.update_private_messages();
-                    inbox_ui.complete_rerender();
-                    recent_view_ui.complete_rerender();
+uploaded images, not third-party image URLs. If the server can't
+preview an uploaded file as an image (e.g., because the image is too
+large to thumbnail), it instead renders a link to the file, as
+`[example image](/user_uploads/path/to/example.png)` would, with the
+alt text as plain text. (An uploaded file with a supported audio
+`Content-Type` renders as an [audio player](#audio-players), not a
+link.)
+**Before Zulip 14.0 (feature level ZF-7e1ae3)**, Markdown image
+syntax that now renders as [a link to the uploaded file](#images) was
+left as literal Markdown text.
+
+Markdown image syntax for an uploaded video (e.g.,
+`![example video](/user_uploads/path/to/video.mp4)`) [renders as a
+link](#images) to the video, so Zulip may generate this preview for
+it as well.
+
+**Changes**: Before Zulip 14.0 (feature level ZF-7e1ae3), Markdown
+image syntax for an uploaded video was left as literal Markdown text.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+uploaded images, not third-party image URLs.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7edd86a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a4ad369` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

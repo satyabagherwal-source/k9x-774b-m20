@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "c037330e62652cca14fc8cedb56d5b2840f166c8973dc8e34e2f2a225b4e9947",
-    "lastHarvestedAt": "2026-11-23T00:48:19.690Z",
+    "contentHash": "10720556e3f75c1006c732fa90d075d386d272c3c834f0f5b4f0f3b735fd8764",
+    "lastHarvestedAt": "2026-11-26T17:39:14.706Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "f28f8940",
+    "sourceVersion": "5ad08921",
     "license": "MIT",
-    "contentHash": "84124866142efc4662260418b627d6ddf6a0562df833b765f41239c88d13821d",
-    "lastHarvestedAt": "2026-11-25T23:02:03.774Z",
+    "contentHash": "78c03ecbf5a096a477a4814fc96b68b12d162bd22bc65d45519f2db55a0a41e5",
+    "lastHarvestedAt": "2026-11-26T17:39:31.053Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "eca8048b",
+    "sourceVersion": "55eba7b1",
     "license": "Apache-2.0",
-    "contentHash": "f323e2d03a77f2873c98c850fe086056362cb604bbcb9a9acea363c2c6bb7b81",
-    "lastHarvestedAt": "2026-11-24T08:25:06.814Z",
+    "contentHash": "093e61c2f1b09ebdb123134179bab2c3152fa7e47f37047774a39905f8b83c2c",
+    "lastHarvestedAt": "2026-11-26T17:39:22.072Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "c707cbcf",
+    "sourceVersion": "cc291d42",
     "license": "NOASSERTION",
-    "contentHash": "8753257e37c870e1b4024aced20ca25afa9a70303b6a739714fdc01bd1e89d06",
-    "lastHarvestedAt": "2026-11-25T23:02:01.196Z",
+    "contentHash": "381a8ff208cfe71e4c26140d83b4ebb3ded484f89fd3a10635afb7f22672012f",
+    "lastHarvestedAt": "2026-11-26T17:39:28.682Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

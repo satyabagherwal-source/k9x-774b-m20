@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:30:58.965Z",
+  "last_updated": "2026-11-26T17:39:37.107Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-26T16:49:26.796Z",
+      "processed_at": "2026-11-26T17:39:35.096Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1183,7 +1183,7 @@
       "staged_for_review": 1
     },
     "clockworklabs-spacetimedb-learnings.md": {
-      "processed_at": "2026-11-24T21:15:55.894Z",
+      "processed_at": "2026-11-26T17:39:36.214Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2168,7 +2168,7 @@
       "staged_for_review": 0
     },
     "hf-google-bert-bert-base-uncased-learnings.md": {
-      "processed_at": "2026-11-23T00:48:36.144Z",
+      "processed_at": "2026-11-26T17:39:34.603Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3988,7 +3988,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4602,
+  "total_dossiers_evaluated": 4605,
   "total_canonical_promoted": 565,
-  "total_staged_for_review": 3466
+  "total_staged_for_review": 3468
 }

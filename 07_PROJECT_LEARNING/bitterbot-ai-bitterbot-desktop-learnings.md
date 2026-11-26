@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `f28f8940`  
+> **Source Version**: `5ad08921`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T23:02:02.666Z  
+> **Timestamp**: 2026-11-26T17:39:29.844Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:02:02.661Z  
+> **Harvest Timestamp**: 2026-11-26T17:39:29.838Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2482 stars
+- **Stars / Engagement**: 2483 stars
 
 ---
 
@@ -1570,37 +1570,360 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f28f8940` (2026-11-25)
-**Commit Message**: fix(skills): say wallet spending caps cannot be approved past (#398)
+### Incident Patch 1: `5ad08921` (2026-11-26)
+**Commit Message**: fix(deep-recall): pick the sub-model for the provider whose key is set (#394)
 
-Step 3 told the model to ask the user for permission when a cost exceeds
-the spending limits. The x402 per-request cap and the session spend cap
-are hard limits: pay_for_resource throws and the spend gate refuses, and
-nothing is sent for approval. Tell the model the payment will be refused,
-not to work around the cap, and where the owner can raise it.
+* fix(deep-recall): pick the sub-model for the provider whose key is set
 
-Fixes #390
+resolveSubModel counted any of the three API keys as proof for every provider, so the first entry (OpenAI) won whenever any key was set, and a Google- or Anthropic-only setup got an OpenAI sub-model it has no key for. Each provider now needs its own key. The Google sub-model was gemini-2.0-flash-lite, which Google shut down on 2026-06-01; it is now gemini-3.5-flash-lite.
 
-**File**: `skills/wallet-payments/SKILL.md` (modified, +1/-1)
+* fix(deep-recall): detect provider keys through model auth and resolve newer Flash-Lite ids
+
+The auto sub-model check built its own variable names, so Google was matched on
+GOOGLE_API_KEY while model auth reads GEMINI_API_KEY. It now asks model auth.
+gemini-3.5-flash-lite is not in the pinned model catalog, so a forward-compat
+rule clones stable Flash-Lite ids from the newest catalogued one. A test loads
+every auto sub-model from the real catalog.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: VGIL77 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `docs/memory/deep-recall.md` (modified, +1/-1)
 ```diff
-@@ -27,7 +27,7 @@ When `web_fetch` returns a 402 Payment Required response, follow this workflow e
+@@ -129,7 +129,7 @@ A keyword-only hit has no cosine and never counts toward the shortcut.
+ | Root (writes REPL code) | User's configured model (e.g., Claude Opus) | Exploration strategy needs the strong model           |
+ | Sub-LLM (`llm_query`)   | Cheap model (e.g., GPT-4o-mini, Haiku)      | Summarizing/extracting from chunks doesn't need power |
  
- 1. **Extract the price**: if the 402 result has `price_usdc`, use it. The tool derives it from the x402 `accepts[]` offer only when the asset is USDC; `x402_offer` names the asset, network and amount in atomic units. Otherwise look at `x402_headers` for `x-payment-amount`. Do not convert raw `amount` or `maxAmountRequired` values from `payment_required`, `payment_details` or the `body_snippet` yourself: they are atomic units (`10000` is 0.01 USDC) and easy to misread, so treat the price as unclear.
- 2. **Handle unclear prices**: if you cannot confidently determine the price, DO NOT GUESS. Ask: "This resource requires payment, but the price isn't clear. Would you like me to proceed, and what is your maximum budget?"
--3. **Check balance and rules**: call `get_balance` (token="USDC"). If the cost exceeds your spending limits, ask the user for permission.
-+3. **Check balance and rules**: call `get_balance` (token="USDC"). The spending caps in the wallet tool's info are hard limits: a payment over the x402 per-request cap or the session spend cap is refused even if the user agrees, so do not ask for permission to go over one, and do not split the payment or switch to `send_usdc` to get around it. Tell the user the cost is over the cap and that it can only be raised in the wallet settings (`tools.wallet.x402.maxCostPerRequestUsd`, `tools.wallet.sessionSpendCapUsd`).
- 4. **Inform the user**: state the cost and your intent briefly (for example "This endpoint requires a 0.15 USDC micropayment. I have the funds and am purchasing it now.").
- 5. **Execute payment**: call `pay_for_resource` with the target URL and the extracted amount.
- 6. **Process content directly**: `pay_for_resource` returns the un-paywalled content. Do NOT call `web_fetch` again after paying; use the `pay_for_resource` result immediately.
+-Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from available API keys (`memory.rlm.subModel` overrides).
++Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from the first provider with usable credentials, in the order OpenAI (`gpt-4o-mini`), Anthropic (`claude-haiku-4-5`), Google (`gemini-3.5-flash-lite`, needs `GEMINI_API_KEY`); `memory.rlm.subModel` overrides.
+ 
+ ---
+ 
+```
+
+**File**: `src/agents/embedded-runner/model.test.ts` (modified, +36/-0)
+```diff
+@@ -409,6 +409,42 @@ describe("resolveModel", () => {
+     });
+   });
+ 
++  it("builds a google forward-compat fallback for a newer stable flash-lite id", () => {
++    const templateModel = {
++      id: "gemini-2.5-flash-lite",
++      name: "Gemini 2.5 Flash Lite",
++      provider: "google",
++      api: "google-generative-ai",
++      baseUrl: "https://generativelanguage.googleapis.com/v1beta",
++      reasoning: true,
++      input: ["text", "image"] as const,
++      cost: { input: 0.1, output: 0.4, cacheRead: 0.025, cacheWrite: 0 },
++      contextWindow: 1048576,
++      maxTokens: 65536,
++    };
++    mockDiscoveredModel({
++      provider: "google",
++      modelId: "gemini-2.5-flash-lite",
++      templateModel,
++    });
++
++    const result = resolveModel("google", "gemini-3.5-flash-lite", "/tmp/agent");
++
++    expect(result.error).toBeUndefined();
++    expect(result.model).toMatchObject({
++      provider: "google",
++      id: "gemini-3.5-flash-lite",
++      api: "google-generative-ai",
++      baseUrl: "https://generativelanguage.googleapis.com/v1beta",
++    });
++    expect(borrowedPriceTemplate(result.model)).toBe("gemini-2.5-flash-lite");
++
++    // Speech, image and preview variants are different products and stay unknown.
++    for (const id of ["gemini-3.8-flash-lite-tts", "gemini-3.1-flash-lite-image", "gemini-9-pro"]) {
++      expect(resolveModel("google", id, "/tmp/agent").error).toBe(`Unknown model: google/${id}`);
++    }
++  });
++
+   it("keeps unknown-model errors for non-gpt-5 openai-codex ids", () => {
+     const result = resolveModel("openai-codex", "gpt-4.1-mini", "/tmp/agent");
+     expect(result.model).toBeUndefined();
+```
+
+**File**: `src/agents/model-forward-compat.ts` (modified, +33/-1)
+```diff
+@@ -27,6 +27,13 @@ const ANTHROPIC_OPUS_NEXT_TEMPLATE_MODEL_IDS = ["claude-opus-4-6", "claude-opus-
+ const ZAI_GLM5_MODEL_ID = "glm-5";
+ const ZAI_GLM5_TEMPLATE_MODEL_IDS = ["glm-4.7"] as const;
+ 
++// Stable Gemini Flash-Lite ids only (gemini-3.5-flash-lite), not the -tts, -image or -preview ones.
++const GOOGLE_FLASH_LITE_MODEL_ID = /^gemini-\d+(?:\.\d+)?-flash-lite$/;
++const GOOGLE_FLASH_LITE_TEMPLATE_MODEL_IDS = [
++  "gemini-3.1-flash-lite-preview",
++  "gemini-2.5-flash-lite",
++] as const;
++
+ /**
+  * A model cloned from a catalogued template carries the template's `cost`, which is a guess,
+  * not this model's price (claude-fable-5-1 cloned from Opus 4.7 was billed at $5/$25 per M while
+@@ -294,6 +301,30 @@ function resolveZaiGlm5ForwardCompatModel(
+   } as Model<Api>);
+ }
+ 
++// Google ships Flash-Lite releases faster than the built-in catalog picks them up, and shuts the
++// old ones down (gemini-2.0-flash-lite went away on 2026-06-01). A newer stable Flash-Lite id is
++// cloned from the newest catalogued one; the provider picks the thinking settings from the id.
++function resolveGoogleFlashLiteForwardCompatModel(
++  provider: string,
++  modelId: string,
++  modelRegistry: ModelRegistry,
++): Model<Api> | undefined {
++  const normalizedProvider = normalizeProviderId(provider);
++  if (normalizedProvider !== "google") {
++    return undefined;
++  }
++  const trimmedModelId = modelId.trim();
++  if (!GOOGLE_FLASH_LITE_MODEL_ID.test(trimmedModelId.toLowerCase())) {
++    return undefined;
++  }
++  return cloneFirstTemplateModel({
++    normalizedProvider,
++    trimmedModelId,
++    templateIds: [...GOOGLE_FLASH_LITE_TEMPLATE_MODEL_IDS],
++    modelRegistry,
++  });
++}
++
+ export function resolveForwardCompatModel(
+   provider: string,
+   modelId: string,
+@@ -304,6 +335,7 @@ export function resolveForwardCompatModel(
+     resolveAnthropicOpus46ForwardCompatModel(provider, modelId, modelRegistry) ??
+     resolveAnthropicOpusNextForwardCompatModel(provider, modelId, modelRegistry) ??
+     resolveAnthropicFamilyForwardCompatModel(provider, modelId, modelRegistry) ??
+-    resolveZaiGlm5ForwardCompatModel(provider, modelId, modelRegistry)
++    resolveZaiGlm5ForwardCompatModel(provider, modelId, modelRegistry) ??
++    resolveGoogleFlashLiteForwardCompatModel(provider, modelId, modelRegistry)
+   );
+ }
+```
+
+**File**: `src/agents/tools/deep-recall-tool.sub-model-catalog.test.ts` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++import fs from "node:fs";
++import os from "node:os";
++import path from "node:path";
++import { expect, it } from "vitest";
++import { resolveModel } from "../embedded-runner/model.js";
++import { resolveSubModel } from "./deep-recall-tool.js";
++
++// Unmocked on purpose: every model deep recall can pick on "auto" has to load from the real
++// catalog (or a forward-compat rule), or the recursive calls fail with "Unknown model".
++it("auto sub-models all resolve to a usable model", async () => {
++  const agentDir = fs.mkdtempSync(path.join(os.tmpdir(), "bitterbot-sub-model-"));
++  const envKeys = ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY"] as const;
++  const saved = envKeys.map((key) => [key, process.env[key]] as const);
++  try {
++    for (const only of envKeys) {
++      for (const key of envKeys) {
++        delete process.env[key];
++      }
++      process.env[only] = "test-key";
++      const sub = await resolveSubModel(undefined, "auto");
++      if (!sub) {
++        // A stored credential for an earlier provider on this machine can win; skip then.
++        continue;
++      }
++      const resolved = resolveModel(sub.provider, sub.model, agentDir, undefined);
++      expect(resolved.error, `${sub.provider}/${sub.model}`).toBeUndefined();
++      expect(resolved.model?.id).toBe(sub.model);
++    }
++    const google = resolveModel("google", "gemini-3.5-flash-lite", agentDir, undefined);
++    expect(google.error).toBeUndefined();
++    expect(google.model).toMatchObject({ provider: "google", api: "google-generative-ai" });
++  } finally {
++    for (const [key, value] of saved) {
++      if (value === undefined) {
++        delete process.env[key];
++      } else {
++        process.env[key] = value;
++      }
++    }
++    fs.rmSync(agentDir, { recursive: true, force: true });
++  }
++});
+```
+
+**File**: `src/agents/tools/deep-recall-tool.sub-model.test.ts` (added, +81/-0)
+```diff
+@@ -0,0 +1,81 @@
++import { afterEach, beforeEach, expect, it, vi } from "vitest";
++
++const stored = vi.hoisted(() => ({ providers: [] as string[] }));
++
++vi.mock("../runtime/models/index.js", async (importOriginal) => ({
++  ...(await importOriginal<typeof import("../runtime/models/index.js")>()),
++  discoverAuthStorage: () => ({ list: () => stored.providers }),
++}));
++vi.mock("../agent-paths.js", async (importOriginal) => ({
++  ...(await importOriginal<typeof import("../agent-paths.js")>()),
++  resolveBitterbotAgentDir: () => "/tmp/bitterbot-test-agent",
++}));
++
++const { resolveSubModel } = await import("./deep-recall-tool.js");
++
++const KEYS = [
++  "OPENAI_API_KEY",
++  "ANTHROPIC_API_KEY",
++  "ANTHROPIC_OAUTH_TOKEN",
++  "GEMINI_API_KEY",
++  "GOOGLE_API_KEY",
++] as const;
++const saved: Record<string, string | undefined> = {};
++
++beforeEach(() => {
++  stored.providers = [];
++  for (const key of KEYS) {
++    saved[key] = process.env[key];
++    delete process.env[key];
++  }
++});
++
++afterEach(() => {
++  for (const key of KEYS) {
++    if (saved[key] === undefined) {
++      delete process.env[key];
++    } else {
++      process.env[key] = saved[key];
++    }
++  }
++});
++
++it("picks the Google sub-model when only the Gemini key is set", async () => {
++  process.env.GEMINI_API_KEY = "test-key";
++  const sub = await resolveSubModel(undefined, "auto");
++  expect(sub?.provider).toBe("google");
++  // gemini-2.0-flash-lite was shut down on the Gemini API on 2026-06-01.
++  expect(sub?.model).not.toBe("gemini-2.0-flash-lite");
++});
++
++it("does not pick Google on GOOGLE_API_KEY, which model auth does not read for it", async () => {
++  process.env.GOOGLE_API_KEY = "test-key";
++  expect(await resolveSubModel(undefined, "auto")).toBeNull();
++});
++
++it("picks the Anthropic sub-model when only an Anthropic key is set", async () => {
++  process.env.ANTHROPIC_API_KEY = "test-key";
++  expect((await resolveSubModel(undefined, "auto"))?.provider).toBe("anthropic");
++});
++
++it("picks a provider that only has stored credentials", async () => {
++  stored.providers = ["google"];
++  expect((await resolveSubModel(undefined, "auto"))?.provider).toBe("google");
++});
++
++it("prefers OpenAI when several providers have keys", async () => {
++  process.env.OPENAI_API_KEY = "test-key";
++  process.env.GEMINI_API_KEY = "test-key";
++  expect((await resolveSubModel(undefined, "auto"))?.provider).toBe("openai");
++});
++
++it("returns null when no provider has credentials", async () => {
++  expect(await resolveSubModel(undefined, "auto")).toBeNull();
++});
++
++it("keeps an explicitly configured sub-model", async () => {
++  expect(await resolveSubModel(undefined, "openai/gpt-5-mini")).toEqual({
++    provider: "openai",
++    model: "gpt-5-mini",
++  });
++});
+```
+
+**File**: `src/agents/tools/deep-recall-tool.ts` (modified, +15/-31)
+```diff
+@@ -312,14 +312,15 @@ const DeepRecallSchema = Type.Object({
+ const CHEAP_SUB_MODELS: Record<string, { provider: string; model: string }> = {
+   openai: { provider: "openai", model: "gpt-4o-mini" },
+   anthropic: { provider: "anthropic", model: "claude-haiku-4-5-20251001" },
+-  google: { provider: "google", model: "gemini-2.0-flash-lite" },
++  google: { provider: "google", model: "gemini-3.5-flash-lite" },
+ };
+ 
+ /**
+- * Resolve the cheapest available sub-model for RLM recursive calls.
+- * Checks what API keys are available and picks the cheapest model.
++ * Resolve the cheapest available sub-model for RLM recursive calls: the first
++ * provider, in cost order, that this install can actually authenticate to.
++ * Exported for tests.
+  */
+-async function resolveSubModel(
++export async function resolveSubModel(
+   cfg: BitterbotConfig | undefined,
+   configuredSubModel: string,
+ ): Promise<{ provider: string; model: string } | null> {
+@@ -330,39 +331,22 @@ async function resolveSubModel(
+     }
+   }
+ 
+-  // Auto-detect: try providers in cost order
++  let stored: string[] = [];
+   try {
+     const { discoverAuthStorage } = await import("../runtime/models/index.js");
+     const { resolveBitterbotAgentDir } = await import("../agent-paths.js");
+-    const agentDir = resolveBitterbotAgentDir();
+-    const authStorage = discoverAuthStorage(agentDir);
+-
+-    // Check available providers
+-    for (const [providerId, subModel] of Object.entries(CHEAP_SUB_MODELS)) {
+-      const providers = authStorage.list?.() ?? [];
+-      const hasProvider =
+-        providers.includes(providerId) ||
+-        process.env[`${providerId.toUpperCase()}_API_KEY`] ||
+-        process.env.OPENAI_API_KEY ||
+-        process.env.ANTHROPIC_API_KEY ||
+-        process.env.GOOGLE_API_KEY;
+-      if (hasProvider) {
+-        return subModel;
+-      }
+-    }
++    stored = discoverAuthStorage(resolveBitterbotAgentDir()).list?.() ?? [];
+   } catch {
+-    // Fallback
++    // No readable auth store: environment keys still count.
+   }
+ 
+-  // Last resort: try OpenAI (most common)
+-  if (process.env.OPENAI_API_KEY) {
+-    return CHEAP_SUB_MODELS.openai!;
+-  }
+-  if (process.env.ANTHROPIC_API_KEY) {
+-    return CHEAP_SUB_MODELS.anthropic!;
+-  }
+-  if (process.env.GOOGLE_API_KEY) {
+-    return CHEAP_SUB_MODELS.google!;
++  // Ask model auth which environment variable each provider reads, so a provider
++  // is only picked when the sub-calls can use its key (Google reads GEMINI_API_KEY).
++  const { resolveEnvApiKey } = await import("../model-auth.js");
++  for (const [providerId, subModel] of Object.entries(CHEAP_SUB_MODELS)) {
++    if (stored.includes(providerId) || resolveEnvApiKey(providerId)) {
++      return subModel;
++    }
+   }
+ 
+   return null;
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #398** (2026-11-25): fix(skills): say wallet spending caps cannot be approved past (@nabeelbaghoor)
 - **PR #396** (2026-11-24): feat(tts): speak through the OpenAI Realtime API ahead of the speech model shutdown (@VGIL77)
 - **PR #395** (2026-11-24): fix(media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown (@VGIL77)
+- **PR #394** (2026-11-26): fix(deep-recall): pick the sub-model for the provider whose key is set (@AyhamJo7)
 - **PR #393** (2026-11-22): fix(deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes (@VGIL77)
 - **PR #392** (2026-11-22): chore(main): release 1.14.3 (@github-actions[bot])
-- **PR #389** (2026-11-22): fix(agents): retry one-shot completions with thinking between_tools when a model rejects disabled (@VGIL77)
 
 ---
 
@@ -1620,28 +1943,28 @@ Fixes #390
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skills): say wallet spending caps cannot be approved past
+## X. deep-recall): pick the sub-model for the provider whose key is set
 
 **RULE**:
-When implementing operations in `skills/wallet-payments/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/memory/deep-recall.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f28f8940`: skills): say wallet spending caps cannot be approved past. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ad08921`: deep-recall): pick the sub-model for the provider whose key is set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/wallet-payments/SKILL.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/deep-recall.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-3. **Check balance and rules**: call `get_balance` (token="USDC"). The spending caps in the wallet tool's info are hard limits: a payment over the x402 per-request cap or the session spend cap is refused even if the user agrees, so do not ask for permission to go over one, and do not split the payment or switch to `send_usdc` to get around it. Tell the user the cost is over the cap and that it can only be raised in the wallet settings (`tools.wallet.x402.maxCostPerRequestUsd`, `tools.wallet.sessionSpendCapUsd`).
+Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from the first provider with usable credentials, in the order OpenAI (`gpt-4o-mini`), Anthropic (`claude-haiku-4-5`), Google (`gemini-3.5-flash-lite`, needs `GEMINI_API_KEY`); `memory.rlm.subModel` overrides.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-3. **Check balance and rules**: call `get_balance` (token="USDC"). If the cost exceeds your spending limits, ask the user for permission.
+Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from available API keys (`memory.rlm.subModel` overrides).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f28f8940` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ad08921` are properly handled with clean fallback behavior.

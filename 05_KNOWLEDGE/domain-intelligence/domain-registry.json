@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T17:30:58.661Z",
-  "total_records": 2765,
+  "last_updated": "2026-11-26T17:39:36.713Z",
+  "total_records": 2767,
   "domains": {
     "A": {
       "total": 23,
@@ -2389,7 +2389,7 @@
       ]
     },
     "I": {
-      "total": 163,
+      "total": 165,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2553,7 +2553,9 @@
         "domain_intelligence-content-information-intelligence-helixdb-helix-db-core-invariants",
         "domain_intelligence-content-information-intelligence-kube-rs-kube-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-core-invariants",
-        "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-zulip-zulip-core-invariants",
+        "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants"
       ]
     },
     "J": {
@@ -11346,8 +11348,8 @@
       "title": "Research & Knowledge Intelligence: google-bert/bert-base-uncased Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-bert-bert-base-uncased-research-knowledge-intelligence-google-bert-ber.md",
       "repository": "google-bert/bert-base-uncased",
-      "content_hash": "9bcec13db5c2ab840a4cc6f44636a6be4eed09fd3da8c6bf83b9ce16eec56751",
-      "created_at": "2026-11-23T00:48:19.911Z"
+      "content_hash": "f36cd33c178a036e4d11b7f96cd04a9f4a59cc2458d5fc6679d1c18afc69dbee",
+      "created_at": "2026-11-26T17:39:14.949Z"
     },
     "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants",
@@ -11415,8 +11417,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-bert-bert-base-uncased-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-bert-bert-base-uncased-learnings-research-knowledge-intelligence-hf-go.md",
       "repository": "hf-google-bert-bert-base-uncased-learnings",
-      "content_hash": "8521be575d77915e61224a7c713a309f5fdf0c17ee97c5162da0a33e55cc6e2d",
-      "created_at": "2026-11-23T00:48:36.347Z"
+      "content_hash": "139e916f664d22ff7cab3303fcad27e4d1ef6f62ebdad35a13da6b833c051d7d",
+      "created_at": "2026-11-26T17:39:34.861Z"
     },
     "DOM-K-30566771": {
       "record_id": "DOM-K-30566771",
@@ -19043,8 +19045,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "7146d5a9a9167f22935573a4f46bfc98414604a50dc5fe28d92284e8e0da501c",
-      "created_at": "2026-11-25T23:02:04.166Z"
+      "content_hash": "f85767f4d5694d98c0958a54ebde3043bb33207569934cc8001e6735395f1ed5",
+      "created_at": "2026-11-26T17:39:31.506Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -29039,8 +29041,8 @@
       "title": "Technical Construction Intelligence: clockworklabs/SpacetimeDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-technical-construction-intelligence-clockworklabs-spac.md",
       "repository": "clockworklabs/SpacetimeDB",
-      "content_hash": "754aa104a1e6b4a1031769c2673870e65ce152f148aefcf2c506d3ddde8b337f",
-      "created_at": "2026-11-24T21:15:48.712Z"
+      "content_hash": "1b22869832a9b7970691e7d40d9c7115921a2f91250911abab28361119b49cab",
+      "created_at": "2026-11-26T17:39:29.140Z"
     },
     "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv",
@@ -29048,8 +29050,8 @@
       "title": "Technical Construction Intelligence: clockworklabs-spacetimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-learnings-technical-construction-intelligence-clockwor.md",
       "repository": "clockworklabs-spacetimedb-learnings",
-      "content_hash": "8dd2cd14336530d07db0eb30e68ab7fbab929e22d820ef66b189d9d9bedc7c81",
-      "created_at": "2026-11-24T21:15:56.477Z"
+      "content_hash": "a4773156f2a3833223150bba689da0cf62febc4d029e23de8c307e444bbe8159",
+      "created_at": "2026-11-26T17:39:36.713Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants",
@@ -46696,6 +46698,24 @@
       "repository": "open-wa-wa-automate-nodejs-learnings",
       "content_hash": "2ef96a1d75c971945608de8a9b8ab61af4e9ea85a8dd468428cdfa6ac6b09429",
       "created_at": "2026-11-26T17:23:10.829Z"
+    },
+    "domain_intelligence-content-information-intelligence-zulip-zulip-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-zulip-zulip-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: zulip/zulip Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-content-information-intelligence-zulip-zulip-core-invariants.md",
+      "repository": "zulip/zulip",
+      "content_hash": "7e92867cc8d9d68866f2b0c1932cdf4dde8e654ce4b78906febc05535f74d4d0",
+      "created_at": "2026-11-26T17:39:22.529Z"
+    },
+    "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
+      "repository": "zulip-zulip-learnings",
+      "content_hash": "f8ce144225140033a973bb8b4fedef0ff596cb043832658d3f2a8d629a96f336",
+      "created_at": "2026-11-26T17:39:35.819Z"
     }
   }
 }

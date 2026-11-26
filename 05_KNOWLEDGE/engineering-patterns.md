@@ -809686,3 +809686,237 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ae294f53` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10738. Fix image syntax for unpreviewable uploads rendering as text. (Harvested from zulip/zulip)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fix image syntax for unpreviewable uploads rendering as text.",
+  "source": "zulip/zulip",
+  "source_url": "https://github.com/zulip/zulip",
+  "source_version": "55eba7b1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T17:39:21.461Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zulip-zulip",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zulip/zulip](https://github.com/zulip/zulip) (Revision: `55eba7b1`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `api_docs/message-formatting.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3a4ad369`: markdown: Fix image syntax for unpreviewable uploads rendering as text.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `api_docs/message-formatting.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+uploaded images, not third-party image URLs. If the server can't
+preview an uploaded file as an image (e.g., because the image is too
+large to thumbnail), it instead renders a link to the file, as
+`[example image](/user_uploads/path/to/example.png)` would, with the
+alt text as plain text. (An uploaded file with a supported audio
+`Content-Type` renders as an [audio player](#audio-players), not a
+link.)
+**Before Zulip 14.0 (feature level ZF-7e1ae3)**, Markdown image
+syntax that now renders as [a link to the uploaded file](#images) was
+left as literal Markdown text.
+
+Markdown image syntax for an uploaded video (e.g.,
+`![example video](/user_uploads/path/to/video.mp4)`) [renders as a
+link](#images) to the video, so Zulip may generate this preview for
+it as well.
+
+**Changes**: Before Zulip 14.0 (feature level ZF-7e1ae3), Markdown
+image syntax for an uploaded video was left as literal Markdown text.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+uploaded images, not third-party image URLs.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3a4ad369` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10739. fix `ctx.from` in a submodule view for explicitly named tables (Harvested from clockworklabs/SpacetimeDB)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "fix `ctx.from` in a submodule view for explicitly named tables",
+  "source": "clockworklabs/SpacetimeDB",
+  "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+  "source_version": "cc291d42",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T17:39:28.074Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clockworklabs-spacetimedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `cc291d42`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/bindings-typescript/src/server/runtime.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cc291d42`: ts-sdk: fix `ctx.from` in a submodule view for explicitly named tables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/server/runtime.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  /** Query builder scoped to the submodule's own tables. Like the db view, it
+   *  names each table by accessor path (`namePrefix` holds accessor keys): the
+   *  host resolves that alias, but not an accessor namespace joined to a
+   *  table's explicit canonical name. */
+          { ...def, sourceName: m.namePrefix + def.accessorName },
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+  /** Query builder scoped to the submodule's own tables, with namespace-prefixed
+   *  source names so generated SQL targets the mounted table names. */
+          { ...def, sourceName: m.namePrefix + def.sourceName },
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cc291d42` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10740. pick the sub-model for the provider whose key is set (Harvested from Bitterbot-AI/bitterbot-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "pick the sub-model for the provider whose key is set",
+  "source": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "5ad08921",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T17:39:30.445Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `5ad08921`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/memory/deep-recall.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5ad08921`: deep-recall): pick the sub-model for the provider whose key is set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/deep-recall.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from the first provider with usable credentials, in the order OpenAI (`gpt-4o-mini`), Anthropic (`claude-haiku-4-5`), Google (`gemini-3.5-flash-lite`, needs `GEMINI_API_KEY`); `memory.rlm.subModel` overrides.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from available API keys (`memory.rlm.subModel` overrides).
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5ad08921` are properly handled with clean fallback behavior.

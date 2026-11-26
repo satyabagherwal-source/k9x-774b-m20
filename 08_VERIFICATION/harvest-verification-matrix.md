@@ -13489,3 +13489,7 @@
 | `CYCLE-20261126-MHM6` | `2026-11-26T17:23:06.798Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10736` | Yes (`c6c83dee...`) |
 | `CYCLE-20261126-WBA4` | `2026-11-26T17:30:45.148Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`a54184f8...`) |
 | `CYCLE-20261126-WDBN` | `2026-11-26T17:30:47.795Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10737` | Yes (`0ca61401...`) |
+| `CYCLE-20261126-78GD` | `2026-11-26T17:39:14.701Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`10720556...`) |
+| `CYCLE-20261126-7E4Y` | `2026-11-26T17:39:22.067Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10738` | Yes (`093e61c2...`) |
+| `CYCLE-20261126-7J8M` | `2026-11-26T17:39:28.678Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10739` | Yes (`381a8ff2...`) |
+| `CYCLE-20261126-7L2G` | `2026-11-26T17:39:31.048Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10740` | Yes (`78c03ecb...`) |

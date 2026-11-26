@@ -4,22 +4,22 @@
 {
   "source_repository": "clockworklabs/SpacetimeDB",
   "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-  "source_version": "c707cbcf",
+  "source_version": "cc291d42",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T23:02:01.414Z",
+  "timestamp": "2026-11-26T17:39:28.934Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clockworklabs-spacetimedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `c707cbcf`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T23:02:01.414Z`  
+> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `cc291d42`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T17:39:28.934Z`  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `clockworklabs/SpacetimeDB` (Commit: `c707cbcf`)
+- **Target Repository**: `clockworklabs/SpacetimeDB` (Commit: `cc291d42`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:02:00.244Z  
+> **Harvest Timestamp**: 2026-11-26T17:39:27.466Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25570 stars
+- **Stars / Engagement**: 25571 stars
 
 ---
 
@@ -841,165 +841,122 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `537d6f82` (2026-11-25)
-**Commit Message**: Fix wrong and broken doc links in the websocket message types (#6613)
+### Incident Patch 1: `cc291d42` (2026-11-26)
+**Commit Message**: ts-sdk: fix `ctx.from` in a submodule view for explicitly named tables (#6661)
 
 # Description of Changes
 
-Fixes doc comments in `crates/client-api-messages` that name the wrong
-type or link to a type that doesn't exist. Client authors read these
-comments to learn how requests and responses pair up, and several
-pointed at the wrong thing:
+A submodule view that returns `ctx.from.<table>` fails with `Error
+executing raw SQL returned by view` when the table has an explicit
+`name`. The submodule query builder joined the accessor namespace to the
+table's canonical name (`"camelLib"."named_item"`). The host resolves
+the accessor path (`camelLib.item`) or the canonical path
+(`camel_lib.named_item`), but not a mix.
 
-- `v2::CallReducer` and `v2::CallProcedure` said the server replies with
-`CallReducerResult` / `CallProcedureResult`. Neither type exists; the
-replies are `ReducerResult` and `ProcedureResult`.
-- `v2::OneOffQuery` and `v2::SingleTableRows` referred to
-`OneOffQueryResponse`, which is actually `OneOffQueryResult`.
-- The `request_id` fields on `v2::OneOffQueryResult` and
-`v2::ReducerResult` said they echo a `SubscribeSingle` message. They
-echo `OneOffQuery` and `CallReducer`.
-- `ProcedureResult` (v1 and v2) said its `request_id` comes from a
-`ProcedureCall` request (it's `CallProcedure`), and that its `timestamp`
-is when the *reducer* started.
-- `v2::CallReducer::args` / `v2::CallProcedure::args` linked
-`ProductValue`, which isn't in scope there. They now link via
-`spacetimedb_sats::ProductValue`.
-- The `websocket` module docs linked `ClientMessage` / `Server
+The builder now uses the accessor name, as the submodule db view already
+does. #6358 edits the same line; I can rebase on whichever lands first.
 
-**File**: `crates/client-api-messages/src/websocket.rs` (modified, +2/-2)
+# API and ABI breaking changes
+
+None
+
+# Rollback safety impact
+
+n/a
+
+# Expected complexity level and risk
+
+1
+
+# Testing
+
+- [x] New test in `tests/ctx_as.test.ts`, which fails on master
+- [x] Against a 2.16.1 standalone: the view returned 400 before the
+change and rows after it
+- [x] `pnpm lint`, `tsc`, `pnpm test:unit` (except the two wasm
+test-utils files, which need the Rust build)
+
+**File**: `crates/bindings-typescript/src/server/runtime.ts` (modified, +5/-3)
 ```diff
-@@ -1,7 +1,7 @@
- //! Messages sent over the SpacetimeDB WebSocket protocol.
- //!
--//! Client -> Server messages are encoded as [`ClientMessage`].
--//! Server -> Client messages are encoded as [`ServerMessage`].
-+//! Client -> Server messages are encoded as a `ClientMessage` from the protocol version in use, e.g. [`v2::ClientMessage`].
-+//! Server -> Client messages are encoded as a `ServerMessage` from the protocol version in use, e.g. [`v2::ServerMessage`].
- //!
- //! Any changes to this file must be paired with a change to the WebSocket protocol identifiers
- //! defined in `crates/client-api/src/routes/subscribe.rs`,
+@@ -594,15 +594,17 @@ class ModuleHooksImpl implements ModuleHooks {
+     ));
+   }
+ 
+-  /** Query builder scoped to the submodule's own tables, with namespace-prefixed
+-   *  source names so generated SQL targets the mounted table names. */
++  /** Query builder scoped to the submodule's own tables. Like the db view, it
++   *  names each table by accessor path (`namePrefix` holds accessor keys): the
++   *  host resolves that alias, but not an accessor namespace joined to a
++   *  table's explicit canonical name. */
+   #getSubmoduleQueryBuilder(submoduleIdx: number): QueryBuilder<any> {
+     const m = this.#flatSubmodules[submoduleIdx];
+     return (m.queryBuilder_ ??= makeQueryBuilder({
+       tables: Object.fromEntries(
+         Object.entries(m.schemaTables).map(([key, def]) => [
+           key,
+-          { ...def, sourceName: m.namePrefix + def.sourceName },
++          { ...def, sourceName: m.namePrefix + def.accessorName },
+         ])
+       ),
+     }));
 ```
 
-**File**: `crates/client-api-messages/src/websocket/v1.rs` (modified, +2/-2)
+**File**: `crates/bindings-typescript/tests/ctx_as.test.ts` (modified, +27/-0)
 ```diff
-@@ -687,13 +687,13 @@ pub struct ProcedureResult<F: WebsocketFormat> {
-     ///
-     /// Contains the return value if successful, or the error message if not.
-     pub status: ProcedureStatus<F>,
--    /// The time when the reducer started.
-+    /// The time when the procedure started.
-     ///
-     /// Note that [`Timestamp`] serializes as `i64` nanoseconds since the Unix epoch.
-     pub timestamp: Timestamp,
-     /// The time the procedure took to run.
-     pub total_host_execution_duration: TimeDuration,
--    /// The same same client-provided identifier as in the original [`ProcedureCall`] request.
-+    /// The same client-provided identifier as in the original [`CallProcedure`] request.
-     ///
-     /// Clients use this to correlate the response with the original request.
-     pub request_id: u32,
-```
-
-**File**: `crates/client-api-messages/src/websocket/v2.rs` (modified, +10/-10)
-```diff
-@@ -134,7 +134,7 @@ pub struct SubscribeSet {
- ///
- /// Unlike subscriptions registered by [`Subscribe`], this query will not receive real-time updates.
- ///
--/// The server will respond with a [`OneOffQueryResponse`] message containing the same `request_id`
-+/// The server will respond with a [`OneOffQueryResult`] message containing the same `request_id`
- /// and the status of the query, either the matching rows or an error message.
- #[derive(SpacetimeType)]
- #[sats(crate = spacetimedb_lib)]
-@@ -148,7 +148,7 @@ pub struct OneOffQuery {
+@@ -16,12 +16,14 @@ describe('ctx.as alias proxy', () => {
+   let schema: typeof import('../src/server/schema').schema;
+   let table: typeof import('../src/lib/table').table;
+   let t: typeof import('../src/lib/type_builders').t;
++  let toSql: typeof import('../src/lib/query').toSql;
+   let moduleHooks: symbol;
  
- /// Sent by the client to invoke a reducer, a transactional non-side-effecting database function.
- ///
--/// After the reducer runs, the server will respond with a [`CallReducerResult`] message containing the same `request_id`
-+/// After the reducer runs, the server will respond with a [`ReducerResult`] message containing the same `request_id`
- /// and the status of the run, either the return value and [`TransactionUpdate`] or an error.
- #[derive(SpacetimeType)]
- #[sats(crate = spacetimedb_lib)]
-@@ -164,7 +164,7 @@ pub struct CallReducer {
+   beforeAll(async () => {
+     ({ schema } = await import('../src/server/schema'));
+     ({ table } = await import('../src/lib/table'));
+     ({ t } = await import('../src/lib/type_builders'));
++    ({ toSql } = await import('../src/lib/query'));
+     ({ moduleHooks } = (await import('spacetime:sys@2.0')) as any);
+   });
  
-     /// The arguments to the reducer.
-     ///
--    /// A BSATN-encoded [`ProductValue`] which meets the reducer's argument schema.
-+    /// A BSATN-encoded [`ProductValue`](spacetimedb_sats::ProductValue) which meets the reducer's argument schema.
-     pub args: Bytes,
- }
- 
-@@ -183,7 +183,7 @@ impl_deserialize!([] CallReducerFlags, de => match de.deserialize_u8()? {
- 
- /// Sent by the client to invoke a procedure, a non-transactional side-effecting database function.
- ///
--/// After the procedure runs, the server will respond with a [`CallProcedureResult`] message containing the same `request_id`
-+/// After the procedure runs, the server will respond with a [`ProcedureResult`] message containing the same `request_id`
- /// and the status of the run, either the return value or an error.
- #[derive(SpacetimeType)]
- #[sats(crate = spacetimedb_lib)]
-@@ -199,7 +199,7 @@ pub struct CallProcedure {
- 
-     /// The arguments to the procedure.
-     ///
--    /// A BSATN-encoded [`ProductValue`] which meets the procedure's argument schema.
-+    /// A BSATN-encoded [`ProductValue`](spacetimedb_sats::ProductValue) which meets the procedure's argument schema.
-     pub args: Bytes,
- }
- 
-@@ -268,7 +268,7 @@ pub struct QueryRows {
- 
- /// Matching rows resident in a table at the time a query ran,
- /// used in contexts where we're not sending insert/delete deltas,
--/// like the [`QueryRows`] of a [`SubscribeApplied`], and [`OneOffQueryResponse`].
-+/// like the [`QueryRows`] of a [`SubscribeApplied`], and [`OneOffQueryResult`].
- #[derive(SpacetimeType, Debug)]
- #[sats(crate = spacetimedb_lib)]
- pub struct SingleTableRows {
-@@ -436,7 +436,7 @@ pub struct EventTableRows {
- #[derive(SpacetimeType, Debug)]
- #[sats(crate = spacetimedb_lib)]
- pub struct OneOffQueryResult {
--    /// The request_id of the corresponding `SubscribeSingle` message.
-+    /// The request_id of the corresponding [`OneOffQuery`] message.
-     pub request_id: u32,
-     /// The matching rows for this query, or an error message if computation failed.
-     ///
-@@ -449,7 +449,7 @@ pub struct OneOffQueryResult {
- #[derive(SpacetimeType, Debug)]
- #[sats(crate = spacetimedb_lib)]
- pub struct ReducerResult {
--    /// The request_id of the corresponding `SubscribeSingle` message.
-+    /// The request_id of the corresponding [`CallReducer`] message.
-     pub request_id: u32,
-     /// The time when the reducer started.
-     ///
-@@ -503,13 +503,13 @@ pub struct ProcedureResult {
-     ///
-     /// Contains the return value if successful, or the error message if not.
-     pub status: ProcedureStatus,
--    /// The time when the reducer started.
-+    /// The time when the procedure started.
-     ///
-     /// Note that [`Timestamp`] serializes as `i64` nanoseconds since the Unix epoch.
-     pub timestamp: Timestamp,
-     /// The time the procedure took to run.
-     pub total_host_execution_duration: TimeDuration,
--    /// The same same client-provided identifier as in the original [`ProcedureCall`] request.
-+    /// The same client-provided identifier as in the original [`CallProcedure`] request.
-     ///
-     /// Clients use this to correlate the response with the original request.
-     pub request_id: u32,
+@@ -129,4 +131,29 @@ describe('ctx.as alias proxy', () => {
+     expect(capturedCtx.as.myauth.as.baz.db.bazTable).toBeDefined();
+     expect(capturedCtx.as.myauth.as.baz.sender).toBe(capturedCtx.sender);
+   });
++
++  it('ctx.from in a submodule view names an explicitly named table by its accessor', async () => {
++    const sessions = table(
++      { name: 'auth_sessions', public: true },
++      { id: t.u64().primaryKey().autoInc() }
++    );
++    const authSchema = schema({ sessions });
++    let sql: string | undefined;
++    const allSessions = authSchema.anonymousView(
++      { public: true },
++      t.array(sessions.rowType),
++      ctx => {
++        sql = toSql(ctx.from.sessions);
++        return ctx.from.sessions;
++      }
++    );
++    const consumer = schema({ myAuth: { default: authSchema, allSessions } });
++
++    const hooks = (consumer as any)[moduleHooks]({});
++    hooks.__call_view_anon__(0, new Uint8Array());
++
++    // The host resolves `myAuth.sessions` (accessors) and the canonical
++    // `my_auth.auth_sessions`, but not a mix of the two.
++    expect(sql).toBe('SELECT * FROM "myAuth"."sessions"');
++  });
+ });
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6710** (closed): Let pnpm run the bun package's install script in the bun-ts template (@krisajenkins)
+- **PR #6693** (2026-11-26): Upgrade Wasmtime from 39 to 48.0.7 (@cloutiertyler)
 - **PR #6690** (2026-11-25): Update dependencies to clear Dependabot alerts and make pnpm the only package manager (@cloutiertyler)
 - **PR #6689** (2026-11-25): Move LLM benchmark results out of SpacetimeDB and port the benchmark tooling to Rust (@cloutiertyler)
 - **PR #6686** (2026-11-24): Release - Double the Cargo publish index timeout (@bfops)
 - **PR #6681** (2026-11-23): Fix Stripe, PostHog and Auth types on SDK 2.12 (@bradleyshep)
-- **PR #6674** (2026-11-25): Async IDC: pipelining (@Shubham8287)
 
 ---
 
@@ -1019,33 +976,37 @@ is when the *reducer* started.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wrong and broken doc links in the websocket message types
+## X. ts-sdk: fix `ctx.from` in a submodule view for explicitly named tables
 
 **RULE**:
-When implementing operations in `crates/client-api-messages/src/websocket.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/bindings-typescript/src/server/runtime.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `537d6f82`: wrong and broken doc links in the websocket message types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc291d42`: ts-sdk: fix `ctx.from` in a submodule view for explicitly named tables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/client-api-messages/src/websocket.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/server/runtime.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Client -> Server messages are encoded as a `ClientMessage` from the protocol version in use, e.g. [`v2::ClientMessage`].
-//! Server -> Client messages are encoded as a `ServerMessage` from the protocol version in use, e.g. [`v2::ServerMessage`].
+  /** Query builder scoped to the submodule's own tables. Like the db view, it
+   *  names each table by accessor path (`namePrefix` holds accessor keys): the
+   *  host resolves that alias, but not an accessor namespace joined to a
+   *  table's explicit canonical name. */
+          { ...def, sourceName: m.namePrefix + def.accessorName },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-//! Client -> Server messages are encoded as [`ClientMessage`].
-//! Server -> Client messages are encoded as [`ServerMessage`].
+  /** Query builder scoped to the submodule's own tables, with namespace-prefixed
+   *  source names so generated SQL targets the mounted table names. */
+          { ...def, sourceName: m.namePrefix + def.sourceName },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `537d6f82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc291d42` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

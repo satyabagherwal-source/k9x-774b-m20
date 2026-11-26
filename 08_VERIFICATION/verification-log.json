@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-9LJH",
-    "timestamp": "2026-11-25T05:45:34.541Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "d3ad89768da387ce9600a50bc1e0348243d23cda588801602cd492e6df4cf33f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-L5E1",
-    "timestamp": "2026-11-25T05:54:33.481Z",
-    "repository": "reflection/Beam-1.0-501B-A23B",
-    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-    "contentHash": "e5594b0a5a7b20ecee31d20c31022f18dbfe68f86018496a9f714ac7345e08bc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-L6N4",
-    "timestamp": "2026-11-25T05:54:35.104Z",
-    "repository": "Automattic/harper",
-    "learningId": "learn-github-automattic-harper",
-    "contentHash": "bba99e9de9ebe6cff7595c1d2bc25f6ba86633f0f6bbc87f4143c0c157257876",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-LCLF",
-    "timestamp": "2026-11-25T05:54:42.819Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "c4f32f734bf98abbbcf0769dbbe7fcff46eef00843f991f6d0ce99c756fbaa87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-VYQN",
     "timestamp": "2026-11-25T06:02:58.079Z",
     "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
@@ -7490,6 +7430,66 @@
     "repository": "zeronsh/zeron",
     "learningId": "learn-github-zeronsh-zeron",
     "contentHash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-78GD",
+    "timestamp": "2026-11-26T17:39:14.701Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "10720556e3f75c1006c732fa90d075d386d272c3c834f0f5b4f0f3b735fd8764",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-7E4Y",
+    "timestamp": "2026-11-26T17:39:22.067Z",
+    "repository": "zulip/zulip",
+    "learningId": "learn-github-zulip-zulip",
+    "contentHash": "093e61c2f1b09ebdb123134179bab2c3152fa7e47f37047774a39905f8b83c2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-7J8M",
+    "timestamp": "2026-11-26T17:39:28.678Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "381a8ff208cfe71e4c26140d83b4ebb3ded484f89fd3a10635afb7f22672012f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-7L2G",
+    "timestamp": "2026-11-26T17:39:31.048Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "78c03ecbf5a096a477a4814fc96b68b12d162bd22bc65d45519f2db55a0a41e5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

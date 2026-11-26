@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:30:47.810Z",
-  "total_cycles_completed": 12802,
-  "total_learnings_persisted": 12802,
-  "total_rules_promoted": 11642,
+  "last_updated": "2026-11-26T17:39:31.066Z",
+  "total_cycles_completed": 12806,
+  "total_learnings_persisted": 12806,
+  "total_rules_promoted": 11645,
   "history": [
-    {
-      "timestamp": "2026-11-26T06:52:21.765Z",
-      "repository": "nex-agi/Nex-N2.6",
-      "learningId": "learn-huggingface-nex-agi-nex-n2-6",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T07:00:49.666Z",
-      "repository": "maxwell-model/Maxwell-V1-Flash",
-      "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T07:10:15.066Z",
-      "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T07:10:17.677Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T07:10:23.248Z",
       "repository": "wzh4869/AppPorts",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T17:30:47.810Z",
       "repository": "zeronsh/zeron",
       "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:39:14.720Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:39:22.084Z",
+      "repository": "zulip/zulip",
+      "learningId": "learn-github-zulip-zulip",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:39:28.700Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:39:31.066Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

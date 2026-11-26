@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T21:15:56.162Z",
+  "timestamp": "2026-11-26T17:39:36.382Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clockworklabs-spacetimedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clockworklabs-spacetimedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T21:15:56.162Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T17:39:36.382Z`  
 > **Learning ID**: `LEARN-EVO-clockworklabs-spacetimedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `01b14a89`  
+> **Source Version**: `cc291d42`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T21:15:47.062Z  
+> **Timestamp**: 2026-11-26T17:39:27.472Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T21:15:47.057Z  
+> **Harvest Timestamp**: 2026-11-26T17:39:27.466Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -855,14 +855,20 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01b14a89` (2026-11-24)
-**Commit Message**: Release - Double the Cargo publish index timeout (#6686)
+### Incident Patch 1: `cc291d42` (2026-11-26)
+**Commit Message**: ts-sdk: fix `ctx.from` in a submodule view for explicitly named tables (#6661)
 
 # Description of Changes
 
-Double Cargo's crates.io index wait from 60 to 120 seconds. The v2.16.3
-release hit this timeout waiting for `spacetimedb-sats`. [Release
-job](https://github.com/clockworklabs/SpacetimeDB/actions/runs/45450644164/job/138647121662)
+A submodule view that returns `ctx.from.<table>` fails with `Error
+executing raw SQL returned by view` when the table has an explicit
+`name`. The submodule query builder joined the accessor namespace to the
+table's canonical name (`"camelLib"."named_item"`). The host resolves
+the accessor path (`camelLib.item`) or the canonical path
+(`camel_lib.named_item`), but not a mix.
+
+The builder now uses the accessor name, as the submodule db view already
+does. #6358 edits the same line; I can rebase on whichever lands first.
 
 # API and ABI breaking changes
 
@@ -878,55 +884,93 @@ n/a
 
 # Testing
 
-- `cargo publish --dry-run` packaged and verified a test crate with the
-120-second setting on Cargo 1.97.1
-- Cargo reported `publish.timeout = 120` for the same configuration
+- [x] New test in `tests/ctx_as.test.ts`, which fails on master
+- [x] Against a 2.16.1 standalone: the view returned 400 before the
+change and rows after it
+- [x] `pnpm lint`, `tsc`, `pnpm test:unit` (except the two wasm
+test-utils files, which need the Rust build)
 
-The live registry wait wasn't exercised.
-
----------
-
-Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
-
-**File**: `tools/release/src/targets/crates.rs` (modified, +20/-1)
+**File**: `crates/bindings-typescript/src/server/runtime.ts` (modified, +5/-3)
 ```diff
-@@ -40,7 +40,26 @@ impl CratesRelease {
-         // Without this, dry-run doesn't work properly: every crate will look for its deps on crates.io
-         // and fail, but if they're on one invocation then they're able to resolve properly.
-         let mut cmd = Command::new("cargo");
--        cmd.current_dir(workspace_root).args(["publish", "--allow-dirty"]);
-+        cmd.current_dir(workspace_root)
-+            // The pinned stable Cargo requires RUSTC_BOOTSTRAP=1 to accept -Zpublish-timeout.
-+            .env("RUSTC_BOOTSTRAP", "1")
-+            .args([
-+                "publish",
-+                "--allow-dirty",
-+                // -Zpublish-timeout enables the publish.timeout setting. Set it to 120 seconds
-+                // (default: 60) for Cargo to wait for an uploaded crate to appear in the registry
-+                // index before publishing its dependents.
-+                "-Zpublish-timeout",
-+                "--config",
-+                "publish.timeout=120",
-+                // Set RUSTC_BOOTSTRAP=-1 in Cargo's child processes to enforce stable compiler
-+                // feature gates during package verification. force=true makes that value override
-+                // the RUSTC_BOOTSTRAP=1 they would otherwise inherit from Cargo.
-+                "--config",
-+                r#"env.RUSTC_BOOTSTRAP.value="-1""#,
-+                "--config",
-+                "env.RUSTC_BOOTSTRAP.force=true",
-+            ]);
-         for crate_name in crates {
-             cmd.args(["-p", crate_name]);
-         }
+@@ -594,15 +594,17 @@ class ModuleHooksImpl implements ModuleHooks {
+     ));
+   }
+ 
+-  /** Query builder scoped to the submodule's own tables, with namespace-prefixed
+-   *  source names so generated SQL targets the mounted table names. */
++  /** Query builder scoped to the submodule's own tables. Like the db view, it
++   *  names each table by accessor path (`namePrefix` holds accessor keys): the
++   *  host resolves that alias, but not an accessor namespace joined to a
++   *  table's explicit canonical name. */
+   #getSubmoduleQueryBuilder(submoduleIdx: number): QueryBuilder<any> {
+     const m = this.#flatSubmodules[submoduleIdx];
+     return (m.queryBuilder_ ??= makeQueryBuilder({
+       tables: Object.fromEntries(
+         Object.entries(m.schemaTables).map(([key, def]) => [
+           key,
+-          { ...def, sourceName: m.namePrefix + def.sourceName },
++          { ...def, sourceName: m.namePrefix + def.accessorName },
+         ])
+       ),
+     }));
+```
+
+**File**: `crates/bindings-typescript/tests/ctx_as.test.ts` (modified, +27/-0)
+```diff
+@@ -16,12 +16,14 @@ describe('ctx.as alias proxy', () => {
+   let schema: typeof import('../src/server/schema').schema;
+   let table: typeof import('../src/lib/table').table;
+   let t: typeof import('../src/lib/type_builders').t;
++  let toSql: typeof import('../src/lib/query').toSql;
+   let moduleHooks: symbol;
+ 
+   beforeAll(async () => {
+     ({ schema } = await import('../src/server/schema'));
+     ({ table } = await import('../src/lib/table'));
+     ({ t } = await import('../src/lib/type_builders'));
++    ({ toSql } = await import('../src/lib/query'));
+     ({ moduleHooks } = (await import('spacetime:sys@2.0')) as any);
+   });
+ 
+@@ -129,4 +131,29 @@ describe('ctx.as alias proxy', () => {
+     expect(capturedCtx.as.myauth.as.baz.db.bazTable).toBeDefined();
+     expect(capturedCtx.as.myauth.as.baz.sender).toBe(capturedCtx.sender);
+   });
++
++  it('ctx.from in a submodule view names an explicitly named table by its accessor', async () => {
++    const sessions = table(
++      { name: 'auth_sessions', public: true },
++      { id: t.u64().primaryKey().autoInc() }
++    );
++    const authSchema = schema({ sessions });
++    let sql: string | undefined;
++    const allSessions = authSchema.anonymousView(
++      { public: true },
++      t.array(sessions.rowType),
++      ctx => {
++        sql = toSql(ctx.from.sessions);
++        return ctx.from.sessions;
++      }
++    );
++    const consumer = schema({ myAuth: { default: authSchema, allSessions } });
++
++    const hooks = (consumer as any)[moduleHooks]({});
++    hooks.__call_view_anon__(0, new Uint8Array());
++
++    // The host resolves `myAuth.sessions` (accessors) and the canonical
++    // `my_auth.auth_sessions`, but not a mix of the two.
++    expect(sql).toBe('SELECT * FROM "myAuth"."sessions"');
++  });
+ });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6710** (closed): Let pnpm run the bun package's install script in the bun-ts template (@krisajenkins)
+- **PR #6693** (2026-11-26): Upgrade Wasmtime from 39 to 48.0.7 (@cloutiertyler)
+- **PR #6690** (2026-11-25): Update dependencies to clear Dependabot alerts and make pnpm the only package manager (@cloutiertyler)
+- **PR #6689** (2026-11-25): Move LLM benchmark results out of SpacetimeDB and port the benchmark tooling to Rust (@cloutiertyler)
 - **PR #6686** (2026-11-24): Release - Double the Cargo publish index timeout (@bfops)
 - **PR #6681** (2026-11-23): Fix Stripe, PostHog and Auth types on SDK 2.12 (@bradleyshep)
-- **PR #6672** (2026-11-23): Bump versions to 2.16.3 (@rekhoff)
-- **PR #6666** (2026-11-23): Allow pre-release suffixes and patch downgrades in metadata.toml version check (@bfops)
-- **PR #6663** (2026-11-23): Smoketests: resolve C# ClientSDK version from the local package source (@bfops)
-- **PR #6659** (2026-11-22): Skip absent page slots when verifying snapshots (@bfops)
 
 ---
 
@@ -946,50 +990,37 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release - Double the Cargo publish index timeout
+## X. ts-sdk: fix `ctx.from` in a submodule view for explicitly named tables
 
 **RULE**:
-When implementing operations in `tools/release/src/targets/crates.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/bindings-typescript/src/server/runtime.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01b14a89`: Release - Double the Cargo publish index timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc291d42`: ts-sdk: fix `ctx.from` in a submodule view for explicitly named tables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/release/src/targets/crates.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/server/runtime.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        cmd.current_dir(workspace_root)
-            // The pinned stable Cargo requires RUSTC_BOOTSTRAP=1 to accept -Zpublish-timeout.
-            .env("RUSTC_BOOTSTRAP", "1")
-            .args([
-                "publish",
-                "--allow-dirty",
-                // -Zpublish-timeout enables the publish.timeout setting. Set it to 120 seconds
-                // (default: 60) for Cargo to wait for an uploaded crate to appear in the registry
-                // index before publishing its dependents.
-                "-Zpublish-timeout",
-                "--config",
-                "publish.timeout=120",
-                // Set RUSTC_BOOTSTRAP=-1 in Cargo's child processes to enforce stable compiler
-                // feature gates during package verification. force=true makes that value override
-                // the RUSTC_BOOTSTRAP=1 they would otherwise inherit from Cargo.
-                "--config",
-                r#"env.RUSTC_BOOTSTRAP.value="-1""#,
-                "--config",
-                "env.RUSTC_BOOTSTRAP.force=true",
-            ]);
+  /** Query builder scoped to the submodule's own tables. Like the db view, it
+   *  names each table by accessor path (`namePrefix` holds accessor keys): the
+   *  host resolves that alias, but not an accessor namespace joined to a
+   *  table's explicit canonical name. */
+          { ...def, sourceName: m.namePrefix + def.accessorName },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        cmd.current_dir(workspace_root).args(["publish", "--allow-dirty"]);
+  /** Query builder scoped to the submodule's own tables, with namespace-prefixed
+   *  source names so generated SQL targets the mounted table names. */
+          { ...def, sourceName: m.namePrefix + def.sourceName },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01b14a89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc291d42` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -13522,3 +13522,7 @@ Every entry in this ledger must capture:
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `44e963a3` | Multi-dimensional audit evidence | 2026-11-26T17:23:06.801Z |
 | `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-26T17:30:45.151Z |
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `ae294f53` | Multi-dimensional audit evidence | 2026-11-26T17:30:47.798Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-26T17:39:14.706Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `55eba7b1` | Multi-dimensional audit evidence | 2026-11-26T17:39:22.072Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `cc291d42` | Multi-dimensional audit evidence | 2026-11-26T17:39:28.682Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `5ad08921` | Multi-dimensional audit evidence | 2026-11-26T17:39:31.053Z |
