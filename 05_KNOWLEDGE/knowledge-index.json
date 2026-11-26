@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T07:19:18.800Z",
+  "last_updated": "2026-11-26T07:28:59.068Z",
   "total_verified_learnings": 9123,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25734,
+  "total_items": 25737,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b78904d43de455b276875965c041e9b731c035a94729f5b4c6a56dcc1156e8c3",
+      "content_hash": "447e11b39fca9d66eb350dd3048eec97f33e03a7cf240bcfd0ac0a396506c3c5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T06:52:35.691Z"
+      "persisted_at": "2026-11-26T07:28:58.519Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1afe3f9421c9ecb293d226d6cf99cd781fbc72de28d212e26579af5e7c34c801",
+      "content_hash": "7981e30a1aeacbdcd94f67f5afcebeca8b1429750f3157f529d7090c70507afb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T06:52:35.903Z"
+      "persisted_at": "2026-11-26T07:28:58.809Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2e035a8166ba35571543d0c12531acd382e3d72dbac57db64f6556da7f09522b",
+      "content_hash": "809d37277a5818183391a1f92f671209f8f506508fc01fa42c9e184099572c18",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:52:36.075Z"
+      "persisted_at": "2026-11-26T07:28:59.068Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -230773,8 +230773,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "98a8c03c",
-      "content_hash": "f6dbb59fb9b17d6e83a06572d8a7e41241c03334f8c326b2df66e473835a2222",
+      "source_version": "06717572",
+      "content_hash": "08380e00481374329940b03b2311f84e2733464e9223b5864bdd1e6c6d55df7b",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -230817,6 +230817,11 @@
           "number": 10470,
           "title": "Allow README.md PRs without vouching",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10624,
+          "title": "add Supermetal to adopter listings",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230824,7 +230829,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T06:21:18.949Z",
+      "verified_at": "2026-11-26T07:28:50.401Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230866,10 +230871,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "repository": "slatedb/slatedb",
-      "source_version": "98a8c03c",
-      "content_hash": "8bdc53c980b8b1b230cf8804460f0f152a366e5770c6bd3f49a003d80b2a1083",
+      "source_version": "06717572",
+      "content_hash": "33db6e299561fffa86bcd2fc242e91795a3c4c78f208b3847384e7568a47f7b7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:21:19.709Z"
+      "persisted_at": "2026-11-26T07:28:51.426Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb",
@@ -230878,10 +230883,10 @@
       "relative_path": "08_VERIFICATION/slatedb-slatedb-verification-protocol-empirical-defect-shield-for-slatedb-slated.md",
       "title": "Verification Protocol: Empirical Defect Shield for slatedb/slatedb",
       "repository": "slatedb/slatedb",
-      "source_version": "98a8c03c",
-      "content_hash": "ffee79777587964c1f60fd0f44e93b96aaff76180e1719e75a5b9475d6f4b22a",
+      "source_version": "06717572",
+      "content_hash": "88259e59b398aa53681a4694e6c5e1a3432ec625b56ba18668fbce96155ac6fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T06:21:19.900Z"
+      "persisted_at": "2026-11-26T07:28:51.714Z"
     },
     "learn-github-nucleoidai-nucleoid": {
       "learning_id": "learn-github-nucleoidai-nucleoid",
@@ -254278,9 +254283,9 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6ab1a7f113fe898af631696473c37f2129eae472276ee3aba55455e893cc71b",
+      "content_hash": "9eae0587a4cf95f8f38370a760965516ff62c6be5b2a2eb80f0f44206c0e1b28",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:21:25.460Z"
+      "persisted_at": "2026-11-26T07:28:56.929Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings",
@@ -254290,9 +254295,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for slatedb-slatedb-learnings",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf7845c3e6ef81f09d63af359458eb249d596dfcd922afd3c89b0d266f4c5c7c",
+      "content_hash": "e9c375ee758796cca12f36abaaf530418b35d0f1de408d8b175ba081a92e7138",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T06:21:25.654Z"
+      "persisted_at": "2026-11-26T07:28:57.239Z"
     },
     "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci": {
       "item_id": "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci",
@@ -277754,7 +277759,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
       "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
-      "content_hash": "c8d1872087756fdbc713843e308aa86a5e99e25960432ba31b11501c14131330",
+      "content_hash": "5cd834f2d01450195b604ced2d924057f144989a1fe083c49e201158d13cd031",
       "dossier_path": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md",
       "promoted_rules": [],
@@ -277763,7 +277768,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T13:20:25.777Z",
+      "verified_at": "2026-11-26T07:28:35.545Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277780,9 +277785,9 @@
       "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic Core Invariants",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
       "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
-      "content_hash": "f36f2e2b55e3c832aee4a0baa36cbeca5c5f18ba694f5b59c1d67e6808408aad",
+      "content_hash": "e27d0041d30ed3250aaf0b6a360569ac31e40fb3c70e1f68b7ab3d3b18ba2963",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T13:20:26.344Z"
+      "persisted_at": "2026-11-26T07:28:36.269Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor",
@@ -277792,9 +277797,9 @@
       "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings Core Invariants",
       "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa2b691caabd1cdc09dc110847546deabe5a9646950e0d5add5a2221de9de96c",
+      "content_hash": "7d9a2c5d2fa4c032be3b7b14756cea126acd9cfa08decce343298914256f0b7a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T13:20:38.081Z"
+      "persisted_at": "2026-11-26T07:28:55.093Z"
     },
     "learn-github-meta-docusaurus": {
       "learning_id": "learn-github-meta-docusaurus",
@@ -351734,13 +351739,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3MSC-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EEYT-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "92812f0cef425460d5597187fb01d4446043ebb81dc036d7907baa39a6ad8671",
+      "content_hash": "f5c2246d60b39f00b5c2c18ed26f0260e3dfae0b2e9616f63aba469319ff85b1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T06:52:35.484Z"
+      "persisted_at": "2026-11-26T07:28:58.182Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",
@@ -352420,6 +352425,44 @@
       "content_hash": "7fb446c84d041e8061406f9064b5a1024600d6f60a9a7758e59750d914d9d398",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T07:19:18.253Z"
+    },
+    "rule-10624": {
+      "learning_id": "rule-10624",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10624,
+      "title": "add Supermetal to adopter listings",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "06717572",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T07:28:50.401Z"
+    },
+    "candidate_directive-add-supermetal-to-adopter-listings": {
+      "item_id": "candidate_directive-add-supermetal-to-adopter-listings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E9J8-add-supermetal-to-adopter-listings.md",
+      "title": "add Supermetal to adopter listings",
+      "repository": "slatedb/slatedb",
+      "source_version": "06717572",
+      "content_hash": "89288f4da6c32ab05aef47e1de9857322792022bf5f64a356a88817f02669174",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T07:28:51.145Z"
+    },
+    "candidate_directive-site-add-supermetal-to-adopter-listings": {
+      "item_id": "candidate_directive-site-add-supermetal-to-adopter-listings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EDQL-site-add-supermetal-to-adopter-listings.md",
+      "title": "site: add Supermetal to adopter listings",
+      "repository": "slatedb-slatedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50a9379c72db5a166d944ab599348fd84cf9d23f50badb45cd7e8c9c26013175",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T07:28:56.592Z"
     }
   },
   "ai-builder-brain": {

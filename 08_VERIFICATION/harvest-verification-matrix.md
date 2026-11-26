@@ -13291,3 +13291,5 @@
 | `CYCLE-20261126-1K51` | `2026-11-26T07:18:58.357Z` | `internlm/Sage-S2.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md` | Yes (`f93bf8e7...`) |
 | `CYCLE-20261126-1SKF` | `2026-11-26T07:19:09.279Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10622` | Yes (`7849623a...`) |
 | `CYCLE-20261126-1UZL` | `2026-11-26T07:19:12.417Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10623` | Yes (`c74ddc86...`) |
+| `CYCLE-20261126-DXTW` | `2026-11-26T07:28:35.972Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md` | Yes (`5cd834f2...`) |
+| `CYCLE-20261126-E99H` | `2026-11-26T07:28:50.789Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10624` | Yes (`08380e00...`) |

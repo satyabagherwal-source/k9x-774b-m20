@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T07:19:18.512Z",
+  "last_updated": "2026-11-26T07:28:58.519Z",
   "total_records": 2719,
   "domains": {
     "A": {
@@ -8489,8 +8489,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "b78904d43de455b276875965c041e9b731c035a94729f5b4c6a56dcc1156e8c3",
-      "created_at": "2026-11-26T06:52:35.691Z"
+      "content_hash": "447e11b39fca9d66eb350dd3048eec97f33e03a7cf240bcfd0ac0a396506c3c5",
+      "created_at": "2026-11-26T07:28:58.519Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -15789,8 +15789,8 @@
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "repository": "slatedb/slatedb",
-      "content_hash": "8bdc53c980b8b1b230cf8804460f0f152a366e5770c6bd3f49a003d80b2a1083",
-      "created_at": "2026-11-25T06:21:19.709Z"
+      "content_hash": "33db6e299561fffa86bcd2fc242e91795a3c4c78f208b3847384e7568a47f7b7",
+      "created_at": "2026-11-26T07:28:51.426Z"
     },
     "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -23159,8 +23159,8 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-learnings-architecture-intelligence-slatedb-slatedb-learnings-co.md",
       "repository": "slatedb-slatedb-learnings",
-      "content_hash": "b6ab1a7f113fe898af631696473c37f2129eae472276ee3aba55455e893cc71b",
-      "created_at": "2026-11-25T06:21:25.460Z"
+      "content_hash": "9eae0587a4cf95f8f38370a760965516ff62c6be5b2a2eb80f0f44206c0e1b28",
+      "created_at": "2026-11-26T07:28:56.929Z"
     },
     "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-": {
       "record_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",
@@ -28225,8 +28225,8 @@
       "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic-research-knowledge-in.md",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
-      "content_hash": "f36f2e2b55e3c832aee4a0baa36cbeca5c5f18ba694f5b59c1d67e6808408aad",
-      "created_at": "2026-11-22T13:20:26.344Z"
+      "content_hash": "e27d0041d30ed3250aaf0b6a360569ac31e40fb3c70e1f68b7ab3d3b18ba2963",
+      "created_at": "2026-11-26T07:28:36.269Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor",
@@ -28234,8 +28234,8 @@
       "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic-learnings-research-kn.md",
       "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings",
-      "content_hash": "fa2b691caabd1cdc09dc110847546deabe5a9646950e0d5add5a2221de9de96c",
-      "created_at": "2026-11-22T13:20:38.081Z"
+      "content_hash": "7d9a2c5d2fa4c032be3b7b14756cea126acd9cfa08decce343298914256f0b7a",
+      "created_at": "2026-11-26T07:28:55.093Z"
     },
     "domain_intelligence-technical-construction-intelligence-meta-docusaurus-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meta-docusaurus-core-invariants",

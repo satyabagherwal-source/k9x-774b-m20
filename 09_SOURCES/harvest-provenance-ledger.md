@@ -13324,3 +13324,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-internlm-sage-s2-1-flash` | `https://huggingface.co/internlm/Sage-S2.1-Flash` | `hf-internl` | Multi-dimensional audit evidence | 2026-11-26T07:18:58.362Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `2f46a26c` | Multi-dimensional audit evidence | 2026-11-26T07:19:09.284Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `28cc85d1` | Multi-dimensional audit evidence | 2026-11-26T07:19:12.421Z |
+| `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-26T07:28:35.977Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `06717572` | Multi-dimensional audit evidence | 2026-11-26T07:28:50.795Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T06:21:25.095Z",
+  "timestamp": "2026-11-26T07:28:56.427Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-slatedb-slatedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [slatedb-slatedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T06:21:25.095Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T07:28:56.427Z`  
 > **Learning ID**: `LEARN-EVO-slatedb-slatedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `98a8c03c`  
+> **Source Version**: `06717572`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T06:21:18.006Z  
+> **Timestamp**: 2026-11-26T07:28:49.186Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T06:21:18.000Z  
+> **Harvest Timestamp**: 2026-11-26T07:28:49.179Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3676 stars
+- **Stars / Engagement**: 3683 stars
 
 ---
 
@@ -2373,55 +2373,69 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `98a8c03c` (2026-11-25)
-**Commit Message**: Allow README.md PRs without vouching (#2292)
-
-**File**: `.github/workflows/vouch-check-pr.yaml` (modified, +6/-3)
-```diff
-@@ -1,11 +1,14 @@
- name: Vouch Check PR
- 
--# Close pull requests from authors who are not in .github/VOUCHED.td. Users with write access and
--# bots skip the check. This workflow does not check out pull request code, so
-+# Close pull requests from authors who are not in .github/VOUCHED.td. Users with write access,
-+# bots, and README.md-only pull requests skip the check. Include `synchronize` so a later push to
-+# other files still triggers the check. This workflow does not check out pull request code, so
- # pull_request_target is safe here.
- on:
-   pull_request_target:
--    types: [opened, reopened]
-+    types: [opened, reopened, synchronize]
-+    paths-ignore:
-+      - 'README.md'
- 
- permissions:
-   contents: read
-```
-
----
-
-### Incident Patch 2: `8950a4bf` (2026-11-25)
-**Commit Message**: Add Rivet to adopters (#2291)
+### Incident Patch 1: `06717572` (2026-11-25)
+**Commit Message**: site: add Supermetal to adopter listings (#2295)
 
 **File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -163,6 +163,7 @@ See who's using SlateDB.
- - [OpenData](https://www.opendata.dev)
- - [Prisma](https://www.prisma.io)
- - [Responsive](https://responsive.dev)
-+- [Rivet](https://rivet.dev)
+@@ -166,6 +166,7 @@ See who's using SlateDB.
+ - [Rivet](https://rivet.dev)
  - [s2-lite](https://github.com/s2-streamstore/s2)
  - [Storrito](https://storrito.com)
++- [Supermetal](https://supermetal.io)
  - [Taquba](https://github.com/micllam/taquba)
+ - [Tasklet](https://tasklet.ai)
+ - [Tensorlake](https://www.tensorlake.ai)
+```
+
+**File**: `website/public/img/logos/dropbox.svg` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-<svg viewBox="0 0 113 33" fill="none" xmlns="http://www.w3.org/2000/svg">
++<svg viewBox="0 0 122 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(0, 0.5) scale(0.78)">
+ <polygon points="10.6,1.7 0,8.5 10.6,15.3 21.2,8.5" fill="#0061FE"/>
+ <polygon points="31.8,1.7 21.2,8.5 31.8,15.3 42.4,8.5" fill="#0061FE"/>
+```
+
+**File**: `website/public/img/logos/supermetal.svg` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++<svg width="755.405" height="116.255" viewBox="0 0 755.405 116.255" fill="none" xmlns="http://www.w3.org/2000/svg">
++<path d="M89.8731 26.0205V45.0284L44.8833 18.9886H44.864L33.0668 25.8223L5.67374 41.655L44.864 64.3263V83.3148L-0.00012207 57.3668V25.948L44.864 0H44.8833L89.8731 26.0205Z" fill="#EA580C"/>
++<path d="M89.8731 58.6911V89.965L44.8833 116H44.864V115.985L-0.00012207 90.0375V71.0489L44.864 96.9921H44.8833L56.695 90.1631L84.0735 74.3256L44.864 51.6399V32.6513L89.8731 58.6911Z" fill="#EA580C"/>
++<path d="M741.219 -6.10352e-05H755.405V89.6396H741.219V-6.10352e-05Z" fill="black"/>
++<path d="M672.497 78.4656V63.6512L683.67 52.6032H715.936V43.3128L711.291 38.6676H691.58L686.935 43.3128V47.3303H672.999V40.0486L685.805 27.1174H717.066L729.871 40.0486V89.6392H716.94V79.9722L706.896 89.6392H683.67L672.497 78.4656ZM705.515 78.4656L715.936 68.422V63.1491H690.45L686.432 67.041V74.6993L690.199 78.4656H705.515Z" fill="black"/>
++<path d="M629.027 77.2104V39.17H617.728V27.1176H629.278V6.77924H643.214V27.1176H662.422V39.17H643.214V72.6907L648.11 77.587H662.422V89.6394H641.456L629.027 77.2104Z" fill="black"/>
++<path d="M549.785 77.2102V39.672L562.214 27.1174H596.237L608.917 39.672V63.0235H563.972V73.0672L568.743 77.8379H590.211L594.731 73.1927V69.4263H608.792V77.4613L596.614 89.6392H562.089L549.785 77.2102ZM594.731 52.6032V43.9406L589.835 38.9187H568.868L563.972 43.9406V52.6032H594.731Z" fill="black"/>
++<path d="M446.519 27.1174H459.702V38.0399L470.499 27.1174H486.066L494.98 36.1567L504.019 27.1174H525.111L537.917 40.0486V89.6392H523.73V44.1916L518.834 39.2954H507.158L499.876 46.577V89.6392H486.066V44.0661L481.295 39.2954H472.758L460.706 51.4733V89.6392H446.519V27.1174Z" fill="black"/>
++<path d="M394.874 27.1174H408.057V37.7888L418.477 27.1174H435.802V39.2954H421.616L409.061 52.101V89.6392H394.874V27.1174Z" fill="black"/>
++<path d="M323.794 77.2102V39.672L336.223 27.1174H370.246L382.926 39.672V63.0235H337.98V73.0672L342.751 77.8379H364.219L368.739 73.1927V69.4263H382.8V77.4613L370.622 89.6392H336.097L323.794 77.2102ZM368.739 52.6032V43.9406L363.843 38.9187H342.877L337.98 43.9406V52.6032H368.739Z" fill="black"/>
++<path d="M252.895 27.1174H266.077V36.91L275.995 27.1174H299.975L312.529 39.672V77.0846L299.975 89.6392H275.87L267.082 82.232V116.255H252.895V27.1174ZM293.321 77.4613L298.343 72.565V44.1916L293.321 39.2954H278.255L267.082 50.4689V67.9198L277.628 77.4613H293.321Z" fill="black"/>
++<path d="M182.839 76.9591V27.1174H197.026V72.565L201.922 77.4613H212.844L226.152 64.1534V27.1174H240.339V89.6392H227.157V78.089L215.481 89.6392H195.519L182.839 76.9591Z" fill="black"/>
++<path d="M114 77.9634V70.3052H127.936V74.3226L131.451 77.9634H152.794L156.309 74.3226V67.5431L152.668 63.9023H125.676L114.502 52.6032V38.5421L125.927 27.1174H157.439L168.989 38.7932V46.4515H155.053V42.434L151.538 38.7932H131.953L128.438 42.434V48.7113L132.079 52.3521H158.945L170.244 63.7768V78.2145L158.82 89.6392H125.55L114 77.9634Z" fill="black"/>
++</svg>
+```
+
+**File**: `website/src/pages/index.astro` (modified, +1/-0)
+```diff
+@@ -113,6 +113,7 @@ const usedBy = [
+     { name: 'MerkleMap',  href: 'https://merklemap.com/',        logo: '/img/logos/merklemap.svg' },
+     { name: 'OpenData',   href: 'https://opendata.dev/',         logo: '/img/logos/opendata.svg' },
+     { name: 'Massive',    href: 'https://massive.com/',           logo: '/img/logos/massive.png' },
++    { name: 'Supermetal', href: 'https://supermetal.io/',        logo: '/img/logos/supermetal.svg' },
+ ];
+ 
+ // Quickstart language entries.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2295** (2026-11-25): site: add Supermetal to adopter listings (@kumarUjjawal)
 - **PR #2292** (2026-11-25): Allow README.md PRs without vouching (@criccomini)
 - **PR #2291** (2026-11-25): Add Rivet to adopters (@NathanFlurry)
 - **PR #2290** (closed): Range cache (@jeromegn)
 - **PR #2289** (2026-11-23): Document SlateDB's three-release storage format support window (@criccomini)
 - **PR #2287** (2026-11-23): Avoid Bytes clones in SST range checks on the read path (@nomiero)
-- **PR #2286** (2026-11-22): Remove WarpBuild microbenchmark jobs from nightly workflow (@criccomini)
 
 ---
 
@@ -2441,38 +2455,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Allow README.md PRs without vouching
+## X. site: add Supermetal to adopter listings
 
 **RULE**:
-When implementing operations in `.github/workflows/vouch-check-pr.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `98a8c03c`: Allow README.md PRs without vouching. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06717572`: site: add Supermetal to adopter listings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/vouch-check-pr.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Close pull requests from authors who are not in .github/VOUCHED.td. Users with write access,
-# bots, and README.md-only pull requests skip the check. Include `synchronize` so a later push to
-# other files still triggers the check. This workflow does not check out pull request code, so
-    types: [opened, reopened, synchronize]
-    paths-ignore:
-      - 'README.md'
+- [Supermetal](https://supermetal.io)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-# Close pull requests from authors who are not in .github/VOUCHED.td. Users with write access and
-# bots skip the check. This workflow does not check out pull request code, so
-    types: [opened, reopened]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `98a8c03c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06717572` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

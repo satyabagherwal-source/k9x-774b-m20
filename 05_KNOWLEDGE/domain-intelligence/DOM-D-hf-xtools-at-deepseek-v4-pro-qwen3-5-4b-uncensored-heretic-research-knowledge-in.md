@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
   "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T13:20:26.342Z",
+  "timestamp": "2026-11-26T07:28:36.268Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic](https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic) (Revision: `hf-xtools-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T13:20:26.342Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T07:28:36.268Z`  
 > **Learning ID**: `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic](https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T13:20:25.304Z  
+> **Harvest Timestamp**: 2026-11-26T07:28:34.946Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 26727 downloads | 280 likes
+- **Stars / Engagement**: 27773 downloads | 288 likes
 
 ---
 

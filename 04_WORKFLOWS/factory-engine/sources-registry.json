@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T07:19:15.946Z",
-    "lastVerified": "2026-11-26T07:19:15.946Z",
+    "lastChecked": "2026-11-26T07:28:54.540Z",
+    "lastVerified": "2026-11-26T07:28:54.540Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -391,8 +391,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T06:52:33.281Z",
-    "lastVerified": "2026-11-26T06:52:33.281Z",
+    "lastChecked": "2026-11-26T07:28:47.301Z",
+    "lastVerified": "2026-11-26T07:28:47.301Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -540,12 +540,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "kubernetes-sigs/aws-load-balancer-controller",
+    "name": "aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T07:13:04.964Z",
-    "lastVerified": "2026-11-25T07:13:04.964Z",
+    "lastChecked": "2026-11-26T07:28:39.844Z",
+    "lastVerified": "2026-11-26T07:28:39.844Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -554,7 +554,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "faa99854"
   },
   "nolabs-ai-nono": {
     "name": "nono",
@@ -1358,9 +1359,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-26T03:21:31.221Z",
+    "lastChecked": "2026-11-26T07:28:42.279Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-26T03:21:31.221Z"
+    "lastVerified": "2026-11-26T07:28:42.279Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -5041,12 +5042,12 @@
     "officialUrl": "https://github.com/slatedb/slatedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T06:21:18.000Z",
-    "lastVerified": "2026-11-25T06:21:18.000Z",
+    "lastChecked": "2026-11-26T07:28:49.179Z",
+    "lastVerified": "2026-11-26T07:28:49.179Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "f6dbb59fb9b17d6e83a06572d8a7e41241c03334f8c326b2df66e473835a2222",
+    "contentHash": "08380e00481374329940b03b2311f84e2733464e9223b5864bdd1e6c6d55df7b",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -8407,9 +8408,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-11-25T01:09:09.817Z",
+    "lastChecked": "2026-11-26T07:28:32.285Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-11-25T01:09:09.817Z"
+    "lastVerified": "2026-11-26T07:28:32.285Z"
   },
   "hf-autotrust-jev-35b": {
     "name": "autotrust/AutoTrust-Decider-Pro-35B",
@@ -11698,9 +11699,9 @@
   "jaywcjlove-devhub": {
     "name": "DevHub",
     "officialUrl": "https://github.com/jaywcjlove/DevHub",
-    "lastChecked": "2026-11-23T21:39:49.543Z",
+    "lastChecked": "2026-11-26T07:28:37.434Z",
     "revisionIdentifier": "15d258ec",
-    "lastVerified": "2026-11-23T21:39:49.543Z"
+    "lastVerified": "2026-11-26T07:28:37.434Z"
   },
   "google-closure-compiler": {
     "name": "google/closure-compiler",
@@ -14841,12 +14842,12 @@
     "officialUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T13:20:25.304Z",
-    "lastVerified": "2026-11-22T13:20:25.304Z",
+    "lastChecked": "2026-11-26T07:28:34.946Z",
+    "lastVerified": "2026-11-26T07:28:34.946Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
-    "contentHash": "c8d1872087756fdbc713843e308aa86a5e99e25960432ba31b11501c14131330",
+    "contentHash": "5cd834f2d01450195b604ced2d924057f144989a1fe083c49e201158d13cd031",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

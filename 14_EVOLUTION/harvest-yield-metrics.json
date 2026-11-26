@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T07:19:12.434Z",
-  "total_cycles_completed": 12612,
-  "total_learnings_persisted": 12612,
-  "total_rules_promoted": 11518,
+  "last_updated": "2026-11-26T07:28:50.812Z",
+  "total_cycles_completed": 12614,
+  "total_learnings_persisted": 12614,
+  "total_rules_promoted": 11519,
   "history": [
-    {
-      "timestamp": "2026-11-25T12:39:06.831Z",
-      "repository": "LiconStudio/Minimax-H3-VBVR",
-      "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T12:39:18.930Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T12:39:24.241Z",
       "repository": "duckdb/duckdb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T07:19:12.434Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:28:35.994Z",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+      "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:28:50.812Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

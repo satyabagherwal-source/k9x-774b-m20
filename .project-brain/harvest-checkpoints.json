@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T07:19:12.438Z",
+  "last_updated": "2026-11-26T07:28:50.822Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "f6dbb59fb9b17d6e83a06572d8a7e41241c03334f8c326b2df66e473835a2222",
-      "verified_at": "2026-11-25T06:21:19.192Z",
+      "content_hash": "08380e00481374329940b03b2311f84e2733464e9223b5864bdd1e6c6d55df7b",
+      "verified_at": "2026-11-26T07:28:50.821Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T06:21:19.192Z"
+      "last_updated": "2026-11-26T07:28:50.821Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -19281,14 +19281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
-      "content_hash": "c8d1872087756fdbc713843e308aa86a5e99e25960432ba31b11501c14131330",
-      "verified_at": "2026-11-22T13:20:26.079Z",
+      "content_hash": "5cd834f2d01450195b604ced2d924057f144989a1fe083c49e201158d13cd031",
+      "verified_at": "2026-11-26T07:28:35.997Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T13:20:26.079Z"
+      "last_updated": "2026-11-26T07:28:35.997Z"
     },
     "sensenova/SenseNova-Loop-9B": {
       "repository": "sensenova/SenseNova-Loop-9B",
