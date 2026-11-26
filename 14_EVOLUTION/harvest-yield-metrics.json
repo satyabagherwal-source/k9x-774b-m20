@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:18:30.457Z",
-  "total_cycles_completed": 12594,
-  "total_learnings_persisted": 12594,
-  "total_rules_promoted": 11508,
+  "last_updated": "2026-11-26T06:26:53.486Z",
+  "total_cycles_completed": 12596,
+  "total_learnings_persisted": 12596,
+  "total_rules_promoted": 11509,
   "history": [
-    {
-      "timestamp": "2026-11-25T11:51:09.388Z",
-      "repository": "LiquidAI/LFM3-Omni-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:51:19.352Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T11:51:25.732Z",
       "repository": "vespa-engine/vespa",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T06:18:30.457Z",
       "repository": "trailbaseio/trailbase",
       "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:26:51.620Z",
+      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:26:53.486Z",
+      "repository": "oshai/kotlin-logging",
+      "learningId": "learn-github-oshai-kotlin-logging",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

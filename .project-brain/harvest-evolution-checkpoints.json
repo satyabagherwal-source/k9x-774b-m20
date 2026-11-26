@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:18:36.057Z",
+  "last_updated": "2026-11-26T06:27:07.428Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T05:48:51.455Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-26T04:47:54.941Z",
+      "processed_at": "2026-11-26T06:27:06.399Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3188,7 +3188,7 @@
       "staged_for_review": 1
     },
     "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md": {
-      "processed_at": "2026-11-22T10:55:07.345Z",
+      "processed_at": "2026-11-26T06:27:05.891Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3946,9 +3946,14 @@
       "processed_at": "2026-11-26T01:18:07.933Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "oshai-kotlin-logging-learnings.md": {
+      "processed_at": "2026-11-26T06:27:03.119Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4410,
+  "total_dossiers_evaluated": 4413,
   "total_canonical_promoted": 557,
-  "total_staged_for_review": 3339
+  "total_staged_for_review": 3342
 }

@@ -12705,8 +12705,8 @@
     "sourceUrl": "https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
     "sourceVersion": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "a0049ab9f1f541048aad2a734fccd4a2900a8bd80145239a8e4df04e9bea215f",
-    "lastHarvestedAt": "2026-11-22T10:55:03.212Z",
+    "contentHash": "e3adb7fc1d39e3b7b249ef5dbd45befadafa6d465090fc06251eff02560499cb",
+    "lastHarvestedAt": "2026-11-26T06:26:51.607Z",
     "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf"
   },
   "hf-n4ze3m-tiny-voca": {
@@ -13488,5 +13488,15 @@
     "contentHash": "3f588f6772aa020f51caadf6f19f8497a72cc0fd87252068d833fb0b77d4bec4",
     "lastHarvestedAt": "2026-11-25T23:01:46.089Z",
     "learningId": "learn-huggingface-krafton-raon-1-mini"
+  },
+  "oshai-kotlin-logging": {
+    "repository": "oshai/kotlin-logging",
+    "platform": "github",
+    "sourceUrl": "https://github.com/oshai/kotlin-logging",
+    "sourceVersion": "0eeeba0c",
+    "license": "Apache-2.0",
+    "contentHash": "9b77a41a56726bcfb6d9eea39f556df3520ee95c3a7430b7e4247d32d0ff0858",
+    "lastHarvestedAt": "2026-11-26T06:26:53.472Z",
+    "learningId": "learn-github-oshai-kotlin-logging"
   }
 }

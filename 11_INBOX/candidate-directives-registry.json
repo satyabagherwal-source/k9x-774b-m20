@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:18:35.563Z",
+  "last_updated": "2026-11-26T06:27:06.782Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56036,11 +56036,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-NB28",
+      "id": "CD-6V89",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-NB28-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-6V89-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -63586,6 +63586,46 @@
       "source_repo": "trailbaseio-trailbase",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AB015E-update-rust-dependencies-addresses-secur.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-6L6H",
+      "directive_title": "harden workflow token permissions and update security/Maven docs",
+      "source_repo": "oshai/kotlin-logging",
+      "source_commit": "0eeeba0c",
+      "staged_file": "11_INBOX/candidate-directives/CD-6L6H-harden-workflow-token-permissions-and-update-security-maven-docs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-6TZB",
+      "directive_title": "ci: harden workflow token permissions and update security/Maven docs",
+      "source_repo": "oshai-kotlin-logging-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6TZB-ci-harden-workflow-token-permissions-and-update-security-maven-docs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-C635AC",
+      "directive_title": "Forensic Learning Record (Deep Inspection): HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C635AC-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-2062D2",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2062D2-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-26"
     }
   ]

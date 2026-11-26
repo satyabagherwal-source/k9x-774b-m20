@@ -5422,3 +5422,7 @@ https://github.com/withcoral/coral
 https://huggingface.co/nvidia/Nemotron-Labs-Image-30B-A3B
 # [HUGGINGFACE-AI-MODELS] KRAFTON/Raon-1-mini (1384 score) - Verified Hugging Face Model: KRAFTON/Raon-1-mini (112 likes, 264 downloads)
 https://huggingface.co/KRAFTON/Raon-1-mini
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-26T06:26:42.092Z] ---
+# [MOBILE-CROSS-PLATFORM] oshai/kotlin-logging (1851 score) - Lightweight Multiplatform logging framework for Kotlin. A convenient and perform
+https://github.com/oshai/kotlin-logging

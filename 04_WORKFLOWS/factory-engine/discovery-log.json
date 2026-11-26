@@ -22330,5 +22330,20 @@
     "downloads": 264,
     "qualityScore": 1384,
     "discoveredAt": "2026-11-25T22:59:28.591Z"
+  },
+  {
+    "name": "kotlin-logging",
+    "fullName": "oshai/kotlin-logging",
+    "url": "https://github.com/oshai/kotlin-logging",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Lightweight Multiplatform logging framework for Kotlin. A convenient and performant logging facade.",
+    "stars": 3108,
+    "forks": 130,
+    "openIssues": 4,
+    "language": "Kotlin",
+    "qualityScore": 1851,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-26T06:24:42.239Z"
   }
 ]

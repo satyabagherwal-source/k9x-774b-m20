@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T06:18:30.461Z",
+  "last_updated": "2026-11-26T06:26:53.490Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19146,14 +19146,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
-      "content_hash": "a0049ab9f1f541048aad2a734fccd4a2900a8bd80145239a8e4df04e9bea215f",
-      "verified_at": "2026-11-22T10:55:03.222Z",
+      "content_hash": "e3adb7fc1d39e3b7b249ef5dbd45befadafa6d465090fc06251eff02560499cb",
+      "verified_at": "2026-11-26T06:26:51.623Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:55:03.222Z"
+      "last_updated": "2026-11-26T06:26:51.623Z"
     },
     "n4ze3m/tiny-voca": {
       "repository": "n4ze3m/tiny-voca",
@@ -20354,6 +20354,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-25T23:01:46.107Z"
+    },
+    "oshai/kotlin-logging": {
+      "repository": "oshai/kotlin-logging",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-oshai-kotlin-logging",
+      "content_hash": "9b77a41a56726bcfb6d9eea39f556df3520ee95c3a7430b7e4247d32d0ff0858",
+      "verified_at": "2026-11-26T06:26:53.490Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-26T06:26:53.490Z"
     }
   },
   "repos": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-JPQ3",
-    "timestamp": "2026-11-24T15:53:38.043Z",
-    "repository": "nativewind/nativewind",
-    "learningId": "learn-github-nativewind-nativewind",
-    "contentHash": "fe2a1e4523d2c4c8b1da19b6b9c2a68764416671c15753ea1cb7142ea760a145",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-JXGL",
-    "timestamp": "2026-11-24T15:53:48.069Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "181237dc56e61313e8da477a35aa5595644ecec7333090e245550e3c789d12aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-U09J",
     "timestamp": "2026-11-24T16:01:38.263Z",
     "repository": "goharbor/harbor",
@@ -7490,6 +7460,36 @@
     "repository": "trailbaseio/trailbase",
     "learningId": "learn-github-trailbaseio-trailbase",
     "contentHash": "dabac014dc998032dea13334eb33c741891335fc6cddd79c2d3c4a34069f390b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-6JIQ",
+    "timestamp": "2026-11-26T06:26:51.602Z",
+    "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+    "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+    "contentHash": "e3adb7fc1d39e3b7b249ef5dbd45befadafa6d465090fc06251eff02560499cb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-6KYK",
+    "timestamp": "2026-11-26T06:26:53.468Z",
+    "repository": "oshai/kotlin-logging",
+    "learningId": "learn-github-oshai-kotlin-logging",
+    "contentHash": "9b77a41a56726bcfb6d9eea39f556df3520ee95c3a7430b7e4247d32d0ff0858",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
