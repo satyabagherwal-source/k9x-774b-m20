@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-EXGU",
-    "timestamp": "2026-11-25T10:57:39.054Z",
-    "repository": "LiquidAI/LFM3-1.7B",
-    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-    "contentHash": "40b7aa58f617ba8f8797dad7b6d57284f9a8897ce5f4104f44be99b2233d4aa5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-F28I",
-    "timestamp": "2026-11-25T10:57:45.234Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "9a7a420de505657bfee383a1bf9e40ff70a3c682fb84081a7a9890ae96d00890",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-FDG6",
     "timestamp": "2026-11-25T10:57:59.766Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7490,6 +7460,36 @@
     "repository": "margelo/react-native-vision-camera",
     "learningId": "learn-github-margelo-react-native-vision-camera",
     "contentHash": "5baba2d13f30c00e39c5beda0873c4ee9e801faf0f5fb190adb710b27fe1685b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-W9YP",
+    "timestamp": "2026-11-26T22:10:39.601Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "cdb06c7061824590d9f9456fa889c439175bee79f822ba23af1e00e73dc9c171",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WFI2",
+    "timestamp": "2026-11-26T22:10:46.778Z",
+    "repository": "aws-amplify/amplify-js",
+    "learningId": "learn-github-aws-amplify-amplify-js",
+    "contentHash": "05c50587afb2b3faae3b8e640ba330c40550e4e7bb1fa863608ff81b0f05fc8e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

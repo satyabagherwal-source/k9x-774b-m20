@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md`  
 > **Source**: github ([https://github.com/aws-amplify/amplify-js](https://github.com/aws-amplify/amplify-js))  
-> **Source Version**: `9e01896b`  
+> **Source Version**: `c08112f4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T17:02:31.499Z  
+> **Timestamp**: 2026-11-26T22:10:45.554Z  
 > **Learning ID**: `learn-github-aws-amplify-amplify-js`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws-amplify/amplify-js](https://github.com/aws-amplify/amplify-js))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:02:31.494Z  
+> **Harvest Timestamp**: 2026-11-26T22:10:45.549Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A declarative JavaScript library for application development using cloud services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9556 stars
+- **Stars / Engagement**: 9554 stars
 
 ---
 
@@ -446,11 +446,11 @@ export const getAccessTokenUsername = (accessToken: string): string =>
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #15026** (2026-11-26): **GraphQL subscriptions: after a retry that follows a connection ack timeout, the state stays ConnectedPendingDisconnect**
+  *Symptoms*: ### Before opening, please confirm:  - [x] I have searched for duplicate or closed issues.  ### Category  GraphQL API (subscriptions)  ### Describe the bug  When the `connection_ack` of the real-time WebSocket does not come within `CONNECTION_INIT_TIMEOUT` (15 s), `_initiateHandshake` records `CONNECTION_CHANGE.CONNECTION_FAILED`. In `ConnectionStateMonitor`, that change sets `intendedConnectionState: 'disconnected'`.  `jitteredExponentialRetry` then calls `_establishConnection` again. The retry does not record `OPENING_CONNECTION`, which happens only once, in `_startSubscriptionWithAWSAppSyncRealTime`. When the retry socket gets its ack and the subscription starts, `CONNECTION_ESTABLISHED` sets `connectionState: 'connected'`, but the intended state stays `disconnected`.  So the Hub reports `ConnectedPendingDisconnect` for a subscription that works, and it never reports `Connected`. An app that waits for `Connected` (to refetch data after a reconnect, for example) never sees it.  Observed states: `Disconnected -> Connecting -> Disconnected -> ConnectedPendingDisconnect`  ### Expected behavior  After the retry socket is connected and the subscription starts, the state is `Connected`.  ### Reproduction steps  Run the script below with Node.js 24 (`node repro.ts`, aws-amplify 6.22.2). It uses a fake `WebSocket` and the real timers, and runs about 21 s. The first socket never gets an ack. The retry socket gets `connection_ack` and `start_ack`.  Output:  ``` states: Disconnected -
+
 - **Issue #15016** (2026-11-16): **fetchAuthSession() waits up to 5 minutes when signInWithRedirect completion fails early on page load**
   *Symptoms*: ### Before opening, please confirm:  - [x] I have searched for duplicate or closed issues and discussions. - [x] I have read the guide for submitting bug reports. - [x] I have done my best to include a minimal, self-contained set of instructions for consistently reproducing the issue.  ### JavaScript Framework  React (also reproducible without a framework)  ### Amplify APIs  Authentication  ### Amplify Version  v6 (`@aws-amplify/auth` 6.21.2 and `main` at 6a065b1)  ### Amplify Categories  auth  ### Environment information  Browser, Cognito user pool with Hosted UI (`signInWithRedirect`), authorization code flow.  ### Describe the bug  `fetchAuthSession()` and `getCurrentUser()` can wait for the whole inflight OAuth deadline (5 minutes) after the redirect flow has already failed.  `TokenOrchestrator.waitForInflightOAuth()` first awaits `oAuthStore.loadOAuthInFlightDeadline()`, then registers its resolver with `addInflightPromise`. `handleFailure()` releases the registered resolvers synchronously, then clears the inflight data.  If completion fails early, the release runs before a token consumer that started at the same time has registered. Two examples: `getRedirectUrl()` throws `InvalidOriginException` after a single storage read, or the redirect URL has no `code`/`state`. The consumer then finishes its deadline read (the value it read before the clear), parks, and nothing releases it until the backstop timer fires at the deadline.  A related case is in the shared backstop ti
-
-- **Issue #15005** (2026-11-05): **`signOut({ global: true })` silently fails to revoke tokens for federated (hosted-UI) users.**
-  *Symptoms*: ### Before opening, please confirm:   - [x] I have [searched for duplicate or closed issues](https://github.com/aws-amplify/amplify-js/issues?q=is%3Aissue+) and [discussions](https://github.com/aws-amplify/amplify-js/discussions). - [x] I have read the guide for [submitting bug reports](https://github.com/aws-amplify/amplify-js/blob/main/CONTRIBUTING.md#bug-reports). - [x] I have done my best to include a minimal, self-contained set of instructions for consistently reproducing the issue.  ### JavaScript Framework  React  ### Amplify APIs  Authentication  ### Amplify Version  v6  ### Amplify Categories  auth  ### Backend  None  ### Environment information  @aws-amplify/auth (v6)  ### Describe the bug  `signOut({ global: true })` relies on the Cognito `GlobalSignOut` API, which requires the access token to carry the `aws.cognito.signin.user.admin` scope. Access tokens issued through federated / hosted-UI sign-in (SAML, social) do not carry that scope, so the call fails with NotAuthorizedException. The error is swallowed, local tokens are cleared, and the app appears logged out, but the refresh token is never revoked and stays valid for its full lifetime. Native (SRP / USER_PASSWORD) users are unaffected because their tokens carry the scope, which masks the problem in testing.  ### Expected behavior  When `global: true` cannot invoke `GlobalSignOut` for a federated user, Amplify should fall back to the token-revocation endpoint (`/oauth2/revoke`, which needs only the client id a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -467,535 +467,215 @@ export const getAccessTokenUsername = (accessToken: string): string =>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e01896b` (2026-11-16)
-**Commit Message**: fix(auth): register OAuth token waiters before reading the deadline (#15017)
+### Incident Patch 1: `c08112f4` (2026-11-26)
+**Commit Message**: fix(api-graphql): record connecting state on each connection retry (#15029)
 
-* fix(auth): register OAuth token waiters before reading the deadline
+* fix(api-graphql): record connecting state on each connection retry
 
-A token consumer read the inflight OAuth deadline before registering its
-resolver. When the redirect completion failed early (for example an invalid
-origin or a cancelled sign-in), handleFailure released the registered
-waiters before that consumer registered, so fetchAuthSession() and
-getCurrentUser() parked until the 5-minute deadline.
+A connection attempt that times out waiting for connection_ack records
+CONNECTION_FAILED, which also sets the intended state to disconnected.
+The retry never recorded OPENING_CONNECTION again, so when it succeeded
+the state stayed ConnectedPendingDisconnect, and a later socket close
+reported Disconnected and halted the automatic reconnect.
 
-Each waiter now registers synchronously, then reads the deadline, and owns
-its own backstop timer. A release settles it even while its read is pending,
-and a stale re-check only settles its own waiter, never one parked for a
-newer flow. The deadline, renewal, cross-tab release and fail-open
-re-check behavior are unchanged.
+Record OPENING_CONNECTION at the start of every connection attempt.
 
-* fix(auth): address review feedback on inflight OAuth waiters
+* test(api-graphql): bound retry wait loop and cover close-before-open retries
 
-- Drop the stale addInflightPromise mock from attemptCompleteOAuthFlow tests.
-- Release the waiter if checkDeadline throws on the first deadline read,
-  matching the backstop re-check.
-- Bump the changeset to minor: removing TokenOrchestrator.inflightPromise
-  changes the public type exported from @aws-amplify/auth/cogn
+Add a deadline to waitForSocketCount so a regression fails with a clear
+message instead of hanging until the Jest timeout. Cover the path where
+every attempt closes before the socket opens, which ends in
+ConnectionDisrupted. Note why the OPENING_CONNECTION record in
+_connectWebSocket is kept.
 
-**File**: `.changeset/auth-oauth-wait-register-before-read.md` (added, +5/-0)
+**File**: `.changeset/api-graphql-reconnect-state-after-ack-timeout.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@aws-amplify/auth': minor
++'@aws-amplify/api-graphql': patch
 +---
 +
-+fix(auth): release token consumers when a redirect sign-in fails during their inflight OAuth deadline read, and stop a stale deadline re-check from releasing waiters of a newer flow
++fix(api-graphql): report `Connected` instead of `ConnectedPendingDisconnect` when a real-time connection succeeds on a retry after a connection ack timeout, so a later disconnect triggers an automatic reconnect
 ```
 
-**File**: `packages/auth/__tests__/providers/cognito/tokenOrchestrator.test.ts` (modified, +5/-25)
+**File**: `packages/api-graphql/__tests__/AWSAppSyncRealTimeProvider.test.ts` (modified, +161/-0)
 ```diff
-@@ -5,7 +5,6 @@ import { Hub, ResourcesConfig } from '@aws-amplify/core';
- import { AMPLIFY_SYMBOL } from '@aws-amplify/core/internals/utils';
+@@ -1025,6 +1025,167 @@ describe('AWSAppSyncRealTimeProvider', () => {
+ 					);
+ 				});
  
- import { TokenOrchestrator } from '../../../src/providers/cognito/tokenProvider';
--import { addInflightPromise } from '../../../src/providers/cognito/utils/oauth/inflightPromise';
- import { oAuthStore } from '../../../src/providers/cognito/utils/oauth';
- 
- jest.mock('../../../src/providers/cognito/utils/oauth/oAuthStore');
-@@ -40,11 +39,6 @@ const validAuthConfig: ResourcesConfig = {
- 	},
- };
- 
--jest.mock('../../../src/providers/cognito/utils/oauth/inflightPromise', () => ({
--	addInflightPromise: jest.fn(),
--	armInflightDeadline: jest.fn(),
--}));
--
- const currentDate = new Date();
- 
- const expiredDate = new Date();
-@@ -101,15 +95,15 @@ const validAuthTokens = {
- 	metadata: undefined,
- };
- 
--const mockAddInflightPromise = addInflightPromise as jest.Mock;
--
- describe('TokenOrchestrator', () => {
- 	const tokenOrchestrator = new TokenOrchestrator();
-+	beforeEach(() => {
-+		(oAuthStore.loadOAuthInFlightDeadline as jest.Mock).mockResolvedValue(
-+			undefined,
-+		);
-+	});
- 	describe('Happy Path Cases:', () => {
- 		beforeAll(() => {
--			mockAddInflightPromise.mockImplementation(resolver => {
--				resolver();
--			});
- 			tokenOrchestrator.setAuthConfig(validAuthConfig.Auth!);
- 			tokenOrchestrator.setAuthTokenStore(mockAuthTokenStore);
- 			tokenOrchestrator.setTokenRefresher(mockTokenRefresher);
-@@ -142,29 +136,15 @@ describe('TokenOrchestrator', () => {
- 			);
- 		});
- 
--		it('Should call addInflightPromise when OAuth is inflight', async () => {
--			mockAuthTokenStore.loadTokens.mockResolvedValue(validAuthTokens);
--			(oAuthStore.loadOAuthInFlightDeadline as jest.Mock).mockResolvedValue(
--				Date.now() + 60_000,
--			);
--
--			const tokens = await tokenOrchestrator.getTokens();
--
--			expect(addInflightPromise).toHaveBeenCalledWith(expect.any(Function));
--			expect(tokens?.accessToken).toEqual(validAuthTokens.accessToken);
--		});
--
- 		it('Should not block when the inflight OAuth blocking deadline has passed', async () => {
- 			mockAuthTokenStore.loadTokens.mockResolvedValue(validAuthTokens);
- 			// An absent or expired deadline is reported as `undefined` by the store.
- 			(oAuthStore.loadOAuthInFlightDeadline as jest.Mock).mockResolvedValue(
- 				undefined,
- 			);
--			mockAddInflightPromise.mockClear();
- 
- 			const tokens = await tokenOrchestrator.getTokens();
- 
--			expect(addInflightPromise).not.toHaveBeenCalled();
- 			expect(tokens?.accessToken).toEqual(validAuthTokens.accessToken);
- 		});
- 	});
++				describe('connection retry after a connection init timeout', () => {
++					// Allow exactly one retry: attempt 1 backs off 200-300 ms, attempt 2 would back off 400+ ms
++					const retryMaxDelayMs = 300;
++
++					let newWebSocketSpy: jest.SpyInstance;
++
++					beforeEach(() => {
++						newWebSocketSpy = jest.spyOn(
++							fakeWebSocketInterface,
++							'newWebSocket',
++						);
++					});
++
++					const waitForSocketCount = async (count: number) => {
++						// Fail fast with a clear message instead of hanging until the Jest timeout
++						const deadline = Date.now() + retryMaxDelayMs + 500;
++						while (newWebSocketSpy.mock.calls.length < count) {
++							if (Date.now() > deadline) {
++								throw new Error(
++									`Expected ${count} WebSocket(s) to be opened, but saw ${newWebSocketSpy.mock.calls.length}`,
++								);
++							}
++							await delay(5);
++						}
++					};
++
++					const subscribeAndTimeOutFirstAttempt = async () => {
++						const observer = provider.subscribe({
++							appSyncGraphqlEndpoint: 'ws://localhost:8080',
++						});
++						observer.subscribe({ error: () => {} });
++
++						// The first socket opens but never receives a connection_ack
++						await fakeWebSocketInterface.readyForUse;
++						await fakeWebSocketInterface.triggerOpen();
++						await fakeWebSocketInterface.waitUntilConnectionStateIn([
++							CS.Disconnected,
++						]);
++
++						// The retry opens a new socket
++						await waitForSocketCount(2);
++					};
++
++					const completeHandshake = async () => {
++						await fakeWebSocketInterface.triggerOpen();
++						await fakeWebSocketInterface.handShakeMessage();
++						await fakeWebSocketInterface.startAckMessage();
++						await fakeWebSocketInterface.keepAlive();
++						await fakeWebSocketInterface.waitUntilConnectionStateIn([
++							CS.Connected,
++							CS.ConnectedPendingDisconnect,
++						]);
++					};
++
++					test('reports Connected when the retry succeeds', async () => {
++						await replaceConstant('MAX_DELAY_MS', retryMaxDelayMs, async () => {
++							await replaceConstant('CONNECTION_INIT_TIMEOUT', 20, async () => {
++								await subscribeAndTimeOutFirstAttempt();
++								await completeHandshake();
++
++								expect(
++									fakeWebSocketInterface.hubConnectionListener
++										.currentConnectionState,
++								).toBe(CS.Connected);
++								expect(fakeWebSocketInterface.observedConnectionStates).toEqual(
++									[
++										CS.Disconnected,
++										CS.Connecting,
++										CS.Disconnected,
++										CS.Connecting,
++										CS.Connected,
++									],
++								);
++							});
++						});
++					});
++
++					test('reconnects when the retried socket is later closed by the server', async () => {
++						await replaceConstant('MAX_DELAY_MS', retryMaxDelayMs, async () => {
++							await replaceConstant('CONNECTION_INIT_TIMEOUT', 20, async () => {
++								await subscribeAndTimeOutFirstAttempt();
++								await completeHandshake();
++
++								await fakeWebSocketInterface.triggerClose();
++								expect(
++									fakeWebSocketInterface.hubConnectionListener
++										.currentConnectionState,
++								).toBe(CS.ConnectionDisrupted);
++
++								// The reconnect opens a third socket and recovers
++								await waitForSocketCount(3);
++								await completeHandshake();
++								expect(
++									fakeWebSocketInterface.hubConnectionListener
++										.currentConnectionState,
++								).toBe(CS.Connected);
++							});
++						});
++					});
++
++					test('reports Disconnected when every attempt times out', async () => {
++						await replaceConstant('MAX_DELAY_MS', retryMaxDelayMs, async () => {
++							await replaceConstant('CONNECTION_INIT_TIMEOUT', 20, async () => {
++								await subscribeAndTimeOutFirstAttempt();
++
++								// The retry socket opens but never receives a connection_ack either
++								await fakeWebSocketInterface.triggerOpen();
++								// Outlast the connection init timeout and any further backoff
++								await delay(retryMaxDelayMs + 50);
++
++								expect(newWebSocketSpy).toHaveBeenCalledTimes(2);
++								expect(
++									fakeWebSocketInterface.hubConnectionListener
++										.currentConnectionState,
++								).toBe(CS.Disconnected);
++								expect(fakeWebSocketInterface.observedConnectionStates).toEqual(
++									[
++										CS.Disconnected,
++										CS.Connecting,
++										CS.Disconnected,
++										CS.Connecting,
++										CS.Disconnected,
++									],
++								);
++							});
++						});
++					});
++
++					test('reports ConnectionDisrupted when every attempt closes before opening', async () => {
++						await replaceConstant('MAX_DELAY_MS', retryMaxDelayMs, async () => {
++							const observer = provider.subscribe({
++								appSyncGraphqlEndpoint: 'ws://localhost:8080',
++							});
++							observer.subscribe({ error: () => {} });
++
++							// Each socket is closed by the server before it opens. This
++							// path records CLOSED, not CONNEC
 ```
 
-**File**: `packages/auth/__tests__/providers/cognito/utils/oauth/attemptCompleteOAuthFlow.test.ts` (modified, +0/-7)
+**File**: `packages/api-graphql/src/Providers/AWSWebSocketProvider/index.ts` (modified, +8/-0)
 ```diff
-@@ -35,13 +35,6 @@ jest.mock(
- 	}),
- );
+@@ -251,6 +251,10 @@ export abstract class AWSWebSocketProvider {
+ 		const { additionalCustomHeaders } =
+ 			await additionalHeadersFromOptions(options);
  
--jest.mock(
--	'../../../../../src/providers/cognito/utils/oauth/inflightPromise',
--	() => ({
--		addInflightPromise: jest.fn(),
--	}),
--);
--
- const mockAssertOAuthConfig = assertOAuthConfig as jest.Mock;
- const mockAssertTokenProviderConfig = assertTokenProviderConfig as jest.Mock;
- const mockCompleteOAuthFlow = completeOAuthFlow as jest.Mock;
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/utils/oauth/inflightOAuthDeadline.test.ts` (modified, +310/-6)
-```diff
-@@ -1,7 +1,7 @@
- // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- // SPDX-License-Identifier: Apache-2.0
- 
--import { defaultStorage } from '@aws-amplify/core';
-+import { Hub, defaultStorage } from '@aws-amplify/core';
- 
- import { TokenOrchestrator } from '../../../../../src/providers/cognito/tokenProvider/TokenOrchestrator';
- import { AUTH_KEY_PREFIX } from '../../../../../src/providers/cognito/tokenProvider/constants';
-@@ -11,6 +11,8 @@ import {
- } from '../../../../../src/providers/cognito/utils/signInWithRedirectStore';
- import { oAuthStore } from '../../../../../src/providers/cognito/utils/oauth/oAuthStore';
- import { resolveAndClearInflightPromises } from '../../../../../src/providers/cognito/utils/oauth/inflightPromise';
-+import { attemptCompleteOAuthFlow } from '../../../../../src/providers/cognito/utils/oauth/attemptCompleteOAuthFlow';
-+import { AuthTokenStore } from '../../../../../src/providers/cognito/tokenProvider/types';
- 
- // Registers the browser-only side effects at module load — including the
- // cross-tab storage listener that releases parked token consumers when the
-@@ -69,17 +71,129 @@ const park = (orchestrator: TokenOrchestrator) => {
- 	return { promise, isSettled: () => settled };
- };
- 
-+interface HeldRead {
-+	started: Promise<void>;
-+	deliver(): void;
-+	fail(error: unknown): void;
-+}
-+
-+const heldReads: HeldRead[] = [];
-+
-+// Holds the next `count` reads of the deadline key at the storage boundary.
-+// Each read captures the stored value when it starts and returns it only when
-+// delivered, like a slow storage backend.
-+const holdDeadlineReads = (count: number) => {
-+	const getItem = defaultStorage.getItem.bind(defaultStorage);
-+	const holds = Array.from({ length: count }, () => {
-+		let markStarted!: () => void;
-+		let settle!: (read: () => Promise<string | null>) => void;
-+		const value = new Promise<() => Promise<string | null>>(resolve => {
-+			settle = resolve;
-+		});
-+		let captured: string | null = null;
-+		const held: HeldRead & { start(value: string | null): void } = {
-+			started: new Promise<void>(resolve => {
-+				markStarted = resolve;
-+			}),
-+			start(storedValue) {
-+				captured = storedValue;
-+				markStarted();
-+			},
-+			deliver: () => {
-+				settle(async () => captured);
-+			},
-+			fail: error => {
-+				settle(() => Promise.reject(error));
-+			},
-+		};
-+
-+		return { held, value };
-+	});
-+	const pending = [...holds];
-+	jest.spyOn(defaultStorage, 'getItem').mockImplementation(async key => {
-+		const next = key === deadlineKey ? pending.shift() : undefined;
-+		if (!next) {
-+			return getItem(key);
-+		}
-+		next.held.start(window.localStorage.getItem(key));
-+
-+		return (await next.value)();
-+	});
-+	heldReads.push(...holds.map(({ held }) => held));
-+
-+	return holds.map(({ held }) => held);
-+};
-+
-+const oauthConfig = {
-+	Cognito: {
-+		...authConfig.Cognito,
-+		loginWith: {
-+			oauth: {
-+				domain: 'auth.example.com',
-+				redirectSignIn: ['http://localhost/'],
-+				redirectSignOut: ['http://localhost/'],
-+				responseType: 'code' as const,
-+				scopes: ['openid'],
-+			},
-+		},
-+	},
-+};
-+
-+const priorTokens = {
-+	accessToken: {
-+		payload: { exp: Math.floor(Date.now() / 1000) + 3600 },
-+		toString: () => 'prior-access-token',
-+	},
-+	idToken: {
-+		payload: { exp: Math.floor(Date.now() / 1000) + 3600 },
-+		toString: () => 'prior-id-token',
-+	},
-+	clockDrift: 0,
-+};
-+
-+const createSignedInOrchestrator = () => {
-+	const orchestrator = createOrchestrator();
-+	orchestrator.setAuthTokenStore({
-+		loadTokens: async () => priorTokens,
-+		getLastAuthUser: async () => 'prior-user',
-+	} as unknown as AuthTokenStore);
-+
-+	return orchestrator;
-+};
-+
-+const listenForRedirectFailure = () => {
-+	const errors: Error[] = [];
-+	const stop = Hub.listen('auth', ({ payload }) => {
-+		const { event, data } = payload as {
-+			event: string;
-+			data?: { error?: Error };
-+		};
-+		if (event === 'signInWithRedirect_failure' && data?.error) {
-+			errors.push(data.error);
-+		}
-+	});
-+
-+	return { errors, stop };
-+};
-+
- describe('inflight OAuth blocking deadline', () => {
- 	beforeEach(() => {
- 		jest.useFakeTimers();
- 		window.localStorage.clear();
-+		oAuthStore.setAuthConfig(authConfig.Cognito as any);
- 	});
- 
- 	afterEach(async () => {
--		// Drain any parked waiters and clear the singleton backstop timer so
-+		// Drain any parked waiters and clear their backstop timers so
- 		// module-level state never leaks between tests.
- 		resolveAndClearInflightPromises();
-+		heldReads.splice(0).forEach(held => {
-+			held.deliver();
-+		});
- 		await drainMicrotasks();
-+		resolveAndClearInflightPromises();
-+		jest.restoreAllMocks();
-+		window.history.replaceState({}, '', '/');
- 		jest.clearAllTimers();
- 		jest.useRealTimers();
- 	});
-@@ -250,10 +364,9 @@ describe('inflight OAuth blocking deadline', () => {
- 	});
- 
- 	it('blocks on a new flow parked on the SAME orchestrator right after a release', async () => {
--		// Pins the fix for the post-release hole: `this.inflightPromise` is reset
--		// by
-```
-
-**File**: `packages/auth/src/providers/cognito/tokenProvider/TokenOrchestrator.ts` (modified, +13/-61)
-```diff
-@@ -18,10 +18,7 @@ import {
- import { assertServiceError } from '../../../errors/utils/assertServiceError';
- import { AuthError } from '../../../errors/AuthError';
- import { oAuthStore } from '../utils/oauth/oAuthStore';
--import {
--	addInflightPromise,
--	armInflightDeadline,
--} from '../utils/oauth/inflightPromise';
-+import { waitForInflightOAuth } from '../utils/oauth/inflightPromise';
- import { ClientMetadata, CognitoAuthSignInDetails } from '../types';
- 
- import {
-@@ -38,60 +35,19 @@ export class TokenOrchestrator implements AuthTokenOrchestrator {
- 	clientMetadataProvider?: ClientMetadataProvider;
- 	tokenStore?: AuthTokenStore;
- 	tokenRefresher?: TokenRefresher;
--	inflightPromise: Promise<void> | undefined;
-+	// when there is valid oauth config and there is an inflight oauth flow, try
-+	// to block async calls that require fetching tokens before the oauth flow completes
-+	// e.g. getCurrentUser, fetchAuthSession etc.
-+	// Read-time evaluation of the blocking deadline: absent flag, an
-+	// expired deadline, or a flag value other than 'true' all mean
-+	// "do not block". An abandoned flow in another tab can therefore
-+	// never park token consumers indefinitely.
-+	// (`loadOAuthInFlightDeadline` is optional on the OAuthStore
-+	// interface for custom-implementation compatibility, but this
-+	// singleton is always the concrete DefaultOAuthStore, which
-+	// implements it.)
- 	waitForInflightOAuth: () => Promise<void> = isBrowser()
--		? async () => {
--				// Read-time evaluation of the blocking deadline: absent flag, an
--				// expired deadline, or a flag value other than 'true' all mean
--				// "do not block". An abandoned flow in another tab can therefore
--				// never park token consumers indefinitely.
--				// (`loadOAuthInFlightDeadline` is optional on the OAuthStore
--				// interface for custom-implementation compatibility, but this
--				// singleton is always the concrete DefaultOAuthStore, which
--				// implements it.)
--				const deadline = await oAuthStore.loadOAuthInFlightDeadline();
--				if (deadline === undefined) {
--					return;
--				}
--
--				if (this.inflightPromise) {
--					// Keep the backstop aligned with the current deadline for waiters
--					// piggybacking on the existing park.
--					armInflightDeadline(deadline, () =>
--						oAuthStore.loadOAuthInFlightDeadline(),
--					);
--
--					return this.inflightPromise;
--				}
--
--				// when there is valid oauth config and there is an inflight oauth flow, try
--				// to block async calls that require fetching tokens before the oauth flow completes
--				// e.g. getCurrentUser, fetchAuthSession etc.
--
--				this.inflightPromise = new Promise<void>(resolve => {
--					// Invariant: `this.inflightPromise` is owned by the park lifecycle —
--					// created here and reset by the very resolver that releases it
--					// (drained by the backstop timer, the cross-tab listener, or
--					// in-process completion). Resetting BEFORE resolving closes the
--					// post-release hole where a caller for a NEW flow could observe a
--					// stale, already-resolved promise and skip blocking on it.
--					addInflightPromise(() => {
--						this.inflightPromise = undefined;
--						resolve();
--					});
--					// Arm the deadline backstop in the same synchronous step as the
--					// park: it releases this waiter even when the cross-tab release
--					// fired between the deadline read above and this park (that storage
--					// event never re-fires), when storage events are unavailable
--					// (Safari private mode), or when the flow is simply never
--					// completed anywhere.
--					armInflightDeadline(deadline, () =>
--						oAuthStore.loadOAuthInFlightDeadline(),
--					);
--				});
--
--				return this.inflightPromise;
--			}
-+		? () => waitForInflightOAuth(() => oAuthStore.loadOAuthInFlightDeadline())
- 		: async () => {
- 				// no-op for non-browser environments
- 			};
-@@ -151,10 +107,6 @@ export class TokenOrchestrator implements AuthTokenOrchestrator {
- 			return null;
- 		}
- 		await this.waitForInflightOAuth();
--		// NOTE: `this.inflightPromise` is reset by the resolver registered in
--		// `waitForInflightOAuth` (co-located with the release), NOT here — a reset
--		// here could clobber a newer flow's park created between the release and
--		// this line resuming.
- 		tokens = await this.getTokenStore().loadTokens();
- 		const username = await this.getTokenStore().getLastAuthUser();
- 
-```
-
-**File**: `packages/auth/src/providers/cognito/utils/oauth/inflightPromise.ts` (modified, +61/-57)
-```diff
-@@ -1,69 +1,73 @@
- // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- // SPDX-License-Identifier: Apache-2.0
- 
--const inflightPromises: ((value: void | PromiseLike<void>) => void)[] = [];
--
--// Module-level singleton backstop timer for the inflight OAuth blocking
--// deadline. A single timer (not one per waiter) is sufficient because all
--// parked waiters share one release (`resolveAndClearInflightPromises` drains
--// them all), and every park re-arms it with the current deadline.
--let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
--
--export const addInflightPromise = (resolver: () => void) => {
--	inflightPromises.push(resolver);
--};
-+const inflightPromises = new Set<() => void>();
- 
- /**
-- * Arms (or re-arms) the backstop timer that releases parked token consumers
-- * once the inflight OAuth blocking deadline passes.
-+ * Blocks a token consumer while an OAuth flow is in flight, until the flow
-+ * settles (`resolveAndClearInflightPromises`) or its blocking deadline passes.
-  *
-- * On fire it re-reads the deadline instead of trusting the armed one: a fresh
-- * `signInWithRedirect` may have renewed it (re-arm for the new deadline), or
-- * the flow may have been released through another path already (the re-check
-- * returns `undefined` and draining is a no-op). The release is purely local —
-- * it never mutates shared OAuth state, so another tab's still-running flow is
-- * left intact.
-+ * The waiter registers before it reads the deadline, so a release that happens
-+ * while that read is pending still settles it. Each waiter owns its backstop
-+ * timer: on fire it re-reads the deadline instead of trusting the armed one, as
-+ * a fresh `signInWithRedirect` may have renewed it. Its re-check only ever
-+ * settles this waiter, never one parked for a newer flow. The backstop also
-+ * covers environments without storage events (Safari private mode) and flows
-+ * that are never completed anywhere. The release is purely
-+ * local: it never mutates shared OAuth state, so another tab's still-running
-+ * flow is left intact.
-  *
-  * Note: browsers throttle timers in background tabs, which may delay (never
-- * prevent) this release; the cross-tab storage listener remains the fast path.
-+ * prevent) the backstop release; the cross-tab storage listener remains the
-+ * fast path.
-  */
--export const armInflightDeadline = (
--	deadline: number,
--	recheckDeadline: () => Promise<number | undefined>,
--) => {
--	if (deadlineTimer !== undefined) {
--		clearTimeout(deadlineTimer);
--	}
--	deadlineTimer = setTimeout(
--		() => {
--			deadlineTimer = undefined;
--			recheckDeadline()
--				.then(renewedDeadline => {
--					if (renewedDeadline !== undefined) {
--						armInflightDeadline(renewedDeadline, recheckDeadline);
-+export const waitForInflightOAuth = (
-+	readDeadline: () => Promise<number | undefined>,
-+): Promise<void> =>
-+	new Promise<void>((resolve, reject) => {
-+		let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
- 
--						return;
--					}
--					resolveAndClearInflightPromises();
--				})
--				// Fail open: an error while re-checking (e.g. auth config torn down)
--				// must release the waiters rather than leave them parked forever.
--				.catch(() => {
--					resolveAndClearInflightPromises();
--				});
--		},
--		Math.max(0, deadline - Date.now()),
--	);
--};
-+		const release = () => {
-+			if (!inflightPromises.delete(release)) {
-+				return;
-+			}
-+			clearTimeout(deadlineTimer);
-+			resolve();
-+		};
-+
-+		const checkDeadline = (deadline: number | undefined) => {
-+			if (!inflightPromises.has(release)) {
-+				return;
-+			}
-+			if (deadline === undefined) {
-+				release();
-+
-+				return;
-+			}
-+			deadlineTimer = setTimeout(
-+				() => {
-+					readDeadline()
-+						.then(checkDeadline)
-+						// Fail open: an error while re-checking (e.g. auth config torn
-+						// down) must release the waiter rather than leave it parked.
-+						.catch(release);
-+				},
-+				Math.max(0, deadline - Date.now()),
-+			);
-+		};
-+
-+		inflightPromises.add(release);
-+		readDeadline()
-+			.then(checkDeadline, error => {
-+				if (inflightPromises.delete(release)) {
-+					reject(error);
-+				}
-+			})
-+			.catch(release);
-+	});
- 
--export const resolveAndClearInflightPromises = () => {
--	// The waiters this timer guarded are being released through this very call
--	// (whatever triggered it) — clear it so no stale timer outlives its waiters.
--	if (deadlineTimer !== undefined) {
--		clearTimeout(deadlineTimer);
--		deadlineTimer = undefined;
--	}
--	while (inflightPromises.length) {
--		inflightPromises.pop()?.();
--	}
-+export const resolveAndClearInflightPromises = (): void => {
-+	inflightPromises.forEach(release => {
-+		release();
-+	});
- };
++		// Intentionally kept alongside the per-attempt record in
++		// _establishConnection: this one covers building the auth headers before
++		// the first attempt. The connection state observable drops the repeated
++		// Connecting.
+ 		this.connectionStateMonitor.record(CONNECTION_CHANGE.OPENING_CONNECTION);
+ 		await this._initializeWebSocketConnection({
+ 			apiKey,
+@@ -1142,6 +1146,10 @@ export abstract class AWSWebSocketProvider {
+ 		subprotocol: string,
+ 	) => {
+ 		this.logger.debug(`Establishing WebSocket connection to ${awsRealTimeUrl}`);
++		// Record the intent to connect on every attempt. A failed attempt records
++		// CONNECTION_FAILED, which would otherwise leave a successful retry in
++		// ConnectedPendingDisconnect.
++		this.connectionStateMonitor.record(CONNECTION_CHANGE.OPENING_CONNECTION);
+ 		try {
+ 			await this._openConnection(awsRealTimeUrl, subprotocol);
+ 			await this._initiateHandshake();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15029** (2026-11-26): fix(api-graphql): record connecting state on each connection retry (@osama-rizk)
+- **PR #15024** (2026-11-26): chore(deps): remediate open Dependabot alerts (next, fast-xml-parser) (@osama-rizk)
+- **PR #15020** (closed): chore(deps-dev): bump next from 16.4.1 to 16.4.5 (@dependabot[bot])
 - **PR #15017** (2026-11-16): fix(auth): register OAuth token waiters before reading the deadline (@maxence-lefebvre)
+- **PR #15014** (closed): chore(deps): bump fast-xml-parser from 5.7.2 to 5.12.0 (@dependabot[bot])
 - **PR #15013** (2026-11-10): chore(e2e): disable Pinpoint-backed E2E tests (@soberm)
-- **PR #15010** (2026-11-05): chore(deps): update glob and minimatch transitive dependencies (@soberm)
-- **PR #15009** (2026-11-05): fix(auth): revoke refresh token when global sign out fails (@soberm)
-- **PR #15008** (2026-11-05): chore(deps): bump joi from 18.2.9 to 18.3.2 (@dependabot[bot])
-- **PR #15007** (2026-11-05): chore(deps-dev): bump glob from 10.5.0 to 14.0.2 (@dependabot[bot])
 
 ---
 
@@ -1015,25 +695,25 @@ re-check behavior are unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. auth): register OAuth token waiters before reading the deadline
+## X. api-graphql): record connecting state on each connection retry
 
 **RULE**:
-When implementing operations in `.changeset/auth-oauth-wait-register-before-read.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws-amplify/amplify-js. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/api-graphql-reconnect-state-after-ack-timeout.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws-amplify/amplify-js. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e01896b`: auth): register OAuth token waiters before reading the deadline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c08112f4`: api-graphql): record connecting state on each connection retry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/auth-oauth-wait-register-before-read.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/api-graphql-reconnect-state-after-ack-timeout.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'@aws-amplify/auth': minor
+'@aws-amplify/api-graphql': patch
 ---
 
-fix(auth): release token consumers when a redirect sign-in fails during their inflight OAuth deadline read, and stop a stale deadline re-check from releasing waiters of a newer flow
+fix(api-graphql): report `Connected` instead of `ConnectedPendingDisconnect` when a real-time connection succeeds on a retry after a connection ack timeout, so a later disconnect triggers an automatic reconnect
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1043,4 +723,4 @@ fix(auth): release token consumers when a redirect sign-in fails during their in
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e01896b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c08112f4` are properly handled with clean fallback behavior.

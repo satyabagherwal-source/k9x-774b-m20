@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T22:02:20.539Z",
+  "last_updated": "2026-11-26T22:10:53.990Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T21:44:28.492Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-26T21:26:16.604Z",
+      "processed_at": "2026-11-26T22:10:52.686Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2393,7 +2393,7 @@
       "staged_for_review": 0
     },
     "aws-amplify-amplify-js-learnings.md": {
-      "processed_at": "2026-11-17T17:02:41.930Z",
+      "processed_at": "2026-11-26T22:10:51.730Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2453,7 +2453,7 @@
       "staged_for_review": 0
     },
     "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md": {
-      "processed_at": "2026-11-23T09:49:07.370Z",
+      "processed_at": "2026-11-26T22:10:51.228Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4008,7 +4008,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4689,
+  "total_dossiers_evaluated": 4692,
   "total_canonical_promoted": 568,
-  "total_staged_for_review": 3522
+  "total_staged_for_review": 3524
 }

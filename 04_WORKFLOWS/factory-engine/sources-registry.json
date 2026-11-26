@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T22:02:17.097Z",
-    "lastVerified": "2026-11-26T22:02:17.097Z",
+    "lastChecked": "2026-11-26T22:10:51.075Z",
+    "lastVerified": "2026-11-26T22:10:51.075Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T21:26:15.023Z",
-    "lastVerified": "2026-11-26T21:26:15.023Z",
+    "lastChecked": "2026-11-26T22:10:51.067Z",
+    "lastVerified": "2026-11-26T22:10:51.067Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1771,12 +1771,12 @@
     "lastVerified": "2026-11-26T10:30:55.187Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T17:57:05.630Z",
-    "lastVerified": "2026-11-26T17:57:05.630Z",
+    "lastChecked": "2026-11-26T22:10:46.184Z",
+    "lastVerified": "2026-11-26T22:10:46.184Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1785,7 +1785,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b2358d26"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -3395,9 +3396,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-26T03:30:04.004Z",
+    "lastChecked": "2026-11-26T22:10:48.593Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-26T03:30:04.005Z"
+    "lastVerified": "2026-11-26T22:10:48.593Z"
   },
   "o2sh-onefetch": {
     "name": "o2sh/onefetch",
@@ -3662,11 +3663,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aws-amplify-amplify-js": {
-    "name": "amplify-js",
+    "name": "aws-amplify/amplify-js",
     "officialUrl": "https://github.com/aws-amplify/amplify-js",
-    "lastChecked": "2026-11-24T14:14:59.233Z",
-    "revisionIdentifier": "9e01896b",
-    "lastVerified": "2026-11-24T14:14:59.233Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-26T22:10:45.549Z",
+    "lastVerified": "2026-11-26T22:10:45.549Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-aws-amplify-amplify-js",
+    "contentHash": "05c50587afb2b3faae3b8e640ba330c40550e4e7bb1fa863608ff81b0f05fc8e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "dragonflyoss-dragonfly": {
     "name": "dragonfly",
@@ -4663,8 +4674,8 @@
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T15:00:17.307Z",
-    "lastVerified": "2026-11-25T15:00:17.307Z",
+    "lastChecked": "2026-11-26T22:10:36.076Z",
+    "lastVerified": "2026-11-26T22:10:36.076Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -5649,12 +5660,12 @@
     "officialUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T09:48:25.132Z",
-    "lastVerified": "2026-11-23T09:48:25.132Z",
+    "lastChecked": "2026-11-26T22:10:38.868Z",
+    "lastVerified": "2026-11-26T22:10:38.868Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "8630622348d55a9cf70247ec4c2a9b97960f94e8dfd714589cd83519a5a40c27",
+    "contentHash": "cdb06c7061824590d9f9456fa889c439175bee79f822ba23af1e00e73dc9c171",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6603,9 +6614,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-26T04:22:35.094Z",
+    "lastChecked": "2026-11-26T22:10:43.565Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-26T04:22:35.094Z"
+    "lastVerified": "2026-11-26T22:10:43.565Z"
   },
   "lindb-lindb": {
     "name": "lindb",

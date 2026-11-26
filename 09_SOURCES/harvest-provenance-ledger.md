@@ -13604,3 +13604,5 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `e03ef4b2` | Multi-dimensional audit evidence | 2026-11-26T21:52:54.698Z |
 | `learn-huggingface-qwen-qwen3-4b-instruct-2507` | `https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-26T22:02:05.758Z |
 | `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `d54fc486` | Multi-dimensional audit evidence | 2026-11-26T22:02:13.384Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-11-26T22:10:39.606Z |
+| `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `c08112f4` | Multi-dimensional audit evidence | 2026-11-26T22:10:46.783Z |

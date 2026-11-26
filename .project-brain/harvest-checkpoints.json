@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T22:02:13.412Z",
+  "last_updated": "2026-11-26T22:10:46.805Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1385,14 +1385,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "content_hash": "8630622348d55a9cf70247ec4c2a9b97960f94e8dfd714589cd83519a5a40c27",
-      "verified_at": "2026-11-23T09:48:25.785Z",
+      "content_hash": "cdb06c7061824590d9f9456fa889c439175bee79f822ba23af1e00e73dc9c171",
+      "verified_at": "2026-11-26T22:10:39.621Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T09:48:25.785Z"
+      "last_updated": "2026-11-26T22:10:39.621Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -6501,14 +6501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-amplify-amplify-js",
-      "content_hash": "d4285a5484733f883970f085a335c33073e8dfd321cc081a67fc9ac8f325ebe5",
-      "verified_at": "2026-11-17T17:02:32.368Z",
+      "content_hash": "05c50587afb2b3faae3b8e640ba330c40550e4e7bb1fa863608ff81b0f05fc8e",
+      "verified_at": "2026-11-26T22:10:46.804Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:02:32.368Z"
+      "last_updated": "2026-11-26T22:10:46.804Z"
     },
     "go-eagle/eagle": {
       "repository": "go-eagle/eagle",

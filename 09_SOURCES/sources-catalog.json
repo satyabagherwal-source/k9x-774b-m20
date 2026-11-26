@@ -1055,8 +1055,8 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "8630622348d55a9cf70247ec4c2a9b97960f94e8dfd714589cd83519a5a40c27",
-    "lastHarvestedAt": "2026-11-23T09:48:25.776Z",
+    "contentHash": "cdb06c7061824590d9f9456fa889c439175bee79f822ba23af1e00e73dc9c171",
+    "lastHarvestedAt": "2026-11-26T22:10:39.606Z",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
@@ -4253,10 +4253,10 @@
     "repository": "aws-amplify/amplify-js",
     "platform": "github",
     "sourceUrl": "https://github.com/aws-amplify/amplify-js",
-    "sourceVersion": "9e01896b",
+    "sourceVersion": "c08112f4",
     "license": "Apache-2.0",
-    "contentHash": "d4285a5484733f883970f085a335c33073e8dfd321cc081a67fc9ac8f325ebe5",
-    "lastHarvestedAt": "2026-11-17T17:02:32.361Z",
+    "contentHash": "05c50587afb2b3faae3b8e640ba330c40550e4e7bb1fa863608ff81b0f05fc8e",
+    "lastHarvestedAt": "2026-11-26T22:10:46.783Z",
     "learningId": "learn-github-aws-amplify-amplify-js"
   },
   "go-eagle-eagle": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T22:02:20.035Z",
-  "total_records": 2784,
+  "last_updated": "2026-11-26T22:10:53.420Z",
+  "total_records": 2786,
   "domains": {
     "A": {
       "total": 23,
@@ -1239,7 +1239,7 @@
       ]
     },
     "G": {
-      "total": 476,
+      "total": 478,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1716,7 +1716,9 @@
         "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-core-invariants",
         "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-svenstaro-miniserve-core-invariants",
-        "domain_intelligence-architecture-intelligence-svenstaro-miniserve-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-svenstaro-miniserve-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-aws-amplify-amplify-js-core-invariants",
+        "domain_intelligence-architecture-intelligence-aws-amplify-amplify-js-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8554,8 +8556,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "9fe7e6cf60003a68f976d40b3b3f70f5254015e66849451493cb3814515aa79e",
-      "created_at": "2026-11-26T21:26:17.255Z"
+      "content_hash": "8cd6c5e752e1511969e92e61a2aafbe3d4ac5f632fcffbcf450ebb52157a42a6",
+      "created_at": "2026-11-26T22:10:53.420Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -14684,8 +14686,8 @@
       "title": "Research & Knowledge Intelligence: Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-research-knowledge-intelligence-infa.md",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "content_hash": "02acf15829c86c77a59b377a04c8760180a22a6ffd099fbbc4f66fb92bb3d87c",
-      "created_at": "2026-11-23T09:48:26.001Z"
+      "content_hash": "d9ed4b09a226fc427ee038178521674632a8118eea9f73eafbc4b9763b75b452",
+      "created_at": "2026-11-26T22:10:39.851Z"
     },
     "domain_intelligence-research-knowledge-intelligence-edge0-edge0-145b-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-edge0-145b-nvfp4-core-invariants",
@@ -14804,8 +14806,8 @@
       "title": "Research & Knowledge Intelligence: hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-learnings-research-knowledge-intelli.md",
       "repository": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings",
-      "content_hash": "89cd303398a84d0757c5a791d2a49d8d7db6d7c5bae18e713fb841ca4b2f3482",
-      "created_at": "2026-11-23T09:49:07.605Z"
+      "content_hash": "00034cc033dcd44768d96bb3916f88fa948eab414b9c63aa4c94dc5da674ba0d",
+      "created_at": "2026-11-26T22:10:51.489Z"
     },
     "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv",
@@ -46985,6 +46987,24 @@
       "repository": "pimalaya-himalaya-learnings",
       "content_hash": "6d5884e3d8112636579ef9efbf402b14d0e6f368f89d4f8fd139f550c5a8bb73",
       "created_at": "2026-11-26T21:52:59.020Z"
+    },
+    "domain_intelligence-architecture-intelligence-aws-amplify-amplify-js-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-aws-amplify-amplify-js-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: aws-amplify/amplify-js Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aws-amplify-amplify-js-architecture-intelligence-aws-amplify-amplify-js-core-inv.md",
+      "repository": "aws-amplify/amplify-js",
+      "content_hash": "4293bd62a11bdac38db1bf78d7c966ff254f0baf7311267fc1499db306557665",
+      "created_at": "2026-11-26T22:10:47.233Z"
+    },
+    "domain_intelligence-architecture-intelligence-aws-amplify-amplify-js-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-aws-amplify-amplify-js-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: aws-amplify-amplify-js-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aws-amplify-amplify-js-learnings-architecture-intelligence-aws-amplify-amplify-j.md",
+      "repository": "aws-amplify-amplify-js-learnings",
+      "content_hash": "0ea8db4bee73ef61c330de326840ed64d266810aa00a9f67c355821f225c32aa",
+      "created_at": "2026-11-26T22:10:52.264Z"
     }
   }
 }

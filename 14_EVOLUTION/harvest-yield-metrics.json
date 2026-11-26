@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T22:02:13.407Z",
-  "total_cycles_completed": 12881,
-  "total_learnings_persisted": 12881,
-  "total_rules_promoted": 11688,
+  "last_updated": "2026-11-26T22:10:46.801Z",
+  "total_cycles_completed": 12883,
+  "total_learnings_persisted": 12883,
+  "total_rules_promoted": 11689,
   "history": [
-    {
-      "timestamp": "2026-11-26T11:39:55.046Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T11:49:25.287Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T11:49:33.413Z",
       "repository": "electron/electron",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T22:02:13.407Z",
       "repository": "margelo/react-native-vision-camera",
       "learningId": "learn-github-margelo-react-native-vision-camera",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:10:39.618Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:10:46.801Z",
+      "repository": "aws-amplify/amplify-js",
+      "learningId": "learn-github-aws-amplify-amplify-js",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
