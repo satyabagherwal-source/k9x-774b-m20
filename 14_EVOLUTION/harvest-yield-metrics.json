@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T08:36:44.278Z",
-  "total_cycles_completed": 12629,
-  "total_learnings_persisted": 12629,
-  "total_rules_promoted": 11528,
+  "last_updated": "2026-11-26T08:57:35.675Z",
+  "total_cycles_completed": 12634,
+  "total_learnings_persisted": 12634,
+  "total_rules_promoted": 11531,
   "history": [
-    {
-      "timestamp": "2026-11-25T13:49:21.819Z",
-      "repository": "erkamyaman/rust-anything",
-      "learningId": "learn-github-erkamyaman-rust-anything",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T13:49:26.558Z",
-      "repository": "zoontek/react-native-permissions",
-      "learningId": "learn-github-zoontek-react-native-permissions",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T13:49:34.595Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T14:04:51.931Z",
-      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T14:05:08.776Z",
-      "repository": "apache/pinot",
-      "learningId": "learn-github-apache-pinot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T14:05:09.677Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-26T08:36:44.278Z",
       "repository": "oxc-project/oxc",
       "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:57:21.245Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:57:24.537Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:57:29.195Z",
+      "repository": "rafsoh/dimeApp",
+      "learningId": "learn-github-rafsoh-dimeapp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:57:31.514Z",
+      "repository": "flux-iac/tofu-controller",
+      "learningId": "learn-github-flux-iac-tofu-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:57:35.675Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

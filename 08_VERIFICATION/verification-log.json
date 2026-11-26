@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-2PE1",
-    "timestamp": "2026-11-24T18:00:22.537Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "9f1073fc711637eaeb32a6a7e10a971dfb347ca824bb470f3b6e007215fe0d5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-2TDI",
-    "timestamp": "2026-11-24T18:00:27.702Z",
-    "repository": "react/metro",
-    "learningId": "learn-github-react-metro",
-    "contentHash": "8ca88d575a265575d5d5b5d6026dc27d8fd7c0338083d3cc5eaaa15a24725312",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-31EY",
-    "timestamp": "2026-11-24T18:00:38.123Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "7f9bd676be3e28487a9628e6bee2c3eced07314d9297d3f6c52815cb86c994d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-E1EO",
-    "timestamp": "2026-11-24T18:09:11.328Z",
-    "repository": "goodrain/rainbond",
-    "learningId": "learn-github-goodrain-rainbond",
-    "contentHash": "5bf09ff334fb90781f552b2b5719748e50e5ffcc7b6a702ec999862f98c0cb0a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-OW86",
-    "timestamp": "2026-11-24T18:17:37.830Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "5bea62554e4a7cb684f41783a57f650220b58938b0a1c4f64a48ee036af82325",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-A9NM",
     "timestamp": "2026-11-24T18:34:15.010Z",
     "repository": "AtomicChat/Inkling-2-Mini-GGUF",
@@ -7490,6 +7415,81 @@
     "repository": "oxc-project/oxc",
     "learningId": "learn-github-oxc-project-oxc",
     "contentHash": "fb59056d95b1c1fbd5b5fb0ce771da1d992e9ec78ce2de129f30ef7ebeb8f857",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-K2TM",
+    "timestamp": "2026-11-26T08:57:21.226Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-convaiinnovations-laya",
+    "contentHash": "a3f07cad995ee99b11e924b404679709de92a7363ce024771de8f7e1b8e8634f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-K5D2",
+    "timestamp": "2026-11-26T08:57:24.518Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "f5bf89192aced5bf4d39f18f1b45f8f6bf79c8a6f9800dc766479fce6646f32e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-K8XI",
+    "timestamp": "2026-11-26T08:57:29.142Z",
+    "repository": "rafsoh/dimeApp",
+    "learningId": "learn-github-rafsoh-dimeapp",
+    "contentHash": "b76afc01e4a9bcb4969ebe64a5f45995022e40cb1e5011b833d4f769052e220f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-KAQU",
+    "timestamp": "2026-11-26T08:57:31.494Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "8eb7d11fe0b955bea03e2764b36075716374ea5cf8eb385728426a48b9816d1d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-KDYI",
+    "timestamp": "2026-11-26T08:57:35.658Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "26783d36fa73f82ab8c903ace32d51c327a4e68461ecff443bc7600d4e42ff49",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "b896dc9713cda126bc410a4ca85032a781120d52977957da4fb578f4a70d817d",
-    "lastHarvestedAt": "2026-11-22T15:58:57.116Z",
+    "contentHash": "a3f07cad995ee99b11e924b404679709de92a7363ce024771de8f7e1b8e8634f",
+    "lastHarvestedAt": "2026-11-26T08:57:21.231Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "f2e66637",
+    "sourceVersion": "410c10f3",
     "license": "Apache-2.0",
-    "contentHash": "ae71faba075db48f2cd5690ed5a965fa193c585fc152425ace7787ef741e0909",
-    "lastHarvestedAt": "2026-11-26T00:18:04.876Z",
+    "contentHash": "26783d36fa73f82ab8c903ace32d51c327a4e68461ecff443bc7600d4e42ff49",
+    "lastHarvestedAt": "2026-11-26T08:57:35.663Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "23cefad9",
+    "sourceVersion": "29fa7be9",
     "license": "Apache-2.0",
-    "contentHash": "26b3b62a16d66fd5da9c9b5195586ad1590186d25f1ec358dc26cdfdabf043b8",
-    "lastHarvestedAt": "2026-11-23T19:51:23.132Z",
+    "contentHash": "8eb7d11fe0b955bea03e2764b36075716374ea5cf8eb385728426a48b9816d1d",
+    "lastHarvestedAt": "2026-11-26T08:57:31.499Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "2664a0aa",
+    "sourceVersion": "a3ce8d5e",
     "license": "NOASSERTION",
-    "contentHash": "1170c9d904dd65551fe5dd93b012b68a220fd99b3ead34eab2b11485b0813e5c",
-    "lastHarvestedAt": "2026-11-25T02:01:59.432Z",
+    "contentHash": "f5bf89192aced5bf4d39f18f1b45f8f6bf79c8a6f9800dc766479fce6646f32e",
+    "lastHarvestedAt": "2026-11-26T08:57:24.522Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -10023,10 +10023,10 @@
     "repository": "rafsoh/dimeApp",
     "platform": "github",
     "sourceUrl": "https://github.com/rafsoh/dimeApp",
-    "sourceVersion": "2e7cc39c",
+    "sourceVersion": "67b0c7d3",
     "license": "GPL-3.0",
-    "contentHash": "de07fc6738038d9bc6e084cef678dabc3ad9db18c8a95af57c6a5157c2bff9d6",
-    "lastHarvestedAt": "2026-11-23T22:42:54.305Z",
+    "contentHash": "b76afc01e4a9bcb4969ebe64a5f45995022e40cb1e5011b833d4f769052e220f",
+    "lastHarvestedAt": "2026-11-26T08:57:29.147Z",
     "learningId": "learn-github-rafsoh-dimeapp"
   },
   "exyte-chat": {

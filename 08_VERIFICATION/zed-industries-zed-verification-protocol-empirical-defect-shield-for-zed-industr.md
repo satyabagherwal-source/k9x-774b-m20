@@ -4,22 +4,22 @@
 {
   "source_repository": "zed-industries/zed",
   "source_url": "https://github.com/zed-industries/zed",
-  "source_version": "2664a0aa",
+  "source_version": "a3ce8d5e",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T02:01:59.739Z",
+  "timestamp": "2026-11-26T08:57:24.787Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zed-industries-zed",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `2664a0aa`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T02:01:59.739Z`  
+> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `a3ce8d5e`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T08:57:24.787Z`  
 > **Learning ID**: `learn-github-zed-industries-zed`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zed-industries/zed` (Commit: `2664a0aa`)
+- **Target Repository**: `zed-industries/zed` (Commit: `a3ce8d5e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:01:57.661Z  
+> **Harvest Timestamp**: 2026-11-26T08:57:23.233Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 95668 stars
+- **Stars / Engagement**: 95762 stars
 
 ---
 
@@ -2345,232 +2345,529 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6837f173` (2026-11-24)
-**Commit Message**: gpui: Apply deferred content masks during prepaint (#67390)
+### Incident Patch 1: `6ba65ce3` (2026-11-25)
+**Commit Message**: crashes: Update crash-handler to fix child processes hanging on macOS (#67378)
 
 ## Summary
 
-`Window::defer_draw` documents that its content mask applies during
-prepaint and paint, but prepaint doesn't apply it. A deferred element's
-hitboxes then extend past its visible area and block clicks on elements
-underneath.
+On macOS, child processes inherit Zed's Mach exception port.
+`crash-handler` 0.8.0 replies to their exceptions as handled, so a child
+that faults retries the instruction forever instead of receiving its
+signal.
+[0.8.1](https://github.com/EmbarkStudios/crash-handling/pull/126) passes
+these exceptions on to the kernel.
 
-Deferred prepaint now applies the mask.
-
-Closes #66079
+Closes #67287
+Closes #60389
 
 ## Testing
 
-- Tested on Linux with a small GPUI app. On `main`, the clipped part of
-a masked overlay blocks the button underneath. On this branch, the
-button gets hover and clicks.
-- `test_deferred_content_mask_clips_hitboxes` fails without this change.
-- `cargo test -p gpui --lib`, `cargo test -p editor --lib --
-edit_prediction`, and `./script/clippy -p gpui` pass.
+- To reproduce, run the program from either issue as a task on macOS. It
+hangs instead of exiting.
+- Tested on macOS 26
+[arm64](https://github.com/ptweezy/zed/actions/runs/45244310375/job/137936952458)
+and macOS 15
+[x86_64](https://github.com/ptweezy/zed/actions/runs/45244310375/job/137936951965)
+runners, with a small program that attaches the handler as Zed does and
+spawns each issue's program. Not tested in a full Zed build on macOS.
+  - With 0.8.0, both programs hang until killed.
+- With 0.8.1, the Go program prints `<nil>` and the C program exits with
+`SIGSEGV`.
+- `crash-handler`'s `foreign_task` test fails on 0.8.0 and passes on
+0.8.1 on both runners.
+- `cargo test -p crashes` and `./script/clippy -p crashes` pass on
+Linux.
 
-## Self-review
+## Self
 
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- [GPUI] Fixed deferred element hitboxes ignoring their content mask
-
-
-
-https://github.com/user-attachments/assets/1f0918a5-ce0b-4aa7-8f50-d92255be6105
-
-**File**: `crates/gpui/src/elements/deferred.rs` (modified, +44/-1)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -92,7 +92,8 @@ mod tests {
-     use std::{cell::Cell, rc::Rc};
+@@ -4123,9 +4123,9 @@ dependencies = [
  
-     use crate::{
--        Context, Entity, StyleRefinement, TestAppContext, Window, anchored, deferred, div, point,
-+        AvailableSpace, Bounds, ContentMask, Context, Entity, Modifiers, MouseButton,
-+        StyleRefinement, TestAppContext, Window, anchored, canvas, deferred, div, point,
-         prelude::*, px, size,
-     };
- 
-@@ -308,4 +309,46 @@ mod tests {
-             })
-             .unwrap();
+ [[package]]
+ name = "crash-handler"
+-version = "0.8.0"
++version = "0.8.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c16fd44a8db657c3647d6b4c9eb4b41a43a2954947469ed90abcdb310c8eba96"
++checksum = "b9897480a6a7009a9ca940c1813daf2755d8a3e6857e5ac4fd0ae526ff5682d1"
+ dependencies = [
+  "cfg-if",
+  "crash-context",
+```
+
+---
+
+### Incident Patch 2: `dc1a4bfd` (2026-11-25)
+**Commit Message**: trusted_worktrees: Fix case-sensitive path comparison on Windows (#67078)
+
+Closes #66915
+
+## Summary
+
+Zed canonicalizes a folder's path when it opens it, so a worktree root
+always has its on-disk spelling. Persisted trusted paths don't. They
+keep the casing they had when they were saved. On Windows the two can
+drift apart, for example after renaming `Project` to `project`. The
+trust check then compares `C:\dev\project` with `C:\dev\Project`, fails,
+and the worktree's `.zed/debug.json`, tasks, and settings never load.
+
+The fix happens while a local worktree is created. In
+`create_local_worktree`, before `Worktree::local` starts scanning and
+before the worktree is added to its store, Zed looks for persisted local
+trusted paths that match the worktree path only when case is ignored. It
+resolves those through the project's `Fs`, with `Fs::canonicalize` like
+the worktree path itself, so mapped drive letters are kept, and trusts
+their on-disk spelling in that store. Nothing can check the worktree's
+trust before it's added, so the first check already sees the corrected
+grant.
+
+What it does and doesn't touch:
+
+- The filesystem decides whether two spellings are the same directory.
+In a case
+
+**File**: `crates/fs/src/fs.rs` (modified, +23/-0)
+```diff
+@@ -161,6 +161,10 @@ pub trait Fs: Send + Sync {
+     async fn is_file(&self, path: &Path) -> bool;
+     async fn is_dir(&self, path: &Path) -> bool;
+     async fn metadata(&self, path: &Path) -> Result<Option<Metadata>>;
++    /// Whether `path` is a symlink, without following it or needing read access to it.
++    /// On Windows, junctions and other name surrogate reparse points (e.g. mount points) count too.
++    /// Errors when `path` does not exist.
++    async fn is_symlink(&self, path: &Path) -> Result<bool>;
+     async fn read_link(&self, path: &Path) -> Result<PathBuf>;
+     async fn read_dir(
+         &self,
+@@ -1281,6 +1285,15 @@ impl Fs for RealFs {
+         }))
      }
-+
-+    struct MaskedOverlayView(Rc<Cell<usize>>);
-+
-+    impl Render for MaskedOverlayView {
-+        fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
-+            let clicks = self.0.clone();
-+            let on_click = move |_: &_, _: &mut _, _: &mut _| clicks.set(clicks.get() + 1);
-+            let overlay = |bounds: Bounds<_>, window: &mut Window, cx: &mut _| {
-+                let mut overlay = div().size(px(200.)).occlude().into_any_element();
-+                overlay.layout_as_root(AvailableSpace::min_size(), window, cx);
-+                let mask = ContentMask {
-+                    bounds: Bounds::new(bounds.origin, size(px(100.), px(200.))),
-+                };
-+                window.defer_draw(overlay, bounds.origin, 1, Some(mask));
-+            };
-+            div()
-+                .size_full()
-+                .child(
-+                    div()
-+                        .absolute()
-+                        .size(px(200.))
-+                        .on_mouse_down(MouseButton::Left, on_click),
-+                )
-+                .child(canvas(overlay, |_, _, _, _| {}).size_full())
-+        }
+ 
++    async fn is_symlink(&self, path: &Path) -> Result<bool> {
++        let path = path.to_owned();
++        let metadata = self
++            .executor
++            .spawn(async move { std::fs::symlink_metadata(&path) })
++            .await?;
++        Ok(metadata.file_type().is_symlink())
 +    }
 +
-+    #[gpui::test]
-+    fn test_deferred_content_mask_clips_hitboxes(cx: &mut TestAppContext) {
-+        let clicks = Rc::new(Cell::new(0));
-+        let (_, cx) = cx.add_window_view({
-+            let clicks = clicks.clone();
-+            |_, _| MaskedOverlayView(clicks)
-+        });
-+        cx.run_until_parked();
-+
-+        cx.simulate_click(point(px(50.), px(50.)), Modifiers::none());
-+        assert_eq!(clicks.get(), 0, "the visible overlay should block clicks");
-+
-+        cx.simulate_click(point(px(150.), px(50.)), Modifiers::none());
-+        assert_eq!(clicks.get(), 1, "the clipped area should not block clicks");
+     async fn read_link(&self, path: &Path) -> Result<PathBuf> {
+         let path = path.to_owned();
+         let path = self
+@@ -3681,6 +3694,16 @@ impl Fs for FakeFs {
+         }
+     }
+ 
++    async fn is_symlink(&self, path: &Path) -> Result<bool> {
++        self.simulate_random_delay().await;
++        let path = normalize_path(path);
++        let mut state = self.state.lock();
++        let (entry, _) = state
++            .try_entry(&path, false)
++            .with_context(|| format!("path does not exist: {path:?}"))?;
++        Ok(entry.is_symlink())
 +    }
++
+     async fn read_link(&self, path: &Path) -> Result<PathBuf> {
+         self.simulate_random_delay().await;
+         let path = normalize_path(path);
+```
+
+**File**: `crates/project/src/trusted_worktrees.rs` (modified, +138/-1)
+```diff
+@@ -41,12 +41,13 @@
+ 
+ use client::ProjectId;
+ use collections::{HashMap, HashSet};
++use fs::Fs;
+ use gpui::{App, AppContext as _, Context, Entity, EventEmitter, Global, Task, WeakEntity};
+ use remote::RemoteConnectionIdentity;
+ use rpc::{AnyProtoClient, proto};
+ use settings::{Settings as _, WorktreeId};
+ use std::{
+-    path::{Path, PathBuf},
++    path::{Component, Path, PathBuf, Prefix},
+     sync::Arc,
+ };
+ use util::debug_panic;
+@@ -60,6 +61,46 @@ pub fn init(db_trusted_paths: DbTrustedPaths, cx: &mut App) {
+     }
  }
-```
-
-**File**: `crates/gpui/src/window.rs` (modified, +5/-1)
-```diff
-@@ -4326,11 +4326,15 @@ impl Window {
  
-                 let prepaint_start = self.prepaint_index();
-                 if let Some(mut element) = element {
-+                    let content_mask =
-+                        self.next_frame.deferred_draws[deferred_draw_ix].content_mask;
-                     let ((), accessed_entities) = cx.detect_accessed_entities(|cx| {
-                         self.with_rendered_view(current_view, |window| {
-                             window.with_rem_size(Some(rem_size), |window| {
-                                 window.with_absolute_element_offset(absolute_offset, |window| {
--                                    element.prepaint(window, cx);
-+                                    window.with_content_mask(content_mask, |window| {
-+                                        element.prepaint(window, cx);
-+                                    });
-                                 });
-                             });
-                         });
-```
-
----
-
-### Incident Patch 2: `f614e6ed` (2026-11-24)
-**Commit Message**: sum_tree: Build an empty tree in one pass when an edit fills it (#67374)
-
-## Summary
-
-Follow-up to #67332.
-
-#67332 made `SumTree::edit` insert items in place, which made a large
-edit that fills an empty tree slower. `edit` now builds an empty tree
-with `from_iter` straight from the sorted edits. That skips the two
-checks that guard the in-place path and the copy of the items into a
-`Vec`.
-
-One `edit` of 1,000,000 items with `u64` keys into an empty tree, time
-per item. Release build, the first edit of a new process, median of 9
-alternating rounds (15 on the 9800X3D, pinned to one core):
-
-| Machine | Before #67332 | Main | This PR |
-|---|---|---|---|
-| Ryzen 7 9800X3D | 19.6 ns | 21.8 ns | 13.5 ns |
-| `ubuntu-latest`, Xeon Platinum 8573C | 61.2 ns | 69.8 ns | 40.7 ns |
-| `ubuntu-24.04-arm`, Neoverse-N2 | 53.6 ns | 59.8 ns | 35.2 ns |
-| `windows-latest` | 55.3 ns | 59.9 ns | 39.3 ns |
-| `macos-15`, Apple M1 | 28.5 ns | 29.1 ns | 19.4 ns |
-| `macos-15-intel`, Core i7-8700B | 105.2 ns | 112.1 ns | 62.5 ns |
-
-With `Arc<str>` keys, the same edit takes 35–44% less time than on main.
-
-Smaller edits of an empty tree take the same path. Against main, edits
-of 12, 13, and 48 items take 22–53%
-
-**File**: `crates/sum_tree/src/sum_tree.rs` (modified, +21/-2)
-```diff
-@@ -1182,6 +1182,17 @@ impl<T: KeyedItem> SumTree<T> {
-         let mut removed = Vec::new();
-         edits.sort_unstable_by_key(|item| item.key());
- 
-+        if self.is_empty() {
-+            *self = Self::from_iter(
-+                edits.into_iter().filter_map(|edit| match edit {
-+                    Edit::Insert(item) => Some(item),
-+                    Edit::Remove(_) => None,
-+                }),
-+                cx,
-+            );
-+            return Vec::new();
++/// Returns the on-disk spelling of `path` when it differs from `path` only by ASCII case.
++///
++/// Paths through a symlink or junction are skipped, as resolving those may land in another
++/// directory whose name differs only by case. Components are checked from the root, so nothing
++/// under a link is looked up. Only local drive paths are resolved, `C:\` and `\\?\C:\` alike:
++/// paths with a component that cannot be checked are skipped, as are UNC paths (network shares,
++/// `\\wsl.localhost`).
++async fn on_disk_spelling(fs: &dyn Fs, path: &Path) -> Option<PathBuf> {
++    let Some(Component::Prefix(prefix)) = path.components().next() else {
++        return None;
++    };
++    // Local drives, including in the extended-length `\\?\C:\` form, which paths keep e.g. when
++    // longer than `MAX_PATH`.
++    if !matches!(prefix.kind(), Prefix::Disk(_) | Prefix::VerbatimDisk(_)) {
++        return None;
++    }
++    for ancestor in path.ancestors().collect::<Vec<_>>().into_iter().rev() {
++        if fs.is_symlink(ancestor).await.unwrap_or(true) {
++            return None;
 +        }
++    }
++    // Resolved with the `Fs::canonicalize` worktree paths are opened with, which keeps mapped
++    // drive letters. Unlike worktree roots, the result is not simplified: it keeps the drive
++    // prefix form of `path`, so that a short `\\?\C:\` parent of a longer root keeps matching it.
++    let canonical = fs.canonicalize(path).await.ok()?;
++    (canonical != path && canonical.as_os_str().eq_ignore_ascii_case(path.as_os_str()))
++        .then_some(canonical)
++}
 +
-         // A repeated key can replace items in more than one leaf, which only the slicing below
-         // handles.
-         if edits.iter().all(|edit| matches!(edit, Edit::Insert(_)))
-@@ -1952,6 +1963,12 @@ mod tests {
-         assert_eq!(tree.get(&2, ()), Some(&2));
-         assert_eq!(tree.get(&4, ()), Some(&4));
- 
-+        // An edit of an empty tree packs its leaves as `from_iter` does.
-+        let mut tree = SumTree::<u8>::default();
-+        tree.edit((0..5).map(Edit::Insert).collect(), ());
-+        let packed = SumTree::<u8>::from_iter(0..5, ());
-+        assert_eq!(tree.0.child_summaries(), packed.0.child_summaries());
++fn starts_with_ignoring_ascii_case(path: &Path, prefix: &Path) -> bool {
++    let mut components = path.components();
++    prefix.components().all(|prefix_component| {
++        components.next().is_some_and(|component| {
++            component
++                .as_os_str()
++                .eq_ignore_ascii_case(prefix_component.as_os_str())
++        })
++    })
++}
 +
-         // Each insert of a repeated key replaces one item, here in two different leaves.
-         let mut tree = SumTree::from_iter([1u8, 2, 3, 5, 5, 6, 7, 8], ());
-         let removed = tree.edit(vec![Edit::Insert(5), Edit::Insert(5)], ());
-@@ -1990,8 +2007,10 @@ mod tests {
+ /// An initialization call to set up trust global for a particular project (remote or local).
+ pub fn track_worktree_trust(
+     worktree_store: Entity<WorktreeStore>,
+@@ -136,6 +177,8 @@ pub struct TrustedWorktreesStore {
+     trusted_paths: TrustedPaths,
+     restricted: HashMap<WeakEntity<WorktreeStore>, HashSet<WorktreeId>>,
+     worktree_trust_serialization: Task<()>,
++    #[cfg(feature = "test-support")]
++    casing_resolution_hold: Option<futures::channel::oneshot::Receiver<()>>,
+ }
  
-         let mut rng = StdRng::seed_from_u64(0);
-         for _ in 0..1000 {
--            let mut tree = SumTree::<u8>::default();
--            let mut expected = BTreeSet::new();
-+            // `edit` builds an empty tree with `from_iter`, so start with one item.
-+            let first = rng.random::<u8>();
-+            let mut tree = SumTree::from_item(first, ());
-+            let mut expected = BTreeSet::from([first]);
-             let mut snapshots = Vec::new();
-             // Removals slice the tree, which leaves nodes that underflow.
-             let with_removals = rng.random();
+ #[derive(Debug, Default)]
+@@ -204,9 +247,21 @@ impl TrustedWorktreesStore {
+             worktree_stores: HashMap::default(),
+             restricted: HashMap::default(),
+             worktree_trust_serialization: Task::ready(()),
++            #[cfg(feature = "test-support")]
++            casing_resolution_hold: None,
+         }
+     }
+ 
++    /// Holds the next casing resolution until the returned sender is used or dropped,
++    /// so that tests can let everything else run first.
++    /// Only a resolution with persisted paths to resolve takes the hold.
++    #[cfg(feature = "test-support")]
++    pub fn hold_next_casing_resolution(&mut self) -> futures::channel::oneshot::Sender<()> {
++        let (release, hold) = futures::channel::oneshot::channel();
++        self.casing_resolution_hold = Some(hold);
++        release
++    }
++
+     /// Whether a particular worktree store has associated worktrees that are restricted, or an associated host is restricted.
+     pub fn has_restricted_worktrees(
+         &self,
+@@ -409,6 +464,88 @@ impl TrustedWorktreesStore {
+         ));
+     }
+ 
++    /// Worktrees open with their canonical, on-disk path spelling, but a persisted trusted path keeps
++    /// the casing it was stored with, so it stops matching once those differ (#66915).
++    ///
++    /// To be awaited before a local worktree at `worktree_abs_path` joins `worktree_store`:
++    /// finds the persisted local trusted paths that match the worktree path only when ignoring
++    /// ASCII case, and trusts their on-disk spelling in that store.
++    /// The file system decides whether those name the same directory; nothing restricted is lifted.
++    pub(crate) fn resolve_trusted_path_casing(
++        &mut self,
++        worktree_store: &Entity<WorktreeStore>,
++        worktree_abs_path: &Path,
++        fs: Arc<dyn Fs>,
++        cx: &mut Context<Self>,
++    ) -> Task<()> {
++        let worktree_store = worktree_store.downgrade();
++        let is_local_store = self
++            .worktree_stores
++           
+```
+
+**File**: `crates/project/src/worktree_store.rs` (modified, +19/-0)
+```diff
+@@ -1013,6 +1013,25 @@ impl WorktreeStore {
+ 
+         cx.spawn(async move |this, cx| {
+             let worktree_id = next_worktree_id.await?;
++            // Before the worktree starts scanning, so that neither a trust check nor a scan
++            // event happens before the worktree joins the store with the corrected grants.
++            let resolve_trusted_path_casing = this.update(cx, |_, cx| {
++                TrustedWorktrees::try_get_global(cx).map(|trusted_worktrees| {
++                    let worktree_store = cx.entity();
++                    trusted_worktrees.update(cx, |trusted_worktrees, cx| {
++                        trusted_worktrees.resolve_trusted_path_casing(
++                            &worktree_store,
++                            abs_path.as_path(),
++                            fs.clone(),
++                            cx,
++                        )
++                    })
++                })
++            })?;
++            if let Some(resolve_trusted_path_casing) = resolve_trusted_path_casing {
++                resolve_trusted_path_casing.await;
++            }
++
+             let worktree = Worktree::local(
+                 SanitizedPath::cast_arc(abs_path.clone()),
+                 visible,
+```
+
+**File**: `crates/project/tests/integration/project_tests.rs` (modified, +75/-0)
+```diff
+@@ -1446,6 +1446,81 @@ async fn test_project_tasks_and_debug_scenarios_require_trust(cx: &mut gpui::Tes
+     assert_eq!(scenarios[0].1.label, "debug");
+ }
+ 
++#[cfg(windows)]
++#[gpui::test]
++async fn test_debug_scenarios_load_with_differently_cased_db_trusted_path(
++    cx: &mut gpui::TestAppContext,
++) {
++    use project::trusted_worktrees::{self, DbTrustedPaths, TrustedWorktrees};
++
++    init_test(cx);
++    TaskStore::init(None);
++
++    let fs = FakeFs::new(cx.executor());
++    fs.set_case_sensitive(false);
++    fs.insert_tree(
++        path!("/root/Project"),
++        json!({
++            ".zed": {
++                "debug.json": r#"[{ "label": "debug", "adapter": "Debugpy", "request": "launch" }]"#,
++            },
++        }),
++    )
++    .await;
++    let root = PathBuf::from(path!("/root"));
++    let db_trusted_paths =
++        DbTrustedPaths::from_iter([(None, HashSet::from_iter([root.join("project")]))]);
++    cx.update(|cx| trusted_worktrees::init(db_trusted_paths, cx));
++    let trusted_worktrees = cx.update(|cx| TrustedWorktrees::try_get_global(cx).unwrap());
++
++    let no_paths: [&Path; 0] = [];
++    let project = Project::test_with_worktree_trust(fs, no_paths, cx).await;
++    let release_casing_resolution =
++        trusted_worktrees.update(cx, |store, _| store.hold_next_casing_resolution());
++    let create_worktree = project.update(cx, |project, cx| {
++        project.find_or_create_worktree(root.join("Project"), true, cx)
++    });
++    // Let everything else run first: had the worktree started scanning, the scan would finish here.
++    cx.run_until_parked();
++    assert!(
++        project.read_with(cx, |project, cx| project.worktrees(cx).next().is_none()),
++        "the casing resolution should hold the worktree creation"
++    );
++    release_casing_resolution.send(()).unwrap();
++    create_worktree.await.unwrap();
++    cx.run_until_parked();
++
++    let worktree_store = project.read_with(cx, |project, _| project.worktree_store());
++    assert!(
++        !trusted_worktrees.read_with(cx, |store, cx| store
++            .has_restricted_worktrees(&worktree_store, cx)),
++        "the worktree must never be restricted"
++    );
++
++    let worktree_id = project.read_with(cx, |project, cx| {
++        project.worktrees(cx).next().unwrap().read(cx).id()
++    });
++    let inventory = project.read_with(cx, |project, cx| {
++        project
++            .task_store()
++            .read(cx)
++            .task_inventory()
++            .unwrap()
++            .clone()
++    });
++    let contexts = TaskContexts {
++        active_worktree_context: Some((worktree_id, TaskContext::default())),
++        ..Default::default()
++    };
++    let (_, scenarios) = inventory
++        .update(cx, |inventory, cx| {
++            inventory.list_debug_scenarios(&contexts, Vec::new(), Vec::new(), false, cx)
++        })
++        .await;
++    assert_eq!(scenarios.len(), 1);
++    assert_eq!(scenarios[0].1.label, "debug");
++}
++
+ #[gpui::test]
+ async fn test_invalid_local_tasks_shows_toast_with_doc_link(cx: &mut gpui::TestAppContext) {
+     init_test(cx);
+```
+
+**File**: `crates/project/tests/integration/trusted_worktrees.rs` (modified, +479/-0)
+```diff
+@@ -33,6 +33,485 @@ fn init_trust_global(
+     })
+ }
+ 
++#[cfg(windows)]
++#[gpui::test]
++async fn test_differently_cased_db_trusted_parent_path(cx: &mut TestAppContext) {
++    use fs::RealFs;
++    use std::path::Path;
++    use util::{paths::SanitizedPath, test::TempTree};
++
++    init_test(cx);
++    cx.executor().allow_parking();
++
++    let dir = TempTree::new(json!({ "Dev": { "one": {}, "two": {} } }));
++    let root = SanitizedPath::new(dir.path()).as_path().to_path_buf();
++    cx.update(|cx| {
++        init(
++            DbTrustedPaths::from_iter([(None, HashSet::from_iter([root.join("DEV")]))]),
++            cx,
++        )
++    });
++    let one = root.join("Dev").join("one");
++    let two = root.join("Dev").join("two");
++    let untracked_project =
++        Project::test(RealFs::new(None, cx.executor()), [one.as_path()], cx).await;
++    // Both tracked stores are registered before either opens a child of the trusted parent.
++    let no_paths: [&Path; 0] = [];
++    let project_a =
++        Project::test_with_worktree_trust(RealFs::new(None, cx.executor()), no_paths, cx).await;
++    let project_b =
++        Project::test_with_worktree_trust(RealFs::new(None, cx.executor()), no_paths, cx).await;
++    for (project, path) in [(&project_a, &one), (&project_b, &two)] {
++        project
++            .update(cx, |project, cx| {
++                project.find_or_create_worktree(path, true, cx)
++            })
++            .await
++            .unwrap();
++        cx.run_until_parked();
++    }
++
++    let trusted_worktrees = cx.update(|cx| TrustedWorktrees::try_get_global(cx).unwrap());
++    for (project, trusted) in [
++        (project_a, true),
++        (project_b, true),
++        (untracked_project, false),
++    ] {
++        let worktree_store = project.read_with(cx, |project, _| project.worktree_store());
++        let worktree_id = worktree_store.read_with(cx, |store, cx| {
++            store.worktrees().next().unwrap().read(cx).id()
++        });
++        trusted_worktrees.update(cx, |store, cx| {
++            assert_eq!(
++                store.can_trust(&worktree_store, worktree_id, cx),
++                trusted,
++                "a differently cased trusted parent should trust its subdirectories \
++                 in every worktree store tracked for trust, and only there"
++            );
++        });
++    }
++}
++
++#[cfg(windows)]
++#[gpui::test]
++async fn test_differently_cased_db_trusted_path_on_mapped_drive(cx: &mut TestAppContext) {
++    use fs::{Fs as _, RealFs};
++    use std::path::Path;
++    use util::{ResultExt as _, paths::SanitizedPath, test::TempTree};
++
++    /// A free drive letter mapped to the directory's administrative network share.
++    struct MappedDrive(PathBuf);
++
++    impl MappedDrive {
++        #[allow(clippy::disallowed_methods)]
++        fn new(target: &Path) -> Option<Self> {
++            let share = format!(
++                r"\\localhost\{}",
++                target.to_string_lossy().replacen(':', "$", 1)
++            );
++            if !Path::new(&share).exists() {
++                return None;
++            }
++            ('M'..='Z').rev().find_map(|letter| {
++                let root = PathBuf::from(format!("{letter}:\\"));
++                if root.exists() {
++                    return None;
++                }
++                std::process::Command::new("net")
++                    .args(["use", &format!("{letter}:"), &share, "/persistent:no"])
++                    .output()
++                    .ok()?
++                    .status
++                    .success()
++                    .then(|| Self(root))
++            })
++        }
++    }
++
++    impl Drop for MappedDrive {
++        #[allow(clippy::disallowed_methods)]
++        fn drop(&mut self) {
++            let drive = self.0.to_string_lossy();
++            std::process::Command::new("net")
++                .args(["use", drive.trim_end_matches('\\'), "/delete", "/y"])
++                .output()
++                .log_err();
++        }
++    }
++
++    init_test(cx);
++    cx.executor().allow_parking();
++
++    let dir = TempTree::new(json!({ "Project": {} }));
++    let Some(drive) = MappedDrive::new(SanitizedPath::new(dir.path()).as_path()) else {
++        eprintln!("skipping: no drive letter could be mapped to a network share");
++        return;
++    };
++    cx.update(|cx| {
++        init(
++            DbTrustedPaths::from_iter([(None, HashSet::from_iter([drive.0.join("project")]))]),
++            cx,
++        )
++    });
++    let fs = RealFs::new(None, cx.executor());
++    // Zed opens a worktree by its canonical path, which keeps the mapped drive letter.
++    let worktree_path = fs.canonicalize(&drive.0.join("project")).await.unwrap();
++    assert_eq!(worktree_path, drive.0.join("Project"));
++    let project = Project::test_with_worktree_trust(fs, [worktree_path.as_path()], cx).await;
++    let worktree_store = project.read_with(cx, |project, _| project.worktree_store());
++    let worktree_id = worktree_store.read_with(cx, |store, cx| {
++   
 ```
 
 ---
 
-### Incident Patch 3: `67c513c8` (2026-11-24)
-**Commit Message**: git_ui: Focus the panel when there is no repository (#67389)
+### Incident Patch 3: `fa6e2e98` (2026-11-25)
+**Commit Message**: gpui: Remove `.unwrap()` on every GPUI entity borrow (#67361)
 
 ## Summary
 
-Without a repository, the Git panel doesn't render its commit editor but
-still moves focus to it. `git_panel::ToggleFocus` then leaves the panel
-unfocused, and `git_panel::Toggle` can't close it.
+Removes an `unwrap` call during entity borrows. Realistically this only
+happens once in each function where the compiler can optimize the later
+calls away, but every new function usually still has one of these
+unwraps. I didn't take the time to benchmark though, since the effect
+will likely be insignificant.
 
-Focus now stays on the panel when there is no repository.
-
-Closes #48275
-Closes #50117
+`DropGuard`, Rust 1.100 new feature, allows writing Drop implementations
+inline. The differentiating feature for me, is that the function takes a
+owned `self`, instead of `&mut self` as in `impl Drop`, this allows us
+to get rid of `Option` in a lot of drop implementations, where the type
+needs to be moved out during `Drop`.
 
 ## Testing
 
-- To reproduce, open a folder without a Git repository and run
-`git_panel::Toggle` twice.
-- Tested on Linux. The second toggle leaves the panel open on `main` and
-closes it on this branch.
-- `test_toggle_without_repository` fails without this change.
-- `cargo test -p git_ui --lib` and `./script/clippy -p git_ui` pass.
+Trivial change once familiar with `DropGuard`.
 
 ## Self-review
 
@@ -2582,75 +2879,93 @@ performance.
 
 Release Notes:
 
-- Fixed `git_panel::ToggleFocus` and `git_panel::Toggle` in projects
-without a Git repository
+- N/A
+- [GPUI] Removed an unwrap during Entity borrow
 
-
-
-https://github.com/user-attachments/assets/10061567-9725-4399-b048-6a30b9e662c0
-
-**File**: `crates/git_ui/src/git_panel.rs` (modified, +30/-0)
+**File**: `crates/gpui/src/app.rs` (modified, +11/-18)
 ```diff
-@@ -2820,6 +2820,9 @@ impl GitPanel {
-     }
+@@ -4,7 +4,7 @@ use std::{
+     cell::{Cell, Ref, RefCell, RefMut},
+     ffi::OsString,
+     marker::PhantomData,
+-    mem,
++    mem::{self, DropGuard},
+     ops::{Deref, DerefMut},
+     path::{Path, PathBuf},
+     rc::{Rc, Weak},
+@@ -3791,53 +3791,46 @@ impl HttpClient for NullHttpClient {
  
-     fn focus_editor(&mut self, _: &FocusEditor, window: &mut Window, cx: &mut Context<Self>) {
-+        if self.active_repository.is_none() {
-+            return;
-+        }
-         self.set_active_tab(GitPanelTab::Changes, window, cx);
-         if self.commit_editor_collapsed {
-             self.toggle_commit_editor(&ToggleCommitEditor, window, cx);
-@@ -10246,6 +10249,7 @@ impl editor::Addon for GitPanelAddon {
- impl Panel for GitPanel {
-     fn activation_focus_handle(&self, cx: &App) -> FocusHandle {
-         if self.active_tab == GitPanelTab::Changes
-+            && self.active_repository.is_some()
-             && !self.commit_editor_collapsed
-             && (self.entries.is_empty() || self.commit_editor_expanded)
-         {
-@@ -15814,6 +15818,32 @@ mod tests {
-         });
-     }
+ /// A mutable reference to an entity owned by GPUI
+ pub struct GpuiBorrow<'a, T> {
+-    inner: Option<Lease<T>>,
+-    app: &'a mut App,
++    guard: DropGuard<(Lease<T>, &'a mut App), fn((Lease<T>, &'a mut App))>,
+ }
  
-+    #[gpui::test]
-+    async fn test_toggle_without_repository(cx: &mut TestAppContext) {
-+        init_test(cx);
-+
-+        let (_, _project, workspace, panel, mut cx) =
-+            setup_git_panel_with_changes(cx, json!({ "file": "" }), &[]).await;
-+        workspace.update_in(&mut cx, |workspace, window, cx| {
-+            workspace.add_panel(panel.clone(), window, cx);
-+        });
-+
-+        cx.dispatch_action(super::Toggle);
-+        cx.run_until_parked();
-+        panel.update_in(&mut cx, |panel, window, cx| {
-+            assert!(panel.active_repository.is_none());
-+            assert!(panel.focus_handle.is_focused(window));
-+            panel.focus_editor(&FocusEditor, window, cx);
-+            assert!(panel.focus_handle.is_focused(window));
-+        });
-+        let right_dock = workspace.read_with(&cx, |workspace, _| workspace.right_dock().clone());
-+        assert!(right_dock.read_with(&cx, |dock, _| dock.is_open()));
-+
-+        cx.dispatch_action(super::Toggle);
-+        cx.run_until_parked();
-+        assert!(!right_dock.read_with(&cx, |dock, _| dock.is_open()));
-+    }
-+
-     #[gpui::test]
-     async fn test_history_tab_pane_navigation_focuses_rendered_panel(cx: &mut TestAppContext) {
-         init_test(cx);
+ impl<'a, T: 'static> GpuiBorrow<'a, T> {
+     fn new(inner: Entity<T>, app: &'a mut App) -> Self {
+         app.start_update();
+         let lease = app.entities.lease(&inner);
+         Self {
+-            inner: Some(lease),
+-            app,
++            guard: DropGuard::new((lease, app), |(lease, app)| {
++                app.notify(lease.id);
++                app.entities.end_lease(lease);
++                app.finish_update();
++            }),
+         }
+     }
+ }
+ 
+ impl<'a, T: 'static> std::borrow::Borrow<T> for GpuiBorrow<'a, T> {
+     fn borrow(&self) -> &T {
+-        self.inner.as_ref().unwrap().borrow()
++        &self.guard.0
+     }
+ }
+ 
+ impl<'a, T: 'static> std::borrow::BorrowMut<T> for GpuiBorrow<'a, T> {
+     fn borrow_mut(&mut self) -> &mut T {
+-        self.inner.as_mut().unwrap().borrow_mut()
++        &mut self.guard.0
+     }
+ }
+ 
+ impl<'a, T: 'static> std::ops::Deref for GpuiBorrow<'a, T> {
+     type Target = T;
+ 
+     fn deref(&self) -> &Self::Target {
+-        self.inner.as_ref().unwrap()
++        &self.guard.0
+     }
+ }
+ 
+ impl<'a, T: 'static> std::ops::DerefMut for GpuiBorrow<'a, T> {
+     fn deref_mut(&mut self) -> &mut T {
+-        self.inner.as_mut().unwrap()
+-    }
+-}
+-
+-impl<'a, T> Drop for GpuiBorrow<'a, T> {
+-    fn drop(&mut self) {
+-        let lease = self.inner.take().unwrap();
+-        self.app.notify(lease.id);
+-        self.app.entities.end_lease(lease);
+-        self.app.finish_update();
++        &mut self.guard.0
+     }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #67437** (2026-11-24): sandbox: Let embedders name the Windows sandbox launcher (@rtfeldman)
-- **PR #67435** (2026-11-24): Remove deprecated `package.authors` from Cargo manifests (@Sha1rholder)
-- **PR #67431** (2026-11-24): workspace: Keep pinned tabs when restoring past max_tabs (@ptweezy)
-- **PR #67426** (2026-11-24): Show a repository's closed checkouts in the worktree picker (@SomeoneToIgnore)
-- **PR #67424** (2026-11-24): multi_buffer: Speed up edits in multibuffers with many files (@smitbarmase)
-- **PR #67422** (closed): Update/new docker logo (@ashraf7hossain)
+- **PR #67490** (closed): gpui_macos: fall back to CVDisplayLink on Apple Paravirtual Metal devices (@danchamorro)
+- **PR #67487** (closed): opencode: Fix 404s for Google models (@SGumbles)
+- **PR #67478** (closed): Update stable docs for current hosted models and pricing (@morgankrey)
+- **PR #67474** (2026-11-25): google_ai: Default citation_sources when Gemini omits it (@Anthony-Eid)
+- **PR #67471** (2026-11-25): terminal_view: Draw tab cells as spaces (@ptweezy)
+- **PR #67470** (2026-11-26): search: Replace from the editor while buffer search is open (@ptweezy)
 
 ---
 
@@ -2670,54 +2985,33 @@ https://github.com/user-attachments/assets/10061567-9725-4399-b048-6a30b9e662c0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpui: Apply deferred content masks during prepaint
+## X. crashes: Update crash-handler to fix child processes hanging on macOS
 
 **RULE**:
-When implementing operations in `crates/gpui/src/elements/deferred.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6837f173`: gpui: Apply deferred content masks during prepaint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ba65ce3`: crashes: Update crash-handler to fix child processes hanging on macOS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui/src/elements/deferred.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        AvailableSpace, Bounds, ContentMask, Context, Entity, Modifiers, MouseButton,
-        StyleRefinement, TestAppContext, Window, anchored, canvas, deferred, div, point,
-
-    struct MaskedOverlayView(Rc<Cell<usize>>);
-
-    impl Render for MaskedOverlayView {
-        fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
-            let clicks = self.0.clone();
-            let on_click = move |_: &_, _: &mut _, _: &mut _| clicks.set(clicks.get() + 1);
-            let overlay = |bounds: Bounds<_>, window: &mut Window, cx: &mut _| {
-                let mut overlay = div().size(px(200.)).occlude().into_any_element();
-                overlay.layout_as_root(AvailableSpace::min_size(), window, cx);
-                let mask = ContentMask {
-                    bounds: Bounds::new(bounds.origin, size(px(100.), px(200.))),
-                };
-                window.defer_draw(overlay, bounds.origin, 1, Some(mask));
-            };
-            div()
-                .size_full()
-                .child(
-                    div()
-                        .absolute()
-                        .size(px(200.))
-                        .on_mouse_down(MouseButton::Left, on_cl
+version = "0.8.1"
+checksum = "b9897480a6a7009a9ca940c1813daf2755d8a3e6857e5ac4fd0ae526ff5682d1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        Context, Entity, StyleRefinement, TestAppContext, Window, anchored, deferred, div, point,
+version = "0.8.0"
+checksum = "c16fd44a8db657c3647d6b4c9eb4b41a43a2954947469ed90abcdb310c8eba96"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6837f173` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ba65ce3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

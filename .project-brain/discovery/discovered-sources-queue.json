@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T08:36:49.794Z",
+  "updated_at": "2026-11-26T08:57:41.479Z",
   "stats": {
-    "total_discovered": 9707,
-    "approved_pending_harvest": 9207,
+    "total_discovered": 9716,
+    "approved_pending_harvest": 9216,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9194,
+      "COMMUNITY_AND_EXPERT": 9203,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210081,6 +210081,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
         "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-334DF9ABA08A": {
+      "id": "SRC-334DF9ABA08A",
+      "url": "https://github.com/EmbarkStudios/crash-handling/pull/126",
+      "title": "https://github.com/EmbarkStudios/crash-handling/pull/126",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:57:39.419Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-0A232B79BF83": {
+      "id": "SRC-0A232B79BF83",
+      "url": "https://github.com/ptweezy/zed/actions/runs/45244310375/job/137936952458",
+      "title": "https://github.com/ptweezy/zed/actions/runs/45244310375/job/137936952458",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:57:39.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-AA8D282C2FB4": {
+      "id": "SRC-AA8D282C2FB4",
+      "url": "https://github.com/ptweezy/zed/actions/runs/45244310375/job/137936951965",
+      "title": "https://github.com/ptweezy/zed/actions/runs/45244310375/job/137936951965",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:57:39.559Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-11B78EBA9719": {
+      "id": "SRC-11B78EBA9719",
+      "url": "https://github.com/Alamofire/Alamofire",
+      "title": "https://github.com/Alamofire/Alamofire",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:57:41.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+        "fileName": "rafsoh-dimeapp-learnings.md"
+      }
+    },
+    "SRC-A72B37D14213": {
+      "id": "SRC-A72B37D14213",
+      "url": "https://github.com/getsentry/sentry-cocoa",
+      "title": "https://github.com/getsentry/sentry-cocoa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:57:41.201Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+        "fileName": "rafsoh-dimeapp-learnings.md"
+      }
+    },
+    "SRC-65F5CA1E20EB": {
+      "id": "SRC-65F5CA1E20EB",
+      "url": "https://github.com/ggruen/CloudKitSyncMonitor",
+      "title": "https://github.com/ggruen/CloudKitSyncMonitor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:57:41.267Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+        "fileName": "rafsoh-dimeapp-learnings.md"
+      }
+    },
+    "SRC-0813D8074328": {
+      "id": "SRC-0813D8074328",
+      "url": "https://github.com/simibac/ConfettiSwiftUI",
+      "title": "https://github.com/simibac/ConfettiSwiftUI",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:57:41.335Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+        "fileName": "rafsoh-dimeapp-learnings.md"
+      }
+    },
+    "SRC-57A66D596E73": {
+      "id": "SRC-57A66D596E73",
+      "url": "https://github.com/duemunk/CrookedText",
+      "title": "https://github.com/duemunk/CrookedText",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:57:41.406Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+        "fileName": "rafsoh-dimeapp-learnings.md"
+      }
+    },
+    "SRC-7B5E54F81AC1": {
+      "id": "SRC-7B5E54F81AC1",
+      "url": "https://github.com/getsentry/sentry-cocoa.git",
+      "title": "https://github.com/getsentry/sentry-cocoa.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:57:41.479Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+        "fileName": "rafsoh-dimeapp-learnings.md"
       }
     }
   }

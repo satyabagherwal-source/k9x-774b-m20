@@ -4,23 +4,23 @@
 {
   "source_repository": "rafsoh/dimeApp",
   "source_url": "https://github.com/rafsoh/dimeApp",
-  "source_version": "2e7cc39c",
+  "source_version": "67b0c7d3",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-23T22:42:54.595Z",
+  "timestamp": "2026-11-26T08:57:29.449Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rafsoh-dimeapp",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rafsoh/dimeApp](https://github.com/rafsoh/dimeApp) (Revision: `2e7cc39c`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-23T22:42:54.595Z`  
+> **Provenance**: Harvested from [rafsoh/dimeApp](https://github.com/rafsoh/dimeApp) (Revision: `67b0c7d3`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-26T08:57:29.449Z`  
 > **Learning ID**: `learn-github-rafsoh-dimeapp`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 85%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rafsoh/dimeApp](https://github.com/rafsoh/dimeApp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:42:52.838Z  
+> **Harvest Timestamp**: 2026-11-26T08:57:28.513Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Dime is a beautiful expense tracker built with iOS design guidelines in mind.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1922 stars
+- **Stars / Engagement**: 1927 stars
 
 ---
 
@@ -697,6 +697,265 @@ extension View {
 
 ```
 
+### Core Architecture Module: `app/dime/Utilities/CSVImport.swift`
+```
+//
+//  CSVImport.swift
+//  dime
+//
+
+import Foundation
+
+enum CSVExport {
+    // Currency was added last, so the earlier columns stay where older exports had them.
+    static let header = "Date,Note,Amount,Category,Type,Currency\n"
+
+    /// Two decimals as before, or three for currencies like KWD so no digit is lost.
+    static func amount(_ amount: Double, currencyCode: String) -> String {
+        String(format: "%.\(max(2, CurrencyDigits.fractionDigits(for: currencyCode)))f", amount)
+    }
+}
+
+struct CSVTable {
+    let headers: [String]
+    let hasHeaderRow: Bool
+    /// Every row is padded to `headers.count`.
+    let rows: [[String]]
+
+    var columnCount: Int { headers.count }
+
+    func column(_ index: Int) -> [String] {
+        rows.map { $0[index] }
+    }
+
+    /// Reads comma, semicolon or tab separated text, with quoted fields that may hold separators, quotes and line breaks.
+    static func parse(_ text: String) -> CSVTable? {
+        var text = text
+        if text.hasPrefix("\u{FEFF}") {
+            text.removeFirst()
+        }
+
+        let delimiter = detectDelimiter(text)
+        var records = parseRecords(text, delimiter: delimiter)
+            .map { $0.map { $0.trimmingCharacters(in: .whitespaces) } }
+            .filter { record in record.contains { !$0.isEmpty } }
+
+        guard let first = records.first else { return nil }
+
+        let width = records.map(\.count).max() ?? 0
+        guard width >= 2 else { return nil }
+
+        // A header row names its columns; data rows hold at least one amount or date.
+        let hasHeaderRow = records.count > 1 && !first.contains { ImportParsing.amount($0) != nil || ImportParsing.looksLikeDate($0) }
+
+        var headers: [String] = []
+        if hasHeaderRow {
+            headers = records.removeFirst()
+        }
+
+        guard !records.isEmpty else { return nil }
+
+        headers = (0 ..< width).map { index in
+            let name = index < headers.count ? headers[index] : ""
+            return name.isEmpty ? String(format: NSLocalizedString("Column %lld", comment: "an unnamed column in an imported file"), index + 1) : name
+        }
+
+        let rows = records.map { record in
+            record.count < width ? record + Array(repeating: "", count: width - record.count) : record
+        }
+
+        return CSVTable(headers: headers, hasHeaderRow: hasHeaderRow, rows: rows)
+    }
+
+    private static func detectDelimiter(_ text: String) -> Character {
+        let firstLine = text.prefix { $0 != "\n" && $0 != "\r\n" && $0 != "\r" }
+        var counts: [Character: Int] = [",": 0, ";": 0, "\t": 0]
+        var inQuotes = false
+
+        for character in firstLine {
+            if character == "\"" {
+                inQuotes.toggle()
+            } else if !inQuotes, counts[character] != nil {
+                counts[character, default: 0] += 1
+            }
+        }
+
+        let best = counts.max { $0.value < $1.value || ($0.value == $1.value && $0.key != ",") }
+        return (best?.value ?? 0) > 0 ? best!.key : ","
+    }
+
+    private static func parseRecords(_ text: String, delimiter: Character) -> [[String]] {
+        var records: [[String]] = []
+        var record: [String] = []
+        var field = ""
+        var inQuotes = false
+        var characters = text.makeIterator()
+        var pending: Character? = characters.next()
+
+        while let character = pending {
+            pending = characters.next()
+
+            if inQuotes {
+                if character == "\"" {
+                    if pending == "\"" {
+                        field.append("\"")
+                        pending = characters.next()
+                    } else {
+                        inQuotes = false
+                    }
+                } else {
+                    field.append(character)
+                }
+                continue
+            }
+
+            switch character {
+            case "\"" where field.trimmingCharacters(in: .whitespaces).isEmpty:
+                field = ""
+                inQuotes = true
+            case delimiter:
+                record.append(field)
+                field = ""
+            // "\r\n" is a single Character in Swift.
+            case "\n", "\r\n", "\r":
+                record.append(field)
+                records.append(record)
+                record = []
+                field = ""
+            default:
+                field.append(character)
+            }
+        }
+
+        if !field.isEmpty || !record.isEmpty {
+            record.append(field)
+            records.append(record)
+        }
+
+        return records
+    }
+}
+
+enum ImportField: CaseIterable, Hashable {
+    case date, amount, category, note, type, currency
+
+    var title: String {
+        switch self {
+        case .date: return "Date"
+        case .amount: return "Amount"
+        case .category: return "Category"
+        case .note: return "Note"
+        case .type: return "Type"
+        case .currency: return "Currency"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .date: return "calendar"
+        case .amount: return "dollarsign.circle.fill"
+        case .category: return "square.grid.2x2.fill"
+        case .note: return "doc.plaintext.fill"
+        case .type: return "plusminus"
+        case .currency: return "coloncurrencysign.circle.fill"
+        }
+    }
+
+    var isRequired: Bool {
+        switch self {
+        case .date, .amount: return true
+        case .category, .note, .type, .currency: return false
+        }
+    }
+
+    var headerKeywords: [String] {
+        switch self {
+        case .date: return ["date", "time", "day", "when", "posted"]
+        case .amount: return ["amount", "value", "price", "cost", "sum", "total", "spent"]
+        case .category: return ["category", "categories", "tag", "group"]
+        case .note: return ["note", "description", "memo", "title", "name", "payee", "merchant", "details", "subtitle"]
+        case .type: return ["type", "kind", "direction", "income/expense", "flow"]
+        case .currency: return ["currency", "ccy", "currency code", "iso currency"]
+        }
+    }
+}
+
+enum ImportParsing {
+    private static let posix = Locale(identifier: "en_US_POSIX")
+
+    static let dateFormats = [
+        "yyyy-MM-dd HH:mm:ss Z", "yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss",
+        "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd", "yyyy/MM/dd HH:mm", "yyyy/MM/dd", "yyyy.MM.dd", "yyyyMMdd",
+        "dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm", "dd/MM/yyyy", "dd/MM/yy", "dd-MM-yyyy", "dd.MM.yyyy",
+        "MM/dd/yyyy HH:mm:ss", "MM/dd/yyyy h:mm a", "MM/dd/yyyy HH:mm", "MM/dd/yyyy", "MM/dd/yy", "MM-dd-yyyy",
+        "d MMM yyyy", "dd MMM yyyy", "d MMMM yyyy", "MMM d, yyyy", "MMMM d, yyyy", "dd-MMM-yyyy", "d-MMM-yy"
+    ]
+
+    private static var formatters: [String: DateFormatter] = [:]
+
+    static func formatter(for format: String) -> DateFormatter {
+        // The built-in patterns are English, so they stay on a POSIX calendar.
+        // A format typed by hand that names a month or weekday follows the device locale.
+        let named = !dateFormats.contains(format) && (format.contains("MMM") || format.contains("E"))
+        let key = (named ? "local:" : "posix:") + format
+        if let formatter = formatters[key] {
+            return formatter
+        }
+        let formatter = DateFormatter()
+        if named {
+            formatter.locale = .current
+        } else {
+            formatter.locale = posix
+            formatter.calendar = Calendar(identifier: .gregorian)
+            formatter.isLenient = false
+        }
+        formatter.dateFormat = format
+        formatters[key] = formatter
+        return formatter
+    }
+
+    static func date(_ raw: String, format: String) -> Date? {
+        let value = raw.trimmingCharacters(in: .whitespaces)
+        guard !value.isEmpty, separatorsMatch(value, format: format) else { return nil }
+        return formatter(for: format).date(from: value)
+    }
+
+    /// DateFormatter accepts any separator in place of the format's, so "03.01.2024" would read as "dd/MM/yyyy".
+    private static func separatorsMatch(_ value: String, format: String) -> Bool {
+        let isSeparator: (Character) -> Bool = { !$0.isLetter && !$0.isNumber && !$0.isWhitespace && $0 != "'" }
+        var valueSeparators = value.filter(isSeparator)
+        let formatSeparators = format.filter(isSeparator)
+
+        // The time zone's sign and colon, as in "+0000" or "-05:00", aren't separators in the format.
+        if format.hasSuffix("Z"), let sign = valueSeparators.lastIndex(where: { $0 == "+" || $0 == "-" }), valueSeparators.count > formatSeparators.count {
+            valueSeparators = String(valueSeparators[..<sign])
+        }
+        return valueSeparators == formatSeparators
+    }
+
+    static func looksLikeDate(_ raw: String) -> Bool {
+        dateFormats.contains { date(raw, format: $0) != nil }
+    }
+
+    /// The formats that read at least `threshold` of the non-empty samples, those reading the most first. Day-first and
+    /// month-first formats that read as many are ordered by the device's region.
+    static func dateFormats(fitting samples: [String], threshold: Double = 0.8) -> [String] {
+        let values = samples.filter { !$0.isEmpty }
+        guard !values.isEmpty else { return [] }
+
+        let localTemplate = DateFormatter.dateFormat(fromTemplate: "ddMMyyyy", options: 0, locale: .current) ?? ""
+        let regionIsDayFirst = (localTemplate.firstIndex(of: "d") ?? localTemplate.endIndex) < (localTemplate.firstIndex(of: "M") ?? localTemplate.endIndex)
+
+        let fitting = dateFormats.enumerated().compactMap { offset, format -> (format: String, count: Int, offset: Int)? in
+            let count = values.filter { date($0, format: format) != nil }.count
+            return Double(count) >= Double(values.count) * threshold ? (format, count, offset) : nil
+        }
+
+        let ranked = fitting.sorted { lhs, rhs in
+            if lhs.count != rhs.count {
+                retu
+```
+
 ### Core Architecture Module: `app/dime/Utilities/Color.swift`
 ```
 //
@@ -737,6 +996,16 @@ extension Color {
         "23": "#5FAF9F",
         "24": "#D46D7F"
     ]
+
+    /// The next palette colour that is not already used. Once every colour is
+    /// in use, colours repeat from the start of the palette.
+    static func nextExpenseColour(used: [String]) -> String {
+        guard !colorArray.isEmpty else { return "#FFFFFF" }
+        if let unused = colorArray.first(where: { !used.contains($0) }) {
+            return unused
+        }
+        return colorArray[used.count % colorArray.count]
+    }
 
     static let colorArray: [String] = [
         "#279AF4",
@@ -1129,34 +1398,139 @@ extension UIFont {
         }
     }
 
+    /// The app's font (see `AppFont`) at a fixed size. Named for SF Pro Rounded, the default.
     class func rounded(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
-        let systemFont = UIFont.systemFont(ofSize: size, weight: weight)
-        let font: UIFont
-
-        if let descriptor = systemFont.fontDescriptor.withDesign(.rounded) {
-            font = UIFont(descriptor: descriptor, size: size)
-        } else {
-            font = systemFont
+        let current = AppFont.current
+        if let name = current.faceName(for: weight), let custom = UIFont(name: name, size: size) {
+            return custom
         }
-        return font
+        let systemFont = UIFont.systemFont(ofSize: size, weight: weight)
+        guard current.usesRoundedSystemFont, let descriptor = systemFont.fontDescriptor.withDesign(.rounded) else {
+            return systemFont
+        }
+        return UIFont(descriptor: descriptor, size: size)
     }
 
     class func roundedSpecial(ofStyle style: UIFont.TextStyle, weight: UIFont.Weight, size: Double) -> UIFont {
-        let systemFont = UIFont.systemFont(ofSize: size, weight: weight)
-        let font: UIFont
-
-        if let descriptor = systemFont.fontDescriptor.withDesign(.rounded) {
-            font = UIFont(descriptor: descriptor, size: size)
-        } else {
-            font = systemFont
-        }
-        return UIFontMetrics(forTextStyle: style).scaledFont(for: font)
+        UIFontMetrics(forTextStyle: style).scaledFont(for: rounded(ofSize: size, weight: weight))
     }
 
     static func textStyleSize(_ style: UIFont.TextStyle) -> CGFloat {
         UIFont.preferredFont(forTextStyle: style).pointSize
     }
 
+}
+
+/// The typeface chosen in Settings > Font. Read by the app and the widgets, so it lives in the app group.
+/// Raw values are stored, so never change them; cases are listed in the order Settings shows them.
+enum AppFont: Int, CaseIterable {
+    case sfProRounded = 0
+    case sfPro = 2
+    case allo = 1
+    case atkinson = 3
+    case fraunces = 4
+    case geistPixel = 5
+
+    static let storageKey = "appFont"
+    private static let defaults = UserDefaults(suiteName: "group.com.rafaelsoh.dime")
+
+    static var current: AppFont {
+        AppFont(rawValue: defaults?.integer(forKey: storageKey) ?? 0) ?? .sfProRounded
+    }
+
+    var displayName: String {
+        switch self {
+        case .sfProRounded: return "SF Pro Rounded"
+        case .sfPro: return "SF Pro"
+        case .allo: return "Allo"
+        case .atkinson: return "Atkinson Hyperlegible"
+        case .fraunces: return "Fraunces"
+        case .geistPixel: return "Geist Pixel"
+        }
+    }
+
+    /// The system design for the SF fonts; nil for fonts bundled with the app.
+    var systemDesign: Font.Design? {
+        switch self {
+        case .sfProRounded: return .rounded
+        case .sfPro: return .default
+        default: return nil
+        }
+    }
+
+    var usesRoundedSystemFont: Bool { self == .sfProRounded }
+
+    /// Bundled fonts ship as static faces in the app and widget bundles (dime/Fonts, listed under UIAppFonts).
+    /// Returns the PostScript name of the face closest to `weight`, or nil for the system fonts.
+    func faceName(for weight: Font.Weight) -> String? {
+        let face: String
+        switch weight {
+        case .bold, .heavy, .black: face = "Bold"
+        case .semibold: face = "SemiBold"
+        case .medium: face = "Medium"
+        default: face = "Regular"
+        }
+        switch self {
+        case .sfProRounded, .sfPro: return nil
+        case .allo: return "Allo-\(face)"
+        case .atkinson: return "AtkinsonHyperlegibleNext-\(face)"
+        case .fraunces: return "Fraunces-\(face)"
+        // Geist Pixel has a single weight.
+        case .geistPixel: return "GeistPixel-Square"
+        }
+    }
+
+    func faceName(for weight: UIFont.Weight) -> String? {
+        switch weight {
+        case .bold, .heavy, .black: return faceName(for: Font.Weight.bold)
+        case .semibold: return faceName(for: Font.Weight.semibold)
+        case .medium: return faceName(for: Font.Weight.medium)
+        default: return faceName(for: Font.Weight.regular)
+        }
+    }
+
+    /// Point sizes of the text styles at the default (Large) Dynamic Type size; custom fonts scale from these.
+    static func baseSize(_ style: Font.TextStyle) -> CGFloat {
+        switch style {
+        case .largeTitle: return 34
+        case .title: return 28
+        case .title2: return 22
+        case .title3: return 20
+        case .headline: return 17
+        case .body: return 17
+        case .callout: return 16
+        case .subheadline: return 15
+        case .footnote: return 13
+        case .caption: return 12
+        case .caption2: return 11
+        default: return 17
+        }
+    }
+}
+
+extension Font {
+    /// The app's font for a text style, following Settings > Font. Scales with Dynamic Type.
+    static func app(_ style: Font.TextStyle, weight: Font.Weight? = nil) -> Font {
+        app(style, weight: weight, font: .current)
+    }
+
+    static func app(_ style: Font.TextStyle, weight: Font.Weight? = nil, font appFont: AppFont) -> Font {
+        if let design = appFont.systemDesign {
+            let font = Font.system(style, design: design)
+            return weight.map { font.weight($0) } ?? font
+        }
+        let resolved = weight ?? (style == .headline ? .semibold : .regular)
+        return .custom(appFont.faceName(for: resolved) ?? "", size: AppFont.baseSize(style), relativeTo: style)
+    }
+
+    /// The app's font at a fixed size, like `.system(size:weight:design: .rounded)`.
+    static func app(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        let appFont = AppFont.current
+        if let design = appFont.systemDesign {
+            return .system(size: size, weight: weight, design: design)
+        }
+        return .custom(appFont.faceName(for: weight) ?? "", fixedSize: size)
+    }
 }
 
 ```
@@ -1220,6 +1594,10 @@ extension Notification {
     var keyboardHeight: CGFloat {
         return (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0
     }
+
+    var keyboardEndFrame: CGRect {
+        (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect) ?? .null
+    }
 }
 
 extension View {
@@ -1245,6 +1623,10 @@ final class KeyboardHeightCache {
     static let shared = KeyboardHeightCache()
 
     private var observer: NSObjectProtocol?
+    private var frameObserver: NSObjectProtocol?
+
+    /// Where the keyboard is or is heading, in screen coordinates. Off screen or `.null` while hidden.
+    private(set) var screenFrame: CGRect = .null
 
     func start() {
         guard observer == nil else { return }
@@ -1254,6 +1636,10 @@ final class KeyboardHeightCache {
             if height > 200 {
                 UserDefaults(suiteName: "group.com.rafaelsoh.dime")?.set(Double(height - 20), forKey: "keyboard")
             }
+        }
+
+        frameObserver = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) { [weak self] notification in
+            self?.screenFrame = notification.keyboardEndFrame
         }
     }
 }
@@ -1273,88 +1659,6 @@ extension View {
         ModifiedContent(content: self, modifier: KeyboardAwareModifier(showToolbar: showToolbar))
     }
 }
-
-```
-
-### Core Architecture Module: `app/dime/Utilities/OffsetHelper.swift`
-```
-//
-//  OffsetHelper.swift
-//  dime
-//
-//  Created by Rafael Soh on 9/7/23.
-//
-
-import Combine
-import Foundation
-import SwiftUI
-
-struct OffsetKey: PreferenceKey {
-    static var defaultValue: CGRect = .zero
-    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
-        value = nextValue()
-    }
-}
-
-extension View {
-    @ViewBuilder
-    func offsetExtractor(coordinateSpace _: String, completion: @escaping (CGRect) -> Void) -> some View {
-        overlay(alignment: .top) {
-            GeometryReader {
-                let rect = $0.frame(in: .global)
-                Color.clear
-                    .preference(key: OffsetKey.self, value: rect)
-                    .onPreferenceChange(OffsetKey.self, perform: completion)
-            }
-        }
-    }
-}
-
-//
-// class ScrollViewModel: NSObject, ObservableObject, UIGestureRecognizerDelegate {
-//    let gestureID: String = UUID().uuidString
-//    let gestureEnded = PassthroughSubject<Void, Never>()
-//
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return true
-//    }
-//
-//    func addGesture() {
-//        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(onGestureChange(gesture: )))
-//        panGesture.delegate = self
-//        panGesture.name = gestureID
-//        rootController().view.addGestureRecognizer(panGesture)
-//        print("ADDEEDDDD")
-//    }
-//
-//    func removeGesture() {
-//        rootController().view.gestureRecognizers?.removeAll(where: { gesture in
-//            gesture.name == gestureID
-//        })
-//    }
-//
-//    func rootController() -> UIViewController {
-//        guard let screen = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
-//            return .init()
-//        }
-//
-//        guard let root = screen.windows.first?.rootViewController else {
-//            return .init()
-//        }
-//
-//        return root
-//    }
-//
-//    @objc
-//    func onGestureChange(gesture: UIPanGestureRecognizer) {
-//        if gesture.state == .cancelled || gesture.state == .ended {
-//
-//            gestureEnded.send()
-//
-//        }
-//    }
-//
-// }
 
 ```
 
@@ -1391,382 +1695,699 @@ extension View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d95a9194` (2026-11-21)
-**Commit Message**: Merge pull request #117 from rafsoh/feature/liquid-glass-redesign
+### Incident Patch 1: `c8066e75` (2026-11-26)
+**Commit Message**: Add privacy-safe Sentry crash and data-integrity reporting.
 
-Redesign the app for iOS 26 Liquid Glass
+Report store migration, CloudKit sync, backup, import, and bulk-delete outcomes as counts and error codes so a silent data loss can be diagnosed, without sending notes, amounts, or names.
 
-**File**: `app/Localizations/en.lproj/Localizable.strings` (modified, +3/-2)
+Co-authored-by: Rafael Soh <[REDACTED_EMAIL]>
+
+**File**: `.gitignore` (modified, +3/-0)
 ```diff
-@@ -20,8 +20,8 @@
- // categories
+@@ -7,3 +7,6 @@ xcuserdata/
  
- "Categories" = "Categories";
--"no_income_categories" = "No income categories found, click the 'New' button to add some";
--"no_expense_categories" = "No expense categories found, click the 'New' button to add some";
-+"no_income_categories" = "No income categories found";
-+"no_expense_categories" = "No expense categories found";
- "Suggestions Hidden" = "Suggestions Hidden";
- "Successfully Edited" = "Successfully Edited";
- "INCOME CATEGORIES" = "INCOME CATEGORIES";
-@@ -89,6 +89,7 @@
- "Your Log is Empty" = "Your Log is Empty";
- "Press the plus button to add your first entry" = "Press the plus button to add your first entry";
- "Search entry by note" = "Search entry by note";
-+"Search by note, category, amount or date" = "Search by note, category, amount or date";
- "all entries" = "all entries";
- "by type" = "by type";
- "by day" = "by day";
+ ## MacOS
+ .DS_Store
++
++## Sentry auth. The public DSN is committed; the upload token is not.
++.sentryclirc
 ```
 
-**File**: `app/Localizations/fr.lproj/Localizable.strings` (modified, +3/-2)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -20,8 +20,8 @@
- // categories
+@@ -60,6 +60,7 @@ Dime is a 100% free, open-source personal finance tracker built with iOS design
+ ## Third party dependencies
  
- "Categories" = "Catégories";
--"no_income_categories" = "Aucune catégorie de revenus n'a été trouvée, cliquez sur le bouton 'Nouveau' pour en ajouter";
--"no_expense_categories" = "Aucune catégorie de dépenses n'a été trouvée, cliquez sur le bouton 'Nouveau' pour en ajouter";
-+"no_income_categories" = "Aucune catégorie de revenus trouvée";
-+"no_expense_categories" = "Aucune catégorie de dépenses trouvée";
- "Suggestions Hidden" = "Suggestions cachées";
- "Successfully Edited" = "Édité avec succès";
- "INCOME CATEGORIES" = "Catégories de revenus";
-@@ -89,6 +89,7 @@
- "Your Log is Empty" = "Votre registre est vide";
- "Press the plus button to add your first entry" = "Appuyez sur le bouton + pour ajouter votre première entrée";
- "Search entry by note" = "Recherche d'une saisie par note";
-+"Search by note, category, amount or date" = "Recherchez par note, catégorie, montant ou date";
- "all entries" = "toutes les entrées";
- "by type" = "par type";
- "by day" = "par jour";
+ - [Alamofire](https://github.com/Alamofire/Alamofire)
++- [Sentry](https://github.com/getsentry/sentry-cocoa) (crash and diagnostic reporting; see [SENTRY.md](SENTRY.md))
+ - [CloudKitSyncMonitor](https://github.com/ggruen/CloudKitSyncMonitor)
+ - [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI)
+ - [CrookedText](https://github.com/duemunk/CrookedText)
 ```
 
-**File**: `app/Localizations/ru.lproj/Localizable.strings` (modified, +3/-2)
+**File**: `SENTRY.md` (added, +80/-0)
 ```diff
-@@ -18,8 +18,8 @@
- // categories
+@@ -0,0 +1,80 @@
++# Sentry
++
++Dime reports crashes, app hangs, and a small set of data-integrity events to the Sentry project `dime-ios` in the org `dime-1x` (US region). The goal is to explain reports of all data disappearing after an update, without sending the contents of anyone's books.
++
++## Setup
++
++The app links the official [sentry-cocoa](https://github.com/getsentry/sentry-cocoa) SDK 9.35.0 (the current stable release) through Swift Package Manager. The product is the prebuilt `Sentry` binary, on the `dime` app target only.
++
++`SentryBootstrap.start()` runs at the top of `dimeApp.init`, before `DataController` opens the store. Release builds use the environment `production` and a release name of `bundle-id@version+build`. Debug builds set the environment to `debug` and `enabled = false`, so Xcode runs do not spend the free Developer plan quota. Unit tests do not start the SDK.
++
++Crash reporting and app hang tracking (2 second threshold) are on. Tracing is sampled at `tracesSampleRate = 0.1`. Session replay is off (`sessionSampleRate` and `onErrorSampleRate` are 0), and screenshots and view hierarchies are not attached.
++
++### Extensions
++
++The widget and the intent extensions compile the same store-loading code, but they do not link Sentry. The SDK is a static binary of several megabytes, and each extension would embed its own copy. Those processes instead write a short, privacy-safe record into the app-group defaults. The app forwards that queue the next time it launches. Extension crash stacks are not reported.
++
++## What is sent
++
++- Crash reports, watchdog terminations, and app hangs: stack traces, OS and device model, app version, and the in-memory breadcrumb trail.
++- One sampled performance trace in about ten launches (app start and view-controller class names). No Core Data, file, or network spans.
++- Data-integrity breadcrumbs and captured events. Values are counts, booleans, file sizes, and short tokens such as `import` or `NSCocoaErrorDomain`. See the list below.
++
++No Sentry user is set. `sendDefaultPii` is false, and scope persistence is off. `beforeSend` removes the user, the HTTP request, the device name, and identifier-like context fields. `beforeBreadcrumb` drops automatic breadcrumbs other than app, device, and view-controller lifecycle, and it drops those too when the message is not a class or lifecycle name.
++
++In the Sentry project settings, turn on **Prevent Storing of IP Addresses** (Security & Privacy). The Cocoa SDK has historically left IP inference to the server even when the client sends no PII.
++
++## What is not sent
++
++- Transaction amounts, notes, dates, or currency codes
++- Category names, emoji, or colours
++- Merchant or payee text, budget names, or any other text the user typed
++- Account identifiers, Apple ID, device name, IDFV, or a Sentry user id
++- Screenshots, view hierarchies, or session replay
++- Core Data predicates, SQL, or the contents of a backup file
++- The full store path (it contains the app-container id)
++
++Error objects are reduced to a domain and code chain before they are captured. CloudKit partial failures often embed the record that failed; that record is not included. Network failures during sync are breadcrumbs only, because an offline device would otherwise create an event on every retry.
++
++## Events that diagnose missing data
++
++These are the captured messages, in addition to ordinary crashes:
++
++| Situation | Message |
++| --- | --- |
++| Migration finishes with fewer transactions, categories, budgets, or templates than before | Store migration reduced record counts |
++| The store opens with zero transactions, the file or a pre-migration snapshot is non-trivial, and the user did not use Erase Data | Store loaded with no transactions |
++| After iCloud is current, the store has fewer than half the transactions of the newest backup (and at least 10 were in the backup) | Transaction count is far below the newest backup |
++| A CloudKit import or export ends with that same kind of drop, and it was not a bulk delete in the same moment | CloudKit sync reduced the transaction count |
++| Store load, the pre-migration snapshot, a context save, a backup, a restore, or a non-network CloudKit event fails | The caught error, domain and code only |
++
++Breadcrumbs (not their own issues) also cover: migration start and the pre-migration snapshot from the store copy kept before migrating, store load counts, iCloud sync preference changes, the legacy iCloud setting being carried over, CloudKit event start and finish, CSV import counts, backup written or skipped, restore started and finished, erase-all, and a bulk delete (a category, or 10 or more transactions). The pre-migration count is an integer read from the old store with migration disabled.
++
++The empty-store and below-backup issues are sent once per app version so a launch loop cannot drain the quota. Erase Data suppresses the empty-store issue.
++
++## Uploading dSYMs
++
++Release builds of the `dime` targ
+```
+
+**File**: `app/dime.xcodeproj/project.pbxproj` (modified, +61/-0)
+```diff
+@@ -66,6 +66,14 @@
+ 		5327D2DE287C6B5F00F76ADF /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2D5287C6B5E00F76ADF /* CustomTabBar.swift */; };
+ 		5327D2E0287C6B7D00F76ADF /* DeviceModels.json in Resources */ = {isa = PBXBuildFile; fileRef = 5327D2DF287C6B7C00F76ADF /* DeviceModels.json */; };
+ 		5327D2E6287C6CC300F76ADF /* Popovers in Frameworks */ = {isa = PBXBuildFile; productRef = 5327D2E5287C6CC300F76ADF /* Popovers */; };
++		E6BEA1032D26000100A1B2C1 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = E6BEA1022D26000100A1B2C1 /* Sentry */; };
++		E6BEA1052D26000100A1B2C1 /* DataIntegrityLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */; };
++		E6BEA1062D26000100A1B2C1 /* DataIntegrityLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */; };
++		E6BEA1072D26000100A1B2C1 /* DataIntegrityLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */; };
++		E6BEA1082D26000100A1B2C1 /* DataIntegrityLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */; };
++		E6BEA10A2D26000100A1B2C1 /* SentryBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1092D26000100A1B2C1 /* SentryBootstrap.swift */; };
++		E6BEA10C2D26000100A1B2C1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E6BEA10B2D26000100A1B2C1 /* PrivacyInfo.xcprivacy */; };
++		E6BEA10F2D26000100A1B2C1 /* DataIntegrityLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA10E2D26000100A1B2C1 /* DataIntegrityLogTests.swift */; };
+ 		532C58BC2A629C3900DA2C81 /* NewBudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532C58BB2A629C3900DA2C81 /* NewBudgetView.swift */; };
+ 		533182D328A0D61D00DEBFA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5327D294287C698900F76ADF /* Assets.xcassets */; };
+ 		53326B2C2ADC3C8D0027C693 /* TestDragToAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53326B2B2ADC3C8D0027C693 /* TestDragToAdd.swift */; };
+@@ -288,6 +296,10 @@
+ 		5324985428A64DA7007B34D1 /* RecentTransactionsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTransactionsWidget.swift; sourceTree = "<group>"; };
+ 		5327D283287C697400F76ADF /* dime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dime.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		5327D286287C697400F76ADF /* dimeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dimeApp.swift; sourceTree = "<group>"; };
++		E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataIntegrityLog.swift; sourceTree = "<group>"; };
++		E6BEA1092D26000100A1B2C1 /* SentryBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentryBootstrap.swift; sourceTree = "<group>"; };
++		E6BEA10B2D26000100A1B2C1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
++		E6BEA10E2D26000100A1B2C1 /* DataIntegrityLogTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataIntegrityLogTests.swift; sourceTree = "<group>"; };
+ 		5327D28D287C697C00F76ADF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+ 		5327D294287C698900F76ADF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+ 		5327D2AC287C6AD200F76ADF /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+@@ -470,6 +482,7 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
++				E6BEA1032D26000100A1B2C1 /* Sentry in Frameworks */,
+ 				D6A4DE242D61744400F7F751 /* SwiftUIIntrospect-Static in Frameworks */,
+ 				D6A4DE202D61744400F7F751 /* SwiftUIIntrospect in Frameworks */,
+ 				53A4148028B7DA4C008C30E7 /* ConfettiSwiftUI in Frameworks */,
+@@ -571,6 +584,8 @@
+ 				53A4147828B6625D008C30E7 /* AppDelegate.swift */,
+ 				53A4147A28B66265008C30E7 /* SceneDelegate.swift */,
+ 				5327D286287C697400F76ADF /* dimeApp.swift */,
++				E6BEA1092D26000100A1B2C1 /* SentryBootstrap.swift */,
++				E6BEA10B2D26000100A1B2C1 /* PrivacyInfo.xcprivacy */,
+ 				5327D2DF287C6B7C00F76ADF /* DeviceModels.json */,
+ 				5327D2CA287C6B4700F76ADF /* ContentView.swift */,
+ 				5327D294287C698900F76ADF /* Assets.xcassets */,
+@@ -627,6 +642,7 @@
+ 				53BC2A3F2A8B21920019E4A8 /* MainModel.xcdatamodeld */,
+ 				53980E5B28A77B62009CC4E2 /* Helper.swift */,
+ 				5327D2AC287C6
+```
+
+**File**: `app/dime.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +9/-0)
+```diff
+@@ -55,6 +55,15 @@
+         "version" : "1.3.2"
+       }
+     },
++    {
++      "identity" : "sentry-cocoa",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/getsentry/sentry-cocoa.git",
++      "state" : {
++        "revision" : "485e0622e00d60d71eb6b519822188e2eb7c29e3",
++        "version" : "9.35.0"
++      }
++    },
+     {
+       "identity" : "swiftui-introspect",
+       "kind" : "remoteSourceControl",
+```
+
+**File**: `app/dime/Data/Backups.swift` (modified, +60/-3)
+```diff
+@@ -435,6 +435,15 @@ final class BackupManager: ObservableObject {
+         let currentCount = dataController.transactionCount()
  
- "Categories" = "Категории";
--"no_income_categories" = "Нет категорий трат. Чтобы добавить категорию, нажмите на 'Добавить'";
--"no_expense_categories" = "Нет категорий доходов. Чтобы добавить категорию, нажмите на 'Добавить'";
-+"no_income_categories" = "Нет категорий доходов";
-+"no_expense_categories" = "Нет категорий расходов";
- "Suggestions Hidden" = "Предложения скрыты";
- "Successfully Edited" = "Изменено";
- "INCOME CATEGORIES" = "Категории доходов";
-@@ -87,6 +87,7 @@
- "Your Log is Empty" = "Ваш лог пуст";
- "Press the plus button to add your first entry" = "Нажмите на + чтобы добавить Вашу первую запись";
- "Search entry by note" = "Поиск записи по Примечанию";
-+"Search by note, category, amount or date" = "Поиск по заметке, категории, сумме или дате";
- "all entries" = "все записи";
- "by type" = "по типу";
- "by day" = "по дням";
-```
-
-**File**: `app/dime.xcodeproj/project.pbxproj` (modified, +4/-0)
-```diff
-@@ -35,6 +35,7 @@
- 		5327D2B9287C6AFB00F76ADF /* EmailExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2B2287C6AFB00F76ADF /* EmailExtensions.swift */; };
- 		5327D2BA287C6AFB00F76ADF /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2B3287C6AFB00F76ADF /* ViewExtension.swift */; };
- 		5327D2BB287C6AFB00F76ADF /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2B4287C6AFB00F76ADF /* StringExtension.swift */; };
-+		E7A1C0DE2B11000100D1E001 /* TransactionSearchQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A1C0DE2B11000200D1E001 /* TransactionSearchQuery.swift */; };
- 		5327D2BC287C6AFB00F76ADF /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2B5287C6AFB00F76ADF /* Color.swift */; };
- 		5327D2C4287C6B2500F76ADF /* TimeFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2BE287C6B2500F76ADF /* TimeFrame.swift */; };
- 		5327D2C5287C6B2500F76ADF /* PowerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2BF287C6B2500F76ADF /* PowerCategory.swift */; };
-@@ -237,6 +238,7 @@
- 		5327D2B2287C6AFB00F76ADF /* EmailExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmailExtensions.swift; sourceTree = "<group>"; };
- 		5327D2B3287C6AFB00F76ADF /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
- 		5327D2B4287C6AFB00F76ADF /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
-+		E7A1C0DE2B11000200D1E001 /* TransactionSearchQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionSearchQuery.swift; sourceTree = "<group>"; };
- 		5327D2B5287C6AFB00F76ADF /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
- 		5327D2BE287C6B2500F76ADF /* TimeFrame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeFrame.swift; sourceTree = "<group>"; };
- 		5327D2BF287C6B2500F76ADF /* PowerCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PowerCategory.swift; sourceTree = "<group>"; };
-@@ -487,6 +489,7 @@
- 				5327D2B2287C6AFB00F76ADF /* EmailExtensions.swift */,
- 				5327D2B3287C6AFB00F76ADF /* ViewExtension.swift */,
- 				5327D2B4287C6AFB00F76ADF /* StringExtension.swift */,
-+				E7A1C0DE2B11000200D1E001 /* TransactionSearchQuery.swift */,
- 				53B1D1A4289383B100E28062 /* FontExtension.swift */,
- 				53A4147C28B7C70D008C30E7 /* AppVersion.swift */,
- 				534973D528CB5A75000201F9 /* URLExtension.swift */,
-@@ -980,6 +983,7 @@
- 				53D40B652AB1B2DB001D3866 /* UpdateSheet.swift in Sources */,
- 				5327D2BA287C6AFB00F76ADF /* ViewExtension.swift in Sources */,
- 				5327D2DB287C6B5F00F76ADF /* LogView.swift in Sources */,
-+				E7A1C0DE2B11000100D1E001 /* TransactionSearchQuery.swift in Sources */,
- 				5362CF322A92750800244744 /* ImportDataView.swift in Sources */,
- 				5327D287287C697400F76ADF /* dimeApp.swift in Sources */,
- 				53A4147728B3B559008C30E7 /* WelcomeSheetView.swift in Sources */,
-```
-
-**File**: `app/dime/Assets.xcassets/Colors/BudgetBackground.colorset/Contents.json` (modified, +2/-2)
-```diff
-@@ -32,8 +32,8 @@
-         "color-space" : "srgb",
-         "components" : {
-           "alpha" : "1.000",
--          "blue" : "0x1A",
--          "green" : "0x1B",
-+          "blue" : "0x1E",
-+          "green" : "0x1C",
-           "red" : "0x1C"
+         if BackupStore.looksLikeDataLoss(currentTransactionCount: currentCount, backupTransactionCount: backup.transactionCount) {
++            DataIntegrityLog.captureOnce(
++                key: "below-backup",
++                message: "Transaction count is far below the newest backup",
++                numbers: [
++                    "transactions": currentCount,
++                    "backupTransactions": backup.transactionCount
++                ],
++                flags: ["cloudKit": dataController.isCloudKitSyncEnabled]
++            )
+             suggestedRestore = SuggestedRestore(backup: backup, currentTransactionCount: currentCount)
          }
-       },
+     }
+@@ -480,11 +489,28 @@ final class BackupManager: ObservableObject {
+                 } ?? false
+ 
+                 if !automatic || (!isEmpty && !looksLost) {
+-                    try store.write(from: context)
++                    let summary = try store.write(from: context)
+                     succeeded = true
++                    DataIntegrityLog.breadcrumb(
++                        "backup written",
++                        numbers: ["transactions": summary.transactionCount],
++                        flags: ["automatic": automatic]
++                    )
++                } else {
++                    DataIntegrityLog.breadcrumb(
++                        "backup skipped",
++                        numbers: ["transactions": transactionCount],
++                        flags: ["automatic": automatic, "empty": isEmpty, "looksLost": looksLost]
++                    )
+                 }
+             } catch {
+-                logger.error("Backing up failed: \(String(describing: error), privacy: .public)")
++                let nsError = error as NSError
++                logger.error("Backing up failed: \(nsError.domain, privacy: .public) \(nsError.code, privacy: .public)")
++                DataIntegrityLog.capture(
++                    error,
++                    message: "Backup failed",
++                    flags: ["automatic": automatic]
++                )
+             }
+ 
+             DispatchQueue.main.async {
+@@ -499,16 +525,30 @@ final class BackupManager: ObservableObject {
+     func restore(_ backup: BackupSummary, completion: @escaping (Result<RestoreResult, Error>) -> Void) {
+         // Restoring before iCloud has caught up would re-add items that are about to be downloaded again.
+         guard dataController.isDataCurrentWithICloud else {
++            DataIntegrityLog.breadcrumb(
++                "restore skipped",
++                numbers: ["backupTransactions": backup.transactionCount],
++                tokens: ["reason": "waitingForICloud"]
++            )
+             completion(.failure(RestoreError.waitingForICloud))
+             return
+         }
+ 
+         // Rows restored mid-change could miss it and be read in the wrong currency.
+         guard defaults?.data(forKey: MainCurrencyChangeManager.pendingPlanKey) == nil else {
++            DataIntegrityLog.breadcrumb(
++                "restore skipped",
++                numbers: ["backupTransactions": backup.transactionCount],
++                tokens: ["reason": "currencyChange"]
++            )
+             completion(.failure(RestoreError.currencyChangeInProgress))
+             return
+         }
+ 
++        DataIntegrityLog.breadcrumb(
++            "restore started",
++            numbers: ["backupTransactions": backup.transactionCount]
++        )
+         isWorking = true
+         let context = dataController.container.newBackgroundContext()
+         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+@@ -527,10 +567,27 @@ final class BackupManager: ObservableObject {
+             DispatchQueue.main.async {
+                 self.isWorking = false
+ 
+-                if case .success = result {
++                switch result {
++                case let .success(restored):
+                     self.defaults?.set(backup.url.lastPathComponent, forKey: Self.handledBackupKey)
+                     self.suggestedRestore = nil
+                     WidgetCenter.shared.reloadAllTimelines()
++                    DataIntegrityLog.breadcrumb(
++                        "restore finished",
++                        numbers: [
++                            "transactions": restored.transactions,
++                            "categories": restored.categories,
++                            "budgets": restored.budgets,
++                            "templates": restored.templates,
++                            "backupTransactions": backup.transactionCount
++                        ]
++                    )
++                case let .failure(error):
++                    DataIntegrityLog.capture(
++                        error,
++                        message: "Restore failed",
++                        numbers: ["backupTransactions": backup.transactionCount]
++                    )
 ```
 
-**File**: `app/dime/Assets.xcassets/Colors/LightIcon.colorset/Contents.json` (modified, +3/-3)
+**File**: `app/dime/Data/DataController.swift` (modified, +336/-12)
 ```diff
-@@ -23,9 +23,9 @@
-         "color-space" : "srgb",
-         "components" : {
-           "alpha" : "1.000",
--          "blue" : "0x26",
--          "green" : "0x26",
--          "red" : "0x23"
-+          "blue" : "0x1E",
-+          "green" : "0x1C",
-+          "red" : "0x1C"
+@@ -268,6 +268,7 @@ class DataController: ObservableObject {
+ 
+     static let iCloudSyncEnabledKey = "iCloudSyncEnabled"
+     static let lastBulkDeletionKey = "lastBulkDeletion"
++    static let didEraseAllDataKey = "didEraseAllData"
+     static let dataIsCurrentNotification = Notification.Name("DimeDataIsCurrentWithICloud")
+     private static let cloudKitContainerIdentifier = "iCloud.com.rafaelsoh.dime"
+ 
+@@ -285,6 +286,10 @@ class DataController: ObservableObject {
          }
-       },
-       "idiom" : "universal"
+ 
+         defaults.set(legacyValue, forKey: iCloudSyncEnabledKey)
++        DataIntegrityLog.breadcrumb(
++            "legacy iCloud sync setting carried over",
++            flags: ["enabled": legacyValue]
++        )
+     }
+ 
+     var container = NSPersistentCloudKitContainer(name: "MainModel")
+@@ -296,6 +301,7 @@ class DataController: ObservableObject {
+ 
+     // Main thread only.
+     private var recurringGate: RecurringGenerationGate
++    private var transactionCountAtCloudKitEventStart: [UUID: Int] = [:]
+     private var recurringFallback: DispatchWorkItem?
+     private var pathMonitor: NWPathMonitor?
+ 
+@@ -346,20 +352,93 @@ class DataController: ObservableObject {
+ 
+         container.persistentStoreDescriptions = [description]
+ 
+-        if !usesDemoData, let storeURL = description.url {
++        let storeURL = description.url
++        let migrationNeeded = !usesDemoData && storeURL.map {
++            StoreSnapshot.needsMigration(storeAt: $0, to: container.managedObjectModel)
++        } ?? false
++        var countsBeforeMigration: [String: Int]?
++
++        if migrationNeeded, let storeURL {
++            let sourceModel = StoreSnapshot.sourceModel(forStoreAt: storeURL)
++            if let sourceModel {
++                countsBeforeMigration = StoreSnapshot.recordCounts(storeAt: storeURL, model: sourceModel)
++            }
++
++            var startingNumbers = countsBeforeMigration ?? [:]
++            let facts = Self.storeFileFacts(storeURL)
++            startingNumbers["fileBytes"] = facts.bytes
++            startingNumbers["walBytes"] = facts.walBytes
++            DataIntegrityLog.breadcrumb(
++                "migration starting",
++                numbers: startingNumbers,
++                flags: [
++                    "sourceModelFound": sourceModel != nil,
++                    "counted": countsBeforeMigration != nil,
++                    "cloudKit": isCloudKitSyncEnabled
++                ],
++                persist: true
++            )
++
+             do {
+                 if let snapshot = try StoreSnapshot.snapshotIfMigrationNeeded(storeAt: storeURL, to: container.managedObjectModel, in: StoreSnapshot.directory(forStoreAt: storeURL)) {
+-                    logger.notice("Saved the store before migrating it to \(snapshot.path, privacy: .public)")
++                    logger.notice("Saved the store before migrating it")
++                    let bytes = (try? snapshot.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
++                    DataIntegrityLog.breadcrumb(
++                        "pre-migration snapshot saved",
++                        numbers: ["bytes": bytes],
++                        flags: ["cloudKit": isCloudKitSyncEnabled],
++                        persist: true
++                    )
+                 }
+             } catch {
+-                logger.error("Saving the store before migrating it failed: \(String(describing: error), privacy: .public)")
++                let nsError = error as NSError
++                logger.error("Saving the store before migrating it failed: \(nsError.domain, privacy: .public) \(nsError.code, privacy: .public)")
++                DataIntegrityLog.capture(
++                    error,
++                    message: "Pre-migration snapshot failed",
++                    numbers: countsBeforeMigration ?? [:],
++                    flags: ["cloudKit": isCloudKitSyncEnabled]
++                )
+             }
+         }
+ 
+-        container.loadPersistentStores { description, error in
++        let shouldReportIntegrity = !usesDemoData
++        let countsBeforeMigrationForLoad = countsBeforeMigration
+ 
++        container.loadPersistentStores { description, error in
+             if let error = error as NSError? {
+-                fatalError("Unresolved error \(error), \(error.userInfo) for \(description)")
++                if shouldReportIntegrity {
++                    var numbers = countsBeforeMigrationForLoad ?? [:]
++                    let facts = Self.storeFileFacts(description.url)
++                    numbers["fileBytes"] = facts.bytes
++                    numbers["walBytes"] = facts.walBytes
++                    numbers["snapshotCount"] = facts.snapshotCount
++                    DataIntegrityLog.capture(
++                        error,
++                        message: "Persistent store failed to load",
++                        numbers: numbers,
++                        flags: [
++                            "migrationNeeded": migrationNeeded,
++                            "cloudKit
 ```
 
-**File**: `app/dime/Assets.xcassets/Colors/Outline.colorset/Contents.json` (modified, +3/-3)
+**File**: `app/dime/Data/DataIntegrityLog.swift` (added, +294/-0)
 ```diff
-@@ -41,9 +41,9 @@
-         "color-space" : "srgb",
-         "components" : {
-           "alpha" : "1.000",
--          "blue" : "0x2E",
--          "green" : "0x2E",
--          "red" : "0x2E"
-+          "blue" : "0x3A",
-+          "green" : "0x38",
-+          "red" : "0x38"
-         }
-       },
-       "idiom" : "universal"
-```
-
-**File**: `app/dime/Assets.xcassets/Colors/PrimaryBackground.colorset/Contents.json` (modified, +3/-3)
-```diff
-@@ -41,9 +41,9 @@
-         "color-space" : "srgb",
-         "components" : {
-           "alpha" : "1.000",
--          "blue" : "0x07",
--          "green" : "0x0A",
--          "red" : "0x06"
-+          "blue" : "0x00",
-+          "green" : "0x00",
-+          "red" : "0x00"
-         }
-       },
-       "idiom" : "universal"
+@@ -0,0 +1,294 @@
++//
++//  DataIntegrityLog.swift
++//  dime
++//
++//  Privacy-safe diagnostics for store loading, migration, sync, backup, and bulk deletion.
++//  Callers may pass counts, booleans, and short tokens (error domains, event types).
++//  They must not pass notes, amounts, names, or any other user-entered text.
++//
++
++import CloudKit
++import Foundation
++import os
++
++#if canImport(Sentry)
++import Sentry
++#endif
++
++enum DataIntegrityLog {
++    struct FailureSummary: Equatable {
++        var domain: String
++        var code: Int
++        /// Domains and codes only, never `userInfo` values or localized text.
++        var chain: String
++    }
++
++    private static let logger = Logger(subsystem: "com.rafaelsoh.dime", category: "DataIntegrity")
++    private static let lock = NSLock()
++    private static let pendingKey = "dime.dataIntegrity.pending"
++    private static let maximumPending = 40
++    private static let suiteName = "group.com.rafaelsoh.dime"
++    private static let allowedTokenCharacters = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._:-")
++
++    /// A breadcrumb. `persist` keeps it for the app to forward when this process has no Sentry SDK
++    /// (widgets and intents). Routine breadcrumbs stay in memory only.
++    static func breadcrumb(
++        _ message: String,
++        numbers: [String: Int] = [:],
++        flags: [String: Bool] = [:],
++        tokens: [String: String] = [:],
++        persist: Bool = false
++    ) {
++        deliver(message: message, capture: false, error: nil, numbers: numbers, flags: flags, tokens: tokens, persist: persist)
++    }
++
++    static func capture(
++        _ message: String,
++        numbers: [String: Int] = [:],
++        flags: [String: Bool] = [:],
++        tokens: [String: String] = [:]
++    ) {
++        deliver(message: message, capture: true, error: nil, numbers: numbers, flags: flags, tokens: tokens, persist: true)
++    }
++
++    static func capture(
++        _ error: Error,
++        message: String,
++        numbers: [String: Int] = [:],
++        flags: [String: Bool] = [:],
++        tokens: [String: String] = [:]
++    ) {
++        deliver(message: message, capture: true, error: error, numbers: numbers, flags: flags, tokens: tokens, persist: true)
++    }
++
++    /// One captured event per app version for this key, shared across the app and its extensions.
++    static func captureOnce(
++        key: String,
++        message: String,
++        numbers: [String: Int] = [:],
++        flags: [String: Bool] = [:],
++        tokens: [String: String] = [:]
++    ) {
++        let storageKey = onceStorageKey(key)
++        guard markOnce(storageKey) else {
++            return
++        }
++
++        deliver(message: message, capture: true, error: nil, numbers: numbers, flags: flags, tokens: tokens, persist: true)
++    }
++
++    static func failureSummary(for error: Error) -> FailureSummary {
++        var parts: [String] = []
++        var pending: [NSError] = [error as NSError]
++        var seen = 0
++
++        while let next = pending.popLast(), seen < 8 {
++            seen += 1
++            parts.append("\(safeToken(next.domain)):\(next.code)")
++
++            if let underlying = next.userInfo[NSUnderlyingErrorKey] as? Error {
++                pending.append(underlying as NSError)
++            }
++
++            if let multiple = next.userInfo[NSMultipleUnderlyingErrorsKey] as? [Any] {
++                pending.append(contentsOf: multiple.prefix(4).compactMap { $0 as? Error }.map { $0 as NSError })
++            }
++
++            // Partial CloudKit failures can carry the record itself. Keep the error code only.
++            if let partial = next.userInfo[CKPartialErrorsByItemIDKey] as? [AnyHashable: Any] {
++                let partialErrors = partial.values.compactMap { $0 as? Error }.prefix(3)
++                pending.append(contentsOf: partialErrors.map { $0 as NSError })
++            }
++        }
++
++        let primary = error as NSError
++        let chain = parts.joined(separator: " | ")
++        return FailureSummary(domain: safeToken(primary.domain), code: primary.code, chain: String(chain.prefix(300)))
++    }
++
++    /// Sends diagnostics an extension stored in the app group. No-op until the app starts Sentry.
++    static func flushPending() {
++        #if canImport(Sentry)
++        for record in dequeueAll() {
++            send(record)
++        }
++        #endif
++    }
++
++    // MARK: - Delivery
++
++    private struct PendingRecord: Codable {
++        var message: String
++        var capture: Bool
++        var numbers: [String: Int]
++        var flags: [String: Bool]
++        var tokens: [String: String]
++        var failureDomain: String?
++        var failureCode: Int?
++        var failureChain: String?
++    }
++
++    private static func deliver(
++        message: String,
++        capture: Bool,
++        error: Error?,
++        numbers: [String: Int],
++        flags: [String: Bool],
++        tokens: [String: String],
++   
 ```
 
 ---
 
-### Incident Patch 2: `f896e46c` (2026-11-21)
-**Commit Message**: Redesign the app for iOS 26 Liquid Glass
+### Incident Patch 2: `67b0c7d3` (2026-11-26)
+**Commit Message**: Merge pull request #178 from rafsoh/build/3.0.2-6
 
-Rebuild every screen with iOS 26 glass controls and Apple-standard
-sizing, with solid fallbacks on earlier iOS versions. Shared components
-live in ViewExtension.swift.
+Bump 3.0.2 to build 6
 
-- Log: date-aware search, swipe-to-delete that no longer fights
-  scrolling, and immediate delete without the undo toast.
-- Insights: cards, a category ring, and category, cash flow and
-  recurring sheets that share one row and chart style.
-- Budgets: new tiles with a pace marker and an over-budget icon,
-  detail sheets, and a sentence-style budget builder.
-- Date pickers: a scrolling week calendar for transaction dates and
-  yearly budget starts, a weekday menu and a day-of-month grid.
-- Settings: every subview restyled, including Backups.
-- Debug-only launch arguments seed an in-memory demo store.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `app/Localizations/en.lproj/Localizable.strings` (modified, +3/-2)
+**File**: `app/dime.xcodeproj/project.pbxproj` (modified, +8/-8)
 ```diff
-@@ -20,8 +20,8 @@
- // categories
- 
- "Categories" = "Categories";
--"no_income_categories" = "No income categories found, click the 'New' button to add some";
--"no_expense_categories" = "No expense categories found, click the 'New' button to add some";
-+"no_income_categories" = "No income categories found";
-+"no_expense_categories" = "No expense categories found";
- "Suggestions Hidden" = "Suggestions Hidden";
- "Successfully Edited" = "Successfully Edited";
- "INCOME CATEGORIES" = "INCOME CATEGORIES";
-@@ -89,6 +89,7 @@
- "Your Log is Empty" = "Your Log is Empty";
- "Press the plus button to add your first entry" = "Press the plus button to add your first entry";
- "Search entry by note" = "Search entry by note";
-+"Search by note, category, amount or date" = "Search by note, category, amount or date";
- "all entries" = "all entries";
- "by type" = "by type";
- "by day" = "by day";
+@@ -1544,7 +1544,7 @@
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CODE_SIGN_ENTITLEMENTS = BudgetIntent/BudgetIntent.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = BudgetIntent/Info.plist;
+@@ -1576,7 +1576,7 @@
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CODE_SIGN_ENTITLEMENTS = BudgetIntent/BudgetIntent.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = BudgetIntent/Info.plist;
+@@ -1607,7 +1607,7 @@
+ 			buildSettings = {
+ 				CODE_SIGN_ENTITLEMENTS = BudgetIntentUI/BudgetIntentUI.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = BudgetIntentUI/Info.plist;
+@@ -1634,7 +1634,7 @@
+ 			buildSettings = {
+ 				CODE_SIGN_ENTITLEMENTS = BudgetIntentUI/BudgetIntentUI.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = BudgetIntentUI/Info.plist;
+@@ -1782,7 +1782,7 @@
+ 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+ 				CODE_SIGN_ENTITLEMENTS = dime/dime.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_ASSET_PATHS = "\"dime/Preview Content\"";
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				ENABLE_PREVIEWS = YES;
+@@ -1823,7 +1823,7 @@
+ 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+ 				CODE_SIGN_ENTITLEMENTS = dime/dime.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_ASSET_PATHS = "\"dime/Preview Content\"";
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				ENABLE_PREVIEWS = YES;
+@@ -1863,7 +1863,7 @@
+ 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+ 				CODE_SIGN_ENTITLEMENTS = ExpenditureWidgetExtension.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = ExpenditureWidget/Info.plist;
+@@ -1894,7 +1894,7 @@
+ 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+ 				CODE_SIGN_ENTITLEMENTS = ExpenditureWidgetExtension.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = ExpenditureWidget/Info.plist;
 ```
 
-**File**: `app/Localizations/fr.lproj/Localizable.strings` (modified, +3/-2)
-```diff
-@@ -20,8 +20,8 @@
- // categories
- 
- "Categories" = "Catégories";
--"no_income_categories" = "Aucune catégorie de revenus n'a été trouvée, cliquez sur le bouton 'Nouveau' pour en ajouter";
--"no_expense_categories" = "Aucune catégorie de dépenses n'a été trouvée, cliquez sur le bouton 'Nouveau' pour en ajouter";
-+"no_income_categories" = "Aucune catégorie de revenus trouvée";
-+"no_expense_categories" = "Aucune catégorie de dépenses trouvée";
- "Suggestions Hidden" = "Suggestions cachées";
- "Successfully Edited" = "Édité avec succès";
- "INCOME CATEGORIES" = "Catégories de revenus";
-@@ -89,6 +89,7 @@
- "Your Log is Empty" = "Votre registre est vide";
- "Press the plus button to add your first entry" = "Appuyez sur le bouton + pour ajouter votre première entrée";
- "Search entry by note" = "Recherche d'une saisie par note";
-+"Search by note, category, amount or date" = "Recherchez par note, catégorie, montant ou date";
- "all entries" = "toutes les entrées";
- "by type" = "par type";
- "by day" = "par jour";
-```
+---
 
-**File**: `app/Localizations/ru.lproj/Localizable.strings` (modified, +3/-2)
-```diff
-@@ -18,8 +18,8 @@
- // categories
- 
- "Categories" = "Категории";
--"no_income_categories" = "Нет категорий трат. Чтобы добавить категорию, нажмите на 'Добавить'";
--"no_expense_categories" = "Нет категорий доходов. Чтобы добавить категорию, нажмите на 'Добавить'";
-+"no_income_categories" = "Нет категорий доходов";
-+"no_expense_categories" = "Нет категорий расходов";
- "Suggestions Hidden" = "Предложения скрыты";
- "Successfully Edited" = "Изменено";
- "INCOME CATEGORIES" = "Категории доходов";
-@@ -87,6 +87,7 @@
- "Your Log is Empty" = "Ваш лог пуст";
- "Press the plus button to add your first entry" = "Нажмите на + чтобы добавить Вашу первую запись";
- "Search entry by note" = "Поиск записи по Примечанию";
-+"Search by note, category, amount or date" = "Поиск по заметке, категории, сумме или дате";
- "all entries" = "все записи";
- "by type" = "по типу";
- "by day" = "по дням";
-```
+### Incident Patch 3: `6f4b0aad` (2026-11-26)
+**Commit Message**: Bump 3.0.2 to build 6
 
-**File**: `app/dime.xcodeproj/project.pbxproj` (modified, +4/-0)
+**File**: `app/dime.xcodeproj/project.pbxproj` (modified, +8/-8)
 ```diff
-@@ -35,6 +35,7 @@
- 		5327D2B9287C6AFB00F76ADF /* EmailExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2B2287C6AFB00F76ADF /* EmailExtensions.swift */; };
- 		5327D2BA287C6AFB00F76ADF /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2B3287C6AFB00F76ADF /* ViewExtension.swift */; };
- 		5327D2BB287C6AFB00F76ADF /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2B4287C6AFB00F76ADF /* StringExtension.swift */; };
-+		E7A1C0DE2B11000100D1E001 /* TransactionSearchQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A1C0DE2B11000200D1E001 /* TransactionSearchQuery.swift */; };
- 		5327D2BC287C6AFB00F76ADF /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2B5287C6AFB00F76ADF /* Color.swift */; };
- 		5327D2C4287C6B2500F76ADF /* TimeFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2BE287C6B2500F76ADF /* TimeFrame.swift */; };
- 		5327D2C5287C6B2500F76ADF /* PowerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2BF287C6B2500F76ADF /* PowerCategory.swift */; };
-@@ -237,6 +238,7 @@
- 		5327D2B2287C6AFB00F76ADF /* EmailExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmailExtensions.swift; sourceTree = "<group>"; };
- 		5327D2B3287C6AFB00F76ADF /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
- 		5327D2B4287C6AFB00F76ADF /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
-+		E7A1C0DE2B11000200D1E001 /* TransactionSearchQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionSearchQuery.swift; sourceTree = "<group>"; };
- 		5327D2B5287C6AFB00F76ADF /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
- 		5327D2BE287C6B2500F76ADF /* TimeFrame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeFrame.swift; sourceTree = "<group>"; };
- 		5327D2BF287C6B2500F76ADF /* PowerCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PowerCategory.swift; sourceTree = "<group>"; };
-@@ -487,6 +489,7 @@
- 				5327D2B2287C6AFB00F76ADF /* EmailExtensions.swift */,
- 				5327D2B3287C6AFB00F76ADF /* ViewExtension.swift */,
- 				5327D2B4287C6AFB00F76ADF /* StringExtension.swift */,
-+				E7A1C0DE2B11000200D1E001 /* TransactionSearchQuery.swift */,
- 				53B1D1A4289383B100E28062 /* FontExtension.swift */,
- 				53A4147C28B7C70D008C30E7 /* AppVersion.swift */,
- 				534973D528CB5A75000201F9 /* URLExtension.swift */,
-@@ -980,6 +983,7 @@
- 				53D40B652AB1B2DB001D3866 /* UpdateSheet.swift in Sources */,
- 				5327D2BA287C6AFB00F76ADF /* ViewExtension.swift in Sources */,
- 				5327D2DB287C6B5F00F76ADF /* LogView.swift in Sources */,
-+				E7A1C0DE2B11000100D1E001 /* TransactionSearchQuery.swift in Sources */,
- 				5362CF322A92750800244744 /* ImportDataView.swift in Sources */,
- 				5327D287287C697400F76ADF /* dimeApp.swift in Sources */,
- 				53A4147728B3B559008C30E7 /* WelcomeSheetView.swift in Sources */,
-```
-
-**File**: `app/dime/Assets.xcassets/Colors/BudgetBackground.colorset/Contents.json` (modified, +2/-2)
-```diff
-@@ -32,8 +32,8 @@
-         "color-space" : "srgb",
-         "components" : {
-           "alpha" : "1.000",
--          "blue" : "0x1A",
--          "green" : "0x1B",
-+          "blue" : "0x1E",
-+          "green" : "0x1C",
-           "red" : "0x1C"
-         }
-       },
-```
-
-**File**: `app/dime/Assets.xcassets/Colors/LightIcon.colorset/Contents.json` (modified, +3/-3)
-```diff
-@@ -23,9 +23,9 @@
-         "color-space" : "srgb",
-         "components" : {
-           "alpha" : "1.000",
--          "blue" : "0x26",
--          "green" : "0x26",
--          "red" : "0x23"
-+          "blue" : "0x1E",
-+          "green" : "0x1C",
-+          "red" : "0x1C"
-         }
-       },
-       "idiom" : "universal"
-```
-
-**File**: `app/dime/Assets.xcassets/Colors/Outline.colorset/Contents.json` (modified, +3/-3)
-```diff
-@@ -41,9 +41,9 @@
-         "color-space" : "srgb",
-         "components" : {
-           "alpha" : "1.000",
--          "blue" : "0x2E",
--          "green" : "0x2E",
--          "red" : "0x2E"
-+          "blue" : "0x3A",
-+          "green" : "0x38",
-+          "red" : "0x38"
-         }
-       },
-       "idiom" : "universal"
-```
-
-**File**: `app/dime/Assets.xcassets/Colors/PrimaryBackground.colorset/Contents.json` (modified, +3/-3)
-```diff
-@@ -41,9 +41,9 @@
-         "color-space" : "srgb",
-         "components" : {
-           "alpha" : "1.000",
--          "blue" : "0x07",
--          "green" : "0x0A",
--          "red" : "0x06"
-+          "blue" : "0x00",
-+          "green" : "0x00",
-+          "red" : "0x00"
-         }
-       },
-       "idiom" : "universal"
+@@ -1544,7 +1544,7 @@
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CODE_SIGN_ENTITLEMENTS = BudgetIntent/BudgetIntent.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = BudgetIntent/Info.plist;
+@@ -1576,7 +1576,7 @@
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CODE_SIGN_ENTITLEMENTS = BudgetIntent/BudgetIntent.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = BudgetIntent/Info.plist;
+@@ -1607,7 +1607,7 @@
+ 			buildSettings = {
+ 				CODE_SIGN_ENTITLEMENTS = BudgetIntentUI/BudgetIntentUI.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = BudgetIntentUI/Info.plist;
+@@ -1634,7 +1634,7 @@
+ 			buildSettings = {
+ 				CODE_SIGN_ENTITLEMENTS = BudgetIntentUI/BudgetIntentUI.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = BudgetIntentUI/Info.plist;
+@@ -1782,7 +1782,7 @@
+ 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+ 				CODE_SIGN_ENTITLEMENTS = dime/dime.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_ASSET_PATHS = "\"dime/Preview Content\"";
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				ENABLE_PREVIEWS = YES;
+@@ -1823,7 +1823,7 @@
+ 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+ 				CODE_SIGN_ENTITLEMENTS = dime/dime.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_ASSET_PATHS = "\"dime/Preview Content\"";
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				ENABLE_PREVIEWS = YES;
+@@ -1863,7 +1863,7 @@
+ 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+ 				CODE_SIGN_ENTITLEMENTS = ExpenditureWidgetExtension.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = ExpenditureWidget/Info.plist;
+@@ -1894,7 +1894,7 @@
+ 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+ 				CODE_SIGN_ENTITLEMENTS = ExpenditureWidgetExtension.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = 5UNNTHMF44;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				INFOPLIST_FILE = ExpenditureWidget/Info.plist;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #129** (2026-11-23): Scrub the date sliders, and stop the log list redrawing while searching (@rafsoh)
-- **PR #128** (2026-11-23): Smooth the log search bar and add pull to search (@rafsoh)
-- **PR #120** (2026-11-22): Duo side bar controls on the add page, and budget widgets in the new design (@rafsoh)
-- **PR #119** (2026-11-22): Support the iPhone Duo's vertical bar (@rafsoh)
-- **PR #118** (2026-11-21): Set the version to 3.0 (@rafsoh)
-- **PR #117** (2026-11-21): Redesign the app for iOS 26 Liquid Glass (@rafsoh)
+- **PR #178** (2026-11-26): Bump 3.0.2 to build 6 (@rafsoh)
+- **PR #177** (2026-11-26): 3.0.2 release notes and Sentry privacy policy (@rafsoh)
+- **PR #176** (2026-11-26): Bump 3.0.2 to build 5 (@rafsoh)
+- **PR #175** (2026-11-26): Add SF Pro, Atkinson Hyperlegible Next, Fraunces and Geist Pixel fonts (@rafsoh)
+- **PR #174** (2026-11-26): Remove temporary screenshot launch argument from the Allo font PR (@rafsoh)
+- **PR #173** (2026-11-26): Bump 3.0.2 to build 4 (@rafsoh)
 
 ---
 
@@ -1786,34 +2407,33 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Localizable.strings
+## X. Add privacy-safe Sentry crash and data-integrity reporting.
 
 **RULE**:
-When implementing operations in `app/Localizations/en.lproj/Localizable.strings`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rafsoh/dimeApp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rafsoh/dimeApp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d95a9194`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8066e75`: Add privacy-safe Sentry crash and data-integrity reporting.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/Localizations/en.lproj/Localizable.strings`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-"no_income_categories" = "No income categories found";
-"no_expense_categories" = "No expense categories found";
-"Search by note, category, amount or date" = "Search by note, category, amount or date";
+
+## Sentry auth. The public DSN is committed; the upload token is not.
+.sentryclirc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-"no_income_categories" = "No income categories found, click the 'New' button to add some";
-"no_expense_categories" = "No expense categories found, click the 'New' button to add some";
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d95a9194` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8066e75` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

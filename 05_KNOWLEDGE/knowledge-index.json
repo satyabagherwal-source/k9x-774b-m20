@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T08:36:50.450Z",
+  "last_updated": "2026-11-26T08:57:42.174Z",
   "total_verified_learnings": 9124,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25767,
+  "total_items": 25775,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "f2e66637",
-      "content_hash": "feaa107dbf1291ef0332dc7f29cd01e78cbad417b2c1664372f4e5ddb22a9887",
+      "source_version": "410c10f3",
+      "content_hash": "356de6da05d3246828b6ebe33d60c6f16e4e207881673ef706617322732e5a52",
       "domain_letter": "B",
-      "persisted_at": "2026-11-26T00:18:05.313Z"
+      "persisted_at": "2026-11-26T08:57:36.123Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "f2e66637",
-      "content_hash": "0d2e9153d1d86c753a3dd3111dc650cc3bd7af6d6c647442e4b0687b66485cbb",
+      "source_version": "410c10f3",
+      "content_hash": "95d71e420b59939e1700db7bc4c9d4db958892302082af8a328d50906fc33229",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:18:05.497Z"
+      "persisted_at": "2026-11-26T08:57:36.331Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -214402,8 +214402,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "21fc4bdb",
-      "content_hash": "ddedc0acb2ba69936b6d6ecc1ceb84c34c640cdd4f8e69f92aea497b8ce38305",
+      "source_version": "410c10f3",
+      "content_hash": "26783d36fa73f82ab8c903ace32d51c327a4e68461ecff443bc7600d4e42ff49",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214536,6 +214536,11 @@
           "number": 10387,
           "title": "fix policy importer cidr leak",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10636,
+          "title": "maps/egressmap: leverage map registry to configure and create policy maps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214543,7 +214548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T13:20:37.556Z",
+      "verified_at": "2026-11-26T08:57:35.387Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221420,8 +221425,8 @@
       "slug": "flux-iac-tofu-controller",
       "platform": "github",
       "source_url": "https://github.com/flux-iac/tofu-controller",
-      "source_version": "23cefad9",
-      "content_hash": "26b3b62a16d66fd5da9c9b5195586ad1590186d25f1ec358dc26cdfdabf043b8",
+      "source_version": "29fa7be9",
+      "content_hash": "8eb7d11fe0b955bea03e2764b36075716374ea5cf8eb385728426a48b9816d1d",
       "dossier_path": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "promoted_rules": [
@@ -221444,6 +221449,11 @@
           "number": 10108,
           "title": "bump the go-minor group across 2 directories with 10 updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10635,
+          "title": "bump the go-patch group across 2 directories with 5 updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221451,7 +221461,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:51:22.937Z",
+      "verified_at": "2026-11-26T08:57:31.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221505,10 +221515,10 @@
       "relative_path": "08_VERIFICATION/flux-iac-tofu-controller-verification-protocol-empirical-defect-shield-for-flux-.md",
       "title": "Verification Protocol: Empirical Defect Shield for flux-iac/tofu-controller",
       "repository": "flux-iac/tofu-controller",
-      "source_version": "23cefad9",
-      "content_hash": "ca56cf0a7487f41a999f76bbcff69e8c6d3e4379692d53dfae09cd087541d761",
+      "source_version": "29fa7be9",
+      "content_hash": "670d2e04fc52b988e420fc5f901d0fda04ed897c40eac0a6dc1b645af7679b95",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:51:23.654Z"
+      "persisted_at": "2026-11-26T08:57:32.201Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co",
@@ -234888,8 +234898,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "2664a0aa",
-      "content_hash": "1170c9d904dd65551fe5dd93b012b68a220fd99b3ead34eab2b11485b0813e5c",
+      "source_version": "a3ce8d5e",
+      "content_hash": "f5bf89192aced5bf4d39f18f1b45f8f6bf79c8a6f9800dc766479fce6646f32e",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -234937,6 +234947,11 @@
           "number": 10424,
           "title": "Apply deferred content masks during prepaint",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10634,
+          "title": "Update crash-handler to fix child processes hanging on macOS",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234944,7 +234959,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T02:01:59.089Z",
+      "verified_at": "2026-11-26T08:57:24.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234986,10 +235001,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "repository": "zed-industries/zed",
-      "source_version": "2664a0aa",
-      "content_hash": "79df0fef956c775923e56fcbe0f08d4492a0802e69fbfe72e273ac0fdfe419c7",
+      "source_version": "a3ce8d5e",
+      "content_hash": "80df4082301ea77341bc8e57dd538820ec4814a5f890202b87f4180901834a38",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T02:01:59.993Z"
+      "persisted_at": "2026-11-26T08:57:25.016Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed",
@@ -234998,10 +235013,10 @@
       "relative_path": "08_VERIFICATION/zed-industries-zed-verification-protocol-empirical-defect-shield-for-zed-industr.md",
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries/zed",
       "repository": "zed-industries/zed",
-      "source_version": "2664a0aa",
-      "content_hash": "90bdab7536c60738e8be162d2f28d3725fb18aa5e35affb74f3080f59cd83478",
+      "source_version": "a3ce8d5e",
+      "content_hash": "fee9efb8e54c52a59847764635da6ab295e0de951bc65d817597bcbe0ad515a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:02:00.253Z"
+      "persisted_at": "2026-11-26T08:57:25.245Z"
     },
     "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp": {
       "item_id": "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp",
@@ -235023,9 +235038,9 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "200ea4319080c581dec8de705100c99c9d819e05f56f920ac8b66dcd52b348a4",
+      "content_hash": "5b9ee9984ab60cef2ed52f2981bc9902cbaa64db22fad167c7844ad0f5949a97",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T02:02:11.271Z"
+      "persisted_at": "2026-11-26T08:57:40.123Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings",
@@ -235035,9 +235050,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries-zed-learnings",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f9129e47d09fb8ed6caf56fbe240a801a76e9dbccedc5c56c629a5b66ec43fb",
+      "content_hash": "8ed790a46a588311dc3f701d9c9e3220fc352b70fa02c803e59423a085f7fc6d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:02:11.521Z"
+      "persisted_at": "2026-11-26T08:57:40.337Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
@@ -281981,10 +281996,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-technical-construction-intelligence-flux-iac-tofu-contr.md",
       "title": "Technical Construction Intelligence: flux-iac/tofu-controller Core Invariants",
       "repository": "flux-iac/tofu-controller",
-      "source_version": "23cefad9",
-      "content_hash": "0d8e49a34bb0e07e9c9aa330708630326673351167bdcd2161dba4cdedbf9244",
+      "source_version": "29fa7be9",
+      "content_hash": "7832aeaea98d855eced5e4b718ba5f87942b85477a4e538b2c5a41e7f4aa85f7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T19:51:23.499Z"
+      "persisted_at": "2026-11-26T08:57:31.987Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor",
@@ -283513,7 +283528,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "b896dc9713cda126bc410a4ca85032a781120d52977957da4fb578f4a70d817d",
+      "content_hash": "a3f07cad995ee99b11e924b404679709de92a7363ce024771de8f7e1b8e8634f",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -283538,7 +283553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T15:58:56.854Z",
+      "verified_at": "2026-11-26T08:57:20.929Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283555,9 +283570,9 @@
       "title": "Research & Knowledge Intelligence: convaiinnovations/laya Core Invariants",
       "repository": "convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "14f0639523c4d21e8bc3d5bff152fa6021be2a9981fc0febfad8f3e1e83a9da4",
+      "content_hash": "b0f9962030f3d2339e5783076f1a9c3509973d489b0f8f3743864d462c1647ed",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T09:28:26.568Z"
+      "persisted_at": "2026-11-26T08:57:21.486Z"
     },
     "rule-9054": {
       "learning_id": "rule-9054",
@@ -283681,9 +283696,9 @@
       "title": "Research & Knowledge Intelligence: hf-convaiinnovations-laya-learnings Core Invariants",
       "repository": "hf-convaiinnovations-laya-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c8e913a192dbefc54ab8c567b036af3217b8d6653f9a6958090b018e0e01b98",
+      "content_hash": "07e94f40ef0b85240521e56b129e146da600a91d0468b14d337ea6fa2cfd5a6e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T09:28:38.513Z"
+      "persisted_at": "2026-11-26T08:57:40.773Z"
     },
     "candidate_directive-ext-auth-align-domain-rule-matching-for-ascii-case": {
       "item_id": "candidate_directive-ext-auth-align-domain-rule-matching-for-ascii-case",
@@ -313183,8 +313198,8 @@
       "slug": "rafsoh-dimeapp",
       "platform": "github",
       "source_url": "https://github.com/rafsoh/dimeApp",
-      "source_version": "2e7cc39c",
-      "content_hash": "de07fc6738038d9bc6e084cef678dabc3ad9db18c8a95af57c6a5157c2bff9d6",
+      "source_version": "67b0c7d3",
+      "content_hash": "b76afc01e4a9bcb4969ebe64a5f45995022e40cb1e5011b833d4f769052e220f",
       "dossier_path": "07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
       "promoted_rules": [
@@ -313214,7 +313229,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:42:54.018Z",
+      "verified_at": "2026-11-26T08:57:28.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -313320,10 +313335,10 @@
       "relative_path": "08_VERIFICATION/rafsoh-dimeapp-verification-protocol-empirical-defect-shield-for-rafsoh-dimeapp.md",
       "title": "Verification Protocol: Empirical Defect Shield for rafsoh/dimeApp",
       "repository": "rafsoh/dimeApp",
-      "source_version": "2e7cc39c",
-      "content_hash": "2249cf7a1fe85bfdac90114cff060e9d849d4de073ad629c192f9f190c059fa7",
+      "source_version": "67b0c7d3",
+      "content_hash": "66196886f30aff9a4049268bf00e03745ef13dda9dca501ce260c27c9899d517",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:42:55.047Z"
+      "persisted_at": "2026-11-26T08:57:29.933Z"
     },
     "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants",
@@ -313345,9 +313360,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rafsoh-dimeapp-learnings",
       "repository": "rafsoh-dimeapp-learnings",
       "source_version": "HEAD",
-      "content_hash": "efd7ededd6038d7732a55a567d98b4833c6f0bee247f8081722ab1fa8b540fda",
+      "content_hash": "0272d847fa24b16d990bdc799c17ad49d00eb0fbc35018391d2b7e8be37717e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:43:07.926Z"
+      "persisted_at": "2026-11-26T08:57:42.174Z"
     },
     "learn-github-parcel-bundler-parcel": {
       "learning_id": "learn-github-parcel-bundler-parcel",
@@ -332943,10 +332958,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-rafsoh-dimeapp-design-intelligence-rafsoh-dimeapp-core-invariants.md",
       "title": "Design Intelligence: rafsoh/dimeApp Core Invariants",
       "repository": "rafsoh/dimeApp",
-      "source_version": "2e7cc39c",
-      "content_hash": "09e1f9f418fb2e5c8aacf6af63451b1e9e7297af91199ea2ae963e06b044b3b9",
+      "source_version": "67b0c7d3",
+      "content_hash": "6a5353138fb2d653f60fefadf4032853aacf575a95100cf0e97154a62ad375f0",
       "domain_letter": "F",
-      "persisted_at": "2026-11-23T22:42:54.822Z"
+      "persisted_at": "2026-11-26T08:57:29.676Z"
     },
     "candidate_directive-plugins-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun": {
       "item_id": "candidate_directive-plugins-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun",
@@ -332968,9 +332983,9 @@
       "title": "Design Intelligence: rafsoh-dimeapp-learnings Core Invariants",
       "repository": "rafsoh-dimeapp-learnings",
       "source_version": "HEAD",
-      "content_hash": "d32ce9f8af5d779366b74bd73bf7f64d18e3f48a51dbed1bd5e96006c7d1c5f7",
+      "content_hash": "62f15efd019ef19641a0fd149437fde6e38ac9bee3f3b746953c9033c6b0e068",
       "domain_letter": "F",
-      "persisted_at": "2026-11-23T22:43:07.696Z"
+      "persisted_at": "2026-11-26T08:57:41.958Z"
     },
     "rule-10138": {
       "learning_id": "rule-10138",
@@ -352902,6 +352917,108 @@
       "content_hash": "b51c0cdcc17691e5b5821bedd3a2530876f4067e3c0f35413305ba80c4ff2a50",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T08:36:48.520Z"
+    },
+    "rule-10634": {
+      "learning_id": "rule-10634",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10634,
+      "title": "Update crash-handler to fix child processes hanging on macOS",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "a3ce8d5e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T08:57:24.239Z"
+    },
+    "candidate_directive-update-crash-handler-to-fix-child-processes-hanging-on-macos": {
+      "item_id": "candidate_directive-update-crash-handler-to-fix-child-processes-hanging-on-macos",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K5KF-update-crash-handler-to-fix-child-processes-hanging-on-macos.md",
+      "title": "Update crash-handler to fix child processes hanging on macOS",
+      "repository": "zed-industries/zed",
+      "source_version": "a3ce8d5e",
+      "content_hash": "3c77e5cce8949fc416ffcf8d7131a3d5f84cbf6f90dd40164a333071d42b7616",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T08:57:24.788Z"
+    },
+    "candidate_directive-add-privacy-safe-sentry-crash-and-data-integrity-reporting": {
+      "item_id": "candidate_directive-add-privacy-safe-sentry-crash-and-data-integrity-reporting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KINL-add-privacy-safe-sentry-crash-and-data-integrity-reporting.md",
+      "title": "Add privacy-safe Sentry crash and data-integrity reporting.",
+      "repository": "rafsoh-dimeapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c5fb721d0d9609ad76026486f4bab47460b04fa6fd01ff02b2a104f1440a6016",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-26T08:57:41.748Z"
+    },
+    "rule-10635": {
+      "learning_id": "rule-10635",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10635,
+      "title": "bump the go-patch group across 2 directories with 5 updates",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "29fa7be9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T08:57:31.230Z"
+    },
+    "candidate_directive-bump-the-go-patch-group-across-2-directories-with-5-updates": {
+      "item_id": "candidate_directive-bump-the-go-patch-group-across-2-directories-with-5-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KAYH-bump-the-go-patch-group-across-2-directories-with-5-updates.md",
+      "title": "bump the go-patch group across 2 directories with 5 updates",
+      "repository": "flux-iac/tofu-controller",
+      "source_version": "29fa7be9",
+      "content_hash": "6e550ae408e92abbc433223d0f98b9d14895380af78e05fadf2e7f3729c38780",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T08:57:31.770Z"
+    },
+    "rule-10636": {
+      "learning_id": "rule-10636",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10636,
+      "title": "maps/egressmap: leverage map registry to configure and create policy maps",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "410c10f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T08:57:35.387Z"
+    },
+    "candidate_directive-maps-egressmap-leverage-map-registry-to-configure-and-create-policy-maps": {
+      "item_id": "candidate_directive-maps-egressmap-leverage-map-registry-to-configure-and-create-policy-maps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KE5K-maps-egressmap-leverage-map-registry-to-configure-and-create-policy-maps.md",
+      "title": "maps/egressmap: leverage map registry to configure and create policy maps",
+      "repository": "cilium/cilium",
+      "source_version": "410c10f3",
+      "content_hash": "d312f2375ee9e2527b8ea9287f459dd0cad48e9d4cdf9e81bba9cd1edabeef27",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-26T08:57:35.913Z"
+    },
+    "candidate_directive-crashes-update-crash-handler-to-fix-child-processes-hanging-on-macos": {
+      "item_id": "candidate_directive-crashes-update-crash-handler-to-fix-child-processes-hanging-on-macos",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KH8J-crashes-update-crash-handler-to-fix-child-processes-hanging-on-macos.md",
+      "title": "crashes: Update crash-handler to fix child processes hanging on macOS",
+      "repository": "zed-industries-zed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a60f1628dca6f292d600d60bff830fad7b8027f27b6094c9455c1a590ff04439",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T08:57:39.911Z"
     }
   },
   "ai-builder-brain": {

@@ -13308,3 +13308,8 @@
 | `CYCLE-20261126-T9AL` | `2026-11-26T08:36:29.901Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`359fdfa8...`) |
 | `CYCLE-20261126-THHV` | `2026-11-26T08:36:40.531Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10632` | Yes (`aa3080d1...`) |
 | `CYCLE-20261126-TKDI` | `2026-11-26T08:36:44.262Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10633` | Yes (`fb59056d...`) |
+| `CYCLE-20261126-K2TM` | `2026-11-26T08:57:21.226Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`a3f07cad...`) |
+| `CYCLE-20261126-K5D2` | `2026-11-26T08:57:24.518Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10634` | Yes (`f5bf8919...`) |
+| `CYCLE-20261126-K8XI` | `2026-11-26T08:57:29.142Z` | `rafsoh/dimeApp` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md` | Yes (`b76afc01...`) |
+| `CYCLE-20261126-KAQU` | `2026-11-26T08:57:31.494Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10635` | Yes (`8eb7d11f...`) |
+| `CYCLE-20261126-KDYI` | `2026-11-26T08:57:35.658Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10636` | Yes (`26783d36...`) |

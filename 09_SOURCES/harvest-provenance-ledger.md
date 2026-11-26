@@ -13341,3 +13341,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-26T08:36:29.906Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `75fe8688` | Multi-dimensional audit evidence | 2026-11-26T08:36:40.535Z |
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `ab594768` | Multi-dimensional audit evidence | 2026-11-26T08:36:44.267Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-26T08:57:21.231Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `a3ce8d5e` | Multi-dimensional audit evidence | 2026-11-26T08:57:24.522Z |
+| `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `67b0c7d3` | Multi-dimensional audit evidence | 2026-11-26T08:57:29.147Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `29fa7be9` | Multi-dimensional audit evidence | 2026-11-26T08:57:31.499Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `410c10f3` | Multi-dimensional audit evidence | 2026-11-26T08:57:35.663Z |

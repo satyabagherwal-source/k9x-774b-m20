@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T09:28:38.393Z",
+  "timestamp": "2026-11-26T08:57:40.643Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-convaiinnovations-laya-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-convaiinnovations-laya-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T09:28:38.393Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T08:57:40.643Z`  
 > **Learning ID**: `LEARN-EVO-hf-convaiinnovations-laya-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-convaiinn`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T09:28:25.668Z  
+> **Timestamp**: 2026-11-26T08:57:20.595Z  
 > **Learning ID**: `learn-huggingface-convaiinnovations-laya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T09:28:23.973Z  
+> **Harvest Timestamp**: 2026-11-26T08:57:20.469Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 16719 downloads | 5976 likes
+- **Stars / Engagement**: 15848 downloads | 6024 likes
 
 ---
 

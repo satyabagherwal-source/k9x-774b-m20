@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T08:36:50.254Z",
+  "last_updated": "2026-11-26T08:57:41.958Z",
   "total_records": 2723,
   "domains": {
     "A": {
@@ -8466,8 +8466,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "feaa107dbf1291ef0332dc7f29cd01e78cbad417b2c1664372f4e5ddb22a9887",
-      "created_at": "2026-11-26T00:18:05.313Z"
+      "content_hash": "356de6da05d3246828b6ebe33d60c6f16e4e207881673ef706617322732e5a52",
+      "created_at": "2026-11-26T08:57:36.123Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -17068,8 +17068,8 @@
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "repository": "zed-industries/zed",
-      "content_hash": "79df0fef956c775923e56fcbe0f08d4492a0802e69fbfe72e273ac0fdfe419c7",
-      "created_at": "2026-11-25T02:01:59.993Z"
+      "content_hash": "80df4082301ea77341bc8e57dd538820ec4814a5f890202b87f4180901834a38",
+      "created_at": "2026-11-26T08:57:25.016Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
@@ -17077,8 +17077,8 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-learnings-content-information-intelligence-zed-industries-zed.md",
       "repository": "zed-industries-zed-learnings",
-      "content_hash": "200ea4319080c581dec8de705100c99c9d819e05f56f920ac8b66dcd52b348a4",
-      "created_at": "2026-11-25T02:02:11.271Z"
+      "content_hash": "5b9ee9984ab60cef2ed52f2981bc9902cbaa64db22fad167c7844ad0f5949a97",
+      "created_at": "2026-11-26T08:57:40.123Z"
     },
     "DOM-D-C9202D2F": {
       "record_id": "DOM-D-C9202D2F",
@@ -29087,8 +29087,8 @@
       "title": "Technical Construction Intelligence: flux-iac/tofu-controller Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-technical-construction-intelligence-flux-iac-tofu-contr.md",
       "repository": "flux-iac/tofu-controller",
-      "content_hash": "0d8e49a34bb0e07e9c9aa330708630326673351167bdcd2161dba4cdedbf9244",
-      "created_at": "2026-11-23T19:51:23.499Z"
+      "content_hash": "7832aeaea98d855eced5e4b718ba5f87942b85477a4e538b2c5a41e7f4aa85f7",
+      "created_at": "2026-11-26T08:57:31.987Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor",
@@ -29400,8 +29400,8 @@
       "title": "Research & Knowledge Intelligence: convaiinnovations/laya Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-convaiinnovations-laya-research-knowledge-intelligence-convaiinnovations-laya.md",
       "repository": "convaiinnovations/laya",
-      "content_hash": "14f0639523c4d21e8bc3d5bff152fa6021be2a9981fc0febfad8f3e1e83a9da4",
-      "created_at": "2026-11-18T09:28:26.568Z"
+      "content_hash": "b0f9962030f3d2339e5783076f1a9c3509973d489b0f8f3743864d462c1647ed",
+      "created_at": "2026-11-26T08:57:21.486Z"
     },
     "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-core-invariants",
@@ -29427,8 +29427,8 @@
       "title": "Research & Knowledge Intelligence: hf-convaiinnovations-laya-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-convaiinnovations-laya-learnings-research-knowledge-intelligence-hf-convaiinn.md",
       "repository": "hf-convaiinnovations-laya-learnings",
-      "content_hash": "9c8e913a192dbefc54ab8c567b036af3217b8d6653f9a6958090b018e0e01b98",
-      "created_at": "2026-11-18T09:28:38.513Z"
+      "content_hash": "07e94f40ef0b85240521e56b129e146da600a91d0468b14d337ea6fa2cfd5a6e",
+      "created_at": "2026-11-26T08:57:40.773Z"
     },
     "domain_intelligence-research-knowledge-intelligence-edge0-audio8-asr-infinite-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-audio8-asr-infinite-core-invariants",
@@ -41503,8 +41503,8 @@
       "title": "Design Intelligence: rafsoh/dimeApp Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-rafsoh-dimeapp-design-intelligence-rafsoh-dimeapp-core-invariants.md",
       "repository": "rafsoh/dimeApp",
-      "content_hash": "09e1f9f418fb2e5c8aacf6af63451b1e9e7297af91199ea2ae963e06b044b3b9",
-      "created_at": "2026-11-23T22:42:54.822Z"
+      "content_hash": "6a5353138fb2d653f60fefadf4032853aacf575a95100cf0e97154a62ad375f0",
+      "created_at": "2026-11-26T08:57:29.676Z"
     },
     "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants",
@@ -41512,8 +41512,8 @@
       "title": "Design Intelligence: rafsoh-dimeapp-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-rafsoh-dimeapp-learnings-design-intelligence-rafsoh-dimeapp-learnings-core-invar.md",
       "repository": "rafsoh-dimeapp-learnings",
-      "content_hash": "d32ce9f8af5d779366b74bd73bf7f64d18e3f48a51dbed1bd5e96006c7d1c5f7",
-      "created_at": "2026-11-23T22:43:07.696Z"
+      "content_hash": "62f15efd019ef19641a0fd149437fde6e38ac9bee3f3b746953c9033c6b0e068",
+      "created_at": "2026-11-26T08:57:41.958Z"
     },
     "domain_intelligence-content-information-intelligence-biomejs-biome-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-biomejs-biome-core-invariants",

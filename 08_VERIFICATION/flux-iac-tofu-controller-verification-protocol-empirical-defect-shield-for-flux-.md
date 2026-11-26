@@ -4,22 +4,22 @@
 {
   "source_repository": "flux-iac/tofu-controller",
   "source_url": "https://github.com/flux-iac/tofu-controller",
-  "source_version": "23cefad9",
+  "source_version": "29fa7be9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T19:51:23.350Z",
+  "timestamp": "2026-11-26T08:57:31.769Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-flux-iac-tofu-controller",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller) (Revision: `23cefad9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T19:51:23.350Z`  
+> **Provenance**: Harvested from [flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller) (Revision: `29fa7be9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T08:57:31.769Z`  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `flux-iac/tofu-controller` (Commit: `23cefad9`)
+- **Target Repository**: `flux-iac/tofu-controller` (Commit: `29fa7be9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:51:22.148Z  
+> **Harvest Timestamp**: 2026-11-26T08:57:30.211Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A GitOps OpenTofu and Terraform controller for Flux
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 1731 stars
+- **Stars / Engagement**: 1733 stars
 
 ---
 
@@ -1092,11 +1092,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1953** (2026-11-23): **chore(deps): bump the go-minor group across 2 directories with 10 updates**
-  *Symptoms*: Bumps the go-minor group with 9 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.47.7` | `1.48.0` | | [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2) | `1.20.15` | `1.21.3` | | [github.com/aws/aws-sdk-go-v2/service/dynamodb](https://github.com/aws/aws-sdk-go-v2) | `1.73.1` | `1.74.1` | | [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) | `1.114.8` | `1.116.0` | | [github.com/aws/smithy-go](https://github.com/aws/smithy-go) | `1.28.8` | `1.28.9` | | [github.com/fluxcd/pkg/apis/meta](https://github.com/fluxcd/pkg) | `1.38.0` | `1.39.0` | | [github.com/fluxcd/pkg/git](https://github.com/fluxcd/pkg) | `0.56.1` | `0.59.0` | | [github.com/fluxcd/pkg/runtime](https://github.com/fluxcd/pkg) | `0.122.0` | `0.123.0` | | [github.com/zclconf/go-cty](https://github.com/zclconf/go-cty) | `1.19.0` | `1.20.0` | | [github.com/fluxcd/pkg/apis/meta](https://github.com/fluxcd/pkg) | `1.38.0` | `1.39.0` |  Bumps the go-minor group with 2 updates in the /tfctl directory: [github.com/fluxcd/pkg/apis/meta](https://github.com/fluxcd/pkg) and [github.com/fluxcd/pkg/ssa](https://github.com/fluxcd/pkg).  Updates `github.com/aws/aws-sdk-go-v2` from 1.47.7 to 1.48.0 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/aws/aws-sdk-go-v2/commit/914e76e97ffb90ba9c14b4f9770ed2b108120a67"><code>914e76e</code></a> Release 2026-11
+- **Issue #1956** (2026-11-25): **chore(deps): bump the go-patch group across 2 directories with 5 updates**
+  *Symptoms*: Bumps the go-patch group with 5 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.15` | `1.33.21` | | [github.com/elgohr/go-localstack](https://github.com/elgohr/go-localstack) | `1.0.173` | `1.0.174` | | [github.com/fluxcd/source-controller/api](https://github.com/fluxcd/source-controller) | `1.10.1` | `1.10.2` | | [github.com/jenkins-x/go-scm](https://github.com/jenkins-x/go-scm) | `1.17.1` | `1.17.2` | | [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) | `0.25.2` | `0.25.3` | | [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) | `0.25.2` | `0.25.3` |  Bumps the go-patch group with 1 update in the /tfctl directory: [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime).  Updates `github.com/aws/aws-sdk-go-v2/config` from 1.33.15 to 1.33.21 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/aws/aws-sdk-go-v2/commit/b260587e158655c930bbe98087f7386e3c3f4331"><code>b260587</code></a> Release 2026-11-19</li> <li><a href="https://github.com/aws/aws-sdk-go-v2/commit/e258524597b0485a798d3fb5731607221612d78f"><code>e258524</code></a> Regenerated Clients</li> <li><a href="https://github.com/aws/aws-sdk-go-v2/commit/0cdd946367d581341a08e25d99d6bc42ad2a93ad"><code>0cdd946</code></a> Update endpoints model</li> <li><a href="https://github.com/aws/aw
 
-- **Issue #1951** (2026-11-23): **chore(deps): bump the go-patch group across 2 directories with 7 updates**
-  *Symptoms*: Bumps the go-patch group with 7 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.15` | `1.33.21` | | [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2) | `1.20.15` | `1.21.3` | | [github.com/aws/smithy-go](https://github.com/aws/smithy-go) | `1.28.8` | `1.28.9` | | [github.com/elgohr/go-localstack](https://github.com/elgohr/go-localstack) | `1.0.173` | `1.0.174` | | [github.com/jenkins-x/go-scm](https://github.com/jenkins-x/go-scm) | `1.17.1` | `1.17.2` | | [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) | `0.25.2` | `0.25.3` | | [sigs.k8s.io/kustomize/kyaml](https://github.com/kubernetes-sigs/kustomize) | `0.21.2` | `0.21.3` | | [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) | `0.25.2` | `0.25.3` | | [sigs.k8s.io/kustomize/kyaml](https://github.com/kubernetes-sigs/kustomize) | `0.21.2` | `0.21.3` |  Bumps the go-patch group with 2 updates in the /tfctl directory: [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) and [sigs.k8s.io/kustomize/kyaml](https://github.com/kubernetes-sigs/kustomize).  Updates `github.com/aws/aws-sdk-go-v2/config` from 1.33.15 to 1.33.21 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/aws/aws-sdk-go-v2/commit/b260587e158655c930bbe98087f7386e3c3f4331"><code>b260587</code><
+- **Issue #1954** (2026-11-24): **chore(deps): bump the go-patch group across 2 directories with 5 updates**
+  *Symptoms*: Bumps the go-patch group with 5 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.15` | `1.33.21` | | [github.com/elgohr/go-localstack](https://github.com/elgohr/go-localstack) | `1.0.173` | `1.0.174` | | [github.com/jenkins-x/go-scm](https://github.com/jenkins-x/go-scm) | `1.17.1` | `1.17.2` | | [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) | `0.25.2` | `0.25.3` | | [sigs.k8s.io/kustomize/kyaml](https://github.com/kubernetes-sigs/kustomize) | `0.21.2` | `0.21.3` | | [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) | `0.25.2` | `0.25.3` | | [sigs.k8s.io/kustomize/kyaml](https://github.com/kubernetes-sigs/kustomize) | `0.21.2` | `0.21.3` |  Bumps the go-patch group with 2 updates in the /tfctl directory: [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) and [sigs.k8s.io/kustomize/kyaml](https://github.com/kubernetes-sigs/kustomize).  Updates `github.com/aws/aws-sdk-go-v2/config` from 1.33.15 to 1.33.21 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/aws/aws-sdk-go-v2/commit/b260587e158655c930bbe98087f7386e3c3f4331"><code>b260587</code></a> Release 2026-11-19</li> <li><a href="https://github.com/aws/aws-sdk-go-v2/commit/e258524597b0485a798d3fb5731607221612d78f"><code>e258524</code></a> Regenerated Clients</li> <li><a href="https
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1113,224 +1113,195 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `23cefad9` (2026-11-23)
-**Commit Message**: chore(deps): bump the go-minor group across 2 directories with 10 updates (#1953)
+### Incident Patch 1: `29fa7be9` (2026-11-25)
+**Commit Message**: chore(deps): bump the go-patch group across 2 directories with 5 updates (#1956)
 
-Bumps the go-minor group with 9 updates in the / directory:
+Bumps the go-patch group with 5 updates in the / directory:
 
 | Package | From | To |
 | --- | --- | --- |
-| [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.47.7` | `1.48.0` |
-| [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2) | `1.20.15` | `1.21.3` |
-| [github.com/aws/aws-sdk-go-v2/service/dynamodb](https://github.com/aws/aws-sdk-go-v2) | `1.73.1` | `1.74.1` |
-| [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) | `1.114.8` | `1.116.0` |
-| [github.com/aws/smithy-go](https://github.com/aws/smithy-go) | `1.28.8` | `1.28.9` |
-| [github.com/fluxcd/pkg/apis/meta](https://github.com/fluxcd/pkg) | `1.38.0` | `1.39.0` |
-| [github.com/fluxcd/pkg/git](https://github.com/fluxcd/pkg) | `0.56.1` | `0.59.0` |
-| [github.com/fluxcd/pkg/runtime](https://github.com/fluxcd/pkg) | `0.122.0` | `0.123.0` |
-| [github.com/zclconf/go-cty](https://github.com/zclconf/go-cty) | `1.19.0` | `1.20.0` |
-| [github.com/fluxcd/pkg/apis/meta](https://github.com/fluxcd/pkg) | `1.38.0` | `1.39.0` |
+| [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.15` | `1.33.21` |
+| [github.com/elgohr/go-localstack](https://github.com/elgohr/go-localstack) | `1.0.173` | `1.0.174` |
+| [github.com/fluxcd/source-controller/api](https://github.com/fluxcd/source-controller) | `1.10.1` | `1.10.2` |
+| [github.com/jenkins-x/go-scm](https://github.com/jenkins-x/go-scm) | `1.17.1` | `1.17.2` |
+| [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) | `0.25.2` | `0.25.3` |
+| [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) | `0.25.2` | `0.25.3` |
 
-Bumps the go-minor group with 2 updates in the /tfctl 
+Bumps the go-patch group with 1 update in the /tfctl directory: [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime).
 
-**File**: `go.mod` (modified, +24/-24)
+
+Updates `github.com/aws/aws-sdk-go-v2/config` from 1.33.15 to 1.33.21
+- [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+- [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.33.15...config
+
+**File**: `go.mod` (modified, +6/-6)
 ```diff
-@@ -8,20 +8,20 @@ replace github.com/flux-iac/tofu-controller/tfctl => ./tfctl
- 
+@@ -9,29 +9,29 @@ replace github.com/flux-iac/tofu-controller/tfctl => ./tfctl
  require (
  	github.com/Masterminds/sprig/v3 v3.3.0
--	github.com/aws/aws-sdk-go-v2 v1.47.7
-+	github.com/aws/aws-sdk-go-v2 v1.48.0
- 	github.com/aws/aws-sdk-go-v2/config v1.33.15
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.15
--	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.73.1
--	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.8
--	github.com/aws/smithy-go v1.28.8
-+	github.com/aws/aws-sdk-go-v2/credentials v1.21.3
-+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.74.1
-+	github.com/aws/aws-sdk-go-v2/service/s3 v1.116.0
-+	github.com/aws/smithy-go v1.28.9
+ 	github.com/aws/aws-sdk-go-v2 v1.48.0
+-	github.com/aws/aws-sdk-go-v2/config v1.33.15
++	github.com/aws/aws-sdk-go-v2/config v1.33.21
+ 	github.com/aws/aws-sdk-go-v2/credentials v1.21.3
+ 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.74.1
+ 	github.com/aws/aws-sdk-go-v2/service/s3 v1.116.0
+ 	github.com/aws/smithy-go v1.28.9
  	github.com/bradleyfalzon/ghinstallation/v2 v2.19.0
  	github.com/cyphar/filepath-securejoin v0.7.0
- 	github.com/elgohr/go-localstack v1.0.173
+-	github.com/elgohr/go-localstack v1.0.173
++	github.com/elgohr/go-localstack v1.0.174
  	github.com/flux-iac/tofu-controller/api v0.0.0-20260505110553-6233d9ea1db8
  	github.com/flux-iac/tofu-controller/tfctl v0.0.0-00010101000000-000000000000
--	github.com/fluxcd/pkg/apis/meta v1.38.0
--	github.com/fluxcd/pkg/git v0.56.1
--	github.com/fluxcd/pkg/runtime v0.122.0
-+	github.com/fluxcd/pkg/apis/meta v1.39.0
-+	github.com/fluxcd/pkg/git v0.59.0
-+	github.com/fluxcd/pkg/runtime v0.123.0
+ 	github.com/fluxcd/pkg/apis/meta v1.39.0
+ 	github.com/fluxcd/pkg/git v0.59.0
+ 	github.com/fluxcd/pkg/runtime v0.123.0
  	github.com/fluxcd/pkg/tar v1.4.0
- 	github.com/fluxcd/source-controller/api v1.10.1
+-	github.com/fluxcd/source-controller/api v1.10.1
++	github.com/fluxcd/source-controller/api v1.10.2
  	github.com/go-logr/logr v1.4.4
-@@ -40,7 +40,7 @@ require (
- 	github.com/spf13/pflag v1.1.0
- 	github.com/spf13/viper v1.21.0
- 	github.com/stretchr/testify v1.12.1
--	github.com/zclconf/go-cty v1.19.0
-+	github.com/zclconf/go-cty v1.20.0
- 	google.golang.org/grpc v1.85.0
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/yaml.v2 v2.4.0
-@@ -72,11 +72,11 @@ require (
- 	github.com/apparentlymart/go-textseg v1.0.0 // indirect
- 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
- 	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
--	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.7 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.10 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.10 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.10 // indirect
-+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.53.7 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.40.7 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/cloudwatchevents v1.25.7 // indirect
-@@ -86,25 +86,25 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/elasticsearchservice v1.30.7 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/firehose v1.32.4 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/iam v1.35.2 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.11 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.13.10 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.10 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.10 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.13.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.12 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/kinesis v1.43.5 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/lambda v1.88.5 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/redshift v1.46.8 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/route53 v1.43.2 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.32.8 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/ses v1.26.2 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sfn v1.31.2 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.12.3 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.14.0 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sns v1.31.7 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sqs v1.34.8 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/ssm v1.52.8 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.39.3 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.3 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.53.0 // indirect
- 	github.com/beo
+ 	github.com/google/uuid v1.6.0
+ 	github.com/hashicorp/go-cleanhttp v0.5.2
+ 	github.com/hashicorp/go-retryablehttp v0.7.8
+ 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
+ 	github.com/hashicorp/terraform-exec v0.26.0
+ 	github.com/hashicorp/terraform-json v0.29.0
+-	github.com/jenkins-x/go-scm v1.17.1
++	github.com/jenkins-x/go-scm v1.17.2
+ 	github.com/kubescape/go-git-url v0.0.34
+ 	github.com/maxbrunsfeld/counterfeiter/v6 v6.14.0
+ 	github.com/onsi/gomega v1.44.0
+@@ -52,7 +52,7 @@ require (
+ 	k8s.io/kubectl v0.37.2
+ 	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
+ 	sigs.k8s.io/cli-utils v0.37.2
+-	sigs.k8s.io/controller-runtime v0.25.2
++	sigs.k8s.io/controller-runtime v0.25.3
+ 	sigs.k8s.io/kustomize/kyaml v0.21.2
+ 	sigs.k8s.io/yaml v1.6.0
+ )
+@@ -229,7 +229,7 @@ require (
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+-	golang.org/x/oauth2 v0.37.0 // indirect
++	golang.org/x/oauth2 v0.38.0 // indirect
+ 	golang.org/x/sync v0.24.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/term v0.47.0 // indirect
 ```
 
-**File**: `go.sum` (modified, +48/-48)
+**File**: `go.sum` (modified, +16/-16)
 ```diff
-@@ -39,22 +39,22 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPd
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
- github.com/aws/aws-sdk-go v1.55.5 h1:KKUZBfBoyqy5d3swXyiC7Q76ic40rYcbqH7qjh59kzU=
- github.com/aws/aws-sdk-go v1.55.5/go.mod h1:eRwEWoyTWFMVYVQzKMNHWP5/RV4xIUGMQfXQHfHkpNU=
--github.com/aws/aws-sdk-go-v2 v1.47.7 h1:jBmtzRtGWVAzbfc4RBWo1dTte0ZZH8p9U42YJIw2+Bw=
--github.com/aws/aws-sdk-go-v2 v1.47.7/go.mod h1:I8lFSH4MGrZiw2m7miCrRYHsgpC1+HW8uiVGOiPYPcw=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26 h1:SJNA4XaM8Z09adeTHf/vME93jzl44lJV70pSawIBXac=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26/go.mod h1:l0ME5pd2QytH8UZzETcrt90x9Bm+3TyBVeWfVEcZ82c=
-+github.com/aws/aws-sdk-go-v2 v1.48.0 h1:tFU7EJVm7MfyaXLsXdYTZ0Vd6vwt9OljCyqq0gqk0Mc=
-+github.com/aws/aws-sdk-go-v2 v1.48.0/go.mod h1:oeKU5p+TQBnpeLmU42WZLWvzv+ORLn+74n4QVLnm/Z0=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 h1:3dMP9eEmHVosFN1QiD24IJBKVY8m6iUfVYXqRCT118Q=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27/go.mod h1:KH4PKcqtjy1m0656eqQV2v53xE04ddJzuNloEKqlHkI=
- github.com/aws/aws-sdk-go-v2/config v1.33.15 h1:eSO7lvznhY5nMN1K9xK+pPTwNNH0chVmCIzH3C5as+E=
- github.com/aws/aws-sdk-go-v2/config v1.33.15/go.mod h1:QLBxqEJFcgbrsw2dHaWMDW6DcIFWkHplXJMZGB/s2Ew=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.15 h1:LUFG3364w8wKBhGxGQ2XUxCCs+yOUrSg0dWUtBJskp8=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.15/go.mod h1:Q+tKQpy3sU1MjBqXzhZauN7ffcNRF9p7Rvw293sYwE4=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.7 h1:5GGOwjXU738VrsBT0EDFtP5JtLPmJQILp8RS6P+KqLM=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.7/go.mod h1:jY/VeijtHNuTiy5XI9HjpLiamtaaLw+KInZULfookJ8=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.10 h1:DKtPO+uoekvZX1tIFGVlWypYGSYkHPb7rliUI1wZtEw=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.10/go.mod h1:uAi0RDdZZz8IRpXERptWALeCgQG9Ye/HiMLxkxlt8IU=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.10 h1:r8p95YELmfmuV9VvAaFcLesVBZduCCCccxpzQKkNThw=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.10/go.mod h1:W3M52Mqai5TjgzyL/dEG+UwE+Xz9PykyjXelvbAzWIA=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.10 h1:iytL6kFchhbCWWEfLzMGq1+yRecF7+BOXnp70J9zNRM=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.10/go.mod h1:OaBcfeWMHPSyFqiHL/KN1zVIricTvYDNiO4XhR781eM=
-+github.com/aws/aws-sdk-go-v2/credentials v1.21.3 h1:bh+9VoJ4eDzJVEY6jfdNTBa0Dx7tdr+lWSPNovU1vXc=
-+github.com/aws/aws-sdk-go-v2/credentials v1.21.3/go.mod h1:4CNs0EBvjDEpyaXSYCdNeNRhFjHFX2Y373tFUaeTYXA=
-+github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 h1:oH1E0tjN0g+ZRusbX1dsuat4FJ0z05l8hWaycSbDuNc=
-+github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9/go.mod h1:3ZaQGigIoaS45x9HgnLZ4sP475Fs7QoxU3IsZX/J3h4=
-+github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 h1:W0yUUzKBA8SofGQ0yZafEUuZq9UxfvijRgdc6vcRQPA=
-+github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12/go.mod h1:xwKv6vwBNdpPFOxEm/ld4IODZK2s/1ksHvdBqLfH6Gs=
-+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 h1:lqSi8qvAnKC1vfosImdmOsuiJLr/jdybZX5299beB6Q=
-+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12/go.mod h1:rqPQE2vqkW9YHx5+Gp55sx1wsTM4xtGQLl+TKMjxxrs=
-+github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 h1:uvX2yaL+aMjkmnrLPPlR/zwjoKFRMoNhhJfeGjfk6qc=
-+github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12/go.mod h1:dicT+2eNhHHqGkxHO7LoXw3QghIUGuzgdmFqaSTopgI=
- github.com/aws/aws-sdk-go-v2/service/cloudformation v1.53.7 h1:pWuvZn0cGEybhLxYUZBlUQF8vaIcJ11I/8o8i1QjdZ0=
- github.com/aws/aws-sdk-go-v2/service/cloudformation v1.53.7/go.mod h1:TXiuXcbBl1rEAy9xhZi2TBZeWfoRhJ6ymMfepMxJnZk=
- github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.40.7 h1:G8JC8KCrNiQiyK61CYyzRDixCb+XNktVcaQzlG95yJI=
-@@ -63,8 +63,8 @@ github.com/aws/aws-sdk-go-v2/service/cloudwatchevents v1.25.7 h1:stI+nb5ujwmxc/e
- github.com/aws/aws-sdk-go-v2/service/cloudwatchevents v1.25.7/go.mod h1:WpRJHsSWWjBTAa8rXeF5kal4xRgFXwyeJzmlnjAzM+8=
- github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.65.0 h1:3yaFbUbuLfN8n1q01wZtQtHRzUDc/jm0VvniMY0IPE8=
- github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.65.0/go.mod h1:PobeppEnIjw4pcgjFryNDZCTH7AiqZw0yb5r98Gvf9c=
--github.com/aws/aws-sdk-go-v2/service/dynamodb v1.73.1 h1:H8fm6dOTr08vZH4bFc60iSAQ2w//d/eSiABxDuZoHNc=
--github.com/aws/aws-sdk-go-v2/service/dynamodb v1.73.1/go.mod h1:3nRqNS5JBCPn7ovwKmfa4EUp9oLbiP03vMNOLXMvbQw=
-+github.com/aws/aws-sdk-go-v2/service/dynamodb v1.74.1 h1:oXvMRjj+k1m83sdxBmjyWJKFXZMPU7U8xb1mCnDg9QY=
-+github.com/aws/aws-sdk-go-v2/service/dynamodb v1.74.1/go.mod h1:tzOEVcpLdi8aqyYUKQkuOVVAOfOgfLA0xEomIUTHIFY=
- github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.22.7 h1:VTBHXWkSeFgT3sfYB4U92qMgzHl0nz9H1tYNHHutLg0=
- github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.22.7/go.mod h1:F/ybU7YfgFcktSp+biKgiHjyscGhlZxOz4QFFQqHXGw=
- github.com/aws/aws-sdk-go-v2/se
+@@ -43,8 +43,8 @@ github.com/aws/aws-sdk-go-v2 v1.48.0 h1:tFU7EJVm7MfyaXLsXdYTZ0Vd6vwt9OljCyqq0gqk
+ github.com/aws/aws-sdk-go-v2 v1.48.0/go.mod h1:oeKU5p+TQBnpeLmU42WZLWvzv+ORLn+74n4QVLnm/Z0=
+ github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 h1:3dMP9eEmHVosFN1QiD24IJBKVY8m6iUfVYXqRCT118Q=
+ github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27/go.mod h1:KH4PKcqtjy1m0656eqQV2v53xE04ddJzuNloEKqlHkI=
+-github.com/aws/aws-sdk-go-v2/config v1.33.15 h1:eSO7lvznhY5nMN1K9xK+pPTwNNH0chVmCIzH3C5as+E=
+-github.com/aws/aws-sdk-go-v2/config v1.33.15/go.mod h1:QLBxqEJFcgbrsw2dHaWMDW6DcIFWkHplXJMZGB/s2Ew=
++github.com/aws/aws-sdk-go-v2/config v1.33.21 h1:NY1d3yXmplUSYnUAue0sR88svD+SJiaI+YJGp8TxSNg=
++github.com/aws/aws-sdk-go-v2/config v1.33.21/go.mod h1:pVJNXUXaCLu9a/4/liTklg9zR3yO0xm/XBEQhgg5nzc=
+ github.com/aws/aws-sdk-go-v2/credentials v1.21.3 h1:bh+9VoJ4eDzJVEY6jfdNTBa0Dx7tdr+lWSPNovU1vXc=
+ github.com/aws/aws-sdk-go-v2/credentials v1.21.3/go.mod h1:4CNs0EBvjDEpyaXSYCdNeNRhFjHFX2Y373tFUaeTYXA=
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 h1:oH1E0tjN0g+ZRusbX1dsuat4FJ0z05l8hWaycSbDuNc=
+@@ -165,8 +165,8 @@ github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4
+ github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
+ github.com/elazarl/goproxy v1.9.2 h1:+vXRRSWrznMtBrAb559qfqC+Cny1Q3rR0l51Yu/3WUw=
+ github.com/elazarl/goproxy v1.9.2/go.mod h1:THdE5ix2clxX9lZzcICPpZ67d6CdrPZxdOYsNgU5e30=
+-github.com/elgohr/go-localstack v1.0.173 h1:NQgYB1CZUd+4Xf5EQYzCV0rusj7K1fLjB456QgwxhGU=
+-github.com/elgohr/go-localstack v1.0.173/go.mod h1:93pIHCr4mcZTyfsY3c8vj2ZVguYRuQyPynnz7lCrlOA=
++github.com/elgohr/go-localstack v1.0.174 h1:9myaaPU7B4FSA6M1oKap+ri0+moxyD+laYfLBy0zsSI=
++github.com/elgohr/go-localstack v1.0.174/go.mod h1:U+7Am7dRR4f3mgA50SGtJCP5NCLmtVU6oGYvPpTrPNw=
+ github.com/emicklei/go-restful/v3 v3.13.0 h1:C4Bl2xDndpU6nJ4bc1jXd+uTmYPVUwkD6bFY/oTyCes=
+ github.com/emicklei/go-restful/v3 v3.13.0/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
+ github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
+@@ -197,8 +197,8 @@ github.com/fluxcd/pkg/ssa v0.85.0 h1:V12FOOIhAMgH5byjaTW9G1snaoNcn+hBxP4hH0Us52E
+ github.com/fluxcd/pkg/ssa v0.85.0/go.mod h1:J91YwWDZDDwNUIKWPbTk771JT0CzoWwJL5og9muo1jw=
+ github.com/fluxcd/pkg/tar v1.4.0 h1:E6LKORT7ZBd/1ekX4N/gS9LeKfyLui1lBgne8e5PC8I=
+ github.com/fluxcd/pkg/tar v1.4.0/go.mod h1:20lDnHLNj/mgTUA494YWkxldX8zyyFexSKpuipX+6Tk=
+-github.com/fluxcd/source-controller/api v1.10.1 h1:DqqIctqpgyZvPCjpJUFwWjUM063Y5xblsLqxmxQxcac=
+-github.com/fluxcd/source-controller/api v1.10.1/go.mod h1:ar4cOwOZ9aMei+7eChKuJFJmnN1Mm5LOTZ9q46Yp4c0=
++github.com/fluxcd/source-controller/api v1.10.2 h1:OPs3SN0rlhcxJ8HXHHFj5h0wkmrCIgfLIDmK6C66Ahc=
++github.com/fluxcd/source-controller/api v1.10.2/go.mod h1:ar4cOwOZ9aMei+7eChKuJFJmnN1Mm5LOTZ9q46Yp4c0=
+ github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
+ github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
+ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
+@@ -331,8 +331,8 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
+ github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
+ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
+-github.com/jenkins-x/go-scm v1.17.1 h1:z9g6oSa9EmwjpCr5TCkOYhzRyZ9sWiAcHnw4enK71lU=
+-github.com/jenkins-x/go-scm v1.17.1/go.mod h1:DcST+SZCV5wiszUKVIRzLkEjCEaAeS3dJjINxcEj8hk=
++github.com/jenkins-x/go-scm v1.17.2 h1:UInE1LNgCWVu+9xScK9BEn9Xukw6DVlhx6+Cq8asBS4=
++github.com/jenkins-x/go-scm v1.17.2/go.mod h1:5tKfxId14C+A0Q8tF84ebl/NuYKd5RKMqdXaPyU/D/Y=
+ github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
+ github.com/jmespath/go-jmespath v0.4.0 h1:BEgLn5cpjn8UN1mAw4NjwDrS35OdebyEtFe+9YPoQUg=
+ github.com/jmespath/go-jmespath v0.4.0/go.mod h1:T8mJZnbsbmF+m6zOOFylbeCJqk5+pHWvzYPziyZiYoo=
+@@ -511,10 +511,10 @@ go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lq
+ go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
+ go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
+ go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
+-go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+-go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
++go.opentelemetry.io
 ```
 
-**File**: `tfctl/go.mod` (modified, +3/-3)
+**File**: `tfctl/go.mod` (modified, +2/-2)
 ```diff
-@@ -7,8 +7,8 @@ replace github.com/flux-iac/tofu-controller/api => ../api
- require (
- 	github.com/flux-iac/tofu-controller/api v0.0.0-20260505110553-6233d9ea1db8
- 	github.com/fluxcd/cli-utils v1.4.0
--	github.com/fluxcd/pkg/apis/meta v1.38.0
--	github.com/fluxcd/pkg/ssa v0.83.0
-+	github.com/fluxcd/pkg/apis/meta v1.39.0
-+	github.com/fluxcd/pkg/ssa v0.85.0
- 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
- 	github.com/hashicorp/go-version v1.9.0
- 	github.com/hashicorp/hc-install v0.10.0
-@@ -40,7 +40,7 @@ require (
- 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
+@@ -21,7 +21,7 @@ require (
+ 	k8s.io/apimachinery v0.37.2
+ 	k8s.io/cli-runtime v0.37.2
+ 	k8s.io/client-go v0.37.2
+-	sigs.k8s.io/controller-runtime v0.25.2
++	sigs.k8s.io/controller-runtime v0.25.3
+ 	sigs.k8s.io/kustomize/kyaml v0.21.2
+ 	sigs.k8s.io/yaml v1.6.0
+ )
+@@ -41,7 +41,7 @@ require (
  	github.com/fatih/color v1.19.0 // indirect
  	github.com/fluxcd/pkg/apis/acl v0.12.0 // indirect
--	github.com/fluxcd/pkg/runtime v0.122.0 // indirect
-+	github.com/fluxcd/pkg/runtime v0.123.0 // indirect
- 	github.com/fluxcd/source-controller/api v1.10.1 // indirect
+ 	github.com/fluxcd/pkg/runtime v0.123.0 // indirect
+-	github.com/fluxcd/source-controller/api v1.10.1 // indirect
++	github.com/fluxcd/source-controller/api v1.10.2 // indirect
  	github.com/fsnotify/fsnotify v1.10.1 // indirect
  	github.com/fxamacker/cbor/v2 v2.9.3 // indirect
+ 	github.com/go-errors/errors v1.5.1 // indirect
 ```
 
-**File**: `tfctl/go.sum` (modified, +6/-6)
+**File**: `tfctl/go.sum` (modified, +4/-4)
 ```diff
-@@ -47,12 +47,12 @@ github.com/fluxcd/cli-utils v1.4.0 h1:zlTiCWcVDQvvwZXILYeu5rpbnGt1sS+w32y3+rkOpi
- github.com/fluxcd/cli-utils v1.4.0/go.mod h1:OupUOj2boEKTbiguMbGMz5Z/d59JUcb1c7pPESe8Pjw=
- github.com/fluxcd/pkg/apis/acl v0.12.0 h1:UWpZDqKxpKDW38wdXIMHV8Uv3POPu2vUrra0JH1frH0=
- github.com/fluxcd/pkg/apis/acl v0.12.0/go.mod h1:PJrGIu5Bw/6/siO95uhS+pi5oKSU+gVJqHqsPHb8Kok=
--github.com/fluxcd/pkg/apis/meta v1.38.0 h1:7t6/DuGFAPx2LE4MsRh1jskjnVE6qELKfr/LrfG7KE8=
--github.com/fluxcd/pkg/apis/meta v1.38.0/go.mod h1:lmdugeiZyt6w+DRm8ypkB+nwrzm+saMbqSfZKGBbTOE=
--github.com/fluxcd/pkg/runtime v0.122.0 h1:5nT+3PqbRvnzIMBNW6g/lIqsg6B715zaF12J3KnvjJY=
--github.com/fluxcd/pkg/runtime v0.122.0/go.mod h1:46y8/GVMFotQkQxzzePecv7cn09DLbQhq6cl2VQ5l9A=
--github.com/fluxcd/pkg/ssa v0.83.0 h1:uFKrK255D8wdZxI6k6CznDmVgcah2y+0B+DYYpq/kZs=
--github.com/fluxcd/pkg/ssa v0.83.0/go.mod h1:J91YwWDZDDwNUIKWPbTk771JT0CzoWwJL5og9muo1jw=
-+github.com/fluxcd/pkg/apis/meta v1.39.0 h1:rbBMryj1DNNpS4hMg6HSOk4FHxco7pXXC1oN0i/59z4=
-+github.com/fluxcd/pkg/apis/meta v1.39.0/go.mod h1:lmdugeiZyt6w+DRm8ypkB+nwrzm+saMbqSfZKGBbTOE=
-+github.com/fluxcd/pkg/runtime v0.123.0 h1:PNEF3LykVQagCRLYQ1o92VJH4zhtXREuQPbJE6arWH0=
-+github.com/fluxcd/pkg/runtime v0.123.0/go.mod h1:bGvdZTHpS/TGP/RbrhtyLDz9SDvhBOLLAgOgN2UuPFQ=
-+github.com/fluxcd/pkg/ssa v0.85.0 h1:V12FOOIhAMgH5byjaTW9G1snaoNcn+hBxP4hH0Us52E=
-+github.com/fluxcd/pkg/ssa v0.85.0/go.mod h1:J91YwWDZDDwNUIKWPbTk771JT0CzoWwJL5og9muo1jw=
- github.com/fluxcd/source-controller/api v1.10.1 h1:DqqIctqpgyZvPCjpJUFwWjUM063Y5xblsLqxmxQxcac=
- github.com/fluxcd/source-controller/api v1.10.1/go.mod h1:ar4cOwOZ9aMei+7eChKuJFJmnN1Mm5LOTZ9q46Yp4c0=
+@@ -53,8 +53,8 @@ github.com/fluxcd/pkg/runtime v0.123.0 h1:PNEF3LykVQagCRLYQ1o92VJH4zhtXREuQPbJE6
+ github.com/fluxcd/pkg/runtime v0.123.0/go.mod h1:bGvdZTHpS/TGP/RbrhtyLDz9SDvhBOLLAgOgN2UuPFQ=
+ github.com/fluxcd/pkg/ssa v0.85.0 h1:V12FOOIhAMgH5byjaTW9G1snaoNcn+hBxP4hH0Us52E=
+ github.com/fluxcd/pkg/ssa v0.85.0/go.mod h1:J91YwWDZDDwNUIKWPbTk771JT0CzoWwJL5og9muo1jw=
+-github.com/fluxcd/source-controller/api v1.10.1 h1:DqqIctqpgyZvPCjpJUFwWjUM063Y5xblsLqxmxQxcac=
+-github.com/fluxcd/source-controller/api v1.10.1/go.mod h1:ar4cOwOZ9aMei+7eChKuJFJmnN1Mm5LOTZ9q46Yp4c0=
++github.com/fluxcd/source-controller/api v1.10.2 h1:OPs3SN0rlhcxJ8HXHHFj5h0wkmrCIgfLIDmK6C66Ahc=
++github.com/fluxcd/source-controller/api v1.10.2/go.mod h1:ar4cOwOZ9aMei+7eChKuJFJmnN1Mm5LOTZ9q46Yp4c0=
  github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
+ github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
+ github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=
+@@ -314,8 +314,8 @@ k8s.io/kubectl v0.37.2 h1:AGGIhrGSsXtrL6BZWf7Hp2K9yB+2qdx7wovsOP1MiCg=
+ k8s.io/kubectl v0.37.2/go.mod h1:0nyX9up426PgGMcGkWjF1DeipLkd41eKZHoLDgop20k=
+ k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3 h1:jVkFFVfXdXP74B/zbO3hM3hpSFD0xvhQ5U686DPurkE=
+ k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3/go.mod h1:M2s5JB1lIYP3jzZdorPLHXIPJzt9vv2muW5a6L9DtNM=
+-sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
+-sigs.k8s.io/controller-runtime v0.25.2/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
++sigs.k8s.io/controller-runtime v0.25.3 h1:b4OcZSY/aKHY8JG+rBlQmQ1xLs574+ZBEjv1dtfLd80=
++sigs.k8s.io/controller-runtime v0.25.3/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730/go.mod h1:mdzfpAEoE6DHQEN0uh9ZbOCuHbLK5wOm7dK4ctXE9Tg=
+ sigs.k8s.io/kustomize/api v0.21.2 h1:MRyw+zLnFBP+G40gZJoKZErAuRiOPEPao+ddS9L6xt4=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1956** (2026-11-25): chore(deps): bump the go-patch group across 2 directories with 5 updates (@dependabot[bot])
+- **PR #1954** (closed): chore(deps): bump the go-patch group across 2 directories with 5 updates (@dependabot[bot])
 - **PR #1953** (2026-11-23): chore(deps): bump the go-minor group across 2 directories with 10 updates (@dependabot[bot])
 - **PR #1951** (closed): chore(deps): bump the go-patch group across 2 directories with 7 updates (@dependabot[bot])
 - **PR #1950** (2026-11-18): build(tfctl): add Windows builds to goreleaser (@yuminn-k)
 - **PR #1949** (closed): chore(deps): bump the go-minor group across 2 directories with 5 updates (@dependabot[bot])
-- **PR #1948** (closed): chore(deps): bump the go-patch group across 2 directories with 5 updates (@dependabot[bot])
-- **PR #1946** (2026-11-17): chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
 
 ---
 
@@ -1350,13 +1321,13 @@ Bumps the go-minor group with 2 updates in the /tfctl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the go-minor group across 2 directories with 10 updates
+## X. deps): bump the go-patch group across 2 directories with 5 updates
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `23cefad9`: deps): bump the go-minor group across 2 directories with 10 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `29fa7be9`: deps): bump the go-patch group across 2 directories with 5 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -1364,56 +1335,27 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/aws/aws-sdk-go-v2 v1.48.0
-	github.com/aws/aws-sdk-go-v2/credentials v1.21.3
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.74.1
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.116.0
-	github.com/aws/smithy-go v1.28.9
-	github.com/fluxcd/pkg/apis/meta v1.39.0
-	github.com/fluxcd/pkg/git v0.59.0
-	github.com/fluxcd/pkg/runtime v0.123.0
-	github.com/zclconf/go-cty v1.20.0
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.13.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.14.0 // indirect
-
+	github.com/aws/aws-sdk-go-v2/config v1.33.21
+	github.com/elgohr/go-localstack v1.0.174
+	github.com/fluxcd/source-controller/api v1.10.2
+	github.com/jenkins-x/go-scm v1.17.2
+	sigs.k8s.io/controller-runtime v0.25.3
+	golang.org/x/oauth2 v0.38.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/aws/aws-sdk-go-v2 v1.47.7
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.15
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.73.1
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.8
-	github.com/aws/smithy-go v1.28.8
-	github.com/fluxcd/pkg/apis/meta v1.38.0
-	github.com/fluxcd/pkg/git v0.56.1
-	github.com/fluxcd/pkg/runtime v0.122.0
-	github.com/zclconf/go-cty v1.19.0
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.7 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.10 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.10 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.13.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.12.3 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.33.15
+	github.com/elgohr/go-localstack v1.0.173
+	github.com/fluxcd/source-controller/api v1.10.1
+	github.com/jenkins-x/go-scm v1.17.1
+	sigs.k8s.io/controller-runtime v0.25.2
+	golang.org/x/oauth2 v0.37.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `23cefad9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `29fa7be9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
