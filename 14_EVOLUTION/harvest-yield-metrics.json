@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:11:48.302Z",
-  "total_cycles_completed": 12901,
-  "total_learnings_persisted": 12901,
-  "total_rules_promoted": 11699,
+  "last_updated": "2026-11-26T23:24:11.240Z",
+  "total_cycles_completed": 12903,
+  "total_learnings_persisted": 12903,
+  "total_rules_promoted": 11700,
   "history": [
-    {
-      "timestamp": "2026-11-26T12:50:53.940Z",
-      "repository": "makecindy/cindy",
-      "learningId": "learn-github-makecindy-cindy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T12:59:16.769Z",
-      "repository": "yetone/magpie",
-      "learningId": "learn-github-yetone-magpie",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T12:59:19.737Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T23:11:48.302Z",
       "repository": "SeekStorm/SeekStorm",
       "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T23:24:01.159Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T23:24:11.240Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

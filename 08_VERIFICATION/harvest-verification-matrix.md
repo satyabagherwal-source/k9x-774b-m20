@@ -13592,3 +13592,5 @@
 | `CYCLE-20261126-2NJR` | `2026-11-26T23:11:36.375Z` | `EL4CTEO/fast-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10789` | Yes (`61e82582...`) |
 | `CYCLE-20261126-2QWH` | `2026-11-26T23:11:40.721Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10790` | Yes (`8033e726...`) |
 | `CYCLE-20261126-2WQA` | `2026-11-26T23:11:48.274Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10791` | Yes (`0911e5de...`) |
+| `CYCLE-20261126-IM7M` | `2026-11-26T23:24:01.138Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`81286dbd...`) |
+| `CYCLE-20261126-ITZG` | `2026-11-26T23:24:11.212Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10792` | Yes (`11e09881...`) |

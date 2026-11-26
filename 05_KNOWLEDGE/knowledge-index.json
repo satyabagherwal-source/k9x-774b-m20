@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T23:11:55.206Z",
+  "last_updated": "2026-11-26T23:24:18.704Z",
   "total_verified_learnings": 9137,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26247,
+  "total_items": 26252,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1086098305567bf127d5e34645b98ea8d9c94a9972e9b66bb58fa71f90ba866d",
+      "content_hash": "0a34185f7c4e9b492b904a973372cef1974bd622fd3970baa5c76bde6212e7cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T21:44:29.360Z"
+      "persisted_at": "2026-11-26T23:24:18.704Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -215071,8 +215071,8 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "63911ea6",
-      "content_hash": "44436e631864d3a8aac510c6d06e22536d9f3d34cf591590e63bb5f48f3585bd",
+      "source_version": "55f7ecc2",
+      "content_hash": "11e09881a75c1274d969cf44a33b4c0cdea6addbefd9dbe02122373fe4e82fbf",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
@@ -215110,6 +215110,11 @@
           "number": 10462,
           "title": "bump golang.org/x/crypto to 0.59.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10792,
+          "title": "stat test",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215117,7 +215122,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T05:29:12.883Z",
+      "verified_at": "2026-11-26T23:24:10.873Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215171,10 +215176,10 @@
       "relative_path": "08_VERIFICATION/linkerd-linkerd2-verification-protocol-empirical-defect-shield-for-linkerd-linke.md",
       "title": "Verification Protocol: Empirical Defect Shield for linkerd/linkerd2",
       "repository": "linkerd/linkerd2",
-      "source_version": "103bc2d9",
-      "content_hash": "c023897f62ba5efa0fb5911c2ef26e2ef3f515f068fcd7a9ed1a121ef980a84c",
+      "source_version": "55f7ecc2",
+      "content_hash": "fd27a194f112215500d89b3a81c9e0b349cc08f901a08978dd441bf3f6e538c5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:19:54.534Z"
+      "persisted_at": "2026-11-26T23:24:12.186Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants",
@@ -215220,9 +215225,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for linkerd-linkerd2-learnings",
       "repository": "linkerd-linkerd2-learnings",
       "source_version": "HEAD",
-      "content_hash": "a053d996652209965481b195e77857dc76142a9c6dec4fd16dc70ce37ac14aa4",
+      "content_hash": "6f48cb6aaa1c734e9c7dc201c3c989c200519aac9ec4b3cfc2d4b745bd3fa82f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:19:59.191Z"
+      "persisted_at": "2026-11-26T23:24:17.217Z"
     },
     "candidate_directive-clean-up-stdin-source-logging-for-per-source-debug": {
       "item_id": "candidate_directive-clean-up-stdin-source-logging-for-per-source-debug",
@@ -229617,7 +229622,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
       "source_version": "hf-baai-bge-reranker-v2-m3",
-      "content_hash": "1a2889676cd13702a37af6c9e17922bb948104d03c39cb26c580139cb17a60fb",
+      "content_hash": "81286dbd2a7205c7a9472c1ca28c541ab4ec2791f99a0e1d26cf49bd82192341",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "promoted_rules": [
@@ -229637,7 +229642,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:38:01.825Z",
+      "verified_at": "2026-11-26T23:24:00.707Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -297780,9 +297785,9 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-reranker-v2-m3 Core Invariants",
       "repository": "BAAI/bge-reranker-v2-m3",
       "source_version": "hf-baai-bge-reranker-v2-m3",
-      "content_hash": "d59e030451b1060bda084e8fc05e3dcd2d7511ccb62e2a10c954edaa0777211a",
+      "content_hash": "ea6dc25c953bec7e144b2c29f1dd98173d999abaa3fb6fc6b9377815e14a8e2a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:38:02.398Z"
+      "persisted_at": "2026-11-26T23:24:01.445Z"
     },
     "rule-9310": {
       "learning_id": "rule-9310",
@@ -297982,9 +297987,9 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-reranker-v2-m3-learnings Core Invariants",
       "repository": "hf-baai-bge-reranker-v2-m3-learnings",
       "source_version": "HEAD",
-      "content_hash": "0fafe8ecb91a014a8571e27aa6c54dd0edbee9b2bfa136a301938cc0ded09e64",
+      "content_hash": "b9b8a80a5b09fad568316f598d10c38837626080172fd60e7882e4107bf44f65",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:38:22.204Z"
+      "persisted_at": "2026-11-26T23:24:15.572Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-callstack-agent-device-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-callstack-agent-device-learnings",
@@ -357730,13 +357735,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YM0O-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IZAZ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d35cbad453c62ffd829b916d878ba04841d6fbf7aacbe7093b7ea2b64e6c7287",
+      "content_hash": "cce57b23e098f8b12f7e8ebe2fc2673b31104a6cd49afd366e27631ce778a0b3",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T21:44:28.926Z"
+      "persisted_at": "2026-11-26T23:24:18.111Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357746,9 +357751,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "071042eff81ae4232e5f99f103ff491f004f8865b151e451bb1a0ceca297c1a6",
+      "content_hash": "d058ff500b3cb18905b731d58236f53c39019592214e0bf625af143db53903d4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T21:44:29.150Z"
+      "persisted_at": "2026-11-26T23:24:18.411Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -359987,6 +359992,68 @@
       "content_hash": "4cc89cb3aa72dcd73a418de79e0ed63172316092edda16c538339651063587ad",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T23:11:52.562Z"
+    },
+    "rule-10792": {
+      "learning_id": "rule-10792",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10792,
+      "title": "stat test",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "55f7ecc2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T23:24:10.873Z"
+    },
+    "candidate_directive-stat-test": {
+      "item_id": "candidate_directive-stat-test",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IU8X-stat-test.md",
+      "title": "stat test",
+      "repository": "linkerd/linkerd2",
+      "source_version": "55f7ecc2",
+      "content_hash": "3b816a70c006562632f00ee3ba3443204743b39da8f95ac658983fc9f5f56b6e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T23:24:11.557Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-linkerd-linkerd2-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-linkerd-linkerd2-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-linkerd-linkerd2-quality-verification-intelligence-linkerd-linkerd2-core-invaria.md",
+      "title": "Quality & Verification Intelligence: linkerd/linkerd2 Core Invariants",
+      "repository": "linkerd/linkerd2",
+      "source_version": "55f7ecc2",
+      "content_hash": "5461f6a8e4b74ff67d76320cc496d6727cec22ea6d1422932ed16f484f5ea86b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T23:24:11.872Z"
+    },
+    "candidate_directive-viz-stat-test": {
+      "item_id": "candidate_directive-viz-stat-test",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IY4T-viz-stat-test.md",
+      "title": "viz): stat test",
+      "repository": "linkerd-linkerd2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "095def92d290c36ee71d857f221c74e370d1763ecfca8a63300404c9f70de9de",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T23:24:16.592Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-linkerd-linkerd2-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-linkerd-linkerd2-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-linkerd-linkerd2-learnings-quality-verification-intelligence-linkerd-linkerd2-le.md",
+      "title": "Quality & Verification Intelligence: linkerd-linkerd2-learnings Core Invariants",
+      "repository": "linkerd-linkerd2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "81af82f4fcf53400bb75cbb5d7bfe4a4aaa7c3b10ab5ce9bdd12cdb7d2d31405",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T23:24:16.893Z"
     }
   },
   "ai-builder-brain": {

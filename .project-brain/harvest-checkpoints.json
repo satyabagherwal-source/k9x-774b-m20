@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T23:11:48.307Z",
+  "last_updated": "2026-11-26T23:24:11.244Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1475,14 +1475,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "content_hash": "1a2889676cd13702a37af6c9e17922bb948104d03c39cb26c580139cb17a60fb",
-      "verified_at": "2026-11-23T14:38:02.117Z",
+      "content_hash": "81286dbd2a7205c7a9472c1ca28c541ab4ec2791f99a0e1d26cf49bd82192341",
+      "verified_at": "2026-11-26T23:24:01.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T14:38:02.117Z"
+      "last_updated": "2026-11-26T23:24:01.163Z"
     },
     "jonatasgrosman/wav2vec2-large-xlsr-53-japanese": {
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "44436e631864d3a8aac510c6d06e22536d9f3d34cf591590e63bb5f48f3585bd",
-      "verified_at": "2026-11-26T05:29:13.218Z",
+      "content_hash": "11e09881a75c1274d969cf44a33b4c0cdea6addbefd9dbe02122373fe4e82fbf",
+      "verified_at": "2026-11-26T23:24:11.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T05:29:13.218Z"
+      "last_updated": "2026-11-26T23:24:11.243Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",

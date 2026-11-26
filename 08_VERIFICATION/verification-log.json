@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-N1EU",
-    "timestamp": "2026-11-25T11:59:56.646Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "55eaa0460ea19abd70782a839534fe1e4b97d59856af53ac1d7d59848a1d5985",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-YP7S",
-    "timestamp": "2026-11-25T12:09:00.712Z",
-    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-    "contentHash": "8b878caba3d541d33bfc9311a59d02d3ac7d3773a4539f194e6cb30ab23af676",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-YRFS",
     "timestamp": "2026-11-25T12:09:03.592Z",
     "repository": "GitoxideLabs/gitoxide",
@@ -7490,6 +7460,36 @@
     "repository": "SeekStorm/SeekStorm",
     "learningId": "learn-github-seekstorm-seekstorm",
     "contentHash": "0911e5de1ff9523495058647c3321cb041cd9ab909d3f0bcdfb54011948a2ca3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-IM7M",
+    "timestamp": "2026-11-26T23:24:01.138Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "81286dbd2a7205c7a9472c1ca28c541ab4ec2791f99a0e1d26cf49bd82192341",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-ITZG",
+    "timestamp": "2026-11-26T23:24:11.212Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "11e09881a75c1274d969cf44a33b4c0cdea6addbefd9dbe02122373fe4e82fbf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

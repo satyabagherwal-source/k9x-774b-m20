@@ -4,22 +4,22 @@
 {
   "source_repository": "linkerd/linkerd2",
   "source_url": "https://github.com/linkerd/linkerd2",
-  "source_version": "103bc2d9",
+  "source_version": "55f7ecc2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T05:19:54.066Z",
+  "timestamp": "2026-11-26T23:24:11.556Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-linkerd-linkerd2",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `103bc2d9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T05:19:54.066Z`  
+> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `55f7ecc2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T23:24:11.556Z`  
 > **Learning ID**: `learn-github-linkerd-linkerd2`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `linkerd/linkerd2` (Commit: `103bc2d9`)
+- **Target Repository**: `linkerd/linkerd2` (Commit: `55f7ecc2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:19:52.297Z  
+> **Harvest Timestamp**: 2026-11-26T23:24:09.617Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11544 stars
+- **Stars / Engagement**: 11546 stars
 
 ---
 
@@ -1622,11 +1622,11 @@ func (pw *ProbeWorker) doProbe() error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #15767** (2026-11-25): **Proxy parses OTEL_RESOURCE_ATTRIBUTES as newline-separated instead of comma-separated**
+  *Symptoms*: ### What is the issue?  The proxy reads the `OTEL_RESOURCE_ATTRIBUTES` environment variable to add resource attributes to the spans it exports. The [OpenTelemetry specification](https://opentelemetry.io/docs/specs/otel/resource/sdk/#specifying-resource-information-via-an-environment-variable) defines this variable as a comma-separated list of `key=value` pairs, for example `service.namespace=shop,deployment.environment=prod`.  The proxy parses it with the same newline-based parser it uses for the downward API labels file and `LINKERD2_PROXY_TRACE_EXTRA_ATTRIBUTES`. As a result, a spec-conformant value with more than one attribute becomes a single attribute: the first key gets the rest of the string as its value, and the other attributes are lost.  ### How can it be reproduced?  1. Install Linkerd with proxy tracing enabled. 2. Set an extra environment variable on the proxy through the `proxy.additionalEnv` Helm value:     ```yaml    proxy:      additionalEnv:        - name: OTEL_RESOURCE_ATTRIBUTES          value: service.namespace=shop,deployment.environment=prod    ```  3. Inspect a span exported by the proxy in the trace collector.  Expected resource attributes:  - `service.namespace=shop` - `deployment.environment=prod`  Actual resource attribute:  - `service.namespace=shop,deployment.environment=prod`  The `deployment.environment` attribute is missing.  ### Logs, error output, etc  None. The value is accepted silently.  ### output of `linkerd check -o short`  Not applica
+
 - **Issue #15764** (2026-11-13): **linkerd-cni writes an invalid kubeconfig when KUBERNETES_SERVICE_HOST is an IPv6 address**
   *Symptoms*: ### What is the issue?  The linkerd-cni installer (`internal/cni/conf.go` in linkerd2-proxy-init) builds the cluster server URL for the cni-plugin kubeconfig as `https://{{ .ServiceHost }}:{{ .ServicePort }}`. On IPv6 and IPv6-first dual-stack clusters, `KUBERNETES_SERVICE_HOST` is an IPv6 address such as `fd00:10:96::1`, so the kubeconfig contains:  ```yaml server: https://fd00:10:96::1:443 ```  That is not a valid URL, so the cni-plugin cannot create a Kubernetes client from the kubeconfig.  linkerd/linkerd2-proxy-init#589 removed the square brackets around the host to fix IPv4 addresses with recent Go versions. A review comment on that PR pointed out that the change breaks IPv6 hosts.  ### How can it be reproduced?  1. Run the linkerd-cni installer with `KUBERNETES_SERVICE_HOST=fd00:10:96::1` and `KUBERNETES_SERVICE_PORT=443`, for example through `reconfigureK8s` in a `TestReconfigureK8s` case. 2. Inspect the generated `ZZZ-linkerd-cni-kubeconfig`. The `server` field is `https://fd00:10:96::1:443`.  ### Logs, error output, etc  Parsing the generated server URL with Go's `net/url`:  ``` parse "https://fd00:10:96::1:443": invalid port ":10:96::1:443" after host ```  ### output of `linkerd check -o short`  Not applicable. I found this by reading the installer code and reproduced it with the installer's unit tests, not on a live cluster.  ### Environment  - linkerd2-proxy-init `main` (f9e8b49) - Any cluster where `KUBERNETES_SERVICE_HOST` is an IPv6 address  ### Possible solut
-
-- **Issue #15665** (2026-10-08): **h2 library upgrade causes policy service to terminate connections from clients with a large number of policy watches**
-  *Symptoms*: ### What is the issue?  The h2 upgrade from 0.4.15 to 0.4.17 in https://github.com/linkerd/linkerd2/pull/15592 and released in  https://github.com/linkerd/linkerd2/releases/tag/edge-26.8.3 included this change from h2 library https://github.com/hyperium/h2/pull/935, which was released in h2 0.4.16.  The h2 change adds a "small DATA frame" budget which limits the number of small http2 DATA frames that a client can send to the server, in an attempt to protect the server from denial of service attacks. When the client overruns this budget by sending too many small http2 DATA frames, the server terminates the connection with a GOAWAY.  This change, however, is causing the policy container to terminate valid connections. linkerd client proxies can easily overrun the default small DATA frame budget in the h2 library by creating a few hundred policy watches. Each `Watch()` gRPC request results in a small DATA frame sent from the proxy to the policy service, eventually causing the policy service to terminate the connection.  I attempted to upgrade from edge-26.8.2 to edge-26.9.1 and immediately began running into this issue. Client proxies that have a large number of outbound destinations would send many `Watch()` requests to the policy service, until the policy service terminated the connection. A few minutes later, the client proxies would retry, only to have the connection terminated again once the small DATA frame budget was exhausted and the h2 library closed the connection.  Th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1643,100 +1643,386 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `103bc2d9` (2026-11-24)
-**Commit Message**: chore(deps): bump golang.org/x/crypto to 0.59.0 (#15821)
+### Incident Patch 1: `55f7ecc2` (2026-11-26)
+**Commit Message**: fix(viz): stat test (#15823)
 
-This addresses CVE [GO-2026-5932](https://pkg.go.dev/vuln/GO-2026-5932)
+Run tests outside of the data-plane + workload scope.  They only require
+viz install to have completed in order to complete.
 
-While linkerd does not import golang.org/x/crypto/openpgp, this change
-clears the scanner finding.
+Separate the client (slow cooker) and server (bb) manifests.  This
+allows the server to be started, and deployed before starting the
+client.  It results in not needing to insert artificial wait times in
+the client startup and fewer errors in the analyzed results.
 
-Signed-off-by: Allison Richardet <[REDACTED_EMAIL]>
+By separating out the wait for client traffic and then prometheus
+samples, we shorten the wait time to only what is needed.
 
-**File**: `go.mod` (modified, +5/-5)
+**File**: `test/integration/viz/install_test.go` (modified, +4/-0)
 ```diff
-@@ -136,15 +136,15 @@ require (
- 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
- 	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
--	golang.org/x/sync v0.24.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/sync v0.25.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
- 	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
--	golang.org/x/term v0.47.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/term v0.48.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
- 	golang.org/x/tools/godoc v0.1.0-deprecated // indirect
- 	google.golang.org/api v0.278.0 // indirect
+@@ -108,10 +108,14 @@ func TestInstallVizHA(t *testing.T) {
+ // TestInstallViz will install the viz extension to be used by the rest of the
+ // tests in the viz suite
+ func TestInstallViz(t *testing.T) {
++	// drop the prometheus scrape interval; some of the test cases wait for
++	// multiple scrapes; and this will drop testing time
+ 	cmd := []string{
+ 		"viz",
+ 		"install",
+ 		"--set", fmt.Sprintf("namespace=%s", TestHelper.GetVizNamespace()),
++		"--set", "prometheus.globalConfig.scrape_interval=2s",
++		"--set", "prometheus.globalConfig.scrape_timeout=2s",
+ 	}
+ 
+ 	out, err := TestHelper.LinkerdRun(cmd...)
 ```
 
-**File**: `go.sum` (modified, +10/-10)
+**File**: `test/integration/viz/stat/stat_test.go` (modified, +152/-75)
 ```diff
-@@ -467,8 +467,8 @@ golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod h1:yigFU9vqHzYiE8U
- golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
-@@ -536,8 +536,8 @@ golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190312061237-fead79001313/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -560,19 +560,19 @@ golang.org/x/sys v0.0.0-20200331124033-c3d80250170d/go.mod h1:h1NjWce9XRLGQEsW7w
- golang.org/x/sys v0.0.0-20200523222454-059865788121/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20210616094352-59db8d763f22/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a h1:wnveMBKHwx8/nIb8WYT5P9vtefdXOvIWxzycCkc5n6Q=
- golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
--golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
--golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
-+golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
-+golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
- golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
- golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
- golang.org/x/time v0.0.0-20191024005414-555d28b269f0/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+@@ -2,13 +2,15 @@ package get
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"os"
+ 	"strings"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/linkerd/linkerd2/testutil"
++	"github.com/linkerd/linkerd2/testutil/prommatch"
+ )
+ 
+ //////////////////////
+@@ -24,16 +26,34 @@ func TestMain(m *testing.M) {
+ 	os.Exit(m.Run())
+ }
+ 
++// statWindow is the time window passed to every "linkerd viz stat" call. It is
++// short so that transient errors at startup fall out of the window.
++const statWindow = "30s"
++
++// clientTrafficTimeout is a maximum wait for the client application to start
++// sending traffic.
++const clientTrafficTimeout = 2 * time.Minute
++
++type statTestCase struct {
++	args         []string
++	expectedRows map[string]string
++	status       string
++}
++
++// clientSuccessMatcher matches successful responses recorded by slow-cooker's
++// proxy for the requests slow-cooker sends to backend-svc.
++var clientSuccessMatcher = prommatch.NewMatcher("response_total",
++	prommatch.Labels{
++		"direction":      prommatch.Equals("outbound"),
++		"classification": prommatch.Equals("success"),
++	},
++	prommatch.HasPositiveValue(),
++)
++
+ //////////////////////
+ /// TEST EXECUTION ///
+ //////////////////////
+ 
+-// These tests retry for up to 20 seconds, since each call to "linkerd stat"
+-// generates traffic to the components in the linkerd namespace, and we're
+-// testing that those components are properly reporting stats. It's ok if the
+-// first few attempts fail due to missing stats, since the requests from those
+-// failed attempts will eventually be recorded in the stats that we're
+-// requesting, and the test will pass.
+ func TestCliStatForLinkerdNamespace(t *testing.T) {
+ 	ctx := context.Background()
+ 	var prometheusPod, prometheusNamespace, prometheusDeployment, metricsPod string
+@@ -62,11 +82,7 @@ func TestCliStatForLinkerdNamespace(t *testing.T) {
+ 	}
+ 	prometheusPod = pods[0]
+ 
+-	testCases := []struct {
+-		args         []string
+-		expectedRows map[string]string
+-		status       string
+-	}{
++	testCases := []statTestCase{
+ 		{
+ 			args: []string{"viz", "stat", "deploy", "-n", TestHelper.GetLinkerdNamespace()},
+ 			expectedRows: map[string]string{
+@@ -103,11 +119,7 @@ func TestCliStatForLinkerdNamespace(t *testing.T) {
+ 	}
+ 
+ 	if !TestHelper.ExternalPrometheus() {
+-		testCases = append(testCases, []struct {
+-			args         []string
+-			expectedRows map[string]string
+-			status       string
+-		}{
++		testCases = append(testCases, []statTestCase{
+ 			{
+ 				args: []string{"viz", "stat", "deploy", "-n", TestHelper.GetVizNamespace()},
+ 				expectedRows: map[string]string{
+@@ -133,11 +145,7 @@ func TestCliStatForLinkerdNamespace(t *testing.T) {
+ 		}...,
+ 		)
+ 	} else {
+-		testCases = append(testCases, []struct {
+-			args         []string
+-			expectedRows map[string]string
+-			status       string
+-		}{
++		testCases = append(testCases, []statTestCase{
+ 			{
+ 				args: []string{"viz", "stat", "deploy", "-n", TestHelper.GetVizNamespace()},
+ 				expectedRows: map[string]string{
+@@ -157,36 +165,39 @@ func TestCliStatForLinkerdNamespace(t *testing.T) {
+ 		)
+ 	}
+ 
++	// preceding test cases do not require sample apps they only check for
++	// formatted viz stat output that result from the install test
++	runStatCases(t, testCases, 20*time.Second)
++
+ 	// Apply a sample application
+ 	TestHelper.WithDataPlaneNamespace(ctx, "stat-test", map[string]string{}, t, func(t *testing.T, prefixedNs string) {
+-		out, err := TestHelper.LinkerdRun("inject", "--manual", "../trafficsplit/testdata/application.yaml")
+-		if err != nil {
+-			testutil.AnnotatedFatal(t, "'linkerd inject' command failed", err)
++		// separate the sample apps into server + client applications and only
++		// start the client after the server is deployed
++		if err := deploySampleApp(ctx, t, prefixedNs, "testdata/servers.yaml", "backend", "failing"); err != nil {
++			testutil.AnnotatedError(t, "failed to deploy the sample application's servers", err)
++			return
+ 		}
+-
+-		out, err = TestHelper.KubectlApply(out, prefixedNs)
+-		if err != nil {
+-			testutil.AnnotatedFatalf(t, "'kubectl apply' command failed",
+-				"'kubectl apply' command failed\n%s", out)
++		if err := deploySampleApp(ctx, t, prefixedNs, "testdata/client.yaml", "slow-cooker"); err != nil {
++			testutil.AnnotatedError(t, "failed to deploy the sample application's client", err)
++			return
+ 		}
+ 
+-		// wait for deployments to start
+-		for _, deploy := range []string{"backend", "failing", "slow-cooker"} {
+-			if err := TestHelper.CheckPods(ctx, prefixedNs, deploy, 1); err != nil {
+-				//nolint:errorlint
+-				if rce, ok := err.(*testutil.RestartCountError); ok {
+-					testutil.AnnotatedWarn(t, "CheckPods timed-out", rce)
+-				} else {
+-					testutil.AnnotatedError(t, "CheckPods timed-out", err)
+-				}
+-			}
++		// wait for client traffic (using linkerd diagnostics to inspect proxy metrics)
++		if err := waitForClientTraffic(prefixedNs); err != nil {
++			testutil.AnnotatedError(t, "slow-cooker did not receive successful responses", err)
++		
+```
+
+**File**: `test/integration/viz/stat/testdata/client.yaml` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++# Client side of the stat test's sample application: slow-cooker sends a
++# steady stream of requests to backend-svc. The test applies this file only
++# after the deployments in servers.yaml are ready, so slow-cooker starts
++# sending immediately instead of sleeping first.
++---
++apiVersion: apps/v1
++kind: Deployment
++metadata:
++  name: slow-cooker
++spec:
++  replicas: 1
++  selector:
++    matchLabels:
++      app: slow-cooker
++  template:
++    metadata:
++      labels:
++        app: slow-cooker
++    spec:
++      containers:
++      - name: slow-cooker
++        image: buoyantio/slow_cooker:1.3.0
++        args:
++        - http://backend-svc:8080
++        ports:
++        - containerPort: 9999
++---
++apiVersion: v1
++kind: Service
++metadata:
++  name: slow-cooker
++spec:
++  selector:
++    app: slow-cooker
++  ports:
++  - name: metrics
++    port: 9999
++    targetPort: 9999
+```
+
+**File**: `test/integration/viz/stat/testdata/servers.yaml` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++# Server side of the stat test's sample application: a backend that always
++# succeeds and one that always fails. The test applies this file first and
++# waits for both deployments to be ready before applying client.yaml, so the
++# client never sends a request before the backend can answer it.
++#
++# Based on ../../trafficsplit/testdata/application.yaml, which is shared with
++# the trafficsplit test and still starts every workload at once.
++---
++apiVersion: apps/v1
++kind: Deployment
++metadata:
++  name: backend
++spec:
++  replicas: 1
++  selector:
++    matchLabels:
++      app: backend
++  template:
++    metadata:
++      labels:
++        app: backend
++    spec:
++      containers:
++      - name: backend
++        image: buoyantio/bb:v0.0.6
++        args:
++        - terminus
++        - "--h1-server-port=8080"
++        - "--response-text=backend1"
++        ports:
++        - containerPort: 8080
++        # Ready means the server answers HTTP, not just that the container
++        # started. A TCP probe would not prove this: the proxy accepts the
++        # connection even when the server is not listening yet.
++        readinessProbe:
++          httpGet:
++            path: /
++            port: 8080
++          periodSeconds: 1
++---
++apiVersion: v1
++kind: Service
++metadata:
++  name: backend-svc
++spec:
++  selector:
++    app: backend
++  ports:
++  - name: http
++    port: 8080
++    targetPort: 8080
++---
++apiVersion: apps/v1
++kind: Deployment
++metadata:
++  name: failing
++spec:
++  replicas: 1
++  selector:
++    matchLabels:
++      app: failing
++  template:
++    metadata:
++      labels:
++        app: failing
++    spec:
++      containers:
++      - name: failing
++        image: buoyantio/bb:v0.0.6
++        args:
++        - terminus
++        - "--h1-server-port=8080"
++        - "--response-text=failing"
++        - "--percent-failure=100"
++        ports:
++        - containerPort: 8080
++        # No HTTP readiness probe: every response is an error, so it would
++        # never pass. Nothing sends traffic to this backend in the stat test.
++---
++apiVersion: v1
++kind: Service
++metadata:
++  name: failing-svc
++spec:
++  selector:
++    app: failing
++  ports:
++  - name: http
++    port: 8080
++    targetPort: 8080
+```
+
+**File**: `testutil/prometheus.go` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++package testutil
++
++import (
++	"context"
++	"fmt"
++	"time"
++
++	promapi "github.com/prometheus/client_golang/api"
++	promv1 "github.com/prometheus/client_golang/api/prometheus/v1"
++	"github.com/prometheus/common/model"
++)
++
++const prometheusPort = 9090
++
++// WaitForPrometheusQuery blocks until query, evaluated by the Prometheus
++// deployment promDeploy in promNamespace, returns at least one series.
++//
++// Use it to wait until Prometheus has ingested the samples an assertion depends
++// on, instead of retrying the assertion itself. The wait ends as soon as the
++// data is present; timeout only guards against a hang and should be well above
++// the time a healthy cluster needs.
++//
++// Prometheus is reached through a port-forward, which connects over the pod's
++// loopback interface and so is not subject to the proxy's inbound policy.
++func (h *TestHelper) WaitForPrometheusQuery(ctx context.Context, promNamespace, promDeploy, query string, timeout time.Duration) error {
++	addr, err := h.URLFor(ctx, promNamespace, promDeploy, prometheusPort)
++	if err != nil {
++		return fmt.Errorf("failed to port-forward to Prometheus %s/%s: %w", promNamespace, promDeploy, err)
++	}
++
++	client, err := promapi.NewClient(promapi.Config{Address: addr})
++	if err != nil {
++		return fmt.Errorf("failed to create Prometheus client for %s: %w", addr, err)
++	}
++	api := promv1.NewAPI(client)
++
++	return RetryFor(timeout, func() error {
++		queryCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
++		defer cancel()
++
++		result, _, err := api.Query(queryCtx, query, time.Now())
++		if err != nil {
++			return fmt.Errorf("query %q to Prometheus failed: %w", query, err)
++		}
++		vector, ok := result.(model.Vector)
++		if !ok {
++			return fmt.Errorf("query %q to Prometheus returned a %s, expected a vector", query, result.Type())
++		}
++		if len(vector) == 0 {
++			return fmt.Errorf("query %q to Prometheus returned no series", query)
++		}
++		return nil
++	})
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15823** (2026-11-26): fix(viz): stat test (@raykroeker)
 - **PR #15821** (2026-11-24): chore(deps): bump golang.org/x/crypto to 0.59.0 (@arichardet)
 - **PR #15815** (2026-11-23): chore(build): update golang to 1.26.11 (@arichardet)
 - **PR #15788** (2026-11-19): build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (@dependabot[bot])
 - **PR #15785** (2026-11-23): chore: add k8s level warning for malformed ports on annotation (@anthoturc)
 - **PR #15784** (2026-11-20): fix(destination): keep federated endpoints when a stream is torn down (@codenameraz)
-- **PR #15781** (2026-11-13): proxy: v2.374.0 (@l5d-bot)
 
 ---
 
@@ -1756,39 +2042,34 @@ Signed-off-by: Allison Richardet <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump golang.org/x/crypto to 0.59.0
+## X. viz): stat test
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/integration/viz/install_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `103bc2d9`: deps): bump golang.org/x/crypto to 0.59.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `55f7ecc2`: viz): stat test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/integration/viz/install_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/crypto v0.59.0 // indirect
-	golang.org/x/sync v0.25.0 // indirect
-	golang.org/x/sys v0.50.0 // indirect
-	golang.org/x/term v0.48.0 // indirect
-	golang.org/x/text v0.44.0 // indirect
+	// drop the prometheus scrape interval; some of the test cases wait for
+	// multiple scrapes; and this will drop testing time
+		"--set", "prometheus.globalConfig.scrape_interval=2s",
+		"--set", "prometheus.globalConfig.scrape_timeout=2s",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/sync v0.24.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `103bc2d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `55f7ecc2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

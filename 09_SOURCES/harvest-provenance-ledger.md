@@ -13625,3 +13625,5 @@ Every entry in this ledger must capture:
 | `learn-github-el4cteo-fast-anything` | `https://github.com/EL4CTEO/fast-anything` | `d9b39f50` | Multi-dimensional audit evidence | 2026-11-26T23:11:36.380Z |
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `0e20faf6` | Multi-dimensional audit evidence | 2026-11-26T23:11:40.726Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `71e34a45` | Multi-dimensional audit evidence | 2026-11-26T23:11:48.279Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-26T23:24:01.144Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `55f7ecc2` | Multi-dimensional audit evidence | 2026-11-26T23:24:11.217Z |
