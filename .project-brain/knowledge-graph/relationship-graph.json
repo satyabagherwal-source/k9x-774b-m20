@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T14:22:56.881Z",
+  "updated_at": "2026-11-26T15:12:39.572Z",
   "statistics": {
-    "total_nodes": 562,
-    "total_edges": 230,
+    "total_nodes": 563,
+    "total_edges": 231,
     "domain_distribution": {
       "D": 339,
       "M": 1,
-      "H": 103,
+      "H": 104,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -22,7 +22,7 @@
       "A": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 226,
+      "CONSTRAINED_BY_ARCHITECTURE": 227,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12540,6 +12540,29 @@
       ],
       "created_at": "2026-11-26T14:22:56.881Z",
       "updated_at": "2026-11-26T14:22:56.881Z"
+    },
+    "DOM-H-CC34C8D8": {
+      "id": "DOM-H-CC34C8D8",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "[iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemen",
+      "summary": "Prevents defects observed in production commit `3ea73699`: [iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplement -> When implementing operations in `packages/react-native/React/Fabric/Mounting/RCTComponentViewFactory.mm`, engineers MUST enforce rigorous bo",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://react-react-native/react-react-native-learnings.md",
+        "source_version": "9743c098",
+        "observed_at": "2026-11-26T15:11:45.730Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-react-native)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-26T15:12:39.571Z",
+      "updated_at": "2026-11-26T15:12:39.571Z"
     }
   },
   "edges": [
@@ -14842,6 +14865,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-B8D29B23 [D] with Domain M",
       "created_at": "2026-11-26T09:13:05.391Z"
+    },
+    {
+      "id": "EDGE-0683136CA533",
+      "sourceId": "DOM-H-CC34C8D8",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-CC34C8D8 [H] with Domain G",
+      "created_at": "2026-11-26T15:12:39.572Z"
     }
   ]
 }

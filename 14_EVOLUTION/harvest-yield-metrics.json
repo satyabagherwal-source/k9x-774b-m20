@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T15:02:25.506Z",
-  "total_cycles_completed": 12754,
-  "total_learnings_persisted": 12754,
-  "total_rules_promoted": 11613,
+  "last_updated": "2026-11-26T15:11:55.184Z",
+  "total_cycles_completed": 12757,
+  "total_learnings_persisted": 12757,
+  "total_rules_promoted": 11615,
   "history": [
-    {
-      "timestamp": "2026-11-26T03:46:41.015Z",
-      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
-      "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T03:55:04.798Z",
-      "repository": "facebook/sam-3d-body-dinov3",
-      "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T03:55:19.039Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T04:04:58.426Z",
       "repository": "Lakonik/pi-H3",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T15:02:25.506Z",
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:11:41.485Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:11:47.335Z",
+      "repository": "react/react-native",
+      "learningId": "learn-github-react-react-native",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:11:55.184Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

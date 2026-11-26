@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T14:53:36.060Z",
+  "updated_at": "2026-11-26T15:12:42.622Z",
   "stats": {
-    "total_discovered": 9818,
-    "approved_pending_harvest": 9316,
+    "total_discovered": 9828,
+    "approved_pending_harvest": 9324,
     "harvested_count": 0,
-    "rejected_count": 502,
+    "rejected_count": 504,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9303,
+      "COMMUNITY_AND_EXPERT": 9313,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -212509,6 +212509,212 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
         "fileName": "metrolistgroup-metrolist-learnings.md"
+      }
+    },
+    "SRC-A4B227229607": {
+      "id": "SRC-A4B227229607",
+      "url": "https://github.com/react/r",
+      "title": "https://github.com/react/r",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:12:40.085Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-62DB4B52E03F": {
+      "id": "SRC-62DB4B52E03F",
+      "url": "https://app.codecov.io/gh/apache/pinot/pull/20371?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/apache/pinot/pull/20371?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:12:41.582Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-4C88A249F6B9": {
+      "id": "SRC-4C88A249F6B9",
+      "url": "https://app.codecov.io/gh/apache/pinot/commit/ed05b3875971a63ffad9fc1c0f738f152809383b?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/apache/pinot/commit/ed05b3875971a63ffad9fc1c0f738f152809383b?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:12:41.687Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-95ED96A8AEC6": {
+      "id": "SRC-95ED96A8AEC6",
+      "url": "https://app.codecov.io/gh/apache/pinot/commit/0e170da8bfb3c6e7e950bfb278d64b6390dd569e?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/apache/pinot/commit/0e170da8bfb3c6e7e950bfb278d64b6390dd569e?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:12:41.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-A7E54AA9B227": {
+      "id": "SRC-A7E54AA9B227",
+      "url": "https://app.codecov.io/gh/apache/pinot/pull/20371?dropdown=coverage&src=pr&el=tree&utm_c=",
+      "title": "https://app.codecov.io/gh/apache/pinot/pull/20371?dropdown=coverage&src=pr&el=tree&utm_c=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:12:41.913Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-0E037CDA79B5": {
+      "id": "SRC-0E037CDA79B5",
+      "url": "https://github.com/pinot-contrib/pinot-docs/pull/1223",
+      "title": "https://github.com/pinot-contrib/pinot-docs/pull/1223",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:12:42.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-C8542A684CF0": {
+      "id": "SRC-C8542A684CF0",
+      "url": "http://maven.apache.org/POM/4.0.0",
+      "title": "http://maven.apache.org/POM/4.0.0",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T15:12:42.153Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-6EEE2BEC235F": {
+      "id": "SRC-6EEE2BEC235F",
+      "url": "http://maven.apache.org/xsd/maven-4.0.0.xsd",
+      "title": "http://maven.apache.org/xsd/maven-4.0.0.xsd",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T15:12:42.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-A9C9DF605AEC": {
+      "id": "SRC-A9C9DF605AEC",
+      "url": "https://pinot.apache.org/",
+      "title": "https://pinot.apache.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:12:42.408Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-F6983DDD3840": {
+      "id": "SRC-F6983DDD3840",
+      "url": "https://github.com/swagger-api/swagger-ui/compare/v5.35.1...v5.36.0",
+      "title": "https://github.com/swagger-api/swagger-ui/compare/v5.35.1...v5.36.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:12:42.622Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
       }
     }
   }

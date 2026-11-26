@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T15:02:25.516Z",
+  "last_updated": "2026-11-26T15:11:55.195Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -680,14 +680,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "content_hash": "d5d96dbc8630461968e9c82f723be309195d7062c5a777aa848d22a5177bfcd8",
-      "verified_at": "2026-11-22T22:15:02.008Z",
+      "content_hash": "50eb52913855cd82bb38556f61f16ff5c23e9e747a96121a3c611d6d89caf08e",
+      "verified_at": "2026-11-26T15:11:41.491Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T22:15:02.008Z"
+      "last_updated": "2026-11-26T15:11:41.491Z"
     },
     "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF": {
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -15426,14 +15426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-react-native",
-      "content_hash": "f8b733d7a1bdf9d1b70dfa3b6119c3abf8da8fc53a2b95c9450bb82c87813506",
-      "verified_at": "2026-11-24T04:53:55.701Z",
+      "content_hash": "38b07462e2b33fa8efa7b2b17f4698e68d508102dec2dd9037019e68d88b84e1",
+      "verified_at": "2026-11-26T15:11:47.345Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T04:53:55.701Z"
+      "last_updated": "2026-11-26T15:11:47.345Z"
     },
     "faker-js/faker": {
       "repository": "faker-js/faker",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "9e41809f86683ef4fc383a33ed13b7c799455a429868decb980d6db74bce8c1d",
-      "verified_at": "2026-11-25T14:05:08.789Z",
+      "content_hash": "113824aa67d4feeb7815f74d2fb2ad5031193ddf375e7c78c14767da7a53dead",
+      "verified_at": "2026-11-26T15:11:55.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T14:05:08.789Z"
+      "last_updated": "2026-11-26T15:11:55.194Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

@@ -13438,3 +13438,7 @@
 | `CYCLE-20261126-LFN3` | `2026-11-26T15:02:19.503Z` | `yazinsai/OpenOats` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10709` | Yes (`03111ccd...`) |
 | `CYCLE-20261126-LG71` | `2026-11-26T15:02:20.221Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10710` | Yes (`a5155995...`) |
 | `CYCLE-20261126-LK9B` | `2026-11-26T15:02:25.487Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10711` | Yes (`f03b2add...`) |
+| `CYCLE-20261126-XH91` | `2026-11-26T15:11:41.461Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`50eb5291...`) |
+| `CYCLE-20261126-XLRK` | `2026-11-26T15:11:47.312Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10712` | Yes (`38b07462...`) |
+| `CYCLE-20261126-XRTK` | `2026-11-26T15:11:55.160Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10713` | Yes (`113824aa...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T15:12:39.576Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-CC34C8D8` [Domain H] | Yes (`fe0a35e6...`) |

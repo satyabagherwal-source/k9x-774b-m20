@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T15:02:31.962Z",
+  "last_updated": "2026-11-26T15:12:43.654Z",
   "total_verified_learnings": 9129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25991,
+  "total_items": 25997,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114093,10 +114093,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "repository": "react/react-native",
-      "source_version": "ad969b28",
-      "content_hash": "ffebee48026c6398742891de7154964a84458c6690732668678c3faffcdb0528",
+      "source_version": "9743c098",
+      "content_hash": "4fb730c8826a787b8b8da552294e08d68eadd18da09b5da4e5bcff24e70468c9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:53:56.203Z"
+      "persisted_at": "2026-11-26T15:11:47.950Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native",
@@ -114105,10 +114105,10 @@
       "relative_path": "08_VERIFICATION/react-react-native-verification-protocol-empirical-defect-shield-for-react-react.md",
       "title": "Verification Protocol: Empirical Defect Shield for react/react-native",
       "repository": "react/react-native",
-      "source_version": "ad969b28",
-      "content_hash": "651ccb97cebf4141041716b3608d6f92d1bfe7b7eaedd35497e3290d655f1fa2",
+      "source_version": "9743c098",
+      "content_hash": "945824dcbd89607340c3233af7487e1b358807d7931a2042ee22eb4362b93e71",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:53:56.410Z"
+      "persisted_at": "2026-11-26T15:11:48.225Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -114478,9 +114478,9 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Pro-RL Core Invariants",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "cc4e18f4950566c3dc0bfc2d61c0ae83ad0034b9b00fc394c110cb25e82b7fdc",
+      "content_hash": "9f86d37fe4d4d379041ff32f6ef76856567d1630de81e019c2d65d65d7acc071",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:15:02.198Z"
+      "persisted_at": "2026-11-26T15:11:41.862Z"
     },
     "candidate_directive-dsn-look-up-getparam-keys-by-their-bytes": {
       "item_id": "candidate_directive-dsn-look-up-getparam-keys-by-their-bytes",
@@ -114562,9 +114562,9 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-pro-rl-learnings Core Invariants",
       "repository": "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings",
       "source_version": "HEAD",
-      "content_hash": "225e9897fdae97223506dfaf103f4a1614bef6a1253e8080b64c3cf574a6f82d",
+      "content_hash": "3ad0ec697e75ccaa5efe0cfa959a99cf387fe19dc879e35575561dd70a24ecc7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:15:14.193Z"
+      "persisted_at": "2026-11-26T15:11:59.474Z"
     },
     "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
@@ -236306,8 +236306,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "95ec60fa",
-      "content_hash": "9e41809f86683ef4fc383a33ed13b7c799455a429868decb980d6db74bce8c1d",
+      "source_version": "d197e0b5",
+      "content_hash": "113824aa67d4feeb7815f74d2fb2ad5031193ddf375e7c78c14767da7a53dead",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -236360,6 +236360,11 @@
           "number": 10537,
           "title": "Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10713,
+          "title": "Add a Foreign Function & Memory (Panama) based PinotDataBuffer implementation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236367,7 +236372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T14:05:08.487Z",
+      "verified_at": "2026-11-26T15:11:54.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236421,10 +236426,10 @@
       "relative_path": "08_VERIFICATION/apache-pinot-verification-protocol-empirical-defect-shield-for-apache-pinot.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/pinot",
       "repository": "apache/pinot",
-      "source_version": "95ec60fa",
-      "content_hash": "86a65ff4e9432cc23ca0bfab2b31d0bcfcb6d21b357fccb5d0fa0c75ebc35a7f",
+      "source_version": "d197e0b5",
+      "content_hash": "40c897aa1db5a51b0b93b29afc385f245a47d9b681bc7f73306a4c0a13f4b0e4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:05:09.618Z"
+      "persisted_at": "2026-11-26T15:11:56.096Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -273432,8 +273437,8 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "ad969b28",
-      "content_hash": "f8b733d7a1bdf9d1b70dfa3b6119c3abf8da8fc53a2b95c9450bb82c87813506",
+      "source_version": "9743c098",
+      "content_hash": "38b07462e2b33fa8efa7b2b17f4698e68d508102dec2dd9037019e68d88b84e1",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
@@ -273456,6 +273461,11 @@
           "number": 10204,
           "title": "[Android] Anti-aliased rounded overflow clips on Android 9 and 10",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10712,
+          "title": "[iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemen",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -273463,7 +273473,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T04:53:55.320Z",
+      "verified_at": "2026-11-26T15:11:46.970Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273554,9 +273564,9 @@
       "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
       "repository": "react-react-native-learnings",
       "source_version": "HEAD",
-      "content_hash": "51536c57812baa8a5d741ab892c7f4b64ef7d3df8b10a3b31c2340f2b17a4bc2",
+      "content_hash": "da2c0e3b3467b2b39941b6fab973ffa000b5d55867caf0f1458cae6d6a08e945",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:54:35.087Z"
+      "persisted_at": "2026-11-26T15:12:40.825Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings",
@@ -273566,9 +273576,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-react-native-learnings",
       "repository": "react-react-native-learnings",
       "source_version": "HEAD",
-      "content_hash": "763a3d789827512a0afd122358b258dcd21c15b690659de67faf81b36f320a8c",
+      "content_hash": "388e39c8f4fcfc2a09cbf906e1e4549c9e9c59ee8e198f73fcd0a7b17334d35f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:54:35.329Z"
+      "persisted_at": "2026-11-26T15:12:41.133Z"
     },
     "learn-github-mswjs-msw": {
       "learning_id": "learn-github-mswjs-msw",
@@ -276563,9 +276573,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-pinot-learnings",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "70fbd214139649b0c1d6aa54e8d63a8d236b82f44757c13c79714878f9c47e98",
+      "content_hash": "096c8d7113c1ee3991b7580bbbb784483031a563e370f854cf9beb3c91aae9f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:05:15.142Z"
+      "persisted_at": "2026-11-26T15:12:43.654Z"
     },
     "learn-huggingface-speridlabs-idol": {
       "learning_id": "learn-huggingface-speridlabs-idol",
@@ -289076,7 +289086,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "d5d96dbc8630461968e9c82f723be309195d7062c5a777aa848d22a5177bfcd8",
+      "content_hash": "50eb52913855cd82bb38556f61f16ff5c23e9e747a96121a3c611d6d89caf08e",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [],
@@ -289085,7 +289095,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T22:15:01.757Z",
+      "verified_at": "2026-11-26T15:11:41.121Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -356221,6 +356231,82 @@
       "content_hash": "e8ae4765885dc71a77e7f20db9f6efd36a6e415a471411fcec89c63078ca6590",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T15:02:31.497Z"
+    },
+    "rule-10712": {
+      "learning_id": "rule-10712",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10712,
+      "title": "[iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemen",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "9743c098",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T15:11:46.970Z"
+    },
+    "candidate_directive-ios-fabric-fix-data-race-in-rctcomponentviewfactory-legacy-interop-unimplemen": {
+      "item_id": "candidate_directive-ios-fabric-fix-data-race-in-rctcomponentviewfactory-legacy-interop-unimplemen",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YQTB-ios-fabric-fix-data-race-in-rctcomponentviewfactory-legacy-interop-unimplemen.md",
+      "title": "[iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemen",
+      "repository": "react-react-native-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8c8ca80098ac704fe7fc477503fc3e661839a67552adaab2bff52a575009d216",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T15:12:40.511Z"
+    },
+    "rule-10713": {
+      "learning_id": "rule-10713",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10713,
+      "title": "Add a Foreign Function & Memory (Panama) based PinotDataBuffer implementation",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "d197e0b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T15:11:54.824Z"
+    },
+    "candidate_directive-add-a-foreign-function-memory-panama-based-pinotdatabuffer-implementation": {
+      "item_id": "candidate_directive-add-a-foreign-function-memory-panama-based-pinotdatabuffer-implementation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YSQZ-add-a-foreign-function-memory-panama-based-pinotdatabuffer-implementation.md",
+      "title": "Add a Foreign Function & Memory (Panama) based PinotDataBuffer implementation",
+      "repository": "apache-pinot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "166ee945f998c41d06798f6f46a215cc8a0befddc9e1dbbd3c3b4d605ba48c1d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T15:12:43.034Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-pinot-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-apache-pinot-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-pinot-technical-construction-intelligence-apache-pinot-core-invariants.md",
+      "title": "Technical Construction Intelligence: apache/pinot Core Invariants",
+      "repository": "apache/pinot",
+      "source_version": "d197e0b5",
+      "content_hash": "f4c8f8a3251f2aaebb57b90c9806dc232b1aa3655e3f996ea0f188b6ea468400",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T15:11:55.814Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-pinot-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-apache-pinot-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-pinot-learnings-technical-construction-intelligence-apache-pinot-learning.md",
+      "title": "Technical Construction Intelligence: apache-pinot-learnings Core Invariants",
+      "repository": "apache-pinot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "37310ed351c1fa0627e9cd41fb110a02c8f6ab0ac233686af8abf02c8fef06a6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T15:12:43.345Z"
     }
   },
   "ai-builder-brain": {

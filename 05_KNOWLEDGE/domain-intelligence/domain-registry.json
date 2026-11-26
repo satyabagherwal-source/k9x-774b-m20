@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T15:02:31.722Z",
-  "total_records": 2754,
+  "last_updated": "2026-11-26T15:12:43.345Z",
+  "total_records": 2757,
   "domains": {
     "A": {
       "total": 23,
@@ -1709,7 +1709,7 @@
       ]
     },
     "H": {
-      "total": 666,
+      "total": 669,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2376,7 +2376,10 @@
         "domain_intelligence-technical-construction-intelligence-yetone-magpie-core-invariants",
         "domain_intelligence-technical-construction-intelligence-yetone-magpie-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-zhouxiaoka-autoclip-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-zhouxiaoka-autoclip-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-zhouxiaoka-autoclip-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-apache-pinot-core-invariants",
+        "DOM-H-CC34C8D8",
+        "domain_intelligence-technical-construction-intelligence-apache-pinot-learnings-core-invariants"
       ]
     },
     "I": {
@@ -9703,8 +9706,8 @@
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "repository": "react/react-native",
-      "content_hash": "ffebee48026c6398742891de7154964a84458c6690732668678c3faffcdb0528",
-      "created_at": "2026-11-24T04:53:56.203Z"
+      "content_hash": "4fb730c8826a787b8b8da552294e08d68eadd18da09b5da4e5bcff24e70468c9",
+      "created_at": "2026-11-26T15:11:47.950Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -10006,8 +10009,8 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Pro-RL Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-research-knowledge-intelligence-xiaomimimo-mimo-v.md",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "content_hash": "cc4e18f4950566c3dc0bfc2d61c0ae83ad0034b9b00fc394c110cb25e82b7fdc",
-      "created_at": "2026-11-22T22:15:02.198Z"
+      "content_hash": "9f86d37fe4d4d379041ff32f6ef76856567d1630de81e019c2d65d65d7acc071",
+      "created_at": "2026-11-26T15:11:41.862Z"
     },
     "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants",
@@ -10075,8 +10078,8 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-pro-rl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-research-knowledge-intelligence-hf-xiao.md",
       "repository": "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings",
-      "content_hash": "225e9897fdae97223506dfaf103f4a1614bef6a1253e8080b64c3cf574a6f82d",
-      "created_at": "2026-11-22T22:15:14.193Z"
+      "content_hash": "3ad0ec697e75ccaa5efe0cfa959a99cf387fe19dc879e35575561dd70a24ecc7",
+      "created_at": "2026-11-26T15:11:59.474Z"
     },
     "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
@@ -26830,8 +26833,8 @@
       "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-learnings-technical-construction-intelligence-react-react-nat.md",
       "repository": "react-react-native-learnings",
-      "content_hash": "51536c57812baa8a5d741ab892c7f4b64ef7d3df8b10a3b31c2340f2b17a4bc2",
-      "created_at": "2026-11-24T04:54:35.087Z"
+      "content_hash": "da2c0e3b3467b2b39941b6fab973ffa000b5d55867caf0f1458cae6d6a08e945",
+      "created_at": "2026-11-26T15:12:40.825Z"
     },
     "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants",
@@ -46487,6 +46490,66 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T14:22:56.851Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-pinot-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-apache-pinot-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: apache/pinot Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-pinot-technical-construction-intelligence-apache-pinot-core-invariants.md",
+      "repository": "apache/pinot",
+      "content_hash": "f4c8f8a3251f2aaebb57b90c9806dc232b1aa3655e3f996ea0f188b6ea468400",
+      "created_at": "2026-11-26T15:11:55.814Z"
+    },
+    "DOM-H-CC34C8D8": {
+      "record_id": "DOM-H-CC34C8D8",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "[iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemen",
+      "content": "When implementing operations in `packages/react-native/React/Fabric/Mounting/RCTComponentViewFactory.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "fe0a35e60caaddbe35ccd59ed03633ff2ac71c1e2b1a4e81e3626e5beb57df84",
+      "summary": "Prevents defects observed in production commit `3ea73699`: [iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplement -> When implementing operations in `packages/react-native/React/Fabric/Mounting/RCTComponentViewFactory.mm`, engineers MUST enforce rigorous bo",
+      "provenance": {
+        "source_uri": "project://react-react-native/react-react-native-learnings.md",
+        "source_version": "9743c098",
+        "observed_at": "2026-11-26T15:11:45.730Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-react-native)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-react-native"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T15:12:39.530Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-pinot-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-apache-pinot-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: apache-pinot-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-pinot-learnings-technical-construction-intelligence-apache-pinot-learning.md",
+      "repository": "apache-pinot-learnings",
+      "content_hash": "37310ed351c1fa0627e9cd41fb110a02c8f6ab0ac233686af8abf02c8fef06a6",
+      "created_at": "2026-11-26T15:12:43.345Z"
     }
   }
 }

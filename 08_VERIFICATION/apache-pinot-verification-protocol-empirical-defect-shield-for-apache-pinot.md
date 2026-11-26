@@ -4,22 +4,22 @@
 {
   "source_repository": "apache/pinot",
   "source_url": "https://github.com/apache/pinot",
-  "source_version": "95ec60fa",
+  "source_version": "d197e0b5",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T14:05:09.114Z",
+  "timestamp": "2026-11-26T15:11:55.532Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-pinot",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `95ec60fa`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T14:05:09.114Z`  
+> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `d197e0b5`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T15:11:55.532Z`  
 > **Learning ID**: `learn-github-apache-pinot`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `apache/pinot` (Commit: `95ec60fa`)
+- **Target Repository**: `apache/pinot` (Commit: `d197e0b5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:05:07.363Z  
+> **Harvest Timestamp**: 2026-11-26T15:11:53.601Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1983,11 +1983,14 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20371** (2026-11-26): **Register time-series plan node types and validate worker expressions**
+  *Symptoms*: ## Changes  Resolve time-series plan nodes by their existing wire names using the built-in leaf type and the types declared by installed language plugins. M3QL registers its `KeepLastValuePlanNode` and `TransformNullPlanNode`. The broker and worker continue to use the same plan format.  Validate leaf expressions during worker planning. Groovy calls in filter, grouping, time, and value expressions now produce a planning error. Ordinary transforms remain supported.  ## Plugin compatibility  Upgrade the M3QL plugin with the worker. A third-party language that dispatches custom nodes must supply a `TimeSeriesPlanNodeProvider` on the worker classpath and list its implementation in `META-INF/services/org.apache.pinot.tsdb.spi.plan.serde.TimeSeriesPlanNodeProvider`.  ## Regression coverage  The decoder test checks the same unregistered type at the root and in a child node. The worker planner test checks the four expression positions. Both exercise local Java APIs.  ```sh ./mvnw -pl :pinot-query-runtime,:pinot-timeseries-m3ql -am \   -Dtest=TimeSeriesPlanSerdeTest,PhysicalTimeSeriesServerPlanVisitorTest,M3qlParserTest \   -Dsurefire.failIfNoSpecifiedTests=false test ``` 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20371?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :x: Patch coverage is `76.66667%` with `7 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 71.46%. Comparing base ([`ed05b38`](https://app.codecov.io/gh/apache/pinot/commit/ed05b3875971a63ffad9fc1c0f738f152809383b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`0e170da`](https://app.codecov.io/gh/apache/pinot/commit/0e170da8bfb3c6e7e950bfb278d64b6390dd569e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)).  | [Files with missing lines](https://app.codecov.io/gh/apache/pinot/pull/20371?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_c
+  > Documentation follow-up (merged): https://github.com/pinot-contrib/pinot-docs/pull/1223
+
 - **Issue #20370** (2026-11-24): **Reuse broker principal validation for requests without a table**
   *Symptoms*: ## Summary  Use the existing empty-table-set authorization path when a broker request has no table context. This gives the ZooKeeper-backed provider one place to validate the caller and apply table restrictions.  ## How to reproduce in the unit test  Run `ZkBasicAuthAccessControlFactoryTest#testQueryAuthorization` with the updated assertions. The test covers the identity-only overload for valid, missing, and incorrect credentials, along with the existing named-table cases.  ```sh ./mvnw -pl pinot-broker -am -Dtest=ZkBasicAuthAccessControlFactoryTest -Dsurefire.failIfNoSpecifiedTests=false test ``` 
-
-- **Issue #20369** (2026-11-24): **Enforce broker table permissions for time-series queries**
-  *Symptoms*: ## Summary  Use the broker's requester check before time-series planning. ZooKeeper-backed authentication for this check landed in #20370. Check the caller's table grants across all leaves in the logical plan, then run the configured provider's fine-grained checks on the resolved table names. Apply both checks to execution, empty results, and EXPLAIN.  Time-series execution does not apply row filters. When row-level security is enabled and the caller has a filter on a referenced table, the broker denies the request. Deployments with a custom time-series EXPLAIN handler must implement the overload that accepts the caller identity and HTTP headers.  ## How to reproduce in a unit test  The broker unit test supplies a two-table logical plan and a mock provider that denies the second table. It covers regular execution, empty results, and EXPLAIN, as well as resolved-table denials and row-filter policies. The ZooKeeper Basic Auth tests from #20370 cover requester-only authentication with valid, missing, and invalid credentials.  ## Validation  90 tests passed after rebasing onto `3c43f6853c`, across `TimeSeriesRequestHandlerTest`, `TimeSeriesQueryEnvironmentTest`, `PinotClientRequestTest`, `BasicAuthAccessControlTest`, `ZkBasicAuthAccessControlFactoryTest`, and `PinotSinkIntegrationTest`. Spotless, Checkstyle, license formatting and verification, and test compilation passed for the affected modules.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2004,19 +2007,966 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95ec60fa` (2026-11-25)
-**Commit Message**: Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9 (#20387)
+### Incident Patch 1: `df69b9f8` (2026-11-25)
+**Commit Message**: Add a Foreign Function & Memory (Panama) based PinotDataBuffer implementation (#19021)
 
-Bumps [com.github.jnr:jnr-posix](https://github.com/jnr/jnr-posix) from 3.2.8 to 3.2.9.
-- [Release notes](https://github.com/jnr/jnr-posix/releases)
-- [Commits](https://github.com/jnr/jnr-posix/compare/jnr-posix-3.2.8...jnr-posix-3.2.9)
+* Add java.lang.foreign (Panama) PinotDataBuffer implementation
+
+Add an opt-in off-heap buffer implementation backed by the Foreign
+Function & Memory API (MemorySegment/Arena) in a new Java 25 module
+pinot-segment-spi-foreign, as an alternative to the sun.misc.Unsafe
+based buffer. It is selected via the pinot.offheap.buffer.factory
+config or the PINOT_BUFFER_LIBRARY environment variable; the default
+(Unsafe wrapped in SmallWithFallback) is unchanged.
+
+The code lives in a separate module so that pinot-segment-spi can stay
+Java 11 bytecode for the JDBC/Java driver dependency closure
+(pinot-jdbc-client -> pinot-java-client -> pinot-common ->
+pinot-segment-spi), while the FFM code (which requires Java 21+) is
+compiled at Java 25.
+
+Also extend pinot-perf: BenchmarkPinotDataBuffer gains foreign options
+and BenchmarkQueriesSSQE gains an opt-in _bufferLibrary parameter to
+compare backends end-to-end.
+
+* Address review: rename module to pinot-foreign-buffers, add Cleaner leak safety net
+
+- Rename module pinot-segment-spi-foreign -> pinot-foreign-buffers and move the
+  classes to package org.apache.pinot.
+
+**File**: `pinot-bom/pom.xml` (modified, +11/-0)
+```diff
+@@ -139,6 +139,11 @@
+         <artifactId>pinot-segment-spi</artifactId>
+         <version>${project.version}</version>
+       </dependency>
++      <dependency>
++        <groupId>org.apache.pinot</groupId>
++        <artifactId>pinot-foreign-buffers</artifactId>
++        <version>${project.version}</version>
++      </dependency>
+       <dependency>
+         <groupId>org.apache.pinot</groupId>
+         <artifactId>pinot-common</artifactId>
+@@ -446,6 +451,12 @@
+         <version>${project.version}</version>
+         <type>test-jar</type>
+       </dependency>
++      <dependency>
++        <groupId>org.apache.pinot</groupId>
++        <artifactId>pinot-segment-spi</artifactId>
++        <version>${project.version}</version>
++        <type>test-jar</type>
++      </dependency>
+       <dependency>
+         <groupId>org.apache.pinot</groupId>
+         <artifactId>pinot-common</artifactId>
+```
+
+**File**: `pinot-foreign-buffers/pom.xml` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!--
++
++    Licensed to the Apache Software Foundation (ASF) under one
++    or more contributor license agreements.  See the NOTICE file
++    distributed with this work for additional information
++    regarding copyright ownership.  The ASF licenses this file
++    to you under the Apache License, Version 2.0 (the
++    "License"); you may not use this file except in compliance
++    with the License.  You may obtain a copy of the License at
++
++      http://www.apache.org/licenses/LICENSE-2.0
++
++    Unless required by applicable law or agreed to in writing,
++    software distributed under the License is distributed on an
++    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++    KIND, either express or implied.  See the License for the
++    specific language governing permissions and limitations
++    under the License.
++
++-->
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++  <modelVersion>4.0.0</modelVersion>
++  <parent>
++    <artifactId>pinot</artifactId>
++    <groupId>org.apache.pinot</groupId>
++    <version>1.7.0-SNAPSHOT</version>
++  </parent>
++  <artifactId>pinot-foreign-buffers</artifactId>
++  <name>Pinot Foreign (Panama) Buffers</name>
++  <url>https://pinot.apache.org/</url>
++  <properties>
++    <pinot.root>${basedir}/..</pinot.root>
++  </properties>
++
++  <!--
++    This module provides a java.lang.foreign (Panama FFM) based PinotDataBuffer implementation. It is kept separate
++    from pinot-segment-spi (which is pinned to Java 11 bytecode for driver/client consumers) because the Foreign
++    Function & Memory API requires Java 21+. It therefore inherits the project-wide Java 25 release level and must not
++    be depended on by any Java 11 artifact. The factory is selected at runtime by class name via the
++    pinot.offheap.buffer.factory config or the PINOT_BUFFER_LIBRARY environment variable.
++  -->
++
++  <dependencies>
++    <dependency>
++      <groupId>org.apache.pinot</groupId>
++      <artifactId>pinot-segment-spi</artifactId>
++    </dependency>
++
++    <dependency>
++      <groupId>org.apache.pinot</groupId>
++      <artifactId>pinot-segment-spi</artifactId>
++      <type>test-jar</type>
++      <scope>test</scope>
++    </dependency>
++    <dependency>
++      <groupId>commons-io</groupId>
++      <artifactId>commons-io</artifactId>
++      <scope>test</scope>
++    </dependency>
++    <dependency>
++      <groupId>org.testng</groupId>
++      <artifactId>testng</artifactId>
++      <scope>test</scope>
++    </dependency>
++  </dependencies>
++</project>
+```
+
+**File**: `pinot-foreign-buffers/src/main/java/org/apache/pinot/segment/memory/foreign/ForeignPinotBuffer.java` (added, +263/-0)
+```diff
+@@ -0,0 +1,263 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.segment.memory.foreign;
++
++import java.lang.foreign.Arena;
++import java.lang.foreign.MemorySegment;
++import java.lang.foreign.ValueLayout;
++import java.lang.ref.Cleaner;
++import java.nio.ByteBuffer;
++import java.nio.ByteOrder;
++import javax.annotation.Nullable;
++import org.apache.pinot.segment.spi.memory.NonNativePinotDataBuffer;
++import org.apache.pinot.segment.spi.memory.PinotDataBuffer;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++
++
++/// A [PinotDataBuffer] backed by the Foreign Function &amp; Memory API ([MemorySegment]).
++///
++/// This is the Java 21+ replacement for the `sun.misc.Unsafe` based buffer. Like the Unsafe implementation it only
++/// reads and writes in [native byte order][ByteOrder#nativeOrder()]; non-native order is provided by wrapping it in a
++/// [NonNativePinotDataBuffer]. Because [MemorySegment] natively supports `long` indexing, a single implementation
++/// covers buffers larger than [Integer#MAX_VALUE] without any of the manual pointer arithmetic, page alignment or
++/// reflective `DirectByteBuffer` construction the Unsafe path required.
++///
++/// All accessors use the `*_UNALIGNED` [ValueLayout] constants because callers read and write at arbitrary byte
++/// offsets. Bounds checking is performed by [MemorySegment] itself (throwing [IndexOutOfBoundsException]), so this
++/// class does not add its own checks. Access is memory-safe: reads and writes after the backing [Arena] is closed fail
++/// deterministically instead of corrupting memory.
++///
++/// Thread-safety: instances created through [ForeignPinotBufferFactory] use a [shared arena][Arena#ofShared()], so the
++/// buffer may be read, written and closed from any thread. As with every [PinotDataBuffer], closing a buffer while
++/// another thread accesses it is a caller error. Closing does not wait for other threads, and it stays memory-safe:
++/// a concurrent read or write on this buffer or its views fails with [IllegalStateException]. If an I/O operation
++/// still uses a [ByteBuffer] from [#toDirectByteBuffer(long, int, ByteOrder)], [#release()] throws
++/// [IllegalStateException] and the memory stays allocated. The inherited synchronized [#close()] serialises
++/// concurrent close calls on the same instance.
++public class ForeignPinotBuffer extends PinotDataBuffer {
++
++  private static final Logger LOGGER = LoggerFactory.getLogger(ForeignPinotBuffer.class);
++  /// Leak safety net for owning buffers. A shared [Arena] is not GC-managed (unlike [Arena#ofAuto()]), so if a buffer
++  /// is never closed the native memory would leak. This cleaner closes the arena on collection, mirroring the
++  /// `finalize()` safety net the `Unsafe` implementation used (but without the deprecated finalizer).
++  private static final Cleaner CLEANER = Cleaner.create();
++
++  // Native-order, byte-aligned (alignment == 1) layouts. Single-byte access is always aligned.
++  private static final ValueLayout.OfByte BYTE = ValueLayout.JAVA_BYTE;
++  private static final ValueLayout.OfChar CHAR = ValueLayout.JAVA_CHAR_UNALIGNED;
++  private static final ValueLayout.OfShort SHORT = ValueLayout.JAVA_SHORT_UNALIGNED;
++  private static final ValueLayout.OfInt INT = ValueLayout.JAVA_INT_UNALIGNED;
++  private static final ValueLayout.OfLong LONG = ValueLayout.JAVA_LONG_UNALIGNED;
++  private static final ValueLayout.OfFloat FLOAT = ValueLayout.JAVA_FLOAT_UNALIGNED;
++  private static final ValueLayout.OfDouble DOUBLE = ValueLayout.JAVA_DOUBLE_UNALIGNED;
++
++  private final MemorySegment _segment;
++  /// The cleanup action registered with the [Cleaner] for owning buffers, or {@code null} for a non-owning view.
++  @Nullable
++  private final ArenaCleanup _cleanup;
++  /// The handle to the registered cleaning action, used to free eagerly (and de-register) on explicit close.
++  @Nullable
++  private final Cleaner.Cleanable _cleanable;
++  /// For a view, the owning buffer whose arena backs this view, or {@code null} for an owning buffer. The field is
++  /// never read. It keeps the owner reachable while the view is reachable, so the leak safety net of a leaked owner
++  /// cannot close the arena under a vie
+```
+
+**File**: `pinot-foreign-buffers/src/main/java/org/apache/pinot/segment/memory/foreign/ForeignPinotBufferFactory.java` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.segment.memory.foreign;
++
++import java.io.File;
++import java.io.IOException;
++import java.lang.foreign.Arena;
++import java.lang.foreign.MemorySegment;
++import java.nio.ByteOrder;
++import java.nio.channels.FileChannel;
++import java.nio.file.StandardOpenOption;
++import org.apache.pinot.segment.spi.memory.NonNativePinotDataBuffer;
++import org.apache.pinot.segment.spi.memory.PinotBufferFactory;
++import org.apache.pinot.segment.spi.memory.PinotDataBuffer;
++
++
++/// A [PinotBufferFactory] that creates buffers backed by the Foreign Function &amp; Memory API.
++///
++/// This is the Java 21+ alternative to
++/// [org.apache.pinot.segment.spi.memory.unsafe.UnsafePinotBufferFactory]. It produces [ForeignPinotBuffer] instances
++/// backed by a [MemorySegment]. Every buffer owns a dedicated [shared arena][Arena#ofShared()] so that the buffer can
++/// be accessed and closed from any thread; closing the buffer closes the arena, which frees the native memory or
++/// unmaps the file.
++///
++/// Unlike the Unsafe factory this works on every operating system (including Windows), needs no reflection, and maps
++/// files larger than [Integer#MAX_VALUE] directly through [FileChannel#map(FileChannel.MapMode, long, long, Arena)].
++///
++/// To select this factory set the `pinot.offheap.buffer.factory` configuration (or the `PINOT_BUFFER_LIBRARY`
++/// environment variable) to this class' fully qualified name.
++public class ForeignPinotBufferFactory implements PinotBufferFactory {
++
++  @Override
++  public PinotDataBuffer allocateDirect(long size, ByteOrder byteOrder) {
++    Arena arena = Arena.ofShared();
++    try {
++      MemorySegment segment = arena.allocate(size);
++      return wrap(new ForeignPinotBuffer(segment, arena), byteOrder);
++    } catch (RuntimeException | Error e) {
++      arena.close();
++      throw e;
++    }
++  }
++
++  @Override
++  public PinotDataBuffer mapFile(File file, boolean readOnly, long offset, long size, ByteOrder byteOrder)
++      throws IOException {
++    FileChannel.MapMode mapMode = readOnly ? FileChannel.MapMode.READ_ONLY : FileChannel.MapMode.READ_WRITE;
++    // The channel can be closed right after mapping; the mapping outlives it (as with MappedByteBuffer). The mapping
++    // itself is kept alive by the arena and released when the arena is closed.
++    Arena arena = Arena.ofShared();
++    try (FileChannel channel = openChannel(file, readOnly)) {
++      MemorySegment segment = channel.map(mapMode, offset, size, arena);
++      return wrap(new ForeignPinotBuffer(segment, arena), byteOrder);
++    } catch (RuntimeException | Error | IOException e) {
++      arena.close();
++      throw e;
++    }
++  }
++
++  private static FileChannel openChannel(File file, boolean readOnly)
++      throws IOException {
++    if (readOnly) {
++      return FileChannel.open(file.toPath(), StandardOpenOption.READ);
++    }
++    return FileChannel.open(file.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE,
++        StandardOpenOption.CREATE);
++  }
++
++  private static PinotDataBuffer wrap(ForeignPinotBuffer buffer, ByteOrder byteOrder) {
++    if (byteOrder == ByteOrder.nativeOrder()) {
++      return buffer;
++    } else {
++      return new NonNativePinotDataBuffer(buffer);
++    }
++  }
++}
+```
+
+**File**: `pinot-foreign-buffers/src/test/java/org/apache/pinot/segment/memory/foreign/ForeignMemoryPinotDataBufferTest.java` (added, +188/-0)
+```diff
+@@ -0,0 +1,188 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.segment.memory.foreign;
++
++import java.io.RandomAccessFile;
++import java.lang.ref.WeakReference;
++import java.nio.ByteBuffer;
++import java.nio.ByteOrder;
++import org.apache.commons.io.FileUtils;
++import org.apache.pinot.segment.spi.memory.PinotDataBuffer;
++import org.apache.pinot.segment.spi.memory.PinotDataBufferTest;
++import org.testng.Assert;
++import org.testng.annotations.Test;
++
++
++public class ForeignMemoryPinotDataBufferTest extends PinotDataBufferTest {
++  public ForeignMemoryPinotDataBufferTest() {
++    super(new ForeignPinotBufferFactory());
++  }
++
++  @Override
++  protected boolean prioritizeByteBuffer() {
++    return false;
++  }
++
++  /// Verifies that {@link PinotDataBuffer#toDirectByteBuffer} returns a zero-copy, live view over the same native
++  /// memory (not a copy). This is what lets consumers such as RoaringBitmap read a buffer region in place (e.g. via
++  /// {@link PinotDataBuffer#viewAsRoaringBitmap}) without materialising a copy on the query path. The check writes
++  /// through the buffer AFTER the view is obtained and asserts the change is visible through the view, and vice versa.
++  @Test
++  public void testToDirectByteBufferIsZeroCopyView()
++      throws Exception {
++    try (PinotDataBuffer buffer = _factory.allocateDirect(BUFFER_SIZE, PinotDataBuffer.NATIVE_ORDER)) {
++      ByteBuffer view = buffer.toDirectByteBuffer(0, BUFFER_SIZE);
++      Assert.assertTrue(view.isDirect(), "view must be a direct ByteBuffer over native memory");
++      Assert.assertEquals(view.capacity(), BUFFER_SIZE);
++      // Write through the buffer after the view exists -> must be visible through the view (proves it is not a copy).
++      buffer.putInt(0, 0x0A0B0C0D);
++      Assert.assertEquals(view.getInt(0), 0x0A0B0C0D);
++      // Write through the view -> must be visible through the buffer.
++      view.putInt(Integer.BYTES, 0x01020304);
++      Assert.assertEquals(buffer.getInt(Integer.BYTES), 0x01020304);
++    }
++  }
++
++  /// Verifies the headline memory-safety guarantee: reading or writing after the backing arena is closed fails
++  /// deterministically with {@link IllegalStateException} instead of corrupting memory (as the {@code Unsafe}
++  /// implementation would).
++  @Test
++  public void testUseAfterCloseFailsDeterministically() {
++    PinotDataBuffer buffer = _factory.allocateDirect(BUFFER_SIZE, PinotDataBuffer.NATIVE_ORDER);
++    buffer.putInt(0, 42);
++    Assert.assertEquals(buffer.getInt(0), 42);
++    try {
++      buffer.close();
++    } catch (Exception e) {
++      throw new AssertionError("close() should not throw", e);
++    }
++    Assert.assertThrows(IllegalStateException.class, () -> buffer.getInt(0));
++    Assert.assertThrows(IllegalStateException.class, () -> buffer.putInt(0, 7));
++  }
++
++  /// Verifies that {@code long} offset addressing is correct beyond {@link Integer#MAX_VALUE}. A narrowing bug in the
++  /// offset arithmetic would silently read/write the wrong location; this writes distinct values at offsets below, on
++  /// and above the 2^31 boundary and reads them back.
++  @Test
++  public void testLargeOffsetAddressing()
++      throws Exception {
++    // A few bytes beyond Integer.MAX_VALUE so that an 8-byte long can be addressed strictly above the int range.
++    // Offsets are chosen so that the four written regions do not overlap.
++    long size = Integer.MAX_VALUE + 32L;
++    long lowOffset = 0;                             // bytes [0, 8)
++    long straddlingOffset = Integer.MAX_VALUE - 3L; // bytes span the 2^31 boundary: [MAX-3, MAX+5)
++    long highOffset = Integer.MAX_VALUE + 8L;       // fully above the int range: [MAX+8, MAX+16)
++    long lastByteOffset = size - 1;                 // last addressable byte
++
++    try (PinotDataBuffer buffer = _factory.allocateDirect(size, PinotDataBuffer.NATIVE_ORDER)) {
++      Assert.assertEquals(buffer.size(), size);
++      buffer.putLong(lowOffset, 0x0102030405060708L);
++      buffer.putLong(straddlingOffset, 0x1112131415161718L);
++      buffer.putLong(highOffset, 0x2122232425262728L);
++      buffer.putByte(lastByteOffset, (byte) 0x5A);
++
++      Assert.assertEquals(buffer.getLong(low
+```
+
+**File**: `pinot-perf/pom.xml` (modified, +4/-0)
+```diff
+@@ -45,6 +45,10 @@
+       <groupId>org.apache.pinot</groupId>
+       <artifactId>pinot-segment-local</artifactId>
+     </dependency>
++    <dependency>
++      <groupId>org.apache.pinot</groupId>
++      <artifactId>pinot-foreign-buffers</artifactId>
++    </dependency>
+     <dependency>
+       <groupId>org.apache.pinot</groupId>
+       <artifactId>pinot-server</artifactId>
+```
+
+**File**: `pinot-perf/src/main/java/org/apache/pinot/perf/BenchmarkPinotDataBuffer.java` (modified, +17/-2)
+```diff
+@@ -22,6 +22,7 @@
+ import java.nio.ByteOrder;
+ import java.util.Random;
+ import java.util.concurrent.TimeUnit;
++import org.apache.pinot.segment.memory.foreign.ForeignPinotBufferFactory;
+ import org.apache.pinot.segment.spi.memory.ByteBufferPinotBufferFactory;
+ import org.apache.pinot.segment.spi.memory.PinotDataBuffer;
+ import org.apache.pinot.segment.spi.memory.SmallWithFallbackPinotBufferFactory;
+@@ -49,9 +50,16 @@
+ @OutputTimeUnit(TimeUnit.NANOSECONDS)
+ @Warmup(iterations = 3, time = 1)
+ @Measurement(iterations = 3, time = 1)
++// Mirror the --add-opens that the production launcher (appAssemblerScriptTemplate) and surefire pass on JDK 11+. The
++// Unsafe/Chronicle mmap path (sun.nio.ch) and Netty's zero-copy path require them; without them the "unsafe" factory
++// fails in the forked JVM.
+ @Fork(value = 1, jvmArgsPrepend = {
+     "--add-opens=java.base/java.nio=ALL-UNNAMED",
+-    "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED"
++    "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
++    "--add-opens=java.base/java.lang=ALL-UNNAMED",
++    "--add-opens=java.base/java.util=ALL-UNNAMED",
++    "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
++    "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED"
+ })
+ @State(Scope.Benchmark)
+ public class BenchmarkPinotDataBuffer {
+@@ -60,7 +68,7 @@ public class BenchmarkPinotDataBuffer {
+ 
+   @Param({"1", "32", "1024"})
+   private int _valueLength;
+-  @Param({"bytebuffer", "unsafe", "wrapper+unsafe"})
++  @Param({"bytebuffer", "unsafe", "wrapper+unsafe", "foreign", "wrapper+foreign"})
+   private String _bufferLibrary;
+   private byte[] _bytes;
+   private PinotDataBuffer _buffer;
+@@ -102,6 +110,13 @@ public void setupBufferLibrary() {
+         PinotDataBuffer.useFactory(new SmallWithFallbackPinotBufferFactory(
+             new ByteBufferPinotBufferFactory(), new UnsafePinotBufferFactory()));
+         break;
++      case "foreign":
++        PinotDataBuffer.useFactory(new ForeignPinotBufferFactory());
++        break;
++      case "wrapper+foreign":
++        PinotDataBuffer.useFactory(new SmallWithFallbackPinotBufferFactory(
++            new ByteBufferPinotBufferFactory(), new ForeignPinotBufferFactory()));
++        break;
+       default:
+         throw new IllegalArgumentException("Unrecognized buffer library \"" + _bufferLibrary + "\"");
+     }
+```
+
+**File**: `pinot-perf/src/main/java/org/apache/pinot/perf/BenchmarkQueriesSSQE.java` (modified, +49/-1)
+```diff
+@@ -36,6 +36,7 @@
+ import org.apache.pinot.segment.spi.IndexSegment;
+ import org.apache.pinot.segment.spi.creator.SegmentGeneratorConfig;
+ import org.apache.pinot.segment.spi.index.startree.AggregationFunctionColumnPair;
++import org.apache.pinot.segment.spi.memory.PinotDataBuffer;
+ import org.apache.pinot.spi.config.table.FieldConfig;
+ import org.apache.pinot.spi.config.table.StarTreeIndexConfig;
+ import org.apache.pinot.spi.config.table.TableConfig;
+@@ -44,6 +45,8 @@
+ import org.apache.pinot.spi.data.Schema;
+ import org.apache.pinot.spi.data.readers.GenericRow;
+ import org.apache.pinot.spi.data.readers.RecordReader;
++import org.apache.pinot.spi.env.PinotConfiguration;
++import org.apache.pinot.spi.utils.ReadMode;
+ import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
+ import org.openjdk.jmh.annotations.Benchmark;
+ import org.openjdk.jmh.annotations.BenchmarkMode;
+@@ -64,7 +67,17 @@
+ 
+ @BenchmarkMode(Mode.AverageTime)
+ @OutputTimeUnit(TimeUnit.MILLISECONDS)
+-@Fork(1)
++// Mirror the --add-opens that the production launcher (appAssemblerScriptTemplate) and surefire pass on JDK 11+. These
++// are required by the Unsafe/Chronicle mmap path (sun.nio.ch) and Netty's zero-copy path; without them the "unsafe"
++// _bufferLibrary and other reflective JDK access fail in the forked JVM.
++@Fork(value = 1, jvmArgsPrepend = {
++    "--add-opens=java.base/java.nio=ALL-UNNAMED",
++    "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
++    "--add-opens=java.base/java.lang=ALL-UNNAMED",
++    "--add-opens=java.base/java.util=ALL-UNNAMED",
++    "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
++    "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED"
++})
+ @Warmup(iterations = 5, time = 1)
+ @Measurement(iterations = 5, time = 1)
+ @State(Scope.Benchmark)
+@@ -230,18 +243,53 @@ public static void main(String[] args)
+       FILTERING_ON_TIMESTAMP_QUERY, REGEXP_REPLACE_QUERY, JSON_MATCH_QUERY
+   })
+   String _query;
++  // Off-heap buffer backend used for mmap'd segment reads. Defaults to "default" (the JVM default factory, Unsafe
++  // wrapped in SmallWithFallback) so the standard matrix is unaffected. Override on the CLI to compare backends, e.g.
++  // -p _bufferLibrary=foreign,bytebuffer,unsafe . The non-default values force a single factory for ALL buffer sizes
++  // (prioritize.bytebuffer=false) so the query read path is exercised entirely through that implementation.
++  @Param({"default"})
++  String _bufferLibrary;
+   private IndexSegment _indexSegment;
+   private List<IndexSegment> _indexSegments;
+   private Distribution.DataSupplier _supplier;
+ 
++  /// Sets the process-wide default {@link PinotDataBuffer} factory according to {@link #_bufferLibrary}. Uses
++  /// {@code prioritize.bytebuffer=false} so a single factory backs ALL buffer sizes (otherwise buffers below 2GB fall
++  /// back to ByteBuffer and the chosen implementation is never exercised).
++  private void configureBufferFactory() {
++    String className;
++    switch (_bufferLibrary) {
++      case "default":
++        return; // keep the JVM default factory (Unsafe wrapped in SmallWithFallback)
++      case "unsafe":
++        className = "org.apache.pinot.segment.spi.memory.unsafe.UnsafePinotBufferFactory";
++        break;
++      case "foreign":
++        className = "org.apache.pinot.segment.memory.foreign.ForeignPinotBufferFactory";
++        break;
++      case "bytebuffer":
++        className = "org.apache.pinot.segment.spi.memory.ByteBufferPinotBufferFactory";
++        break;
++      default:
++        throw new IllegalArgumentException("Unknown buffer library: " + _bufferLibrary);
++    }
++    Map<String, String> props = new HashMap<>();
++    props.put("pinot.offheap.buffer.factory", className);
++    props.put("pinot.offheap.prioritize.bytebuffer", "false");
++    PinotDataBuffer.loadDefaultFactory(new PinotConfiguration(props));
++  }
++
+   @Setup
+   public void setUp()
+       throws Exception {
++    configureBufferFactory();
+     _supplier = Distribution.createSupplier(42, _scenario);
+     FileUtils.deleteQuietly(INDEX_DIR);
+ 
+     _indexSegments = new ArrayList<>();
+     IndexLoadingConfig indexLoadingConfig = new IndexLoadingConfig(TABLE_CONFIG, SCHEMA);
++    // Force mmap so segment reads go through PinotDataBuffer (the configured off-heap factory), not on-heap.
++    indexLoadingConfig.setReadMode(ReadMode.mmap);
+     for (int i = 0; i < _numSegments; i++) {
+       buildSegment(String.format(SEGMENT_NAME_TEMPLATE, i));
+       _indexSegments.add(ImmutableSegmentLoader.load(new File(INDEX_DIR, String.format(SEGMENT_NAME_TEMPLATE, i)),
+```
+
+---
+
+### Incident Patch 2: `7f1fded6` (2026-11-26)
+**Commit Message**: Require controller admin for ZooKeeper-backed Basic Auth user creation (#20368)
+
+* Require a controller admin to create users with ZooKeeper Basic Auth
+
+The controller authorization filter already dispatches CREATE_USER to the configured provider. Check the authenticated controller role in the ZooKeeper provider and delegate all other actions to the existing policy.
+
+Regression coverage: BasicAuthAccessControlFactoryTest#testCreateUserAuthorization checks the authorization decision for a ZooKeeper user, a ZooKeeper administrator, and a file-backed principal.
+
+* Centralize the user creation check in the final Basic Auth method
+
+* Protect ZooKeeper-backed account metadata mutations
+
+Apply the controller administrator check to account updates and deletes, and authorize raw metadata targets before writing. For non-admin recursive deletes, remove only the preflighted nodes using leaf deletes.
+
+Regression coverage: BasicAuthAccessControlFactoryTest#testUserMutationAuthorization and ZookeeperResourceTest#testUserMetadataWriteAuthorization exercise the policy and storage guard.
+
+**File**: `pinot-common/src/main/java/org/apache/pinot/common/metadata/ZKMetadataProvider.java` (modified, +4/-0)
+```diff
+@@ -236,6 +236,10 @@ public static String constructPropertyStorePathForResourceConfig(String resource
+     return StringUtil.join("/", PROPERTYSTORE_TABLE_CONFIGS_PREFIX, resourceName);
+   }
+ 
++  public static String getPropertyStorePathForUserConfigs() {
++    return PROPERTYSTORE_USER_CONFIGS_PREFIX;
++  }
++
+   public static String constructPropertyStorePathForUserConfig(String resourceName) {
+     return StringUtil.join("/", PROPERTYSTORE_USER_CONFIGS_PREFIX, resourceName);
+   }
+```
+
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/api/access/BaseBasicAuthAccessControl.java` (modified, +19/-6)
+```diff
+@@ -25,8 +25,12 @@
+ import javax.annotation.Nullable;
+ import javax.ws.rs.NotAuthorizedException;
+ import javax.ws.rs.core.HttpHeaders;
++import org.apache.pinot.core.auth.Actions;
+ import org.apache.pinot.core.auth.BasicAuthPrincipal;
+ import org.apache.pinot.core.auth.TargetType;
++import org.apache.pinot.core.auth.ZkBasicAuthPrincipal;
++import org.apache.pinot.spi.config.user.ComponentType;
++import org.apache.pinot.spi.config.user.RoleType;
+ import org.apache.pinot.spi.utils.builder.TableNameBuilder;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+@@ -100,12 +104,21 @@ private void warnOnceAboutTableScope(P principal, String endpointUrl) {
+ 
+   @Override
+   public final boolean hasAccess(HttpHeaders httpHeaders, TargetType targetType, String targetId, String action) {
+-    // Basic auth permissions are CRUD access types, not action names. AuthenticationFilter enforces the resolved
+-    // AccessType before invoking this fine-grained check, so this overload must only prevent unauthenticated access.
+-    // In particular it must not require unrestricted table scope for TargetType.CLUSTER: several table-scoped
+-    // endpoints declare a cluster action, and for those the filter already resolved the table name and ran the
+-    // table-scoped check above. Endpoints that name no table go through the cluster-wide check above instead.
+-    return getPrincipal(httpHeaders).isPresent();
++    Optional<P> principal = getPrincipal(httpHeaders);
++    if (targetType == TargetType.CLUSTER && (Actions.Cluster.CREATE_USER.equals(action)
++        || Actions.Cluster.UPDATE_USER.equals(action) || Actions.Cluster.DELETE_USER.equals(action))) {
++      return principal.filter(BaseBasicAuthAccessControl::canManageUsers).isPresent();
++    }
++    // AuthenticationFilter already checked CRUD and table scope, including for table requests with cluster actions.
++    return principal.isPresent();
++  }
++
++  private static boolean canManageUsers(BasicAuthPrincipal principal) {
++    if (principal instanceof ZkBasicAuthPrincipal zkPrincipal) {
++      return zkPrincipal.hasPermission(RoleType.ADMIN, ComponentType.CONTROLLER);
++    }
++    // Only the file-backed principal relies solely on the preceding CRUD and table-scope checks.
++    return principal.getClass() == BasicAuthPrincipal.class;
+   }
+ 
+   /// Reports whether the principal may act on the given target type at all, without a specific target or action.
+```
+
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/ZookeeperResource.java` (modified, +76/-1)
+```diff
+@@ -50,15 +50,20 @@
+ import javax.ws.rs.Path;
+ import javax.ws.rs.Produces;
+ import javax.ws.rs.QueryParam;
++import javax.ws.rs.core.Context;
+ import javax.ws.rs.core.HttpHeaders;
+ import javax.ws.rs.core.MediaType;
+ import javax.ws.rs.core.Response;
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.helix.AccessOption;
++import org.apache.helix.PropertyType;
+ import org.apache.helix.zookeeper.datamodel.ZNRecord;
+ import org.apache.helix.zookeeper.introspect.CodehausJacksonIntrospector;
++import org.apache.pinot.common.metadata.ZKMetadataProvider;
++import org.apache.pinot.controller.api.access.AccessControlFactory;
+ import org.apache.pinot.controller.api.access.AccessType;
+ import org.apache.pinot.controller.api.access.Authenticate;
++import org.apache.pinot.controller.api.access.ZkBasicAuthAccessControlFactory;
+ import org.apache.pinot.controller.api.exception.ControllerApplicationException;
+ import org.apache.pinot.controller.helix.core.PinotHelixResourceManager;
+ import org.apache.pinot.core.auth.Actions;
+@@ -79,6 +84,11 @@
+ @Path("/")
+ public class ZookeeperResource {
+   private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperResource.class);
++  private static final String USER_CONFIGS = "/" + PropertyType.PROPERTYSTORE
++      + ZKMetadataProvider.getPropertyStorePathForUserConfigs();
++  // Helix can also read existing user configs from its legacy fallback property store.
++  private static final String LEGACY_USER_CONFIGS = "/HELIX_PROPERTYSTORE"
++      + ZKMetadataProvider.getPropertyStorePathForUserConfigs();
+ 
+   // Helix uses codehaus.jackson.map.ObjectMapper, hence we can't use pinot JsonUtils here.
+   @VisibleForTesting
+@@ -94,6 +104,12 @@ public class ZookeeperResource {
+   @Inject
+   PinotHelixResourceManager _pinotHelixResourceManager;
+ 
++  @Inject
++  AccessControlFactory _accessControlFactory;
++
++  @Context
++  HttpHeaders _httpHeaders;
++
+   @GET
+   @Path("/zk/get")
+   @Authorize(targetType = TargetType.CLUSTER, action = Actions.Cluster.GET_ZNODE)
+@@ -140,7 +156,7 @@ public SuccessResponse delete(
+ 
+     path = validateAndNormalizeZKPath(path, true);
+ 
+-    boolean success = _pinotHelixResourceManager.deleteZKPath(path);
++    boolean success = deleteAuthorizedPath(path);
+     if (success) {
+       return new SuccessResponse("Successfully deleted path: " + path);
+     } else {
+@@ -188,6 +204,10 @@ public SuccessResponse putChildren(
+           e);
+     }
+ 
++    // Authorize the whole batch before writing its first child.
++    for (ZNRecord znRecord : znRecords) {
++      authorizeUserMetadataWrite(path + "/" + znRecord.getId());
++    }
+     for (ZNRecord znRecord : znRecords) {
+       String childPath = path + "/" + znRecord.getId();
+       try {
+@@ -227,6 +247,7 @@ public SuccessResponse putData(
+       @Nullable String payload) {
+ 
+     path = validateAndNormalizeZKPath(path, false);
++    authorizeUserMetadataWrite(path);
+ 
+     if (StringUtils.isEmpty(data)) {
+       data = payload;
+@@ -277,6 +298,7 @@ public SuccessResponse createNode(
+       int accessOption, String payload) {
+ 
+     path = validateAndNormalizeZKPath(path, false);
++    authorizeUserMetadataWrite(path);
+ 
+     //validate ttl range
+     if ((accessOption == AccessOption.PERSISTENT_WITH_TTL
+@@ -424,6 +446,59 @@ public String stat(
+     }
+   }
+ 
++  private boolean deleteAuthorizedPath(String path) {
++    if (canManageUserMetadata()) {
++      return _pinotHelixResourceManager.deleteZKPath(path);
++    }
++    if (path.equals("/")) {
++      throw userMetadataAccessDenied();
++    }
++    // The raw accessor can reach multiple clusters. Check the whole subtree before making any changes.
++    List<String> paths = new ArrayList<>();
++    paths.add(path);
++    for (int i = 0; i < paths.size(); i++) {
++      String node = paths.get(i);
++      if (isUserMetadata(node)) {
++        throw userMetadataAccessDenied();
++      }
++      List<String> children = _pinotHelixResourceManager.getZKChildNames(node);
++      if (children == null) {
++        return false;
++      }
++      for (String child : children) {
++        paths.add(node + "/" + child);
++      }
++    }
++    // Never recursively remove a child that appeared after authorization.
++    for (String node : paths.reversed()) {
++      if (!_pinotHelixResourceManager.deleteZKLeaf(node)) {
++        return false;
++      }
++    }
++    return true;
++  }
++
++  private void authorizeUserMetadataWrite(String path) {
++    if (isUserMetadata(path) && !canManageUserMetadata()) {
++      throw userMetadataAccessDenied();
++    }
++  }
++
++  private boolean canManageUserMetadata() {
++    return !(_accessControlFactory instanceof ZkBasicAuthAccessControlFactory) || _accessControlFactory.create()
++        .hasAccess(_httpHeaders, TargetType.CLUSTER, null, Actions.Cluster.UPDATE_USER);
++  }
++
++  private static ControllerApplicationException userMetadataAccessDenied() {
++    return new ControllerApplicationException(LOGGER, "Permission denied to modify user metadata",
++        Response.Statu
+```
+
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/helix/core/PinotHelixResourceManager.java` (modified, +5/-0)
+```diff
+@@ -2386,6 +2386,11 @@ public boolean deleteZKPath(String path) {
+     return _helixDataAccessor.getBaseDataAccessor().remove(path, -1);
+   }
+ 
++  /// Removes only a leaf, even if children are added concurrently.
++  public boolean deleteZKLeaf(String path) {
++    return _helixDataAccessor.getBaseDataAccessor().removeWithExpectedVersion(path, AccessOption.PERSISTENT, -1);
++  }
++
+   public ZNRecord readZKData(String path) {
+     return _helixDataAccessor.getBaseDataAccessor().get(path, null, -1);
+   }
+```
+
+**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/api/access/BasicAuthAccessControlFactoryTest.java` (modified, +17/-0)
+```diff
+@@ -143,6 +143,21 @@ public void testAuthenticationProbeRemainsNonThrowing(AccessControl accessContro
+     assertTrue(accessControl.hasAccess(headers(SCOPED_ADMIN_USER, SCOPED_ADMIN_PASSWORD), TargetType.CLUSTER));
+   }
+ 
++  @Test
++  public void testUserMutationAuthorization()
++      throws Exception {
++    AccessControl zk = createZkAccessControl();
++    AccessControl file = createStaticAccessControl();
++    HttpHeaders fullUser = headers(FULL_USER, FULL_PASSWORD);
++    HttpHeaders admin = headers("admin", FULL_PASSWORD);
++    for (String action : List.of(Actions.Cluster.CREATE_USER, Actions.Cluster.UPDATE_USER,
++        Actions.Cluster.DELETE_USER)) {
++      assertFalse(zk.hasAccess(fullUser, TargetType.CLUSTER, null, action), action);
++      assertTrue(zk.hasAccess(admin, TargetType.CLUSTER, null, action), action);
++      assertTrue(file.hasAccess(fullUser, TargetType.CLUSTER, null, action), action);
++    }
++  }
++
+   @Test(dataProvider = "accessControls")
+   public void testBasicAuthWorkflow(AccessControl accessControl) {
+     assertFalse(accessControl.protectAnnotatedOnly());
+@@ -270,6 +285,8 @@ private static AccessControl createZkAccessControl()
+         user(FULL_USER, FULL_PASSWORD, null,
+             List.of(org.apache.pinot.spi.config.user.AccessType.values())),
+         user(WILDCARD_USER, WILDCARD_PASSWORD, null, null),
++        new UserConfig("admin", BcryptUtils.encrypt(FULL_PASSWORD), ComponentType.CONTROLLER.name(),
++            RoleType.ADMIN.name(), null, null, null),
+         user(SCOPED_ADMIN_USER, SCOPED_ADMIN_PASSWORD, List.of(ALLOWED_TABLE),
+             List.of(org.apache.pinot.spi.config.user.AccessType.values())),
+         user(EXCLUDED_USER, EXCLUDED_PASSWORD, null, List.of("otherTable"), null),
+```
+
+**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/api/resources/ZookeeperResourceTest.java` (modified, +66/-7)
+```diff
+@@ -21,26 +21,34 @@
+ import com.fasterxml.jackson.core.type.TypeReference;
+ import java.nio.charset.StandardCharsets;
+ import java.util.List;
++import javax.ws.rs.core.HttpHeaders;
++import javax.ws.rs.core.Response;
++import org.apache.helix.AccessOption;
++import org.apache.helix.PropertyPathBuilder;
+ import org.apache.helix.zookeeper.datamodel.ZNRecord;
+ import org.apache.pinot.client.admin.PinotAdminClient;
++import org.apache.pinot.controller.api.access.AccessControl;
++import org.apache.pinot.controller.api.access.BasicAuthAccessControlFactory;
++import org.apache.pinot.controller.api.access.ZkBasicAuthAccessControlFactory;
++import org.apache.pinot.controller.api.exception.ControllerApplicationException;
+ import org.apache.pinot.controller.helix.ControllerTest;
++import org.apache.pinot.controller.helix.core.PinotHelixResourceManager;
++import org.apache.pinot.core.auth.Actions;
++import org.apache.pinot.core.auth.TargetType;
++import org.apache.zookeeper.data.Stat;
++import org.mockito.InOrder;
++import org.mockito.Mockito;
+ import org.testng.Assert;
+-import org.testng.annotations.BeforeClass;
+ import org.testng.annotations.Test;
+ 
+ import static org.testng.Assert.expectThrows;
+ 
+ 
+ public class ZookeeperResourceTest extends ControllerTest {
+-  @BeforeClass
+-  public void setUp()
+-      throws Exception {
+-    setupSharedStateAndValidate();
+-  }
+-
+   @Test
+   public void testZookeeperDataEndpoints()
+       throws Exception {
++    setupSharedStateAndValidate();
+     PinotAdminClient adminClient = getOrCreateAdminClient();
+     String path = "/zookeeper";
+     int expectedVersion = -1;
+@@ -118,4 +126,55 @@ public void testZookeeperDataEndpoints()
+     Assert.assertEquals(recordList4.get(0), recordList3.get(0));
+     Assert.assertEquals(recordList4.get(1), recordList3.get(1));
+   }
++
++  @Test
++  public void testUserMetadataWriteAuthorization()
++      throws Exception {
++    ZookeeperResource resource = new ZookeeperResource();
++    PinotHelixResourceManager manager = Mockito.mock(PinotHelixResourceManager.class);
++    AccessControl accessControl = Mockito.mock(AccessControl.class);
++    resource._pinotHelixResourceManager = manager;
++    resource._accessControlFactory = Mockito.mock(ZkBasicAuthAccessControlFactory.class);
++    resource._httpHeaders = Mockito.mock(HttpHeaders.class);
++    Mockito.when(resource._accessControlFactory.create()).thenReturn(accessControl);
++
++    String configRoot = PropertyPathBuilder.propertyStore("testCluster") + "/CONFIGS";
++    String userPath = configRoot + "/USER/fixture";
++    Mockito.when(manager.getZKStat(configRoot)).thenReturn(new Stat());
++    Mockito.when(manager.getZKChildNames(configRoot)).thenReturn(List.of("USER"));
++    String record = ZookeeperResource.MAPPER.writeValueAsString(new ZNRecord("fixture"));
++    String batch = ZookeeperResource.MAPPER.writeValueAsString(List.of(new ZNRecord("other"), new ZNRecord("USER")));
++    assertForbidden(() -> resource.createNode(userPath, -1, AccessOption.PERSISTENT, record));
++    assertForbidden(() -> resource.putData(userPath, null, -1, AccessOption.PERSISTENT, record));
++    assertForbidden(() -> resource.putData("/peers/testCluster/HELIX_PROPERTYSTORE/CONFIGS/USER/fixture", null, -1,
++        AccessOption.PERSISTENT, record));
++    assertForbidden(() -> resource.putChildren(configRoot, null, -1, AccessOption.PERSISTENT, batch));
++    assertForbidden(() -> resource.delete(configRoot));
++    Mockito.verifyNoMoreInteractions(Mockito.ignoreStubs(manager));
++
++    String topLevel = "/fixture";
++    Mockito.when(manager.getZKStat(topLevel)).thenReturn(new Stat());
++    Mockito.when(manager.getZKChildNames(topLevel)).thenReturn(List.of("child"));
++    Mockito.when(manager.deleteZKLeaf(topLevel + "/child")).thenReturn(true);
++    Mockito.when(manager.deleteZKLeaf(topLevel)).thenReturn(true);
++    resource.delete(topLevel);
++    InOrder deletes = Mockito.inOrder(manager);
++    deletes.verify(manager).deleteZKLeaf(topLevel + "/child");
++    deletes.verify(manager).deleteZKLeaf(topLevel);
++    Mockito.verify(manager, Mockito.never()).deleteZKPath(topLevel);
++
++    Mockito.when(accessControl.hasAccess(resource._httpHeaders, TargetType.CLUSTER, null, Actions.Cluster.UPDATE_USER))
++        .thenReturn(true);
++    Mockito.when(manager.deleteZKPath(configRoot)).thenReturn(true);
++    resource.delete(configRoot);
++    Mockito.verify(manager).deleteZKPath(configRoot);
++    resource._accessControlFactory = Mockito.mock(BasicAuthAccessControlFactory.class);
++    resource.delete(configRoot);
++    Mockito.verify(manager, Mockito.times(2)).deleteZKPath(configRoot);
++  }
++
++  private static void assertForbidden(Runnable operation) {
++    ControllerApplicationException exception = expectThrows(ControllerApplicationException.class, operation::run);
++    Assert.assertEquals(exception.getResponse().getStatus(), Response.Status.FORBIDDEN.getStatusCode());
++  }
+ }
+```
+
+---
+
+### Incident Patch 3: `3be12a28` (2026-11-26)
+**Commit Message**: Bump org.webjars:swagger-ui from 5.35.1 to 5.36.0 (#20392)
+
+Bumps [org.webjars:swagger-ui](https://github.com/swagger-api/swagger-ui) from 5.35.1 to 5.36.0.
+- [Release notes](https://github.com/swagger-api/swagger-ui/releases)
+- [Commits](https://github.com/swagger-api/swagger-ui/compare/v5.35.1...v5.36.0)
 
 ---
 updated-dependencies:
-- dependency-name: com.github.jnr:jnr-posix
-  dependency-version: 3.2.9
+- dependency-name: org.webjars:swagger-ui
+  dependency-version: 5.36.0
   dependency-type: direct:production
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -2024,109 +2974,24 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -368,7 +368,7 @@
-     <equalsverifier.version>3.19.4</equalsverifier.version>
-     <testcontainers.version>2.0.5</testcontainers.version>
-     <h2.version>2.5.252</h2.version>
--    <jnr-posix.version>3.2.8</jnr-posix.version>
-+    <jnr-posix.version>3.2.9</jnr-posix.version>
-     <scalatest.version>3.2.20</scalatest.version>
-     <assertj.version>3.27.7</assertj.version>
- 
-```
-
----
-
-### Incident Patch 2: `3c7a9684` (2026-11-25)
-**Commit Message**: Keep waiting for segment offloads when the table shutdown thread is interrupted (#20362)
-
-releaseAndRemoveAllSegments waits up to 10 minutes for the offloads. When the
-calling thread was interrupted, awaitTermination threw at once and shutdownNow
-dropped the queued offloads and interrupted the running ones, so a consuming
-segment could keep running after its table data manager was gone.
-
-Keep waiting within the same 10 minute limit and restore the interrupt once the
-offloads are done.
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/data/manager/BaseTableDataManager.java` (modified, +16/-5)
-```diff
-@@ -342,13 +342,24 @@ protected void releaseAndRemoveAllSegments() {
-         });
-       }
-       stopExecutorService.shutdown();
--      try {
--        // Wait at most 10 minutes before exiting this method.
--        if (!stopExecutorService.awaitTermination(10, TimeUnit.MINUTES)) {
--          stopExecutorService.shutdownNow();
-+      // Wait at most 10 minutes before exiting this method. An interrupt must not abandon the queued offloads, or a
-+      // consuming segment could keep running after its table is gone, so keep waiting and restore the interrupt once
-+      // the offloads are done.
-+      long deadlineNanos = System.nanoTime() + TimeUnit.MINUTES.toNanos(10);
-+      boolean interrupted = false;
-+      boolean terminated = false;
-+      long remainingNanos;
-+      while (!terminated && (remainingNanos = deadlineNanos - System.nanoTime()) > 0) {
-+        try {
-+          terminated = stopExecutorService.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS);
-+        } catch (InterruptedException e) {
-+          interrupted = true;
-         }
--      } catch (InterruptedException e) {
-+      }
-+      if (!terminated) {
-         stopExecutorService.shutdownNow();
-+      }
-+      if (interrupted) {
-         Thread.currentThread().interrupt();
-       }
-     }
-```
-
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/data/manager/BaseTableDataManagerTest.java` (modified, +27/-0)
-```diff
-@@ -199,6 +199,33 @@ public static void initSegmentFetcher()
-     PinotCrypterFactory.init(new PinotConfiguration(properties));
-   }
- 
-+  @Test
-+  public void testReleaseAndRemoveAllSegmentsFinishesOffloadsWhenInterrupted()
-+      throws Exception {
-+    BaseTableDataManager table = createTableManager();
-+    int numSegments = 3;
-+    CountDownLatch offloaded = new CountDownLatch(numSegments);
-+    for (int i = 0; i < numSegments; i++) {
-+      SegmentDataManager segmentDataManager = mock(SegmentDataManager.class);
-+      doAnswer(invocation -> {
-+        Thread.sleep(200);
-+        offloaded.countDown();
-+        return null;
-+      }).when(segmentDataManager).offload();
-+      table.registerSegment(SEGMENT_NAME + i, segmentDataManager);
-+    }
-+
-+    Thread.currentThread().interrupt();
-+    try {
-+      table.releaseAndRemoveAllSegments();
-+      assertTrue(Thread.currentThread().isInterrupted());
-+      assertEquals(offloaded.getCount(), 0L);
-+      assertEquals(table.getNumSegments(), 0);
-+    } finally {
-+      Thread.interrupted();
-+    }
-+  }
-+
-   @Test
-   @SuppressWarnings("deprecation")
-   public void testOnlineSegmentLoadedDuringShutdownIsDestroyed()
+@@ -199,7 +199,7 @@
+     <jersey.version>2.48</jersey.version>
+     <hk2.version>2.6.1</hk2.version>
+     <swagger.version>1.6.17</swagger.version>
+-    <swagger-ui.version>5.35.1</swagger-ui.version>
++    <swagger-ui.version>5.36.0</swagger-ui.version>
+     <hadoop.version>3.4.3</hadoop.version>
+     <jsonpath.version>2.10.0</jsonpath.version>
+     <jsonsmart.version>2.6.1</jsonsmart.version>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20394** (2026-11-26): Bump org.codehaus.mojo:versions-maven-plugin from 2.25.2 to 2.25.3 (@dependabot[bot])
+- **PR #20393** (2026-11-26): Bump org.codehaus.mojo:animal-sniffer-annotations from 1.29.1 to 1.29.2 (@dependabot[bot])
+- **PR #20392** (2026-11-26): Bump org.webjars:swagger-ui from 5.35.1 to 5.36.0 (@dependabot[bot])
 - **PR #20387** (2026-11-25): Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9 (@dependabot[bot])
-- **PR #20376** (2026-11-25): Reject range index on a raw BIG_DECIMAL column during table config validation (@deshmukhpurushothaman)
-- **PR #20375** (2026-11-24): Bump software.amazon.awssdk:bom from 2.59.5 to 2.59.7 (@dependabot[bot])
-- **PR #20370** (2026-11-24): Reuse broker principal validation for requests without a table (@xiangfu0)
-- **PR #20369** (2026-11-24): Enforce broker table permissions for time-series queries (@xiangfu0)
-- **PR #20364** (2026-11-24): Fix minion test races during parallel execution and segment refresh (@Jackie-Jiang)
+- **PR #20379** (2026-11-25): Stop leftover MSE mailboxes and finished tasks from keeping queries in memory (@yashmayya)
+- **PR #20378** (2026-11-26): Restrict the locations ProtoBufCodeGenMessageDecoder loads jar files from (@xiangfu0)
 
 ---
 
@@ -2146,31 +3011,41 @@ offloads are done.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9
+## X. Add a Foreign Function & Memory (Panama) based PinotDataBuffer implementation
 
 **RULE**:
-When implementing operations in `pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-bom/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95ec60fa`: Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df69b9f8`: Add a Foreign Function & Memory (Panama) based PinotDataBuffer implementation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-bom/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    <jnr-posix.version>3.2.9</jnr-posix.version>
+      <dependency>
+        <groupId>org.apache.pinot</groupId>
+        <artifactId>pinot-foreign-buffers</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.pinot</groupId>
+        <artifactId>pinot-segment-spi</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+      </dependency>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    <jnr-posix.version>3.2.8</jnr-posix.version>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95ec60fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df69b9f8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

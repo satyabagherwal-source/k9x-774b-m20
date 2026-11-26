@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T15:02:31.497Z",
+  "last_updated": "2026-11-26T15:12:43.034Z",
   "directives": [
     {
       "id": "CD-001",
@@ -65601,6 +65601,37 @@
       "source_repo": "yazinsai-openoats",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-395E86-rebuild-a-mic-the-headset-rebound-don-t-.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-YQTB",
+      "directive_title": "[iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemen",
+      "source_repo": "react-react-native-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YQTB-ios-fabric-fix-data-race-in-rctcomponentviewfactory-legacy-interop-unimplemen.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-YSQZ",
+      "directive_title": "Add a Foreign Function & Memory (Panama) based PinotDataBuffer implementation",
+      "source_repo": "apache-pinot-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YSQZ-add-a-foreign-function-memory-panama-based-pinotdatabuffer-implementation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-B12B1B",
+      "directive_title": "Add a Foreign Function & Memory (Panama) based PinotDataBuffer implementation",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-pinot",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B12B1B-add-a-foreign-function-memory-panama-bas.md",
       "staged_date": "2026-11-26"
     }
   ]

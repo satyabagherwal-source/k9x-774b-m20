@@ -545,8 +545,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-pro-rl",
     "license": "Open-Source",
-    "contentHash": "d5d96dbc8630461968e9c82f723be309195d7062c5a777aa848d22a5177bfcd8",
-    "lastHarvestedAt": "2026-11-22T22:15:02.001Z",
+    "contentHash": "50eb52913855cd82bb38556f61f16ff5c23e9e747a96121a3c611d6d89caf08e",
+    "lastHarvestedAt": "2026-11-26T15:11:41.467Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "ad969b28",
+    "sourceVersion": "9743c098",
     "license": "MIT",
-    "contentHash": "f8b733d7a1bdf9d1b70dfa3b6119c3abf8da8fc53a2b95c9450bb82c87813506",
-    "lastHarvestedAt": "2026-11-24T04:53:55.601Z",
+    "contentHash": "38b07462e2b33fa8efa7b2b17f4698e68d508102dec2dd9037019e68d88b84e1",
+    "lastHarvestedAt": "2026-11-26T15:11:47.317Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "95ec60fa",
+    "sourceVersion": "d197e0b5",
     "license": "Apache-2.0",
-    "contentHash": "9e41809f86683ef4fc383a33ed13b7c799455a429868decb980d6db74bce8c1d",
-    "lastHarvestedAt": "2026-11-25T14:05:08.768Z",
+    "contentHash": "113824aa67d4feeb7815f74d2fb2ad5031193ddf375e7c78c14767da7a53dead",
+    "lastHarvestedAt": "2026-11-26T15:11:55.165Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

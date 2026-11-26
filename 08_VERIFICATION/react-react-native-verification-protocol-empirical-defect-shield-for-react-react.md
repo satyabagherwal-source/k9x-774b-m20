@@ -4,22 +4,22 @@
 {
   "source_repository": "react/react-native",
   "source_url": "https://github.com/react/react-native",
-  "source_version": "ad969b28",
+  "source_version": "9743c098",
   "license": "MIT",
-  "timestamp": "2026-11-24T04:53:55.995Z",
+  "timestamp": "2026-11-26T15:11:47.671Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-react-react-native",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [react/react-native](https://github.com/react/react-native) (Revision: `ad969b28`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T04:53:55.995Z`  
+> **Provenance**: Harvested from [react/react-native](https://github.com/react/react-native) (Revision: `9743c098`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T15:11:47.671Z`  
 > **Learning ID**: `learn-github-react-react-native`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `react/react-native` (Commit: `ad969b28`)
+- **Target Repository**: `react/react-native` (Commit: `9743c098`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T04:53:54.292Z  
+> **Harvest Timestamp**: 2026-11-26T15:11:45.722Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126989 stars
+- **Stars / Engagement**: 127009 stars
 
 ---
 
@@ -633,587 +633,546 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5dc1d781` (2026-11-23)
-**Commit Message**: [Android] Anti-aliased rounded overflow clips on Android 9 and 10
+### Incident Patch 1: `3ea73699` (2026-11-25)
+**Commit Message**: [iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemented fallbacks
 
 ## Summary:
 
-On Android 9 and 10, a view with `overflow: 'hidden'` and a `borderRadius` has stepped, aliased corners. RN clips the padding box with `Canvas.clipPath`, and HWUI's `SkiaCanvas::clipPath` does not request anti-aliasing before Android 11 (AOSP frameworks/base `e431e316981e`, "Added support for antialiased canvas clipping", first in `android-11.0.0_r1`; `android-9.0.0_r1` and `android-10.0.0_r1` call `mCanvas->clipPath(*path, op)` without it). It is most visible where a dark photo meets a light card.
+`-[RCTComponentViewFactory _registerComponentIfPossible:]` runs on the JS thread, from the `ComponentDescriptorProviderRegistry` request callback. Its legacy-interop fallback and its `UnimplementedView` fallback write `_componentViewClasses` and `_registrationStatusMap` **without taking `_mutex`**. Its early `_registrationStatusMap.find` and `-_wasComponentRegistered:` also read without the lock.
 
-#54525 fixed this for `Image` on API 28 and below by drawing into a layer and masking it with an anti-aliased path. Clipping views (`View`, scroll views, text) still use the hard clip, and API 29 is missed by the `<= P` gate.
+On the main thread, `-createComponentViewWithComponentHandle:` takes only `std::shared_lock lock(_mutex)` before it calls `_componentViewClasses.find(handle)`. So an unlocked insert, particularly one that rehashes the map, can make that lookup miss a handle registered long ago. In practice the missed handle is often the built-in `Paragraph`:
 
-This change, on Android 9 and 10 only, clips with the view's outline (`clipToOutline`) when the padding box is a round rect with one circular radius and no border, and nothing is drawn outside the bounds that the outline would cut off (box shadows, outline, a feedback ripple). `RenderNodeDrawable` clips outlines with an anti-aliased `clipRRect` on every version, and the outline clip dr
+- Debug builds abort with `RCTAssert: ComponentView with componentHandle … (Paragraph) not found.`
+- Release builds compile the assert out and dereference the end iterator. #58299 reports a production SIGSEGV at fault address `0x18`.
 
-**File**: `packages/react-native/ReactAndroid/api/ReactAndroid.api` (modified, +2/-0)
+Any app that renders a component through the legacy interop layer is exposed: a library without Fabric codegen,
+
+**File**: `packages/react-native/React/Fabric/Mounting/RCTComponentViewFactory.mm` (modified, +21/-7)
 ```diff
-@@ -3189,6 +3189,8 @@ public final class com/facebook/react/uimanager/BackgroundStyleApplicator {
- 	public static final fun setOutlineOffset (Landroid/view/View;F)V
- 	public static final fun setOutlineStyle (Landroid/view/View;Lcom/facebook/react/uimanager/style/OutlineStyle;)V
- 	public static final fun setOutlineWidth (Landroid/view/View;F)V
-+	public static final fun updatePaddingBoxClip (Landroid/view/View;Landroid/graphics/Canvas;Z)V
-+	public static final fun updatePaddingBoxOutlineClip (Landroid/view/View;Landroid/graphics/Canvas;Z)Z
+@@ -131,14 +131,18 @@ - (RCTComponentViewClassDescriptor)_componentViewClassDescriptorFromClass:(Class
+ 
+ - (BOOL)_wasComponentRegistered:(const std::string &)name
+ {
++  std::shared_lock lock(_mutex);
+   auto registrationResult = _registrationStatusMap.find(name);
+   return registrationResult != _registrationStatusMap.end() && (registrationResult->second);
  }
  
- public abstract class com/facebook/react/uimanager/BaseViewManager : com/facebook/react/uimanager/ViewManager, android/view/View$OnLayoutChangeListener {
-```
-
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/uimanager/BackgroundStyleApplicator.kt` (modified, +89/-3)
-```diff
-@@ -18,8 +18,10 @@ import android.graphics.RectF
- import android.graphics.drawable.Drawable
- import android.os.Build
- import android.view.View
-+import android.view.ViewOutlineProvider
- import android.widget.ImageView
- import androidx.annotation.ColorInt
-+import com.facebook.react.R
- import com.facebook.react.bridge.ReadableArray
- import com.facebook.react.common.annotations.UnstableReactNativeAPI
- import com.facebook.react.uimanager.PixelUtil.dpToPx
-@@ -465,6 +467,88 @@ public object BackgroundStyleApplicator {
-     clipToPaddingBoxWithAntiAliasing(view, canvas, null)
-   }
- 
-+  /**
-+   * Clips [view]'s content to its padding box when [clip] is true, like [clipToPaddingBox], and
-+   * removes any clip applied by an earlier call when [clip] is false. Views call it on every draw,
-+   * before drawing what the clip applies to.
-+   *
-+   * See [updatePaddingBoxOutlineClip]; when the outline clip does not apply, the canvas is clipped
-+   * as [clipToPaddingBox] does.
-+   */
-+  @JvmStatic
-+  public fun updatePaddingBoxClip(view: View, canvas: Canvas, clip: Boolean) {
-+    if (!updatePaddingBoxOutlineClip(view, canvas, clip) && clip) {
-+      clipToPaddingBox(view, canvas)
-+    }
-+  }
-+
-+  /**
-+   * Clips [view] to its padding box with its outline ([View.setClipToOutline]) when [clip] is true
-+   * and the outline can describe the padding box, and removes an outline clip set by an earlier
-+   * call otherwise. Returns whether the outline clip is in effect; when it is not, the caller clips
-+   * the canvas itself.
-+   *
-+   * Before Android 11, HWUI's Canvas.clipPath is not anti-aliased, so a rounded padding box clipped
-+   * with it has stepped corners. On Android 9 and 10 the outline clip is anti-aliased and draws no
-+   * offscreen layer, but describes only a round rect, so it is used when the padding box is one: a
-+   * single circular radius, no border, and nothing drawn outside the bounds (box shadows, outline,
-+   * a feedback ripple) for it to cut off. Any other padding box keeps the canvas clip: masking it
-+   * with a layer, as [clipToPaddingBoxWithAntiAliasing] does for images, costs a frame's budget on
-+   * these devices for a screen of bordered cards.
-+   */
-+  @JvmStatic
-+  public fun updatePaddingBoxOutlineClip(view: View, canvas: Canvas, clip: Boolean): Boolean {
-+    // The outline clip is a RenderNode property, so software drawing (e.g. view.draw into a
-+    // bitmap) ignores it. Leave it for the next hardware draw: clearing it here would not re-record
-+    // the display list it was recorded for.
-+    if (!canvas.isHardwareAccelerated) {
-+      return false
-+    }
-+    val ownsOutlineClip = view.getTag(R.id.padding_box_outline_clip) == true
-+    val useOutlineClip = clip && canClipPaddingBoxWithOutline(view, ownsOutlineClip)
-+    if (useOutlineClip && !ownsOutlineClip) {
-+      view.setTag(R.id.padding_box_outline_clip, true)
-+      view.clipToOutline = true
-+    } else if (!useOutlineClip) {
-+      clearPaddingBoxOutlineClip(view)
-+    }
-+    return useOutlineClip
-+  }
-+
-+  /**
-+   * Android 9 and 10 clip with a non-anti-aliased Canvas.clipPath. Earlier versions are left alone:
-+   * their OpenGL renderer replaces, rather than intersects, an inherited round-rect outline clip,
-+   * so nested rounded clips would escape their parent.
-+   */
-+  private fun usesOutlineForRoundedClip(): Boolean =
-+      Build.VERSION.SDK_INT in Build.VERSION_CODES.P..Build.VERSION_CODES.Q
-+
-+  private fun canClipPaddingBoxWithOutline(view: View, ownsOutlineClip: Boolean): Boolean {
-+    if (
-+        !usesOutlineForRoundedClip() ||
-+            !(ownsOutlineClip || !view.clipToOutline) ||
-+            view.outlineProvider !== ViewOutlineProvider.BACKGROUND ||
-+            view.getTag(R.id.filter) != null
-+    ) {
-+      return false
-+    }
-+
-+    val composite = getCompositeBackgroundDrawable(view) ?: return false
-+    // The outline clip also clips the view's own background, so a feedback ripple drawn there
-+    // (bounded or borderless in place) would be cut where the canvas clip never cut it.
-+    return composite.outerShadows.isEmpty() &&
-+        composite.feedbackUnderlay == null &&
-+        (composite.outline?.outlineWidth ?: 0f) == 0f &&
-+        composite.getUniformBorderRadiusWithoutBorder() != null
-+  }
-+
-+  private fun clearPaddingBoxOutlineClip(view: View) {
-+    if (view.getTag(R.id.padding_box_outline_clip) == true) {
-+      view.setTag(R.id.padding_box_outline_clip, null)
-+      view.clipToOutline = false
-+    }
-+  }
-+
-   /**
-    * Populates [outRect] with the padding box rect of the view.
-    *
-@@ -544,10 +628,11 @@ public object BackgroundStyleApplicator {
-           )
-       paddingBoxPath.offset(drawingRect.left.toFloat(), drawingRect.top.toFloat())
- 
--      // On Android 28 and below, use antialiased clipping with Porter-Duff compositing. On newer
--      // Android versions, use the standard clipPath.
-+      // HWUI's clipPath is not anti-aliased before Android 11, so on Android 10 and below us
-```
-
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/uimanager/drawable/CompositeBackgroundDrawable.kt` (modified, +38/-2)
-```diff
-@@ -19,6 +19,7 @@ import android.os.Build
- import com.facebook.react.common.annotations.UnstableReactNativeAPI
- import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags
- import com.facebook.react.uimanager.PixelUtil.dpToPx
-+import com.facebook.react.uimanager.PixelUtil.pxToDp
- import com.facebook.react.uimanager.style.BorderInsets
- import com.facebook.react.uimanager.style.BorderRadiusStyle
- 
-@@ -207,8 +208,8 @@ internal class CompositeBackgroundDrawable(
-           borderRadius?.resolve(
-               layoutDirection,
-               context,
--              bounds.width().toFloat(),
--              bounds.height().toFloat(),
-+              bounds.width().pxToDp(),
-+              bounds.height().pxToDp(),
-           )
- 
-       val computedBorderInsets = borderInsets?.resolve(layoutDirection, context)
-@@ -248,6 +249,41 @@ internal class CompositeBackgroundDrawable(
-     }
-   }
- 
-+  /**
-+   * Returns the corner radius, in pixels, when every corner shares one circular radius and no
-+   * border is set, so that the border box and the padding box are the same round rect, and the
-+   * round rect [getOutline] describes. Returns null otherwise.
-+   */
-+  fun getUniformBorderRadiusWithoutBorder(): Float? {
-+    val computedBorderInsets = borderInsets?.resolve(layoutDirection, context)
-+    if (
-+        computedBorderInsets != null &&
-+            (computedBorderInsets.left != 0f ||
-+                computedBorderInsets.top != 0f ||
-+                computedBorderInsets.right != 0f ||
-+                computedBorderInsets.bottom != 0f)
-+    ) {
-+      return null
-+    }
-+
-+    val computedBorderRadius =
-+        borderRadius?.resolve(
-+            layoutDirection,
-+            context,
-+            bounds.width().pxToDp(),
-+            bounds.height().pxToDp(),
-+        ) ?: return null
-+    if (!computedBorderRadius.isUniform()) {
-+      return null
-+    }
-+
-+    val corner = computedBorderRadius.topLeft
-+    if (corner.horizontal <= 0f || corner.horizontal != corner.vertical) {
-+      return null
-+    }
-+    return corner.horizontal.dpToPx()
-+  }
-+
-   companion object {
-     private fun createLayersArray(
-         originalBackground: Drawable?,
-```
-
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/image/ReactImageView.kt` (modified, +8/-1)
-```diff
-@@ -382,7 +382,7 @@ public class ReactImageView(
-   public override fun hasOverlappingRendering(): Boolean = false
- 
-   public override fun onDraw(canvas: Canvas) {
--    BackgroundStyleApplicator.clipToPaddingBoxWithAntiAliasing(this, canvas) {
-+    val drawImage = {
-       try {
-         super.onDraw(canvas)
-       } catch (e: RuntimeException) {
-@@ -395,6 +395,13 @@ public class ReactImageView(
-         }
-       }
-     }
-+    // On Android 9 and 10 an avatar-like padding box takes the outline clip, which needs no layer;
-+    // anything else is clipped as before.
-+    if (BackgroundStyleApplicator.updatePaddingBoxOutlineClip(this, canvas, true)) {
-+      drawImage()
-+    } else {
-+      BackgroundStyleApplicator.clipToPaddingBoxWithAntiAliasing(this, canvas, drawImage)
+ - (void)_registerComponentIfPossible:(const std::string &)name
+ {
+-  if (_registrationStatusMap.find(name) != _registrationStatusMap.end()) {
+-    return;
++  {
++    std::shared_lock lock(_mutex);
++    if (_registrationStatusMap.find(name) != _registrationStatusMap.end()) {
++      return;
 +    }
    }
  
-   public fun maybeUpdateView() {
+   // Fallback 1: Call provider function for component view class.
+@@ -177,10 +181,17 @@ - (void)_registerComponentIfPossible:(const std::string &)name
+     auto provider = ComponentDescriptorProvider{
+         .handle = componentHandle, .name = componentName, .flavor = flavor, .constructor = constructor};
+ 
++    // Only the map writes take the lock: building a legacy interop descriptor can wait on the
++    // main queue (a view manager that requires main queue setup), which may itself be waiting
++    // for this lock in -createComponentViewWithComponentHandle:.
+     _providerRegistry.add(provider);
+-    _componentViewClasses[componentHandle] =
++    auto classDescriptor =
+         [self _componentViewClassDescriptorFromClass:[RCTLegacyViewManagerInteropComponentView class]];
+-    _registrationStatusMap.insert({provider.name, true});
++    {
++      std::unique_lock lock(_mutex);
++      _componentViewClasses[componentHandle] = classDescriptor;
++      _registrationStatusMap.insert({provider.name, true});
++    }
+     return;
+   }
+ #endif // RCT_REMOVE_LEGACY_COMPONENT_INTEROP
+@@ -194,9 +205,12 @@ - (void)_registerComponentIfPossible:(const std::string &)name
+       .handle = componentHandle, .name = componentName, .flavor = flavor, .constructor = constructor};
+ 
+   _providerRegistry.add(provider);
+-  _componentViewClasses[componentHandle] =
+-      [self _componentViewClassDescriptorFromClass:[RCTUnimplementedViewComponentView class]];
+-  _registrationStatusMap.insert({provider.name, false});
++  auto classDescriptor = [self _componentViewClassDescriptorFromClass:[RCTUnimplementedViewComponentView class]];
++  {
++    std::unique_lock lock(_mutex);
++    _componentViewClasses[componentHandle] = classDescriptor;
++    _registrationStatusMap.insert({provider.name, false});
++  }
+ }
+ 
+ - (void)registerComponentViewClass:(Class<RCTComponentViewProtocol>)componentViewClass
 ```
 
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactHorizontalScrollView.kt` (modified, +1/-3)
+---
+
+### Incident Patch 2: `9d6a2497` (2026-11-25)
+**Commit Message**: Report padding box from scroll view getClipBounds when overflow is not visible
+
+Summary:
+**Problem:** Systems that read a view's clip region through `View.getClipBounds` see React Native scroll views as unclipped. `ReactViewGroup` already reports its padding box there when overflow is not visible, behind the `syncAndroidClipBoundsWithOverflow` feature flag. The scroll views always return the default.
+
+**Fix:** Add the same two `getClipBounds` overrides to `ReactScrollView` and `ReactHorizontalScrollView`, and regenerate `ReactNestedScrollView` from `ReactScrollView`. The returned rect is the unscrolled padding box, because scrolling translates only the children.
+
+**Risk:** Only effective when `syncAndroidClipBoundsWithOverflow` is on (default off). With the flag on, every scroll view with non-visible overflow (the JS `ScrollView` default) reports a clip. Nothing inside React Native reads `getClipBounds`, so drawing does not change.
+
+**Review focus:** Confirm that the unscrolled padding box is the right coordinate space for clip-bounds consumers.
+
+Changelog: [Internal]
+
+Reviewed By: christophpurrer
+
+Differential Revision: D134353417
+
+Pull Request resolved: https://github.com/react/r
+
+**File**: `packages/react-native/ReactAndroid/api/ReactAndroid.api` (modified, +4/-0)
 ```diff
-@@ -454,9 +454,7 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
-   }
- 
-   public override fun onDraw(canvas: Canvas) {
--    if (_overflow != Overflow.VISIBLE) {
--      BackgroundStyleApplicator.clipToPaddingBox(this, canvas)
--    }
-+    BackgroundStyleApplicator.updatePaddingBoxClip(this, canvas, _overflow != Overflow.VISIBLE)
+@@ -5504,6 +5504,8 @@ public class com/facebook/react/views/scroll/ReactHorizontalScrollView : android
+ 	public fun fling (I)V
+ 	public fun focusSearch (Landroid/view/View;I)Landroid/view/View;
+ 	public fun getChildVisibleRect (Landroid/view/View;Landroid/graphics/Rect;Landroid/graphics/Point;)Z
++	public fun getClipBounds ()Landroid/graphics/Rect;
++	public fun getClipBounds (Landroid/graphics/Rect;)Z
+ 	public fun getClippingRect (Landroid/graphics/Rect;)V
+ 	public fun getFadingEdgeLengthEnd ()I
+ 	public fun getFadingEdgeLengthStart ()I
+@@ -5654,6 +5656,8 @@ public class com/facebook/react/views/scroll/ReactScrollView : android/widget/Sc
+ 	public fun focusSearch (Landroid/view/View;I)Landroid/view/View;
+ 	protected fun getBottomFadingEdgeStrength ()F
+ 	public fun getChildVisibleRect (Landroid/view/View;Landroid/graphics/Rect;Landroid/graphics/Point;)Z
++	public fun getClipBounds ()Landroid/graphics/Rect;
++	public fun getClipBounds (Landroid/graphics/Rect;)Z
+ 	public fun getClippingRect (Landroid/graphics/Rect;)V
+ 	public fun getFadingEdgeLengthEnd ()I
+ 	public fun getFadingEdgeLengthStart ()I
+```
+
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactHorizontalScrollView.kt` (modified, +27/-0)
+```diff
+@@ -458,6 +458,33 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
      super.onDraw(canvas)
    }
  
++  /**
++   * Returns the padding box when overflow is not visible, so that systems querying
++   * [View.getClipBounds] can determine this view's clipping region. The rect is not offset by the
++   * scroll position: scrolling only translates children, not this view's own clip.
++   */
++  override fun getClipBounds(): Rect? {
++    if (
++        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
++    ) {
++      val rect = Rect()
++      BackgroundStyleApplicator.getPaddingBoxRect(this, rect)
++      return rect
++    }
++    return super.getClipBounds()
++  }
++
++  /** See [getClipBounds]. */
++  override fun getClipBounds(outRect: Rect): Boolean {
++    if (
++        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
++    ) {
++      BackgroundStyleApplicator.getPaddingBoxRect(this, outRect)
++      return true
++    }
++    return super.getClipBounds(outRect)
++  }
++
+   override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+     MeasureSpecAssertions.assertExplicitMeasureSpec(widthMeasureSpec, heightMeasureSpec)
+ 
 ```
 
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactNestedScrollView.kt` (modified, +2/-4)
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactNestedScrollView.kt` (modified, +28/-1)
 ```diff
 @@ -4,7 +4,7 @@
   * This source code is licensed under the MIT license found in the
   * LICENSE file in the root directory of this source tree.
   *
-- * @generated SignedSource<<5d7adbc00208fc9995b1c3e69c677a38>>
-+ * @generated SignedSource<<2d0623d35595eba002baeb40062c5ed3>>
+- * @generated SignedSource<<2d0623d35595eba002baeb40062c5ed3>>
++ * @generated SignedSource<<557812f5b7859a968d77969161d79133>>
   */
  
  /**
-@@ -797,9 +797,7 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
-   }
- 
-   override fun onDraw(canvas: Canvas) {
--    if (_overflow != Overflow.VISIBLE) {
--      BackgroundStyleApplicator.clipToPaddingBox(this, canvas)
--    }
-+    BackgroundStyleApplicator.updatePaddingBoxClip(this, canvas, _overflow != Overflow.VISIBLE)
+@@ -801,6 +801,33 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
      super.onDraw(canvas)
    }
  
++  /**
++   * Returns the padding box when overflow is not visible, so that systems querying
++   * [View.getClipBounds] can determine this view's clipping region. The rect is not offset by the
++   * scroll position: scrolling only translates children, not this view's own clip.
++   */
++  override fun getClipBounds(): Rect? {
++    if (
++        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
++    ) {
++      val rect = Rect()
++      BackgroundStyleApplicator.getPaddingBoxRect(this, rect)
++      return rect
++    }
++    return super.getClipBounds()
++  }
++
++  /** See [getClipBounds]. */
++  override fun getClipBounds(outRect: Rect): Boolean {
++    if (
++        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
++    ) {
++      BackgroundStyleApplicator.getPaddingBoxRect(this, outRect)
++      return true
++    }
++    return super.getClipBounds(outRect)
++  }
++
+   /**
+    * This handles any sort of scrolling that may occur after a touch is finished. This may be
+    * momentum scrolling (fling) or because you have pagingEnabled on the scroll view. Because we
 ```
 
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactScrollView.kt` (modified, +1/-3)
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactScrollView.kt` (modified, +27/-0)
 ```diff
-@@ -789,9 +789,7 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
-   }
- 
-   public override fun onDraw(canvas: Canvas) {
--    if (_overflow != Overflow.VISIBLE) {
--      BackgroundStyleApplicator.clipToPaddingBox(this, canvas)
--    }
-+    BackgroundStyleApplicator.updatePaddingBoxClip(this, canvas, _overflow != Overflow.VISIBLE)
+@@ -793,6 +793,33 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
      super.onDraw(canvas)
    }
  
-```
-
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/text/PreparedLayoutTextView.kt` (modified, +1/-3)
-```diff
-@@ -122,9 +122,7 @@ internal class PreparedLayoutTextView(context: Context) : ViewGroup(context), Re
- 
-   @OptIn(UnstableReactNativeAPI::class)
-   override fun onDraw(canvas: Canvas) {
--    if (overflow != Overflow.VISIBLE) {
--      BackgroundStyleApplicator.clipToPaddingBox(this, canvas)
--    }
-+    BackgroundStyleApplicator.updatePaddingBoxClip(this, canvas, overflow != Overflow.VISIBLE)
- 
-     super.onDraw(canvas)
-     canvas.translate(
-```
-
----
-
-### Incident Patch 2: `684b6a59` (2026-11-23)
-**Commit Message**: Fix dangling const-ref JSI args in bridging
-
-## Summary
-
-Fixes #60212.
-
-`bridging::callFromJs` (C++ TurboModule methods) and bridged `std::function`s convert each argument with `bridging::fromJs<ArgT>`. When a parameter is `const jsi::Object &`, `const jsi::Function &` or `const jsi::Value &`, the JSI overload of `fromJs` in `Base.h` returned a reference to a temporary created inside `fromJs`. The temporary was destroyed as `fromJs` returned, so the method read a destroyed value. Clang warns about it with `-Wreturn-stack-address`, and AddressSanitizer reports stack-use-after-return.
-
-This overload now returns the converted value instead of a reference. The temporary then lives in the caller until the end of the call expression, which covers the method call. The non-JSI overloads already behave this way. SFINAE still checks `static_cast<ReturnT>`, so the set of supported conversions is unchanged. The C++ API snapshots are updated for the new return type.
-
-## Changelog:
-
-[General] [Fixed] - Fix C++ TurboModule methods and bridged functions that take `jsi::Object`, `jsi::Function` or `jsi::Value` by const reference reading a destroyed argument
-
-## Test Plan
-
-Added `BridgingTest.jsiRef
-
-**File**: `packages/react-native/ReactCommon/react/bridging/Base.h` (modified, +6/-3)
-```diff
-@@ -61,13 +61,16 @@ struct bridging_wrapper<T, std::void_t<decltype(&remove_cvref_t<T>::operator())>
- template <typename T>
- using bridging_t = typename detail::bridging_wrapper<T>::type;
- 
-+// Returns by value even when ReturnT is a reference (e.g. `const jsi::Object &`
-+// for a method parameter): the converted value is a temporary of this frame, so
-+// a returned reference would dangle. The caller's temporary lives until the end
-+// of its full-expression, which covers the method call.
- template <typename ReturnT, typename JSArgT>
-   requires is_jsi_v<JSArgT>
- auto fromJs(jsi::Runtime &rt, JSArgT &&value, const std::shared_ptr<CallInvoker> & /*unused*/)
--    -> decltype(static_cast<ReturnT>(std::move(convert(rt, std::forward<JSArgT>(value)))))
--
-+    -> remove_cvref_t<decltype(static_cast<ReturnT>(std::move(convert(rt, std::forward<JSArgT>(value)))))>
- {
--  return static_cast<ReturnT>(std::move(convert(rt, std::forward<JSArgT>(value))));
-+  return static_cast<remove_cvref_t<ReturnT>>(std::move(convert(rt, std::forward<JSArgT>(value))));
- }
- 
- template <typename ReturnT, typename JSArgT>
-```
-
-**File**: `packages/react-native/ReactCommon/react/bridging/tests/BridgingTest.cpp` (modified, +14/-0)
-```diff
-@@ -233,6 +233,20 @@ TEST_F(BridgingTest, functionTest) {
-       func.call(rt, object, jsi::String::createFromAscii(rt, "foo"))
-           .asString(rt)
-           .utf8(rt));
-+
-+  // Test with JSI values taken by const reference.
-+  func = bridging::toJs(
-+      rt,
-+      [this](const jsi::Object& obj, const jsi::Value& key) {
-+        return obj.getProperty(rt, key.asString(rt)).asString(rt).utf8(rt);
-+      },
-+      invoker);
-+
-+  EXPECT_EQ(
-+      "bar"s,
-+      func.call(rt, object, jsi::String::createFromAscii(rt, "foo"))
-+          .asString(rt)
-+          .utf8(rt));
- }
- 
- TEST_F(BridgingTest, syncCallbackTest) {
-```
-
-**File**: `packages/react-native/ReactCommon/react/bridging/tests/ClassTest.cpp` (modified, +67/-0)
-```diff
-@@ -50,6 +50,18 @@ struct TestClass {
-     return buffer;
-   }
- 
-+  size_t keyCount(jsi::Runtime& rt, const jsi::Object& obj) {
-+    return obj.getPropertyNames(rt).size(rt);
++  /**
++   * Returns the padding box when overflow is not visible, so that systems querying
++   * [View.getClipBounds] can determine this view's clipping region. The rect is not offset by the
++   * scroll position: scrolling only translates children, not this view's own clip.
++   */
++  override fun getClipBounds(): Rect? {
++    if (
++        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
++    ) {
++      val rect = Rect()
++      BackgroundStyleApplicator.getPaddingBoxRect(this, rect)
++      return rect
++    }
++    return super.getClipBounds()
 +  }
 +
-+  double callFunction(jsi::Runtime& rt, const jsi::Function& func) {
-+    return func.call(rt).asNumber();
++  /** See [getClipBounds]. */
++  override fun getClipBounds(outRect: Rect): Boolean {
++    if (
++        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
++    ) {
++      BackgroundStyleApplicator.getPaddingBoxRect(this, outRect)
++      return true
++    }
++    return super.getClipBounds(outRect)
 +  }
 +
-+  bool isObject(jsi::Runtime& /*unused*/, const jsi::Value& value) {
-+    return value.isObject();
+   /**
+    * This handles any sort of scrolling that may occur after a touch is finished. This may be
+    * momentum scrolling (fling) or because you have pagingEnabled on the scroll view. Because we
+```
+
+**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/views/scroll/ReactScrollViewClipBoundsTest.kt` (added, +145/-0)
+```diff
+@@ -0,0 +1,145 @@
++/*
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++package com.facebook.react.views.scroll
++
++import android.graphics.Rect
++import android.os.Build
++import android.util.DisplayMetrics
++import android.view.View
++import android.view.ViewGroup
++import androidx.annotation.RequiresApi
++import com.facebook.react.bridge.ReactTestHelper.createTestReactApplicationContext
++import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags
++import com.facebook.react.internal.featureflags.ReactNativeFeatureFlagsDefaults
++import com.facebook.react.internal.featureflags.ReactNativeFeatureFlagsForTests
++import com.facebook.react.uimanager.BackgroundStyleApplicator
++import com.facebook.react.uimanager.DisplayMetricsHolder
++import com.facebook.react.uimanager.ThemedReactContext
++import com.facebook.react.uimanager.UIManagerHelper
++import com.facebook.react.uimanager.events.EventDispatcher
++import com.facebook.react.uimanager.style.LogicalEdge
++import com.facebook.testutils.shadows.ShadowSoLoader
++import org.assertj.core.api.Assertions.assertThat
++import org.junit.After
++import org.junit.Before
++import org.junit.Test
++import org.junit.runner.RunWith
++import org.mockito.MockedStatic
++import org.mockito.Mockito.mockStatic
++import org.mockito.kotlin.any
++import org.mockito.kotlin.mock
++import org.robolectric.RobolectricTestRunner
++import org.robolectric.annotation.Config
++
++/** Verifies that scroll views report their padding box from [View.getClipBounds]. */
++@RunWith(RobolectricTestRunner::class)
++@Config(shadows = [ShadowSoLoader::class])
++@RequiresApi(Build.VERSION_CODES.M)
++class ReactScrollViewClipBoundsTest {
++
++  private lateinit var context: ThemedReactContext
++  private lateinit var uiManagerHelperMock: MockedStatic<UIManagerHelper>
++
++  @Before
++  fun setUp() {
++    ReactNativeFeatureFlagsForTests.setUp()
++    val reactContext = createTestReactApplicationContext()
++    context = ThemedReactContext(reactContext, reactContext, null, -1)
++    DisplayMetricsHolder.setScreenDisplayMetrics(DisplayMetrics().apply { density = 1f })
++    uiManagerHelperMock = mockStatic(UIManagerHelper::class.java)
++    uiManagerHelperMock
++        .`when`<EventDispatcher?> { UIManagerHelper.getEventDispatcher(any()) }
++        .thenReturn(mock())
 +  }
 +
-  private:
-   std::shared_ptr<CallInvoker> invoker_;
- };
-@@ -121,6 +133,61 @@ TEST_F(BridgingTest, arrayBufferCallFromJsTest) {
-   EXPECT_EQ(9, out.size(rt));
- }
- 
-+TEST_F(BridgingTest, jsiReferenceArgumentCallFromJsTest) {
-+  // Converting to a JSI reference type must yield an owned value, not a
-+  // reference to a temporary destroyed inside fromJs.
-+  static_assert(
-+      !std::is_reference_v<decltype(bridging::fromJs<const jsi::Object&>(
-+          rt, std::declval<jsi::Object>(), invoker))>);
-+  static_assert(
-+      !std::is_reference_v<decltype(bridging::fromJs<const jsi::Function&>(
-+          rt, std::declval<const jsi::Value&>(), invoker))>);
-+  static_assert(
-+      !std::is_reference_v<decltype(bridging::fromJs<const jsi::Value&>(
-+          rt, std::declval<jsi::Value>(), invoker))>);
++  @After
++  fun tearDown() {
++    uiManagerHelperMock.close()
++    ReactNativeFeatureFlags.dangerouslyReset()
++    DisplayMetricsHolder.setScreenDisplayMetrics(null)
++  }
 +
-+  auto instance = TestClass(invoker);
++  private fun enableClipBoundsSync(enabled: Boolean) {
++    ReactNativeFeatureFlags.dangerouslyReset()
++    ReactNativeFeatureFlags.override(
++        object : ReactNativeFeatureFlagsDefaults() {
++          override fun syncAndroidClipBoundsWithOverflow(): Boolean = enabled
++        },
++    )
++  }
 +
-+  // Methods taking JSI values by const reference must be called with a value
-+  // that outlives the call, both for rvalue and lvalue arguments.
-+  EXPECT_EQ(
-+      2,
-+      bridging::callFromJs<size_t>(
-+          rt,
-+          &TestClass::keyCount,
-+          invoker,
-+          &instance,
-+          eval("({opacity: 0.5, width: 10})").asObject(rt)));
++  private fun scrollViews(): List<Pair<ViewGroup, (String?) -> Unit>> {
++    val vertical = ReactScrollView(context)
++    val horizontal = ReactHorizontalScrollView(context)
++    val nested = ReactNestedScrollView(context)
++    return listOf(
++        vertical to vertical::setOverflow,
++        horizontal to horizontal::setOverflow,
++        nested to nested::setOverflow,
++    )
++  }
 +
-+  auto object = eval("({opacity: 0.5, width: 10})").asObject(rt);
-+  EXPECT_EQ(
-+      2,
-+      bridging::callFromJs<size_t>(
-+          rt, &TestClass::keyCount, invoker, &instance, object));
++  private fun layoutScrolled(view: ViewGroup) {
++    val content = View(context)
++    view.addView(content)
++    content.layout(0, 0, 1000, 1000)
++    view.layout(0, 0, 100, 50)
++    view.scrollTo(30, 40)
++  }
 +
-+  EXPECT_EQ(
-+      42.0,
-+      bridging::callFromJs<double>(
-+          rt,
-+          &TestClass::callFunction,
-+          invoker,
-+          &instance,
-+          function("() => 42")));
++  @Test
++  fun returnsUnscrolledPaddingBoxWhenOverflowHidden() {
++    enableClipBoundsSync(true)
++    scrollViews().forEach { (view, setOverflow) ->
++      setOverflow("hidden")
++      layoutScrolled(view)
++      assertThat(view.scrollX + view.scrollY).isGreaterThan(0)
 +
-+  EXPECT_TRUE(
-+      bridging::callFromJs<bool>(
-+          rt,
-+          &TestClass::isObject,
-+          invoker,
-+          &instance,
-+          eval("({opacity: 0.5})")));
++      assertThat(view.clipBounds).isEqualTo(Rect(0, 0, 100, 50))
++      val outRect = Rect()
++      assertThat(view.getClipBounds(outRect)).isTrue()
++      assertThat(outRect).isEqualTo(Rect(0, 0, 100, 50))
++    }
++  }
 +
-+  auto value = eval("({opacity: 0.5})");
-+  EXPECT_TRUE(
-+      bridging::callFromJs<bool>(
-+          rt, &TestClass::isObject, invoker, &instance, value));
++  @Test
++  fun excludesBordersFromPaddingBox() {
++    enableClipBoundsSync(true)
++    scrollViews().forEach { (view, setOverflow) ->
++      setOverflow("scroll")
++      BackgroundStyleApplicator.setBorderWidth(view, LogicalEdge.ALL, 5f)
++      layoutScrolled(view)
++
++      assertThat(view.clipBounds).isEqualTo(Rect(5, 5, 95, 45))
++    }
++  }
++
++  @Test
++  fun fallsBackToSuperWhenOverflowVisible() {
++    enableClipBoundsSync(true)
++    scrollViews().forEach { (view, setOverflow) ->
++      setOverflow("visible")
++      layoutScrolled(view)
++
++      assertThat(view.clipBounds).isNull()
++      assertThat(view.getClipBounds(Rect())).isFalse()
++    }
++  }
++
++  @Test
++  fun fallsBackToSuperWhenFlagDisabled() {
++    enableClipBoundsSync(false)
++    scrollViews().forEach { (view, setOverflow) ->
++      setOverflow("hidden")
++      layoutScrolled(view)
++
++      assertThat(view.clipBounds).isNull()
++      assertThat(view.getClipBounds(Rect())).isFalse()
++    }
++  }
 +}
-+
- struct MethodReturnTypeCastingTestObject {
-  public:
-   explicit MethodReturnTypeCastingTestObject(int value) : value_(value) {}
-```
-
-**File**: `scripts/cxx-api/api-snapshots/ReactAndroidDebugCxx.api` (modified, +1/-1)
-```diff
-@@ -5347,7 +5347,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
- template <typename ReturnT, typename JSArgT>
- decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
- template <typename ReturnT, typename JSArgT>
--decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
-+facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
- template <typename ReturnT, typename... ArgsT>
- constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
- template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
-```
-
-**File**: `scripts/cxx-api/api-snapshots/ReactAndroidFrameworksCxx.api` (modified, +1/-1)
-```diff
-@@ -8931,7 +8931,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
- template <typename ReturnT, typename JSArgT>
- decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
- template <typename ReturnT, typename JSArgT>
--decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
-+facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
- template <typename ReturnT, typename... ArgsT>
- constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
- template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
-```
-
-**File**: `scripts/cxx-api/api-snapshots/ReactAndroidNewarchCxx.api` (modified, +1/-1)
-```diff
-@@ -5196,7 +5196,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
- template <typename ReturnT, typename JSArgT>
- decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
- template <typename ReturnT, typename JSArgT>
--decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
-+facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
- template <typename ReturnT, typename... ArgsT>
- constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
- template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
-```
-
-**File**: `scripts/cxx-api/api-snapshots/ReactAndroidReleaseCxx.api` (modified, +1/-1)
-```diff
-@@ -5196,7 +5196,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
- template <typename ReturnT, typename JSArgT>
- decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
- template <typename ReturnT, typename JSArgT>
--decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
-+facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
- template <typename ReturnT, typename... ArgsT>
- constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
- template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
-```
-
-**File**: `scripts/cxx-api/api-snapshots/ReactAppleDebugCxx.api` (modified, +1/-1)
-```diff
-@@ -7098,7 +7098,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
- template <typename ReturnT, typename JSArgT>
- decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
- template <typename ReturnT, typename JSArgT>
--decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
-+facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
- template <typename ReturnT, typename... ArgsT>
- constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
- template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
 ```
 
 ---
 
-### Incident Patch 3: `a83804d2` (2026-11-23)
-**Commit Message**: Fix ImageRequestParams.h not found in ReactCodegen with static frameworks
+### Incident Patch 3: `0c688a79` (2026-11-25)
+**Commit Message**: Detect cyclic values in dynamicFromValue in debug builds
 
-## Summary:
+Summary:
+A cyclic JavaScript value can leave prop conversion stuck while memory grows. Native debug builds now detect the cycle and throw a `JSError`, returning control to JavaScript instead of hanging. Release-build conversion is unchanged.
 
-Since 0.89.0-rc.0, the iOS build fails with static frameworks when React Native is built from source and a codegen spec has an `ImageSource` prop. `@react-native-community/slider`, `react-native-svg`, and `react-native-screens` all hit this.
+**How the hang happens**
+1. Fabric converts a component's raw props through `RawProps::toDynamic` and `jsi::dynamicFromValue`.
+2. The converter walks objects with an explicit stack. A cycle keeps expanding the same path instead of finishing.
+3. The call never returns, so the JavaScript thread remains stuck while the partial output and pending handles grow.
 
-```
-React_Fabric.framework/Headers/react/renderer/imagemanager/ImageManager.h:17:10:
-fatal error: 'react/renderer/imagemanager/ImageRequestParams.h' file not found
-```
+**What changes**
+When `NDEBUG` is not defined, the converter uses Brent's algorithm to detect cycles without a visited set. Cyclic values throw, while acyclic values—including objects shared across paths—continue to convert normally.
 
-Regressed by #58730, which made codegen emit umbrella includes. Generated `Props.h` now includes `<React/ImageManager.h>`. That umbrella includes `ImageManager.h`, which needs `ImageRequestParams.h` from `React_ImageManager.framework`. The `ReactCodegen` pod has no header search path for that framework. Library pods already get it from `new_architecture.rb`.
+When `NDEBUG` is defined, all cycle-detection code is excluded: depth fields and arguments, ancestor storage, comparisons and updates. The release converter retains its original code and behavior, including the existing hang on cyclic values. This is a native-build guard, not the JavaScript `__DEV__` fl
 
-This change adds `React-ImageManager` to the `ReactCodegen` framework header search paths. The prebuilt core is not affected.
-
-## Changelog:
-
-[IOS] [FIXED] - Fix `ImageRequestParams.h` not found in codegen with static frameworks
-
-## Test Plan:
-
-Repro: https://github.com/intergalacticspacehighway/rn-static-frameworks-imagesource-repro (R
-
-**File**: `packages/react-native/scripts/codegen/__tests__/__snapshots__/generate-artifacts-executor-test.js.snap` (modified, +2/-0)
+**File**: `packages/react-native/ReactCommon/jsi/jsi/JSIDynamic.cpp` (modified, +56/-0)
 ```diff
-@@ -444,6 +444,7 @@ if use_frameworks
-   ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-Fabric\\", \\"React_Fabric\\", [\\"react/renderer/components/view/platform/cxx\\"])
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-bridging\\", \\"React_bridging\\", []))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-FabricImage\\", \\"React_FabricImage\\", []))
-+    .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-ImageManager\\", \\"React_ImageManager\\", []))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-graphics\\", \\"React_graphics\\", [\\"react/renderer/graphics/platform/ios\\"]))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"ReactCommon\\", \\"ReactCommon\\", [\\"react/nativemodule/core\\"]))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-runtimeexecutor\\", \\"React_runtimeexecutor\\", [\\"platform/ios\\"]))
-@@ -947,6 +948,7 @@ if use_frameworks
-   ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-Fabric\\", \\"React_Fabric\\", [\\"react/renderer/components/view/platform/cxx\\"])
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-bridging\\", \\"React_bridging\\", []))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-FabricImage\\", \\"React_FabricImage\\", []))
-+    .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-ImageManager\\", \\"React_ImageManager\\", []))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-graphics\\", \\"React_graphics\\", [\\"react/renderer/graphics/platform/ios\\"]))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"ReactCommon\\", \\"ReactCommon\\", [\\"react/nativemodule/core\\"]))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-runtimeexecutor\\", \\"React_runtimeexecutor\\", [\\"platform/ios\\"]))
-```
-
-**File**: `packages/react-native/scripts/codegen/templates/ReactCodegen.podspec.template` (modified, +1/-0)
-```diff
-@@ -32,6 +32,7 @@ if use_frameworks
-   ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-Fabric", "React_Fabric", ["react/renderer/components/view/platform/cxx"])
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-bridging", "React_bridging", []))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-FabricImage", "React_FabricImage", []))
-+    .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-ImageManager", "React_ImageManager", []))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-graphics", "React_graphics", ["react/renderer/graphics/platform/ios"]))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "ReactCommon", "ReactCommon", ["react/nativemodule/core"]))
-     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-runtimeexecutor", "React_runtimeexecutor", ["platform/ios"]))
+@@ -125,11 +125,19 @@ Value valueFromDynamic(Runtime& runtime, const folly::dynamic& dynInput) {
+ namespace {
+ 
+ struct FromValue {
++#ifndef NDEBUG
++  FromValue(folly::dynamic* dynArg, Object objArg, size_t depthArg)
++      : dyn(dynArg), obj(std::move(objArg)), depth(depthArg) {}
++#else
+   FromValue(folly::dynamic* dynArg, Object objArg)
+       : dyn(dynArg), obj(std::move(objArg)) {}
++#endif
+ 
+   folly::dynamic* dyn;
+   Object obj;
++#ifndef NDEBUG
++  size_t depth;
++#endif
+ };
+ 
+ // This converts one element.  If it's a collection, it gets pushed
+@@ -140,7 +148,12 @@ void dynamicFromValueShallow(
+     Runtime& runtime,
+     std::vector<FromValue>& stack,
+     const jsi::Value& value,
++#ifndef NDEBUG
++    folly::dynamic& output,
++    size_t depth) {
++#else
+     folly::dynamic& output) {
++#endif
+   if (value.isUndefined() || value.isNull()) {
+     output = nullptr;
+   } else if (value.isBool()) {
+@@ -158,7 +171,11 @@ void dynamicFromValueShallow(
+     } else {
+       output = folly::dynamic::object();
+     }
++#ifndef NDEBUG
++    stack.emplace_back(&output, std::move(obj), depth);
++#else
+     stack.emplace_back(&output, std::move(obj));
++#endif
+   } else if (value.isBigInt()) {
+     throw JSError(runtime, "JS BigInts are not convertible to dynamic");
+   } else if (value.isSymbol()) {
+@@ -175,14 +192,33 @@ folly::dynamic dynamicFromValue(
+     const Value& valueInput,
+     const std::function<bool(const std::string&)>& filterObjectKeys) {
+   std::vector<FromValue> stack;
++#ifndef NDEBUG
++  std::vector<FromValue> ancestors;
++#endif
+   folly::dynamic ret;
+ 
++#ifndef NDEBUG
++  dynamicFromValueShallow(runtime, stack, valueInput, ret, 0);
++#else
+   dynamicFromValueShallow(runtime, stack, valueInput, ret);
++#endif
+ 
+   while (!stack.empty()) {
+     auto top = std::move(stack.back());
+     stack.pop_back();
+ 
++#ifndef NDEBUG
++    // Detect cycles with Brent's algorithm: compare each object with its
++    // nearest ancestor saved at depth 0, 1, 2, 4, 8, ...
++    while (!ancestors.empty() && ancestors.back().depth >= top.depth) {
++      ancestors.pop_back();
++    }
++    if (!ancestors.empty() &&
++        Object::strictEquals(runtime, ancestors.back().obj, top.obj)) {
++      throw JSError(runtime, "Cyclic JS values are not convertible to dynamic");
++    }
++#endif
++
+     if (top.obj.isArray(runtime)) {
+       // Inserting into a dyn can invalidate references into it, so we
+       // need to insert new elements up front, then push stuff onto
+@@ -194,8 +230,17 @@ folly::dynamic dynamicFromValue(
+         top.dyn->push_back(nullptr);
+       }
+       for (size_t i = 0; i < arraySize; ++i) {
++#ifndef NDEBUG
++        dynamicFromValueShallow(
++            runtime,
++            stack,
++            array.getValueAtIndex(runtime, i),
++            top.dyn->at(i),
++            top.depth + 1);
++#else
+         dynamicFromValueShallow(
+             runtime, stack, array.getValueAtIndex(runtime, i), top.dyn->at(i));
++#endif
+       }
+     } else {
+       Array names = top.obj.getPropertyNames(runtime);
+@@ -220,10 +265,21 @@ folly::dynamic dynamicFromValue(
+         top.dyn->insert(props.back().first, nullptr);
+       }
+       for (const auto& prop : props) {
++#ifndef NDEBUG
++        dynamicFromValueShallow(
++            runtime, stack, prop.second, (*top.dyn)[prop.first], top.depth + 1);
++#else
+         dynamicFromValueShallow(
+             runtime, stack, prop.second, (*top.dyn)[prop.first]);
++#endif
+       }
+     }
++
++#ifndef NDEBUG
++    if ((top.depth & (top.depth - 1)) == 0) {
++      ancestors.push_back(std::move(top));
++    }
++#endif
+   }
+ 
+   return ret;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60242** (2026-11-23): Drop an always-true unsigned check in YogaLayoutableShadowNode::replaceChild (@r-barnes)
-- **PR #60234** (2026-11-23): Update React Native DevTools binaries (@cipolleschi)
-- **PR #60232** (2026-11-23): Compute isBaselineLayout once per container instead of once per flex line (#2090) (@cipolleschi)
-- **PR #60225** (2026-11-23): Fix ImageRequestParams.h not found in ReactCodegen with static frameworks (@intergalacticspacehighway)
-- **PR #60224** (2026-11-23): Avoid copying ShadowViews into Android mount items (@riteshshukla04)
-- **PR #60223** (2026-11-23): Do not key WeakHashMap by Integer (@Yqwed)
+- **PR #60318** (2026-11-26): Revert "Fix stale packager connections on Android" (@cipolleschi)
+- **PR #60317** (closed): Keep dev-server host validation compatible across OkHttp versions (@cipolleschi)
+- **PR #60314** (2026-11-26): Clarify Fantom test mode selection (@rubennorte)
+- **PR #60313** (2026-11-26): Fix Meta import risk PR labeling permissions (@cortinico)
+- **PR #60308** (2026-11-26): Speed up disconnecting the final `ResizeObserver` (@rubennorte)
+- **PR #60297** (2026-11-25): Detect cyclic values in dynamicFromValue in debug builds (@dalves)
 
 ---
 
@@ -1233,32 +1192,57 @@ Repro: https://github.com/intergalacticspacehighway/rn-static-frameworks-imageso
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Android] Anti-aliased rounded overflow clips on Android 9 and 10
+## X. [iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemen
 
 **RULE**:
-When implementing operations in `packages/react-native/ReactAndroid/api/ReactAndroid.api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native/React/Fabric/Mounting/RCTComponentViewFactory.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5dc1d781`: [Android] Anti-aliased rounded overflow clips on Android 9 and 10. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ea73699`: [iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemented fallbacks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactAndroid/api/ReactAndroid.api`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/React/Fabric/Mounting/RCTComponentViewFactory.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	public static final fun updatePaddingBoxClip (Landroid/view/View;Landroid/graphics/Canvas;Z)V
-	public static final fun updatePaddingBoxOutlineClip (Landroid/view/View;Landroid/graphics/Canvas;Z)Z
+  std::shared_lock lock(_mutex);
+  {
+    std::shared_lock lock(_mutex);
+    if (_registrationStatusMap.find(name) != _registrationStatusMap.end()) {
+      return;
+    }
+    // Only the map writes take the lock: building a legacy interop descriptor can wait on the
+    // main queue (a view manager that requires main queue setup), which may itself be waiting
+    // for this lock in -createComponentViewWithComponentHandle:.
+    auto classDescriptor =
+    {
+      std::unique_lock lock(_mutex);
+      _componentViewClasses[componentHandle] = classDescriptor;
+      _registrationStatusMap.insert({provider.name, true});
+    }
+  auto classDescriptor = [self _componentViewClassDescriptorFromClass:[RCTUnimplementedViewComponentView class]];
+  {
+    std::unique_lock lock(_mutex);
+    _componentViewClasses[componentHandle] = classDescriptor;
+    _registrationStatusMap.insert({provider.name, false});
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  if (_registrationStatusMap.find(name) != _registrationStatusMap.end()) {
+    return;
+    _componentViewClasses[componentHandle] =
+    _registrationStatusMap.insert({provider.name, true});
+  _componentViewClasses[componentHandle] =
+      [self _componentViewClassDescriptorFromClass:[RCTUnimplementedViewComponentView class]];
+  _registrationStatusMap.insert({provider.name, false});
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5dc1d781` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ea73699` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

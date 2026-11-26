@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T15:02:32.199Z",
+  "last_updated": "2026-11-26T15:12:43.919Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -808,7 +808,7 @@
       "staged_for_review": 1
     },
     "apache-pinot-learnings.md": {
-      "processed_at": "2026-11-25T14:05:14.043Z",
+      "processed_at": "2026-11-26T15:12:41.436Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2048,7 +2048,7 @@
       "staged_for_review": 0
     },
     "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md": {
-      "processed_at": "2026-11-22T22:15:13.977Z",
+      "processed_at": "2026-11-26T15:11:59.120Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3253,7 +3253,7 @@
       "staged_for_review": 1
     },
     "react-react-native-learnings.md": {
-      "processed_at": "2026-11-24T04:54:34.114Z",
+      "processed_at": "2026-11-26T15:12:39.576Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -3978,7 +3978,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4557,
-  "total_canonical_promoted": 562,
-  "total_staged_for_review": 3435
+  "total_dossiers_evaluated": 4560,
+  "total_canonical_promoted": 563,
+  "total_staged_for_review": 3436
 }

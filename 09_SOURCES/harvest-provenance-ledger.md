@@ -13471,3 +13471,7 @@ Every entry in this ledger must capture:
 | `learn-github-yazinsai-openoats` | `https://github.com/yazinsai/OpenOats` | `d8caac78` | Multi-dimensional audit evidence | 2026-11-26T15:02:19.508Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `9f296bf9` | Multi-dimensional audit evidence | 2026-11-26T15:02:20.226Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `fe354f74` | Multi-dimensional audit evidence | 2026-11-26T15:02:25.492Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-26T15:11:41.467Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `9743c098` | Multi-dimensional audit evidence | 2026-11-26T15:11:47.317Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `d197e0b5` | Multi-dimensional audit evidence | 2026-11-26T15:11:55.165Z |
+| `learn-dom-h-cc34c8d8` | `project://react-react-native` | `9743c098` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-26T15:12:39.576Z |
