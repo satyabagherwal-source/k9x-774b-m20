@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T19:16:10.195Z",
-  "total_cycles_completed": 12841,
-  "total_learnings_persisted": 12841,
-  "total_rules_promoted": 11668,
+  "last_updated": "2026-11-26T19:25:26.764Z",
+  "total_cycles_completed": 12843,
+  "total_learnings_persisted": 12843,
+  "total_rules_promoted": 11669,
   "history": [
-    {
-      "timestamp": "2026-11-26T09:37:46.190Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T09:47:53.851Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T09:47:57.858Z",
       "repository": "TypeWhisper/typewhisper-mac",
@@ -1403,6 +1389,20 @@
       "repository": "MiniMaxAI/MiniMax-H3",
       "learningId": "learn-huggingface-minimaxai-minimax-h3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T19:25:18.525Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T19:25:26.764Z",
+      "repository": "openreplay/openreplay",
+      "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

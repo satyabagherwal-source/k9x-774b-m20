@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T19:16:50.047Z",
+  "last_updated": "2026-11-26T19:25:32.451Z",
   "total_records": 2772,
   "domains": {
     "A": {
@@ -12190,8 +12190,8 @@
       "title": "Technical Construction Intelligence: openreplay/openreplay Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-technical-construction-intelligence-openreplay-openreplay-.md",
       "repository": "openreplay/openreplay",
-      "content_hash": "1bcb547f01349f7b99ac533df4aa4f55436df5dd3601371b0710036da4a0b615",
-      "created_at": "2026-11-21T17:49:57.030Z"
+      "content_hash": "75317c6e7a1ff199c290f7aec63507d67a1ea576db826a22a325781d25b30c16",
+      "created_at": "2026-11-26T19:25:27.221Z"
     },
     "domain_intelligence-architecture-intelligence-crate-crate-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-crate-crate-core-invariants",
@@ -12268,8 +12268,8 @@
       "title": "Technical Construction Intelligence: openreplay-openreplay-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-learnings-technical-construction-intelligence-openreplay-o.md",
       "repository": "openreplay-openreplay-learnings",
-      "content_hash": "9227910ed687ccc98dd36944d59a943b87c24e66ac17a74dd431e7655de41b27",
-      "created_at": "2026-11-21T17:50:10.962Z"
+      "content_hash": "e23206ab540c0825d0dbf358f24d6f5768f8ab933693da804a3fd42a59e7a86a",
+      "created_at": "2026-11-26T19:25:31.367Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants",
@@ -12907,8 +12907,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-Flash-Next Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-flash-next-research-knowledge-intelligence-qwen-qwen3-8-flash-ne.md",
       "repository": "Qwen/Qwen3.8-Flash-Next",
-      "content_hash": "b859f2e1367a6b55304c97c236a898ba9e1c34079cbd51f823ad924b8a49f544",
-      "created_at": "2026-11-23T05:51:40.545Z"
+      "content_hash": "570efd8182230d8b6999f0085e2bece9e9d00774300492ab38bc11a6d34fa939",
+      "created_at": "2026-11-26T19:25:18.756Z"
     },
     "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian": {
       "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian",
@@ -12976,8 +12976,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-flash-next-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-flash-next-learnings-research-knowledge-intelligence-hf-qwen-qwe.md",
       "repository": "hf-qwen-qwen3.8-flash-next-learnings",
-      "content_hash": "b0f677990996563069d0a400cfab4a5e077758c3560e37938c230f2a4f0d052d",
-      "created_at": "2026-11-23T05:51:52.025Z"
+      "content_hash": "2f3313d92bedea1d1c753b6dc17ddf2853d52ce076779361d337b3433b11d724",
+      "created_at": "2026-11-26T19:25:30.529Z"
     },
     "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor": {
       "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor",
@@ -46719,8 +46719,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "937c67a4f624206734441be8835a06363e5fcfd9a1dea8044d4f9e5069e74d0a",
-      "created_at": "2026-11-26T18:50:32.650Z"
+      "content_hash": "52ff2f3ebabdfa22efaec472266ada657530cf90cd65058f3d29f8e084ce536e",
+      "created_at": "2026-11-26T19:25:32.451Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

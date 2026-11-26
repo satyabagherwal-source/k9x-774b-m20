@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T18:50:25.369Z",
-    "lastVerified": "2026-11-26T18:50:25.369Z",
+    "lastChecked": "2026-11-26T19:25:29.964Z",
+    "lastVerified": "2026-11-26T19:25:29.964Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T19:16:21.688Z",
-    "lastVerified": "2026-11-26T19:16:21.688Z",
+    "lastChecked": "2026-11-26T19:25:30.141Z",
+    "lastVerified": "2026-11-26T19:25:30.141Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -264,8 +264,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-26T15:11:46.357Z",
-    "lastVerified": "2026-11-26T15:11:46.357Z",
+    "lastChecked": "2026-11-26T19:25:24.947Z",
+    "lastVerified": "2026-11-26T19:25:24.947Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -2263,9 +2263,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-26T00:59:32.807Z",
+    "lastChecked": "2026-11-26T19:25:27.492Z",
     "revisionIdentifier": "d375c6d7",
-    "lastVerified": "2026-11-26T00:59:32.807Z"
+    "lastVerified": "2026-11-26T19:25:27.492Z"
   },
   "unhappychoice-gitlogue": {
     "name": "unhappychoice/gitlogue",
@@ -2534,22 +2534,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "openreplay-openreplay": {
-    "name": "openreplay",
+    "name": "openreplay/openreplay",
     "officialUrl": "https://github.com/openreplay/openreplay",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T11:21:49.078Z",
-    "lastVerified": "2026-11-24T11:21:49.078Z",
+    "lastChecked": "2026-11-26T19:25:25.490Z",
+    "lastVerified": "2026-11-26T19:25:25.490Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openreplay-openreplay",
-    "contentHash": "bb82497f94a9281706806b3a5d75b36f0d1729a7a06372e201ea667d0f5f9549",
+    "contentHash": "8bdd40c89fe13ccbcd72501fca944224fd86911b2468fab590a5c7199ae53a36",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fc6d0e45"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "authzed-spicedb": {
     "name": "spicedb",
@@ -3616,9 +3615,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-25T12:19:16.261Z",
+    "lastChecked": "2026-11-26T19:25:14.920Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-25T12:19:16.261Z"
+    "lastVerified": "2026-11-26T19:25:14.920Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -4559,12 +4558,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T05:51:31.095Z",
-    "lastVerified": "2026-11-23T05:51:31.095Z",
+    "lastChecked": "2026-11-26T19:25:17.737Z",
+    "lastVerified": "2026-11-26T19:25:17.737Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "1947692b796e8d51133a0ce76d7d0f33fe5db0226307696c8052e2e0557f936e",
+    "contentHash": "a48ee5fd684c647faf0d72b71a6ef6513e9a0888856d034b6fb1ed05dd7ec137",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5437,12 +5436,12 @@
     "revisionIdentifier": "b3fba7d0"
   },
   "crossplane-crossplane": {
-    "name": "crossplane/crossplane",
+    "name": "crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T01:53:32.215Z",
-    "lastVerified": "2026-11-26T01:53:32.215Z",
+    "lastChecked": "2026-11-26T19:25:22.407Z",
+    "lastVerified": "2026-11-26T19:25:22.407Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -5451,7 +5450,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "af8beda6"
   },
   "sqlpage-sqlpage": {
     "name": "sqlpage/SQLPage",

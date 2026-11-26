@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T19:16:48.368Z",
+  "updated_at": "2026-11-26T19:25:30.894Z",
   "stats": {
-    "total_discovered": 9981,
-    "approved_pending_harvest": 9461,
+    "total_discovered": 9983,
+    "approved_pending_harvest": 9462,
     "harvested_count": 0,
-    "rejected_count": 520,
+    "rejected_count": 521,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9464,
+      "COMMUNITY_AND_EXPERT": 9466,
       "OFFICIAL_DOCUMENTATION": 286,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -215969,6 +215969,43 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-kandinskylab-kandinsky-imagesr-2.0-learnings.md",
         "fileName": "hf-kandinskylab-kandinsky-imagesr-2.0-learnings.md"
+      }
+    },
+    "SRC-E944E1D1AE1D": {
+      "id": "SRC-E944E1D1AE1D",
+      "url": "https://playwright.dev/docs/test-configuration",
+      "title": "https://playwright.dev/docs/test-configuration",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T19:25:30.827Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
+        "fileName": "openreplay-openreplay-learnings.md"
+      }
+    },
+    "SRC-E4308A244DB4": {
+      "id": "SRC-E4308A244DB4",
+      "url": "http://localhost:3333/",
+      "title": "http://localhost:3333/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T19:25:30.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
+        "fileName": "openreplay-openreplay-learnings.md"
       }
     }
   }

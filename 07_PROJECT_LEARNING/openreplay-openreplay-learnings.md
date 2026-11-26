@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `fc6d0e45`  
+> **Source Version**: `80414abf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T17:49:55.627Z  
+> **Timestamp**: 2026-11-26T19:25:25.495Z  
 > **Learning ID**: `learn-github-openreplay-openreplay`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:49:55.622Z  
+> **Harvest Timestamp**: 2026-11-26T19:25:25.490Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13169 stars
+- **Stars / Engagement**: 13193 stars
 
 ---
 
@@ -1076,238 +1076,354 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a82fdbea` (2026-11-20)
-**Commit Message**: fix(helm): bump nginx-ingress to 5.8-alpine (#5185)
+### Incident Patch 1: `bcaf9197` (2026-11-26)
+**Commit Message**: fix(helm): resume clickhouse migration from markers (#5235)
 
-NIC 5.8.0 bundles nginx 1.31.9, which fixes the nginx2root
-HTTP/2 RCE CVE-2026-123007 and related CVEs. The 2.4.1 chart
-templates render fine against 5.8 and no feature we use changed
-between 5.7 and 5.8.
+A failed ClickHouse migration left the openreplay-version ConfigMap
+untouched, so the rerun got the same version list and resumed the
+first version at openreplay_migration_state()+1, even when that step
+counter belonged to a later version. Steps of the wrong version ran,
+the interrupted version was skipped and the job still completed
+(OR-4040, shiphawk-us).
 
-Refs: OR-3999
+The version list now starts from ClickHouse's own markers: resume the
+in-progress version, then every newer folder. The requested list is
+only used before markers exist (pre 1.22). An in-progress version
+missing from the release fails the job instead of guessing.
 
-**File**: `scripts/helmcharts/openreplay/values.yaml` (modified, +1/-1)
+test_clickhouse_migrate.sh replays the cases with a stub client that
+enforces the step guards. Verified on ClickHouse 26.8: v1.22 to 2.0.0
+with a failure at 1.24.0/4, rerun, catalog identical to a clean run.
+
+**File**: `scripts/helmcharts/openreplay/files/clickhouse.sh` (modified, +31/-1)
 ```diff
-@@ -73,7 +73,7 @@ ingress-nginx:
-   enabled: true
-   controller:
-     image:
--      tag: 5.4-alpine
-+      tag: 5.8-alpine
-     enableSnippets: true
-     # Keep k8s ingress compatible health check for LB
-     healthStatus: true
+@@ -67,9 +67,39 @@ function run_numbered_migration() {
+     echo "Migration for version $version completed successfully"
+ }
+ 
++# Versions to migrate. ClickHouse's own markers decide where to start; the
++# requested list (built from the openreplay-version ConfigMap, which only moves
++# after a fully successful upgrade) is used only when there are no markers yet.
++function migration_versions_from_markers() {
++    local requested=$1 state db_version base v
++    $ch_client -q "CREATE FUNCTION IF NOT EXISTS openreplay_migration_state AS() -> -1;"
++    $ch_client -q "CREATE FUNCTION IF NOT EXISTS openreplay_version AS() -> 'v0.0.0';"
++    state=$($ch_client -q "SELECT openreplay_migration_state()" | tr -d '[:space:]')
++    db_version=$($ch_client -q "SELECT openreplay_version()" | tr -d '[:space:]')
++    migration_versions=()
++    if [[ "$db_version" == "v0.0.0" ]]; then
++        IFS=',' read -r -a migration_versions <<< "$requested"
++        return 0
++    fi
++    base="${db_version#v}"
++    if [[ "$state" != "-1" ]]; then
++        if [[ ! -d "${clickhousedir}/${base}" ]]; then
++            echo "ERROR: ClickHouse is mid-migration at ${db_version} step ${state}, but this release has no ${base} migration."
++            exit 1
++        fi
++        migration_versions+=("$base")
++    fi
++    for v in $(ls "$clickhousedir" | grep -v '^create$' | sort -V); do
++        if [[ "$v" != "$base" && "$(printf '%s\n%s\n' "$base" "$v" | sort -V | tail -n1)" == "$v" ]]; then
++            migration_versions+=("$v")
++        fi
++    done
++    echo "ClickHouse markers ${db_version}/${state}; requested ${requested}; migrating ${migration_versions[*]:-nothing}"
++}
++
+ function migrate() {
+     echo "Starting clickhouse migration"
+-    IFS=',' read -r -a migration_versions <<< "$1"
++    migration_versions_from_markers "$1"
+     for version in ${migration_versions[*]}; do
+         echo "Migrating clickhouse version $version"
+         if [[ -f "${clickhousedir}/${version}/${version}.sql" ]]; then
+```
+
+**File**: `scripts/helmcharts/test_clickhouse_migrate.sh` (added, +164/-0)
+```diff
+@@ -0,0 +1,164 @@
++#!/usr/bin/env bash
++# Guards OR-4040: after a failed ClickHouse migration, a rerun must resume
++# from ClickHouse's own markers (openreplay_version / openreplay_migration_state),
++# not from the openreplay-version ConfigMap, which only moves after a fully
++# successful upgrade. Resuming from the ConfigMap ran steps of the wrong
++# version, skipped the interrupted one, and still reported success.
++#
++# A stub clickhouse-client keeps the two markers in files, records which SQL
++# files run, and enforces the throwIf guards the real step files carry. It
++# runs against the real migration tree in scripts/schema.
++# Run: bash test_clickhouse_migrate.sh   (Linux, bash)
++set -u
++HERE="$(cd "$(dirname "$0")" && pwd)"
++SCRIPT="${HERE}/openreplay/files/clickhouse.sh"
++CHDIR="$(cd "${HERE}/../schema/db/init_dbs/clickhouse" && pwd)"
++
++fails=0
++pass() { echo "PASS: $1"; }
++fail() { echo "FAIL: $1"; fails=$((fails + 1)); }
++
++WORK="$(mktemp -d)"
++trap 'rm -rf "$WORK"' EXIT
++mkdir -p "$WORK/bin"
++
++# Script under test, pointed at the real migration tree.
++sed "s#^clickhousedir=.*#clickhousedir=${CHDIR}#" "$SCRIPT" >"$WORK/clickhouse.sh"
++
++cat >"$WORK/bin/clickhouse-client" <<'STUB'
++#!/usr/bin/env bash
++# Markers live in $CH_STUB/v and $CH_STUB/s. Executed files go to $CH_STUB/ran.
++q=""
++while [ $# -gt 0 ]; do
++  case "$1" in -q) q="$2"; shift ;; esac
++  shift
++done
++if [ -n "$q" ]; then
++  case "$q" in
++    *"SELECT openreplay_migration_state()"*) cat "$CH_STUB/s" ;;
++    *"SELECT openreplay_version()"*) cat "$CH_STUB/v" ;;
++  esac
++  exit 0
++fi
++file="$(readlink /proc/$$/fd/0)"
++echo "${file#"$CH_ROOT"/}" >>"$CH_STUB/ran"
++if [ -n "${CH_STUB_FAIL:-}" ] && [ "${file#"$CH_ROOT"/}" = "$CH_STUB_FAIL" ]; then
++  echo "stub: injected failure at $CH_STUB_FAIL" >&2; exit 1
++fi
++sql="$(tr '\n' ' ' | tr -s ' ')"
++re_need_v="throwIf\(\(SELECT openreplay_version\(\)\) != '([^']+)'"
++re_need_done="throwIf\(\(SELECT openreplay_migration_state\(\)\) > -1"
++re_need_s="throwIf\(\(SELECT openreplay_migration_state\(\)\) != (-?[0-9]+)"
++re_set_v="CREATE OR REPLACE FUNCTION openreplay_version AS\(\) ?-> ?'([^']+)'"
++re_set_s="CREATE OR REPLACE FUNCTION openreplay_migration_state AS\(\) ?-> ?\(?(-?[0-9]+)"
++IFS=';' read -r -d '' -a stmts <<<"$sql"
++for st in "${stmts[@]}"; do
++  v="$(cat "$CH_STUB/v")"; s="$(cat "$CH_STUB/s")"
++  if [[ $st =~ $re_need_v ]] && [ "$v" != "${BASH_REMATCH[1]}" ]; then
++    echo "stub: version $v != ${BASH_REMATCH[1]}" >&2; exit 1; fi
++  if [[ $st =~ $re_need_done ]] && [ "$s" -gt -1 ]; then
++    echo "stub: previous migration not finished ($v/$s)" >&2; exit 1; fi
++  if [[ $st =~ $re_need_s ]] && [ "$s" != "${BASH_REMATCH[1]}" ]; then
++    echo "stub: state $s != ${BASH_REMATCH[1]}" >&2; exit 1; fi
++  if [[ $st =~ $re_set_v ]]; then echo "${BASH_REMATCH[1]}" >"$CH_STUB/v"; fi
++  if [[ $st =~ $re_set_s ]]; then echo "${BASH_REMATCH[1]}" >"$CH_STUB/s"; fi
++done
++exit 0
++STUB
++chmod +x "$WORK/bin/clickhouse-client"
++
++versions="$(ls "$CHDIR" | grep -v '^create$' | sort -V)"
++top="v$(tail -n1 <<<"$versions")"
++
++# Versions dbops.sh passes when the ConfigMap says $1 (every folder above it).
++requested() {
++  local from="${1#v}" v out=()
++  for v in $versions; do
++    [ "$v" != "$from" ] && [ "$(printf '%s\n%s\n' "$v" "$from" | sort -V | tail -n1)" = "$v" ] && out+=("$v")
++  done
++  (IFS=,; echo "${out[*]}")
++}
++
++# Fresh stub with markers $1/$2. Sets $STUB.
++new_stub() {
++  STUB="$(mktemp -d -p "$WORK")"
++  echo "$1" >"$STUB/v"; echo "$2" >"$STUB/s"; : >"$STUB/ran"
++}
++
++# Run migrate with the version list $1 against $STUB. Sets $RC and $OUT.
++run_migrate() {
++  OUT="$(env PATH="$WORK/bin:$PATH" CH_STUB="$STUB" CH_ROOT="$CHDIR" \
++    CH_HOST=h CH_PORT=9000 CH_USERNAME=u CH_PASSWORD= "${@:2}" \
++    bash "$WORK/clickhouse.sh" migrate "$1" 2>&1)"
++  RC=$?
++}
++
++markers() { echo "$(cat "$STUB/v")/$(cat "$STUB/s")"; }
++ran_any() { grep -q "^$1/" "$STUB/ran"; }
++first_ran() { head -n1 "$STUB/ran"; }
++
++# C1: failure mid-version, rerun with the unchanged ConfigMap list.
++# Every step of every version runs exactly once across both runs.
++new_stub v1.22.0 -1
++list="$(requested v1.22.0)"
++run_migrate "$list" CH_STUB_FAIL=1.24.0/4.sql
++if [ "$RC" -ne 0 ] && [ "$(markers)" = "v1.24.0/3" ]; then pass "C1 run 1 stops at 1.24.0/4 with markers v1.24.0/3"; else
++  fail "C1 run 1 want rc!=0 and v1.24.0/3, got rc=$RC markers=$(markers)"; fi
++cp "$STUB/ran" "$STUB/ran1"; : >"$STUB/ran"
++run_migrate "$list"
++dups="$(grep -v '^1.24.0/4.sql$' "$STUB/ran1" | cat - "$STUB/ran" | sort | uniq -d)"
++want="$(cd "$CHDIR" && for v in $(tr , ' ' <<<"$list"); do
++  if [ -f "$v/$v.sql" ]; then echo "$v/$v.sql"; else ls "$v" | sort -V | sed "s#^#$v/#"; fi; done | sort)"
++got="$(grep -v '^1.24.0/4.sql$' "$STUB/ran1" | cat - "$STUB/ran" | sort -u)"
++if [ "$RC" -eq 0 ] && [ "$(markers)" = "$top/-1" ] && [ -z "$dups" ] && [ "$want" = "$got" ]; then
++  pass "C1 rerun resumes at 1.24.0/4 and finishes at $top, each step once"; else
++ 
 ```
 
 ---
 
-### Incident Patch 2: `fc6d0e45` (2026-11-20)
-**Commit Message**: chore(deps): update dependency vite to v7.3.7 [security] (#5188)
+### Incident Patch 2: `80414abf` (2026-11-26)
+**Commit Message**: ui: slimmer e2e CI artifacts (#5240)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `mcp_app/yarn.lock` (modified, +187/-343)
+**File**: `.github/workflows/ui-tests.js.yml` (modified, +2/-3)
 ```diff
-@@ -185,261 +185,131 @@
-     "@babel/helper-string-parser" "^7.29.7"
-     "@babel/helper-validator-identifier" "^7.29.7"
+@@ -101,6 +101,5 @@ jobs:
+         uses: actions/upload-artifact@v5
+         with:
+           name: 'playwright-report'
+-          path: |
+-            frontend/playwright-report
+-            frontend/test-results
++          path: frontend/test-results
++          retention-days: 7
+```
+
+**File**: `frontend/.gitignore` (modified, +1/-0)
+```diff
+@@ -18,6 +18,7 @@ logs
+ !.yarn/versions
+ *.env.json
+ test-results/
++test-results-login/
+ playwright-report/
+ tests/playwright/auth-state.json
+ coverage
+```
+
+**File**: `frontend/playwright.config.ts` (modified, +24/-6)
+```diff
+@@ -1,17 +1,23 @@
+ import 'dotenv/config';
+ import { defineConfig, devices } from '@playwright/test';
  
--"@esbuild/aix-ppc64@0.27.7":
--  version "0.27.7"
--  resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.27.7.tgz#82b74f92aa78d720b714162939fb248c90addf53"
--  integrity sha512-EKX3Qwmhz1eMdEJokhALr0YiD0lhQNwDqkPYyPhiSwKrh7/4KRjQc04sZ8db+5DVVnZ1LmbNDI1uAMPEUBnQPg==
++const CI = !!process.env.CI;
++
++/* CI uploads only test-results: real-backend runs keep no traces or
++   screenshots there, and the login specs write elsewhere. */
++const realBackend = CI ? ({ trace: 'off', screenshot: 'off' } as const) : {};
++const loginOutput = 'test-results-login';
++
+ /**
+  * See https://playwright.dev/docs/test-configuration.
+  */
+ 
+ export default defineConfig({
+   testDir: './tests/playwright',
+   fullyParallel: true,
+-  retries: process.env.CI ? 1 : 0,
++  retries: CI ? 1 : 0,
+   workers: 1,
+-  // html only in CI, where the report is uploaded as a failure artifact
+-  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
++  reporter: 'list',
+   use: {
+     baseURL: 'http://localhost:3333',
+     trace: 'on-first-retry',
+@@ -20,11 +26,23 @@ export default defineConfig({
+ 
+   /* Configure projects for major browsers */
+   projects: [
+-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
 -
- "@esbuild/aix-ppc64@0.28.2":
-   version "0.28.2"
-   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.28.2.tgz#bf6e10303bcf2e7c686975fa52f937ec2728d8bc"
-   integrity sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==
- 
--"@esbuild/android-arm64@0.27.7":
--  version "0.27.7"
--  resolved "https://registry.yarnpkg.com/@esbuild/android-arm64/-/android-arm64-0.27.7.tgz#f78cb8a3121fc205a53285adb24972db385d185d"
--  integrity sha512-62dPZHpIXzvChfvfLJow3q5dDtiNMkwiRzPylSCfriLvZeq0a1bWChrGx/BbUbPwOrsWKMn8idSllklzBy+dgQ==
--
- "@esbuild/android-arm64@0.28.2":
-   version "0.28.2"
-   resolved "https://registry.yarnpkg.com/@esbuild/android-arm64/-/android-arm64-0.28.2.tgz#0c6246bc8d2c4d172aac2db3fb1190d72bd65504"
-   integrity sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==
- 
--"@esbuild/android-arm@0.27.7":
--  version "0.27.7"
--  resolved "https://registry.yarnpkg.com/@esbuild/android-arm/-/android-arm-0.27.7.tgz#593e10a1450bbfcac6cb321f61f468453bac209d"
--  integrity sha512-jbPXvB4Yj2yBV7HUfE2KHe4GJX51QplCN1pGbYjvsyCZbQmies29EoJbkEc+vYuU5o45AfQn37vZlyXy4YJ8RQ==
--
- "@esbuild/android-arm@0.28.2":
-   version "0.28.2"
-   resolved "https://registry.yarnpkg.com/@esbuild/android-arm/-/android-arm-0.28.2.tgz#2d84ece6a4e2684d92be26ee13d42757d831c381"
-   integrity sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==
- 
--"@esbuild/android-x64@0.27.7":
--  version "0.27.7"
--  resolved "https://registry.yarnpkg.com/@esbuild/android-x64/-/android-x64-0.27.7.tgz#453143d073326033d2d22caf9e48de4bae274b07"
--  integrity sha512-x5VpMODneVDb70PYV2VQOmIUUiBtY3D3mPBG8NxVk5CogneYhkR7MmM3yR/uMdITLrC1ml/NV1rj4bMJuy9MCg==
--
- "@esbuild/android-x64@0.28.2":
-   version "0.28.2"
-   resolved "https://registry.yarnpkg.com/@esbuild/android-x64/-/android-x64-0.28.2.tgz#fc38d4d6358d8dc1cf53f09f7589fe436eb64801"
-   integrity sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==
- 
--"@esbuild/darwin-arm64@0.27.7":
--  version "0.27.7"
--  resolved "https://registry.yarnpkg.com/@esbuild/darwin-arm64/-/darwin-arm64-0.27.7.tgz#6f23000fb9b40b7e04b7d0606c0693bd0632f322"
--  integrity sha512-5lckdqeuBPlKUwvoCXIgI2D9/ABmPq3Rdp7IfL70393YgaASt7tbju3Ac+ePVi3KDH6N2RqePfHnXkaDtY9fkw==
--
- "@esbuild/darwin-arm64@0.28.2":
-   version "0.28.2"
-   resolved "https://registry.yarnpkg.com/@esbuild/darwin-arm64/-/darwin-arm64-0.28.2.tgz#f83afeeac1d7dac01c7a2fd012b3e451a0591fcc"
-   integrity sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==
- 
--"@esbuild/darwin-x64@0.27.7":
--  version "0.27.7"
--  resolved "https://registry.yarnpkg.com/@esbuild/darwin-x64/-/darwin-x64-0.27.7.tgz#27393dd18bb1263c663979c5f1576e00c2d024be"
--  integrity sha512-rYnXrKcXuT7Z+WL5K980jVFdvVKhCHhUwid+dDYQpH+qu+TefcomiMAJpIiC2EM3Rjtq0sO3StMV/+3w3MyyqQ==
--
- "@esbuild/darwin-x64@0.28.2":
-   version "0.28.2"
-   resolved "https://registry.yarnpkg.com/@esbuild/darwin-x64/-/darwin-x64-0.28.2.tgz#510147c055a795588dbbe14fd6b1b8ad0a2f30de"
-   integrity sha512-uq6suIWYP37qzGddBKPw5QEQPi6HiLGsO7UmkpfyaYNQ3D+rN6w6WfwH+nuqcGXWvawGwxOEroO4YGnFh95azw==
- 
--"@esbuild/freebsd-arm64@0.27.7":
--  version "0.27.7"
--  resolved "https://registry.yarnpkg.com/@esbuild/freebsd-arm64/-/freebsd-arm64-0.27.7.tgz#22e4638fa502d1c0027077324c97640e3adf3a62"
--  integrity sha512-B48PqeCsEgOtzME2GbNM2roU29AMTuOIN91dsMO30t+Ydis3z/3Ngoj5hhnsOSSwNzS+6JppqWsuhTp6E82l2w==
--
- "@esbuild/freebsd-arm64@0.28.2":
-   version "0.28.2"
-   resolved "https://registry.yarnpkg.com/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.2.tgz#093b9200ecf0b115ba4e5e248a7485c9c5f8bd5e"
-   integrity sha512-n+I0BTSRIoy+d6RPKnEVwql5UwBJolytvY4mAOIEJorKlqgPII8ix6slVVrfZ5Tnj7glIZvloylbB/EJPMWEXw==
- 
--"@esbuild/freebsd-x64@0.27.7":
--  version "0.27.7"
--  resolved "https://registry.yarnpkg.com/@esbuild/freebsd-x64/-/freebsd-x64-0.27.7.tgz#9224b8e4fea924ce2194e3efc3e9aebf822192d6"
--  integrity sha512-jOBDK5XEjA4m5IJK3bpAQF9/Lelu/Z9ZcdhTRLf4cajlB+8VEhFFRjWgfy3M1O4rO2GQ/b2dLwCUGpiF/eATNQ==
--
- "@esbuild/freebsd-x64@0.28.2":
-   version "0.28.2"
-   resolved "https://registry.yarnpkg.com/@esbuild/freebsd-x64/-/freebsd-x64-0.28.2.tgz#0be22b6df925d213e841ea87123af5df80b0faf7"
-   integrity sha512-78XJTJkvPs0kz2w61301PJjXl4g7q3JqiYMZ/M/yVI73EHBrCRTgkhu9oqG7vPqq+a/yadEW8aD+agKlk5xrmg==
- 
--"@esbuild/linux-arm64@0.27.7":
--  version "0.27.7"
--  resolved "https://registry.yarnpkg.com/@esbuild/linux-arm64/-/linux-arm64-0.27.7.tgz#4f5d1c27527d817b35684ae21419e57c2bda0
++    {
++      name: 'setup',
++      testMatch: /.*\.setup\.ts/,
++      outputDir: loginOutput,
++      use: realBackend,
++    },
++    {
++      name: 'sign-in',
++      testMatch: /sign-in\.spec\.ts/,
++      outputDir: loginOutput,
++      use: { ...devices['Desktop Chrome'], ...realBackend },
++      dependencies: ['setup'],
++    },
+     {
+       name: 'chromium',
+-      use: { ...devices['Desktop Chrome'] },
++      use: { ...devices['Desktop Chrome'], ...realBackend },
++      testIgnore: /sign-in\.spec\.ts/,
+       dependencies: ['setup'],
+     },
+   ],
 ```
 
 ---
 
-### Incident Patch 3: `475ac45f` (2026-11-20)
-**Commit Message**: chore(deps): update dependency @modelcontextprotocol/sdk to v1.32.0 [security] (#5189)
+### Incident Patch 3: `d7e2bec9` (2026-11-26)
+**Commit Message**: ui: funnel step drill excludes the next step (#5237)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Clicking a funnel step filters sessions by the steps up to it plus the
+next step with its properties negated (is/contains/on/= to
+isNot/notContains/notOn/!=), so the list shows sessions that stopped
+there. Steps whose operators have no negative twin are left out.
 
-**File**: `mcp_app/yarn.lock` (modified, +89/-102)
+**File**: `frontend/app/components/Funnels/FunnelWidget/FunnelWidget.tsx` (modified, +33/-1)
 ```diff
-@@ -446,9 +446,9 @@
-   integrity sha512-5ebpxr3nWMzrL/rnUI755Jkuee0bHL/Gq0WTF9lvcpv73wAp5eu8MfBUgWK9bhWvZjj7yX8etf/8tI8Ney695g==
+@@ -1,5 +1,6 @@
+ import { useStore } from '@/mstore';
+ import Filter from '@/mstore/types/filter';
++import FilterItem from '@/mstore/types/filterItem';
+ import { Tag, Tooltip } from 'antd';
+ import cn from 'classnames';
+ import { observer } from 'mobx-react-lite';
+@@ -36,6 +37,36 @@ interface Props {
+   compData: FunnelData;
+ }
  
- "@hono/node-server@^1.19.9 || ^2.0.5":
--  version "2.1.1"
--  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-2.1.1.tgz#9cfa8649e9ecbcd48edf505b103002402ea51e70"
--  integrity sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==
-+  version "2.1.11"
-+  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-2.1.11.tgz#cfc6266cd3389925acaf5a6ec5d8ed4b66990d53"
-+  integrity sha512-KzKz9vl4vvr1vgLHamj+g5uonbrj5NwAdO3yzOS6cd2HjALVeOgTgeZOyAzNxejbkfOOPIcvuf/Tg8l1pEFLog==
++// the backend reads an event whose properties are all negative as one the
++// session must not have; operators without a negative twin can't be excluded
++const NEGATED: Record<string, string> = {
++  is: 'isNot',
++  contains: 'notContains',
++  on: 'notOn',
++  '=': '!=',
++};
++
++/** the step negated, so a drill stops at the step before it */
++function excludeStep(step?: FilterItem): FilterItem | null {
++  if (!step?.isEvent) return null;
++  // the properties toJson sends
++  const props = (step.filters ?? []).filter(
++    (p) =>
++      p.operator === 'isAny' ||
++      p.value?.some((v) => v !== '' && v !== null && v !== undefined),
++  );
++  if (!props.length || props.some((p) => !NEGATED[p.operator || 'is'])) {
++    return null;
++  }
++  return new FilterItem({
++    ...JSON.parse(JSON.stringify(step)),
++    filters: props.map((p) => ({
++      ...JSON.parse(JSON.stringify(p)),
++      operator: NEGATED[p.operator || 'is'],
++    })),
++  });
++}
++
+ function FunnelWidget(props: Props) {
+   const { t } = useTranslation();
+   const { dashboardStore, metricStore, filterStore } = useStore();
+@@ -60,8 +91,9 @@ function FunnelWidget(props: Props) {
+   const metricFilters = metric?.series[0]?.filter.filters || [];
  
- "@jridgewell/gen-mapping@^0.3.12", "@jridgewell/gen-mapping@^0.3.5":
-   version "0.3.13"
-@@ -497,9 +497,9 @@
-     "@standard-schema/spec" "^1.1.0"
- 
- "@modelcontextprotocol/sdk@^1.30.0":
--  version "1.30.0"
--  resolved "https://registry.yarnpkg.com/@modelcontextprotocol/sdk/-/sdk-1.30.0.tgz#dfa8a48347ec2d2c0d47917d7dc57f754e37f5ff"
--  integrity sha512-xKd8OIzlqNzcqcNumGAa6g+PW2kjD5vrpcKOnfldAUPP3j7lnqMPwlTXQm8gF+UwH72z0lqaRbjr9hqGz0eITA==
-+  version "1.32.2"
-+  resolved "https://registry.yarnpkg.com/@modelcontextprotocol/sdk/-/sdk-1.32.2.tgz#6ede940e436998cc20a70092f0af875735bc78f8"
-+  integrity sha512-SWsVtH/0vULSQStoZ6xxH2K09Li8fXYTMC64ZeogCdpZ3XSi1eCPOByV1OpuJxuI3OcmHhosDWYyii07tpPsLw==
-   dependencies:
-     "@hono/node-server" "^1.19.9 || ^2.0.5"
-     ajv "^8.17.1"
-@@ -768,18 +768,18 @@ baseline-browser-mapping@^2.11.25:
-   resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.11.26.tgz#01bf6774efb3fbb9de20afc6b923ab85c7d230a6"
-   integrity sha512-GLQdD3y6UF8iVuMJl5fHgE4jdn/ua7n+toKfLgNlg3BqQtOZjpy68T8Tup8/wGWZCDlm7KMg7tPb4MPn7oN0TQ==
- 
--body-parser@^2.2.1:
--  version "2.3.0"
--  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-2.3.0.tgz#6d8662f4d8c336028b8ac9aa24251b0ca64ba437"
--  integrity sha512-2cGmJupaNgg+QUwVLAucDuWuoMZ6EX9iHDRswZ5lsNYEmwPaRknMPCLZz07yTzVq/83p4o/wzbDZbBrTvGGTIw==
-+body-parser@^2.3.0:
-+  version "2.4.0"
-+  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-2.4.0.tgz#337a76249270f83e450ad385a9606ca3b4a75c06"
-+  integrity sha512-Ifk1KcLrxaGt1occQagQNFNNOqRt1LFuehEnHHzB8Z6cRgIxRU1TBaiIsUiCdA+gy5PL7Y1IX31DNKkRmxtXjQ==
-   dependencies:
-     bytes "^3.1.2"
--    content-type "^2.0.0"
-+    content-type "^2.1.0"
-     debug "^4.4.3"
-     http-errors "^2.0.1"
--    iconv-lite "^0.7.2"
-+    iconv-lite "^0.7.3"
-     on-finished "^2.4.1"
--    qs "^6.15.2"
-+    qs "^6.16.1"
-     raw-body "^3.0.2"
-     type-is "^2.1.0"
- 
-@@ -827,17 +827,17 @@ caniuse-lite@^1.0.30001810:
-   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001812.tgz#55b32ed819d120b384149a4f9fd59d179ce008f9"
-   integrity sha512-qN+QNNBr93TCmFrmte0bBCjSDMuRvt78VlHT99qIGPszm4QsqCX8lnyWUFkHi8B7ZBAPq8SH+UqyXNy/odMdng==
- 
--content-disposition@^1.0.0:
--  version "1.1.0"
--  resolved "https://registry.yarnpkg.com/content-disposition/-/content-disposition-1.1.0.tgz#f3db789c752d45564cc7e9e1e0b31790d4a38e17"
--  integrity sha512-5jRCH9Z/+DRP7rkvY83B+yGIGX96OYdJmzngqnw2SBSxqCFPd0w2km3s5iawpGX8krnwSGmF0FW5Nhr0Hfai3g==
-+content-disposition@^2.0.1:
-+  version "2.0.1"
-+  resolved "https://registry.yarnpkg.com/content-disposition/-/content-disposition-2.0.1.tgz#88a75c7a52ef9c407c96035fe83a66939c2a4dc9"
-+  integrity sha512-e+H0ZXHSWYrENhQzw1LPuP4oF5MzVKmDU6d3hxlvaPEYLLg62MxtQNPRx4SYSuYJSBUgnQIG4HIN2tEtNv7Dog==
- 
- content-type@^1.0.5:
-   version "1.0.5"
-   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.5.tgz#8b773162656d1d1086784c8f23a54ce6d73d7918"
-   integrity sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA==
- 
--content-type@^2.0.0:
-+content-type@^2.0.0, content-type@^2.1.0:
-   version "2.1.0"
-   resolved "https://registry.yarnpkg.com/content-type/-/content-type-2.1.0.tgz#d9389c43c0a8cf6a355db464d21e07092a40493a"
-   integrity sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag==
-@@ -919,9 +919,9 @@ electron-to-chromium@^1.5.438:
-   integrity sha512-qu6QIPXhsb+CRcAiTMNjR4A1y/7tCYKkKjr5CZXRVih6qkDf79peZ2BpEU3qoDBNCRrcy3Mra3X9nG5oruuA7Q==
- 
- encodeurl@^2.0.0:
--  version "2.0.0"
--  resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-2.0.0.tgz#7b8ea898077d7e409d3ac45474ea38eaf0857a58"
--  integrity sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==
-+  version "2.0.3"
-+  resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-2.0.3.tgz#d3895ecc5f498ae0b8840bcf670e1fcaf519f44d"
-+  integrity sha512-mIteYONiEfc4xWf2F1WXovh1c8npzS00vNeiUPdwFF+QlVJni+gNvpQltLMQhob8rew/bWWc/bGTuUr0EUGt0w==
- 
- engine.io-client@~6.6.1:
-   version "6.6.4"
-@@ -950,9 +950,9 @@ es-errors@^1.3.0:
-   integrity sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==
- 
- es-object-atoms@^1.0.0, es-object-atoms@^1.1.1:
--  ve
+   const applyDrillDown = (index: number, isComp?: boolean) => {
++    const next = index > -1 ? excludeStep(metricFilters[index + 1]) : null;
+     const filter = {
+-      filters: metricFilters.slice(0, index + 1),
++      filters: [...metricFilters.slice(0, index + 1), ...(next ? [next] : [])],
+     };
+     const periodTimestamps =
+       isComp && index > -1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5197** (2026-11-20): Update dependency bun to v1.4.5 (main) (@renovate[bot])
-- **PR #5195** (2026-11-20): chore(deps): update dependency glob to v10 [security] (dev) (@renovate[bot])
-- **PR #5194** (2026-11-20): Update dependency axios to v0.34.0 [SECURITY] (dev) (@renovate[bot])
-- **PR #5193** (2026-11-20): chore(deps): update dependency glob to v10 [security] (main) (@renovate[bot])
-- **PR #5192** (2026-11-20): chore(deps): update dependency axios to v0.34.0 [security] (main) (@renovate[bot])
-- **PR #5191** (2026-11-20): chore(deps): update dependency vitest to v4 [security] (main) (@renovate[bot])
+- **PR #5240** (2026-11-26): ui: slimmer e2e CI artifacts (@nick-delirium)
+- **PR #5239** (2026-11-26): ui: e2e specs follow the new side nav, session table and date picker;… (@nick-delirium)
+- **PR #5238** (2026-11-26): Updated patch build from main d7e2bec9319781f3a97113cdc77a0f14cba479c9 (@estradino)
+- **PR #5237** (2026-11-26): ui: funnel step drill excludes the next step (@nick-delirium)
+- **PR #5236** (2026-11-26): ui: funnel step drill excludes the next step (@nick-delirium)
+- **PR #5235** (2026-11-26): fix(helm): resume clickhouse migration from markers (@rjshrjndrn)
 
 ---
 
@@ -1327,28 +1443,50 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. helm): bump nginx-ingress to 5.8-alpine
+## X. helm): resume clickhouse migration from markers
 
 **RULE**:
-When implementing operations in `scripts/helmcharts/openreplay/values.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/helmcharts/openreplay/files/clickhouse.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a82fdbea`: helm): bump nginx-ingress to 5.8-alpine. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcaf9197`: helm): resume clickhouse migration from markers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/values.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/files/clickhouse.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      tag: 5.8-alpine
+# Versions to migrate. ClickHouse's own markers decide where to start; the
+# requested list (built from the openreplay-version ConfigMap, which only moves
+# after a fully successful upgrade) is used only when there are no markers yet.
+function migration_versions_from_markers() {
+    local requested=$1 state db_version base v
+    $ch_client -q "CREATE FUNCTION IF NOT EXISTS openreplay_migration_state AS() -> -1;"
+    $ch_client -q "CREATE FUNCTION IF NOT EXISTS openreplay_version AS() -> 'v0.0.0';"
+    state=$($ch_client -q "SELECT openreplay_migration_state()" | tr -d '[:space:]')
+    db_version=$($ch_client -q "SELECT openreplay_version()" | tr -d '[:space:]')
+    migration_versions=()
+    if [[ "$db_version" == "v0.0.0" ]]; then
+        IFS=',' read -r -a migration_versions <<< "$requested"
+        return 0
+    fi
+    base="${db_version#v}"
+    if [[ "$state" != "-1" ]]; then
+        if [[ ! -d "${clickhousedir}/${base}" ]]; then
+            echo "ERROR: ClickHouse is mid-migration at ${db_version} step ${state}, but this release has no ${base} migration."
+            exit 1
+        fi
+        migration_versions+=("$base")
+    fi
+    for v in $(ls "$clickhousedir" | grep -v '^cre
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      tag: 5.4-alpine
+    IFS=',' read -r -a migration_versions <<< "$1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a82fdbea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcaf9197` are properly handled with clean fallback behavior.

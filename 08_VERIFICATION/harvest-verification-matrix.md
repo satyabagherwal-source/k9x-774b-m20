@@ -13529,3 +13529,5 @@
 | `CYCLE-20261126-NTOU` | `2026-11-26T19:16:07.566Z` | `kandinskylab/Kandinsky-ImageSR-2.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-kandinskylab-kandinsky-imagesr-2.0-learnings.md` | Yes (`ff571660...`) |
 | `CYCLE-20261126-NVPG` | `2026-11-26T19:16:10.180Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`8ddfb661...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T19:16:48.335Z` | `hf-kandinskylab-kandinsky-imagesr-2.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-95F35A51` [Domain D] | Yes (`a1e03bfc...`) |
+| `CYCLE-20261126-ZMSQ` | `2026-11-26T19:25:18.506Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`a48ee5fd...`) |
+| `CYCLE-20261126-ZT5G` | `2026-11-26T19:25:26.740Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10763` | Yes (`8bdd40c8...`) |

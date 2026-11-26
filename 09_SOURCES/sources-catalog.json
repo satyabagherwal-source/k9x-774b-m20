@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "1947692b796e8d51133a0ce76d7d0f33fe5db0226307696c8052e2e0557f936e",
-    "lastHarvestedAt": "2026-11-23T05:51:40.216Z",
+    "contentHash": "a48ee5fd684c647faf0d72b71a6ef6513e9a0888856d034b6fb1ed05dd7ec137",
+    "lastHarvestedAt": "2026-11-26T19:25:18.512Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "fc6d0e45",
+    "sourceVersion": "80414abf",
     "license": "NOASSERTION",
-    "contentHash": "bb82497f94a9281706806b3a5d75b36f0d1729a7a06372e201ea667d0f5f9549",
-    "lastHarvestedAt": "2026-11-21T17:49:56.667Z",
+    "contentHash": "8bdd40c89fe13ccbcd72501fca944224fd86911b2468fab590a5c7199ae53a36",
+    "lastHarvestedAt": "2026-11-26T19:25:26.745Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {

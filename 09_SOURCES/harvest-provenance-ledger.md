@@ -13562,3 +13562,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-kandinskylab-kandinsky-imagesr-2-0` | `https://huggingface.co/kandinskylab/Kandinsky-ImageSR-2.0` | `hf-kandins` | Multi-dimensional audit evidence | 2026-11-26T19:16:07.570Z |
 | `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-26T19:16:10.184Z |
 | `learn-dom-d-95f35a51` | `project://hf-kandinskylab-kandinsky-imagesr-2.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-kandinskylab-kandinsky-imagesr-2.0-learnings.md` | 2026-11-26T19:16:48.335Z |
+| `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-26T19:25:18.512Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `80414abf` | Multi-dimensional audit evidence | 2026-11-26T19:25:26.745Z |

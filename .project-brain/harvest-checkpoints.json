@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T19:16:10.198Z",
+  "last_updated": "2026-11-26T19:25:26.767Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1130,14 +1130,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "content_hash": "1947692b796e8d51133a0ce76d7d0f33fe5db0226307696c8052e2e0557f936e",
-      "verified_at": "2026-11-23T05:51:40.227Z",
+      "content_hash": "a48ee5fd684c647faf0d72b71a6ef6513e9a0888856d034b6fb1ed05dd7ec137",
+      "verified_at": "2026-11-26T19:25:18.528Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T05:51:40.227Z"
+      "last_updated": "2026-11-26T19:25:18.528Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "bb82497f94a9281706806b3a5d75b36f0d1729a7a06372e201ea667d0f5f9549",
-      "verified_at": "2026-11-21T17:49:56.675Z",
+      "content_hash": "8bdd40c89fe13ccbcd72501fca944224fd86911b2468fab590a5c7199ae53a36",
+      "verified_at": "2026-11-26T19:25:26.767Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:49:56.675Z"
+      "last_updated": "2026-11-26T19:25:26.767Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
