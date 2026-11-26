@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T14:04:22.957Z",
+  "last_updated": "2026-11-26T14:13:44.787Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-26T12:50:59.790Z",
+      "processed_at": "2026-11-26T14:13:43.074Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1993,8 +1993,8 @@
       "staged_for_review": 1
     },
     "hf-akhilaaa3-jev-omni-learnings.md": {
-      "processed_at": "2026-11-22T21:14:45.153Z",
-      "promoted_canonical": 2,
+      "processed_at": "2026-11-26T14:13:41.058Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "mintplex-labs-anything-llm-learnings.md": {
@@ -2373,7 +2373,7 @@
       "staged_for_review": 0
     },
     "sceneview-sceneview-learnings.md": {
-      "processed_at": "2026-11-24T03:50:08.932Z",
+      "processed_at": "2026-11-26T14:13:41.712Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3978,7 +3978,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4539,
+  "total_dossiers_evaluated": 4542,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3424
+  "total_staged_for_review": 3426
 }

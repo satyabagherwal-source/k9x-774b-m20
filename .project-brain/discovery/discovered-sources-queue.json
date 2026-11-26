@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T13:44:58.649Z",
+  "updated_at": "2026-11-26T14:13:41.886Z",
   "stats": {
-    "total_discovered": 9805,
-    "approved_pending_harvest": 9304,
+    "total_discovered": 9807,
+    "approved_pending_harvest": 9306,
     "harvested_count": 0,
     "rejected_count": 501,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9290,
+      "COMMUNITY_AND_EXPERT": 9292,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -212230,6 +212230,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
         "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-9D22E51056CA": {
+      "id": "SRC-9D22E51056CA",
+      "url": "https://raw.githubusercontent.com/Labs-Ascend/MAVLab/843fefe3fe58345609282ec4c548c811a44ac659/mavlab-android/app/src/main/assets/models/drone.glb",
+      "title": "https://raw.githubusercontent.com/Labs-Ascend/MAVLab/843fefe3fe58345609282ec4c548c811a44ac659/mavlab-android/app/src/main/assets/models/drone.glb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:13:41.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-772418CF3205": {
+      "id": "SRC-772418CF3205",
+      "url": "https://github.com/sceneview/sceneview/pull/5271",
+      "title": "https://github.com/sceneview/sceneview/pull/5271",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:13:41.886Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
       }
     }
   }

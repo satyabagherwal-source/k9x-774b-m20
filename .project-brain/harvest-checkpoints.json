@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T14:04:17.172Z",
+  "last_updated": "2026-11-26T14:13:37.173Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -590,14 +590,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akhilaaa3-jev-omni",
-      "content_hash": "8e0c09941b93b70a9deb05fe8291100e14d1c8c2e94fc5726d8fd0658aba97d6",
-      "verified_at": "2026-11-22T21:13:17.222Z",
+      "content_hash": "f0f2a723f360b1508b271b85f297e75b5c50ab85af8968c7fdd70519b4ae35c5",
+      "verified_at": "2026-11-26T14:13:29.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:13:17.222Z"
+      "last_updated": "2026-11-26T14:13:29.164Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -18441,14 +18441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sceneview-sceneview",
-      "content_hash": "b5f2ed678cdc53b2d64bd660e9bb85af9fb75f4b9229b90abcd2ebf6cd760ea2",
-      "verified_at": "2026-11-24T03:49:58.871Z",
+      "content_hash": "dea73e48a51f287187376ce0b9c3c54ce1ad1b0d968f7317eae1bc3b8a1e041f",
+      "verified_at": "2026-11-26T14:13:37.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:49:58.871Z"
+      "last_updated": "2026-11-26T14:13:37.172Z"
     },
     "tencent/Qwen3.8-27B-DSpine-b16": {
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",

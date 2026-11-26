@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T14:04:17.165Z",
-  "total_cycles_completed": 12734,
-  "total_learnings_persisted": 12734,
-  "total_rules_promoted": 11600,
+  "last_updated": "2026-11-26T14:13:37.161Z",
+  "total_cycles_completed": 12736,
+  "total_learnings_persisted": 12736,
+  "total_rules_promoted": 11601,
   "history": [
-    {
-      "timestamp": "2026-11-26T02:18:33.453Z",
-      "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
-      "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T02:18:35.008Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T02:26:59.215Z",
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T14:04:17.165Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T14:13:29.160Z",
+      "repository": "akhilaaa3/Jev-Omni",
+      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T14:13:37.161Z",
+      "repository": "sceneview/sceneview",
+      "learningId": "learn-github-sceneview-sceneview",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

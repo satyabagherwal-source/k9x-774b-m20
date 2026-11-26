@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "8e0c09941b93b70a9deb05fe8291100e14d1c8c2e94fc5726d8fd0658aba97d6",
-    "lastHarvestedAt": "2026-11-22T21:13:17.212Z",
+    "contentHash": "f0f2a723f360b1508b271b85f297e75b5c50ab85af8968c7fdd70519b4ae35c5",
+    "lastHarvestedAt": "2026-11-26T14:13:29.145Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -12253,10 +12253,10 @@
     "repository": "sceneview/sceneview",
     "platform": "github",
     "sourceUrl": "https://github.com/sceneview/sceneview",
-    "sourceVersion": "a1c2b6b5",
+    "sourceVersion": "3adac593",
     "license": "Apache-2.0",
-    "contentHash": "b5f2ed678cdc53b2d64bd660e9bb85af9fb75f4b9229b90abcd2ebf6cd760ea2",
-    "lastHarvestedAt": "2026-11-24T03:49:58.856Z",
+    "contentHash": "dea73e48a51f287187376ce0b9c3c54ce1ad1b0d968f7317eae1bc3b8a1e041f",
+    "lastHarvestedAt": "2026-11-26T14:13:37.144Z",
     "learningId": "learn-github-sceneview-sceneview"
   },
   "hf-tencent-qwen3.8-27b-dspine-b16": {

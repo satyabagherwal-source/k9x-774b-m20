@@ -13450,3 +13450,5 @@ Every entry in this ledger must capture:
 | `learn-github-wquguru-cicada` | `https://github.com/wquguru/cicada` | `be9785d5` | Multi-dimensional audit evidence | 2026-11-26T14:04:08.603Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `fc120870` | Multi-dimensional audit evidence | 2026-11-26T14:04:12.612Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `327564b0` | Multi-dimensional audit evidence | 2026-11-26T14:04:17.151Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-26T14:13:29.145Z |
+| `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `3adac593` | Multi-dimensional audit evidence | 2026-11-26T14:13:37.144Z |

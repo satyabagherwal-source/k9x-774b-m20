@@ -13417,3 +13417,5 @@
 | `CYCLE-20261126-IM1I` | `2026-11-26T14:04:08.598Z` | `wquguru/cicada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10699` | Yes (`3b2711e6...`) |
 | `CYCLE-20261126-IP4V` | `2026-11-26T14:04:12.607Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10700` | Yes (`c4dc0724...`) |
 | `CYCLE-20261126-ISMY` | `2026-11-26T14:04:17.146Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10701` | Yes (`c6802b61...`) |
+| `CYCLE-20261126-UMK4` | `2026-11-26T14:13:29.140Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`f0f2a723...`) |
+| `CYCLE-20261126-USQB` | `2026-11-26T14:13:37.139Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10702` | Yes (`dea73e48...`) |
