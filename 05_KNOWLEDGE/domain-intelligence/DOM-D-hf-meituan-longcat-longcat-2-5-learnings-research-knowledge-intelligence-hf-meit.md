@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T02:37:44.907Z",
+  "timestamp": "2026-11-26T04:31:03.057Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-meituan-longcat-longcat-2.5-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-meituan-longcat-longcat-2.5-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T02:37:44.907Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:31:03.057Z`  
 > **Learning ID**: `LEARN-EVO-hf-meituan-longcat-longcat-2.5-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-meituan-l`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T02:36:55.330Z  
+> **Timestamp**: 2026-11-26T04:30:48.299Z  
 > **Learning ID**: `learn-huggingface-meituan-longcat-longcat-2-5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-2.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/meituan-longcat/LongCat-2.5](https://huggingface.co/meituan-longcat/LongCat-2.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T02:36:55.116Z  
+> **Harvest Timestamp**: 2026-11-26T04:30:48.123Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 971 downloads | 240 likes
+- **Stars / Engagement**: 3722 downloads | 285 likes
 
 ---
 

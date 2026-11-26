@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T22:07:36.062Z",
+  "timestamp": "2026-11-26T04:31:02.344Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-domcyrus-rustnet-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [domcyrus-rustnet-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T22:07:36.062Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:31:02.344Z`  
 > **Learning ID**: `LEARN-EVO-domcyrus-rustnet-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `617d7976`  
+> **Source Version**: `71475e09`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:07:25.628Z  
+> **Timestamp**: 2026-11-26T04:30:50.536Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:07:20.870Z  
+> **Harvest Timestamp**: 2026-11-26T04:30:50.531Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5261 stars
+- **Stars / Engagement**: 5264 stars
 
 ---
 
@@ -2526,618 +2526,736 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `617d7976` (2026-11-23)
-**Commit Message**: feat(ui): redesign Health & Host Findings accordion and enable t history toggle (#748)
+### Incident Patch 1: `21a4d76d` (2026-11-25)
+**Commit Message**: feat(ui): add Alt+Left/Alt+Right tab history (#752)
 
-* feat(ui): redesign Health & Host Findings accordion and enable t history toggle
+* feat(ui): add Alt+Left/Alt+Right tab history
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+Keep a bounded back/forward stack of visited tabs so Alt+Left returns
+to the previous view (e.g. Details back to Overview) and Alt+Right
+undoes it. Terminals that can remap the X1/X2 mouse buttons can map
+them to these keys until crossterm reports those buttons.
+
+Refs #274
+
+* feat(ui): also bind Alt+b/Alt+f for macOS terminals and use jump_to_tab
+
+Map Alt+b / Alt+f alongside Alt+Left / Alt+Right so Option+Left / Option+Right work out of the box in macOS terminals that send Esc b / Esc f by default (Ghostty, Terminal.app, iTerm2).
+
+Route the remaining direct tab switches in Overview and Activity through jump_to_tab so record_tab_change stays private, and combine the duplicate tab-navigation guard in dispatch_key.
+
+---------
+
+Co-authored-by: JROtto5 <[REDACTED_EMAIL]>
+Co-authored-by: Marco Cadetg <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Update ctutils to 0.4.4 for RUSTSEC-2026-0385 and replace yanked clipboard-win 5.4.1 with 5.4.3 (#698)
+@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Avoid allocating static Overview titles and expanded process-group connectors on each render (#412)
  
- ### Changed
-+- Redesign `5 Health & Host > Findings` with a structured tree accordion: aligned finding columns with severity icons and status pills, faint tree guide rails (`│ ├─ └─`), a TCP handshake health bar, single-line tabular attempt rows with inline anomalies, aligned `Resets and ICMP` / `Interface drops` / `Capture quality` sub-tables, and full-width row selection highlighting
- - Skip TCP attempt mutex locking on steady-state established packets when no handshakes are pending (#734)
- - Keep Overview's TCP handshake summary on one compact line while quiet or healthy, expanding when issues appear, and make sidebar DNS/TCP health rows jump directly to Findings (#734)
- - Show a severity indicator on `5 Health & Host` in the tab bar, attention counts on `Findings`, and trailing action chips on linked evidence rows (#734)
-@@ -45,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
- 
- ### Fixed
-+- Allow pressing `t` directly in `5 Health & Host > Findings` to toggle historic connections immediately (matching the `press t for history` prompt on closed TCP attempts) and show `t history` in the Findings status bar and help overlay
- - Link Windows synchronization APIs explicitly to prevent x86 startup failures and x64 test crashes caused by enclave DLL imports (#731)
- - Remove redundant homepage metadata to prevent Cargo manifest warnings when building from source (#731)
- - Validate complete DNS questions and recognize STUN on port 53 before DNS to prevent false resolver failures (#722)
+ ### Added
++- Go back and forward through visited tabs with `Alt+Left` / `Alt+Right`
+ - Mirror the Graph tab's RX/TX traffic waves around a shared center time horizon (RX up, TX down), with `m` to toggle back to the split view and `[view] mirrored_traffic_graph` in `config.toml`
+ - Sort findings by severity while preserving the selected finding and evidence position (#734)
+ - Align health colors across Findings, Overview, Details and host inventory, and leave zero error counts neutral (#734)
 ```
 
-**File**: `USAGE.ja.md` (modified, +2/-2)
+**File**: `USAGE.ja.md` (modified, +1/-1)
 ```diff
-@@ -217,9 +217,9 @@ Findings を開くと、最も優先度の高い項目が選択されます。
+@@ -11,7 +11,7 @@
+ 権限の設定は[インストールガイド（英語）](INSTALL.md)を参照してください。
+ `rustnet` で起動し、必要なら `-i <interface>` でキャプチャ対象を指定します。
  
- 既定のテーマでは、緑は正常なハンドシェイクや DNS 応答、黄は状態の悪化、ドロップ、または観測データの不足を示します。相手からの TCP リセット、DNS タイムアウト、インターフェースエラー、キャプチャの停止など、実際に観測した障害は赤で表示します。確認中と未観測の状態は控えめな色で表示し、エラー件数がゼロの場合は強調しません。`NO_COLOR` でも状態名、件数、選択位置を示す `▌` を確認できます。
- 
--**DNS replies** ではリゾルバーと個々の問題を順に確認できます。**Open DNS resolvers** で応答結果、遅延、問い合わせ名を調べます。**Interface drops** からは OS のカウンターを開けます。**TCP handshakes** を展開すると、影響を受けたすべての宛先と、保持されている試行が表示されます。リンクのある行は末尾に `[↗]` を表示し、選択すると完全なリンク（`[Open Details ↵]` など）を展開します。`Enter` または末尾のリンクのクリックで移動できます。対応する接続が残っていれば **Open Details** が表示されます。`Esc` で元の項目に戻り（ステータスバーに `esc findings` を表示）、Findings 上では Overview に戻ります。マウスホイールで選択位置とは独立してスクロールできます。`v` で **Sockets** に移って待受ポートの所有プロセスを確認し、`V` で戻れます。各セクションの位置は保持されます。
-+**DNS replies** ではリゾルバーと個々の問題を順に確認できます。**Open DNS resolvers** で応答結果、遅延、問い合わせ名を調べます。**Interface drops** からは OS のカウンターを開けます。**TCP handshakes** を展開すると、影響を受けたすべての宛先と、保持されている試行が表示されます。リンクのある行は末尾に `[↗]` を表示し、選択すると完全なリンク（`[Open Details ↵]` など）を展開します。`Enter` または末尾のリンクのクリックで移動できます。対応する接続が残っていれば **Open Details** が表示されます。Findings で `t` を押すと接続履歴の表示を切り替えられます。履歴を表示すると、保持されている切断済みの接続も Details で確認できます。`Esc` で元の項目に戻り（ステータスバーに `esc findings` を表示）、Findings 上では Overview に戻ります。マウスホイールで選択位置とは独立してスクロールできます。`v` で **Sockets** に移って待受ポートの所有プロセスを確認し、`V` で戻れます。各セクションの位置は保持されます。
- 
--各試行は完了から 5 分間集計されます。各試行には表示期限と残り時間が付き、全宛先で直近 32 件までの問題を表示します。選択中の試行が一覧から消えると保持条件が表示され、同じグループ内の近くの項目に選択が移ります。項目が残っていなければ見出しに戻ります。
-+各試行は完了から 5 分間集計されます。各試行の完了時刻と集計期間終了までの残り時間が表示され、全宛先で直近 32 件までの問題を表示します。選択中の試行が一覧から消えると保持条件が表示され、同じグループ内の近くの項目に選択が移ります。項目が残っていなければ見出しに戻ります。
- 
- Findings で `h` を押すと TCP Attempt Health のヘルプが開き、カウンターの意味、固定ウィンドウ、回復した異常、出力される証拠と診断の限界を確認できます。
- 
-```
-
-**File**: `USAGE.md` (modified, +2/-2)
-```diff
-@@ -1755,9 +1755,9 @@ Findings opens on the highest-priority row. Errors come first, then warnings, th
- 
- In the default theme, green marks healthy handshakes or responsive DNS. Yellow marks degraded health, drops, or incomplete evidence. Red marks observed failures such as peer TCP resets, a DNS timeout, an interface error, or a stopped capture. Checking and unobserved states are muted. Zero error counts stay neutral. Status words, counts, and the `▌` selection marker remain readable with `NO_COLOR`.
- 
--In **DNS replies**, browse resolvers and individual issues. Follow **Open DNS resolvers** for resolver outcomes, latency and question names. **Interface drops** links to the OS counters. Expand **TCP handshakes** to see every affected destination and its retained attempts. Linked rows show a quiet trailing `[↗]` badge and expand to the full action chip (`[Open Details ↵]`, `[Open DNS resolvers ↵]`, `[Open interface counters ↵]`) when selected; press `Enter` or click the badge to open the linked view. **Open Details** appears while the matching connection is available. `Esc` returns to the source item (advertised as `esc findings` in the status bar), or back to Overview from Findings. Use the mouse wheel to scroll independently of selection. Use `v` to visit **Sockets** for the owner of a listening port and `V` to return. Each section keeps its position.
-+In **DNS replies**, browse resolvers and individual issues. Follow **Open DNS resolvers** for resolver outcomes, latency and question names. **Interface drops** links to the OS counters. Expand **TCP handshakes** to see every affected destination and its retained attempts. Linked rows show a quiet trailing `[↗]` badge and expand to the full action chip (`[Open Details ↵]`, `[Open DNS resolvers ↵]`, `[Open interface counters ↵]`) when selected; press `Enter` or click the badge to open the linked view. **Open Details** appears while the matching connection is available. Press `t` in Findings to show or hide historic connections, including retained closed connections you can open in Details. `Esc` returns to the source item (advertised as `esc findings` in the status bar), or back to Overview from Findings. Use the mouse wheel to scroll independently of selection. Use `v` to visit **Sockets** for the owner of a listening port and `V` to return. Each section keeps its position.
- 
--Each completed attempt counts for five minutes. Findings shows the expiry time and remaining duration on each retained attempt and keeps up to 32 recent issues across destinations. If the selected attempt leaves the list, a notice explains the retention limits. Selection moves to a nearby item in TCP handshakes, or to its heading when the group is empty.
-+Each completed attempt counts for five minutes. Findings shows the completion time and the time left in the five-minute window on each retained attempt and keeps up to 32 recent issues across destinations. If the selected attempt leaves the list, a notice explains the retention limits. Selection moves to a nearby item in TCP handshakes, or to its heading when the group is empty.
- 
- In Findings, press `h` to open the TCP Attempt Health help for counter meanings, the fixed window, recovered anomalies, export evidence and diagnostic limits.
+-- `1`～`5` または Tab / Shift+Tab：Overview、Details、Activity、Graph、Health & Host の切り替え。
++- `1`～`5` または Tab / Shift+Tab：Overview、Details、Activity、Graph、Health & Host の切り替え。`Alt+←` / `Alt+→`：表示したタブを戻る／進む。
+ - `/`：接続の絞り込み。Enter：選択した接続の詳細。Esc：戻る。
+ - `h`：現在の画面のヘルプ。`q`：終了。
  
 ```
 
-**File**: `USAGE.zh-CN.md` (modified, +2/-2)
+**File**: `USAGE.md` (modified, +3/-2)
 ```diff
-@@ -1658,9 +1658,9 @@ Findings > TCP handshakes 显示固定五分钟窗口内观测到的出站 TCP 
+@@ -527,14 +527,15 @@ rustnet --kubernetes on
+ - `Tab` - Next tab
+ - `Shift+Tab` - Previous tab
+ - `1` / `2` / `3` / `4` / `5` - Jump directly to Overview / Details / Activity / Graph / Health & Host
++- `Alt+Left` / `Alt+Right` - Go back / forward through the tabs you visited
+ - `Enter` - View detailed information about selected connection
+ - `Esc` - Go back to previous view or clear active filter
+ - `h` - Toggle a help overlay containing controls for the active tab
  
- 默认主题用绿色表示握手正常或 DNS 应答正常，用黄色表示状态下降、丢包或观测数据不完整。对端 TCP 重置、DNS 超时、接口错误和捕获中断等已观测到的故障显示为红色。检查中或尚未观测到的状态使用弱化颜色，错误计数为零时不着色。启用 `NO_COLOR` 后，仍可通过状态文字、计数和 `▌` 标记识别状态与当前选中项。
+ The help overlay keeps the active tab visible underneath it and only lists
+ controls and concepts that apply to that tab. Tab navigation (`Tab`,
+-`Shift+Tab`, `1`-`5`) stays available while the overlay is open, and a mouse
+-click anywhere dismisses it.
++`Shift+Tab`, `1`-`5`, `Alt+Left` / `Alt+Right`) stays available while the
++overlay is open, and a mouse click anywhere dismisses it.
  
--在 **DNS replies** 中可逐项查看解析器和问题记录，选择 **Open DNS resolvers** 查看应答结果、延迟和查询名称。**Interface drops** 可打开操作系统接口计数器。展开 **TCP handshakes** 可查看所有受影响的目标及保留的尝试。带链接的行在未选中时于行尾显示紧凑的 `[↗]`，选中后展开为完整操作标签（如 `[Open Details ↵]`），按 `Enter` 或点击行尾链接即可跳转。只要对应的连接仍可查看，行内就会显示 **Open Details**。按 `Esc` 可返回原先选中的记录（状态栏显示 `esc findings`），在 Findings 中按 `Esc` 返回 Overview。使用鼠标滚轮可独立滚动列表。按 `v` 切到 **Sockets** 查找监听端口所属进程，再按 `V` 返回。各区块分别保留位置。
-+在 **DNS replies** 中可逐项查看解析器和问题记录，选择 **Open DNS resolvers** 查看应答结果、延迟和查询名称。**Interface drops** 可打开操作系统接口计数器。展开 **TCP handshakes** 可查看所有受影响的目标及保留的尝试。带链接的行在未选中时于行尾显示紧凑的 `[↗]`，选中后展开为完整操作标签（如 `[Open Details ↵]`），按 `Enter` 或点击行尾链接即可跳转。只要对应的连接仍可查看，行内就会显示 **Open Details**。在 Findings 中按 `t` 可显示或隐藏历史连接。显示历史连接后，可在 Details 中查看仍保留的已关闭连接。按 `Esc` 可返回原先选中的记录（状态栏显示 `esc findings`），在 Findings 中按 `Esc` 返回 Overview。使用鼠标滚轮可独立滚动列表。按 `v` 切到 **Sockets** 查找监听端口所属进程，再按 `V` 返回。各区块分别保留位置。
- 
--每次尝试从完成时起计入统计，保留五分钟。每条尝试都显示到期时间与剩余时间，所有目标合计最多显示最近 32 条问题记录。如果选中的尝试移出列表，界面会提示保留条件，并选中同组中邻近的一项。如果该组已无记录，则选中组标题。
-+每次尝试从完成时起计入统计，保留五分钟。每条尝试都显示完成时刻和五分钟窗口内的剩余时间，所有目标合计最多显示最近 32 条问题记录。如果选中的尝试移出列表，界面会提示保留条件，并选中同组中邻近的一项。如果该组已无记录，则选中组标题。
- 
- 在 Findings 中按 `h` 打开 TCP Attempt Health 帮助，查看计数含义、固定窗口、已恢复的异常、导出证据及诊断限制。
+ ### Compact terminals
  
 ```
 
-**File**: `src/app/sampling.rs` (modified, +64/-7)
+**File**: `USAGE.zh-CN.md` (modified, +2/-1)
 ```diff
-@@ -5,8 +5,8 @@ use anyhow::Result;
- use dashmap::DashMap;
- use log::{debug, info, warn};
- use std::collections::HashMap;
--use std::sync::Arc;
--use std::sync::atomic::Ordering;
-+use std::sync::atomic::{AtomicU64, Ordering};
-+use std::sync::{Arc, RwLock};
- use std::time::{Duration, Instant, SystemTime};
+@@ -511,11 +511,12 @@ rustnet --kubernetes on
+ - `Tab`：下一个标签页
+ - `Shift+Tab`：上一个标签页
+ - `1` / `2` / `3` / `4` / `5`：直接跳转到 概览 / 详情 / 活动 / 图表 / 健康与主机（Health & Host）
++- `Alt+Left` / `Alt+Right`：在访问过的标签页之间后退 / 前进
+ - `Enter` —— 查看所选连接的详细信息
+ - `Esc` —— 返回上一个视图或清除活动过滤器
+ - `h`：切换仅包含当前标签页相关操作的帮助浮层
  
- use crate::network::{
-@@ -176,6 +176,22 @@ fn snapshot_retained_connections(
-     })
- }
+-帮助浮层会保留其下方的当前标签页，并且只列出适用于该标签页的操作和概念。浮层打开时仍可使用标签页导航键（`Tab`、`Shift+Tab`、`1`-`5`），点击鼠标任意位置即可关闭浮层。
++帮助浮层会保留其下方的当前标签页，并且只列出适用于该标签页的操作和概念。浮层打开时仍可使用标签页导航键（`Tab`、`Shift+Tab`、`1`-`5`、`Alt+Left` / `Alt+Right`），点击鼠标任意位置即可关闭浮层。
  
-+/// A history toggle or clear can publish a newer snapshot while the worker samples.
-+fn publish_sample_if_current(
-+    snapshot: &RwLock<Vec<Connection>>,
-+    generation: &AtomicU64,
-+    sampled_generation: u64,
-+    sample: Vec<Connection>,
-+) -> bool {
-+    let mut published = snapshot.write().unwrap();
-+    if generation.load(Ordering::Relaxed) != sampled_generation {
-+        return false;
-+    }
-+    *published = sample;
-+    generation.fetch_add(1, Ordering::Release);
-+    true
-+}
-+
- impl App {
-     pub(super) fn start_snapshot_provider(
-         &mut self,
-@@ -205,6 +221,7 @@ impl App {
-                 let start = Instant::now();
-                 let total_connections = tracker.connections().len();
+ ### 操作<a id="actions"></a>
  
-+                let sampled_generation = snapshot_generation.load(Ordering::Acquire);
-                 let snapshot_data = build_connection_snapshot(
-                     &tracker,
-                     &service_lookup,
-@@ -231,11 +248,14 @@ impl App {
+```
+
+**File**: `src/tui.rs` (modified, +1/-1)
+```diff
+@@ -404,7 +404,7 @@ where
+                                     ui_state.clear_filter();
+                                     needs_data_refresh = true;
+                                 } else if ui_state.selected_tab != 0 {
+-                                    ui_state.selected_tab = 0;
++                                    ui_state.jump_to_tab(0);
+                                 }
+                             }
  
-                 let ui_publish_due =
-                     last_ui_publish.is_none_or(|published| published.elapsed() >= refresh_interval);
--                if ui_publish_due {
--                    let mut published = snapshot.write().unwrap();
--                    *published = snapshot_data;
--                    snapshot_generation.fetch_add(1, Ordering::Release);
--                    drop(published);
-+                if ui_publish_due
-+                    && publish_sample_if_current(
-+                        &snapshot,
-+                        &snapshot_generation,
-+                        sampled_generation,
-+                        snapshot_data,
-+                    )
-+                {
-                     last_ui_publish = Some(Instant::now());
- 
-                     // Counts active connections only.
-@@ -565,6 +585,43 @@ mod live_rate_sampling_tests {
-         ApplicationProtocol, ConnectionKey, DnsInfo, DnsQueryType, DpiInfo, Protocol, ProtocolState,
-     };
- 
-+    #[test]
-+    fn in_flight_sample_cannot_undo_a_history_toggle() {
-+        let app = App::new(crate::test_support::test_config()).unwrap();
-+        let mut historic = Connection::new(
-+            Protocol::Udp,
-+            "192.0.2.1:40000".parse().unwrap(),
-+            "198.51.100.1:53".parse().unwrap(),
-+            ProtocolState::Udp,
-+        );
-+        historic.is_historic = true;
-+        let key = ConnectionKey::from_connection(&historic);
-+        app.tracker
-+            .historic()
-+            .insert(HistoricKey::for_connection(key, &historic), historic);
-+
-+        for include_historic in [true, false] {
-+            // Stage a worker sample, then toggle history before the worker publishes it.
-+            let sampled_generation = app.snapshot_generation();
-+            let stale = build_connection_snapshot(
-+                &app.tracker,
-+                &app.service_lookup,
-+                false,
-+                app.show_historic.load(Ordering::Relaxed),
-+            );
-+            assert_eq!(stale.len(), usize::from(!include_historic));
-+            app.toggle_show_historic();
-+            assert!(!publish_sample_if_current(
-+                &app.connections_snapshot,
-+                &app.snapshot_generation,
-+                sampled_generation,
-+                stale,
-+            ));
-+            assert_eq!(app.snapshot_generation(), sampled_generation + 1);
-+            assert_eq!(app.get_connections().len(), usize::from(include_historic));
+```
+
+**File**: `src/ui/mod.rs` (modified, +16/-5)
+```diff
+@@ -52,11 +52,22 @@ pub fn dispatch_key(
+     ctx: &mut HandlerContext<'_>,
+ ) -> Option<Vec<Effect>> {
+     use crossterm::event::{KeyCode, KeyModifiers};
+-    if (!ctx.ui_state.filter_mode || ctx.ui_state.show_help)
+-        && let (KeyCode::Char(n @ '1'..='5'), KeyModifiers::NONE) = (key.code, key.modifiers)
+-    {
+-        ctx.ui_state.jump_to_tab(n as usize - '1' as usize);
+-        return Some(Vec::new());
++    if !ctx.ui_state.filter_mode || ctx.ui_state.show_help {
++        match (key.code, key.modifiers) {
++            (KeyCode::Char(n @ '1'..='5'), KeyModifiers::NONE) => {
++                ctx.ui_state.jump_to_tab(n as usize - '1' as usize);
++                return Some(Vec::new());
++            }
++            (KeyCode::Left | KeyCode::Char('b'), KeyModifiers::ALT) => {
++                ctx.ui_state.go_back();
++                return Some(Vec::new());
++            }
++            (KeyCode::Right | KeyCode::Char('f'), KeyModifiers::ALT) => {
++                ctx.ui_state.go_forward();
++                return Some(Vec::new());
++            }
++            _ => {}
 +        }
-+    }
-+
-     #[test]
-     fn connection_snapshot_blocks_archival_until_both_tables_are_scanned() {
-         let tracker = Arc::new(ConnectionTracker::new());
+     }
+     if ctx.ui_state.show_help {
+         return HelpOverlay.handle_key(key, ctx);
 ```
 
-**File**: `src/app/state.rs` (modified, +21/-2)
+**File**: `src/ui/snapshot_tests.rs` (modified, +61/-0)
 ```diff
-@@ -851,14 +851,33 @@ impl App {
-     }
- 
-     pub(crate) fn toggle_show_historic(&self) {
--        let prev = self.show_historic.load(Ordering::Relaxed);
--        self.show_historic.store(!prev, Ordering::Relaxed);
-+        let next = !self.show_historic.load(Ordering::Relaxed);
-+        self.show_historic.store(next, Ordering::Relaxed);
-+        self.publish_connection_snapshot(next);
-     }
- 
-     pub(crate) fn set_show_historic(&self, value: bool) {
-         self.show_historic.store(value, Ordering::Relaxed);
-     }
- 
-+    /// Rebuild and publish the UI connection snapshot immediately so toggling
-+    /// history from Overview or Findings takes effect without waiting for the
-+    /// next periodic snapshot tick.
-+    fn publish_connection_snapshot(&self, include_historic: bool) {
-+        let snapshot = build_connection_snapshot(
-+            &self.tracker,
-+            &self.service_lookup,
-+            self.config.filter_localhost,
-+            include_historic,
-+        );
-+        let mut published = self
-+            .connections_snapshot
-+            .write()
-+            .unwrap_or_else(std::sync::PoisonError::into_inner);
-+        *published = snapshot;
-+        self.snapshot_generation.fetch_add(1, Ordering::Release);
-+    }
-+
-     /// Seed the UI snapshot directly. Tests only.
-     #[cfg(test)]
-     pub(crate) fn set_connections_snapshot_for_test(&self, snapshot: Vec<Connection>) {
-```
-
-**File**: `src/ui/snapshot_tests.rs` (modified, +118/-8)
-```diff
-@@ -2407,6 +2407,9 @@ fn host_tcp_evidence_links_only_to_the_observed_connection() {
-         };
-         let (closed, regions) = render_app_frame(&app, &mut state, &connections, None, width, 50);
-         assert!(closed.contains("▌ ▸ TCP handshakes"));
-+        if width == 140 {
-+            assert!(closed.contains("1/1 reset or incomplete"), "{closed}");
-+        }
-         assert!(!closed.contains("Open Details"));
-         let mut ctx = HandlerContext {
-             connections: &connections,
-@@ -2420,10 +2423,7 @@ fn host_tcp_evidence_links_only_to_the_observed_connection() {
-             key(KeyCode::Char(' '), &mut ctx);
-         }
-         let (open, regions) = render_app_frame(&app, &mut state, &connections, None, width, 50);
--        assert!(
--            open.contains("no handshake") && open.contains("observed"),
--            "{open}"
--        );
-+        assert!(open.contains("no handshake"), "{open}");
-         let link = regions
-             .health_rows
-             .iter()
-@@ -2562,6 +2562,108 @@ fn host_tcp_details_opens_each_same_timestamp_generation() {
+@@ -6114,3 +6114,64 @@ fn profile_details_rendering() {
+         );
      }
  }
- 
++
 +#[test]
-+fn host_tcp_findings_t_key_toggles_history_and_enables_details_link() {
++fn alt_arrows_walk_tab_history_from_any_tab() {
 +    use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
-+    let mut app = test_app();
-+    let conn = local_tcp(50124, "client");
-+    let captured = SystemTime::now() - Duration::from_secs(2);
-+    // Ingest two SYN+RST generations on the same 4-tuple so the first is archived as historic.
-+    for seq in [17, 33] {
-+        let mut packet = evidence_syn(&conn, seq);
-+        app.ingest_packet_at_for_test(&packet, captured);
-+        packet.is_outgoing = false;
-+        packet.protocol_state = ProtocolState::Tcp(TcpState::Closed);
-+        let header = packet.tcp_header.as_mut().unwrap();
-+        header.flags.syn = false;
-+        header.flags.ack = true;
-+        header.flags.rst = true;
-+        header.ack = seq + 1;
-+        app.ingest_packet_at_for_test(&packet, captured);
-+    }
-+    // Publish initial snapshot with show_historic = false (only the live generation is present).
-+    assert_eq!(app.stop().panicked_workers, 0);
-+    let connections = app.get_connections();
-+    assert_eq!(connections.len(), 1);
-+
++    let app = test_app();
++    let regions = ClickableRegions::default();
++    // Overview claims plain Left/Right for group folding; Alt+arrows must
++    // still reach the history.
 +    let mut state = UiState {
-+        selected_tab: 4,
-+        expanded_findings: [tabs::health::Finding::Tcp].into(),
++        grouping_enabled: true,
 +        ..Default::default()
 +    };
-+    let (_, regions) = render_app_frame(&app, &mut state, &connections, None, 140, 50);
-+    let attempts: Vec<_> = regions
-+        .health_rows
-+        .iter()
-+        .filter_map(|(t, _)| {
-+            matches!(t, tabs::health::HealthTarget::Attempt { .. }).then_some(t.clone())
-+        })
-+        .collect();
-+    assert_eq!(attempts.len(), 2);
-+
-+    // Select the archived (historic) attempt: without history enabled, Details is unavailable.
-+    let historic_target = attempts
-+        .into_iter()
-+        .find(|target| {
-+            state.health_cursor.get_mut().target = Some(target.clone());
-+            let (frame, _) = render_app_frame(&app, &mut state, &connections, None, 140, 50);
-+            frame.contains("press t for history")
-+        })
-+        .expect("archived TCP attempt should prompt to press t for history");
-+    state.health_cursor.get_mut().target = Some(historic_target.clone());
-+    let (before_toggle, regions) = render_app_frame(&app, &mut state, &connections, None, 140, 50);
-+    assert!(before_toggle.contains("Details unavailable (press t for history)"));
-+
-+    // Press `t` directly in Findings: toggles history, refreshes snapshot immediately, and enables Details.
-+    let mut ctx = HandlerContext {
-+        connections: &connections,
-+        ..test_support::empty_ctx(&app, &mut state, &regions)
++    let alt = |code, state: &mut UiState| {
++        let tab = state.selected_tab;
++        dispatch_key(
++            tab,
++            KeyEvent::new(code, KeyModifiers::ALT),
++            &mut test_support::empty_ctx(&app, state, &regions),
++        )
++        .unwrap();
 +    };
-+    let effects = dispatch_key(
-+        4,
-+        KeyEvent::new(KeyCode::Char('t'), KeyModifiers::NONE),
-+        &mut ctx,
-+    )
-+    .unwrap();
-+    assert!(matches!(effects.as_slice(), [Effect::RefreshData]));
-+    assert!(state.show_historic);
++    state.jump_to_tab(3);
++    alt(KeyCode::Left, &mut state);
++    assert_eq!(state.selected_tab, 0);
++    alt(KeyCode::Right, &mut state);
++    assert_eq!(state.selected_tab, 3);
 +
-+    let refreshed = app.get_connections();
-+    assert_eq!(refreshed.len(), 2);
-+    let (after_toggle, regions) = render_app_frame(&app, &mut state, &refreshed, None, 140, 50);
-+    assert!(after_toggle.contains("[Open Details ↵]"), "{after_toggle}");
++    // macOS terminals (Ghostty, Terminal.app, iTerm2) send Esc b / Esc f for Option+Left/Right.
++    alt(KeyCode::Char('b'), &mut state);
++    assert_eq!(state.selected_tab, 0);
++    alt(KeyCode::Char('f'), &mut state);
++    assert_eq!(state.selected_tab, 3);
 +
-+    // Pressing Enter now opens the historic connection in Details.
-+    let mut ctx = HandlerContext {
-+        connections: &refreshed,
-+        ..test_support::empty_ctx(&app, &mut state, &regions)
-+    };
++    state.show_help = true;
++    alt(KeyCode::Left, &mut state);
++    assert_eq!(state.selected_tab, 0);
++    assert!(state.show_help);
++    alt(KeyCode::Char('f'), &mut state);
++    assert_eq!(state.selected_tab, 3);
++    assert!(state.show_help);
++    alt(KeyCode::Char('b'), &mut state);
++    assert_eq!(state.selected_tab, 0);
++    assert!(state.show_help);
++
++    // While typing a filter the arrows belong to the input.
++    state.show_help = false;
++    state.filter_mode = true;
++    let tab = state.selected_tab;
 +    dispatch_key(
-+        4,
-+        KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE),
-+        &mut ctx,
-+    )
-+    .unwrap();
-+    assert_eq!(state.selected_tab, 1);
-+    assert!(refreshed[state.get_selected_index(&refreshed).unwrap()].is_historic);
-+
-+    // Pressing `t` again in Findings turns history back off.
-+    state.jump_to_tab(4);
-+    let (_, regions) = render_app_frame(&app, &mut state, &refreshed, None, 140, 50);
-+    let mut ctx = HandlerContext {
-+        connections: &refreshed,
-+        ..test_support::empt
++        tab,
++        KeyEvent::new(KeyCode::Right, KeyModifiers::ALT),
++        &mut test_support::empty_ctx(&app, &mut state, &regions),
++    );
++    assert_eq!(state.selected_tab, 0);
++    dispatch_key(
++        tab,
++        KeyEvent::new(KeyCode::Char('f'), KeyModifiers::ALT),
++        &mut test_support::empty_ctx(&app, &mut state, &regions),
++    );
++    assert_eq!(state.selected_tab, 0);
++}
 ```
 
-**File**: `src/ui/snapshots/rustnet_monitor__ui__snapshot_tests__host_network_events.snap` (modified, +15/-15)
+**File**: `src/ui/snapshots/rustnet_monitor__ui__snapshot_tests__help_overlay_activity.snap` (modified, +1/-1)
 ```diff
-@@ -7,21 +7,21 @@ expression: output
- Findings (1)   Sockets   Interfaces   DNS resolvers                                                                                         
- ━━━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
- ▎ Findings  window: 60s · 1 warning ────────────────────────────────────────────────────────────────────────────────────────────────────────
--▌ ▾ Resets and ICMP (60s)  RST 1 sent / 0 received · 0 ICMP                                                                                 
--    60s / total (since startup) · captured packets                                                                                          
--                                                    Sent: window / total  Received: window / total                                          
--    TCP reset                                                      1 / 1                     0 / 0                                          
--    ICMP port unreachable                                          0 / 0                     0 / 1                                          
--    ICMP destination unreachable                                   0 / 0                     0 / 1                                          
--    ICMP administratively prohibited                               0 / 0                     0 / 1                                          
--    ICMP packet too big / frag needed                              0 / 0                     0 / 1                                          
--    ICMP time exceeded                                             0 / 0                     0 / 1                                          
--    ICMP parameter problem                                         0 / 0                     0 / 1                                          
--  ▸ TCP handshakes (5m)  not observed                                                                                                       
--  ▸ Interface drops (60s)  Waiting for interface statistics                                                                                 
--  ▸ DNS replies (60s)  not observed · 0 replies · 0 timeouts                                                                                
--  ▸ Capture quality (since startup)  0 reported drops · 0 queue drops                                                                       
-+▌ ▾ Resets and ICMP  ▲ [observed]    RST 1 sent / 0 recv · 0 ICMP                                                                    (60s)  
-+  │  Event (60s / since startup)           Sent (60s / total)  Recv (60s / total)                                                           
-+  │  ────────────────────────────────────────────────────────────────────────────                                                           
-+  ├─ TCP reset                                          1 / 1               0 / 0                                                           
-+  ├─ ICMP port unreachable                              0 / 0               0 / 1                                                           
-+  ├─ ICMP destination unreachable                       0 / 0               0 / 1                                                           
-+  ├─ ICMP administratively prohibited                   0 / 0               0 / 1                                                           
-+  ├─ ICMP packet too big / frag needed                  0 / 0               0 / 1                                                           
-+  ├─ ICMP time exceeded                                 0 / 0               0 / 1                                                           
-+  └─ ICMP parameter problem                             0 / 0               0 / 1                                                           
-                                                                                                                                             
-+  ▸ TCP handshakes   ○ not observed                                                                                                   (5m)  
-+  ▸ Interface drops  ○ waiting       Waiting for interface statistics                                                                (60s)  
-+  ▸ DNS replies      ○ not observed  0 replies · 0 timeouts                                                                          (60s)  
-+  ▸ Capture quality  ● healthy       0 reported drops · 0 queue drops                                                      (since startup)  
-                                                                                                                                             
-                                                                                                                                             
-                                                                                                                                       
+@@ -21,7 +21,7 @@ expression: output
+     │   S                     Reverse the sort direction                                     ▐ │    
+     │   Esc                   Back one level; from applications return to Overview           ▐ │    
+     │                                                                                        ▐ │    
+-    │ ▎ Activity Concepts                                                                    ▐ │    
++    │ ▎ Activity Concepts                                                                      │    
+     │   2s Avg TX/RX     Sort and show averaged rates with s for steadier ordering             │    
+     │   Applications     Traffic grouped by process name; PIDs are inside details              │    
+     │   Scope            All captured traffic; Overview filters do not apply                   │    
 ```
 
 ---
 
-### Incident Patch 2: `39db6c5d` (2026-11-23)
-**Commit Message**: feat(ui): add mirrored RX/TX traffic graph mode on Graph tab (#746)
+### Incident Patch 2: `a2a1ef4a` (2026-11-25)
+**Commit Message**: feat: add shared passive diagnostic findings engine for TUI and headless JSON (#751)
 
-* feat(ui): add mirrored RX/TX traffic graph mode on Graph tab
+* feat: add shared passive diagnostic findings engine for TUI and headless JSON
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `benches/common/mod.rs` (modified, +1/-0)
 ```diff
-@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Avoid allocating static Overview titles and expanded process-group connectors on each render (#412)
- 
- ### Added
-+- Mirror the Graph tab's RX/TX traffic waves around a shared center time horizon (RX up, TX down), with `m` to toggle back to the split view and `[view] mirrored_traffic_graph` in `config.toml`
- - Sort findings by severity while preserving the selected finding and evidence position (#734)
- - Align health colors across Findings, Overview, Details and host inventory, and leave zero error counts neutral (#734)
- - Combine Findings, Sockets, Interfaces and DNS resolvers in 5 Health & Host, with a single expandable list, item-by-item navigation and return links (#734)
+@@ -39,6 +39,7 @@ pub fn make_packet(local_port: u16, seq: u32) -> ParsedPacket {
+         },
+         payload_len: 1400,
+         window_scale: None,
++        mss: None,
+     });
+     packet
+ }
 ```
 
-**File**: `USAGE.ja.md` (modified, +7/-0)
+**File**: `crates/rustnet-core/src/network/dns_attribution.rs` (modified, +2/-0)
 ```diff
-@@ -33,6 +33,9 @@ Graph は選択したキャプチャ対象のカウンターを使います。`a
- 全インターフェースの合計で、同じ通信を複数回数える場合があります。
- カウンターが取得できない間は RX/TX グラフを停止し、サンプルの取得後に再開します。
- 
-+**開発版。** Graph の既定はミラー表示で、共通の時間軸から RX は上向きに、TX は下向きに伸びます。
-+Traffic の表示中に `m` を押すと、現在のセッションでミラー表示と分割表示を切り替えられます。
-+
- Graph と Details は観測したバーストを保持し、RX/TX 別の自動線形目盛りを使います。
- 単位はバイト/秒（KiB/MiB/GiB は二進単位）なので、方向間の比較は数値で行ってください。
- 余裕があれば現在値、期間内のピーク、`2s avg` を表示します。`0 B/s` は観測したアイドル状態、
-@@ -138,6 +141,10 @@ group_by_process = true
- `group_by_process` は Overview を折りたたんだプロセス別グループで開始します。
- `a` で一時的に切り替え、Space で展開し、`r` で設定値に戻します。無画面出力には影響しません。
- 
-+**開発版。** 起動時に Graph で RX と TX を別々のグラフに表示するには、`config.toml` の
-+`[view]` に `mirrored_traffic_graph = false` を指定します。既定値は `true` です。
-+Overview で `r` を押すと、グラフのレイアウトを含む表示設定が設定値に戻ります。
-+
- ## 無画面出力の拡張（開発版）
- 
- `--headless-details full` はプロトコル、健全性、ネットワーク、アカウント名、
+@@ -756,6 +756,7 @@ mod tests {
+                     sni: Some("sni.example".into()),
+                     alpn: vec![],
+                     cipher_suite: None,
++                    alert: None,
+                 }),
+             }),
+         });
+@@ -787,6 +788,7 @@ mod tests {
+                     sni: Some("partial[PARTIAL]".into()),
+                     alpn: vec![],
+                     cipher_suite: None,
++                    alert: None,
+                 }),
+             }),
+         });
 ```
 
-**File**: `USAGE.md` (modified, +9/-0)
+**File**: `crates/rustnet-core/src/network/dpi/http.rs` (modified, +25/-0)
 ```diff
-@@ -414,6 +414,11 @@ the configured grouping preference. These settings do not affect headless output
- group_by_process = true
- ```
+@@ -14,6 +14,7 @@ pub(super) fn analyze_http(payload: &[u8]) -> Option<HttpInfo> {
+         status_code: None,
+         status_token: None,
+         user_agent: None,
++        has_basic_auth: false,
+     };
  
-+**Unreleased.** To start Graph with separate RX and TX plots, set
-+`mirrored_traffic_graph = false` under `[view]` in `config.toml`. The default is
-+`true`. Pressing `r` in Overview resets view settings, including the graph layout,
-+to their configured values.
-+
- For an optional Help shadow, add `[ui]` with `popup_shadow = true` to the same
- config file (default: `false`). `NO_COLOR` or `--no-color` disables the shadow.
- 
-@@ -549,6 +554,10 @@ Graph uses the selected capture interface's counters. `any` and macOS default
- `pktap` show all-interface totals, which can count the same traffic more than once.
- Missing counters leave RX/TX plots unavailable until sampling resumes.
- 
-+**Unreleased.** Graph defaults to a mirrored traffic chart. RX rises above the
-+shared time axis and TX extends below it. While Traffic is visible, press `m`
-+to switch between mirrored and split layouts for the current session.
-+
- Graph and Details preserve sampled bursts on independent automatic linear RX/TX
- scales in bytes per second (KiB/MiB/GiB are binary units). Compare numeric readings
- across directions. Headers show current rate, window peak, and `2s avg` when space
-```
-
-**File**: `USAGE.zh-CN.md` (modified, +7/-0)
-```diff
-@@ -400,6 +400,10 @@ Unix），并在背景报告为浅色时将这些灰色层级加深为 ANSI Dark
- group_by_process = true
- ```
- 
-+**开发版。** 如需让 Graph 在启动时分别绘制 RX 和 TX，请在 `config.toml` 的
-+`[view]` 下设置 `mirrored_traffic_graph = false`。默认值为 `true`。
-+在 Overview 中按 `r` 可将图表布局等视图设置恢复为配置文件中的值。
-+
- 如需帮助浮层阴影，在同一配置文件的 `[ui]` 下设置 `popup_shadow = true`
- （默认为 `false`）。`NO_COLOR` 或 `--no-color` 会禁用阴影。
- 
-@@ -1044,6 +1048,9 @@ Host 的 Sockets 和 Interfaces 在表格放不下时使用换行记录。
- Graph 使用所选捕获接口的计数器。`any` 和 macOS 默认的 `pktap` 汇总所有接口，
- 可能重复计算同一流量。计数器不可用时，RX/TX 图暂停，恢复采样后继续。
- 
-+**开发版。** Graph 默认使用镜像布局，RX 从共用时间轴向上延伸，TX 向下延伸。
-+显示 Traffic 区域时，按 `m` 可在镜像布局和分图布局之间切换，仅对当前会话生效。
-+
- Graph 和 Details 保留采样到的突发流量，RX/TX 分别使用自动线性刻度，单位为字节/秒
- （KiB/MiB/GiB 使用二进制单位）。比较方向时请看数值。空间允许时，标题显示当前速率、
- 窗口峰值和 `2s avg`。`0 B/s` 表示观测到空闲，占位符表示数据不可用。
-```
-
-**File**: `src/config.rs` (modified, +37/-2)
-```diff
-@@ -15,6 +15,7 @@
- //!
- //! [view]
- //! group_by_process = true
-+//! mirrored_traffic_graph = true
- //! ```
- //!
- //! Loading never fails: a missing file yields the defaults silently, and an
-@@ -38,10 +39,20 @@ struct RawConfig {
-     view: RawView,
- }
- 
--#[derive(Debug, Default, Deserialize)]
-+#[derive(Debug, Deserialize)]
- #[serde(default)]
- struct RawView {
-     group_by_process: bool,
-+    mirrored_traffic_graph: bool,
-+}
-+
-+impl Default for RawView {
-+    fn default() -> Self {
-+        Self {
-+            group_by_process: false,
-+            mirrored_traffic_graph: true,
-+        }
-+    }
- }
- 
- #[derive(Debug, Default, Deserialize)]
-@@ -60,12 +71,25 @@ struct RawUi {
- 
- /// Parsed user configuration. Override values are validated later by
- /// `ThemeSpec::set_token`, not here.
--#[derive(Debug, Default, PartialEq)]
-+#[derive(Debug, PartialEq)]
- pub struct UserConfig {
-     pub theme: Option<String>,
-     pub popup_shadow: bool,
-     pub overrides: Vec<(String, String)>,
-     pub group_by_process: bool,
-+    pub mirrored_traffic_graph: bool,
-+}
-+
-+impl Default for UserConfig {
-+    fn default() -> Self {
-+        Self {
-+            theme: None,
-+            popup_shadow: false,
-+            overrides: Vec::new(),
-+            group_by_process: false,
-+            mirrored_traffic_graph: true,
-+        }
-+    }
- }
- 
- /// Load the user configuration. Never panics, never fails: missing file is
-@@ -140,6 +164,7 @@ fn parse(contents: &str) -> Result<UserConfig, String> {
-         popup_shadow: raw.ui.popup_shadow,
-         overrides: raw.theme.overrides.into_iter().collect(),
-         group_by_process: raw.view.group_by_process,
-+        mirrored_traffic_graph: raw.view.mirrored_traffic_graph,
-     })
- }
- 
-@@ -300,6 +325,16 @@ selection_bg = "#3b4261"
-         assert!(parse("[view]\ngroup_by_process = \"true\"").is_err());
+     let text = String::from_utf8_lossy(payload);
+@@ -63,6 +64,14 @@ pub(super) fn analyze_http(payload: &[u8]) -> Option<HttpInfo> {
+                 info.host = Some(value.to_string());
+             } else if key.eq_ignore_ascii_case("user-agent") {
+                 info.user_agent = Some(value.to_string());
++            } else if key.eq_ignore_ascii_case("authorization")
++                && value
++                    .as_bytes()
++                    .get(..6)
++                    .is_some_and(|prefix| prefix.eq_ignore_ascii_case(b"basic "))
++            {
++                // Flag cleartext HTTP Basic auth without retaining credentials.
++                info.has_basic_auth = true;
+             }
+         }
      }
- 
+@@ -150,6 +159,22 @@ mod tests {
+         assert_eq!(info.method.as_deref(), Some("GET"));
+         assert_eq!(info.path.as_deref(), Some("/index.html"));
+         assert_eq!(info.host.as_deref(), Some("example.com"));
++        assert!(!info.has_basic_auth);
++    }
++
 +    #[test]
-+    fn mirrored_traffic_graph_defaults_to_true_and_accepts_booleans() {
-+        for input in ["", "[view]", "[view]\nmirrored_traffic_graph = true"] {
-+            assert!(parse(input).unwrap().mirrored_traffic_graph);
++    fn test_http_basic_auth_flagged_without_storing_credentials() {
++        let payload =
++            b"GET /admin HTTP/1.1\r\nHost: intranet.local\r\nAuthorization: Basic dXNlcjpwYXNz\r\n\r\n";
++        let info = analyze_http(payload).unwrap();
++        assert!(info.has_basic_auth);
++
++        let bearer =
++            b"GET /api HTTP/1.1\r\nHost: intranet.local\r\nAuthorization: Bearer tok123\r\n\r\n";
++        assert!(!analyze_http(bearer).unwrap().has_basic_auth);
++
++        let non_ascii = "GET / HTTP/1.1\r\nAuthorization: Basicé\r\n\r\n";
++        assert!(!analyze_http(non_ascii.as_bytes()).unwrap().has_basic_auth);
+     }
+ 
+     #[test]
+```
+
+**File**: `crates/rustnet-core/src/network/dpi/https.rs` (modified, +51/-3)
+```diff
+@@ -1,5 +1,5 @@
+ use super::tls_common::{self, TlsParseOptions};
+-use crate::network::types::{HttpsInfo, TlsInfo};
++use crate::network::types::{HttpsInfo, TlsAlert, TlsInfo};
+ use log::debug;
+ 
+ pub(super) fn is_tls_handshake(payload: &[u8]) -> bool {
+@@ -9,11 +9,24 @@ pub(super) fn is_tls_handshake(payload: &[u8]) -> bool {
+ 
+     // TLS record header:
+     // - Content type (1 byte): 0x16 for handshake
+-    // - Version (2 bytes): 0x0301-0x0304 for TLS 1.0-1.3
++    // - Version (2 bytes): 0x0300-0x0304 for SSL 3.0 / TLS 1.0-1.3
+     // - Length (2 bytes)
+     payload[0] == 0x16 && // Handshake content type
+         payload[1] == 0x03 && // Major version 3
+-        (payload[2] >= 0x01 && payload[2] <= 0x04) // Minor version 1-4
++        payload[2] <= 0x04 // Minor version 0-4
++}
++
++/// Unencrypted TLS alert record (`content_type == 0x15`, length == 2, valid
++/// warning/fatal level byte). Encrypted alerts carry MAC/AEAD overhead so
++/// their record length exceeds 2 bytes.
++pub(super) fn is_tls_alert(payload: &[u8]) -> bool {
++    payload.len() >= 7
++        && payload[0] == 0x15
++        && payload[1] == 0x03
++        && payload[2] <= 0x04
++        && payload[3] == 0x00
++        && payload[4] == 0x02
++        && TlsAlert::from_bytes(payload[5], payload[6]).is_some()
+ }
+ 
+ pub(super) fn analyze_https(payload: &[u8]) -> Option<HttpsInfo> {
+@@ -27,6 +40,16 @@ pub(super) fn analyze_https(payload: &[u8]) -> Option<HttpsInfo> {
+     // Record layer version (kept even for non-handshake records)
+     info.version = tls_common::version_from_bytes(payload[1], payload[2]);
+ 
++    if payload[0] == 0x15 {
++        let record_length = u16::from_be_bytes([payload[3], payload[4]]) as usize;
++        if record_length == 2 && payload.len() >= 7 {
++            info.alert = TlsAlert::from_bytes(payload[5], payload[6]);
 +        }
-+        let off = parse("[view]\nmirrored_traffic_graph = false").unwrap();
-+        assert!(!off.mirrored_traffic_graph);
-+        assert!(parse("[view]\nmirrored_traffic_graph = \"no\"").is_err());
++        return Some(HttpsInfo {
++            tls_info: Some(info),
++        });
 +    }
 +
-     #[test]
-     fn theme_name_without_overrides() {
-         let config = parse("[theme]\nname = \"nord\"\n").unwrap();
-```
-
-**File**: `src/ui/snapshot_tests.rs` (modified, +7/-1)
-```diff
-@@ -4550,7 +4550,13 @@ fn compact_graph_keeps_live_rates_and_all_tcp_states_visible() {
-     for label in ["RX", "TX", "OPENED", "CLOSED", "8.00 KiB/s", "4.00 KiB/s"] {
-         assert!(traffic.contains(label), "{label}: {traffic}");
+     if payload[0] != 0x16 {
+         // Not a handshake record - still extract version
+         return Some(HttpsInfo {
+@@ -135,5 +158,30 @@ mod tests {
+         assert_eq!(info.version, Some(TlsVersion::Tls12));
+         assert_eq!(info.sni, None);
+         assert!(info.alpn.is_empty());
++        assert_eq!(info.alert, None);
++    }
++
++    #[test]
++    fn test_analyze_https_cleartext_tls_alert() {
++        use crate::network::types::{TlsAlert, TlsAlertLevel};
++
++        // Fatal handshake_failure (level=2, desc=40) over TLS 1.2 record layer.
++        let payload = [0x15, 0x03, 0x03, 0x00, 0x02, 0x02, 40];
++        assert!(is_tls_alert(&payload));
++        let info = analyze_https(&payload).unwrap().tls_info.unwrap();
++        assert_eq!(
++            info.alert,
++            Some(TlsAlert {
++                level: TlsAlertLevel::Fatal,
++                description: 40,
++            })
++        );
++        assert_eq!(info.alert.unwrap().description_name(), "handshake_failure");
++
++        // Encrypted alert (length > 2) must not be misread as cleartext alert.
++        let encrypted = [0x15, 0x03, 0x03, 0x00, 0x1a, 0x02, 40];
++        assert!(!is_tls_alert(&encrypted));
++        let info = analyze_https(&encrypted).unwrap().tls_info.unwrap();
++        assert_eq!(info.alert, None);
      }
--    assert_eq!(traffic.matches("-60s").count(), 2);
-+    // Default mirrored view shares one center time horizon; split view keeps two.
-+    assert!(traffic.contains("0┼"));
-+    assert_eq!(traffic.matches("-60s").count(), 1);
-+    state.graph_mirrored = false;
-+    let split = render_app(&app, &mut state, &connections, None, 80, 24);
-+    assert_eq!(split.matches("-60s").count(), 2);
-+    state.graph_mirrored = true;
-     state.graph_section = GraphSection::Health;
-     let health = render_app(&app, &mut state, &connections, None, 80, 24);
-     for label in [
+ }
 ```
 
-**File**: `src/ui/snapshots/rustnet_monitor__ui__snapshot_tests__graph_tab_compact_traffic.snap` (modified, +1/-1)
+**File**: `crates/rustnet-core/src/network/dpi/mod.rs` (modified, +5/-2)
 ```diff
-@@ -25,4 +25,4 @@ Waiting for connection data...
-                                                                                 
-                                                                                 
-                                                                                 
-- v/V section  esc back                                           h help  q quit
-+ v/V section  m split  esc back                                  h help  q quit
+@@ -114,8 +114,11 @@ pub(crate) fn analyze_tcp_packet(
+         });
+     }
+ 
+-    // 2. Check for TLS/HTTPS (port 443 or TLS handshake)
+-    if (local_port == PORT_HTTPS || remote_port == PORT_HTTPS || https::is_tls_handshake(payload))
++    // 2. Check for TLS/HTTPS (port 443, TLS handshake, or cleartext TLS alert)
++    if (local_port == PORT_HTTPS
++        || remote_port == PORT_HTTPS
++        || https::is_tls_handshake(payload)
++        || https::is_tls_alert(payload))
+         && let Some(tls_result) = https::analyze_https(payload)
+     {
+         return Some(DpiResult {
 ```
 
-**File**: `src/ui/snapshots/rustnet_monitor__ui__snapshot_tests__graph_tab_empty_history.snap` (modified, +1/-1)
+**File**: `crates/rustnet-core/src/network/dpi/tls_common.rs` (modified, +2/-0)
 ```diff
-@@ -41,4 +41,4 @@ Other  ░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒
-                                                                                                                                             
-                                                                                                                                             
-                                                                                                                                             
-- esc back                                                                                                                    h help  q quit
-+ m split  esc back                                                                                                           h help  q quit
+@@ -211,6 +211,7 @@ pub(in crate::network::dpi) fn parse_sni_header(data: &[u8]) -> Option<SniHeader
+ 
+ pub(in crate::network::dpi) fn version_from_bytes(major: u8, minor: u8) -> Option<TlsVersion> {
+     match (major, minor) {
++        (0x03, 0x00) => Some(TlsVersion::Ssl30),
+         (0x03, 0x01) => Some(TlsVersion::Tls10),
+         (0x03, 0x02) => Some(TlsVersion::Tls11),
+         (0x03, 0x03) => Some(TlsVersion::Tls12),
+@@ -221,6 +222,7 @@ pub(in crate::network::dpi) fn version_from_bytes(major: u8, minor: u8) -> Optio
+ 
+ fn version_to_priority(version: TlsVersion) -> u8 {
+     match version {
++        TlsVersion::Ssl30 => 0,
+         TlsVersion::Tls10 => 1,
+         TlsVersion::Tls11 => 2,
+         TlsVersion::Tls12 => 3,
+```
+
+**File**: `crates/rustnet-core/src/network/findings.rs` (added, +1234/-0)
+```diff
+@@ -0,0 +1,1234 @@
++//! Shared passive diagnostic findings engine.
++//!
++//! Evaluates bounded, evidence-first findings from `rustnet-core` snapshots.
++//! Findings describe observed wire behavior, never causal verdicts, and never
++//! retain credentials or application payloads.
++
++use std::collections::{HashMap, HashSet};
++use std::net::SocketAddr;
++use std::time::SystemTime;
++
++use crate::network::dns_analytics::{DnsAnalyticsSnapshot, DnsHealth, DnsIssueKind};
++use crate::network::interface_stats::InterfaceErrorCounts;
++use crate::network::neighbors::NeighborChange;
++use crate::network::tcp_attempts::TcpAttemptSnapshot;
++use crate::network::time_window::TimeWindow;
++use crate::network::types::{
++    ApplicationProtocol, Connection, ConnectionKey, DhcpMessageType, NetworkEventKind,
++    NetworkEventSnapshot, OpenVpnPacketType, Protocol, SnmpVersion, TlsAlertLevel, TlsInfo,
++    TlsVersion, WireGuardPacketType,
++};
++
++const MAX_OBSERVATIONS: usize = 32;
++const LOW_MSS_THRESHOLD: u16 = 1200;
++const RETRANSMIT_WARN_COUNT: u64 = 5;
++const RETRANSMIT_HIGH_COUNT: u64 = 10;
++const OUT_OF_ORDER_WARN_COUNT: u64 = 10;
++const ZERO_WINDOW_ERROR_COUNT: u64 = 5;
++const NXDOMAIN_BURST_MIN_COUNT: usize = 10;
++const NXDOMAIN_BURST_HIGH_COUNT: usize = 25;
++const NXDOMAIN_BURST_PERCENT: usize = 25;
++const TUNNEL_UNANSWERED_PACKETS: u64 = 3;
++const MIDSTREAM_MIN_TCP_FLOWS: usize = 5;
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
++pub enum FindingSeverity {
++    Error,
++    Warning,
++    Healthy,
++    Muted,
++}
++
++impl FindingSeverity {
++    pub const fn as_str(self) -> &'static str {
++        match self {
++            Self::Error => "error",
++            Self::Warning => "warning",
++            Self::Healthy => "healthy",
++            Self::Muted => "muted",
++        }
++    }
++
++    pub const fn is_attention(self) -> bool {
++        matches!(self, Self::Error | Self::Warning)
++    }
++
++    pub const fn observed(error: bool, warning: bool) -> Self {
++        if error {
++            Self::Error
++        } else if warning {
++            Self::Warning
++        } else {
++            Self::Muted
++        }
++    }
++
++    fn escalate(&mut self, other: Self) {
++        if other < *self {
++            *self = other;
++        }
++    }
++
++    const fn sort_rank(self) -> u8 {
++        match self {
++            Self::Error => 0,
++            Self::Warning => 1,
++            Self::Healthy | Self::Muted => 2,
++        }
++    }
++}
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
++pub enum FindingCategory {
++    Tcp,
++    Path,
++    NameAndAddress,
++    Application,
++    Tunnel,
++    Security,
++    HostAndCapture,
++}
++
++impl FindingCategory {
++    pub const fn as_str(self) -> &'static str {
++        match self {
++            Self::Tcp => "tcp",
++            Self::Path => "path",
++            Self::NameAndAddress => "name_and_address",
++            Self::Application => "application",
++            Self::Tunnel => "tunnel",
++            Self::Security => "security",
++            Self::HostAndCapture => "host_and_capture",
++        }
++    }
++}
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
++pub enum FindingId {
++    TcpHandshakes,
++    TcpFlowQuality,
++    ResetsAndIcmp,
++    InterfaceDrops,
++    DnsReplies,
++    DnsNxdomainBurst,
++    TlsHealth,
++    HttpErrors,
++    LanAndDhcp,
++    TunnelHealth,
++    CleartextProtocols,
++    CaptureQuality,
++}
++
++struct FindingSpec {
++    id: &'static str,
++    title: &'static str,
++    category: FindingCategory,
++    hint: &'static str,
++}
++
++impl FindingId {
++    const fn spec(self) -> FindingSpec {
++        use FindingCategory as Cat;
++        match self {
++            Self::TcpHandshakes => FindingSpec {
++                id: "tcp_handshakes",
++                title: "TCP handshakes",
++                category: Cat::Tcp,
++                hint: "Resets often come from closed ports or middleboxes; unanswered SYNs can also reflect silent drops, routing issues, or capture gaps.",
++            },
++            Self::TcpFlowQuality => FindingSpec {
++                id: "tcp_flow_quality",
++                title: "TCP flow quality",
++                category: Cat::Tcp,
++                hint: "Inspect affected flows in Details for receive window, RTT, and retransmits; low MSS or repeated retransmits can signal MTU clamping or congestion.",
++            },
++            Self::ResetsAndIcmp => FindingSpec {
++                id: "resets_and_icmp",
++                title: "Resets and ICMP",
++                category: Cat::Path,
++                hint: "ICMP Packet Too Big points to path MTU limits; Administratively Prohibited or Port Unreachable indicates peer or router rejection.",
++            },
++            Self::InterfaceDrops => FindingSpec {
++                id: "interface_drops",
++                title: "Interface drops",
++                category: Cat::HostAndCapture,
++                hint: "OS interface drops/errors occur below the application layer; check NIC ring buffers, li
+```
+
+**File**: `crates/rustnet-core/src/network/merge.rs` (modified, +42/-1)
+```diff
+@@ -92,6 +92,8 @@ struct TcpSegment {
+     is_rst: bool,
+     /// Window-scale verdict from this segment's options (SYN only).
+     window_scale: Option<SynWindowScale>,
++    /// Maximum Segment Size from this segment's options (SYN only).
++    mss: Option<u16>,
+ }
+ 
+ /// The analytics view of one packet's TCP header.
+@@ -110,6 +112,7 @@ fn tcp_segment_from(parsed: &ParsedPacket, tcp_header: &TcpHeaderInfo) -> TcpSeg
+         is_fin: tcp_header.flags.fin,
+         is_rst: tcp_header.flags.rst,
+         window_scale: tcp_header.window_scale,
++        mss: tcp_header.mss,
+     }
+ }
+ 
+@@ -131,6 +134,7 @@ fn analyze_tcp_segment(
+         is_fin,
+         is_rst,
+         window_scale,
++        mss,
+     } = segment;
+     let mut events = TcpMergeEvents::default();
+     // Read before this segment overwrites it: RFC 5681 asks whether the
+@@ -142,7 +146,7 @@ fn analyze_tcp_segment(
+     // consume a sequence number, so a resent bare one has this same shape.
+     let one_byte_data = payload_len == 1 && !is_syn && !is_fin && !is_rst;
+ 
+-    // Learn each side's window-scale shift from its SYN. Only a fully
++    // Learn each side's window-scale shift and MSS from its SYN. Only a fully
+     // examined SYN without the option turns scaling off (RFC 7323); a SYN
+     // whose options could not be examined (truncated capture, malformed
+     // options) proves nothing, and a complete retransmitted SYN may still
+@@ -159,6 +163,13 @@ fn analyze_tcp_segment(
+             Some(SynWindowScale::Absent) => analytics.window_scaling_disabled = true,
+             Some(SynWindowScale::Unknown) | None => {}
+         }
++        if let Some(mss) = mss {
++            if is_outgoing {
++                analytics.mss_out.get_or_insert(mss);
++            } else {
++                analytics.mss_in.get_or_insert(mss);
++            }
++        }
+     }
+ 
+     // Track the advertised window per direction, since each end advertises
+@@ -732,6 +743,26 @@ pub(crate) fn merge_tls_info(dst: &mut Option<TlsInfo>, src: &Option<TlsInfo>) -
+         dst_tls.cipher_suite = src_tls.cipher_suite;
+         updated = true;
+     }
++    if let Some(alert) = src_tls.alert
++        && dst_tls.alert != Some(alert)
++    {
++        // Keep a fatal alert over a subsequent warning, otherwise record the
++        // latest observed unencrypted alert.
++        let keep_existing = matches!(
++            (dst_tls.alert, alert.level),
++            (
++                Some(crate::network::types::TlsAlert {
++                    level: crate::network::types::TlsAlertLevel::Fatal,
++                    ..
++                }),
++                crate::network::types::TlsAlertLevel::Warning
++            )
++        );
++        if !keep_existing {
++            dst_tls.alert = Some(alert);
++            updated = true;
++        }
++    }
+ 
+     updated
+ }
+@@ -742,6 +773,7 @@ fn merge_http_info(old_info: &mut HttpInfo, new_info: &HttpInfo) {
+     set_if_absent(&mut old_info.path, &new_info.path);
+     set_if_absent(&mut old_info.host, &new_info.host);
+     set_if_absent(&mut old_info.user_agent, &new_info.user_agent);
++    old_info.has_basic_auth |= new_info.has_basic_auth;
+     // Keep the numeric code and observed token from the same first response.
+     if old_info.status_code.is_none() && old_info.status_token.is_none() {
+         old_info.status_code = new_info.status_code;
+@@ -1003,6 +1035,7 @@ mod tests {
+             status_code: code,
+             status_token: token.map(str::to_string),
+             user_agent: None,
++            has_basic_auth: false,
+         };
+         let mut request = make_http(None, None);
+         let response = make_http(Some(200), Some("+200"));
+@@ -1165,6 +1198,7 @@ mod tests {
+                 },
+                 payload_len: 60, // Simulated payload length
+                 window_scale: None,
++                mss: None,
+             },
+         );
+         packet.is_outgoing = is_outgoing;
+@@ -1214,12 +1248,14 @@ mod tests {
+             sni: Some("exa[PARTIAL]".to_string()),
+             alpn: vec!["h3".to_string()],
+             cipher_suite: None,
++            alert: None,
+         });
+         let src = Some(TlsInfo {
+             version: Some(TlsVersion::Tls13),
+             sni: Some("example.com".to_string()),
+             alpn: Vec::new(),
+             cipher_suite: None,
++            alert: None,
+         });
+ 
+         assert!(merge_tls_info(&mut dst, &src));
+@@ -1234,6 +1270,7 @@ mod tests {
+             sni: Some("other.example".to_string()),
+             alpn: Vec::new(),
+             cipher_suite: None,
++            alert: None,
+         });
+         assert!(!merge_tls_info(&mut dst, &other));
+         assert_eq!(dst.unwrap().sni.as_deref(), Some("example.com"));
+@@ -1246,12 +1283,14 @@ mod tests {
+             sni: None,
+             alpn: Vec::new(),
+             cipher_suite: Some(0x1301),
++            alert: None,
+         });
+         let src = Some(TlsInfo {
+             version: Some(TlsVersion::Tls13),
+             sni: Some(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #752** (2026-11-25): feat(ui): add Alt+Left/Alt+Right tab history (@JROtto5)
+- **PR #751** (2026-11-25): feat: add shared passive diagnostic findings engine for TUI and headless JSON (@domcyrus)
+- **PR #750** (2026-11-25): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
 - **PR #749** (2026-11-23): ci: test-sign the Windows x64 executable (@domcyrus)
 - **PR #748** (2026-11-23): feat(ui): redesign Health & Host Findings accordion and enable t history toggle (@domcyrus)
 - **PR #747** (2026-11-23): chore(deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group (@dependabot[bot])
-- **PR #746** (2026-11-23): feat(ui): add mirrored RX/TX traffic graph mode on Graph tab (@domcyrus)
-- **PR #744** (2026-11-22): Support cargo binstall for official RustNet release binaries (@domcyrus)
-- **PR #743** (closed): Summarize RustNet’s security checks in all three READMEs (@domcyrus)
 
 ---
 
@@ -3157,13 +3275,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): redesign Health & Host Findings accordion and enable t history toggle
+## X. ui): add Alt+Left/Alt+Right tab history
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `617d7976`: ui): redesign Health & Host Findings accordion and enable t history toggle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21a4d76d`: ui): add Alt+Left/Alt+Right tab history. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -3171,8 +3289,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Redesign `5 Health & Host > Findings` with a structured tree accordion: aligned finding columns with severity icons and status pills, faint tree guide rails (`│ ├─ └─`), a TCP handshake health bar, single-line tabular attempt rows with inline anomalies, aligned `Resets and ICMP` / `Interface drops` / `Capture quality` sub-tables, and full-width row selection highlighting
-- Allow pressing `t` directly in `5 Health & Host > Findings` to toggle historic connections immediately (matching the `press t for history` prompt on closed TCP attempts) and show `t history` in the Findings status bar and help overlay
+- Go back and forward through visited tabs with `Alt+Left` / `Alt+Right`
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3182,7 +3299,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `617d7976` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21a4d76d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

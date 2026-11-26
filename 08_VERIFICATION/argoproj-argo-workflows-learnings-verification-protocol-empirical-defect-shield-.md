@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T04:16:02.823Z",
+  "timestamp": "2026-11-26T04:31:03.836Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-argoproj-argo-workflows-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [argoproj-argo-workflows-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T04:16:02.823Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:31:03.836Z`  
 > **Learning ID**: `LEARN-EVO-argoproj-argo-workflows-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `e0dadd07`  
+> **Source Version**: `27111e49`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T04:15:54.828Z  
+> **Timestamp**: 2026-11-26T04:30:57.442Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T04:15:54.708Z  
+> **Harvest Timestamp**: 2026-11-26T04:30:57.438Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17117 stars
+- **Stars / Engagement**: 17118 stars
 
 ---
 
@@ -792,11 +792,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17575** (2026-11-24): **chore(deps): update dependency @babel/preset-env to v7.29.14 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [@babel/preset-env](https://babel.dev/docs/en/next/babel-preset-env) ([source](https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-preset-env)) | [`7.29.7` → `7.29.14`](https://renovatebot.com/diffs/npm/@babel%2fpreset-env/7.29.7/7.29.14) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@babel%2fpreset-env/7.29.14?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fpreset-env/7.29.14?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true) |  ---  ### Release Notes  <details> <summary>babel/babel (@&#8203;babel/preset-env)</summary>  ### [`v7.29.14`](https://redirect.github.com/babel/babel/releases/tag/v7.29.14)  [Compare Source](https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.14)  #### v7.29.14 (2026-11-11)  ##### :eyeglasses: Spec Compliance  - `babel-parser`   - [#&#8203;18543](https://redirect.github.com/babel/babel/pull/18543) fix(parser): require `(` after `import.{source,defer,sync}` ([@&#8
+- **Issue #17602** (2026-11-25): **fix(ci): PR readiness bot reports wrong output due to missing permissions**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [x] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  No issue tracking this problem  ### Motivation  <!-- TODO: Say why you made your changes. --> <img width="743" height="251" alt="image" src="https://github.com/user-attachments/assets/e2a4ab57-8da0-4abb-9a24-3a4c7ae20186" />  Contributor table was showing wrong number for issues row for my account (should be 0 opened and 5 commented on in the picture)  ### Modifications  <!-- TODO: Say what changes you made. --> <!-- TODO: Attach screenshots if you changed the UI. --> Increase permissions of workflow  ### Verification  <!-- TODO: Say how you tested your changes. --> A bit of hacking on my fork to trigger the workflow as I cannot test it here without merging the PR https://github.com/ricCap/argo-workflows/pull/4#issuecomment-7173182600  <img width="680" height="121" alt="image" src="https:/
 
-- **Issue #17574** (2026-11-24): **chore(deps): update dependency @babel/core to v7.29.13 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [@babel/core](https://babel.dev/docs/en/next/babel-core) ([source](https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-core)) | [`7.29.7` → `7.29.13`](https://renovatebot.com/diffs/npm/@babel%2fcore/7.29.7/7.29.13) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@babel%2fcore/7.29.13?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fcore/7.29.13?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fcore/7.29.7/7.29.13?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fcore/7.29.7/7.29.13?slim=true) |  ---  ### Release Notes  <details> <summary>babel/babel (@&#8203;babel/core)</summary>  ### [`v7.29.13`](https://redirect.github.com/babel/babel/releases/tag/v7.29.13)  [Compare Source](https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.13)  #### v7.29.13 (2026-11-04)  ##### :bug: Bug Fix  - `babel-generator`, `babel-parser`   - [#&#8203;18522](https://redirect.github.com/babel/babel/pull/18522) fix(parser): start decorated object members at their first decorator ([@&#8203;babel-bot](https://redirect.github.co
+- **Issue #17601** (2026-11-25): **feat(controller): retry skipped completion reconciles when the informer catches up**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [x] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [x] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  Part of #17244 (step 4), should be merged after https://github.com/argoproj/argo-workflows/pull/17589 (step 3), which in turn should come after (step 2) https://github.com/argoproj/argo-workflows/pull/17245. Will rebase once those are merged (see only [this PR diff here](https://github.com/ricCap/argo-workflows/compare/811b51f923e5c4a3897a56f5ae15d83cc87fd4b7...0722df19f))  ### Motivation  <!-- TODO: Say why you made your changes. --> 😄 continuing with step 4 of #17244  🤖 `processNextItem` skips a reconcile when the workflow informer has not yet seen the controller's last write (`isOutdated`), and retries it with `AddRateLimited`. When the informer later delivers that write, its `UpdateFunc` also uses `AddRateLimited`. Both wait the full `DEFAULT_REQUEUE_TIME` (10s by default).  A comple
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -813,68 +813,64 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3386b613` (2026-11-24)
-**Commit Message**: ci: report UI unit test coverage to codecov (#17529)
+### Incident Patch 1: `27111e49` (2026-11-25)
+**Commit Message**: fix(ci): PR readiness bot reports wrong output due to missing permissions (#17602)
 
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Riccardo Capraro <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci-build.yaml` (modified, +15/-1)
+**File**: `.github/pr-readiness/README.md` (modified, +1/-1)
 ```diff
-@@ -587,7 +587,21 @@ jobs:
-           cache-dependency-path: ui/yarn.lock
-       - run: sh hack/retry-download.sh yarn --cwd ui install
-       - run: yarn --cwd ui build
--      - run: yarn --cwd ui test
-+      - run: yarn --cwd ui test --coverage --coverageReporters=lcovonly
-+      - name: Make coverage paths relative to the repo root
-+        # jest writes them relative to ui/
-+        run: sed -i 's|^SF:src/|SF:ui/src/|' ui/coverage/lcov.info
-+      - name: Upload coverage report
-+        # runs on PRs as well as main so codecov can comment a coverage report on the PR
-+        if: github.repository == 'argoproj/argo-workflows'
-+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
-+        with:
-+          files: ui/coverage/lcov.info
-+          disable_search: true
-+          flags: ui
-+          fail_ci_if_error: true
-+        env:
-+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-       - run: yarn --cwd ui lint
-       - run: yarn --cwd ui deduplicate
-       # if lint or deduplicate make changes that are not in the PR, fail the build
+@@ -61,7 +61,7 @@ A deterministic check ([`template.ts`](template.ts)) compares the description ag
+ - `workflow_run` workflows execute the **default branch's** definition with the base-repo token — a fork PR cannot alter what runs here. `pull_request_target` likewise runs the base branch's definition, never the fork's.
+ - The job **never checks out or executes PR-head code**; the checkout step pins `ref` to the default branch (without it, `pull_request_target` would check out the PR's base branch). Keep it that way.
+ - The author's login is checked against GitHub's login format before it is put into a search string.
+-- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`. No secrets beyond `GITHUB_TOKEN`.
++- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`, `issues: read`. The last is needed by the contributor table: without it, GitHub search cannot see issues, so the `is:issue` searches silently return the author's PRs instead. No secrets beyond `GITHUB_TOKEN`.
+ - `workflow_run.pull_requests` is empty for fork PRs, so the PR is found by matching `head_sha` against open PRs; no match → exit (a newer push superseded the run).
+ - PR title/body/branch are attacker-controlled: they are only ever handled as data, never interpolated into shell or scripts. The comment never echoes contributor-supplied text — only the bot's own guidance, check titles/URLs, and template section names.
+ - All actions are pinned to full commit SHAs (enforced by repo lint).
 ```
 
-**File**: `ui/.gitignore` (modified, +1/-0)
+**File**: `.github/workflows/pr-readiness.yaml` (modified, +1/-0)
 ```diff
-@@ -3,3 +3,4 @@ dist
- bundle
- .vscode
- yarn-error.log
-+coverage
+@@ -49,6 +49,7 @@ jobs:
+       pull-requests: write # sticky comment + not-ready label
+       contents: read # checkout of the default branch (scripts, OWNERS, template)
+       actions: read # job/step conclusions for the feature check
++      issues: read # contributor table: without it, search hides issues and `is:issue` queries count PRs instead
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
 ```
 
-**File**: `ui/jest.config.js` (modified, +2/-0)
+---
+
+### Incident Patch 2: `1c8564d6` (2026-11-25)
+**Commit Message**: fix(build): detect lint build tags on macOS (#17296)
+
+Signed-off-by: Luca Marsella <[REDACTED_EMAIL]>
+
+**File**: `Makefile` (modified, +2/-1)
 ```diff
-@@ -4,6 +4,8 @@ module.exports = {
-   // Playwright specs under e2e/ are run by `yarn e2e`, not Jest.
-   testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/e2e/"],
-   setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
-+  // with --coverage, count every source file, not only the ones a test imports
-+  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.d.ts"],
-   transformIgnorePatterns: [
-     "node_modules/(?!(argo-ui)/)"
-   ],
+@@ -190,7 +190,8 @@ TOOL_GOTESTSUM              := $(GOPATH)/bin/gotestsum
+ TOOL_BUF                    := $(GOPATH)/bin/buf
+ endif
+ # Extract custom build tags for linting (excluding platform-specific ones)
+-GO_BUILD_TAGS               := $(shell grep -rh '//go:build' --include='*.go' --exclude-dir=vendor --exclude-dir=".??*" . 2>/dev/null | grep -v vendor | sed 's|.*//go:build ||' | tr '&|!() ' '\n' | grep -v '^$$' | grep -vE '^(windows|darwin|linux|ignore_autogenerated)$$' | sort -u | tr '\n' ',' | sed 's/,$$//')
++# git grep, not grep -r: it skips ignored dirs (vendor/, .go/) the same way with GNU and BSD tools
++GO_BUILD_TAGS               := $(shell git grep --no-color -h --untracked '//go:build' -- '*.go' 2>/dev/null | grep -v vendor | sed 's|.*//go:build ||' | tr '&|!() ' '\n' | grep -v '^$$' | grep -vE '^(windows|darwin|linux|ignore_autogenerated)$$' | sort -u | tr '\n' ',' | sed 's/,$$//')
+ TOOL_EMBEDDOC               := hack/embeddoc/embeddoc
+ 
+ # npm bin -g will do this on later npms than we have
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17575** (2026-11-24): chore(deps): update dependency @babel/preset-env to v7.29.14 (main) (@renovate[bot])
-- **PR #17574** (2026-11-24): chore(deps): update dependency @babel/core to v7.29.13 (main) (@renovate[bot])
-- **PR #17573** (2026-11-24): chore(deps): update amannn/action-semantic-pull-request action to v6.1.4 (main) (@renovate[bot])
-- **PR #17572** (2026-11-24): chore(deps): update softprops/action-gh-release digest to 8a0cd65 (main) (@renovate[bot])
-- **PR #17570** (2026-11-24): fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.0) (@Joibel)
-- **PR #17568** (2026-11-24): chore(deps): update k8s.io/utils digest to ca04ba5 (main) (@renovate[bot])
+- **PR #17602** (2026-11-25): fix(ci): PR readiness bot reports wrong output due to missing permissions (@ricCap)
+- **PR #17601** (closed): feat(controller): retry skipped completion reconciles when the informer catches up (@ricCap)
+- **PR #17599** (2026-11-25): docs: update CHANGELOG.md for v4.1.7 (@github-actions[bot])
+- **PR #17596** (2026-11-25): chore(deps): update dependency minimatch to v11.0.9 (main) (@renovate[bot])
+- **PR #17595** (2026-11-25): chore(deps): update dependency @types/node to v24.19.4 (main) (@renovate[bot])
+- **PR #17593** (2026-11-25): fix(artifacts): reject S3 caSecret without a valid PEM certificate (cherry-pick #17373 for 4.0) (@Joibel)
 
 ---
 
@@ -894,45 +890,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: report UI unit test coverage to codecov
+## X. ci): PR readiness bot reports wrong output due to missing permissions
 
 **RULE**:
-When implementing operations in `.github/workflows/ci-build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/pr-readiness/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3386b613`: ci: report UI unit test coverage to codecov. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27111e49`: ci): PR readiness bot reports wrong output due to missing permissions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-build.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/pr-readiness/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - run: yarn --cwd ui test --coverage --coverageReporters=lcovonly
-      - name: Make coverage paths relative to the repo root
-        # jest writes them relative to ui/
-        run: sed -i 's|^SF:src/|SF:ui/src/|' ui/coverage/lcov.info
-      - name: Upload coverage report
-        # runs on PRs as well as main so codecov can comment a coverage report on the PR
-        if: github.repository == 'argoproj/argo-workflows'
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
-        with:
-          files: ui/coverage/lcov.info
-          disable_search: true
-          flags: ui
-          fail_ci_if_error: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`, `issues: read`. The last is needed by the contributor table: without it, GitHub search cannot see issues, so the `is:issue` searches silently return the author's PRs instead. No secrets beyond `GITHUB_TOKEN`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-      - run: yarn --cwd ui test
+- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`. No secrets beyond `GITHUB_TOKEN`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3386b613` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27111e49` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

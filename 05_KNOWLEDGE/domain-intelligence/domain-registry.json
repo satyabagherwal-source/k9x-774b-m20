@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T04:22:44.934Z",
+  "last_updated": "2026-11-26T04:31:04.084Z",
   "total_records": 2705,
   "domains": {
     "A": {
@@ -10377,8 +10377,8 @@
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "repository": "argoproj/argo-workflows",
-      "content_hash": "7049db8d2643706dfcb8adcb68d15cc7a77b981d88c1217001e5ae5be6d8d51d",
-      "created_at": "2026-11-24T11:05:47.721Z"
+      "content_hash": "268e58b4dd10929d90ab8742ca2ba76e67e5906b3c599cb0a6f351441ef900e8",
+      "created_at": "2026-11-26T04:30:58.777Z"
     },
     "DOM-D-3A0F1688": {
       "record_id": "DOM-D-3A0F1688",
@@ -10437,8 +10437,8 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-learnings-human-need-intelligence-argoproj-argo-workflow.md",
       "repository": "argoproj-argo-workflows-learnings",
-      "content_hash": "c66a763a403871ca288abcdc0dd10ca0c83680620f43b4e574f9d851da086d2a",
-      "created_at": "2026-11-24T11:05:51.103Z"
+      "content_hash": "5c563193338f012ec47d439ec14eeab50dbd4d9c31afcbd0275f9838d9034e0d",
+      "created_at": "2026-11-26T04:31:04.084Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu",
@@ -13101,8 +13101,8 @@
       "title": "Research & Knowledge Intelligence: meituan-longcat/LongCat-2.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-2-5-research-knowledge-intelligence-meituan-longcat-l.md",
       "repository": "meituan-longcat/LongCat-2.5",
-      "content_hash": "0089ae933b519f9c79fe6710afca123ddb470024fc0ecb47e2dada6e7e047530",
-      "created_at": "2026-11-14T02:36:55.945Z"
+      "content_hash": "09b0a13aa0899f8f867fd44b474bd2133a323a5b3156498f54ee4e71b583e436",
+      "created_at": "2026-11-26T04:30:48.999Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openai-gpt-oss-120b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openai-gpt-oss-120b-core-invariants",
@@ -13170,8 +13170,8 @@
       "title": "Research & Knowledge Intelligence: hf-meituan-longcat-longcat-2.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-2-5-learnings-research-knowledge-intelligence-hf-meit.md",
       "repository": "hf-meituan-longcat-longcat-2.5-learnings",
-      "content_hash": "8adc484043cb4055b5568e0157a32b0fa7019bc816bbd55d3e3a8a13c0ec1ca6",
-      "created_at": "2026-11-14T02:37:45.014Z"
+      "content_hash": "9088170f6348a846a04004538a9ad42f57edb35e376b4be444a376aa07c5225c",
+      "created_at": "2026-11-26T04:31:03.150Z"
     },
     "DOM-D-0D55DB0B": {
       "record_id": "DOM-D-0D55DB0B",
@@ -43475,8 +43475,8 @@
       "title": "Architecture Intelligence: domcyrus/rustnet Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-domcyrus-rustnet-architecture-intelligence-domcyrus-rustnet-core-invariants.md",
       "repository": "domcyrus/rustnet",
-      "content_hash": "98839b4379fda4099f089e60aaba1cf232b7fd57473269c34288de583d91c6e0",
-      "created_at": "2026-11-24T22:07:27.103Z"
+      "content_hash": "d3af2aa596843c5edb13459967a21acc9dc2a2a3035d35623864607a204933ab",
+      "created_at": "2026-11-26T04:30:51.989Z"
     },
     "domain_intelligence-architecture-intelligence-domcyrus-rustnet-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-domcyrus-rustnet-learnings-core-invariants",
@@ -43484,8 +43484,8 @@
       "title": "Architecture Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-domcyrus-rustnet-learnings-architecture-intelligence-domcyrus-rustnet-learnings-.md",
       "repository": "domcyrus-rustnet-learnings",
-      "content_hash": "649e55452a60bf9a4c004045a63f842b5a9fa55962fe2138d8cf8293b8460855",
-      "created_at": "2026-11-24T22:07:36.422Z"
+      "content_hash": "5cf11f990494c2d43dc39d727b5884cfef3fd982d8e7e01b9131a8f707942258",
+      "created_at": "2026-11-26T04:31:02.626Z"
     },
     "domain_intelligence-technical-construction-intelligence-miso-belica-justext-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-miso-belica-justext-core-invariants",

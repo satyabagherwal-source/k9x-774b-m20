@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:22:30.761Z",
-  "total_cycles_completed": 12562,
-  "total_learnings_persisted": 12562,
-  "total_rules_promoted": 11488,
+  "last_updated": "2026-11-26T04:30:58.407Z",
+  "total_cycles_completed": 12565,
+  "total_learnings_persisted": 12565,
+  "total_rules_promoted": 11490,
   "history": [
-    {
-      "timestamp": "2026-11-25T09:24:56.262Z",
-      "repository": "briaai/Fibo-2.0-dev",
-      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T09:25:00.844Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T09:37:23.495Z",
-      "repository": "modelcontextprotocol/kotlin-sdk",
-      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T09:37:30.682Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1403,6 +1382,27 @@
       "repository": "thinkingmachines/Inkling-2-Small",
       "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:30:48.796Z",
+      "repository": "meituan-longcat/LongCat-2.5",
+      "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:30:51.591Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:30:58.407Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

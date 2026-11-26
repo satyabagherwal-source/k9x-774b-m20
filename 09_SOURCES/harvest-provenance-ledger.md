@@ -13269,3 +13269,6 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `02f525cb` | Multi-dimensional audit evidence | 2026-11-26T04:13:36.128Z |
 | `learn-dom-h-bc714522` | `project://doobidoo-mcp-memory-service` | `02f525cb` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md` | 2026-11-26T04:14:09.358Z |
 | `learn-huggingface-thinkingmachines-inkling-2-small` | `https://huggingface.co/thinkingmachines/Inkling-2-Small` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-26T04:22:30.749Z |
+| `learn-huggingface-meituan-longcat-longcat-2-5` | `https://huggingface.co/meituan-longcat/LongCat-2.5` | `hf-meituan` | Multi-dimensional audit evidence | 2026-11-26T04:30:48.781Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `71475e09` | Multi-dimensional audit evidence | 2026-11-26T04:30:51.579Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `27111e49` | Multi-dimensional audit evidence | 2026-11-26T04:30:58.395Z |

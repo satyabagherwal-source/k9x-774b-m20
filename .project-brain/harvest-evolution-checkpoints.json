@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:22:45.253Z",
+  "last_updated": "2026-11-26T04:31:04.396Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T03:46:54.300Z",
@@ -98,9 +98,9 @@
       "staged_for_review": 1
     },
     "argoproj-argo-workflows-learnings.md": {
-      "processed_at": "2026-11-25T04:16:01.620Z",
+      "processed_at": "2026-11-26T04:31:03.369Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
       "processed_at": "2026-11-24T19:10:45.951Z",
@@ -1238,7 +1238,7 @@
       "staged_for_review": 1
     },
     "domcyrus-rustnet-learnings.md": {
-      "processed_at": "2026-11-24T22:07:35.535Z",
+      "processed_at": "2026-11-26T04:31:01.761Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2328,9 +2328,9 @@
       "staged_for_review": 0
     },
     "hf-meituan-longcat-longcat-2.5-learnings.md": {
-      "processed_at": "2026-11-22T07:48:38.200Z",
+      "processed_at": "2026-11-26T04:31:02.943Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 0
     },
     "hf-openai-gpt-oss-120b-learnings.md": {
       "processed_at": "2026-11-23T06:22:33.918Z",
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4374,
+  "total_dossiers_evaluated": 4377,
   "total_canonical_promoted": 552,
-  "total_staged_for_review": 3316
+  "total_staged_for_review": 3318
 }

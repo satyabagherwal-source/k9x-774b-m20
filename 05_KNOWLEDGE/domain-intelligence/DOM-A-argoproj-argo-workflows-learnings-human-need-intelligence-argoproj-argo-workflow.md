@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T11:05:50.821Z",
+  "timestamp": "2026-11-26T04:31:03.836Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-argoproj-argo-workflows-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [argoproj-argo-workflows-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T11:05:50.821Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:31:03.836Z`  
 > **Learning ID**: `LEARN-EVO-argoproj-argo-workflows-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain A (Human & Need Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from argoproj-argo-workflows-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `582f5637`  
+> **Source Version**: `27111e49`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T11:05:46.288Z  
+> **Timestamp**: 2026-11-26T04:30:57.442Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T11:04:55.312Z  
+> **Harvest Timestamp**: 2026-11-26T04:30:57.438Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17114 stars
+- **Stars / Engagement**: 17118 stars
 
 ---
 
@@ -795,11 +795,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17553** (2026-11-24): **fix(controller): find a pod's retry node by name, not by scanning every node (cherry-pick #17447 for 4.1)**
-  *Symptoms*: Cherry-picked fix(controller): find a pod's retry node by name, not by scanning every node (#17447)  Signed-off-by: Ian Wormsbecker <iwormsy@gmail.com>
+- **Issue #17602** (2026-11-25): **fix(ci): PR readiness bot reports wrong output due to missing permissions**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [x] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  No issue tracking this problem  ### Motivation  <!-- TODO: Say why you made your changes. --> <img width="743" height="251" alt="image" src="https://github.com/user-attachments/assets/e2a4ab57-8da0-4abb-9a24-3a4c7ae20186" />  Contributor table was showing wrong number for issues row for my account (should be 0 opened and 5 commented on in the picture)  ### Modifications  <!-- TODO: Say what changes you made. --> <!-- TODO: Attach screenshots if you changed the UI. --> Increase permissions of workflow  ### Verification  <!-- TODO: Say how you tested your changes. --> A bit of hacking on my fork to trigger the workflow as I cannot test it here without merging the PR https://github.com/ricCap/argo-workflows/pull/4#issuecomment-7173182600  <img width="680" height="121" alt="image" src="https:/
 
-- **Issue #17549** (2026-11-23): **fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.1)**
-  *Symptoms*: Cherry-picked fix(resource): ignore unspecified container timestamps (#17523)  Signed-off-by: Shubham Singh <development.shubhamsingh@gmail.com>
+- **Issue #17601** (2026-11-25): **feat(controller): retry skipped completion reconciles when the informer catches up**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [x] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [x] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  Part of #17244 (step 4), should be merged after https://github.com/argoproj/argo-workflows/pull/17589 (step 3), which in turn should come after (step 2) https://github.com/argoproj/argo-workflows/pull/17245. Will rebase once those are merged (see only [this PR diff here](https://github.com/ricCap/argo-workflows/compare/811b51f923e5c4a3897a56f5ae15d83cc87fd4b7...0722df19f))  ### Motivation  <!-- TODO: Say why you made your changes. --> 😄 continuing with step 4 of #17244  🤖 `processNextItem` skips a reconcile when the workflow informer has not yet seen the controller's last write (`isOutdated`), and retries it with `AddRateLimited`. When the informer later delivers that write, its `UpdateFunc` also uses `AddRateLimited`. Both wait the full `DEFAULT_REQUEUE_TIME` (10s by default).  A comple
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -816,185 +816,64 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `582f5637` (2026-11-24)
-**Commit Message**: fix(controller): find a pod's retry node by name, not by scanning every node (#17447)
+### Incident Patch 1: `27111e49` (2026-11-25)
+**Commit Message**: fix(ci): PR readiness bot reports wrong output due to missing permissions (#17602)
 
-Signed-off-by: Ian Wormsbecker <[REDACTED_EMAIL]>
+Signed-off-by: Riccardo Capraro <[REDACTED_EMAIL]>
 
-**File**: `workflow/controller/retry_tweak.go` (modified, +54/-0)
+**File**: `.github/pr-readiness/README.md` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,8 @@
- package controller
- 
- import (
-+	"strings"
-+
- 	apiv1 "k8s.io/api/core/v1"
- 	"k8s.io/utils/env"
- 
-@@ -23,6 +25,58 @@ func FindRetryNode(nodes wfv1.Nodes, nodeID string) *wfv1.NodeStatus {
- 	return nil
- }
- 
-+// FindRetryNodeByName finds the same node as FindRetryNode without scanning
-+// every node. A retry node names each attempt "<retry node name>(<attempt>)"
-+// (see handleRetries), so the only node that can be a node's retry parent is
-+// the one named by dropping that suffix, found by name in constant time.
-+// FindRetryNode visits every node of the workflow, which a controller
-+// creating thousands of pods in a large workflow pays once per pod.
-+func FindRetryNodeByName(wf *wfv1.Workflow, nodeID string) *wfv1.NodeStatus {
-+	if parentNode := retryParentByName(wf, nodeID); parentNode != nil {
-+		return parentNode
-+	}
-+	node, ok := wf.Status.Nodes[nodeID]
-+	if !ok {
-+		return nil
-+	}
-+	return retryParentByName(wf, node.BoundaryID)
-+}
-+
-+// retryParentByName returns the retry node that has childID as an attempt, if
-+// any.
-+func retryParentByName(wf *wfv1.Workflow, childID string) *wfv1.NodeStatus {
-+	child, ok := wf.Status.Nodes[childID]
-+	if !ok {
-+		return nil
-+	}
-+	parentName, ok := retryParentName(child.Name)
-+	if !ok {
-+		return nil
-+	}
-+	parentNode, err := wf.GetNodeByName(parentName)
-+	if err != nil || parentNode.Type != wfv1.NodeTypeRetry || !parentNode.HasChild(childID) {
-+		return nil
-+	}
-+	return parentNode
-+}
-+
-+// retryParentName strips a retry attempt suffix, "(<digits>)", from a node
-+// name, reporting whether the name had one.
-+func retryParentName(name string) (string, bool) {
-+	if !strings.HasSuffix(name, ")") {
-+		return "", false
-+	}
-+	open := strings.LastIndex(name, "(")
-+	if open < 0 {
-+		return "", false
-+	}
-+	attempt := name[open+1 : len(name)-1]
-+	if attempt == "" || strings.Trim(attempt, "0123456789") != "" {
-+		return "", false
-+	}
-+	return name[:open], true
-+}
-+
- // RetryOnDifferentHost append affinity with fail host to pod
- func RetryOnDifferentHost(retryNodeName string) RetryTweak {
- 	return func(retryStrategy wfv1.RetryStrategy, nodes wfv1.Nodes, pod *apiv1.Pod) {
+@@ -61,7 +61,7 @@ A deterministic check ([`template.ts`](template.ts)) compares the description ag
+ - `workflow_run` workflows execute the **default branch's** definition with the base-repo token — a fork PR cannot alter what runs here. `pull_request_target` likewise runs the base branch's definition, never the fork's.
+ - The job **never checks out or executes PR-head code**; the checkout step pins `ref` to the default branch (without it, `pull_request_target` would check out the PR's base branch). Keep it that way.
+ - The author's login is checked against GitHub's login format before it is put into a search string.
+-- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`. No secrets beyond `GITHUB_TOKEN`.
++- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`, `issues: read`. The last is needed by the contributor table: without it, GitHub search cannot see issues, so the `is:issue` searches silently return the author's PRs instead. No secrets beyond `GITHUB_TOKEN`.
+ - `workflow_run.pull_requests` is empty for fork PRs, so the PR is found by matching `head_sha` against open PRs; no match → exit (a newer push superseded the run).
+ - PR title/body/branch are attacker-controlled: they are only ever handled as data, never interpolated into shell or scripts. The comment never echoes contributor-supplied text — only the bot's own guidance, check titles/URLs, and template section names.
+ - All actions are pinned to full commit SHAs (enforced by repo lint).
 ```
 
-**File**: `workflow/controller/retry_tweak_test.go` (modified, +67/-0)
+**File**: `.github/workflows/pr-readiness.yaml` (modified, +1/-0)
 ```diff
-@@ -4,6 +4,7 @@ import (
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
- )
-@@ -93,3 +94,69 @@ func TestFindRetryNode(t *testing.T) {
- 		assert.Equal(t, FindRetryNode(allNodes, "C2"), &node)
- 	})
- }
-+
-+func TestFindRetryNodeByName(t *testing.T) {
-+	wf := &wfv1.Workflow{ObjectMeta: metav1.ObjectMeta{Name: "wf"}}
-+	wf.Status.Nodes = wfv1.Nodes{}
-+	add := func(name string, nodeType wfv1.NodeType, boundary string, children ...string) string {
-+		id := wf.NodeID(name)
-+		childIDs := make([]string, len(children))
-+		for i, child := range children {
-+			childIDs[i] = wf.NodeID(child)
-+		}
-+		boundaryID := ""
-+		if boundary != "" {
-+			boundaryID = wf.NodeID(boundary)
-+		}
-+		wf.Status.Nodes[id] = wfv1.NodeStatus{ID: id, Name: name, Type: nodeType, BoundaryID: boundaryID, Children: childIDs}
-+		return id
-+	}
-+	root := add("wf", wfv1.NodeTypeSteps, "", "wf[0].steps", "wf[0].ref", "wf[0].plain", "wf[0].items(0:a)", "wf[0].decoy")
-+	// A retried steps template: its pod's retry parent is found through the boundary.
-+	stepsRetry := add("wf[0].steps", wfv1.NodeTypeRetry, "wf", "wf[0].steps(0)")
-+	add("wf[0].steps(0)", wfv1.NodeTypeSteps, "wf", "wf[0].steps(0)[0].pod")
-+	stepsPod := add("wf[0].steps(0)[0].pod", wfv1.NodeTypePod, "wf[0].steps(0)")
-+	// A retried pod on its second attempt.
-+	refRetry := add("wf[0].ref", wfv1.NodeTypeRetry, "wf", "wf[0].ref(0)", "wf[0].ref(1)")
-+	add("wf[0].ref(0)", wfv1.NodeTypePod, "wf")
-+	refPod := add("wf[0].ref(1)", wfv1.NodeTypePod, "wf")
-+	plainPod := add("wf[0].plain", wfv1.NodeTypePod, "wf")
-+	itemsPod := add("wf[0].items(0:a)", wfv1.NodeTypePod, "wf")
-+	// Named like an attempt, but its parent is not a retry node.
-+	add("wf[0].decoy", wfv1.NodeTypeSteps, "wf", "wf[0].decoy(0)")
-+	decoyPod := add("wf[0].decoy(0)", wfv1.NodeTypePod, "wf[0].decoy")
-+
-+	t.Run("Finds the retry node through the boundary", func(t *testing.T) {
-+		assert.Equal(t, stepsRetry, FindRetryNodeByName(wf, stepsPod).ID)
-+	})
-+	t.Run("Finds the retry node of a later attempt", func(t *testing.T) {
-+		assert.Equal(t, refRetry, FindRetryNodeByName(wf, refPod).ID)
-+	})
-+	t.Run("Finds nothing without a retry parent", func(t *testing.T) {
-+		for _, id := range []string{root, plainPod, itemsPod, decoyPod, "missing"} {
-+			assert.Nil(t, FindRetryNodeByName(wf, id), wf.Status.Nodes[id].Name)
-+		}
-+	})
-+	t.Run("Agrees with FindRetryNode for every node", func(t *testing.T) {
-+		for id, node := range wf.Status.Nodes {
-+			assert.Equal(t, FindRetryNode(wf.Status.Nodes, id), FindRetryNodeByName(wf, id), node.Name)
-+		}
-+	})
-+}
-+
-+func TestRetryParentName(t *testing.T) {
-+	for name, want := range map[string]string{
-+		"wf[0].step(0)":        "wf[0].step",
-+		"wf[0].step(12)":       "wf[0].step",
-+		"wf[0].step(0:a)(3)":   "wf[0].step(0:a)",
-+		"wf[0].step(0:a)":      "",
-+		"wf[0].step":           "",
-+		"wf[0].step()":         "",
-+		"wf[0].step(-1)":       "",
-+		"wf[0].step(1)[0].pod": "",
-+	} {
-+		got, ok := retryParentName(name)
-+		assert.Equal(t, want != "", ok, name)
-+		assert.Equal(t, want, got, name)
-+	}
-+}
+@@ -49,6 +49,7 @@ jobs:
+       pull-requests: write # sticky comment + not-ready label
+       contents: read # checkout of the default branch (scripts, OWNERS, template)
+       actions: read # job/step conclusions for the feature check
++      issues: read # contributor table: without it, search hides issues and `is:issue` queries count PRs instead
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
 ```
 
-**File**: `workflow/controller/workflowpod_deps.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `1c8564d6` (2026-11-25)
+**Commit Message**: fix(build): detect lint build tags on macOS (#17296)
+
+Signed-off-by: Luca Marsella <[REDACTED_EMAIL]>
+
+**File**: `Makefile` (modified, +2/-1)
 ```diff
-@@ -41,7 +41,7 @@ func (woc *wfOperationCtx) getNodeByName(nodeName string) (*wfv1.NodeStatus, err
+@@ -190,7 +190,8 @@ TOOL_GOTESTSUM              := $(GOPATH)/bin/gotestsum
+ TOOL_BUF                    := $(GOPATH)/bin/buf
+ endif
+ # Extract custom build tags for linting (excluding platform-specific ones)
+-GO_BUILD_TAGS               := $(shell grep -rh '//go:build' --include='*.go' --exclude-dir=vendor --exclude-dir=".??*" . 2>/dev/null | grep -v vendor | sed 's|.*//go:build ||' | tr '&|!() ' '\n' | grep -v '^$$' | grep -vE '^(windows|darwin|linux|ignore_autogenerated)$$' | sort -u | tr '\n' ',' | sed 's/,$$//')
++# git grep, not grep -r: it skips ignored dirs (vendor/, .go/) the same way with GNU and BSD tools
++GO_BUILD_TAGS               := $(shell git grep --no-color -h --untracked '//go:build' -- '*.go' 2>/dev/null | grep -v vendor | sed 's|.*//go:build ||' | tr '&|!() ' '\n' | grep -v '^$$' | grep -vE '^(windows|darwin|linux|ignore_autogenerated)$$' | sort -u | tr '\n' ',' | sed 's/,$$//')
+ TOOL_EMBEDDOC               := hack/embeddoc/embeddoc
  
- // findRetryNode locates the closest retry-node ancestor of nodeID in live status.
- func (woc *wfOperationCtx) findRetryNode(nodeID string) *wfv1.NodeStatus {
--	return FindRetryNode(woc.wf.Status.Nodes, nodeID)
-+	return FindRetryNodeByName(woc.wf, nodeID)
- }
- 
- // retryStrategyForTemplate resolves the retry strategy applicable to tmpl.
+ # npm bin -g will do this on later npms than we have
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17553** (2026-11-24): fix(controller): find a pod's retry node by name, not by scanning every node (cherry-pick #17447 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17549** (2026-11-23): fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17545** (2026-11-20): fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.0) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17544** (2026-11-20): fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17540** (2026-11-18): fix: build the OSS Scanner image like release builds (@Joibel)
-- **PR #17539** (2026-11-20): chore(deps): update dependency go to v1.27.4 (main) (@renovate[bot])
+- **PR #17602** (2026-11-25): fix(ci): PR readiness bot reports wrong output due to missing permissions (@ricCap)
+- **PR #17601** (closed): feat(controller): retry skipped completion reconciles when the informer catches up (@ricCap)
+- **PR #17599** (2026-11-25): docs: update CHANGELOG.md for v4.1.7 (@github-actions[bot])
+- **PR #17596** (2026-11-25): chore(deps): update dependency minimatch to v11.0.9 (main) (@renovate[bot])
+- **PR #17595** (2026-11-25): chore(deps): update dependency @types/node to v24.19.4 (main) (@renovate[bot])
+- **PR #17593** (2026-11-25): fix(artifacts): reject S3 caSecret without a valid PEM certificate (cherry-pick #17373 for 4.0) (@Joibel)
 
 ---
 
@@ -1014,65 +893,31 @@ Signed-off-by: Ian Wormsbecker <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. controller): find a pod's retry node by name, not by scanning every node
+## X. ci): PR readiness bot reports wrong output due to missing permissions
 
 **RULE**:
-When implementing operations in `workflow/controller/retry_tweak.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/pr-readiness/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `582f5637`: controller): find a pod's retry node by name, not by scanning every node. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27111e49`: ci): PR readiness bot reports wrong output due to missing permissions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/retry_tweak.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/pr-readiness/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"strings"
-
-// FindRetryNodeByName finds the same node as FindRetryNode without scanning
-// every node. A retry node names each attempt "<retry node name>(<attempt>)"
-// (see handleRetries), so the only node that can be a node's retry parent is
-// the one named by dropping that suffix, found by name in constant time.
-// FindRetryNode visits every node of the workflow, which a controller
-// creating thousands of pods in a large workflow pays once per pod.
-func FindRetryNodeByName(wf *wfv1.Workflow, nodeID string) *wfv1.NodeStatus {
-	if parentNode := retryParentByName(wf, nodeID); parentNode != nil {
-		return parentNode
-	}
-	node, ok := wf.Status.Nodes[nodeID]
-	if !ok {
-		return nil
-	}
-	return retryParentByName(wf, node.BoundaryID)
-}
-
-// retryParentByName returns the retry node that has childID as an attempt, if
-// any.
-func retryParentByName(wf *wfv1.Workflow, childID string) *wfv1.NodeStatus {
-	child, ok := wf.Status.Nodes[childID]
-	if !ok {
-		return nil
-	}
-	parentName, ok := retryParentName(child.Name)
-	if !ok {
-		return nil
-	}
-	parentNode, err := wf.GetNodeByName(parentName)
-	if err != nil || parentNode.Type != wfv1.NodeTypeRetry || !parentNode.HasChild(childID) {
-		return nil
-	}
-
+- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`, `issues: read`. The last is needed by the contributor table: without it, GitHub search cannot see issues, so the `is:issue` searches silently return the author's PRs instead. No secrets beyond `GITHUB_TOKEN`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`. No secrets beyond `GITHUB_TOKEN`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `582f5637` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27111e49` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

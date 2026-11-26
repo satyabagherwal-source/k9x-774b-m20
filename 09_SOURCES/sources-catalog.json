@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "e0dadd07",
+    "sourceVersion": "27111e49",
     "license": "Apache-2.0",
-    "contentHash": "41af28317a3eeb8f6d0006064506585deea4552ddc2d52311ab29d7672756b82",
-    "lastHarvestedAt": "2026-11-25T04:15:55.897Z",
+    "contentHash": "70cc56f89d96e43e9af60962300a75d012c1b3f664e04426b34d144c82adf83c",
+    "lastHarvestedAt": "2026-11-26T04:30:58.395Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "617d7976",
+    "sourceVersion": "71475e09",
     "license": "Apache-2.0",
-    "contentHash": "c072ec0b7a1379a2f8c9b67f57f0cc4616c5f308e0a3bb61a7f72bcf2f3b7ecf",
-    "lastHarvestedAt": "2026-11-24T22:07:26.703Z",
+    "contentHash": "82705427cdaaaf0cb1ad850408b5d8f761fab810e77bb31af12220f6726e8f08",
+    "lastHarvestedAt": "2026-11-26T04:30:51.579Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -12485,8 +12485,8 @@
     "sourceUrl": "https://huggingface.co/meituan-longcat/LongCat-2.5",
     "sourceVersion": "hf-meituan-longcat-longcat-2.5",
     "license": "Open-Source",
-    "contentHash": "de5ad174984dc58f9690e13d47ab6e649a469805c0ab4f84ab6fec8309900709",
-    "lastHarvestedAt": "2026-11-22T07:48:34.559Z",
+    "contentHash": "2b1e804347d990c0216d33deba73a39db85fbbaf76664c01454980a954e5b928",
+    "lastHarvestedAt": "2026-11-26T04:30:48.781Z",
     "learningId": "learn-huggingface-meituan-longcat-longcat-2-5"
   },
   "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized": {

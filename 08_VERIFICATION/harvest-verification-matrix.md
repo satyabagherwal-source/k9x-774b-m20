@@ -13236,3 +13236,6 @@
 | `CYCLE-20261126-F663` | `2026-11-26T04:13:36.123Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10595` | Yes (`1207486f...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T04:14:09.358Z` | `doobidoo-mcp-memory-service` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-BC714522` [Domain H] | Yes (`8f61942c...`) |
 | `CYCLE-20261126-QMOO` | `2026-11-26T04:22:30.744Z` | `thinkingmachines/Inkling-2-Small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md` | Yes (`782f2ffd...`) |
+| `CYCLE-20261126-1AYX` | `2026-11-26T04:30:48.777Z` | `meituan-longcat/LongCat-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-2.5-learnings.md` | Yes (`2b1e8043...`) |
+| `CYCLE-20261126-1D4N` | `2026-11-26T04:30:51.575Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10596` | Yes (`82705427...`) |
+| `CYCLE-20261126-1IE0` | `2026-11-26T04:30:58.392Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10597` | Yes (`70cc56f8...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T04:22:30.764Z",
+  "last_updated": "2026-11-26T04:30:58.411Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "41af28317a3eeb8f6d0006064506585deea4552ddc2d52311ab29d7672756b82",
-      "verified_at": "2026-11-25T04:15:55.911Z",
+      "content_hash": "70cc56f89d96e43e9af60962300a75d012c1b3f664e04426b34d144c82adf83c",
+      "verified_at": "2026-11-26T04:30:58.410Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T04:15:55.911Z"
+      "last_updated": "2026-11-26T04:30:58.410Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "c072ec0b7a1379a2f8c9b67f57f0cc4616c5f308e0a3bb61a7f72bcf2f3b7ecf",
-      "verified_at": "2026-11-24T22:07:26.719Z",
+      "content_hash": "82705427cdaaaf0cb1ad850408b5d8f761fab810e77bb31af12220f6726e8f08",
+      "verified_at": "2026-11-26T04:30:51.594Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T22:07:26.719Z"
+      "last_updated": "2026-11-26T04:30:51.594Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
@@ -18786,14 +18786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meituan-longcat-longcat-2-5",
-      "content_hash": "de5ad174984dc58f9690e13d47ab6e649a469805c0ab4f84ab6fec8309900709",
-      "verified_at": "2026-11-22T07:48:34.566Z",
+      "content_hash": "2b1e804347d990c0216d33deba73a39db85fbbaf76664c01454980a954e5b928",
+      "verified_at": "2026-11-26T04:30:48.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:48:34.566Z"
+      "last_updated": "2026-11-26T04:30:48.799Z"
     },
     "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized": {
       "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
