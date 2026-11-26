@@ -13475,3 +13475,6 @@ Every entry in this ledger must capture:
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `9743c098` | Multi-dimensional audit evidence | 2026-11-26T15:11:47.317Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `d197e0b5` | Multi-dimensional audit evidence | 2026-11-26T15:11:55.165Z |
 | `learn-dom-h-cc34c8d8` | `project://react-react-native` | `9743c098` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-26T15:12:39.576Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-26T15:22:01.035Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `e874a148` | Multi-dimensional audit evidence | 2026-11-26T15:22:03.168Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `7e3f05c1` | Multi-dimensional audit evidence | 2026-11-26T15:22:12.299Z |

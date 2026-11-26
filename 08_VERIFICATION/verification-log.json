@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-XTDJ",
-    "timestamp": "2026-11-25T02:20:27.511Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "d64f17dd0e61ac41b80d693b9b870da51367d45f63dadf845c1fdf0adc56c12f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-8ERW",
-    "timestamp": "2026-11-25T02:28:41.804Z",
-    "repository": "MemTensor/MemT-1.0-Pro",
-    "learningId": "learn-huggingface-memtensor-memt-1-0-pro",
-    "contentHash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-8MCN",
-    "timestamp": "2026-11-25T02:28:51.623Z",
-    "repository": "msasikanth/twine",
-    "learningId": "learn-github-msasikanth-twine",
-    "contentHash": "030de6565f285c4cf69f43b9bf21782e0baa6f445f92dc1b5be6e1e6825df86f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-8QJD",
     "timestamp": "2026-11-25T02:28:57.049Z",
     "repository": "freenet/freenet-core",
@@ -7490,6 +7445,51 @@
     "repository": "apache/pinot",
     "learningId": "learn-github-apache-pinot",
     "contentHash": "113824aa67d4feeb7815f74d2fb2ad5031193ddf375e7c78c14767da7a53dead",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-ARB9",
+    "timestamp": "2026-11-26T15:22:01.029Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+    "contentHash": "1216e9f9e75e7296958b32b95904148f8007537ccc24f2a36ca2dd6f70523e3a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-ASYJ",
+    "timestamp": "2026-11-26T15:22:03.163Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "14edecd937e4ff4a51967dd0974245d3a1dceacc7e5e2a3bc2d6935675072092",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-B006",
+    "timestamp": "2026-11-26T15:22:12.294Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "22b110b1b32592e8ce2fe4d24b8bb21448a693f1b5c4e82953fc8bf4c4d4e13c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

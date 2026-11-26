@@ -4,22 +4,22 @@
 {
   "source_repository": "cachix/devenv",
   "source_url": "https://github.com/cachix/devenv",
-  "source_version": "221e8c7e",
+  "source_version": "e874a148",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T07:12:58.256Z",
+  "timestamp": "2026-11-26T15:22:03.544Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cachix-devenv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cachix/devenv](https://github.com/cachix/devenv) (Revision: `221e8c7e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T07:12:58.256Z`  
+> **Provenance**: Harvested from [cachix/devenv](https://github.com/cachix/devenv) (Revision: `e874a148`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T15:22:03.544Z`  
 > **Learning ID**: `learn-github-cachix-devenv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `cachix/devenv` (Commit: `221e8c7e`)
+- **Target Repository**: `cachix/devenv` (Commit: `e874a148`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T07:12:56.870Z  
+> **Harvest Timestamp**: 2026-11-26T15:22:01.393Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7845 stars
+- **Stars / Engagement**: 7852 stars
 
 ---
 
@@ -1711,77 +1711,831 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `417d6426` (2026-11-24)
-**Commit Message**: fix(php): take languages.php.extensions from the PHP being built (#3400)
+### Incident Patch 1: `3020e473` (2026-11-25)
+**Commit Message**: fix(machines): tolerate brief transaction observation gaps (#3401)
 
-The extensions function of languages.php.package took the extensions in
-languages.php.extensions from the original package (`package.extensions`)
-instead of its `all` argument. Nix runs the function again for every PHP
-rebuilt from the package (`php.override { ... }`), such as the thread-safe
-embed build of nixpkgs' FrankenPHP: the default extensions then came from
-the rebuilt PHP, but the configured ones were still built for the original,
-and the rebuilt PHP could not load them ("undefined symbol:
-compiler_globals" for a thread-safe PHP).
+A NixOS switch can interrupt a status poll when systemd re-execs or SSH
+restarts. The controller now keeps watching the same transaction within a
+90-second window, allows each SSH round trip the standard 30-second request
+timeout, and still stops guessing once that window closes.
 
-For languages.php.package itself, `all` is the same set, so its derivation
-does not change.
+A confirmation reply is the executor's own record, written before the reply is
+sent, so a valid reply for this transaction ends observation without further
+status calls. A reply that is lost, late, or invalid is reconciled by reading
+the transaction back, and confirmation is never sent a second time, so no
+handler can collide with the lock the first one holds.
 
-**File**: `src/modules/languages/php.nix` (modified, +1/-1)
+The transaction fixtures cover slow status and confirmation replies, a
+confirmation that outlives the SSH bound, and sustained loss of observation.
+The real SSH VM fixture deploys through a transient disconnect with the
+existing 90-second target-side watchdog and treats a lost confirmation reply as
+the success it became.
+
+**File**: `devenv/src/devenv/machines.rs` (modified, +530/-47)
 ```diff
-@@ -18,7 +18,7 @@ let
+@@ -75,6 +75,142 @@ const NIXOS_FACTER_COMMAND: &str = "nixos-facter";
+ const MACHINE_EXECUTOR: &str =
+     "/nix/var/nix/gcroots/devenv-machines/executor/bin/devenv-machine-deploy";
  
-   configurePackage = package:
-     package.buildEnv {
--      extensions = { all, enabled }: with all; (builtins.filter filterDefaultExtensions (enabled ++ attrValues (getAttrs cfg.extensions package.extensions)));
-+      extensions = { all, enabled }: with all; (builtins.filter filterDefaultExtensions (enabled ++ attrValues (getAttrs cfg.extensions all)));
-       extraConfig = cfg.ini;
++/// Overall bound on watching one target-side transaction.
++const TRANSACTION_OBSERVATION_DEADLINE: std::time::Duration = std::time::Duration::from_secs(900);
++/// How often the controller re-reads the target's view of the transaction.
++const TRANSACTION_OBSERVATION_INTERVAL: std::time::Duration = std::time::Duration::from_secs(2);
++/// Bound on one captured request to a machine over SSH.
++const MACHINE_SSH_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
++/// How long the controller keeps watching this transaction without a positive
++/// answer about its own ID. The executor answers `unknown` while it cannot see
++/// the activation unit (start, switch, health check, reboot), and a status
++/// round trip can fail while the target is busy; both are gaps in observation,
++/// not decisions. The window leaves room for several full SSH attempts; past
++/// it the controller stops guessing.
++const TRANSACTION_OBSERVATION_GAP: std::time::Duration = std::time::Duration::from_secs(90);
++
++/// What one validated status document says about the transaction.
++///
++/// Only terminal outcomes are decisions about the deployment. `unknown` means
++/// the target answered for this transaction but could not report its progress.
++#[derive(Debug, PartialEq)]
++enum TransactionDecision {
++    Succeeded,
++    RolledBack(String),
++    RollbackFailed(String),
++    Failed(String),
++    AwaitingConfirmation,
++    Pending,
++    Unknown(Option<String>),
++}
++
++impl TransactionDecision {
++    /// Interpret a status document. The version and the ID bind the answer to
++    /// this transaction, so a malformed, unsupported, or foreign response must
++    /// fail closed instead of being read as progress.
++    fn from_status(status: &serde_json::Value, id: &str, name: &str) -> Result<Self> {
++        if status["version"].as_u64() != Some(1) {
++            bail!(
++                "Unsupported executor status version on {name}; inspect the target before retrying"
++            );
++        }
++        if status["id"].as_str() != Some(id) {
++            bail!(
++                "Target reports a different transaction; inspect `devenv machines status {name}`"
++            );
++        }
++        Ok(match status["outcome"].as_str() {
++            Some("succeeded") => Self::Succeeded,
++            Some("rolled-back") => Self::RolledBack(
++                status["error"]
++                    .as_str()
++                    .unwrap_or("deployment was not confirmed")
++                    .to_string(),
++            ),
++            Some("rollback-failed") => Self::RollbackFailed(
++                status["rollbackError"]
++                    .as_str()
++                    .unwrap_or("previous system could not be restored")
++                    .to_string(),
++            ),
++            Some("failed") => Self::Failed(
++                status["error"]
++                    .as_str()
++                    .unwrap_or("activation failed")
++                    .to_string(),
++            ),
++            Some("pending") if status["phase"].as_str() == Some("awaiting-confirmation") => {
++                Self::AwaitingConfirmation
++            }
++            Some("pending") => Self::Pending,
++            Some("unknown") => {
++                Self::Unknown(status["observationError"].as_str().map(str::to_string))
++            }
++            _ => bail!(
++                "Transaction {id} has an unknown outcome; inspect `devenv machines status {name}`"
++            ),
++        })
++    }
++}
++
++/// The result of one read-only look at a target-side transaction.
++enum TransactionObservation {
++    /// The target answered for this transaction.
++    Decision(TransactionDecision),
++    /// The status round trip failed; nothing is known about progress.
++    Unreachable(String),
++}
++
++/// The time left to observe a transaction, never negative.
++///
++/// Observation ends at the earlier of the overall deadline and the tolerated
++/// gap since the last positive observation. Nothing is issued, acted on, or
++/// slept past that point, so both bounds share this one calculation.
++fn transaction_observation_window(
++    last_positive: tokio::time::Instant,
++    deadline: tokio::time::Instant,
++) -> std::time::Duration {
++    (last_positive + TRANSACTION_OBSERVATION_GAP)
++        .min(deadline)
++        .saturating_duration_since(tokio::time::Instant::now())
++}
++
++/// Why watching this transaction must stop, if it must.
++///
++/// Called before a status round trip is issued and again before its answer is
++/// acted on: an answer that arrives after the window closed is not progress,
++/// and must not confirm or succeed a deployment. When both cutoffs have
++/// passed, the closed overall deadline is reported ahead of a lost gap.
++fn transaction_observation_expired(
++    id: &str,
++    name: &str,
++  
+```
+
+**File**: `tests/machines-deploy-ssh-vm/devenv.nix` (modified, +30/-6)
+```diff
+@@ -30,6 +30,7 @@ let
+         fi
+         ;;
+       *" confirm "*)
++        echo confirm >> /run/devenv-test-confirms
+         if test "$mode" = lost-confirm; then
+           ${pkgs.bash}/bin/bash -c "$SSH_ORIGINAL_COMMAND" > /run/devenv-test-response
+           kill -KILL "$PPID"
+@@ -42,12 +43,35 @@ let
+         fi
+         ;;
+       *" status")
+-        if test "$mode" = during-switch; then
+-          while ! ${pkgs.jq}/bin/jq -e '.phase == "switching"' /var/lib/devenv-machines/current.json >/dev/null; do sleep 0.05; done
+-          touch /run/devenv-test-switch-disconnect
+-          kill -KILL "$PPID"
+-          exit 255
+-        fi
++        case "$mode" in
++          status-transient|status-persistent)
++            if test ! -e /run/devenv-test-status-fault; then
++              # Wait until activation owns the target, so the interruption
++              # observes a real switch rather than a still-queued request.
++              phase=
++              n=0
++              while test "$n" -lt 400; do
++                phase=$(${pkgs.jq}/bin/jq -r '.phase' /var/lib/devenv-machines/current.json 2>/dev/null || true)
++                case "$phase" in
++                  switching|checking|awaiting-confirmation) break ;;
++                esac
++                n=$((n + 1))
++                sleep 0.05
++              done
++              printf '%s\n' "''${phase:-unobserved}" > /run/devenv-test-fault-phase
++              # Latch the fault. A transient interruption lets later polls
++              # through; a persistent one fails every later poll immediately
++              # instead of waiting for a phase that has already passed.
++              touch /run/devenv-test-status-fault
++              kill -KILL "$PPID"
++              exit 255
++            fi
++            if test "$mode" = status-persistent; then
++              kill -KILL "$PPID"
++              exit 255
++            fi
++            ;;
++        esac
+         ;;
+     esac
+     exec ${pkgs.bash}/bin/bash -c "$SSH_ORIGINAL_COMMAND"
+```
+
+**File**: `tests/machines-deploy-ssh-vm/test.py` (modified, +108/-36)
+```diff
+@@ -46,7 +46,8 @@
+     build.nixos = lib.mkForce (throw "apply rebuilt a system");
+     build.deployer = lib.mkForce (throw "apply rebuilt an executor");
+   };
+-}"""
++}
++"""
+     % (
+         json.dumps(f"root@127.0.0.1:{port}"),
+         "[ " + " ".join(json.dumps(v) for v in opts) + " ]",
+@@ -110,7 +111,7 @@ def start_cli(*args):
+ 
+ 
+ def finish(proc, log, success):
+-    code = proc.wait(timeout=90)
++    code = proc.wait(timeout=120)
+     log.seek(0)
+     output = log.read()
+     log.close()
+@@ -127,7 +128,7 @@ def wait_outcome(outcome):
+         "devenv-machine-deploy status | jq -e '.outcome == "
+         + json.dumps(outcome)
+         + "'",
+-        timeout=90,
++        timeout=120,
+     )
+     assert state()["outcome"] == outcome
+ 
+@@ -149,50 +150,121 @@ def check_controller_status(outcome):
+     assert json.loads(result.stdout)["server"]["outcome"] == outcome
+ 
+ 
++def logs():
++    """Count submissions and confirmation requests that reached the server."""
++    return (
++        int(machine.succeed("wc -l < /run/devenv-test-starts").strip()),
++        int(machine.succeed("wc -l < /run/devenv-test-confirms").strip()),
++    )
++
++
++def begin_fault(mode):
++    machine.succeed(
++        "echo %s > /run/devenv-ssh-fault; : > /run/devenv-test-starts; "
++        ": > /run/devenv-test-confirms; rm -f /run/devenv-test-status-fault "
++        "/run/devenv-test-fault-phase"
++        % shlex.quote(mode)
++    )
++
++
++def end_fault():
++    machine.succeed("rm -f /run/devenv-ssh-fault")
++
++
++def assert_recovery(outcome, counts, generation):
++    """Drop the injected fault, then assert the target and controller agree."""
++    end_fault()
++    wait_outcome(outcome)
++    assert logs() == counts, logs()
++    assert_generation(generation)
++    check_controller_status(outcome)
++
++
+ # Connection refusal before submission must never create a checkpoint.
+ # This VM uses the service, not socket activation. Including the absent socket
+ # in the same stop command can prevent systemd from stopping the service.
+ machine.succeed("systemctl stop sshd.service")
+ machine.wait_for_closed_port(22)
++machine.succeed(": > /run/devenv-test-starts")
++machine.succeed(": > /run/devenv-test-confirms")
+ proc, log = start_cli("apply", str(plan_file))
+-finish(proc, log, False)
++output = finish(proc, log, False)
++assert "deployed" not in output, output
+ machine.succeed("test ! -e /var/lib/devenv-machines/current.json")
++assert logs() == (0, 0), logs()
+ machine.succeed("systemctl start sshd.service")
+ machine.wait_for_unit("sshd.service")
+ 
+-for mode in ["lost-start", "during-switch", "controller-exit", "lost-confirm"]:
+-    if mode == "lost-confirm":
+-        # Successful confirmation needs time for a full NixOS activation.
+-        # Keep the shorter watchdog deadline for the rollback scenarios above.
+-        plan["machines"]["server"]["nixos"]["executor"] = confirmation_executor_package
+-        plan_file.write_text(json.dumps(plan))
+-    machine.succeed(
+-        "echo "
+-        + shlex.quote(mode)
+-        + " > /run/devenv-ssh-fault; : > /run/devenv-test-starts"
+-    )
+-    proc, log = start_cli("apply", str(plan_file))
+-    if mode == "controller-exit":
+-        machine.wait_until_succeeds(
+-            "test -e /run/devenv-test-confirm-waiting", timeout=60
+-        )
+-        proc.terminate()
+-    output = finish(proc, log, False)
+-    if mode == "lost-start":
+-        assert "may have started" in output, output
+-    elif mode == "during-switch":
+-        machine.succeed("test -e /run/devenv-test-switch-disconnect")
+-        assert "Lost observation" in output, output
+-    elif mode == "lost-confirm":
+-        assert "Could not acknowledge confirmation" in output, output
+-    machine.succeed("rm /run/devenv-ssh-fault")
+-    outcome = "succeeded" if mode == "lost-confirm" else "rolled-back"
+-    wait_outcome(outcome)
+-    assert machine.succeed("wc -l < /run/devenv-test-starts").strip() == "1"
+-    assert_generation(updated if mode == "lost-confirm" else original)
+-    check_controller_status(outcome)
++# A submission whose response is lost after the command ran may have started.
++begin_fault("lost-start")
++proc, log = start_cli("apply", str(plan_file))
++output = finish(proc, log, False)
++assert "may have started" in output, output
++assert_recovery("rolled-back", (1, 0), original)
++
++# A target that never answers a status poll again is not progress: the
++# controller must stop observing at the gap bound, confirm nothing, and leave
++# recovery to the armed watchdog. The fault latches on the first post-switch
++# observation; every later poll fails immediately instead of blocking on a
++# phase that has already passed.
++begin_fault("status-persistent")
++proc, log = start_cli("apply", str(plan_file))
++output = finish(proc, log, False)
++assert "Lost observation" in output, output
++assert "for 90s" in output, output
++assert "could not be observed" in output, output
++machine.succeed("test -e /run/devenv-test-status-fault")
++assert machine.succeed("ca
+```
+
+**File**: `tests/machines-transactional/.test.sh` (modified, +216/-6)
+```diff
+@@ -4,6 +4,9 @@ set -euo pipefail
+ mkdir -p mock-bin
+ export TRANSACTION_LOG="$PWD/commands.log"
+ export TRANSACTION_ID="$PWD/request-id"
++export TRANSACTION_STATUS_COUNT="$PWD/status-count"
++export TRANSACTION_AWAITING_COUNT="$PWD/awaiting-count"
++export TRANSACTION_HANG_PID="$PWD/hung-ssh.pid"
+ export REAL_NIX
+ REAL_NIX=$(command -v nix)
+ cat >mock-bin/ssh <<'EOF'
+@@ -23,17 +26,67 @@ request=" (start|rollback) '([A-Za-z0-9-]+)'"
+ if [[ "$remote" =~ $request ]]; then
+   printf '%s' "${BASH_REMATCH[2]}" >"$TRANSACTION_ID"
+   rm -f "$TRANSACTION_ID.confirmed"
++  rm -f "$TRANSACTION_AWAITING_COUNT"
++  : >"$TRANSACTION_STATUS_COUNT"
+   if [[ "${TRANSACTION_LOST:-}" == 1 ]]; then
+     exit 255
+   fi
+   printf '{}\n'
+ elif [[ "$remote" == *" confirm "* ]]; then
+-  [[ "$remote" == *"'$(cat "$TRANSACTION_ID")'"* ]]
++  [[ "$remote" == *"'"$(cat "$TRANSACTION_ID")"'"* ]]
++  # The executor persists `phase: succeeded` before it prints the reply, so a
++  # slow reply still carries the result.
++  sleep "${TRANSACTION_CONFIRM_DELAY_SECONDS:-0}"
+   touch "$TRANSACTION_ID.confirmed"
+   if [[ "${TRANSACTION_LOST_CONFIRM:-}" == 1 ]]; then exit 255; fi
+-  printf '{}\n'
++  printf '{"version":1,"id":"%s","phase":"succeeded"}\n' "$(cat "$TRANSACTION_ID")"
+ elif [[ "$remote" == *status* ]]; then
++  observations=0
++  if [[ -s "$TRANSACTION_STATUS_COUNT" ]]; then
++    observations=$(cat "$TRANSACTION_STATUS_COUNT")
++  fi
++  observations=$((observations + 1))
++  printf '%s' "$observations" >"$TRANSACTION_STATUS_COUNT"
++  sleep "${TRANSACTION_STATUS_DELAY_SECONDS:-0}"
++  # The target can also become unobservable once the confirmation landed.
++  if [[ "${TRANSACTION_STATUS_LOST_AFTER_CONFIRM:-}" == 1 && -e "$TRANSACTION_ID.confirmed" ]]; then
++    echo "status transport failure after confirmation" >&2
++    exit 255
++  fi
++  # A busy target drops status round trips and, while it cannot observe the
++  # activation unit, reports the transaction rather than its progress.
++  if ((observations <= ${TRANSACTION_STATUS_DROPS:-0})); then
++    echo "transient status transport failure" >&2
++    exit 255
++  fi
++  if ((observations <= ${TRANSACTION_UNKNOWN_STATUSES:-0})); then
++    printf '{"version":1,"id":"%s","outcome":"unknown","observationError":"cannot observe activation service"}\n' \
++      "$(cat "$TRANSACTION_ID")"
++    exit 0
++  fi
++  # A status round trip that hangs on the target keeps the local ssh blocked.
++  if ((observations <= ${TRANSACTION_STATUS_HANGS:-0})); then
++    printf '%s' "$$" >"$TRANSACTION_HANG_PID"
++    # exec keeps the recorded PID on the process that actually sleeps, so the
++    # controller abandoning the attempt kills the sleeper and nothing else.
++    exec sleep "${TRANSACTION_STATUS_HANG_SECONDS:-31}"
++  fi
++  # A real executor fault, distinct from a transport failure: it exits with a
++  # code OpenSSH never uses for a dropped connection.
++  if [[ -n "${TRANSACTION_STATUS_FAILURE_CODE:-}" ]]; then
++    echo "executor cannot read the transaction" >&2
++    exit "$TRANSACTION_STATUS_FAILURE_CODE"
++  fi
+   if [[ "${TRANSACTION_CONFIRM:-}" == 1 && ! -e "$TRANSACTION_ID.confirmed" ]]; then
++    awaiting=$(cat "$TRANSACTION_AWAITING_COUNT" 2>/dev/null || echo 0)
++    awaiting=$((awaiting + 1))
++    printf '%s' "$awaiting" >"$TRANSACTION_AWAITING_COUNT"
++    # An unconfirmed transaction is rolled back by the target-side watchdog.
++    if ((awaiting > ${TRANSACTION_UNCONFIRMED_ATTEMPTS:-1000000})); then
++      printf '{"version":1,"id":"%s","outcome":"rolled-back","error":"confirmation never arrived"}\n' \
++        "$(cat "$TRANSACTION_ID")"
++      exit 0
++    fi
+     printf '{"version":1,"id":"%s","outcome":"pending","phase":"awaiting-confirmation"}\n' "$(cat "$TRANSACTION_ID")"
+     exit 0
+   fi
+@@ -73,7 +126,8 @@ if grep -q '^copy ' "$TRANSACTION_LOG"; then
+   exit 1
+ fi
+ 
+-for outcome in failed unknown rolled-back rollback-failed; do
++# `unknown` is no longer a verdict; the bounded persistent case below covers it.
++for outcome in failed rolled-back rollback-failed; do
+   if TRANSACTION_OUTCOME="$outcome" devenv machines deploy server --yes >"$outcome.log" 2>&1; then
+     echo "transaction with $outcome outcome reported success"
+     exit 1
+@@ -87,11 +141,167 @@ if TRANSACTION_LOST=1 devenv machines deploy server --yes >lost.log 2>&1; then
+ fi
+ grep -q 'may have started' lost.log
+ 
+-if TRANSACTION_CONFIRM=1 TRANSACTION_LOST_CONFIRM=1 devenv machines deploy server --yes >lost-confirm.log 2>&1; then
+-  echo "lost confirmation response reported success"
++# A lost confirmation reply is reconciled with the target's own record: the
++# executor persists `phase: succeeded` before replying, so a status read is the
++# verdict.
++if ! TRANSACTION_CONFIRM=1 TRANSACTION_LOST_CONFIRM=1 \
++  devenv machines deploy server --yes >lost-confirm.log 2>&1; then
++  cat lost-confirm.log
++  echo "a confirmation whose reply was lost aborted a successful deployment"
++  exit 1
++fi
++grep -q ' confirm ' "$TRANSACTION_LOG"
++
++# An unanswered confir
+```
+
+---
+
+### Incident Patch 2: `e874a148` (2026-11-26)
+**Commit Message**: fix(ci): repair integration tests and examples (#3406)
+
+Update the OpenCode, PHP, process attach, Postgres, and SSH deployment fixtures. Keep Varnish, the OpenTelemetry Collector, and the Pkl tools working with rolling Nixpkgs. Manage RabbitMQ's EPMD alongside the service and verify that its listener closes after shutdown.
+
+**File**: `docs/src/content/docs/services/varnish.md` (modified, +2/-5)
+```diff
+@@ -44,7 +44,7 @@ true
+ 
+ 
+ 
+-Which Varnish package to use.
++Which Varnish or Vinyl Cache package to use.
+ 
+ 
+ 
+@@ -54,10 +54,7 @@ package
+ 
+ 
+ *Default:*
+-
+-```nix
+-pkgs.varnish
+-```
++` pkgs.varnish ` when available, otherwise ` pkgs.vinyl-cache `
+ 
+ *Declared by:*
+  - [https://github.com/cachix/devenv/blob/main/src/modules/services/varnish.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/varnish.nix)
+```
+
+**File**: `examples/rabbitmq/devenv.nix` (modified, +3/-0)
+```diff
+@@ -1,6 +1,9 @@
+ { pkgs, lib, ... }:
+ 
+ {
++  # Keep the example clear of the standard EPMD ports on shared runners.
++  processes.rabbitmq.ports.epmd.allocate = 24369;
++
+   services.rabbitmq = {
+     enable = true;
+     managementPlugin = {
+```
+
+**File**: `examples/supported-languages/.patch.sh` (modified, +14/-2)
+```diff
+@@ -1,5 +1,10 @@
+-cat >devenv.local.nix <<EOF
+-{ pkgs, lib, ... }: {
++cat >devenv.local.nix <<'EOF'
++{ pkgs, lib, inputs, ... }:
++let
++  compatiblePkl = inputs.pkl-nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
++  needsOlderGradle = lib.versions.majorMinor pkgs.gradle_9.version == "9.9";
++in
++{
+   # ARM is not supported.
+   languages.unison.enable = lib.mkForce (!(pkgs.stdenv.hostPlatform.isLinux && pkgs.stdenv.hostPlatform.isAarch64));
+   languages.standardml.enable = lib.mkForce (!pkgs.stdenv.hostPlatform.isAarch64);
+@@ -14,5 +19,12 @@ cat >devenv.local.nix <<EOF
+   languages.swift.enable = lib.mkForce pkgs.stdenv.hostPlatform.isDarwin;
+   # lobster is marked broken on macOS
+   languages.lobster.enable = lib.mkForce (!pkgs.stdenv.hostPlatform.isDarwin);
++  # These Pkl releases lock the Kotlin DSL plugin bundled with Gradle 9.8.
++  languages.pkl.package = lib.mkIf (
++    needsOlderGradle && pkgs.pkl.version == "0.32.1"
++  ) compatiblePkl.pkl;
++  languages.pkl.lsp.package = lib.mkIf (
++    needsOlderGradle && pkgs.pkl-lsp.version == "0.8.0"
++  ) compatiblePkl.pkl-lsp;
+ }
+ EOF
+```
+
+**File**: `examples/supported-languages/devenv.yaml` (modified, +3/-1)
+```diff
+@@ -5,4 +5,6 @@ inputs:
+     url: github:thomashoneyman/purescript-overlay
+     inputs:
+       nixpkgs:
+-        follows: nixpkgs
+\ No newline at end of file
++        follows: nixpkgs
++  pkl-nixpkgs:
++    url: github:cachix/devenv-nixpkgs/d97234e58d4e90e3bf77c082fc3b546e51200938
+```
+
+**File**: `examples/varnish/.test.sh` (modified, +1/-0)
+```diff
+@@ -2,6 +2,7 @@
+ set -ex
+ 
+ wait_for_port $VARNISH_PORT
++varnishadm ping
+ 
+ caddy=$(curl http://localhost:8001)
+ varnish=$(curl http://localhost:$VARNISH_PORT)
+```
+
+**File**: `examples/varnish/devenv.nix` (modified, +1/-2)
+```diff
+@@ -1,8 +1,7 @@
+-{ pkgs, ... }:
++{ ... }:
+ {
+   services.varnish = {
+     enable = true;
+-    package = pkgs.varnish;
+     vcl = ''
+       vcl 4.0;
+ 
+```
+
+**File**: `src/modules/services/opentelemetry-collector.nix` (modified, +17/-1)
+```diff
+@@ -4,6 +4,22 @@ let
+   cfg = config.services.opentelemetry-collector;
+   types = lib.types;
+ 
++  # This release depends on cockroachdb/swiss, which uses Go runtime internals
++  # and does not build with Go 1.27. Keep the Nixpkgs package on other releases.
++  defaultPackage =
++    if
++      pkgs.opentelemetry-collector-contrib.version == "0.155.0"
++      && pkgs ? buildGo126Module
++      && pkgs ? opentelemetry-collector-releases
++      && pkgs.opentelemetry-collector-releases ? override
++      && lib.versions.majorMinor pkgs.go.version == "1.27"
++    then
++      (pkgs.opentelemetry-collector-releases.override {
++        buildGoModule = pkgs.buildGo126Module;
++      }).otelcol-contrib
++    else
++      pkgs.opentelemetry-collector-contrib;
++
+   settingsFormat = pkgs.formats.yaml { };
+ 
+   defaultSettings = {
+@@ -142,7 +158,7 @@ in
+     package = lib.mkOption {
+       type = types.package;
+       description = "The OpenTelemetry Collector package to use";
+-      default = pkgs.opentelemetry-collector-contrib;
++      default = defaultPackage;
+       defaultText = lib.literalExpression "pkgs.opentelemetry-collector-contrib";
      };
  
 ```
 
-**File**: `tests/php-extensions-rebuilt/.test.sh` (added, +7/-0)
+**File**: `src/modules/services/rabbitmq.nix` (modified, +55/-3)
 ```diff
-@@ -0,0 +1,7 @@
-+set -e
+@@ -14,6 +14,11 @@ let
+   allocatedManagementPort = config.processes.rabbitmq.ports.management.value;
+   allocatedDistributionPort = config.processes.rabbitmq.ports.distribution.value;
+   allocatedEpmdPort = config.processes.rabbitmq.ports.epmd.value;
++  # Nixpkgs builds RabbitMQ against Erlang. Reuse that runtime when the package
++  # exposes it so the service does not pull in a second Erlang installation.
++  erlang = lib.findFirst (input: (input.pname or null) == "erlang")
++    pkgs.beamPackages.erlang
++    (cfg.package.buildInputs or [ ]);
+ 
+   config_file_content = lib.generators.toKeyValue { } cfg.configItems;
+   config_file = pkgs.writeText "rabbitmq.conf" config_file_content;
+@@ -161,6 +166,16 @@ in
+             when running multiple environments.
+           '';
+         }
++        {
++          date = "2026-11-25";
++          title = "RabbitMQ releases its EPMD port on shutdown";
++          when = cfg.enable;
++          description = ''
++            devenv now starts the Erlang Port Mapper Daemon alongside RabbitMQ
++            and stops it with the service. Repeated starts can reuse the port
++            after shutdown, including in strict port mode.
++          '';
++        }
+       ];
+     }
+     (mkIf cfg.enable {
+@@ -195,14 +210,51 @@ in
+         ports.main.allocate = basePort;
+         ports.management.allocate = baseManagementPort;
+         ports.distribution.allocate = basePort + 20000;
+-        ports.epmd.allocate = 4369;
+-        exec = "exec ${cfg.package}/bin/rabbitmq-server";
++        ports.epmd.allocate = mkDefault 4369;
++        exec = ''
++          epmd=${lib.getExe' erlang "epmd"}
++          "$epmd" &
++          epmd_pid=$!
 +
-+# The shell's PHP loads the extension.
-+php -r 'exit(extension_loaded("shmop") ? 0 : 1);'
++          cleanup() {
++            if [ -n "''${server_pid:-}" ]; then
++              kill "$server_pid" 2>/dev/null || true
++              wait "$server_pid" 2>/dev/null || true
++            fi
++            kill "$epmd_pid" 2>/dev/null || true
++            wait "$epmd_pid" 2>/dev/null || true
++          }
++          trap cleanup EXIT
++          trap 'exit 130' INT
++          trap 'exit 143' TERM
 +
-+# A rebuilt variant of the same package is thread-safe and loads its own build of the extension.
-+"$REBUILT_PHP" -r 'if (!PHP_ZTS) { fwrite(STDERR, "not thread-safe\n"); exit(1); } exit(extension_loaded("shmop") ? 0 : 1);'
++          # Start EPMD in this process group so the process manager owns both
++          # children. Erlang would otherwise start a detached daemon.
++          deadline=$((SECONDS + 10))
++          until "$epmd" -names >/dev/null 2>&1; do
++            if [ "$SECONDS" -ge "$deadline" ] || ! kill -0 "$epmd_pid" 2>/dev/null; then
++              echo "EPMD did not start on port $ERL_EPMD_PORT" >&2
++              exit 1
++            fi
++            sleep 0.1
++          done
++
++          RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="''${RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS:-} -start_epmd false" \
++            ${cfg.package}/bin/rabbitmq-server &
++          server_pid=$!
++          status=0
++          wait "$server_pid" || status=$?
++          unset server_pid
++          exit "$status"
++        '';
+ 
+         ready = {
+           # `check_running` succeeds only after the `rabbit` Erlang application
+           # has fully started, which catches plugin boot failures that `ping`
+           # (TCP/Erlang VM only) silently ignores.
+-          exec = "${cfg.package}/bin/rabbitmq-diagnostics -q check_running";
++          exec = ''
++            ERL_FLAGS="''${ERL_FLAGS:-} -start_epmd false" ${cfg.package}/bin/rabbitmq-diagnostics -q check_running
++          '';
+           initial_delay = 10;
+           period = 3;
+           probe_timeout = 5;
 ```
 
-**File**: `tests/php-extensions-rebuilt/devenv.nix` (added, +19/-0)
+---
+
+### Incident Patch 3: `2dee64c2` (2026-11-25)
+**Commit Message**: fix(shell): keep FSEvents running after dropped events (#3404)
+
+Fixes #3403.
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,19 @@
-+{ pkgs, config, lib, ... }:
-+
-+let
-+  # languages.php.package rebuilt as another variant: the thread-safe PHP with the embed SAPI that
-+  # nixpkgs' FrankenPHP builds from it (`passthru.php`; FrankenPHP itself is not built). Nix runs
-+  # the package's extensions function again for the new PHP, so languages.php.extensions have to
-+  # come from its `all` argument: extensions of the original package are built for the original
-+  # PHP, which the rebuilt one cannot load.
-+  rebuilt = (pkgs.frankenphp.override { php = config.languages.php.package; }).php;
-+in
-+{
-+  languages.php = {
-+    enable = true;
-+    # Not enabled by default, so it comes from languages.php.extensions.
-+    extensions = [ "shmop" ];
-+  };
-+
-+  env.REBUILT_PHP = lib.getExe rebuilt;
+@@ -13,6 +13,7 @@
+ 
+ ### Bug Fixes
+ 
++- On macOS, `devenv shell` rescans watched files after FSEvents drops notifications without restarting the event stream ([#3403](https://github.com/cachix/devenv/issues/3403)).
+ - Fixed a two-second TUI startup delay on terminals that do not answer keyboard capability queries, including during direnv shell activation. Interactive progress remains available for `direnv-export` and `print-dev-env` ([#3169](https://github.com/cachix/devenv/issues/3169)).
+ - Foreground `devenv up` now publishes its manager before service readiness, so other `devenv up` calls can detect it during startup. Failed publication cancels setup tasks before cleaning up.
+ - Foreground and detached native process startup now share a lock, preventing simultaneous cold starts from overwriting each other's manager socket and PID file. Waiting for the lock can be cancelled, and competing callers preserve the winning manager's proxy routes.
+```
+
+**File**: `devenv-event-sources/src/fs.rs` (modified, +152/-44)
+```diff
+@@ -7,9 +7,9 @@ use std::time::{Duration, Instant};
+ use tokio::sync::{Mutex as AsyncMutex, mpsc, watch};
+ use tokio::task::JoinHandle;
+ use tracing::{trace, warn};
+-use watchexec::{Config, WatchedPath};
++use watchexec::{Config, WatchedPath, filter::Filterer};
+ use watchexec_events::{
+-    Tag,
++    Event, Priority, Tag,
+     filekind::{FileEventKind, ModifyKind},
+ };
+ use watchexec_filterer_globset::GlobsetFilterer;
+@@ -1140,8 +1140,6 @@ impl FileWatcher {
+         let event_registrations = registrations;
+         let event_handle = handle.clone();
+         let filter_task = tokio::spawn(async move {
+-            use watchexec::filter::Filterer;
+-
+             let mut batch = Vec::new();
+             let mut raw_event_paths = HashMap::new();
+             let mut event_paths = HashMap::new();
+@@ -1176,30 +1174,8 @@ impl FileWatcher {
+                     }
+                 }
+ 
+-                let mut rescan = false;
+-                for (event, priority) in &batch {
+-                    if !filterer.check_event(event, *priority).unwrap_or(true) {
+-                        continue;
+-                    }
+-                    if !is_restart_worthy_event(event) {
+-                        continue;
+-                    }
+-                    let may_invalidate_watch = event_may_invalidate_watch(event);
+-                    let mut saw_path = false;
+-                    for (path, _) in event.paths() {
+-                        saw_path = true;
+-                        raw_event_paths
+-                            .entry(path.to_path_buf())
+-                            .and_modify(|invalidate| *invalidate |= may_invalidate_watch)
+-                            .or_insert(may_invalidate_watch);
+-                    }
+-                    if !saw_path {
+-                        // inotify queue overflows are pathless. Preserve that
+-                        // information as one rescan instead of enqueueing every
+-                        // watched path separately.
+-                        rescan = true;
+-                    }
+-                }
++                let rescan_mode = collect_batch_paths(&batch, &filterer, &mut raw_event_paths);
++                let rescan = rescan_mode != RescanMode::None;
+ 
+                 // Native backends often emit several event kinds for the same
+                 // path. Deduplicate before the comparatively expensive
+@@ -1215,21 +1191,21 @@ impl FileWatcher {
+ 
+                 let (paths, refresh_targets) = {
+                     let state = event_registrations.lock().unwrap();
+-                    if !rescan {
+-                        for (path, may_invalidate_watch) in &event_paths {
+-                            event_affected.clear();
+-                            state.affected_targets(path, &mut event_affected);
+-                            state.targets_needing_refresh(
+-                                &event_affected,
+-                                *may_invalidate_watch,
+-                                &mut refresh,
+-                            );
++                    for (path, may_invalidate_watch) in &event_paths {
++                        event_affected.clear();
++                        state.affected_targets(path, &mut event_affected);
++                        state.targets_needing_refresh(
++                            &event_affected,
++                            *may_invalidate_watch,
++                            &mut refresh,
++                        );
++                        if !rescan {
+                             affected.extend(event_affected.iter().copied());
+-                            if *may_invalidate_watch
+-                                && let Some(anchor) = state.invalidated_anchor(path)
+-                            {
+-                                invalidated.insert(anchor);
+-                            }
++                        }
++                        if *may_invalidate_watch
++                            && let Some(anchor) = state.invalidated_anchor(path)
++                        {
++                            invalidated.insert(anchor);
+                         }
+                     }
+                     (
+@@ -1238,7 +1214,7 @@ impl FileWatcher {
+                     )
+                 };
+ 
+-                if rescan {
++                if rescan_mode == RescanMode::RewatchAll {
+                     event_handle.rewatch_all().await;
+                 } else {
+                     event_handle.refresh_logical_targets(refresh_targets).await;
+@@ -1329,7 +1305,60 @@ impl FileWatcher {
+     }
+ }
+ 
+-fn is_restart_worthy_event(event: &watchexec_events::Event) -> bool {
++#[derive(Debug, PartialEq, Eq)]
++enum RescanMode {
++    None,
++    CheckPaths,
++    RewatchAll,
 +}
++
++fn collect_batch_paths(
++    batch: &[(Event, Priority)],
++    filterer: &GlobsetFilterer,
++    raw_event_paths: &mut HashMap<PathBuf, bool>,
++) -> RescanMode {
++    let mut rescan = RescanMode::None;
++    for (event, priority) in batch {
++        // Watchexec forwards notify's
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3406** (2026-11-26): Fix integration tests and examples on rolling Nixpkgs (@domenkozar)
+- **PR #3404** (2026-11-25): fix(shell): keep FSEvents running after dropped events (@domenkozar)
+- **PR #3402** (2026-11-25): feat(coffee): CoffeeScript support (@givikuna)
+- **PR #3401** (2026-11-25): fix(machines): tolerate brief transaction observation gaps (@sylvesterroos)
 - **PR #3400** (2026-11-24): fix(php): take languages.php.extensions from the PHP being built (@sagikazarmark)
 - **PR #3399** (2026-11-24): chore(deps): bump idna from 3.11 to 3.15 in /tests/python-uv-sync/directory (@dependabot[bot])
-- **PR #3397** (2026-11-24): chore(deps): bump rmcp from 2.0.0 to 2.1.0 (@dependabot[bot])
-- **PR #3391** (2026-11-24): chore(deps): bump cachix/install-nix-action from 31 to 32 (@dependabot[bot])
-- **PR #3389** (2026-11-23): machines: accept existing configurations (@vimjoyer)
-- **PR #3382** (2026-11-21): feat(groovy): adding npm-groovy-lint and fixing npm build error (@givikuna)
 
 ---
 
@@ -1801,31 +2555,48 @@ does not change.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. php): take languages.php.extensions from the PHP being built
+## X. machines): tolerate brief transaction observation gaps
 
 **RULE**:
-When implementing operations in `src/modules/languages/php.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `devenv/src/devenv/machines.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `417d6426`: php): take languages.php.extensions from the PHP being built. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3020e473`: machines): tolerate brief transaction observation gaps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/modules/languages/php.nix`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `devenv/src/devenv/machines.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      extensions = { all, enabled }: with all; (builtins.filter filterDefaultExtensions (enabled ++ attrValues (getAttrs cfg.extensions all)));
+/// Overall bound on watching one target-side transaction.
+const TRANSACTION_OBSERVATION_DEADLINE: std::time::Duration = std::time::Duration::from_secs(900);
+/// How often the controller re-reads the target's view of the transaction.
+const TRANSACTION_OBSERVATION_INTERVAL: std::time::Duration = std::time::Duration::from_secs(2);
+/// Bound on one captured request to a machine over SSH.
+const MACHINE_SSH_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
+/// How long the controller keeps watching this transaction without a positive
+/// answer about its own ID. The executor answers `unknown` while it cannot see
+/// the activation unit (start, switch, health check, reboot), and a status
+/// round trip can fail while the target is busy; both are gaps in observation,
+/// not decisions. The window leaves room for several full SSH attempts; past
+/// it the controller stops guessing.
+const TRANSACTION_OBSERVATION_GAP: std::time::Duration = std::time::Duration::from_secs(90);
+
+/// What one validated status document says about the transaction.
+///
+/// Only terminal outcomes are decisions about the deployment. `unknown` means
+/// the target answered for this transaction but cou
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      extensions = { all, enabled }: with all; (builtins.filter filterDefaultExtensions (enabled ++ attrValues (getAttrs cfg.extensions package.extensions)));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `417d6426` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3020e473` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

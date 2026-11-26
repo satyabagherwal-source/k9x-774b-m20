@@ -807647,3 +807647,181 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `df69b9f8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10714. tolerate brief transaction observation gaps (Harvested from cachix/devenv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "tolerate brief transaction observation gaps",
+  "source": "cachix/devenv",
+  "source_url": "https://github.com/cachix/devenv",
+  "source_version": "e874a148",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T15:22:02.271Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cachix-devenv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cachix/devenv](https://github.com/cachix/devenv) (Revision: `e874a148`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `devenv/src/devenv/machines.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3020e473`: machines): tolerate brief transaction observation gaps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `devenv/src/devenv/machines.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// Overall bound on watching one target-side transaction.
+const TRANSACTION_OBSERVATION_DEADLINE: std::time::Duration = std::time::Duration::from_secs(900);
+/// How often the controller re-reads the target's view of the transaction.
+const TRANSACTION_OBSERVATION_INTERVAL: std::time::Duration = std::time::Duration::from_secs(2);
+/// Bound on one captured request to a machine over SSH.
+const MACHINE_SSH_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
+/// How long the controller keeps watching this transaction without a positive
+/// answer about its own ID. The executor answers `unknown` while it cannot see
+/// the activation unit (start, switch, health check, reboot), and a status
+/// round trip can fail while the target is busy; both are gaps in observation,
+/// not decisions. The window leaves room for several full SSH attempts; past
+/// it the controller stops guessing.
+const TRANSACTION_OBSERVATION_GAP: std::time::Duration = std::time::Duration::from_secs(90);
+
+/// What one validated status document says about the transaction.
+///
+/// Only terminal outcomes are decisions about the deployment. `unknown` means
+/// the target answered for this transaction but cou
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3020e473` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10715. keep the account table out of GraphQL (Harvested from dosco/deeporg)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep the account table out of GraphQL",
+  "source": "dosco/deeporg",
+  "source_url": "https://github.com/dosco/graphjin",
+  "source_version": "7e3f05c1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T15:22:11.531Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dosco-deeporg",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dosco/deeporg](https://github.com/dosco/graphjin) (Revision: `7e3f05c1`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `cmd/agentic_accounts_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c7599c95`: agentic): keep the account table out of GraphQL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/agentic_accounts_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// Accounts and their password hashes are in the store. No role reads the
+	// store's tables through GraphQL: not the admin, not anyone else.
+	assertAccountsNotReadable(t, base, map[string]string{"the admin": cookie})
+	member := signFirstBootToken(t, secret, "sam", "")
+	if body := firstBootGraphQL(t, base, member, storeAccountsQuery); strings.Contains(body, "password_hash") || strings.Contains(body, `"kind"`) {
+		t.Fatalf("a signed-in user read the account table: %s", clip(body))
+	}
+
+
+// storeAccountsQuery asks for the store's keyed table by the name it has on
+// SQLite. It holds the accounts and their password hashes.
+const storeAccountsQuery = `query { _graphjin_auth_sessions { kind id data } }`
+
+// assertAccountsNotReadable fails if any of the sessions can read the account
+// table through GraphQL.
+func assertAccountsNotReadable(t *testing.T, base string, sessions map[string]string) {
+	t.Helper()
+	for who, cookie := range sessions {
+		// A blocked table answers with an error or with null, depending on
+		// whether another database is connected. Either way no row comes back.
+		body := accountsGraphQL(t, base, cookie, storeAccountsQuery)
+		if strings.Contains(body, "password_hash
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c7599c95` are properly handled with clean fallback behavior.

@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "803e258110bde37597b5e80a6d41bee8447fe5053e9f6ff52cfb2587ad9ae655",
-    "lastHarvestedAt": "2026-11-22T22:27:59.547Z",
+    "contentHash": "1216e9f9e75e7296958b32b95904148f8007537ccc24f2a36ca2dd6f70523e3a",
+    "lastHarvestedAt": "2026-11-26T15:22:01.035Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "221e8c7e",
+    "sourceVersion": "e874a148",
     "license": "Apache-2.0",
-    "contentHash": "1d4e0ac3a9d9d17b75cc5b6660e5d8660778806c40787f8b741c5ca3e3f1df9a",
-    "lastHarvestedAt": "2026-11-25T07:12:58.014Z",
+    "contentHash": "14edecd937e4ff4a51967dd0974245d3a1dceacc7e5e2a3bc2d6935675072092",
+    "lastHarvestedAt": "2026-11-26T15:22:03.168Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -3693,10 +3693,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "28191b07",
+    "sourceVersion": "7e3f05c1",
     "license": "Apache-2.0",
-    "contentHash": "d96f520f2e1f433972e6a654286555724f2690a19e18eb00addb5b67d52dd713",
-    "lastHarvestedAt": "2026-11-25T15:07:21.005Z",
+    "contentHash": "22b110b1b32592e8ce2fe4d24b8bb21448a693f1b5c4e82953fc8bf4c4d4e13c",
+    "lastHarvestedAt": "2026-11-26T15:22:12.299Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "gravitl-netmaker": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T15:12:43.034Z",
+  "last_updated": "2026-11-26T15:22:20.097Z",
   "directives": [
     {
       "id": "CD-001",
@@ -65633,6 +65633,59 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B12B1B-add-a-foreign-function-memory-panama-bas.md",
       "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-AT8Y",
+      "directive_title": "tolerate brief transaction observation gaps",
+      "source_repo": "cachix/devenv",
+      "source_commit": "e874a148",
+      "staged_file": "11_INBOX/candidate-directives/CD-AT8Y-tolerate-brief-transaction-observation-gaps.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-B0B3",
+      "directive_title": "keep the account table out of GraphQL",
+      "source_repo": "dosco/deeporg",
+      "source_commit": "7e3f05c1",
+      "staged_file": "11_INBOX/candidate-directives/CD-B0B3-keep-the-account-table-out-of-graphql.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-B3YV",
+      "directive_title": "machines): tolerate brief transaction observation gaps",
+      "source_repo": "cachix-devenv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B3YV-machines-tolerate-brief-transaction-observation-gaps.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-6988B8",
+      "directive_title": "Forensic Learning Record (Deep Inspection): orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6988B8-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-B60R",
+      "directive_title": "agentic): keep the account table out of GraphQL",
+      "source_repo": "dosco-graphjin-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B60R-agentic-keep-the-account-table-out-of-graphql.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
     }
   ]
 }

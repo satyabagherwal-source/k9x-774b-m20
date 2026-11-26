@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T15:12:43.654Z",
+  "last_updated": "2026-11-26T15:22:20.672Z",
   "total_verified_learnings": 9129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25997,
+  "total_items": 26003,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114778,9 +114778,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF Core Invariants",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "e57c0bd003d4d5024e50d5657d5da5bd9b0ebbfde6d69940f4a4e3b9e819ede8",
+      "content_hash": "fd1407282f18af2d774882d36f269c81bf2d7b6b0d5ef026fab4364b3ac24cdb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:27:59.758Z"
+      "persisted_at": "2026-11-26T15:22:01.377Z"
     },
     "candidate_directive-deps-bump-rustix-to-1-1-6-for-rustsec-2026-0486": {
       "item_id": "candidate_directive-deps-bump-rustix-to-1-1-6-for-rustsec-2026-0486",
@@ -114886,9 +114886,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c45b273cb422d86ff604009f2f9e5f14817961d4378abdcb136c0916fd74130",
+      "content_hash": "9a1f066278b9cc360b305ae5ef1322184fe382b17028441552062512386cd551",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:28:20.777Z"
+      "persisted_at": "2026-11-26T15:22:18.585Z"
     },
     "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
@@ -232697,9 +232697,9 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "a84346f01c097799ef9afc9de1130f92ecad513f990436eb7e98b19856180c2b",
+      "content_hash": "bdc3337c24b2cbad53980e0bf03a0f76592d20076ae73b20ccdf06ae459e72ea",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T15:07:26.093Z"
+      "persisted_at": "2026-11-26T15:22:20.371Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings",
@@ -232709,9 +232709,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-graphjin-learnings",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8d0d82c341ea85515e2be7674ac3eb649c2a65aba436f091c8f6f2ea50801b2",
+      "content_hash": "aeb68eaf8dc0cc9a8f8f1dd9272c97ad759d5e87ad12338ffb3b5c17991ac6f1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:07:26.344Z"
+      "persisted_at": "2026-11-26T15:22:20.672Z"
     },
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
@@ -242925,8 +242925,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "221e8c7e",
-      "content_hash": "1d4e0ac3a9d9d17b75cc5b6660e5d8660778806c40787f8b741c5ca3e3f1df9a",
+      "source_version": "e874a148",
+      "content_hash": "14edecd937e4ff4a51967dd0974245d3a1dceacc7e5e2a3bc2d6935675072092",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -242954,6 +242954,11 @@
           "number": 10478,
           "title": "take languages.php.extensions from the PHP being built",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10714,
+          "title": "tolerate brief transaction observation gaps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242961,7 +242966,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T07:12:57.796Z",
+      "verified_at": "2026-11-26T15:22:02.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243003,10 +243008,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
       "title": "Architecture Intelligence: cachix/devenv Core Invariants",
       "repository": "cachix/devenv",
-      "source_version": "221e8c7e",
-      "content_hash": "2a35f85cd2203a6dd441534b904314ba1cedd5031ace006c6c9efd79cdee704f",
+      "source_version": "e874a148",
+      "content_hash": "d614a1b23b0319090cc42b184a0b91863523689d68f6f885e614833ffc853109",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T07:12:58.437Z"
+      "persisted_at": "2026-11-26T15:22:03.819Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv",
@@ -243015,10 +243020,10 @@
       "relative_path": "08_VERIFICATION/cachix-devenv-verification-protocol-empirical-defect-shield-for-cachix-devenv.md",
       "title": "Verification Protocol: Empirical Defect Shield for cachix/devenv",
       "repository": "cachix/devenv",
-      "source_version": "221e8c7e",
-      "content_hash": "a2940a5f8e4517ce345e1cd13524b110f6ffabaf0e7af60e1ccd98d5c634e346",
+      "source_version": "e874a148",
+      "content_hash": "cf89727b4c9e3e344421593293eb209f6e8853184fa98501cf039bc94e87c2ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:12:58.616Z"
+      "persisted_at": "2026-11-26T15:22:04.095Z"
     },
     "learn-github-necolas-react-native-web": {
       "learning_id": "learn-github-necolas-react-native-web",
@@ -243254,9 +243259,9 @@
       "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "5452f50ae0595aec7be08e8d5f4678be9b65c60a85f3a6891113eca0db7eb7c9",
+      "content_hash": "478f1ccffb8ad64685f8f260a43b3f4fabfc78eea4b15aaa1c2d18b5148b9b4f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T07:13:10.232Z"
+      "persisted_at": "2026-11-26T15:22:17.708Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings",
@@ -243266,9 +243271,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cachix-devenv-learnings",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "efb955b2ba5af5b75200a336c5e07ad98ed102a36ebfa34c06d937cebcfea628",
+      "content_hash": "d0917b010a2d2a2e61bf70ecc8366c61243b3e0d612b99253eff5ac66a42dc01",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:13:10.428Z"
+      "persisted_at": "2026-11-26T15:22:17.994Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
@@ -289230,7 +289235,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "803e258110bde37597b5e80a6d41bee8447fe5053e9f6ff52cfb2587ad9ae655",
+      "content_hash": "1216e9f9e75e7296958b32b95904148f8007537ccc24f2a36ca2dd6f70523e3a",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -289239,7 +289244,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T22:27:59.310Z",
+      "verified_at": "2026-11-26T15:22:00.669Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -314433,13 +314438,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-deeporg",
+      "slug": "dosco-graphjin",
       "platform": "github",
-      "source_url": "https://github.com/dosco/deeporg",
-      "source_version": "6acc0f9b",
-      "content_hash": "8343d23013dc1bc103f370a5cf82f27f86d7abacb016c3aeef52ba29a3a81013",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "7e3f05c1",
+      "content_hash": "22b110b1b32592e8ce2fe4d24b8bb21448a693f1b5c4e82953fc8bf4c4d4e13c",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -314470,6 +314475,11 @@
           "number": 10547,
           "title": "make a freshly generated agentic config work",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10715,
+          "title": "keep the account table out of GraphQL",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -314477,7 +314487,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T23:32:33.538Z",
+      "verified_at": "2026-11-26T15:22:11.952Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -314502,13 +314512,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "6acc0f9b",
-      "content_hash": "0fb655c9c29e7e6b0107f454a691d28cf4571aa37f607951f7b92187d98ea40b",
+      "source_version": "7e3f05c1",
+      "content_hash": "1b033a507b94ac87d625eb216ffd9ac5d16a70a119c5978d79cf213f757fa530",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:32:34.418Z"
+      "persisted_at": "2026-11-26T15:22:13.241Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -322353,13 +322363,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
-      "source_version": "6acc0f9b",
-      "content_hash": "009415353e2f3d4241742fe514945561aa37091bf5325608c42a3f56518e3a54",
+      "source_version": "7e3f05c1",
+      "content_hash": "a47fb2d16d85642962b13da321ac97ed79cf4f6e4f3ba8044309e42c056a4c6a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T23:32:34.232Z"
+      "persisted_at": "2026-11-26T15:22:12.971Z"
     },
     "rule-9885": {
       "learning_id": "rule-9885",
@@ -356307,6 +356317,82 @@
       "content_hash": "37310ed351c1fa0627e9cd41fb110a02c8f6ab0ac233686af8abf02c8fef06a6",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T15:12:43.345Z"
+    },
+    "rule-10714": {
+      "learning_id": "rule-10714",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10714,
+      "title": "tolerate brief transaction observation gaps",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "e874a148",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T15:22:02.832Z"
+    },
+    "candidate_directive-tolerate-brief-transaction-observation-gaps": {
+      "item_id": "candidate_directive-tolerate-brief-transaction-observation-gaps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AT8Y-tolerate-brief-transaction-observation-gaps.md",
+      "title": "tolerate brief transaction observation gaps",
+      "repository": "cachix/devenv",
+      "source_version": "e874a148",
+      "content_hash": "088f5544e0080075c85c8acd1e8d966275f721220fbaf7c9ea1e3b49df378208",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T15:22:03.545Z"
+    },
+    "rule-10715": {
+      "learning_id": "rule-10715",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10715,
+      "title": "keep the account table out of GraphQL",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "7e3f05c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T15:22:11.952Z"
+    },
+    "candidate_directive-keep-the-account-table-out-of-graphql": {
+      "item_id": "candidate_directive-keep-the-account-table-out-of-graphql",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B0B3-keep-the-account-table-out-of-graphql.md",
+      "title": "keep the account table out of GraphQL",
+      "repository": "dosco/deeporg",
+      "source_version": "7e3f05c1",
+      "content_hash": "82ffa6d17a5c6d32b032cae2f4eb5efd027a0f06c0478f2c0dd6de37ba3603ac",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T15:22:12.694Z"
+    },
+    "candidate_directive-machines-tolerate-brief-transaction-observation-gaps": {
+      "item_id": "candidate_directive-machines-tolerate-brief-transaction-observation-gaps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B3YV-machines-tolerate-brief-transaction-observation-gaps.md",
+      "title": "machines): tolerate brief transaction observation gaps",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f0c32dec5c5633a7a7d3f672855211269d84b2f34488882358e00b161994a2d2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T15:22:17.438Z"
+    },
+    "candidate_directive-agentic-keep-the-account-table-out-of-graphql": {
+      "item_id": "candidate_directive-agentic-keep-the-account-table-out-of-graphql",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B60R-agentic-keep-the-account-table-out-of-graphql.md",
+      "title": "agentic): keep the account table out of GraphQL",
+      "repository": "dosco-graphjin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4a3d099f74732db3fbca24ca79d56e014d58e0495af572ae980e77f5be82b364",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T15:22:20.097Z"
     }
   },
   "ai-builder-brain": {

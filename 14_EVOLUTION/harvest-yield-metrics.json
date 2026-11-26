@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T15:11:55.184Z",
-  "total_cycles_completed": 12757,
-  "total_learnings_persisted": 12757,
-  "total_rules_promoted": 11615,
+  "last_updated": "2026-11-26T15:22:12.326Z",
+  "total_cycles_completed": 12760,
+  "total_learnings_persisted": 12760,
+  "total_rules_promoted": 11617,
   "history": [
-    {
-      "timestamp": "2026-11-26T04:04:58.426Z",
-      "repository": "Lakonik/pi-H3",
-      "learningId": "learn-huggingface-lakonik-pi-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T04:13:20.930Z",
-      "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
-      "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T04:13:24.152Z",
-      "repository": "apache/maka",
-      "learningId": "learn-github-apache-maka",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T04:13:36.142Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T15:11:55.184Z",
       "repository": "apache/pinot",
       "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:22:01.053Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:22:03.187Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:22:12.326Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

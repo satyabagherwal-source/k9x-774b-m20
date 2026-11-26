@@ -13442,3 +13442,6 @@
 | `CYCLE-20261126-XLRK` | `2026-11-26T15:11:47.312Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10712` | Yes (`38b07462...`) |
 | `CYCLE-20261126-XRTK` | `2026-11-26T15:11:55.160Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10713` | Yes (`113824aa...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T15:12:39.576Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-CC34C8D8` [Domain H] | Yes (`fe0a35e6...`) |
+| `CYCLE-20261126-ARB9` | `2026-11-26T15:22:01.029Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`1216e9f9...`) |
+| `CYCLE-20261126-ASYJ` | `2026-11-26T15:22:03.163Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10714` | Yes (`14edecd9...`) |
+| `CYCLE-20261126-B006` | `2026-11-26T15:22:12.294Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10715` | Yes (`22b110b1...`) |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T15:12:42.622Z",
+  "updated_at": "2026-11-26T15:22:19.744Z",
   "stats": {
-    "total_discovered": 9828,
-    "approved_pending_harvest": 9324,
+    "total_discovered": 9841,
+    "approved_pending_harvest": 9331,
     "harvested_count": 0,
-    "rejected_count": 504,
+    "rejected_count": 510,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9313,
+      "COMMUNITY_AND_EXPERT": 9326,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -212715,6 +212715,250 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
         "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-08CE88FB4692": {
+      "id": "SRC-08CE88FB4692",
+      "url": "https://github.com/cachix/devenv/blob/main/src/modules/services/varnish.nix",
+      "title": "https://github.com/cachix/devenv/blob/main/src/modules/services/varnish.nix",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:22:16.729Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-5970F6C6060F": {
+      "id": "SRC-5970F6C6060F",
+      "url": "http://localhost:8001/",
+      "title": "http://localhost:8001/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T15:22:16.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-814EEC9DF746": {
+      "id": "SRC-814EEC9DF746",
+      "url": "http://localhost:$VARNISH_PORT",
+      "title": "http://localhost:$VARNISH_PORT",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T15:22:16.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-F1B306796C3E": {
+      "id": "SRC-F1B306796C3E",
+      "url": "https://github.com/cachix/devenv/issues/3403",
+      "title": "https://github.com/cachix/devenv/issues/3403",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:22:16.984Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-ED1D50ACE952": {
+      "id": "SRC-ED1D50ACE952",
+      "url": "https://github.com/cachix/devenv/issues/3169",
+      "title": "https://github.com/cachix/devenv/issues/3169",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:22:17.067Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-A315AF5BC847": {
+      "id": "SRC-A315AF5BC847",
+      "url": "https://deeporg.io/start/quick-start",
+      "title": "https://deeporg.io/start/quick-start",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:22:19.011Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-22A2E1E1116E": {
+      "id": "SRC-22A2E1E1116E",
+      "url": "https://deeporg.io/start/demos",
+      "title": "https://deeporg.io/start/demos",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:22:19.096Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-C0EEEA72BEC8": {
+      "id": "SRC-C0EEEA72BEC8",
+      "url": "http://localhost:8083/agent",
+      "title": "http://localhost:8083/agent",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T15:22:19.191Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-00D161BC58BB": {
+      "id": "SRC-00D161BC58BB",
+      "url": "http://localhost:8083/",
+      "title": "http://localhost:8083/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T15:22:19.282Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-FF8EFFED7278": {
+      "id": "SRC-FF8EFFED7278",
+      "url": "http://127.0.0.1:8080/api/v1/mcp",
+      "title": "http://127.0.0.1:8080/api/v1/mcp",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T15:22:19.378Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-E7ED491EE03F": {
+      "id": "SRC-E7ED491EE03F",
+      "url": "https://deeporg.io/agentic/mcp",
+      "title": "https://deeporg.io/agentic/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:22:19.478Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-8EBC548A5946": {
+      "id": "SRC-8EBC548A5946",
+      "url": "https://deeporg.io/agentic/oauth",
+      "title": "https://deeporg.io/agentic/oauth",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:22:19.567Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-A2D7724F9EB1": {
+      "id": "SRC-A2D7724F9EB1",
+      "url": "http://localhost:8080/admin/runtime",
+      "title": "http://localhost:8080/admin/runtime",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T15:22:19.744Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
       }
     }
   }
