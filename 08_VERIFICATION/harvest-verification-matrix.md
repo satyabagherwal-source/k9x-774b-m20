@@ -13503,3 +13503,6 @@
 | `CYCLE-20261126-56FX` | `2026-11-26T18:05:38.397Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`6780c9dc...`) |
 | `CYCLE-20261126-5C1G` | `2026-11-26T18:05:45.652Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10746` | Yes (`be42e996...`) |
 | `CYCLE-20261126-5HQM` | `2026-11-26T18:05:53.038Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10747` | Yes (`0e56fd04...`) |
+| `CYCLE-20261126-GFR4` | `2026-11-26T18:14:23.680Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`16ffb404...`) |
+| `CYCLE-20261126-GIAF` | `2026-11-26T18:14:26.967Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10748` | Yes (`28b6ae4a...`) |
+| `CYCLE-20261126-GQRF` | `2026-11-26T18:14:37.947Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10749` | Yes (`ad5ea98e...`) |

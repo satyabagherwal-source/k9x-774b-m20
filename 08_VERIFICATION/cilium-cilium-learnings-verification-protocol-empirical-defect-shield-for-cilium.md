@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T00:18:10.489Z",
+  "timestamp": "2026-11-26T18:14:43.820Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cilium-cilium-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cilium-cilium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T00:18:10.489Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T18:14:43.820Z`  
 > **Learning ID**: `LEARN-EVO-cilium-cilium-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `f2e66637`  
+> **Source Version**: `b2d0110f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T00:18:03.709Z  
+> **Timestamp**: 2026-11-26T18:14:36.720Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T00:18:03.703Z  
+> **Harvest Timestamp**: 2026-11-26T18:14:36.715Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25913 stars
+- **Stars / Engagement**: 25919 stars
 
 ---
 
@@ -1284,14 +1284,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50268** (2026-11-25): **.github: don't use ubuntu-slim for labeling External Contributions**
-  *Symptoms*: This part needs to run a `docker pull`, which doesn't seem to work from the slim runner. See for instance https://github.com/cilium/cilium/actions/runs/45520933278/job/138892286504?pr=50263  Fixes: 1e538a99c38d (".github: Run labeler on ubuntu-slim")
+- **Issue #50280** (2026-11-26): **ci: Read the Hubble CLI job's kind config from KIND_CONFIG**
+  *Symptoms*: The Hubble CLI integration test has always declared kind_config at the workflow level, but passes ${{ env.KIND_CONFIG }} to helm/kind-action. The env context is case sensitive, so the expression expands to the empty string and kind creates its default single-node cluster with kindnet. Cilium installs on top of it and both IPAMs then hand out addresses from 10.244.0.0/24. kindnet wires hubble-relay sequentially before Cilium's CNI config exists, while Cilium picks its router IP at random among 254 addresses. In 1 run out of 254, cilium_host takes the relay's address and its local route shadows the pod's route, so the kubelet probes and DNS replies for the relay reach the host stack. The relay never connects to hubble-peer and `cilium status --wait` gives up after 5 minutes:    Deployment             hubble-relay             Desired: 1, Unavailable: 1/1   Errors:                hubble-relay       hubble-relay    1 pods of Deployment hubble-relay are not ready  This commit renames the key to KIND_CONFIG, the spelling the other kind workflows use. .github/kind-config.yaml then applies, so the cluster comes up without a CNI on the control-plane and worker it declares, and Cilium is the only IPAM on each node.  This PR was prepared with AIL:3. I personally checked the kind-action inputs in run 37774557276.  Fixes: bc294a83d5a1 ("Add hubble CLI integration tests") 
+
+- **Issue #50277** (2026-11-26): **DO NOT MERGE ci: use versioned Ubuntu 26 runners**
+  *Symptoms*: DO NOT MERGE THIS IS A TEST PR FOR https://github.com/cilium/cilium/pull/49623
   **Post-Mortem & Fix Analysis**:
   > /test
-
-- **Issue #50264** (2026-11-25): **[v1.18] proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x**
-  *Symptoms*: Relates: https://github.com/cilium/cilium/pull/50136 Relates: https://github.com/cilium/proxy/pull/2186  ```release-note proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x ``` 
-  **Post-Mortem & Fix Analysis**:
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1309,571 +1308,63 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5091870f` (2026-11-04)
-**Commit Message**: gha/eks: run the conformance suite on an IPv6-only cluster
+### Incident Patch 1: `043fd9e1` (2026-11-04)
+**Commit Message**: cilium-cli: Follow Cilium logs only with debug logging
 
-Add an ip-family knob to the EKS test matrix and wire it through the
-cluster/nodegroup setup so that one k8s version (1.34) runs the
-connectivity tests on an IPv6-only cluster:
+Without debug logging, the agents of an AWS-CNI job [1] would take 5 to
+11 hours to fill a 10 MiB log file, so following them only costs
+bandwidth. This commit only follows clusters whose cilium-config sets
+debug to true, which CI does by default.
 
-- k8s-versions: declare the optional ip-family field, and set it to
-  IPv6 for the 1.34 entry.
-- setup-eks-cluster: pass ipFamily to eksctl's kubernetesNetworkConfig,
-  and prefix the kubeconfig pool key with "ipv6-" so that IPv4 and IPv6
-  clusters of the same version/region/addons don't share a pool entry.
-  The same prefixing is mirrored in the cluster pool manager, which
-  computes the key independently.
-- setup-eks-nodegroup: grant the nodes ec2:AssignIpv6Addresses, which
-  they need to hand IPv6 addresses to pods.
-- conformance-eks: install Cilium with ipv4.enabled=false and
-  ipv6.enabled=true, look up the subnets' IPv6 CIDR, and pass the v6
-  external target flags to the connectivity test.
+This commit was prepared with AIL:3. I personally checked the kind runs
+with and without debug logging.
 
-CoreDNS forwards to /etc/resolv.conf, which is inherited from the host
-and only lists an IPv4 nameserver that an IPv6-only pod cannot reach.
-Override the pod's resolver to the IPv6 VPC resolver (fd00:ec2::253).
-
-Signed-off-by: Alex Melhem <[REDACTED_EMAI
-
-**File**: `.github/actions/cli-test-config/action.yaml` (modified, +13/-4)
-```diff
-@@ -77,13 +77,18 @@ runs:
-           "--code-owners=${CILIUM_CLI_CODE_OWNERS_PATHS}" \
-           "--exclude-code-owners=${CILIUM_CLI_EXCLUDE_OWNERS}" \
-           "--external-target=${{ inputs.external-target }}" \
--          "--external-cidr=${{ inputs.external-cidr }}" \
--          "--external-ip=${{ inputs.external-ip }}" \
--          "--external-other-ip=${{ inputs.external-other-ip }}" \
--          "--external-target-ipv6-capable=${{ inputs.external-target-ipv6-capable }}" \
-           "--hubble=${{ inputs.hubble }}" \
-         )
- 
-+        if [ -n "${{ inputs.external-cidr }}" ]; then
-+          CONNECTIVITY_TEST_DEFAULTS+=("--external-cidr=${{ inputs.external-cidr }}")
-+        fi
-+        if [ -n "${{ inputs.external-ip }}" ]; then
-+          CONNECTIVITY_TEST_DEFAULTS+=("--external-ip=${{ inputs.external-ip }}")
-+        fi
-+        if [ -n "${{ inputs.external-other-ip }}" ]; then
-+          CONNECTIVITY_TEST_DEFAULTS+=("--external-other-ip=${{ inputs.external-other-ip }}")
-+        fi
-         if [ -n "${{ inputs.external-cidrv6 }}" ]; then
-           CONNECTIVITY_TEST_DEFAULTS+=("--external-cidrv6=${{ inputs.external-cidrv6 }}")
-         fi
-@@ -108,6 +113,10 @@ runs:
-           CONNECTIVITY_TEST_DEFAULTS+=("--external-target-fake-dns")
-         fi
- 
-+        if [ "${{ inputs.external-target-ipv6-capable }}" == "true" ]; then
-+          CONNECTIVITY_TEST_DEFAULTS+=("--external-target-ipv6-capable")
-+        fi
-+
-         if [ "${{ inputs.include-unsafe-tests }}" == "true" ]; then
-           CONNECTIVITY_TEST_DEFAULTS+=("--include-unsafe-tests")
-         fi
-```
-
-**File**: `.github/actions/eks/k8s-versions-schema.yaml` (modified, +1/-0)
-```diff
-@@ -7,3 +7,4 @@ includeItem:
-   ipsec: bool(required=False)
-   kpr: bool(required=False)
-   aws-eni-pd: bool(required=False)
-+  ip-family: str(required=False)
-```
-
-**File**: `.github/actions/eks/k8s-versions.yaml` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@
- include:
-   - version: "1.34"
-     region: us-east-2
-+    ip-family: "IPv6"
-   - version: "1.35"
-     region: us-east-1
-     aws-eni-pd: true
-```
-
-**File**: `.github/actions/generic-external-targets/action.sh` (modified, +30/-5)
-```diff
-@@ -32,6 +32,29 @@ IPOTHERTARGET_RAW=$(kubectl get nodes -l cilium.io/no-schedule=true -o jsonpath=
- mapfile -d ' ' -t IPTARGET < <(printf '%s' "$IPTARGET_RAW")
- mapfile -d ' ' -t IPOTHERTARGET < <(printf '%s' "$IPOTHERTARGET_RAW")
- 
-+# Pick the first address of each family out of a node's InternalIPs, and store
-+# them in the ADDR_V4 / ADDR_V6 globals
-+split_families() {
-+	ADDR_V4=""
-+	ADDR_V6=""
-+	local addr
-+	for addr in "$@"; do
-+		if [[ "$addr" == *:* ]]; then
-+			[ -n "$ADDR_V6" ] || ADDR_V6="$addr"
-+		elif [ -n "$addr" ]; then
-+			[ -n "$ADDR_V4" ] || ADDR_V4="$addr"
-+		fi
-+	done
-+}
-+
-+split_families "${IPTARGET[@]}"
-+TARGET_V4="$ADDR_V4"
-+TARGET_V6="$ADDR_V6"
-+
-+split_families "${IPOTHERTARGET[@]}"
-+OTHERTARGET_V4="$ADDR_V4"
-+OTHERTARGET_V6="$ADDR_V6"
-+
- # Create a config file to tell openssl how to turn the signing request into a certificate
- # Make sure the key usage is such that we can use the cert for HTTPS traffic.
- # Also make sure both domain names are in the subjectAltName so the certificate works for
-@@ -79,11 +102,13 @@ kubectl -n external-other rollout status daemonset nginx --timeout 60s
- kubectl -n external wait --for=jsonpath='{.status.numberReady}=1' daemonset/nginx --timeout=60s
- kubectl -n external-other wait --for=jsonpath='{.status.numberReady}=1' daemonset/nginx --timeout=60s
- 
--echo "ipv4_external_target=${IPTARGET[0]}" >> $GITHUB_OUTPUT
--echo "ipv4_other_external_target=${IPOTHERTARGET[0]}" >> $GITHUB_OUTPUT
--if [ "${#IPTARGET[@]}" -ge 2 ] && [ "${#IPOTHERTARGET[@]}" -ge 2 ]; then
--	echo "ipv6_external_target=${IPTARGET[1]}" >> $GITHUB_OUTPUT
--	echo "ipv6_other_external_target=${IPOTHERTARGET[1]}" >> $GITHUB_OUTPUT
-+if [ -n "$TARGET_V4" ] && [ -n "$OTHERTARGET_V4" ]; then
-+	echo "ipv4_external_target=$TARGET_V4" >> $GITHUB_OUTPUT
-+	echo "ipv4_other_external_target=$OTHERTARGET_V4" >> $GITHUB_OUTPUT
-+fi
-+if [ -n "$TARGET_V6" ] && [ -n "$OTHERTARGET_V6" ]; then
-+	echo "ipv6_external_target=$TARGET_V6" >> $GITHUB_OUTPUT
-+	echo "ipv6_other_external_target=$OTHERTARGET_V6" >> $GITHUB_OUTPUT
- fi
- # Publish FQDNs, so that pod resolvers don't walk their ndots:5 search list.
- echo "external_target_name=$TARGETNAME." >> $GITHUB_OUTPUT
-```
-
-**File**: `.github/actions/setup-eks-cluster/action.yml` (modified, +11/-0)
-```diff
-@@ -29,6 +29,9 @@ inputs:
-     description: 'EKS Provisioned Control Plane scaling tier (standard, tier-xl, tier-2xl, tier-4xl, tier-8xl). Leave empty to use the default Standard (auto-scaling) control plane. Only applies when a new cluster is created.'
-     required: false
-     default: ''
-+  ip_family:
-+    description: 'Cluster IP family (IPv4 or IPv6)'
-+    required: false
- outputs:
-   cluster_name:
-     description: 'Actual cluster name (from pool or newly created)'
-@@ -68,6 +71,11 @@ runs:
-         ADDONS_HASH=$(echo -n "${{ inputs.addons }} ${{ inputs.zones }}" | sha256sum | cut -c1-8)
- 
-         KUBECONFIG_PATH="${{ inputs.region }}-${{ inputs.version }}-${ADDONS_HASH}"
-+
-+        if [[ "${{ inputs.ip_family }}" == "IPv6" ]]; then
-+          KUBECONFIG_PATH="ipv6-${KUBECONFIG_PATH}"
-+        fi
-+
-         # Sanitize KUBECONFIG_PATH name for S3 key
-         KUBECONFIG_PATH_SAFE="${KUBECONFIG_PATH//[.\/]/-}"
-         S3_PREFIX="kubeconfig-pool/${KUBECONFIG_PATH_SAFE}/"
-@@ -165,6 +173,9 @@ runs:
-            usage: "${{ github.repository_owner }}-${{ github.event.repository.name }}"
-            owner: "${{ inputs.owner }}"
- 
-+        kubernetesNetworkConfig:
-+          ipFamily: "${{ inputs.ip_family || 'IPv4' }}"
-+
-         vpc:
-           clusterEndpoints:
-             publicAccess: true
-```
-
-**File**: `.github/actions/setup-eks-nodegroup/action.yml` (modified, +9/-0)
-```diff
-@@ -36,6 +36,9 @@ inputs:
-   az_external:
-     description: 'Availability zone of nodes without Cilium'
-     required: false
-+  ip_family:
-+    description: 'IP family of the cluster the nodes join (IPv4 or IPv6)'
-+    required: false
- runs:
-   using: composite
-   steps:
-@@ -143,6 +146,12 @@ runs:
-           exit 1
-         fi
- 
-+    - name: Allow the nodes to assign IPv6 addresses
-+      if: ${{ inputs.ip_family == 'IPv6' }}
-+      shell: bash
-+      run: |
-+        yq -i '.managedNodeGroups[].iam.attachPolicy = {"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": ["ec2:AssignIpv6Addresses"], "Resource": "*"}]}' nodegroup-details.yaml
-+
-     - name: Create EKS nodegroup
-       shell: bash
-       run: |
-```
-
-**File**: `.github/workflows/conformance-eks.yaml` (modified, +50/-3)
-```diff
-@@ -223,6 +223,14 @@ jobs:
-             mv /tmp/result.json.tmp /tmp/result.json
-           fi
- 
-+          # Allow a caller to opt out of the IPv6 leg of the matrix
-+          SKIP_IPV6=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["skip-ipv6"] // false')
-+          if [[ "$SKIP_IPV6" == "true" ]]; then
-+            echo "::notice::skip-ipv6 requested - removing IPv6 entries from the matrix"
-+            jq '.include |= map(select(.["ip-family"] != "IPv6"))' /tmp/result.json > /tmp/result.json.tmp
-+            mv /tmp/result.json.tmp /tmp/result.json
-+          fi
-+
-           # Check if KPR is requested via extra-args
-           KPR=$(echo "${EXTRA_ARGS}" | jq -r '.["kpr"] // false')
-           if [[ "$KPR" == "true" ]]; then
-@@ -378,15 +386,18 @@ jobs:
-           if [[ "${{ matrix.aws-eni-pd }}" == "true" ]]; then
-             CILIUM_INSTALL_DEFAULTS+=" --helm-set eni.awsEnablePrefixDelegation=true"
-           fi
-+          if [[ "${{ matrix.ip-family }}" == "IPv6" ]]; then
-+            CILIUM_INSTALL_DEFAULTS+=" --helm-set ipv4.enabled=false --helm-set ipv6.enabled=true"
-+          fi
- 
-           BPFMASQV4=$(echo "${EXTRA_ARGS}" | jq -r '.["bpf-masq-v4"] // false')
--          if [[ "${BPFMASQV4}" == "true" ]]; then
-+          if [[ "${BPFMASQV4}" == "true" && "${{ matrix.ip-family }}" != "IPv6" ]]; then
-             CILIUM_INSTALL_DEFAULTS+=" --helm-set bpf.masquerade=true \
-               --helm-set enableIPv4Masquerade=true"
-           fi
- 
-           ADV_FEAT=$(echo "${EXTRA_ARGS}" | jq -r '.["advanced-features"] // false')
--          if [[ "$ADV_FEAT" == "true" ]]; then
-+          if [[ "$ADV_FEAT" == "true" && "${{ matrix.ip-family }}" != "IPv6" ]]; then
-             CILIUM_INSTALL_DEFAULTS+=" --helm-set localRedirectPolicies.enabled=true \
-               --helm-set egressGateway.enabled=true"
-           fi
-@@ -451,6 +462,7 @@ jobs:
-           owner: "${{ steps.vars.outputs.owner }}"
-           version: ${{ matrix.version }}
-           addons: "coredns kube-proxy"
-+          ip_family: ${{ matrix.ip-family }}
- 
-       - name: Generate cilium-cli kubeconfig
-         id: gen-kubeconfig
-@@ -540,12 +552,32 @@ jobs:
-           nodes_without_cilium: 2
-           az_cluster: ${{ steps.vars.outputs.eks_zone_1 }}
-           az_external: ${{ steps.vars.outputs.eks_zone_2 }}
-+          ip_family: ${{ matrix.ip-family }}
- 
-       - name: Wait for Cilium to be ready
-         run: |
-           cilium status --wait --interactive=false --wait-duration=10m
-           kubectl get pods -n kube-system
- 
-+      # The Corefile forwards to /etc/resolv.conf. That file is inherited from
-+      # the host and lists an IPv4 nameserver, unreachable from an IPv6 only pod.
-+      # Override the pod's copy to target the IPv6 VPC resolver.
-+      - name: Configure the coredns nameservers
-+        if: ${{ matrix.ip-family == 'IPv6' }}
-+        run: |
-+          COREDNS_PATCH="
-+          spec:
-+            template:
-+              spec:
-+                dnsPolicy: None
-+                dnsConfig:
-+                  nameservers:
-+                  - fd00:ec2::253
-+          "
-+
-+          kubectl patch deployment -n kube-system coredns --patch="$COREDNS_PATCH"
-+          kubectl -n kube-system rollout status deploy/coredns --timeout=5m
-+
-       - name: Add external targets to the cluster
-         uses: ./.github/actions/generic-external-targets
-         id: external_targets
-@@ -564,7 +596,18 @@ jobs:
-             --output text)
-           # Supposed to be one subnet and one CIDR with the default setup-eks-nodegroup config.
-           CIDRV4=$(echo "$CIDRS" | awk '{print $1}')
--          echo "ipv4_external_cidr=$CIDRV4" >> $GITHUB_OUTPUT
-+          if [ "${{ matrix.ip-family }}" != "IPv6" ]; then
-+            echo "ipv4_external_cidr=$CIDRV4" >> $GITHUB_OUTPUT
-+          fi
-+
-+          CIDRS6=$(aws ec2 describe-subnets \
-+            --subnet-ids $SUBNETS \
-+            --query 'Subnets[].Ipv6CidrBlockAssociationSet[].Ipv6CidrBlock' \
-+            --output text)
-+          CIDRV6=$(echo "$CIDRS6" | awk '{print $1}')
-+          if [ "${{ matrix.ip-family }}" = "IPv6" ]; then
-+            echo "ipv6_external_cidr=$CIDRV6" >> $GITHUB_OUTPUT
-+          fi
- 
-       - name: Get connectivity test flags
-         id: e2e_config
-@@ -575,6 +618,10 @@ jobs:
-           external-cidr: ${{ steps.external_cidr.outputs.ipv4_external_cidr }}
-           external-ip: ${{ steps.external_targets.outputs.ipv4_external_target }}
-           external-other-ip: ${{ steps.external_targets.outputs.ipv4_other_external_target }}
-+          external-cidrv6: ${{ steps.external_cidr.outputs.ipv6_external_cidr }}
-+          external-ipv6: ${{ steps.external_targets.outputs.ipv6_external_target }}
-+          external-other-ipv6: ${{ steps.external_targets.outputs.ipv6_other_external_target }}
-+          external-target-ipv6-capable: ${{ steps.external_targets.outputs.ipv6_external_target != '' }}
-           external-target-ca-namespace: external-target-secre
-```
-
-**File**: `.github/workflows/conformance-kpr-eks.yaml` (modified, +3/-1)
-```diff
-@@ -150,7 +150,9 @@ jobs:
-       UID: 2
-       context-ref: ${{ inputs.context-ref || github.sha }}
-       SHA: ${{ inputs.SHA || github.sha }}
--      extra-args: '{"kpr": true, "bpf-masq-v4": true, "advanced-features": true, "ipsec": true}'
-+      # Skipping IPv6 + IPsec config as it is known to not work.
-+      # TODO: Remove the skip flag when https://github.com/cilium/cilium/issues/49834 is resolved.
-+      extra-args: '{"kpr": true, "bpf-masq-v4": true, "advanced-features": true, "ipsec": true, "skip-ipv6": true}'
-       test-concurrency: 2
- 
-   conformance-eks-kpr-wireguard:
-```
-
----
-
-### Incident Patch 2: `6ae31f72` (2026-11-20)
-**Commit Message**: gha: Require a cache-mode in every workflow
-
-The commit "gha: Stop Ariane runs from writing to the cache" left the
-other 57 workflows on GitHub's default, which writes to the main branch
-scope on workflow_dispatch, and lint-workflows lets new ones do so.
-
-This commit sets a static cache-mode everywhere: write in a workflow
-that uses a cache and, with all its callers, runs only on schedule,
-push, pull_request, merge_group or a workflow_run after the Image CI
-Cache Cleaner, read in the other cache users, and none in the rest.
-lint-workflows derives the same value per file and rejects a called
-workflow that grants more than its caller. build-go-caches and
-lint-build-commits refill after a cleaner run only when a schedule or a
-dispatch started it, because a pull request can run its own workflow
-under the cleaner's name.
-
-Pull request and merge queue runs keep writing, as they save only into
-their own scope, and so do the refills after the cleaner. Ariane runs,
-maintainer dispatches and pull_request_target runs only read.
-
-This commit was prepared with AIL:3. I personally checked the diff.
+1: https://github.com/cilium/cilium/actions/runs/39635245257/job/119344831387
 
 Signed-off-by: André Martins <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ariane-scheduled.yaml` (modified, +2/-0)
+**File**: `cilium-cli/connectivity/check/podlogs.go` (modified, +9/-1)
 ```diff
-@@ -16,6 +16,8 @@ permissions:
-   # To trigger workflows via workflow_dispatch
-   actions: write
+@@ -19,6 +19,7 @@ import (
+ 	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
+ 	"k8s.io/client-go/rest"
  
-+cache-mode: none
++	"github.com/cilium/cilium/cilium-cli/defaults"
+ 	"github.com/cilium/cilium/pkg/lock"
+ )
+ 
+@@ -47,14 +48,21 @@ type logFollower struct {
+ }
+ 
+ // FollowCiliumLogs keeps the Cilium pod log lines for which keep returns true
+-// until ctx ends. It does nothing when the user filtered out the scenario.
++// until ctx ends. It does nothing when the user filtered out the scenario, and
++// skips the clusters whose agents do not log at debug level.
+ func (ct *ConnectivityTest) FollowCiliumLogs(ctx context.Context, scenario string, keep func(line string) bool) {
+ 	if !ct.params.testEnabled(scenario) {
+ 		return
+ 	}
+ 
+ 	f := &logFollower{keep: keep, logs: make(map[string]*followedLog)}
+ 	for _, client := range ct.Clients() {
++		// Without debug logging, an agent takes hours to fill a kubelet log file.
++		cm, err := client.GetConfigMap(ctx, ct.params.CiliumNamespace, defaults.ConfigMapName, metav1.GetOptions{})
++		if err != nil || cm.Data["debug"] != "true" {
++			continue
++		}
 +
- jobs:
-   ariane-scheduled:
-     name: Run Scheduled Workflows
-```
-
-**File**: `.github/workflows/auto-approve.yaml` (modified, +2/-0)
-```diff
-@@ -6,6 +6,8 @@ on:
-     - review_requested
-     - synchronize
- 
-+cache-mode: none
-+
- jobs:
-   pre-approve:
-     # Avoid running the 'auto-approve' environment if we don't need to.
-```
-
-**File**: `.github/workflows/auto-labeler-v1.18.yaml` (modified, +2/-0)
-```diff
-@@ -9,6 +9,8 @@ on:
-       - reopened
- 
- 
-+cache-mode: none
-+
- jobs:
-   external-contributions:
-     if: |
-```
-
-**File**: `.github/workflows/auto-labeler-v1.19.yaml` (modified, +2/-0)
-```diff
-@@ -9,6 +9,8 @@ on:
-       - reopened
- 
- 
-+cache-mode: none
-+
- jobs:
-   external-contributions:
-     if: |
-```
-
-**File**: `.github/workflows/auto-labeler-v1.20.yaml` (modified, +2/-0)
-```diff
-@@ -9,6 +9,8 @@ on:
-       - reopened
- 
- 
-+cache-mode: none
-+
- jobs:
-   external-contributions:
-     if: |
-```
-
-**File**: `.github/workflows/auto-labeler.yaml` (modified, +2/-0)
-```diff
-@@ -10,6 +10,8 @@ on:
-       - v1.19
-       - v1.18
- 
-+cache-mode: none
-+
- jobs:
-   external-contributions:
-     if: |
-```
-
-**File**: `.github/workflows/build-go-caches.yaml` (modified, +4/-0)
-```diff
-@@ -18,13 +18,17 @@ on:
- 
- permissions: read-all
- 
-+cache-mode: write
-+
- concurrency:
-   group: ${{ github.workflow }}-${{ github.event.after }}
-   cancel-in-progress: true
- 
- jobs:
-   build_go_caches:
-     name: Build Go Caches
-+    # A pull request can run its own workflow under the cleaner's name.
-+    if: github.event_name != 'workflow_run' || contains(fromJSON('["schedule", "workflow_dispatch"]'), github.event.workflow_run.event)
-     runs-on: ${{ vars.UBUNTU_2604_4CPU_16GB || 'ubuntu-26.04' }}
-     timeout-minutes: 20
-     strategy:
-```
-
-**File**: `.github/workflows/build-images-base-renovate.yaml` (modified, +2/-0)
-```diff
-@@ -13,6 +13,8 @@ permissions:
-   # To be able to access the repository with `actions/checkout`
-   contents: read
- 
-+cache-mode: write
-+
- jobs:
-   build-base-images-from-renovate:
-     name: "Build Base Images From Renovate"
-```
-
----
-
-### Incident Patch 3: `ca4f74b5` (2026-11-18)
-**Commit Message**: gha: Limit PR image builds to main and ft/main
-
-The pull_request_target triggers of the Image CI, base image and
-docs-builder workflows on main skip only the stable branches. Their
-trusted checkout, and with it local actions such as cosign, comes from
-the base branch the pull request author picks. Hundreds of branches
-carry older copies of those actions, so targeting one of them sidesteps
-a fix that lives only on main. This still matters for
-build-images-base.yaml, which checks the pull request out at the
-workspace root and runs the base branch's cosign action.
-
-This commit limits the triggers to main and ft/main/**. Feature branches
-from now on go under ft/main/<name> and need a rebase onto main for
-fixes to the local actions. Stacked pull requests and those against any
-other base get no images, so their default smoke tests time out after
-30 minutes and Ariane refuses /test and the /ci-* triggers that depend
-on the image build. 63 pull requests used such a base in the last 12
-months, 50 of them feature/dra-driver, and none is open today.
-Retargeting one to main fires an edited event, so it needs a new push
-or a close and reopen.
-
-This commit was prepared with AIL:3. I personally c
-
-**File**: `.github/workflows/build-images-base.yaml` (modified, +7/-4)
-```diff
-@@ -10,10 +10,13 @@ on:
-     paths:
-       - images/runtime/**
-       - images/builder/**
--    branches-ignore:
--      - v1.20
--      - v1.19
--      - v1.18
-+    branches:
-+      - main
-+      - ft/main/**
-+      # No effect on GitHub; check-workflow-check-name-collisions.go reads these to tell this file from its -v1.x copies
-+      - '!v1.20'
-+      - '!v1.19'
-+      - '!v1.18'
-   # This workflow can be reused so that renovate can execute this workflow_dispatch:
-   # run from a different environment than 'release-base-images'. See
-   # build-images-base-renovate.yaml
-```
-
-**File**: `.github/workflows/build-images-ci.yaml` (modified, +7/-4)
-```diff
-@@ -7,10 +7,13 @@ on:
-       - opened
-       - synchronize
-       - reopened
--    branches-ignore:
--      - v1.20
--      - v1.19
--      - v1.18
-+    branches:
-+      - main
-+      - ft/main/**
-+      # No effect on GitHub; check-workflow-check-name-collisions.go reads these to tell this file from its -v1.x copies
-+      - '!v1.20'
-+      - '!v1.19'
-+      - '!v1.18'
-   push:
-     branches:
-       - main
-```
-
-**File**: `.github/workflows/build-images-docs-builder.yaml` (modified, +7/-4)
-```diff
-@@ -9,10 +9,13 @@ on:
-       - reopened
-     paths:
-       - images/docs-builder/**
--    branches-ignore:
--      - v1.20
--      - v1.19
--      - v1.18
-+    branches:
-+      - main
-+      - ft/main/**
-+      # No effect on GitHub; check-workflow-check-name-collisions.go reads these to tell this file from its -v1.x copies
-+      - '!v1.20'
-+      - '!v1.19'
-+      - '!v1.18'
-   # Renovate branches build from a different environment than 'docs-builder'.
-   # See build-images-docs-builder-renovate.yaml
-   workflow_call:
+ 		// A clientset of its own keeps the log streams off the rate limiter of the tests.
+ 		clientset, err := kubernetes.NewForConfig(rest.CopyConfig(client.Config))
+ 		if err != nil {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50280** (2026-11-26): ci: Read the Hubble CLI job's kind config from KIND_CONFIG (@aanm)
+- **PR #50277** (closed): DO NOT MERGE ci: use versioned Ubuntu 26 runners (@nbusseneau)
 - **PR #50268** (2026-11-25): .github: don't use ubuntu-slim for labeling External Contributions (@julianwiedmann)
+- **PR #50266** (2026-11-26): [v1.19] loadbalancer: preserve sockets to shared live backends (@ysksuzuki)
 - **PR #50264** (2026-11-25): [v1.18] proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x (@sayboras)
 - **PR #50263** (closed): Update quay.io/cilium/cilium-envoy Docker tag to v1.39.6-1795562505-2cd7b93ce3f7c9645c511c84c494e47e264de4e1 (v1.18) - autoclosed (@cilium-renovate[bot])
-- **PR #50258** (2026-11-24): Update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
-- **PR #50257** (2026-11-25): Update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
-- **PR #50255** (2026-11-25): Update auto-merge-trusted-deps (main) (@cilium-renovate[bot])
 
 ---
 
@@ -1893,46 +1384,39 @@ This commit was prepared with AIL:3. I personally c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gha/eks: run the conformance suite on an IPv6-only cluster
+## X. cilium-cli: Follow Cilium logs only with debug logging
 
 **RULE**:
-When implementing operations in `.github/actions/cli-test-config/action.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cilium-cli/connectivity/check/podlogs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5091870f`: gha/eks: run the conformance suite on an IPv6-only cluster. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `043fd9e1`: cilium-cli: Follow Cilium logs only with debug logging. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/cli-test-config/action.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/connectivity/check/podlogs.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        if [ -n "${{ inputs.external-cidr }}" ]; then
-          CONNECTIVITY_TEST_DEFAULTS+=("--external-cidr=${{ inputs.external-cidr }}")
-        fi
-        if [ -n "${{ inputs.external-ip }}" ]; then
-          CONNECTIVITY_TEST_DEFAULTS+=("--external-ip=${{ inputs.external-ip }}")
-        fi
-        if [ -n "${{ inputs.external-other-ip }}" ]; then
-          CONNECTIVITY_TEST_DEFAULTS+=("--external-other-ip=${{ inputs.external-other-ip }}")
-        fi
-        if [ "${{ inputs.external-target-ipv6-capable }}" == "true" ]; then
-          CONNECTIVITY_TEST_DEFAULTS+=("--external-target-ipv6-capable")
-        fi
+	"github.com/cilium/cilium/cilium-cli/defaults"
+// until ctx ends. It does nothing when the user filtered out the scenario, and
+// skips the clusters whose agents do not log at debug level.
+		// Without debug logging, an agent takes hours to fill a kubelet log file.
+		cm, err := client.GetConfigMap(ctx, ct.params.CiliumNamespace, defaults.ConfigMapName, metav1.GetOptions{})
+		if err != nil || cm.Data["debug"] != "true" {
+			continue
+		}
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-          "--external-cidr=${{ inputs.external-cidr }}" \
-          "--external-ip=${{ inputs.external-ip }}" \
-          "--external-other-ip=${{ inputs.external-other-ip }}" \
-          "--external-target-ipv6-capable=${{ inputs.external-target-ipv6-capable }}" \
+// until ctx ends. It does nothing when the user filtered out the scenario.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5091870f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `043fd9e1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

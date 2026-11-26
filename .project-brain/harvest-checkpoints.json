@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T18:05:53.066Z",
+  "last_updated": "2026-11-26T18:14:37.973Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1025,14 +1025,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-amazon-chronos-2",
-      "content_hash": "99b551c899d10f2b4ebeb21f2263f252cd87b73e7501b7a78ab4d19bd002ad0e",
-      "verified_at": "2026-11-23T04:00:02.825Z",
+      "content_hash": "16ffb404afd7414d81208dcb225ea65a09dafb2ce19f47b55e01c9822bcaea61",
+      "verified_at": "2026-11-26T18:14:23.700Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T04:00:02.825Z"
+      "last_updated": "2026-11-26T18:14:23.700Z"
     },
     "CompVis/stable-diffusion-v1-4": {
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "29ba5ab778e3f53023141dfe425605525dd9f9c37e2b2e9bc55cd5078b50b7ec",
-      "verified_at": "2026-11-26T13:55:25.136Z",
+      "content_hash": "ad5ea98ee545f58f2aa8bd50e955db6f0449c2aed72986e27c43765ee5d65977",
+      "verified_at": "2026-11-26T18:14:37.973Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T13:55:25.136Z"
+      "last_updated": "2026-11-26T18:14:37.973Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "9a7a420de505657bfee383a1bf9e40ff70a3c682fb84081a7a9890ae96d00890",
-      "verified_at": "2026-11-25T10:57:45.256Z",
+      "content_hash": "28b6ae4a3a0f9ea56a9bc81bfaf0ebcadb3afb21b8c98a67f40e90172c83a0b2",
+      "verified_at": "2026-11-26T18:14:26.993Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T10:57:45.256Z"
+      "last_updated": "2026-11-26T18:14:26.993Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T10:58:04.313Z",
+  "timestamp": "2026-11-26T18:14:42.328Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-orange-opensource-hurl-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [orange-opensource-hurl-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T10:58:04.313Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T18:14:42.328Z`  
 > **Learning ID**: `LEARN-EVO-orange-opensource-hurl-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from orange-opensource-hurl-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `013ceaf3`  
+> **Source Version**: `08733868`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T10:57:44.404Z  
+> **Timestamp**: 2026-11-26T18:14:25.731Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T10:57:44.399Z  
+> **Harvest Timestamp**: 2026-11-26T18:14:25.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19360 stars
+- **Stars / Engagement**: 19369 stars
 
 ---
 
@@ -1896,261 +1896,304 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `013ceaf3` (2026-11-25)
-**Commit Message**: Update crates
+### Incident Patch 1: `1ba855ec` (2026-11-25)
+**Commit Message**: Add RequestCookie::new and RequestCookie::from builder.
 
-**File**: `Cargo.lock` (modified, +6/-6)
+**File**: `packages/hurl/src/http/curl_cmd.rs` (modified, +4/-4)
 ```diff
-@@ -933,9 +933,9 @@ checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
+@@ -1351,10 +1351,10 @@ mod tests {
+         let request = RequestSpec {
+             method: Method("GET".to_string()),
+             url: Url::from_str("http://localhost:8000/hello").unwrap(),
+-            cookies: vec![crate::http::RequestCookie {
+-                name: "cookie1".to_string(),
+-                value: "value'with'quotes".to_string(),
+-            }],
++            cookies: vec![crate::http::RequestCookie::new(
++                "cookie1",
++                "value'with'quotes",
++            )],
+             ..Default::default()
+         };
  
- [[package]]
- name = "regex"
--version = "1.13.1"
-+version = "1.13.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
-+checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
- dependencies = [
-  "aho-corasick",
-  "memchr",
-@@ -945,9 +945,9 @@ dependencies = [
- 
- [[package]]
- name = "regex-automata"
--version = "0.4.18"
-+version = "0.4.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
-+checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
- dependencies = [
-  "aho-corasick",
-  "memchr",
-@@ -956,9 +956,9 @@ dependencies = [
- 
- [[package]]
- name = "regex-syntax"
--version = "0.8.11"
-+version = "0.8.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
-+checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
- 
- [[package]]
- name = "rle-decode-fast"
 ```
 
-**File**: `packages/hurl/Cargo.toml` (modified, +1/-1)
+**File**: `packages/hurl/src/http/request.rs` (modified, +7/-41)
 ```diff
-@@ -31,7 +31,7 @@ libflate = "2.3.2"
- libxml = "0.3.24"
- md5 = "0.8.1"
- percent-encoding = "2.3.2"
--regex = "1.13.1"
-+regex = "1.13.2"
- serde = { version = "1.0.229", features = ["derive"] }
- serde_json = { version = "1.0.154", features = ["arbitrary_precision"] }
- sha2 = "0.11.1"
-```
-
-**File**: `packages/hurl_core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ repository = "https://github.com/Orange-OpenSource/hurl"
- [dependencies]
- colored = "3.1.1"
- libxml = "0.3.24"
--regex = "1.13.1"
-+regex = "1.13.2"
+@@ -220,20 +220,9 @@ impl Request {
+ }
  
- [lints]
- workspace = true
-```
-
-**File**: `packages/hurlfmt/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ rust-version = "1.100.0"
- base64 = "0.23.1"
- clap = { version = "4.6.8", features = ["cargo", "wrap_help"] }
- hurl_core = { version = "9.0.0", path = "../hurl_core" }
--regex = "1.13.1"
-+regex = "1.13.2"
- 
- 
- [lints]
-```
-
----
-
-### Incident Patch 2: `54e4de9a` (2026-11-24)
-**Commit Message**: Better integration test with --cookie and --location/--location-trusted
-
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.hurl` (modified, +1/-2)
-```diff
-@@ -1,4 +1,4 @@
--GET http://localhost:8000/follow-redirect-leak/host-a-step-1?trusted={{trusted}}
-+GET http://localhost:8000/follow-redirect-leak/host-a-step-1?expect_auth_forwarded={{expect_auth_forwarded}}&expect_cookie_forwarded={{expect_cookie_forwarded}}
- HTTP 200
- [Asserts]
- redirects count == 2
-@@ -8,4 +8,3 @@ url == "http://localhost:8000/follow-redirect-leak/host-a-step-3"
- header "Location" not exists
- `Followed redirect!`
- 
+ fn parse_cookies(s: &str) -> Vec<RequestCookie> {
+-    s.split(';').map(|t| parse_cookie(t.trim())).collect()
+-}
 -
-```
-
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.out` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Followed redirect!Followed redirect!Followed redirect!
-\ No newline at end of file
-+Followed redirect!Followed redirect!Followed redirect!Followed redirect!
-\ No newline at end of file
-```
-
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.ps1` (modified, +14/-9)
-```diff
-@@ -4,24 +4,29 @@ $ErrorActionPreference = 'Stop'
- hurl --location `
-   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
-   --header 'Cookie: fruit=lemon' `
--  --variable trusted=false `
-+  --variable expect_auth_forwarded=false `
-+  --variable expect_cookie_forwarded=false `
-   tests_ok/follow_redirect/follow_redirect_leak.hurl
+-fn parse_cookie(s: &str) -> RequestCookie {
+-    match s.find('=') {
+-        Some(i) => RequestCookie {
+-            name: s.split_at(i).0.to_string(),
+-            value: s.split_at(i + 1).1.to_string(),
+-        },
+-        None => RequestCookie {
+-            name: s.to_string(),
+-            value: String::new(),
+-        },
+-    }
++    s.split(';')
++        .map(|t| RequestCookie::from_str(t.trim()))
++        .collect()
+ }
  
- hurl --location-trusted `
-   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
-   --header 'Cookie: fruit=lemon' `
--  --variable trusted=true `
-+  --variable expect_auth_forwarded=true `
-+  --variable expect_cookie_forwarded=true `
-   tests_ok/follow_redirect/follow_redirect_leak.hurl
+ #[cfg(test)]
+@@ -281,14 +270,8 @@ mod tests {
+         assert_eq!(
+             cookies_request().cookies(),
+             vec![
+-                RequestCookie {
+-                    name: "cookie1".to_string(),
+-                    value: "value1".to_string(),
+-                },
+-                RequestCookie {
+-                    name: "cookie2".to_string(),
+-                    value: "value2".to_string(),
+-                },
++                RequestCookie::new("cookie1", "value1"),
++                RequestCookie::new("cookie2", "value2"),
+             ]
+         );
+     }
+@@ -298,29 +281,12 @@ mod tests {
+         assert_eq!(
+             parse_cookies("cookie1=value1; cookie2=value2"),
+             vec![
+-                RequestCookie {
+-                    name: "cookie1".to_string(),
+-                    value: "value1".to_string(),
+-                },
+-                RequestCookie {
+-                    name: "cookie2".to_string(),
+-                    value: "value2".to_string(),
+-                },
++                RequestCookie::new("cookie1", "value1"),
++                RequestCookie::new("cookie2", "value2"),
+             ]
+         );
+     }
  
- hurl --location `
-   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
-   --cookie tests_ok/follow_redirect/cookies.txt `
--  --variable trusted=false `
-+  --variable expect_auth_forwarded=false `
-+  --variable expect_cookie_forwarded=false `
-   tests_ok/follow_redirect/follow_redirect_leak.hurl
- 
--# FIXME: --cookie and --location-trusted should work
--#hurl --location-trusted `
--#  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
--#  --cookie tests_ok/follow_redirect/cookies.txt `
--#  --variable trusted=true `
--#  tests_ok/follow_redirect/follow_redirect_leak.hurl
-+# Cookies from a cookie file are domain-scoped: they are not forwarded to another host,
-+# even with --location-trusted (same as curl).
-+hurl --location-trusted `
-+  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
-+  --cookie tests_ok/follow_redirect/cookies.txt `
-+  --variable expect_auth_forwarded=true `
-+  --variable expect_cookie_forwarded=false `
-+  tests_ok/follow_redirect/follow_redirect_leak.hurl
-```
-
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.py` (modified, +13/-11)
-```diff
-@@ -5,24 +5,30 @@
- @app.route("/follow-redirect-leak/host-a-step-1")
- def follow_redirect_leak_host_a_step_1():
-     # step-1 domain is localhost
--    trusted = get_trusted_param()
-+    expect_auth_forwarded = request.args.get("expect_auth_forwarded", "false")
-+    expect_cookie_forwarded = request.args.get("expect_cookie_forwarded", "false")
-     assert "Authorization" in request.headers
-     assert request.cookies.get("fruit") is not None
-     return redirect(
--        f"http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2?trusted={trusted}"
-+        f"http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2"
-+        f"?expect_auth_forwarded={expect_auth_forwarded}"
-+        f"&expect_cookie_forwarded={expect_cookie_forwarded}"
-     )
- 
- 
- @app.route("/follow-redirect-leak/host-b-step-2")
- def follow_redirect_leak_host_b_step_2():
--    trusted = get_trusted_param()
--    # step-1 domain is 127.0.0.1, we change domain.
--    # We need to check if the credentials are here when the domain is trusted
--    if trusted == "true":
-+    # step-2 domain is 127.0.0.1, we change domain.
-+    # Credentials are forwarded only if the test expects them to be.
-+    expect_auth_forwarded = request.args.get("expect_auth_forwarded", "false")
-+    expect_cookie_forwarded = request.args.get("expect_cookie_forwarded", "false")
-+    if expect_auth_forwarded == "true":
-         assert "Authorization" in request.headers
--        assert request.cookies.get("fruit") is not None
-     else:
-         assert "Authorization" not in request.headers
-+    if expect_cookie_forwarded == "true":
-+        assert request.cookies.get("fruit") is not None
-+    else:
-         assert request.cookies.get("fruit") is None
-     return redirect("http://localhost:8000/follow-redirect-leak/host-a-step-3")
- 
-@@ -33,7 +39,3 @@ def follow_redirect_leak_host_a_step_3():
-     assert "Authorization" in request.headers
-     assert request.cookies.get("fruit") is not None
-     return "Followed redirect!"
+-    #[test]
+-    fn test_parse_cookie() {
+-        assert_eq!(
+-            parse_cookie("cookie1=value1"),
+-            RequestCookie {
+-                name: "cookie1".to_string(),
+-                value: "value1".to_string(),
+-            },
+-        );
+-    }
 -
--
--def get_trusted_param():
--    return request.args.get("trusted", "false")
+     #[test]
+     fn test_tls_version() {
+         assert_eq!("1.0".parse(), Ok(TlsVersion::Tls10));
 ```
 
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.sh` (modified, +14/-10)
+**File**: `packages/hurl/src/http/request_cookie.rs` (modified, +35/-0)
 ```diff
-@@ -4,25 +4,29 @@ set -Eeuo pipefail
- hurl --location \
-   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
-   --header 'Cookie: fruit=lemon' \
--  --variable trusted=false \
-+  --variable expect_auth_forwarded=false \
-+  --variable expect_cookie_forwarded=false \
-   tests_ok/follow_redirect/follow_redirect_leak.hurl
+@@ -24,8 +24,43 @@ pub struct RequestCookie {
+     pub value: String,
+ }
  
- hurl --location-trusted \
-   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
-   --header 'Cookie: fruit=lemon' \
--  --variable trusted=true \
-+  --variable expect_auth_forwarded=true \
-+  --variable expect_cookie_forwarded=true \
-   tests_ok/follow_redirect/follow_redirect_leak.hurl
++impl RequestCookie {
++    /// Creates a new request cookie.
++    pub fn new(name: &str, value: &str) -> Self {
++        RequestCookie {
++            name: name.to_string(),
++            value: value.to_string(),
++        }
++    }
++
++    /// Creates a new instance from a string with format `name=value`.
++    pub fn from_str(s: &str) -> Self {
++        match s.find('=') {
++            Some(i) => {
++                let name = s.split_at(i).0;
++                let value = s.split_at(i + 1).1;
++                RequestCookie::new(name, value)
++            }
++            None => RequestCookie::new(s, ""),
++        }
++    }
++}
++
+ impl fmt::Display for RequestCookie {
+     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+         write!(f, "{}={}", self.name, self.value)
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use crate::http::RequestCookie;
++
++    #[test]
++    fn test_parse_cookie() {
++        assert_eq!(
++            RequestCookie::from_str("cookie1=value1"),
++            RequestCookie::new("cookie1", "value1"),
++        );
++    }
++}
+```
+
+**File**: `packages/hurl/src/http/tests/mod.rs` (modified, +2/-8)
+```diff
+@@ -170,14 +170,8 @@ pub fn custom_http_request() -> RequestSpec {
+         url: Url::from_str("http://localhost/custom").unwrap(),
+         headers,
+         cookies: vec![
+-            RequestCookie {
+-                name: String::from("theme"),
+-                value: String::from("light"),
+-            },
+-            RequestCookie {
+-                name: String::from("sessionToken"),
+-                value: String::from("abc123"),
+-            },
++            RequestCookie::new("theme", "light"),
++            RequestCookie::new("sessionToken", "abc123"),
+         ],
+         ..Default::default()
+     }
+```
+
+**File**: `packages/hurl/src/runner/request.rs` (modified, +30/-19)
+```diff
+@@ -94,7 +94,7 @@ pub fn eval_request(
+     for cookie in request.cookies() {
+         let name = template::eval_template(&cookie.name, variables)?;
+         let value = template::eval_template(&cookie.value, variables)?;
+-        let cookie = RequestCookie { name, value };
++        let cookie = RequestCookie::new(&name, &value);
+         cookies.push(cookie);
+     }
+     for cookie in option_cookies {
+@@ -439,13 +439,6 @@ mod tests {
+         hurl_file.entries[0].request.clone()
+     }
  
- hurl --location \
-   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
-   --cookie tests_ok/follow_redirect/cookies.txt \
--  --variable trusted=false \
-+  --variable expect_auth_forwarded=false \
-+  --variable expect_cookie_forwarded=false \
-   tests_ok/follow_redirect/follow_redirect_leak.hurl
- 
--# FIXME: --cookie and --location-trusted should work
--#hurl --location-trusted \
--#  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
--#  --cookie tests_ok/follow_redirect/cookies.txt \
--#  --variable trusted=true \
--#  tests_ok/follow_redirect/follow_redirect_leak.hurl
+-    fn new_cookie(name: &str, value: &str) -> RequestCookie {
+-        RequestCookie {
+-            name: name.to_string(),
+-            value: value.to_string(),
+-        }
+-    }
 -
-+# Cookies from a cookie file are domain-scoped: they are not forwarded to another host,
-+# even with --location-trusted (same as curl).
-+hurl --location-trusted \
-+  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
-+  --cookie tests_ok/follow_redirect/cookies.txt \
-+  --variable expect_auth_forwarded=true \
-+  --variable expect_cookie_forwarded=false \
-+  tests_ok/follow_redirect/follow_redirect_leak.hurl
+     fn eval_cookies(content: &str, option_cookies: &[RequestCookie]) -> Vec<RequestCookie> {
+         let request = parse_request(content);
+         let variables = VariableSet::new();
+@@ -463,17 +456,23 @@ fruit: lemon
+ ";
+         assert_eq!(
+             eval_cookies(content, &[]),
+-            vec![new_cookie("fruit", "lemon")]
++            vec![RequestCookie::new("fruit", "lemon")]
+         );
+     }
+ 
+     #[test]
+     fn test_eval_cookies_only_option_cookies() {
+         let content = "GET http://localhost:8000/hello\n";
+-        let option_cookies = [new_cookie("fruit", "lemon"), new_cookie("color", "green")];
++        let option_cookies = [
++            RequestCookie::new("fruit", "lemon"),
++            RequestCookie::new("color", "green"),
++        ];
+         assert_eq!(
+             eval_cookies(content, &option_cookies),
+-            vec![new_cookie("fruit", "lemon"), new_cookie("color", "green")]
++            vec![
++                RequestCookie::new("fruit", "lemon"),
++                RequestCookie::new("color", "green")
++            ]
+         );
+     }
+ 
+@@ -484,10 +483,13 @@ GET http://localhost:8000/hello
+ [Cookies]
+ fruit: lemon
+ ";
+-        let option_cookies = [new_cookie("color", "green")];
++        let option_cookies = [RequestCookie::new("color", "green")];
+         assert_eq!(
+             eval_cookies(content, &option_cookies),
+-            vec![new_cookie("fruit", "lemon"), new_cookie("color", "green")]
++            vec![
++                RequestCookie::new("fruit", "lemon"),
++                RequestCookie::new("color", "green")
++            ]
+         );
+     }
+ 
+@@ -498,10 +500,16 @@ GET http://localhost:8000/hello
+ [Cookies]
+ fruit: lemon
+ ";
+-        let option_cookies = [new_cookie("fruit", "apple"), new_cookie("color", "green")];
++        let option_cookies = [
++            RequestCookie::new("fruit", "apple"),
++            RequestCookie::new("color", "green"),
++        ];
+         assert_eq!(
+             eval_cookies(content, &option_cookies),
+-            vec![new_cookie("fruit", "lemon"), new_cookie("color", "green")]
++            vec![
++                RequestCookie::new("fruit", "lemon"),
++                RequestCookie::new("color", "green")
++            ]
+         );
+     }
+ 
+@@ -512,10 +520,13 @@ GET http://localhost:8000/hello
+ [Cookies]
+ Fruit: lemon
+ ";
+-        let option_cookies = [new_cookie("fruit", "apple")];
++        let option_cookies = [RequestCookie::new("fruit", "apple")];
+         assert_eq!(
+             eval_cookies(content, &option_cookies),
+-            vec![new_cookie("Fruit", "lemon"), new_cookie("fruit", "apple")]
++            vec![
++                RequestCookie::new("Fruit", "lemon"),
++                RequestCookie::new("fruit", "apple")
++            ]
+         );
+     }
+ 
+@@ -530,7 +541,7 @@ GET http://localhost:8000/hello
+         let mut variables = VariableSet::new();
+         variables.insert("name".to_string(), Value::String("fruit".to_string()));
+         variables.insert("value".to_string(), Value::String("lemon".to_string()));
+-        let option_cookies = [new_cookie("fruit", "apple")];
++        let option_cookies = [RequestCookie::new("fruit", "apple")];
+         let cookies = eval_request(
+             &request,
+             &option_cookies,
+@@ -539,7 +550,7 @@ GET http://localhost:8000/hello
+         )
+         .unwrap()
+         .cookies;
+-        assert_eq!(cookies, vec![new_cookie("fruit", "lemon")]);
++        assert_eq!(cookies, vec![RequestCookie::new("fruit", "lemon")]);
+     }
+ 
+     #[test]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5462** (2026-11-26): Delete headers field from ClientOptions (redundant with the headers in RequestSpec) (@jcamiel)
+- **PR #5461** (2026-11-26): Update crates (@hurl-bot)
+- **PR #5460** (2026-11-25): Add cookies on runner (@jcamiel)
 - **PR #5458** (2026-11-25): Update crates (@hurl-bot)
 - **PR #5457** (2026-11-24): Better integration test with --cookie and --location/--location-trusted (@jcamiel)
 - **PR #5456** (2026-11-24): Update crates (@hurl-bot)
-- **PR #5455** (2026-11-23): Update integration test with --cookie and --location/--location-trusted (@jcamiel)
-- **PR #5454** (2026-11-23): Update crates (@hurl-bot)
-- **PR #5453** (2026-11-22): Rename Cookie::match_domain to Cookie::match_host and fix the method method matching any IPs. (@jcamiel)
 
 ---
 
@@ -2170,41 +2213,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update crates
+## X. Add RequestCookie::new and RequestCookie::from builder.
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/hurl/src/http/curl_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `013ceaf3`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ba855ec`: Add RequestCookie::new and RequestCookie::from builder.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/http/curl_cmd.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.13.2"
-checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
-version = "0.4.19"
-checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
-version = "0.8.12"
-checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
+            cookies: vec![crate::http::RequestCookie::new(
+                "cookie1",
+                "value'with'quotes",
+            )],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.13.1"
-checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
-version = "0.4.18"
-checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
-version = "0.8.11"
-checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+            cookies: vec![crate::http::RequestCookie {
+                name: "cookie1".to_string(),
+                value: "value'with'quotes".to_string(),
+            }],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `013ceaf3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ba855ec` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

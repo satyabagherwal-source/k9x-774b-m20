@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:05:53.062Z",
-  "total_cycles_completed": 12816,
-  "total_learnings_persisted": 12816,
-  "total_rules_promoted": 11652,
+  "last_updated": "2026-11-26T18:14:37.966Z",
+  "total_cycles_completed": 12819,
+  "total_learnings_persisted": 12819,
+  "total_rules_promoted": 11654,
   "history": [
-    {
-      "timestamp": "2026-11-26T07:48:30.152Z",
-      "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
-      "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T07:48:43.885Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T07:57:47.093Z",
-      "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
-      "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T07:57:55.980Z",
       "repository": "kube-rs/kube",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T18:05:53.062Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:14:23.697Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:14:26.986Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:14:37.966Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

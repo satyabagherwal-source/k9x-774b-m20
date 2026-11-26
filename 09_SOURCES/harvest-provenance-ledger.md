@@ -13536,3 +13536,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-26T18:05:38.401Z |
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `20180caa` | Multi-dimensional audit evidence | 2026-11-26T18:05:45.656Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `fba29442` | Multi-dimensional audit evidence | 2026-11-26T18:05:53.042Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-26T18:14:23.685Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `08733868` | Multi-dimensional audit evidence | 2026-11-26T18:14:26.971Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `b2d0110f` | Multi-dimensional audit evidence | 2026-11-26T18:14:37.952Z |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-6QTG",
-    "timestamp": "2026-11-25T06:39:20.644Z",
-    "repository": "TableProApp/TablePro",
-    "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "855d1580f0cddfe6392c867364203b7df91d0336c115afdd632ba1bd6bb22a9f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-6S0L",
-    "timestamp": "2026-11-25T06:39:22.197Z",
-    "repository": "stakater/Reloader",
-    "learningId": "learn-github-stakater-reloader",
-    "contentHash": "67ce5517893a540a17de99b33e245ed3a10324d5046b9549c112c2cf0303d00a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-6VHL",
-    "timestamp": "2026-11-25T06:39:26.697Z",
-    "repository": "gluesql/gluesql",
-    "learningId": "learn-github-gluesql-gluesql",
-    "contentHash": "82a709b3d541b83d74af5f12c8bde45401cd069297356ff01afaeea1a69a4f52",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-HG16",
     "timestamp": "2026-11-25T06:47:39.882Z",
     "repository": "RecursiveSI/flint",
@@ -7490,6 +7445,51 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "0e56fd040eadf3d5add95ec2faadb2e43eea790da9e8ae61301031d4e38a8d83",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-GFR4",
+    "timestamp": "2026-11-26T18:14:23.680Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "16ffb404afd7414d81208dcb225ea65a09dafb2ce19f47b55e01c9822bcaea61",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-GIAF",
+    "timestamp": "2026-11-26T18:14:26.967Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "28b6ae4a3a0f9ea56a9bc81bfaf0ebcadb3afb21b8c98a67f40e90172c83a0b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-GQRF",
+    "timestamp": "2026-11-26T18:14:37.947Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "ad5ea98ee545f58f2aa8bd50e955db6f0449c2aed72986e27c43765ee5d65977",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

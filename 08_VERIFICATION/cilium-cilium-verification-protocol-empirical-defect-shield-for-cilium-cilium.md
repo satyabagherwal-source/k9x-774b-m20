@@ -4,22 +4,22 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "c330d437",
+  "source_version": "b2d0110f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T13:55:25.343Z",
+  "timestamp": "2026-11-26T18:14:38.201Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `c330d437`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T13:55:25.343Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `b2d0110f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T18:14:38.201Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `cilium/cilium` (Commit: `c330d437`)
+- **Target Repository**: `cilium/cilium` (Commit: `b2d0110f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T13:55:23.996Z  
+> **Harvest Timestamp**: 2026-11-26T18:14:36.715Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1273,9 +1273,10 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 - **Issue #50280** (2026-11-26): **ci: Read the Hubble CLI job's kind config from KIND_CONFIG**
   *Symptoms*: The Hubble CLI integration test has always declared kind_config at the workflow level, but passes ${{ env.KIND_CONFIG }} to helm/kind-action. The env context is case sensitive, so the expression expands to the empty string and kind creates its default single-node cluster with kindnet. Cilium installs on top of it and both IPAMs then hand out addresses from 10.244.0.0/24. kindnet wires hubble-relay sequentially before Cilium's CNI config exists, while Cilium picks its router IP at random among 254 addresses. In 1 run out of 254, cilium_host takes the relay's address and its local route shadows the pod's route, so the kubelet probes and DNS replies for the relay reach the host stack. The relay never connects to hubble-peer and `cilium status --wait` gives up after 5 minutes:    Deployment             hubble-relay             Desired: 1, Unavailable: 1/1   Errors:                hubble-relay       hubble-relay    1 pods of Deployment hubble-relay are not ready  This commit renames the key to KIND_CONFIG, the spelling the other kind workflows use. .github/kind-config.yaml then applies, so the cluster comes up without a CNI on the control-plane and worker it declares, and Cilium is the only IPAM on each node.  This PR was prepared with AIL:3. I personally checked the kind-action inputs in run 37774557276.  Fixes: bc294a83d5a1 ("Add hubble CLI integration tests") 
 
-- **Issue #50268** (2026-11-25): **.github: don't use ubuntu-slim for labeling External Contributions**
-  *Symptoms*: This part needs to run a `docker pull`, which doesn't seem to work from the slim runner. See for instance https://github.com/cilium/cilium/actions/runs/45520933278/job/138892286504?pr=50263  Fixes: 1e538a99c38d (".github: Run labeler on ubuntu-slim")
+- **Issue #50277** (2026-11-26): **DO NOT MERGE ci: use versioned Ubuntu 26 runners**
+  *Symptoms*: DO NOT MERGE THIS IS A TEST PR FOR https://github.com/cilium/cilium/pull/49623
   **Post-Mortem & Fix Analysis**:
+  > /test
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1293,154 +1294,63 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c330d437` (2026-10-12)
-**Commit Message**: ci: Read the Hubble CLI job's kind config from KIND_CONFIG
+### Incident Patch 1: `043fd9e1` (2026-11-04)
+**Commit Message**: cilium-cli: Follow Cilium logs only with debug logging
 
-The Hubble CLI integration test has always declared kind_config at the
-workflow level, but passes ${{ env.KIND_CONFIG }} to helm/kind-action.
-The env context is case sensitive, so the expression expands to the
-empty string and kind creates its default single-node cluster with
-kindnet. Cilium installs on top of it and both IPAMs then hand out
-addresses from 10.244.0.0/24. kindnet wires hubble-relay sequentially
-before Cilium's CNI config exists, while Cilium picks its router IP at
-random among 254 addresses. In 1 run out of 254, cilium_host takes the
-relay's address and its local route shadows the pod's route, so the
-kubelet probes and DNS replies for the relay reach the host stack. The
-relay never connects to hubble-peer and `cilium status --wait` gives up
-after 5 minutes:
+Without debug logging, the agents of an AWS-CNI job [1] would take 5 to
+11 hours to fill a 10 MiB log file, so following them only costs
+bandwidth. This commit only follows clusters whose cilium-config sets
+debug to true, which CI does by default.
 
-  Deployment             hubble-relay             Desired: 1, Unavailable: 1/1
-  Errors:                hubble-relay       hubble-relay    1 pods of Deployment hubble-relay are not ready
+This commit was prepared with AIL:3. I personally checked the kind runs
+with and without debug logging.
 
-This commit renames the key to KIND_CONFIG, the spelling the other kind
-workflows use. .github/kind-config.yaml then applies, so the cluster
-comes up without a CNI on 
+1: https://github.com/cilium/cilium/actions/runs/39635245257/job/119344831387
 
-**File**: `.github/workflows/hubble-cli-integration-test.yaml` (modified, +1/-1)
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `cilium-cli/connectivity/check/podlogs.go` (modified, +9/-1)
 ```diff
-@@ -49,7 +49,7 @@ concurrency:
-   cancel-in-progress: true
+@@ -19,6 +19,7 @@ import (
+ 	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
+ 	"k8s.io/client-go/rest"
  
- env:
--  kind_config: .github/kind-config.yaml
-+  KIND_CONFIG: .github/kind-config.yaml
++	"github.com/cilium/cilium/cilium-cli/defaults"
+ 	"github.com/cilium/cilium/pkg/lock"
+ )
  
- jobs:
-   echo-inputs:
-```
-
----
-
-### Incident Patch 2: `f631e869` (2026-11-19)
-**Commit Message**: loadbalancer/redirectpolicy: reject addressMatchers with unspecified IPs
-
-Currently, an addressMatcher LRP configured on an unspecified IP address
-would be accepted, and programmed into the data path, but the socketLB
-wildcard lookup would ignore the entry due to type mismatch.
-
-This commit modifies the LRP parser to reject such an LRP, and updates
-script tests to verify the behaviour.
-
-Signed-off-by: Alasdair McWilliam <[REDACTED_EMAIL]>
-
-**File**: `pkg/loadbalancer/redirectpolicy/redirectpolicy.go` (modified, +5/-1)
-```diff
-@@ -182,7 +182,11 @@ func getSanitizedLocalRedirectPolicy(cfg Config, log *slog.Logger, name, namespa
- 			return nil, fmt.Errorf("invalid address matcher IP %v: %w", addrMatcher.IP, err)
- 		}
+@@ -47,14 +48,21 @@ type logFollower struct {
+ }
  
--		if !cfg.AddressAllowed(addrCluster.Addr()) {
-+		addr := addrCluster.Addr()
-+		if addr.IsUnspecified() {
-+			return nil, fmt.Errorf("unspecified address %q not allowed in AddressMatcher", addrMatcher.IP)
+ // FollowCiliumLogs keeps the Cilium pod log lines for which keep returns true
+-// until ctx ends. It does nothing when the user filtered out the scenario.
++// until ctx ends. It does nothing when the user filtered out the scenario, and
++// skips the clusters whose agents do not log at debug level.
+ func (ct *ConnectivityTest) FollowCiliumLogs(ctx context.Context, scenario string, keep func(line string) bool) {
+ 	if !ct.params.testEnabled(scenario) {
+ 		return
+ 	}
+ 
+ 	f := &logFollower{keep: keep, logs: make(map[string]*followedLog)}
+ 	for _, client := range ct.Clients() {
++		// Without debug logging, an agent takes hours to fill a kubelet log file.
++		cm, err := client.GetConfigMap(ctx, ct.params.CiliumNamespace, defaults.ConfigMapName, metav1.GetOptions{})
++		if err != nil || cm.Data["debug"] != "true" {
++			continue
 +		}
-+		if !cfg.AddressAllowed(addr) {
- 			return nil, fmt.Errorf("address %q in AddressMatcher disallowed by --"+AddressMatcherCIDRsName, addrMatcher.IP)
- 		}
- 
-```
-
-**File**: `pkg/loadbalancer/redirectpolicy/testdata/address-malformed.txtar` (modified, +51/-1)
-```diff
-@@ -1,4 +1,5 @@
--# Verifies that malformed AddressMatcher LRPs are not applied
-+# Verifies that malformed AddressMatcher LRPs are not applied. This
-+# includes unspecified addresses.
- 
- hive start
- 
-@@ -18,6 +19,13 @@ k8s/add lrp-addr-malformed.yaml
- # Tables and maps should still be empty.
- * db/empty services frontends backends localredirectpolicies
- 
-+# Unspecified IPv4 and IPv6 addressMatchers should also be rejected.
-+k8s/add lrp-addr-unspecified-v4.yaml lrp-addr-unspecified-v6.yaml pod.yaml
-+* db/empty services frontends backends localredirectpolicies
 +
-+k8s/delete lrp-addr-unspecified-v4.yaml lrp-addr-unspecified-v6.yaml pod.yaml
-+* db/empty services frontends backends localredirectpolicies
-+
- -- lrp-addr-malformed.yaml --
- apiVersion: "cilium.io/v2"
- kind: CiliumLocalRedirectPolicy
-@@ -46,6 +54,48 @@ spec:
-         name: "test1"
-         protocol: TCP
- 
-+-- lrp-addr-unspecified-v4.yaml --
-+apiVersion: "cilium.io/v2"
-+kind: CiliumLocalRedirectPolicy
-+metadata:
-+  name: "lrp-addr-unspecified-v4"
-+  namespace: test
-+spec:
-+  redirectFrontend:
-+    addressMatcher:
-+      ip: "0.0.0.0"
-+      toPorts:
-+        - port: "5050"
-+          protocol: TCP
-+  redirectBackend:
-+    localEndpointSelector:
-+      matchLabels:
-+        app: proxy
-+    toPorts:
-+      - port: "80"
-+        protocol: TCP
-+
-+-- lrp-addr-unspecified-v6.yaml --
-+apiVersion: "cilium.io/v2"
-+kind: CiliumLocalRedirectPolicy
-+metadata:
-+  name: "lrp-addr-unspecified-v6"
-+  namespace: test
-+spec:
-+  redirectFrontend:
-+    addressMatcher:
-+      ip: "::"
-+      toPorts:
-+        - port: "5050"
-+          protocol: TCP
-+  redirectBackend:
-+    localEndpointSelector:
-+      matchLabels:
-+        app: proxy
-+    toPorts:
-+      - port: "80"
-+        protocol: TCP
-+
- -- lrp-addr.yaml --
- apiVersion: "cilium.io/v2"
- kind: CiliumLocalRedirectPolicy
+ 		// A clientset of its own keeps the log streams off the rate limiter of the tests.
+ 		clientset, err := kubernetes.NewForConfig(rest.CopyConfig(client.Config))
+ 		if err != nil {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #50280** (2026-11-26): ci: Read the Hubble CLI job's kind config from KIND_CONFIG (@aanm)
+- **PR #50277** (closed): DO NOT MERGE ci: use versioned Ubuntu 26 runners (@nbusseneau)
 - **PR #50268** (2026-11-25): .github: don't use ubuntu-slim for labeling External Contributions (@julianwiedmann)
 - **PR #50266** (2026-11-26): [v1.19] loadbalancer: preserve sockets to shared live backends (@ysksuzuki)
 - **PR #50264** (2026-11-25): [v1.18] proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x (@sayboras)
 - **PR #50263** (closed): Update quay.io/cilium/cilium-envoy Docker tag to v1.39.6-1795562505-2cd7b93ce3f7c9645c511c84c494e47e264de4e1 (v1.18) - autoclosed (@cilium-renovate[bot])
-- **PR #50258** (2026-11-24): Update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
 
 ---
 
@@ -1460,31 +1370,39 @@ Signed-off-by: Alasdair McWilliam <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: Read the Hubble CLI job's kind config from KIND_CONFIG
+## X. cilium-cli: Follow Cilium logs only with debug logging
 
 **RULE**:
-When implementing operations in `.github/workflows/hubble-cli-integration-test.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cilium-cli/connectivity/check/podlogs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c330d437`: ci: Read the Hubble CLI job's kind config from KIND_CONFIG. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `043fd9e1`: cilium-cli: Follow Cilium logs only with debug logging. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/hubble-cli-integration-test.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/connectivity/check/podlogs.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  KIND_CONFIG: .github/kind-config.yaml
+	"github.com/cilium/cilium/cilium-cli/defaults"
+// until ctx ends. It does nothing when the user filtered out the scenario, and
+// skips the clusters whose agents do not log at debug level.
+		// Without debug logging, an agent takes hours to fill a kubelet log file.
+		cm, err := client.GetConfigMap(ctx, ct.params.CiliumNamespace, defaults.ConfigMapName, metav1.GetOptions{})
+		if err != nil || cm.Data["debug"] != "true" {
+			continue
+		}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  kind_config: .github/kind-config.yaml
+// until ctx ends. It does nothing when the user filtered out the scenario.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c330d437` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `043fd9e1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

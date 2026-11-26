@@ -795,8 +795,8 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "99b551c899d10f2b4ebeb21f2263f252cd87b73e7501b7a78ab4d19bd002ad0e",
-    "lastHarvestedAt": "2026-11-23T04:00:02.817Z",
+    "contentHash": "16ffb404afd7414d81208dcb225ea65a09dafb2ce19f47b55e01c9822bcaea61",
+    "lastHarvestedAt": "2026-11-26T18:14:23.685Z",
     "learningId": "learn-huggingface-amazon-chronos-2"
   },
   "hf-compvis-stable-diffusion-v1-4": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "c330d437",
+    "sourceVersion": "b2d0110f",
     "license": "Apache-2.0",
-    "contentHash": "29ba5ab778e3f53023141dfe425605525dd9f9c37e2b2e9bc55cd5078b50b7ec",
-    "lastHarvestedAt": "2026-11-26T13:55:25.116Z",
+    "contentHash": "ad5ea98ee545f58f2aa8bd50e955db6f0449c2aed72986e27c43765ee5d65977",
+    "lastHarvestedAt": "2026-11-26T18:14:37.952Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "013ceaf3",
+    "sourceVersion": "08733868",
     "license": "Apache-2.0",
-    "contentHash": "9a7a420de505657bfee383a1bf9e40ff70a3c682fb84081a7a9890ae96d00890",
-    "lastHarvestedAt": "2026-11-25T10:57:45.238Z",
+    "contentHash": "28b6ae4a3a0f9ea56a9bc81bfaf0ebcadb3afb21b8c98a67f40e90172c83a0b2",
+    "lastHarvestedAt": "2026-11-26T18:14:26.971Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {

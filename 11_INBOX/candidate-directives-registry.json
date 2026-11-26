@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:06:01.012Z",
+  "last_updated": "2026-11-26T18:14:43.955Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66416,6 +66416,48 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-GU8Y",
+      "directive_title": "Add RequestCookie::new and RequestCookie::from builder.",
+      "source_repo": "orange-opensource-hurl-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GU8Y-add-requestcookie-new-and-requestcookie-from-builder.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-GQYG",
+      "directive_title": "Follow Cilium logs only with debug logging",
+      "source_repo": "cilium/cilium",
+      "source_commit": "b2d0110f",
+      "staged_file": "11_INBOX/candidate-directives/CD-GQYG-follow-cilium-logs-only-with-debug-logging.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-C1BD1F",
+      "directive_title": "Add RequestCookie::new and RequestCookie::from builder.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "orange-opensource-hurl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C1BD1F-add-requestcookie-new-and-requestcookie-.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-GVEB",
+      "directive_title": "cilium-cli: Follow Cilium logs only with debug logging",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GVEB-cilium-cli-follow-cilium-logs-only-with-debug-logging.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "B"
     }
   ]
 }

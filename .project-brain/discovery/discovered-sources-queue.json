@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T18:05:59.477Z",
+  "updated_at": "2026-11-26T18:14:43.701Z",
   "stats": {
-    "total_discovered": 9948,
-    "approved_pending_harvest": 9432,
+    "total_discovered": 9953,
+    "approved_pending_harvest": 9434,
     "harvested_count": 0,
-    "rejected_count": 516,
+    "rejected_count": 519,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9432,
+      "COMMUNITY_AND_EXPERT": 9437,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -215271,6 +215271,95 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
         "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-DF7D77A453C1": {
+      "id": "SRC-DF7D77A453C1",
+      "url": "http://localhost:8000/hello",
+      "title": "http://localhost:8000/hello",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T18:14:42.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-B208C241914A": {
+      "id": "SRC-B208C241914A",
+      "url": "http://localhost/custom",
+      "title": "http://localhost/custom",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T18:14:42.112Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-C632CC897B91": {
+      "id": "SRC-C632CC897B91",
+      "url": "http://localhost:8000/hello/n",
+      "title": "http://localhost:8000/hello/n",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T18:14:42.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-92A68DB8CEF1": {
+      "id": "SRC-92A68DB8CEF1",
+      "url": "https://github.com/cilium/cilium/pull/49623",
+      "title": "https://github.com/cilium/cilium/pull/49623",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:14:43.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-08EC5FC88FB3": {
+      "id": "SRC-08EC5FC88FB3",
+      "url": "https://github.com/cilium/cilium/actions/runs/39635245257/job/119344831387",
+      "title": "https://github.com/cilium/cilium/actions/runs/39635245257/job/119344831387",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:14:43.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }
