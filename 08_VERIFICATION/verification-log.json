@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-1BWJ",
-    "timestamp": "2026-11-24T13:47:21.859Z",
-    "repository": "i18next/react-i18next",
-    "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "b2e1c81c204bce403fa95b811bcd014b4107d7760ea2461b055fad4163cba31d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-1I8C",
     "timestamp": "2026-11-24T13:47:30.060Z",
     "repository": "apache/shardingsphere",
@@ -7490,6 +7475,21 @@
     "repository": "Zyphra/ZONOS3-Mini",
     "learningId": "learn-huggingface-zyphra-zonos3-mini",
     "contentHash": "47b697125ec47875099ea838d89a2340d9a5e892db2bd5b3373c1828a24ff949",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-GJXI",
+    "timestamp": "2026-11-26T03:46:40.998Z",
+    "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+    "contentHash": "c5e9fbd79af6da5ae7645cb225c0c1e9a8221820f0ac3d330c0fc3549eb84420",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

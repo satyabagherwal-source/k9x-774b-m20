@@ -13259,3 +13259,4 @@ Every entry in this ledger must capture:
 | `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `abab8260` | Multi-dimensional audit evidence | 2026-11-26T03:21:25.376Z |
 | `learn-huggingface-comfy-org-relayvsr` | `https://huggingface.co/Comfy-Org/RelayVSR` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-26T03:29:54.863Z |
 | `learn-huggingface-zyphra-zonos3-mini` | `https://huggingface.co/Zyphra/ZONOS3-Mini` | `hf-zyphra-` | Multi-dimensional audit evidence | 2026-11-26T03:38:15.249Z |
+| `learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m` | `https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-26T03:46:41.002Z |

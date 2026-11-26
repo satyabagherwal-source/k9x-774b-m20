@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T03:38:29.512Z",
+  "last_updated": "2026-11-26T03:46:54.902Z",
   "total_records": 2703,
   "domains": {
     "A": {
@@ -8518,8 +8518,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "68ebc10c409aaf4a752428de73b0af5b356817d1bdc88210d5e0dc0ca23b6802",
-      "created_at": "2026-11-26T02:27:12.821Z"
+      "content_hash": "c99e2a9f3296e4cee202ea839a4a4b1f3159fb0d2b91aa1aec43115ee87c5a74",
+      "created_at": "2026-11-26T03:46:54.902Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9436,8 +9436,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "cb2e7b6f3412b0f60bf88cb55fdc0905af7d03e1aa85f13c2699b996dd367522",
-      "created_at": "2026-11-26T02:55:25.679Z"
+      "content_hash": "8a0afbb7836efc72ba2bc0bd79a43a16e00ec77fb72d7451506e4f7b2a8f872b",
+      "created_at": "2026-11-26T03:46:53.919Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -25336,8 +25336,8 @@
       "title": "Research & Knowledge Intelligence: facebook/dinov3-vitl16-pretrain-lvd1689m Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-research-knowledge-intelligence-face.md",
       "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
-      "content_hash": "3a601e4612ba9cfc2b7d9f788d907a137136e002a772dccb64aa4c0ef02e1cc2",
-      "created_at": "2026-11-22T07:05:57.873Z"
+      "content_hash": "d603b99e84fad49d7446509ab01ea0ef0095f5423efa5523cf8f3a74d4f858ca",
+      "created_at": "2026-11-26T03:46:41.233Z"
     },
     "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-core-invariants",
@@ -25381,8 +25381,8 @@
       "title": "Research & Knowledge Intelligence: hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings-research-knowledge-intelli.md",
       "repository": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings",
-      "content_hash": "4a2c558d4891c802a13fbc874be3c926a5bf260a6b8517cd597637f39ea50bf2",
-      "created_at": "2026-11-22T07:06:10.544Z"
+      "content_hash": "701e6b027dd89c996d6e7aa712fca3519eb88982c0225a977e597f7732e50599",
+      "created_at": "2026-11-26T03:46:53.181Z"
     },
     "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants",

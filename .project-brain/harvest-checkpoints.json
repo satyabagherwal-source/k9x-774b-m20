@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T03:38:15.264Z",
+  "last_updated": "2026-11-26T03:46:41.018Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18651,14 +18651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-      "content_hash": "c7bb55d03528a8754193ae9a8bbdf58d997ae3fb4157d6f976a4c59d9bbc1d2d",
-      "verified_at": "2026-11-22T07:05:57.697Z",
+      "content_hash": "c5e9fbd79af6da5ae7645cb225c0c1e9a8221820f0ac3d330c0fc3549eb84420",
+      "verified_at": "2026-11-26T03:46:41.017Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:05:57.697Z"
+      "last_updated": "2026-11-26T03:46:41.017Z"
     },
     "tonhowtf/omniget": {
       "repository": "tonhowtf/omniget",

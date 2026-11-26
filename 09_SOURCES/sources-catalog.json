@@ -12395,8 +12395,8 @@
     "sourceUrl": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
     "sourceVersion": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
     "license": "Open-Source",
-    "contentHash": "c7bb55d03528a8754193ae9a8bbdf58d997ae3fb4157d6f976a4c59d9bbc1d2d",
-    "lastHarvestedAt": "2026-11-22T07:05:57.690Z",
+    "contentHash": "c5e9fbd79af6da5ae7645cb225c0c1e9a8221820f0ac3d330c0fc3549eb84420",
+    "lastHarvestedAt": "2026-11-26T03:46:41.002Z",
     "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m"
   },
   "tonhowtf-omniget": {

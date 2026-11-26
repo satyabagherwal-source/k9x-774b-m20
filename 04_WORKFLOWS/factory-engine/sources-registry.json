@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T03:38:27.082Z",
-    "lastVerified": "2026-11-26T03:38:27.082Z",
+    "lastChecked": "2026-11-26T03:46:52.795Z",
+    "lastVerified": "2026-11-26T03:46:52.795Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -388,12 +388,12 @@
     "lastVerified": "2026-11-25T14:50:21.572Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T03:13:13.557Z",
-    "lastVerified": "2026-11-26T03:13:13.557Z",
+    "lastChecked": "2026-11-26T03:46:52.783Z",
+    "lastVerified": "2026-11-26T03:46:52.783Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -402,7 +402,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d536eec8"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1589,9 +1590,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-25T23:41:44.835Z",
+    "lastChecked": "2026-11-26T03:46:47.795Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-25T23:41:44.835Z"
+    "lastVerified": "2026-11-26T03:46:47.795Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -3508,8 +3509,8 @@
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-25T02:20:19.615Z",
-    "lastVerified": "2026-11-25T02:20:19.615Z",
+    "lastChecked": "2026-11-26T03:46:50.281Z",
+    "lastVerified": "2026-11-26T03:46:50.281Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
@@ -6288,9 +6289,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-25T03:28:23.930Z",
+    "lastChecked": "2026-11-26T03:46:45.274Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-25T03:28:23.930Z"
+    "lastVerified": "2026-11-26T03:46:45.274Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -7087,12 +7088,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dalance-procs": {
-    "name": "dalance/procs",
+    "name": "procs",
     "officialUrl": "https://github.com/dalance/procs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T21:01:21.304Z",
-    "lastVerified": "2026-11-24T21:01:21.304Z",
+    "lastChecked": "2026-11-26T03:46:37.793Z",
+    "lastVerified": "2026-11-26T03:46:37.793Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dalance-procs",
@@ -7101,7 +7102,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9422dd6b"
   },
   "hf-zai-org-glm-5.3": {
     "name": "zai-org/GLM-5.3",
@@ -11159,9 +11161,9 @@
   "kitlangton-hex": {
     "name": "Hex",
     "officialUrl": "https://github.com/kitlangton/Hex",
-    "lastChecked": "2026-11-23T18:03:10.082Z",
+    "lastChecked": "2026-11-26T03:46:42.894Z",
     "revisionIdentifier": "3e300721",
-    "lastVerified": "2026-11-23T18:03:10.082Z"
+    "lastVerified": "2026-11-26T03:46:42.894Z"
   },
   "rehypejs-rehype": {
     "name": "rehype",
@@ -14384,12 +14386,12 @@
     "officialUrl": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T07:05:57.119Z",
-    "lastVerified": "2026-11-22T07:05:57.119Z",
+    "lastChecked": "2026-11-26T03:46:40.356Z",
+    "lastVerified": "2026-11-26T03:46:40.356Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-    "contentHash": "c7bb55d03528a8754193ae9a8bbdf58d997ae3fb4157d6f976a4c59d9bbc1d2d",
+    "contentHash": "c5e9fbd79af6da5ae7645cb225c0c1e9a8221820f0ac3d330c0fc3549eb84420",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

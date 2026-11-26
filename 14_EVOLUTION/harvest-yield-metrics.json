@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T03:38:15.261Z",
-  "total_cycles_completed": 12554,
-  "total_learnings_persisted": 12554,
+  "last_updated": "2026-11-26T03:46:41.015Z",
+  "total_cycles_completed": 12555,
+  "total_learnings_persisted": 12555,
   "total_rules_promoted": 11486,
   "history": [
-    {
-      "timestamp": "2026-11-25T08:44:11.666Z",
-      "repository": "apache/zookeeper",
-      "learningId": "learn-github-apache-zookeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T08:56:01.694Z",
       "repository": "inclusionAI/LingSante-3.1-air-VL",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-26T03:38:15.261Z",
       "repository": "Zyphra/ZONOS3-Mini",
       "learningId": "learn-huggingface-zyphra-zonos3-mini",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T03:46:41.015Z",
+      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
