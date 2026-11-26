@@ -22456,5 +22456,20 @@
     "downloads": 4,
     "qualityScore": 864,
     "discoveredAt": "2026-11-26T19:13:53.185Z"
+  },
+  {
+    "name": "Aliens_eye",
+    "fullName": "arxhr007/Aliens_eye",
+    "url": "https://github.com/arxhr007/Aliens_eye",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI powered OSINT engine to discover and map  7,700+ social media identities across the web",
+    "stars": 4900,
+    "forks": 575,
+    "openIssues": 0,
+    "language": "Python",
+    "qualityScore": 2873,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-26T21:13:53.967Z"
   }
 ]

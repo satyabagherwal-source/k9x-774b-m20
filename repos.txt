@@ -5458,3 +5458,7 @@ https://github.com/open-wa/wa-automate-nodejs
 # --- Automatically Discovered by AI Scout Engine [2026-11-26T19:16:01.075Z] ---
 # [HUGGINGFACE-AI-MODELS] kandinskylab/Kandinsky-ImageSR-2.0 (864 score) - Verified Hugging Face Model: kandinskylab/Kandinsky-ImageSR-2.0 (86 likes, 4 dow
 https://huggingface.co/kandinskylab/Kandinsky-ImageSR-2.0
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-26T21:17:16.092Z] ---
+# [AI-AGENTS] arxhr007/Aliens_eye (2873 score) - AI powered OSINT engine to discover and map  7,700+ social media identities acro
+https://github.com/arxhr007/Aliens_eye

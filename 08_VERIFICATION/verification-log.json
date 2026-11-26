@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-MKJ0",
-    "timestamp": "2026-11-25T10:07:36.300Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "4ef9bbe4a17e396c5ddddf80b4d29444847b3f77e9c445f6f7012844f34d3cbd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-48MJ",
-    "timestamp": "2026-11-25T10:21:20.683Z",
-    "repository": "FastVideo/FastH3-Omni-Comfy",
-    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-    "contentHash": "546943546d85137584a01e9b39ae314855c11c90ab1655ec89beede77ba4f252",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-7YBU",
-    "timestamp": "2026-11-25T10:24:13.962Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "d0713a511f2b99936262ce80a55ac6987cd9fb90db8d1d6728d6049dd509ba74",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-9LZ7",
     "timestamp": "2026-11-25T10:25:31.267Z",
     "repository": "loft-sh/vcluster",
@@ -7490,6 +7445,51 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "396ac043b84988e16f903b08622b7cf52890274ae4611fbdf10ae8e605a0df53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-ZPKD",
+    "timestamp": "2026-11-26T21:17:20.557Z",
+    "repository": "arxhr007/Aliens_eye",
+    "learningId": "learn-github-arxhr007-aliens_eye",
+    "contentHash": "d81b3ea3e83ac13c85657df90ca5f32a1fe21ff443ff99b738c45235219dc43a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-ZSR9",
+    "timestamp": "2026-11-26T21:17:24.693Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "63085d38311dbbb1fbe90582c2de2ba98b4553b11d4ae16d547c96f21eb045cb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-05KS",
+    "timestamp": "2026-11-26T21:17:41.308Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "6cb594bcfe24b405e591a6b320af1d50c82e211113cfb920b03a7aec1ea2fa9e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

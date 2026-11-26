@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T20:59:46.055Z",
+  "updated_at": "2026-11-26T21:17:47.249Z",
   "stats": {
-    "total_discovered": 10044,
-    "approved_pending_harvest": 9522,
+    "total_discovered": 10059,
+    "approved_pending_harvest": 9536,
     "harvested_count": 0,
-    "rejected_count": 522,
+    "rejected_count": 523,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9526,
+      "COMMUNITY_AND_EXPERT": 9541,
       "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -217341,6 +217341,329 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
         "fileName": "svenstaro-miniserve-learnings.md"
+      }
+    },
+    "SRC-D5B4E0F84B41": {
+      "id": "SRC-D5B4E0F84B41",
+      "url": "https://github.com/agentclientprotocol/typescript-sdk",
+      "title": "https://github.com/agentclientprotocol/typescript-sdk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:45.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-D204B5167AF0": {
+      "id": "SRC-D204B5167AF0",
+      "url": "https://github.com/aws/aws-sdk-js-v3/tree/HEAD/clients/client-bedrock",
+      "title": "https://github.com/aws/aws-sdk-js-v3/tree/HEAD/clients/client-bedrock",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:45.568Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-5B675261A2DE": {
+      "id": "SRC-5B675261A2DE",
+      "url": "https://github.com/coinbase/cdp-sdk",
+      "title": "https://github.com/coinbase/cdp-sdk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:45.633Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-6DE871DE1CB8": {
+      "id": "SRC-6DE871DE1CB8",
+      "url": "https://github.com/larksuite/node-sdk",
+      "title": "https://github.com/larksuite/node-sdk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:45.698Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-4EBF444714F2": {
+      "id": "SRC-4EBF444714F2",
+      "url": "https://github.com/open-telemetry/opentelemetry-js",
+      "title": "https://github.com/open-telemetry/opentelemetry-js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:45.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-696A8136B1B6": {
+      "id": "SRC-696A8136B1B6",
+      "url": "https://github.com/sinclairzx81/sinclair-typebox",
+      "title": "https://github.com/sinclairzx81/sinclair-typebox",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:45.831Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-C5E99007201B": {
+      "id": "SRC-C5E99007201B",
+      "url": "https://github.com/tj/commander.js",
+      "title": "https://github.com/tj/commander.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:45.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-49559BB89D55": {
+      "id": "SRC-49559BB89D55",
+      "url": "https://github.com/discordjs/discord-api-types",
+      "title": "https://github.com/discordjs/discord-api-types",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:45.963Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-97C1503EC49A": {
+      "id": "SRC-97C1503EC49A",
+      "url": "https://github.com/arxhr007/Aliens_eye",
+      "title": "https://github.com/arxhr007/Aliens_eye",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:46.864Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxhr007-aliens_eye-learnings.md",
+        "fileName": "arxhr007-aliens_eye-learnings.md"
+      }
+    },
+    "SRC-11E94BF3AC36": {
+      "id": "SRC-11E94BF3AC36",
+      "url": "https://example.test/final",
+      "title": "https://example.test/final",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:46.929Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxhr007-aliens_eye-learnings.md",
+        "fileName": "arxhr007-aliens_eye-learnings.md"
+      }
+    },
+    "SRC-D502C9F03E60": {
+      "id": "SRC-D502C9F03E60",
+      "url": "https://example.test/%7Bi",
+      "title": "https://example.test/%7Bi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:46.992Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxhr007-aliens_eye-learnings.md",
+        "fileName": "arxhr007-aliens_eye-learnings.md"
+      }
+    },
+    "SRC-37F58C3315BE": {
+      "id": "SRC-37F58C3315BE",
+      "url": "https://example.test/a",
+      "title": "https://example.test/a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:47.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxhr007-aliens_eye-learnings.md",
+        "fileName": "arxhr007-aliens_eye-learnings.md"
+      }
+    },
+    "SRC-C26700D6C896": {
+      "id": "SRC-C26700D6C896",
+      "url": "https://example.test/slow",
+      "title": "https://example.test/slow",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:47.123Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxhr007-aliens_eye-learnings.md",
+        "fileName": "arxhr007-aliens_eye-learnings.md"
+      }
+    },
+    "SRC-460182EE815C": {
+      "id": "SRC-460182EE815C",
+      "url": "http://{server.host/",
+      "title": "http://{server.host/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T21:17:47.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxhr007-aliens_eye-learnings.md",
+        "fileName": "arxhr007-aliens_eye-learnings.md"
+      }
+    },
+    "SRC-D5CB02C9BD7F": {
+      "id": "SRC-D5CB02C9BD7F",
+      "url": "https://limited.example/u/%7B",
+      "title": "https://limited.example/u/%7B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:17:47.249Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxhr007-aliens_eye-learnings.md",
+        "fileName": "arxhr007-aliens_eye-learnings.md"
       }
     }
   }

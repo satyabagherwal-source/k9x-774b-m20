@@ -995,8 +995,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
     "sourceVersion": "hf-deepseek-ai-deepseek-v3",
     "license": "Open-Source",
-    "contentHash": "d7ecfd23d115b7bb6b979d4bf16980f0fdbdbbd85c6ecc132bb116d4ff2f2956",
-    "lastHarvestedAt": "2026-11-23T08:11:57.593Z",
+    "contentHash": "63085d38311dbbb1fbe90582c2de2ba98b4553b11d4ae16d547c96f21eb045cb",
+    "lastHarvestedAt": "2026-11-26T21:17:24.698Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3"
   },
   "hf-baidu-unlimited-ocr": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "e09ae3b9",
+    "sourceVersion": "498590e2",
     "license": "MIT",
-    "contentHash": "a02824aa867360119e6c199af326d8d19e9ae1844d5aa7cd1a111ed20eba5601",
-    "lastHarvestedAt": "2026-11-26T20:40:38.243Z",
+    "contentHash": "6cb594bcfe24b405e591a6b320af1d50c82e211113cfb920b03a7aec1ea2fa9e",
+    "lastHarvestedAt": "2026-11-26T21:17:41.312Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -13578,5 +13578,15 @@
     "contentHash": "ff57166043015aedef0e9f1c8ab2f6a9dcc5671b48b84ba7e24e8f5c85ea06b6",
     "lastHarvestedAt": "2026-11-26T19:16:07.570Z",
     "learningId": "learn-huggingface-kandinskylab-kandinsky-imagesr-2-0"
+  },
+  "arxhr007-aliens_eye": {
+    "repository": "arxhr007/Aliens_eye",
+    "platform": "github",
+    "sourceUrl": "https://github.com/arxhr007/Aliens_eye",
+    "sourceVersion": "da0f12ef",
+    "license": "MIT",
+    "contentHash": "d81b3ea3e83ac13c85657df90ca5f32a1fe21ff443ff99b738c45235219dc43a",
+    "lastHarvestedAt": "2026-11-26T21:17:20.562Z",
+    "learningId": "learn-github-arxhr007-aliens_eye"
   }
 }

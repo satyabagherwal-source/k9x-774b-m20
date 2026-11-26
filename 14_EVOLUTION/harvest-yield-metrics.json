@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T21:09:01.723Z",
-  "total_cycles_completed": 12871,
-  "total_learnings_persisted": 12871,
-  "total_rules_promoted": 11685,
+  "last_updated": "2026-11-26T21:17:41.331Z",
+  "total_cycles_completed": 12874,
+  "total_learnings_persisted": 12874,
+  "total_rules_promoted": 11686,
   "history": [
-    {
-      "timestamp": "2026-11-26T11:15:44.327Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T11:15:51.065Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T11:28:53.857Z",
-      "repository": "KORMo-VL/KORMo-Web-11B",
-      "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T11:28:54.985Z",
       "repository": "tw93/Pake",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T21:09:01.723Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T21:17:20.616Z",
+      "repository": "arxhr007/Aliens_eye",
+      "learningId": "learn-github-arxhr007-aliens_eye",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T21:17:24.710Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T21:17:41.331Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

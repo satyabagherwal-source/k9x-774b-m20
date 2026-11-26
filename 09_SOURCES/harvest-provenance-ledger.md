@@ -13594,3 +13594,6 @@ Every entry in this ledger must capture:
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `452b4d01` | Multi-dimensional audit evidence | 2026-11-26T20:59:41.559Z |
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-26T21:08:50.088Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `33bbc74e` | Multi-dimensional audit evidence | 2026-11-26T21:09:01.701Z |
+| `learn-github-arxhr007-aliens_eye` | `https://github.com/arxhr007/Aliens_eye` | `da0f12ef` | Multi-dimensional audit evidence | 2026-11-26T21:17:20.562Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-26T21:17:24.698Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `498590e2` | Multi-dimensional audit evidence | 2026-11-26T21:17:41.312Z |

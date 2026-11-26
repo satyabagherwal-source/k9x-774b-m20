@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T21:09:08.380Z",
-  "total_records": 2780,
+  "last_updated": "2026-11-26T21:17:47.721Z",
+  "total_records": 2782,
   "domains": {
     "A": {
       "total": 23,
@@ -1720,7 +1720,7 @@
       ]
     },
     "H": {
-      "total": 675,
+      "total": 677,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2396,7 +2396,9 @@
         "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-core-invariants",
         "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-learnings-core-invarian",
-        "DOM-H-82FF7827"
+        "DOM-H-82FF7827",
+        "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-learnings-core-invariant"
       ]
     },
     "I": {
@@ -14142,8 +14144,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-research-knowledge-intelligence-deepseek-ai-deepseek-.md",
       "repository": "deepseek-ai/DeepSeek-V3",
-      "content_hash": "67f96e1f98bc41d8dc01c9d8efb3d0aa41c19bdc2d41322fe9c6eccb70cf578f",
-      "created_at": "2026-11-23T08:11:57.816Z"
+      "content_hash": "2c4b81a99d350d1cba76aacdb8bc897b7b19c5a2e9a274f6605d97872b4c5c26",
+      "created_at": "2026-11-26T21:17:24.933Z"
     },
     "domain_intelligence-architecture-intelligence-keybase-client-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-keybase-client-core-invariants",
@@ -14202,8 +14204,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-learnings-research-knowledge-intelligence-hf-deepseek.md",
       "repository": "hf-deepseek-ai-deepseek-v3-learnings",
-      "content_hash": "5c3812b8bcea1daa915d0ef403b24b47d8cc10fa2f74c23bb3b97fafb4370284",
-      "created_at": "2026-11-23T08:12:00.939Z"
+      "content_hash": "c8c337925546224b8f40fe9b211baefdb1407a8cc037847fc4f001916fec6da7",
+      "created_at": "2026-11-26T21:17:45.093Z"
     },
     "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants",
@@ -19058,8 +19060,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "1fc5e6b630c32c945a29f34930073d93aea45a1a1a3933e4794303a44d75ef8a",
-      "created_at": "2026-11-26T20:40:38.697Z"
+      "content_hash": "da153601bb7c279d6185bc34cbae887175ea7a58c0826c310b929837721656cd",
+      "created_at": "2026-11-26T21:17:41.784Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -28670,8 +28672,8 @@
       "title": "Architecture Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-learnings-architecture-intelligence-bitterbot-ai-.md",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
-      "content_hash": "29155edf974df1107c9f121209b331c23a92022705397274fc673ba60167dcca",
-      "created_at": "2026-11-26T20:41:12.704Z"
+      "content_hash": "fdd20eb47316c1e7f92e7c4d78557147ca3837a68892919636a6911f43d3beca",
+      "created_at": "2026-11-26T21:17:46.412Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants",
@@ -46945,6 +46947,24 @@
       "repository": "svenstaro-miniserve-learnings",
       "content_hash": "828650ce8ead2125622699d969bcdc46205f8d617ee47f2b621c06085983b070",
       "created_at": "2026-11-26T20:59:46.815Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: arxhr007/Aliens_eye Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arxhr007-aliens_eye-technical-construction-intelligence-arxhr007-aliens_eye-core.md",
+      "repository": "arxhr007/Aliens_eye",
+      "content_hash": "7e7389465b0cd89f0db2cf29c90ea4431c1638e3823044e9810baa1b4ac2012d",
+      "created_at": "2026-11-26T21:17:21.069Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: arxhr007-aliens_eye-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arxhr007-aliens_eye-learnings-technical-construction-intelligence-arxhr007-alien.md",
+      "repository": "arxhr007-aliens_eye-learnings",
+      "content_hash": "7a9a713a1926b41497c229793b1c82842ec21f65abd09c0f8b320f6b54ebcf56",
+      "created_at": "2026-11-26T21:17:47.721Z"
     }
   }
 }
