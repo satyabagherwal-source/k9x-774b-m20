@@ -805,8 +805,8 @@
     "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
     "license": "Open-Source",
-    "contentHash": "90d9d4c897edd1647a4f5e1a90897d55178cc0b094e4dc665bf1dc06e742d97a",
-    "lastHarvestedAt": "2026-11-23T04:23:24.562Z",
+    "contentHash": "4d5becae93ceadb9090cd8f46f6507489f45af2db6a67de17bab615c7a3519fb",
+    "lastHarvestedAt": "2026-11-26T18:32:52.359Z",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4"
   },
   "hf-meta-llama-meta-llama-3-8b": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "c14584a6",
+    "sourceVersion": "f94c2ef2",
     "license": "Apache-2.0",
-    "contentHash": "261f39e6463f05d072dcd4c576c0841869bc9a4bb2d13362200f7d210571b1d0",
-    "lastHarvestedAt": "2026-11-25T00:35:19.297Z",
+    "contentHash": "fa4989470005cf082cad070ea85fee23745c5c0e308560aec201550e2015c15f",
+    "lastHarvestedAt": "2026-11-26T18:33:02.216Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {

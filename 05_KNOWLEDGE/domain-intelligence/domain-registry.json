@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T18:24:32.373Z",
+  "last_updated": "2026-11-26T18:33:08.642Z",
   "total_records": 2769,
   "domains": {
     "A": {
@@ -18131,8 +18131,8 @@
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "repository": "aquasecurity/trivy",
-      "content_hash": "65b831051088ac2f3474c9c7218f5fbac8cca829389686e5a6d4447d641791e5",
-      "created_at": "2026-11-25T00:35:19.701Z"
+      "content_hash": "3a42576ac85a7aec2b8136f0e1878b602e71e7b123491927723dba0881b9a15e",
+      "created_at": "2026-11-26T18:33:02.687Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
@@ -18158,8 +18158,8 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-learnings-technical-construction-intelligence-aquasecurity-tr.md",
       "repository": "aquasecurity-trivy-learnings",
-      "content_hash": "c32c596f5d79da21e2f4312c330cf27c6d22f4bcbe3e60138436cd95dffb6a2d",
-      "created_at": "2026-11-25T00:35:24.772Z"
+      "content_hash": "9127488655071aaa4b0b737b0dfaf7c3eeccc9c3d406ee003d22f34eed123497",
+      "created_at": "2026-11-26T18:33:07.226Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
@@ -18419,8 +18419,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "8794f5193c0d65d1ced0b82e9e1be2f537576e3696ef6fa6e0787bdc1c1fd1a5",
-      "created_at": "2026-11-24T20:53:14.516Z"
+      "content_hash": "f7321a4c3739fb9fe700a4249f60ee7f9cecd00920c6b68585aec6edc613dbb1",
+      "created_at": "2026-11-26T18:33:08.642Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -32471,8 +32471,8 @@
       "title": "Research & Knowledge Intelligence: CompVis/stable-diffusion-v1-4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-compvis-stable-diffusion-v1-4-research-knowledge-intelligence-compvis-stable-.md",
       "repository": "CompVis/stable-diffusion-v1-4",
-      "content_hash": "b16a95d85211bf0dbe94df4948bc3a33823ab4fe9306aa75a1a4410078b62548",
-      "created_at": "2026-11-23T04:23:24.796Z"
+      "content_hash": "6cecd67f9c7c2a31b760203030151d9d7bb02aa6bfb949462c4b0830dbf3c151",
+      "created_at": "2026-11-26T18:32:52.599Z"
     },
     "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-core-invariants",
@@ -32540,8 +32540,8 @@
       "title": "Research & Knowledge Intelligence: hf-compvis-stable-diffusion-v1-4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-compvis-stable-diffusion-v1-4-learnings-research-knowledge-intelligence-hf-co.md",
       "repository": "hf-compvis-stable-diffusion-v1-4-learnings",
-      "content_hash": "dad83ded56b761654e5ceae214bf3b6592c0e0dcf2fc9750d23992363c4ccc2a",
-      "created_at": "2026-11-23T04:24:07.134Z"
+      "content_hash": "ed8e618aaf80e58e69f604308e3dca5ad40d011dd555d92ba4fea32baf877bf9",
+      "created_at": "2026-11-26T18:33:06.032Z"
     },
     "domain_intelligence-architecture-intelligence-agent-field-agentfield-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-field-agentfield-core-invariants",

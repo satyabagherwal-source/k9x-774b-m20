@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T18:24:28.316Z",
-    "lastVerified": "2026-11-26T18:24:28.316Z",
+    "lastChecked": "2026-11-26T18:33:05.623Z",
+    "lastVerified": "2026-11-26T18:33:05.623Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T17:57:05.800Z",
+    "lastChecked": "2026-11-26T18:33:04.002Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T17:57:05.800Z"
+    "lastVerified": "2026-11-26T18:33:04.002Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1705,9 +1705,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-11-25T23:59:19.925Z",
+    "lastChecked": "2026-11-26T18:33:01.388Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-11-25T23:59:19.925Z"
+    "lastVerified": "2026-11-26T18:33:01.388Z"
   },
   "googleworkspace-cli": {
     "name": "cli",
@@ -2034,12 +2034,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "streetwriters-notesnook": {
-    "name": "streetwriters/notesnook",
+    "name": "notesnook",
     "officialUrl": "https://github.com/streetwriters/notesnook",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T09:41:08.096Z",
-    "lastVerified": "2026-11-24T09:41:08.096Z",
+    "lastChecked": "2026-11-26T18:32:53.982Z",
+    "lastVerified": "2026-11-26T18:32:53.982Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-streetwriters-notesnook",
@@ -2048,7 +2048,8 @@
     "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "18c27502"
   },
   "moby-buildkit": {
     "name": "moby/buildkit",
@@ -2164,8 +2165,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T14:13:35.759Z",
-    "lastVerified": "2026-11-26T14:13:35.759Z",
+    "lastChecked": "2026-11-26T18:32:58.919Z",
+    "lastVerified": "2026-11-26T18:32:58.919Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -3179,9 +3180,9 @@
   "xampprocky-tokei": {
     "name": "tokei",
     "officialUrl": "https://github.com/XAMPPRocky/tokei",
-    "lastChecked": "2026-11-25T11:19:50.582Z",
+    "lastChecked": "2026-11-26T18:32:48.874Z",
     "revisionIdentifier": "c14f7447",
-    "lastVerified": "2026-11-25T11:19:50.582Z"
+    "lastVerified": "2026-11-26T18:32:48.874Z"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -4192,12 +4193,12 @@
     "officialUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T04:23:10.108Z",
-    "lastVerified": "2026-11-23T04:23:10.108Z",
+    "lastChecked": "2026-11-26T18:32:51.631Z",
+    "lastVerified": "2026-11-26T18:32:51.631Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "90d9d4c897edd1647a4f5e1a90897d55178cc0b094e4dc665bf1dc06e742d97a",
+    "contentHash": "4d5becae93ceadb9090cd8f46f6507489f45af2db6a67de17bab615c7a3519fb",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5033,22 +5034,21 @@
     "lastVerified": "2026-11-24T17:33:03.953Z"
   },
   "aquasecurity-trivy": {
-    "name": "trivy",
+    "name": "aquasecurity/trivy",
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T00:59:27.908Z",
-    "lastVerified": "2026-11-26T00:59:27.908Z",
+    "lastChecked": "2026-11-26T18:33:00.977Z",
+    "lastVerified": "2026-11-26T18:33:00.977Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "261f39e6463f05d072dcd4c576c0841869bc9a4bb2d13362200f7d210571b1d0",
+    "contentHash": "fa4989470005cf082cad070ea85fee23745c5c0e308560aec201550e2015c15f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c14584a6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "slatedb-slatedb": {
     "name": "slatedb/slatedb",

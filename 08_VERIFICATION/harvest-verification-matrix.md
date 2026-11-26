@@ -13510,3 +13510,5 @@
 | `CYCLE-20261126-T7B2` | `2026-11-26T18:24:19.262Z` | `feathersjs/feathers` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10750` | Yes (`3c200160...`) |
 | `CYCLE-20261126-T8YE` | `2026-11-26T18:24:21.398Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10751` | Yes (`675d54f1...`) |
 | `CYCLE-20261126-TB2V` | `2026-11-26T18:24:24.151Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10752` | Yes (`e9943568...`) |
+| `CYCLE-20261126-477M` | `2026-11-26T18:32:52.354Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`4d5becae...`) |
+| `CYCLE-20261126-4ETG` | `2026-11-26T18:33:02.212Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10753` | Yes (`fa498947...`) |

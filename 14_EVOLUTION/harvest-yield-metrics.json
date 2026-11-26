@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:24:24.173Z",
-  "total_cycles_completed": 12823,
-  "total_learnings_persisted": 12823,
-  "total_rules_promoted": 11657,
+  "last_updated": "2026-11-26T18:33:02.236Z",
+  "total_cycles_completed": 12825,
+  "total_learnings_persisted": 12825,
+  "total_rules_promoted": 11658,
   "history": [
-    {
-      "timestamp": "2026-11-26T08:22:14.921Z",
-      "repository": "tencent/Hy4-flash",
-      "learningId": "learn-huggingface-tencent-hy4-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T08:22:44.742Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T08:26:35.223Z",
       "repository": "biomejs/biome",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T18:24:24.173Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:32:52.372Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:33:02.236Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

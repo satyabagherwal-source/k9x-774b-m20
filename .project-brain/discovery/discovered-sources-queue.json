@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T18:24:29.088Z",
+  "updated_at": "2026-11-26T18:33:06.746Z",
   "stats": {
-    "total_discovered": 9957,
-    "approved_pending_harvest": 9437,
+    "total_discovered": 9961,
+    "approved_pending_harvest": 9441,
     "harvested_count": 0,
     "rejected_count": 520,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9441,
+      "COMMUNITY_AND_EXPERT": 9445,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -215441,6 +215441,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
         "fileName": "feathersjs-feathers-learnings.md"
+      }
+    },
+    "SRC-B37CEF035BC1": {
+      "id": "SRC-B37CEF035BC1",
+      "url": "https://management.azure.com/.default",
+      "title": "https://management.azure.com/.default",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:33:06.523Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-A0A1FF7C58A1": {
+      "id": "SRC-A0A1FF7C58A1",
+      "url": "https://management.chinacloudapi.cn/.default",
+      "title": "https://management.chinacloudapi.cn/.default",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:33:06.591Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-50DB4D64BAB7": {
+      "id": "SRC-50DB4D64BAB7",
+      "url": "https://containerregistry.azure.net/.default",
+      "title": "https://containerregistry.azure.net/.default",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:33:06.677Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-8A490BB7E799": {
+      "id": "SRC-8A490BB7E799",
+      "url": "https://pkg.go.dev/cmd/link",
+      "title": "https://pkg.go.dev/cmd/link",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:33:06.746Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
       }
     }
   }

@@ -4,24 +4,24 @@
 {
   "source_repository": "aquasecurity/trivy",
   "source_url": "https://github.com/aquasecurity/trivy",
-  "source_version": "c14584a6",
+  "source_version": "f94c2ef2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T00:35:19.526Z",
+  "timestamp": "2026-11-26T18:33:02.475Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aquasecurity-trivy",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `c14584a6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T00:35:19.526Z`  
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `f94c2ef2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T18:33:02.475Z`  
 > **Learning ID**: `learn-github-aquasecurity-trivy`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 80%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aquasecurity/trivy:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:35:18.205Z  
+> **Harvest Timestamp**: 2026-11-26T18:33:00.977Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39697 stars
+- **Stars / Engagement**: 39790 stars
 
 ---
 
@@ -1016,385 +1016,441 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c14584a6` (2026-11-24)
-**Commit Message**: fix(cloudformation): read SqsManagedSseEnabled for SQS queues (#11722)
+### Incident Patch 1: `f94c2ef2` (2026-11-26)
+**Commit Message**: fix(terraform): parse TF_VAR_ values for variables of complex types as HCL (#11701)
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Aakarsh Maurya <[REDACTED_EMAIL]>
 
-**File**: `pkg/iac/adapters/cloudformation/aws/sqs/queue.go` (modified, +1/-1)
+**File**: `pkg/iac/scanners/terraform/parser/load_vars.go` (modified, +44/-10)
 ```diff
-@@ -17,7 +17,7 @@ func getQueues(ctx parser.FileContext) (queues []sqs.Queue) {
- 			QueueURL: iacTypes.StringDefault("", r.Metadata()),
- 			Encryption: sqs.Encryption{
- 				Metadata:          r.Metadata(),
--				ManagedEncryption: iacTypes.Bool(false, r.Metadata()),
-+				ManagedEncryption: r.GetBoolProperty("SqsManagedSseEnabled"),
- 				KMSKeyID:          r.GetStringProperty("KmsMasterKeyId"),
- 			},
- 		}
-```
-
-**File**: `pkg/iac/adapters/cloudformation/aws/sqs/sqs_test.go` (modified, +38/-0)
-```diff
-@@ -65,6 +65,44 @@ Resources:
- 				},
- 			},
- 		},
-+		{
-+			name: "managed SSE enabled",
-+			source: `AWSTemplateFormatVersion: '2010-09-09'
-+Resources:
-+  MyQueue:
-+    Type: AWS::SQS::Queue
-+    Properties:
-+      SqsManagedSseEnabled: true
-+`,
-+			expected: sqs.SQS{
-+				Queues: []sqs.Queue{
-+					{
-+						Encryption: sqs.Encryption{
-+							ManagedEncryption: types.BoolTest(true),
-+						},
-+					},
-+				},
-+			},
-+		},
-+		{
-+			name: "managed SSE disabled",
-+			source: `AWSTemplateFormatVersion: '2010-09-09'
-+Resources:
-+  MyQueue:
-+    Type: AWS::SQS::Queue
-+    Properties:
-+      SqsManagedSseEnabled: false
-+`,
-+			expected: sqs.SQS{
-+				Queues: []sqs.Queue{
-+					{
-+						Encryption: sqs.Encryption{
-+							ManagedEncryption: types.BoolTest(false),
-+						},
-+					},
-+				},
-+			},
-+		},
- 		{
- 			name: "empty",
- 			source: `AWSTemplateFormatVersion: 2010-09-09
-```
-
----
-
-### Incident Patch 2: `4feb155f` (2026-11-24)
-**Commit Message**: fix(arm): give missing resource fields the resource location (#11698)
-
-**File**: `pkg/iac/scanners/azure/arm/parser/parser.go` (modified, +18/-7)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"github.com/samber/lo"
- 
- 	"github.com/aquasecurity/trivy/pkg/iac/scanners/azure"
-+	"github.com/aquasecurity/trivy/pkg/iac/types"
- 	"github.com/aquasecurity/trivy/pkg/log"
+@@ -12,25 +12,59 @@ import (
+ 	"github.com/hashicorp/hcl/v2/hclsyntax"
+ 	hcljson "github.com/hashicorp/hcl/v2/json"
+ 	"github.com/zclconf/go-cty/cty"
++	"github.com/zclconf/go-cty/cty/convert"
++
++	"github.com/aquasecurity/trivy/pkg/iac/terraform"
++	"github.com/aquasecurity/trivy/pkg/log"
  )
  
-@@ -115,16 +116,26 @@ func (p *Parser) convertResource(input Resource) azure.Resource {
- 		children = append(children, p.convertResource(child))
+-func loadTFVars(srcFS fs.FS, filenames []string) (map[string]cty.Value, error) {
+-	combinedVars := make(map[string]cty.Value)
++func parseEnvVar(name, val string, ty cty.Type) (cty.Value, error) {
++	if ty == cty.NilType || ty.IsPrimitiveType() {
++		return cty.StringVal(val), nil
++	}
++	expr, diags := hclsyntax.ParseExpression([]byte(val), "<TF_VAR_"+name+">", hcl.InitialPos)
++	if diags.HasErrors() {
++		return cty.NilVal, fmt.Errorf("parse HCL expression: %w", diags)
++	}
++	v, diags := expr.Value(nil)
++	if diags.HasErrors() {
++		return cty.NilVal, fmt.Errorf("evaluate HCL expression: %w", diags)
++	}
++	v, err := convert.Convert(v, ty)
++	if err != nil {
++		return cty.NilVal, fmt.Errorf("convert to %s: %w", ty.FriendlyName(), err)
++	}
++	return v, nil
++}
++
++func loadEnvVars(logger *log.Logger, blocks terraform.Blocks) map[string]cty.Value {
++	envVars := make(map[string]cty.Value)
++	varTypes := make(map[string]cty.Type)
++
++	for _, block := range blocks.OfType("variable") {
++		varTypes[block.TypeLabel()] = inputVariableType(block)
++	}
+ 
+ 	for _, env := range os.Environ() {
+-		split := strings.Split(env, "=")
+-		key := split[0]
+-		if !strings.HasPrefix(key, "TF_VAR_") {
++		key, val, _ := strings.Cut(env, "=")
++		name, ok := strings.CutPrefix(key, "TF_VAR_")
++		if !ok {
+ 			continue
+ 		}
+-		key = strings.TrimPrefix(key, "TF_VAR_")
+-		var val string
+-		if len(split) > 1 {
+-			val = split[1]
++		v, err := parseEnvVar(name, val, varTypes[name])
++		if err != nil {
++			logger.Warn("Ignoring TF_VAR environment variable", log.String("name", "TF_VAR_"+name), log.Err(err))
++			continue
+ 		}
+-		combinedVars[key] = cty.StringVal(val)
++		envVars[name] = v
  	}
  
-+	metadata := lo.FromPtr(input.Metadata)
- 	resource := azure.Resource{
--		Metadata:   lo.FromPtr(input.Metadata),
--		APIVersion: input.APIVersion,
--		Type:       input.Type,
--		Kind:       input.Kind,
--		Name:       input.Name,
--		Location:   input.Location,
--		Properties: input.Properties,
-+		Metadata:   metadata,
-+		APIVersion: valueOrNull(input.APIVersion, metadata),
-+		Type:       valueOrNull(input.Type, metadata),
-+		Kind:       valueOrNull(input.Kind, metadata),
-+		Name:       valueOrNull(input.Name, metadata),
-+		Location:   valueOrNull(input.Location, metadata),
-+		Properties: valueOrNull(input.Properties, metadata),
- 		Resources:  children,
++	return envVars
++}
++
++func loadTFVars(srcFS fs.FS, filenames []string) (map[string]cty.Value, error) {
++	combinedVars := make(map[string]cty.Value)
++
+ 	for _, filename := range filenames {
+ 		vars, err := loadTFVarsFile(srcFS, filename)
+ 		if err != nil {
+```
+
+**File**: `pkg/iac/scanners/terraform/parser/parser.go` (modified, +7/-2)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	"io"
+ 	"io/fs"
+ 	"log/slog"
++	"maps"
+ 	"os"
+ 	"path"
+ 	"path/filepath"
+@@ -281,11 +282,15 @@ func (p *Parser) Load(_ context.Context) (*evaluator, error) {
+ 		inputVars = p.tfvars
+ 		p.logger.Debug("Added input variables from tfvars.", log.Int("count", len(inputVars)))
+ 	default:
+-		inputVars, err = loadTFVars(p.configsFS, p.tfvarsPaths)
++		var fileVars map[string]cty.Value
++		fileVars, err = loadTFVars(p.configsFS, p.tfvarsPaths)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+-		p.logger.Debug("Added input variables from tfvars", log.Int("count", len(inputVars)))
++		inputVars = loadEnvVars(p.logger, blocks)
++		p.logger.Debug("Added input variables from environment", log.Int("count", len(inputVars)))
++		p.logger.Debug("Added input variables from tfvars", log.Int("count", len(fileVars)))
++		maps.Copy(inputVars, fileVars)
+ 		p.setFallbackValuesForMissingVars(inputVars, blocks)
  	}
  
- 	return resource
+```
+
+**File**: `pkg/iac/scanners/terraform/parser/parser_test.go` (modified, +112/-0)
+```diff
+@@ -3418,3 +3418,115 @@ resource "aws_s3_bucket" "test" {}`,
+ 	assert.Len(t, modules.GetResourcesByType("aws_security_group"), 1)
+ 	assert.Len(t, modules.GetResourcesByType("aws_s3_bucket"), 1)
  }
 +
-+// valueOrNull returns a null value with the given metadata if v is absent
-+// in the template.
-+func valueOrNull(v azure.Value, metadata types.Metadata) azure.Value {
-+	if v.GetMetadata().IsManaged() {
-+		return v
++func Test_VariableValueFromEnv(t *testing.T) {
++	tests := []struct {
++		name     string
++		variable string
++		env      string
++		tfvars   string
++		want     cty.Value
++	}{
++		{
++			name:     "map(string) with = in the value",
++			variable: `type = map(string)`,
++			env:      `{env="prod"}`,
++			want:     cty.MapVal(map[string]cty.Value{"env": cty.StringVal("prod")}),
++		},
++		{
++			name:     "list(number)",
++			variable: `type = list(number)`,
++			env:      `[1, 2]`,
++			want:     cty.ListVal([]cty.Value{cty.NumberIntVal(1), cty.NumberIntVal(2)}),
++		},
++		{
++			name:     "object",
++			variable: `type = object({ a = number })`,
++			env:      `{a=1}`,
++			want:     cty.ObjectVal(map[string]cty.Value{"a": cty.NumberIntVal(1)}),
++		},
++		{
++			name:     "any is parsed as HCL",
++			variable: `type = any`,
++			env:      `["a","b"]`,
++			want:     cty.TupleVal([]cty.Value{cty.StringVal("a"), cty.StringVal("b")}),
++		},
++		{
++			name: "variable without type stays a literal",
++			env:  `{a=1}`,
++			want: cty.StringVal(`{a=1}`),
++		},
++		{
++			name:     "string that looks like HCL stays a string",
++			variable: `type = string`,
++			env:      `["a"]`,
++			want:     cty.StringVal(`["a"]`),
++		},
++		{
++			name:     "string keeps = in the value",
++			variable: `type = string`,
++			env:      `a=b`,
++			want:     cty.StringVal(`a=b`),
++		},
++		{
++			name:     "number",
++			variable: `type = number`,
++			env:      `5`,
++			want:     cty.NumberIntVal(5),
++		},
++		{
++			name: "invalid value falls back to the default",
++			variable: `type    = map(string)
++default = { env = "default" }`,
++			env:  `[oops`,
++			want: cty.MapVal(map[string]cty.Value{"env": cty.StringVal("default")}),
++		},
++		{
++			name: "value with wrong type falls back to the default",
++			variable: `type    = map(string)
++default = { env = "default" }`,
++			env:  `["a"]`,
++			want: cty.MapVal(map[string]cty.Value{"env": cty.StringVal("default")}),
++		},
++		{
++			name:     "tfvars file overrides environment variable",
++			variable: `type = map(string)`,
++			env:      `{env="prod"}`,
++			tfvars:   `x = { env = "dev" }`,
++			want:     cty.MapVal(map[string]cty.Value{"env": cty.StringVal("dev")}),
++		},
 +	}
-+	return azure.NewValue(nil, metadata)
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Setenv("TF_VAR_x", tt.env)
++
++			files := map[string]string{
++				"main.tf": fmt.Sprintf(`
++variable "x" {
++%s
++}
++
++resource "test" "this" {
++  value = var.x
++}
++`, tt.variable),
++			}
++			var opts []Option
++			if tt.tfvars != "" {
++				files["main.tfvars"] = tt.tfvars
++				opts = append(opts, OptionWithTFVarsPaths("main.tfvars"))
++			}
++
++			resources := parse(t, files, opts...).GetResourcesByType("test")
++			require.Len(t, resources, 1)
++
++			attr := resources[0].GetAttribute("value")
++			require.NotNil(t, attr)
++			require.True(t, attr.IsResolvable())
++
++			got := attr.Value()
++			assert.True(t, tt.want.RawEquals(got), "want %#v, got %#v", tt.want, got)
++		})
++	}
 +}
 ```
 
-**File**: `pkg/iac/scanners/azure/arm/parser/parser_test.go` (modified, +1/-0)
+---
+
+### Incident Patch 2: `38b8e97f` (2026-11-26)
+**Commit Message**: fix(image): use ACR audience for Azure registry tokens (#11598)
+
+**File**: `pkg/fanal/image/registry/azure/azure.go` (modified, +4/-7)
 ```diff
-@@ -265,6 +265,7 @@ func TestParser_Parse(t *testing.T) {
- 								"location",
- 								createMetadata(fsys, filename, 10, 10, "resources.myacc.location", &resourceMetadata),
- 							),
-+							Properties: azure.NewValue(nil, resourceMetadata),
- 						},
- 					},
- 				}
+@@ -20,7 +20,6 @@ import (
+ 
+ type RegistryClient struct {
+ 	domain string
+-	scope  string
+ 	cloud  cloud.Configuration
+ }
+ 
+@@ -30,22 +29,20 @@ type Registry struct {
+ const (
+ 	azureURL      = ".azurecr.io"
+ 	chinaAzureURL = ".azurecr.cn"
+-	scope         = "https://management.azure.com/.default"
+-	chinaScope    = "https://management.chinacloudapi.cn/.default"
+-	scheme        = "https"
++	// Use the ACR audience because a registry always accepts it, while ARM audience tokens can be disabled.
++	scope  = "https://containerregistry.azure.net/.default"
++	scheme = "https"
+ )
+ 
+ func (r *Registry) CheckOptions(domain string, _ types.RegistryOptions) (intf.RegistryClient, error) {
+ 	if strings.HasSuffix(domain, azureURL) {
+ 		return &RegistryClient{
+ 			domain: domain,
+-			scope:  scope,
+ 			cloud:  cloud.AzurePublic,
+ 		}, nil
+ 	} else if strings.HasSuffix(domain, chinaAzureURL) {
+ 		return &RegistryClient{
+ 			domain: domain,
+-			scope:  chinaScope,
+ 			cloud:  cloud.AzureChina,
+ 		}, nil
+ 	}
+@@ -59,7 +56,7 @@ func (r *RegistryClient) GetCredential(ctx context.Context) (string, string, err
+ 	if err != nil {
+ 		return "", "", xerrors.Errorf("unable to generate acr credential error: %w", err)
+ 	}
+-	aadToken, err := cred.GetToken(ctx, policy.TokenRequestOptions{Scopes: []string{r.scope}})
++	aadToken, err := cred.GetToken(ctx, policy.TokenRequestOptions{Scopes: []string{scope}})
+ 	if err != nil {
+ 		return "", "", xerrors.Errorf("unable to get an access token: %w", err)
+ 	}
 ```
 
 ---
 
-### Incident Patch 3: `5ad7d8e1` (2026-11-24)
-**Commit Message**: fix(alpine): preserve dependencies with fuzzy version requirements (#11384)
+### Incident Patch 3: `87ab02ca` (2026-11-26)
+**Commit Message**: fix(go): parse `-X` ldflags values without CSV splitting (#11727)
 
-Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
-
-**File**: `pkg/fanal/analyzer/analyzer_test.go` (modified, +2/-2)
+**File**: `pkg/dependency/parser/golang/binary/parse.go` (modified, +29/-14)
 ```diff
-@@ -776,7 +776,7 @@ func TestAnalyzerGroup_AnalyzerVersions(t *testing.T) {
- 				Analyzers: map[string]int{
- 					"alpine":       1,
- 					"apk-repo":     1,
--					"apk":          4,
-+					"apk":          5,
- 					"bundler":      1,
- 					"dpkg-license": 1,
- 					"ubuntu":       1,
-@@ -802,7 +802,7 @@ func TestAnalyzerGroup_AnalyzerVersions(t *testing.T) {
- 			},
- 			want: analyzer.Versions{
- 				Analyzers: map[string]int{
--					"apk":     4,
-+					"apk":     5,
- 					"bundler": 1,
- 				},
- 				PostAnalyzers: map[string]int{
-```
-
-**File**: `pkg/fanal/analyzer/pkg/apk/apk.go` (modified, +4/-3)
-```diff
-@@ -27,7 +27,7 @@ func init() {
- 	analyzer.RegisterAnalyzer(newAlpinePkgAnalyzer())
- }
- 
--const analyzerVersion = 4
-+const analyzerVersion = 5
- 
- var requiredFiles = []string{"lib/apk/db/installed", "usr/lib/apk/db/installed"}
- 
-@@ -135,8 +135,9 @@ func (a alpinePkgAnalyzer) trimRequirement(s string) string {
- 	// e.g.
- 	//   so:libssl.so.1.1=1.1 => so:libssl.so.1.1
- 	//   musl>=1.2 => musl
--	if strings.ContainsAny(s, "<>=") {
--		s = s[:strings.IndexAny(s, "><=")]
-+	//   python3~3.12 => python3
-+	if strings.ContainsAny(s, "<>=~") {
-+		s = s[:strings.IndexAny(s, "><=~")]
+@@ -224,25 +224,26 @@ func (p *Parser) ParseLDFlags(name string, flags []string) string {
+ 	fset.ParseErrorsAllowlist.UnknownFlags = true
+ 	// The shorthand name is needed here because setting the full name
+ 	// to `X` will cause the flag set to look for `--X` instead of `-X`.
+-	// The flag can also be set multiple times, so a string slice is needed
+-	// to handle that edge case.
+-	var x map[string]string
+-	fset.StringToStringVarP(&x, "", "X", nil, "")
++	// The flag can also be set multiple times, so a string array is needed
++	// to handle that edge case. Each value is kept as is (no CSV splitting)
++	// and split on the first `=` below, the same way the Go linker does.
++	// cf. https://pkg.go.dev/cmd/link (`-X importpath.name=value`)
++	var xFlags []string
++	fset.StringArrayVarP(&xFlags, "", "X", nil, "")
+ 	// Init `help` flag to avoid error in flags with `h` (e.g. `-lpthread`)
+ 	fset.BoolP("help", "h", false, "just to disable the built-in help flag")
+ 	if err := fset.Parse(flags); err != nil {
+ 		p.logger.Error("Could not parse -ldflags found in build info", log.Err(err))
+ 		return ""
  	}
- 	return s
- }
-```
-
-**File**: `pkg/fanal/analyzer/pkg/apk/testdata/apk` (modified, +1/-1)
-```diff
-@@ -523,7 +523,7 @@ o:test-parent
- m:Carlo Landmeter <clandmeter@gmail.com>
- t:1546255353
- c:856c64b1dc1f9b8176c60e28808482f8503c4e98
--D:pkgconfig sqlite-libs=3.26.0-r3
-+D:pkgconfig~1 sqlite-libs~3.26
- p:pc:sqlite3=3.26.0
- F:usr
- F:usr/lib
-```
-
-**File**: `pkg/fanal/artifact/image/image_test.go` (modified, +17/-17)
-```diff
-@@ -37,7 +37,7 @@ import (
  
- // Common blob IDs used across multiple test cases to reduce duplication
- const (
--	alpineBaseLayerID     = "sha256:b16c09c79d37ead0f37afff062d630a63be0abfc806f175cd0d07eceff5f43ca"
-+	alpineBaseLayerID     = "sha256:a6aeee7c1819976bb8ed6e4aadc41c0fd0a9d60a140dea25871ff037b45346b1"
- 	alpineBaseLayerDiffID = "sha256:beee9f30bc1f711043e78d4a2be0668955d4b761d587d6f60c2c8dc081efb203"
- 	alpineArtifactID      = "sha256:3c709d2a158be3a97051e10cd0e30f047225cb9505101feb3fadcd395c2e0408"
- 	composerImageID       = "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72"
-@@ -609,7 +609,7 @@ func TestArtifact_Inspect(t *testing.T) {
- 			},
- 			wantBlobs: []cachetest.WantBlob{
- 				{
--					ID: "sha256:fed5b720b4395f2c56c6a6c5601a595de436cb1c04bd511e9710b87c3d5d90be",
-+					ID: "sha256:b9197aa85310995d145284e7905f0b912bb8287042295872d7832801e1001154",
- 					BlobInfo: types.BlobInfo{
- 						SchemaVersion: types.BlobJSONSchemaVersion,
- 						Size:          3061760,
-@@ -703,7 +703,7 @@ func TestArtifact_Inspect(t *testing.T) {
- 					},
- 				},
- 				{
--					ID: "sha256:db6c6f2f4e18f403abc164137e105d43cc8beae06ec9ab45cb95ff4c9406792c",
-+					ID: "sha256:d906c67f5cd8ce75ad5734e328d83b6a840ef53e5ef2fd734a1dacdd5f6e983d",
- 					BlobInfo: types.BlobInfo{
- 						SchemaVersion: types.BlobJSONSchemaVersion,
- 						Size:          15441920,
-@@ -804,7 +804,7 @@ func TestArtifact_Inspect(t *testing.T) {
- 					},
- 				},
- 				{
--					ID: "sha256:6ff39218a560ee82dcb45411c4c5d0ce192a5af8d7736f85b812fd0a53f84947",
-+					ID: "sha256:1fa5a531525db30710df775554196ca8a5071cb0f9057579ede8d31687a01d62",
- 					BlobInfo: types.BlobInfo{
- 						SchemaVersion: types.BlobJSONSchemaVersion,
- 						Size:          29696,
-@@ -1025,7 +1025,7 @@ func TestArtifact_Inspect(t *testing.T) {
- 					},
- 				},
- 				{
--					ID: "sha256:eaaba47f90addaddaa6225c354b74651a050a0af5b73a9b972436852a8c69c8d",
-+					ID: "sha256:12c6fe34e31d3fda253fe3d44a9e2e6bf8638bf1b6879509e440f1c9e8938f77",
- 					BlobInfo: types.BlobInfo{
- 						SchemaVersion: types.BlobJSONSchemaVersion,
- 						Size:          6656,
-@@ -1942,10 +1942,10 @@ func TestArtifact_Inspect(t *testing.T) {
- 				Type: types.TypeContainerImage,
- 				ID:   "sha256:0bebf0773ffd87baa7c64fbdbdf79a24ae125e3f99a8adebe52d1ccbe6bed16b",
- 				BlobIDs: []string{
--					"sha256:fed5b720b4395f2c56c6a6c5601a595de436cb1c04bd511e9710b87c3d5d90be",
--					"sha256:db6c6f2f4e18f403abc164137e105d43cc8beae06ec9ab45cb95ff4c9406792c",
--					"sha256:6ff39218a560ee82dcb45411c4c5d0ce192a5af8d7736f85b812fd0a53f84947",
--					"sha256:eaaba47f90addaddaa6225c354b74651a050a0af5b73a9b972436852a8c69c8d",
-+					"sha256:b9197aa85310995d145284e7905f0b912bb8287042295872d7832801e1001154",
-+					"sha256:d906c67f5cd8ce75ad5734e328d83b6a840ef53e5ef2fd734a1dacdd5f6e983d",
-+					"sha256:1fa5a531525db30710df775554196ca8a5071cb0f9057579ede8d31687a01d62",
-+					"sha256:12c6fe34e31d3fda253fe3d44a9e2e6bf8638bf1b6879509e440f1c9e8938f77",
- 				},
- 				ImageMetadata: artifact.ImageMetadata{
- 					ID: "sha256:58701fd185bda36cab0557bb6438661831267aa4a9e0b54211c4d5317a48aff4",
-@@ -2053,7 +2053,7 @@ func TestArtifact_Inspect(t *testing.T) {
- 			},
- 			wantBlobs: []cachetest.WantBlob{
- 				{
--					ID: "sha256:763ba8250d4ac1d9eb191bf20477ba2923754f6e998962455d62888fcec311ad",
-+					ID: "sha256:cd6ae1a3c401e1af5f7841ead2a9fec5e43ae6eefcc52f754d8e5ca58f12818b",
- 					BlobInfo: types.BlobInfo{
- 						SchemaVersion: types.BlobJSONSchemaVersion,
- 						Size:          3061760,
-@@ -2063,7 +2063,7 @@ func TestArtifact_Inspect(t *testing.T) {
- 					},
- 				},
- 				{
--					ID: "sha256:719eedecc470cd3e9b5955c540f20a8136350f699343519c981b9f90ddb3afe0",
-+					ID: "sha256:979f285695355666169fb80f8ab6164d806ce5ee2405cf0a386bb9a6faee0ea9",
- 					BlobInfo: types.BlobInfo{
- 						SchemaVersion: types.BlobJSONSchemaVersion,
- 						Size:          15441920,
-@@ -2073,7 +2073,7 @@ func TestArtifact_Inspect(t *testing.T) {
- 					},
- 				},
- 				{
--					ID: "sha256:d8bc3f755a79b3a10834c1a32ffbf376819e20ab960de0b946bd4a4d75c9d438",
-+					ID: "sha256:3c7597ceccf2ac9683ff3ff4a49e76202e23037827b1f9a82b499becb8c7ac83",
- 					BlobInfo: types.BlobInfo{
- 						SchemaVersion: types.BlobJSONSchemaVersion,
- 						Size:          29696,
-@@ -2084,7 +2084,7 @@ func TestArtifact_Inspect(t *testing.T) {
- 					},
- 				},
- 				{
--					ID: "sha256:66751e6ebd080058a3f093b4dbc25789da7d8b0e59efcff8924f2acd88235e9c",
-+					ID: "sha256:4a2173ebcbe7ae39b27be88294b95aca44d7aa0c3f87cfdfa35acddb1c3d5e99",
- 					BlobInfo: types.BlobInfo{
- 						SchemaVersion: types.BlobJSONSchemaVersion,
- 						Size:          6656,
-@@ -2100,10 +2100,10 @@ func TestArtifact_Inspect(t *testing.T) {
- 				Type: types.TypeContainerImage,
- 				ID:   "sha256:0bebf0773ffd87baa7c64fbdbdf79a24ae125e3f99a8adebe52d1ccbe6bed16b",
- 				BlobIDs: []string{
--					"sha256:763ba8250d4ac1d9eb191bf20477ba2923754f6e998962455d62888fcec311ad",
--					"sha256:719eedecc470cd3e9b5955c540f20a8136350f699343519c981b9f90ddb3afe0",
+-	// foundVersions contains discovered versions by type.
+-	// foundVersions doesn't contain duplicates. Versions are filled into first corresponding category.
+-	// Possible elements(categories):
+-	//   [0]: Versions using format `github.com/<module_owner>/<module_name>/cmd/**/*.<version>=x.x.x`
+-	//   [1]: Versions that use prefixes from `defaultVersionPrefixes`
+-	//   [2]: Other versions
+-	var foundVersions = make([][]string, 3)
+-	for key, val := range x {
++	// The last value wins for a repeated key, as in the Go linker.
++	x := make(map[string]string, len(xFlags))
++	for _, f := range xFlags {
++		key, val, ok := strings.Cut(f, "=")
++		if !ok {
++			continue
++		}
+ 		// It's valid to set the -X flags with quotes so we trim any that might
+ 		// have been provided: Ex:
+ 		//
+@@ -252,8 +253,22 @@ func (p *Parser) ParseLDFlags(name string, flags []string) string {
+ 		// -X='main.version=1.0.0'
+ 		// -X="main.version=1.0.0"
+ 		// -X "main.version=1.0.0"
+-		key = strings.TrimLeft(key, `'`)
+-		val = strings.TrimRight(val, `'`)
++		//
++		// Quotes are trimmed before the assignment so that quoted and unquoted
++		// forms of the same key overwrite each other.
++		key = strings.TrimLeft(key, `'"`)
++		val = strings.TrimRight(val, `'"`)
++		x[key] = val
++	}
++
++	// foundVersions contains discovered versions by type.
++	// foundVersions doesn't contain duplicates. Versions are filled into first corresponding category.
++	// Possible elements(categories):
++	//   [0]: Versions using format `github.com/<module_owner>/<module_name>/cmd/**/*.<version>=x.x.x`
++	//   [1]: Versions that use prefixes from `defaultVersionPrefixes`
++	//   [2]: Other versions
++	var foundVersions = make([][]string, 3)
++	for key, val := range x {
+ 		if isVersionXKey(key) && isValidSemVer(val) {
+ 			classifyVersion(foundVersions, key, name, val)
+ 		}
 ```
 
-**File**: `pkg/fanal/artifact/local/fs_test.go` (modified, +3/-3)
+**File**: `pkg/dependency/parser/golang/binary/parse_test.go` (modified, +63/-0)
 ```diff
-@@ -240,7 +240,7 @@ func TestArtifact_Inspect(t *testing.T) {
- 			wantBlobs: []cachetest.WantBlob{
- 				{
- 					// Cache key is based on commit hash (8a19b492a589955c3e70c6ad8efd1e4ec6ae0d35)
--					ID: "sha256:74a32b480af4718f21f6a2102c522d7574987bed398aabe53d334ee6e37fd31e",
-+					ID: "sha256:d0685eeb4be367af9b877559b1aa4703407ed34472185b9528023c0de18ff18e",
- 					BlobInfo: types.BlobInfo{
- 						SchemaVersion: types.BlobJSONSchemaVersion,
- 					},
-@@ -249,9 +249,9 @@ func TestArtifact_Inspect(t *testing.T) {
- 			want: artifact.Reference{
- 				Name: "../../../../internal/gittest/testdata/test-repo",
- 				Type: types.TypeRepository,
--				ID:   "sha256:74a32b480af4718f21f6a2102c522d7574987bed398aabe53d334ee6e37fd31e",
-+				ID:   "sha256:d0685eeb4be367af9b877559b1aa4703407ed34472185b9528023c0de18ff18e",
- 				BlobIDs: []string{
--					"sha256:74a32b480af4718f21f6a2102c522d7574987bed398aabe53d334ee6e37fd31e",
-+					"sha256:d0685eeb4be367af9b877559b1aa4703407ed34472185b9528023c0de18ff18e",
- 				},
- 				RepoMetadata: artifact.RepoMetadata{
- 					RepoURL:   "https://github.com/aquasecurity/trivy-test-repo/",
-```
-
-**File**: `pkg/fanal/artifact/vm/vm_test.go` (modified, +6/-6)
-```diff
-@@ -117,16 +117,16 @@ func TestArtifact_Inspect(t *testing.T) {
- 			rootDir: "testdata/alpine",
- 			wantBlobs: []cachetest.WantBlob{
- 				{
--					ID:       "sha256:501ce2453820cc0c4e8b6807cb7a5f35f7c63f1f123f3dd8993711ba967684b9",
-+					ID:       "sha256:4e3660e57de14f05f4a8a36396b0a3f77952238b115d40a2d291f7c4b2783b73",
- 					BlobInfo: expectedBlobInfo,
- 				},
+@@ -617,6 +617,69 @@ func TestParser_ParseLDFlags(t *testing.T) {
  			},
- 			want: artifact.Reference{
- 				Name: "rawdata.img",
- 				Type: types.TypeVM,
--				ID:   "sha256:501ce2453820cc0c4e8b6807cb7a5f35f7c63f1f123f3dd8993711ba967684b9",
-+				ID:   "sha256:4e3660e57de14f05f4a8a36396b0a3f77952238b115d40a2d291f7c4b2783b73",
- 				BlobIDs: []string{
--					"sha256:501ce2453820cc0c4e8b6807cb7a5f35f7c63f1f123f3dd8993711ba967684b9",
-+					"sha256:4e3660e57de14f05f4a8a36396b0a3f77952238b115d40a2d291f7c4b2783b73",
- 				},
- 			},
+ 			want: "v1.28.6+k3s2",
  		},
-@@ -136,16 +136,16 @@ func TestArtifact_Inspect(t *testing.T) {
- 			rootDir: "testdata/alpine",
- 			wantBlobs: []cachetest.WantBlob{
- 				{
--					ID:       "sha256:e21f910185164358fe21301af84a148632b2aa20bcde806d55b9fb2d02b0f46b",
-+					ID:       "sha256:60d51bcb3f9ac0186673b899640c3ae92cf94d36fdcbff2a7c5ccb9c7a708260",
- 					BlobInfo: expectedBlobInfo,
- 				},
- 			},
- 			want: artifact.Reference{
- 				Name: "ebs-012345",
- 				Type: types.TypeVM,
--				ID:   "sha256:e21f910185164358fe21301af84a148632b2aa20bcde806d55b9fb2d02b0f46b",
-+				ID:   "sha256:60d51bcb3f9ac0186673b899640c3ae92cf94d36fdcbff2a7c5ccb9c7a708260",
- 				BlobIDs: []string{
--					"sha256:e21f910185164358fe21301af84a148632b2aa20bcde806d55b9fb2d02b0f46b",
-+					"sha256:60d51bcb3f9ac0186673b899640c3ae92cf94d36fdcbff2a7c5ccb9c7a708260",
- 				},
- 			},
- 		},
++		{
++			name: "with multi-line flag value containing `=`",
++			args: args{
++				name: "github.com/aquasecurity/test",
++				flags: []string{
++					"-X",
++					"main.banner=key=value\nmore",
++					"-X",
++					"main.version=1.2.3",
++				},
++			},
++			want: "1.2.3",
++		},
++		{
++			name: "with comma in flag value containing `=`",
++			args: args{
++				name: "github.com/aquasecurity/test",
++				flags: []string{
++					"-X",
++					"main.banner=a=b,c",
++					"-X",
++					"main.version=1.2.3",
++				},
++			},
++			want: "1.2.3",
++		},
++		{
++			name: "with flag value without `=`",
++			args: args{
++				name: "github.com/aquasecurity/test",
++				flags: []string{
++					"-X",
++					"novalue",
++					"-X",
++					"main.version=1.2.3",
++				},
++			},
++			want: "1.2.3",
++		},
++		{
++			name: "with quoted and unquoted assignments to the same key",
++			args: args{
++				name: "github.com/aquasecurity/test",
++				flags: []string{
++					"-X",
++					`"main.version=1.2.3"`,
++					"-X",
++					"main.version=2.0.0",
++				},
++			},
++			want: "2.0.0",
++		},
++		{
++			name: "with comma-separated assignments in a single flag value",
++			args: args{
++				name: "github.com/aquasecurity/test",
++				flags: []string{
++					"-X",
++					"main.banner=x,main.version=1.2.3",
++				},
++			},
++			want: "",
++		},
+ 		{
+ 			name: "with no flags",
+ 			args: args{
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11727** (2026-11-26): fix(go): parse `-X` ldflags values without CSV splitting (@DmitriyLewen)
 - **PR #11726** (2026-11-24): chore(deps): bump the common group across 1 directory with 18 updates (@dependabot[bot])
 - **PR #11725** (2026-11-24): chore(deps): bump the github-actions group across 1 directory with 11 updates (@dependabot[bot])
 - **PR #11722** (2026-11-24): fix(cloudformation): read SqsManagedSseEnabled for SQS queues (@NarenAdithya14)
 - **PR #11720** (closed): fix(misconf): read SqsManagedSseEnabled in CloudFormation SQS adapter (@jtoledo3970)
 - **PR #11716** (closed): fix(report): add license handling to HTML template (@ghs)
-- **PR #11712** (2026-11-23): chore(deps): upgrade apk packages in container images (@DmitriyLewen)
 
 ---
 
@@ -1414,31 +1470,75 @@ Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cloudformation): read SqsManagedSseEnabled for SQS queues
+## X. terraform): parse TF_VAR_ values for variables of complex types as HCL
 
 **RULE**:
-When implementing operations in `pkg/iac/adapters/cloudformation/aws/sqs/queue.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/iac/scanners/terraform/parser/load_vars.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c14584a6`: cloudformation): read SqsManagedSseEnabled for SQS queues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f94c2ef2`: terraform): parse TF_VAR_ values for variables of complex types as HCL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/iac/adapters/cloudformation/aws/sqs/queue.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/iac/scanners/terraform/parser/load_vars.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				ManagedEncryption: r.GetBoolProperty("SqsManagedSseEnabled"),
+	"github.com/zclconf/go-cty/cty/convert"
+
+	"github.com/aquasecurity/trivy/pkg/iac/terraform"
+	"github.com/aquasecurity/trivy/pkg/log"
+func parseEnvVar(name, val string, ty cty.Type) (cty.Value, error) {
+	if ty == cty.NilType || ty.IsPrimitiveType() {
+		return cty.StringVal(val), nil
+	}
+	expr, diags := hclsyntax.ParseExpression([]byte(val), "<TF_VAR_"+name+">", hcl.InitialPos)
+	if diags.HasErrors() {
+		return cty.NilVal, fmt.Errorf("parse HCL expression: %w", diags)
+	}
+	v, diags := expr.Value(nil)
+	if diags.HasErrors() {
+		return cty.NilVal, fmt.Errorf("evaluate HCL expression: %w", diags)
+	}
+	v, err := convert.Convert(v, ty)
+	if err != nil {
+		return cty.NilVal, fmt.Errorf("convert to %s: %w", ty.FriendlyName(), err)
+	}
+	return v, nil
+}
+
+func loadEnvVars(logger *log.Logger, blocks terraform.Blocks) map[string]cty.Value {
+	envVars := make(map[string]cty.Value)
+	varTypes := make(map[string]cty.Type)
+
+	for _, block := range blocks.OfType("variable") {
+		varTypes[block.TypeLabel()] = inputVariableType(block)
+	}
+		key, val, _ := strings.Cut(env, "=")
+		name, ok := strings.CutPrefix(key, "TF_VAR_")
+		if !ok {
+		v, err := parseEnvVar(name, val, varTypes[name])
+		if err != nil {
+			logger.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				ManagedEncryption: iacTypes.Bool(false, r.Metadata()),
+func loadTFVars(srcFS fs.FS, filenames []string) (map[string]cty.Value, error) {
+	combinedVars := make(map[string]cty.Value)
+		split := strings.Split(env, "=")
+		key := split[0]
+		if !strings.HasPrefix(key, "TF_VAR_") {
+		key = strings.TrimPrefix(key, "TF_VAR_")
+		var val string
+		if len(split) > 1 {
+			val = split[1]
+		combinedVars[key] = cty.StringVal(val)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c14584a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f94c2ef2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

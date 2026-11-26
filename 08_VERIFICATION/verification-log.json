@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-31X7",
-    "timestamp": "2026-11-25T07:04:28.027Z",
-    "repository": "InternScience/Sage-A1.5",
-    "learningId": "learn-huggingface-internscience-sage-a1-5",
-    "contentHash": "311c82b012fcc96ba4c4cb069205c34af9d9a2ac456ed55bdeff778c09d1e62c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-33YL",
-    "timestamp": "2026-11-25T07:04:30.669Z",
-    "repository": "googleworkspace/cli",
-    "learningId": "learn-github-googleworkspace-cli",
-    "contentHash": "6167160e3612c9bd21fea39bed86108dff846fd0d538b56e2a571264b25e28f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-39JR",
     "timestamp": "2026-11-25T07:04:37.911Z",
     "repository": "nginx/kubernetes-ingress",
@@ -7490,6 +7460,36 @@
     "repository": "projectdiscovery/nuclei",
     "learningId": "learn-github-projectdiscovery-nuclei",
     "contentHash": "e99435686fc2639bb54b00c270e1dc79ea1879e13aeeab3189f4639f646bb077",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-477M",
+    "timestamp": "2026-11-26T18:32:52.354Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "4d5becae93ceadb9090cd8f46f6507489f45af2db6a67de17bab615c7a3519fb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-4ETG",
+    "timestamp": "2026-11-26T18:33:02.212Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "fa4989470005cf082cad070ea85fee23745c5c0e308560aec201550e2015c15f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

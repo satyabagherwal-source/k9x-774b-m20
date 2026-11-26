@@ -13543,3 +13543,5 @@ Every entry in this ledger must capture:
 | `learn-github-feathersjs-feathers` | `https://github.com/feathersjs/feathers` | `61e15794` | Multi-dimensional audit evidence | 2026-11-26T18:24:19.267Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `b07e3171` | Multi-dimensional audit evidence | 2026-11-26T18:24:21.404Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `90b55382` | Multi-dimensional audit evidence | 2026-11-26T18:24:24.157Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-26T18:32:52.359Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `f94c2ef2` | Multi-dimensional audit evidence | 2026-11-26T18:33:02.216Z |

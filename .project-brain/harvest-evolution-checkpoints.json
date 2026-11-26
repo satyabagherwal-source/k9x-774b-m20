@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:24:32.928Z",
+  "last_updated": "2026-11-26T18:33:08.862Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T17:39:35.096Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-24T20:53:13.186Z",
+      "processed_at": "2026-11-26T18:33:07.632Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -988,7 +988,7 @@
       "staged_for_review": 1
     },
     "aquasecurity-trivy-learnings.md": {
-      "processed_at": "2026-11-25T00:35:24.152Z",
+      "processed_at": "2026-11-26T18:33:06.261Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2243,7 +2243,7 @@
       "staged_for_review": 0
     },
     "hf-compvis-stable-diffusion-v1-4-learnings.md": {
-      "processed_at": "2026-11-23T04:24:06.938Z",
+      "processed_at": "2026-11-26T18:33:05.780Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3993,7 +3993,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4620,
+  "total_dossiers_evaluated": 4623,
   "total_canonical_promoted": 565,
-  "total_staged_for_review": 3479
+  "total_staged_for_review": 3481
 }
