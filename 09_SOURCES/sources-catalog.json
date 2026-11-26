@@ -575,8 +575,8 @@
     "sourceUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "37dd007266816de8620d7e66e644e1a58920a499f1687710435ce0746dc4b90a",
-    "lastHarvestedAt": "2026-11-22T22:49:25.247Z",
+    "contentHash": "2ea8c522e14c9fd87165a431c97dd187f35e33273af2c0fb10323f4d0653ea66",
+    "lastHarvestedAt": "2026-11-26T15:50:06.661Z",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "9dbecfa0",
+    "sourceVersion": "9fb6a904",
     "license": "NOASSERTION",
-    "contentHash": "6100f770212e564b782e7e51823a8f684d032f4af1dcb795c6c1fb50457dc80a",
-    "lastHarvestedAt": "2026-11-24T19:10:00.046Z",
+    "contentHash": "d4d77b305010dc6ee153d3538c6caf48265dc3bbb1b5a4ca3dee028b4791a579",
+    "lastHarvestedAt": "2026-11-26T15:50:22.468Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {

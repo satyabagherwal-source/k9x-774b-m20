@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-L8C9",
-    "timestamp": "2026-11-25T02:38:39.993Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "3375aaa9c1bc9a4d330c29ba31a3d3bb7388aca3c58344934278f1140d628f5e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-WREL",
-    "timestamp": "2026-11-25T02:47:37.917Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "1b9d5cd5bd9c515fc17db03cb1e20d762c18eaee2423406dbcc57846f3fb6494",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-X0VD",
     "timestamp": "2026-11-25T02:47:50.185Z",
     "repository": "doobidoo/mcp-memory-service",
@@ -7492,6 +7462,36 @@
     "contentHash": "479ad42f79deb461aee03dcdaa8a703162d3f9ea96f0b890b61e0e15680304b2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-AVY7",
+    "timestamp": "2026-11-26T15:50:06.655Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "2ea8c522e14c9fd87165a431c97dd187f35e33273af2c0fb10323f4d0653ea66",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-B85B",
+    "timestamp": "2026-11-26T15:50:22.463Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "d4d77b305010dc6ee153d3538c6caf48265dc3bbb1b5a4ca3dee028b4791a579",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

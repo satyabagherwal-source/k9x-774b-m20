@@ -13449,3 +13449,5 @@
 | `CYCLE-20261126-VB90` | `2026-11-26T15:37:59.988Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`a8d55653...`) |
 | `CYCLE-20261126-VHJM` | `2026-11-26T15:38:08.146Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md` | Yes (`479ad42f...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T15:38:42.062Z` | `hf-llamaindex-ocria-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2C3FC3C9` [Domain D] | Yes (`88bcb1e6...`) |
+| `CYCLE-20261126-AVY7` | `2026-11-26T15:50:06.655Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`2ea8c522...`) |
+| `CYCLE-20261126-B85B` | `2026-11-26T15:50:22.463Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10716` | Yes (`d4d77b30...`) |

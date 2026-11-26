@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T16:05:54.051Z",
+  "timestamp": "2026-11-26T15:50:27.721Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-meilisearch-meilisearch-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meilisearch-meilisearch-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T16:05:54.051Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T15:50:27.721Z`  
 > **Learning ID**: `LEARN-EVO-meilisearch-meilisearch-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `d15a0866`  
+> **Source Version**: `9fb6a904`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T16:05:49.027Z  
+> **Timestamp**: 2026-11-26T15:50:20.858Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:05:49.021Z  
+> **Harvest Timestamp**: 2026-11-26T15:50:20.851Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59885 stars
+- **Stars / Engagement**: 60017 stars
 
 ---
 
@@ -2074,226 +2074,170 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d15a0866` (2026-11-17)
-**Commit Message**: Merge pull request #6740 from meilisearch/fix-ngrams-in-typo-rr
+### Incident Patch 1: `00cc536c` (2026-11-25)
+**Commit Message**: Compare the render failures result with the data from the database
 
-Fix ngrams base costs
-
-**File**: `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs` (modified, +1/-1)
+**File**: `crates/milli/src/update/new/extract/vectors/mod.rs` (modified, +30/-6)
 ```diff
-@@ -50,7 +50,7 @@ impl RankingRuleGraphTrait for TypoGraph {
-         // Ngrams have a base typo cost
-         // 2-gram -> equivalent to 1 typo
-         // 3-gram -> equivalent to 2 typos
--        let base_cost = if term.term_ids.len() == 1 { 0 } else { term.term_ids.len() as u32 };
-+        let base_cost = term.term_ids.len().saturating_sub(1) as u32;
+@@ -134,7 +134,7 @@ impl<'extractor> Extractor<'extractor> for EmbeddingExtractor<'_, '_> {
+                         let DocumentEmbeddingStatus {
+                             user_provided: old_is_user_provided,
+                             must_regenerate: old_must_regenerate,
+-                            render_failure: _,
++                            render_failure: old_render_failure,
+                             embed_failure: _,
+                         } = chunks.document_embedding_status(update.docid());
  
-         for nbr_typos in 0..=term.term_subset.max_typo_cost(ctx) {
-             let mut term = term.clone();
-```
+@@ -182,6 +182,7 @@ impl<'extractor> Extractor<'extractor> for EmbeddingExtractor<'_, '_> {
+                                     old_is_user_provided,
+                                     old_must_regenerate,
+                                     true,
++                                    old_render_failure,
+                                 )?;
+                             }
+                         // no `_vectors` field, so only regenerate if the document is already set to in the DB.
+@@ -206,6 +207,7 @@ impl<'extractor> Extractor<'extractor> for EmbeddingExtractor<'_, '_> {
+                                 old_is_user_provided,
+                                 old_must_regenerate,
+                                 true,
++                                old_render_failure,
+                             )?;
+                         }
+                     }
+@@ -396,7 +398,7 @@ impl<'extractor, SD: SettingsDelta + Sync> SettingsChangeExtractor<'extractor>
+                 let DocumentEmbeddingStatus {
+                     user_provided: old_is_user_provided,
+                     must_regenerate: _,
+-                    render_failure: _,
++                    render_failure: old_render_failure,
+                     embed_failure: _,
+                 } = chunks.document_embedding_status(document.docid());
+                 let old_has_fragments = old_embedders
+@@ -434,6 +436,7 @@ impl<'extractor, SD: SettingsDelta + Sync> SettingsChangeExtractor<'extractor>
+                             &new_fields_ids_map,
+                             &unused_vectors_distribution,
+                             old_is_user_provided,
++                            old_render_failure,
+                             fragments_changed,
+                         )?;
+                     }
+@@ -471,6 +474,7 @@ impl<'extractor, SD: SettingsDelta + Sync> SettingsChangeExtractor<'extractor>
+                                 &new_fields_ids_map,
+                                 &unused_vectors_distribution,
+                                 old_is_user_provided,
++                                old_render_failure,
+                                 true,
+                             )?;
+                         } else if is_new_embedder {
+@@ -714,6 +718,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+         new_fields_ids_map: &'a RefCell<GlobalFieldsIdsMap<'a>>,
+         unused_vectors_distribution: &UnusedVectorsDistributionBump<'a>,
+         old_is_user_provided: bool,
++        old_render_failure: bool,
+         full_reindex: bool,
+     ) -> Result<()>
+     where
+@@ -744,6 +749,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+                         extractors,
+                         document,
+                         &(),
++                        old_render_failure,
+                         session,
+                         unused_vectors_distribution,
+                         ignore_document_template_failures,
+@@ -870,6 +876,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+         old_is_user_provided: bool,
+         old_must_regenerate: bool,
+         new_must_regenerate: bool,
++        old_render_failure: bool,
+     ) -> Result<()>
+     where
+         'a: 'doc,
+@@ -895,6 +902,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+                     new_document,
+                     &external_docid,
+                     old_must_regenerate,
++                    old_render_failure,
+                     old_is_user_provided,
+                     session,
+                     unused_vectors_distribution,
+@@ -921,6 +929,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+                         extractors,
+                         new_document,
+                         &(),
++                        old_render_failure,
+                         session,
+                         unused_vectors_distribution,
+                         ignore_document_template_failures,
+@@ -934,6 +943,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+                         new_document,
+                         &(),
+                         old_must_regenerate,
++                        old_render_failure,
+                         false,
+                         session,
+                         unused_vectors_distribution,
+@@ -967,6 +977,13 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+     where
+         'a: 'doc,
+     {
++        let DocumentEmbeddingStatus {
++            user_provided: _,
 
-**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo__typo_bucketing-8.snap` (modified, +11/-11)
-```diff
-@@ -1,53 +1,53 @@
- ---
--source: milli/src/search/new/tests/typo.rs
-+source: crates/milli/src/search/new/tests/typo.rs
- expression: "format!(\"{document_scores:#?}\")"
- ---
- [
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 6,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 6,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 2,
--                max_typo_count: 6,
-+                typo_count: 1,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 2,
--                max_typo_count: 6,
-+                typo_count: 1,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 3,
--                max_typo_count: 6,
-+                typo_count: 2,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 4,
--                max_typo_count: 6,
-+                typo_count: 3,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-```
-
-**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo__typo_synonyms-2.snap` (modified, +4/-4)
-```diff
-@@ -1,29 +1,29 @@
- ---
--source: milli/src/search/new/tests/typo.rs
-+source: crates/milli/src/search/new/tests/typo.rs
- expression: "format!(\"{document_scores:#?}\")"
- ---
- [
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 13,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 13,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
-                 typo_count: 1,
--                max_typo_count: 13,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-```
-
-**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo__typo_synonyms-5.snap` (modified, +6/-6)
-```diff
-@@ -1,29 +1,29 @@
- ---
--source: milli/src/search/new/tests/typo.rs
-+source: crates/milli/src/search/new/tests/typo.rs
- expression: "format!(\"{document_scores:#?}\")"
- ---
- [
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 13,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 2,
--                max_typo_count: 13,
-+                typo_count: 1,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 2,
--                max_typo_count: 13,
-+                typo_count: 1,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-```
-
-**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo_proximity__trap_complex2-2.snap` (modified, +3/-3)
-```diff
-@@ -1,13 +1,13 @@
- ---
--source: milli/src/search/new/tests/typo_proximity.rs
-+source: crates/milli/src/search/new/tests/typo_proximity.rs
- expression: "format!(\"{document_scores:#?}\")"
- ---
- [
-     [
-         Typo(
-             Typo {
-                 typo_count: 1,
--                max_typo_count: 5,
-+                max_typo_count: 4,
-             },
-         ),
-         Proximity(
-@@ -21,7 +21,7 @@ expression: "format!(\"{document_scores:#?}\")"
-         Typo(
-             Typo {
-                 typo_count: 1,
--                max_typo_count: 5,
-+                max_typo_count: 4,
-             },
-         ),
-         Proximity(
 ```
 
 ---
 
-### Incident Patch 2: `ee4adb75` (2026-11-17)
-**Commit Message**: Fix ngrams base costs
+### Incident Patch 2: `b9550fe9` (2026-11-25)
+**Commit Message**: Use a match when processing rendering failures
 
-**File**: `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs` (modified, +2/-1)
+**File**: `crates/milli/src/update/new/extract/vectors/mod.rs` (modified, +7/-5)
 ```diff
-@@ -50,7 +50,8 @@ impl RankingRuleGraphTrait for TypoGraph {
-         // Ngrams have a base typo cost
-         // 2-gram -> equivalent to 1 typo
-         // 3-gram -> equivalent to 2 typos
--        let base_cost = if term.term_ids.len() == 1 { 0 } else { term.term_ids.len() as u32 };
-+        let base_cost =
-+            if term.term_ids.len() == 1 { 0 } else { term.term_ids.len().saturating_sub(1) as u32 };
+@@ -518,11 +518,13 @@ impl<'doc> OnEmbed<'doc> for OnEmbeddingDocumentUpdates<'doc, '_, '_> {
+         let mut status_delta = self.status_delta.borrow_mut();
+         let failure_delta = status_delta.0.entry_ref(self.embedder_name).or_default();
  
-         for nbr_typos in 0..=term.term_subset.max_typo_cost(ctx) {
-             let mut term = term.clone();
+-        if old_render_failure {
+-            failure_delta.del_rendering_failure(docid);
+-        }
+-        if new_render_failure {
+-            failure_delta.add_rendering_failure(docid);
++        match (old_render_failure, new_render_failure) {
++            // failed to render, now it's ok
++            (true, false) => failure_delta.del_rendering_failure(docid),
++            // now it's failing to render
++            (false, true) => failure_delta.add_rendering_failure(docid),
++            // fail or success both ways, do nothing
++            (true, true) | (false, false) => (),
+         }
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `f8402104` (2026-11-25)
+**Commit Message**: Fix documentation
+
+**File**: `crates/milli/src/vector/db.rs` (modified, +1/-0)
+```diff
+@@ -452,6 +452,7 @@ impl<'a> heed::BytesEncode<'a> for EmbedderInfoCodec {
+ }
+ 
+ /// Codec for the legacy embedder info format.
++///
+ /// this codec can only store two bitmaps and cannot be extended because we don't encode the size of the second bitmap.
+ /// deprecated since v1.59.0
+ struct LegacyEmbedderInfoCodec;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6751** (2026-11-26): Federated search: add step for distinct in inter-index merge (@dureuill)
+- **PR #6750** (2026-11-23): Update version for the next release (v1.58.0) in Cargo.toml (@meili-bot)
+- **PR #6748** (closed): Fix the word position documentation link (@curquiza)
+- **PR #6744** (2026-11-19): Replace unsupported macos-14 runner with macos-15 (@curquiza)
+- **PR #6742** (2026-11-18): Add temporary Product Hunt launch link to README (@mayasssh)
 - **PR #6740** (2026-11-17): Fix ngrams base costs (@ManyTheFish)
-- **PR #6739** (2026-11-16): Upgrade to Rust v1.100 (@dureuill)
-- **PR #6738** (2026-11-16): Switch to  ubuntu 24.04 in prevision of GH retirement of 22.04 (@dureuill)
-- **PR #6735** (2026-11-12): Update version for the next release (v1.57.0) in Cargo.toml (@meili-bot)
-- **PR #6734** (2026-11-12): Upgrade macos runner following removal by GH (@dureuill)
-- **PR #6732** (2026-11-16): Improve the licensing situation with the OpenLDAP license (@Kerollmops)
 
 ---
 
@@ -2313,31 +2257,45 @@ Fix ngrams base costs
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in mod.rs
+## X. Compare the render failures result with the data from the database
 
 **RULE**:
-When implementing operations in `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/milli/src/update/new/extract/vectors/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d15a0866`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `00cc536c`: Compare the render failures result with the data from the database. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/milli/src/update/new/extract/vectors/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let base_cost = term.term_ids.len().saturating_sub(1) as u32;
+                            render_failure: old_render_failure,
+                                    old_render_failure,
+                                old_render_failure,
+                    render_failure: old_render_failure,
+                            old_render_failure,
+                                old_render_failure,
+        old_render_failure: bool,
+                        old_render_failure,
+        old_render_failure: bool,
+                    old_render_failure,
+                        old_render_failure,
+                        old_render_failure,
+        let DocumentEmbeddingStatus {
+            user_provided: _,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        let base_cost = if term.term_ids.len() == 1 { 0 } else { term.term_ids.len() as u32 };
+                            render_failure: _,
+                    render_failure: _,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d15a0866` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `00cc536c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

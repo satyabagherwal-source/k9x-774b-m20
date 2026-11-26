@@ -4,24 +4,24 @@
 {
   "source_repository": "meilisearch/meilisearch",
   "source_url": "https://github.com/meilisearch/meilisearch",
-  "source_version": "9dbecfa0",
+  "source_version": "9fb6a904",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T19:10:00.380Z",
+  "timestamp": "2026-11-26T15:50:22.805Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meilisearch-meilisearch",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `9dbecfa0`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T19:10:00.380Z`  
+> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `9fb6a904`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T15:50:22.805Z`  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meilisearch/meilisearch:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:09:58.601Z  
+> **Harvest Timestamp**: 2026-11-26T15:50:20.851Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59985 stars
+- **Stars / Engagement**: 60017 stars
 
 ---
 
@@ -2063,357 +2063,170 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9dbecfa0` (2026-11-24)
-**Commit Message**: Merge pull request #6496 from 0xfandom/fix/6482-max-total-hits-metadata
+### Incident Patch 1: `00cc536c` (2026-11-25)
+**Commit Message**: Compare the render failures result with the data from the database
 
-Respect pagination.maxTotalHits in total hits metadata
-
-**File**: `crates/meilisearch/src/search/federated/perform.rs` (modified, +1/-1)
+**File**: `crates/milli/src/update/new/extract/vectors/mod.rs` (modified, +30/-6)
 ```diff
-@@ -1766,7 +1766,7 @@ impl SearchByIndex {
-         .into_iter()
-         .map(|(_, hit)| hit)
-         .collect();
--        let estimated_total_hits = candidates.len() as usize;
-+        let estimated_total_hits = usize::min(candidates.len() as usize, max_total_hits);
-         let facets = facet_patterns_by_index
-             .map(|facets_by_index| {
-                 compute_facet_distribution_stats(
-```
+@@ -134,7 +134,7 @@ impl<'extractor> Extractor<'extractor> for EmbeddingExtractor<'_, '_> {
+                         let DocumentEmbeddingStatus {
+                             user_provided: old_is_user_provided,
+                             must_regenerate: old_must_regenerate,
+-                            render_failure: _,
++                            render_failure: old_render_failure,
+                             embed_failure: _,
+                         } = chunks.document_embedding_status(update.docid());
+ 
+@@ -182,6 +182,7 @@ impl<'extractor> Extractor<'extractor> for EmbeddingExtractor<'_, '_> {
+                                     old_is_user_provided,
+                                     old_must_regenerate,
+                                     true,
++                                    old_render_failure,
+                                 )?;
+                             }
+                         // no `_vectors` field, so only regenerate if the document is already set to in the DB.
+@@ -206,6 +207,7 @@ impl<'extractor> Extractor<'extractor> for EmbeddingExtractor<'_, '_> {
+                                 old_is_user_provided,
+                                 old_must_regenerate,
+                                 true,
++                                old_render_failure,
+                             )?;
+                         }
+                     }
+@@ -396,7 +398,7 @@ impl<'extractor, SD: SettingsDelta + Sync> SettingsChangeExtractor<'extractor>
+                 let DocumentEmbeddingStatus {
+                     user_provided: old_is_user_provided,
+                     must_regenerate: _,
+-                    render_failure: _,
++                    render_failure: old_render_failure,
+                     embed_failure: _,
+                 } = chunks.document_embedding_status(document.docid());
+                 let old_has_fragments = old_embedders
+@@ -434,6 +436,7 @@ impl<'extractor, SD: SettingsDelta + Sync> SettingsChangeExtractor<'extractor>
+                             &new_fields_ids_map,
+                             &unused_vectors_distribution,
+                             old_is_user_provided,
++                            old_render_failure,
+                             fragments_changed,
+                         )?;
+                     }
+@@ -471,6 +474,7 @@ impl<'extractor, SD: SettingsDelta + Sync> SettingsChangeExtractor<'extractor>
+                                 &new_fields_ids_map,
+                                 &unused_vectors_distribution,
+                                 old_is_user_provided,
++                                old_render_failure,
+                                 true,
+                             )?;
+                         } else if is_new_embedder {
+@@ -714,6 +718,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+         new_fields_ids_map: &'a RefCell<GlobalFieldsIdsMap<'a>>,
+         unused_vectors_distribution: &UnusedVectorsDistributionBump<'a>,
+         old_is_user_provided: bool,
++        old_render_failure: bool,
+         full_reindex: bool,
+     ) -> Result<()>
+     where
+@@ -744,6 +749,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+                         extractors,
+                         document,
+                         &(),
++                        old_render_failure,
+                         session,
+                         unused_vectors_distribution,
+                         ignore_document_template_failures,
+@@ -870,6 +876,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+         old_is_user_provided: bool,
+         old_must_regenerate: bool,
+         new_must_regenerate: bool,
++        old_render_failure: bool,
+     ) -> Result<()>
+     where
+         'a: 'doc,
+@@ -895,6 +902,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+                     new_document,
+                     &external_docid,
+                     old_must_regenerate,
++                    old_render_failure,
+                     old_is_user_provided,
+                     session,
+                     unused_vectors_distribution,
+@@ -921,6 +929,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+                         extractors,
+                         new_document,
+                         &(),
++                        old_render_failure,
+                         session,
+                         unused_vectors_distribution,
+                         ignore_document_template_failures,
+@@ -934,6 +943,7 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+                         new_document,
+                         &(),
+                         old_must_regenerate,
++                        old_render_failure,
+                         false,
+                         session,
+                         unused_vectors_distribution,
+@@ -967,6 +977,13 @@ impl<'a, 'b, 'extractor> Chunks<'a, 'b, 'extractor> {
+     where
+         'a: 'doc,
+     {
++        let DocumentEmbeddingStatus {
++            user_provided: _,
 
-**File**: `crates/meilisearch/tests/search/pagination.rs` (modified, +31/-0)
-```diff
-@@ -195,3 +195,34 @@ async fn test_issue_5274() {
-     }
-     "###);
- }
-+
-+/// testing: https://github.com/meilisearch/meilisearch/issues/6482
-+#[actix_rt::test]
-+async fn max_total_hits_caps_estimated_and_total_hits() {
-+    let server = Server::new_shared();
-+    let index = server.unique_index();
-+
-+    let documents = json!([
-+        { "id": 1, "title": "Document 1" },
-+        { "id": 2, "title": "Document 2" },
-+        { "id": 3, "title": "Document 3" }
-+    ]);
-+    let (task, _code) = index.add_documents(documents, None).await;
-+    server.wait_task(task.uid()).await.succeeded();
-+
-+    let (task, _code) = index.update_settings_pagination(json!({ "maxTotalHits": 2 })).await;
-+    server.wait_task(task.uid()).await.succeeded();
-+
-+    // Offset/limit pagination: `estimatedTotalHits` must not exceed `maxTotalHits`.
-+    let (response, code) = index.search_post(json!({ "offset": 0, "limit": 1 })).await;
-+    snapshot!(code, @"200 OK");
-+    snapshot!(response["hits"].as_array().unwrap().len(), @"1");
-+    snapshot!(response["estimatedTotalHits"], @"2");
-+
-+    // Page-based pagination: `totalHits` and `totalPages` must respect `maxTotalHits`.
-+    let (response, code) = index.search_post(json!({ "page": 1, "hitsPerPage": 1 })).await;
-+    snapshot!(code, @"200 OK");
-+    snapshot!(response["hits"].as_array().unwrap().len(), @"1");
-+    snapshot!(response["totalHits"], @"2");
-+    snapshot!(response["totalPages"], @"2");
-+}
-```
-
----
-
-### Incident Patch 2: `119861ef` (2026-07-06)
-**Commit Message**: fix(search): respect pagination.maxTotalHits in total hits metadata
-
-Single-index searches now run through the federated search path, which
-computed `estimatedTotalHits` (and, for page-based pagination, `totalHits`
-and `totalPages`) straight from the candidate count without applying the
-`pagination.maxTotalHits` cap. The setting was still applied to the
-returned `hits`, so the metadata could advertise more results than were
-actually reachable.
-
-Cap the estimated total by `maxTotalHits`, matching the non-federated
-path and the documented behavior that both totals are computed only until
-they reach `pagination.maxTotalHits`.
-
-Fixes #6482
-
-**File**: `crates/meilisearch/src/search/federated/perform.rs` (modified, +1/-1)
-```diff
-@@ -1766,7 +1766,7 @@ impl SearchByIndex {
-         .into_iter()
-         .map(|(_, hit)| hit)
-         .collect();
--        let estimated_total_hits = candidates.len() as usize;
-+        let estimated_total_hits = usize::min(candidates.len() as usize, max_total_hits);
-         let facets = facet_patterns_by_index
-             .map(|facets_by_index| {
-                 compute_facet_distribution_stats(
-```
-
-**File**: `crates/meilisearch/tests/search/pagination.rs` (modified, +31/-0)
-```diff
-@@ -195,3 +195,34 @@ async fn test_issue_5274() {
-     }
-     "###);
- }
-+
-+/// testing: https://github.com/meilisearch/meilisearch/issues/6482
-+#[actix_rt::test]
-+async fn max_total_hits_caps_estimated_and_total_hits() {
-+    let server = Server::new_shared();
-+    let index = server.unique_index();
-+
-+    let documents = json!([
-+        { "id": 1, "title": "Document 1" },
-+        { "id": 2, "title": "Document 2" },
-+        { "id": 3, "title": "Document 3" }
-+    ]);
-+    let (task, _code) = index.add_documents(documents, None).await;
-+    server.wait_task(task.uid()).await.succeeded();
-+
-+    let (task, _code) = index.update_settings_pagination(json!({ "maxTotalHits": 2 })).await;
-+    server.wait_task(task.uid()).await.succeeded();
-+
-+    // Offset/limit pagination: `estimatedTotalHits` must not exceed `maxTotalHits`.
-+    let (response, code) = index.search_post(json!({ "offset": 0, "limit": 1 })).await;
-+    snapshot!(code, @"200 OK");
-+    snapshot!(response["hits"].as_array().unwrap().len(), @"1");
-+    snapshot!(response["estimatedTotalHits"], @"2");
-+
-+    // Page-based pagination: `totalHits` and `totalPages` must respect `maxTotalHits`.
-+    let (response, code) = index.search_post(json!({ "page": 1, "hitsPerPage": 1 })).await;
-+    snapshot!(code, @"200 OK");
-+    snapshot!(response["hits"].as_array().unwrap().len(), @"1");
-+    snapshot!(response["totalHits"], @"2");
-+    snapshot!(response["totalPages"], @"2");
-+}
 ```
 
 ---
 
-### Incident Patch 3: `475b3218` (2026-11-24)
-**Commit Message**: Merge pull request #6733 from meilisearch/fix-latest-and-major-tags
+### Incident Patch 2: `b9550fe9` (2026-11-25)
+**Commit Message**: Use a match when processing rendering failures
 
-Fix CIs: Only move the latest, vX and vX.Y tags for the highest stable version
-
-**File**: `.github/scripts/is-latest-release.sh` (modified, +25/-46)
+**File**: `crates/milli/src/update/new/extract/vectors/mod.rs` (modified, +7/-5)
 ```diff
-@@ -1,48 +1,27 @@
--#!/bin/sh
--
--# Used in our CIs to publish the latest Docker image.
--
--# Checks if the current tag ($GITHUB_REF) corresponds to the latest release tag on GitHub
--# Returns "true" or "false" (as a string).
--
--GITHUB_API='https://api.github.com/repos/meilisearch/meilisearch/releases'
--PNAME='meilisearch'
--
--# FUNCTIONS
--
--# Returns the version of the latest stable version of Meilisearch by setting the $latest variable.
--get_latest() {
--    # temp_file is needed because the grep would start before the download is over
--    temp_file=$(mktemp -q /tmp/$PNAME.XXXXXXXXX)
--    latest_release="$GITHUB_API/latest"
--
--    if [ $? -ne 0 ]; then
--        echo "$0: Can't create temp file."
--        exit 1
--    fi
--
--    if [ -z "$GITHUB_PAT" ]; then
--        curl -s "$latest_release" > "$temp_file" || return 1
--    else
--        curl -H "Authorization: token $GITHUB_PAT" -s "$latest_release" > "$temp_file" || return 1
--    fi
--
--    latest="$(cat "$temp_file" | grep '"tag_name":' | cut -d ':' -f2 | tr -d '"' | tr -d ',' | tr -d ' ')"
--
--    rm -f "$temp_file"
--    return 0
-+#!/usr/bin/env bash
-+set -eu -o pipefail
-+
-+# Used in our CIs to know if a stable release should move the `latest`, `vX` and `vX.Y` tags (Docker and git).
-+# Relies only on the semver order of the git tags, so it doesn't depend on when the CIs run.
-+#
-+# Usage: is-latest-release.sh vX.Y.Z
-+# Outputs, in the `$GITHUB_OUTPUT` format:
-+# - latest=true|false: the tag is the highest stable version
-+# - latest_major=true|false: the tag is the highest stable version of its major
-+# - latest_minor=true|false: the tag is the highest stable version of its minor
-+
-+current_tag=$1
-+major=${current_tag%%.*}
-+minor=${current_tag%.*}
-+
-+# Listing the remote tags works whatever the checkout configuration (shallow clone, no tags fetched...)
-+stable_tags=$(git ls-remote --tags --refs origin | cut -f 2 | sed 's|^refs/tags/||' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V)
-+
-+# Outputs true if the current tag is the highest stable tag starting with the given prefix
-+is_highest() {
-+    [[ $current_tag == "$(grep "^$1" <<< "$stable_tags" | tail -n 1)" ]] && echo true || echo false
+@@ -518,11 +518,13 @@ impl<'doc> OnEmbed<'doc> for OnEmbeddingDocumentUpdates<'doc, '_, '_> {
+         let mut status_delta = self.status_delta.borrow_mut();
+         let failure_delta = status_delta.0.entry_ref(self.embedder_name).or_default();
+ 
+-        if old_render_failure {
+-            failure_delta.del_rendering_failure(docid);
+-        }
+-        if new_render_failure {
+-            failure_delta.add_rendering_failure(docid);
++        match (old_render_failure, new_render_failure) {
++            // failed to render, now it's ok
++            (true, false) => failure_delta.del_rendering_failure(docid),
++            // now it's failing to render
++            (false, true) => failure_delta.add_rendering_failure(docid),
++            // fail or success both ways, do nothing
++            (true, true) | (false, false) => (),
+         }
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `f8402104` (2026-11-25)
+**Commit Message**: Fix documentation
+
+**File**: `crates/milli/src/vector/db.rs` (modified, +1/-0)
+```diff
+@@ -452,6 +452,7 @@ impl<'a> heed::BytesEncode<'a> for EmbedderInfoCodec {
  }
  
--# MAIN
--current_tag="$(echo $GITHUB_REF | tr -d 'refs/tags/')"
--get_latest
--
--if [ "$current_tag" != "$latest" ]; then
--    # The current release tag is not the latest
--    echo "false"
--else
--    # The current release tag is the latest
--    echo "true"
--fi
--
--exit 0
-+echo "latest=$(is_highest v)"
-+echo "latest_major=$(is_highest "$major\.")"
-+echo "latest_minor=$(is_highest "$minor\.")"
-```
-
-**File**: `.github/workflows/latest-git-tag.yml` (modified, +23/-0)
-```diff
-@@ -18,9 +18,32 @@ jobs:
-   update-latest-tag:
-     runs-on: ubuntu-latest
-     needs: check-version
-+    # Run one release at a time: otherwise, a run could compute the latest flags
-+    # before a higher version is tagged, and push the `latest` tag after that higher version's run
-+    concurrency:
-+      group: latest-git-tag
-+      cancel-in-progress: false
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+      - name: Check if the release is the latest one
-+        id: is-latest
-+        if: github.event_name == 'release'
-+        env:
-+          GH_TOKEN: ${{ secrets.MEILI_BOT_GH_PAT }}
-+          GH_REF_NAME: ${{ github.ref_name }}
-+        run: |
-+          flags=$(bash .github/scripts/is-latest-release.sh "$GH_REF_NAME")
-+          echo "$flags" >> $GITHUB_OUTPUT
-+
-+          github_latest=$(gh release view --json tagName --jq .tagName)
-+          if grep -qx 'latest=true' <<< "$flags"; then
-+            [[ $github_latest == "$GH_REF_NAME" ]] || echo "::warning::$GH_REF_NAME is the highest stable version but is not set as the latest GitHub release ($github_latest is)"
-+          elif [[ $github_latest == "$GH_REF_NAME" ]]; then
-+            echo "::warning::$GH_REF_NAME is set as the latest GitHub release but is not the highest stable version"
-+          fi
-       - uses: rickstaa/action-create-tag@a1c7777fcb2fee4f19b0f283ba888afa11678b72 # v1
-+        # A manual run always moves the tag, to fix it if needed
-+        if: github.event_name == 'workflow_dispatch' || steps.is-latest.outputs.latest == 'true'
-         with:
-           tag: "latest"
-           message: "Latest stable release of Meilisearch"
-```
-
-**File**: `.github/workflows/publish-docker-images.yml` (modified, +15/-11)
-```diff
-@@ -59,14 +59,11 @@ jobs:
-         with:
-           images: ${{ matrix.registry }}
-           # Prevent `latest` to be updated for each new tag pushed.
--          # We need latest and `vX.Y` tags to only be pushed for the stable Meilisearch releases.
-+          # Images are pushed by digest here: the `latest`, `vX` and `vX.Y` tags are only created in the merge job.
-           flavor: latest=false
-           tags: |
-             type=ref,event=tag
-             type=raw,value=nightly,enable=${{ github.event_name != 'push' }}
--            type=semver,pattern=v{{major}}.{{minor}},enable=${{ steps.check-tag-format.outputs.stable == 'true' }}
--            type=semver,pattern=v{{major}},enable=${{ steps.check-tag-format.outputs.stable == 'true' }}
--            type=raw,value=latest,enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest == 'true' }}
- 
-       - name: Build and push by digest
-         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-@@ -109,6 +106,12 @@ jobs:
-     needs:
-       - build
- 
-+    # Run one release at a time: otherwise, a run could compute the latest flags
-+    # before a higher version is tagged, and push the `latest` and `vX` tags after that higher version's run
-+    concurrency:
-+      group: ${{ github.event_name == 'push' && format('docker-manifest-{0}', matrix.edition) || format('docker-manifest-{0}-{1}', matrix.edition, github.run_id) }}
-+      cancel-in-progress: false
-+
-     permissions:
-       id-token: write # This is needed to use Cosign in keyless mode
- 
-@@ -118,25 +121,26 @@ jobs:
-       # If we are running a cron or manual job ('schedule' or 'workflow_dispatch' event), it means we are publishing the `nightly` tag, so not considered stable.
-       # If we have pushed a tag, and the tag has the v<nmumber>.<number>.<number> format, it means we are publishing an official release, so considered stable.
-       # In this situation, we need to set `output.stable` to create/update the following tags (additionally to the `vX.Y.Z` Docker tag):
--      # - a `vX.Y` (without patch version) Docker tag
--      # - a `latest` Docker tag
-+      # - a `vX.Y` (without patch version) Docker tag, only if it is the highest stable version of its minor
-+      # - a `vX` (without minor and patch versions) Docker tag, only if it is the highest stable version of its major
-+      # - a `latest` Docker tag, only if it is the highest stable version
-       # For any other tag pushed, this is not considered stable.
-       - name: Define if stable and latest release
-         id: check-tag-format
-         env:
--          # To avoid request limit with the .github/scripts/is-latest-release.sh script
--          GITHUB_PATH: ${{ secrets.MEILI_BOT_GH_PAT }}
-           GH_REF_NAME: ${{ github.ref_name }}
-           GH_EVENT_NAME: ${{ github.event_name }}
-         run: |
-           escaped_tag=$(printf "%q" "$GH_REF_NAME")
-           echo "latest=false" >> $GITHUB_OUTPUT
-+          echo "latest_major=false" >> $GITHUB_OUTPUT
-+          echo "latest_minor=false" >> $GITHUB_OUTPUT
- 
-           if [[ "$GH_EVENT_NAME" != 'push' ]]; then
-             echo "stable=false" >> $GITHUB_OUTPUT
-           elif [[ $escaped_tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-             echo "stable=true" >> $GITHUB_OUTPUT
--            echo "latest=$(sh .github/scripts/is-latest-release.sh)" >> $GITHUB_OUTPUT
-+            bash .github/scripts/is-latest-release.sh "$GH_REF_NAME" >> $GITHUB_OUTPUT
-           else
-             echo "stable=false" >> $GITHUB_OUTPUT
-           fi
-@@ -184,8 +188,8 @@ jobs:
-           tags: |
-             type=ref,event=tag
-             type=raw,value=nightly,enable=${{ github.event_name != 'push' }}
--            type=semver,pattern=v{{major}}.{{minor}},enable=${{ steps.check-tag-format.outputs.stable == 'true' }}
--            type=semver,pattern=v{{major}},enable=${{ steps.check-tag-format.outputs.stable == 'true' }}
-+            type=semver,pattern=v{{major}}.{{minor}},enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest_minor == 'true' }}
-+            type=semver,pattern=v{{major}},enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest_major == 'true' }}
-             type=raw,value=latest,enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest == 'true' }}
- 
-       - name: Create manifest list and push
-```
-
-**File**: `documentation/release.md` (modified, +3/-4)
-```diff
-@@ -64,11 +64,10 @@ Why? GitHub Merge Queue does not work with branch patterns yet, so we have to ad
- - Ensure each line makes sense for external people reading the changelogs. Add more details of usage if needed.
- - Thank the external contributors at the end of the changelogs.
- 
--⚠️ <ins>If doing a patch release that should NOT be the `latest` release</s>:
-+⚠️ <ins>If doing a patch release that should NOT be the `latest` release</ins>:
- 
--- Do NOT check `Set as the latest release` when creating the GitHub release. If you did, quickly interrupt all CIs and delete the GitHub release!
--- Once the release is created, you don't have to care about Homebrew, APT and Docker CIs: they will not consider this new release as the latest; the CIs are already adapted for this situation.
--- However, the [CI updating the `latest` git tag](https://github.com/meilisearch/meilisearch/actions/workflows/latest-git-tag.yml) is not working for this situation currently and will attach the `latest` git tag to the just-created release, which is something we don't want! If you don't succeed in stopping the CI on time, don't worry, you just have to re-run the [old CI](https://github.com/meilisearch/meilisearch/actions/workflows/latest-git-tag.yml) corresponding to the real latest release, and the `latest` git tag will be attached back to the right commit.
-+- Do NOT check `Set as the latest release` when creating the GitHub release, so that GitHub displays the right latest release. If you did, just edit the release to uncheck it: no CI relies on this checkbox.
-+- The Docker `latest`, `vX` and `vX.Y` tags and the `latest` git tag are only moved if the release is the highest stable version (or the highest stable version of its major for `vX`, of its minor for `vX.Y`), based on the semver order of the git tags. The [CI updating the `latest` git tag](https://github.com/meilisearch/meilisearch/actions/workflows/latest-git-tag.yml) displays a warning if the checkbox is not consistent with the git tags.
- 
- 6. Bring the new commits back from `release-vX.Y.Z+1` to `main` by merging a PR originating `release-vX.Y.Z+1` and pointing to `main`.
- 
+ /// Codec for the legacy embedder info format.
++///
+ /// this codec can only store two bitmaps and cannot be extended because we don't encode the size of the second bitmap.
+ /// deprecated since v1.59.0
+ struct LegacyEmbedderInfoCodec;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6751** (2026-11-26): Federated search: add step for distinct in inter-index merge (@dureuill)
 - **PR #6750** (2026-11-23): Update version for the next release (v1.58.0) in Cargo.toml (@meili-bot)
 - **PR #6748** (closed): Fix the word position documentation link (@curquiza)
 - **PR #6744** (2026-11-19): Replace unsupported macos-14 runner with macos-15 (@curquiza)
 - **PR #6742** (2026-11-18): Add temporary Product Hunt launch link to README (@mayasssh)
 - **PR #6740** (2026-11-17): Fix ngrams base costs (@ManyTheFish)
-- **PR #6739** (2026-11-16): Upgrade to Rust v1.100 (@dureuill)
 
 ---
 
@@ -2433,31 +2246,45 @@ Fix CIs: Only move the latest, vX and vX.Y tags for the highest stable version
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in perform.rs
+## X. Compare the render failures result with the data from the database
 
 **RULE**:
-When implementing operations in `crates/meilisearch/src/search/federated/perform.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/milli/src/update/new/extract/vectors/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9dbecfa0`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `00cc536c`: Compare the render failures result with the data from the database. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/meilisearch/src/search/federated/perform.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/milli/src/update/new/extract/vectors/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let estimated_total_hits = usize::min(candidates.len() as usize, max_total_hits);
+                            render_failure: old_render_failure,
+                                    old_render_failure,
+                                old_render_failure,
+                    render_failure: old_render_failure,
+                            old_render_failure,
+                                old_render_failure,
+        old_render_failure: bool,
+                        old_render_failure,
+        old_render_failure: bool,
+                    old_render_failure,
+                        old_render_failure,
+                        old_render_failure,
+        let DocumentEmbeddingStatus {
+            user_provided: _,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        let estimated_total_hits = candidates.len() as usize;
+                            render_failure: _,
+                    render_failure: _,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9dbecfa0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `00cc536c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

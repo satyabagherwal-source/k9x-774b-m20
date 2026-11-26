@@ -13482,3 +13482,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-11-26T15:37:59.993Z |
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `69f59581` | Multi-dimensional audit evidence | 2026-11-26T15:38:08.151Z |
 | `learn-dom-d-2c3fc3c9` | `project://hf-llamaindex-ocria-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md` | 2026-11-26T15:38:42.062Z |
+| `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-26T15:50:06.661Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `9fb6a904` | Multi-dimensional audit evidence | 2026-11-26T15:50:22.468Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T15:38:08.208Z",
+  "last_updated": "2026-11-26T15:50:22.496Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -725,14 +725,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "37dd007266816de8620d7e66e644e1a58920a499f1687710435ce0746dc4b90a",
-      "verified_at": "2026-11-22T22:49:25.256Z",
+      "content_hash": "2ea8c522e14c9fd87165a431c97dd187f35e33273af2c0fb10323f4d0653ea66",
+      "verified_at": "2026-11-26T15:50:06.682Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T22:49:25.256Z"
+      "last_updated": "2026-11-26T15:50:06.682Z"
     },
     "PSRben/VisionHOPE": {
       "repository": "PSRben/VisionHOPE",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "6100f770212e564b782e7e51823a8f684d032f4af1dcb795c6c1fb50457dc80a",
-      "verified_at": "2026-11-24T19:10:00.068Z",
+      "content_hash": "d4d77b305010dc6ee153d3538c6caf48265dc3bbb1b5a4ca3dee028b4791a579",
+      "verified_at": "2026-11-26T15:50:22.495Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:10:00.068Z"
+      "last_updated": "2026-11-26T15:50:22.495Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",

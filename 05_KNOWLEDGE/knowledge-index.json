@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T15:38:44.374Z",
+  "last_updated": "2026-11-26T15:50:30.411Z",
   "total_verified_learnings": 9130,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26007,
+  "total_items": 26009,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d4356db51fdea89e73a2ade23f2a61629b047111212da1ff8dd3adc1413866a",
+      "content_hash": "611ecb63a50cace49e2cb9b4b261ae34b726ae5c44cb1a41572ea097199bc80d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T14:13:44.043Z"
+      "persisted_at": "2026-11-26T15:50:29.831Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5b4bacb62c76a0e54aba37c32d3dd5a6b3bdebaf28027e9f2e29dc06fcfd104",
+      "content_hash": "5756c056f8ccacff9cf674249357e2c19ecbe9a7145f22f6a275995fb8c58b61",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T14:13:44.318Z"
+      "persisted_at": "2026-11-26T15:50:30.141Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9dadb4d3bbf5d4e01343069ccf79eed3bd8c9c5b5891ea8c87d826df86a179e",
+      "content_hash": "85af7c5c023e8952a166b3cfbc44980ae8b1a99fa2afafa18c4fcaca4e5ced3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:13:44.557Z"
+      "persisted_at": "2026-11-26T15:50:30.411Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -113817,10 +113817,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "repository": "meilisearch/meilisearch",
-      "source_version": "9dbecfa0",
-      "content_hash": "a65a7c218bc1fe3ff2b6bfd7ec87f56bb7d88f52f00dfff9c391a067ec3f5f94",
+      "source_version": "9fb6a904",
+      "content_hash": "45eb62f56fe4818f696ab8e5f2355b491490d77a8c086e8e12e6787368775173",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:10:00.630Z"
+      "persisted_at": "2026-11-26T15:50:23.128Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch",
@@ -113829,10 +113829,10 @@
       "relative_path": "08_VERIFICATION/meilisearch-meilisearch-verification-protocol-empirical-defect-shield-for-meilis.md",
       "title": "Verification Protocol: Empirical Defect Shield for meilisearch/meilisearch",
       "repository": "meilisearch/meilisearch",
-      "source_version": "9dbecfa0",
-      "content_hash": "97993a0d8fe989b40a220f43997e95d73638d679439b2b310635b0cbc0b573c9",
+      "source_version": "9fb6a904",
+      "content_hash": "29986e94f07fba43f2ac0f76d67eb529323cf926d414c58ad192c4355d9ef8a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:10:00.869Z"
+      "persisted_at": "2026-11-26T15:50:23.420Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
@@ -113890,9 +113890,9 @@
       "title": "Technical Construction Intelligence: meilisearch-meilisearch-learnings Core Invariants",
       "repository": "meilisearch-meilisearch-learnings",
       "source_version": "HEAD",
-      "content_hash": "291c68be3983294f0560e506c75272b3884b4e1c4235e603237cfec973e01779",
+      "content_hash": "7e0779f0a57df08f89f6caa41a83fe90b1b15ea3e2b678e198f636df28adc979",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T16:05:54.260Z"
+      "persisted_at": "2026-11-26T15:50:28.200Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch-learni",
@@ -113902,9 +113902,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meilisearch-meilisearch-learnings",
       "repository": "meilisearch-meilisearch-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ae8f9809101a6ac7dfb7fc5f92d4fa9eb4d893fd83892899c45474ece539800",
+      "content_hash": "f0eca4680d4f9eee36b3e0f10430045630b13b714322c87fc3cb1ba89159de2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:05:54.382Z"
+      "persisted_at": "2026-11-26T15:50:28.500Z"
     },
     "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant",
@@ -115066,9 +115066,9 @@
       "title": "Research & Knowledge Intelligence: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "0c9a60640dd344734b05c897f251c092023e8723cf06f729c179d2beea239350",
+      "content_hash": "78b0be5ded71da940c870f5c362f0c00f7032384c8e269909223f74d9272111b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:49:25.477Z"
+      "persisted_at": "2026-11-26T15:50:06.987Z"
     },
     "candidate_directive-fix-reset-keep-mounted-field-names-with-keepfieldsref-so-later-resets-resto": {
       "item_id": "candidate_directive-fix-reset-keep-mounted-field-names-with-keepfieldsref-so-later-resets-resto",
@@ -260330,8 +260330,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "9dbecfa0",
-      "content_hash": "6100f770212e564b782e7e51823a8f684d032f4af1dcb795c6c1fb50457dc80a",
+      "source_version": "9fb6a904",
+      "content_hash": "d4d77b305010dc6ee153d3538c6caf48265dc3bbb1b5a4ca3dee028b4791a579",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -260359,6 +260359,11 @@
           "number": 10343,
           "title": "Empirical Invariant Guard in perform.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10716,
+          "title": "Compare the render failures result with the data from the database",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260366,7 +260371,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:09:59.765Z",
+      "verified_at": "2026-11-26T15:50:22.070Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -289377,7 +289382,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "37dd007266816de8620d7e66e644e1a58920a499f1687710435ce0746dc4b90a",
+      "content_hash": "2ea8c522e14c9fd87165a431c97dd187f35e33273af2c0fb10323f4d0653ea66",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [],
@@ -289386,7 +289391,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T22:49:24.982Z",
+      "verified_at": "2026-11-26T15:50:06.246Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -289403,9 +289408,9 @@
       "title": "Research & Knowledge Intelligence: hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "315f60563fcb3b5eb29423a5ee7766330da8d0220e7587e15c31211a139d8d66",
+      "content_hash": "1db69428348266b42aa6d4c6acf7b8f6e446ad80870bff1abc8d7b8e8360b0a7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:49:38.291Z"
+      "persisted_at": "2026-11-26T15:50:26.783Z"
     },
     "candidate_directive-move-the-calendar-widget-to-ratatui-calendar": {
       "item_id": "candidate_directive-move-the-calendar-widget-to-ratatui-calendar",
@@ -352175,13 +352180,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UXTU-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BDL9-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "85ee511ca58802fbb49734778ba2de0db59a854351a0d6adc020b22bf8993982",
+      "content_hash": "3e11bd4821eb6c9557d90e0532d9eb094ec9714d0960616dcf799c80389f6e8e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T14:13:43.747Z"
+      "persisted_at": "2026-11-26T15:50:29.518Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",
@@ -356456,6 +356461,32 @@
       "content_hash": "893b7b2c6a6d5dfa6f787874642dd48b24217a425e5800c4bfee3e44e977b52b",
       "domain_letter": "D",
       "persisted_at": "2026-11-26T15:38:42.452Z"
+    },
+    "rule-10716": {
+      "learning_id": "rule-10716",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10716,
+      "title": "Compare the render failures result with the data from the database",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "9fb6a904",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T15:50:22.070Z"
+    },
+    "candidate_directive-compare-the-render-failures-result-with-the-data-from-the-database": {
+      "item_id": "candidate_directive-compare-the-render-failures-result-with-the-data-from-the-database",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BCBX-compare-the-render-failures-result-with-the-data-from-the-database.md",
+      "title": "Compare the render failures result with the data from the database",
+      "repository": "meilisearch-meilisearch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "be2c08d72bff0d537cad619a24cab754ab63e00de001426dd78e054f69836cd0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T15:50:27.885Z"
     }
   },
   "ai-builder-brain": {
