@@ -13255,3 +13255,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c09581ba` | Multi-dimensional audit evidence | 2026-11-26T03:13:10.762Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `ff2624ee` | Multi-dimensional audit evidence | 2026-11-26T03:13:13.191Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d536eec8` | Multi-dimensional audit evidence | 2026-11-26T03:13:14.402Z |
+| `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-26T03:21:24.389Z |
+| `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `abab8260` | Multi-dimensional audit evidence | 2026-11-26T03:21:25.376Z |

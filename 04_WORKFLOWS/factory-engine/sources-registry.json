@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T02:46:50.306Z",
-    "lastVerified": "2026-11-26T02:46:50.306Z",
+    "lastChecked": "2026-11-26T03:21:36.227Z",
+    "lastVerified": "2026-11-26T03:21:36.227Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T03:13:17.875Z",
-    "lastVerified": "2026-11-26T03:13:17.875Z",
+    "lastChecked": "2026-11-26T03:21:36.235Z",
+    "lastVerified": "2026-11-26T03:21:36.235Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1357,9 +1357,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-25T23:11:47.580Z",
+    "lastChecked": "2026-11-26T03:21:31.221Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-25T23:11:47.580Z"
+    "lastVerified": "2026-11-26T03:21:31.221Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -3302,9 +3302,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-25T01:52:53.975Z",
+    "lastChecked": "2026-11-26T03:21:33.704Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-25T01:52:53.975Z"
+    "lastVerified": "2026-11-26T03:21:33.704Z"
   },
   "hf-briaai-rmbg-3.0": {
     "name": "briaai/RMBG-3.0",
@@ -6076,12 +6076,12 @@
     "lastVerified": "2026-11-24T19:55:21.307Z"
   },
   "checkmarx-kics": {
-    "name": "Checkmarx/kics",
+    "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-11-25T02:56:10.248Z",
-    "lastVerified": "2026-11-25T02:56:10.248Z",
+    "lastChecked": "2026-11-26T03:21:28.736Z",
+    "lastVerified": "2026-11-26T03:21:28.736Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
@@ -6090,7 +6090,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a572efb2"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -6889,22 +6890,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "graphprotocol-graph-node": {
-    "name": "graph-node",
+    "name": "graphprotocol/graph-node",
     "officialUrl": "https://github.com/graphprotocol/graph-node",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T20:29:43.617Z",
-    "lastVerified": "2026-11-24T20:29:43.617Z",
+    "lastChecked": "2026-11-26T03:21:24.179Z",
+    "lastVerified": "2026-11-26T03:21:24.179Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-graphprotocol-graph-node",
-    "contentHash": "5c9434c8db3992aa2b42d45612e339432e33514d64147956290abfc108c8c95a",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "d3a7133307f839f22384d317450040aaaf33e2713a8b6eaed7f7e31a56e7452a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a6ae6e2c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-bingsu-adetailer": {
     "name": "Bingsu/adetailer",
@@ -11096,9 +11096,9 @@
   "mazzzystar-queryable": {
     "name": "Queryable",
     "officialUrl": "https://github.com/mazzzystar/Queryable",
-    "lastChecked": "2026-11-23T17:37:47.771Z",
+    "lastChecked": "2026-11-26T03:21:26.545Z",
     "revisionIdentifier": "19825faa",
-    "lastVerified": "2026-11-23T17:37:47.771Z"
+    "lastVerified": "2026-11-26T03:21:26.545Z"
   },
   "fb55-css-select": {
     "name": "fb55/css-select",
@@ -14332,12 +14332,12 @@
     "officialUrl": "https://huggingface.co/Cactus-Compute/mirage",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T06:36:06.147Z",
-    "lastVerified": "2026-11-22T06:36:06.147Z",
+    "lastChecked": "2026-11-26T03:21:23.725Z",
+    "lastVerified": "2026-11-26T03:21:23.725Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cactus-compute-mirage",
-    "contentHash": "47200bb90b24d57ec9c706507203b3f32f812efbfbb582501b53fd01dbed0cf8",
+    "contentHash": "6371256beaa2d308fcd117f414af925c6902c92f88c3185a2b4645a1a36f2056",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T06:41:11.263Z",
+  "timestamp": "2026-11-26T03:21:37.329Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-cactus-compute-mirage-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-cactus-compute-mirage-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T06:41:11.263Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T03:21:37.329Z`  
 > **Learning ID**: `LEARN-EVO-hf-cactus-compute-mirage-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-cactus-co`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T06:41:07.159Z  
+> **Timestamp**: 2026-11-26T03:21:23.848Z  
 > **Learning ID**: `learn-huggingface-cactus-compute-mirage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Cactus-Compute/mirage](https://huggingface.co/Cactus-Compute/mirage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T06:36:06.147Z  
+> **Harvest Timestamp**: 2026-11-26T03:21:23.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 56257 downloads | 555 likes
+- **Stars / Engagement**: 75416 downloads | 637 likes
 
 ---
 

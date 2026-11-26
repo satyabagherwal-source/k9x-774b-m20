@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T03:13:20.500Z",
+  "last_updated": "2026-11-26T03:21:38.791Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T02:27:12.180Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-26T02:46:51.026Z",
+      "processed_at": "2026-11-26T03:21:37.656Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -38,7 +38,7 @@
       "staged_for_review": 0
     },
     "hf-cactus-compute-mirage-learnings.md": {
-      "processed_at": "2026-11-22T06:41:11.095Z",
+      "processed_at": "2026-11-26T03:21:37.222Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2313,9 +2313,9 @@
       "staged_for_review": 1
     },
     "graphprotocol-graph-node-learnings.md": {
-      "processed_at": "2026-11-19T04:36:38.358Z",
+      "processed_at": "2026-11-26T03:21:36.385Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "hf-deepseek-ai-deepseek-v4-pro-learnings.md": {
       "processed_at": "2026-11-23T05:59:56.186Z",
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4350,
+  "total_dossiers_evaluated": 4353,
   "total_canonical_promoted": 550,
-  "total_staged_for_review": 3301
+  "total_staged_for_review": 3303
 }

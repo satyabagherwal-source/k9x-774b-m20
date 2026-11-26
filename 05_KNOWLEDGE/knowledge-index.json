@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T03:13:20.348Z",
+  "last_updated": "2026-11-26T03:21:38.642Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25640,
+  "total_items": 25643,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e363b4ec503d46e417c960728768f930075b20e2adf2f6e136c8a07558388600",
+      "content_hash": "25150b126fdd6e7b8d70be38c39063a57a391e9bcea4225d4b6fdebfe4d907ee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T02:46:51.842Z"
+      "persisted_at": "2026-11-26T03:21:38.306Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ae2e4c95d3119fdb625d6e2dc7d759ab6006758584c39d64dd1e59dd2e5b933",
+      "content_hash": "f62712ce0be0d39028d7584b517cfa295b52c7afb9e88f8e3b1cee282749b025",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T02:46:52.088Z"
+      "persisted_at": "2026-11-26T03:21:38.496Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ccc341e0df9f0b41b30bbf2b556f14a7c3cac587a07c8e7f5508bb5661c2e66f",
+      "content_hash": "9946ce689555db7612e2e4d129af32def305f1a2f845b0d1096fa469bbc62427",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T02:46:52.248Z"
+      "persisted_at": "2026-11-26T03:21:38.642Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -222238,14 +222238,19 @@
       "slug": "graphprotocol-graph-node",
       "platform": "github",
       "source_url": "https://github.com/graphprotocol/graph-node",
-      "source_version": "a6ae6e2c",
-      "content_hash": "5c9434c8db3992aa2b42d45612e339432e33514d64147956290abfc108c8c95a",
+      "source_version": "abab8260",
+      "content_hash": "d3a7133307f839f22384d317450040aaaf33e2713a8b6eaed7f7e31a56e7452a",
       "dossier_path": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "promoted_rules": [
         {
           "number": 8418,
           "title": "Don't unset nullable primitive fields set to 0 or false",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10593,
+          "title": "Bump locked dependencies to fix RustSec advisories",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -222254,7 +222259,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T04:36:20.548Z",
+      "verified_at": "2026-11-26T03:21:25.152Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222296,10 +222301,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-graphprotocol-graph-node-deployment-operations-intelligence-graphprotocol-graph-.md",
       "title": "Deployment & Operations Intelligence: graphprotocol/graph-node Core Invariants",
       "repository": "graphprotocol/graph-node",
-      "source_version": "a6ae6e2c",
-      "content_hash": "e643d8252ad77b8c970d262dc2b1ebc8be67af84fa0281824bdb0797f1fa3f15",
+      "source_version": "abab8260",
+      "content_hash": "9ea42ac5e72f9ed182594af933fe880dc04882d66aa1da1c626d75e99c40e57b",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T04:36:20.994Z"
+      "persisted_at": "2026-11-26T03:21:25.793Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-graphprotocol-graph-node": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-graphprotocol-graph-node",
@@ -222308,10 +222313,10 @@
       "relative_path": "08_VERIFICATION/graphprotocol-graph-node-verification-protocol-empirical-defect-shield-for-graph.md",
       "title": "Verification Protocol: Empirical Defect Shield for graphprotocol/graph-node",
       "repository": "graphprotocol/graph-node",
-      "source_version": "796ace3f",
-      "content_hash": "e9cd8313b4d3ca60a6cf41e892f19332d3b5516ff552c67b83cd8c4ace9d3a5f",
+      "source_version": "abab8260",
+      "content_hash": "f3fa50013529ae53f145e1178b819e377d453b8b212f45e312266f5107aafac3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T02:06:15.323Z"
+      "persisted_at": "2026-11-26T03:21:25.983Z"
     },
     "learn-github-goharbor-harbor": {
       "learning_id": "learn-github-goharbor-harbor",
@@ -222569,9 +222574,9 @@
       "title": "Deployment & Operations Intelligence: graphprotocol-graph-node-learnings Core Invariants",
       "repository": "graphprotocol-graph-node-learnings",
       "source_version": "HEAD",
-      "content_hash": "699844f86f9b3ee26764a9933038bb03cfdaaf60fb6654124209f45ec9ab0bd1",
+      "content_hash": "4ec01f53faefe3905a0252ca661bd5cf18f6fa56c76c8b22ad66ddbc21fa68ab",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T04:36:38.570Z"
+      "persisted_at": "2026-11-26T03:21:36.862Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-graphprotocol-graph-node-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-graphprotocol-graph-node-learn",
@@ -222581,9 +222586,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for graphprotocol-graph-node-learnings",
       "repository": "graphprotocol-graph-node-learnings",
       "source_version": "HEAD",
-      "content_hash": "11eedee1c07868a57bcdca28979ee171ac4ada2c38f35c92a192c5188418c1b7",
+      "content_hash": "90a401cc665c364cf03b26dcaf6ff0c4898c59cb3a5fb5d6648f79603b7dee27",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T02:06:30.590Z"
+      "persisted_at": "2026-11-26T03:21:37.052Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-pro-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-pro-learnings-core-in",
@@ -253976,7 +253981,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/mirage",
       "source_version": "hf-cactus-compute-mirage",
-      "content_hash": "47200bb90b24d57ec9c706507203b3f32f812efbfbb582501b53fd01dbed0cf8",
+      "content_hash": "6371256beaa2d308fcd117f414af925c6902c92f88c3185a2b4645a1a36f2056",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
       "promoted_rules": [],
@@ -253985,7 +253990,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T06:41:07.529Z",
+      "verified_at": "2026-11-26T03:21:24.129Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254002,9 +254007,9 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/mirage Core Invariants",
       "repository": "Cactus-Compute/mirage",
       "source_version": "hf-cactus-compute-mirage",
-      "content_hash": "7fbc497819b8784a7f53421f3d9ade72079f4592c9011f09d63f85fe336a0ea3",
+      "content_hash": "abca0b08aeb3085a58fe5b5b21aa47854fd1870721e1748f1dcd526b9f6672e5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T06:41:08.114Z"
+      "persisted_at": "2026-11-26T03:21:24.638Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian",
@@ -254014,9 +254019,9 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-mirage-learnings Core Invariants",
       "repository": "hf-cactus-compute-mirage-learnings",
       "source_version": "HEAD",
-      "content_hash": "168f048ca377fcc9c3f9f6cfcbaf889760810956c27568bf51695a29abafbad2",
+      "content_hash": "20e8b1d31536e06cdb1f60f87195c72d3942bff7c0a8decbb85bb283b3e3de4b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T06:41:11.387Z"
+      "persisted_at": "2026-11-26T03:21:37.449Z"
     },
     "learn-github-dicklesworthstone-destructive_command_guard": {
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
@@ -342784,13 +342789,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BMBM-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KCAV-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b1ac1e941616f6cc5008cb0e4227971106cf13c106336fe08678c07987119448",
+      "content_hash": "f34b278230eea36e22b81c7e8343ff56369806e9bff013fded0a21455aa3865a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T02:46:51.591Z"
+      "persisted_at": "2026-11-26T03:21:38.122Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -351058,6 +351063,44 @@
       "content_hash": "25672f4654f1821027dea716db4239f6b5bcbc9e5c471d22592f135b033534f7",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T03:13:15.035Z"
+    },
+    "rule-10593": {
+      "learning_id": "rule-10593",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10593,
+      "title": "Bump locked dependencies to fix RustSec advisories",
+      "source_url": "https://github.com/graphprotocol/graph-node",
+      "source_version": "abab8260",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T03:21:25.152Z"
+    },
+    "candidate_directive-bump-locked-dependencies-to-fix-rustsec-advisories": {
+      "item_id": "candidate_directive-bump-locked-dependencies-to-fix-rustsec-advisories",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K2NE-bump-locked-dependencies-to-fix-rustsec-advisories.md",
+      "title": "Bump locked dependencies to fix RustSec advisories",
+      "repository": "graphprotocol/graph-node",
+      "source_version": "abab8260",
+      "content_hash": "0f61d8674dada306662729f907fa5592419b64062c89129508b2449165d1399a",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T03:21:25.611Z"
+    },
+    "candidate_directive-all-bump-locked-dependencies-to-fix-rustsec-advisories": {
+      "item_id": "candidate_directive-all-bump-locked-dependencies-to-fix-rustsec-advisories",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KB6P-all-bump-locked-dependencies-to-fix-rustsec-advisories.md",
+      "title": "all: Bump locked dependencies to fix RustSec advisories",
+      "repository": "graphprotocol-graph-node-learnings",
+      "source_version": "HEAD",
+      "content_hash": "64c4e2707bd334c563313704cd5583fa76e8d95d8c8bbe94e604210413f9b632",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T03:21:36.674Z"
     }
   },
   "ai-builder-brain": {

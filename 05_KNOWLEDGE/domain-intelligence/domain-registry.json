@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T03:13:20.157Z",
+  "last_updated": "2026-11-26T03:21:38.306Z",
   "total_records": 2703,
   "domains": {
     "A": {
@@ -8473,8 +8473,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "e363b4ec503d46e417c960728768f930075b20e2adf2f6e136c8a07558388600",
-      "created_at": "2026-11-26T02:46:51.842Z"
+      "content_hash": "25150b126fdd6e7b8d70be38c39063a57a391e9bcea4225d4b6fdebfe4d907ee",
+      "created_at": "2026-11-26T03:21:38.306Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -12943,8 +12943,8 @@
       "title": "Deployment & Operations Intelligence: graphprotocol/graph-node Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-graphprotocol-graph-node-deployment-operations-intelligence-graphprotocol-graph-.md",
       "repository": "graphprotocol/graph-node",
-      "content_hash": "e643d8252ad77b8c970d262dc2b1ebc8be67af84fa0281824bdb0797f1fa3f15",
-      "created_at": "2026-11-19T04:36:20.994Z"
+      "content_hash": "9ea42ac5e72f9ed182594af933fe880dc04882d66aa1da1c626d75e99c40e57b",
+      "created_at": "2026-11-26T03:21:25.793Z"
     },
     "domain_intelligence-architecture-intelligence-goharbor-harbor-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-goharbor-harbor-core-invariants",
@@ -12970,8 +12970,8 @@
       "title": "Deployment & Operations Intelligence: graphprotocol-graph-node-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-graphprotocol-graph-node-learnings-deployment-operations-intelligence-graphproto.md",
       "repository": "graphprotocol-graph-node-learnings",
-      "content_hash": "699844f86f9b3ee26764a9933038bb03cfdaaf60fb6654124209f45ec9ab0bd1",
-      "created_at": "2026-11-19T04:36:38.570Z"
+      "content_hash": "4ec01f53faefe3905a0252ca661bd5cf18f6fa56c76c8b22ad66ddbc21fa68ab",
+      "created_at": "2026-11-26T03:21:36.862Z"
     },
     "DOM-D-53028CD5": {
       "record_id": "DOM-D-53028CD5",
@@ -23116,8 +23116,8 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/mirage Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-mirage-research-knowledge-intelligence-cactus-compute-mirage-c.md",
       "repository": "Cactus-Compute/mirage",
-      "content_hash": "7fbc497819b8784a7f53421f3d9ade72079f4592c9011f09d63f85fe336a0ea3",
-      "created_at": "2026-11-22T06:41:08.114Z"
+      "content_hash": "abca0b08aeb3085a58fe5b5b21aa47854fd1870721e1748f1dcd526b9f6672e5",
+      "created_at": "2026-11-26T03:21:24.638Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian",
@@ -23125,8 +23125,8 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-mirage-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-mirage-learnings-research-knowledge-intelligence-hf-cactus-com.md",
       "repository": "hf-cactus-compute-mirage-learnings",
-      "content_hash": "168f048ca377fcc9c3f9f6cfcbaf889760810956c27568bf51695a29abafbad2",
-      "created_at": "2026-11-22T06:41:11.387Z"
+      "content_hash": "20e8b1d31536e06cdb1f60f87195c72d3942bff7c0a8decbb85bb283b3e3de4b",
+      "created_at": "2026-11-26T03:21:37.449Z"
     },
     "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-core-invar",

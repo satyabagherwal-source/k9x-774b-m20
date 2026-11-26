@@ -4,22 +4,22 @@
 {
   "source_repository": "graphprotocol/graph-node",
   "source_url": "https://github.com/graphprotocol/graph-node",
-  "source_version": "796ace3f",
+  "source_version": "abab8260",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T02:06:15.147Z",
+  "timestamp": "2026-11-26T03:21:25.611Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-graphprotocol-graph-node",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [graphprotocol/graph-node](https://github.com/graphprotocol/graph-node) (Revision: `796ace3f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T02:06:15.147Z`  
+> **Provenance**: Harvested from [graphprotocol/graph-node](https://github.com/graphprotocol/graph-node) (Revision: `abab8260`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T03:21:25.611Z`  
 > **Learning ID**: `learn-github-graphprotocol-graph-node`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `graphprotocol/graph-node` (Commit: `796ace3f`)
+- **Target Repository**: `graphprotocol/graph-node` (Commit: `abab8260`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/graphprotocol/graph-node](https://github.com/graphprotocol/graph-node))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T02:06:14.209Z  
+> **Harvest Timestamp**: 2026-11-26T03:21:24.179Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Graph Node indexes data from blockchains such as Ethereum and serves it over GraphQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 3166 stars
+- **Stars / Engagement**: 3170 stars
 
 ---
 
@@ -892,126 +892,223 @@ impl<S> Drop for GraphmanExecutionTracker<S> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `796ace3f` (2026-11-13)
-**Commit Message**: gnd: Don't unset nullable primitive fields set to 0 or false (#6760)
+### Incident Patch 1: `abab8260` (2026-11-24)
+**Commit Message**: all: Bump locked dependencies to fix RustSec advisories (#6788)
 
-`gnd codegen` took an accessor's nullability from the GraphQL field, so a
-nullable `Int`, `Boolean`, `Int8` or `Timestamp` field, or a nullable
-reference to an entity with `id: Int8!`, got a setter that unsets the
-field when it is given 0 or false, and the store held null. graph-cli
-decides from the AssemblyScript type, which `type_from_field` already
-keeps non-nullable for all of these, and generates the non-nullable
-getter and setter. Take nullability from the type expression in both, as
-graph-cli does.
+Lockfile-only update: rustls 0.23.46, rustls-webpki 0.103.16,
+webpki-roots 1.0.11, webpki-root-certs 1.0.11,
+postgres-protocol 0.6.12, tokio-postgres 0.7.18,
+quinn-proto 0.11.19, quinn-udp 0.5.16, pulldown-cmark 0.13.6,
+plus the transitive bumps they require (aws-lc-rs 1.18.2,
+aws-lc-sys 0.46.0, pkg-config 0.3.34, whoami 2.1.3).
 
-Fixes #6759
-
-**File**: `gnd/src/codegen/schema.rs` (modified, +66/-8)
+**File**: `Cargo.lock` (modified, +111/-62)
 ```diff
-@@ -494,7 +494,8 @@ impl SchemaCodeGenerator {
+@@ -945,7 +945,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
+ dependencies = [
+  "anstyle",
+  "once_cell_polyfill",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
+ ]
  
-         let value_type = self.value_type_from_field(field);
-         let return_type = self.type_from_field(field);
--        let nullable = field.is_nullable;
-+        // AS primitives can't be nullable, so take nullability from the AS type.
-+        let nullable = matches!(return_type, TypeExpr::Nullable(_));
+ [[package]]
+@@ -1676,24 +1676,25 @@ checksum = "0c4b4d0bd25bd0b74681c0ad21497610ce1b7c91b1022cd21c80c6fbdd9476b0"
  
-         let primitive_default = match &return_type {
-             TypeExpr::Named(t) => t.get_primitive_default(),
-@@ -575,13 +576,8 @@ impl SchemaCodeGenerator {
-         let safe_name = handle_reserved_word(&field.name);
-         let value_type = self.value_type_from_field(field);
-         let param_type = self.type_from_field(field);
--        let nullable = field.is_nullable;
--
--        let set_code = if nullable {
--            let inner_type = match &param_type {
--                TypeExpr::Nullable(n) => n.inner.to_string(),
--                other => other.to_string(),
--            };
-+        let set_code = if let TypeExpr::Nullable(n) = &param_type {
-+            let inner_type = n.inner.to_string();
-             format!(
-                 r#"
-       if (!value) {{
-@@ -762,6 +758,68 @@ mod tests {
-         assert!(method_names.contains(&"set symbol"));
-     }
+ [[package]]
+ name = "aws-lc-rs"
+-version = "1.16.3"
++version = "1.18.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0ec6fb3fe69024a75fa7e1bfb48aa6cf59706a101658ea01bfd33b2b248a038f"
++checksum = "faac5829c2b74c28f830747e7818ccfb684261b5f48a1118b1e2a13d36dfab13"
+ dependencies = [
+  "aws-lc-sys",
+  "zeroize",
+ ]
  
-+    #[test]
-+    fn test_nullable_primitive_fields() {
-+        // Nullable primitives, incl. Int8-id entity refs, get non-nullable accessors.
-+        let schema = r#"
-+            type Example @entity(immutable: true) {
-+                id: ID!
-+                side: Int
-+                flag: Boolean
-+                big: Int8
-+                at: Timestamp
-+                counter: Counter
-+                name: String
-+            }
+ [[package]]
+ name = "aws-lc-sys"
+-version = "0.40.0"
++version = "0.46.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f50037ee5e1e41e7b8f9d161680a725bd1626cb6f8c7e901f91f942850852fe7"
++checksum = "f1622d8446a2d4b2ce0c7eefc73dd43a99779028d5ee5c2dd8073a658ba8a2bc"
+ dependencies = [
+  "cc",
+  "cmake",
+  "dunce",
+  "fs_extra",
++ "pkg-config",
+ ]
+ 
+ [[package]]
+@@ -2140,6 +2141,12 @@ dependencies = [
+  "cc",
+ ]
+ 
++[[package]]
++name = "cmov"
++version = "0.5.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
 +
-+            type Counter @entity(immutable: true) {
-+                id: Int8!
-+            }
-+        "#;
-+        let doc = parse_schema::<String>(schema).unwrap();
-+        let generator = SchemaCodeGenerator::new(&doc).unwrap();
+ [[package]]
+ name = "cobs"
+ version = "0.3.0"
+@@ -2626,6 +2633,15 @@ dependencies = [
+  "memchr",
+ ]
+ 
++[[package]]
++name = "ctutils"
++version = "0.4.8"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
++dependencies = [
++ "cmov",
++]
 +
-+        let classes = generator.generate_types(true);
-+        assert_eq!(classes.len(), 2);
+ [[package]]
+ name = "darling"
+ version = "0.20.10"
+@@ -3052,6 +3068,7 @@ dependencies = [
+  "block-buffer 0.12.0",
+  "const-oid 0.10.2",
+  "crypto-common 0.2.1",
++ "ctutils",
+ ]
+ 
+ [[package]]
+@@ -3707,10 +3724,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "43a49c392881ce6d5c3b8cb70f98717b7c07aabbdff06687b9030dbfbe2725f8"
+ dependencies = [
+  "cfg-if",
+- "js-sys",
+  "libc",
+  "wasi 0.13.3+wasi-0.2.2",
+- "wasm-bindgen",
+  "windows-targets 0.52.6",
+ ]
+ 
+@@ -3721,11 +3736,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
+ dependencies = [
+  "cfg-if",
++ "js-sys",
+  "libc",
+  "r-efi",
+  "rand_core 0.10.0",
+  "wasip2",
+  "wasip3",
++ "wasm-bindgen",
+ ]
+ 
+ [[package]]
+@@ -4451,6 +4468,15 @@ dependencies = [
+  "digest 0.10.7",
+ ]
+ 
++[[package]]
++name = "hmac"
++version = "0.13.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f"
++dependencies = [
++ "digest 0.11.2",
++]
 +
-+        let example = &classes[0];
-+        let body = |name: &str| -> String {
-+            example
-+                .methods
-+                .iter()
-+                .find(|m| m.name == name)
-+                .unwrap_or_else(|| panic!("no method `{name}`"))
-+                .body
-+                .clone()
-+        };
+ [[package]]
+ name = "home"
+ version = "0.5.9"
+@@ -5311,11 +5337,10 @@ checksum = "b6d2cec3eae94f9f509c767b45932f1ada8350c4bdb85af2fcab4a3c14807981"
+ 
+ [[package]]
+ name = "libredox"
+-version = "0.1.3"
++version = "0.1.25"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c0ff37bd590ca25063e35af745c343cb7a0271906fb7b37e4813e8f79f00268d"
++checksum = "61ff90caf6077a803a240f62fdbe88645a890bbca49ef8174c3cb0404362171d"
+ dependencies = [
+- "bitflags 2.11.1",
+  "libc",
+ ]
+ 
+@@ -5419,12 +5444,12 @@ checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
+ 
+ [[package]]
+ name = "md-5"
+-version = "0.10.6"
++version = "0.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d89e7ee0cfbedfc4da3340218492196241d89eefb6dab27de5df917a6d2e78cf"
++checksum = "69b6441f590336821bb897fb28fc622898ccceb1d6cea3fde5ea86b090c4de98"
+ dependencies = [
+  "cfg-if",
+- "digest 0.10.7",
++ "digest 0.11.2",
+ ]
+ 
+ [[package]]
+@@ -5720,6 +5745,24 @@ dependencies = [
+  "smallvec",
+ ]
+ 
++[[package]]
++name = "objc2-core-foundation"
++version = "0.3.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2a180dd8642fa45cdb7dd721cd4c11b1cadd4929ce112ebd8b9f5803cc79d536"
++dependencies = [
++ "bitflags 2.11.1",
++]
 +
-+        for (field, default) in [
-+            ("side", "0"),
-+            ("flag", "false"),
-+            ("big", "0"),
-+            ("at", "0"),
-+            ("counter", "0"),
-+        ] {
-+            let getter = body(&format!("get {field}"));
-+            assert!(
-+                getter.contains(&format!("return {default}")) && !getter.contains("return null"),
-+                "nullable primitive `{field}` should return its default, got: {getter}"
-+            );
++[[package]]
++name = "objc2-system-configuration"
++version = "0.3.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7216bd11cbda54ccabcab84d523dc93b858ec75ecfb3a7d89513fa22464da396"
++dependencies = [
++ "objc2-core-foundation",
++]
 +
-+            let setter = body(&format!("set {field}"));
-+            assert!(
-+                setter.contains(&format!("this.set('{field}'")) && !setter.contains("unset"),
-+                "nullable primitive `{field}` should always be set, got: {setter}"
-+            );
-+        }
-+
-+        // A nullable field of a non-primitive type keeps the nullable accessors
-+        let getter = body("get name");
-+        assert!(getter.contains("return null"), "got: {getter}");
-+        let setter = body("set name");
-+        assert!(setter.contains("this.unset('name')"), "got: {setter}");
-+    }
-+
-     #[test]
-     fn test_id_field_types() {
-         assert_eq!(IdFieldKind::String.type_name(), "string");
+ [[package]]
+ name = "object"
+ version = "0.39.1"
+@@ -5909,7 +5952,7 @@ checksum = "2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1"
+ dependencies = [
+  "cfg-if",
+  "libc",
+- "redox_syscall 0.5.2",
++ "redox_syscall",
+  "smallvec",
+  "windows-link 0.2.1",
+ ]
+@@ -6109,9 +6152,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "pkg-config"
+-version = "0.3.30"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
++checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
+ 
+ [[package]]
+ name = "polling"
+@@ -6182,27 +6225,27 @@ dependencies = [
+ 
+ [[
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6788** (2026-11-24): all: Bump locked dependencies to fix RustSec advisories (@dimitrovmaksim)
 - **PR #6760** (2026-11-13): gnd: Don't unset nullable primitive fields set to 0 or false (@taiyangc)
 - **PR #6758** (closed): store: create a copy's attribute indexes from the source's index list (@lx3133584)
 - **PR #6757** (closed): core: keep the full trigger filter when a template handler is address-scoped (@lx3133584)
 - **PR #6756** (closed): store: keep postponed attribute indexes pending when a graft copies from an unsynced base (@lx3133584)
 - **PR #6755** (closed): store: reject write batches that overlap the deployment head (@lx3133584)
-- **PR #6754** (closed): store: refuse a proof of indexing for a pruned block (@lx3133584)
 
 ---
 
@@ -1031,71 +1128,87 @@ Fixes #6759
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gnd: Don't unset nullable primitive fields set to 0 or false
+## X. all: Bump locked dependencies to fix RustSec advisories
 
 **RULE**:
-When implementing operations in `gnd/src/codegen/schema.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in graphprotocol/graph-node. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in graphprotocol/graph-node. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `796ace3f`: gnd: Don't unset nullable primitive fields set to 0 or false. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `abab8260`: all: Bump locked dependencies to fix RustSec advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gnd/src/codegen/schema.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // AS primitives can't be nullable, so take nullability from the AS type.
-        let nullable = matches!(return_type, TypeExpr::Nullable(_));
-        let set_code = if let TypeExpr::Nullable(n) = &param_type {
-            let inner_type = n.inner.to_string();
-    #[test]
-    fn test_nullable_primitive_fields() {
-        // Nullable primitives, incl. Int8-id entity refs, get non-nullable accessors.
-        let schema = r#"
-            type Example @entity(immutable: true) {
-                id: ID!
-                side: Int
-                flag: Boolean
-                big: Int8
-                at: Timestamp
-                counter: Counter
-                name: String
-            }
+ "windows-sys 0.61.2",
+version = "1.18.2"
+checksum = "faac5829c2b74c28f830747e7818ccfb684261b5f48a1118b1e2a13d36dfab13"
+version = "0.46.0"
+checksum = "f1622d8446a2d4b2ce0c7eefc73dd43a99779028d5ee5c2dd8073a658ba8a2bc"
+ "pkg-config",
+[[package]]
+name = "cmov"
+version = "0.5.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
 
-            type Counter @entity(immutable: true) {
-                id: Int8!
-            }
-        "#;
-        let doc = parse_schema::<String>(schema).unwrap();
-        let generator = SchemaCodeGenerator::new(&doc).unwrap();
+[[package]]
+name = "ctutils"
+version = "0.4.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
+dependencies = [
+ "cmov",
+]
 
-        let classes = generator.generate_types(true);
-        assert_eq!(classes.len(), 2);
+ "ctutils",
+ "js-sys",
+ "wasm-bindgen",
+[[package]]
+name = "hmac"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f"
+dependencies = [
+ "digest 0.11.2",
+]
 
-        let example = &classes[0];
-        let body = |name: &str| -> String {
-            example
-                .methods
-                .iter()
-                .find(|m| m.na
+version = "0.1.25"
+checksum = "61ff90caf6077a803a240f62fdbe88645a890bbca49ef8174c3cb0404362171d"
+version = "0.11.0"
+checksum = "69b6441f590336821bb897fb28fc622898ccceb1d6cea3fde5ea86b090c4de98"
+ "digest 0.11.2",
+[[package]]
+name = "objc2-core-foundation"
+version = "0.3.2"
+source = "registry+htt
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        let nullable = field.is_nullable;
-        let nullable = field.is_nullable;
-
-        let set_code = if nullable {
-            let inner_type = match &param_type {
-                TypeExpr::Nullable(n) => n.inner.to_string(),
-                other => other.to_string(),
-            };
+ "windows-sys 0.60.2",
+version = "1.16.3"
+checksum = "0ec6fb3fe69024a75fa7e1bfb48aa6cf59706a101658ea01bfd33b2b248a038f"
+version = "0.40.0"
+checksum = "f50037ee5e1e41e7b8f9d161680a725bd1626cb6f8c7e901f91f942850852fe7"
+ "js-sys",
+ "wasm-bindgen",
+version = "0.1.3"
+checksum = "c0ff37bd590ca25063e35af745c343cb7a0271906fb7b37e4813e8f79f00268d"
+ "bitflags 2.11.1",
+version = "0.10.6"
+checksum = "d89e7ee0cfbedfc4da3340218492196241d89eefb6dab27de5df917a6d2e78cf"
+ "digest 0.10.7",
+ "redox_syscall 0.5.2",
+version = "0.3.30"
+checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `796ace3f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `abab8260` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
