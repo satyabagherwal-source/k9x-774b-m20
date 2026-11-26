@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-PP0J",
-    "timestamp": "2026-11-24T22:30:11.683Z",
-    "repository": "kotest/kotest",
-    "learningId": "learn-github-kotest-kotest",
-    "contentHash": "6e5be600d9b802b26c12a7645da4a943507d8b914bb29721a4cf6eea5c4f8c4a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-5FV1",
-    "timestamp": "2026-11-24T22:42:26.317Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "58a29a68f2391c9456f1e8713eafb0dfa12383dfd81d35beff0d9d01b14874fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-5GYG",
-    "timestamp": "2026-11-24T22:42:27.736Z",
-    "repository": "google/closure-compiler",
-    "learningId": "learn-github-google-closure-compiler",
-    "contentHash": "4742c193603251845fb519ecb2813de753c13b56d065a7e091d4b6c141081b34",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-5O92",
     "timestamp": "2026-11-24T22:42:37.190Z",
     "repository": "alibaba/zvec",
@@ -7492,6 +7447,51 @@
     "contentHash": "e52c0f2cb3a91f41313abf3c4f945937c3d19866056d51164d9c2993a587dad8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-HQM7",
+    "timestamp": "2026-11-26T12:11:29.407Z",
+    "repository": "yyjeqhc/webcodex",
+    "learningId": "learn-github-yyjeqhc-webcodex",
+    "contentHash": "f8373b4b22493b945dede9930e9ef1a5e224528671b2ed218fa2cd5e1f5a2034",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-HSGZ",
+    "timestamp": "2026-11-26T12:11:31.811Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "80455e28bc434a076ec63b671cd59cb21d310eba3778076f44d45e45ceaaef93",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-HTMO",
+    "timestamp": "2026-11-26T12:11:33.312Z",
+    "repository": "iliyami/MacSai",
+    "learningId": "learn-github-iliyami-macsai",
+    "contentHash": "6591ad9cb7f29b26462a658339785ca23b1b3efcec79705382ccf06795c9a5b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

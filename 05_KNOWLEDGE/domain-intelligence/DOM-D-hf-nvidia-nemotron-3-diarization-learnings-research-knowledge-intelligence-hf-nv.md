@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T19:01:52.496Z",
+  "timestamp": "2026-11-26T12:11:39.836Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-nvidia-nemotron-3-diarization-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-nvidia-nemotron-3-diarization-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T19:01:52.496Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T12:11:39.836Z`  
 > **Learning ID**: `LEARN-EVO-hf-nvidia-nemotron-3-diarization-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-nvidia-ne`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T19:01:33.466Z  
+> **Timestamp**: 2026-11-26T12:11:31.050Z  
 > **Learning ID**: `learn-huggingface-nvidia-nemotron-3-diarization`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/Nemotron-3-Diarization](https://huggingface.co/nvidia/Nemotron-3-Diarization))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:01:33.322Z  
+> **Harvest Timestamp**: 2026-11-26T12:11:25.507Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: voice-activity-detection
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 240864 downloads | 848 likes
+- **Stars / Engagement**: 241983 downloads | 856 likes
 
 ---
 

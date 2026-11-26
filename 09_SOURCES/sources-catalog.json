@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "d2729c573a0a76cecbe2ec0963fe956160b27eb28bc2ea3909934401b636de3d",
-    "lastHarvestedAt": "2026-11-22T19:01:34.119Z",
+    "contentHash": "80455e28bc434a076ec63b671cd59cb21d310eba3778076f44d45e45ceaaef93",
+    "lastHarvestedAt": "2026-11-26T12:11:31.817Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -1303,10 +1303,10 @@
     "repository": "iliyami/MacSai",
     "platform": "github",
     "sourceUrl": "https://github.com/iliyami/MacSai",
-    "sourceVersion": "5891a8ce",
+    "sourceVersion": "8aa34cc8",
     "license": "BSD-3-Clause",
-    "contentHash": "4cf2d4de4b38558d529b5ea50ae6f84e44979df9bb8988ed6ffa9a9238d50a4c",
-    "lastHarvestedAt": "2026-11-21T02:57:46.059Z",
+    "contentHash": "6591ad9cb7f29b26462a658339785ca23b1b3efcec79705382ccf06795c9a5b8",
+    "lastHarvestedAt": "2026-11-26T12:11:33.318Z",
     "learningId": "learn-github-iliyami-macsai"
   },
   "duty1g-x64dbg-mcp-server": {
@@ -12303,10 +12303,10 @@
     "repository": "yyjeqhc/webcodex",
     "platform": "github",
     "sourceUrl": "https://github.com/yyjeqhc/webcodex",
-    "sourceVersion": "70315e49",
+    "sourceVersion": "d9327074",
     "license": "Apache-2.0",
-    "contentHash": "c4cacd3ddc16d318fc5f5396ce0edee873ff670fb37af9c167b54dd30439d5ca",
-    "lastHarvestedAt": "2026-11-25T04:31:05.559Z",
+    "contentHash": "f8373b4b22493b945dede9930e9ef1a5e224528671b2ed218fa2cd5e1f5a2034",
+    "lastHarvestedAt": "2026-11-26T12:11:29.413Z",
     "learningId": "learn-github-yyjeqhc-webcodex"
   },
   "hf-minimaxai-minimax-h3-image": {

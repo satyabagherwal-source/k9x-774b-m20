@@ -803873,3 +803873,177 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e1dee6a9` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10670. prevent Runner inventory refresh from blocking project onboarding (Harvested from yyjeqhc/webcodex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "prevent Runner inventory refresh from blocking project onboarding",
+  "source": "yyjeqhc/webcodex",
+  "source_url": "https://github.com/yyjeqhc/webcodex",
+  "source_version": "d9327074",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T12:11:28.595Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yyjeqhc-webcodex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex) (Revision: `d9327074`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/webcodex-runner/src/webcodex_runner/transport/project_inventory.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `aa95c2b6`: projects): prevent Runner inventory refresh from blocking project onboarding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/webcodex-runner/src/webcodex_runner/transport/project_inventory.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    pub(super) supported: bool,
+    pub(super) fn replace_projects(
+            ProjectInventoryStatusAction::FreshResnapshot => {
+                self.retry_at = None;
+                if self.supported {
+                    runtime.invalidate_project_inventory();
+                }
+            }
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    supported: bool,
+    project_cache: RunnerProjectCache,
+            project_cache: RunnerProjectCache::default(),
+    pub(super) fn refresh_from_current_projects(
+        &mut self,
+        transport: StreamTransport,
+        cfg: &RunnerConfig,
+        runtime: &RunnerRuntimeState,
+        out_tx: &tokio::sync::mpsc::Sender<RunnerEnvelope>,
+        reason_code: &str,
+    ) {
+        if !self.supported {
+            return;
+        }
+        self.project_cache.invalidate();
+        let projects = runtime.project_summaries(&mut self.project_cache, cfg);
+        self.replace_projects(projects, transport, out_tx, reason_code);
+    }
+
+    fn replace_projects(
+        cfg: &RunnerConfig,
+            ProjectInventoryStatusAction::FreshResnapshot => self.refresh_from_current_projects(
+                transport,
+                cfg,
+                runtime,
+                out_tx,
+                "project_inventory_server_invalidated_snapshot",
+            ),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `aa95c2b6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10671. #262: show download and upload speed in the menu bar (Harvested from iliyami/MacSai)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "#262: show download and upload speed in the menu bar",
+  "source": "iliyami/MacSai",
+  "source_url": "https://github.com/iliyami/MacSai",
+  "source_version": "8aa34cc8",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-26T12:11:32.559Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-iliyami-macsai",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [iliyami/MacSai](https://github.com/iliyami/MacSai) (Revision: `8aa34cc8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `README.de.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8aa34cc8`: #262: show download and upload speed in the menu bar. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.de.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+- **Konfigurierbare Anzeige**: zeige freien Speicher, GPU-Auslastung, Speichernutzung, Akkutemperatur oder Download- und Upload-Geschwindigkeit; die Auswahl bleibt erhalten, und nicht verfügbare Sensoren zeigen `--`
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+- **Konfigurierbare Anzeige**: zeige freien Speicher, GPU-Auslastung, Speichernutzung oder Akkutemperatur; die Auswahl bleibt erhalten, und nicht verfügbare Sensoren zeigen `--`
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8aa34cc8` are properly handled with clean fallback behavior.

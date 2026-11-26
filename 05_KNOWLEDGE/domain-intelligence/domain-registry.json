@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T12:02:08.802Z",
+  "last_updated": "2026-11-26T12:11:41.026Z",
   "total_records": 2744,
   "domains": {
     "A": {
@@ -24398,8 +24398,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc/webcodex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-technical-construction-intelligence-yyjeqhc-webcodex-core-invar.md",
       "repository": "yyjeqhc/webcodex",
-      "content_hash": "994a348dc8b1adbfbacb9de01c15bf82c42bce097660492bd0cd4d7180d0751c",
-      "created_at": "2026-11-25T04:31:06.208Z"
+      "content_hash": "da43ab693650a92201b92d547895cb4b48d39906313ab857c16bfeb9d67ac0fe",
+      "created_at": "2026-11-26T12:11:30.066Z"
     },
     "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
@@ -24407,8 +24407,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-learnings-technical-construction-intelligence-yyjeqhc-webcodex-.md",
       "repository": "yyjeqhc-webcodex-learnings",
-      "content_hash": "871be9de2ca24267d2c48c7dc6b421d31531754e16a2e30acd0c0f0708d6a87d",
-      "created_at": "2026-11-25T04:31:20.026Z"
+      "content_hash": "6eea5b4bd37468b530d4f8030b8d78c9097ae7e1130739daa1c391c495d097e7",
+      "created_at": "2026-11-26T12:11:39.056Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant",
@@ -30150,8 +30150,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/Nemotron-3-Diarization Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-3-diarization-research-knowledge-intelligence-nvidia-nemotron.md",
       "repository": "nvidia/Nemotron-3-Diarization",
-      "content_hash": "7456224a5a9f448b8cf1cfced77d5eeafa6117daef0aae8120783b988a4a698b",
-      "created_at": "2026-11-22T19:01:34.400Z"
+      "content_hash": "0d9c3d0db94624fbf002f4cc68791bc31b8dce9b55a45dabf4414cb1fd84ef83",
+      "created_at": "2026-11-26T12:11:32.150Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-",
@@ -30159,8 +30159,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nemotron-3-diarization-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-3-diarization-learnings-research-knowledge-intelligence-hf-nv.md",
       "repository": "hf-nvidia-nemotron-3-diarization-learnings",
-      "content_hash": "e0a084257c9e338f15b563673b1447edab6f953458c6b8c922f5b4c91f8b8be3",
-      "created_at": "2026-11-22T19:01:52.611Z"
+      "content_hash": "cf17017383bbd0eeead26377c639cc3b208202d917fcb7b236eb7480ac2e5a9b",
+      "created_at": "2026-11-26T12:11:39.989Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants",
@@ -37838,8 +37838,8 @@
       "title": "Technical Construction Intelligence: iliyami/MacSai Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-iliyami-macsai-technical-construction-intelligence-iliyami-macsai-core-invariant.md",
       "repository": "iliyami/MacSai",
-      "content_hash": "4ddc49ed66c21233158edc6af96dcc594a19e18a8e74c9caff8f6cd670dd83a2",
-      "created_at": "2026-11-21T02:57:46.420Z"
+      "content_hash": "9da68cfad5e38c8213b96d3921bce983a77e82e38ed326368cdff85221fa5d63",
+      "created_at": "2026-11-26T12:11:33.906Z"
     },
     "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants",
@@ -37847,8 +37847,8 @@
       "title": "Technical Construction Intelligence: iliyami-macsai-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-iliyami-macsai-learnings-technical-construction-intelligence-iliyami-macsai-lear.md",
       "repository": "iliyami-macsai-learnings",
-      "content_hash": "03d2106dbef7a8d834283257702ca64023516277af69af552e34cd231b837f91",
-      "created_at": "2026-11-21T02:57:55.716Z"
+      "content_hash": "d98a96d16bb198b0591f0626b5f57da1c8d12d5b3ea4fdad561e95c8425dea90",
+      "created_at": "2026-11-26T12:11:41.026Z"
     },
     "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-core-invariants",

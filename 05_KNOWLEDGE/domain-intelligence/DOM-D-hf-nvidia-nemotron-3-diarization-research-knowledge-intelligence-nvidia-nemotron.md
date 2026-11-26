@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
   "source_version": "hf-nvidia-nemotron-3-diarization",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T19:01:34.399Z",
+  "timestamp": "2026-11-26T12:11:32.148Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nvidia/Nemotron-3-Diarization](https://huggingface.co/nvidia/Nemotron-3-Diarization) (Revision: `hf-nvidia-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T19:01:34.399Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T12:11:32.148Z`  
 > **Learning ID**: `learn-huggingface-nvidia-nemotron-3-diarization`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/Nemotron-3-Diarization](https://huggingface.co/nvidia/Nemotron-3-Diarization))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:01:33.322Z  
+> **Harvest Timestamp**: 2026-11-26T12:11:25.507Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: voice-activity-detection
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 240864 downloads | 848 likes
+- **Stars / Engagement**: 241983 downloads | 856 likes
 
 ---
 

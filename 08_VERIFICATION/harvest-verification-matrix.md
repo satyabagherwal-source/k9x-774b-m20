@@ -13368,3 +13368,6 @@
 | `CYCLE-20261126-PCWI` | `2026-11-26T11:49:25.266Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`db478ca8...`) |
 | `CYCLE-20261126-PJ68` | `2026-11-26T11:49:33.392Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10669` | Yes (`b095a4ae...`) |
 | `CYCLE-20261126-5EVQ` | `2026-11-26T12:01:54.326Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`e52c0f2c...`) |
+| `CYCLE-20261126-HQM7` | `2026-11-26T12:11:29.407Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10670` | Yes (`f8373b4b...`) |
+| `CYCLE-20261126-HSGZ` | `2026-11-26T12:11:31.811Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`80455e28...`) |
+| `CYCLE-20261126-HTMO` | `2026-11-26T12:11:33.312Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10671` | Yes (`6591ad9c...`) |

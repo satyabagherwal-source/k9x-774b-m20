@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T12:01:54.349Z",
+  "last_updated": "2026-11-26T12:11:33.345Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -395,14 +395,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "d2729c573a0a76cecbe2ec0963fe956160b27eb28bc2ea3909934401b636de3d",
-      "verified_at": "2026-11-22T19:01:34.130Z",
+      "content_hash": "80455e28bc434a076ec63b671cd59cb21d310eba3778076f44d45e45ceaaef93",
+      "verified_at": "2026-11-26T12:11:31.849Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:01:34.130Z"
+      "last_updated": "2026-11-26T12:11:31.849Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
@@ -2039,14 +2039,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iliyami-macsai",
-      "content_hash": "4cf2d4de4b38558d529b5ea50ae6f84e44979df9bb8988ed6ffa9a9238d50a4c",
-      "verified_at": "2026-11-21T02:57:46.066Z",
+      "content_hash": "6591ad9cb7f29b26462a658339785ca23b1b3efcec79705382ccf06795c9a5b8",
+      "verified_at": "2026-11-26T12:11:33.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T02:57:46.066Z"
+      "last_updated": "2026-11-26T12:11:33.344Z"
     },
     "duty1g/x64dbg-mcp-server": {
       "repository": "duty1g/x64dbg-mcp-server",
@@ -18516,14 +18516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yyjeqhc-webcodex",
-      "content_hash": "c4cacd3ddc16d318fc5f5396ce0edee873ff670fb37af9c167b54dd30439d5ca",
-      "verified_at": "2026-11-25T04:31:05.618Z",
+      "content_hash": "f8373b4b22493b945dede9930e9ef1a5e224528671b2ed218fa2cd5e1f5a2034",
+      "verified_at": "2026-11-26T12:11:29.439Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T04:31:05.618Z"
+      "last_updated": "2026-11-26T12:11:29.439Z"
     },
     "MiniMaxAI/MiniMax-H3-Image": {
       "repository": "MiniMaxAI/MiniMax-H3-Image",

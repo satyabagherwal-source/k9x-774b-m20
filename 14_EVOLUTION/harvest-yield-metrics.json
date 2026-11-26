@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T12:01:54.345Z",
-  "total_cycles_completed": 12685,
-  "total_learnings_persisted": 12685,
-  "total_rules_promoted": 11566,
+  "last_updated": "2026-11-26T12:11:33.334Z",
+  "total_cycles_completed": 12688,
+  "total_learnings_persisted": 12688,
+  "total_rules_promoted": 11568,
   "history": [
-    {
-      "timestamp": "2026-11-25T23:32:38.776Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:32:40.700Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:41:38.073Z",
-      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
-      "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T23:41:44.356Z",
       "repository": "chrisbanes/skills",
@@ -1403,6 +1382,27 @@
       "repository": "Contrastive-LM/CLM-v0.1-8B",
       "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:11:29.430Z",
+      "repository": "yyjeqhc/webcodex",
+      "learningId": "learn-github-yyjeqhc-webcodex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:11:31.844Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:11:33.334Z",
+      "repository": "iliyami/MacSai",
+      "learningId": "learn-github-iliyami-macsai",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

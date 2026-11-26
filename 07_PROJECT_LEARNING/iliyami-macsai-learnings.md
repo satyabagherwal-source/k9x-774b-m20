@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source**: github ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
-> **Source Version**: `5891a8ce`  
+> **Source Version**: `8aa34cc8`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T02:57:45.054Z  
+> **Timestamp**: 2026-11-26T12:11:31.721Z  
 > **Learning ID**: `learn-github-iliyami-macsai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T02:57:45.049Z  
+> **Harvest Timestamp**: 2026-11-26T12:11:31.714Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mac Sai: the open-source Mac cleaner, optimizer, and malware scanner. A free, Apple-notarized alternative to CleanMyMac, built with Swift 6 and SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2188 stars
+- **Stars / Engagement**: 2216 stars
 
 ---
 
@@ -1715,276 +1715,144 @@ public enum SharedAppState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5891a8ce` (2026-11-17)
-**Commit Message**: Add Universal Clipboard archive detection to System Junk (#273)
+### Incident Patch 1: `8aa34cc8` (2026-11-25)
+**Commit Message**: Fix #262: show download and upload speed in the menu bar (#277)
 
-* Add opt-in detection of old Universal Clipboard archives
+* Fix #262: show download and upload speed in the menu bar
 
-* Report blocked scans and detect clipboard archives of all ages
+Add a "Network speed" choice to Settings > Menu bar display. The label
+reads "↓ 12.5 MB/s ↑ 2.3 MB/s", using the rates the helper already
+polls for the popover, so no extra sampling is added.
 
-* Clipboard archives: translations for all languages, README row, version 1.32.3
+- MenuBarMetric: new networkSpeed case (raw value "networkSpeed"),
+  inserted before iconOnly; existing raw values are unchanged
+- NetworkRate.format: one shared formatter for the popover and the label
+- "Network speed" translated in all 13 interface languages
 
-- Translate the five new strings into Brazilian Portuguese, Korean, French,
-  Italian, Spanish, Japanese, Turkish and Farsi, which were added after this
-  PR was opened. Use the existing Full Disk Access and folder terms in
-  Traditional Chinese and German.
-- Test that every supported language resolves the new strings.
-- Describe the category in the System Junk row of all 13 READMEs instead of
-  a separate section.
-- Remove a stray blank line in TargetedScanner.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Network speed label: fixed width, README mention, version 1.33.0
+
+Pad each rate to the width of "99.9 MB/s" so the monospaced menu bar
+label keeps one width as the speed changes, instead of shifting the icons
+beside it every 3 seconds. List the new option in all 13 READMEs.
 
 ---------
 
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Co-authored-by: Iliya <[REDACTED_EMAIL]>
 
 **File**: `README.de.md` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ Ein voll ausgestatteter Mac-Reiniger sollte kein Jahresabo kosten und dich nicht
- | Modul | Was es tut |
- |--------|------------|
- | **Smart Scan** | Ein Klick führt die Module für Bereinigung, Schutz und Leistung gemeinsam aus, mit Live-Fortschritt, und zeigt danach genau, wie viel pro Modul freigegeben wurde |
--| **System Junk** | 16+ Scan-Kategorien: Benutzer- und System-Caches, Protokolle, Sprachdateien, defekte Einstellungen, defekte Anmeldeobjekte, Dokumentversionen, iOS-Backups, Xcode-Müll, Caches von Paketmanagern / IDEs / KI-Werkzeugen, Reste gelöschter Benutzer, sowie **Universal-Binary-Verschlankung** (findet fette Mach-O-Binärdateien, die sowohl arm64 als auch x86_64 enthalten, und schreibt sie per `lipo` auf deine native Architektur um, mit Abbrechen-Unterstützung) |
-+| **System Junk** | 16+ Scan-Kategorien: Benutzer- und System-Caches, Protokolle, Sprachdateien, defekte Einstellungen, defekte Anmeldeobjekte, Dokumentversionen, iOS-Backups, Xcode-Müll, Caches von Paketmanagern / IDEs / KI-Werkzeugen, Reste gelöschter Benutzer, Archive der universellen Zwischenablage (nur zur Prüfung, nie vorausgewählt) sowie **Universal-Binary-Verschlankung** (findet fette Mach-O-Binärdateien, die sowohl arm64 als auch x86_64 enthalten, und schreibt sie per `lipo` auf deine native Architektur um, mit Abbrechen-Unterstützung) |
- | **Mail Attachments** | Findet zwischengespeicherte Anhänge aus Apple Mail, Outlook und Spark |
- | **Trash Bins** | Leert den Papierkorb an jedem Ort, auch auf externen Laufwerken |
- | **Project Junk** | Findet wiederherstellbare Build-Ordner in deinen Projekten: `node_modules`, `.next`, `dist`, Rust- und Maven-`target`, Gradle-`build`, Python-Virtualenvs und CocoaPods-`Pods`. Ein Ordner zählt nur, wenn die Dateien daneben den Projekttyp bestätigen, und `dist` und `Pods` nur, wenn deine `.gitignore` sie nennt. Alles geht in den Papierkorb |
+@@ -188,7 +188,7 @@ Ein voll ausgestatteter Mac-Reiniger sollte kein Jahresabo kosten und dich nicht
+ Ein Menüleisten-Widget im Glasmorphismus-Stil, das die Vitalwerte deines Macs einen Klick entfernt hält. Es ist ein eigenständiger Prozess, der beim Anmelden startet und aus der Seitenleiste der App umgeschaltet wird, du musst also nie das Hauptfenster öffnen, nur um kurz nachzusehen.
+ 
+ - **Live-Statusringe**: CPU-Last, Speicherdruck, Speicherplatznutzung und Akku in einem 2x2-Ringraster (`host_processor_info`, `vm_statistics64`, APFS-Kapazität, IOKit-Stromquelle), farblich abgestuft von Grün über Gelb bis Rot
+-- **Konfigurierbare Anzeige**: zeige freien Speicher, GPU-Auslastung, Speichernutzung oder Akkutemperatur; die Auswahl bleibt erhalten, und nicht verfügbare Sensoren zeigen `--`
++- **Konfigurierbare Anzeige**: zeige freien Speicher, GPU-Auslastung, Speichernutzung, Akkutemperatur oder Download- und Upload-Geschwindigkeit; die Auswahl bleibt erhalten, und nicht verfügbare Sensoren zeigen `--`
+ - **Netzwerk, Laufzeit und Swap**: Echtzeit-Durchsatz hoch/runter, System-Laufzeit, Swap-Nutzung
+ - **Empfehlungen**: umsetzbare, ausblendbare Tipps ("Benutzer-Caches sind auf 2,52 GB gewachsen, führe System Junk aus"), ein Tipp genügt zum Handeln, nach dem Ausblenden 30 Tage unterdrückt
+ - **Schutzstatus**: Zeitpunkt des letzten Malware-Scans und Anzahl der Bedrohungen, farbcodiert nach Aktualität
 ```
 
 **File**: `README.es.md` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ Un limpiador completo para Mac no debería costar una suscripción anual ni pedi
- | Módulo | Qué hace |
- |--------|------------|
- | **Smart Scan** | Con un clic ejecuta a la vez los módulos de limpieza, protección y rendimiento con el progreso en tiempo real, y luego muestra exactamente cuánto liberó cada módulo |
--| **System Junk** | Más de 16 categorías de análisis: cachés del usuario y del sistema, registros, archivos de idioma, preferencias dañadas, ítems de inicio dañados, versiones de documentos, copias de seguridad de iOS, restos de Xcode, cachés de gestores de paquetes / IDE / herramientas de IA, restos de usuarios eliminados y **reducción de binarios universales** (encuentra binarios Mach-O "fat" que incluyen arm64 y x86_64 y los reescribe para tu arquitectura nativa con `lipo`, respetando Cancelar) |
-+| **System Junk** | Más de 16 categorías de análisis: cachés del usuario y del sistema, registros, archivos de idioma, preferencias dañadas, ítems de inicio dañados, versiones de documentos, copias de seguridad de iOS, restos de Xcode, cachés de gestores de paquetes / IDE / herramientas de IA, restos de usuarios eliminados, archivos del Portapapeles universal (para revisar, nunca preseleccionados) y **reducción de binarios universales** (encuentra binarios Mach-O "fat" que incluyen arm64 y x86_64 y los reescribe para tu arquitectura nativa con `lipo`, respetando Cancelar) |
- | **Mail Attachments** | Encuentra los archivos adjuntos en caché de Apple Mail, Outlook y Spark |
- | **Trash Bins** | Vacía la Papelera en todas las ubicaciones, incluidos los discos externos |
- | **Project Junk** | Encuentra carpetas de compilación regenerables en tus proyectos: `node_modules`, `.next`, `dist`, `target` de Rust y Maven, `build` de Gradle, entornos virtuales de Python y `Pods` de CocoaPods. Una carpeta solo cuenta si los archivos que la acompañan confirman el tipo de proyecto, y `dist` y `Pods` solo si tu `.gitignore` los menciona. Todo va a la Papelera |
+@@ -188,7 +188,7 @@ Un limpiador completo para Mac no debería costar una suscripción anual ni pedi
+ Un widget de estilo glassmorphism en la barra de menús que pone los signos vitales de tu Mac a un clic. Es un proceso independiente que se abre al iniciar sesión y se activa o desactiva desde la barra lateral de la app, así que nunca tienes que abrir la ventana principal solo para echar un vistazo.
+ 
+ - **Anillos de estadísticas en tiempo real**: carga de CPU, presión de memoria, uso del disco y batería en una cuadrícula de anillos de 2x2 (`host_processor_info`, `vm_statistics64`, capacidad de APFS, fuente de alimentación de IOKit), con colores que van del verde al ámbar y al rojo
+-- **Lectura configurable**: muestra el espacio libre en disco, el uso de GPU, el uso de memoria o la temperatura de la batería; la elección se guarda, y los sensores no disponibles muestran `--`
++- **Lectura configurable**: muestra el espacio libre en disco, el uso de GPU, el uso de memoria, la temperatura de la batería o la velocidad de descarga y subida; la elección se guarda, y los sensores no disponibles muestran `--`
+ - **Red, tiempo de actividad y swap**: velocidad de subida/bajada en tiempo real, tiempo de actividad del sistema y uso de swap
+ - **Recomendaciones**: consejos útiles que puedes descartar ("Las cachés de usuario crecieron hasta 2,52 GB, ejecuta System Junk"), se actúa con un toque y, una vez descartados, se ocultan durante 30 días
+ - **Estado de protección**: hora del último análisis de malware y número de amenazas, con colores según su antigüedad
 ```
 
 **File**: `README.fa.md` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ brew install --cask mac-sai
- | ماژول | کاری که انجام می‌دهد |
- |--------|------------|
- | **اسکن هوشمند** | با یک کلیک ماژول‌های پاک‌سازی، محافظت و کارایی را با هم و با نمایش زندهٔ پیشرفت اجرا می‌کند و سپس دقیقاً نشان می‌دهد هر ماژول چه مقدار فضا آزاد کرده است |
--| **فایل‌های اضافی سیستم** | بیش از ۱۶ دستهٔ اسکن: حافظه‌های نهان کاربر و سیستم، گزارش‌ها، فایل‌های زبان، تنظیمات برگزیدهٔ خراب، موارد ورود خراب، نسخه‌های اسناد، پشتیبان‌های iOS، فایل‌های اضافی Xcode، حافظه‌های نهان مدیران بسته / IDEها / ابزارهای هوش مصنوعی، باقی‌مانده‌های کاربران حذف‌شده، و **کوچک‌سازی باینری‌های Universal** (باینری‌های fat از نوع Mach-O را که هم arm64 و هم x86_64 را در خود دارند پیدا می‌کند و با `lipo` آن‌ها را فقط برای معماری بومی Mac شما بازنویسی می‌کند، و دکمهٔ لغو را هم رعایت می‌کند) |
-+| **فایل‌های اضافی سیستم** | بیش از ۱۶ دستهٔ اسکن: حافظه‌های نهان کاربر و سیستم، گزارش‌ها، فایل‌های زبان، تنظیمات برگزیدهٔ خراب، موارد ورود خراب، نسخه‌های اسناد، پشتیبان‌های iOS، فایل‌های اضافی Xcode، حافظه‌های نهان مدیران بسته / IDEها / ابزارهای هوش مصنوعی، باقی‌مانده‌های کاربران حذف‌شده، بایگانی‌های کلیپ‌بورد جهانی (فقط برای بررسی، هرگز از پیش انتخاب نمی‌شوند)، و **کوچک‌سازی باینری‌های Universal** (باینری‌های fat از نوع Mach-O را که هم arm64 و هم x86_64 را در خود دارند پیدا می‌کند و با `lipo` آن‌ها را فقط برای معماری بومی Mac شما بازنویسی می‌کند، و دکمهٔ لغو را هم رعایت می‌کند) |
- | **پیوست‌های Mail** | پیوست‌های ذخیره‌شده در حافظهٔ نهان Apple Mail، Outlook و Spark را پیدا می‌کند |
- | **سطل‌های زباله** | سطل زباله را در همهٔ مکان‌ها، از جمله درایوهای خارجی، خالی می‌کند |
- | **فایل‌های اضافی پروژه‌ها** | پوشه‌های build قابل بازسازی را در پروژه‌هایتان پیدا می‌کند: `node_modules`، `.next`، `dist`، پوشهٔ `target` در Rust و Maven، پوشهٔ `build` در Gradle، محیط‌های مجازی (virtualenv) پایتون و `Pods` در CocoaPods. یک پوشه فقط وقتی به حساب می‌آید که فایل‌های کنارش نوع پروژه را تأیید کنند، و `dist` و `Pods` فقط وقتی که نامشان در `.gitignore` شما آمده باشد. همه چیز به سطل زباله منتقل می‌شود |
+@@ -188,7 +188,7 @@ brew install --cask mac-sai
+ یک ویجت نوار منو با طراحی شیشه‌ای (glassmorphism) که علائم حیاتی Mac شما را با یک کلیک در دسترس می‌گذارد. این ویجت یک پردازش مستقل است که هنگام ورود اجرا می‌شود و از نوار کناری برنامه روشن و خاموش می‌شود، بنابراین برای یک نگاه سریع هرگز لازم نیست پنجرهٔ اصلی را باز کنید.
+ 
+ - **حلقه‌های آمار زنده**: بار CPU، فشار حافظه، مصرف دیسک و باتری در یک شبکهٔ ۲×۲ از حلقه‌ها (`host_processor_info`، `vm_statistics64`، ظرفیت APFS، منبع تغذیهٔ IOKit)، با رنگ‌بندی از سبز به کهربایی و سپس قرمز
+-- **نمایشگر قابل تنظیم**: فضای آزاد دیسک، مصرف GPU، مصرف حافظه یا دمای باتری را نشان دهید؛ انتخاب شما ذخیره می‌شود و حسگرهای ناموجود `--` نشان می‌دهند
++- **نمایشگر قابل تنظیم**: فضای آزاد دیسک، مصرف GPU، مصرف حافظه، دمای باتری یا سرعت دانلود و آپلود را نشان دهید؛ انتخاب شما ذخیره می‌شود و حسگرهای ناموجود `--` نشان می‌دهند
+ - **شبکه، مدت روشن بودن و swap**: سرعت لحظه‌ای ارسال و دریافت، مدت روشن بودن سیستم، مصرف swap
+ - **پیشنهادها**: نکته‌های کاربردی و قابل رد کردن («حافظهٔ نهان کاربر به ۲٫۵۲ گیگابایت رسید، فایل‌های اضافی سیستم را اجرا کنید»)، قابل اجرا با یک ضربه، و پس از رد شدن تا ۳۰ روز دوباره نمایش داده نمی‌شوند
+ - **وضعیت محافظت**: زمان آخرین اسکن بدافزار و تعداد تهدیدها، با رنگ‌بندی بر اساس تازگی
 ```
 
 **File**: `README.fr.md` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ Un nettoyeur Mac complet ne devrait pas coûter un abonnement annuel ni vous dem
- | Module | Ce que ça fait |
- |--------|------------|
- | **Smart Scan** | Un clic exécute ensemble les modules de nettoyage, de protection et de performances avec une progression en direct, puis montre exactement ce qui a été libéré par module |
--| **System Junk** | 16+ catégories de scan : caches utilisateur et système, journaux, fichiers de langue, préférences corrompues, objets d'ouverture invalides, versions de documents, sauvegardes iOS, résidus Xcode, caches des gestionnaires de paquets / IDE / outils d'IA, restes d'utilisateurs supprimés, ainsi que l'**amincissement des binaires universels** (repère les binaires Mach-O gras contenant à la fois arm64 et x86_64 et les réécrit pour votre architecture native via `lipo`, en respectant l'annulation) |
-+| **System Junk** | 16+ catégories de scan : caches utilisateur et système, journaux, fichiers de langue, préférences corrompues, objets d'ouverture invalides, versions de documents, sauvegardes iOS, résidus Xcode, caches des gestionnaires de paquets / IDE / outils d'IA, restes d'utilisateurs supprimés, archives du presse-papiers universel (à vérifier, jamais présélectionnées), ainsi que l'**amincissement des binaires universels** (repère les binaires Mach-O gras contenant à la fois arm64 et x86_64 et les réécrit pour votre architecture native via `lipo`, en respectant l'annulation) |
- | **Mail Attachments** | Trouve les pièces jointes mises en cache par Apple Mail, Outlook et Spark |
- | **Trash Bins** | Vide la corbeille à chaque emplacement, y compris sur les disques externes |
- | **Project Junk** | Trouve les dossiers de build régénérables dans vos projets : `node_modules`, `.next`, `dist`, `target` de Rust et Maven, `build` de Gradle, environnements virtuels Python et `Pods` de CocoaPods. Un dossier ne compte que si les fichiers voisins confirment le type de projet, et `dist` et `Pods` seulement si votre `.gitignore` les nomme. Tout part à la corbeille |
+@@ -188,7 +188,7 @@ Un nettoyeur Mac complet ne devrait pas coûter un abonnement annuel ni vous dem
+ Un widget de barre des menus au style glassmorphisme qui met les constantes vitales de votre Mac à un clic. C'est un processus indépendant qui se lance à l'ouverture de session et se bascule depuis la barre latérale de l'app, vous n'avez donc jamais à ouvrir la fenêtre principale juste pour jeter un œil.
+ 
+ - **Anneaux de statistiques en direct** : charge CPU, pression mémoire, utilisation du disque et batterie dans une grille d'anneaux 2x2 (`host_processor_info`, `vm_statistics64`, capacité APFS, source d'alimentation IOKit), graduée en couleur du vert à l'ambre au rouge
+-- **Affichage configurable** : montrez l'espace disque libre, l'utilisation du GPU, l'utilisation de la mémoire ou la température de la batterie ; le choix persiste, et les capteurs indisponibles affichent `--`
++- **Affichage configurable** : montrez l'espace disque libre, l'utilisation du GPU, l'utilisation de la mémoire, la température de la batterie ou le débit de téléchargement et d'envoi ; le choix persiste, et les capteurs indisponibles affichent `--`
+ - **Réseau, temps de fonctionnement et swap** : débit montant/descendant en temps réel, temps de fonctionnement du système, utilisation du swap
+ - **Recommandations** : conseils actionnables et masquables (« Les caches utilisateur ont atteint 2,52 Go, lancez System Junk »), une touche pour agir, supprimés pendant 30 jours une fois masqués
+ - **Statut de protection** : heure du dernier scan de logiciels malveillants et nombre de menaces, codé en couleur selon la fraîcheur
 ```
 
 **File**: `README.it.md` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ Un pulitore per Mac completo non dovrebbe costare un abbonamento annuale né chi
- | Modulo | Cosa fa |
- |--------|------------|
- | **Smart Scan** | Un solo clic esegue insieme i moduli di pulizia, protezione e prestazioni con l'avanzamento in tempo reale, poi mostra esattamente quanto spazio ha liberato ciascun modulo |
--| **System Junk** | 16+ categorie di scansione: cache utente e di sistema, log, file di lingua, preferenze danneggiate, elementi di login non validi, versioni dei documenti, backup iOS, file inutili di Xcode, cache di gestori di pacchetti / IDE / strumenti di IA, residui di utenti eliminati e **assottigliamento dei binari Universal** (trova i binari Mach-O "fat" che contengono sia arm64 sia x86_64 e li riscrive per la tua architettura nativa tramite `lipo`, rispettando l'annullamento) |
-+| **System Junk** | 16+ categorie di scansione: cache utente e di sistema, log, file di lingua, preferenze danneggiate, elementi di login non validi, versioni dei documenti, backup iOS, file inutili di Xcode, cache di gestori di pacchetti / IDE / strumenti di IA, residui di utenti eliminati, archivi degli Appunti universali (da controllare, mai preselezionati) e **assottigliamento dei binari Universal** (trova i binari Mach-O "fat" che contengono sia arm64 sia x86_64 e li riscrive per la tua architettura nativa tramite `lipo`, rispettando l'annullamento) |
- | **Mail Attachments** | Trova gli allegati in cache di Apple Mail, Outlook e Spark |
- | **Trash Bins** | Svuota il Cestino in ogni posizione, compresi i dischi esterni |
- | **Project Junk** | Trova le cartelle di build rigenerabili nei tuoi progetti: `node_modules`, `.next`, `dist`, `target` di Rust e Maven, `build` di Gradle, virtualenv di Python e `Pods` di CocoaPods. Una cartella viene considerata solo quando i file accanto confermano il tipo di progetto, e `dist` e `Pods` solo quando il tuo `.gitignore` li nomina. Tutto finisce nel Cestino |
+@@ -188,7 +188,7 @@ Un pulitore per Mac completo non dovrebbe costare un abbonamento annuale né chi
+ Un widget in stile glassmorphism nella barra dei menu che mette i parametri vitali del tuo Mac a un clic di distanza. È un processo indipendente che si avvia al login e si attiva o disattiva dalla barra laterale dell'app, così non devi mai aprire la finestra principale solo per dare un'occhiata.
+ 
+ - **Anelli statistici in tempo reale**: carico della CPU, pressione della memoria, uso del disco e batteria in una griglia di anelli 2x2 (`host_processor_info`, `vm_statistics64`, capacità APFS, fonte di alimentazione IOKit), con colori che sfumano dal verde all'ambra al rosso
+-- **Indicatore configurabile**: mostra lo spazio libero su disco, l'uso della GPU, l'uso della memoria o la temperatura della batteria; la scelta viene ricordata, e i sensori non disponibili mostrano `--`
++- **Indicatore configurabile**: mostra lo spazio libero su disco, l'uso della GPU, l'uso della memoria, la temperatura della batteria o la velocità di download e upload; la scelta viene ricordata, e i sensori non disponibili mostrano `--`
+ - **Rete, tempo di attività e swap**: velocità di upload/download in tempo reale, tempo di attività del sistema, uso dello swap
+ - **Consigli**: suggerimenti pratici e ignorabili ("Le cache utente sono cresciute a 2,52 GB, esegui System Junk"), un tocco per agire, nascosti per 30 giorni dopo averli ignorati
+ - **Stato della protezione**: ora dell'ultima scansione anti-malware e numero di minacce, con un colore che indica quanto è recente
 ```
 
 **File**: `README.ja.md` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ brew install --cask mac-sai
- | モジュール | 機能 |
- |--------|------------|
- | **スマートスキャン** | ワンクリックでクリーンアップ、保護、パフォーマンスの各モジュールをまとめて実行し、進行状況をリアルタイムで表示したうえで、モジュールごとに解放した容量を正確に示します |
--| **システムの不要ファイル** | 16+ のスキャンカテゴリ：ユーザーとシステムのキャッシュ、ログ、言語ファイル、破損した環境設定、壊れたログイン項目、書類のバージョン、iOS バックアップ、Xcode の不要ファイル、パッケージマネージャ / IDE / AI ツールのキャッシュ、削除済みユーザーの残留ファイル、そして **ユニバーサルバイナリの軽量化**（arm64 と x86_64 の両方を含む fat Mach-O バイナリを見つけ、`lipo` でお使いの Mac のネイティブアーキテクチャ用に書き換えます。キャンセルにも対応） |
-+| **システムの不要ファイル** | 16+ のスキャンカテゴリ：ユーザーとシステムのキャッシュ、ログ、言語ファイル、破損した環境設定、壊れたログイン項目、書類のバージョン、iOS バックアップ、Xcode の不要ファイル、パッケージマネージャ / IDE / AI ツールのキャッシュ、削除済みユーザーの残留ファイル、ユニバーサルクリップボードのアーカイブ（確認用、事前に選択されません）、そして **ユニバーサルバイナリの軽量化**（arm64 と x86_64 の両方を含む fat Mach-O バイナリを見つけ、`lipo` でお使いの Mac のネイティブアーキテクチャ用に書き換えます。キャンセルにも対応） |
- | **メールの添付ファイル** | Apple Mail、Outlook、Spark にキャッシュされた添付ファイルを見つけます |
- | **ゴミ箱** | 外付けドライブを含む、すべての場所のゴミ箱を空にします |
- | **プロジェクトの不要ファイル** | プロジェクト全体から再生成可能なビルドフォルダを見つけます：`node_modules`、`.next`、`dist`、Rust と Maven の `target`、Gradle の `build`、Python の仮想環境（virtualenv）、CocoaPods の `Pods`。隣にあるファイルからプロジェクトの種類を確認できた場合にのみ対象となり、`dist` と `Pods` は `.gitignore` に記載されている場合に限ります。すべてゴミ箱に移動されます |
+@@ -188,7 +188,7 @@ brew install --cask mac-sai
+ Mac の状態をワンクリックで確認できる、グラスモーフィズムデザインのメニューバーウィジェットです。ログイン時に起動する独立したプロセスで、アプリのサイドバーからオン / オフを切り替えられるため、状態を確認するだけのためにメインウィンドウを開く必要はありません。
+ 
+ - **リアルタイムのステータスリング**：CPU 負荷、メモリプレッシャー、ディスク使用量、バッテリーを 2x2 のリンググリッドで表示します（`host_processor_info`、`vm_statistics64`、APFS の容量、IOKit の電源情報）。緑から黄、赤へと色分けされます
+-- **表示項目のカスタマイズ**：空きディスク容量、GPU 使用率、メモリ使用量、バッテリー温度から選べます。選択は保持され、利用できないセンサーは `--` と表示されます
++- **表示項目のカスタマイズ**：空きディスク容量、GPU 使用率、メモリ使用量、バッテリー温度、ダウンロードとアップロードの速度から選べます。選択は保持され、利用できないセンサーは `--` と表示されます
+ - **ネットワーク、稼働時間、スワップ**：リアルタイムのアップロード / ダウンロード速度、システムの稼働時間、スワップ使用量
+ - **おすすめ**：すぐに実行でき、非表示にもできるヒント（「ユーザーキャッシュが 2.52 GB に増えました。システムの不要ファイルを実行してください」）。ワンタップで実行でき、非表示にすると30日間は表示されません
+ - **保護ステータス**：前回のマルウェアスキャンの日時と脅威の数を、経過時間に応じて色分けして表示します
 ```
 
 **File**: `README.ko.md` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ brew install --cask mac-sai
- | 모듈 | 기능 |
- |--------|------------|
- | **Smart Scan** | 클릭 한 번으로 정리, 보호, 성능 모듈을 함께 실행하고 진행 상황을 실시간으로 보여 주며, 완료 후 모듈별로 확보한 공간을 정확히 표시합니다 |
--| **System Junk** | 16개 이상의 스캔 카테고리: 사용자 및 시스템 캐시, 로그, 언어 파일, 손상된 환경설정, 손상된 로그인 항목, 문서 버전, iOS 백업, Xcode 불필요한 파일, 패키지 관리자 / IDE / AI 도구 캐시, 삭제된 사용자의 잔여 파일, 그리고 **Universal Binary 축소** (arm64와 x86_64를 모두 포함한 fat Mach-O 바이너리를 찾아 `lipo`로 사용자의 네이티브 아키텍처용으로 다시 작성하며, 취소를 지원합니다) |
-+| **System Junk** | 16개 이상의 스캔 카테고리: 사용자 및 시스템 캐시, 로그, 언어 파일, 손상된 환경설정, 손상된 로그인 항목, 문서 버전, iOS 백업, Xcode 불필요한 파일, 패키지 관리자 / IDE / AI 도구 캐시, 삭제된 사용자의 잔여 파일, 범용 클립보드 보관 파일(검토용, 미리 선택되지 않음), 그리고 **Universal Binary 축소** (arm64와 x86_64를 모두 포함한 fat Mach-O 바이너리를 찾아 `lipo`로 사용자의 네이티브 아키텍처용으로 다시 작성하며, 취소를 지원합니다) |
- | **Mail Attachments** | Apple Mail, Outlook, Spark에 캐시된 첨부 파일을 찾습니다 |
- | **Trash Bins** | 외장 드라이브를 포함한 모든 위치의 휴지통을 비웁니다 |
- | **Project Junk** | 프로젝트 전반에서 다시 생성할 수 있는 빌드 폴더를 찾습니다: `node_modules`, `.next`, `dist`, Rust 및 Maven `target`, Gradle `build`, Python virtualenv, CocoaPods `Pods`. 옆에 있는 파일로 프로젝트 유형이 확인될 때만 대상으로 간주하며, `dist`와 `Pods`는 `.gitignore`에 명시된 경우에만 해당합니다. 모든 항목은 휴지통으로 이동합니다 |
+@@ -188,7 +188,7 @@ brew install --cask mac-sai
+ Mac의 핵심 상태를 클릭 한 번 거리에 두는 글래스모피즘 스타일의 메뉴 막대 위젯입니다. 로그인할 때 실행되는 독립 프로세스이며 앱의 사이드바에서 켜고 끌 수 있으므로, 상태를 확인하려고 메인 윈도우를 열 필요가 없습니다.
+ 
+ - **실시간 상태 링**: CPU 부하, 메모리 압력, 디스크 사용량, 배터리를 2x2 링 그리드로 표시하며(`host_processor_info`, `vm_statistics64`, APFS 용량, IOKit 전원), 녹색에서 주황색, 빨간색으로 색이 바뀝니다
+-- **사용자 설정 가능한 표시 항목**: 디스크 여유 공간, GPU 사용량, 메모리 사용량, 배터리 온도 중에서 선택할 수 있습니다. 선택은 유지되며, 사용할 수 없는 센서는 `--`로 표시됩니다
++- **사용자 설정 가능한 표시 항목**: 디스크 여유 공간, GPU 사용량, 메모리 사용량, 배터리 온도, 다운로드 및 업로드 속도 중에서 선택할 수 있습니다. 선택은 유지되며, 사용할 수 없는 센서는 `--`로 표시됩니다
+ - **네트워크, 가동 시간, 스왑**: 실시간 업로드/다운로드 처리량, 시스템 가동 시간, 스왑 사용량
+ - **권장 사항**: 바로 실행하거나 닫을 수 있는 팁("사용자 캐시가 2.52 GB로 늘어났습니다. System Junk를 실행하십시오"), 한 번 탭하면 실행되며, 닫으면 30일 동안 표시되지 않습니다
+ - **보호 상태**: 마지막 악성코드 스캔 시간과 위협 수를 최신 여부에 따라 색상으로 구분해 표시합니다
 ```
 
 **File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ A full-featured Mac cleaner should not cost a yearly subscription or ask you to
- | Module | What it does |
- |--------|------------|
- | **Smart Scan** | One click runs cleanup, protection, and performance modules together with live progress, then shows exactly what it freed per module |
--| **System Junk** | 16+ scan categories: user and system caches, logs, language files, broken preferences, broken login items, document versions, iOS backups, Xcode junk, package-manager / IDE / AI-tool caches, deleted-user leftovers, and **Universal Binary thinning** (finds fat Mach-O binaries carrying both arm64 and x86_64 and rewrites them to your native arch via `lipo`, honoring Cancel) |
-+| **System Junk** | 16+ scan categories: user and system caches, logs, language files, broken preferences, broken login items, document versions, iOS backups, Xcode junk, package-manager / IDE / AI-tool caches, deleted-user leftovers, Universal Clipboard archives (listed for review, never pre-selected), and **Universal Binary thinning** (finds fat Mach-O binaries carrying both arm64 and x86_64 and rewrites them to your native arch via `lipo`, honoring Cancel) |
- | **Mail Attachments** | Finds cached attachments from Apple Mail, Outlook, and Spark |
- | **Trash Bins** | Empties the Trash across every location, including external drives |
- | **Project Junk** | Finds regenerable build folders across your projects: `node_modules`, `.next`, `dist`, Rust and Maven `target`, Gradle `build`, Python virtualenvs, and CocoaPods `Pods`. A folder only counts when the files next to it confirm the project type, and `dist` and `Pods` only when your `.gitignore` names them. Everything goes to the Trash |
-```
-
----
-
-### Incident Patch 2: `0369c425` (2026-11-17)
-**Commit Message**: README: 44-second video tour under the screenshot, in all 13 languages (#276)
-
-A clickable cover image opens the tour on the website, in the reader's
-language. GitHub does not play videos stored in the repository, so the
-cover links to the site, which plays the self-hosted MP4 with captions.
-
-**File**: `README.de.md` (modified, +5/-0)
-```diff
-@@ -34,6 +34,11 @@
-   <img src="assets/demo.png" width="720" alt="Mac Sai Screenshot" />
- </p>
+@@ -188,7 +188,7 @@ A full-featured Mac cleaner should not cost a yearly subscription or ask you to
+ A glassmorphism menu-bar widget that puts your Mac's vitals one click away. It is an independent process that launches at login and is toggled from the app's sidebar, so you never have to open the main window just to check in.
  
-+<p align="center">
-+  <a href="https://iliyami.github.io/MacSai/de/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Tour abspielen: Mac Sai in 44 Sekunden" /></a><br>
-+  <sub><a href="https://iliyami.github.io/MacSai/de/#showcase-title"><strong>Mac Sai in 44 Sekunden</strong></a>. Eine kurze Tour durch die Werkzeuge, mit echten Bildschirmen aus der App. Video auf Englisch.</sub>
-+</p>
-+
- <p align="center">
-   <strong>In einem Befehl installieren:</strong>
- </p>
-```
-
-**File**: `README.es.md` (modified, +5/-0)
-```diff
-@@ -34,6 +34,11 @@
-   <img src="assets/demo.png" width="720" alt="Captura de pantalla de Mac Sai" />
- </p>
- 
-+<p align="center">
-+  <a href="https://iliyami.github.io/MacSai/es/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Ver el recorrido: Mac Sai en 44 segundos" /></a><br>
-+  <sub><a href="https://iliyami.github.io/MacSai/es/#showcase-title"><strong>Mac Sai en 44 segundos</strong></a>. Un recorrido breve por las herramientas, con pantallas reales de la app. Vídeo en inglés.</sub>
-+</p>
-+
- <p align="center">
-   <strong>Instálala con un solo comando:</strong>
- </p>
-```
-
-**File**: `README.fa.md` (modified, +5/-0)
-```diff
-@@ -34,6 +34,11 @@
-   <img src="assets/demo.png" width="720" alt="تصویر صفحهٔ Mac Sai" />
- </p>
- 
-+<p align="center" dir="rtl">
-+  <a href="https://iliyami.github.io/MacSai/fa/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="پخش ویدیو: Mac Sai در ۴۴ ثانیه" /></a><br>
-+  <sub><a href="https://iliyami.github.io/MacSai/fa/#showcase-title"><strong>Mac Sai در ۴۴ ثانیه</strong></a>. گشتی کوتاه در ابزارها، با صفحه‌های واقعی برنامه. ویدیو به زبان انگلیسی است.</sub>
-+</p>
-+
- <p align="center" dir="rtl">
-   <strong>نصب با یک دستور:</strong>
- </p>
-```
-
-**File**: `README.fr.md` (modified, +5/-0)
-```diff
-@@ -34,6 +34,11 @@
-   <img src="assets/demo.png" width="720" alt="Mac Sai Screenshot" />
- </p>
- 
-+<p align="center">
-+  <a href="https://iliyami.github.io/MacSai/fr/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Lancer la visite: Mac Sai en 44 secondes" /></a><br>
-+  <sub><a href="https://iliyami.github.io/MacSai/fr/#showcase-title"><strong>Mac Sai en 44 secondes</strong></a>. Un petit tour des outils, avec de vrais écrans de l’app. Vidéo en anglais.</sub>
-+</p>
-+
- <p align="center">
-   <strong>Installez en une commande :</strong>
- </p>
-```
-
-**File**: `README.it.md` (modified, +5/-0)
-```diff
-@@ -34,6 +34,11 @@
-   <img src="assets/demo.png" width="720" alt="Schermata di Mac Sai" />
- </p>
- 
-+<p align="center">
-+  <a href="https://iliyami.github.io/MacSai/it/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Guarda il tour: Mac Sai in 44 secondi" /></a><br>
-+  <sub><a href="https://iliyami.github.io/MacSai/it/#showcase-title"><strong>Mac Sai in 44 secondi</strong></a>. Un breve giro tra gli strumenti, con schermate reali dell’app. Video in inglese.</sub>
-+</p>
-+
- <p align="center">
-   <strong>Installalo con un solo comando:</strong>
- </p>
-```
-
-**File**: `README.ja.md` (modified, +5/-0)
-```diff
-@@ -34,6 +34,11 @@
-   <img src="assets/demo.png" width="720" alt="Mac Sai のスクリーンショット" />
- </p>
- 
-+<p align="center">
-+  <a href="https://iliyami.github.io/MacSai/ja/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="ツアーを再生: 44 秒でわかる Mac Sai" /></a><br>
-+  <sub><a href="https://iliyami.github.io/MacSai/ja/#showcase-title"><strong>44 秒でわかる Mac Sai</strong></a>。実際のアプリ画面で、各ツールを手短に紹介します。 動画は英語です。</sub>
-+</p>
-+
- <p align="center">
-   <strong>コマンド1つでインストール：</strong>
- </p>
-```
-
-**File**: `README.ko.md` (modified, +5/-0)
-```diff
-@@ -34,6 +34,11 @@
-   <img src="assets/demo.png" width="720" alt="Mac Sai 스크린샷" />
- </p>
- 
-+<p align="center">
-+  <a href="https://iliyami.github.io/MacSai/ko/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="투어 재생: 44초 만에 보는 Mac Sai" /></a><br>
-+  <sub><a href="https://iliyami.github.io/MacSai/ko/#showcase-title"><strong>44초 만에 보는 Mac Sai</strong></a>. 실제 앱 화면으로 도구를 짧게 둘러봅니다. 영상은 영어입니다.</sub>
-+</p>
-+
- <p align="center">
-   <strong>명령어 한 줄로 설치하기:</strong>
- </p>
-```
-
-**File**: `README.md` (modified, +5/-0)
-```diff
-@@ -34,6 +34,11 @@
-   <img src="assets/demo.png" width="720" alt="Mac Sai Screenshot" />
- </p>
- 
-+<p align="center">
-+  <a href="https://iliyami.github.io/MacSai/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Play the tour: See Mac Sai in 44 seconds" /></a><br>
-+  <sub><a href="https://iliyami.github.io/MacSai/#showcase-title"><strong>See Mac Sai in 44 seconds</strong></a>. A short tour of the tools, with real screens from the app.</sub>
-+</p>
-+
- <p align="center">
-   <strong>Install in one command:</strong>
- </p>
+ - **Live stat rings**: CPU load, memory pressure, disk usage, and battery in a 2x2 ring grid (`host_processor_info`, `vm_statistics64`, APFS capacity, IOKit power source), color-graded green to amber to red
+-- **Configurable readout**: show free disk, GPU usage, memory usage, or battery temperature; the choice persists, and unavailable sensors show `--`
++- **Configurable readout**: show free disk, GPU usage, memory usage, battery temperature, or download and upload speed; the choice persists, and unavailable sensors show `--`
+ - **Network, uptime, and swap**: real-time up/down throughput, system uptime, swap usage
+ - **Recommendations**: actionable, dismissible tips ("User caches grew to 2.52 GB, run System Junk"), one tap to act, suppressed for 30 days once dismissed
+ - **Protection status**: last malware-scan time and threat count, color-coded by freshness
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #277** (2026-11-25): Fix #262: show download and upload speed in the menu bar (@Finjineersdev)
 - **PR #276** (2026-11-17): README: 44-second video tour (@iliyami)
 - **PR #275** (2026-11-12): Mac Sai website, in 13 languages, on GitHub Pages (@iliyami)
 - **PR #274** (2026-11-11): Add Farsi (Persian) interface language and README (@iliyami)
 - **PR #273** (2026-11-17): Add Universal Clipboard archive detection to System Junk (@thorufur)
 - **PR #272** (2026-11-09): README in Spanish, Italian, Brazilian Portuguese, Japanese, Korean and Turkish (@iliyami)
-- **PR #271** (2026-11-06): README: list all 12 interface languages (@iliyami)
 
 ---
 
@@ -2004,13 +1872,13 @@ cover links to the site, which plays the self-hosted MP4 with captions.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Universal Clipboard archive detection to System Junk
+## X. #262: show download and upload speed in the menu bar
 
 **RULE**:
 When implementing operations in `README.de.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5891a8ce`: Add Universal Clipboard archive detection to System Junk. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8aa34cc8`: #262: show download and upload speed in the menu bar. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.de.md`.
@@ -2018,14 +1886,14 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-| **System Junk** | 16+ Scan-Kategorien: Benutzer- und System-Caches, Protokolle, Sprachdateien, defekte Einstellungen, defekte Anmeldeobjekte, Dokumentversionen, iOS-Backups, Xcode-Müll, Caches von Paketmanagern / IDEs / KI-Werkzeugen, Reste gelöschter Benutzer, Archive der universellen Zwischenablage (nur zur Prüfung, nie vorausgewählt) sowie **Universal-Binary-Verschlankung** (findet fette Mach-O-Binärdateien, die sowohl arm64 als auch x86_64 enthalten, und schreibt sie per `lipo` auf deine native Architektur um, mit Abbrechen-Unterstützung) |
+- **Konfigurierbare Anzeige**: zeige freien Speicher, GPU-Auslastung, Speichernutzung, Akkutemperatur oder Download- und Upload-Geschwindigkeit; die Auswahl bleibt erhalten, und nicht verfügbare Sensoren zeigen `--`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-| **System Junk** | 16+ Scan-Kategorien: Benutzer- und System-Caches, Protokolle, Sprachdateien, defekte Einstellungen, defekte Anmeldeobjekte, Dokumentversionen, iOS-Backups, Xcode-Müll, Caches von Paketmanagern / IDEs / KI-Werkzeugen, Reste gelöschter Benutzer, sowie **Universal-Binary-Verschlankung** (findet fette Mach-O-Binärdateien, die sowohl arm64 als auch x86_64 enthalten, und schreibt sie per `lipo` auf deine native Architektur um, mit Abbrechen-Unterstützung) |
+- **Konfigurierbare Anzeige**: zeige freien Speicher, GPU-Auslastung, Speichernutzung oder Akkutemperatur; die Auswahl bleibt erhalten, und nicht verfügbare Sensoren zeigen `--`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5891a8ce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8aa34cc8` are properly handled with clean fallback behavior.

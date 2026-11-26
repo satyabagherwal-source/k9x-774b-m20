@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T11:49:38.179Z",
+  "updated_at": "2026-11-26T12:11:38.372Z",
   "stats": {
-    "total_discovered": 9748,
+    "total_discovered": 9749,
     "approved_pending_harvest": 9248,
     "harvested_count": 0,
-    "rejected_count": 500,
+    "rejected_count": 501,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9235,
+      "COMMUNITY_AND_EXPERT": 9236,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210983,6 +210983,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
         "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-7472FA36266F": {
+      "id": "SRC-7472FA36266F",
+      "url": "http://127.0.0.1:1234/",
+      "title": "http://127.0.0.1:1234/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T12:11:38.372Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
       }
     }
   }

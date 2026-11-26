@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T12:02:09.028Z",
+  "last_updated": "2026-11-26T12:11:41.311Z",
   "total_verified_learnings": 9127,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25876,
+  "total_items": 25881,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112785,10 +112785,10 @@
       "relative_path": "08_VERIFICATION/iliyami-macsai-verification-protocol-empirical-defect-shield-for-iliyami-macsai.md",
       "title": "Verification Protocol: Empirical Defect Shield for iliyami/MacSai",
       "repository": "iliyami/MacSai",
-      "source_version": "5891a8ce",
-      "content_hash": "ce850075fd10dbcbd28b24a67000a8694575288f468b9515a7afefb419f8b0f3",
+      "source_version": "8aa34cc8",
+      "content_hash": "1d0cadd309796493eeec706825195bec30017f28d093b099655d55fb58f2f4ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:57:46.573Z"
+      "persisted_at": "2026-11-26T12:11:34.195Z"
     },
     "candidate_directive-merge-pull-request-23479-from-asheesh7298-bug-asheesh7298-23478": {
       "item_id": "candidate_directive-merge-pull-request-23479-from-asheesh7298-bug-asheesh7298-23478",
@@ -112870,9 +112870,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for iliyami-macsai-learnings",
       "repository": "iliyami-macsai-learnings",
       "source_version": "HEAD",
-      "content_hash": "e30f894d48e0ee0636e8d83d60c0de0f9364321129ae913e804a01161b49b4be",
+      "content_hash": "15edc40a8d725a6dbede7a8ee2e2005a33007c4defba9c963492e51b865175b7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:57:55.868Z"
+      "persisted_at": "2026-11-26T12:11:41.311Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants",
@@ -259650,8 +259650,8 @@
       "slug": "yyjeqhc-webcodex",
       "platform": "github",
       "source_url": "https://github.com/yyjeqhc/webcodex",
-      "source_version": "70315e49",
-      "content_hash": "c4cacd3ddc16d318fc5f5396ce0edee873ff670fb37af9c167b54dd30439d5ca",
+      "source_version": "d9327074",
+      "content_hash": "f8373b4b22493b945dede9930e9ef1a5e224528671b2ed218fa2cd5e1f5a2034",
       "dossier_path": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
       "promoted_rules": [
@@ -259674,6 +259674,11 @@
           "number": 10173,
           "title": "accelerate Windows status checks and acknowledge lifecycle actions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10670,
+          "title": "prevent Runner inventory refresh from blocking project onboarding",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -259681,7 +259686,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T04:31:05.292Z",
+      "verified_at": "2026-11-26T12:11:29.003Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259723,10 +259728,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-technical-construction-intelligence-yyjeqhc-webcodex-core-invar.md",
       "title": "Technical Construction Intelligence: yyjeqhc/webcodex Core Invariants",
       "repository": "yyjeqhc/webcodex",
-      "source_version": "70315e49",
-      "content_hash": "994a348dc8b1adbfbacb9de01c15bf82c42bce097660492bd0cd4d7180d0751c",
+      "source_version": "d9327074",
+      "content_hash": "da43ab693650a92201b92d547895cb4b48d39906313ab857c16bfeb9d67ac0fe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:31:06.208Z"
+      "persisted_at": "2026-11-26T12:11:30.066Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex",
@@ -259735,10 +259740,10 @@
       "relative_path": "08_VERIFICATION/yyjeqhc-webcodex-verification-protocol-empirical-defect-shield-for-yyjeqhc-webco.md",
       "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc/webcodex",
       "repository": "yyjeqhc/webcodex",
-      "source_version": "70315e49",
-      "content_hash": "d63d8061f38a948ee330f3a794579c30fa94e8c474a30a1083ecba218f947db9",
+      "source_version": "d9327074",
+      "content_hash": "d0913fa9f8ad78514e3448d6123e6503186073110dd6f52dc26f371787cceb81",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:31:06.490Z"
+      "persisted_at": "2026-11-26T12:11:30.411Z"
     },
     "rule-8722": {
       "learning_id": "rule-8722",
@@ -259774,9 +259779,9 @@
       "title": "Technical Construction Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
       "repository": "yyjeqhc-webcodex-learnings",
       "source_version": "HEAD",
-      "content_hash": "871be9de2ca24267d2c48c7dc6b421d31531754e16a2e30acd0c0f0708d6a87d",
+      "content_hash": "6eea5b4bd37468b530d4f8030b8d78c9097ae7e1130739daa1c391c495d097e7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:31:20.026Z"
+      "persisted_at": "2026-11-26T12:11:39.056Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex-learnings",
@@ -259786,9 +259791,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc-webcodex-learnings",
       "repository": "yyjeqhc-webcodex-learnings",
       "source_version": "HEAD",
-      "content_hash": "e12fc454765f681b56633d8b0b81ff0c6b45ddb7c810adb5ad6af65e8f18f04e",
+      "content_hash": "46fb900595436f586aa05da44c0556c2c6b80101f8a310cef8693f68409e00fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:31:20.270Z"
+      "persisted_at": "2026-11-26T12:11:39.394Z"
     },
     "rule-8723": {
       "learning_id": "rule-8723",
@@ -286401,7 +286406,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "d2729c573a0a76cecbe2ec0963fe956160b27eb28bc2ea3909934401b636de3d",
+      "content_hash": "80455e28bc434a076ec63b671cd59cb21d310eba3778076f44d45e45ceaaef93",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [],
@@ -286410,7 +286415,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:01:33.821Z",
+      "verified_at": "2026-11-26T12:11:31.479Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286427,9 +286432,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/Nemotron-3-Diarization Core Invariants",
       "repository": "nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "7456224a5a9f448b8cf1cfced77d5eeafa6117daef0aae8120783b988a4a698b",
+      "content_hash": "0d9c3d0db94624fbf002f4cc68791bc31b8dce9b55a45dabf4414cb1fd84ef83",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:01:34.400Z"
+      "persisted_at": "2026-11-26T12:11:32.150Z"
     },
     "rule-9100": {
       "learning_id": "rule-9100",
@@ -286465,9 +286470,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nemotron-3-diarization-learnings Core Invariants",
       "repository": "hf-nvidia-nemotron-3-diarization-learnings",
       "source_version": "HEAD",
-      "content_hash": "e0a084257c9e338f15b563673b1447edab6f953458c6b8c922f5b4c91f8b8be3",
+      "content_hash": "cf17017383bbd0eeead26377c639cc3b208202d917fcb7b236eb7480ac2e5a9b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:01:52.611Z"
+      "persisted_at": "2026-11-26T12:11:39.989Z"
     },
     "candidate_directive-android-dispatch-helper-taps-and-keys-without-the-global-animation-wait": {
       "item_id": "candidate_directive-android-dispatch-helper-taps-and-keys-without-the-global-animation-wait",
@@ -315095,14 +315100,19 @@
       "slug": "iliyami-macsai",
       "platform": "github",
       "source_url": "https://github.com/iliyami/MacSai",
-      "source_version": "5891a8ce",
-      "content_hash": "4cf2d4de4b38558d529b5ea50ae6f84e44979df9bb8988ed6ffa9a9238d50a4c",
+      "source_version": "8aa34cc8",
+      "content_hash": "6591ad9cb7f29b26462a658339785ca23b1b3efcec79705382ccf06795c9a5b8",
       "dossier_path": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "promoted_rules": [
         {
           "number": 9707,
           "title": "Add Universal Clipboard archive detection to System Junk",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10671,
+          "title": "#262: show download and upload speed in the menu bar",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -315111,7 +315121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:57:45.862Z",
+      "verified_at": "2026-11-26T12:11:32.972Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -315153,10 +315163,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-iliyami-macsai-technical-construction-intelligence-iliyami-macsai-core-invariant.md",
       "title": "Technical Construction Intelligence: iliyami/MacSai Core Invariants",
       "repository": "iliyami/MacSai",
-      "source_version": "5891a8ce",
-      "content_hash": "4ddc49ed66c21233158edc6af96dcc594a19e18a8e74c9caff8f6cd670dd83a2",
+      "source_version": "8aa34cc8",
+      "content_hash": "9da68cfad5e38c8213b96d3921bce983a77e82e38ed326368cdff85221fa5d63",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:57:46.420Z"
+      "persisted_at": "2026-11-26T12:11:33.906Z"
     },
     "rule-9708": {
       "learning_id": "rule-9708",
@@ -315192,9 +315202,9 @@
       "title": "Technical Construction Intelligence: iliyami-macsai-learnings Core Invariants",
       "repository": "iliyami-macsai-learnings",
       "source_version": "HEAD",
-      "content_hash": "03d2106dbef7a8d834283257702ca64023516277af69af552e34cd231b837f91",
+      "content_hash": "d98a96d16bb198b0591f0626b5f57da1c8d12d5b3ea4fdad561e95c8425dea90",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:57:55.716Z"
+      "persisted_at": "2026-11-26T12:11:41.026Z"
     },
     "rule-9709": {
       "learning_id": "rule-9709",
@@ -354515,6 +354525,70 @@
       "content_hash": "974a95bb851ad45a15c6424d1c5a36dcfe2255ab9a2a7690ed88c3c3f47f7f52",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T11:49:38.575Z"
+    },
+    "rule-10670": {
+      "learning_id": "rule-10670",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10670,
+      "title": "prevent Runner inventory refresh from blocking project onboarding",
+      "source_url": "https://github.com/yyjeqhc/webcodex",
+      "source_version": "d9327074",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:11:29.003Z"
+    },
+    "candidate_directive-prevent-runner-inventory-refresh-from-blocking-project-onboarding": {
+      "item_id": "candidate_directive-prevent-runner-inventory-refresh-from-blocking-project-onboarding",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HQV5-prevent-runner-inventory-refresh-from-blocking-project-onboarding.md",
+      "title": "prevent Runner inventory refresh from blocking project onboarding",
+      "repository": "yyjeqhc/webcodex",
+      "source_version": "d9327074",
+      "content_hash": "d077cd0dd60671259f8c32a480443d781399929268367ea9eecab6b5f88edfda",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:11:29.734Z"
+    },
+    "rule-10671": {
+      "learning_id": "rule-10671",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10671,
+      "title": "#262: show download and upload speed in the menu bar",
+      "source_url": "https://github.com/iliyami/MacSai",
+      "source_version": "8aa34cc8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:11:32.972Z"
+    },
+    "candidate_directive-262-show-download-and-upload-speed-in-the-menu-bar": {
+      "item_id": "candidate_directive-262-show-download-and-upload-speed-in-the-menu-bar",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HZCS-262-show-download-and-upload-speed-in-the-menu-bar.md",
+      "title": "#262: show download and upload speed in the menu bar",
+      "repository": "iliyami-macsai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ac00002062f1dca6b505cf2a2ef7d35dac6f78f25e5a302ce4fbae961313b5b2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:11:40.736Z"
+    },
+    "candidate_directive-projects-prevent-runner-inventory-refresh-from-blocking-project-onboarding": {
+      "item_id": "candidate_directive-projects-prevent-runner-inventory-refresh-from-blocking-project-onboarding",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HXSA-projects-prevent-runner-inventory-refresh-from-blocking-project-onboarding.md",
+      "title": "projects): prevent Runner inventory refresh from blocking project onboarding",
+      "repository": "yyjeqhc-webcodex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "44703856ed2ce1973bbde6422637e065f6cb2b10ab76bc3787d80f97dc478954",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:11:38.703Z"
     }
   },
   "ai-builder-brain": {

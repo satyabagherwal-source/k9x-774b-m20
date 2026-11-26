@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T12:02:05.841Z",
-    "lastVerified": "2026-11-26T12:02:05.841Z",
+    "lastChecked": "2026-11-26T12:11:37.934Z",
+    "lastVerified": "2026-11-26T12:11:37.934Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T11:29:05.357Z",
+    "lastChecked": "2026-11-26T12:11:37.923Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T11:29:05.357Z"
+    "lastVerified": "2026-11-26T12:11:37.923Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -987,8 +987,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T06:52:28.309Z",
-    "lastVerified": "2026-11-26T06:52:28.309Z",
+    "lastChecked": "2026-11-26T12:11:33.113Z",
+    "lastVerified": "2026-11-26T12:11:33.113Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -1484,12 +1484,12 @@
     "officialUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T19:01:33.322Z",
-    "lastVerified": "2026-11-22T19:01:33.322Z",
+    "lastChecked": "2026-11-26T12:11:25.507Z",
+    "lastVerified": "2026-11-26T12:11:25.507Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "d2729c573a0a76cecbe2ec0963fe956160b27eb28bc2ea3909934401b636de3d",
+    "contentHash": "80455e28bc434a076ec63b671cd59cb21d310eba3778076f44d45e45ceaaef93",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2536,12 +2536,12 @@
     "revisionIdentifier": "fc6d0e45"
   },
   "authzed-spicedb": {
-    "name": "authzed/spicedb",
+    "name": "spicedb",
     "officialUrl": "https://github.com/authzed/spicedb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T11:51:18.187Z",
-    "lastVerified": "2026-11-25T11:51:18.187Z",
+    "lastChecked": "2026-11-26T12:11:30.922Z",
+    "lastVerified": "2026-11-26T12:11:30.922Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-authzed-spicedb",
@@ -2550,7 +2550,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9596a364"
   },
   "infiniflow-infinity": {
     "name": "infiniflow/infinity",
@@ -6548,9 +6549,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-25T10:45:38.301Z",
+    "lastChecked": "2026-11-26T12:11:35.593Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-25T10:45:38.301Z"
+    "lastVerified": "2026-11-26T12:11:35.593Z"
   },
   "graykode-abtop": {
     "name": "abtop",
@@ -9260,14 +9261,14 @@
     "officialUrl": "https://github.com/yyjeqhc/webcodex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T04:31:04.752Z",
-    "lastVerified": "2026-11-25T04:31:04.752Z",
+    "lastChecked": "2026-11-26T12:11:27.637Z",
+    "lastVerified": "2026-11-26T12:11:27.637Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yyjeqhc-webcodex",
-    "contentHash": "c4cacd3ddc16d318fc5f5396ce0edee873ff670fb37af9c167b54dd30439d5ca",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "f8373b4b22493b945dede9930e9ef1a5e224528671b2ed218fa2cd5e1f5a2034",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12315,22 +12316,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "iliyami-macsai": {
-    "name": "MacSai",
+    "name": "iliyami/MacSai",
     "officialUrl": "https://github.com/iliyami/MacSai",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-24T01:37:55.862Z",
-    "lastVerified": "2026-11-24T01:37:55.862Z",
+    "lastChecked": "2026-11-26T12:11:31.714Z",
+    "lastVerified": "2026-11-26T12:11:31.714Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "4cf2d4de4b38558d529b5ea50ae6f84e44979df9bb8988ed6ffa9a9238d50a4c",
+    "contentHash": "6591ad9cb7f29b26462a658339785ca23b1b3efcec79705382ccf06795c9a5b8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5891a8ce"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "faker-js-faker": {
     "name": "faker-js/faker",
