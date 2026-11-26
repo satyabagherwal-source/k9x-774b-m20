@@ -13531,3 +13531,6 @@
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T19:16:48.335Z` | `hf-kandinskylab-kandinsky-imagesr-2.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-95F35A51` [Domain D] | Yes (`a1e03bfc...`) |
 | `CYCLE-20261126-ZMSQ` | `2026-11-26T19:25:18.506Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`a48ee5fd...`) |
 | `CYCLE-20261126-ZT5G` | `2026-11-26T19:25:26.740Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10763` | Yes (`8bdd40c8...`) |
+| `CYCLE-20261126-ETIH` | `2026-11-26T19:37:07.049Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`3f8e4e8b...`) |
+| `CYCLE-20261126-F2D1` | `2026-11-26T19:37:18.517Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10764` | Yes (`9a84341c...`) |
+| `CYCLE-20261126-F5WZ` | `2026-11-26T19:37:23.123Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10765` | Yes (`d6129c26...`) |

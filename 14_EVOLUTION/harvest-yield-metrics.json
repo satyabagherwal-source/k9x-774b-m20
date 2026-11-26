@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T19:25:26.764Z",
-  "total_cycles_completed": 12843,
-  "total_learnings_persisted": 12843,
-  "total_rules_promoted": 11669,
+  "last_updated": "2026-11-26T19:37:23.141Z",
+  "total_cycles_completed": 12846,
+  "total_learnings_persisted": 12846,
+  "total_rules_promoted": 11671,
   "history": [
-    {
-      "timestamp": "2026-11-26T09:47:57.858Z",
-      "repository": "TypeWhisper/typewhisper-mac",
-      "learningId": "learn-github-typewhisper-typewhisper-mac",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T09:48:00.108Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T09:52:50.315Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T10:08:14.751Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T19:25:26.764Z",
       "repository": "openreplay/openreplay",
       "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T19:37:07.066Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T19:37:18.546Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T19:37:23.141Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

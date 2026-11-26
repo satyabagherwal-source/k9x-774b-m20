@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T21:47:15.593Z",
+  "timestamp": "2026-11-26T19:37:28.302Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-databendlabs-databend-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [databendlabs-databend-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T21:47:15.593Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T19:37:28.302Z`  
 > **Learning ID**: `LEARN-EVO-databendlabs-databend-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from databendlabs-databend-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `77137bc2`  
+> **Source Version**: `f1fb8936`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T21:47:11.185Z  
+> **Timestamp**: 2026-11-26T19:37:21.924Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T21:47:10.993Z  
+> **Harvest Timestamp**: 2026-11-26T19:37:21.918Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9501 stars
+- **Stars / Engagement**: 9509 stars
 
 ---
 
@@ -1224,11 +1224,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21146** (2026-11-20): **chore(meta): use server v260629.11.0 and client v260205.13.7**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Use Meta server and test harness `v260629.11.0` with maintenance client `v260205.13.7`. Both resolve crates.io OpenRaft `0.10.1`; the server no longer needs a Git source for OpenRaft. Keep the runtime bridge between the two Meta sources. Server-side credentials import `databend_meta::Secret` without a direct `databend-meta-raft-config` dependency. The semaphore codec uses `codeq 0.6.3` with the same wire format. Databend’s separate Hickory dependencies are outside this change.  The maintenance client retains the `1.2.770` minimum Meta server version. Keep `watch_on_leader()` until all watch-serving endpoints have upgraded through normal rollout and a deployed probe confirms stale-stream closure, reconnect to the new leader, and resumed updates.  Validation: Clippy and 111 focused tests passed for query config, Meta CLI config, control, store, cache, and semaphore. The `metactl` Raft TLS suite also passed locally, including follower reads, snapshot catch-up, and leader transfer.  <!-- x-pr-ship target=main old-base-oid=a85e50302ceeb3fd46c3582409745f0d551a0eee predecessor=none -->  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [x] Breaking Change (fix or feature that could cause ex
+- **Issue #21241** (2026-11-26): **fix: query: read the RESULT_SCAN cache key of HTTP sessions from meta**
+  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### fix: query: read the RESULT_SCAN cache key of HTTP sessions from meta # Summary  For an HTTP session, `RESULT_SCAN` now uses the result cache key that the server recorded for the last query, instead of the copy in the session state that the client sends back.  # Details  - When an HTTP query has a result cache key, `HttpQuery` records it in   meta at `_result_scan_owner/{tenant}/{user}/{query_id}`, with   `query_result_cache_ttl_secs` as its TTL, before the response that   carries the key. The tenant and user are the authenticated ones that   `HttpQuery` already uses for query ownership. Because the user is   part of the key, a user reads back only the keys of their own   queries.  - `HttpSessionConf::restore()` reads the record for the last query id   only when the client's `last_query_result_cache_key` is not empty,   so a session that does not use the result cache makes no extra meta   read. The content of that field is no longer used. A failed read or   write is logged, and `RESULT_SCAN` then reports that no cache key is   found.  - Each HTTP query with a result cache key costs one meta write. The   result cache is off by default.  - The field is still sent, so nodes of older versions keep working   during a rolling upgrade. A `RESULT_SCAN` on a new node of a query   that ran on an old node finds no record, and reports that no cache   key is found.  ##### 
 
-- **Issue #21141** (2026-11-20): **fix(query): probe the partition built in each hash join spill round**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The legacy hash join can silently return wrong results when it spills. CI hit this in [`linux / sqllogic / cluster (tpcds, 4c)`](https://github.com/databendlabs/databend/actions/runs/44673294220/job/136092536425): TPC-DS Q69 in `tpcds_spill_3.test` returned one extra row. Correct runs in the same job had identical row counts for every operator up to the `NOT EXISTS` left mark join on `web_sales`. That join's output differed on one node, and on that node the join spilled into 16 rounds.  **Root cause.** Spilled partitions are restored one per round. At the end of a round, the last probe processor releases the build side (`continue_build_watcher.send(true)`) and only afterwards reads the partition to restore from `HashJoinState::partition_id`. Once the build side finishes the next round, its `finalize_done` already stores the partition of the round after that in the same slot. A probe thread delayed between the release and the read (for example, preempted for about the 1 ms a small round takes) restores the following partition. It probes that partition against the wrong table, and its buffered rows of both partitions are never joined:  - inner and semi joins lose rows; - `NOT EXISTS` / left mark joins return extra rows; - no error is raised.  This has existed since the round protocol was introduced. It affects every join that runs on the legacy implementatio
+- **Issue #21239** (2026-11-26): **fix: query: update the matching entry in update_query_ids_results**
+  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### fix: query: update the matching entry in update_query_ids_results # Summary  `SessionContext::update_query_ids_results()` now writes the new result cache key into the entry whose query id matches, instead of into the entry at the mirrored position.  # Details  - The loop took its index from `iter().rev().enumerate()`, an offset   from the end, and used it to index the list from the front. In a list   of more than one entry, updating the k-th entry from the end replaced   the k-th entry from the front with the updated query id: another   query's entry was lost, and the matching entry kept its old key.  - No current caller is known to reach this. Every update with `Some`   is for a query id that is not in the list yet, so it is appended, and   an update with `None` never writes.  - The function now finds the entry with `rposition()`. An update with   `None` still keeps a key that is already set.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue)  ## AI assistance  - AI usage: An AI coding agent generated code and wrote tests; I reviewed and confirmed every line before committing it. - Responsible human: @drmingdrmer - [x] The responsible human has read every line of this diff and can explain each change  ## Related Issues  <!-- Reviewable:sta
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1245,908 +1245,1698 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f3fe9792` (2026-11-20)
-**Commit Message**: fix(query): read spilled byte columns with the writer's arrow types (#21053)
+### Incident Patch 1: `80519243` (2026-11-26)
+**Commit Message**: fix(query): use one conversion plan for CAST and TRY_CAST (#21203)
 
-* fix(query): read spilled byte columns with the writer's arrow types
+* feat(query): record how overloads take nullable arguments
 
-Spill files are written with LargeBinary/Utf8View byte columns, but
-SpillsDataReader built its field levels from the row group's parquet
-schema without the footer's embedded arrow schema, so byte columns were
-decoded as Binary/Utf8 with i32 offsets. A row group is decoded as one
-batch, so a byte column above 2 GiB failed with "index overflow decoding
-byte array".
+A call checked for non-nullable arguments may get nullable ones later,
+e.g. when an outer join makes a column nullable. Record, at registration,
+which overload takes them instead of searching all overloads again.
 
-Pass the arrow schema derived from the reader's data schema, the same
-conversion the writer uses, as the decoding hint.
+- NullableInput tells the variant of a builtin overload (passthrough,
+  combine or null-aware), or the factories that create the function for
+  nullable arguments: a passthrough factory, registered by
+  register_passthrough_nullable_factory, or null-aware ones.
+- The register_passthrough_nullable_* and register_combine_nullable_*
+  helpers and the builders with passthrough_nullable record their
+  variants. register_nullable_variants pairs each builtin with the
+  variant that takes its arguments nullable, and panics on an overload,
+  variant or name it cannot pair.
+- check_nullable_arguments checks a call again for nullable arguments
+  through its recorded overloads.
 
-* fix(query): name spill read hint fields after the file's columns
+* feat(query): declare the nullable variants of and, or, is_true, concat_ws, tuple get and the decimal casts
 
-Parquet matches hint fields by name. The writer names top-level columns after the block (col_N), while callers pass their own data schema (for example agg_0/group_0, or 0/1 for partial top-n), so the hint failed with 'incompatible arrow schema'. Take the top-level names from the file and keep the types inferred from the data schema.
+- and, or and is_true register their three-valued variants, and
+  conca
 
-**File**: `src/query/service/src/spillers/async_buffer.rs` (modified, +211/-6)
+**File**: `src/query/expression/src/auto_cast_rules.rs` (added, +195/-0)
 ```diff
-@@ -25,6 +25,8 @@ use std::sync::atomic::Ordering;
- use std::time::Duration;
- use std::time::Instant;
- 
-+use arrow_array::RecordBatch;
-+use arrow_schema::Fields;
- use arrow_schema::Schema;
- use bytes::Bytes;
- use bytes::BytesMut;
-@@ -583,10 +585,23 @@ impl SpillsDataReader {
-             ));
-         }
- 
-+        // Read back the arrow types the writer used. Without them, byte columns are
-+        // inferred as Binary/Utf8, whose i32 offsets overflow once a column of the
-+        // row group, which is decoded as one batch, holds more than 2 GiB.
-+        // Hint fields must carry the names in the file, which the writer takes
-+        // from the block rather than from `data_schema`.
-+        let schema_descr = row_groups[0].schema_descr();
-+        let arrow_schema = Schema::from(infer_table_schema(&data_schema)?.as_ref());
-+        let hint = arrow_schema
-+            .fields()
+@@ -0,0 +1,195 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//! The rules of automatic casts that hold across functions.
++//!
++//! Type checking casts an argument to the type a function overload takes when a rule allows it.
++//! The rules here are shared by many functions, and planner and storage code rely on the casts
++//! they allow; which rules a function uses is decided where the function is registered.
++//! [`decimal_auto_cast`] is the rule for decimals, whose sizes a list of type pairs cannot hold.
++
++use crate::types::ALL_INTEGER_TYPES;
++use crate::types::ALL_NUMERICS_TYPES;
++use crate::types::DataType;
++use crate::types::Decimal;
++use crate::types::NumberDataType;
++use crate::types::i256;
++
++/// Whether a decimal rule casts `src` to `dest` automatically, for any function: a string or an
++/// integer to a decimal that holds it, a decimal to a wider decimal, and a decimal to Float64.
++pub fn decimal_auto_cast(src: &DataType, dest: &DataType) -> bool {
++    match (src, dest) {
++        (DataType::String, DataType::Decimal(_)) => true,
++        (DataType::Decimal(x), DataType::Decimal(y)) => {
++            x.scale() <= y.scale()
++                && (x.leading_digits() <= y.leading_digits()
++                    || y.precision() == i256::MAX_PRECISION)
++        }
++        (DataType::Number(n), DataType::Decimal(d)) if !n.is_float() => {
++            let properties = n.get_decimal_properties().unwrap();
++            properties.scale() <= d.scale()
++                && properties.precision() - properties.scale() <= d.leading_digits()
++        }
++        // Only to Float64, otherwise `sqrt(1234.56789)` would have the signature
++        // `sqrt(1234.56789::Float32)`.
++        (DataType::Decimal(_), DataType::Number(n)) => n.is_float64(),
++        _ => false,
++    }
++}
++
++/// Whether an automatic cast from `src` to `dest` is a `TRY_CAST`: a Variant extracts a value
++/// with [`cast_from_variant_rules`], and a value of another JSON type becomes NULL.
++pub fn is_auto_try_cast(src: &DataType, dest: &DataType) -> bool {
++    src.remove_nullable() == DataType::Variant
++        && dest.is_nullable()
++        && is_variant_auto_cast_target(dest)
++}
++
++/// The types that a Variant extracts automatically, as NULL for a value of another JSON type.
++const VARIANT_AUTO_CAST_TARGETS: &[DataType] = &[
++    DataType::Boolean,
++    DataType::Date,
++    DataType::Timestamp,
++    DataType::String,
++    DataType::Number(NumberDataType::UInt8),
++    DataType::Number(NumberDataType::UInt16),
++    DataType::Number(NumberDataType::UInt32),
++    DataType::Number(NumberDataType::UInt64),
++    DataType::Number(NumberDataType::Int8),
++    DataType::Number(NumberDataType::Int16),
++    DataType::Number(NumberDataType::Int32),
++    DataType::Number(NumberDataType::Int64),
++    DataType::Number(NumberDataType::Float32),
++    DataType::Number(NumberDataType::Float64),
++];
++
++/// Whether [`cast_from_variant_rules`] cast a Variant to `dest`, nullable or not.
++pub fn is_variant_auto_cast_target(dest: &DataType) -> bool {
++    VARIANT_AUTO_CAST_TARGETS.contains(&dest.remove_nullable())
++}
++
++/// The cast rules for any situation, including comparison functions, joins, etc. Among numbers,
++/// they are the lossless casts of [`NumberDataType::can_lossless_cast_to`], and the lossy casts
++/// `UInt64 -> Int64`, `UInt64 -> Float64` and `Int64 -> Float64`. Through the lossy casts,
++/// comparing a `UInt64` with an `Int64` casts to `Int64`, unlike the lossless common types of
++/// [`crate::conversion::common_super_type_with_conversion`].
++pub fn general_cast_rules() -> Vec<(DataType, DataType)> {
++    let mut rules = vec![
++        (DataType::String, DataType::Binary),
++        (DataType::String, DataType::Timestamp),
++        (DataType::String, DataType::TimestampTz),
++        (DataType::String, DataType::Date),
++        (DataType::String, DataType::Interval),
++        (DataType::String, DataType::Boolean),
++        (DataType::Date, DataType::Timestamp),
++    ];
++    let lossless = ALL_NUMERICS_TYPES.iter().flat_map(|src| {
++        ALL_NUMERICS_TYPES
 +            .iter()
-+            .zip(schema_descr.root_schema().get_fields())
-+            .map(|(field, column)| field.as_ref().clone().with_name(column.name()))
-+            .collect::<Vec<_>>();
-         let field_levels = parquet_to_arrow_field_levels(
--            row_groups[0].schema_descr(),
-+            schema_descr,
-             ProjectionMask::all(),
--            None,
-+            Some(&Fields::from(hint)),
-         )?;
- 
-         let (tx, rx) = async_channel::bounded(1);
-@@ -613,6 +628,16 @@ impl SpillsDataReader {
-     }
- 
-     pub fn read(&mut self) -> Result<Option<DataBlock>> {
-+        let Some(batch) = self.read_record_batch()? else {
-+            return Ok(None);
-+        };
-+        Ok(Some(DataBlock::from_record_batch_keep_null_const(
-+            &self.data_schema,
-+            &batch,
-+        )?))
-+    }
++            .filter(move |dest| src != *dest && src.can_lossless_cast_to(**dest))
++            .map(|dest| (*src, *dest))
++    });
++    let lossy = [
++        (NumberDataType::UInt64, NumberDataType::Int64),
++        (NumberDataType::UInt64, NumberDataType::Float64),
++        (NumberDataType::Int64, NumberDataType::Float64),
++    
+```
+
+**File**: `src/query/expression/src/cast_plan.rs` (added, +498/-0)
+```diff
+@@ -0,0 +1,498 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+    fn read_record_batch(&mut self) -> Result<Option<RecordBatch>> {
-         let start = Instant::now();
- 
-         let fetched = match self.receiver.recv_blocking() {
-@@ -641,10 +666,7 @@ impl SpillsDataReader {
-         };
-         debug_assert!(reader.next().is_none());
-         record_read_profile(self.target, start.elapsed(), fetched.read_bytes);
--        Ok(Some(DataBlock::from_record_batch_keep_null_const(
--            &self.data_schema,
--            &batch,
--        )?))
-+        Ok(Some(batch))
++//! The steps that a cast takes.
++//!
++//! A cast does not map to one function: it may take no function (`NULL`, nullability, empty
++//! containers), one function, a chain of casts, or a cast for each nested value. [`CastPlan`]
++//! records these steps; the evaluator runs them and the constant folder derives their domain.
++//!
++//! The plan of `TRY_CAST` is the plan of `CAST` to the nullable destination. What happens with
++//! a row that fails is decided where the plan runs: `CAST` reports an error, `TRY_CAST` turns
++//! the row into NULL at the nearest nullable destination. A function only provides the
++//! conversion of one step.
++//!
++//! A step that converts a value runs the function overload registered for its source and
++//! destination types, and its domain is the domain of that function. Function overload
++//! resolution does not take part: a cast without a registered function or chain has no plan.
++
++use std::fmt;
++use std::sync::Arc;
++
++use crate::FunctionRegistry;
++use crate::NullableInput;
++use crate::Scalar;
++use crate::function::Function;
++use crate::function::FunctionID;
++use crate::type_check::Substitution;
++use crate::types::DataType;
++use crate::types::NumberScalar;
++use crate::types::VectorDataType;
++use crate::types::decimal::DecimalSize;
++
++/// How a cast from `src_type` to `dest_type` runs.
++#[derive(Clone, Debug)]
++pub struct CastPlan {
++    pub src_type: DataType,
++    pub dest_type: DataType,
++    pub step: CastStep,
++}
++
++#[derive(Clone, Debug)]
++pub enum CastStep {
++    /// The value already has the layout of the destination.
++    Identity,
++    /// `NULL` to any type: NULL for a nullable destination, an error otherwise.
++    Null,
++    /// A cast function converts the value: `call` runs it on the value of the source, and
++    /// `value_call` on a non-NULL value, the same call for a non-nullable source. The function
++    /// may return NULL for some non-NULL values, e.g. a JSON null cast from Variant, which
++    /// `value_call` returns a nullable type for; see [`CastPlan::rejects_null`].
++    Function {
++        call: Box<CastCall>,
++        value_call: Box<CastCall>,
++    },
++    /// Casts through intermediate types, one cast after another.
++    Chain(Vec<CastPlan>),
++    /// `T1 NULL -> T2 NULL`.
++    Nullable(Box<CastPlan>),
++    /// `T1 NULL -> T2`: a NULL is an error.
++    FromNullable(Box<CastPlan>),
++    /// `T1 -> T2 NULL`.
++    ToNullable(Box<CastPlan>),
++    /// An empty array or map to an array or map, as the destination is: `[]` or `{}`.
++    Empty,
++    /// Casts the elements of each array, or the key-value tuples of each map, as the destination
++    /// is.
++    Elements(Box<CastPlan>),
++    /// Casts each field.
++    Tuple(Vec<CastPlan>),
++    /// Casts the elements of each JSON array; a value that is not an array has none.
++    ///
++    /// Known issue: so a value that is not an array becomes `[]`, for `TRY_CAST` too, which
++    /// follows `CAST` here instead of returning NULL. Whether NULL suits better is open; the
++    /// result of `CAST` is kept as before.
++    VariantToArray(Box<CastPlan>),
++    /// Casts the values of each JSON object; a value that is not an object has none, and
++    /// becomes `{}` as in [`CastStep::VariantToArray`].
++    VariantToMap(Box<CastPlan>),
++    /// Converts a String, Variant or numeric Array value to a vector.
++    ToVector,
++}
++
++/// The function overload that a cast step runs, on the value that the step converts.
++#[derive(Clone, Debug)]
++pub struct CastCall {
++    pub id: FunctionID,
++    pub function: Arc<Function>,
++    pub generics: Vec<DataType>,
++    pub return_type: DataType,
++}
++
++/// A registered overload of a cast function. A factory is instantiated for the types of each
++/// step, e.g. with the precision and scale of the destination decimal.
++#[derive(Clone, Copy, Debug)]
++pub enum CastOverload {
++    Builtin(usize),
++    Factory(usize),
++}
++
++/// How a registered cast converts a value of its source type to its destination type.
++#[derive(Clone, Debug)]
++pub enum RegisteredCast {
++    /// Runs a function.
++    Function(CastFunction),
++    /// Converts to `via` first, then from `via` to the destination.
++    Chain { via: DataType },
++}
++
++/// The function that a cast step runs.
++#[derive(Clone, Debug)]
++pub struct CastFunction {
++    pub name: String,
++    /// The overload for a non-NULL argument.
++    
+```
+
+**File**: `src/query/expression/src/constant_folder.rs` (modified, +196/-210)
+```diff
+@@ -136,47 +136,6 @@ impl<'e, Index: ColumnIndex> FunctionNode<'e, Index> {
+             FunctionNode::Owned(call) => Cow::Owned(Expr::FunctionCall(call)),
+         }
      }
+-
+-    fn finish(self, args: impl IntoIterator<Item = Expr<Index>>) -> Expr<Index> {
+-        let args = args.into_iter().collect();
+-        match self {
+-            FunctionNode::Borrowed { call, .. } => Expr::FunctionCall(FunctionCall {
+-                span: call.span,
+-                id: call.id.clone(),
+-                function: call.function.clone(),
+-                generics: call.generics.clone(),
+-                args,
+-                return_type: call.return_type.clone(),
+-            }),
+-            FunctionNode::Owned(mut call) => {
+-                call.args = args;
+-                Expr::FunctionCall(call)
+-            }
+-        }
+-    }
+-
+-    fn borrowed_expr(&self) -> Option<&'e Expr<Index>> {
+-        match self {
+-            FunctionNode::Borrowed { expr, .. } => Some(expr),
+-            FunctionNode::Owned(_) => None,
+-        }
+-    }
+-
+-    fn finish_fold(self, args: Vec<FoldResult<'e, Index>>, changed: bool) -> FoldResult<'e, Index> {
+-        match (changed, self) {
+-            (false, FunctionNode::Borrowed { expr, .. }) => {
+-                FoldResult::Unchanged(Cow::Borrowed(expr))
+-            }
+-            (changed, node) => {
+-                let expr = node.finish(args.into_iter().map(FoldResult::into_expr));
+-                if changed {
+-                    FoldResult::Changed(expr)
+-                } else {
+-                    FoldResult::Unchanged(Cow::Owned(expr))
+-                }
+-            }
+-        }
+-    }
  }
  
-@@ -868,9 +890,22 @@ mod tests {
-     use std::sync::atomic::AtomicUsize;
-     use std::sync::atomic::Ordering;
- 
-+    use arrow_schema::DataType as ArrowDataType;
-     use databend_common_base::runtime::spawn;
-+    use databend_common_expression::Column;
-+    use databend_common_expression::DataField;
-+    use databend_common_expression::DataSchema;
-     use databend_common_expression::FromData;
-+    use databend_common_expression::block_debug::pretty_format_blocks;
-+    use databend_common_expression::types::BinaryType;
-+    use databend_common_expression::types::BooleanType;
-+    use databend_common_expression::types::DataType;
-+    use databend_common_expression::types::DecimalSize;
-     use databend_common_expression::types::Int32Type;
-+    use databend_common_expression::types::Int64Type;
-+    use databend_common_expression::types::NumberDataType;
-+    use databend_common_expression::types::StringType;
-+    use databend_common_expression::types::VariantType;
-     use opendal::Operator;
- 
-     use super::*;
-@@ -1081,6 +1116,176 @@ mod tests {
-         );
+ enum LambdaNode<'e, Index: ColumnIndex> {
+@@ -214,7 +173,57 @@ impl<'e, Index: ColumnIndex> LambdaNode<'e, Index> {
+             LambdaNode::Owned(call) => Cow::Owned(Expr::LambdaFunctionCall(call)),
+         }
      }
- 
-+    #[tokio::test(flavor = "multi_thread")]
-+    async fn test_spill_reads_byte_columns_with_writer_types() {
-+        let pool = SpillsBufferPool::create(1).unwrap();
-+        let operator = create_test_operator().unwrap();
-+        let path = "spill_byte_column_types".to_string();
++}
 +
-+        let variants = || {
-+            ["[1,\"a\"]", "{\"k\":null}"]
-+                .iter()
-+                .map(|json| jsonb::parse_value(json.as_bytes()).unwrap().to_vec())
-+                .collect::<Vec<_>>()
-+        };
-+        // The last column has the shape of an arg_max state: (has_value, key, value).
-+        let block = DataBlock::new_from_columns(vec![
-+            StringType::from_data(vec!["a", "bc"]),
-+            StringType::from_opt_data(vec![Some("d"), None]),
-+            BinaryType::from_data(vec![b"ef".as_slice(), b"".as_slice()]),
-+            VariantType::from_data(variants()),
-+            Column::Tuple(vec![
-+                BooleanType::from_data(vec![true, false]),
-+                Int64Type::from_data(vec![1, 2]),
-+                VariantType::from_data(variants()),
-+            ]),
-+            // Types whose hinted arrow type also differs from the parquet default.
-+            Column::random(
-+                &DataType::Decimal(DecimalSize::new(10, 2).unwrap()),
-+                2,
-+                None,
-+            ),
-+            Column::random(
-+                &DataType::Array(Box::new(DataType::Number(NumberDataType::Int32))),
-+                2,
-+                None,
-+            ),
-+            Column::random(
-+                &DataType::Nullable(Box::new(DataType::Tuple(vec![
-+                    Da
-```
-
----
-
-### Incident Patch 2: `532835a7` (2026-11-20)
-**Commit Message**: fix(query): reject out-of-range to_decimal parameters (#21128)
-
-* fix(query): reject out-of-range to_decimal parameters (#21107)
-
-* refactor(query): name the target type in decimal cast overflow errors
-
-The overflow errors of integer, float and decimal casts to decimal
-quoted the source line that raised them, which only told the cast
-paths apart and changed with every edit of the file. They now name the
-decimal type the value does not fit; a NaN or infinite float says so,
-under the same 'Decimal overflow' prefix that tests match. The evaluator
-already shows the function and the value.
-
-(cherry picked from commit 84479b615116d7602f1394992dfbe25d57da208a)
-
-* fix(query): reject NULL Decimal type arguments
-
-**File**: `src/query/expression/src/types/decimal.rs` (modified, +35/-19)
-```diff
-@@ -52,6 +52,7 @@ use super::AccessType;
- use super::AnyType;
- use super::DataType;
- use super::F64;
-+use super::NumberScalar;
- use super::NumberType;
- use super::SimpleDomain;
- use super::SimpleType;
-@@ -518,28 +519,43 @@ impl DecimalSize {
-     }
- 
-     pub fn new(precision: u8, scale: u8) -> Result<DecimalSize> {
--        let size = DecimalSize { precision, scale };
--        size.validate()?;
--
--        Ok(size)
-+        Self::from_checked_params(Some(precision), Some(scale))
++/// A function or lambda call whose arguments are folded one by one.
++trait CallNode<'e, Index: ColumnIndex>: Sized {
++    /// The call itself, when it is borrowed and can be kept as it is.
++    fn borrowed_expr(&self) -> Option<&'e Expr<Index>>;
++
++    /// The call over `args`.
++    fn finish(self, args: impl IntoIterator<Item = Expr<Index>>) -> Expr<Index>;
++
++    fn finish_fold(self, args: Vec<FoldResult<'e, Index>>, changed: bool) -> FoldResult<'e, Index> {
++        if !changed && let Some(expr) = self.borrowed_expr() {
++            return FoldResult::Unchanged(Cow::Borrowed(expr));
++        }
++        let expr = self.finish(args.into_iter().map(FoldResult::into_expr));
++        if changed {
++            FoldResult::Changed(expr)
++        } else {
++            FoldResult::Unchanged(Cow::Owned(expr))
++        }
 +    }
++}
 +
-+    pub fn try_from_scalars(precision: &Scalar, scale: &Scalar) -> Result<Self> {
-+        let to_u8 = |value: &Scalar, name: &str| -> Result<Option<u8>> {
-+            crate::with_integer_mapped_type!(|NUM_TYPE| match value.as_number() {
-+                Some(NumberScalar::NUM_TYPE(value)) => Ok(value.to_u8()),
-+                _ => Err(ErrorCode::IllegalDataType(format!(
-+                    "Decimal {name} must be an integer, got {}",
-+                    value.as_ref().infer_data_type()
-+                ))),
-+            })
-+        };
-+        Self::from_checked_params(to_u8(precision, "precision")?, to_u8(scale, "scale")?)
-     }
- 
-     pub fn validate(&self) -> Result<()> {
--        if self.precision < 1 || self.precision > i256::MAX_PRECISION {
--            return Err(ErrorCode::Overflow(format!(
--                "Decimal precision must be between 1 and {}",
--                i256::MAX_PRECISION
--            )));
--        }
--
--        if self.scale > self.precision {
--            return Err(ErrorCode::Overflow(format!(
--                "Decimal scale must be between 0 and precision {}",
--                self.precision
--            )));
--        }
--
--        Ok(())
-+        Self::new(self.precision, self.scale).map(|_| ())
-+    }
-+
-+    fn from_checked_params(precision: Option<u8>, scale: Option<u8>) -> Result<Self> {
-+        let precision = precision
-+            .filter(|p| (1..=i256::MAX_PRECISION).contains(p))
-+            .ok_or_else(|| {
-+                ErrorCode::Overflow(format!(
-+                    "Decimal precision must be between 1 and {}",
-+                    i256::MAX_PRECISION
-+                ))
-+            })?;
-+        let scale = scale
-+            .filter(|s| (0..=precision).contains(s))
-+            .ok_or_else(|| {
-+                ErrorCode::Overflow(format!(
-+                    "Decimal scale must be between 0 and precision {precision}"
-+                ))
-+            })?;
-+        Ok(Self::new_unchecked(precision, scale))
-     }
- 
-     pub fn default_128() -> DecimalSize {
-```
-
-**File**: `src/query/functions/src/scalars/decimal/src/cast.rs` (modified, +43/-19)
-```diff
-@@ -118,8 +118,7 @@ pub fn register_to_decimal(registry: &mut FunctionRegistry) {
-             _ => return None,
-         };
- 
--        let decimal_size =
--            DecimalSize::new(params[0].get_i64()? as _, params[1].get_i64()? as _).ok()?;
-+        let decimal_size = DecimalSize::try_from_scalars(&params[0], &params[1]).ok()?;
- 
-         let is_variant = from_type == DataType::Variant;
-         let return_type = if is_variant {
-@@ -565,7 +564,7 @@ where
-                 skip_inactive_with_builder_1_arg::<BooleanType, DecimalType<T>>(
-                     |a, out: &mut Vec<T>, ctx| {
-                         if a {
--                            ctx.set_error(out.len(), "Decimal overflow");
-+                            ctx.set_error(out.len(), DecimalOverflow(size));
-                             out.push(T::one());
-                         } else {
-                             out.push(T::zero());
-@@ -758,7 +757,7 @@ where
-             from, ctx,
-         )
-     } else {
--        let overflow = concat!("Decimal overflow at line : ", line!());
-+        let overflow = DecimalOverflow(size);
-         if let Value::Scalar(value) = &from {
-             let x = S::to_scalar_ref(value);
-             if let Some(x) = T::from_i128(x).and_then(|x| x.checked_mul(multiplier))
-@@ -797,13 +796,15 @@ where
- {
-     let f = |x: S::ScalarRef<'_>, builder: &mut Vec<T>, ctx: &mut EvalContext| {
-         let rounding_mode = ctx.func_ctx.rounding_mode;
--        match T::from_float(x.as_(), size, rounding_mode) {
-+        let x: f64 = x.as_();
-+        match T::from_float(x, size, rounding_mode) {
-             Some(x) => builder.push(x),
-+            None if !x.is_finite() => {
-+                ctx.set_error(builder.len(), NonFiniteDecimal(x));
-+                builder.push(T::one());
++impl<'e, Index: ColumnIndex> CallNode<'e, Index> for FunctionNode<'e, Index> {
++    fn finish(self, args: impl IntoIterator<Item = Expr<Index>>) -> Expr<Index> {
++        let args = args.into_iter().collect();
++        match self {
++            FunctionNode::Borrowed { call, .. } => Expr::FunctionCall(FunctionCall {
++                span: call.span,
++                id: call.id.clone(),
++                function: call.function.clone(),
++                generics: call.generics.clone(),
++                args,
++                return_type: call.return_type.clone(),
++            }),
++            FunctionNode::Owned(mut call) => {
++                call.args = args;
++                Expr::FunctionCall(call)
 +            }
-             None => {
--                ctx.set_error(
--                    builder.len(),
--                    concat!("Decimal overflow at line : ", line!()),
--                );
-+                ctx.set_error(builder.len(), DecimalOverflow(size));
-                 builder.push(T::one());
-             }
++        }
++    }
++
++    fn borrowed_expr(&self) -> Option<&'e Expr<Index>> {
++        match self {
++            FunctionNode::Borrowed { expr, .. } => Some(expr),
++            FunctionNode::Owned(_) => None,
++        }
++    }
++}
+ 
++impl<'e, Index: ColumnIndex> CallNode<'e, Index> for LambdaNode<'e, Index> {
+     fn finish(self, args: impl IntoIterator<Item = Expr<Index>>) -> Expr<Index> {
+         let args = args.into_iter().collect();
+         match self {
+@@ -239,22 +248,6 @@ impl<'e, Index: ColumnIndex> LambdaNode<'e, Index> {
+             LambdaNode::Owned(_) => None,
          }
-@@ -843,28 +844,29 @@ where
-     let min = W::min_for_precision(dest.precision());
-     let max = W::max_for_precision(dest.precision());
-     match dest.scale().cmp(&from.scale()) {
--        Ordering::Equal => {
--            rescale::<F, W, T>(value, ctx, move |x, _| (x >= min && x <= max).then_some(x))
+     }
+-
+-    fn finish_fold(self, args: Vec<FoldResult<'e, Index>>, changed: bool) -> FoldResult<'e, Index> {
+-        match (changed, self) {
+-            (false, LambdaNode::Borrowed { expr, .. }) => {
+-                FoldResult::Unchanged(Cow::Borrowed(expr))
+-            }
+-            (changed, node) => {
+-                let expr = node.finish(args.into_iter().map(FoldResult::into_expr));
+-                if changed {
+-                    FoldResult::Changed(expr)
+-                } else {
+-                    FoldResult::Unchanged(Cow::Owned(expr))
+-                }
+-            }
 -        }
-+        Ordering::Equal => rescale::<F, W, T>(value, ctx, dest, move |x, _| {
-+            (x >= min && x <= max).then_some(x)
-+        }),
-         Ordering::Greater => {
-             let factor = W::e(dest.scale() - from.scale());
--            rescale::<F, W, T>(value, ctx, move |x, _| {
-+            rescale::<F, W, T>(value, ctx, dest, move |x, _| {
-                 x.checked_mul(factor).filter(|x| *x >= min && *x <= max)
-             })
+-    }
+ }
+ 
+ enum CastNode<'e, Index: ColumnIndex> {
+@@ -449,8 +442,19 @@ impl<'a, Index: ColumnIndex> ConstantFolder<'a, Index> {
+ 
+     /// Fold expression by one step, specifically, by reducing expression by domain calculation and then
+     /// folding the function calls whose all arguments are constants.
+-    #[recursive::recursive]
+     
+```
+
+**File**: `src/query/expression/src/constant_folder/fold_rules.rs` (modified, +213/-274)
+```diff
+@@ -19,8 +19,6 @@
+ //! with another tree type can apply the same decision to its own nodes. Only
+ //! [`FoldRules::eval_constant`] takes an expression, which must be free of columns.
+ 
+-use databend_common_ast::Span;
+-
+ use super::monotonicity::calculate_monotonicity_domain;
+ use super::monotonicity::is_monotonic;
+ use crate::ColumnIndex;
+@@ -32,17 +30,19 @@ use crate::FunctionRegistry;
+ use crate::Scalar;
+ use crate::Value;
+ use crate::block::DataBlock;
++use crate::cast_plan::CastCall;
++use crate::cast_plan::CastPlan;
++use crate::cast_plan::CastStep;
++use crate::cast_plan::resolve_cast_plan;
+ use crate::evaluator::Evaluator;
+-use crate::expression::Cast;
+ use crate::expression::ColumnRef;
+-use crate::expression::Constant;
+ use crate::expression::Expr;
+ use crate::expression::ExprVisitor;
+ use crate::expression::FunctionCall;
+ use crate::expression::LambdaFunctionCall;
+ use crate::expression::visit_expr;
+ use crate::property::Domain;
+-use crate::type_check::resolve_cast_function;
++use crate::types::AnyType;
+ use crate::types::DataType;
+ use crate::types::boolean::BooleanDomain;
+ use crate::types::nullable::NullableDomain;
+@@ -62,299 +62,232 @@ impl FoldRules {
+     pub fn cast_domain(
+         func_ctx: &FunctionContext,
+         fn_registry: &FunctionRegistry,
+-        span: Span,
+         src_type: &DataType,
+         dest_type: &DataType,
+         is_try: bool,
+         domain: &Domain,
+     ) -> Option<Domain> {
+-        if is_try {
+-            Self::calculate_try_cast(func_ctx, fn_registry, span, src_type, dest_type, domain)
+-        } else {
+-            Self::calculate_cast(func_ctx, fn_registry, span, src_type, dest_type, domain)
+-        }
++        let plan = resolve_cast_plan(src_type, dest_type, fn_registry)?;
++        let (domain, may_fail) =
++            Self::cast_plan_domain(func_ctx, fn_registry, &plan, is_try, domain)?;
++        // The destination of `TRY_CAST` is nullable, so a failed row is NULL by now.
++        debug_assert!(!may_fail);
++        Some(domain)
+     }
+ 
+-    pub(super) fn calculate_cast(
++    /// Domain of the output of a cast plan, and whether a row may fail, which is only possible
++    /// for `TRY_CAST`. A failed row becomes NULL at the nearest nullable destination, as in
++    /// `Evaluator::run_cast_plan`. Returns `None` when the domain is unknown, or when a row of
++    /// `CAST` may fail.
++    fn cast_plan_domain(
+         func_ctx: &FunctionContext,
+         fn_registry: &FunctionRegistry,
+-        span: Span,
+-        src_type: &DataType,
+-        dest_type: &DataType,
++        plan: &CastPlan,
++        is_try: bool,
+         domain: &Domain,
+-    ) -> Option<Domain> {
+-        if src_type == dest_type {
+-            return Some(domain.clone());
+-        }
+-
+-        if let Some(call) = resolve_cast_function(span, false, src_type, dest_type, fn_registry)
+-            && let Some(new_domain) =
+-                Self::calculate_simple_cast(func_ctx, fn_registry, call, domain)
+-        {
+-            return new_domain;
+-        }
+-
+-        match (src_type, dest_type) {
+-            (DataType::Null, DataType::Nullable(_)) => Some(domain.clone()),
+-            (DataType::Nullable(inner_src_ty), DataType::Nullable(inner_dest_ty)) => {
+-                let domain = domain.as_nullable().unwrap();
+-                let value = match &domain.value {
+-                    Some(value) => Some(Box::new(Self::calculate_cast(
+-                        func_ctx,
+-                        fn_registry,
+-                        span,
+-                        inner_src_ty,
+-                        inner_dest_ty,
+-                        value,
+-                    )?)),
+-                    None => None,
+-                };
+-                Some(Domain::Nullable(NullableDomain {
+-                    has_null: domain.has_null,
+-                    value,
+-                }))
+-            }
+-            (_, DataType::Nullable(inner_dest_ty)) => Some(Domain::Nullable(NullableDomain {
+-                has_null: false,
+-                value: Some(Box::new(Self::calculate_cast(
+-                    func_ctx,
+-                    fn_registry,
+-                    span,
+-                    src_type,
+-                    inner_dest_ty,
+-                    domain,
+-                )?)),
+-            })),
++    ) -> Option<(Domain, bool)> {
++        let dest_type = &plan.dest_type;
++        let nested = |plan: &CastPlan, domain: &Domain| {
++            Self::cast_plan_domain(func_ctx, fn_registry, plan, is_try, domain)
++        };
+ 
+-            (DataType::EmptyArray, DataType::Array(_)) => Some(domain.clone()),
+-            (DataType::Array(inner_src_ty), DataType::Array(inner_dest_ty)) => {
+-                let inner_domain = match domain.as_array().unwrap() {
+-                    Some(inner_domain) => Some(Box::new(Self::calculate_cast(
+-                        func_ctx,
+-                        fn_registry,
+-                        span,
+-                        inner_src_ty,
+-               
+```
+
+**File**: `src/query/expression/src/conversion.rs` (modified, +12/-15)
+```diff
+@@ -12,6 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use crate::auto_cast_rules::is_variant_auto_cast_target;
+ use crate::type_check::common_super_type;
+ use crate::types::DataType;
+ use crate::types::Decimal;
+@@ -126,12 +127,20 @@ pub fn classify_conversion(src: &DataType, dest: &DataType) -> ConversionClass {
+         (DataType::String, dest) if is_value_dependent_string_target(dest) => {
+             ConversionClass::ValueDependent
          }
-         Ordering::Less => {
-             let reduction = ScaleReduction::<W>::new(from.scale() - dest.scale(), dest.precision());
--            rescale::<F, W, T>(value, ctx, move |x, rounding_mode| {
-+            rescale::<F, W, T>(value, ctx, dest, move |x, rounding_mode| {
-                 reduction.reduce(x, rounding_mode)
-             })
-         }
+-        (DataType::Variant, dest) if is_variant_try_cast_target(dest) => ConversionClass::TryOnly,
++        (DataType::Variant, dest) if is_variant_auto_cast_target(dest) => ConversionClass::TryOnly,
+ 
+         _ => ConversionClass::Unsupported,
      }
  }
  
--// Rows the rescaling rejects do not fit the target precision.
-+// Rows the rescaling rejects do not fit `dest`.
- fn rescale<F, W, T>(
-     value: Value<DecimalType<F>>,
-     ctx: &mut EvalContext,
-+    dest: DecimalSize,
-     rescale: impl Fn(W, bool) -> Option<W> + Copy + Send + Sync,
- ) -> Value<DecimalType<T>>
- where
-@@ -879,16 +881,38 @@ where
-         ) {
-             Some(y) => builder.push(y.as_decimal::<T>()),
-             None => {
--                ctx.set_error(
--                    builder.len(),
--                    concat!("Decimal overflow at line : ", line!()),
--                );
-+                ctx.set_error(builder.len(), DecimalOverflow(dest));
-                 builder.push(T::one());
-             }
-         },
-     )(value, ctx)
++/// The common type of `left` and `right` for reasoning about equality, with how each side
++/// converts to it.
++///
++/// Known divergence: this is not always the type that a comparison casts to. The comparison
++/// functions resolve their arguments with their auto cast rules, which include lossy number
++/// casts. For `UInt64` and `Int64`, this returns `Decimal(20, 0)`, lossless on both sides,
++/// while `a = b` casts `a` to `Int64` and fails on `u64::MAX`. The rules are kept apart for now;
++/// `test_comparison_and_conversion_common_types_differ` records the difference.
+ pub fn common_super_type_with_conversion(
+     left: impl Into<DataType>,
+     right: impl Into<DataType>,
+@@ -208,10 +217,10 @@ fn common_type_for_conversion(left: DataType, right: DataType) -> Option<DataTyp
+                 (DataType::String, ty) if is_value_dependent_string_target(&ty) => Some(ty),
+                 (ty, DataType::String) if is_value_dependent_string_target(&ty) => Some(ty),
+ 
+-                (DataType::Variant, ty) if is_variant_try_cast_target(&ty) => {
++                (DataType::Variant, ty) if is_variant_auto_cast_target(&ty) => {
+                     Some(ty.wrap_nullable())
+                 }
+-                (ty, DataType::Variant) if is_variant_try_cast_target(&ty) => {
++                (ty, DataType::Variant) if is_variant_auto_cast_target(&ty) => {
+                     Some(ty.wrap_nullable())
+                 }
+ 
+@@ -331,18 +340,6 @@ fn is_value_dependent_string_target(ty: &DataType) -> bool {
+     }
  }
  
-+/// The error of a value that a decimal of `size` cannot hold. The evaluator
-+/// adds the function and its arguments to it, which show the value.
-+#[derive(Clone, Copy)]
-+struct DecimalOverflow(DecimalSize);
-+
-+impl std::fmt::Display for DecimalOverflow {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        write!(
-+            f,
-+            "Decimal overflow: the value does not fit {}",
-+            DataType::Decimal(self.0)
-+        )
-+    }
-+}
-+
-+/// The error of a NaN or infinite float cast to a decimal.
-+#[derive(Clone, Copy)]
-+struct NonFiniteDecimal(f64);
-+
-+impl std::fmt::Display for NonFiniteDecimal {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        write!(f, "Decimal overflow: {} has no decimal value", self.0)
-+    }
-+}
-+
- /// Drops `shift >= 1` fractional digits, truncating or rounding half away
- /// from zero, then checks the target range.
+-fn is_variant_try_cast_target(ty: &DataType) -> bool {
+-    match ty {
+-        DataType::Nullable(ty) => is_variant_try_cast_target(ty),
+-        DataType::Boolean
+-        | DataType::Date
+-        | DataType::Timestamp
+-        | DataType::String
+-        | DataType::Number(_) => true,
+-        _ => false,
+-    }
+-}
+-
+ fn is_type_safe_for_equality_inference(ty: &DataType) -> bool {
+     !matches!(
+         ty.remove_nullable(),
+```
+
+**File**: `src/query/expression/src/evaluator.rs` (modified, +696/-989)
+```diff
+@@ -12,7 +12,6 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-use std::collections::BTreeMap;
+ use std::collections::HashSet;
+ use std::ops::Not;
+ 
+@@ -30,20 +29,24 @@ use crate::BlockEntry;
+ use crate::Function;
+ use crate::FunctionContext;
+ use crate::FunctionEval;
++use crate::FunctionID;
+ use crate::FunctionRegistry;
+ use crate::LikePattern;
+ use crate::RemoteExpr;
+ use crate::ScalarRef;
+ use crate::SelectOp;
+ use crate::block::DataBlock;
++use crate::cast_plan::CastCall;
++use crate::cast_plan::CastPlan;
++use crate::cast_plan::CastStep;
++use crate::cast_plan::resolve_cast_plan;
+ use crate::expr::*;
+ use crate::expression::Expr;
+ use crate::function::EvalContext;
+ use crate::kernels::has_nested_decimal;
+ use crate::kernels::select_if_then_else;
+-use crate::type_check::check_cast_function;
+ use crate::type_check::format_function_argument_mismatch_hint;
+-use crate::type_check::resolve_cast_function;
++use crate::types::BinaryColumn;
+ use crate::types::BooleanType;
+ use crate::types::DataType;
+ use crate::types::DecimalColumn;
+@@ -56,12 +59,10 @@ use crate::types::ReturnType;
+ use crate::types::StringType;
+ use crate::types::ValueType;
+ use crate::types::VariantType;
+-use crate::types::VectorDataType;
+ use crate::types::VectorScalar;
+ use crate::types::any::AnyType;
+ use crate::types::array::ArrayColumn;
+ use crate::types::nullable::NullableColumn;
+-use crate::types::string::StringColumnBuilder;
+ use crate::utils::filter_helper::FilterHelpers;
+ use crate::utils::json_path_transform::PathStep;
+ use crate::utils::json_path_transform::replace_at_locations;
+@@ -124,9 +125,68 @@ fn and_validity(bitmap: Bitmap, validity: Option<&Bitmap>) -> Bitmap {
+ /// parent calls must accumulate instead of overwrite.
  ///
-```
-
-**File**: `src/query/functions/tests/it/scalars/cast.rs` (modified, +2/-0)
-```diff
-@@ -1267,6 +1267,8 @@ fn test_decimal_cast_precision_and_partial_errors() {
-     let columns = [("a", Int64Type::from_data(vec![-10, -9, 0, 9, 10]))];
-     run_ast(file, "CAST(a AS DECIMAL(1,0))", &columns);
-     run_ast(file, "TRY_CAST(a AS DECIMAL(1,0))", &columns);
-+    let columns = [("f", Float64Type::from_data(vec![1.5, f64::NAN]))];
-+    run_ast(file, "CAST(f AS DECIMAL(38,10))", &columns);
-     let columns = [("active", BooleanType::from_data(vec![false, true, false]))];
-     run_ast(
-         file,
-```
-
-**File**: `src/query/functions/tests/it/scalars/testdata/decimal_cast_precision.txt` (modified, +18/-10)
-```diff
-@@ -11,31 +11,31 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(10::Int64 AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(-10::Int64 AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(- CAST(10 AS Int64) AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(- CAST(10 AS Int64) AS Decimal(1, 0))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(9223372036854775807::Int64 AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(9223372036854775807)` in expr `CAST(CAST(9223372036854775807 AS Int64) AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(9223372036854775807)` in expr `CAST(CAST(9223372036854775807 AS Int64) AS Decimal(1, 0))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(18446744073709551615::UInt64 AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(18446744073709551615)` in expr `CAST(18446744073709551615 AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(18446744073709551615)` in expr `CAST(18446744073709551615 AS Decimal(1, 0))`
- 
- 
- 
-@@ -70,7 +70,7 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(TRUE AS DECIMAL(1,1))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow while evaluating function `to_decimal(1, 1)(true)` in expr `CAST(true AS Decimal(1, 1))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 1) while evaluating function `to_decimal(1, 1)(true)` in expr `CAST(true AS Decimal(1, 1))`
- 
- 
- 
-@@ -135,7 +135,7 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(a AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(a AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(a AS Decimal(1, 0))`
- 
- 
- 
-@@ -163,11 +163,19 @@ evaluation (internal):
- +--------+--------------------------------------------------------------------------------+
- 
- 
-+error: 
-+  --> SQL:1:1
-+  |
-+1 | CAST(f AS DECIMAL(38,10))
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: NaN has no decimal value while evaluating function `to_decimal(38, 10)(NaN)` in expr `CAST(f AS Decimal(38, 10))`
+ /// A length-1 source bitmap comes from a scalar subexpression (evaluated in
+-/// a one-row block, e.g. a constant cast in `run_simple_cast`); a scalar
++/// a one-row block); a scalar
+ /// error applies to every row, so it is broadcast to `num_rows` instead of
+ /// marking only row 0.
++/// Rows that failed in either bitmap; an unset bit is a failed row.
++fn and_failures(left: Option<Bitmap>, right: Option<Bitmap>) -> Option<Bitmap> {
++    match (left, right) {
++        (Some(left), Some(right)) => Some(&left & &right),
++        (left, right) => left.or(right),
++    }
++}
 +
-+
-+
- error: 
-   --> SQL:1:12
-   |
- 1 | if(active, CAST(10::Int64 AS DECIMAL(1,0)), NULL)
--  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(10 AS Int64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
-+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(10 AS Int64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
- 
- 
- 
-@@ -198,7 +206,7 @@ error:
-   --> SQL:1:12
-   |
- 1 | if(active, CAST(1e30::Float64 AS DECIMAL(1,0)), NULL)
--  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 805 while evaluating function `to_decimal(1, 0)(1000000000000000000000000000000)` in expr `CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
-+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(1000000000000000000000000000000)` in expr `CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
- 
- 
- 
-@@ -214,15 +222,15 @@ error:
-   --> SQL:1:12
-   |
- 1 | if(active, CAST(10::DE
-```
-
-**File**: `src/query/functions/tests/it/scalars/testdata/decimal_to_decimal_cast.txt` (modified, +10/-10)
-```diff
-@@ -67,15 +67,15 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(123.45::DECIMAL(5,2) AS DECIMAL(5,4))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 4)(123.45)` in expr `CAST(123.45 AS Decimal(5, 4))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 4) while evaluating function `to_decimal(5, 4)(123.45)` in expr `CAST(123.45 AS Decimal(5, 4))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(123::DECIMAL(3,0) AS DECIMAL(3,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(3, 2)(123)` in expr `CAST(CAST(123 AS Decimal(3, 0)) AS Decimal(3, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(3, 2) while evaluating function `to_decimal(3, 2)(123)` in expr `CAST(CAST(123 AS Decimal(3, 0)) AS Decimal(3, 2))`
- 
- 
- 
-@@ -449,23 +449,23 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(12345.67::DECIMAL(7,2) AS DECIMAL(5,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 2)(12345.67)` in expr `CAST(12345.67 AS Decimal(5, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 2) while evaluating function `to_decimal(5, 2)(12345.67)` in expr `CAST(12345.67 AS Decimal(5, 2))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(999.99::DECIMAL(5,2) AS DECIMAL(4,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(4, 2)(999.99)` in expr `CAST(999.99 AS Decimal(4, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(4, 2) while evaluating function `to_decimal(4, 2)(999.99)` in expr `CAST(999.99 AS Decimal(4, 2))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(99.9::DECIMAL(3,1) AS DECIMAL(2,1))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(2, 1)(99.9)` in expr `CAST(99.9 AS Decimal(2, 1))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(2, 1) while evaluating function `to_decimal(2, 1)(99.9)` in expr `CAST(99.9 AS Decimal(2, 1))`
- 
- 
- 
-@@ -482,23 +482,23 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(-123.45::DECIMAL(5,2) AS DECIMAL(4,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(4, 2)(-123.45)` in expr `CAST(- 123.45 AS Decimal(4, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(4, 2) while evaluating function `to_decimal(4, 2)(-123.45)` in expr `CAST(- 123.45 AS Decimal(4, 2))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(99.99::DECIMAL(4,2) AS DECIMAL(3,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(3, 2)(99.99)` in expr `CAST(99.99 AS Decimal(3, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(3, 2) while evaluating function `to_decimal(3, 2)(99.99)` in expr `CAST(99.99 AS Decimal(3, 2))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(9.99::DECIMAL(3,2) AS DECIMAL(2,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(2, 2)(9.99)` in expr `CAST(9.99 AS Decimal(2, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(2, 2) while evaluating function `to_decimal(2, 2)(9.99)` in expr `CAST(9.99 AS Decimal(2, 2))`
- 
- 
- 
-@@ -524,7 +524,7 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(12345678901234567890.123456789::DECIMAL(38,9) AS DECIMAL(18,4))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(18, 4)(12345678901234567890.123456789)` in expr `CAST(CAST(12345678901234567890.123456789 AS Decimal(38, 9)) AS Decimal(18, 4))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(18, 4) while evaluating function `to_decimal(18, 4)(12345678901234567890.123456789)` in expr `CAST(CAST(12345678901234567890.123456789 AS Decimal(38, 9)) AS Decimal(18, 4))`
- 
- 
- 
-@@ -650,7 +650,7 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(a AS DECIMAL(5,1))
--  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 1)(1234567.89)` in expr `CAST(a AS Decimal(5, 1))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 1) while evaluating function `to_decimal(5, 1)(1234567.89)` in expr `CAST(a AS Decimal(5, 1))`
- 
- 
- 
-```
-
-**File**: `src/query/sql/src/planner/semantic/type_check.rs` (modified, +2/-2)
-```diff
-@@ -52,8 +52,8 @@ use crate::planner::expression::UDFValidator;
- use crate::planner::expression::UdfValidationConfig;
- use crate::plans::DictGetFunctionArgument;
- 
--const DEFAULT_DECIMAL_PRECISION: i64 = 38;
--const DEFAULT_DECIMAL_SCALE: i64 = 0;
-+const DEFAULT_DECIMAL_PRECISION: u8 = 38;
-+const DEFAULT_DECIMAL_SCALE: u8 = 0;
- 
- mod adapter;
- mod aggregate;
-```
-
-**File**: `src/query/sql/src/planner/semantic/type_check/scalar_function.rs` (modified, +32/-44)
-```diff
-@@ -598,63 +598,51 @@ where A: TypeCheckAdapter
-                     }
-                 }
-             }
--        } else if (func_name.eq_ignore_ascii_case("to_number")
-+        } else if func_name.eq_ignore_ascii_case("to_number")
-             || func_name.eq_ignore_ascii_case("to_numeric")
-             || func_name.eq_ignore_ascii_case("to_decimal")
-             || func_name.eq_ignore_ascii_case("try_to_number")
-             || func_name.eq_ignore_ascii_case("try_to_numeric")
--            || func_name.eq_ignore_ascii_case("try_to_decimal"))
--            && params.is_empty()
-+            || func_name.eq_ignore_ascii_case("try_to_decimal")
-         {
--            if args.is_empty() || args.len() > 4 {
-+            if args.is_empty() || args.len() > 4 || (!params.is_empty() && params.len() != 2) {
-                 return Err(ErrorCode::SemanticError(format!(
-                     "Invalid arguments for `{func_name}`, get {} params and {} arguments",
-                     params.len(),
-                     args.len()
-                 )));
-             }
--            let arg_fn = |args: &[BoundScalar],
--                          index: usize,
--                          arg_name: &str,
--                          default: i64|
--             -> Result<i64> {
--                Ok(args
--                    .get(index)
--                    .map(|arg| match self.bound_constant_value(&arg.scalar, &arg.facts) {
--                        Some((value, _)) => Ok(value.get_i64()),
--                        None => Err(ErrorCode::SemanticError(format!(
--                            "Invalid arguments for `{func_name}`, {arg_name} is only allowed to be a constant"
--                        ))),
--                    })
--                    .transpose()?
--                    .flatten()
--                    .unwrap_or(default))
--            };
--
--            let (precision_index, scale_index) =
--                if args.len() > 1 && args[1].scalar.data_type().remove_nullable().is_string() {
--                    (2, 3)
--                } else {
--                    (1, 2)
-+            let size = if let [precision, scale] = params.as_slice() {
-+                DecimalSize::try_from_scalars(precision, scale)
++/// `validity` without the rows that `failed` unsets. A failed scalar fails every row.
++fn exclude_failures(validity: Option<Bitmap>, failed: Option<&Bitmap>) -> Option<Bitmap> {
++    let Some(failed) = failed else {
++        return validity;
++    };
++    match validity {
++        Some(validity) if failed.len() == 1 && validity.len() != 1 => {
++            if failed.get_bit(0) {
++                Some(validity)
 +            } else {
-+                let arg_fn = |index: usize, name: &str, default: u8| -> Result<Scalar> {
-+                    let Some(arg) = args.get(index) else {
-+                        return Ok(Scalar::Number(NumberScalar::UInt8(default)));
-+                    };
-+                    self.bound_constant_value(&arg.scalar, &arg.facts)
-+                        .map(|(value, _)| value)
-+                        .ok_or_else(|| ErrorCode::SemanticError(format!(
-+                            "Invalid arguments for `{func_name}`, {name} is only allowed to be a constant"
-+                        )))
-                 };
--            let precision = arg_fn(
--                &args,
--                precision_index,
--                "precision",
--                DEFAULT_DECIMAL_PRECISION,
--            )?;
--            let scale = arg_fn(&args, scale_index, "scale", DEFAULT_DECIMAL_SCALE)?;
--
--            if let Err(err) = DecimalSize::new(precision as u8, scale as u8) {
--                return Err(ErrorCode::SemanticError(format!(
--                    "Invalid arguments for `{func_name}`, {}",
--                    err,
--                )));
-+                let precision_index =
-+                    if args.len() > 1 && args[1].scalar.data_type().remove_nullable().is_string() {
-+                        2
-+                    } else {
-+                        1
-+                    };
-+                let precision = arg_fn(precision_index, "precision", DEFAULT_DECIMAL_PRECISION)?;
-+                let scale = arg_fn(precision_index + 1, "scale", DEFAULT_DECIMAL_SCALE)?;
-+                DecimalSize::try_from_scalars(&precision, &scale)
-+            };
-+            let size = size.map_err(|err| {
-+                ErrorCode::SemanticError(format!("Invalid arguments for `{func_name}`, {err}"))
-+            })?;
-+            if params.is_empty() {
-+                // Typed as literal params are, e.g. `to_decimal(10, 2)(x)`.
-+                params.push(Scalar::Number(NumberScalar::UInt8(size.precision())));
-+                params.push(Scalar::Number(NumberScalar::UInt8(size.scale())));
-             }
--
--            // Typed as literal params are, e.g. `to_decimal(10, 2)(x)`.
--            params.push(Scalar::Number(NumberScalar::UInt8(precision as _)));
--            params.push(Scalar::Number(NumberScalar::UInt8(scale as _)));
-         }
- 
-         let placeholders = args
++                Some(Bitmap::new_constant(false, validity.len()))
++            }
++        }
++        Some(validity) => Some(&validity & failed),
++        None => Some(failed.clone()),
++    }
++}
++
++/// A scalar function call whose arguments are evaluated.
++struct EvaluatedCall<'a> {
++    span: Span,
++    id: &'a FunctionID,
++    function: &'a Function,
++    generics: &'a [DataType],
++    args: Vec<Value<AnyType>>,
++    /// The rows that the call runs for, of which the rows in `validity` are active.
++    num_rows: usize,
++    validity: Option<Bitmap>,
++    /// Whether the call runs once per entry of a dictionary argument.
++    dictionary_eval: bool,
++}
++
++/// The validity of the single row of `value` that a scalar became, when `is_scalar`: every active
++/// row of `validity` uses the scalar, so it is active when any of them is.
++fn scalar_row_validity(validity: Option<Bitmap>, is_scalar: bool) -> Option<Bitmap> {
++    match validity {
++        Some(validity) if is_scalar => Some(Bitmap::new_constant(validity.true_count() > 0, 1)),
++        validity => validity,
++    }
++}
++
++/// The rows, given by `offsets`, that have a failed nested value.
++fn row_failures(offsets: &[u64], failed: Option<Bitmap>) -> Option<Bitmap> {
++    let failed = failed?;
++    let rows = offsets
++        .windows(2)
++        .map(|row| (row[0]..row[1]).all(|idx| failed.get_bit(idx as usize)))
++        .collect::<Bitmap>();
++    (rows.null_count() > 0).then_some(rows)
++}
++
+ fn merge_eval_errors(
+     target: &mut Option<(MutableBitmap, String)>,
+     source: Option<(MutableBitmap, String)>,
+@@ -301,19 +361,16 @@ impl<'a> Evaluator<'a> {
+                 let keep_encoded =
+                     keep_encoded && src_type.remove_nullable() == dest_type.remove_nullable();
+                 let value = self.partial_run(inner, validity.clone(), options, keep_encoded)?;
+-                if *is_try {
+-                    self.run_try_cast(*span, src_type, dest_type, value, &|| expr.sql_display())?
+-                } else {
+-                    self.run_cast(
+-                        *span,
+-                        src_type,
+-                        dest_type,
+-                        value,
+
 ```
 
-**File**: `tests/sqllogictests/suites/base/11_data_type/11_0006_data_type_decimal.test` (modified, +48/-0)
+**File**: `src/query/expression/src/filter/selector.rs` (modified, +10/-14)
 ```diff
-@@ -1348,6 +1348,54 @@ SELECT try_to_decimal(123456, 6, 0);
- ----
- 123456
+@@ -615,20 +615,16 @@ impl<'a> Selector<'a> {
+                 let mut eval_options = EvaluateOptions::new_for_select(selection);
+                 let value = self.evaluator.get_select_child(expr, &mut eval_options)?.0;
+                 let src_type = expr.data_type();
+-                let result = if *is_try {
+-                    self.evaluator
+-                        .run_try_cast(*span, src_type, dest_type, value, &|| expr.sql_display())?
+-                } else {
+-                    self.evaluator.run_cast(
+-                        *span,
+-                        src_type,
+-                        dest_type,
+-                        value,
+-                        None,
+-                        &|| expr.sql_display(),
+-                        &mut eval_options,
+-                    )?
+-                };
++                let result = self.evaluator.run_cast(
++                    *span,
++                    *is_try,
++                    src_type,
++                    dest_type,
++                    value,
++                    None,
++                    &|| expr.sql_display(),
++                    &mut eval_options,
++                )?;
+                 (result, dest_type.clone())
+             }
+             Expr::LambdaFunctionCall(LambdaFunctionCall {
+```
+
+**File**: `src/query/expression/src/function.rs` (modified, +335/-38)
+```diff
+@@ -42,6 +42,8 @@ use crate::ColumnIndex;
+ use crate::Expr;
+ use crate::FunctionDomain;
+ use crate::Scalar;
++use crate::cast_plan::RegisteredCast;
++use crate::cast_plan::resolve_registered_cast;
+ use crate::function_stat::DeriveStat;
+ use crate::function_stat::ScalarFunctionStat;
+ use crate::property::Domain;
+@@ -259,6 +261,14 @@ pub enum FunctionID {
+     },
+ }
  
-+# Decimal parameters must not wrap when converted to UInt8 (#21107).
-+query IRR
-+SELECT to_decimal(1, 1, 0), to_decimal(76, 0)(1), to_decimal(0, 3, 3);
-+----
-+1 1 0.000
++/// `data_type` without the size of a decimal, as the key of a registered cast.
++pub(crate) fn cast_key(data_type: &DataType) -> DataType {
++    match data_type {
++        DataType::Decimal(_) => DataType::Decimal(DecimalSize::default()),
++        data_type => data_type.clone(),
++    }
++}
 +
-+statement error Decimal precision must be between 1 and 76
-+SELECT to_decimal(3, 259, 0)
+ #[derive(Default)]
+ pub struct FunctionRegistry {
+     pub funcs: HashMap<String, Vec<(Arc<Function>, usize)>>,
+@@ -269,11 +279,15 @@ pub struct FunctionRegistry {
+     pub aliases: HashMap<String, String>,
+ 
+     /// Default cast rules for all functions.
+-    pub default_cast_rules: Vec<(DataType, DataType)>,
++    default_cast_rules: Vec<(DataType, DataType)>,
+     /// Cast rules for specific functions, which will override the default cast rules.
+     pub additional_cast_rules: HashMap<String, Vec<(DataType, DataType)>>,
+-    /// The auto rules that should use TRY_CAST instead of CAST.
+-    pub auto_try_cast_rules: Vec<(DataType, DataType)>,
++    /// The registered casts, keyed by the source type, or `None` for any source, and the
++    /// destination type, both non-nullable, with decimal sizes erased. A cast runs a function,
++    /// or converts through an intermediate type.
++    casts: HashMap<(Option<DataType>, DataType), RegisteredCast>,
++    /// The function that converts values to a type, keyed by the type with decimal sizes erased.
++    conversion_functions: HashMap<DataType, String>,
+     pub dynamic_cast_rules: HashMap<String, DynamicCastRules>,
+     pub properties: HashMap<String, FunctionProperty>,
+     pub derive_stat: HashMap<String, DeriveStat>,
+@@ -283,6 +297,41 @@ pub struct FunctionRegistry {
+     /// per overload avoids disabling context-free folding for unrelated overloads that share a
+     /// name, such as numeric and timestamp arithmetic.
+     context_dependent_functions: HashMap<String, HashSet<usize>>,
++    /// How overloads take nullable arguments where their signatures do not,
++    /// see [`NullableInput`]. The key is the canonical function name and the
++    /// registry-local function ID, as for `context_dependent_functions`.
++    nullable_inputs: HashMap<String, HashMap<usize, NullableInput>>,
++}
 +
-+statement error Decimal scale must be between 0 and precision 3
-+SELECT to_decimal(3, 3, 257)
-+
-+statement error Decimal scale must be between 0 and precision 3
-+SELECT to_number(3, 3, -255)
-+
-+statement error Decimal scale must be between 0 and precision 6
-+SELECT try_to_decimal(123456, 6, 256)
-+
-+statement error Decimal scale must be between 0 and precision 3
-+SELECT to_decimal('2.5', '9D9', 3, 257)
-+
-+statement error Decimal scale must be between 0 and precision 3
-+SELECT to_decimal(3, 257)(3)
-+
-+statement error Decimal precision must be between 1 and 76
-+SELECT try_to_numeric(4294967299, 1)(3)
-+
-+statement error Decimal precision must be between 1 and 76
-+SELECT to_decimal(3, 9223372036854775808, 0)
-+
-+# NULL is allowed as the value, not as an explicit Decimal type parameter.
-+query ?
-+SELECT to_decimal(CAST(NULL AS INT64 NULL), 3, 0);
-+----
-+NULL
-+
-+statement error Decimal scale must be an integer, got NULL
-+SELECT to_decimal(3, 3, NULL)
-+
-+statement error Decimal precision must be an integer, got NULL
-+SELECT to_decimal(3, NULL, 2)
-+
-+statement error Decimal scale must be an integer, got NULL
-+SELECT try_to_numeric(3, 3, CAST(NULL AS INT64))
-+
-+statement error Decimal scale must be an integer, got NULL
-+SELECT to_decimal(3, NULL)(3)
-+
- query I
- SELECT TO_DECIMAL('123456789', 9);
- ----
++/// How an overload takes arguments that are nullable where its signature is
++/// not, as its registration implements it. A builtin overload whose signature
++/// takes them, being nullable or a generic there, needs none, and a factory is
++/// asked for a function for them first, as candidate search asks it; an
++/// overload without one takes no such arguments otherwise.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub enum NullableInput {
++    /// The builtin overload `variant`, registered with it, takes every argument
++    /// nullable and returns the result nullable, NULL where an argument is
++    /// NULL: `register_passthrough_nullable_*` and builders with
++    /// `passthrough_nullable`.
++    PassthroughVariant { variant: usize },
++    /// The builtin overload `variant`, registered with it, takes every argument
++    /// nullable and returns the same nullable result, NULL where an argument
++    /// is NULL: `register_combine_nullable_*`.
++    CombineVariant { variant: usize },
++    /// The builtin overload `variant`, registered with it, takes every argument
++    /// nullable and handles NULL itself, e.g. `and` by three-valued logic.
++    NullAwareVariant { variant: usize },
++    /// The factory `factory` of the same name creates the function for
++    /// nullable arguments that the factory declines or its function does not
++    /// take, as the passthrough nullable function of this factory's:
++    /// `register_passthrough_nullable_factory`.
++    PassthroughFactory { factory: usize },
++    /// The factories `factories` of the same name create the function for
++    /// nullable arguments that the factory declines or its function does not
++    /// take, tried in order, and may handle NULL themselves:
++    /// `register_nullable_variants`.
++    NullAwareFactories { factories: Vec<usize> },
+ }
+ 
+ impl FunctionRegistry {
+@@ -331,6 +380,58 @@ impl FunctionRegistry {
+         }
+     }
+ 
++    /// The function that the factory `id` of `name` creates for `params` and
++    /// `args_type`, as candidate search creates it.
++    pub fn create_factory_function(
++        &self,
++        name: &str,
++        id: usize,
++        params: &[Scalar],
++        args_type: &[DataType],
++    ) -> Option<(FunctionID, Arc<Function>)> {
++        let (factory, _) = self
++            .factories
++            .get(name)?
++            .iter()
++            .find(|(_, factory_id)| *factory_id == id)?;
++        Self::create_by_factory(factory, name, id, params, args_typ
 ```
 
 ---
 
-### Incident Patch 3: `4cfb5200` (2026-11-20)
-**Commit Message**: fix(storage): skip reversed ranges in clustering diagnostics (#21131)
+### Incident Patch 2: `75107161` (2026-11-26)
+**Commit Message**: fix(query): fix materialized CTE hangs on channels nobody reads (#21227)
 
-* fix(storage): skip reversed ranges in clustering diagnostics
+* fix(query): match materialized CTE channels to their consumers
 
-Normalize float endpoints to OrderedFloat semantics before row encoding. Exclude both endpoints of reversed blocks from overlap and depth statistics while preserving the original block counts.
+A materialized CTE producer opens one channel per counted consumer and
+sends every block to each of them. A channel nobody reads blocks a
+bounded producer, which hangs the grouping-sets UNION rewrites.
 
-* fix review comments
+- Count consumers on the physical plan. Physical building can drop a
+  consumer, e.g. a grand-total level with no keys and no used aggregate
+  becomes a constant scan and no longer reads the level above it.
+- Give duplicate producers names of their own. A subquery copied behind a
+  reused SELECT alias or a SQL function argument produces its CTEs under
+  the same names, so the later producer replaced the earlier one's
+  channels.
 
-**File**: `Cargo.lock` (modified, +0/-2)
+Fixes #21217
+
+* fix(query): fail queries whose CTE channel has no consumer
+
+A materialized CTE producer opens its channels when its pipeline is
+built, and each consumer takes one when its own pipeline is built. A
+channel that no consumer takes is never read: a bounded one fills up and
+the query hangs instead of failing.
+
+Check that every channel was taken once all pipelines of the query on
+a node are built: after the lo
+
+**File**: `src/query/service/src/physical_plans/physical_distributed_pruning.rs` (modified, +41/-1)
 ```diff
-@@ -3383,10 +3383,8 @@ dependencies = [
-  "databend-common-timezone",
-  "databend_educe",
-  "divan",
-- "either",
-  "enum-as-inner",
-  "ethnum",
-- "fastrace",
-  "futures",
-  "geo",
-  "geozero",
+@@ -30,7 +30,11 @@ pub fn optimize_distributed_fuse_pruning(
+     plan: &PhysicalPlan,
+     eligible_scan_ids: &HashSet<usize>,
+ ) -> PhysicalPlan {
+-    if eligible_scan_ids.is_empty() {
++    // A plan without exchanges runs only on the local node. Injecting the metadata exchange
++    // under a materialized CTE would make it distributed: the CTE producer then runs on all
++    // executors while its consumers stay in the local root fragment, so the producers on the
++    // other executors read rows that nobody consumes and block on their full channels.
++    if eligible_scan_ids.is_empty() || !plan.is_distributed_plan() {
+         return plan.clone();
+     }
+ 
+@@ -140,4 +144,40 @@ mod tests {
+         assert_eq!(metadata_exchange.kind, FragmentKind::Normal);
+         assert!(FusePrune::check_physical_plan(&metadata_exchange.input));
+     }
++
++    fn materialized_cte(input: PhysicalPlan) -> PhysicalPlan {
++        PhysicalPlan::new(MaterializedCTE {
++            plan_id: 0,
++            stat_info: None,
++            input,
++            cte_name: "cte".to_string(),
++            cte_output_columns: None,
++            ref_count: 1,
++            channel_size: None,
++            meta: PhysicalPlanMeta::new("MaterializedCTE"),
++        })
++    }
++
++    #[test]
++    fn keeps_local_plan_with_materialized_cte_local() {
++        let eligible = HashSet::from([1]);
++
++        let local = optimize_distributed_fuse_pruning(&materialized_cte(table_scan(1)), &eligible);
++        let cte = MaterializedCTE::from_physical_plan(&local).unwrap();
++        assert!(TableScan::check_physical_plan(&cte.input));
++        assert!(!local.is_distributed_plan());
++
++        let distributed = PhysicalPlan::new(Exchange {
++            meta: PhysicalPlanMeta::new("Exchange"),
++            input: materialized_cte(table_scan(1)),
++            kind: FragmentKind::Merge,
++            keys: vec![],
++            ignore_exchange: false,
++            allow_adjust_parallelism: true,
++        });
++        let distributed = optimize_distributed_fuse_pruning(&distributed, &eligible);
++        let outer_exchange = Exchange::from_physical_plan(&distributed).unwrap();
++        let cte = MaterializedCTE::from_physical_plan(&outer_exchange.input).unwrap();
++        assert!(FuseBlockRead::check_physical_plan(&cte.input));
++    }
+ }
 ```
 
-**File**: `src/query/expression/Cargo.toml` (modified, +0/-2)
+**File**: `src/query/service/src/physical_plans/physical_materialized_cte.rs` (modified, +220/-0)
 ```diff
-@@ -36,10 +36,8 @@ databend-common-metrics = { workspace = true }
- databend-common-statistics = { workspace = true }
- databend-common-timezone = { workspace = true }
- educe = { workspace = true }
--either = { workspace = true }
- enum-as-inner = { workspace = true }
- ethnum = { workspace = true }
--fastrace = { workspace = true }
- futures = { workspace = true }
- geo = { workspace = true }
- geozero = { workspace = true }
-```
-
-**File**: `src/query/storages/fuse/src/table_functions/clustering_information.rs` (modified, +247/-105)
-```diff
-@@ -21,6 +21,7 @@ use databend_common_base::runtime::JoinHandle;
- use databend_common_base::runtime::Runtime;
- use databend_common_catalog::plan::DataSourcePlan;
- use databend_common_catalog::table_args::TableArgs;
-+use databend_common_column::bitmap::Bitmap;
- use databend_common_exception::ErrorCode;
+@@ -13,6 +13,8 @@
+ // limitations under the License.
+ 
+ use std::any::Any;
++use std::collections::HashMap;
++use std::collections::HashSet;
+ 
  use databend_common_exception::Result;
- use databend_common_expression::BlockEntry;
-@@ -38,6 +39,7 @@ use databend_common_expression::types::DataType;
- use databend_common_expression::types::StringType;
- use databend_common_expression::types::TimestampType;
- use databend_common_expression::types::VariantType;
-+use databend_common_expression::types::number::NumberColumnBuilder;
- use databend_common_pipeline_transforms::sorts::core::RowConverter;
- use databend_common_pipeline_transforms::sorts::core::VariableRowConverter;
- use databend_common_sql::NameResolutionContext;
-@@ -441,69 +443,31 @@ impl ClusteringInformationImpl<'_> {
-     ) -> Result<ClusteringInformationResponse> {
-         let cluster_type = key.cluster_type();
-         let calculation_start = Instant::now();
--        let CollectedMetadata {
--            key_types,
--            endpoint_builders,
--            block_count,
--            constant_block_count,
--        } = metadata;
--        let aggregate = match endpoint_builders {
-+        let statistics = match metadata.endpoint_builders {
-             Some(builders) => {
-                 let max_threads = self.ctx.get_settings().get_max_threads()? as usize;
-                 with_request_pool(max_threads, move |_| {
--                    let sorted = sort_endpoints(builders, &key_types)?;
--                    sweep_exact_statistics(&sorted.keys, &sorted.order)
-+                    summarize_linear_ranges(builders, &metadata.key_types)
-                 })?
+ use databend_common_expression::DataSchemaRef;
+@@ -23,12 +25,16 @@ use databend_common_sql::evaluator::BlockOperator;
+ use databend_common_sql::optimizer::ir::PExpr;
+ 
+ use crate::physical_plans::IPhysicalPlan;
++use crate::physical_plans::MaterializeCTERef;
+ use crate::physical_plans::PhysicalPlan;
+ use crate::physical_plans::PhysicalPlanBuilder;
++use crate::physical_plans::PhysicalPlanCast;
+ use crate::physical_plans::PhysicalPlanMeta;
++use crate::physical_plans::Sequence;
+ use crate::physical_plans::explain::PlanStatsInfo;
+ use crate::physical_plans::format::MaterializedCTEFormatter;
+ use crate::physical_plans::format::PhysicalFormat;
++use crate::physical_plans::format::display_materialized_cte_name;
+ use crate::pipelines::PipelineBuilder;
+ use crate::pipelines::memory_settings::MemorySettingsExt;
+ use crate::pipelines::processors::transforms::MaterializedCteSink;
+@@ -167,3 +173,217 @@ impl PhysicalPlanBuilder {
+         }))
+     }
+ }
++
++/// Gives every producer in the plan a name of its own.
++///
++/// A producer registers its channels under its name and each consumer takes one of them
++/// by that name. One bound subquery can occur twice in a plan, e.g. behind a SELECT alias
++/// that is referenced again, or as an argument that a SQL function uses twice. Both copies
++/// then produce their CTEs under the same names: the later producer replaces the channels
++/// of the earlier one, and the consumers of both copies are counted together.
++///
++/// The consumers of a producer are on the right side of its `Sequence`, so a renamed
++/// producer takes the consumers there with it. A later name keeps the display name, which
++/// EXPLAIN shows.
++pub fn rename_duplicate_materialized_ctes(plan: &mut PhysicalPlan) {
++    let mut names = HashSet::new();
++    collect_cte_producer_names(plan, &mut names);
++    let mut produced = HashSet::new();
++    rename_duplicate_producers(plan, &mut names, &mut produced, &mut Vec::new());
++}
++
++#[recursive::recursive]
++fn collect_cte_producer_names(plan: &PhysicalPlan, names: &mut HashSet<String>) {
++    if let Some(producer) = MaterializedCTE::from_physical_plan(plan) {
++        names.insert(producer.cte_name.clone());
++    }
++    for child in plan.children() {
++        collect_cte_producer_names(child, names);
++    }
++}
++
++/// `scopes` maps the name of each enclosing producer to the name it now has.
++#[recursive::recursive]
++fn rename_duplicate_producers(
++    plan: &mut PhysicalPlan,
++    names: &mut HashSet<String>,
++    produced: &mut HashSet<String>,
++    scopes: &mut Vec<(String, String)>,
++) {
++    if let Some(consumer) = MaterializeCTERef::from_mut_physical_plan(plan) {
++        if let Some((_, name)) = scopes
++            .iter()
++            .rev()
++            .find(|(original, _)| *original == consumer.cte_name)
++        {
++            consumer.cte_name = name.clone();
++        }
++        return;
++    }
++
++    if let Some(sequence) = Sequence::from_mut_physical_plan(plan)
++        && let Some(producer) = MaterializedCTE::from_mut_physical_plan(&mut sequence.left)
++    {
++        rename_duplicate_producers(&mut producer.input, names, produced, scopes);
++        let original = producer.cte_name.clone();
++        if !produced.insert(original.clone()) {
++            producer.cte_name = unique_cte_name(&original, names);
++            produced.insert(producer.cte_name.clone());
++        }
++        scopes.push((original, producer.cte_name.clone()));
++        rename_duplicate_producers(&mut sequence.right, names, produced, scopes);
++        scopes.pop();
++        return;
++    }
++
++    for child in plan.children_mut() {
++        rename_duplicate_producers(child, names, produced, scopes);
++    }
++}
++
++fn unique_cte_name(name: &str, names: &mut HashSet<String>) -> String {
++    let display_name = display_materialized_cte_name(name).to_string();
++    let mut id = 0;
++    loop {
++        let name = format!("__materialized_cte_{id}_{display_name}");
++        if names.insert(name.clone()) {
++            return name;
++        }
++        id += 1;
++    }
++}
++
++/// Sets each producer's `ref_count` to the number of consumers left in the physical plan.
++///
++/// The producer opens one channel per counted consumer and sends every block to each of
++/// them, while each consumer takes one channel when its pipeline is built. The logical
++/// count can be too high: physical building may drop a consumer, e.g. an aggregate with
++/// no keys and no used functions becomes a `ConstantTableScan` and its input, a
++/// consumer, is never built. Nobody reads that extra channel, so a bounded one fills up
++/// and blocks the producer and every other consumer.
++pub fn recount_materialized_cte_refs(plan: &mut PhysicalPlan) {
++    let mut ref_counts = HashMap::new();
++    count_cte_consumers(plan, &mut ref_counts);
++    set_cte_re
+```
+
+**File**: `src/query/service/src/physical_plans/physical_plan_builder.rs` (modified, +6/-0)
+```diff
+@@ -39,6 +39,8 @@ use databend_storages_common_table_meta::meta::TableSnapshot;
+ use crate::physical_plans::explain::PlanStatsInfo;
+ use crate::physical_plans::optimize_distributed_fuse_pruning;
+ use crate::physical_plans::physical_plan::PhysicalPlan;
++use crate::physical_plans::recount_materialized_cte_refs;
++use crate::physical_plans::rename_duplicate_materialized_ctes;
+ use crate::sessions::TableContext;
+ 
+ pub struct PhysicalPlanBuilder {
+@@ -113,6 +115,10 @@ impl PhysicalPlanBuilder {
+ 
+         let mut plan = build_result?;
+         if is_root_build {
++            if !self.cte_required_columns.is_empty() {
++                rename_duplicate_materialized_ctes(&mut plan);
++                recount_materialized_cte_refs(&mut plan);
++            }
+             plan = optimize_distributed_fuse_pruning(&plan, &self.distributed_fuse_pruning_scans);
+             plan.adjust_plan_id(&mut 0);
+             self.publish_synchronous_pruning_stats(&plan);
+```
+
+**File**: `src/query/service/src/physical_plans/physical_union_all.rs` (modified, +11/-0)
+```diff
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ 
+ use std::any::Any;
++use std::collections::HashMap;
+ 
+ use databend_common_exception::Result;
+ use databend_common_expression::DataField;
+@@ -33,6 +34,7 @@ use itertools::Itertools;
+ 
+ use crate::physical_plans::Exchange;
+ use crate::physical_plans::PhysicalPlanBuilder;
++use crate::physical_plans::count_cte_consumers;
+ use crate::physical_plans::explain::PlanStatsInfo;
+ use crate::physical_plans::format::PhysicalFormat;
+ use crate::physical_plans::format::UnionAllFormatter;
+@@ -203,6 +205,15 @@ impl UnionAll {
+     }
+ 
+     fn build_recursive_cte_source(&self, builder: &mut PipelineBuilder) -> Result<()> {
++        // The steps build their pipelines when they run, and only then do the materialized
++        // CTE consumers in them take their channels.
++        let mut consumers = HashMap::new();
++        count_cte_consumers(&self.left, &mut consumers);
++        count_cte_consumers(&self.right, &mut consumers);
++        builder
++            .ctx
++            .defer_materialized_cte_consumers(consumers.into_keys());
++
+         let max_threads = builder.settings.get_max_threads()?;
+         builder.main_pipeline.add_source(
+             |output_port| {
+```
+
+**File**: `src/query/service/src/schedulers/scheduler.rs` (modified, +1/-0)
+```diff
+@@ -91,6 +91,7 @@ pub async fn build_local_pipeline(
+     let pipeline =
+         PipelineBuilder::create(ctx.get_function_context()?, ctx.get_settings(), ctx.clone());
+     let mut build_res = pipeline.finalize(plan)?;
++    ctx.check_materialized_cte_receivers_taken()?;
+ 
+     let settings = ctx.get_settings();
+     build_res.set_max_threads(settings.get_max_threads()? as usize);
+```
+
+**File**: `src/query/service/src/servers/flight/v1/exchange/exchange_manager.rs` (modified, +3/-1)
+```diff
+@@ -1215,7 +1215,9 @@ impl QueryCoordinator {
              }
--            None => LinearClusteringStatistics {
--                block_count,
--                depth_counts: if block_count == 0 {
--                    BTreeMap::new()
--                } else {
--                    BTreeMap::from([(0, block_count as u64)])
--                },
-+            None if total_block_count != 0 => LinearClusterStatistics {
-+                block_depth_histogram: BTreeMap::from([("00000".into(), total_block_count)]),
-                 ..Default::default()
-             },
-+            None => LinearClusterStatistics::default(),
-         };
--
--        let info = if aggregate.block_count == 0 {
--            LinearClusterStatistics {
--                total_block_count,
--                ..Default::default()
--            }
--        } else {
--            LinearClusterStatistics {
--                total_block_count,
--                constant_block_count,
--                average_overlaps: rounded_average(aggregate.sum_overlap, aggregate.block_count),
--                average_depth: rounded_average(aggregate.sum_depth, aggregate.block_count),
--                max_depth: aggregate
--                    .depth_counts
--                    .last_key_value()
--                    .map_or(0, |(&depth, _)| depth),
--                p95_depth: percentile_depth(&aggregate.depth_counts, aggregate.block_count, 95),
--                p99_depth: percentile_depth(&aggregate.depth_counts, aggregate.block_count, 99),
--                block_depth_histogram: {
--                    let mut histogram = BTreeMap::new();
--                    for (depth, count) in &aggregate.depth_counts {
--                        let depth = *depth as u32;
--                        let bucket = if depth <= 16 || depth.is_power_of_two() {
--                            depth
--                        } else {
--                            depth.next_power_of_two()
--                        };
--                        *histogram.entry(format!("{:05}", bucket)).or_insert(0) += count;
--                    }
--                    histogram
--                },
--            }
-+        let info = LinearClusterStatistics {
-+            total_block_count,
-+            constant_block_count: metadata.constant_block_count,
-+            ..statistics
-         };
-         info!(
--            "clustering_information: finished table={} cluster_type={} blocks={} constant_blocks={} average_overlaps={} average_depth={} max_depth={} p95_depth={} p99_depth={} calculation_elapsed={:?} total_elapsed={:?}",
-+            "clustering_information: finished table={} cluster_type={} blocks={} constant_blocks={} invalid_blocks={} average_overlaps={} average_depth={} max_depth={} p95_depth={} p99_depth={} calculation_elapsed={:?} total_elapsed={:?}",
-             self.table.table_info.desc,
-             cluster_type,
-             info.total_block_count,
-             info.constant_block_count,
-+            info.invalid_block_count.unwrap_or_default(),
-             info.average_overlaps,
-             info.average_depth,
-             info.max_depth,
-@@ -666,10 +630,9 @@ fn push_endpoint(builders: &mut [ColumnBuilder], endpoint: &[Scalar]) {
- // `sum_overlap` counts both directions for each overlapping b
+         }
+ 
+-        Ok(())
++        // Every fragment of the query on this node is built, and a consumer takes its
++        // channel while its fragment is built.
++        query_context.check_materialized_cte_receivers_taken()
+     }
+ 
+     pub fn subscribe_fragment(
+```
+
+**File**: `src/query/service/src/sessions/query_ctx.rs` (modified, +34/-0)
+```diff
+@@ -1049,6 +1049,40 @@ impl QueryContext {
+         let receivers = receivers.get_mut(cte_name).unwrap();
+         receivers.pop().unwrap()
+     }
++
++    /// Marks materialized CTEs whose consumers are built after the query pipeline: the
++    /// recursive CTE source builds the pipelines of its steps when they run.
++    pub fn defer_materialized_cte_consumers(&self, cte_names: impl IntoIterator<Item = String>) {
++        self.shared
++            .deferred_materialized_cte_consumers
++            .lock()
++            .extend(cte_names);
++    }
++
++    /// Fails if a materialized CTE producer has a channel that no consumer took.
++    ///
++    /// Call it once every pipeline of the query on this node is built. Nobody reads such a
++    /// channel: a bounded one fills up and blocks the producer, and the query would hang
++    /// instead of failing. CTEs with deferred consumers are skipped, as those consumers
++    /// take their channels later.
++    pub fn check_materialized_cte_receivers_taken(&self) -> Result<()> {
++        let deferred = self.shared.deferred_materialized_cte_consumers.lock();
++        let receivers = self.shared.materialized_cte_receivers.lock();
++        let mut untaken = receivers
++            .iter()
++            .filter(|(name, receivers)| !receivers.is_empty() && !deferred.contains(*name))
++            .map(|(name, receivers)| format!("{name} ({})", receivers.len()))
++            .collect::<Vec<_>>();
++        if untaken.is_empty() {
++            return Ok(());
++        }
++
++        untaken.sort();
++        Err(ErrorCode::Internal(format!(
++            "Materialized CTE channels without a consumer: {}",
++            untaken.join(", ")
++        )))
++    }
+ }
+ 
+ impl QueryContext {
+```
+
+**File**: `src/query/service/src/sessions/query_ctx_shared.rs` (modified, +4/-0)
+```diff
+@@ -216,6 +216,9 @@ pub struct QueryContextShared {
+ 
+     pub(super) materialized_cte_receivers:
+         Arc<Mutex<HashMap<String, Vec<Receiver<MaterializedCtePayload>>>>>,
++    /// Materialized CTEs read inside a recursive CTE, whose consumers are built only when
++    /// the recursive steps run.
++    pub(super) deferred_materialized_cte_consumers: Arc<Mutex<HashSet<String>>>,
+     // Temp tables created for recursive CTE cleanup.
+     // This must be shared across QueryContext instances created from the same query,
+     // otherwise cleanup hooks running on the parent context cannot see registrations
+@@ -326,6 +329,7 @@ impl QueryContextShared {
+             nodes_perf: Arc::new(Mutex::new(HashMap::new())),
+             nodes_perf_counters: Arc::new(Mutex::new(HashMap::new())),
+             materialized_cte_receivers: Arc::new(Mutex::new(HashMap::new())),
++            deferred_materialized_cte_consumers: Arc::new(Mutex::new(HashSet::new())),
+             recursive_cte_temp_tables: Arc::new(RwLock::new(Vec::new())),
+             logical_recursive_cte_runtime_ids: Arc::new(RwLock::new(HashMap::new())),
+             visibility_checker_cache: Default::default(),
+```
+
+---
+
+### Incident Patch 3: `c86293c0` (2026-11-26)
+**Commit Message**: fix(query): reject script names in subqueries that changed meaning (#21219)
+
+#20338 made nested SQL inside procedure expressions follow SQL name
+resolution. Bare names that used to resolve to script variables, and
+row-variable column reads such as r.col, now silently resolve to
+columns or fail with unrelated binder errors.
+
+Reject at compile time every nested-SQL name that the previous
+behavior resolved to a script variable or row variable, so no script
+silently changes meaning. Variables are referenced as :var.
+
+**File**: `src/query/script/src/compiler.rs` (modified, +42/-0)
+```diff
+@@ -39,6 +39,7 @@ use databend_common_ast::ast::SetExpr;
+ use databend_common_ast::ast::Statement;
+ use databend_common_ast::ast::TableReference;
+ use databend_common_ast::ast::UnaryOperator;
++use databend_common_ast::span::merge_span;
+ use databend_common_ast::visit::VisitControl;
+ use databend_common_ast::visit::VisitorMut;
+ use databend_common_ast::visit::WalkMut;
+@@ -861,6 +862,46 @@ impl Compiler {
+         Ok(())
+     }
+ 
++    /// Reject names in nested SQL that older versions resolved to script
++    /// variables, so they cannot silently change meaning now that nested SQL
++    /// follows SQL name resolution.
++    fn check_nested_sql_column_ref(&self, expr: &Expr) -> Result<()> {
++        let Expr::ColumnRef {
++            span,
++            column:
++                ColumnRef {
++                    database: None,
++                    table,
++                    column: ColumnID::Name(column),
++                },
++        } = expr
++        else {
++            return Ok(());
++        };
++
++        match table {
++            None if matches!(self.lookup_ref(column), Ok(RefItem::Var(_))) => {
++                let name = self.normalize_ident(column);
++                Err(ErrorCode::ScriptSemanticError(format!(
++                    "`{name}` is ambiguous in a subquery: use `:{name}` for the \
++                     script variable, or qualify the column with its table name"
++                ))
++                .set_span(*span))
++            }
++            Some(iter) if matches!(self.lookup_ref(iter), Ok(RefItem::Iter(_))) => {
++                let span = merge_span(*span, column.span);
++                let iter = self.normalize_ident(iter);
++                let column = self.normalize_ident(column);
++                Err(ErrorCode::ScriptSemanticError(format!(
++                    "`{iter}.{column}` is ambiguous in a subquery: assign `{iter}.{column}` \
++                     to a variable and use it as `:var`, or use a table alias other than `{iter}`"
++                ))
++                .set_span(span))
++            }
++            _ => Ok(()),
++        }
++    }
++
+     fn compile_sql_statement(
+         &self,
+         span: Span,
+@@ -1083,6 +1124,7 @@ impl Compiler {
+                 if self.query_depth > 0 {
+                     // Nested SQL uses the same quoting rules as RESULTSET/RETURN TABLE:
+                     // bare names stay SQL names, `:var` is a script variable.
++                    self.compiler.check_nested_sql_column_ref(expr)?;
+                     self.compiler.rewrite_sql_hole_expr(expr)?;
+                     return Ok(VisitControl::Continue);
+                 }
+```
+
+**File**: `src/query/script/tests/it/main.rs` (modified, +57/-2)
+```diff
+@@ -364,11 +364,28 @@ fn test_script() {
+         r#"
+             LET x RESULTSET := SELECT * FROM numbers(3);
+             FOR r IN x DO
+-                LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++                LET v := r.number;
++                LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :v + 1);
+                 RETURN y;
+             END FOR;
+         "#,
+     );
++    run_script(
++        file,
++        r#"
++            LET id := 1;
++            LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :id);
++            RETURN y;
++        "#,
++    );
++    run_script(
++        file,
++        r#"
++            LET number := 1;
++            LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :number);
++            RETURN y;
++        "#,
++    );
+     run_script(
+         file,
+         r#"
+@@ -444,6 +461,40 @@ fn test_script_error() {
+             LET x := (SELECT :missing);
+         "#,
+     );
++    // Nested SQL names that older versions resolved to script variables must
++    // not silently resolve to columns.
++    run_script(
++        file,
++        r#"
++            LET id := 1;
++            LET y := (SELECT number FROM numbers(3) WHERE number = id);
++        "#,
++    );
++    run_script(
++        file,
++        r#"
++            LET number := 1;
++            LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = number);
++        "#,
++    );
++    run_script(
++        file,
++        r#"
++            LET x RESULTSET := SELECT * FROM numbers(3);
++            FOR r IN x DO
++                LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++            END FOR;
++        "#,
++    );
++    run_script(
++        file,
++        r#"
++            LET x RESULTSET := SELECT * FROM numbers(3);
++            FOR r IN x DO
++                LET y := (SELECT number FROM numbers(3) AS t WHERE t.number = r.number);
++            END FOR;
++        "#,
++    );
+     run_script(
+         file,
+         r#"
+@@ -555,7 +606,11 @@ fn mock_client() -> MockClient {
+             MockSet::unnamed(vec![vec![Literal::UInt64(1)]]),
+         )
+         .response_when(
+-            "SELECT (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1)",
++            "SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 0 + 1)",
++            MockSet::unnamed(vec![vec![Literal::UInt64(1)]]),
++        )
++        .response_when(
++            "SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 1)",
+             MockSet::unnamed(vec![vec![Literal::UInt64(1)]]),
+         )
+         .response_when(
+```
+
+**File**: `src/query/script/tests/it/testdata/script-error.txt` (modified, +54/-0)
+```diff
+@@ -102,6 +102,60 @@ error:
+   |                  ^^^^^^^^ `missing` is not defined
+ 
+ 
++---------- Input ----------
++LET id := 1;
++LET y := (SELECT number FROM numbers(3) WHERE number = id);
++---------- Output ----------
++error: 
++  --> SQL:2:56
++  |
++1 | LET id := 1;
++2 | LET y := (SELECT number FROM numbers(3) WHERE number = id);
++  |                                                        ^^ `id` is ambiguous in a subquery: use `:id` for the script variable, or qualify the column with its table name
++
++
++---------- Input ----------
++LET number := 1;
++LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = number);
++---------- Output ----------
++error: 
++  --> SQL:2:65
++  |
++1 | LET number := 1;
++2 | LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = number);
++  |                                                                 ^^^^^^ `number` is ambiguous in a subquery: use `:number` for the script variable, or qualify the column with its table name
++
++
++---------- Input ----------
++LET x RESULTSET := SELECT * FROM numbers(3);
++FOR r IN x DO
++    LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++END FOR;
++---------- Output ----------
++error: 
++  --> SQL:3:22
++  |
++1 | LET x RESULTSET := SELECT * FROM numbers(3);
++2 | FOR r IN x DO
++3 |     LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++  |                      ^^^^^^^^ `r.number` is ambiguous in a subquery: assign `r.number` to a variable and use it as `:var`, or use a table alias other than `r`
++
++
++---------- Input ----------
++LET x RESULTSET := SELECT * FROM numbers(3);
++FOR r IN x DO
++    LET y := (SELECT number FROM numbers(3) AS t WHERE t.number = r.number);
++END FOR;
++---------- Output ----------
++error: 
++  --> SQL:3:67
++  |
++1 | LET x RESULTSET := SELECT * FROM numbers(3);
++2 | FOR r IN x DO
++3 |     LET y := (SELECT number FROM numbers(3) AS t WHERE t.number = r.number);
++  |                                                                   ^^^^^^^^ `r.number` is ambiguous in a subquery: assign `r.number` to a variable and use it as `:var`, or use a table alias other than `r`
++
++
+ ---------- Input ----------
+ LET x := 1;
+ FOR r IN x DO
+```
+
+**File**: `src/query/script/tests/it/testdata/script.txt` (modified, +68/-9)
+```diff
+@@ -951,28 +951,87 @@ Some(Var(UInt64(1)))
+ ---------- Input ----------
+ LET x RESULTSET := SELECT * FROM numbers(3);
+ FOR r IN x DO
+-    LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++    LET v := r.number;
++    LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :v + 1);
+     RETURN y;
+ END FOR;
+ ---------- IR -------------
+ QUERY SELECT * FROM numbers(3), x(0)
+ ITER x(0), r(3)
+ __LOOP1(1):
+ JUMP_IF_ENDED r(3), __LOOP_END2(2)
+-QUERY SELECT (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1), __expr_result5(5)
+-ITER __expr_result5(5), __expr_result_iter6(6)
+-READ __expr_result_iter6(6), $0, y(4)
+-QUERY SELECT :4, __expr_result8(8)
+-ITER __expr_result8(8), __expr_result_iter9(9)
+-READ __expr_result_iter9(9), $0, __return_val7(7)
+-RETURN __return_val7(7)
++READ r(3), "number", __r.number5(5)
++QUERY SELECT :5, __expr_result6(6)
++ITER __expr_result6(6), __expr_result_iter7(7)
++READ __expr_result_iter7(7), $0, v(4)
++QUERY SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = :4 + 1), __expr_result9(9)
++ITER __expr_result9(9), __expr_result_iter10(10)
++READ __expr_result_iter10(10), $0, y(8)
++QUERY SELECT :8, __expr_result12(12)
++ITER __expr_result12(12), __expr_result_iter13(13)
++READ __expr_result_iter13(13), $0, __return_val11(11)
++RETURN __return_val11(11)
+ NEXT r(3)
+ GOTO __LOOP1(1)
+ __LOOP_END2(2):
+ ---------- QUERY ---------
+ QUERY: SELECT * FROM numbers(3)
+ BLOCK: (number): (0), (1), (2)
+-QUERY: SELECT (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1)
++QUERY: SELECT 0
++BLOCK: ($0): (0)
++QUERY: SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 0 + 1)
++BLOCK: ($0): (1)
++QUERY: SELECT 1
++BLOCK: ($0): (1)
++---------- Output ---------
++Some(Var(UInt64(1)))
++
++
++---------- Input ----------
++LET id := 1;
++LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :id);
++RETURN y;
++---------- IR -------------
++QUERY SELECT 1, __expr_result1(1)
++ITER __expr_result1(1), __expr_result_iter2(2)
++READ __expr_result_iter2(2), $0, id(0)
++QUERY SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = :0), __expr_result4(4)
++ITER __expr_result4(4), __expr_result_iter5(5)
++READ __expr_result_iter5(5), $0, y(3)
++QUERY SELECT :3, __expr_result7(7)
++ITER __expr_result7(7), __expr_result_iter8(8)
++READ __expr_result_iter8(8), $0, __return_val6(6)
++RETURN __return_val6(6)
++---------- QUERY ---------
++QUERY: SELECT 1
++BLOCK: ($0): (1)
++QUERY: SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 1)
++BLOCK: ($0): (1)
++QUERY: SELECT 1
++BLOCK: ($0): (1)
++---------- Output ---------
++Some(Var(UInt64(1)))
++
++
++---------- Input ----------
++LET number := 1;
++LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :number);
++RETURN y;
++---------- IR -------------
++QUERY SELECT 1, __expr_result1(1)
++ITER __expr_result1(1), __expr_result_iter2(2)
++READ __expr_result_iter2(2), $0, number(0)
++QUERY SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = :0), __expr_result4(4)
++ITER __expr_result4(4), __expr_result_iter5(5)
++READ __expr_result_iter5(5), $0, y(3)
++QUERY SELECT :3, __expr_result7(7)
++ITER __expr_result7(7), __expr_result_iter8(8)
++READ __expr_result_iter8(8), $0, __return_val6(6)
++RETURN __return_val6(6)
++---------- QUERY ---------
++QUERY: SELECT 1
++BLOCK: ($0): (1)
++QUERY: SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 1)
+ BLOCK: ($0): (1)
+ QUERY: SELECT 1
+ BLOCK: ($0): (1)
+```
+
+**File**: `tests/sqllogictests/suites/base/15_procedure/15_0001_execute_immediate.test` (modified, +42/-1)
+```diff
+@@ -271,7 +271,7 @@ $$;
+ ----
+ 1
+ 
+-query I
++query error `r.number` is ambiguous in a subquery
+ EXECUTE IMMEDIATE $$
+ BEGIN
+     LET rs RESULTSET := SELECT * FROM numbers(3);
+@@ -281,9 +281,50 @@ BEGIN
+     END FOR;
+ END;
+ $$;
++
++query I
++EXECUTE IMMEDIATE $$
++BEGIN
++    LET rs RESULTSET := SELECT * FROM numbers(3);
++    FOR r IN rs DO
++        LET v := r.number;
++        LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :v + 1);
++        RETURN y;
++    END FOR;
++END;
++$$;
+ ----
+ 1
+ 
++query error `id` is ambiguous in a subquery
++EXECUTE IMMEDIATE $$
++BEGIN
++    LET id := 1;
++    LET y := (SELECT number FROM numbers(3) WHERE number = id);
++    RETURN y;
++END;
++$$;
++
++query error `number` is ambiguous in a subquery
++EXECUTE IMMEDIATE $$
++BEGIN
++    LET number := 2;
++    LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = number);
++    RETURN y;
++END;
++$$;
++
++query I
++EXECUTE IMMEDIATE $$
++BEGIN
++    LET number := 2;
++    LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :number);
++    RETURN y;
++END;
++$$;
++----
++2
++
+ query error `fallback` is not defined
+ EXECUTE IMMEDIATE $$
+ BEGIN
+```
+
+**File**: `tests/sqllogictests/suites/base/15_procedure/15_0002_procedure.test` (modified, +27/-0)
+```diff
+@@ -610,3 +610,30 @@ call PROCEDURE hdr();
+ 
+ statement ok
+ DROP PROCEDURE hdr();
++
++statement ok
++CREATE OR REPLACE PROCEDURE p_param_in_subquery(number UInt64) RETURNS UInt64 NOT NULL LANGUAGE SQL AS $$
++BEGIN
++    LET y := (SELECT count(*) FROM numbers(3) AS t WHERE t.number = number);
++    RETURN y;
++END;
++$$;
++
++query error `number` is ambiguous in a subquery
++call PROCEDURE p_param_in_subquery(1);
++
++statement ok
++CREATE OR REPLACE PROCEDURE p_param_in_subquery(number UInt64) RETURNS UInt64 NOT NULL LANGUAGE SQL AS $$
++BEGIN
++    LET y := (SELECT count(*) FROM numbers(3) AS t WHERE t.number = :number);
++    RETURN y;
++END;
++$$;
++
++query I
++call PROCEDURE p_param_in_subquery(1);
++----
++1
++
++statement ok
++DROP PROCEDURE p_param_in_subquery(UInt64);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21146** (2026-11-20): chore(meta): use server v260629.11.0 and client v260205.13.7 (@drmingdrmer)
-- **PR #21141** (2026-11-20): fix(query): probe the partition built in each hash join spill round (@dqhl76)
-- **PR #21136** (2026-11-20): fix: meta: move the cache off a leader that refuses its watch (@drmingdrmer)
-- **PR #21135** (closed): fix(fuse): accept strings without a bounded statistics maximum (@youngsofun)
-- **PR #21132** (2026-11-20): fix(query): preserve RBAC upgrade compatibility and audit access (@TCeason)
-- **PR #21131** (2026-11-20): fix(storage): skip reversed ranges in clustering diagnostics (@zhyass)
+- **PR #21241** (2026-11-26): fix: query: read the RESULT_SCAN cache key of HTTP sessions from meta (@drmingdrmer)
+- **PR #21239** (2026-11-26): fix: query: update the matching entry in update_query_ids_results (@drmingdrmer)
+- **PR #21237** (2026-11-26): ci(benchmark): move ClickBench hits from cloud to local fs benchmark (@dqhl76)
+- **PR #21236** (closed): fix(storage): keep column statistics only where they cover every row (@dantengsky)
+- **PR #21227** (2026-11-26): fix(query): fix materialized CTE hangs on channels nobody reads (@dqhl76)
+- **PR #21223** (2026-11-26): fix: query: validate result cache key in RESULT_SCAN (@drmingdrmer)
 
 ---
 
@@ -2166,63 +2956,56 @@ Normalize float endpoints to OrderedFloat semantics before row encoding. Exclude
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): read spilled byte columns with the writer's arrow types
+## X. query): use one conversion plan for CAST and TRY_CAST
 
 **RULE**:
-When implementing operations in `src/query/service/src/spillers/async_buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/expression/src/auto_cast_rules.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f3fe9792`: query): read spilled byte columns with the writer's arrow types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80519243`: query): use one conversion plan for CAST and TRY_CAST. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/spillers/async_buffer.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/auto_cast_rules.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use arrow_array::RecordBatch;
-use arrow_schema::Fields;
-        // Read back the arrow types the writer used. Without them, byte columns are
-        // inferred as Binary/Utf8, whose i32 offsets overflow once a column of the
-        // row group, which is decoded as one batch, holds more than 2 GiB.
-        // Hint fields must carry the names in the file, which the writer takes
-        // from the block rather than from `data_schema`.
-        let schema_descr = row_groups[0].schema_descr();
-        let arrow_schema = Schema::from(infer_table_schema(&data_schema)?.as_ref());
-        let hint = arrow_schema
-            .fields()
-            .iter()
-            .zip(schema_descr.root_schema().get_fields())
-            .map(|(field, column)| field.as_ref().clone().with_name(column.name()))
-            .collect::<Vec<_>>();
-            schema_descr,
-            Some(&Fields::from(hint)),
-        let Some(batch) = self.read_record_batch()? else {
-            return Ok(None);
-        };
-        Ok(Some(DataBlock::from_record_batch_keep_null_const(
-            &self.data_schema,
-            &batch,
-        )?))
-    }
+// Copyright 2021 Datafuse Labs
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-    fn read_record_batch(&mut self) -> Result<Option<RecordBatch>> {
-   
+//! The rules of automatic casts that hold across functions.
+//!
+//! Type checking casts an argument to the type a function overload takes when a rule allows it.
+//! The rules here are shared by many functions, and planner and storage code rely on the casts
+//! they allow; which rules a function uses is decided where the function is registered.
+//! [`decimal_auto_cast`] is the rule for decimals, whose sizes a list of type pairs cannot hold.
+
+use crate::types::ALL_INTEGER_TYPES;
+use crate::types::ALL_NUMERICS_TYPES;
+use crate::types::DataType;
+use crate::types::Decimal;
+use crate::types::NumberDataType;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            row_groups[0].schema_descr(),
-            None,
-        Ok(Some(DataBlock::from_record_batch_keep_null_const(
-            &self.data_schema,
-            &batch,
-        )?))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f3fe9792` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80519243` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

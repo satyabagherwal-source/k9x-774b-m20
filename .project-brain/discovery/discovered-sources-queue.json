@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T19:25:30.894Z",
+  "updated_at": "2026-11-26T19:37:27.263Z",
   "stats": {
-    "total_discovered": 9983,
-    "approved_pending_harvest": 9462,
+    "total_discovered": 9985,
+    "approved_pending_harvest": 9464,
     "harvested_count": 0,
     "rejected_count": 521,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9466,
+      "COMMUNITY_AND_EXPERT": 9468,
       "OFFICIAL_DOCUMENTATION": 286,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -216006,6 +216006,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
         "fileName": "openreplay-openreplay-learnings.md"
+      }
+    },
+    "SRC-95FB51AE1FF8": {
+      "id": "SRC-95FB51AE1FF8",
+      "url": "https://meshery.io/blog",
+      "title": "https://meshery.io/blog",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T19:37:27.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-77297F8DFCD9": {
+      "id": "SRC-77297F8DFCD9",
+      "url": "https://github.com/user-attachments/assets/d3bd19a3-53d6-4f5d-bc82-ca26f1e7dc87",
+      "title": "https://github.com/user-attachments/assets/d3bd19a3-53d6-4f5d-bc82-ca26f1e7dc87",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T19:37:27.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
       }
     }
   }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T19:25:32.679Z",
+  "last_updated": "2026-11-26T19:37:28.844Z",
   "total_verified_learnings": 9133,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26148,
+  "total_items": 26153,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112894,9 +112894,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshery-meshery-learnings",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "38f1d50a8e4aba2a34e90b726bcc94848c9177088b76f59739c5cc17898b4585",
+      "content_hash": "0847ca73330b6cc487b3c12e7710c8cc8567abe85f37f25ac9301f716e7e95cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T02:01:22.503Z"
+      "persisted_at": "2026-11-26T19:37:27.912Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -218055,8 +218055,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "649d33fa",
-      "content_hash": "5efd158283b15407d8b9809c26345fb4f7d6b8f74211d5e63654123574192538",
+      "source_version": "f1fb8936",
+      "content_hash": "d6129c26a8b5897893a854e9d465066929875dbc597ba6897a3b1fb9d378268d",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -218114,6 +218114,11 @@
           "number": 10576,
           "title": "build the Parquet read schema once per block reader",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10765,
+          "title": "use one conversion plan for CAST and TRY_CAST",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218121,7 +218126,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T01:08:12.655Z",
+      "verified_at": "2026-11-26T19:37:22.875Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218175,10 +218180,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "649d33fa",
-      "content_hash": "b5356c7f3cd25cdf1863cbb17118d7d339fd16d861b7282542dd35c068d23bf9",
+      "source_version": "f1fb8936",
+      "content_hash": "2c62a68231ea84d80e616917251d9c7ddb76caa9a1816c6a1547956d0ef757f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T01:08:13.525Z"
+      "persisted_at": "2026-11-26T19:37:23.785Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -222365,7 +222370,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "542d2f8f5fb554f3d0fa832994d37859c1bacf35483b64dc3172db7fb9697d19",
+      "content_hash": "3f8e4e8b5791b2635579adfb2ac2cdd513385f6230e53f9571a02e2cd84ab344",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "promoted_rules": [],
@@ -222374,7 +222379,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T05:59:43.171Z",
+      "verified_at": "2026-11-26T19:37:06.771Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222391,9 +222396,9 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4-Pro Core Invariants",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "91eda5a4fcfd390121746cde1072b8467922bed1a3a523adf9645f2c3e671e5c",
+      "content_hash": "a74fde2cf71ee35c7f3b67cca573a81d3ca5bb69f35c6546c0ec2ee049ae6382",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T05:59:43.658Z"
+      "persisted_at": "2026-11-26T19:37:07.294Z"
     },
     "learn-github-graphprotocol-graph-node": {
       "learning_id": "learn-github-graphprotocol-graph-node",
@@ -222768,9 +222773,9 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4-pro-learnings Core Invariants",
       "repository": "hf-deepseek-ai-deepseek-v4-pro-learnings",
       "source_version": "HEAD",
-      "content_hash": "9413cc5faf9801c560a938394e24e4c94b4f26c3dc6ad71d8b2c02d2d50d2010",
+      "content_hash": "10fd38226002100557d467db0fd1e978ccf01c3788f27924fced526c4a4e6075",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T05:59:56.401Z"
+      "persisted_at": "2026-11-26T19:37:26.895Z"
     },
     "candidate_directive-replication-ignore-401-when-listing-labels-of-a-harbor-registry": {
       "item_id": "candidate_directive-replication-ignore-401-when-listing-labels-of-a-harbor-registry",
@@ -240100,8 +240105,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "a010f98f",
-      "content_hash": "064399020fcba39e2e108f82339dc114c118c30082bfe071c4ca4623ce90bfe7",
+      "source_version": "c3d07784",
+      "content_hash": "9a84341c30ac424e13d18fd98a9d42a280e97ad22c600031b53df826172709da",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -240164,6 +240169,11 @@
           "number": 10584,
           "title": "Empirical Invariant Guard in useStateCB.test.ts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10764,
+          "title": "Empirical Invariant Guard in MeshModelDetails.request.test.tsx",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240171,7 +240181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T02:01:18.006Z",
+      "verified_at": "2026-11-26T19:37:18.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240225,10 +240235,10 @@
       "relative_path": "08_VERIFICATION/meshery-meshery-verification-protocol-empirical-defect-shield-for-meshery-mesher.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshery/meshery",
       "repository": "meshery/meshery",
-      "source_version": "a010f98f",
-      "content_hash": "9462b85875c4a492cd839d3111fadf21d90652ad06772308ad13045b18c6317d",
+      "source_version": "c3d07784",
+      "content_hash": "6ebbe3a99eaedd058f6b17663662ac0a765e89b4a6cdb0a305b3dd037203485a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T02:01:18.707Z"
+      "persisted_at": "2026-11-26T19:37:19.208Z"
     },
     "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker": {
       "item_id": "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker",
@@ -249703,9 +249713,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs-databend-learnings",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "de501653f367e8b9f803af940b99fe32865842bff8b3a2c8d5e4a5c44efb6b5c",
+      "content_hash": "4aa9331ed1824ed3fb3e225f402526bbd893441a0dc131911b932784b4eda7cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:41:59.608Z"
+      "persisted_at": "2026-11-26T19:37:28.844Z"
     },
     "learn-huggingface-abiray-minimax-h3-image-gguf": {
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
@@ -265487,10 +265497,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-databendlabs-databend-architecture-intelligence-databendlabs-databend-core-invar.md",
       "title": "Architecture Intelligence: databendlabs/databend Core Invariants",
       "repository": "databendlabs/databend",
-      "source_version": "77137bc2",
-      "content_hash": "c00b5ab14997950a6738d816fab25bac23ac7d458afb75b731354c6c84198d4d",
+      "source_version": "f1fb8936",
+      "content_hash": "6e9917ed99140506efbac368515f81595fcded341857d1267b98da56144b89c6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T21:47:12.464Z"
+      "persisted_at": "2026-11-26T19:37:23.587Z"
     },
     "candidate_directive-client-decide-the-reasoning-dialect-by-endpoint-not-by-model-id": {
       "item_id": "candidate_directive-client-decide-the-reasoning-dialect-by-endpoint-not-by-model-id",
@@ -265536,9 +265546,9 @@
       "title": "Architecture Intelligence: databendlabs-databend-learnings Core Invariants",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "245c960f6f1206836c356fd7009e6c23c2fce39e0f83e6eeca63a89747dc0c9d",
+      "content_hash": "7d38c20d31fb0803ef6095a5123f67883e3c615518cb43ef30ea5ead17a4c251",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T21:47:15.851Z"
+      "persisted_at": "2026-11-26T19:37:28.643Z"
     },
     "rule-8792": {
       "learning_id": "rule-8792",
@@ -276905,10 +276915,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-architecture-intelligence-meshery-meshery-core-invariants.md",
       "title": "Architecture Intelligence: meshery/meshery Core Invariants",
       "repository": "meshery/meshery",
-      "source_version": "a010f98f",
-      "content_hash": "72f53f8258b1436110128dec826971fb745199bfba95544a24d148486cda6611",
+      "source_version": "c3d07784",
+      "content_hash": "eb0cc6b056a10b6cc1bed55e8d024ae7ef48115e93cd0117196d4592e5b64cf4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T02:01:18.533Z"
+      "persisted_at": "2026-11-26T19:37:19.014Z"
     },
     "rule-8954": {
       "learning_id": "rule-8954",
@@ -276980,9 +276990,9 @@
       "title": "Architecture Intelligence: meshery-meshery-learnings Core Invariants",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "9558f48b2dc8f7eb141cd6fd216efd358e7326d908c26eb6c951c67383253a2a",
+      "content_hash": "3feaaf2a515dc01da3f68ca196d11203fa9fae19b48a40f0518f1a21030d8b9e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T02:01:22.356Z"
+      "persisted_at": "2026-11-26T19:37:27.715Z"
     },
     "rule-8955": {
       "learning_id": "rule-8955",
@@ -358531,6 +358541,70 @@
       "content_hash": "2d9aec62d4e91e1f6f0b43f13b72a265262ec6ae1ef51419317f20e2f96b55a8",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T19:25:31.154Z"
+    },
+    "rule-10764": {
+      "learning_id": "rule-10764",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10764,
+      "title": "Empirical Invariant Guard in MeshModelDetails.request.test.tsx",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "c3d07784",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T19:37:18.271Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-meshmodeldetails-request-test-tsx": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-meshmodeldetails-request-test-tsx",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F9AX-empirical-invariant-guard-in-meshmodeldetails-request-test-tsx.md",
+      "title": "Empirical Invariant Guard in MeshModelDetails.request.test.tsx",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "962e3e2a7e9a4fef5deafb6030160731d8a8c9678496f14ee50a440430143a0b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T19:37:27.513Z"
+    },
+    "rule-10765": {
+      "learning_id": "rule-10765",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10765,
+      "title": "use one conversion plan for CAST and TRY_CAST",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "f1fb8936",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T19:37:22.875Z"
+    },
+    "candidate_directive-use-one-conversion-plan-for-cast-and-try_cast": {
+      "item_id": "candidate_directive-use-one-conversion-plan-for-cast-and-try_cast",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F644-use-one-conversion-plan-for-cast-and-try_cast.md",
+      "title": "use one conversion plan for CAST and TRY_CAST",
+      "repository": "databendlabs/databend",
+      "source_version": "f1fb8936",
+      "content_hash": "4337747b9a4a8f25b3d10310d3fc2a6de6be2f9c88da323a752bfe33a0f37d00",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T19:37:23.384Z"
+    },
+    "candidate_directive-query-use-one-conversion-plan-for-cast-and-try_cast": {
+      "item_id": "candidate_directive-query-use-one-conversion-plan-for-cast-and-try_cast",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FA0G-query-use-one-conversion-plan-for-cast-and-try_cast.md",
+      "title": "query): use one conversion plan for CAST and TRY_CAST",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "23904719f06a44fbf0251c4902b24b8b38f06e1ff22cb890166483b6c0de153f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T19:37:28.435Z"
     }
   },
   "ai-builder-brain": {

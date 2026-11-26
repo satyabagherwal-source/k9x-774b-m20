@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-YK2B",
-    "timestamp": "2026-11-25T07:56:57.491Z",
-    "repository": "Comfy-Org/Fibo-2.0",
-    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "67a0e20442b3b63634d212c86bd55e6c1043a6c20f8938c84d954590ee117897",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-YM3U",
-    "timestamp": "2026-11-25T07:57:00.138Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "d1b6c96ac4f0d500f188e43a4279534e28ff196142e8889fe2f3a7a9049c0b27",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-YTZ1",
-    "timestamp": "2026-11-25T07:57:10.333Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "f9b7b675f6d5d2026f8be68c0b56d4bf169893ac54d50d865d45e0a627004fff",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-J8FD",
     "timestamp": "2026-11-25T08:13:02.185Z",
     "repository": "KRAFTON/Raon-1-mini-preview",
@@ -7490,6 +7445,51 @@
     "repository": "openreplay/openreplay",
     "learningId": "learn-github-openreplay-openreplay",
     "contentHash": "8bdd40c89fe13ccbcd72501fca944224fd86911b2468fab590a5c7199ae53a36",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-ETIH",
+    "timestamp": "2026-11-26T19:37:07.049Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "3f8e4e8b5791b2635579adfb2ac2cdd513385f6230e53f9571a02e2cd84ab344",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-F2D1",
+    "timestamp": "2026-11-26T19:37:18.517Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "9a84341c30ac424e13d18fd98a9d42a280e97ad22c600031b53df826172709da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-F5WZ",
+    "timestamp": "2026-11-26T19:37:23.123Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "d6129c26a8b5897893a854e9d465066929875dbc597ba6897a3b1fb9d378268d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

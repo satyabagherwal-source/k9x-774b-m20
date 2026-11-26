@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T19:25:26.767Z",
+  "last_updated": "2026-11-26T19:37:23.150Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1145,14 +1145,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "542d2f8f5fb554f3d0fa832994d37859c1bacf35483b64dc3172db7fb9697d19",
-      "verified_at": "2026-11-23T05:59:43.450Z",
+      "content_hash": "3f8e4e8b5791b2635579adfb2ac2cdd513385f6230e53f9571a02e2cd84ab344",
+      "verified_at": "2026-11-26T19:37:07.068Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T05:59:43.450Z"
+      "last_updated": "2026-11-26T19:37:07.068Z"
     },
     "Tongyi-MAI/Z-Image-Turbo": {
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "064399020fcba39e2e108f82339dc114c118c30082bfe071c4ca4623ce90bfe7",
-      "verified_at": "2026-11-26T02:01:18.192Z",
+      "content_hash": "9a84341c30ac424e13d18fd98a9d42a280e97ad22c600031b53df826172709da",
+      "verified_at": "2026-11-26T19:37:18.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T02:01:18.192Z"
+      "last_updated": "2026-11-26T19:37:18.550Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "5efd158283b15407d8b9809c26345fb4f7d6b8f74211d5e63654123574192538",
-      "verified_at": "2026-11-26T01:08:12.902Z",
+      "content_hash": "d6129c26a8b5897893a854e9d465066929875dbc597ba6897a3b1fb9d378268d",
+      "verified_at": "2026-11-26T19:37:23.149Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T01:08:12.902Z"
+      "last_updated": "2026-11-26T19:37:23.149Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",

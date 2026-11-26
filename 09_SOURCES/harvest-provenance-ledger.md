@@ -13564,3 +13564,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-95f35a51` | `project://hf-kandinskylab-kandinsky-imagesr-2.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-kandinskylab-kandinsky-imagesr-2.0-learnings.md` | 2026-11-26T19:16:48.335Z |
 | `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-26T19:25:18.512Z |
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `80414abf` | Multi-dimensional audit evidence | 2026-11-26T19:25:26.745Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-26T19:37:07.053Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `c3d07784` | Multi-dimensional audit evidence | 2026-11-26T19:37:18.522Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `f1fb8936` | Multi-dimensional audit evidence | 2026-11-26T19:37:23.127Z |

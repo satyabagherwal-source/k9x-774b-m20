@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T19:25:32.451Z",
+  "last_updated": "2026-11-26T19:37:28.643Z",
   "total_records": 2772,
   "domains": {
     "A": {
@@ -13003,8 +13003,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4-Pro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-pro-research-knowledge-intelligence-deepseek-ai-deeps.md",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "content_hash": "91eda5a4fcfd390121746cde1072b8467922bed1a3a523adf9645f2c3e671e5c",
-      "created_at": "2026-11-23T05:59:43.658Z"
+      "content_hash": "a74fde2cf71ee35c7f3b67cca573a81d3ca5bb69f35c6546c0ec2ee049ae6382",
+      "created_at": "2026-11-26T19:37:07.294Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants",
@@ -13090,8 +13090,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4-pro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-pro-learnings-research-knowledge-intelligence-hf-deep.md",
       "repository": "hf-deepseek-ai-deepseek-v4-pro-learnings",
-      "content_hash": "9413cc5faf9801c560a938394e24e4c94b4f26c3dc6ad71d8b2c02d2d50d2010",
-      "created_at": "2026-11-23T05:59:56.401Z"
+      "content_hash": "10fd38226002100557d467db0fd1e978ccf01c3788f27924fced526c4a4e6075",
+      "created_at": "2026-11-26T19:37:26.895Z"
     },
     "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants",
@@ -25342,8 +25342,8 @@
       "title": "Architecture Intelligence: databendlabs/databend Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-databendlabs-databend-architecture-intelligence-databendlabs-databend-core-invar.md",
       "repository": "databendlabs/databend",
-      "content_hash": "c00b5ab14997950a6738d816fab25bac23ac7d458afb75b731354c6c84198d4d",
-      "created_at": "2026-11-20T21:47:12.464Z"
+      "content_hash": "6e9917ed99140506efbac368515f81595fcded341857d1267b98da56144b89c6",
+      "created_at": "2026-11-26T19:37:23.587Z"
     },
     "domain_intelligence-architecture-intelligence-databendlabs-databend-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-databendlabs-databend-learnings-core-invariants",
@@ -25351,8 +25351,8 @@
       "title": "Architecture Intelligence: databendlabs-databend-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-databendlabs-databend-learnings-architecture-intelligence-databendlabs-databend-.md",
       "repository": "databendlabs-databend-learnings",
-      "content_hash": "245c960f6f1206836c356fd7009e6c23c2fce39e0f83e6eeca63a89747dc0c9d",
-      "created_at": "2026-11-20T21:47:15.851Z"
+      "content_hash": "7d38c20d31fb0803ef6095a5123f67883e3c615518cb43ef30ea5ead17a4c251",
+      "created_at": "2026-11-26T19:37:28.643Z"
     },
     "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants",
@@ -27714,8 +27714,8 @@
       "title": "Architecture Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-architecture-intelligence-meshery-meshery-core-invariants.md",
       "repository": "meshery/meshery",
-      "content_hash": "72f53f8258b1436110128dec826971fb745199bfba95544a24d148486cda6611",
-      "created_at": "2026-11-26T02:01:18.533Z"
+      "content_hash": "eb0cc6b056a10b6cc1bed55e8d024ae7ef48115e93cd0117196d4592e5b64cf4",
+      "created_at": "2026-11-26T19:37:19.014Z"
     },
     "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -27741,8 +27741,8 @@
       "title": "Architecture Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-learnings-architecture-intelligence-meshery-meshery-learnings-co.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "9558f48b2dc8f7eb141cd6fd216efd358e7326d908c26eb6c951c67383253a2a",
-      "created_at": "2026-11-26T02:01:22.356Z"
+      "content_hash": "3feaaf2a515dc01da3f68ca196d11203fa9fae19b48a40f0518f1a21030d8b9e",
+      "created_at": "2026-11-26T19:37:27.715Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",

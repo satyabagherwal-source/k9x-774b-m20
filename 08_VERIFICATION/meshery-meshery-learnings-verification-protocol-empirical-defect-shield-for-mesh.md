@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T02:01:22.105Z",
+  "timestamp": "2026-11-26T19:37:27.384Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-meshery-meshery-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meshery-meshery-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T02:01:22.105Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T19:37:27.384Z`  
 > **Learning ID**: `LEARN-EVO-meshery-meshery-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `a010f98f`  
+> **Source Version**: `c3d07784`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T02:01:17.288Z  
+> **Timestamp**: 2026-11-26T19:37:17.354Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T02:01:17.284Z  
+> **Harvest Timestamp**: 2026-11-26T19:37:17.349Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12336 stars
+- **Stars / Engagement**: 12340 stars
 
 ---
 
@@ -829,11 +829,14 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24367** (2026-11-25): **fix(ui): sync changeTrackCB ref, support functional updaters, and guard callbacks in useStateCB**
-  *Symptoms*: **Notes for Reviewers**  This PR fixes #24366  - Hardens `useStateCB` in `ui/utils/hooks/useStateCB.ts`:   - Syncs `changeTrackCBRef.current` when `changeTrackCB` changes across rerenders so `changeTrackCB` never captures stale closures.   - Initializes `stateRef` from the resolved initial `state` (supporting lazy initializers) and resolves functional updaters (`setState((prev) => ...)`) against `stateRef.current` so `getStateRefValue()` and sequential updates always reflect the true state.   - Validates `typeof ... === 'function'` before invoking `callbackRef.current` / `changeTrackCBRef.current`, clears `callbackRef.current` prior to invocation, stabilizes `setState` and `getStateRefValue` via `React.useCallback`, and adds TypeScript types using `NoInfer<T>` to avoid narrowing primitive state literals. - Expands `ui/utils/hooks/__tests__/useStateCB.test.ts` from 7 to 11 unit tests covering updated `changeTrackCB` closures, lazy initializers, sequential functional updaters, non-callable callbacks, and stable function identities (`npx vitest run`: 14/14 passed across `useStateCB.test.ts` and `PatternServiceFormCore.test.tsx`; 0 ESLint errors/warnings; 0 strict TypeScript errors; Prettier LF formatted).  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  Updates from [git push no-mistakes](https://github.com/kunchenguid/no-mistakes) <!-- no-mistakes-pipelin
+- **Issue #24413** (2026-11-26): **[UI] Handle empty component schema in Registry details**
+  *Symptoms*: **Notes for Reviewers**  This PR fixes #24410 by safely parsing `componentData?.component?.schema` in `ComponentContents` (`ui/components/registry/MeshModelDetails.tsx`) before reading `description`, preventing a `SyntaxError` crash when opening Registry components with an empty, whitespace-only, missing, `null`, non-object, or malformed `schema` (such as visual-annotation-only models like `kubecon-logo`).  ### Root Cause `ComponentContents` previously called `JSON.parse(componentData?.component?.schema)?.description` directly during render. When `component.schema` is `""` (the default serialized form for schema-less visual-annotation components in `schemas@v1.3.120`), whitespace-only, `undefined`, `null`, or malformed JSON, `JSON.parse` threw an uncaught `SyntaxError` in render and triggered `CustomErrorFallback`.  ### Changes - Added and exported `extractSchemaDescription(rawSchema: unknown): string | undefined` in `ui/components/registry/MeshModelDetails.tsx`:   - Trims string inputs and returns `undefined` when empty/whitespace-only.   - Parses JSON strings inside `try/catch` and returns `undefined` on parse errors.   - Supports pre-parsed schema objects and returns `description` only when it is a non-empty string on a plain object. - Updated `ComponentContents` to resolve `description` via:   `extractSchemaDescription(componentData?.component?.schema) || componentData?.description || undefined`   preserving schema descriptions first, falling back to component-level `desc
 
-- **Issue #24366** (2026-11-25): **[UI] Fix stale changeTrackCB ref, functional updaters, and callback guards in useStateCB**
-  *Symptoms*: #### Current Behavior In `ui/utils/hooks/useStateCB.ts`: 1. `changeTrackCBRef` is initialized once on mount and never updated across rerenders, causing subsequent state changes to invoke a stale closure. 2. Functional state updaters (`setState((prev) => ...)`) store the updater function itself in `stateRef.current` instead of the resolved state value, breaking `getStateRefValue()` and sequential updates. 3. Lazy initializer functions (`useStateCB(() => init)`) initialize `stateRef.current` with the initializer function rather than the computed initial state. 4. Non-callable values passed as `changeTrackCB` or the per-call `callback` throw `TypeError: ... is not a function`, `callbackRef.current` is not cleared after firing, and `setState`/`getStateRefValue` recreate new function references on every render.  #### Desired Behavior `useStateCB` should: 1. Keep `changeTrackCBRef.current` synced with `changeTrackCB` via `useEffect`. 2. Resolve functional updaters against `stateRef.current` before updating `stateRef.current` and React state, and initialize `stateRef` from the resolved `state`. 3. Safely validate `typeof ... === 'function'` before invoking `pendingCallback` or `changeTrackCBRef.current`, clear `callbackRef.current` before firing, and stabilize `setState` and `getStateRefValue` with `React.useCallback`.  #### Environment - Component: Meshery UI (`ui/utils/hooks/useStateCB.ts`) 
+- **Issue #24412** (2026-11-26): **[Blog] Subscribe button text is not clearly readable**
+  *Symptoms*: On the blog page (https://meshery.io/blog/), the "Subscribe" button in the Community Newsletter card on the right side is not clearly readable - the button text has poor contrast with the button background. This happens in both light mode and dark mode.  Steps to reproduce: 1. Go to https://meshery.io/blog/ 2. Look at the "Community Newsletter" card on the right side 3. The "Subscribe" button text is not clearly visible (in both light and dark mode)  Expected: the button text should be clearly readable in both modes.  (Screen recording of the issue will be attached separately.) 
+  **Post-Mortem & Fix Analysis**:
+  > I'd like to work on this.
+  > https://github.com/user-attachments/assets/d3bd19a3-53d6-4f5d-bc82-ca26f1e7dc87
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -850,562 +853,810 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68bfaf06` (2026-11-25)
-**Commit Message**: Merge pull request #24367 from madhavzanwar/fix/ui-use-state-cb-guards
+### Incident Patch 1: `8f676791` (2026-11-26)
+**Commit Message**: Merge pull request #24413 from BHAUMIK0711/fix/registry-empty-schema-crash
 
-fix(ui): sync changeTrackCB ref, support functional updaters, and guard callbacks in useStateCB
+[UI] Handle empty component schema in Registry details
 
-**File**: `ui/utils/hooks/__tests__/useStateCB.test.ts` (modified, +79/-0)
+**File**: `ui/components/registry/MeshModelDetails.request.test.tsx` (modified, +93/-0)
 ```diff
-@@ -87,4 +87,83 @@ describe('useStateCB', () => {
-     expect(changeTrack).toHaveBeenCalledTimes(3);
-     expect(changeTrack.mock.calls.map((c) => c[0])).toEqual([1, 2, 3]);
+@@ -158,4 +158,97 @@ describe('MeshModelDetails component request', () => {
+ 
+     expect(await screen.findByText('Declarative updates for Pods')).toBeInTheDocument();
    });
 +
-+  it('always invokes the latest changeTrackCB after rerenders', () => {
-+    const firstTrack = vi.fn();
-+    const secondTrack = vi.fn();
-+    const { result, rerender } = renderHook(({ cb }) => useStateCB(0, cb), {
-+      initialProps: { cb: firstTrack },
++  const renderDetailsWithSchema = async (
++    schema: unknown,
++    extraFields: Record<string, unknown> = {},
++  ) => {
++    fetchMock.mockImplementationOnce(async () =>
++      okJsonResponse({
++        page: 0,
++        pageSize: 1,
++        totalCount: 1,
++        components: [
++          {
++            ...componentDef,
++            ...extraFields,
++            component: {
++              ...componentDef.component,
++              ...(schema === Symbol.for('OMIT_SCHEMA') ? {} : { schema }),
++            },
++            registrant: { hostname: 'artifacthub' },
++            duplicates: 0,
++          },
++        ],
++      }),
++    );
++
++    const store = configureStore({
++      reducer: { [api.reducerPath]: api.reducer },
++      middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
 +    });
 +
-+    rerender({ cb: secondTrack });
++    render(
++      <Provider store={store}>
++        <MeshModelDetails
++          view="Components"
++          showDetailsData={{ type: 'Components', data: componentDef }}
++        />
++      </Provider>,
++    );
 +
-+    act(() => {
-+      result.current[1](10);
++    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
++  };
++
++  it('renders without crashing when component.schema is an empty string', async () => {
++    await renderDetailsWithSchema('', {
++      displayName: 'KubeCon Logo',
++      description: 'Visual annotation logo component',
 +    });
 +
-+    expect(firstTrack).not.toHaveBeenCalled();
-+    expect(secondTrack).toHaveBeenCalledTimes(1);
-+    expect(secondTrack).toHaveBeenCalledWith(10);
++    expect(await screen.findByText('KubeCon Logo')).toBeInTheDocument();
++    expect(screen.getByText('Description')).toBeInTheDocument();
++    expect(screen.getByText('Visual annotation logo component')).toBeInTheDocument();
 +  });
 +
-+  it('supports lazy initializer functions and keeps getStateRefValue accurate', () => {
-+    const init = vi.fn(() => 99);
-+    const { result } = renderHook(() => useStateCB(init));
++  it('renders without crashing when component.schema is whitespace-only', async () => {
++    await renderDetailsWithSchema('   \n\t ');
 +
-+    expect(init).toHaveBeenCalledTimes(1);
-+    expect(result.current[0]).toBe(99);
-+    expect(result.current[2]()).toBe(99);
++    expect(await screen.findByText('Deployment')).toBeInTheDocument();
++    expect(screen.getByText('Description')).toBeInTheDocument();
 +  });
 +
-+  it('supports functional state updaters and keeps stateRef in sync across sequential updates', () => {
-+    const changeTrack = vi.fn();
-+    const after = vi.fn();
-+    const { result } = renderHook(() => useStateCB(0, changeTrack));
++  it('renders without crashing when component.schema is missing (undefined)', async () => {
++    await renderDetailsWithSchema(Symbol.for('OMIT_SCHEMA'));
 +
-+    act(() => {
-+      result.current[1]((prev) => prev + 1);
-+      result.current[1]((prev) => prev + 2, after);
-+      expect(result.current[2]()).toBe(3);
-+    });
-+
-+    expect(result.current[0]).toBe(3);
-+    expect(result.current[2]()).toBe(3);
-+    expect(after).toHaveBeenCalledTimes(1);
-+    expect(after).toHaveBeenCalledWith(3);
-+    expect(changeTrack).toHaveBeenCalledTimes(1);
-+    expect(changeTrack).toHaveBeenCalledWith(3);
++    expect(await screen.findByText('Deployment')).toBeInTheDocument();
++    expect(screen.getByText('Description')).toBeInTheDocument();
 +  });
 +
-+  it('ignores non-callable callbacks and preserves setState and getter identities', () => {
-+    const invalidTrack = 'not-a-function' as unknown as (value: number) => void;
-+    const { result, rerender } = renderHook(() => useStateCB(0, invalidTrack));
-+    const [, initialSetState, initialGetRef] = result.current;
++  it('renders without crashing when component.schema is null', async () => {
++    await renderDetailsWithSchema(null);
 +
-+    expect(() => {
-+      act(() => {
-+        initialSetState(5, 'invalid' as unknown as (value: number) => void);
-+      });
-+    }).not.toThrow();
-+
-+    rerender();
-+    expect(result.current[0]).toBe(5);
-+    expect(result.current[1]).toBe(initialSetState);
-+    expect(result.current[2]).toBe(initialGetRef);
++    expect(await screen.findByText('Deployment')).toBeInTheDocument();
++    expect(screen.getByText('Description')).toBeInTheDocument();
 +  });
 +
-+  it('preserves function-valued state when resolved from an updater', () => {
-+    const initialFn = () => 1;
-+    const nextFn = () => 2;
-+    const after = vi.fn();
-+    const { result } = renderHook(() => useStateCB<() => number>(() => initialFn));
++  it('renders without crashing when component.schema is malformed JSON', async () => {
++    await renderDetailsWithSchema('{invalid-json');
 +
-+    act(() => {
-+      result.current[1](() => nextFn, after);
-+    });
++    expect(await screen.findByText('Deployment')).toBeInTheDocument();
++    expect(screen.getByText('Description')).toBeInTheDocument();
++  });
 +
-+    expect(result.current[0]).toBe(nextFn);
-+    expect(result.current[0]()).toBe(2);
-+    expect(result.current[2]()).toBe(nextFn);
-+    expect(after).toHaveBeenCalledWith(nextFn);
++  it('renders without crashing when component.schema is a non-object JSON value', async () => {
++    await renderDetailsWithSchema('[]');
++
++    expect(await screen.findByText('Deployment')).toBeInTheDocument();
++    expect(screen.getByText('Description')).toBeInTheDocument();
++  });
++
++  it('extracts description when component.schema is already an object', async () => {
++    await renderDetailsWithSchema({ description: 'Pre-parsed schema description' });
++
++    expect(await screen.findByText('Pre-parsed schema description')).toBeInTheDocument();
 +  });
  });
 ```
 
-**File**: `ui/utils/hooks/useStateCB.ts` (modified, +48/-16)
+**File**: `ui/components/registry/MeshModelDetails.test.tsx` (modified, +27/-1)
 ```diff
-@@ -1,29 +1,61 @@
- import React from 'react';
+@@ -91,7 +91,7 @@ vi.mock('next/dynamic', () => ({
+   default: () => () => <div data-testid="react-json" />,
+ }));
  
--function useStateCB(initState, changeTrackCB) {
--  const [state, _setState] = React.useState(initState);
--  const stateRef = React.useRef(initState);
--
--  const callbackRef = React.useRef();
--  const changeTrackCBRef = React.useRef(changeTrackCB);
-+type StateCallback<T> = (state: T) => void;
-+type SetStateAction<T> = T | ((prevState: T) => T);
-+type UseStateCBReturn<T> = [
-+  T,
-+  (nextState: SetStateAction<T>, callback?: StateCallback<T>) => void,
-+  () => T,
-+];
-+
-+function useStateCB<T>(
-+  initState: T | (() => T),
-+  changeTrackCB?: StateCallback<NoInfer<T>>,
-+): UseStateCBReturn<T> {
-+  const [state, _setState] = React.useState<T>(initState);
-+  const stateRef = React.useRef<T>(state);
-+
-+  const callbackRef = React.useRef<StateCallback<T> | undefined>(undefined);
-+  const changeTrackCBRef = React.useRef<StateCallback<T> | undefined>(changeTrackCB);
-   const isFirstCBCall = React.useRef(true);
+-import MeshModelDetails from './MeshModelDetails';
++import MeshModelDetails, { extractSchemaDescription } from './MeshModelDetails';
  
-   React.useEffect(() => {
--    if (isFirstCBCall.current) isFirstCBCall.current = false;
--    else {
--      callbackRef.current?.(state);
--      changeTrackCBRef.current?.(state);
-+    changeTrackCBRef.current = changeTrackCB;
-+  }, [changeTrackCB]);
-+
-+  React.useEffect(() => {
-+    if (isFirstCBCall.current) {
-+      isFirstCBCall.current = false;
-+      return;
-+    }
-+
-+    const pendingCallback = callbackRef.current;
-+    callbackRef.current = undefined;
-+    if (typeof pendingCallback === 'function') {
-+      pendingCallback(state);
-+    }
-+
-+    if (typeof changeTrackCBRef.current === 'function') {
-+      changeTrackCBRef.current(state);
-     }
-   }, [state]);
- 
--  const setState = (state, callback) => {
--    callbackRef.current = callback;
-+  const setState = React.useCallback(
-+    (nextState: SetStateAction<T>, callback?: StateCallback<T>) => {
-+      callbackRef.current = callback;
-+
-+      const resolvedState =
-+        typeof nextState === 'function'
-+          ? (nextState as (prevState: T) => T)(stateRef.current)
-+          : nextState;
- 
--    stateRef.current = state;
--    _setState(state);
--  };
-+      stateRef.current = resolvedState;
-+      _setState(() => resolvedState);
-+    },
-+    [],
-+  );
- 
--  const getStateRefValue = () => stateRef.current;
-+  const getStateRefValue = React.useCallback(() => stateRef.current, []);
- 
-   return [state, setState, getStateRefValue];
- }
-```
-
----
-
-### Incident Patch 2: `d18b18d7` (2026-11-25)
-**Commit Message**: fix(ui): sync changeTrackCB ref, support functional updaters, and guard callbacks in useStateCB
-
-Signed-off-by: madhavzanwar <[REDACTED_EMAIL]>
-
-**File**: `ui/utils/hooks/__tests__/useStateCB.test.ts` (modified, +63/-0)
-```diff
-@@ -87,4 +87,67 @@ describe('useStateCB', () => {
-     expect(changeTrack).toHaveBeenCalledTimes(3);
-     expect(changeTrack.mock.calls.map((c) => c[0])).toEqual([1, 2, 3]);
+ describe('MeshModelDetails', () => {
+   it('renders "No <view> selected" when data is empty', () => {
+@@ -122,3 +122,29 @@ describe('MeshModelDetails', () => {
+     expect(screen.getByTestId('details-container')).toHaveAttribute('data-is-empty', 'false');
    });
-+
-+  it('always invokes the latest changeTrackCB after rerenders', () => {
-+    const firstTrack = vi.fn();
-+    const secondTrack = vi.fn();
-+    const { result, rerender } = renderHook(({ cb }) => useStateCB(0, cb), {
-+      initialProps: { cb: firstTrack },
-+    });
-+
-+    rerender({ cb: secondTrack });
-+
-+    act(() => {
-+      result.current[1](10);
-+    });
-+
-+    expect(firstTrack).not.toHaveBeenCalled();
-+    expect(secondTrack).toHaveBeenCalledTimes(1);
-+    expect(secondTrack).toHaveBeenCalledWith(10);
-+  });
-+
-+  it('supports lazy initializer functions and keeps getStateRefValue accurate', () => {
-+    const init = vi.fn(() => 99);
-+    const { result } = renderHook(() => useStateCB(init));
-+
-+    expect(init).toHaveBeenCalledTimes(1);
-+    expect(result.current[0]).toBe(99);
-+    expect(result.current[2]()).toBe(99);
-+  });
-+
-+  it('supports functional state updaters and keeps stateRef in sync across sequential updates', () => {
-+    const changeTrack = vi.fn();
-+    const after = vi.fn();
-+    const { result } = renderHook(() => useStateCB(0, changeTrack));
-+
-+    act(() => {
-+      result.current[1]((prev) => prev + 1);
-+      result.current[1]((prev) => prev + 2, after);
-+      expect(result.current[2]()).toBe(3);
-+    });
-+
-+    expect(result.current[0]).toBe(3);
-+    expect(result.current[2]()).toBe(3);
-+    expect(after).toHaveBeenCalledTimes(1);
-+    expect(after).toHaveBeenCalledWith(3);
-+    expect(changeTrack).toHaveBeenCalledTimes(1);
-+    expect(changeTrack).toHaveBeenCalledWith(3);
-+  });
-+
-+  it('ignores non-callable callbacks and preserves setState and getter identities', () => {
-+    const invalidTrack = 'not-a-function' as unknown as (value: number) => void;
-+    const { result, rerender } = renderHook(() => useStateCB(0, invalidTrack));
-+    const [, initialSetState, initialGetRef] = result.current;
-+
-+    expect(() => {
-+      act(() => {
-+        initialSetState(5, 'invalid' as unknown as (value: number) => void);
-+      });
-+    }).not.toThrow();
-+
-+    rerender();
-+    expect(result.current[0]).toBe(5);
-+    expect(result.current[1]).toBe(initialSetState);
-+    expect(result.current[2]).toBe(initialGetRef);
-+  });
  });
-```
-
-**File**: `ui/utils/hooks/useStateCB.ts` (modified, +48/-16)
-```diff
-@@ -1,29 +1,61 @@
- import React from 'react';
- 
--function useStateCB(initState, changeTrackCB) {
--  const [state, _setState] = React.useState(initState);
--  const stateRef = React.useRef(initState);
--
--  const callbackRef = React.useRef();
--  const changeTrackCBRef = React.useRef(changeTrackCB);
-+type StateCallback<T> = (state: T) => void;
-+type SetStateAction<T> = T | ((prevState: T) => T);
-+type UseStateCBReturn<T> = [
-+  T,
-+  (nextState: SetStateAction<T>, callback?: StateCallback<T>) => void,
-+  () => T,
-+];
 +
-+function useStateCB<T>(
-+  initState: T | (() => T),
-+  changeTrackCB?: StateCallback<NoInfer<T>>,
-+): UseStateCBReturn<T> {
-+  const [state, _setState] = React.useState<T>(initState);
-+  const stateRef = React.useRef<T>(state);
-+
-+  const callbackRef = React.useRef<StateCallback<T> | undefined>(undefined);
-+  const changeTrackCBRef = React.useRef<StateCallback<T> | undefined>(changeTrackCB);
-   const isFirstCBCall = React.useRef(true);
- 
-   React.useEffect(() => {
--    if (isFirstCBCall.current) isFirstCBCall.current = false;
--    else {
--      callbackRef.current?.(state);
--      changeTrackCBRef.current?.(state);
-+    changeTrackCBRef.current = changeTrackCB;
-+  }, [changeTrackCB]);
-+
-+  React.useEffect(() => {
-+    if (isFirstCBCall.current) {
-+      isFirstCBCall.current = false;
-+      return;
-+    }
-+
-+    const pendingCallback = callbackRef.current;
-+    callbackRef.current = undefined;
-+    if (typeof pendingCallback === 'function') {
-+      pendingCallback(state);
-+    }
-+
-+    if (typeof changeTrackCBRef.current === 'function') {
-+      changeTrackCBRef.current(state);
-     }
-   }, [state]);
- 
--  const setState = (state, callback) => {
--    callbackRef.current = callback;
-+  const setState = React.useCallback(
-+    (nextState: SetStateAction<T>, callback?: StateCallback<T>) => {
-+      callbackRef.current = callback;
-+
-+      const resolvedState =
-+        typeof nextState === 'function'
-+          ? (nextState as (prevState: T) => T)(stateRef.current)
-+          : nextState;
- 
--    stateRef.current = state;
--    _setState(state);
--  };
-+      stateRef.current = resolvedState;
-+      _setState(resolvedState);
-+    },
-+    [],
-+  );
- 
--  const getStateRefValue = () => stateRef.current;
-+  const getStateRefValue = React.useCallback(() => stateRef.current, []);
- 
-   return [state, setState, getStateRefValue];
- }
-```
-
----
-
-### Incident Patch 3: `c27e9d73` (2026-11-25)
-**Commit Message**: Merge pull request #24326 from jashwanth176/fix/share-modal-visibility
-
-[UI] Send the design when the Share dialog changes its visibility
-
-**File**: `ui/components/workspaces/ShareWorkspaceModal.test.tsx` (added, +129/-0)
-```diff
-@@ -0,0 +1,129 @@
-+import React from 'react';
-+import { render } from '@testing-library/react';
-+import { beforeEach, describe, expect, it, vi } from 'vitest';
-+import ShareWorkspaceModal from './ShareWorkspaceModal';
-+
-+const updatePatterns = vi.fn();
-+const updateView = vi.fn();
-+let shareModalProps: any;
-+
-+// The visibility helpers in ./SpacesSwitcher/hooks are deliberately not mocked: the
-+// test follows the modal's handler down to the argument the mutation receives.
-+vi.mock('@sistent/sistent', () => ({
-+  ShareModal: (props: any) => {
-+    shareModalProps = props;
-+    return null;
-+  },
-+  DesignIcon: () => null,
-+  ViewIcon: () => null,
-+  PROMPT_VARIANTS: { DANGER: 'danger' },
-+  useTheme: () => ({}),
-+}));
-+
-+vi.mock('@/rtk-query/design', () => ({
-+  useUpdatePatternFileMutation: () => [updatePatterns],
-+  useDeletePatternFileMutation: () => [vi.fn()],
-+}));
-+
-+vi.mock('@/rtk-query/view', () => ({
-+  useUpdateViewVisibilityMutation: () => [updateView],
-+  useDeleteViewMutation: () => [vi.fn()],
-+}));
-+
-+vi.mock('@/rtk-query/resource', () => ({
-+  useCreateAndRevokeResourceAccessRecordMutation: () => [vi.fn()],
-+  useGetAccessActorsInfoOfResourceQuery: () => ({ data: { users: [] }, isSuccess: true }),
-+}));
-+
-+vi.mock('@/rtk-query/user', () => ({
-+  useGetAllUsersQuery: vi.fn(),
-+  useGetLoggedInUserQuery: () => ({ data: { id: 'user-1' } }),
-+  useGetUserProfileSummaryByIdQuery: () => ({ data: { id: 'user-1' }, isSuccess: true }),
-+}));
-+
-+vi.mock('@/utils/hooks/useNotification', () => ({
-+  useNotification: () => ({ notify: vi.fn() }),
-+}));
-+
-+vi.mock('@/constants/endpoints', () => ({ MESHERY_CLOUD_PROD: 'https://cloud.example.com' }));
-+
-+vi.mock('@/utils/Enum', () => ({
-+  APP_MODE: { DESIGN: 'design', OPERATOR: 'operator' },
-+  RESOURCE_TYPE: { DESIGN: 'design', VIEW: 'view', CATALOG: 'catalog' },
-+}));
-+
-+vi.mock('@/utils/utils', () => ({
-+  isInOperatorMode: () => false,
-+  JsonParse: (value: string) => JSON.parse(value),
-+}));
-+
-+vi.mock('lib/event-types', () => ({ EVENT_TYPES: {} }));
-+
-+vi.mock('css/icons.styles', () => ({ iconMedium: {} }));
-+
-+vi.mock('@/store/slices/mesheryUi', () => ({ updateProgress: vi.fn() }));
-+
-+vi.mock('@/utils/fileDownloader', () => ({ default: vi.fn(), downloadFileFromContent: vi.fn() }));
-+
-+const design = {
-+  id: 'p-1',
-+  name: 'my design',
-+  userId: 'user-1',
-+  catalogData: { type: 'deployment' },
-+  patternFile: JSON.stringify({ name: 'my design' }),
-+};
-+
-+describe('ShareWorkspaceModal visibility updates', () => {
-+  beforeEach(() => {
-+    updatePatterns.mockReset().mockResolvedValue({});
-+    updateView.mockReset().mockResolvedValue({});
-+    shareModalProps = undefined;
++describe('extractSchemaDescription', () => {
++  it('returns description from a valid JSON schema string', () => {
++    expect(extractSchemaDescription(JSON.stringify({ description: 'Pod workload' }))).toBe(
++      'Pod workload',
++    );
 +  });
 +
-+  it('sends the design and its new visibility as updateBody, the key the mutation posts', async () => {
-+    render(<ShareWorkspaceModal resource={design} type="design" handleClose={vi.fn()} />);
-+
-+    await shareModalProps.handleUpdateVisibility('public');
-+
-+    expect(updatePatterns).toHaveBeenCalledWith({
-+      updateBody: {
-+        id: 'p-1',
-+        name: 'my design',
-+        catalogData: { type: 'deployment' },
-+        designFile: { name: 'my design' },
-+        visibility: 'public',
-+      },
-+    });
-+    expect(updateView).not.toHaveBeenCalled();
++  it('returns description from an already-parsed schema object', () => {
++    expect(extractSchemaDescription({ description: 'Object schema' })).toBe('Object schema');
 +  });
 +
-+  it('sends a view visibility change through the view mutation', async () => {
-+    render(<ShareWorkspaceModal resource={{ id: 'v-1' }} type="view" handleClose={vi.fn()} />);
-+
-+    await shareModalProps.handleUpdateVisibility('private');
-+
-+    expect(updateView).toHaveBeenCalledWith({ id: 'v-1', body: { visibility: 'private' } });
-+    expect(updatePatterns).not.toHaveBeenCalled();
-+  });
-+
-+  it('uses the first resource when given a list', async () => {
-+    render(<ShareWorkspaceModal resource={[design]} type="design" handleClose={vi.fn()} />);
-+
-+    await shareModalProps.handleUpdateVisibility('private');
-+
-+    expect(updatePatterns.mock.calls[0][0].updateBody).toMatchObject({
-+      id: 'p-1',
-+      visibility: 'private',
-+    });
-+  });
-+
-+  it('returns an error and calls no mutation when the list is empty', async () => {
-+    render(<ShareWorkspaceModal resource={[]} type="design" handleClose={vi.fn()} />);
-+
-+    await expect(shareModalProps.handleUpdateVisibility('public')).resolves.toEqual({
-+      error: 'No resource selected',
-+    });
-+    expect(updatePatterns).not.toHaveBeenCalled();
-+    expect(updateView).not.toHaveBeenCalled();
++  it.each([
++    ['empty string', ''],
++    ['whitespace-only string', '   \n\t '],
++    ['undefined', undefined],
++    ['null', null],
++    ['malformed JSON', '{bad-json'],
++    ['JSON array', '[]'],
++    ['JSON primitive', '42'],
++    ['blank description', JSON.stringify({ description: '   ' })],
++    ['non-string description', JSON.stringify({ description: 123 })],
++  ])('returns undefined for %s without throwing', (_label, input) => {
++    expect(extractSchemaDescription(input)).toBeUndefined();
 +  });
 +});
 ```
 
-**File**: `ui/components/workspaces/ShareWorkspaceModal.tsx` (modified, +19/-32)
+**File**: `ui/components/registry/MeshModelDetails.tsx` (modified, +33/-1)
 ```diff
-@@ -21,8 +21,11 @@ import {
- } from '@/rtk-query/user';
- import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
- import { useNotification } from '@/utils/hooks/useNotification';
--import { getShareableResourceRoute } from './SpacesSwitcher/hooks';
--import { JsonParse } from '@/utils/utils';
-+import {
-+  getShareableResourceRoute,
-+  handleUpdatePatternVisibility,
-+  handleUpdateViewVisibility,
-+} from './SpacesSwitcher/hooks';
- import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
- import { RESOURCE_TYPE } from '@/utils/Enum';
+@@ -35,6 +35,33 @@ const ReactJson = dynamic(() => import('@microlink/react-json-view'), { ssr: fal
  
-@@ -81,39 +84,23 @@ export const ShareWorkspaceModal_: FC<ShareWorkspaceModalInternalProps> = ({
-     firstSelectedResource?.name,
-   );
+ const ExportAvailable = true;
  
--  const handleUpdatePatternVisibility = async (value: string) => {
--    const res = await updatePatterns({
--      body: {
--        id: firstSelectedResource?.id,
--        name: firstSelectedResource?.name,
--        catalogData: firstSelectedResource?.catalogData,
--        designFile: JsonParse(firstSelectedResource?.patternFile),
--        visibility: value,
--      },
--    });
--    return {
--      error: res?.error?.error,
--    };
--  };
--
--  const handleUpdateViewVisibilityCall = async (value: string) => {
--    const res = await updateView({
--      id: firstSelectedResource?.id,
--      body: {
--        visibility: value,
--      },
--    });
--    return {
--      error: res.error?.error,
--    };
--  };
--
--  const handleUpdateVisibility = (updatedVisibility: string) => {
-+  const handleUpdateVisibility = (value: string) => {
-+    if (!firstSelectedResource) {
-+      return Promise.resolve({ error: 'No resource selected' });
++/**
++ * Safely extracts `description` from a component's serialized JSON schema
++ * (or pre-parsed schema object), returning `undefined` for empty,
++ * whitespace-only, missing, null, non-object, or malformed values.
++ */
++export const extractSchemaDescription = (rawSchema: unknown): string | undefined => {
++  let parsed: unknown = rawSchema;
++  if (typeof rawSchema === 'string') {
++    const trimmed = rawSchema.trim();
++    if (!trimmed) {
++      return undefined;
 +    }
-     if (dataName === RESOURCE_TYPE.DESIGN) {
--      return handleUpdatePatternVisibility(updatedVisibility);
-+      return handleUpdatePatternVisibility({
-+        value,
-+        updatePatterns,
-+        selectedResource: firstSelectedResource,
++    try {
++      parsed = JSON.parse(trimmed);
++    } catch {
++      return undefined;
++    }
++  }
++  if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
++    const { description } = parsed as { description?: unknown };
++    if (typeof description === 'string' && description.trim() !== '') {
++      return description;
++    }
++  }
++  return undefined;
++};
++
+ type KeyValueProps = { property: string; value: string | number | string[] | null | undefined };
+ const KeyValue = ({ property, value }: KeyValueProps) => {
+   let formattedValue = value;
+@@ -289,6 +316,11 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
+   const orderRight = ['registrant', 'duplicates'];
+   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
+ 
++  const description =
++    extractSchemaDescription(componentData?.component?.schema) ||
++    componentData?.description ||
++    undefined;
++
+   return (
+     <>
+       {isSuccess && componentData ? (
+@@ -299,7 +331,7 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
+               iconSrc={componentData?.styles?.svgColor}
+             />
+           </div>
+-          <Description description={JSON.parse(componentData?.component?.schema)?.description} />
++          <Description description={description} />
+           <RenderContents
+             metaDataLeft={metaDataLeft}
+             metaDataRight={metaDataRight}
+```
+
+---
+
+### Incident Patch 2: `f28725f2` (2026-11-26)
+**Commit Message**: Merge pull request #24318 from singhaditya73/fix/design-download-progress
+
+fix(ui): clear progress and notify errors on design download failure
+
+**File**: `ui/components/designs/patterns/patterns-actions.test.tsx` (modified, +85/-3)
+```diff
+@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
+ const encodeDesignFile = vi.fn((d: any) => `encoded:${JSON.stringify(d)}`);
+ const getUnit8ArrayDecodedFile = vi.fn((f: any) => `decoded:${f}`);
+ const downloadContent = vi.fn();
++const updateProgress = vi.fn();
+ const buildImportDesignRequestBody = vi.fn();
+ 
+ vi.mock('@sistent/sistent', () => ({
+@@ -37,7 +38,7 @@ vi.mock('../../../utils/fileDownloader', () => ({
+ }));
+ 
+ vi.mock('@/store/slices/mesheryUi', () => ({
+-  updateProgress: vi.fn(),
++  updateProgress: (...args: any[]) => updateProgress(...args),
+ }));
+ 
+ vi.mock('../import-design-request', () => ({
+@@ -85,6 +86,8 @@ const baseDeps = () => {
+ 
+ describe('createPatternsActions', () => {
+   beforeEach(() => {
++    downloadContent.mockReset();
++    updateProgress.mockReset();
+     buildImportDesignRequestBody.mockReset();
+   });
+ 
+@@ -188,7 +191,7 @@ describe('createPatternsActions', () => {
+     expect(deps.setSelectedRowData).toHaveBeenCalledWith(null);
+   });
+ 
+-  it('handleDownload triggers download and notifies', () => {
++  it('handleDownload triggers download, notifies, and resets progress', () => {
+     const deps = baseDeps();
+     const actions = createPatternsActions(deps);
+     const stop = vi.fn();
+@@ -207,7 +210,86 @@ describe('createPatternsActions', () => {
+       source_type: 'manifest',
+       params: { param: 'v' },
+     });
+-    expect(deps.notify).toHaveBeenCalled();
++    expect(updateProgress.mock.calls).toEqual([
++      [{ showProgress: true }],
++      [{ showProgress: false }],
++    ]);
++    expect(deps.notify).toHaveBeenCalledWith({
++      message: '"Design 1" design downloaded',
++      event_type: 'info',
++    });
++  });
++
++  it('handleDownload clears progress and notifies error when downloadContent throws', () => {
++    const deps = baseDeps();
++    const actions = createPatternsActions(deps);
++    const stop = vi.fn();
++    downloadContent.mockImplementationOnce(() => {
++      throw new Error('Download blocked');
++    });
++
++    actions.handleDownload(
++      { stopPropagation: stop } as any,
++      { id: 'd1', name: 'Broken Design' },
++      undefined,
++      undefined,
++    );
++
++    expect(stop).toHaveBeenCalled();
++    expect(updateProgress.mock.calls).toEqual([
++      [{ showProgress: true }],
++      [{ showProgress: false }],
++    ]);
++    expect(deps.notify).toHaveBeenCalledTimes(1);
++    expect(deps.notify).toHaveBeenCalledWith({
++      message: 'Failed to download "Broken Design": Download blocked',
++      event_type: 'error',
++    });
++  });
++
++  it('handleDownload falls back to generic design label and clears progress when design is null', () => {
++    const deps = baseDeps();
++    const actions = createPatternsActions(deps);
++    const stop = vi.fn();
++
++    actions.handleDownload({ stopPropagation: stop } as any, null, undefined, undefined);
++
++    expect(stop).toHaveBeenCalled();
++    expect(downloadContent).not.toHaveBeenCalled();
++    expect(updateProgress.mock.calls).toEqual([
++      [{ showProgress: true }],
++      [{ showProgress: false }],
++    ]);
++    expect(deps.notify).toHaveBeenCalledTimes(1);
++    expect(deps.notify).toHaveBeenCalledWith({
++      message: 'Failed to download "design": Missing design ID',
++      event_type: 'error',
++    });
++  });
++
++  it('handleDownload does not call downloadContent and clears progress when design.id is missing', () => {
++    const deps = baseDeps();
++    const actions = createPatternsActions(deps);
++    const stop = vi.fn();
++
++    actions.handleDownload(
++      { stopPropagation: stop } as any,
++      { name: 'No ID Design' },
++      undefined,
++      undefined,
++    );
++
++    expect(stop).toHaveBeenCalled();
++    expect(downloadContent).not.toHaveBeenCalled();
++    expect(updateProgress.mock.calls).toEqual([
++      [{ showProgress: true }],
++      [{ showProgress: false }],
++    ]);
++    expect(deps.notify).toHaveBeenCalledTimes(1);
++    expect(deps.notify).toHaveBeenCalledWith({
++      message: 'Failed to download "No ID Design": Missing design ID',
++      event_type: 'error',
++    });
+   });
+ 
+   it('handleError surfaces the failure as a notification', () => {
+```
+
+**File**: `ui/components/designs/patterns/patterns-actions.ts` (modified, +12/-7)
+```diff
+@@ -11,10 +11,7 @@ import { ACTION_TYPES } from './MesheryPatterns.constants';
+ 
+ /**
+  * Factory that returns the full set of CRUD / publish / clone / download
+- * handlers used by the Designs page. Behavior is identical to the
+- * original inline definitions in MesheryPatterns.tsx — the same RTK
+- * mutations are called with the same payloads, the same notifications
+- * are emitted, and the same modal/notification side-effects fire.
++ * handlers used by the Designs page.
+  */
+ export function createPatternsActions(deps) {
+   const {
+@@ -369,13 +366,21 @@ export function createPatternsActions(deps) {
+     e.stopPropagation();
+     updateProgress({ showProgress: true });
+     try {
++      if (!design?.id) {
++        throw new Error('Missing design ID');
++      }
+       let id = design.id;
+       let name = design.name;
+       downloadContent({ id, name, type: 'pattern', source_type, params });
+-      updateProgress({ showProgress: false });
+       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
+-    } catch (e) {
+-      console.error(e);
++    } catch (error) {
++      const errorMessage = error instanceof Error ? error.message : String(error);
++      notify({
++        message: `Failed to download "${design?.name ?? 'design'}": ${errorMessage}`,
++        event_type: EVENT_TYPES.ERROR,
 +      });
++    } finally {
++      updateProgress({ showProgress: false });
      }
-     if (dataName === RESOURCE_TYPE.VIEW) {
--      return handleUpdateViewVisibilityCall(updatedVisibility);
-+      return handleUpdateViewVisibility({
-+        value,
-+        updateView,
-+        selectedResource: firstSelectedResource,
-+      });
-     }
-     return Promise.resolve({ error: undefined });
    };
+ 
+```
+
+---
+
+### Incident Patch 3: `1797c0d4` (2026-11-26)
+**Commit Message**: no-mistakes(ci): Fixed failing CI check 'server Unit tests' by carrying forward cert-manager relationships into the newly seeded version directory models/cert-manager/v1.22.0-alpha.0/v1.0.0/relationships, resolving TestSeededModelsRetainRelationships
+
+**File**: `models/cert-manager/v1.22.0-alpha.0/v1.0.0/relationships/edge-non-binding-reference-certificate-ingress-tls.json` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++{
++  "evaluationQuery": "",
++  "id": "00000000-0000-0000-0000-000000000000",
++  "kind": "edge",
++  "metadata": {
++    "description": "A cert-manager Certificate issues its certificate into the Secret named by spec.secretName; an Ingress terminates TLS with that same Secret. The Certificate's secretName is written into the Ingress's first TLS entry (spec.tls.0.secretName) so the two stay in sync. This edge and the Kubernetes Secret -> Ingress TLS edge are alternative sources for the same spec.tls.0.secretName sink: connect the Ingress either to the Secret directly or to the cert-manager Certificate that issues it. A design that carries both converges when the two names agree; wiring both with disagreeing names is a contradictory design. The relationship is suggested for any Certificate/Ingress pair whose two fields are both still unset; setting the Certificate's spec.secretName is what drives the Ingress's first TLS entry.",
++    "isAnnotation": false,
++    "styles": {
++      "primaryColor": "",
++      "svgColor": "",
++      "svgWhite": ""
++    }
++  },
++  "model": {
++    "displayName": "cert-manager",
++    "id": "00000000-0000-0000-0000-000000000000",
++    "model": {
++      "version": "v1.22.0-alpha.0"
++    },
++    "name": "cert-manager",
++    "registrant": {
++      "kind": "github"
++    },
++    "version": "v1.0.0"
++  },
++  "schemaVersion": "relationships.meshery.io/v1beta2",
++  "selectors": [
++    {
++      "allow": {
++        "from": [
++          {
++            "kind": "Certificate",
++            "model": {
++              "displayName": "cert-manager",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "cert-manager",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": {
++              "mutatorRef": [
++                [
++                  "configuration",
++                  "spec",
++                  "secretName"
++                ]
++              ],
++              "patchStrategy": "replace"
++            }
++          }
++        ],
++        "to": [
++          {
++            "kind": "Ingress",
++            "model": {
++              "displayName": "Kubernetes",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "kubernetes",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": {
++              "mutatedRef": [
++                [
++                  "configuration",
++                  "spec",
++                  "tls",
++                  "0",
++                  "secretName"
++                ]
++              ],
++              "patchStrategy": "replace"
++            }
++          }
++        ]
++      },
++      "deny": {
++        "from": [],
++        "to": []
++      }
++    }
++  ],
++  "status": "enabled",
++  "subType": "reference",
++  "type": "non-binding",
++  "version": "v1.0.0"
++}
+```
+
+**File**: `models/cert-manager/v1.22.0-alpha.0/v1.0.0/relationships/edge-non-binding-reference-certificate-issuerref.json` (added, +175/-0)
+```diff
+@@ -0,0 +1,175 @@
++{
++  "evaluationQuery": "",
++  "id": "00000000-0000-0000-0000-000000000000",
++  "kind": "edge",
++  "metadata": {
++    "description": "A Certificate names the issuer that signs it: the Issuer or ClusterIssuer name and kind are written into the Certificate's spec.issuerRef.",
++    "isAnnotation": false,
++    "styles": {
++      "primaryColor": "",
++      "svgColor": "",
++      "svgWhite": ""
++    }
++  },
++  "model": {
++    "displayName": "cert-manager",
++    "id": "00000000-0000-0000-0000-000000000000",
++    "model": {
++      "version": "v1.22.0-alpha.0"
++    },
++    "name": "cert-manager",
++    "registrant": {
++      "kind": "github"
++    },
++    "version": "v1.0.0"
++  },
++  "schemaVersion": "relationships.meshery.io/v1beta2",
++  "selectors": [
++    {
++      "allow": {
++        "from": [
++          {
++            "kind": "ClusterIssuer",
++            "model": {
++              "displayName": "cert-manager",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "cert-manager",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": {
++              "mutatorRef": [
++                [
++                  "displayName"
++                ],
++                [
++                  "component",
++                  "kind"
++                ]
++              ],
++              "patchStrategy": "replace"
++            }
++          }
++        ],
++        "to": [
++          {
++            "kind": "Certificate",
++            "model": {
++              "displayName": "cert-manager",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "cert-manager",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": {
++              "mutatedRef": [
++                [
++                  "configuration",
++                  "spec",
++                  "issuerRef",
++                  "name"
++                ],
++                [
++                  "configuration",
++                  "spec",
++                  "issuerRef",
++                  "kind"
++                ]
++              ],
++              "patchStrategy": "replace"
++            }
++          }
++        ]
++      },
++      "deny": {
++        "from": [],
++        "to": []
++      }
++    },
++    {
++      "allow": {
++        "from": [
++          {
++            "kind": "Issuer",
++            "model": {
++              "displayName": "cert-manager",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "cert-manager",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": {
++              "mutatorRef": [
++                [
++                  "displayName"
++                ],
++                [
++                  "component",
++                  "kind"
++                ]
++              ],
++              "patchStrategy": "replace"
++            }
++          }
++        ],
++        "to": [
++          {
++            "kind": "Certificate",
++            "model": {
++              "displayName": "cert-manager",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "cert-manager",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": {
++              "mutatedRef": [
++                [
++                  "configuration",
++                  "spec",
++                  "issuerRef",
++                  "name"
++                ],
++                [
++                  "configuration",
++                  "spec",
++                  "issuerRef",
++                  "kind"
++                ]
++              ],
++              "patchStrategy": "replace"
++            }
++          }
++        ]
++      },
++      "deny": {
++        "from": [],
++        "to": []
++      }
++    }
++  ],
++  "status": "enabled",
++  "subType": "reference",
++  "type": "non-binding",
++  "version": "v1.0.0"
++}
+```
+
+**File**: `models/cert-manager/v1.22.0-alpha.0/v1.0.0/relationships/edge-non-binding-reference-issuer-ingress-annotation.json` (added, +121/-0)
+```diff
+@@ -0,0 +1,121 @@
++{
++  "evaluationQuery": "",
++  "id": "00000000-0000-0000-0000-000000000000",
++  "kind": "edge",
++  "metadata": {
++    "description": "Documents which Issuer or ClusterIssuer provisions an Ingress's certificate through the cert-manager ingress-shim annotations: a ClusterIssuer is named by metadata.annotations['cert-manager.io/cluster-issuer'], an Issuer by metadata.annotations['cert-manager.io/issuer']. The annotation value is set manually today, because the current patch engine mis-splits dotted annotation keys when writing (meshery/meshkit#1097, fix meshery/meshkit#1098). Automatic patching returns once that fix ships in a meshkit release consumed by Meshery.",
++    "isAnnotation": false,
++    "styles": {
++      "primaryColor": "",
++      "svgColor": "",
++      "svgWhite": ""
++    }
++  },
++  "model": {
++    "displayName": "cert-manager",
++    "id": "00000000-0000-0000-0000-000000000000",
++    "model": {
++      "version": "v1.22.0-alpha.0"
++    },
++    "name": "cert-manager",
++    "registrant": {
++      "kind": "github"
++    },
++    "version": "v1.0.0"
++  },
++  "schemaVersion": "relationships.meshery.io/v1beta2",
++  "selectors": [
++    {
++      "allow": {
++        "from": [
++          {
++            "kind": "ClusterIssuer",
++            "model": {
++              "displayName": "cert-manager",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "cert-manager",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": null
++          }
++        ],
++        "to": [
++          {
++            "kind": "Ingress",
++            "model": {
++              "displayName": "Kubernetes",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "kubernetes",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": null
++          }
++        ]
++      },
++      "deny": {
++        "from": [],
++        "to": []
++      }
++    },
++    {
++      "allow": {
++        "from": [
++          {
++            "kind": "Issuer",
++            "model": {
++              "displayName": "cert-manager",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "cert-manager",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": null
++          }
++        ],
++        "to": [
++          {
++            "kind": "Ingress",
++            "model": {
++              "displayName": "Kubernetes",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "kubernetes",
++              "registrant": {
++                "kind": "github"
++              },
++              "version": ""
++            },
++            "patch": null
++          }
++        ]
++      },
++      "deny": {
++        "from": [],
++        "to": []
++      }
++    }
++  ],
++  "status": "enabled",
++  "subType": "reference",
++  "type": "non-binding",
++  "version": "v1.0.0"
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24367** (2026-11-25): fix(ui): sync changeTrackCB ref, support functional updaters, and guard callbacks in useStateCB (@madhavzanwar)
-- **PR #24365** (2026-11-25): [Server] Require matching cluster CA trust in trusted-context exemption (@subhwastaken)
-- **PR #24348** (2026-11-25): [UI] Guard CAN permission helper against non-string and empty actions or subjects (@mrdeyroy)
-- **PR #24343** (2026-11-25): fix(ui): guard useTimeout against invalid delays, non-callable callbacks, and non-array deps (@madhavzanwar)
-- **PR #24335** (2026-11-25): [Server] Parse POLICY_EVAL_TIMEOUT as a Go duration, not nanoseconds (@SandstromPL)
-- **PR #24334** (closed): fix: send contexts=all on design and adapter commands (@Ankitavasudev)
+- **PR #24413** (2026-11-26): [UI] Handle empty component schema in Registry details (@BHAUMIK0711)
+- **PR #24409** (2026-11-26): [mesheryctl] Check the selected context in IsMesheryRunning (@TunahanBalci)
+- **PR #24408** (closed): fix(ui): correct filter and design download progress and error handling (@AyushmanMohapatra015)
+- **PR #24406** (2026-11-26): [Server] Optimize planner graph in-degree calculation and cycle detection (@mystic-fae)
+- **PR #24399** (2026-11-26): docs(build): verify Dart Sass speaks embedded protocol in check-deps (@kjaid0341-creator)
+- **PR #24397** (2026-11-26): [Docs] Add Permissions Spreadsheet links to Authorization page (#24372) (@DerickDidas)
 
 ---
 
@@ -1425,57 +1676,64 @@ Signed-off-by: madhavzanwar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in useStateCB.test.ts
+## X. Empirical Invariant Guard in MeshModelDetails.request.test.tsx
 
 **RULE**:
-When implementing operations in `ui/utils/hooks/__tests__/useStateCB.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/components/registry/MeshModelDetails.request.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68bfaf06`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f676791`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/utils/hooks/__tests__/useStateCB.test.ts`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/components/registry/MeshModelDetails.request.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
 
-  it('always invokes the latest changeTrackCB after rerenders', () => {
-    const firstTrack = vi.fn();
-    const secondTrack = vi.fn();
-    const { result, rerender } = renderHook(({ cb }) => useStateCB(0, cb), {
-      initialProps: { cb: firstTrack },
+  const renderDetailsWithSchema = async (
+    schema: unknown,
+    extraFields: Record<string, unknown> = {},
+  ) => {
+    fetchMock.mockImplementationOnce(async () =>
+      okJsonResponse({
+        page: 0,
+        pageSize: 1,
+        totalCount: 1,
+        components: [
+          {
+            ...componentDef,
+            ...extraFields,
+            component: {
+              ...componentDef.component,
+              ...(schema === Symbol.for('OMIT_SCHEMA') ? {} : { schema }),
+            },
+            registrant: { hostname: 'artifacthub' },
+            duplicates: 0,
+          },
+        ],
+      }),
+    );
+
+    const store = configureStore({
+      reducer: { [api.reducerPath]: api.reducer },
+      middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
     });
 
-    rerender({ cb: secondTrack });
+    render(
+      <Provider store={store}>
+        <MeshModelDetails
+          view="Components"
+          showDetailsData={{ type: 'Components', data: componentDef }}
+        />
+      </Provider>,
+    );
 
-    act(() => {
-      result.current[1](10);
-    });
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+  };
 
-    expect(firstTrack).not.toHaveBeenCalled();
-    expect(secondTrack).toHaveBeenCalledTimes(1);
-    expect(secondTrack).toHaveBeenCalledWith(10);
-  });
-
-  it('supports lazy initializer functions and keeps getStateRefValue accurate', () => {
-    const init = vi.fn(() => 99);
-    const { result } = renderHook(() => useStateCB(init));
-
-    expect(init).toHaveBeenCalledTimes(1);
-    expect(result.current[0]).toBe(99);
-    expect(result.current[2]()).toBe(99);
-  });
-
-  it('supports functional state updaters and keeps stateRef in sync across sequential updates', () => {
-    const changeTrack = vi.fn();
-    const after = vi.fn();
-    const { result } = renderHook(() => useStateCB(0, changeTrack));
-
-    act(() => {
-      result.current[1]((prev) => prev + 1);
-      result.current[1]((prev) => prev + 2, after);
-      expect(result.current[2](
+  it('renders without crashing when component.schema is an empty string', async () => {
+    await renderDetailsWithSc
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1485,7 +1743,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68bfaf06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f676791` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

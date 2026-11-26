@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `649d33fa`  
+> **Source Version**: `f1fb8936`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T01:08:11.720Z  
+> **Timestamp**: 2026-11-26T19:37:21.924Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T01:08:11.715Z  
+> **Harvest Timestamp**: 2026-11-26T19:37:21.918Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9508 stars
+- **Stars / Engagement**: 9509 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21214** (2026-11-25): **refactor(query): remove the unused tenant_quota table function**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Remove the `tenant_quota` table function, and with it `CALL admin$tenant_quota(...)`. Nothing calls it: Databend Cloud manages tenant limits in its own control plane, and the only in-repo users were tests. - Quota enforcement is unchanged. `[query.quota]`, the checks in `CREATE DATABASE/TABLE/STAGE/USER`, and stored `__fd_quotas` records keep working. After this change a quota is set through `[query.quota]` (applied at startup) instead of SQL. - The `TENANTSETTING` user option still parses and is stored, but no longer gates anything. - Tests: `management_calls.test` now expects `call admin$tenant_quota(...)` to fail with 1025. `15_0009_procedure_call.test` and the AST display test used this function only to cover quote escaping in `CALL`; they now use `system$fuse_snapshot`. - Not built or run locally; relying on CI.  ## Tests  - [ ] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [x] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Documentation Update - [ ] Refactoring - [ ] Performance Improvement - [ ] Other (please describe):  ## AI assistance  - AI usage: An AI coding agent found the unused function, removed it and updated the tests - R
+- **Issue #21241** (2026-11-26): **fix: query: read the RESULT_SCAN cache key of HTTP sessions from meta**
+  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### fix: query: read the RESULT_SCAN cache key of HTTP sessions from meta # Summary  For an HTTP session, `RESULT_SCAN` now uses the result cache key that the server recorded for the last query, instead of the copy in the session state that the client sends back.  # Details  - When an HTTP query has a result cache key, `HttpQuery` records it in   meta at `_result_scan_owner/{tenant}/{user}/{query_id}`, with   `query_result_cache_ttl_secs` as its TTL, before the response that   carries the key. The tenant and user are the authenticated ones that   `HttpQuery` already uses for query ownership. Because the user is   part of the key, a user reads back only the keys of their own   queries.  - `HttpSessionConf::restore()` reads the record for the last query id   only when the client's `last_query_result_cache_key` is not empty,   so a session that does not use the result cache makes no extra meta   read. The content of that field is no longer used. A failed read or   write is logged, and `RESULT_SCAN` then reports that no cache key is   found.  - Each HTTP query with a result cache key costs one meta write. The   result cache is off by default.  - The field is still sent, so nodes of older versions keep working   during a rolling upgrade. A `RESULT_SCAN` on a new node of a query   that ran on an old node finds no record, and reports that no cache   key is found.  ##### 
 
-- **Issue #21211** (2026-11-25): **docs: update TPC-H benchmark results in README**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Update the README benchmark table to match the refreshed benchmark pages:   - TPC-H SF100 vs. Snowflake: 1.25× faster, ~60% lower cost → 3.97× faster, ~87% lower cost (databendlabs/databend-docs#3638).   - TPC-H SF1000 scaling: 4.1× → 3.34× faster on Large vs. Small warehouse (databendlabs/databend-docs#3637). The ratio is lower because the Small warehouse itself got about 2× faster. - No Test: README text only.  ## Tests  - [ ] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [x] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [x] Documentation Update - [ ] Refactoring - [ ] Performance Improvement - [ ] Other (please describe):  ## AI assistance  - AI usage: An AI assistant ran the benchmarks and drafted the README text change. - Responsible human: @dqhl76 - [x] The responsible human has read every line of this diff and can explain each change  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/databendlabs/databend/21211) <!-- Reviewable:end --> 
+- **Issue #21239** (2026-11-26): **fix: query: update the matching entry in update_query_ids_results**
+  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### fix: query: update the matching entry in update_query_ids_results # Summary  `SessionContext::update_query_ids_results()` now writes the new result cache key into the entry whose query id matches, instead of into the entry at the mirrored position.  # Details  - The loop took its index from `iter().rev().enumerate()`, an offset   from the end, and used it to index the list from the front. In a list   of more than one entry, updating the k-th entry from the end replaced   the k-th entry from the front with the updated query id: another   query's entry was lost, and the matching entry kept its old key.  - No current caller is known to reach this. Every update with `Some`   is for a query id that is not in the list yet, so it is appended, and   an update with `None` never writes.  - The function now finds the entry with `rposition()`. An update with   `None` still keeps a key that is already set.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue)  ## AI assistance  - AI usage: An AI coding agent generated code and wrote tests; I reviewed and confirmed every line before committing it. - Responsible human: @drmingdrmer - [x] The responsible human has read every line of this diff and can explain each change  ## Related Issues  <!-- Reviewable:sta
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,1238 +1217,1698 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `649d33fa` (2026-11-25)
-**Commit Message**: refactor(storage): build the Parquet read schema once per block reader (#21183)
+### Incident Patch 1: `80519243` (2026-11-26)
+**Commit Message**: fix(query): use one conversion plan for CAST and TRY_CAST (#21203)
 
-* refactor(storage): build the Parquet read schema once per block reader
+* feat(query): record how overloads take nullable arguments
 
-Reading a Fuse block converted the whole table schema to Arrow and
-Parquet, rebuilt the column id to leaf map and computed the field levels
-for every block. A BlockReader now builds a ParquetReadSchema once, and
-each ReadState keeps a FieldLevelsCache per reader, so the field levels
-of every block layout are computed once per processor without locking.
-RowGroupImplBuilder takes the shared SchemaDescPtr instead of deep
-cloning the descriptor per block.
+A call checked for non-nullable arguments may get nullable ones later,
+e.g. when an outer join makes a column nullable. Record, at registration,
+which overload takes them instead of searching all overloads again.
 
-* fix(storage): bound the Parquet field levels cache
+- NullableInput tells the variant of a builtin overload (passthrough,
+  combine or null-aware), or the factories that create the function for
+  nullable arguments: a passthrough factory, registered by
+  register_passthrough_nullable_factory, or null-aware ones.
+- The register_passthrough_nullable_* and register_combine_nullable_*
+  helpers and the builders with passthrough_nullable record their
+  variants. register_nullable_variants pairs each builtin with the
+  variant that takes its arguments nullable, and panics on an overload,
+  variant or name it cannot pair.
+- check_nullable_arguments checks a call again for nullable arguments
+  through its recorded overloads.
 
-**File**: `src/query/storages/fuse/src/io/mod.rs` (modified, +1/-0)
+* feat(query): declare the nullable variants of and, or, is_true, concat_ws, tuple get and the decimal casts
+
+- and, or and is_true register their three-valued variants, and
+  conca
+
+**File**: `src/query/expression/src/auto_cast_rules.rs` (added, +195/-0)
 ```diff
-@@ -38,6 +38,7 @@ pub use read::BlockReadResult;
- pub use read::BlockReader;
- pub use read::BloomBlockFilterReader;
- pub use read::DataItem;
-+pub use read::FieldLevelsCache;
- pub use read::FuseLowLevelBlockReadOptions;
- pub use read::FuseLowLevelBlockReader;
- pub use read::FuseLowLevelColumnBatchReader;
+@@ -0,0 +1,195 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//! The rules of automatic casts that hold across functions.
++//!
++//! Type checking casts an argument to the type a function overload takes when a rule allows it.
++//! The rules here are shared by many functions, and planner and storage code rely on the casts
++//! they allow; which rules a function uses is decided where the function is registered.
++//! [`decimal_auto_cast`] is the rule for decimals, whose sizes a list of type pairs cannot hold.
++
++use crate::types::ALL_INTEGER_TYPES;
++use crate::types::ALL_NUMERICS_TYPES;
++use crate::types::DataType;
++use crate::types::Decimal;
++use crate::types::NumberDataType;
++use crate::types::i256;
++
++/// Whether a decimal rule casts `src` to `dest` automatically, for any function: a string or an
++/// integer to a decimal that holds it, a decimal to a wider decimal, and a decimal to Float64.
++pub fn decimal_auto_cast(src: &DataType, dest: &DataType) -> bool {
++    match (src, dest) {
++        (DataType::String, DataType::Decimal(_)) => true,
++        (DataType::Decimal(x), DataType::Decimal(y)) => {
++            x.scale() <= y.scale()
++                && (x.leading_digits() <= y.leading_digits()
++                    || y.precision() == i256::MAX_PRECISION)
++        }
++        (DataType::Number(n), DataType::Decimal(d)) if !n.is_float() => {
++            let properties = n.get_decimal_properties().unwrap();
++            properties.scale() <= d.scale()
++                && properties.precision() - properties.scale() <= d.leading_digits()
++        }
++        // Only to Float64, otherwise `sqrt(1234.56789)` would have the signature
++        // `sqrt(1234.56789::Float32)`.
++        (DataType::Decimal(_), DataType::Number(n)) => n.is_float64(),
++        _ => false,
++    }
++}
++
++/// Whether an automatic cast from `src` to `dest` is a `TRY_CAST`: a Variant extracts a value
++/// with [`cast_from_variant_rules`], and a value of another JSON type becomes NULL.
++pub fn is_auto_try_cast(src: &DataType, dest: &DataType) -> bool {
++    src.remove_nullable() == DataType::Variant
++        && dest.is_nullable()
++        && is_variant_auto_cast_target(dest)
++}
++
++/// The types that a Variant extracts automatically, as NULL for a value of another JSON type.
++const VARIANT_AUTO_CAST_TARGETS: &[DataType] = &[
++    DataType::Boolean,
++    DataType::Date,
++    DataType::Timestamp,
++    DataType::String,
++    DataType::Number(NumberDataType::UInt8),
++    DataType::Number(NumberDataType::UInt16),
++    DataType::Number(NumberDataType::UInt32),
++    DataType::Number(NumberDataType::UInt64),
++    DataType::Number(NumberDataType::Int8),
++    DataType::Number(NumberDataType::Int16),
++    DataType::Number(NumberDataType::Int32),
++    DataType::Number(NumberDataType::Int64),
++    DataType::Number(NumberDataType::Float32),
++    DataType::Number(NumberDataType::Float64),
++];
++
++/// Whether [`cast_from_variant_rules`] cast a Variant to `dest`, nullable or not.
++pub fn is_variant_auto_cast_target(dest: &DataType) -> bool {
++    VARIANT_AUTO_CAST_TARGETS.contains(&dest.remove_nullable())
++}
++
++/// The cast rules for any situation, including comparison functions, joins, etc. Among numbers,
++/// they are the lossless casts of [`NumberDataType::can_lossless_cast_to`], and the lossy casts
++/// `UInt64 -> Int64`, `UInt64 -> Float64` and `Int64 -> Float64`. Through the lossy casts,
++/// comparing a `UInt64` with an `Int64` casts to `Int64`, unlike the lossless common types of
++/// [`crate::conversion::common_super_type_with_conversion`].
++pub fn general_cast_rules() -> Vec<(DataType, DataType)> {
++    let mut rules = vec![
++        (DataType::String, DataType::Binary),
++        (DataType::String, DataType::Timestamp),
++        (DataType::String, DataType::TimestampTz),
++        (DataType::String, DataType::Date),
++        (DataType::String, DataType::Interval),
++        (DataType::String, DataType::Boolean),
++        (DataType::Date, DataType::Timestamp),
++    ];
++    let lossless = ALL_NUMERICS_TYPES.iter().flat_map(|src| {
++        ALL_NUMERICS_TYPES
++            .iter()
++            .filter(move |dest| src != *dest && src.can_lossless_cast_to(**dest))
++            .map(|dest| (*src, *dest))
++    });
++    let lossy = [
++        (NumberDataType::UInt64, NumberDataType::Int64),
++        (NumberDataType::UInt64, NumberDataType::Float64),
++        (NumberDataType::Int64, NumberDataType::Float64),
++    
 ```
 
-**File**: `src/query/storages/fuse/src/io/read/block/block_reader.rs` (modified, +16/-5)
+**File**: `src/query/expression/src/cast_plan.rs` (added, +498/-0)
 ```diff
-@@ -17,7 +17,6 @@ use std::collections::HashMap;
- use std::sync::Arc;
- 
- use arrow_schema::Field;
--use arrow_schema::Fields;
- use databend_common_catalog::plan::Projection;
- use databend_common_catalog::table_context::TableContext;
- use databend_common_config::GlobalConfig;
-@@ -39,6 +38,8 @@ use opendal::Operator;
- use crate::BlockReadResult;
- use crate::io::FuseCaches;
- use crate::io::read::block::parquet::ColumnEncoding;
-+use crate::io::read::block::parquet::ParquetReadSchema;
-+use crate::io::read::block::parquet::column_name_paths;
- use crate::io::read::block::parquet::dictionary_hint_fields;
- 
- // TODO: make BlockReader as a trait.
-@@ -63,9 +64,12 @@ pub struct BlockReader {
-     /// regular columns), see [`ColumnEncoding::encode`]. Only with the column array cache on:
-     /// without it an encoded column is used once, and building it costs more than it saves.
-     pub(crate) build_encodings: bool,
--    /// Arrow fields the Parquet columns are read as, if they differ from the original schema,
--    /// see [`dictionary_hint_fields`]. Fixed per reader, so computed once here.
--    pub(crate) parquet_hint_fields: Option<Fields>,
-+    /// Schema forms the Parquet column chunks are read with, including the Arrow fields the
-+    /// columns are read as (see [`dictionary_hint_fields`]). Fixed per reader, so built once
-+    /// here instead of per block.
-+    pub(crate) parquet_read_schema: Arc<ParquetReadSchema>,
-+    /// Name path of each projected column in the record batches read, by projection order.
-+    pub(crate) parquet_name_paths: Arc<Vec<Vec<String>>>,
- 
-     pub original_schema: TableSchemaRef,
- }
-@@ -204,6 +208,12 @@ impl BlockReader {
-                 .map(|field| field.column_id),
-         );
- 
-+        let parquet_read_schema = Arc::new(ParquetReadSchema::try_new(
-+            &original_schema,
-+            parquet_hint_fields,
-+        )?);
-+        let parquet_name_paths = Arc::new(column_name_paths(&projection, &original_schema));
+@@ -0,0 +1,498 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-         Ok(Arc::new(BlockReader {
-             ctx,
-             operator,
-@@ -217,7 +227,8 @@ impl BlockReader {
-             column_encodings: Arc::new(column_encodings),
-             dictionary_ndv_ratio,
-             build_encodings,
--            parquet_hint_fields,
-+            parquet_read_schema,
-+            parquet_name_paths,
-             original_schema,
++//! The steps that a cast takes.
++//!
++//! A cast does not map to one function: it may take no function (`NULL`, nullability, empty
++//! containers), one function, a chain of casts, or a cast for each nested value. [`CastPlan`]
++//! records these steps; the evaluator runs them and the constant folder derives their domain.
++//!
++//! The plan of `TRY_CAST` is the plan of `CAST` to the nullable destination. What happens with
++//! a row that fails is decided where the plan runs: `CAST` reports an error, `TRY_CAST` turns
++//! the row into NULL at the nearest nullable destination. A function only provides the
++//! conversion of one step.
++//!
++//! A step that converts a value runs the function overload registered for its source and
++//! destination types, and its domain is the domain of that function. Function overload
++//! resolution does not take part: a cast without a registered function or chain has no plan.
++
++use std::fmt;
++use std::sync::Arc;
++
++use crate::FunctionRegistry;
++use crate::NullableInput;
++use crate::Scalar;
++use crate::function::Function;
++use crate::function::FunctionID;
++use crate::type_check::Substitution;
++use crate::types::DataType;
++use crate::types::NumberScalar;
++use crate::types::VectorDataType;
++use crate::types::decimal::DecimalSize;
++
++/// How a cast from `src_type` to `dest_type` runs.
++#[derive(Clone, Debug)]
++pub struct CastPlan {
++    pub src_type: DataType,
++    pub dest_type: DataType,
++    pub step: CastStep,
++}
++
++#[derive(Clone, Debug)]
++pub enum CastStep {
++    /// The value already has the layout of the destination.
++    Identity,
++    /// `NULL` to any type: NULL for a nullable destination, an error otherwise.
++    Null,
++    /// A cast function converts the value: `call` runs it on the value of the source, and
++    /// `value_call` on a non-NULL value, the same call for a non-nullable source. The function
++    /// may return NULL for some non-NULL values, e.g. a JSON null cast from Variant, which
++    /// `value_call` returns a nullable type for; see [`CastPlan::rejects_null`].
++    Function {
++        call: Box<CastCall>,
++        value_call: Box<CastCall>,
++    },
++    /// Casts through intermediate types, one cast after another.
++    Chain(Vec<CastPlan>),
++    /// `T1 NULL -> T2 NULL`.
++    Nullable(Box<CastPlan>),
++    /// `T1 NULL -> T2`: a NULL is an error.
++    FromNullable(Box<CastPlan>),
++    /// `T1 -> T2 NULL`.
++    ToNullable(Box<CastPlan>),
++    /// An empty array or map to an array or map, as the destination is: `[]` or `{}`.
++    Empty,
++    /// Casts the elements of each array, or the key-value tuples of each map, as the destination
++    /// is.
++    Elements(Box<CastPlan>),
++    /// Casts each field.
++    Tuple(Vec<CastPlan>),
++    /// Casts the elements of each JSON array; a value that is not an array has none.
++    ///
++    /// Known issue: so a value that is not an array becomes `[]`, for `TRY_CAST` too, which
++    /// follows `CAST` here instead of returning NULL. Whether NULL suits better is open; the
++    /// result of `CAST` is kept as before.
++    VariantToArray(Box<CastPlan>),
++    /// Casts the values of each JSON object; a value that is not an object has none, and
++    /// becomes `{}` as in [`CastStep::VariantToArray`].
++    VariantToMap(Box<CastPlan>),
++    /// Converts a String, Variant or numeric Array value to a vector.
++    ToVector,
++}
++
++/// The function overload that a cast step runs, on the value that the step converts.
++#[derive(Clone, Debug)]
++pub struct CastCall {
++    pub id: FunctionID,
++    pub function: Arc<Function>,
++    pub generics: Vec<DataType>,
++    pub return_type: DataType,
++}
++
++/// A registered overload of a cast function. A factory is instantiated for the types of each
++/// step, e.g. with the precision and scale of the destination decimal.
++#[derive(Clone, Copy, Debug)]
++pub enum CastOverload {
++    Builtin(usize),
++    Factory(usize),
++}
++
++/// How a registered cast converts a value of its source type to its destination type.
++#[derive(Clone, Debug)]
++pub enum RegisteredCast {
++    /// Runs a function.
++    Function(CastFunction),
++    /// Converts to `via` first, then from `via` to the destination.
++    Chain { via: DataType },
++}
++
++/// The function that a cast step runs.
++#[derive(Clone, Debug)]
++pub struct CastFunction {
++    pub name: String,
++    /// The overload for a non-NULL argument.
++    
+```
+
+**File**: `src/query/expression/src/constant_folder.rs` (modified, +196/-210)
+```diff
+@@ -136,47 +136,6 @@ impl<'e, Index: ColumnIndex> FunctionNode<'e, Index> {
+             FunctionNode::Owned(call) => Cow::Owned(Expr::FunctionCall(call)),
+         }
+     }
+-
+-    fn finish(self, args: impl IntoIterator<Item = Expr<Index>>) -> Expr<Index> {
+-        let args = args.into_iter().collect();
+-        match self {
+-            FunctionNode::Borrowed { call, .. } => Expr::FunctionCall(FunctionCall {
+-                span: call.span,
+-                id: call.id.clone(),
+-                function: call.function.clone(),
+-                generics: call.generics.clone(),
+-                args,
+-                return_type: call.return_type.clone(),
+-            }),
+-            FunctionNode::Owned(mut call) => {
+-                call.args = args;
+-                Expr::FunctionCall(call)
+-            }
+-        }
+-    }
+-
+-    fn borrowed_expr(&self) -> Option<&'e Expr<Index>> {
+-        match self {
+-            FunctionNode::Borrowed { expr, .. } => Some(expr),
+-            FunctionNode::Owned(_) => None,
+-        }
+-    }
+-
+-    fn finish_fold(self, args: Vec<FoldResult<'e, Index>>, changed: bool) -> FoldResult<'e, Index> {
+-        match (changed, self) {
+-            (false, FunctionNode::Borrowed { expr, .. }) => {
+-                FoldResult::Unchanged(Cow::Borrowed(expr))
+-            }
+-            (changed, node) => {
+-                let expr = node.finish(args.into_iter().map(FoldResult::into_expr));
+-                if changed {
+-                    FoldResult::Changed(expr)
+-                } else {
+-                    FoldResult::Unchanged(Cow::Owned(expr))
+-                }
+-            }
+-        }
+-    }
+ }
+ 
+ enum LambdaNode<'e, Index: ColumnIndex> {
+@@ -214,7 +173,57 @@ impl<'e, Index: ColumnIndex> LambdaNode<'e, Index> {
+             LambdaNode::Owned(call) => Cow::Owned(Expr::LambdaFunctionCall(call)),
+         }
+     }
++}
++
++/// A function or lambda call whose arguments are folded one by one.
++trait CallNode<'e, Index: ColumnIndex>: Sized {
++    /// The call itself, when it is borrowed and can be kept as it is.
++    fn borrowed_expr(&self) -> Option<&'e Expr<Index>>;
++
++    /// The call over `args`.
++    fn finish(self, args: impl IntoIterator<Item = Expr<Index>>) -> Expr<Index>;
++
++    fn finish_fold(self, args: Vec<FoldResult<'e, Index>>, changed: bool) -> FoldResult<'e, Index> {
++        if !changed && let Some(expr) = self.borrowed_expr() {
++            return FoldResult::Unchanged(Cow::Borrowed(expr));
++        }
++        let expr = self.finish(args.into_iter().map(FoldResult::into_expr));
++        if changed {
++            FoldResult::Changed(expr)
++        } else {
++            FoldResult::Unchanged(Cow::Owned(expr))
++        }
++    }
++}
++
++impl<'e, Index: ColumnIndex> CallNode<'e, Index> for FunctionNode<'e, Index> {
++    fn finish(self, args: impl IntoIterator<Item = Expr<Index>>) -> Expr<Index> {
++        let args = args.into_iter().collect();
++        match self {
++            FunctionNode::Borrowed { call, .. } => Expr::FunctionCall(FunctionCall {
++                span: call.span,
++                id: call.id.clone(),
++                function: call.function.clone(),
++                generics: call.generics.clone(),
++                args,
++                return_type: call.return_type.clone(),
++            }),
++            FunctionNode::Owned(mut call) => {
++                call.args = args;
++                Expr::FunctionCall(call)
++            }
++        }
++    }
++
++    fn borrowed_expr(&self) -> Option<&'e Expr<Index>> {
++        match self {
++            FunctionNode::Borrowed { expr, .. } => Some(expr),
++            FunctionNode::Owned(_) => None,
++        }
++    }
++}
+ 
++impl<'e, Index: ColumnIndex> CallNode<'e, Index> for LambdaNode<'e, Index> {
+     fn finish(self, args: impl IntoIterator<Item = Expr<Index>>) -> Expr<Index> {
+         let args = args.into_iter().collect();
+         match self {
+@@ -239,22 +248,6 @@ impl<'e, Index: ColumnIndex> LambdaNode<'e, Index> {
+             LambdaNode::Owned(_) => None,
+         }
+     }
+-
+-    fn finish_fold(self, args: Vec<FoldResult<'e, Index>>, changed: bool) -> FoldResult<'e, Index> {
+-        match (changed, self) {
+-            (false, LambdaNode::Borrowed { expr, .. }) => {
+-                FoldResult::Unchanged(Cow::Borrowed(expr))
+-            }
+-            (changed, node) => {
+-                let expr = node.finish(args.into_iter().map(FoldResult::into_expr));
+-                if changed {
+-                    FoldResult::Changed(expr)
+-                } else {
+-                    FoldResult::Unchanged(Cow::Owned(expr))
+-                }
+-            }
+-        }
+-    }
+ }
+ 
+ enum CastNode<'e, Index: ColumnIndex> {
+@@ -449,8 +442,19 @@ impl<'a, Index: ColumnIndex> ConstantFolder<'a, Index> {
+ 
+     /// Fold expression by one step, specifically, by reducing expression by domain calculation and then
+     /// folding the function calls whose all arguments are constants.
+-    #[recursive::recursive]
+     
+```
+
+**File**: `src/query/expression/src/constant_folder/fold_rules.rs` (modified, +213/-274)
+```diff
+@@ -19,8 +19,6 @@
+ //! with another tree type can apply the same decision to its own nodes. Only
+ //! [`FoldRules::eval_constant`] takes an expression, which must be free of columns.
+ 
+-use databend_common_ast::Span;
+-
+ use super::monotonicity::calculate_monotonicity_domain;
+ use super::monotonicity::is_monotonic;
+ use crate::ColumnIndex;
+@@ -32,17 +30,19 @@ use crate::FunctionRegistry;
+ use crate::Scalar;
+ use crate::Value;
+ use crate::block::DataBlock;
++use crate::cast_plan::CastCall;
++use crate::cast_plan::CastPlan;
++use crate::cast_plan::CastStep;
++use crate::cast_plan::resolve_cast_plan;
+ use crate::evaluator::Evaluator;
+-use crate::expression::Cast;
+ use crate::expression::ColumnRef;
+-use crate::expression::Constant;
+ use crate::expression::Expr;
+ use crate::expression::ExprVisitor;
+ use crate::expression::FunctionCall;
+ use crate::expression::LambdaFunctionCall;
+ use crate::expression::visit_expr;
+ use crate::property::Domain;
+-use crate::type_check::resolve_cast_function;
++use crate::types::AnyType;
+ use crate::types::DataType;
+ use crate::types::boolean::BooleanDomain;
+ use crate::types::nullable::NullableDomain;
+@@ -62,299 +62,232 @@ impl FoldRules {
+     pub fn cast_domain(
+         func_ctx: &FunctionContext,
+         fn_registry: &FunctionRegistry,
+-        span: Span,
+         src_type: &DataType,
+         dest_type: &DataType,
+         is_try: bool,
+         domain: &Domain,
+     ) -> Option<Domain> {
+-        if is_try {
+-            Self::calculate_try_cast(func_ctx, fn_registry, span, src_type, dest_type, domain)
+-        } else {
+-            Self::calculate_cast(func_ctx, fn_registry, span, src_type, dest_type, domain)
+-        }
++        let plan = resolve_cast_plan(src_type, dest_type, fn_registry)?;
++        let (domain, may_fail) =
++            Self::cast_plan_domain(func_ctx, fn_registry, &plan, is_try, domain)?;
++        // The destination of `TRY_CAST` is nullable, so a failed row is NULL by now.
++        debug_assert!(!may_fail);
++        Some(domain)
+     }
+ 
+-    pub(super) fn calculate_cast(
++    /// Domain of the output of a cast plan, and whether a row may fail, which is only possible
++    /// for `TRY_CAST`. A failed row becomes NULL at the nearest nullable destination, as in
++    /// `Evaluator::run_cast_plan`. Returns `None` when the domain is unknown, or when a row of
++    /// `CAST` may fail.
++    fn cast_plan_domain(
+         func_ctx: &FunctionContext,
+         fn_registry: &FunctionRegistry,
+-        span: Span,
+-        src_type: &DataType,
+-        dest_type: &DataType,
++        plan: &CastPlan,
++        is_try: bool,
+         domain: &Domain,
+-    ) -> Option<Domain> {
+-        if src_type == dest_type {
+-            return Some(domain.clone());
+-        }
+-
+-        if let Some(call) = resolve_cast_function(span, false, src_type, dest_type, fn_registry)
+-            && let Some(new_domain) =
+-                Self::calculate_simple_cast(func_ctx, fn_registry, call, domain)
+-        {
+-            return new_domain;
+-        }
+-
+-        match (src_type, dest_type) {
+-            (DataType::Null, DataType::Nullable(_)) => Some(domain.clone()),
+-            (DataType::Nullable(inner_src_ty), DataType::Nullable(inner_dest_ty)) => {
+-                let domain = domain.as_nullable().unwrap();
+-                let value = match &domain.value {
+-                    Some(value) => Some(Box::new(Self::calculate_cast(
+-                        func_ctx,
+-                        fn_registry,
+-                        span,
+-                        inner_src_ty,
+-                        inner_dest_ty,
+-                        value,
+-                    )?)),
+-                    None => None,
+-                };
+-                Some(Domain::Nullable(NullableDomain {
+-                    has_null: domain.has_null,
+-                    value,
+-                }))
+-            }
+-            (_, DataType::Nullable(inner_dest_ty)) => Some(Domain::Nullable(NullableDomain {
+-                has_null: false,
+-                value: Some(Box::new(Self::calculate_cast(
+-                    func_ctx,
+-                    fn_registry,
+-                    span,
+-                    src_type,
+-                    inner_dest_ty,
+-                    domain,
+-                )?)),
+-            })),
++    ) -> Option<(Domain, bool)> {
++        let dest_type = &plan.dest_type;
++        let nested = |plan: &CastPlan, domain: &Domain| {
++            Self::cast_plan_domain(func_ctx, fn_registry, plan, is_try, domain)
++        };
+ 
+-            (DataType::EmptyArray, DataType::Array(_)) => Some(domain.clone()),
+-            (DataType::Array(inner_src_ty), DataType::Array(inner_dest_ty)) => {
+-                let inner_domain = match domain.as_array().unwrap() {
+-                    Some(inner_domain) => Some(Box::new(Self::calculate_cast(
+-                        func_ctx,
+-                        fn_registry,
+-                        span,
+-                        inner_src_ty,
+-               
+```
+
+**File**: `src/query/expression/src/conversion.rs` (modified, +12/-15)
+```diff
+@@ -12,6 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use crate::auto_cast_rules::is_variant_auto_cast_target;
+ use crate::type_check::common_super_type;
+ use crate::types::DataType;
+ use crate::types::Decimal;
+@@ -126,12 +127,20 @@ pub fn classify_conversion(src: &DataType, dest: &DataType) -> ConversionClass {
+         (DataType::String, dest) if is_value_dependent_string_target(dest) => {
+             ConversionClass::ValueDependent
+         }
+-        (DataType::Variant, dest) if is_variant_try_cast_target(dest) => ConversionClass::TryOnly,
++        (DataType::Variant, dest) if is_variant_auto_cast_target(dest) => ConversionClass::TryOnly,
+ 
+         _ => ConversionClass::Unsupported,
+     }
+ }
+ 
++/// The common type of `left` and `right` for reasoning about equality, with how each side
++/// converts to it.
++///
++/// Known divergence: this is not always the type that a comparison casts to. The comparison
++/// functions resolve their arguments with their auto cast rules, which include lossy number
++/// casts. For `UInt64` and `Int64`, this returns `Decimal(20, 0)`, lossless on both sides,
++/// while `a = b` casts `a` to `Int64` and fails on `u64::MAX`. The rules are kept apart for now;
++/// `test_comparison_and_conversion_common_types_differ` records the difference.
+ pub fn common_super_type_with_conversion(
+     left: impl Into<DataType>,
+     right: impl Into<DataType>,
+@@ -208,10 +217,10 @@ fn common_type_for_conversion(left: DataType, right: DataType) -> Option<DataTyp
+                 (DataType::String, ty) if is_value_dependent_string_target(&ty) => Some(ty),
+                 (ty, DataType::String) if is_value_dependent_string_target(&ty) => Some(ty),
+ 
+-                (DataType::Variant, ty) if is_variant_try_cast_target(&ty) => {
++                (DataType::Variant, ty) if is_variant_auto_cast_target(&ty) => {
+                     Some(ty.wrap_nullable())
+                 }
+-                (ty, DataType::Variant) if is_variant_try_cast_target(&ty) => {
++                (ty, DataType::Variant) if is_variant_auto_cast_target(&ty) => {
+                     Some(ty.wrap_nullable())
+                 }
+ 
+@@ -331,18 +340,6 @@ fn is_value_dependent_string_target(ty: &DataType) -> bool {
+     }
+ }
+ 
+-fn is_variant_try_cast_target(ty: &DataType) -> bool {
+-    match ty {
+-        DataType::Nullable(ty) => is_variant_try_cast_target(ty),
+-        DataType::Boolean
+-        | DataType::Date
+-        | DataType::Timestamp
+-        | DataType::String
+-        | DataType::Number(_) => true,
+-        _ => false,
+-    }
+-}
+-
+ fn is_type_safe_for_equality_inference(ty: &DataType) -> bool {
+     !matches!(
+         ty.remove_nullable(),
+```
+
+**File**: `src/query/expression/src/evaluator.rs` (modified, +696/-989)
+```diff
+@@ -12,7 +12,6 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-use std::collections::BTreeMap;
+ use std::collections::HashSet;
+ use std::ops::Not;
+ 
+@@ -30,20 +29,24 @@ use crate::BlockEntry;
+ use crate::Function;
+ use crate::FunctionContext;
+ use crate::FunctionEval;
++use crate::FunctionID;
+ use crate::FunctionRegistry;
+ use crate::LikePattern;
+ use crate::RemoteExpr;
+ use crate::ScalarRef;
+ use crate::SelectOp;
+ use crate::block::DataBlock;
++use crate::cast_plan::CastCall;
++use crate::cast_plan::CastPlan;
++use crate::cast_plan::CastStep;
++use crate::cast_plan::resolve_cast_plan;
+ use crate::expr::*;
+ use crate::expression::Expr;
+ use crate::function::EvalContext;
+ use crate::kernels::has_nested_decimal;
+ use crate::kernels::select_if_then_else;
+-use crate::type_check::check_cast_function;
+ use crate::type_check::format_function_argument_mismatch_hint;
+-use crate::type_check::resolve_cast_function;
++use crate::types::BinaryColumn;
+ use crate::types::BooleanType;
+ use crate::types::DataType;
+ use crate::types::DecimalColumn;
+@@ -56,12 +59,10 @@ use crate::types::ReturnType;
+ use crate::types::StringType;
+ use crate::types::ValueType;
+ use crate::types::VariantType;
+-use crate::types::VectorDataType;
+ use crate::types::VectorScalar;
+ use crate::types::any::AnyType;
+ use crate::types::array::ArrayColumn;
+ use crate::types::nullable::NullableColumn;
+-use crate::types::string::StringColumnBuilder;
+ use crate::utils::filter_helper::FilterHelpers;
+ use crate::utils::json_path_transform::PathStep;
+ use crate::utils::json_path_transform::replace_at_locations;
+@@ -124,9 +125,68 @@ fn and_validity(bitmap: Bitmap, validity: Option<&Bitmap>) -> Bitmap {
+ /// parent calls must accumulate instead of overwrite.
+ ///
+ /// A length-1 source bitmap comes from a scalar subexpression (evaluated in
+-/// a one-row block, e.g. a constant cast in `run_simple_cast`); a scalar
++/// a one-row block); a scalar
+ /// error applies to every row, so it is broadcast to `num_rows` instead of
+ /// marking only row 0.
++/// Rows that failed in either bitmap; an unset bit is a failed row.
++fn and_failures(left: Option<Bitmap>, right: Option<Bitmap>) -> Option<Bitmap> {
++    match (left, right) {
++        (Some(left), Some(right)) => Some(&left & &right),
++        (left, right) => left.or(right),
++    }
++}
++
++/// `validity` without the rows that `failed` unsets. A failed scalar fails every row.
++fn exclude_failures(validity: Option<Bitmap>, failed: Option<&Bitmap>) -> Option<Bitmap> {
++    let Some(failed) = failed else {
++        return validity;
++    };
++    match validity {
++        Some(validity) if failed.len() == 1 && validity.len() != 1 => {
++            if failed.get_bit(0) {
++                Some(validity)
++            } else {
++                Some(Bitmap::new_constant(false, validity.len()))
++            }
++        }
++        Some(validity) => Some(&validity & failed),
++        None => Some(failed.clone()),
++    }
++}
++
++/// A scalar function call whose arguments are evaluated.
++struct EvaluatedCall<'a> {
++    span: Span,
++    id: &'a FunctionID,
++    function: &'a Function,
++    generics: &'a [DataType],
++    args: Vec<Value<AnyType>>,
++    /// The rows that the call runs for, of which the rows in `validity` are active.
++    num_rows: usize,
++    validity: Option<Bitmap>,
++    /// Whether the call runs once per entry of a dictionary argument.
++    dictionary_eval: bool,
++}
++
++/// The validity of the single row of `value` that a scalar became, when `is_scalar`: every active
++/// row of `validity` uses the scalar, so it is active when any of them is.
++fn scalar_row_validity(validity: Option<Bitmap>, is_scalar: bool) -> Option<Bitmap> {
++    match validity {
++        Some(validity) if is_scalar => Some(Bitmap::new_constant(validity.true_count() > 0, 1)),
++        validity => validity,
++    }
++}
++
++/// The rows, given by `offsets`, that have a failed nested value.
++fn row_failures(offsets: &[u64], failed: Option<Bitmap>) -> Option<Bitmap> {
++    let failed = failed?;
++    let rows = offsets
++        .windows(2)
++        .map(|row| (row[0]..row[1]).all(|idx| failed.get_bit(idx as usize)))
++        .collect::<Bitmap>();
++    (rows.null_count() > 0).then_some(rows)
++}
++
+ fn merge_eval_errors(
+     target: &mut Option<(MutableBitmap, String)>,
+     source: Option<(MutableBitmap, String)>,
+@@ -301,19 +361,16 @@ impl<'a> Evaluator<'a> {
+                 let keep_encoded =
+                     keep_encoded && src_type.remove_nullable() == dest_type.remove_nullable();
+                 let value = self.partial_run(inner, validity.clone(), options, keep_encoded)?;
+-                if *is_try {
+-                    self.run_try_cast(*span, src_type, dest_type, value, &|| expr.sql_display())?
+-                } else {
+-                    self.run_cast(
+-                        *span,
+-                        src_type,
+-                        dest_type,
+-                        value,
+
+```
+
+**File**: `src/query/expression/src/filter/selector.rs` (modified, +10/-14)
+```diff
+@@ -615,20 +615,16 @@ impl<'a> Selector<'a> {
+                 let mut eval_options = EvaluateOptions::new_for_select(selection);
+                 let value = self.evaluator.get_select_child(expr, &mut eval_options)?.0;
+                 let src_type = expr.data_type();
+-                let result = if *is_try {
+-                    self.evaluator
+-                        .run_try_cast(*span, src_type, dest_type, value, &|| expr.sql_display())?
+-                } else {
+-                    self.evaluator.run_cast(
+-                        *span,
+-                        src_type,
+-                        dest_type,
+-                        value,
+-                        None,
+-                        &|| expr.sql_display(),
+-                        &mut eval_options,
+-                    )?
+-                };
++                let result = self.evaluator.run_cast(
++                    *span,
++                    *is_try,
++                    src_type,
++                    dest_type,
++                    value,
++                    None,
++                    &|| expr.sql_display(),
++                    &mut eval_options,
++                )?;
+                 (result, dest_type.clone())
+             }
+             Expr::LambdaFunctionCall(LambdaFunctionCall {
+```
+
+**File**: `src/query/expression/src/function.rs` (modified, +335/-38)
+```diff
+@@ -42,6 +42,8 @@ use crate::ColumnIndex;
+ use crate::Expr;
+ use crate::FunctionDomain;
+ use crate::Scalar;
++use crate::cast_plan::RegisteredCast;
++use crate::cast_plan::resolve_registered_cast;
+ use crate::function_stat::DeriveStat;
+ use crate::function_stat::ScalarFunctionStat;
+ use crate::property::Domain;
+@@ -259,6 +261,14 @@ pub enum FunctionID {
+     },
+ }
+ 
++/// `data_type` without the size of a decimal, as the key of a registered cast.
++pub(crate) fn cast_key(data_type: &DataType) -> DataType {
++    match data_type {
++        DataType::Decimal(_) => DataType::Decimal(DecimalSize::default()),
++        data_type => data_type.clone(),
++    }
++}
++
+ #[derive(Default)]
+ pub struct FunctionRegistry {
+     pub funcs: HashMap<String, Vec<(Arc<Function>, usize)>>,
+@@ -269,11 +279,15 @@ pub struct FunctionRegistry {
+     pub aliases: HashMap<String, String>,
+ 
+     /// Default cast rules for all functions.
+-    pub default_cast_rules: Vec<(DataType, DataType)>,
++    default_cast_rules: Vec<(DataType, DataType)>,
+     /// Cast rules for specific functions, which will override the default cast rules.
+     pub additional_cast_rules: HashMap<String, Vec<(DataType, DataType)>>,
+-    /// The auto rules that should use TRY_CAST instead of CAST.
+-    pub auto_try_cast_rules: Vec<(DataType, DataType)>,
++    /// The registered casts, keyed by the source type, or `None` for any source, and the
++    /// destination type, both non-nullable, with decimal sizes erased. A cast runs a function,
++    /// or converts through an intermediate type.
++    casts: HashMap<(Option<DataType>, DataType), RegisteredCast>,
++    /// The function that converts values to a type, keyed by the type with decimal sizes erased.
++    conversion_functions: HashMap<DataType, String>,
+     pub dynamic_cast_rules: HashMap<String, DynamicCastRules>,
+     pub properties: HashMap<String, FunctionProperty>,
+     pub derive_stat: HashMap<String, DeriveStat>,
+@@ -283,6 +297,41 @@ pub struct FunctionRegistry {
+     /// per overload avoids disabling context-free folding for unrelated overloads that share a
+     /// name, such as numeric and timestamp arithmetic.
+     context_dependent_functions: HashMap<String, HashSet<usize>>,
++    /// How overloads take nullable arguments where their signatures do not,
++    /// see [`NullableInput`]. The key is the canonical function name and the
++    /// registry-local function ID, as for `context_dependent_functions`.
++    nullable_inputs: HashMap<String, HashMap<usize, NullableInput>>,
++}
++
++/// How an overload takes arguments that are nullable where its signature is
++/// not, as its registration implements it. A builtin overload whose signature
++/// takes them, being nullable or a generic there, needs none, and a factory is
++/// asked for a function for them first, as candidate search asks it; an
++/// overload without one takes no such arguments otherwise.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub enum NullableInput {
++    /// The builtin overload `variant`, registered with it, takes every argument
++    /// nullable and returns the result nullable, NULL where an argument is
++    /// NULL: `register_passthrough_nullable_*` and builders with
++    /// `passthrough_nullable`.
++    PassthroughVariant { variant: usize },
++    /// The builtin overload `variant`, registered with it, takes every argument
++    /// nullable and returns the same nullable result, NULL where an argument
++    /// is NULL: `register_combine_nullable_*`.
++    CombineVariant { variant: usize },
++    /// The builtin overload `variant`, registered with it, takes every argument
++    /// nullable and handles NULL itself, e.g. `and` by three-valued logic.
++    NullAwareVariant { variant: usize },
++    /// The factory `factory` of the same name creates the function for
++    /// nullable arguments that the factory declines or its function does not
++    /// take, as the passthrough nullable function of this factory's:
++    /// `register_passthrough_nullable_factory`.
++    PassthroughFactory { factory: usize },
++    /// The factories `factories` of the same name create the function for
++    /// nullable arguments that the factory declines or its function does not
++    /// take, tried in order, and may handle NULL themselves:
++    /// `register_nullable_variants`.
++    NullAwareFactories { factories: Vec<usize> },
+ }
+ 
+ impl FunctionRegistry {
+@@ -331,6 +380,58 @@ impl FunctionRegistry {
+         }
+     }
+ 
++    /// The function that the factory `id` of `name` creates for `params` and
++    /// `args_type`, as candidate search creates it.
++    pub fn create_factory_function(
++        &self,
++        name: &str,
++        id: usize,
++        params: &[Scalar],
++        args_type: &[DataType],
++    ) -> Option<(FunctionID, Arc<Function>)> {
++        let (factory, _) = self
++            .factories
++            .get(name)?
++            .iter()
++            .find(|(_, factory_id)| *factory_id == id)?;
++        Self::create_by_factory(factory, name, id, params, args_typ
+```
+
+---
+
+### Incident Patch 2: `75107161` (2026-11-26)
+**Commit Message**: fix(query): fix materialized CTE hangs on channels nobody reads (#21227)
+
+* fix(query): match materialized CTE channels to their consumers
+
+A materialized CTE producer opens one channel per counted consumer and
+sends every block to each of them. A channel nobody reads blocks a
+bounded producer, which hangs the grouping-sets UNION rewrites.
+
+- Count consumers on the physical plan. Physical building can drop a
+  consumer, e.g. a grand-total level with no keys and no used aggregate
+  becomes a constant scan and no longer reads the level above it.
+- Give duplicate producers names of their own. A subquery copied behind a
+  reused SELECT alias or a SQL function argument produces its CTEs under
+  the same names, so the later producer replaced the earlier one's
+  channels.
+
+Fixes #21217
+
+* fix(query): fail queries whose CTE channel has no consumer
+
+A materialized CTE producer opens its channels when its pipeline is
+built, and each consumer takes one when its own pipeline is built. A
+channel that no consumer takes is never read: a bounded one fills up and
+the query hangs instead of failing.
+
+Check that every channel was taken once all pipelines of the query on
+a node are built: after the lo
+
+**File**: `src/query/service/src/physical_plans/physical_distributed_pruning.rs` (modified, +41/-1)
+```diff
+@@ -30,7 +30,11 @@ pub fn optimize_distributed_fuse_pruning(
+     plan: &PhysicalPlan,
+     eligible_scan_ids: &HashSet<usize>,
+ ) -> PhysicalPlan {
+-    if eligible_scan_ids.is_empty() {
++    // A plan without exchanges runs only on the local node. Injecting the metadata exchange
++    // under a materialized CTE would make it distributed: the CTE producer then runs on all
++    // executors while its consumers stay in the local root fragment, so the producers on the
++    // other executors read rows that nobody consumes and block on their full channels.
++    if eligible_scan_ids.is_empty() || !plan.is_distributed_plan() {
+         return plan.clone();
+     }
+ 
+@@ -140,4 +144,40 @@ mod tests {
+         assert_eq!(metadata_exchange.kind, FragmentKind::Normal);
+         assert!(FusePrune::check_physical_plan(&metadata_exchange.input));
+     }
++
++    fn materialized_cte(input: PhysicalPlan) -> PhysicalPlan {
++        PhysicalPlan::new(MaterializedCTE {
++            plan_id: 0,
++            stat_info: None,
++            input,
++            cte_name: "cte".to_string(),
++            cte_output_columns: None,
++            ref_count: 1,
++            channel_size: None,
++            meta: PhysicalPlanMeta::new("MaterializedCTE"),
++        })
++    }
++
++    #[test]
++    fn keeps_local_plan_with_materialized_cte_local() {
++        let eligible = HashSet::from([1]);
++
++        let local = optimize_distributed_fuse_pruning(&materialized_cte(table_scan(1)), &eligible);
++        let cte = MaterializedCTE::from_physical_plan(&local).unwrap();
++        assert!(TableScan::check_physical_plan(&cte.input));
++        assert!(!local.is_distributed_plan());
++
++        let distributed = PhysicalPlan::new(Exchange {
++            meta: PhysicalPlanMeta::new("Exchange"),
++            input: materialized_cte(table_scan(1)),
++            kind: FragmentKind::Merge,
++            keys: vec![],
++            ignore_exchange: false,
++            allow_adjust_parallelism: true,
++        });
++        let distributed = optimize_distributed_fuse_pruning(&distributed, &eligible);
++        let outer_exchange = Exchange::from_physical_plan(&distributed).unwrap();
++        let cte = MaterializedCTE::from_physical_plan(&outer_exchange.input).unwrap();
++        assert!(FuseBlockRead::check_physical_plan(&cte.input));
++    }
+ }
+```
+
+**File**: `src/query/service/src/physical_plans/physical_materialized_cte.rs` (modified, +220/-0)
+```diff
+@@ -13,6 +13,8 @@
+ // limitations under the License.
+ 
+ use std::any::Any;
++use std::collections::HashMap;
++use std::collections::HashSet;
+ 
+ use databend_common_exception::Result;
+ use databend_common_expression::DataSchemaRef;
+@@ -23,12 +25,16 @@ use databend_common_sql::evaluator::BlockOperator;
+ use databend_common_sql::optimizer::ir::PExpr;
+ 
+ use crate::physical_plans::IPhysicalPlan;
++use crate::physical_plans::MaterializeCTERef;
+ use crate::physical_plans::PhysicalPlan;
+ use crate::physical_plans::PhysicalPlanBuilder;
++use crate::physical_plans::PhysicalPlanCast;
+ use crate::physical_plans::PhysicalPlanMeta;
++use crate::physical_plans::Sequence;
+ use crate::physical_plans::explain::PlanStatsInfo;
+ use crate::physical_plans::format::MaterializedCTEFormatter;
+ use crate::physical_plans::format::PhysicalFormat;
++use crate::physical_plans::format::display_materialized_cte_name;
+ use crate::pipelines::PipelineBuilder;
+ use crate::pipelines::memory_settings::MemorySettingsExt;
+ use crate::pipelines::processors::transforms::MaterializedCteSink;
+@@ -167,3 +173,217 @@ impl PhysicalPlanBuilder {
          }))
      }
-```
-
-**File**: `src/query/storages/fuse/src/io/read/block/block_reader_deserialize.rs` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ impl BlockReader {
-     ) -> Result<DataBlock> {
-         match storage_format {
-             FuseStorageFormat::Parquet => {
--                self.deserialize_parquet_files(num_rows, files, column_chunks, None)
-+                self.deserialize_parquet_files(num_rows, files, column_chunks, None, None)
-             }
-             FuseStorageFormat::Unsupported => Err(unsupported_storage_format_error()),
-         }
-```
-
-**File**: `src/query/storages/fuse/src/io/read/block/mod.rs` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ pub use low_level_block_reader::FuseLowLevelColumnBatchReader;
- pub use low_level_block_reader::FuseLowLevelColumnReader;
- pub use low_level_block_reader::FuseLowLevelDataReader;
- pub use low_level_block_reader::FuseLowLevelFullRowReader;
-+pub use parquet::FieldLevelsCache;
- pub(crate) use parquet::ParquetBatches;
- pub use parquet::RowSelection;
- pub use parquet::column_chunks_to_record_batch;
-```
-
-**File**: `src/query/storages/fuse/src/io/read/block/parquet/adapter.rs` (modified, +7/-6)
-```diff
-@@ -29,22 +29,22 @@ use parquet::file::metadata::FileMetaData;
- use parquet::file::metadata::ParquetMetaData;
- use parquet::file::metadata::RowGroupMetaData;
- use parquet::file::serialized_reader::SerializedPageReader;
--use parquet::schema::types::SchemaDescriptor;
-+use parquet::schema::types::SchemaDescPtr;
- 
- use super::page_header::all_pages_dictionary_encoded;
- 
- pub struct RowGroupImplBuilder<'a> {
-     num_rows: usize,
-     column_chunks: HashMap<usize, Buffer>,
-     column_chunk_metadatas: HashMap<usize, ColumnChunkMetaData>,
--    schema_descriptor: &'a SchemaDescriptor,
-+    schema_descriptor: &'a SchemaDescPtr,
-     compression: Compression,
  }
- 
- impl<'a> RowGroupImplBuilder<'a> {
-     pub fn new(
-         num_rows: usize,
--        schema_descriptor: &'a SchemaDescriptor,
-+        schema_descriptor: &'a SchemaDescPtr,
-         compression: Compression,
-     ) -> Self {
-         Self {
-@@ -90,7 +90,7 @@ impl<'a> RowGroupImplBuilder<'a> {
-     }
- 
-     pub fn build(self) -> RowGroupImpl {
--        let schema_descriptor = Arc::new(self.schema_descriptor.clone());
-+        let schema_descriptor = self.schema_descriptor.clone();
-         let column_metadata = (0..schema_descriptor.num_columns())
-             .map(|dfs_id| {
-                 self.column_chunk_metadatas
-@@ -185,12 +185,13 @@ mod tests {
-     use parquet::basic::Compression;
-     use parquet::basic::Repetition;
-     use parquet::basic::Type as PhysicalType;
-+    use parquet::schema::types::SchemaDescPtr;
-     use parquet::schema::types::SchemaDescriptor;
-     use parquet::schema::types::Type;
- 
-     use super::RowGroupImplBuilder;
- 
--    fn test_schema() -> SchemaDescriptor {
-+    fn test_schema() -> SchemaDescPtr {
-         let fields = vec![
-             Arc::new(
-                 Type::primitive_type_builder("c0", PhysicalType::INT32)
-@@ -215,7 +216,7 @@ mod tests {
-             .with_fields(fields)
-             .build()
-             .unwrap();
--        SchemaDescriptor::new(Arc::new(schema))
-+        Arc::new(SchemaDescriptor::new(Arc::new(schema)))
-     }
- 
-     #[test]
++
++/// Gives every producer in the plan a name of its own.
++///
++/// A producer registers its channels under its name and each consumer takes one of them
++/// by that name. One bound subquery can occur twice in a plan, e.g. behind a SELECT alias
++/// that is referenced again, or as an argument that a SQL function uses twice. Both copies
++/// then produce their CTEs under the same names: the later producer replaces the channels
++/// of the earlier one, and the consumers of both copies are counted together.
++///
++/// The consumers of a producer are on the right side of its `Sequence`, so a renamed
++/// producer takes the consumers there with it. A later name keeps the display name, which
++/// EXPLAIN shows.
++pub fn rename_duplicate_materialized_ctes(plan: &mut PhysicalPlan) {
++    let mut names = HashSet::new();
++    collect_cte_producer_names(plan, &mut names);
++    let mut produced = HashSet::new();
++    rename_duplicate_producers(plan, &mut names, &mut produced, &mut Vec::new());
++}
++
++#[recursive::recursive]
++fn collect_cte_producer_names(plan: &PhysicalPlan, names: &mut HashSet<String>) {
++    if let Some(producer) = MaterializedCTE::from_physical_plan(plan) {
++        names.insert(producer.cte_name.clone());
++    }
++    for child in plan.children() {
++        collect_cte_producer_names(child, names);
++    }
++}
++
++/// `scopes` maps the name of each enclosing producer to the name it now has.
++#[recursive::recursive]
++fn rename_duplicate_producers(
++    plan: &mut PhysicalPlan,
++    names: &mut HashSet<String>,
++    produced: &mut HashSet<String>,
++    scopes: &mut Vec<(String, String)>,
++) {
++    if let Some(consumer) = MaterializeCTERef::from_mut_physical_plan(plan) {
++        if let Some((_, name)) = scopes
++            .iter()
++            .rev()
++            .find(|(original, _)| *original == consumer.cte_name)
++        {
++            consumer.cte_name = name.clone();
++        }
++        return;
++    }
++
++    if let Some(sequence) = Sequence::from_mut_physical_plan(plan)
++        && let Some(producer) = MaterializedCTE::from_mut_physical_plan(&mut sequence.left)
++    {
++        rename_duplicate_producers(&mut producer.input, names, produced, scopes);
++        let original = producer.cte_name.clone();
++        if !produced.insert(original.clone()) {
++            producer.cte_name = unique_cte_name(&original, names);
++            produced.insert(producer.cte_name.clone());
++        }
++        scopes.push((original, producer.cte_name.clone()));
++        rename_duplicate_producers(&mut sequence.right, names, produced, scopes);
++        scopes.pop();
++        return;
++    }
++
++    for child in plan.children_mut() {
++        rename_duplicate_producers(child, names, produced, scopes);
++    }
++}
++
++fn unique_cte_name(name: &str, names: &mut HashSet<String>) -> String {
++    let display_name = display_materialized_cte_name(name).to_string();
++    let mut id = 0;
++    loop {
++        let name = format!("__materialized_cte_{id}_{display_name}");
++        if names.insert(name.clone()) {
++            return name;
++        }
++        id += 1;
++    }
++}
++
++/// Sets each producer's `ref_count` to the number of consumers left in the physical plan.
++///
++/// The producer opens one channel per counted consumer and sends every block to each of
++/// them, while each consumer takes one channel when its pipeline is built. The logical
++/// count can be too high: physical building may drop a consumer, e.g. an aggregate with
++/// no keys and no used functions becomes a `ConstantTableScan` and its input, a
++/// consumer, is never built. Nobody reads that extra channel, so a bounded one fills up
++/// and blocks the producer and every other consumer.
++pub fn recount_materialized_cte_refs(plan: &mut PhysicalPlan) {
++    let mut ref_counts = HashMap::new();
++    count_cte_consumers(plan, &mut ref_counts);
++    set_cte_re
 ```
 
-**File**: `src/query/storages/fuse/src/io/read/block/parquet/deserialize.rs` (modified, +180/-60)
+**File**: `src/query/service/src/physical_plans/physical_plan_builder.rs` (modified, +6/-0)
+```diff
+@@ -39,6 +39,8 @@ use databend_storages_common_table_meta::meta::TableSnapshot;
+ use crate::physical_plans::explain::PlanStatsInfo;
+ use crate::physical_plans::optimize_distributed_fuse_pruning;
+ use crate::physical_plans::physical_plan::PhysicalPlan;
++use crate::physical_plans::recount_materialized_cte_refs;
++use crate::physical_plans::rename_duplicate_materialized_ctes;
+ use crate::sessions::TableContext;
+ 
+ pub struct PhysicalPlanBuilder {
+@@ -113,6 +115,10 @@ impl PhysicalPlanBuilder {
+ 
+         let mut plan = build_result?;
+         if is_root_build {
++            if !self.cte_required_columns.is_empty() {
++                rename_duplicate_materialized_ctes(&mut plan);
++                recount_materialized_cte_refs(&mut plan);
++            }
+             plan = optimize_distributed_fuse_pruning(&plan, &self.distributed_fuse_pruning_scans);
+             plan.adjust_plan_id(&mut 0);
+             self.publish_synchronous_pruning_stats(&plan);
+```
+
+**File**: `src/query/service/src/physical_plans/physical_union_all.rs` (modified, +11/-0)
 ```diff
 @@ -13,6 +13,7 @@
  // limitations under the License.
  
- use std::collections::HashMap;
-+use std::collections::hash_map::Entry;
- use std::sync::Arc;
+ use std::any::Any;
++use std::collections::HashMap;
  
- use arrow_array::RecordBatch;
-@@ -26,15 +27,102 @@ use databend_common_expression::TableDataType;
- use databend_common_expression::TableSchema;
- use databend_storages_common_table_meta::meta::Compression;
- use parquet::arrow::ArrowSchemaConverter;
-+use parquet::arrow::FieldLevels;
- use parquet::arrow::ProjectionMask;
- use parquet::arrow::arrow_reader::ParquetRecordBatchReader;
- use parquet::arrow::arrow_reader::RowSelection;
- use parquet::arrow::parquet_to_arrow_field_levels;
- use parquet::basic::Compression as ParquetCompression;
-+use parquet::schema::types::SchemaDescPtr;
- 
- use crate::io::read::block::block_reader_merge_io::DataItem;
- use crate::io::read::block::parquet::adapter::RowGroupImplBuilder;
- 
-+/// The sorted Parquet leaves read from a block, and the positions of the dictionary hints
-+/// dropped for its column chunks that are not dictionary encoded throughout.
-+type FieldLevelsKey = (Vec<usize>, Vec<usize>);
-+
-+const MAX_CACHED_FIELD_LEVEL_LAYOUTS: usize = 16;
-+
-+/// What reading Parquet column chunks of a table schema needs besides the chunks: the Arrow
-+/// and Parquet forms of the schema, the Parquet leaf of every column id, and the fields to
-+/// read the columns as.
-+///
-+/// All of it depends on the schema only, not on the block, so a reader builds it once and
-+/// reads every block with it. Converting a wide schema per block cost more than decoding the
-+/// columns of a small block.
-+pub struct ParquetReadSchema {
-+    arrow_schema: Schema,
-+    parquet_schema: SchemaDescPtr,
-+    column_id_to_dfs_id: HashMap<ColumnId, usize>,
-+    /// Arrow fields the columns are read as if they differ from `arrow_schema`, see
-+    /// [`dictionary_hint_fields`].
-+    hint_fields: Option<Fields>,
-+}
-+
-+impl ParquetReadSchema {
-+    pub fn try_new(
-+        original_schema: &TableSchema,
-+        hint_fields: Option<Fields>,
-+    ) -> databend_common_exception::Result<Self> {
-+        let arrow_schema = Schema::from(original_schema);
-+        let parquet_schema = Arc::new(ArrowSchemaConverter::new().convert(&arrow_schema)?);
-+        let column_id_to_dfs_id = original_schema
-+            .to_leaf_column_ids()
-+            .iter()
-+            .enumerate()
-+            .map(|(dfs_id, column_id)| (*column_id, dfs_id))
-+            .collect();
-+        Ok(Self {
-+            arrow_schema,
-+            parquet_schema,
-+            column_id_to_dfs_id,
-+            hint_fields,
-+        })
-+    }
-+
-+    fn field_levels(&self, key: &FieldLevelsKey) -> databend_common_exception::Result<FieldLevels> {
-+        let base_fields = self
-+            .hint_fields
-+            .as_ref()
-+            .unwrap_or(self.arrow_schema.fields());
-+        let adjusted_fields = (!key.1.is_empty()).then(|| {
-+            let mut fields = base_fields.to_vec();
-+            for &index in &key.1 {
-+                fields[index] = self.arrow_schema.fields()[index].clone();
-+            }
-+            Fields::from(fields)
-+        });
-+        Ok(parquet_to_arrow_field_levels(
-+            &self.parquet_schema,
-+            ProjectionMask::leaves(&self.parquet_schema, key.0.iter().copied()),
-+            Some(adjusted_fields.as_ref().unwrap_or(base_fields)),
-+        )?)
-+    }
-+}
-+
-+/// Field levels computed with one [`ParquetReadSchema`], by the leaves read and the dictionary
-+/// hints dropped. A reading processor owns one per reader and passes it along with every block.
-+/// Once the cache is full, it reuses existing layouts but does not retain new ones.
-+pub struct FieldLevelsCache {
-+    read_schema: Arc<ParquetReadSchema>,
-+    levels: HashMap<FieldLevelsKey, FieldLevels>,
-+}
-+
-+impl FieldLevelsCache {
-+    pub fn new(read_schema: Arc<ParquetReadSchema>) -> Self {
-+        Self {
-+            read_schema,
-+            levels: HashMap::new(),
-+        }
-+    }
-+
-+    /// Whether this cache holds field levels computed with `read_schema`.
-+    fn is_for(&self, read_schema: &ParquetReadSchema) -> bool {
-+        std::ptr::eq(Arc::as_ptr(&self.read_schema), read_schema)
-+    }
-+}
-+
- /// Arrow fields of `original_schema` with the top-level string fields in `dictionary_columns`
- /// typed `Dictionary(UInt32, Utf8)`. Passed as the hint of [`column_chunks_to_record_batch`],
- /// it makes the Parquet reader preserve the dictionary encoding of these column chunks instead
-@@ -81,39 +169,45 @@ pub fn column_chunks_to_record_batch(
-     selection: Option<RowSelection>,
-     hint_fields: Option<&Fields>,
- ) -> databend_common_exception::Result<RecordBatch> {
-+    let read_schema = ParquetReadSchema::try_new(original_schema, hint_fields.cloned())?;
-     column_chunks_to_record_batch_with_codecs(
-         original_schema,
-+        &read_schema,
-+        None,
-         num_rows,
-         column_chunks,
-         *compression,
-         |_| *compression,
-         selection,
--        hint_fields,
-  
-```
-
-**File**: `src/query/storages/fuse/src/io/read/block/parquet/mod.rs` (modified, +27/-13)
-```diff
-@@ -45,6 +45,8 @@ mod page_header;
- mod row_selection;
- 
- pub use adapter::RowGroupImplBuilder;
-+pub use deserialize::FieldLevelsCache;
-+pub use deserialize::ParquetReadSchema;
- pub use deserialize::column_chunks_to_record_batch;
- pub use deserialize::column_chunks_to_record_batch_with_codecs;
- pub use deserialize::dictionary_hint_fields;
-@@ -61,6 +63,12 @@ use crate::io::FuseCaches;
- use crate::io::read::block::block_reader_merge_io::DataItem;
- 
- impl BlockReader {
-+    /// A [`FieldLevelsCache`] for the blocks this reader reads, to pass along with each of them
-+    /// by a caller that reads many blocks.
-+    pub fn field_levels_cache(&self) -> FieldLevelsCache {
-+        FieldLevelsCache::new(self.parquet_read_schema.clone())
-+    }
-+
-     /// The projected non-nullable string columns kept as dictionaries whose chunk is
-     /// dictionary encoded throughout, with a dictionary within the NDV ratio (as in
-     /// [`ColumnEncoding::encode`]).
-@@ -95,8 +103,15 @@ impl BlockReader {
-         part: &FuseBlockPartInfo,
-         column_chunks: HashMap<ColumnId, DataItem>,
-         selection: Option<&RowSelection>,
-+        field_levels: Option<&mut FieldLevelsCache>,
-     ) -> databend_common_exception::Result<DataBlock> {
--        self.deserialize_parquet_files(part.nums_rows, &part.data_files(), column_chunks, selection)
-+        self.deserialize_parquet_files(
-+            part.nums_rows,
-+            &part.data_files(),
-+            column_chunks,
-+            selection,
-+            field_levels,
-+        )
-     }
- 
-     pub fn deserialize_parquet_chunks(
-@@ -113,17 +128,19 @@ impl BlockReader {
-             col_metas: column_metas,
-             compression: *compression,
-         };
--        self.deserialize_parquet_files(num_rows, &[file], column_chunks, selection)
-+        self.deserialize_parquet_files(num_rows, &[file], column_chunks, selection, None)
-     }
- 
-     /// Deserializes the column chunks a block read from `files`. Each chunk is decompressed
--    /// with the codec of the file that stores its column.
-+    /// with the codec of the file that stores its column. `field_levels` is a cache from
-+    /// [`Self::field_levels_cache`], if the caller keeps one.
-     pub fn deserialize_parquet_files(
-         &self,
-         num_rows: usize,
-         files: &[BlockDataFile<'_>],
-         column_chunks: HashMap<ColumnId, DataItem>,
-         selection: Option<&RowSelection>,
-+        field_levels: Option<&mut FieldLevelsCache>,
-     ) -> databend_common_exception::Result<DataBlock> {
-         let files = DataFileLookup::new(files);
-         let result_rows = selection.map(|s| s.selected_rows).unwrap_or(num_rows);
-@@ -152,14 +169,14 @@ impl BlockReader {
-         };
-         let record_batch = column_chunks_to_record_batch_with_codecs(
-             &self.original_schema,
-+            &self.parquet_read_schema,
-+            field_levels,
-             num_rows,
-             arrow_chunks,
-             files.default_compression(),
-             |column_id| files.compression_of(column_id),
-             selection.map(|s| s.selection.clone()),
--            self.parquet_hint_fields.as_ref(),
-         )?;
--        let name_paths = column_name_paths(&self.projection, &self.original_schema);
-         self.record_batch_to_block(
-             &record_batch,
-             result_rows,
-@@ -168,7 +185,6 @@ impl BlockReader {
-             &dictionary_chunks,
-             num_rows,
-             selection,
--            &name_paths,
-             true,
-         )
-     }
-@@ -200,6 +216,7 @@ impl BlockReader {
-         column_chunks: &HashMap<ColumnId, DataItem>,
-         selection: Option<&RowSelection>,
-         batch_rows: usize,
-+        field_levels: &mut FieldLevelsCache,
-     ) -> databend_common_exception::Result<ParquetBatches> {
-         debug_assert!(self.column_encodings.is_empty());
-         let data_files = part.data_files();
-@@ -211,12 +228,13 @@ impl BlockReader {
-             .min(batch_rows);
-         let reader = column_chunks_record_reader(
-             &self.original_schema,
-+            &self.parquet_read_schema,
-+            Some(field_levels),
-             part.nums_rows,
-             column_chunks,
-             files.default_compression(),
-             |column_id| files.compression_of(column_id),
-             selection.map(|s| s.selection.clone()),
--            self.parquet_hint_fields.as_ref(),
-             reader_batch_rows,
-         )?;
-         let column_chunks = column_chunks
-@@ -229,7 +247,6 @@ impl BlockReader {
-         Ok(ParquetBatches {
-             block_reader: self.clone(),
-             column_chunks,
--            name_paths: column_name_paths(&self.projection, &self.original_schema),
-             reader,
-         })
-     }
-@@ -246,7 +263,6 @@ impl BlockReader {
-         dictionary_chunks: &HashSet<ColumnId>,
-         num_rows: usize,
-         selection: Option<&RowSelection>,
--        name_paths: &[Vec<String>],
-         whole_block: bool,
-     ) -> databend_common_exception::Result<Dat
-```
-
-**File**: `src/query/storages/fuse/src/io/read/mod.rs` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ pub use block::BlockReadContext;
- pub use block::BlockReadResult;
- pub use block::BlockReader;
- pub use block::DataItem;
-+pub use block::FieldLevelsCache;
- pub use block::FuseLowLevelBlockReadOptions;
- pub use block::FuseLowLevelBlockReader;
- pub use block::FuseLowLevelColumnBatchReader;
-```
-
----
-
-### Incident Patch 2: `136e2230` (2026-11-25)
-**Commit Message**: fix(storage): batch blocks per RECLUSTER sort task (#21142)
-
-* fix(storage): batch blocks per RECLUSTER commit
-
-Pack unordered scalar Linear inputs by byte budget in both planning modes. Reuse ordered compaction to absorb small tails, then sort each output block independently. Preserve the existing layouts for Vector, Hilbert, and materialized views.
-
-* test(storage): verify multi-block RECLUSTER tasks
-
-* fix
-
-**File**: `src/query/catalog/src/plan/partition.rs` (modified, +3/-3)
-```diff
-@@ -473,9 +473,9 @@ impl ClusterLevelLogStats {
- /// this enum is not part of persisted FUSE metadata.
- #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
- pub enum ReclusterTaskKind {
--    /// Establish row order. For ordinary linear FUSE tasks, the inputs are one
--    /// unordered block or a size-bounded group of small blocks. Other layouts
--    /// retain their layout-specific sorting and re-aggregation semantics.
-+    /// Establish row order. Ordinary linear FUSE tasks form output blocks first
-+    /// and sort each one independently. Other layouts retain their existing
-+    /// sort paths.
-     SortBlocks,
-     /// Merge blocks already ordered by the current linear cluster key, without
-     /// sorting their rows again.
-```
-
-**File**: `src/query/pipeline/transforms/src/processors/transforms/mod.rs` (modified, +1/-0)
-```diff
-@@ -43,5 +43,6 @@ pub use transform_compact_builder::*;
- pub use transform_dummy::*;
- pub use transform_hook::*;
- pub use transform_ordered_compact_builder::OrderedBlockCompactBuilder;
-+pub use transform_ordered_compact_builder::build_ordered_compact_pipeline;
- pub use transform_pipeline_helper::TransformPipelineHelper;
- pub use transform_retry_async::*;
-```
-
-**File**: `src/query/pipeline/transforms/src/processors/transforms/transform_ordered_compact_builder.rs` (modified, +19/-1)
-```diff
-@@ -15,9 +15,28 @@
  use databend_common_exception::Result;
- use databend_common_expression::BlockThresholds;
- use databend_common_expression::DataBlock;
-+use databend_common_pipeline::core::Pipeline;
+ use databend_common_expression::DataField;
+@@ -33,6 +34,7 @@ use itertools::Itertools;
  
- use crate::processors::AccumulatingTransform;
- use crate::processors::BlockCompactMeta;
-+use crate::processors::TransformCompactBlock;
-+use crate::processors::TransformPipelineHelper;
+ use crate::physical_plans::Exchange;
+ use crate::physical_plans::PhysicalPlanBuilder;
++use crate::physical_plans::count_cte_consumers;
+ use crate::physical_plans::explain::PlanStatsInfo;
+ use crate::physical_plans::format::PhysicalFormat;
+ use crate::physical_plans::format::UnionAllFormatter;
+@@ -203,6 +205,15 @@ impl UnionAll {
+     }
+ 
+     fn build_recursive_cte_source(&self, builder: &mut PipelineBuilder) -> Result<()> {
++        // The steps build their pipelines when they run, and only then do the materialized
++        // CTE consumers in them take their channels.
++        let mut consumers = HashMap::new();
++        count_cte_consumers(&self.left, &mut consumers);
++        count_cte_consumers(&self.right, &mut consumers);
++        builder
++            .ctx
++            .defer_materialized_cte_consumers(consumers.into_keys());
 +
-+/// Gather input into one compactor, then materialize blocks at the requested width.
-+pub fn build_ordered_compact_pipeline(
-+    pipeline: &mut Pipeline,
-+    thresholds: BlockThresholds,
-+    output_len: usize,
-+    extra_key_num: usize,
-+) -> Result<()> {
-+    pipeline.try_resize(1)?;
-+    pipeline.add_accumulating_transformer(move || {
-+        OrderedBlockCompactBuilder::new(thresholds, extra_key_num)
-+    });
-+    pipeline.try_resize(output_len)?;
-+    pipeline.add_block_meta_transformer(|| TransformCompactBlock);
-+    Ok(())
-+}
- 
- pub struct OrderedBlockCompactBuilder {
-     thresholds: BlockThresholds,
-@@ -153,7 +172,6 @@ mod tests {
- 
-     use super::*;
-     use crate::processors::BlockMetaTransform;
--    use crate::processors::TransformCompactBlock;
- 
-     fn block_with_rows(rows: usize) -> DataBlock {
-         DataBlock::new_from_columns(vec![Int32Type::from_data(
+         let max_threads = builder.settings.get_max_threads()?;
+         builder.main_pipeline.add_source(
+             |output_port| {
 ```
 
-**File**: `src/query/service/src/physical_plans/physical_recluster.rs` (modified, +50/-25)
+**File**: `src/query/service/src/schedulers/scheduler.rs` (modified, +1/-0)
 ```diff
-@@ -41,6 +41,7 @@ use databend_common_expression::TableDataType;
- use databend_common_expression::types::DataType;
- use databend_common_expression::types::NumberDataType;
- use databend_common_meta_app::schema::TableInfo;
-+use databend_common_meta_app::schema::is_materialized_view_engine;
- use databend_common_metrics::storage::metrics_inc_recluster_block_bytes_to_read;
- use databend_common_metrics::storage::metrics_inc_recluster_block_nums_to_read;
- use databend_common_metrics::storage::metrics_inc_recluster_row_nums_to_read;
-@@ -51,6 +52,7 @@ use databend_common_pipeline_transforms::OrderedBlockCompactBuilder;
- use databend_common_pipeline_transforms::TransformCompactBlock;
- use databend_common_pipeline_transforms::TransformPipelineHelper;
- use databend_common_pipeline_transforms::blocks::CompoundBlockOperator;
-+use databend_common_pipeline_transforms::build_ordered_compact_pipeline;
- use databend_common_pipeline_transforms::columns::TransformAddStreamColumns;
- use databend_common_pipeline_transforms::sorts::TransformSortPartial;
- use databend_common_sql::StreamContext;
-@@ -282,10 +284,6 @@ impl Recluster {
-             ));
-         }
-         let settings = builder.ctx.get_settings();
--        // Execution-time guard: planning-time admission runs on the
--        // coordinator and cannot see this node's live memory pressure.
--        // Oversized tasks are only tolerable when sort spill can absorb
--        // the pressure; otherwise fail fast instead of risking an OOM kill.
-         let multiway_merge = task.kind == ReclusterTaskKind::MergeBlocks
-             && settings.get_enable_recluster_multiway_merge()?
-             && matches!(table.get_storage_format(), FuseStorageFormat::Parquet)
-@@ -294,7 +292,21 @@ impl Recluster {
-                 .fields()
-                 .iter()
-                 .any(|field| matches!(field.computed_expr(), Some(ComputedExpr::Virtual(_))));
--        if !multiway_merge && !builder.ctx.get_enable_sort_spill() {
-+        let block_thresholds = table.get_block_thresholds();
-+        let schema = table.schema_with_stream();
-+        let mut cluster_stats_gen = table.get_cluster_stats_gen(
-+            builder.ctx.clone(),
-+            task.level + 1,
-+            block_thresholds,
-+            DataSchema::from(schema.clone()).into(),
-+        )?;
-+        let blockwise_sort = task.kind == ReclusterTaskKind::SortBlocks
-+            && cluster_stats_gen.is_linear()
-+            && !is_materialized_view_engine(table.engine());
-+
-+        // Blockwise sort cannot spill, so recheck the worker's input budget
-+        // even when sort spilling is enabled. Multiway merge manages its own budget.
-+        if !multiway_merge && (blockwise_sort || !builder.ctx.get_enable_sort_spill()) {
-             let max_memory_usage = settings.get_max_memory_usage()? as usize;
-             // `max_memory_usage == 0` means memory usage is unlimited.
-             if max_memory_usage != 0 {
-@@ -309,9 +321,7 @@ impl Recluster {
-             }
-         }
-         let recluster_block_nums = task.parts.len();
--        let block_thresholds = table.get_block_thresholds();
-         let table_info = table.get_table_info();
--        let schema = table.schema_with_stream();
-         let description = task.stats.get_description(&table_info.desc);
-         let plan = DataSourcePlan {
-             source_info: DataSourceInfo::TableSource(table_info.clone()),
-@@ -344,18 +354,13 @@ impl Recluster {
-                 max_threads,
-                 max_io_requests,
-                 task_kind :? = task.kind,
-+                cluster_layout = cluster_stats_gen.layout_name(),
-+                input_blocks = recluster_block_nums,
-                 input_levels :serde = task.input_level_stats;
-                 "Recluster input planned"
-             );
-         }
+@@ -91,6 +91,7 @@ pub async fn build_local_pipeline(
+     let pipeline =
+         PipelineBuilder::create(ctx.get_function_context()?, ctx.get_settings(), ctx.clone());
+     let mut build_res = pipeline.finalize(plan)?;
++    ctx.check_materialized_cte_receivers_taken()?;
  
--        let input_schema = DataSchema::from(table.schema_with_stream()).into();
--        let mut cluster_stats_gen = table.get_cluster_stats_gen(
--            builder.ctx.clone(),
--            task.level + 1,
--            block_thresholds,
--            input_schema,
--        )?;
-         let index_merge = match multiway_merge {
-             true if settings.get_enable_recluster_inverted_index_merge()?
-                 && !table.schema().fields().iter().any(|field| {
-@@ -408,6 +413,16 @@ impl Recluster {
-                     .add_transformer(|| TransformAddStreamColumns::new(stream_ctx.clone()));
-             }
- 
-+            if blockwise_sort {
-+                // Compact across read streams before sorting each output block.
-+                let output_len = builder.main_pipeline.output_len();
-+                build_ordered_compact_pipeline(
-+                    &mut builder.main_pipeline,
-+                    block_thresholds,
-+                    output_len,
-+                    0,
-+                )?;
-+            }
-             if !cluster_stats_gen.eval_operators.is_empty() {
-                 let eval_operators = cluster_stats_gen.eval_operators.clone();
-           
+     let settings = ctx.get_settings();
+     build_res.set_max_threads(settings.get_max_threads()? as usize);
 ```
 
-**File**: `src/query/service/tests/it/storages/fuse/operations/mutation/recluster_mutator.rs` (modified, +48/-31)
+**File**: `src/query/service/src/servers/flight/v1/exchange/exchange_manager.rs` (modified, +3/-1)
 ```diff
-@@ -965,14 +965,13 @@ async fn test_recluster_task_kinds() -> anyhow::Result<()> {
-         )]),
-         (
-             "mixed_large",
--            vec![Some(0), None, Some(1), Some(1)],
-+            vec![Some(0), None, Some(0), None, Some(1), Some(1)],
-             1000,
-             100,
--            4,
-+            2,
-             vec![
--                (ReclusterTaskKind::MergeBlocks, 2),
--                (ReclusterTaskKind::SortBlocks, 1),
--                (ReclusterTaskKind::SortBlocks, 1),
-+                (ReclusterTaskKind::SortBlocks, 2),
-+                (ReclusterTaskKind::SortBlocks, 2),
-             ],
-         ),
-         (
-@@ -981,7 +980,15 @@ async fn test_recluster_task_kinds() -> anyhow::Result<()> {
-             1000,
-             100,
-             1,
--            vec![(ReclusterTaskKind::SortBlocks, 1)],
-+            vec![(ReclusterTaskKind::SortBlocks, 3)],
-+        ),
-+        (
-+            "task_byte_budget",
-+            vec![Some(0), None, Some(0)],
-+            1000,
-+            400,
-+            1,
-+            vec![(ReclusterTaskKind::SortBlocks, 2)],
-         ),
-         ("over_memory", vec![Some(0)], 1000, 1001, 4, vec![]),
-     ] {
-@@ -1033,6 +1040,7 @@ async fn test_recluster_task_kinds() -> anyhow::Result<()> {
-             );
-             let mut source_locations = HashSet::new();
-             for task in &parts.tasks {
-+                assert!(task.total_bytes <= 1000, "{case}");
-                 let decoded: ReclusterTask = serde_json::from_slice(&serde_json::to_vec(task)?)?;
-                 assert_eq!(decoded.kind, task.kind);
-                 assert_eq!(decoded.parts, task.parts);
-@@ -1094,58 +1102,67 @@ async fn test_sort_blocks_single_round_and_final() -> anyhow::Result<()> {
-         fixture.default_table_name()
-     );
-     fixture
--        .execute_command(&format!(
--            "create table {name}(id int not null) row_per_block=3 block_per_segment=2"
--        ))
--        .await?;
--    // Two full blocks: the combined row count exceeds the small-group limit.
-+        .default_session()
-+        .get_settings()
-+        .set_setting("enable_compact_after_write".to_string(), "0".to_string())?;
-     fixture
-         .execute_command(&format!(
--            "insert into {name} values (6),(1),(5),(3),(2),(4)"
-+            "create table {name}(id int not null) row_per_block=5 block_per_segment=2"
-         ))
-         .await?;
-+    // Two full blocks and a tail exceed the small-group limit.
-+    for values in ["(6),(1),(5),(3)", "(2),(4),(9),(7)", "(8)"] {
-+        fixture
-+            .execute_command(&format!("insert into {name} values {values}"))
-+            .await?;
+@@ -1215,7 +1215,9 @@ impl QueryCoordinator {
+             }
+         }
+ 
+-        Ok(())
++        // Every fragment of the query on this node is built, and a consumer takes its
++        // channel while its fragment is built.
++        query_context.check_materialized_cte_receivers_taken()
+     }
+ 
+     pub fn subscribe_fragment(
+```
+
+**File**: `src/query/service/src/sessions/query_ctx.rs` (modified, +34/-0)
+```diff
+@@ -1049,6 +1049,40 @@ impl QueryContext {
+         let receivers = receivers.get_mut(cte_name).unwrap();
+         receivers.pop().unwrap()
+     }
++
++    /// Marks materialized CTEs whose consumers are built after the query pipeline: the
++    /// recursive CTE source builds the pipelines of its steps when they run.
++    pub fn defer_materialized_cte_consumers(&self, cte_names: impl IntoIterator<Item = String>) {
++        self.shared
++            .deferred_materialized_cte_consumers
++            .lock()
++            .extend(cte_names);
 +    }
-     fixture
-         .execute_command(&format!("alter table {name} cluster by(id)"))
-         .await?;
-+    let table = fixture.latest_default_table().await?;
-+    let fuse = FuseTable::try_from_table(table.as_ref())?;
-+    let before = fuse.read_table_snapshot().await?.unwrap();
-+    assert_eq!(before.summary.block_count, 3);
 +
-     let ctx = fixture.new_query_ctx().await?;
--    ctx.get_settings().set_max_threads(1)?;
-+    ctx.get_settings().set_max_threads(2)?;
-     execute_command(ctx, &format!("alter table {name} recluster")).await?;
- 
-     let table = fixture.latest_default_table().await?;
-     let fuse = FuseTable::try_from_table(table.as_ref())?;
-     let snapshot = fuse.read_table_snapshot().await?.unwrap();
-+    assert_eq!(
-+        snapshot.prev_snapshot_id.map(|(id, _)| id),
-+        Some(before.snapshot_id),
-+        "ordinary RECLUSTER must commit exactly one snapshot"
-+    );
-+    assert_eq!(snapshot.summary.row_count, before.summary.row_count);
-     let key_id = fuse.cluster_key_id().unwrap();
--    let mut ordered = 0;
--    let mut unordered = 0;
-+    let mut block_rows = Vec::new();
-     for location in &snapshot.segments {
-         let segment = SegmentInfoReader::new(fuse.get_operator(), fuse.schema())
-             .read(&(location.0.clone(), location.1), &CachePolicy::BYPASS)
-             .await?;
--        for block in segment.block_metas()?.iter() {
--            if block
--                .cluster_stats
--                .as_ref()
--                .is_some_and(|stats| stats.cluster_key_id == key_id)
--            {
--                ordered += 1;
--            } else {
--                unordered += 1;
--            }
-+        for block in segment.block_metas()? {
-+            assert!(
-+                block
-+                    .cluster_stats
-+                    .as_ref()
-+                    .is_some_and(|stats| stats.cluster_key_id == key_id)
-+            );
-+            block_rows.push(block.row_count);
-         }
-     }
--    assert_eq!(
--        (ordered, unordered),
--        (1, 1),
--        "ordinary RECLUSTER must execute only one task round"
--    );
-+    block_rows.sort_unstable();
-+    assert_eq!(block_rows, [4, 5]);
- 
-     fixture
-         .execute_command(&format!("alter table {name} recluster final"))
-         .await?;
-     let table = fixture.latest_default_table()
-```
-
-**File**: `src/query/storages/fuse/src/operations/recluster/recluster_mutator.rs` (modified, +48/-38)
-```diff
-@@ -1177,33 +1177,18 @@ impl ReclusterMutator {
-                     }
-                 }
- 
--                if self.properties.split_sort_tasks {
--                    match candidate.kind {
--                        ReclusterTaskKind::MergeBlocks => {
--                            if block_metas.iter().any(|(_, meta)| {
--                                !meta.cluster_stats.as_ref().is_some_and(|stats| {
--                                    self.strategy
--                                        .can_reuse_cluster_stats(&self.properties, stats)
--                                })
--                            }) {
--                                return Err(ErrorCode::Internal(
--                                    "MergeBlocks requires sources ordered by the current cluster key",
--                                ));
--                            }
--                        }
--                        ReclusterTaskKind::SortBlocks => {
--                            if block_metas.len() > 1
--                                && !self
--                                    .properties
--                                    .block_thresholds
--                                    .check_for_compact(total_rows, total_bytes)
--                            {
--                                return Err(ErrorCode::Internal(
--                                    "multi-source SortBlocks exceeds the small-block group limits",
--                                ));
--                            }
--                        }
--                    }
-+                if self.properties.split_sort_tasks
-+                    && candidate.kind == ReclusterTaskKind::MergeBlocks
-+                    && block_metas.iter().any(|(_, meta)| {
-+                        !meta.cluster_stats.as_ref().is_some_and(|stats| {
-+                            self.strategy
-+                                .can_reuse_cluster_stats(&self.properties, stats)
-+                        })
-+                    })
-+                {
-+                    return Err(ErrorCode::Internal(
-+                        "MergeBlocks requires sources ordered by the current cluster key",
-+                    ));
-                 }
- 
-                 let (stats, parts) = FuseTable::to_partitions(
-@@ -1380,17 +1365,14 @@ impl ReclusterMutator {
-                 .iter()
-                 .any(|idx| matches!(blocks[*idx].stats, ReclusterBlockStats::Normalized(_)))
-         {
--            // A large mixed group is not a full-sort task. Establish order in each
--            // unordered block independently; only ordered blocks enter merge selection.
-+            // Pack unordered blocks from the same partition and base level into
-+            // sort tasks. Only ordered blocks enter merge selection.
-             let (ordered, unordered): (Vec<_>, Vec<_>) = indices
-                 .into_iter()
-                 .partition(|idx| matches!(blocks[*idx].stats, ReclusterBlockStats::Original));
--            let mut candidates = Vec::new();
--            for idx in unordered {
--                let bytes = blocks[idx].meta.block_size as usize;
--                if bytes > self.properties.memory_threshold {
--                    continue;
--                }
-+            let bins = self.pack_unordered_blocks(unordered, blocks, task_limit);
-+            let mut candidates = Vec::with_capacity(bins.len());
-+            for (indices, bytes) in bins {
-                 candidates.push(task_candidate(
-                     self.strategy.supports_ordered_merge(),
-                     group,
-@@ -1399,12 +1381,10 @@ impl ReclusterMutator {
-                         max_depth: 1,
-                         average_depth: 1.0,
-                     },
--                    &[idx],
-+                    &indices,
-                     blocks,
-                 ));
-             }
--            candidates.sort_by(|left, right| right.score.cmp_desc(&left.score));
--            candidates.truncate(task_limit);
-             let remaining = task_limit - candidates.len();
-             if ordered.len() >= 2 && remaining > 0 {
-                 // Reserve sort preparation slots before selecting an indivisible
-@@ -1424,6 +1404,36 @@ impl ReclusterMutator {
-             .fetch_task_candidates(&self.properties, group, &indices, blocks, task_limit)
-     }
- 
-+    /// Pack unordered blocks into byte-bounded tasks within one candidate group.
-+    /// Place the largest blocks first on the least loaded task so tasks from
-+    /// a single large window can still use all executors.
-+    fn pack_unordered_blocks(
-+        &self,
-+        mut indices: Vec<usize>,
-+        blocks: &[&ReclusterBlock],
-+        task_limit: usize,
-+    ) -> Vec<(Vec<usize>, usize)> {
-+        let block_bytes = |idx: usize| blocks[idx].meta.block_size as usize;
-+        let memory = self.properties.memory_threshold;
-+        indices.retain(|&idx| block_bytes(idx) <= memory);
-+        indices.sort_by_key(|&idx| std::cmp::Reverse(block_bytes(idx)));
-+        let mut pending = indi
-```
-
-**File**: `src/query/storages/fuse/src/statistics/cluster_statistics.rs` (modified, +9/-0)
-```diff
-@@ -219,6 +219,15 @@ impl ClusterStatsGenerator {
-         }
-     }
- 
-+    /// Stable name of the resolved clustering layout for diagnostics.
-+    pub fn layout_name(&self) -> &'static str {
-+        match &self.layout {
-+            ClusterStatsLayout::Linear => "linear",
-+            ClusterStatsLayout::Hilbert => "hilbert",
-+            ClusterStatsLayout::Vector(_) => "vector",
++    /// Fails if a materialized CTE producer has a channel that no consumer took.
++    ///
++    /// Call it once every pipeline of the query on this node is built. Nobody reads such a
++    /// channel: a bounded one fills up and blocks the producer, and the query would hang
++    /// instead of failing. CTEs with deferred consumers are skipped, as those consumers
++    /// take their channels later.
++    pub fn check_materialized_cte_receivers_taken(&self) -> Result<()> {
++        let deferred = self.shared.deferred_materialized_cte_consumers.lock();
++        let receivers = self.shared.materialized_cte_receivers.lock();
++        let mut untaken = receivers
++            .iter()
++            .filter(|(name, receivers)| !receivers.is_empty() && !deferred.contains(*name))
++            .map(|(name, receivers)| format!("{name} ({})", receivers.len()))
++            .collect::<Vec<_>>();
++        if untaken.is_empty() {
++            return Ok(());
 +        }
-+    }
 +
-     pub fn is_linear(&self) -> bool {
-         matches!(self.layout, ClusterStatsLayout::Linear)
-     }
++        untaken.sort();
++        Err(ErrorCode::Internal(format!(
++            "Materialized CTE channels without a consumer: {}",
++            untaken.join(", ")
++        )))
++    }
+ }
+ 
+ impl QueryContext {
 ```
 
-**File**: `tests/sqllogictests/suites/base/09_fuse_engine/09_0055_recluster_task_kinds.test` (modified, +1/-1)
+**File**: `src/query/service/src/sessions/query_ctx_shared.rs` (modified, +4/-0)
 ```diff
-@@ -73,7 +73,7 @@ alter table t cluster by(-k)
- statement ok
- insert into t values (NULL, 'n'), (2, 'duplicate'), (7, 'g')
+@@ -216,6 +216,9 @@ pub struct QueryContextShared {
  
--# Keep the existing spill path available to both task kinds.
-+# FINAL must still work with forced spill enabled. Blockwise SortBlocks does not spill.
- statement ok
- set force_sort_data_spill = 1
- 
+     pub(super) materialized_cte_receivers:
+         Arc<Mutex<HashMap<String, Vec<Receiver<MaterializedCtePayload>>>>>,
++    /// Materialized CTEs read inside a recursive CTE, whose consumers are built only when
++    /// the recursive steps run.
++    pub(super) deferred_materialized_cte_consumers: Arc<Mutex<HashSet<String>>>,
+     // Temp tables created for recursive CTE cleanup.
+     // This must be shared across QueryContext instances created from the same query,
+     // otherwise cleanup hooks running on the parent context cannot see registrations
+@@ -326,6 +329,7 @@ impl QueryContextShared {
+             nodes_perf: Arc::new(Mutex::new(HashMap::new())),
+             nodes_perf_counters: Arc::new(Mutex::new(HashMap::new())),
+             materialized_cte_receivers: Arc::new(Mutex::new(HashMap::new())),
++            deferred_materialized_cte_consumers: Arc::new(Mutex::new(HashSet::new())),
+             recursive_cte_temp_tables: Arc::new(RwLock::new(Vec::new())),
+             logical_recursive_cte_runtime_ids: Arc::new(RwLock::new(HashMap::new())),
+             visibility_checker_cache: Default::default(),
 ```
 
 ---
 
-### Incident Patch 3: `65d034c6` (2026-11-25)
-**Commit Message**: fix: meta: cap DML retry markers per commit (#21187)
+### Incident Patch 3: `c86293c0` (2026-11-26)
+**Commit Message**: fix(query): reject script names in subqueries that changed meaning (#21219)
 
-change: query: remove the deduplicate_label retry feature
+#20338 made nested SQL inside procedure expressions follow SQL name
+resolution. Bare names that used to resolve to script variables, and
+row-variable column reads such as r.col, now silently resolve to
+columns or fail with unrelated binder errors.
 
-# Summary
+Reject at compile time every nested-SQL name that the previous
+behavior resolved to a script variable or row variable, so no script
+silently changes meaning. Variables are referenced as :var.
 
-Databend no longer suppresses DML replays based on client-supplied
-labels. File-level deduplication for COPY INTO <table> and internal
-transaction retries are unchanged.
-
-# Details
-
-SET deduplicate_label now returns UnknownVariable. The legacy HTTP
-X-DATABEND-DEDUPLICATE-LABEL header is ignored, so sending the same
-INSERT twice with the same header can write the rows twice. Query no
-longer reads or writes label markers in Meta; existing markers expire.
-
-Upgrade tip: Remove retry labels from SQL and HTTP requests. Before
-upgrading, stop retries that depend on labels and reconcile any writes
-with unknown outcomes. Use application-level idempotency before
-retrying writes after the upgrade.
-
-**File**: `docs/designs/dml-deduplication.md` (modified, +15/-63)
+**File**: `src/query/script/src/compiler.rs` (modified, +42/-0)
 ```diff
-@@ -1,67 +1,19 @@
--# DML deduplication contract
-+# Removal of the DML retry label
- 
--A deduplication label is a client retry token, not a Meta key. If a response is
--lost after a durable write commits, a retry with the same token should not
--repeat the write. Query derives the key from the authenticated execution context
--and authorized target. The marker commits atomically with the durable effect.
-+Databend no longer supports `deduplicate_label`. The SQL setting has been
-+removed. The HTTP `X-DATABEND-DEDUPLICATE-LABEL` header is ignored and does
-+not make a write safe to retry. Query does not read or write retry-label
-+markers in Meta. Existing markers expire without migration.
- 
--This document distinguishes the current behavior from the target contract.
-+Remove the label from SQL `SET`, `SETTINGS`, and `SET_VAR`, HTTP session
-+settings, and request headers. A direct `SET deduplicate_label` fails
-+with `UnknownVariable`. Do not rely on the absence of an error: entry
-+points that ignore unknown settings no longer apply the label either.
- 
--## Token entry points
-+Before upgrading, stop automatic retries that depend on the label and
-+reconcile in-flight writes against the destination. After upgrading, use
-+an application-level idempotency strategy before retrying an uncertain
-+write. Resending an old label cannot prevent a duplicate.
- 
--| Entry point | Compatibility rule |
--| --- | --- |
--| SQL `SET_VAR` hint and statement `SETTINGS` clause | Keep both as statement-scoped inputs. Prefer these forms for SQL clients. |
--| HTTP `X-DATABEND-DEDUPLICATE-LABEL` | Keep it as a query-scoped input. A request header must not create a session or tenant default. |
--| SQL `SET deduplicate_label` and HTTP `session.settings` | Keep as session-scoped compatibility inputs. Clients should clear a session label after the intended write and its retries. The empty string means no label. |
--| SQL `SET GLOBAL deduplicate_label` | Reject it. Previously stored global values are ignored on load; nothing needs to be migrated. Use a statement or request token instead. |
--
--Retain existing precedence: statement settings override the query header,
--which overrides session settings. Within SQL, a `SETTINGS` clause takes
--precedence over `SET_VAR` hints when both appear. Apply the same token
--validation to all accepted forms. Do not inherit an outer label as a separate
--retry token for each nested statement in a script or procedure; a client
--retrying a whole script needs a separate contract. Explicit labels on individual
--statements follow the rules below.
--
--## Supported operations
--
--| Operation | Current behavior | Target behavior |
--| --- | --- | --- |
--| Single-target `INSERT`, `REPLACE`, `UPDATE`, `DELETE`, `MERGE`, and `COPY INTO <table>` on a persistent Fuse-backed table | The interpreter can check a label before execution, and the Fuse commit path can record it. A label is currently shared across statement kinds and targets within the tenant. | Support a bounded token scoped to the authenticated principal, catalog, target, and operation kind. A retry must use the same token for the same logical operation. A successful retry may return an already-committed outcome rather than replaying the original result. |
--| Supported DML that consumes a stream but changes no table rows | A stream-offset-only commit can record a marker. | Keep this path: advancing an offset is a durable effect. A statement with no durable effect leaves no persistent marker. |
--| Supported statements inside an explicit transaction | The open transaction checks buffered labels. Only statements with persistent updates contribute markers at commit. | Keep duplicate handling local to the open transaction until commit and publish only markers tied to durable effects. Rollback leaves no persistent marker. A conflicting marker must not cause a transaction containing new work to report success. A statement token does not identify or replay the whole transaction. |
--| Temporary-table-only writes | No persistent marker is written. A label is buffered only for duplicate checks within an open transaction. | Reject a token before execution until a session-local retry contract exists. Never persist a marker for a temporary-table-only write. |
--| `COPY INTO <location>` | It consults the same lookup as table writes, but the stage sink does not record a matching marker. | Reject a token before execution until an export-specific contract exists. A table-write marker does not prove that an external file was written. |
--| Multi-table `INSERT`, other storage engines without marker support, and other statements without a retry contract | Not consistently covered; for example, multi-table `INSERT` does not pass a label to its commit plan. | Reject an explicit token on unsupported operations before execution. Do not silently run an unsupported labeled write as an ordinary write. |
--
--The supported table-write contract covers the durable commit, not all work done
--while preparing it. A 
-```
-
-**File**: `src/common/base/src/headers.rs` (modified, +0/-1)
-```diff
-@@ -23,7 +23,6 @@ pub const HEADER_SQL: &str = "X-DATABEND-SQL";
- pub const HEADER_FUNCTION: &str = "X-DATABEND-FUNCTION";
- pub const HEADER_FUNCTION_HANDLER: &str = "X-DATABEND-FUNCTION-HANDLER";
- 
--pub const HEADER_DEDUPLICATE_LABEL: &str = "X-DATABEND-DEDUPLICATE-LABEL";
- pub const HEADER_NODE_ID: &str = "X-DATABEND-NODE-ID";
- 
- pub const HEADER_QUERY_STATE: &str = "X-DATABEND-QUERY-STATE";
-```
-
-**File**: `src/meta/api/src/api_impl/schema_api.rs` (modified, +0/-35)
-```diff
-@@ -14,7 +14,6 @@
- 
- use std::collections::HashSet;
- use std::fmt::Display;
--use std::time::Duration;
- 
- use ConditionResult::Eq;
- use chrono::DateTime;
-@@ -48,7 +47,6 @@ use databend_common_meta_app::schema::ObjectTagIdRef;
- use databend_common_meta_app::schema::ObjectTagIdRefIdent;
- use databend_common_meta_app::schema::SourceTableMV;
- use databend_common_meta_app::schema::SourceTableMVIdent;
--use databend_common_meta_app::schema::TableDeduplicationLabelIdent;
- use databend_common_meta_app::schema::TableId;
- use databend_common_meta_app::schema::TableIdHistoryIdent;
- use databend_common_meta_app::schema::TableIdList;
-@@ -403,15 +401,6 @@ pub async fn get_db_by_id_or_err(
-     ))
- }
- 
--pub(super) fn build_upsert_table_deduplicated_label(tenant: &Tenant, label: String) -> TxnOp {
--    let ident = TableDeduplicationLabelIdent::new_generic(tenant, label);
--    TxnOp::put_with_ttl(
--        ident.to_string_key(),
--        1_i8.to_le_bytes().to_vec(),
--        Some(Duration::from_secs(86400)),
--    )
--}
--
- #[tonic::async_trait]
- pub(crate) trait UndropTableStrategy {
-     fn table_name_ident(&self) -> &TableNameIdent;
-@@ -804,27 +793,3 @@ pub fn mark_table_index_as_deleted(
-         serialize_struct(&marked_deleted_table_index_meta),
-     ))
- }
--
--#[cfg(test)]
--mod tests {
--    use databend_common_meta_app::tenant::Tenant;
--    use databend_meta_client::types::txn_op::Request;
--
--    use super::build_upsert_table_deduplicated_label;
--
--    #[test]
--    fn test_deduplication_label_put_uses_tenant_key() {
--        let tenant = Tenant::new_literal("tenant_a");
--        let op = build_upsert_table_deduplicated_label(&tenant, "daily/import".to_string());
--        let Some(Request::Put(put)) = op.request else {
--            panic!("expected a put for the deduplication label");
--        };
--
--        assert_eq!(
--            put.key,
--            "__fd_table_deduplication_label/tenant_a/daily%2fimport"
--        );
--        assert_eq!(put.value, [1]);
--        assert_eq!(put.ttl_ms, Some(86_400_000));
--    }
--}
-```
-
-**File**: `src/meta/api/src/api_impl/table_api.rs` (modified, +3/-18)
-```diff
-@@ -149,7 +149,6 @@ use super::garbage_collection_api::HistoryTablesForGc;
- use super::garbage_collection_api::ORPHAN_POSTFIX;
- use super::garbage_collection_api::get_history_tables_for_gc;
- use super::schema_api::VersionedTable;
--use super::schema_api::build_upsert_table_deduplicated_label;
- use super::schema_api::construct_drop_table_txn_operations;
- use super::schema_api::get_db_by_id_or_err;
- use super::schema_api::get_history_table_metas;
-@@ -1581,7 +1580,7 @@ where
-         }
+@@ -39,6 +39,7 @@ use databend_common_ast::ast::SetExpr;
+ use databend_common_ast::ast::Statement;
+ use databend_common_ast::ast::TableReference;
+ use databend_common_ast::ast::UnaryOperator;
++use databend_common_ast::span::merge_span;
+ use databend_common_ast::visit::VisitControl;
+ use databend_common_ast::visit::VisitorMut;
+ use databend_common_ast::visit::WalkMut;
+@@ -861,6 +862,46 @@ impl Compiler {
+         Ok(())
      }
  
--    /// `tenant` scopes deduplication labels and MV source binding generations.
-+    /// `tenant` scopes MV source binding generations.
-     async fn update_multi_table_meta(
++    /// Reject names in nested SQL that older versions resolved to script
++    /// variables, so they cannot silently change meaning now that nested SQL
++    /// follows SQL name resolution.
++    fn check_nested_sql_column_ref(&self, expr: &Expr) -> Result<()> {
++        let Expr::ColumnRef {
++            span,
++            column:
++                ColumnRef {
++                    database: None,
++                    table,
++                    column: ColumnID::Name(column),
++                },
++        } = expr
++        else {
++            return Ok(());
++        };
++
++        match table {
++            None if matches!(self.lookup_ref(column), Ok(RefItem::Var(_))) => {
++                let name = self.normalize_ident(column);
++                Err(ErrorCode::ScriptSemanticError(format!(
++                    "`{name}` is ambiguous in a subquery: use `:{name}` for the \
++                     script variable, or qualify the column with its table name"
++                ))
++                .set_span(*span))
++            }
++            Some(iter) if matches!(self.lookup_ref(iter), Ok(RefItem::Iter(_))) => {
++                let span = merge_span(*span, column.span);
++                let iter = self.normalize_ident(iter);
++                let column = self.normalize_ident(column);
++                Err(ErrorCode::ScriptSemanticError(format!(
++                    "`{iter}.{column}` is ambiguous in a subquery: assign `{iter}.{column}` \
++                     to a variable and use it as `:var`, or use a table alias other than `{iter}`"
++                ))
++                .set_span(span))
++            }
++            _ => Ok(()),
++        }
++    }
++
+     fn compile_sql_statement(
          &self,
-         tenant: &Tenant,
-@@ -1598,16 +1597,11 @@ where
-         req: UpdateMultiTableMetaReq,
-         txn_sender: &IdempotentKVTxnSender,
-     ) -> Result<UpdateMultiTableMetaResult, KVAppError> {
--        if !req.deduplicated_labels.is_empty() && !req.has_persistent_updates() {
--            return Err(AppError::DeduplicationLabelWithoutMetaUpdate.into());
--        }
--
-         let UpdateMultiTableMetaReq {
-             mut update_table_metas,
-             copied_files,
-             update_stream_metas,
--            deduplicated_labels,
--            update_temp_tables: _,
-+            ..
-         } = req;
- 
-         let mut tbl_seqs = HashMap::new();
-@@ -1835,13 +1829,6 @@ where
-             txn.if_then.push(txn_put_pb(&stream_id, &new_stream_meta));
-         }
- 
--        for deduplicated_label in deduplicated_labels {
--            txn.if_then.push(build_upsert_table_deduplicated_label(
--                tenant,
--                deduplicated_label,
--            ));
--        }
--
-         // Keep these after the table metadata gets: failure parsing relies on the first N
-         // responses matching `update_table_metas`, followed by one response per LVT guard.
-         for (_, lvt_ident, _) in &lvt_guards {
-@@ -1853,9 +1840,7 @@ where
-         let txn_response = txn_sender.send_txn(self, txn).await?;
- 
-         let else_branch_op_responses = match txn_response {
--            IdempotentKVTxnResponse::Success(_) => {
--                return Ok(Ok(UpdateTableMetaReply {}));
--            }
-+            IdempotentKVTxnResponse::Success(_) => return Ok(Ok(UpdateTableMetaReply {})),
-             IdempotentKVTxnResponse::AlreadyCommitted => {
-                 info!(
-                     "Transaction ID {} exists, the corresponding update_multi_table_meta transaction has been executed successfully",
+         span: Span,
+@@ -1083,6 +1124,7 @@ impl Compiler {
+                 if self.query_depth > 0 {
+                     // Nested SQL uses the same quoting rules as RESULTSET/RETURN TABLE:
+                     // bare names stay SQL names, `:var` is a script variable.
++                    self.compiler.check_nested_sql_column_ref(expr)?;
+                     self.compiler.rewrite_sql_hole_expr(expr)?;
+                     return Ok(VisitControl::Continue);
+                 }
 ```
 
-**File**: `src/meta/app/src/app_error.rs` (modified, +0/-6)
+**File**: `src/query/script/tests/it/main.rs` (modified, +57/-2)
 ```diff
-@@ -948,9 +948,6 @@ pub enum AppError {
-     #[error(transparent)]
-     CommitTableMetaError(#[from] CommitTableMetaError),
- 
--    #[error("Deduplication labels require a persistent metadata update")]
--    DeduplicationLabelWithoutMetaUpdate,
--
-     #[error(transparent)]
-     SharedTableSecurityPolicy(#[from] SharedTableSecurityPolicy),
- 
-@@ -1485,9 +1482,6 @@ impl From<AppError> for ErrorCode {
-                 ErrorCode::UndropDbWithNoDropTime(err.message())
-             }
-             AppError::CommitTableMetaError(err) => ErrorCode::CommitTableMetaError(err.message()),
--            AppError::DeduplicationLabelWithoutMetaUpdate => {
--                ErrorCode::InvalidArgument(app_err.to_string())
--            }
-             AppError::SharedTableSecurityPolicy(err) => ErrorCode::AlterTableError(err.message()),
-             AppError::InvalidMaterializedView(err) => {
-                 ErrorCode::InvalidMaterializedView(err.message())
+@@ -364,11 +364,28 @@ fn test_script() {
+         r#"
+             LET x RESULTSET := SELECT * FROM numbers(3);
+             FOR r IN x DO
+-                LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++                LET v := r.number;
++                LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :v + 1);
+                 RETURN y;
+             END FOR;
+         "#,
+     );
++    run_script(
++        file,
++        r#"
++            LET id := 1;
++            LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :id);
++            RETURN y;
++        "#,
++    );
++    run_script(
++        file,
++        r#"
++            LET number := 1;
++            LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :number);
++            RETURN y;
++        "#,
++    );
+     run_script(
+         file,
+         r#"
+@@ -444,6 +461,40 @@ fn test_script_error() {
+             LET x := (SELECT :missing);
+         "#,
+     );
++    // Nested SQL names that older versions resolved to script variables must
++    // not silently resolve to columns.
++    run_script(
++        file,
++        r#"
++            LET id := 1;
++            LET y := (SELECT number FROM numbers(3) WHERE number = id);
++        "#,
++    );
++    run_script(
++        file,
++        r#"
++            LET number := 1;
++            LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = number);
++        "#,
++    );
++    run_script(
++        file,
++        r#"
++            LET x RESULTSET := SELECT * FROM numbers(3);
++            FOR r IN x DO
++                LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++            END FOR;
++        "#,
++    );
++    run_script(
++        file,
++        r#"
++            LET x RESULTSET := SELECT * FROM numbers(3);
++            FOR r IN x DO
++                LET y := (SELECT number FROM numbers(3) AS t WHERE t.number = r.number);
++            END FOR;
++        "#,
++    );
+     run_script(
+         file,
+         r#"
+@@ -555,7 +606,11 @@ fn mock_client() -> MockClient {
+             MockSet::unnamed(vec![vec![Literal::UInt64(1)]]),
+         )
+         .response_when(
+-            "SELECT (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1)",
++            "SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 0 + 1)",
++            MockSet::unnamed(vec![vec![Literal::UInt64(1)]]),
++        )
++        .response_when(
++            "SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 1)",
+             MockSet::unnamed(vec![vec![Literal::UInt64(1)]]),
+         )
+         .response_when(
 ```
 
-**File**: `src/meta/app/src/schema/mod.rs` (modified, +0/-2)
+**File**: `src/query/script/tests/it/testdata/script-error.txt` (modified, +54/-0)
 ```diff
-@@ -50,7 +50,6 @@ mod sequence;
- pub mod sequence_storage;
- mod table;
- mod table_clone;
--mod table_deduplication_label_ident;
- pub mod table_lock_ident;
- pub mod table_lock_ident_v2;
- pub mod table_niv;
-@@ -210,7 +209,6 @@ pub use table_clone::OPT_KEY_CLONE_GROUP_ID;
- pub use table_clone::TableCloneBinding;
- pub use table_clone::TableCloneByGroupIdent;
- pub use table_clone::parse_clone_group_id;
--pub use table_deduplication_label_ident::TableDeduplicationLabelIdent;
- pub use table_lock_ident::TableLockIdent;
- pub use table_lock_ident_v2::TableLockIdentV2;
- pub use tag::CreateTagReply;
+@@ -102,6 +102,60 @@ error:
+   |                  ^^^^^^^^ `missing` is not defined
+ 
+ 
++---------- Input ----------
++LET id := 1;
++LET y := (SELECT number FROM numbers(3) WHERE number = id);
++---------- Output ----------
++error: 
++  --> SQL:2:56
++  |
++1 | LET id := 1;
++2 | LET y := (SELECT number FROM numbers(3) WHERE number = id);
++  |                                                        ^^ `id` is ambiguous in a subquery: use `:id` for the script variable, or qualify the column with its table name
++
++
++---------- Input ----------
++LET number := 1;
++LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = number);
++---------- Output ----------
++error: 
++  --> SQL:2:65
++  |
++1 | LET number := 1;
++2 | LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = number);
++  |                                                                 ^^^^^^ `number` is ambiguous in a subquery: use `:number` for the script variable, or qualify the column with its table name
++
++
++---------- Input ----------
++LET x RESULTSET := SELECT * FROM numbers(3);
++FOR r IN x DO
++    LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++END FOR;
++---------- Output ----------
++error: 
++  --> SQL:3:22
++  |
++1 | LET x RESULTSET := SELECT * FROM numbers(3);
++2 | FOR r IN x DO
++3 |     LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++  |                      ^^^^^^^^ `r.number` is ambiguous in a subquery: assign `r.number` to a variable and use it as `:var`, or use a table alias other than `r`
++
++
++---------- Input ----------
++LET x RESULTSET := SELECT * FROM numbers(3);
++FOR r IN x DO
++    LET y := (SELECT number FROM numbers(3) AS t WHERE t.number = r.number);
++END FOR;
++---------- Output ----------
++error: 
++  --> SQL:3:67
++  |
++1 | LET x RESULTSET := SELECT * FROM numbers(3);
++2 | FOR r IN x DO
++3 |     LET y := (SELECT number FROM numbers(3) AS t WHERE t.number = r.number);
++  |                                                                   ^^^^^^^^ `r.number` is ambiguous in a subquery: assign `r.number` to a variable and use it as `:var`, or use a table alias other than `r`
++
++
+ ---------- Input ----------
+ LET x := 1;
+ FOR r IN x DO
 ```
 
-**File**: `src/meta/app/src/schema/table/mod.rs` (modified, +1/-3)
+**File**: `src/query/script/tests/it/testdata/script.txt` (modified, +68/-9)
 ```diff
-@@ -879,7 +879,6 @@ pub struct UpdateMultiTableMetaReq {
-     pub update_table_metas: Vec<(UpdateTableMetaReq, TableInfo)>,
-     pub copied_files: Vec<(u64, UpsertTableCopiedFileReq)>,
-     pub update_stream_metas: Vec<UpdateStreamMetaReq>,
--    pub deduplicated_labels: Vec<String>,
-     pub update_temp_tables: Vec<UpdateTempTableReq>,
- }
- 
-@@ -888,11 +887,10 @@ impl UpdateMultiTableMetaReq {
-         self.update_table_metas.is_empty()
-             && self.copied_files.is_empty()
-             && self.update_stream_metas.is_empty()
--            && self.deduplicated_labels.is_empty()
-             && self.update_temp_tables.is_empty()
-     }
- 
--    /// Deduplication labels and temporary table updates are not persistent work.
-+    /// Temporary table updates are not persistent work.
-     pub fn has_persistent_updates(&self) -> bool {
-         !self.update_table_metas.is_empty()
-             || !self.update_stream_metas.is_empty()
+@@ -951,28 +951,87 @@ Some(Var(UInt64(1)))
+ ---------- Input ----------
+ LET x RESULTSET := SELECT * FROM numbers(3);
+ FOR r IN x DO
+-    LET y := (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1);
++    LET v := r.number;
++    LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :v + 1);
+     RETURN y;
+ END FOR;
+ ---------- IR -------------
+ QUERY SELECT * FROM numbers(3), x(0)
+ ITER x(0), r(3)
+ __LOOP1(1):
+ JUMP_IF_ENDED r(3), __LOOP_END2(2)
+-QUERY SELECT (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1), __expr_result5(5)
+-ITER __expr_result5(5), __expr_result_iter6(6)
+-READ __expr_result_iter6(6), $0, y(4)
+-QUERY SELECT :4, __expr_result8(8)
+-ITER __expr_result8(8), __expr_result_iter9(9)
+-READ __expr_result_iter9(9), $0, __return_val7(7)
+-RETURN __return_val7(7)
++READ r(3), "number", __r.number5(5)
++QUERY SELECT :5, __expr_result6(6)
++ITER __expr_result6(6), __expr_result_iter7(7)
++READ __expr_result_iter7(7), $0, v(4)
++QUERY SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = :4 + 1), __expr_result9(9)
++ITER __expr_result9(9), __expr_result_iter10(10)
++READ __expr_result_iter10(10), $0, y(8)
++QUERY SELECT :8, __expr_result12(12)
++ITER __expr_result12(12), __expr_result_iter13(13)
++READ __expr_result_iter13(13), $0, __return_val11(11)
++RETURN __return_val11(11)
+ NEXT r(3)
+ GOTO __LOOP1(1)
+ __LOOP_END2(2):
+ ---------- QUERY ---------
+ QUERY: SELECT * FROM numbers(3)
+ BLOCK: (number): (0), (1), (2)
+-QUERY: SELECT (SELECT r.number FROM numbers(3) AS r WHERE r.number = 1)
++QUERY: SELECT 0
++BLOCK: ($0): (0)
++QUERY: SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 0 + 1)
++BLOCK: ($0): (1)
++QUERY: SELECT 1
++BLOCK: ($0): (1)
++---------- Output ---------
++Some(Var(UInt64(1)))
++
++
++---------- Input ----------
++LET id := 1;
++LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :id);
++RETURN y;
++---------- IR -------------
++QUERY SELECT 1, __expr_result1(1)
++ITER __expr_result1(1), __expr_result_iter2(2)
++READ __expr_result_iter2(2), $0, id(0)
++QUERY SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = :0), __expr_result4(4)
++ITER __expr_result4(4), __expr_result_iter5(5)
++READ __expr_result_iter5(5), $0, y(3)
++QUERY SELECT :3, __expr_result7(7)
++ITER __expr_result7(7), __expr_result_iter8(8)
++READ __expr_result_iter8(8), $0, __return_val6(6)
++RETURN __return_val6(6)
++---------- QUERY ---------
++QUERY: SELECT 1
++BLOCK: ($0): (1)
++QUERY: SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 1)
++BLOCK: ($0): (1)
++QUERY: SELECT 1
++BLOCK: ($0): (1)
++---------- Output ---------
++Some(Var(UInt64(1)))
++
++
++---------- Input ----------
++LET number := 1;
++LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :number);
++RETURN y;
++---------- IR -------------
++QUERY SELECT 1, __expr_result1(1)
++ITER __expr_result1(1), __expr_result_iter2(2)
++READ __expr_result_iter2(2), $0, number(0)
++QUERY SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = :0), __expr_result4(4)
++ITER __expr_result4(4), __expr_result_iter5(5)
++READ __expr_result_iter5(5), $0, y(3)
++QUERY SELECT :3, __expr_result7(7)
++ITER __expr_result7(7), __expr_result_iter8(8)
++READ __expr_result_iter8(8), $0, __return_val6(6)
++RETURN __return_val6(6)
++---------- QUERY ---------
++QUERY: SELECT 1
++BLOCK: ($0): (1)
++QUERY: SELECT (SELECT t.number FROM numbers(3) AS t WHERE t.number = 1)
+ BLOCK: ($0): (1)
+ QUERY: SELECT 1
+ BLOCK: ($0): (1)
 ```
 
-**File**: `src/meta/app/src/schema/table_deduplication_label_ident.rs` (removed, +0/-27)
+**File**: `tests/sqllogictests/suites/base/15_procedure/15_0001_execute_immediate.test` (modified, +42/-1)
 ```diff
-@@ -1,27 +0,0 @@
--// Copyright 2021 Datafuse Labs
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//     http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--use crate::tenant_key::ident::TIdent;
--use crate::tenant_key::resource::TenantResource;
--
--/// The tenant-scoped key of a committed DML deduplication label.
--pub type TableDeduplicationLabelIdent = TIdent<TableDeduplicationLabelResource>;
--
--pub struct TableDeduplicationLabelResource;
--
--impl TenantResource for TableDeduplicationLabelResource {
--    const PREFIX: &'static str = "__fd_table_deduplication_label";
--    const HAS_TENANT: bool = true;
--    type ValueType = Vec<u8>;
--}
+@@ -271,7 +271,7 @@ $$;
+ ----
+ 1
+ 
+-query I
++query error `r.number` is ambiguous in a subquery
+ EXECUTE IMMEDIATE $$
+ BEGIN
+     LET rs RESULTSET := SELECT * FROM numbers(3);
+@@ -281,9 +281,50 @@ BEGIN
+     END FOR;
+ END;
+ $$;
++
++query I
++EXECUTE IMMEDIATE $$
++BEGIN
++    LET rs RESULTSET := SELECT * FROM numbers(3);
++    FOR r IN rs DO
++        LET v := r.number;
++        LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :v + 1);
++        RETURN y;
++    END FOR;
++END;
++$$;
+ ----
+ 1
+ 
++query error `id` is ambiguous in a subquery
++EXECUTE IMMEDIATE $$
++BEGIN
++    LET id := 1;
++    LET y := (SELECT number FROM numbers(3) WHERE number = id);
++    RETURN y;
++END;
++$$;
++
++query error `number` is ambiguous in a subquery
++EXECUTE IMMEDIATE $$
++BEGIN
++    LET number := 2;
++    LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = number);
++    RETURN y;
++END;
++$$;
++
++query I
++EXECUTE IMMEDIATE $$
++BEGIN
++    LET number := 2;
++    LET y := (SELECT t.number FROM numbers(3) AS t WHERE t.number = :number);
++    RETURN y;
++END;
++$$;
++----
++2
++
+ query error `fallback` is not defined
+ EXECUTE IMMEDIATE $$
+ BEGIN
+```
+
+**File**: `tests/sqllogictests/suites/base/15_procedure/15_0002_procedure.test` (modified, +27/-0)
+```diff
+@@ -610,3 +610,30 @@ call PROCEDURE hdr();
+ 
+ statement ok
+ DROP PROCEDURE hdr();
++
++statement ok
++CREATE OR REPLACE PROCEDURE p_param_in_subquery(number UInt64) RETURNS UInt64 NOT NULL LANGUAGE SQL AS $$
++BEGIN
++    LET y := (SELECT count(*) FROM numbers(3) AS t WHERE t.number = number);
++    RETURN y;
++END;
++$$;
++
++query error `number` is ambiguous in a subquery
++call PROCEDURE p_param_in_subquery(1);
++
++statement ok
++CREATE OR REPLACE PROCEDURE p_param_in_subquery(number UInt64) RETURNS UInt64 NOT NULL LANGUAGE SQL AS $$
++BEGIN
++    LET y := (SELECT count(*) FROM numbers(3) AS t WHERE t.number = :number);
++    RETURN y;
++END;
++$$;
++
++query I
++call PROCEDURE p_param_in_subquery(1);
++----
++1
++
++statement ok
++DROP PROCEDURE p_param_in_subquery(UInt64);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21214** (2026-11-25): refactor(query): remove the unused tenant_quota table function (@bohutang)
-- **PR #21211** (closed): docs: update TPC-H benchmark results in README (@dqhl76)
-- **PR #21210** (2026-11-25): refactor(query): compare strings by view in TopK and rank limit sort (@sundy-li)
-- **PR #21208** (2026-11-25): refactor(query): compare string views by length and prefix first (@sundy-li)
-- **PR #21205** (2026-11-24): ci: hold heavy Dev CI for new Dependabot PRs (@bohutang)
-- **PR #21202** (2026-11-24): fix(query): allow DISTINCT aggregate ORDER BY on its own argument (@zhang2014)
+- **PR #21241** (2026-11-26): fix: query: read the RESULT_SCAN cache key of HTTP sessions from meta (@drmingdrmer)
+- **PR #21239** (2026-11-26): fix: query: update the matching entry in update_query_ids_results (@drmingdrmer)
+- **PR #21237** (2026-11-26): ci(benchmark): move ClickBench hits from cloud to local fs benchmark (@dqhl76)
+- **PR #21236** (closed): fix(storage): keep column statistics only where they cover every row (@dantengsky)
+- **PR #21227** (2026-11-26): fix(query): fix materialized CTE hangs on channels nobody reads (@dqhl76)
+- **PR #21223** (2026-11-26): fix: query: validate result cache key in RESULT_SCAN (@drmingdrmer)
 
 ---
 
@@ -2468,21 +2928,46 @@ retrying writes after the upgrade.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): build the Parquet read schema once per block reader
+## X. query): use one conversion plan for CAST and TRY_CAST
 
 **RULE**:
-When implementing operations in `src/query/storages/fuse/src/io/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/expression/src/auto_cast_rules.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `649d33fa`: storage): build the Parquet read schema once per block reader. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80519243`: query): use one conversion plan for CAST and TRY_CAST. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/storages/fuse/src/io/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/auto_cast_rules.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub use read::FieldLevelsCache;
+// Copyright 2021 Datafuse Labs
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//! The rules of automatic casts that hold across functions.
+//!
+//! Type checking casts an argument to the type a function overload takes when a rule allows it.
+//! The rules here are shared by many functions, and planner and storage code rely on the casts
+//! they allow; which rules a function uses is decided where the function is registered.
+//! [`decimal_auto_cast`] is the rule for decimals, whose sizes a list of type pairs cannot hold.
+
+use crate::types::ALL_INTEGER_TYPES;
+use crate::types::ALL_NUMERICS_TYPES;
+use crate::types::DataType;
+use crate::types::Decimal;
+use crate::types::NumberDataType;
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2492,4 +2977,4 @@ pub use read::FieldLevelsCache;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `649d33fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80519243` are properly handled with clean fallback behavior.
