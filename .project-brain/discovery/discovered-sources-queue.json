@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T18:33:06.746Z",
+  "updated_at": "2026-11-26T18:41:58.085Z",
   "stats": {
-    "total_discovered": 9961,
-    "approved_pending_harvest": 9441,
+    "total_discovered": 9963,
+    "approved_pending_harvest": 9443,
     "harvested_count": 0,
     "rejected_count": 520,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9445,
+      "COMMUNITY_AND_EXPERT": 9447,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -215529,6 +215529,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
         "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-296F14937932": {
+      "id": "SRC-296F14937932",
+      "url": "https://snack.expo.dev/@react-native-paper/react-native-paper-example_v5",
+      "title": "https://snack.expo.dev/@react-native-paper/react-native-paper-example_v5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:41:58.017Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
+        "fileName": "callstack-react-native-paper-learnings.md"
+      }
+    },
+    "SRC-E38340436E7A": {
+      "id": "SRC-E38340436E7A",
+      "url": "https://github.com/necolas/react-native-web/issues/1849",
+      "title": "https://github.com/necolas/react-native-web/issues/1849",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:41:58.085Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
+        "fileName": "callstack-react-native-paper-learnings.md"
       }
     }
   }

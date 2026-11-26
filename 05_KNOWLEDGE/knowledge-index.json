@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T18:33:08.642Z",
+  "last_updated": "2026-11-26T18:41:58.840Z",
   "total_verified_learnings": 9132,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26119,
+  "total_items": 26128,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "f2c476cf",
-      "content_hash": "72833e4380de9dd749bf95c7c812498b4a7677038e3ace6cd13b4b04420c0c2f",
+      "source_version": "72a7f415",
+      "content_hash": "1dc35ef0b0cf84092ee59ab8b3d156f052ec9f81a1cd1d368bd971e37e0f6a3b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T00:46:37.241Z"
+      "persisted_at": "2026-11-26T18:41:49.008Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "f2c476cf",
-      "content_hash": "99d3cc63574a09257a2f31091e7818be6fa6fe796806d4d3de938de07771ca51",
+      "source_version": "72a7f415",
+      "content_hash": "4ef7a5eae262e4026332db0941bc3915b9bef80853fc855c95647c6191ac2032",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:46:37.538Z"
+      "persisted_at": "2026-11-26T18:41:49.269Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -215806,8 +215806,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "9af55fa5",
-      "content_hash": "8268516e92726b2bbd9aabd439c81bb0970062faca9317922a107e345096424f",
+      "source_version": "ee15ab0a",
+      "content_hash": "203fd4c9b04584c92f94c5e9598fa1b0f6bd65323a5647b945ad23454f54b8ac",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -215845,6 +215845,11 @@
           "number": 10566,
           "title": "preserve BufferStorage consistency and staged budget recovery",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10757,
+          "title": "reduce embedded Jieba startup time and memory use",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215852,7 +215857,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T00:09:33.006Z",
+      "verified_at": "2026-11-26T18:41:52.043Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215906,10 +215911,10 @@
       "relative_path": "08_VERIFICATION/alibaba-zvec-verification-protocol-empirical-defect-shield-for-alibaba-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for alibaba/zvec",
       "repository": "alibaba/zvec",
-      "source_version": "9af55fa5",
-      "content_hash": "ff26598f9100e3092fb95b0e31773c517f7da0b39f5320ae16e549b65686a184",
+      "source_version": "ee15ab0a",
+      "content_hash": "26f3b795c612e76092841b6f50e011d9b90a244f68fe94deeb5e8fb4e05a7e68",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:09:34.188Z"
+      "persisted_at": "2026-11-26T18:41:53.116Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
@@ -217956,8 +217961,8 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "ce0ac9f8",
-      "content_hash": "792454fa15ee7aa8b502b170c2bc1fc7290cb7715822621220f6ea4c3e5015be",
+      "source_version": "63a3d5ac",
+      "content_hash": "f72190d41e4f4db6e51f20bd9b9bb73e93bdab04219853cd2e637d274af6caa0",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "promoted_rules": [
@@ -217975,6 +217980,11 @@
           "number": 10242,
           "title": "render aria-readonly on web only when read-only",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10755,
+          "title": "fill 6.x guide gaps and fix the home and version selector links",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217982,7 +217992,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T09:57:10.725Z",
+      "verified_at": "2026-11-26T18:41:43.927Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218010,10 +218020,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
       "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
       "repository": "callstack/react-native-paper",
-      "source_version": "ce0ac9f8",
-      "content_hash": "e998e62cf6a55af06fc12d4b1122557a8cd05b0c4be816bc606f9687d86dd002",
+      "source_version": "63a3d5ac",
+      "content_hash": "a3eb315c77b4c56075c86bc2c15b7b641f343e92d25cfaa52abc5e593e0b725e",
       "domain_letter": "F",
-      "persisted_at": "2026-11-24T09:57:11.391Z"
+      "persisted_at": "2026-11-26T18:41:44.744Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper",
@@ -218022,10 +218032,10 @@
       "relative_path": "08_VERIFICATION/callstack-react-native-paper-verification-protocol-empirical-defect-shield-for-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for callstack/react-native-paper",
       "repository": "callstack/react-native-paper",
-      "source_version": "ce0ac9f8",
-      "content_hash": "c3ea6e006191754bbc31d16a1e5950eb4604c47089b3b970eb83a4364227e517",
+      "source_version": "63a3d5ac",
+      "content_hash": "2fb411be90f9b5ed382033d54514e6802659aa21fa2a72547111f385af1350b4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T09:57:11.577Z"
+      "persisted_at": "2026-11-26T18:41:44.972Z"
     },
     "learn-github-databendlabs-databend": {
       "learning_id": "learn-github-databendlabs-databend",
@@ -218254,9 +218264,9 @@
       "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff9ee1827154807efd21ed5652914c12d64a7e10761828879f43459a0e69656e",
+      "content_hash": "1fa3e1d9366aa19a3c230e78609ae9b6a00342d9bd8aaf52969d6f1719f9a2ed",
       "domain_letter": "F",
-      "persisted_at": "2026-11-24T09:57:22.587Z"
+      "persisted_at": "2026-11-26T18:41:58.601Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l",
@@ -218266,9 +218276,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for callstack-react-native-paper-learnings",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff5f439c2e1f167e76c50dbf4936caf89d7f650f1181124d956be6cdb0d12477",
+      "content_hash": "630ea1705ae54b3c2b84ca89231f0169b7848a88ba66540404003cad2b3cc5d8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T09:57:22.769Z"
+      "persisted_at": "2026-11-26T18:41:58.840Z"
     },
     "learn-github-xudong-huang-may": {
       "learning_id": "learn-github-xudong-huang-may",
@@ -219597,7 +219607,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/hexgrad/Kokoro-82M",
       "source_version": "hf-hexgrad-kokoro-82m",
-      "content_hash": "0a37b9a2dff56b003c0194feb79df6980498ec977ea5a3402cbd7897ddbee0ce",
+      "content_hash": "d00a3334da73e18d8504e53fa0b502db7a68879e6d367a04e24e817d567abf6e",
       "dossier_path": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "promoted_rules": [],
@@ -219606,7 +219616,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T04:50:28.882Z",
+      "verified_at": "2026-11-26T18:41:35.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219623,9 +219633,9 @@
       "title": "Research & Knowledge Intelligence: hexgrad/Kokoro-82M Core Invariants",
       "repository": "hexgrad/Kokoro-82M",
       "source_version": "hf-hexgrad-kokoro-82m",
-      "content_hash": "1c2fcaf829ce2fc94c91648c3179973eb509a87050535fac41589c0f248c64be",
+      "content_hash": "8e2b689ccb9bffd81ee539574b5c8b0e08a6c6c4e5e30783cdc46b03cb864be3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T04:50:29.467Z"
+      "persisted_at": "2026-11-26T18:41:35.767Z"
     },
     "learn-github-u-root-u-root": {
       "learning_id": "learn-github-u-root-u-root",
@@ -219990,9 +220000,9 @@
       "title": "Research & Knowledge Intelligence: hf-hexgrad-kokoro-82m-learnings Core Invariants",
       "repository": "hf-hexgrad-kokoro-82m-learnings",
       "source_version": "HEAD",
-      "content_hash": "118c94019a3409ea29a93bbffdeb558c2222a7f1715ecf1cdb035e39d27c6455",
+      "content_hash": "abb1e633191ea3e2c5c87d7e3722999e93e00dc36db5ff62aa24137bc4b99169",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T04:50:32.715Z"
+      "persisted_at": "2026-11-26T18:41:57.630Z"
     },
     "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria",
@@ -224360,8 +224370,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "f2c476cf",
-      "content_hash": "d85656c4d64ac5fdeae788064cc5d6d8a1ca2564783a1a800ff51dd0654849e4",
+      "source_version": "72a7f415",
+      "content_hash": "1ae857f5f82da40b62945d7b3b2ade301c210d03f15d227fbc4ce64e82d1b2a4",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -224524,6 +224534,11 @@
           "number": 10572,
           "title": "misc/git_hook/githook: don't rebuild hooks after every OSS bump",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10756,
+          "title": "wgengine/netstack: fix invocation of ping on illumos/solaris",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224531,7 +224546,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T00:46:36.524Z",
+      "verified_at": "2026-11-26T18:41:48.206Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247457,8 +247472,8 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "f992f56d",
-      "content_hash": "3ff0e801aad0b1eebedf80ab740fdfea8b21648929bc071717ec6d3f2875b566",
+      "source_version": "414e53f1",
+      "content_hash": "73e18843b3e54913695c7f55684405550ba3ba4e6c84a177c6e7eb7cb6b7093f",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
@@ -247496,6 +247511,11 @@
           "number": 10512,
           "title": "bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10754,
+          "title": "fix incorrect GPU ignoring logic for mem graph",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -247503,7 +247523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T11:30:02.155Z",
+      "verified_at": "2026-11-26T18:41:37.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247545,10 +247565,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "repository": "ClementTsang/bottom",
-      "source_version": "f992f56d",
-      "content_hash": "d661a05fc962ef106c79b11e80bcfb49bc978a04d46eb612134b10dc46292795",
+      "source_version": "414e53f1",
+      "content_hash": "d666d9db2bc35bfecfdd1ab76b2874212efa65d4be2b222ca8aba62a5f0fb099",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:30:03.078Z"
+      "persisted_at": "2026-11-26T18:41:38.505Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom",
@@ -247557,10 +247577,10 @@
       "relative_path": "08_VERIFICATION/clementtsang-bottom-verification-protocol-empirical-defect-shield-for-clementtsa.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClementTsang/bottom",
       "repository": "ClementTsang/bottom",
-      "source_version": "f992f56d",
-      "content_hash": "e62f89d3b576ef32d123e7fa4d2c83c22266a4b52dc5752275e0d6adb21a9af9",
+      "source_version": "414e53f1",
+      "content_hash": "8ca24de283b28bbb6e5ac073f762e7a851da8fb0a6297c8e33b2b8ce6d77ad7a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:30:03.354Z"
+      "persisted_at": "2026-11-26T18:41:38.735Z"
     },
     "candidate_directive-other-set-unused_dependencies-lint-to-deny": {
       "item_id": "candidate_directive-other-set-unused_dependencies-lint-to-deny",
@@ -247582,9 +247602,9 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "eaa03c5301803c19cca97d079859fef23dab036094f777c5212d5f4d6979ad8f",
+      "content_hash": "870721c39fbb4fab6afc1891b912c25b5afe76f404ede82329ee326e5a211c7d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:30:17.369Z"
+      "persisted_at": "2026-11-26T18:41:56.879Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings",
@@ -247594,9 +247614,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clementtsang-bottom-learnings",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "a915e839de7ab1c63b78ab0cf97ddeff6255243168926acc8c5d2aee77226ecc",
+      "content_hash": "5d0ef707e3389cbaa75cc92022544c2e1a18c93456b08998806dfbbda01930b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:30:17.659Z"
+      "persisted_at": "2026-11-26T18:41:57.137Z"
     },
     "learn-huggingface-burner22-numbat": {
       "learning_id": "learn-huggingface-burner22-numbat",
@@ -264337,10 +264357,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "repository": "alibaba/zvec",
-      "source_version": "9af55fa5",
-      "content_hash": "872c7e58897a386f20bcc21cb34f7f2c4c16fc028e5eeeb026c83bb729507477",
+      "source_version": "ee15ab0a",
+      "content_hash": "a25f1be1479c17e1a487993a5ca244df51917768d4e7c5ac9db89cfea1edc9fe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T00:09:33.934Z"
+      "persisted_at": "2026-11-26T18:41:52.894Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -358098,6 +358118,122 @@
       "content_hash": "99c1e2bb394e552b472d04633ccf4106dc9a6194f122c3c96fe6fac69ddbabad",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T18:33:07.007Z"
+    },
+    "rule-10754": {
+      "learning_id": "rule-10754",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10754,
+      "title": "fix incorrect GPU ignoring logic for mem graph",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "414e53f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T18:41:37.659Z"
+    },
+    "candidate_directive-fix-incorrect-gpu-ignoring-logic-for-mem-graph": {
+      "item_id": "candidate_directive-fix-incorrect-gpu-ignoring-logic-for-mem-graph",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FV5K-fix-incorrect-gpu-ignoring-logic-for-mem-graph.md",
+      "title": "fix incorrect GPU ignoring logic for mem graph",
+      "repository": "clementtsang-bottom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c4e26b1d5f9c0786b51b797efe0e0dce84fc9e3cc6d51d2d6404f77072a8b634",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T18:41:56.601Z"
+    },
+    "rule-10755": {
+      "learning_id": "rule-10755",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10755,
+      "title": "fill 6.x guide gaps and fix the home and version selector links",
+      "source_url": "https://github.com/callstack/react-native-paper",
+      "source_version": "63a3d5ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T18:41:43.927Z"
+    },
+    "candidate_directive-fill-6-x-guide-gaps-and-fix-the-home-and-version-selector-links": {
+      "item_id": "candidate_directive-fill-6-x-guide-gaps-and-fix-the-home-and-version-selector-links",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FLT9-fill-6-x-guide-gaps-and-fix-the-home-and-version-selector-links.md",
+      "title": "fill 6.x guide gaps and fix the home and version selector links",
+      "repository": "callstack/react-native-paper",
+      "source_version": "63a3d5ac",
+      "content_hash": "d583c451342f470760e8c484bc9b1755cdbc4391b56e60f92593b9f5aa31abab",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T18:41:44.499Z"
+    },
+    "rule-10756": {
+      "learning_id": "rule-10756",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10756,
+      "title": "wgengine/netstack: fix invocation of ping on illumos/solaris",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "72a7f415",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T18:41:48.206Z"
+    },
+    "candidate_directive-wgengine-netstack-fix-invocation-of-ping-on-illumos-solaris": {
+      "item_id": "candidate_directive-wgengine-netstack-fix-invocation-of-ping-on-illumos-solaris",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FP42-wgengine-netstack-fix-invocation-of-ping-on-illumos-solaris.md",
+      "title": "wgengine/netstack: fix invocation of ping on illumos/solaris",
+      "repository": "tailscale/tailscale",
+      "source_version": "72a7f415",
+      "content_hash": "74b46cef58804779feef31e662f8f6c1b9404034c96a16da45bc3c123d195afc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T18:41:48.771Z"
+    },
+    "rule-10757": {
+      "learning_id": "rule-10757",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10757,
+      "title": "reduce embedded Jieba startup time and memory use",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "ee15ab0a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T18:41:52.043Z"
+    },
+    "candidate_directive-reduce-embedded-jieba-startup-time-and-memory-use": {
+      "item_id": "candidate_directive-reduce-embedded-jieba-startup-time-and-memory-use",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FS48-reduce-embedded-jieba-startup-time-and-memory-use.md",
+      "title": "reduce embedded Jieba startup time and memory use",
+      "repository": "alibaba/zvec",
+      "source_version": "ee15ab0a",
+      "content_hash": "a48e53674147cf447cd89e681916b285ce59da38e368c6467bc759b486d8ddc6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T18:41:52.670Z"
+    },
+    "candidate_directive-docs-fill-6-x-guide-gaps-and-fix-the-home-and-version-selector-links": {
+      "item_id": "candidate_directive-docs-fill-6-x-guide-gaps-and-fix-the-home-and-version-selector-links",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FWIV-docs-fill-6-x-guide-gaps-and-fix-the-home-and-version-selector-links.md",
+      "title": "docs: fill 6.x guide gaps and fix the home and version selector links",
+      "repository": "callstack-react-native-paper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c69da57b463c128b7e49ecf56cb2a4b9e865190e2096060e2fd3a48286493915",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T18:41:58.380Z"
     }
   },
   "ai-builder-brain": {

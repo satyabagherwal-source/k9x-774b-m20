@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T18:33:08.642Z",
+  "last_updated": "2026-11-26T18:41:58.601Z",
   "total_records": 2769,
   "domains": {
     "A": {
@@ -8656,8 +8656,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "72833e4380de9dd749bf95c7c812498b4a7677038e3ace6cd13b4b04420c0c2f",
-      "created_at": "2026-11-26T00:46:37.241Z"
+      "content_hash": "1dc35ef0b0cf84092ee59ab8b3d156f052ec9f81a1cd1d368bd971e37e0f6a3b",
+      "created_at": "2026-11-26T18:41:49.008Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -11749,8 +11749,8 @@
       "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
       "repository": "callstack/react-native-paper",
-      "content_hash": "e998e62cf6a55af06fc12d4b1122557a8cd05b0c4be816bc606f9687d86dd002",
-      "created_at": "2026-11-24T09:57:11.391Z"
+      "content_hash": "a3eb315c77b4c56075c86bc2c15b7b641f343e92d25cfaa52abc5e593e0b725e",
+      "created_at": "2026-11-26T18:41:44.744Z"
     },
     "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants",
@@ -11836,8 +11836,8 @@
       "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-learnings-design-intelligence-callstack-react-nativ.md",
       "repository": "callstack-react-native-paper-learnings",
-      "content_hash": "ff9ee1827154807efd21ed5652914c12d64a7e10761828879f43459a0e69656e",
-      "created_at": "2026-11-24T09:57:22.587Z"
+      "content_hash": "1fa3e1d9366aa19a3c230e78609ae9b6a00342d9bd8aaf52969d6f1719f9a2ed",
+      "created_at": "2026-11-26T18:41:58.601Z"
     },
     "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants",
@@ -12169,8 +12169,8 @@
       "title": "Research & Knowledge Intelligence: hexgrad/Kokoro-82M Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hexgrad-kokoro-82m-research-knowledge-intelligence-hexgrad-kokoro-82m-core-in.md",
       "repository": "hexgrad/Kokoro-82M",
-      "content_hash": "1c2fcaf829ce2fc94c91648c3179973eb509a87050535fac41589c0f248c64be",
-      "created_at": "2026-11-23T04:50:29.467Z"
+      "content_hash": "8e2b689ccb9bffd81ee539574b5c8b0e08a6c6c4e5e30783cdc46b03cb864be3",
+      "created_at": "2026-11-26T18:41:35.767Z"
     },
     "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants",
@@ -12256,8 +12256,8 @@
       "title": "Research & Knowledge Intelligence: hf-hexgrad-kokoro-82m-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hexgrad-kokoro-82m-learnings-research-knowledge-intelligence-hf-hexgrad-kokor.md",
       "repository": "hf-hexgrad-kokoro-82m-learnings",
-      "content_hash": "118c94019a3409ea29a93bbffdeb558c2222a7f1715ecf1cdb035e39d27c6455",
-      "created_at": "2026-11-23T04:50:32.715Z"
+      "content_hash": "abb1e633191ea3e2c5c87d7e3722999e93e00dc36db5ff62aa24137bc4b99169",
+      "created_at": "2026-11-26T18:41:57.630Z"
     },
     "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria",
@@ -20931,8 +20931,8 @@
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "repository": "ClementTsang/bottom",
-      "content_hash": "d661a05fc962ef106c79b11e80bcfb49bc978a04d46eb612134b10dc46292795",
-      "created_at": "2026-11-25T11:30:03.078Z"
+      "content_hash": "d666d9db2bc35bfecfdd1ab76b2874212efa65d4be2b222ca8aba62a5f0fb099",
+      "created_at": "2026-11-26T18:41:38.505Z"
     },
     "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
@@ -20940,8 +20940,8 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-learnings-architecture-intelligence-clementtsang-bottom-lear.md",
       "repository": "clementtsang-bottom-learnings",
-      "content_hash": "eaa03c5301803c19cca97d079859fef23dab036094f777c5212d5f4d6979ad8f",
-      "created_at": "2026-11-25T11:30:17.369Z"
+      "content_hash": "870721c39fbb4fab6afc1891b912c25b5afe76f404ede82329ee326e5a211c7d",
+      "created_at": "2026-11-26T18:41:56.879Z"
     },
     "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants",
@@ -25144,8 +25144,8 @@
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "repository": "alibaba/zvec",
-      "content_hash": "872c7e58897a386f20bcc21cb34f7f2c4c16fc028e5eeeb026c83bb729507477",
-      "created_at": "2026-11-26T00:09:33.934Z"
+      "content_hash": "a25f1be1479c17e1a487993a5ca244df51917768d4e7c5ac9db89cfea1edc9fe",
+      "created_at": "2026-11-26T18:41:52.894Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",

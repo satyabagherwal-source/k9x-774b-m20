@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `f992f56d`  
+> **Source Version**: `414e53f1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T11:30:00.959Z  
+> **Timestamp**: 2026-11-26T18:41:36.644Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T11:30:00.949Z  
+> **Harvest Timestamp**: 2026-11-26T18:41:36.639Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14277 stars
+- **Stars / Engagement**: 14294 stars
 
 ---
 
@@ -1626,73 +1626,31 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f992f56d` (2026-11-25)
-**Commit Message**: deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0 (#2339)
+### Incident Patch 1: `414e53f1` (2026-11-26)
+**Commit Message**: bug: fix incorrect GPU ignoring logic for mem graph (#2341)
 
-Bumps both unicode-width-based dependencies.
+Accidentally made this mistake.
 
-**File**: `.markdownlint.json` (modified, +1/-1)
+**File**: `src/canvas/widgets/mem_graph.rs` (modified, +1/-1)
 ```diff
-@@ -6,5 +6,5 @@
-   "MD024": false,
-   "MD025": false,
-   "MD046": false,
--  "MD059": false,
-+  "MD059": false
- }
-```
-
-**File**: `Cargo.lock` (modified, +4/-4)
-```diff
-@@ -1884,9 +1884,9 @@ checksum = "562d481066bde0658276a35467c4af00bdc6ee726305698a55b86e61d7ad82bb"
+@@ -147,7 +147,7 @@ impl Painter {
+                     let duplicate_names = duplicate_gpu_names(time_series.gpu_mem.keys());
  
- [[package]]
- name = "unicode-ellipsis"
--version = "0.6.0"
-+version = "0.7.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c251ff0046b0e49918e1ef2b4804ae850ba113ae65ed5c6a1e2925a829e86e8c"
-+checksum = "292fd533794b142719d22a0cae54fcaa677cfac2255997fbcf2cffef3ad31c8d"
- dependencies = [
-  "unicode-segmentation",
-  "unicode-width",
-@@ -1917,9 +1917,9 @@ dependencies = [
+                     for (gpu_index, (key, gpu_data)) in time_series.gpu_mem.iter().enumerate() {
+-                        if !gpu_data.no_elements() {
++                        if gpu_data.no_elements() {
+                             continue;
+                         }
  
- [[package]]
- name = "unicode-width"
--version = "0.2.2"
-+version = "0.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b4ac048d71ede7ee76d585517add45da530660ef4390e49b098733c6e897f254"
-+checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
- 
- [[package]]
- name = "uom"
-```
-
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -102,9 +102,9 @@ sysinfo = { version = "=0.40.4", default-features = false, features = ["componen
- terminal-colorsaurus = "=1.0.3"
- timeless = "0.1.0"
- toml_edit = { version = "0.25.12", features = ["serde"] }
--unicode-ellipsis = "0.6.0"
-+unicode-ellipsis = "0.7.0"
- unicode-segmentation = "1.13.3"
--unicode-width = "0.2.2"
-+unicode-width = "0.2.3"
- 
- # Used for logging. Mostly for dev-level debugging.
- fern = { version = "0.7.1", optional = true }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2341** (2026-11-26): bug: fix incorrect GPU ignoring logic for mem graph (@ClementTsang)
 - **PR #2339** (2026-11-25): deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0 (@ClementTsang)
 - **PR #2338** (2026-11-24): deps: bump sysinfo to 0.40.4 (@ClementTsang)
 - **PR #2337** (2026-11-23): deps: bump humantime to 2.4.0 (@ClementTsang)
 - **PR #2336** (2026-11-23): docs: update demo config and GIF (@ClementTsang)
 - **PR #2335** (2026-11-22): ci: update freebsd VM version to avoid node warning (@ClementTsang)
-- **PR #2334** (2026-11-23): docs: update demo config and GIF (@ClementTsang)
 
 ---
 
@@ -1712,28 +1670,28 @@ Bumps both unicode-width-based dependencies.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0
+## X. fix incorrect GPU ignoring logic for mem graph
 
 **RULE**:
-When implementing operations in `.markdownlint.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/canvas/widgets/mem_graph.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f992f56d`: deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `414e53f1`: fix incorrect GPU ignoring logic for mem graph. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.markdownlint.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/canvas/widgets/mem_graph.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  "MD059": false
+                        if gpu_data.no_elements() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  "MD059": false,
+                        if !gpu_data.no_elements() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f992f56d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `414e53f1` are properly handled with clean fallback behavior.

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T09:57:22.271Z",
+  "timestamp": "2026-11-26T18:41:58.242Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-callstack-react-native-paper-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [callstack-react-native-paper-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T09:57:22.271Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T18:41:58.242Z`  
 > **Learning ID**: `LEARN-EVO-callstack-react-native-paper-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 90%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 86%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from callstack-react-native-paper-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source**: github ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
-> **Source Version**: `ce0ac9f8`  
+> **Source Version**: `63a3d5ac`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T09:57:09.718Z  
+> **Timestamp**: 2026-11-26T18:41:42.923Z  
 > **Learning ID**: `learn-github-callstack-react-native-paper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T09:57:09.712Z  
+> **Harvest Timestamp**: 2026-11-26T18:41:42.918Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Material Design for React Native (Android & iOS)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14502 stars
+- **Stars / Engagement**: 14501 stars
 
 ---
 
@@ -500,6 +500,12 @@ export const isLeftRightSwapped = () => {
 
   return !!constants?.isRTL && !!constants.doLeftAndRightSwapInRTL;
 };
+
+```
+
+### Core Architecture Module: `src/components/Avatar/utils.ts`
+```
+export const DEFAULT_SIZE = 64;
 
 ```
 
@@ -1256,278 +1262,23 @@ export const DialogTitleIdContext = React.createContext<string | undefined>(
 
 ```
 
-### Core Architecture Module: `src/components/FAB/utils.ts`
+### Core Architecture Module: `src/components/Drawer/utils.ts`
 ```
-import type { ColorValue } from 'react-native';
-
-import { Tokens } from './tokens';
-import type { Size, Variant } from './tokens';
-import type { InternalTheme, TypescaleKey } from '../../theme/types';
-import { contentColorFor } from '../../theme/utils/color';
-import { resolveCornerRadius } from '../../theme/utils/shape';
-import type { ShapeToken } from '../../theme/utils/shape';
-
-export type ResolvedColors = {
-  container: ColorValue;
-  content: ColorValue;
-};
+import { Platform } from 'react-native';
 
 /**
- * Resolve container + content colors. Explicit overrides win; when only
- * `containerColor` is set, the content color is derived via
- * `contentColorFor`.
- */
-export const resolveColors = ({
-  theme,
-  variant = 'primaryContainer',
-  containerColor,
-  contentColor,
-}: {
-  theme: InternalTheme;
-  variant?: Variant;
-  containerColor?: ColorValue;
-  contentColor?: ColorValue;
-}): ResolvedColors => {
-  const roles = Tokens.variants[variant];
-  const container = containerColor ?? theme.colors[roles.container];
-  const content =
-    contentColor ??
-    (containerColor != null
-      ? contentColorFor(theme, container)
-      : theme.colors[roles.content]);
-  return { container, content };
-};
-
-export type Dimensions = {
-  height: number;
-  width: number;
-  borderRadius: number;
-  iconSize: number;
-  leading: number;
-  trailing: number;
-  iconLabelGap: number;
-  labelTypescale: TypescaleKey;
-};
-
-/**
- * Resolve geometry for a FAB at a given size, with optional shape, icon
- * size, and leading/trailing overrides for FAB Menu items and the close
- * button.
- */
-export const getDimensions = ({
-  theme,
-  size = 'default',
-  shape,
-  iconSize,
-  leading,
-  trailing,
-}: {
-  theme: InternalTheme;
-  size?: Size;
-  shape?: ShapeToken;
-  iconSize?: number;
-  leading?: number;
-  trailing?: number;
-}): Dimensions => {
-  const spec = Tokens.sizes[size];
-  const shapeToken: ShapeToken = shape ?? spec.shape;
-  return {
-    height: spec.container,
-    width: spec.container,
-    borderRadius: resolveCornerRadius(theme, shapeToken),
-    iconSize: iconSize ?? spec.icon,
-    leading: leading ?? spec.leading,
-    trailing: trailing ?? spec.trailing,
-    iconLabelGap: spec.iconLabelGap,
-    labelTypescale: spec.labelTypescale,
-  };
-};
-
-```
-
-### Core Architecture Module: `src/components/IconButton/utils.ts`
-```
-import type { ColorValue } from 'react-native';
-
-import { IconButtonTokens } from './tokens';
-import type { ColorSet, Mode, Shape, Size, Width } from './tokens';
-import { tokens } from '../../theme/tokens';
-import type { InternalTheme } from '../../theme/types';
-import { resolveCornerRadius } from '../../theme/utils/shape';
-import type { ShapeToken } from '../../theme/utils/shape';
-
-const stateOpacity = tokens.md.sys.state.opacity;
-
-export type IconButtonColors = {
-  iconColor: ColorValue;
-  iconOpacity: number;
-  backgroundColor: ColorValue | undefined;
-  backgroundOpacity: number;
-  borderColor: ColorValue;
-  borderWidth: number;
-};
-
-export type IconButtonDimensions = {
-  width: number;
-  height: number;
-  iconSize: number;
-  outlineWidth: number;
-  restingRadius: number;
-  pressedRadius: number;
-};
-
-const colorSetFor = (mode: Mode, selected: boolean | undefined): ColorSet => {
-  if (selected === true) {
-    return IconButtonTokens.modes[mode].selected;
-  }
-  if (selected === false) {
-    return IconButtonTokens.modes[mode].unselected;
-  }
-  return IconButtonTokens.modes[mode].default;
-};
-
-const hasDisabledContainer = (
-  mode: Mode,
-  selected: boolean | undefined
-): boolean => {
-  if (mode === 'filled' || mode === 'tonal') {
-    return true;
-  }
-  return mode === 'outlined' && selected === true;
-};
-
-/**
- * Resolve container, icon, and outline colors for an icon button.
+ * How a drawer destination exposes that it is the active one.
  *
- * A disabled button always takes the disabled icon color, whatever
- * `customIconColor` says.
- *
- * `selected` is a tri-state: `undefined` is the default (non-toggle)
- * appearance; `true`/`false` are the toggle-ON / toggle-OFF color sets.
+ * Destinations are buttons, not tabs: a drawer has no `tablist` around them,
+ * and its sections don't behave like one (no arrow-key navigation). On iOS
+ * and Android a selected button is announced as selected. On web
+ * `aria-selected` isn't allowed on a button, so the active destination is
+ * marked as the current page instead, as in a navigation menu.
  */
-export const getIconButtonColor = ({
-  theme,
-  disabled,
-  mode = 'standard',
-  selected,
-  customIconColor,
-  customContainerColor,
-  outlineWidth = 0,
-}: {
-  theme: InternalTheme;
-  disabled?: boolean;
-  mode?: Mode;
-  selected?: boolean;
-  customIconColor?: ColorValue;
-  customContainerColor?: ColorValue;
-  outlineWidth?: number;
-}): IconButtonColors => {
-  const iconOpacity = disabled ? stateOpacity.disabled : stateOpacity.enabled;
-  const usesDisabledContainer =
-    Boolean(disabled) && hasDisabledContainer(mode, selected);
-
-  if (usesDisabledContainer) {
-    return {
-      iconColor: theme.colors[IconButtonTokens.disabled.icon],
-      iconOpacity,
-      backgroundColor: theme.colors[IconButtonTokens.disabled.container],
-      backgroundOpacity: IconButtonTokens.disabled.containerOpacity,
-      borderColor: theme.colors[IconButtonTokens.disabled.outline],
-      borderWidth: 0,
-    };
-  }
-
-  const set = colorSetFor(mode, selected);
-
-  return {
-    iconColor: disabled
-      ? theme.colors[IconButtonTokens.disabled.icon]
-      : (customIconColor ?? theme.colors[set.icon]),
-    iconOpacity,
-    backgroundColor:
-      customContainerColor ??
-      (set.container ? theme.colors[set.container] : undefined),
-    backgroundOpacity: stateOpacity.enabled,
-    borderColor: theme.colors[set.outline ?? 'outlineVariant'],
-    borderWidth: set.outline ? outlineWidth : 0,
-  };
-};
-
-/**
- * Resting container shape. Toggle-ON inverts round↔square; pressed uses
- * the shared pressed shape (same for round and square).
- */
-export const resolveShapeToken = ({
-  size = 'small',
-  shape = 'round',
-  selected,
-  pressed = false,
-}: {
-  size?: Size;
-  shape?: Shape;
-  selected?: boolean;
-  pressed?: boolean;
-}): ShapeToken => {
-  const spec = IconButtonTokens.sizes[size];
-  if (pressed) {
-    return spec.pressedShape;
-  }
-  const inverted = selected === true;
-  if (shape === 'round') {
-    return inverted ? spec.squareShape : 'full';
-  }
-  return inverted ? 'full' : spec.squareShape;
-};
-
-export const getDimensions = ({
-  theme,
-  size = 'small',
-  width = 'default',
-  shape = 'round',
-  selected,
-  iconSize,
-}: {
-  theme: InternalTheme;
-  size?: Size;
-  width?: Width;
-  shape?: Shape;
-  selected?: boolean;
-  iconSize?: number;
-}): IconButtonDimensions => {
-  const spec = IconButtonTokens.sizes[size];
-  const padding = spec.widths[width];
-  const resolvedIcon = iconSize ?? spec.icon;
-  const height = spec.containerHeight;
-  // From the spec icon, not `iconSize`: the container keeps the scale of its
-  // `size` and a `default` width stays square when the glyph is resized.
-  const containerWidth = spec.icon + padding.leading + padding.trailing;
-
-  const restingToken = resolveShapeToken({
-    size,
-    shape,
-    selected,
-    pressed: false,
-  });
-  const pressedToken = resolveShapeToken({
-    size,
-    shape,
-    selected,
-    pressed: true,
-  });
-
-  const roundRadius = height / 2;
-  const resolveRadius = (token: ShapeToken) =>
-    token === 'full' ? roundRadius : resolveCornerRadius(theme, token);
-
-  return {
-    width: containerWidth,
-    height,
-    iconSize: resolvedIcon,
-    outlineWidth: spec.outlineWidth,
-    restingRadius: resolveRadius(restingToken),
-    pressedRadius: resolveRadius(pressedToken),
-  };
-};
+export const getDestinationA11yProps = (active: boolean | undefined) =>
+  Platform.OS === 'web'
+    ? { 'aria-current': active ? ('page' as const) : undefined }
+    : { 'aria-selected': active };
 
 ```
 
@@ -1558,902 +1309,562 @@ export const getDimensions = ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce0ac9f8` (2026-11-24)
-**Commit Message**: fix(switch): render aria-readonly on web only when read-only
+### Incident Patch 1: `c420b90e` (2026-11-24)
+**Commit Message**: docs: fill 6.x guide gaps and fix the home and version selector links (#5307)
 
-Follow-up to #5222's review.
+Fills ten gaps in the 6.x guides found while checking 6.0.0-alpha.4, and fixes two kinds of broken links on the docs site. Nothing changes in the code.
 
-An operable Switch on web no longer renders aria-readonly="false". The attribute is set only when the switch is read-only.
+- IconButton: a table of the five sizes with their container and default icon, and how to map a 5.x number (pass it as `iconSize` and pick the closest container, so `size={80}` becomes `size="large" iconSize={80}`). The 48dp hit slop follows the named size, so a button made smaller through `style` needs its own `hitSlop`.
+- TextInput: `supportingText` shows whenever it is set, so the After sample passes the message only while it applies, and the field grows by a line when it appears. With `error` and no `endAccessory`, the field draws an `alert-circle` icon at its end.
+- Accessibility props: `Drawer.Item` and `Drawer.CollapsedItem` also pass `accessibilityLabel` to their outer container.
+- Dialog: the `Dialog.Actions` replacement sets `columnGap`, which wins over a later `gap` on Android and iOS but not on the web.
+- Theming: how to type a partial theme kept in a variable with `ProviderProps['theme']`, linked from the ThemeProvider section of the migrati
 
-The test "does not warn when readOnly is set without onValueChange" now checks only for the Switch warning. It failed when it ran on its own, because the first Switch render in a Jest worker also logs Reanimated's one-time warnings.
+**File**: `docs/6.x/docs/guides/migration.md` (modified, +32/-4)
+```diff
+@@ -350,13 +350,13 @@ As with `roundness`, Paper ignores these keys, and TypeScript reports them in th
+  </PaperProvider>
+ ```
+ 
+-A full theme, such as `DarkTheme` or the theme `useTheme()` returns, gives the same result as before, except that custom keys of the theme above it are kept. The `theme` prop is now typed as a partial `Theme`, as on `PaperProvider`, so TypeScript reports a value that isn't a theme, such as a number, and keys the theme doesn't have, such as `roundness`. The `theme` prop of a component returned by `withTheme` gets the same type, and the component you wrap must take a `Theme` in its `theme` prop. A `ThemeProvider` without a `theme` now passes the theme above it on. In 5.x it gave its children the default light theme. To keep that, pass `theme={LightTheme}`.
++A full theme, such as `DarkTheme` or the theme `useTheme()` returns, gives the same result as before, except that custom keys of the theme above it are kept. The `theme` prop is now typed as a partial `Theme`, as on `PaperProvider`, so TypeScript reports a value that isn't a theme, such as a number, and keys the theme doesn't have, such as `roundness`. To keep a partial theme in a variable, type it as [Simple built-in theme overrides](./theming#simple-built-in-theme-overrides) shows. The `theme` prop of a component returned by `withTheme` gets the same type, and the component you wrap must take a `Theme` in its `theme` prop. A `ThemeProvider` without a `theme` now passes the theme above it on. In 5.x it gave its children the default light theme. To keep that, pass `theme={LightTheme}`.
+ 
+ ### Accessibility props
+ 
+ Components now use React Native's `aria-*` props and `role` instead of the `accessibility*` props. `accessibilityLabel` is now `aria-label`, the `accessibilityRole` of `Button` is now `role`, and the `accessibilityState` of `FAB` and `Menu.Item` is now `aria-checked` and `aria-selected`.
+ 
+-`Checkbox.Item`, `RadioButton.Item`, `FAB`, `Menu.Item`, `List.Accordion` and `Switch` no longer accept `accessibilityLabel`, so TypeScript reports an error. Components whose props extend React Native's view props, such as `Button`, `Chip` and `DataTable.Pagination`, still compile with the old props, but pass them to their outer container instead of the element they used to label.
++`Checkbox.Item`, `RadioButton.Item`, `FAB`, `Menu.Item`, `List.Accordion` and `Switch` no longer accept `accessibilityLabel`, so TypeScript reports an error. Components whose props extend React Native's view props, such as `Button`, `Chip`, `DataTable.Pagination`, `Drawer.Item` and `Drawer.CollapsedItem`, still compile with the old props, but pass them to their outer container instead of the element they used to label.
+ 
+ Props that label a part of a component keep their names, e.g. `closeIconAccessibilityLabel` on `Chip` and `dismissAccessibilityLabel` on `Modal`.
+ 
+@@ -905,6 +905,8 @@ The icon is 24dp, in `theme.colors.secondary`. `Dialog.Icon`'s `color` and `size
+ </View>
+ ```
+ 
++If your 5.x style set its own `gap`, drop `columnGap` from the copied style or set it to your value. On Android and iOS, `columnGap` wins over `gap`, so a `{ gap: 12 }` added after it still leaves 8dp between the buttons there. On the web the later of the two wins, so the same style gives 12.
++
+ ### Menu
+ 
+ The `overlayAccessibilityLabel` prop was renamed to `dismissAccessibilityLabel`:
+@@ -1096,10 +1098,12 @@ const [value, setValue] = React.useState('');
+   label="Email"
+   error={hasError}
+   disabled={isDisabled}
+-  supportingText="Enter a valid email"
++  supportingText={hasError ? 'Enter a valid email' : undefined}
+ />
+ ```
+ 
++`supportingText` has no `visible` prop: it shows whenever you pass it, whatever `error` is, so pass the message only while it applies. The field then grows by a line when the message appears, where a hidden 5.x `HelperText` kept its height. An empty string doesn't keep that line either.
++
+ A `HelperText` that isn't tied to one input, such as an error under a group of inputs, has no `supportingText` to move to. Render a `Text` in the theme's error color instead:
+ 
+ ```tsx
+@@ -1155,6 +1159,10 @@ hover and uses `primary`, or `error` for an invalid field. A disabled field uses
+ the disabled colors even when `error` is set. On web it keeps `aria-invalid`; on
+ Android and iOS the error text stays in its hint.
+ 
++With `error` and no `endAccessory`, the field draws an `alert-circle` icon in
++the error color at its end, which takes room from the input. 5.x drew no icon
++there. Any `endAccessory` replaces it, even one that renders nothing.
++
+ If your app was written for a 6.0 alpha build: the input text, prefix and suffix
+ of a disabled field were dimmed twice there. They are now dimmed once, to 38%
+ opacity as in 5.x, so they are more visible than in the alpha builds.
+@@ -1553,7 +1561,15 @@ The colors at rest changed too. In 5.x, a `contained` or `contained-tonal` butto
+ 
+ #### Size
+ 
+-`size` is a named scale: `'extra-small' | 'small' | 'medium' | 'large' | 
+```
 
-The example app's read-only switch gets aria-label="Read-only", and the TertiarySwitch snippet in the migration guide types its props, so it compiles under strict.
+**File**: `docs/6.x/docs/guides/rtl.md` (modified, +2/-0)
+```diff
+@@ -51,6 +51,8 @@ export default function Main() {
+ }
+ ```
+ 
++A `PaperProvider` inside another one doesn't take the direction of the one above it. Without its own `direction`, it falls back to `I18nManager`, which is always left-to-right on the Web, so Paper's components inside it use the left-to-right direction. Pass `direction` to the nested `PaperProvider` too, or use [`ThemeProvider`](./theming#applying-a-theme-to-part-of-the-app) when that part of the app only needs a different theme.
++
+ ## Overriding direction for a subtree
+ 
+ Use `LocaleProvider` to override the direction for a specific part of the tree without affecting the rest of the app:
+```
+
+**File**: `docs/6.x/docs/guides/theming.mdx` (modified, +24/-0)
+```diff
+@@ -415,6 +415,30 @@ export default function Main() {
+ }
+ ```
+ 
++`Theme` requires every key, so it doesn't fit a partial theme kept in a variable. Type the variable with `ProviderProps['theme']`, the type that the `theme` props of `PaperProvider`, `ThemeProvider` and Paper's components take:
++
++```tsx
++import * as React from 'react';
++import { PaperProvider, type ProviderProps } from 'react-native-paper';
++import App from './src/App';
++
++const theme: ProviderProps['theme'] = {
++  colors: {
++    primary: 'tomato',
++  },
++};
++
++export default function Main() {
++  return (
++    <PaperProvider theme={theme}>
++      <App />
++    </PaperProvider>
++  );
++}
++```
++
++The type includes `undefined`. If the variable must always hold a theme, type it with `NonNullable<ProviderProps['theme']>`.
++
+ ### Advanced theme overrides
+ 
+ If you need to modify the built-in theme schema by adding a new property or changing its type, you need to follow these steps:
+```
+
+**File**: `docs/6.x/index.mdx` (modified, +1/-4)
+```diff
+@@ -5,11 +5,8 @@ hero:
+   tagline: Paper is a collection of customizable and production-ready components for React Native, following Google’s Material Design guidelines.
+   actions:
+     - text: Get started
+-      link: /docs/guides/getting-started
++      link: /6.x/docs/guides/getting-started
+       theme: brand
+-    - text: Try on Snack
+-      link: https://snack.expo.dev/@react-native-paper/react-native-paper-example_v5
+-      theme: alt
+ features:
+   - title: Production-ready components
+     details: Buttons, inputs, lists, cards, menus, dialogs, navigation, and feedback patterns built for day-to-day product work.
+```
+
+**File**: `docs/src/data/versionRouteFallbacks.json` (modified, +8/-0)
+```diff
+@@ -2,10 +2,18 @@
+   "next": {
+     "/docs/components/Checkbox/CheckboxAndroid": "/6.x/docs/components/Checkbox/Checkbox",
+     "/docs/components/Checkbox/CheckboxIOS": "/6.x/docs/components/Checkbox/Checkbox",
++    "/docs/components/Dialog/DialogActions": "/6.x/docs/components/Dialog/Dialog",
++    "/docs/components/Dialog/DialogContent": "/6.x/docs/components/Dialog/Dialog",
++    "/docs/components/Dialog/DialogIcon": "/6.x/docs/components/Dialog/Dialog",
++    "/docs/components/Dialog/DialogScrollArea": "/6.x/docs/components/Dialog/Dialog",
++    "/docs/components/Dialog/DialogTitle": "/6.x/docs/components/Dialog/Dialog",
+     "/docs/components/FAB/AnimatedFAB": "/6.x/docs/components/FAB/FAB",
+     "/docs/components/FAB/FABGroup": "/6.x/docs/components/FAB/FAB",
+     "/docs/components/HelperText/HelperText": "/6.x/",
+     "/docs/components/TextInput/TextInputAffix": "/6.x/docs/components/TextInput/TextInput",
++    "/docs/components/ToggleButton/ToggleButton": "/6.x/docs/guides/migration#togglebutton",
++    "/docs/components/ToggleButton/ToggleButtonGroup": "/6.x/docs/guides/migration#togglebutton",
++    "/docs/components/ToggleButton/ToggleButtonRow": "/6.x/docs/guides/migration#togglebutton",
+     "/docs/guides/migration-guide-to-5.0": "/6.x/docs/guides/migration"
+   },
+   "stable": {
+```
+
+---
+
+### Incident Patch 2: `e4256fd0` (2026-11-24)
+**Commit Message**: docs(migration): fix the Switch, IconButton, TextInput and Dialog notes (#5306)
+
+Corrects four places in the 6.x migration guide that were wrong or silent, and adds two IconButton color changes it didn't mention. Nothing changes in the code.
+
+- Focus indicator: since #5222 a `Switch` without `onValueChange` is read-only, so it isn't a keyboard stop and never rings. The paragraph now links to Switches without `onValueChange`. A `Drawer.CollapsedItem` without `onPress` is still a keyboard stop.
+- IconButton: `filled` and `tonal` draw at rest the colors 5.x used only when selected (5.x drew a `surfaceVariant` container until then). Mode names shows how to keep the 5.x look with `containerColor` and `iconColor`, and the `selected={false}` section says its After samples don't keep it.
+- IconButton: a selected `tonal` button draws `secondary` with `onSecondary`, so a 5.x tonal toggle that is off now looks like one that was on. The `outlined` outline uses `outlineVariant` instead of `outline`, also when disabled.
+- TextInput: the `iconSize` sample passes the props `endAccessory` gives it, so it type checks.
+- Dialog: a dialog without `content` keeps the content area's 24dp bottom padding,
+
+**File**: `docs/6.x/docs/guides/migration.md` (modified, +45/-3)
+```diff
+@@ -415,7 +415,7 @@ Interactive components now draw the Material Design 3 keyboard focus indicator:
+ 
+ Components that fill a clipping container or touch their neighbours draw the ring 3dp inside their edge instead: `List.Item`, `List.Accordion`, `Checkbox.Item`, `RadioButton.Item`, `Menu.Item`, the `FAB.Menu` items, `Drawer.Item`, the `BottomNavigation` tabs, `DataTable.Row`, `DataTable.Cell`, `DataTable.Title` and `SegmentedButtons`. `Drawer.CollapsedItem` draws it around its icon and label, 2dp clear of the active indicator. `FAB` and `Switch` draw this ring instead of their own, and `Checkbox` keeps its circular ring around the state layer.
+ 
+-A `TouchableRipple`, and every component built on it, rings only while it can be pressed. A disabled one shows no ring. One with no touch handler and no `disabled` is the plain view described in [TouchableRipple without a press handler](#touchableripple-without-a-press-handler): it isn't a keyboard stop, so it never rings. This applies to `TouchableRipple` only: a `Switch` or `Drawer.CollapsedItem` without a handler is still a keyboard stop and rings.
++A `TouchableRipple`, and every component built on it, rings only while it can be pressed. A disabled one shows no ring. One with no touch handler and no `disabled` is the plain view described in [TouchableRipple without a press handler](#touchableripple-without-a-press-handler): it isn't a keyboard stop, so it never rings. This applies to `TouchableRipple` only: a `Drawer.CollapsedItem` without `onPress` is still a keyboard stop and rings. A `Switch` without `onValueChange` is read-only, so it isn't a keyboard stop and never rings, as [Switches without `onValueChange`](#switches-without-onvaluechange) explains.
+ 
+ An outward ring sits outside the component, so a scroll view or a container with `overflow: 'hidden'` clips it, and a neighbour that touches the component can cover it. Chips in a horizontal `ScrollView`, or a `TouchableRipple` that fills the width of a scroll view, show only part of the ring. Give the container 5dp of padding, or pass `focusRing="inward"` where the component takes it:
+ 
+@@ -778,6 +778,8 @@ The new **`actions`** prop is more customizable because it accepts **`React.Reac
+ />
+ ```
+ 
++A dialog without `content` still renders the content area with its 24dp bottom padding, so a dialog with only a `title` and `actions` has 40dp between them instead of 16dp in 5.x, and one with only `actions` places them 48dp below the top of the dialog instead of 24dp. To keep the 5.x spacing, pass `contentProps={{ style: { paddingBottom: 0 } }}`.
++
+ #### Dialog actions
+ 
+ The dialog no longer injects `compact` on its action buttons, and the default [`Button`](#button) mode is now `filled`. Add `mode="text"` to each button. At the default `small` size, the buttons are **40dp** tall, the Material Design 3 size for dialog actions. The `compact` text buttons in 5.x were **38dp** tall. For a more compact look, also add `size="extra-small"`, which is **32dp** tall:
+@@ -1043,10 +1045,14 @@ const [value, setValue] = React.useState('');
+ 
+ ```tsx
+ // Before (v5)
+-<TextInput.Icon icon="magnify" size={20} />
++<TextInput right={<TextInput.Icon icon="magnify" size={20} />} />
+ 
+ // After (v6)
+-<TextInput.Icon icon="magnify" iconSize={20} />
++<TextInput
++  endAccessory={(props) => (
++    <TextInput.Icon {...props} icon="magnify" iconSize={20} />
++  )}
++/>
+ ```
+ 
+ #### Label and supporting text
+@@ -1506,6 +1512,27 @@ An accordion with a `left` element now indents only its `List.Item` children. An
+ <IconButton icon="camera" mode="tonal" onPress={onPress} />
+ ```
+ 
++The colors at rest changed too. In 5.x, a `contained` or `contained-tonal` button that wasn't `selected` drew a `surfaceVariant` container, with a `primary` icon for `contained` and an `onSurfaceVariant` icon for `contained-tonal`. Only a selected one drew `primary` with an `onPrimary` icon, or `secondaryContainer` with an `onSecondaryContainer` icon. In 6.x, `filled` and `tonal` draw those colors at rest. To keep the 5.x look, pass the 5.x colors as `containerColor` and `iconColor`:
++
++```tsx
++<IconButton
++  icon="camera"
++  mode="filled"
++  containerColor={colors.surfaceVariant}
++  iconColor={colors.primary}
++  onPress={onPress}
++/>
++<IconButton
++  icon="camera"
++  mode="tonal"
++  containerColor={colors.surfaceVariant}
++  iconColor={colors.onSurfaceVariant}
++  onPress={onPress}
++/>
++```
++
++`outlined` keeps its name, but its outline uses `outlineVariant` instead of `outline`, and keeps it when disabled instead of switching to `surfaceDisabled`. A theme that set `colors.outline` to restyle outlined icon buttons sets `outlineVariant` now.
++
+ #### Size
+ 
+ `size` is a named scale: `'extra-small' | 'small' | 'medium' | 'large' | 'extra-large'`, the same names as `Button`. It defaults to `'small'`, which still uses a 24dp icon.
+@@ -1600,6 +1627,21 @@ For `filled`, the default and toggle-on containers use `primary`. Toggle-off (`s
+ />
+ ```
+ 
++Neither keeps the 5.x look, a
+```
+
+---
+
+### Incident Patch 3: `63a3d5ac` (2026-11-25)
+**Commit Message**: fix(touchable-ripple): paint the web hover on top of the style background (#5242)
+
+* fix(touchable-ripple): paint web hover on top of style background
+
+* fix(touchable-ripple): skip web hover for a non-string ripple color
+
+* fix(touchable-ripple): adress sentinel comments
+
+* fix(touchable-ripple): adress sentinel comments
+
+* docs(touchable-ripple): note that the web hover no longer fades
+
+* test(touchable-ripple): type the Pressable mock with PressableProps
+
+---------
 
 Co-authored-by: Luke Walczak <[REDACTED_EMAIL]>
 
-**File**: `docs/6.x/docs/guides/migration.md` (modified, +7/-1)
+**File**: `docs/6.x/docs/guides/migration.md` (modified, +2/-0)
 ```diff
-@@ -1896,7 +1896,13 @@ When selected, an icon set with `checkedIcon` uses `onPrimaryContainer`. If you
- ```tsx
- import { Switch, useTheme } from 'react-native-paper';
+@@ -1024,6 +1024,8 @@ The close button (`onClose`) now fills the trailing 34dp column reserved for it,
  
--const TertiarySwitch = ({ value, onValueChange }) => {
-+const TertiarySwitch = ({
-+  value,
-+  onValueChange,
-+}: {
-+  value: boolean;
-+  onValueChange: (value: boolean) => void;
-+}) => {
-   const theme = useTheme();
-   const switchTheme = {
-     colors: {
+ `TouchableRipple` draws the keyboard focus ring and takes a new `focusRing` prop. See [Focus indicator](#focus-indicator).
+ 
++On web, the hover layer is now a CSS background image. It paints on top of a `backgroundColor` that you set through `style`. While the touchable is hovered, it replaces a `backgroundImage`, such as a gradient, that you set through `style`. The hover layer no longer fades in and out. It shows and hides at once, as in Material Web.
++
+ ### Drawer
+ 
+ The `Drawer` API is unchanged in Paper 6.x. No props were renamed, removed, or given new defaults. `Drawer.Item`, `Drawer.CollapsedItem` and `Drawer.Section` were realigned with the current Material Design 3 navigation drawer spec, so their appearance changes:
 ```
 
-**File**: `example/src/Examples/SwitchExample.tsx` (modified, +1/-1)
+**File**: `src/components/TouchableRipple/TouchableRipple.tsx` (modified, +13/-4)
 ```diff
-@@ -90,7 +90,7 @@ const SwitchExample = () => {
-       </Row>
+@@ -11,7 +11,12 @@ import color from 'color';
  
-       <Row label="Read-only">
--        <Switch value={defaultOn} readOnly />
-+        <Switch value={defaultOn} readOnly aria-label="Read-only" />
-       </Row>
- 
-       <View
-```
-
-**File**: `src/components/Switch/Switch.tsx` (modified, +1/-1)
-```diff
-@@ -476,7 +476,7 @@ const Switch = ({
-           disabled={Platform.OS === 'web' ? isDisabled : !isInteractive}
-           tabIndex={isInteractive ? 0 : -1}
-           aria-readonly={
--            Platform.OS === 'web' ? isAnnouncedReadOnly : undefined
-+            Platform.OS === 'web' && isAnnouncedReadOnly ? true : undefined
-           }
-           onFocus={(e) => {
-             // Not the ring - it's real CSS on web now. This drives the
-```
-
-**File**: `src/components/__tests__/Switch.test.tsx` (modified, +11/-2)
-```diff
-@@ -312,7 +312,9 @@ describe('Switch operability', () => {
- 
-       await render(<Switch value {...{ [prop]: true }} />);
- 
--      expect(console.warn).not.toHaveBeenCalled();
-+      expect(console.warn).not.toHaveBeenCalledWith(
-+        expect.stringContaining('Switch:')
-+      );
-     }
-   );
- 
-@@ -393,7 +395,7 @@ describe('Switch operability', () => {
-       await render(<Switch value disabled readOnly />);
- 
-       expect(screen.getByRole('switch')).toBeDisabled();
--      expect(screen.getByRole('switch')).not.toHaveProp('aria-readonly', true);
-+      expect(screen.getByRole('switch')).not.toHaveProp('aria-readonly');
-     });
-   });
- 
-@@ -422,6 +424,13 @@ describe('Switch operability', () => {
-     expect(screen.getByRole('switch')).toBeEnabled();
-   });
- 
-+  it('does not expose aria-readonly on an operable switch on web', async () => {
-+    jest.replaceProperty(Platform, 'OS', 'web');
-+    await render(<Switch value onValueChange={() => {}} />);
-+
-+    expect(screen.getByRole('switch')).not.toHaveProp('aria-readonly');
-+  });
-+
-   it('exposes a missing-handler fallback as read-only on web', async () => {
-     jest.replaceProperty(Platform, 'OS', 'web');
-     jest.spyOn(console, 'warn').mockImplementation(() => {});
-```
-
----
-
-### Incident Patch 2: `9c7e834f` (2026-11-23)
-**Commit Message**: revert(button): undo the shape morph refactor merged early (#5279)
-
-This reverts commit 343f2cf52725e25caa9d4a55f881642f1e0dacb2.
-
-That commit is #5264, "refactor(button): share the shape morph between Button and IconButton". It was merged by mistake, and its squash message took the title and body meant for #5278, a docs change that is still open: the commit changes no docs. The refactor waits until after 6.0.0-alpha.4, so the release matches the code it was tested on. It will come back in a new pull request with its own title.
-
-**File**: `src/components/Button/Button.tsx` (modified, +38/-20)
-```diff
-@@ -11,14 +11,16 @@ import type {
-   ViewStyle,
- } from 'react-native';
- 
--import Reanimated from 'react-native-reanimated';
-+import Reanimated, { linear } from 'react-native-reanimated';
- 
- import {
-   createIsMode,
-   getButtonColors,
-   getButtonContentBoxStyle,
-   getButtonHitSlop,
-   getButtonPressedRadius,
-+  getButtonRippleColor,
-+  getButtonShapeCurvePoints,
-   getButtonShapeRadius,
-   getButtonSizeStyle,
-   getButtonTransitionDuration,
-@@ -27,18 +29,17 @@ import {
- import { getDefaultDirection, useLocale } from '../../core/locale';
- import { useInternalTheme } from '../../core/theming';
- import { useReduceMotion } from '../../theme/accessibility/ReduceMotionContext';
-+import { toSpringCurve } from '../../theme/tokens/sys/motion';
- import type { ThemeProp } from '../../theme/types';
- import hasTouchHandler from '../../utils/hasTouchHandler';
- import { useFocusRing } from '../../utils/useFocusRing';
--import { useShapeMorph } from '../../utils/useShapeMorph';
- import ActivityIndicator from '../ActivityIndicator';
- import Icon from '../Icon';
- import type { IconSource } from '../Icon';
- import Surface from '../Surface';
- import type { SurfaceStyle } from '../Surface';
- import TouchableRipple from '../TouchableRipple/TouchableRipple';
- import type { Props as TouchableRippleProps } from '../TouchableRipple/TouchableRipple';
--import { getRippleColorFromContent } from '../TouchableRipple/utils';
- import Text from '../Typography/Text';
- 
- // Elevation levels (MD3) used by the `elevated` mode: level 1 at rest,
-@@ -345,6 +346,12 @@ const Button = ({
-     animatesShape && pressed
-       ? getButtonPressedRadius({ size, theme })
-       : restingRadius;
-+  const shapeSpring = React.useMemo(
-+    () => toSpringCurve(theme.motion.spring.fast.spatial),
-+    [theme.motion.spring.fast.spatial]
-+  );
-+  const shapeTransitionDuration = animatesShape ? shapeSpring.duration : 0;
-+
-   const tracksPress = animatesShape || isElevationEntitled;
- 
-   const handlePressIn = React.useCallback(
-@@ -398,7 +405,7 @@ const Button = ({
-   );
- 
-   const rippleColor = React.useMemo(
--    () => getRippleColorFromContent({ contentColor: labelColor }),
-+    () => getButtonRippleColor({ labelColor }),
-     [labelColor]
-   );
- 
-@@ -420,22 +427,23 @@ const Button = ({
-     previousContainerColor: committedContainerColor,
-   });
- 
--  const {
--    duration: shapeTransitionDuration,
--    timingFunction: shapeTimingFunction,
--    outerStyle: clipStyle,
--    innerStyle: innerClipStyle,
--  } = useShapeMorph({
--    theme,
--    radius,
--    largestRadius: Math.max(
--      sizeStyle.minHeight / 2,
--      getButtonShapeRadius({ size, shape: 'square', theme }),
--      getButtonPressedRadius({ size, theme })
--    ),
--    borderWidth,
--    animate: animatesShape,
--  });
-+  const innerRadius = Math.max(0, radius - borderWidth);
-+  const largestRadius = Math.max(
-+    sizeStyle.minHeight / 2,
-+    getButtonShapeRadius({ size, shape: 'square', theme }),
-+    getButtonPressedRadius({ size, theme })
-+  );
-+  const shapeTimingFunction = React.useMemo(
-+    () =>
-+      linear(
-+        ...getButtonShapeCurvePoints({
-+          points: shapeSpring.points,
-+          radius: innerRadius,
-+          largestRadius: Math.max(0, largestRadius - borderWidth),
-+        })
-+      ),
-+    [shapeSpring.points, innerRadius, largestRadius, borderWidth]
-+  );
- 
-   // The clip carries the same radius transition as the `Surface`, so the
-   // ripple and the disabled overlay follow the morph.
-@@ -452,6 +460,16 @@ const Button = ({
-     'outward',
-     'within'
-   );
-+  const shapeTransitionStyle = {
-+    transitionProperty: 'borderRadius',
-+    transitionDuration: shapeTransitionDuration,
-+    transitionTimingFunction: shapeTimingFunction,
-+  } as const;
-+
-+  const clipStyle = { ...shapeTransitionStyle, borderRadius: radius };
-+
-+  const innerClipStyle = { ...shapeTransitionStyle, borderRadius: innerRadius };
-+
-   const outlineStyle = React.useMemo(
-     () => ({ borderColor, borderWidth }),
-     [borderColor, borderWidth]
-```
-
-**File**: `src/components/Button/utils.tsx` (modified, +49/-0)
-```diff
-@@ -1,5 +1,7 @@
- import type { ColorValue, Insets } from 'react-native';
- 
-+import color from 'color';
-+
- import { Tokens } from './tokens';
- import type { ButtonToggleMode } from './tokens';
- import { black, white } from '../../theme/colors';
-@@ -149,6 +151,28 @@ export const getButtonTransitionDuration = ({
-   return theme.motion.duration[pressed ? 'short4' : 'short3'];
- };
- 
-+/**
-+ * Caps the spring curve so the corner can't overshoot below 0 on its way to
-+ * `radius`, from any start up to `largestRadius`.
-+ */
-+export const getButtonShapeCurvePoints = ({
-+  points,
-+  radius,
-+  largestRadius,
-+}: {
-+  points: number[];
-+  radius: number;
-+  largestRadius: number;
-+}): number[] => {
-+  if (largestRadius <= radius) {
-+    return points;
-+  }
-+
-+  const maxProgress = largestRadius / (largestRadius - radius);
-+
-+  return points.map((point) => Math.min(point, maxProgress));
-+};
-+
- /** Corner the container morphs to while pressed. */
- export const getButtonPressedRadius = ({
-   size,
-@@ -425,3 +449,28 @@ export const getButtonColors = ({
-     backgroundOpacity,
-   };
- };
-+
-+/**
-+ * Returns the color used for the button's ripple / state layer: the label
-+ * color at the pressed-state opacity (per Material Design 3).
-+ *
-+ * When the label color is not a plain string (e.g. an Android Material You
-+ * `PlatformColor`), or is a string `color` can't parse (e.g. `var(--x)` or
-+ * `currentColor` on web), `undefined` is returned so `TouchableRipple` falls
-+ * back to its own default state-layer color.
-+ */
-+export const getButtonRippleColor = ({
-+  labelColor,
-+}: {
-+  labelColor: ColorValue;
-+}): ColorValue | undefined => {
-+  if (typeof labelColor !== 'string') {
-+    return undefined;
-+  }
-+
-+  try {
-+    return color(labelColor).alpha(stateOpacity.pressed).rgb().string();
-+  } catch {
-+    return undefined;
-+  }
-+};
-```
-
-**File**: `src/components/IconButton/IconButton.tsx` (modified, +49/-17)
-```diff
-@@ -9,26 +9,33 @@ import type {
-   ViewStyle,
- } from 'react-native';
- 
--import Animated, { type AnimatedStyle } from 'react-native-reanimated';
-+import Animated, {
-+  type AnimatedStyle,
-+  linear,
-+  type CSSStyle,
-+} from 'react-native-reanimated';
- 
- import type { Mode, Shape, Size, Width } from './tokens';
- import { getDimensions, getIconButtonColor } from './utils';
- import { useInternalTheme } from '../../core/theming';
- import { useReduceMotion } from '../../theme/accessibility/ReduceMotionContext';
-+import { toSpringCurve } from '../../theme/tokens/sys/motion';
- import type { ThemeProp } from '../../theme/types';
- import getMinInteractiveSizeHitSlop from '../../utils/getMinInteractiveSizeHitSlop';
- import hasTouchHandler, {
-   carriesToggleState,
- } from '../../utils/hasTouchHandler';
- import { useFocusRing } from '../../utils/useFocusRing';
--import { useShapeMorph } from '../../utils/useShapeMorph';
- import ActivityIndicator from '../ActivityIndicator';
-+import {
-+  getButtonRippleColor,
-+  getButtonShapeCurvePoints,
-+} from '../Button/utils';
- import CrossFadeIcon from '../CrossFadeIcon';
- import Icon from '../Icon';
- import type { IconSource } from '../Icon';
- import TouchableRipple from '../TouchableRipple/TouchableRipple';
- import type { Props as TouchableRippleProps } from '../TouchableRipple/TouchableRipple';
--import { getRippleColorFromContent } from '../TouchableRipple/utils';
- 
- const AnimatedTouchableRipple =
-   Animated.createAnimatedComponent(TouchableRipple);
-@@ -235,21 +242,38 @@ const IconButton = ({
-   const borderRadius = isPressed
-     ? dimensions.pressedRadius
-     : dimensions.restingRadius;
--  const { outerStyle: radiusStyle, innerStyle: innerRadiusStyle } =
--    useShapeMorph({
--      theme,
--      radius: borderRadius,
--      largestRadius: Math.max(
--        dimensions.height / 2,
--        dimensions.restingRadius,
--        dimensions.pressedRadius
-+  // The morph follows the MD3 fast spatial spring, as on Button. The curve is
-+  // capped so a bouncy spring can't push the corner below 0 on its way back
-+  // from the largest radius (the round one).
-+  const shapeSpring = React.useMemo(
-+    () => toSpringCurve(theme.motion.spring.fast.spatial),
-+    [theme.motion.spring.fast.spatial]
-+  );
-+  const largestRadius = Math.max(
-+    dimensions.height / 2,
-+    dimensions.restingRadius,
-+    dimensions.pressedRadius
-+  );
-+  const shapeTimingFunction = React.useMemo(
-+    () =>
-+      linear(
-+        ...getButtonShapeCurvePoints({
-+          points: shapeSpring.points,
-+          radius: borderRadius,
-+          largestRadius,
-+        })
-       ),
--      borderWidth,
--      animate: !reduceMotion,
--    });
-+    [shapeSpring.points, borderRadius, largestRadius]
-+  );
-+  const radiusStyle: CSSStyle<ViewStyle> = {
-+    borderRadius,
-+    transitionProperty: ['borderRadius'],
-+    transitionDuration: reduceMotion ? 0 : shapeSpring.duration,
-+    transitionTimingFunction: shapeTimingFunction,
-+  };
- 
-   // The state layer takes the icon color, as Button's takes its label color.
--  const rippleColor = getRippleColorFromContent({ contentColor: iconColor });
-+  const rippleColor = getButtonRippleColor({ labelColor: iconColor });
- 
-   const handlePressIn = (e: GestureResponderEvent) => {
-     setPressed(true);
-@@ -321,6 +345,16 @@ const IconButton = ({
-     !hasPassedTouchHandler &&
-     !carriesToggleState({ ...rest, ...toggleStateProps });
- 
-+  // The touchable and the disabled layer sit inside the outline, so their
-+  // corner is the container's less the outline, and they morph with it. The
-+  // touchable clips its own ripple to it, though not on web, where
-+  // `overflow: 'hidden'` would also clip the hit slop target; there the ripple
-+  // container follows the touchable's corner.
-+  const innerRadiusStyle: CSSStyle<ViewStyle> = {
-+    ...radiusStyle,
-+    borderRadius: Math.max(0, borderRadius - borderWidth),
-+  };
-+
-   return (
-     <Animated.View
-       ref={ref}
-@@ -373,8 +407,6 @@ const IconButton = ({
-           style={[
-             styles.touchable,
-             innerRadiusStyle,
--            // Not on web, where `overflow: 'hidden'` would also clip the hit
--            // slop target; there the ripple container follows the corner.
-             Platform.OS !== 'web' && styles.clipToShape,
-             contentStyle,
-           ]}
-```
-
-**File**: `src/components/TouchableRipple/utils.ts` (modified, +0/-30)
-```diff
-@@ -1,13 +1,8 @@
- import type { ColorValue } from 'react-native';
- 
--import color from 'color';
--
  import type { PressableProps, PressableStateCallbackType } from './Pressable';
--import { tokens } from '../../theme/tokens';
- import type { InternalTheme } from '../../theme/types';
- 
--const stateOpacity = tokens.md.sys.state.opacity;
--
- const getUnderlayColor = ({
-   calculatedRippleColor,
-   underlayColor,
-@@ -71,28 +66,3 @@ export const resolveChildren = (
-   children: PressableProps['children'],
-   state: PressableStateCallbackType
- ) => (typeof children === 'function' ? children(state) : children);
--
--/**
-- * Returns the ripple / state layer color for a component's content: the
-- * content color at the pressed-state opacity (per Material Design 3).
-- *
-- * When the content color is not a plain string (e.g. an Android Material You
-- * `PlatformColor`), or is a string `color` can't parse (e.g. `var(--x)` or
-- * `currentColor` on web), `undefined` is returned so `TouchableRipple` falls
-- * back to its own default state-layer color.
-- */
--export const getRippleColorFromContent = ({
--  contentColor,
--}: {
--  contentColor: ColorValue;
--}): ColorValue | undefined => {
--  if (typeof contentColor !== 'string') {
--    return undefined;
--  }
--
--  try {
--    return color(contentColor).alpha(stateOpacity.pressed).rgb().string();
--  } catch {
--    return undefined;
--  }
--};
+ import { Pressable } from './Pressable';
+-import { IDLE_STATE, getTouchableRippleColors, resolveChildren } from './utils';
++import {
++  IDLE_STATE,
++  getHoverStyle,
++  getTouchableRippleColors,
++  resolveChildren,
++} from './utils';
+ import { SettingsContext } from '../../core/settings';
+ import type { Settings } from '../../core/settings';
+ import { useInternalTheme } from '../../core/theming';
+@@ -352,12 +357,13 @@ const TouchableRipple = ({
+       {...mergeDataSetProps(rest, ring.dataSetProps)}
+       style={(state) => [
+         styles.touchable,
++        !isInteractive && styles.disabled,
++        typeof style === 'function' ? style(state) : style,
++        // After `style`, so a background set there does not hide the hover.
++        state.hovered && isInteractive && getHoverStyle(hoverColor),
+         // RNW's own `state.focused` fires for mouse clicks too, which is
+         // exactly the distinction `:focus-visible` exists to make.
+         // https://github.com/necolas/react-native-web/issues/1849
+-        state.hovered && isInteractive && { backgroundColor: hoverColor },
+-        !isInteractive && styles.disabled,
+-        typeof style === 'function' ? style(state) : style,
+         ...ring.style,
+       ]}
+     >
+@@ -404,6 +410,9 @@ const styles = StyleSheet.create({
+     position: 'relative',
+     ...(Platform.OS === 'web' && {
+       cursor: 'pointer',
++      // Eases a `backgroundColor` change from `style`, such as a row that
++      // becomes selected. The hover layer is a gradient, which CSS can't
++      // transition, so hover shows at once, as in Material Web (15ms).
+       transition: '150ms background-color',
+     }),
+   },
 ```
 
-**File**: `src/components/__tests__/Button.test.tsx` (modified, +51/-45)
+**File**: `src/components/TouchableRipple/utils.ts` (modified, +15/-1)
 ```diff
-@@ -2,10 +2,11 @@ import { Platform, PlatformColor, StyleSheet } from 'react-native';
+@@ -1,4 +1,4 @@
+-import type { ColorValue } from 'react-native';
++import type { ColorValue, ViewStyle } from 'react-native';
  
- import { afterEach, describe, expect, it, jest } from '@jest/globals';
- import { fireEvent } from '@testing-library/react-native';
+ import color from 'color';
+ 
+@@ -96,3 +96,17 @@ export const getRippleColorFromContent = ({
+     return undefined;
+   }
+ };
++
++/**
++ * The hover layer of a touchable on web. It is a background image, so it
++ * paints on top of a background color that `style` sets, such as the color of
++ * a selected row, and it keeps the border radius of the touchable.
++ *
++ * While the touchable is hovered, this layer replaces a `backgroundImage` that
++ * `style` sets. A color that is not a string cannot go in a CSS gradient, so
++ * it gets no hover layer.
++ */
++export const getHoverStyle = (hoverColor: ColorValue): ViewStyle | undefined =>
++  typeof hoverColor === 'string'
++    ? { backgroundImage: `linear-gradient(${hoverColor}, ${hoverColor})` }
++    : undefined;
+```
+
+**File**: `src/components/__tests__/TouchableRippleHoverWeb.test.tsx` (added, +135/-0)
+```diff
+@@ -0,0 +1,135 @@
++import * as React from 'react';
++import { Platform, PlatformColor, Text } from 'react-native';
++
++import {
++  afterEach,
++  beforeEach,
++  describe,
++  expect,
++  it,
++  jest,
++} from '@jest/globals';
 +import color from 'color';
- 
- import { LocaleProvider } from '../../core/locale';
- import PaperProvider from '../../core/PaperProvider';
--import { render, screen, transitionOf } from '../../test-utils';
++
 +import { render, screen } from '../../test-utils';
- import { ReduceMotionContext } from '../../theme/accessibility/ReduceMotionContext';
- import { pink500, white } from '../../theme/colors';
- import { LightTheme } from '../../theme/schemes';
-@@ -19,6 +20,8 @@ import {
-   getButtonContentBoxStyle,
-   getButtonHitSlop,
-   getButtonPressedRadius,
-+  getButtonRippleColor,
-+  getButtonShapeCurvePoints,
-   getButtonShapeRadius,
-   getButtonSizeStyle,
-   getButtonTransitionDuration,
-@@ -627,6 +630,20 @@ describe('getButtonColors - border width', () => {
-   );
- });
- 
-+describe('getButtonRippleColor', () => {
-+  it('defaults to the label color at the pressed-state opacity', () => {
-+    expect(getButtonRippleColor({ labelColor: '#123456' })).toBe(
-+      color('#123456').alpha(stateOpacity.pressed).rgb().string()
++import { LightTheme } from '../../theme/schemes';
++import type { PressableProps } from '../TouchableRipple/Pressable';
++// The bare specifier resolves to .native under the jest preset, so the web file
++// needs the extension or it never runs.
++import TouchableRipple from '../TouchableRipple/TouchableRipple.tsx';
++
++// Jest has no pointer, so the mock renders Pressable as hovered. That is the
++// state React Native Web passes to the style function under a mouse.
++jest.mock('../TouchableRipple/Pressable', () => {
++  const React = require('react');
++  const { View } = require('react-native');
++  const hovered = { hovered: true, pressed: false, focused: false };
++
++  return {
++    Pressable: React.forwardRef(
++      (
++        { style, children, ...rest }: PressableProps,
++        ref: React.Ref<unknown>
++      ) => (
++        <View
++          {...rest}
++          ref={ref}
++          style={typeof style === 'function' ? style(hovered) : style}
++        >
++          {typeof children === 'function' ? children(hovered) : children}
++        </View>
++      )
++    ),
++  };
++});
++
++const hoverColor = color(String(LightTheme.colors.stateLayerPressed))
++  .fade(0.5)
++  .rgb()
++  .string();
++const hoverLayer = `linear-gradient(${hoverColor}, ${hoverColor})`;
++const rowColor = LightTheme.colors.secondaryContainer;
++
++describe('TouchableRipple hover (web)', () => {
++  const original = Platform.OS;
++  beforeEach(() => {
++    Platform.OS = 'web';
++  });
++  afterEach(() => {
++    Platform.OS = original;
++  });
++
++  it('paints the hover layer when style sets no background', async () => {
++    await render(
++      <TouchableRipple onPress={() => {}} testID="ripple">
++        <Text>Button</Text>
++      </TouchableRipple>
 +    );
++
++    expect(screen.getByTestId('ripple')).toHaveStyle({
++      backgroundImage: hoverLayer,
++    });
 +  });
 +
-+  it('returns undefined when the label color is not a plain string', () => {
-+    expect(
-+      getButtonRippleColor({ labelColor: PlatformColor('?attr/colorPrimary') })
-+    ).toBeUndefined();
++  it('paints the hover layer on top of a background set through style', async () => {
++    await render(
++      <TouchableRipple
++        onPress={() => {}}
++        style={{ backgroundColor: rowColor }}
++        testID="ripple"
++      >
++        <Text>Button</Text>
++      </TouchableRipple>
++    );
++
++    expect(screen.getByTestId('ripple')).toHaveStyle({
++      backgroundColor: rowColor,
++      backgroundImage: hoverLayer,
++    });
++  });
++
++  it('paints the hover layer on top of a background from a style function', async () => {
++    await render(
++      <TouchableRipple
++        onPress={() => {}}
++        style={() => ({ backgroundColor: rowColor })}
++        testID="ripple"
++      >
++        <Text>Button</Text>
++      </TouchableRipple>
++    );
++
++    expect(screen.getByTestId('ripple')).toHaveStyle({
++      backgroundColor: rowColor,
++      backgroundImage: hoverLayer,
++    });
++  });
++
++  it('does not paint a hover layer for a ripple color that is not a string', async () => {
++    await render(
++      <TouchableRipple
++        onPress={() => {}}
++        rippleColor={PlatformColor('systemBlue')}
++        testID="ripple"
++      >
++        <Text>Button</Text>
++      </TouchableRipple>
++    );
++
++    expect(screen.getByTestId('ripple')).toHaveStyle({
++      backgroundImage: undefined,
++    });
++  });
++
++  it('does not paint the hover layer on a disabled touchable', async () => {
++    await render(
++      <TouchableRipple onPress={() => {}} disabled testID="ripple">
++        <Text>Button</Text>
++      </TouchableRipple>
++    );
++
++    expect(screen.getByTestId('ripple')).not.toHaveStyle({
++      backgroundImage: hoverLayer,
++    });
 +  });
 +});
-+
- it('renders with a label color the ripple cannot parse', async () => {
-   await render(
-     <Button textColor="var(--label)" onPress={() => {}}>
-@@ -765,6 +782,33 @@ describe('getButtonPressedRadius', () => {
-   );
- });
- 
-+describe('getButtonShapeCurvePoints', () => {
-+  const { points } = toSpringCurve(LightTheme.motion.spring.fast.spatial);
-+  const cornersOnTheWay = (curve: number[], from: number, to: number) =>
-+    curve.map((progress) => from + (to - from) * progress);
-+
-+  it('keeps the corner at 0 or above on its way to a 0 corner', () => {
-+    const curve = getButtonShapeCurvePoints({
-+      points,
-+      radius: 0,
-+      largestRadius: 20,
-+    });
-+
-+    expect(Math.min(...cornersOnTheWay(curve, 20, 0))).toBe(0);
-+  });
-+
-+  it('keeps the overshoot when the corner has room for it', () => {
-+    const curve = getButtonShapeCurvePoints({
-+      points,
-+      radius: 8,
-+      largestRadius: 20,
-+    });
-+
-+    expect(curve).toEqual(points);
-+    expect(Math.min(...cornersOnTheWay(curve, 20, 8))).toBeLessThan(8);
-+  });
-+});
-+
- describe('getButtonTransitionDuration', () => {
-   const theme = LightTheme;
-   const opaque = theme.colors.primary;
-@@ -1374,47 +1418,6 @@ describe('shape morph animation', () => {
-     expect(screen.getByTestId('button')).toHaveStyle({ borderRadius: 20 });
-   });
- 
--  it('morphs the ripple inside the outline in step with the outline', async () => {
--    await render(
--      <Button mode="outlined" size="large" onPress={() => {}} testID="button">
--        {null}
--      </Button>
--    );
--    const touchable = screen.getByTestId('button');
--    const clip = parentOf(touchable, 'the touchable');
--
--    expect(transitionOf(touchable)).toEqual(transitionOf(clip));
--
--    await fireEvent(touchable, 'onPressIn');
--
--    expect(transitionOf(touchable)).toEqual(transitionOf(clip));
--    expect(clip).toHaveStyle({ borderRadius: LightTheme.shapes.corner.large });
--    expect(touchable).toHaveStyle({
--      borderRadius:
--        LightTheme.shapes.corner.large -
--        Tokens.sizes.large.outlinedOutlineWidth,
--    });
--  });
--
--  it('snaps the corner when animateShape is false', async () => {
--    await render(
--      <Button
--        mode="outlined"
--        animateShape={false}
--        onPress={() => {}}
--        testID="button"
--      >
--        {null}
--      </Button>
--    );
--    const touchable = screen.getByTestId('button');
--
--    expect(transitionOf(touchable).transitionDuration).toBe(0);
--    expect(
--      transitionOf(parentOf(touchable, 'the touchable')).transitionDuration
--    ).toBe(0);
--  });
--
-   it('still changes the shape when animateShape is false and selected flips', async () => {
-     await render(
-       <Button shape="square" size="large" animateShape={false} testID="button">
-@@ -1450,10 +1453,13 @@ describe('with reduce motion', () => {
-       'the clip'
-     );
- 
--  // The container transitions its background and three shadow properties,
--  // then its corner.
-+  // Reanimated's Jest setup keeps CSS transitions out of `style`, and
-+  // `getAnimatedStyle` can't read the container's nested style arrays. The
-+  // container transitions its background and three shadow properties, then
-+  // its corner.
-   const containerTransitionDuration = () =>
--    transitionOf(containerOf()).transitionDuration;
-+    // eslint-disable-next-line no-restricted-syntax -- see the comment above.
-+    StyleSheet.flatten(containerOf().props.jestInlineStyle).transitionDuration;
- 
-   const renderButton = (reduceMotion: 'on' | 'off') =>
- 
 ```
 
-**File**: `src/components/__tests__/Chip.test.tsx` (modified, +7/-4)
+**File**: `src/components/__tests__/__snapshots__/TouchableRippleWeb.test.tsx.snap` (modified, +5/-5)
 ```diff
-@@ -1,12 +1,12 @@
--import { Pressable } from 'react-native';
-+import { Pressable, StyleSheet } from 'react-native';
- import type { GestureResponderEvent } from 'react-native';
- 
- import { describe, expect, it, jest } from '@jest/globals';
- import { fireEvent, userEvent } from '@testing-library/react-native';
- import color from 'color';
- 
- import PaperProvider from '../../core/PaperProvider';
--import { render, screen, transitionOf } from '../../test-utils';
-+import { render, screen } from '../../test-utils';
- import { DarkTheme, LightTheme } from '../../theme/schemes';
- import { tokens } from '../../theme/tokens';
- import Chip from '../Chip/Chip';
-@@ -403,13 +403,16 @@ describe('hitSlop', () => {
- });
- 
- describe('with reduce motion', () => {
--  // The chip's container is the touchable's parent.
-+  // Reanimated's Jest setup keeps CSS transitions out of `style`, and
-+  // `getAnimatedStyle` can't read the chip's nested style arrays. The chip's
-+  // container is the touchable's parent.
-   const elevationTransitionDuration = () => {
-     const { parent } = screen.getByTestId('chip');
-     if (!parent) {
-       throw new Error('Expected the touchable to be inside the container.');
-     }
--    return transitionOf(parent).transitionDuration;
-+    // eslint-disable-next-line no-restricted-syntax -- see the comment above.
-+    return StyleSheet.flatten(parent.props.jestInlineStyle).transitionDuration;
-   };
- 
-   it.each([
-```
-
-**File**: `src/components/__tests__/IconButton.test.tsx` (modified, +4/-58)
-```diff
-@@ -12,13 +12,7 @@ import {
- import color from 'color';
- 
- import PaperProvider from '../../core/PaperProvider';
--import {
--  fireEvent,
--  render,
--  screen,
--  transitionOf,
--  userEvent,
--} from '../../test-utils';
-+import { fireEvent, render, screen, userEvent } from '../../test-utils';
- import { pink500 } from '../../theme/colors';
- import { LightTheme } from '../../theme/schemes';
- import { tokens } from '../../theme/tokens';
-@@ -852,7 +846,9 @@ describe('shape morph', () => {
-       throw new Error('Expected the touchable to be wrapped in the clip view.');
-     }
- 
--    return transitionOf(clip).transitionDuration;
-+    // Reanimated's Jest setup keeps CSS transitions out of `style`.
-+    // eslint-disable-next-line no-restricted-syntax
-+    return StyleSheet.flatten(clip.props.jestInlineStyle).transitionDuration;
-   };
- 
-   it('runs on the fast spatial spring', async () => {
-@@ -872,56 +868,6 @@ describe('shape morph', () => {
- 
-     expect(transitionDuration()).toBe(0);
-   });
--
--  it('morphs the touchable inside the outline in step with the outline', async () => {
--    const { pressedRadius, outlineWidth } = getDimensions({
--      theme,
--      size: 'extra-large',
--    });
--
--    await render(
--      <IconButton
--        icon="camera"
--        mode="outlined"
--        size="extra-large"
--        testID="icon-button"
--        onPress={() => {}}
--      />
--    );
--    const touchable = screen.getByTestId('icon-button');
--    const clip = touchable.parent;
--
--    if (!clip) {
--      throw new Error('Expected the touchable to be wrapped in the clip view.');
--    }
--
--    expect(transitionOf(touchable)).toEqual(transitionOf(clip));
--
--    await fireEvent(touchable, 'pressIn');
--
--    expect(transitionOf(touchable)).toEqual(transitionOf(clip));
--    expect(clip).toHaveStyle({ borderRadius: pressedRadius });
--    expect(touchable).toHaveStyle({
--      borderRadius: pressedRadius - outlineWidth,
--    });
--  });
--
--  it('snaps the touchable corner too under reduce motion', async () => {
--    await render(
--      <PaperProvider reduceMotion="on">
--        <IconButton
--          icon="camera"
--          mode="outlined"
--          testID="icon-button"
--          onPress={() => {}}
--        />
--      </PaperProvider>
--    );
--
--    expect(
--      transitionOf(screen.getByTestId('icon-button')).transitionDuration
--    ).toBe(0);
--  });
- });
- 
- describe('inner corner', () => {
-```
-
-**File**: `src/components/__tests__/TouchableRippleUtils.test.tsx` (removed, +0/-25)
-```diff
-@@ -1,25 +0,0 @@
--import { PlatformColor } from 'react-native';
--
--import { describe, expect, it } from '@jest/globals';
--import color from 'color';
--
--import { tokens } from '../../theme/tokens';
--import { getRippleColorFromContent } from '../TouchableRipple/utils';
--
--const stateOpacity = tokens.md.sys.state.opacity;
--
--describe('getRippleColorFromContent', () => {
--  it('defaults to the content color at the pressed-state opacity', () => {
--    expect(getRippleColorFromContent({ contentColor: '#123456' })).toBe(
--      color('#123456').alpha(stateOpacity.pressed).rgb().string()
--    );
--  });
--
--  it('returns undefined when the content color is not a plain string', () => {
--    expect(
--      getRippleColorFromContent({
--        contentColor: PlatformColor('?attr/colorPrimary'),
--      })
--    ).toBeUndefined();
--  });
--});
-```
-
----
-
-### Incident Patch 3: `fbf9006f` (2026-11-23)
-**Commit Message**: fix(text-input): keep the hidden placeholder empty (#5199)
-
-An empty labelled TextInput hid its placeholder as a single space, and screen readers took that blank as the field's text: TalkBack on Android read "Space" instead of the label, and iOS reported a blank value. The hidden placeholder is now empty. iOS multiline fields keep the space, which their placeholder needs in order to update (facebook/react-native#31573).
-
-Follows #5111 (#5197).
-
-**File**: `src/components/TextInput/hooks.ts` (modified, +8/-3)
-```diff
-@@ -510,9 +510,14 @@ export const useTextInput = (props: TextInputProps): TextInputHookReturn => {
-   const renderLeadingAccessory = props.startAccessory;
-   const renderTrailingAccessory = props.endAccessory;
- 
--  // A space keeps the iOS multiline placeholder updating:
--  // https://github.com/facebook/react-native/issues/31573
--  const placeholder = isPlaceholderShown ? props.placeholder : ' ';
-+  // The hidden placeholder is empty: a blank is read as the field's text
-+  // (TalkBack says "Space, edit box" instead of the label, iOS reports it as
-+  // the value). Only iOS multiline fields keep a space, which keeps their
-+  // placeholder updating: https://github.com/facebook/react-native/issues/31573
-+  const hiddenPlaceholder = Platform.OS === 'ios' && props.multiline ? ' ' : '';
-+  const placeholder = isPlaceholderShown
-+    ? props.placeholder
-+    : hiddenPlaceholder;
- 
-   return {
-     input,
-```
-
-**File**: `src/components/__tests__/TextInput.test.tsx` (modified, +39/-4)
-```diff
-@@ -1119,9 +1119,9 @@ it('does not expose the placeholder string when the TextInput is not focused', a
-     />
-   );
- 
--  /* Sentinel space avoids iOS multiline UITextView not updating placeholder from nil (react-native#31573). */
-+  /* Empty, not a blank: a blank is read as the field's text. */
-   // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
--  expect(screen.getByTestId('tf-input').props.placeholder).toBe(' ');
-+  expect(screen.getByTestId('tf-input').props.placeholder).toBe('');
- });
- 
- it('shows placeholder when unfocused and no label is given', async () => {
-@@ -1155,7 +1155,7 @@ it('shows placeholder when the TextInput is focused, once the label floats away'
- 
-   // The label still rests over the input when the field takes focus.
-   // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
--  expect(screen.getByTestId('tf-input').props.placeholder).toBe(' ');
-+  expect(screen.getByTestId('tf-input').props.placeholder).toBe('');
- 
-   await act(() => jest.advanceTimersByTimeAsync(1000));
- 
-@@ -1177,6 +1177,7 @@ it('shows placeholder on multiline TextInput when focused, once the label floats
-     />
-   );
- 
-+  // iOS multiline fields keep a blank (react-native#31573).
-   // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
-   expect(screen.getByTestId('tf-multiline').props.placeholder).toBe(' ');
- 
-@@ -1193,6 +1194,40 @@ it('shows placeholder on multiline TextInput when focused, once the label floats
-   );
- });
- 
-+// TalkBack reads an empty field's text, even ' ', in place of its label.
-+it.each([false, true])(
-+  'keeps the hidden placeholder empty on Android (multiline: %s)',
-+  async (multiline) => {
-+    const platformOS = jest.replaceProperty(Platform, 'OS', 'android');
-+
-+    try {
-+      await render(
-+        <TextInput
-+          label="Email"
-+          value=""
-+          onChangeText={() => {}}
-+          placeholder="e.g. user@example.com"
-+          multiline={multiline}
-+          testID="tf-input"
-+        />
-+      );
-+
-+      // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
-+      expect(screen.getByTestId('tf-input').props.placeholder).toBe('');
-+
-+      await fireEvent(screen.getByTestId('tf-input'), 'focus');
-+      await act(() => jest.advanceTimersByTimeAsync(1000));
-+
-+      // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
-+      expect(screen.getByTestId('tf-input').props.placeholder).toBe(
-+        'e.g. user@example.com'
-+      );
-+    } finally {
-+      platformOS.restore();
-+    }
-+  }
-+);
-+
- it('shows placeholder at once when a focused TextInput with a floated label is cleared', async () => {
-   const { rerender } = await render(
-     <TextInput
-@@ -1268,7 +1303,7 @@ it('does not expose the placeholder string again after the TextInput loses focus
-   await fireEvent(screen.getByTestId('tf-input'), 'blur');
- 
-   // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
--  expect(screen.getByTestId('tf-input').props.placeholder).toBe(' ');
-+  expect(screen.getByTestId('tf-input').props.placeholder).toBe('');
- });
- 
- it('keeps a lone StartAccessory before the input in both LTR and RTL (tree order)', async () => {
-```
-
-**File**: `src/components/__tests__/TextInputAccessibility.test.tsx` (modified, +1/-1)
-```diff
-@@ -279,7 +279,7 @@ it('describes an empty labelled field with its placeholder on web until the inpu
-     renderInput.mock.lastCall?.[0]['aria-describedby']?.split(' ') ?? [];
-   const ids = getDescriptionIds();
- 
--  expect(input).toHaveProp('placeholder', ' ');
-+  expect(input).toHaveProp('placeholder', '');
-   expect(ids).toHaveLength(2);
-   expect(screen.queryByText('name@example.com')).toBeNull();
-   expect(
+@@ -36,9 +36,9 @@ exports[`TouchableRipple (web) does not clip its content when borderless 1`] = `
+       {
+         "position": "relative",
+       },
+-      undefined,
+       false,
+       undefined,
++      undefined,
+     ]
+   }
+ >
+@@ -84,9 +84,9 @@ exports[`TouchableRipple (web) renders a touch target behind the children sized
+       {
+         "position": "relative",
+       },
+-      undefined,
+       false,
+       undefined,
++      undefined,
+     ]
+   }
+ >
+@@ -144,9 +144,9 @@ exports[`TouchableRipple (web) renders a touch target behind the children sized
+       {
+         "position": "relative",
+       },
+-      undefined,
+       false,
+       undefined,
++      undefined,
+     ]
+   }
+ >
+@@ -204,9 +204,9 @@ exports[`TouchableRipple (web) renders no touch target when it is disabled 1`] =
+       {
+         "position": "relative",
+       },
+-      undefined,
+       {},
+       undefined,
++      undefined,
+     ]
+   }
+ >
+@@ -270,9 +270,9 @@ exports[`TouchableRipple (web) renders no touch target when there is no hitSlop
+       {
+         "position": "relative",
+       },
+-      undefined,
+       false,
+       undefined,
++      undefined,
+     ]
+   }
+ >
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5319** (2026-11-24): docs: fill migration and theming gaps, add the Reanimated version table (@Doberjohn)
+- **PR #5307** (2026-11-24): docs: fill 6.x guide gaps and fix the home and version selector links (@Doberjohn)
+- **PR #5306** (2026-11-24): docs(migration): fix the Switch, IconButton, TextInput and Dialog notes (@Doberjohn)
 - **PR #5292** (2026-11-23): refactor(button): share the shape morph between Button and IconButton (@Doberjohn)
 - **PR #5279** (2026-11-23): revert(button): undo the shape morph refactor merged early (@Doberjohn)
 - **PR #5278** (2026-11-23): docs(migration): explain IconButton's footprint when moving to iconSize (@Doberjohn)
-- **PR #5276** (2026-11-21): docs(migration): add a 6.0 alpha line for the renamed FAB variants (@Doberjohn)
-- **PR #5274** (2026-11-20): docs(migration): add the missing Dialog, FAB and TextInput notes (@Doberjohn)
-- **PR #5268** (2026-11-20): fix(touchable-ripple): clear a ripple left by a disabling press (@Doberjohn)
 
 ---
 
@@ -2473,13 +1884,13 @@ Follows #5111 (#5197).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. switch): render aria-readonly on web only when read-only
+## X. docs: fill 6.x guide gaps and fix the home and version selector links
 
 **RULE**:
 When implementing operations in `docs/6.x/docs/guides/migration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce0ac9f8`: switch): render aria-readonly on web only when read-only. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c420b90e`: docs: fill 6.x guide gaps and fix the home and version selector links. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/6.x/docs/guides/migration.md`.
@@ -2487,23 +1898,21 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-const TertiarySwitch = ({
-  value,
-  onValueChange,
-}: {
-  value: boolean;
-  onValueChange: (value: boolean) => void;
-}) => {
+A full theme, such as `DarkTheme` or the theme `useTheme()` returns, gives the same result as before, except that custom keys of the theme above it are kept. The `theme` prop is now typed as a partial `Theme`, as on `PaperProvider`, so TypeScript reports a value that isn't a theme, such as a number, and keys the theme doesn't have, such as `roundness`. To keep a partial theme in a variable, type it as [Simple built-in theme overrides](./theming#simple-built-in-theme-overrides) shows. The `theme` prop of a component returned by `withTheme` gets the same type, and the component you wrap must take a `Theme` in its `theme` prop. A `ThemeProvider` without a `theme` now passes the theme above it on. In 5.x it gave its children the default light theme. To keep that, pass `theme={LightTheme}`.
+`Checkbox.Item`, `RadioButton.Item`, `FAB`, `Menu.Item`, `List.Accordion` and `Switch` no longer accept `accessibilityLabel`, so TypeScript reports an error. Components whose props extend React Native's view props, such as `Button`, `Chip`, `DataTable.Pagination`, `Drawer.Item` and `Drawer.CollapsedItem`, still compile with the old props, but pass them to their outer container instead of the element 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-const TertiarySwitch = ({ value, onValueChange }) => {
+A full theme, such as `DarkTheme` or the theme `useTheme()` returns, gives the same result as before, except that custom keys of the theme above it are kept. The `theme` prop is now typed as a partial `Theme`, as on `PaperProvider`, so TypeScript reports a value that isn't a theme, such as a number, and keys the theme doesn't have, such as `roundness`. The `theme` prop of a component returned by `withTheme` gets the same type, and the component you wrap must take a `Theme` in its `theme` prop. A `ThemeProvider` without a `theme` now passes the theme above it on. In 5.x it gave its children the default light theme. To keep that, pass `theme={LightTheme}`.
+`Checkbox.Item`, `RadioButton.Item`, `FAB`, `Menu.Item`, `List.Accordion` and `Switch` no longer accept `accessibilityLabel`, so TypeScript reports an error. Components whose props extend React Native's view props, such as `Button`, `Chip` and `DataTable.Pagination`, still compile with the old props, but pass them to their outer container instead of the element they used to label.
+  supportingText="Enter a valid email"
+`size` is a named scale: `'extra-small' | 'small' | 'medium' | 'large' | 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce0ac9f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c420b90e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

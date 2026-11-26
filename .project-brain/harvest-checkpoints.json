@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T18:33:02.239Z",
+  "last_updated": "2026-11-26T18:41:52.406Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1070,14 +1070,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
-      "content_hash": "0a37b9a2dff56b003c0194feb79df6980498ec977ea5a3402cbd7897ddbee0ce",
-      "verified_at": "2026-11-23T04:50:29.198Z",
+      "content_hash": "d00a3334da73e18d8504e53fa0b502db7a68879e6d367a04e24e817d567abf6e",
+      "verified_at": "2026-11-26T18:41:35.507Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T04:50:29.198Z"
+      "last_updated": "2026-11-26T18:41:35.507Z"
     },
     "openai/whisper-large-v3": {
       "repository": "openai/whisper-large-v3",
@@ -4671,14 +4671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-paper",
-      "content_hash": "792454fa15ee7aa8b502b170c2bc1fc7290cb7715822621220f6ea4c3e5015be",
-      "verified_at": "2026-11-24T09:57:10.968Z",
+      "content_hash": "f72190d41e4f4db6e51f20bd9b9bb73e93bdab04219853cd2e637d274af6caa0",
+      "verified_at": "2026-11-26T18:41:44.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T09:57:10.968Z"
+      "last_updated": "2026-11-26T18:41:44.229Z"
     },
     "tensorchord/pgvecto.rs": {
       "repository": "tensorchord/pgvecto.rs",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "d85656c4d64ac5fdeae788064cc5d6d8a1ca2564783a1a800ff51dd0654849e4",
-      "verified_at": "2026-11-26T00:46:36.779Z",
+      "content_hash": "1ae857f5f82da40b62945d7b3b2ade301c210d03f15d227fbc4ce64e82d1b2a4",
+      "verified_at": "2026-11-26T18:41:48.510Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T00:46:36.779Z"
+      "last_updated": "2026-11-26T18:41:48.510Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "3ff0e801aad0b1eebedf80ab740fdfea8b21648929bc071717ec6d3f2875b566",
-      "verified_at": "2026-11-25T11:30:02.520Z",
+      "content_hash": "73e18843b3e54913695c7f55684405550ba3ba4e6c84a177c6e7eb7cb6b7093f",
+      "verified_at": "2026-11-26T18:41:38.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T11:30:02.520Z"
+      "last_updated": "2026-11-26T18:41:38.019Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "8268516e92726b2bbd9aabd439c81bb0970062faca9317922a107e345096424f",
-      "verified_at": "2026-11-26T00:09:33.334Z",
+      "content_hash": "203fd4c9b04584c92f94c5e9598fa1b0f6bd65323a5647b945ad23454f54b8ac",
+      "verified_at": "2026-11-26T18:41:52.406Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T00:09:33.334Z"
+      "last_updated": "2026-11-26T18:41:52.406Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",

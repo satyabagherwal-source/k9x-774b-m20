@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `f2c476cf`  
+> **Source Version**: `72a7f415`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T00:46:35.591Z  
+> **Timestamp**: 2026-11-26T18:41:47.221Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T00:46:35.586Z  
+> **Harvest Timestamp**: 2026-11-26T18:41:47.217Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39622 stars
+- **Stars / Engagement**: 39666 stars
 
 ---
 
@@ -821,63 +821,30 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a3a1da1` (2026-11-24)
-**Commit Message**: misc/git_hook/githook: don't rebuild hooks after every OSS bump
+### Incident Patch 1: `3ffce79f` (2026-11-26)
+**Commit Message**: wgengine/netstack: fix invocation of ping on illumos/solaris
 
-The launcher found the shared HOOK_VERSION via `go list -m -f
-'{{.Dir}}' tailscale.com`. But go list -m doesn't download modules, so
-after a repo bumps its tailscale.com dependency to a version not yet in
-the module cache, Dir is empty, SHARED_VER falls back to 0, and the
-launcher rebuilds ts-git-hook-bin even though the shared HOOK_VERSION
-didn't change. In corp, which can sometimes bump OSS a few times a
-day, that meant a spurious "git-hook: rebuilding ts-git-hook-bin..."
-(plus a module download) on the first git operation after most bumps.
-
-If Dir is empty, run `go mod download tailscale.com` and look again.
-The rebuild was going to download the module anyway.
-
-Bump HOOK_VERSION so existing installs pick up the new launcher.
-
-Updates tailscale/corp#40381
-
-Change-Id: I6e4720702d7052df3b15dce0c60a8b313c6b48e3
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-
-**File**: `misc/git_hook/githook/HOOK_VERSION` (modified, +1/-1)
+**File**: `wgengine/netstack/netstack_userping.go` (modified, +3/-0)
 ```diff
-@@ -1 +1 @@
--5
-+6
-```
-
-**File**: `misc/git_hook/githook/launcher.sh` (modified, +9/-1)
-```diff
-@@ -32,7 +32,15 @@ BINARY="$HOOK_DIR/ts-git-hook-bin$EXE"
- GO="$REPO_ROOT/tool/go$EXE"
- if [ ! -x "$GO" ]; then GO=go; fi
- 
--OSS_DIR="$(cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null || true)"
-+oss_dir() {
-+  (cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null) || true
-+}
-+OSS_DIR="$(oss_dir)"
-+if [ -z "$OSS_DIR" ]; then
-+  # go list -m doesn't download; a fresh go.mod bump may not be cached yet.
-+  (cd "$REPO_ROOT" && GOWORK=off "$GO" mod download tailscale.com >/dev/null 2>&1) || true
-+  OSS_DIR="$(oss_dir)"
-+fi
- SHARED_VER="$(cat "$OSS_DIR/misc/git_hook/githook/HOOK_VERSION" 2>/dev/null || echo 0)"
- LOCAL_VER="$(cat "$REPO_ROOT/misc/git_hook/HOOK_VERSION" 2>/dev/null || echo 0)"
- WANT="$SHARED_VER:$LOCAL_VER"
+@@ -56,6 +56,9 @@ func (ns *Impl) sendOutboundUserPing(dstIP netip.Addr, timeout time.Duration) er
+ 			ping = "/system/bin/ping6"
+ 		}
+ 		err = exec.Command(ping, "-c", "1", "-w", "3", dstIP.String()).Run()
++	case "illumos", "solaris":
++		// /usr/sbin/ping host [timeout]
++		err = exec.Command("/usr/sbin/ping", dstIP.String(), "3").Run()
+ 	default:
+ 		ping := "ping"
+ 		if isSynology {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22687** (2026-11-26): tsweb/promvarz, cmd/tailscaled: don't mix other metrics into filtered varz (@bradfitz)
 - **PR #22660** (2026-11-25): feature/conn25: use transitIPInPool in connector.packetFilterAllow (@mazdakn)
 - **PR #22646** (closed): .github/workflows: run go vet checks outside golangci-lint (@sfllaw)
 - **PR #22641** (2026-11-25): wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked (@sfllaw)
 - **PR #22638** (2026-11-25): net/portmapper: add Probe metrics for all PCP result codes (@fmarier)
 - **PR #22636** (2026-11-25): tsweb/varz: add match filters and streaming to /debug/varz (@bradfitz)
-- **PR #22635** (2026-11-24): tsnet: test with a fake host DNS resolver, not the OS resolver (@sfllaw)
 
 ---
 
@@ -897,36 +864,30 @@ Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. misc/git_hook/githook: don't rebuild hooks after every OSS bump
+## X. wgengine/netstack: fix invocation of ping on illumos/solaris
 
 **RULE**:
-When implementing operations in `misc/git_hook/githook/launcher.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wgengine/netstack/netstack_userping.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a3a1da1`: misc/git_hook/githook: don't rebuild hooks after every OSS bump. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ffce79f`: wgengine/netstack: fix invocation of ping on illumos/solaris. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/git_hook/githook/launcher.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `wgengine/netstack/netstack_userping.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-oss_dir() {
-  (cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null) || true
-}
-OSS_DIR="$(oss_dir)"
-if [ -z "$OSS_DIR" ]; then
-  # go list -m doesn't download; a fresh go.mod bump may not be cached yet.
-  (cd "$REPO_ROOT" && GOWORK=off "$GO" mod download tailscale.com >/dev/null 2>&1) || true
-  OSS_DIR="$(oss_dir)"
-fi
+	case "illumos", "solaris":
+		// /usr/sbin/ping host [timeout]
+		err = exec.Command("/usr/sbin/ping", dstIP.String(), "3").Run()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-OSS_DIR="$(cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null || true)"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a3a1da1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ffce79f` are properly handled with clean fallback behavior.

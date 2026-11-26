@@ -13512,3 +13512,8 @@
 | `CYCLE-20261126-TB2V` | `2026-11-26T18:24:24.151Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10752` | Yes (`e9943568...`) |
 | `CYCLE-20261126-477M` | `2026-11-26T18:32:52.354Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`4d5becae...`) |
 | `CYCLE-20261126-4ETG` | `2026-11-26T18:33:02.212Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10753` | Yes (`fa498947...`) |
+| `CYCLE-20261126-FEV2` | `2026-11-26T18:41:35.486Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`d00a3334...`) |
+| `CYCLE-20261126-FGSO` | `2026-11-26T18:41:37.992Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10754` | Yes (`73e18843...`) |
+| `CYCLE-20261126-FLL6` | `2026-11-26T18:41:44.202Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10755` | Yes (`f72190d4...`) |
+| `CYCLE-20261126-FOW2` | `2026-11-26T18:41:48.482Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10756` | Yes (`1ae857f5...`) |
+| `CYCLE-20261126-FRWB` | `2026-11-26T18:41:52.379Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10757` | Yes (`203fd4c9...`) |

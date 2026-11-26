@@ -13545,3 +13545,8 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `90b55382` | Multi-dimensional audit evidence | 2026-11-26T18:24:24.157Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-26T18:32:52.359Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `f94c2ef2` | Multi-dimensional audit evidence | 2026-11-26T18:33:02.216Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-26T18:41:35.490Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `414e53f1` | Multi-dimensional audit evidence | 2026-11-26T18:41:37.996Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `63a3d5ac` | Multi-dimensional audit evidence | 2026-11-26T18:41:44.207Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `72a7f415` | Multi-dimensional audit evidence | 2026-11-26T18:41:48.486Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `ee15ab0a` | Multi-dimensional audit evidence | 2026-11-26T18:41:52.383Z |
