@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T07:40:12.677Z",
-  "total_cycles_completed": 12615,
-  "total_learnings_persisted": 12615,
-  "total_rules_promoted": 11519,
+  "last_updated": "2026-11-26T07:48:43.885Z",
+  "total_cycles_completed": 12618,
+  "total_learnings_persisted": 12618,
+  "total_rules_promoted": 11521,
   "history": [
-    {
-      "timestamp": "2026-11-25T12:47:48.425Z",
-      "repository": "Pika-Labs/Pika-H3-Flex",
-      "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T12:48:05.096Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T12:56:29.192Z",
-      "repository": "LiquidAI/LFM3-Audio-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T12:56:31.663Z",
       "repository": "Nasiko-Labs/nasiko",
@@ -1403,6 +1382,27 @@
       "repository": "sensenova/SenseNova-Loop-9B",
       "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:48:27.104Z",
+      "repository": "nexu-io/openmotion",
+      "learningId": "learn-github-nexu-io-openmotion",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:48:30.152Z",
+      "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:48:43.885Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

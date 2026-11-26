@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T07:40:12.681Z",
+  "last_updated": "2026-11-26T07:48:43.889Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "82a709b3d541b83d74af5f12c8bde45401cd069297356ff01afaeea1a69a4f52",
-      "verified_at": "2026-11-25T06:39:26.716Z",
+      "content_hash": "08135c98fe82274f52598a859b897a511754d83e924b09b93fbc1761d57a048b",
+      "verified_at": "2026-11-26T07:48:43.888Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T06:39:26.716Z"
+      "last_updated": "2026-11-26T07:48:43.888Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -19311,14 +19311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
-      "content_hash": "066950ea53d8f62cddaa0059d4b4132bb13587485674501ed8faf5c30f6d0731",
-      "verified_at": "2026-11-22T14:17:27.532Z",
+      "content_hash": "48cac32fda3f8d44dd32f9f4705c8d1038800dfbb682596e74d382028c91ebf6",
+      "verified_at": "2026-11-26T07:48:30.154Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T14:17:27.532Z"
+      "last_updated": "2026-11-26T07:48:30.154Z"
     },
     "harness-hub/Qwen3.8-27B-pi-adapted": {
       "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
@@ -20369,6 +20369,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-26T06:26:53.490Z"
+    },
+    "nexu-io/openmotion": {
+      "repository": "nexu-io/openmotion",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nexu-io-openmotion",
+      "content_hash": "d9960b7a0cecad18e63bb7f31414633ae012a012b281b8abc047033a30a5eee0",
+      "verified_at": "2026-11-26T07:48:27.106Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-26T07:48:27.106Z"
     }
   },
   "repos": {

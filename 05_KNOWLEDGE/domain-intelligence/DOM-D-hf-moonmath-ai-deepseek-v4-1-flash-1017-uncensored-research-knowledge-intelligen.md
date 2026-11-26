@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
   "source_version": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T14:17:27.739Z",
+  "timestamp": "2026-11-26T07:48:30.370Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored](https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored) (Revision: `hf-moonmat`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T14:17:27.739Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T07:48:30.370Z`  
 > **Learning ID**: `learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored](https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:17:13.574Z  
+> **Harvest Timestamp**: 2026-11-26T07:48:29.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2770 downloads | 170 likes
+- **Stars / Engagement**: 3247 downloads | 183 likes
 
 ---
 

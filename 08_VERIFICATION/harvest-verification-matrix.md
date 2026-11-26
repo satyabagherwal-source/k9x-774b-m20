@@ -13294,3 +13294,6 @@
 | `CYCLE-20261126-DXTW` | `2026-11-26T07:28:35.972Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md` | Yes (`5cd834f2...`) |
 | `CYCLE-20261126-E99H` | `2026-11-26T07:28:50.789Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10624` | Yes (`08380e00...`) |
 | `CYCLE-20261126-SVE6` | `2026-11-26T07:40:12.654Z` | `sensenova/SenseNova-Loop-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md` | Yes (`69bf9b7d...`) |
+| `CYCLE-20261126-3GWE` | `2026-11-26T07:48:27.086Z` | `nexu-io/openmotion` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10625` | Yes (`d9960b7a...`) |
+| `CYCLE-20261126-3J93` | `2026-11-26T07:48:30.135Z` | `MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md` | Yes (`48cac32f...`) |
+| `CYCLE-20261126-3TUK` | `2026-11-26T07:48:43.868Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10626` | Yes (`08135c98...`) |

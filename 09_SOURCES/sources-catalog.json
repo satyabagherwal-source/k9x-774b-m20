@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "9d354015",
+    "sourceVersion": "a5225084",
     "license": "Apache-2.0",
-    "contentHash": "82a709b3d541b83d74af5f12c8bde45401cd069297356ff01afaeea1a69a4f52",
-    "lastHarvestedAt": "2026-11-25T06:39:26.701Z",
+    "contentHash": "08135c98fe82274f52598a859b897a511754d83e924b09b93fbc1761d57a048b",
+    "lastHarvestedAt": "2026-11-26T07:48:43.872Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -12815,8 +12815,8 @@
     "sourceUrl": "https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
     "sourceVersion": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored",
     "license": "Open-Source",
-    "contentHash": "066950ea53d8f62cddaa0059d4b4132bb13587485674501ed8faf5c30f6d0731",
-    "lastHarvestedAt": "2026-11-22T14:17:27.524Z",
+    "contentHash": "48cac32fda3f8d44dd32f9f4705c8d1038800dfbb682596e74d382028c91ebf6",
+    "lastHarvestedAt": "2026-11-26T07:48:30.139Z",
     "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored"
   },
   "hf-harness-hub-qwen3.8-27b-pi-adapted": {
@@ -13498,5 +13498,15 @@
     "contentHash": "9b77a41a56726bcfb6d9eea39f556df3520ee95c3a7430b7e4247d32d0ff0858",
     "lastHarvestedAt": "2026-11-26T06:26:53.472Z",
     "learningId": "learn-github-oshai-kotlin-logging"
+  },
+  "nexu-io-openmotion": {
+    "repository": "nexu-io/openmotion",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nexu-io/openmotion",
+    "sourceVersion": "40617226",
+    "license": "Apache-2.0",
+    "contentHash": "d9960b7a0cecad18e63bb7f31414633ae012a012b281b8abc047033a30a5eee0",
+    "lastHarvestedAt": "2026-11-26T07:48:27.090Z",
+    "learningId": "learn-github-nexu-io-openmotion"
   }
 }

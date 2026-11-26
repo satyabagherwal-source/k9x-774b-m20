@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-EU27",
-    "timestamp": "2026-11-24T17:13:49.231Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "03ffe91e33cc6ceabdc9a1f7a8f4455158881c7d333ed936cf50780f8f241f99",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-QMSJ",
-    "timestamp": "2026-11-24T17:22:59.683Z",
-    "repository": "fb55/htmlparser2",
-    "learningId": "learn-github-fb55-htmlparser2",
-    "contentHash": "ce39d9c9429da77159f539a91ecd9025786e4d202699cad5466a07a5c0b2c597",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-QPTM",
-    "timestamp": "2026-11-24T17:23:03.610Z",
-    "repository": "czy0729/Bangumi",
-    "learningId": "learn-github-czy0729-bangumi",
-    "contentHash": "32cffb56a9d84ed878f637b229bb6fadc6dee7624fbe4dcef4a294074f83ef0c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-QV66",
     "timestamp": "2026-11-24T17:23:10.542Z",
     "repository": "dragonflydb/dragonfly",
@@ -7492,6 +7447,51 @@
     "contentHash": "69bf9b7d53fd65330bfba482650bb8ea6415b364d89258b42b5ba694b50231f8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3GWE",
+    "timestamp": "2026-11-26T07:48:27.086Z",
+    "repository": "nexu-io/openmotion",
+    "learningId": "learn-github-nexu-io-openmotion",
+    "contentHash": "d9960b7a0cecad18e63bb7f31414633ae012a012b281b8abc047033a30a5eee0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3J93",
+    "timestamp": "2026-11-26T07:48:30.135Z",
+    "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
+    "contentHash": "48cac32fda3f8d44dd32f9f4705c8d1038800dfbb682596e74d382028c91ebf6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3TUK",
+    "timestamp": "2026-11-26T07:48:43.868Z",
+    "repository": "gluesql/gluesql",
+    "learningId": "learn-github-gluesql-gluesql",
+    "contentHash": "08135c98fe82274f52598a859b897a511754d83e924b09b93fbc1761d57a048b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

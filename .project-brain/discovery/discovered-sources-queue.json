@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T07:28:56.271Z",
+  "updated_at": "2026-11-26T07:48:47.420Z",
   "stats": {
-    "total_discovered": 9674,
-    "approved_pending_harvest": 9174,
+    "total_discovered": 9675,
+    "approved_pending_harvest": 9175,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9161,
+      "COMMUNITY_AND_EXPERT": 9162,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -209355,6 +209355,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
         "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-87FFCAB40DA7": {
+      "id": "SRC-87FFCAB40DA7",
+      "url": "https://github.com/nexu-io/openmotion",
+      "title": "https://github.com/nexu-io/openmotion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T07:48:47.420Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nexu-io-openmotion-learnings.md",
+        "fileName": "nexu-io-openmotion-learnings.md"
       }
     }
   }

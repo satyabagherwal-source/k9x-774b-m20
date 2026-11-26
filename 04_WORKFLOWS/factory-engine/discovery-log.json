@@ -22345,5 +22345,20 @@
     "qualityScore": 1851,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-26T06:24:42.239Z"
+  },
+  {
+    "name": "openmotion",
+    "fullName": "nexu-io/openmotion",
+    "url": "https://github.com/nexu-io/openmotion",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The open-source Claude Motion & CapCut alternative. Turn a reference video into editable motion graphics with your brand kit. Export MP4s for YouTube, YouTube Shorts, Instagram Reels, and TikTok. A full-stack agentic video studio with 300+ Motion.md guides and support for 22 agents, including Claude Code, Codex, DSH, and WorkBuddy.",
+    "stars": 16487,
+    "forks": 1642,
+    "openIssues": 124,
+    "language": "TypeScript",
+    "qualityScore": 9186,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-26T07:44:44.677Z"
   }
 ]

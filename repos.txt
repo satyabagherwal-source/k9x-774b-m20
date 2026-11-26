@@ -5426,3 +5426,7 @@ https://huggingface.co/KRAFTON/Raon-1-mini
 # --- Automatically Discovered by AI Scout Engine [2026-11-26T06:26:42.092Z] ---
 # [MOBILE-CROSS-PLATFORM] oshai/kotlin-logging (1851 score) - Lightweight Multiplatform logging framework for Kotlin. A convenient and perform
 https://github.com/oshai/kotlin-logging
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-26T07:48:21.462Z] ---
+# [AI-AGENTS] nexu-io/openmotion (9186 score) - The open-source Claude Motion & CapCut alternative. Turn a reference video into 
+https://github.com/nexu-io/openmotion

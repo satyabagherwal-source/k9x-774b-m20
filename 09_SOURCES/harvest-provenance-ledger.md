@@ -13327,3 +13327,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-26T07:28:35.977Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `06717572` | Multi-dimensional audit evidence | 2026-11-26T07:28:50.795Z |
 | `learn-huggingface-sensenova-sensenova-loop-9b` | `https://huggingface.co/sensenova/SenseNova-Loop-9B` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-26T07:40:12.660Z |
+| `learn-github-nexu-io-openmotion` | `https://github.com/nexu-io/openmotion` | `40617226` | Multi-dimensional audit evidence | 2026-11-26T07:48:27.090Z |
+| `learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored` | `https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | `hf-moonmat` | Multi-dimensional audit evidence | 2026-11-26T07:48:30.139Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `a5225084` | Multi-dimensional audit evidence | 2026-11-26T07:48:43.872Z |

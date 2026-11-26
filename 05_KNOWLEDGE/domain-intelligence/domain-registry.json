@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T07:40:26.361Z",
-  "total_records": 2719,
+  "last_updated": "2026-11-26T07:48:49.213Z",
+  "total_records": 2721,
   "domains": {
     "A": {
       "total": 22,
@@ -1696,7 +1696,7 @@
       ]
     },
     "H": {
-      "total": 651,
+      "total": 653,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2348,7 +2348,9 @@
         "domain_intelligence-technical-construction-intelligence-hf-adventists-ai-sophon-realtime-v1-learning",
         "DOM-H-F039AD05",
         "domain_intelligence-technical-construction-intelligence-sozercan-kaset-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-sozercan-kaset-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-sozercan-kaset-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-learnings-core-invariants"
       ]
     },
     "I": {
@@ -29065,8 +29067,8 @@
       "title": "Research & Knowledge Intelligence: MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-research-knowledge-intelligen.md",
       "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
-      "content_hash": "2d2e01c50df0573b1b2dabe00ad4d55a8dd2deaf5793a2afb725452b1104f660",
-      "created_at": "2026-11-22T14:17:27.740Z"
+      "content_hash": "fa0cf0fedeb817234c03f1152403fa225c23b487f9625294e57e70e8047df5b1",
+      "created_at": "2026-11-26T07:48:30.370Z"
     },
     "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants",
@@ -29092,8 +29094,8 @@
       "title": "Research & Knowledge Intelligence: hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-learnings-research-knowledge-.md",
       "repository": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings",
-      "content_hash": "8104b0acbf905aba8dea31f24ea064901fd7849737f5bbdc77e8621503b446bf",
-      "created_at": "2026-11-22T14:17:31.691Z"
+      "content_hash": "a6b66c9366a871b168d6c62cf7a0b86100751026b2a72ca2eff40319b4498e83",
+      "created_at": "2026-11-26T07:48:48.537Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari",
@@ -32820,8 +32822,8 @@
       "title": "Content & Information Intelligence: gluesql/gluesql Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gluesql-gluesql-content-information-intelligence-gluesql-gluesql-core-invariants.md",
       "repository": "gluesql/gluesql",
-      "content_hash": "c756cbb6927bbb7669a465219e7dc5eab311db427c413cca8cb95b7d6dc26d19",
-      "created_at": "2026-11-25T06:39:27.106Z"
+      "content_hash": "b3975d260e8c6f283f8823a3cfe231d634943f0f1945aa0d315a70494b7b3cca",
+      "created_at": "2026-11-26T07:48:44.307Z"
     },
     "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants",
@@ -32829,8 +32831,8 @@
       "title": "Content & Information Intelligence: gluesql-gluesql-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gluesql-gluesql-learnings-content-information-intelligence-gluesql-gluesql-learn.md",
       "repository": "gluesql-gluesql-learnings",
-      "content_hash": "61368a4175c0fa2e3027fce33a03bd446b84835cad079416f044dd68cf04488d",
-      "created_at": "2026-11-20T04:02:44.871Z"
+      "content_hash": "347857518d978bc0b606aab233fea3919ad92f51a7ee85c5daf47fcd376bf1ff",
+      "created_at": "2026-11-26T07:48:49.213Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-core-invariants",
@@ -45972,6 +45974,24 @@
       "repository": "nginx-kubernetes-ingress-learnings",
       "content_hash": "6153ea6b35a64d7a93e88522ffbfd2458ff4353bc22f260a76776212c0687a34",
       "created_at": "2026-11-26T07:19:17.468Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nexu-io/openmotion Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nexu-io-openmotion-technical-construction-intelligence-nexu-io-openmotion-core-i.md",
+      "repository": "nexu-io/openmotion",
+      "content_hash": "d95a7d69c9136bf3c3d352af10b9b1102f288c4c24f2388d40457619d9f579af",
+      "created_at": "2026-11-26T07:48:27.545Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nexu-io-openmotion-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nexu-io-openmotion-learnings-technical-construction-intelligence-nexu-io-openmot.md",
+      "repository": "nexu-io-openmotion-learnings",
+      "content_hash": "06344630dbd3523fc999e3f40da434a03bbcd97c57a3f59bedabe858d9650e69",
+      "created_at": "2026-11-26T07:48:47.936Z"
     }
   }
 }

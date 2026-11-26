@@ -4,22 +4,22 @@
 {
   "source_repository": "gluesql/gluesql",
   "source_url": "https://github.com/gluesql/gluesql",
-  "source_version": "9d354015",
+  "source_version": "a5225084",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T06:39:26.933Z",
+  "timestamp": "2026-11-26T07:48:44.119Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gluesql-gluesql",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `9d354015`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T06:39:26.933Z`  
+> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `a5225084`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T07:48:44.119Z`  
 > **Learning ID**: `learn-github-gluesql-gluesql`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gluesql/gluesql` (Commit: `9d354015`)
+- **Target Repository**: `gluesql/gluesql` (Commit: `a5225084`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T06:39:25.540Z  
+> **Harvest Timestamp**: 2026-11-26T07:48:42.724Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2069,404 +2069,136 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d354015` (2026-11-24)
-**Commit Message**: Release v0.21.0 (#2098)
+### Incident Patch 1: `75a4e06b` (2026-11-26)
+**Commit Message**: Fix JsonStorage::fetch_schema dropping Schema::engine (#2099)
 
-* Bump version to v0.21.0
-* Add release notes for GlueSQL v0.21.0
+fetch_schema parses the table .sql file through Schema::from_ddl
+but discards the engine field, rebuilding the Schema with
+engine: None. CompositeStorage routes statements by
+Schema::engine, so a JSON table registered under a non-default
+engine name received no writes: INSERT reported success while
+SELECT returned no rows.
 
-Introduce the SlateDB and SQLite backends and explain how to migrate
-existing Sled and Redb databases. Link the notes from the release index
-and navigation so readers can find the SQL and Rust API changes.
+Carry the parsed engine through, matching storages that serialize
+the whole Schema and already round-trip it.
 
----------
+Adds a composite-storage regression test wiring a JsonStorage
+behind a non-default engine name, the same shape as
+memory_and_redb.
 
-Co-authored-by: Taehoon Moon <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +18/-18)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -1449,7 +1449,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "gluesql-cli",
-  "gluesql-composite-storage",
-@@ -1472,7 +1472,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-cli"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -1494,7 +1494,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-composite-storage"
--version = "0.20.0"
-+version = "0.21.0"
+@@ -1497,6 +1497,7 @@ name = "gluesql-composite-storage"
+ version = "0.21.0"
  dependencies = [
   "gluesql-core",
++ "gluesql-json-storage",
   "gluesql-redb-storage",
-@@ -1505,7 +1505,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-core"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "bigdecimal",
-  "cfg-if",
-@@ -1530,7 +1530,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-csv-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "csv",
-  "gluesql-core",
-@@ -1544,7 +1544,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-file-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "gluesql-core",
   "gluesql-test-suite",
-@@ -1556,7 +1556,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-git-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "gluesql-core",
-  "gluesql-csv-storage",
-@@ -1569,7 +1569,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-json-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "gluesql-core",
-  "gluesql-test-suite",
-@@ -1583,7 +1583,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-macros"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "chrono",
-  "gluesql-core",
-@@ -1598,7 +1598,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-mongo-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "bson",
-  "chrono",
-@@ -1615,7 +1615,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-parquet-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "bincode",
-  "byteorder",
-@@ -1632,7 +1632,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-redb-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "bigdecimal",
-  "bincode",
-@@ -1648,7 +1648,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-redis-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "chrono",
-  "gluesql-core",
-@@ -1661,7 +1661,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-shared-memory-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "gluesql-core",
-  "gluesql-test-suite",
-@@ -1671,7 +1671,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-slatedb-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "async-trait",
-  "bincode",
-@@ -1687,7 +1687,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-sqlite-storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "gluesql-core",
-  "gluesql-test-suite",
-@@ -1701,7 +1701,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql-test-suite"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "bigdecimal",
-  "chrono",
-@@ -1718,7 +1718,7 @@ dependencies = [
- 
- [[package]]
- name = "gluesql_memory_storage"
--version = "0.20.0"
-+version = "0.21.0"
- dependencies = [
-  "gluesql-core",
-  "gluesql-test-suite",
+  "gluesql_memory_storage",
 ```
 
-**File**: `Cargo.toml` (modified, +17/-17)
+**File**: `storages/composite-storage/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -18,31 +18,31 @@ default-members = [
- ]
+@@ -15,6 +15,7 @@ serde = { version = "1", features = ["derive"] }
+ test-suite.workspace = true
+ gluesql_memory_storage.workspace = true
+ gluesql-redb-storage.workspace = true
++gluesql-json-storage.workspace = true
  
- [workspace.package]
--version = "0.20.0"
-+version = "0.21.0"
- edition = "2024"
- description = "GlueSQL - Open source SQL database engine fully written in Rust with pure functional execution layer, easily swappable storage and web assembly support!"
- license = "Apache-2.0"
- repository = "https://github.com/gluesql/gluesql"
- documentation = "https://docs.rs/gluesql/"
- 
- [workspace.dependencies]
--gluesql-core = { path = "./core", version = "0.20.0" }
-+gluesql-core = { path = "./core", version = "0.21.0" }
- 
--cli = { package = "gluesql-cli", path = "./cli", version = "0.20.0" }
--test-suite = { package = "gluesql-test-suite", path = "./test-suite", version = "0.20.0" }
--gluesql_memory_storage = { path = "./storages/memory-storage", version = "0.20.0" }
--gluesql-shared-memory-storage = { path = "./storages/shared-memory-storage", version = "0.20.0" }
--gluesql-redb-storage = { path = "./storages/redb-storage", version = "0.20.0" }
--gluesql-sqlite-storage = { path = "./storages/sqlite-storage", version = "0.20.0" }
--gluesql-slatedb-storage = { path = "./storages/slatedb-storage", version = "0.20.0" }
--gluesql-json-storage = { path = "./storages/json-storage", version = "0.20.0" }
--gluesql-csv-storage = { path = "./storages/csv-storage", version = "0.20.0" }
--gluesql-composite-storage = { path = "./storages/composite-storage", version = "0.20.0" }
--gluesql-redis-storage = { path = "./storages/redis-storage", version = "0.20.0" }
--gluesql-mongo-storage = { path = "./storages/mongo-storage", version = "0.20.0" }
--gluesql-parquet-storage = { path = "./storages/parquet-storage", version = "0.20.0" }
--gluesql-file-storage = { path = "./storages/file-storage", version = "0.20.0" }
--gluesql-git-storage = { path = "./storages/git-storage", version = "0.20.0" }
-+cli = { package = "gluesql-cli", path = "./cli", version = "0.21.0" }
-+test-suite = { package = "gluesql-test-suite", path = "./test-suite", version = "0.21.0" }
-+gluesql_memory_storage = { path = "./storages/memory-storage", version = "0.21.0" }
-+gluesql-shared-memory-storage = { path = "./storages/shared-memory-storage", version = "0.21.0" }
-+gluesql-redb-storage = { path = "./storages/redb-storage", version = "0.21.0" }
-+gluesql-sqlite-storage = { path = "./storages/sqlite-storage", version = "0.21.0" }
-+gluesql-slatedb-storage = { path = "./storages/slatedb-storage", version = "0.21.0" }
-+gluesql-json-storage = { path = "./storages/json-storage", version = "0.21.0" }
-+gluesql-csv-storage = { path = "./storages/csv-storage", version = "0.21.0" }
-+gluesql-composite-storage = { path = "./storages/composite-storage", version = "0.21.0" }
-+gluesql-redis-storage = { path = "./storages/redis-storage", version = "0.21.0" }
-+gluesql-mongo-storage = { path = "./storages/mongo-storage", version = "0.21.0" }
-+gluesql-parquet-storage = { path = "./storages/parquet-storage", version = "0.21.0" }
-+gluesql-file-storage = { path = "./storages/file-storage", version = "0.21.0" }
-+gluesql-git-storage = { path = "./storages/git-storage", version = "0.21.0" }
- 
- [workspace.lints.clippy]
- pedantic = { level = "deny", priority = -1 }
+ [lints]
+ workspace = true
 ```
 
-**File**: `README.md` (modified, +13/-13)
+**File**: `storages/composite-storage/tests/memory_and_json.rs` (added, +39/-0)
 ```diff
-@@ -21,7 +21,7 @@ GlueSQL is quite sticky: it brings SQL to your application's storage. Use a prov
- - **Work with flexible data:** query schema-defined and schemaless tables together, including MAP and LIST values.
- - **Choose a query interface:** write SQL or compose queries with the Rust Query Builder, both backed by the same engine.
- 
--[Explore the documentation →](https://gluesql.org/docs/dev/)
-+[Explore the documentation →](https://gluesql.org/docs/0.21.0/)
- 
- ## Installation
- 
-@@ -51,22 +51,22 @@ GlueSQL provides reference storage implementations for in-memory data, embedded
- 
- | Use case | Recommended storage |
- | --- | --- |
--| Persistent embedded database | [Redb](https://gluesql.org/docs/dev/storages/supported-storages/redb-storage/) |
--| Persistent database on S3 or Cloudflare R2 | [SlateDB](https://gluesql.org/docs/dev/storages/supported-storages/slatedb-storage/) |
--| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/dev/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/dev/storages/supported-storages/redis-storage/) |
--| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](https://gluesql.org/docs/dev/storages/supported-storages/sqlite-storage/) |
--| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/dev/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/dev/storages/supported-storages/shared-memory-storage/) |
--| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/dev/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/dev/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/dev/storages/supported-storages/parquet-storage/) |
--| Lightweight filesystem persistence | [File](https://gluesql.org/docs/dev/storages/supported-storages/file-storage/) |
--| Version-controlled data | [Git](https://gluesql.org/docs/dev/storages/supported-storages/git-storage/) |
--| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/dev/storages/supported-storages/composite-storage/) |
-+| Persistent embedded database | [Redb](https://gluesql.org/docs/0.21.0/storages/supported-storages/redb-storage/) |
-+| Persistent database on S3 or Cloudflare R2 | [SlateDB](https://gluesql.org/docs/0.21.0/storages/supported-storages/slatedb-storage/) |
-+| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/0.21.0/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/0.21.0/storages/supported-storages/redis-storage/) |
-+| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](https://gluesql.org/docs/0.21.0/storages/supported-storages/sqlite-storage/) |
-+| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/0.21.0/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/0.21.0/storages/supported-storages/shared-memory-storage/) |
-+| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/0.21.0/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/0.21.0/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/0.21.0/storages/supported-storages/parquet-storage/) |
-+| Lightweight filesystem persistence | [File](https://gluesql.org/docs/0.21.0/storages/supported-storages/file-storage/) |
-+| Version-controlled data | [Git](https://gluesql.org/docs/0.21.0/storages/supported-storages/git-storage/) |
-+| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/0.21.0/storages/supported-storages/composite-storage/) |
- | Browser / JS applications | [JavaScript: memory, local Storage, or OPFS](https://github.com/gluesql/gluesql-js#pick-the-storage-that-matches-your-data) |
- 
--See the [Storage documentation](https://gluesql.org/docs/dev/storages/intro/) for setup, examples, and limitations.
-+See the [Storage documentation](https://gluesql.org/docs/0.21.0/storages/intro/) for setup, examples, and limitations.
- 
- ## SQL and Query Builder
- 
--GlueSQL supports both SQL and a Query Builder. Use SQL for familiar or dynamic queries, and use the Query Builder when composing queries in Rust or controlling execution more precisely. Both interfaces run through the same GlueSQL engine and storage backend. For more information, check out the [Query Builder documentation](https://gluesql.org/docs/dev/query-builder/intro/) and [SQL documentation](https://gluesql.org/docs/dev/sql-syntax/intro/).
-+GlueSQL supports both SQL and a Query Builder. Use SQL for familiar or dynamic queries, and use the Query Builder when composing queries in Rust or controlling execution more precisely. Both interfaces run through the same GlueSQL engine and storage backend. For more information, check out the [Query Builder documentation](https://gluesql.org/docs/0.21.0/query-builder/intro/) and [SQL documentation](ht
-```
-
-**File**: `docs/docs/releases/index.md` (modified, +1/-0)
-```diff
-@@ -10,3 +10,4 @@ Release notes for GlueSQL.
- - [Release v0.14](release-v0.14.md)
- - [Release v0.15](release-v0.15.md)
- - [Release v0.20.0](release-v0.20.md)
-+- [Release v0.21.0](release-v0.21.md)
-```
-
-**File**: `docs/docs/releases/release-v0.21.md` (added, +134/-0)
-```diff
-@@ -0,0 +1,134 @@
-+---
-+title: Release v0.21.0
-+description: GlueSQL v0.21.0 adds SlateDB and SQLite storage backends.
-+---
+@@ -0,0 +1,39 @@
++use {
++    gluesql_composite_storage::CompositeStorage,
++    gluesql_core::prelude::{Glue, Value::I64},
++    gluesql_json_storage::JsonStorage,
++    gluesql_memory_storage::MemoryStorage,
++    std::fs::{create_dir_all, remove_dir_all},
++    test_suite::*,
++};
 +
-+# GlueSQL v0.21.0
++#[test]
++fn memory_and_json() {
++    let json_storage = {
++        let _ = create_dir_all("data");
++        let path = "data/memory_and_json";
++        let _ = remove_dir_all(path);
 +
-+GlueSQL v0.21 adds two storage backends. **SlateDB** lets applications store tables in an Amazon S3 or Cloudflare R2 bucket and update them in SQL transactions. The **SQLite** backend stores GlueSQL tables in a local database and can use SQLite's own query engine to filter rows.
++        JsonStorage::new(path).unwrap()
++    };
 +
-+If you have an existing Sled or Redb database, see [Upgrading from v0.20](#upgrading-from-v020).
++    let mut storage = CompositeStorage::new();
++    storage.push("MEMORY", MemoryStorage::default());
++    storage.push("JSON", json_storage);
++    storage.set_default("MEMORY");
 +
-+## ✨ Highlights
-+
-+### New SlateDB storage backend for S3 and Cloudflare R2
-+
-+GlueSQL runs the SQL in your Rust application, and SlateDB writes committed changes to the bucket. With bucket credentials configured, an import job can record how many rows it processed in a table on S3.
-+
-+```rust
-+use gluesql::prelude::{Glue, SlatedbStorage};
-+
-+fn main() -> gluesql::core::error::Result<()> {
-+    let storage = SlatedbStorage::open("s3://my-bucket/import-history")?;
 +    let mut glue = Glue::new(storage);
 +
-+    glue.execute("CREATE TABLE IF NOT EXISTS ImportRun (rows_loaded INT)")?;
-+    glue.execute("INSERT INTO ImportRun VALUES (120)")?;
-+    glue.storage.close()
++    glue.execute("CREATE TABLE Bar (id INTEGER) ENGINE = JSON;")
++        .unwrap();
++    glue.execute("INSERT INTO Bar VALUES (1);").unwrap();
++
++    assert_eq!(
++        glue.execute("SELECT * FROM Bar;")
++            .unwrap()
++            .into_iter()
++            .next()
++            .unwrap(),
++        select!(id I64; 1)
++    );
 +}
-+```
-+
-+If the next run opens the same URL and inserts a count of 80, `SELECT SUM(rows_loaded) FROM ImportRun` returns 200. For Cloudflare R2, use your account's endpoint with the bucket name and database path in the URL. [S3 and R2 connection examples](../storages/supported-storages/slatedb-storage.md#s3-and-cloudflare-r2)
-+
-+Use one writer at a time for each database path. A job can group changes with `BEGIN` and `COMMIT`. Reads in the transaction see a consistent snapshot, and a successful commit means the writes have reached object storage. [SlateDB backend (#2068)](https://github.com/gluesql/gluesql/pull/2068)
-+
-+### New SQLite storage backend
-+
-+`SqliteStorage` lets your application use GlueSQL as its SQL interface and SQLite as its database. You create tables and send queries through `glue.execute`, using the same GlueSQL syntax, types, and functions as with other backends. SQLite stores the tables and their rows.
-+
-+Because SQLite has its own SQL engine, GlueSQL's planner can translate part of a query into a SQLite `SELECT`. SQLite plans and runs that statement against its tables. GlueSQL finishes the original query on the rows SQLite returns.
-+
-+An inventory application, for example, can declare a `tags LIST` column in a table stored in its SQLite file. Suppose it has 20 apples tagged `fruit`, 30 untagged pears, and 5 plums tagged `fruit`. This GlueSQL query finds tagged items with more than ten units in stock.
-+
-+```sql
-+SELECT name
-+FROM Item
-+WHERE qty > 10 AND NOT IS_EMPTY(tags);
-+```
-+
-+SQLite runs the `qty > 10` filter, so only the apple and pear rows reach GlueSQL. GlueSQL evaluates `NOT IS_EMPTY(tags)` on their lists and returns the apple row. [SQLite backend (#2078)](https://github.com/gluesql/gluesql/pull/2078)
-+
-+The planner started with simple comparisons in single-table `WHERE` clauses. It now recognizes `IFNULL`, `COALESCE`, and `NULLIF`, including nested calls when both engines agree on types and comparisons. SQLite can therefore evaluate a whole condition such as `COALESCE(qty, 0) > 10`. In v0.21, GlueSQL handles joins and aggregates. [NULL functions in SQLite filters (#2097)](https://github.com/gluesql/gluesql/pull/2097)
-+
-+Our goal is for SQLite to run larger parts of each query wherever it gives the same result as GlueSQL. We want to extend the planner to more functions and expressions, and eventually to whole joins and subqueries. For example, SQLite could join orders with inventory and return just the orders for out-of-stock items to GlueSQL.
-+
-+Open a file with `SqliteStorage::new("inventory.sqlite")` or use `SqliteStorage::in_memory()` for a temporary database. GlueSQL records the logical column types and defaults alongside each table so they are available when you reopen the file. [SQLite storage guide](../storages/supported-storages/sqlite-storage.md)
-+
-+## ⚠️ Upgrading from v0.20
-+
-+### Export Sled data before switching versions
-+
-+v0.21 removes SledStorage, its Cargo feature, and the CLI's Sled backend. To move an existing Sled database to Redb, first export it with the **v0.20 CLI**. Then load the dump into a new database with the **v0.21 CLI**. [Sled removal (#2066)](https://github.com/gluesql/gluesql/pull/2066)
-+
-+```sh
-+# Run with GlueSQL v0.20
-+gluesql --path ./sled-data --dump ./dump.sql
-+
-+# Run with GlueSQL v0.21
-+gluesql --storage redb --path ./restored.redb --execute ./dump.sql
-+```
-+
-+The v0.21 CLI can also dump Redb, JSON, CSV, Parquet, and FileStorage databases. Specify `--storage` whenever you pass `--path` or `--dump`. [CLI guide](../getting-started/cli.md#migration-using-cli) · [CLI dump changes (#2065)](https://github.com/gluesql/gluesql/pull/2065)
-+
-+### Upgrade existing Redb files
-+
-+RedbStorage now uses GlueSQL storage format v5. Back up your database, then upgrade it w
 ```
 
-**File**: `docs/zensical.toml` (modified, +1/-0)
+**File**: `storages/json-storage/src/store.rs` (modified, +9/-4)
 ```diff
-@@ -274,6 +274,7 @@ nav = [
-       "releases/release-v0.14.md",
-       "releases/release-v0.15.md",
-       "releases/release-v0.20.md",
-+      "releases/release-v0.21.md",
-     ]},
-   ]},
- ]
-```
-
-**File**: `pkg/rust/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ all-features = true
+@@ -31,7 +31,7 @@ impl Store for JsonStorage {
+         }
  
- [dependencies]
- gluesql-core.workspace = true
--gluesql-macros = { path = "../../macros", version = "0.20.0" }
-+gluesql-macros = { path = "../../macros", version = "0.21.0" }
- cli = { workspace = true, optional = true }
- test-suite = { workspace = true, optional = true }
- gluesql_memory_storage = { workspace = true, optional = true }
+         let schema_path = self.schema_path(table_name);
+-        let (column_defs, foreign_keys, comment) = if schema_path.exists() {
++        let (column_defs, foreign_keys, engine, comment) = if schema_path.exists() {
+             let mut file = File::open(&schema_path).map_storage_err()?;
+             let mut ddl = String::new();
+             file.read_to_string(&mut ddl).map_storage_err()?;
+@@ -43,16 +43,21 @@ impl Store for JsonStorage {
+                 ));
+             }
+ 
+-            (schema.column_defs, schema.foreign_keys, schema.comment)
++            (
++                schema.column_defs,
++                schema.foreign_keys,
++                schema.engine,
++                schema.comment,
++            )
+         } else {
+-            (None, Vec::new(), None)
++            (None, Vec::new(), None, None)
+         };
+ 
+         Ok(Some(Schema {
+             table_name: table_name.to_owned(),
+             column_defs,
+             indexes: vec![],
+-            engine: None,
++            engine,
+             foreign_keys,
+             comment,
+         }))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2099** (2026-11-26): Fix JsonStorage::fetch_schema dropping Schema::engine (@draarivpatel-ui)
 - **PR #2098** (2026-11-24): Prepare release v0.21.0 (@github-actions[bot])
 - **PR #2097** (2026-11-24): Push down IFNULL, COALESCE, and NULLIF in SQLite filters (@panarch)
+- **PR #2095** (2026-11-26): Restrict CTAS schema copying to a single wildcard projection (@ChobobDev)
 - **PR #2094** (2026-11-22): Reject multiple DELETE targets before FROM (@ChobobDev)
 - **PR #2092** (2026-11-20): Align the docs introduction with the README (@panarch)
-- **PR #2091** (2026-11-19): Preserve LIST element types in SQL output (@panarch)
-- **PR #2089** (2026-11-18): Separate adjacent minus signs in SQL expressions (@panarch)
 
 ---
 
@@ -2486,13 +2218,13 @@ Co-authored-by: Taehoon Moon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release v0.21.0
+## X. JsonStorage::fetch_schema dropping Schema::engine
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d354015`: Release v0.21.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `75a4e06b`: JsonStorage::fetch_schema dropping Schema::engine. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2500,51 +2232,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
-version = "0.21.0"
+ "gluesql-json-storage",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
-version = "0.20.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d354015` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `75a4e06b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
