@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T09:52:56.438Z",
+  "last_updated": "2026-11-26T10:08:32.868Z",
   "directives": [
     {
       "id": "CD-001",
@@ -64300,6 +64300,26 @@
       "source_repo": "typewhisper-typewhisper-mac",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7ADDF6--bug-fix-chinese-number-normalization-fo.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-3MUB",
+      "directive_title": "Add the Python 3.15 hardened Docker image",
+      "source_repo": "astral-sh-uv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3MUB-add-the-python-3-15-hardened-docker-image.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-B4C58D",
+      "directive_title": "Add the Python 3.15 hardened Docker image",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-uv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B4C58D-add-the-python-3-15-hardened-docker-imag.md",
       "staged_date": "2026-11-26"
     }
   ]

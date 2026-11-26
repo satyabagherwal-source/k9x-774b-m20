@@ -13326,3 +13326,7 @@
 | `CYCLE-20261126-D5VX` | `2026-11-26T09:47:57.837Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10642` | Yes (`4d93c3df...`) |
 | `CYCLE-20261126-D7ME` | `2026-11-26T09:48:00.086Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10643` | Yes (`d53cf75c...`) |
 | `CYCLE-20261126-JFJY` | `2026-11-26T09:52:50.302Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`0c177cc7...`) |
+| `CYCLE-20261126-38UO` | `2026-11-26T10:08:14.736Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`4fc49f78...`) |
+| `CYCLE-20261126-3AHC` | `2026-11-26T10:08:16.848Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10644` | Yes (`f4ba7dc2...`) |
+| `CYCLE-20261126-3K4D` | `2026-11-26T10:08:29.341Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md` | Yes (`c5a9b3e2...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T10:09:02.041Z` | `arangodb-arangodb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-439581EA` [Domain D] | Yes (`51ade74a...`) |

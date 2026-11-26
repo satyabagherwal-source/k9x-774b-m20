@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `7dcb28d3`  
+> **Source Version**: `6715b60b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T08:13:18.928Z  
+> **Timestamp**: 2026-11-26T10:08:28.773Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T08:13:14.326Z  
+> **Harvest Timestamp**: 2026-11-26T10:08:28.769Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23751** (2026-11-24): **Bugfix/backport 3.12 bts 2480 unload index on collection open failures**
-  *Symptoms*: ### Scope & Purpose  This is a backport PR for the fix in https://github.com/arangodb/arangodb/pull/23719  - [X] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [X] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*  #### Related Information  *(Please reference tickets / specification / other PRs etc)*  - [ ] Docs PR:  - [ ] Enterprise PR: - [X] GitHub issue / Jira ticket: https://arangodb.atlassian.net/browse/BTS-2480 - [ ] Design document:  
+- **Issue #23766** (2026-11-25): **[COR-1234] Reject zero-hop variable-length MATCH relationships**
+  *Symptoms*: MATCH variable-length relationships with a lower bound of zero, such as * 0..0 or * 0..2, are now rejected with the error zero-hop variable-length relationships are not supported. Since a zero-hop path contains no edge, MATCH does not define whether it represents one or two vertices or which endpoint projection to retain. Ranges starting at 1 or higher remain unchanged.
 
-- **Issue #23749** (2026-11-24): **[COR-1310] Fix some improper cleanups in aql optimizers**
-  *Symptoms*: ### Scope & Purpose  This PR wants to fix some improper cleanups of variables in aql optimizers. It is related to https://github.com/arangodb/arangodb/pull/23557: allocations inside these optimizer rules can throw, and they don't cleanup leftovers properly.  Fixed two places:  1. `ExecutionNode::cloneDependencies()` Removed the try/catch block and `delete` operation, which was duplicated. So, `clone(plan, true)` (line 690) already have the plan own the copy of the plan, so its dtor will properly delete the copy. `delete c;` in the catch block is a kind of use-after-free.  2. `ExecutionPlan::findVarUsage()` This function updated the counts of ExecutionNodes by walking through the AST. The walk allocates. So, if it throws during the walk, the count table is half built, `_planValid` must be `false` so the dtor of ExecutionPlan skips the counting.  - [x] :hankey: Bugfix
+- **Issue #23765** (2026-11-25): **Split WindowNode.h/WindowNode.cpp and remove references to date library**
+  *Symptoms*: ### Scope & Purpose 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,61 +1662,46 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7dcb28d3` (2026-11-24)
-**Commit Message**: Merge pull request #23749 from arangodb/bug-fix/cor-1310-fix-aql-optimizers
+### Incident Patch 1: `b782d3fa` (2026-11-25)
+**Commit Message**: Docs: Fix version remark for --http.decompressed-request-body-global-memory-limit startup option (#23590)
 
-[COR-1310] Fix some improper cleanups in aql optimizers
+Co-authored-by: Vadim Kondratev <[REDACTED_EMAIL]>
 
-**File**: `arangod/Aql/ExecutionNode/ExecutionNode.cpp` (modified, +2/-7)
+**File**: `CHANGELOG` (modified, +0/-4)
 ```diff
-@@ -689,13 +689,8 @@ void ExecutionNode::cloneDependencies(ExecutionPlan* plan,
-   while (it != _dependencies.end()) {
-     auto c = (*it)->clone(plan, true);
-     TRI_ASSERT(c != nullptr);
--    try {
--      c->_parents.emplace_back(theClone);
--      theClone->_dependencies.emplace_back(c);
--    } catch (...) {
--      delete c;
--      throw;
--    }
-+    c->_parents.emplace_back(theClone);
-+    theClone->_dependencies.emplace_back(c);
-     ++it;
-   }
- }
+@@ -831,10 +831,6 @@
+   reversing a string, and reverses strings containing U+FFFF completely.
+   This fixes issue #23360.
+ 
+-* AQL `REVERSE` keeps characters above U+FFFF, such as emoji, intact when
+-  reversing a string, and reverses strings containing U+FFFF completely.
+-  This fixes issue #23360.
+-
+ * The AQL optimizer uses a sparse index for a branch of an `OR` condition only
+   if that branch itself rules out `null` for the indexed attribute.
+   For example, `FILTER doc.b < 5 AND (doc.b >= 0 OR doc.a == 1)` returns
 ```
 
-**File**: `arangod/Aql/ExecutionPlan.cpp` (modified, +5/-0)
+**File**: `arangod/GeneralServer/GeneralServerOptionsProvider.cpp` (modified, +1/-1)
 ```diff
-@@ -2628,6 +2628,10 @@ void ExecutionPlan::findVarUsage() {
-   if (varUsageComputed()) {
-     return;
-   }
-+  bool const wasValid = _planValid;
-+  // The counts are inconsistent during a walk, so if it throws
-+  // ~ExecutionPlan must skip its count check.
-+  _planValid = false;
- 
-   // reset all counters
-   for (auto& counter : _typeCounts) {
-@@ -2638,6 +2642,7 @@ void ExecutionPlan::findVarUsage() {
-   VarUsageFinder finder(&_varSetBy);
-   root()->walk(finder);
- 
-+  _planValid = wasValid;
-   setVarUsageComputed();
- }
- 
+@@ -133,7 +133,7 @@ request as it arrives on the wire is limited separately.)");
+               &options.decompressedRequestBodyGlobalMemoryLimit),
+           arangodb::options::makeDefaultFlags(
+               arangodb::options::Flags::Dynamic))
+-      .setIntroducedIn(31213)
++      .setIntroducedIn(31214)
+       .setLongDescription(R"(Each compressed request body (gzip, deflate or lz4)
+ reserves its decompressed size from this budget until the request is finished.
+ Requests that would exceed the budget are rejected with HTTP 503 and can be
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23766** (2026-11-25): [COR-1234] Reject zero-hop variable-length MATCH relationships (@bluepal-avanthi-dundigala)
+- **PR #23765** (2026-11-25): Split WindowNode.h/WindowNode.cpp and remove references to date library (@markuspf)
+- **PR #23757** (2026-11-25): [COR-1297] Remove unused "encryption" (@markuspf)
+- **PR #23755** (2026-11-25): [COR-1299] Force server off when TLS is requested but fips is enabled. (@johann-listunov)
 - **PR #23751** (2026-11-24): Bugfix/backport 3.12 bts 2480 unload index on collection open failures (@k0ushal)
 - **PR #23749** (2026-11-24): [COR-1310] Fix some improper cleanups in aql optimizers (@knakatasf)
-- **PR #23747** (2026-11-24): Sync stale node_modules/.package-lock.json and exclude it from packages (@KVS85)
-- **PR #23746** (2026-11-24): [3.12] Update node modules @xmldom/xmldom to 0.8.15 and patch minimatch 10.25 with adjusted waiver (@KVS85)
-- **PR #23740** (2026-11-24): [3.11.14] Update node modules: @xmldom/xmldom to 0.8.15, ajv, cross-spawn, flatted and tmp (eslint); Alpine 3.24 Docker base (@KVS85)
-- **PR #23739** (2026-11-24): Rewrite datetime.cpp to use std::chrono (@markuspf)
 
 ---
 
@@ -1730,41 +1715,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Empirical Invariant Guard in ExecutionNode.cpp
-
-**RULE**:
-When implementing operations in `arangod/Aql/ExecutionNode/ExecutionNode.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `7dcb28d3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/Aql/ExecutionNode/ExecutionNode.cpp`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```c++
-// Verified production-grade fix pattern:
-    c->_parents.emplace_back(theClone);
-    theClone->_dependencies.emplace_back(c);
-```
-
-**NEGATIVE CONSTRAINT**:
-```c++
-// Induced defect failure mode:
-    try {
-      c->_parents.emplace_back(theClone);
-      theClone->_dependencies.emplace_back(c);
-    } catch (...) {
-      delete c;
-      throw;
-    }
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7dcb28d3` are properly handled with clean fallback behavior.

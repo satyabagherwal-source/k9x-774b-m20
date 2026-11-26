@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-8922",
-    "timestamp": "2026-11-24T19:00:40.538Z",
-    "repository": "vcaesar/riot",
-    "learningId": "learn-github-vcaesar-riot",
-    "contentHash": "36fc1d2e7ef43405cd58ebe4e1ca31a5c1aa8b73f5c6a6be602edf8eac6639ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-K12L",
-    "timestamp": "2026-11-24T19:09:50.061Z",
-    "repository": "axios/axios",
-    "learningId": "learn-github-axios-axios",
-    "contentHash": "793d480012c671dc5e7e7f99a42f57170d60735631693608b54d9544a31bd0eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-K4QB",
-    "timestamp": "2026-11-24T19:09:54.803Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "99d9e26f6f19651ca8f4a2b220650339c3893261e160cbb39bb527ecb3c1e93e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-K6RB",
     "timestamp": "2026-11-24T19:09:57.431Z",
     "repository": "trufflesecurity/trufflehog",
@@ -7490,6 +7445,51 @@
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
     "contentHash": "0c177cc789d267f459fd34251752ed2d5334477bcd5a6e9d842d8ad2d6da5727",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-38UO",
+    "timestamp": "2026-11-26T10:08:14.736Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "4fc49f781f8cabc56df03e9c6d9f46e8a03858609521f4ee241984cd8d6ba801",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3AHC",
+    "timestamp": "2026-11-26T10:08:16.848Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "f4ba7dc2d6ff34b2bcf68b214dd131d75e6f51efaf071ade1b729ab20fda466c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3K4D",
+    "timestamp": "2026-11-26T10:08:29.341Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "c5a9b3e29e1e5da18c889ec2438eed5b8502fea001f8799876a86198b1a5363c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

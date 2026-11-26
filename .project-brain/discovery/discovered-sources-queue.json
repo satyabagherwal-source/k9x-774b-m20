@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T09:52:56.081Z",
+  "updated_at": "2026-11-26T10:08:32.602Z",
   "stats": {
-    "total_discovered": 9725,
-    "approved_pending_harvest": 9225,
+    "total_discovered": 9726,
+    "approved_pending_harvest": 9226,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9212,
+      "COMMUNITY_AND_EXPERT": 9213,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210477,6 +210477,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
         "fileName": "typewhisper-typewhisper-mac-learnings.md"
+      }
+    },
+    "SRC-23F278872042": {
+      "id": "SRC-23F278872042",
+      "url": "https://github.com/docker-hardened-images/catalog/blob/main/image/python/debian-13/3.10.yaml",
+      "title": "https://github.com/docker-hardened-images/catalog/blob/main/image/python/debian-13/3.10.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T10:08:32.602Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
       }
     }
   }

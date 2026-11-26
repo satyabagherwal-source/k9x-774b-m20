@@ -13359,3 +13359,7 @@ Every entry in this ledger must capture:
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `31093800` | Multi-dimensional audit evidence | 2026-11-26T09:47:57.842Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `1a8626d5` | Multi-dimensional audit evidence | 2026-11-26T09:48:00.091Z |
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-26T09:52:50.308Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-26T10:08:14.740Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `9bf01bef` | Multi-dimensional audit evidence | 2026-11-26T10:08:16.852Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `6715b60b` | Multi-dimensional audit evidence | 2026-11-26T10:08:29.346Z |
+| `learn-dom-d-439581ea` | `project://arangodb-arangodb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md` | 2026-11-26T10:09:02.041Z |

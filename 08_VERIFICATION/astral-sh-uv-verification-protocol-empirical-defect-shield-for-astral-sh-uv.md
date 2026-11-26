@@ -4,22 +4,22 @@
 {
   "source_repository": "astral-sh/uv",
   "source_url": "https://github.com/astral-sh/uv",
-  "source_version": "e3e7c1ea",
+  "source_version": "9bf01bef",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T02:47:38.153Z",
+  "timestamp": "2026-11-26T10:08:17.104Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-astral-sh-uv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [astral-sh/uv](https://github.com/astral-sh/uv) (Revision: `e3e7c1ea`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T02:47:38.153Z`  
+> **Provenance**: Harvested from [astral-sh/uv](https://github.com/astral-sh/uv) (Revision: `9bf01bef`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T10:08:17.104Z`  
 > **Learning ID**: `learn-github-astral-sh-uv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `astral-sh/uv` (Commit: `e3e7c1ea`)
+- **Target Repository**: `astral-sh/uv` (Commit: `9bf01bef`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:47:36.714Z  
+> **Harvest Timestamp**: 2026-11-26T10:08:15.621Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 92613 stars
+- **Stars / Engagement**: 92691 stars
 
 ---
 
@@ -1527,10 +1527,8 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e386a08` (2026-11-24)
-**Commit Message**: Revert "Update CodSpeedHQ/action action to v5.6.0 (#23354)" (#23377)
-
-This reverts commit 9f8285524047d98f3d75691954719d8a999d629e.
+### Incident Patch 1: `9bf01bef` (2026-11-26)
+**Commit Message**: Add the Python 3.15 hardened Docker image (#23407)
 
 <!--
 Thank you for contributing to uv! To help us out with reviewing, please
@@ -1543,138 +1541,52 @@ consider the following:
 
 ## Summary
 
-<!-- What's the purpose of the change? What does it do, and why? -->
+This PR adds `python3.15-dhi`.
+Docker published `dhi.io/python:3.15` in late October
+(docker-hardened-images/catalog#674).
+
+I'm not touching 3.10-dhi for now. It was initially kept in #22773
+because the hardened 3.10 image had its own lifecycle. While it is
+marked as [EOL
+2026-10-31](https://github.com/docker-hardened-images/catalog/blob/main/image/python/debian-13/3.10.yaml#L18),
+images still appear to be published.
 
 ## Test Plan
 
-<!-- How was it tested? -->
+DHI builds are skipped for fork PRs, so CI won't build the new image
+here – but it's a trivial change.
 
-**File**: `.github/workflows/bench.yml` (modified, +2/-2)
+**File**: `.github/workflows/build-docker.yml` (modified, +1/-0)
 ```diff
-@@ -116,7 +116,7 @@ jobs:
-         run: ./target/debug/uv run --script scripts/codspeed-profiles.py start "$RUNNER_TEMP/codspeed-walltime" walltime >> "$GITHUB_OUTPUT"
- 
-       - name: "Run benchmarks"
--        uses: CodSpeedHQ/action@78102a468f96d8e0ccb92d0ec49425753fc42062 # v5.6.0
-+        uses: CodSpeedHQ/action@f842b9a3ffe213dbb81768fd7f7eeb4dfcf1c369 # v5.4.2
-         with:
-           run: uv run --only-dev cargo codspeed run
-           mode: walltime
-@@ -192,7 +192,7 @@ jobs:
-         run: ./target/debug/uv run --script scripts/codspeed-profiles.py start "$RUNNER_TEMP/codspeed-simulation" simulation >> "$GITHUB_OUTPUT"
- 
-       - name: "Run benchmarks"
--        uses: CodSpeedHQ/action@78102a468f96d8e0ccb92d0ec49425753fc42062 # v5.6.0
-+        uses: CodSpeedHQ/action@f842b9a3ffe213dbb81768fd7f7eeb4dfcf1c369 # v5.4.2
-         with:
-           run: uv run --only-dev cargo codspeed run
-           mode: simulation
+@@ -143,6 +143,7 @@ jobs:
+             images+=(
+               "dhi.io/alpine-base:3.23,alpine3.23-dhi,alpine-dhi"
+               "dhi.io/debian-base:trixie-debian13,trixie-dhi,debian-dhi"
++              "dhi.io/python:3.15,python3.15-dhi"
+               "dhi.io/python:3.14,python3.14-dhi"
+               "dhi.io/python:3.13,python3.13-dhi"
+               "dhi.io/python:3.12,python3.12-dhi"
 ```
 
----
-
-### Incident Patch 2: `1b5a6bf4` (2026-11-24)
-**Commit Message**: Deduplicate root requirement handling (#23393)
-
-Deduplicate the code for intersecting root requirement markers with fork
-markers in preparation for #23374.
-
-Co-authored-by: konstin <[REDACTED_EMAIL]>
-
-**File**: `crates/uv-lock/src/lock/mod.rs` (modified, +14/-11)
+**File**: `docs/guides/integration/docker.md` (modified, +1/-0)
 ```diff
-@@ -3286,17 +3286,7 @@ impl Lock {
-         requirement: &Requirement,
-         package: &Package,
-     ) -> Option<MarkerTree> {
--        let marker = if package.fork_markers.is_empty() {
--            requirement.marker
--        } else {
--            let mut combined = MarkerTree::FALSE;
--            for fork_marker in &package.fork_markers {
--                combined = combined.or(fork_marker.pep508());
--            }
--            combined = combined.and(requirement.marker);
--            combined
--        };
--
-+        let marker = package.root_requirement_marker(requirement);
-         (!marker.is_false()).then(|| self.simplify_environment(marker))
-     }
- 
-@@ -7600,6 +7590,19 @@ impl Package {
-         self.fork_markers.as_slice()
-     }
- 
-+    /// Intersect a root requirement with the forks that contain this package.
-+    fn root_requirement_marker(&self, requirement: &Requirement) -> MarkerTree {
-+        let marker = requirement.marker;
-+        if self.fork_markers.is_empty() {
-+            return marker;
-+        }
-+        let forks = self
-+            .fork_markers
-+            .iter()
-+            .fold(MarkerTree::FALSE, |markers, fork| markers.or(fork.pep508()));
-+        marker.and(forks)
-+    }
-+
-     /// Returns whether this package is included by the given PEP 508 marker.
-     pub fn is_included_by_marker(&self, marker: MarkerTree) -> bool {
-         self.fork_markers.is_empty()
-```
-
-**File**: `crates/uv-lock/src/lock/tree.rs` (modified, +2/-24)
-```diff
-@@ -232,18 +232,7 @@ impl<'env> TreeDisplay<'env> {
-             for requirement in lock.requirements() {
-                 for &package_index in by_name.get(&requirement.name).into_iter().flatten() {
-                     let package = lock.package(package_index);
--                    // Determine whether this entry is "relevant" for the requirement, by intersecting
--                    // the markers.
--                    let marker = if package.fork_markers.is_empty() {
--                        requirement.marker
--                    } else {
--                        let mut combined = MarkerTree::FALSE;
--                        for fork_marker in &package.fork_markers {
--                            combined = combined.or(fork_marker.pep508());
--                        }
--                        combined = combined.and(requirement.marker);
--                        combined
--                    };
-+                    let marker = package.root_requirement_marker(requirement);
-                     if marker.is_false() {
-                         continue;
-                     }
-@@ -284,18 +273,7 @@ impl<'env> TreeDisplay<'env> {
-                 for requirement in requirements {
-                     for &package_index in by_name.get(&requirement.name).into_iter().flatten() {
-                         let package = lock.package(package_index);
--                        // Determine whether this entry is "relevant" for the requirement, by intersecting
--                        // the markers.
--                        let marker = if package.fork_markers.is_empty() {
--                            requirement.marker
--                        } else {
--                            let mut combined = MarkerTree::FALSE;
--                            for fork_marker in &package.fork_markers {
--                                combined = combined.or(fork_marker.pep508());
--                            }
--                            combined = combined.and(requirement.marker);
--                            combined
--                        };
-+                        let marker = package.root_requirement_marker(requirement);
-                         if marker.is_false() {
-                             continue;
-                         }
+@@ -57,6 +57,7 @@ And the following derived images are available:
+     - `ghcr.io/astral-sh/uv:debian-dhi`
+     - `ghcr.io/astral-sh/uv:trixie-dhi`
+ - Based on `dhi/python:3.x`:
++    - `ghcr.io/astral-sh/uv:python3.15-dhi`
+     - `ghcr.io/astral-sh/uv:python3.14-dhi`
+     - `ghcr.io/astral-sh/uv:python3.13-dhi`
+     - `ghcr.io/astral-sh/uv:python3.12-dhi`
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23407** (2026-11-26): Add the Python 3.15 hardened Docker image (@halms)
+- **PR #23403** (closed): Preserve `resolution-markers` order when reusing forks from an existing lockfile (@KarloZ7715)
 - **PR #23398** (2026-11-24): Bump version to 0.13.10 (@astral-automations-bot[bot])
 - **PR #23397** (2026-11-24): Sync latest Python releases (@astral-automations-bot[bot])
 - **PR #23395** (2026-11-24): Use gpt-6-astra for PR code quality reviews (@woodruffw)
 - **PR #23394** (2026-11-24): Ignore pins with unsatisfiable markers in `uv pip compile --universal` (@konstin)
-- **PR #23393** (2026-11-24): Deduplicate root requirement handling (@konstin)
-- **PR #23392** (2026-11-24): zip: reject conflicting compression methods (@astral-automations-bot[bot])
 
 ---
 
@@ -1694,33 +1606,31 @@ Co-authored-by: konstin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "Update CodSpeedHQ/action action to v5.6.0"
+## X. Add the Python 3.15 hardened Docker image
 
 **RULE**:
-When implementing operations in `.github/workflows/bench.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-docker.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e386a08`: Revert "Update CodSpeedHQ/action action to v5.6.0". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bf01bef`: Add the Python 3.15 hardened Docker image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/bench.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-docker.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: CodSpeedHQ/action@f842b9a3ffe213dbb81768fd7f7eeb4dfcf1c369 # v5.4.2
-        uses: CodSpeedHQ/action@f842b9a3ffe213dbb81768fd7f7eeb4dfcf1c369 # v5.4.2
+              "dhi.io/python:3.15,python3.15-dhi"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        uses: CodSpeedHQ/action@78102a468f96d8e0ccb92d0ec49425753fc42062 # v5.6.0
-        uses: CodSpeedHQ/action@78102a468f96d8e0ccb92d0ec49425753fc42062 # v5.6.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e386a08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bf01bef` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

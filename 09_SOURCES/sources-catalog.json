@@ -165,8 +165,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "1b13fd44792f683ec141973f3976844a10793b61324f608b4385a53c44674d24",
-    "lastHarvestedAt": "2026-11-22T17:14:08.480Z",
+    "contentHash": "4fc49f781f8cabc56df03e9c6d9f46e8a03858609521f4ee241984cd8d6ba801",
+    "lastHarvestedAt": "2026-11-26T10:08:14.740Z",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "7dcb28d3",
+    "sourceVersion": "6715b60b",
     "license": "NOASSERTION",
-    "contentHash": "bfe49f5538b93d23392942911fbc4332a90ba49f68da92348a0c2c3accc10aaa",
-    "lastHarvestedAt": "2026-11-25T08:13:20.336Z",
+    "contentHash": "c5a9b3e29e1e5da18c889ec2438eed5b8502fea001f8799876a86198b1a5363c",
+    "lastHarvestedAt": "2026-11-26T10:08:29.346Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "e3e7c1ea",
+    "sourceVersion": "9bf01bef",
     "license": "Apache-2.0",
-    "contentHash": "1b9d5cd5bd9c515fc17db03cb1e20d762c18eaee2423406dbcc57846f3fb6494",
-    "lastHarvestedAt": "2026-11-25T02:47:37.921Z",
+    "contentHash": "f4ba7dc2d6ff34b2bcf68b214dd131d75e6f51efaf071ade1b729ab20fda466c",
+    "lastHarvestedAt": "2026-11-26T10:08:16.852Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

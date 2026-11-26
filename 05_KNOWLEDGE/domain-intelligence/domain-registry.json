@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T09:52:56.708Z",
-  "total_records": 2730,
+  "last_updated": "2026-11-26T10:09:02.454Z",
+  "total_records": 2731,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1020,
+      "total": 1021,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1092,7 +1092,8 @@
         "DOM-D-D64D33E0",
         "domain_intelligence-research-knowledge-intelligence-sand-ai-magi-2-preview-core-invariants",
         "DOM-D-B8D29B23",
-        "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria",
+        "DOM-D-439581EA"
       ]
     },
     "E": {
@@ -16883,8 +16884,8 @@
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "repository": "arangodb/arangodb",
-      "content_hash": "d22f0f6e73a1cf9823e3cc2d39ec4d3de29c0160db20a7dbe05f2fd6e9034303",
-      "created_at": "2026-11-25T08:13:20.904Z"
+      "content_hash": "3030871bed62b572a5344d3104f623a6915948623c2baf1fcabcf452f2cce538",
+      "created_at": "2026-11-26T10:08:29.586Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -16952,8 +16953,8 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-learnings-technical-construction-intelligence-arangodb-arangod.md",
       "repository": "arangodb-arangodb-learnings",
-      "content_hash": "73d5000dd71875b031646b80ac06e3cf18b560bd622053ec38c5e384d59abe47",
-      "created_at": "2026-11-25T08:13:30.884Z"
+      "content_hash": "4d00010e02ad16ca3c9459cb43da49d975c06953102d5596e90d53d7a1eff75b",
+      "created_at": "2026-11-26T10:09:02.454Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants",
@@ -17507,8 +17508,8 @@
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "repository": "astral-sh/uv",
-      "content_hash": "44eedc7d1c0a700f74caeb3467383999703662f60aa0c791d83d60a0a7d510bf",
-      "created_at": "2026-11-25T02:47:38.337Z"
+      "content_hash": "27fa3554e07be15569e8fd851cb2efef7d64ed79f5c9bb5da5960f43b1c8252e",
+      "created_at": "2026-11-26T10:08:17.298Z"
     },
     "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
@@ -17534,8 +17535,8 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-learnings-architecture-intelligence-astral-sh-uv-learnings-core-inv.md",
       "repository": "astral-sh-uv-learnings",
-      "content_hash": "325e497e642462a0682a49673aa96e40d3fb5b97b323b81bc07d7611d326d2cd",
-      "created_at": "2026-11-25T02:47:54.237Z"
+      "content_hash": "70ee19f1652d746bddeefc255a11419f71b8d15d19ce24573e48396d3e4e0caa",
+      "created_at": "2026-11-26T10:08:33.060Z"
     },
     "DOM-D-CCF89F8A": {
       "record_id": "DOM-D-CCF89F8A",
@@ -29566,8 +29567,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-small-en-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-small-en-v1-5-research-knowledge-intelligence-baai-bge-small-en-v1-5.md",
       "repository": "BAAI/bge-small-en-v1.5",
-      "content_hash": "173db57ddbc790b16fa4b3aa948052e924645739da3972e0197e2d933eb9766d",
-      "created_at": "2026-11-22T17:14:08.750Z"
+      "content_hash": "8e90e573aad0ed7a9e569e4ba026a8a7b8bc0c0660cc523f7ba5c3152ba916d0",
+      "created_at": "2026-11-26T10:08:14.980Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria",
@@ -29575,8 +29576,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-small-en-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-small-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-.md",
       "repository": "hf-baai-bge-small-en-v1.5-learnings",
-      "content_hash": "895aa13c7ac447fadf9cab5c05384e79bf94273523d8c0f920e941c0202066b7",
-      "created_at": "2026-11-22T17:14:13.047Z"
+      "content_hash": "7f9cc0040a299c3e288c9ea75e5ff4858161f82603da1443e0689863e102a4ff",
+      "created_at": "2026-11-26T10:08:33.697Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants",
@@ -46115,6 +46116,48 @@
       "repository": "oven-sh-bun-learnings",
       "content_hash": "8ec9220c61b66b0079fd312f69b91b4aeeb8bd839010c31689b198c2ad795a86",
       "created_at": "2026-11-26T09:52:54.572Z"
+    },
+    "DOM-D-439581EA": {
+      "record_id": "DOM-D-439581EA",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): arangodb/arangodb",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  \n> **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  \n> **Source Version**: `6715b60b`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-structural-",
+      "content_hash": "51ade74a8dc1ae31621fa8195b1c9de20bae32cda55b81f13f15d9f1da247f0b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  \n> **Source**: github ([https://github.com/arangodb -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  \n> **Source**: github ([https://github.com/arangodb",
+      "provenance": {
+        "source_uri": "project://arangodb-arangodb/arangodb-arangodb-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T10:08:33.889Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (arangodb-arangodb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of arangodb-arangodb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T10:09:02.008Z"
     }
   }
 }
