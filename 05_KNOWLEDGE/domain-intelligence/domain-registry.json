@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T18:59:08.464Z",
+  "last_updated": "2026-11-26T19:07:55.971Z",
   "total_records": 2769,
   "domains": {
     "A": {
@@ -12670,8 +12670,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-schnell Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-schnell-research-knowledge-intelligence-black-forest.md",
       "repository": "black-forest-labs/FLUX.1-schnell",
-      "content_hash": "e53b06183d623ea1b949f6a35b86b696e18d858389f536c0bb8cf8dfaa9abd71",
-      "created_at": "2026-11-18T19:44:20.168Z"
+      "content_hash": "026003ca99724f7c6f6833173cdc67286a7ec54c144386bdb563ae47dbdd7ac1",
+      "created_at": "2026-11-26T19:07:35.409Z"
     },
     "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants",
@@ -12730,8 +12730,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-schnell-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-schnell-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
-      "content_hash": "a84be14e7e5797771497539429644c58a74895dc1421a35f6fed629604bd8e35",
-      "created_at": "2026-11-18T19:44:32.067Z"
+      "content_hash": "60ff68a661319f42caf549d2efe991f3f1a11c5242ed2786f2050ea849b38986",
+      "created_at": "2026-11-26T19:07:54.411Z"
     },
     "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants",
@@ -21263,8 +21263,8 @@
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "bfc899a4976983ce502524e407f96d50391ecfb770b3db0c34d192669cbf3516",
-      "created_at": "2026-11-24T23:14:02.477Z"
+      "content_hash": "56c7809fc53b1a671e332663dcc348ffc828eb1191ffe5f53ac545e3b3468f87",
+      "created_at": "2026-11-26T19:07:49.539Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant",
@@ -21324,8 +21324,8 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-learnings-technical-construction-intelligence-lancedb-lancedb-le.md",
       "repository": "lancedb-lancedb-learnings",
-      "content_hash": "73c5277bbac71d89bf69c26ab8a6e6cbf6ee45f6a1c023480835983b12c4d743",
-      "created_at": "2026-11-24T23:14:08.382Z"
+      "content_hash": "bb74e6d94896c3c30ad0e65d29d0adf4891c4daeae1c1a2f78fb77ac47010d70",
+      "created_at": "2026-11-26T19:07:55.971Z"
     },
     "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants",
@@ -26044,8 +26044,8 @@
       "title": "Technical Construction Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gitoxidelabs-gitoxide-technical-construction-intelligence-gitoxidelabs-gitoxide-.md",
       "repository": "GitoxideLabs/gitoxide",
-      "content_hash": "0441eed9e7651c93cbde66a5eec32ca96e621767c5224826e8062f12a1f4c303",
-      "created_at": "2026-11-17T02:51:00.239Z"
+      "content_hash": "673b8575a95466f54c866af1bc34f8ee6715a8c20afeafc3acfe14ba0fc504d4",
+      "created_at": "2026-11-26T19:07:38.094Z"
     },
     "DOM-J-ABC3C562": {
       "record_id": "DOM-J-ABC3C562",
@@ -26087,8 +26087,8 @@
       "title": "Technical Construction Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gitoxidelabs-gitoxide-learnings-technical-construction-intelligence-gitoxidelabs.md",
       "repository": "gitoxidelabs-gitoxide-learnings",
-      "content_hash": "2b827b302fefa55fd12bf3b0e91a501c3290feddfa61083aa822ca3e7b5163de",
-      "created_at": "2026-11-17T02:51:31.793Z"
+      "content_hash": "567ec9f8ce3b98f9c6f6124897574c6dee7504325d2df615bdd858338132bbd3",
+      "created_at": "2026-11-26T19:07:53.674Z"
     },
     "domain_intelligence-technical-construction-intelligence-kumahq-kuma-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kumahq-kuma-core-invariants",

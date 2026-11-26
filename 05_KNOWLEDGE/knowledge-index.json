@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T18:59:08.648Z",
+  "last_updated": "2026-11-26T19:07:56.196Z",
   "total_verified_learnings": 9132,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26136,
+  "total_items": 26142,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217351,8 +217351,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "7c3d68e9",
-      "content_hash": "754141eb2afd72133b3bd01835d8698b8dee828aad27a2365c6939a3bfeda731",
+      "source_version": "1c011801",
+      "content_hash": "f60a5d370f63a03f06714579537ae80084aec6a00b9c53b135a5c0057f07512b",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -217415,6 +217415,11 @@
           "number": 10570,
           "title": "preserve blob snapshot identity across credential refresh",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10762,
+          "title": "hand off Pages artifact to a separate deploy job",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217422,7 +217427,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T00:34:58.001Z",
+      "verified_at": "2026-11-26T19:07:48.699Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217476,10 +217481,10 @@
       "relative_path": "08_VERIFICATION/lancedb-lancedb-verification-protocol-empirical-defect-shield-for-lancedb-lanced.md",
       "title": "Verification Protocol: Empirical Defect Shield for lancedb/lancedb",
       "repository": "lancedb/lancedb",
-      "source_version": "7c3d68e9",
-      "content_hash": "8dbb3d2817609bbdbad5034ebd5d8c78a27cf1972006cc92ed2015d9ee120d6c",
+      "source_version": "1c011801",
+      "content_hash": "e19476d994bc884f979322e32d5be7562f1465a4541ed98ec7b2a488e52f1e16",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:34:58.789Z"
+      "persisted_at": "2026-11-26T19:07:49.800Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -221461,7 +221466,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "f20faf0ade090f30cc522c566c352573001df2f1c3e85a7762cf8db937db6584",
+      "content_hash": "eb0eceee45dab69903d845f55f44f4885bd01a81780d8938f60d539f8054aff8",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -221486,7 +221491,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T05:27:26.352Z",
+      "verified_at": "2026-11-26T19:07:34.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221503,9 +221508,9 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-schnell Core Invariants",
       "repository": "black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "e53b06183d623ea1b949f6a35b86b696e18d858389f536c0bb8cf8dfaa9abd71",
+      "content_hash": "026003ca99724f7c6f6833173cdc67286a7ec54c144386bdb563ae47dbdd7ac1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:44:20.168Z"
+      "persisted_at": "2026-11-26T19:07:35.409Z"
     },
     "learn-github-flux-iac-tofu-controller": {
       "learning_id": "learn-github-flux-iac-tofu-controller",
@@ -221618,9 +221623,9 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-schnell-learnings Core Invariants",
       "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
       "source_version": "HEAD",
-      "content_hash": "a84be14e7e5797771497539429644c58a74895dc1421a35f6fed629604bd8e35",
+      "content_hash": "60ff68a661319f42caf549d2efe991f3f1a11c5242ed2786f2050ea849b38986",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:44:32.067Z"
+      "persisted_at": "2026-11-26T19:07:54.411Z"
     },
     "candidate_directive-runner-set-controller-instance-id-in-environment": {
       "item_id": "candidate_directive-runner-set-controller-instance-id-in-environment",
@@ -248539,8 +248544,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "a825f86d",
-      "content_hash": "3b812d0dd0f60aad7b3e6b29fa3f0b73dbe2b6224bf8cffdfe1fc17e4fbea83f",
+      "source_version": "2bcb31df",
+      "content_hash": "c19ef42d7c3f92f9bcc569c7424c2919576778d0d39fdc851b34b41c432a3eb3",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -248608,6 +248613,11 @@
           "number": 10520,
           "title": "confine Git discovery to scripted fixtures",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10761,
+          "title": "make histogram diffs match `git diff --histogram`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -248615,7 +248625,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T12:09:03.363Z",
+      "verified_at": "2026-11-26T19:07:37.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248669,10 +248679,10 @@
       "relative_path": "08_VERIFICATION/gitoxidelabs-gitoxide-verification-protocol-empirical-defect-shield-for-gitoxide.md",
       "title": "Verification Protocol: Empirical Defect Shield for GitoxideLabs/gitoxide",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "a825f86d",
-      "content_hash": "b799445f6f63178bd491cf2b58d0b2c76a6660a46e03c413d53a3b0e1a77f247",
+      "source_version": "2bcb31df",
+      "content_hash": "6cbda3ce153cd7aa95ded7d989f691b23424f301f3f60f5b51d9208a1564ccb7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:09:04.240Z"
+      "persisted_at": "2026-11-26T19:07:38.319Z"
     },
     "learn-github-melnixdev-seo-crawl-audit": {
       "learning_id": "learn-github-melnixdev-seo-crawl-audit",
@@ -248856,9 +248866,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gitoxidelabs-gitoxide-learnings",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "a48b176ba917415d8fbad6cf9fc904fa1b805be5e9f8823f9753af4a236a32ea",
+      "content_hash": "e03e4ffcdbba2243f496123fe27e1f08785b2c028b27ef6f1d325ccc40efd2d2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:09:19.676Z"
+      "persisted_at": "2026-11-26T19:07:53.903Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv": {
       "item_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv",
@@ -248943,10 +248953,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "repository": "lancedb/lancedb",
-      "source_version": "fc6dfca1",
-      "content_hash": "bfc899a4976983ce502524e407f96d50391ecfb770b3db0c34d192669cbf3516",
+      "source_version": "1c011801",
+      "content_hash": "56c7809fc53b1a671e332663dcc348ffc828eb1191ffe5f53ac545e3b3468f87",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:14:02.477Z"
+      "persisted_at": "2026-11-26T19:07:49.539Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb",
@@ -249152,9 +249162,9 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "73c5277bbac71d89bf69c26ab8a6e6cbf6ee45f6a1c023480835983b12c4d743",
+      "content_hash": "bb74e6d94896c3c30ad0e65d29d0adf4891c4daeae1c1a2f78fb77ac47010d70",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:14:08.382Z"
+      "persisted_at": "2026-11-26T19:07:55.971Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings",
@@ -249176,9 +249186,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lancedb-lancedb-learnings",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "71e288cbd94d5c0d06a18c8d7551a48a9c9124dca8281cf965cfe760f0d19776",
+      "content_hash": "2c494a7b05893a05de04bbac75aeeed10af7ec6f0245d2dd7acf1a3e6ce9a498",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:35:03.653Z"
+      "persisted_at": "2026-11-26T19:07:56.196Z"
     },
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
@@ -269478,10 +269488,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gitoxidelabs-gitoxide-technical-construction-intelligence-gitoxidelabs-gitoxide-.md",
       "title": "Technical Construction Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "ab7c5dc0",
-      "content_hash": "0441eed9e7651c93cbde66a5eec32ca96e621767c5224826e8062f12a1f4c303",
+      "source_version": "2bcb31df",
+      "content_hash": "673b8575a95466f54c866af1bc34f8ee6715a8c20afeafc3acfe14ba0fc504d4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:51:00.239Z"
+      "persisted_at": "2026-11-26T19:07:38.094Z"
     },
     "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria",
@@ -269491,9 +269501,9 @@
       "title": "Technical Construction Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "2b827b302fefa55fd12bf3b0e91a501c3290feddfa61083aa822ca3e7b5163de",
+      "content_hash": "567ec9f8ce3b98f9c6f6124897574c6dee7504325d2df615bdd858338132bbd3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:51:31.793Z"
+      "persisted_at": "2026-11-26T19:07:53.674Z"
     },
     "rule-8842": {
       "learning_id": "rule-8842",
@@ -358351,6 +358361,82 @@
       "content_hash": "7c976132ab132d5843d7561507f3ace1cda837640a50720edc546fc8a689b996",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T18:59:08.275Z"
+    },
+    "rule-10761": {
+      "learning_id": "rule-10761",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10761,
+      "title": "make histogram diffs match `git diff --histogram`",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "2bcb31df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T19:07:37.251Z"
+    },
+    "candidate_directive-make-histogram-diffs-match-git-diff-histogram": {
+      "item_id": "candidate_directive-make-histogram-diffs-match-git-diff-histogram",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CWEI-make-histogram-diffs-match-git-diff-histogram.md",
+      "title": "make histogram diffs match `git diff --histogram`",
+      "repository": "GitoxideLabs/gitoxide",
+      "source_version": "2bcb31df",
+      "content_hash": "d9b3eb026e8dec6ff1436356df5c96e2659adba06dfada296b9b0adae33a96a0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T19:07:37.872Z"
+    },
+    "rule-10762": {
+      "learning_id": "rule-10762",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10762,
+      "title": "hand off Pages artifact to a separate deploy job",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "1c011801",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T19:07:48.699Z"
+    },
+    "candidate_directive-hand-off-pages-artifact-to-a-separate-deploy-job": {
+      "item_id": "candidate_directive-hand-off-pages-artifact-to-a-separate-deploy-job",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D58G-hand-off-pages-artifact-to-a-separate-deploy-job.md",
+      "title": "hand off Pages artifact to a separate deploy job",
+      "repository": "lancedb/lancedb",
+      "source_version": "1c011801",
+      "content_hash": "6672a61094adb7e4ad1f0204dd08bae73e859d8c5e510892f5afecdf9d5c778e",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T19:07:49.318Z"
+    },
+    "candidate_directive-gix-imara-diff-make-histogram-diffs-match-git-diff-histogram": {
+      "item_id": "candidate_directive-gix-imara-diff-make-histogram-diffs-match-git-diff-histogram",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D8F3-gix-imara-diff-make-histogram-diffs-match-git-diff-histogram.md",
+      "title": "gix-imara-diff): make histogram diffs match `git diff --histogram`",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "720dd4daadef51aba14b7389dd1b8e12de637348550648904d72b7f3fc209dbb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T19:07:53.446Z"
+    },
+    "candidate_directive-ci-hand-off-pages-artifact-to-a-separate-deploy-job": {
+      "item_id": "candidate_directive-ci-hand-off-pages-artifact-to-a-separate-deploy-job",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DA6C-ci-hand-off-pages-artifact-to-a-separate-deploy-job.md",
+      "title": "ci): hand off Pages artifact to a separate deploy job",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1e5cc44137a70dbef3b105a3f23b5c4a37892a18c2479243d30eb31736d76c83",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T19:07:55.716Z"
     }
   },
   "ai-builder-brain": {

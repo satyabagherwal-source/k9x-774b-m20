@@ -4,24 +4,24 @@
 {
   "source_repository": "lancedb/lancedb",
   "source_url": "https://github.com/lancedb/lancedb",
-  "source_version": "fc6dfca1",
+  "source_version": "1c011801",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T23:14:02.252Z",
+  "timestamp": "2026-11-26T19:07:49.313Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lancedb-lancedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `fc6dfca1`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T23:14:02.252Z`  
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `1c011801`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T19:07:49.313Z`  
 > **Learning ID**: `learn-github-lancedb-lancedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lancedb/lancedb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:14:00.773Z  
+> **Harvest Timestamp**: 2026-11-26T19:07:47.704Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11978 stars
+- **Stars / Engagement**: 11992 stars
 
 ---
 
@@ -1277,11 +1277,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5195** (2026-11-24): **fix(python): skip OpenAI embedding requests when no valid text remains**
-  *Symptoms*: ## Summary  Follows up on #4005, which handled mixed batches in `OpenAIEmbeddings.generate_embeddings`. On `main`, when the input batch is empty (`[]`) or filtering leaves no valid texts (such as `[None, ""]`), `generate_embeddings` still imports the `openai` SDK and calls `embeddings.create(input=[], ...)`.  - Return `[None] * len(texts)` early in `python/python/lancedb/embeddings/openai.py` when no valid texts remain (`[]` for empty input, one `None` per item when all inputs are filtered), before importing the `openai` SDK or sending a request. - Add regression tests in `python/python/tests/test_embeddings.py` covering empty batches, all-filtered batches, and native-backed `table.add(..., on_bad_vectors="null")` verifying rows are kept with null vectors and no OpenAI request is made.  ## Attribution  Successor to #3152. The early return and nullable ingestion test were originally contributed by @saudademjj in #3152.  ## Verification  - 3 new regression tests failed before the fix (observing `embeddings.create(input=[], ...)`) and passed after. - Related embedding test suite: `148 passed, 1 skipped, 9 deselected` (mocked client only; no live OpenAI API calls). - Ruff check and format checks are clean for the changed `python/` tree (scoped to `python/` only).  Co-authored-by: saudademjj <128795969+saudademjj@users.noreply.github.com> 
+- **Issue #5236** (2026-11-26): **fix(ci): hand off Pages artifact to a separate deploy job**
+  *Symptoms*: The docs workflow uploads `github-pages` and deploys in the same job. On `0adfd22`, attempt 1 finished the upload and the deploy immediately found zero artifacts; attempt 2 uploaded again and the deploy found two artifacts with the same name. Four earlier main runs show the same zero-artifact race.  This uploads the site as `github-pages-<run_id>-<run_attempt>`, exposes that name as a `build` job output, and deploys from a separate `needs: build` job using the same name. A full workflow re-run gets a fresh name, while a deploy-only retry keeps the original build output and reuses the artifact uploaded by that build.  The existing action pins already expose the required inputs (`name` on `upload-pages-artifact`, `artifact_name` on `deploy-pages`), so this does not bump actions. Workflow triggers, permissions, concurrency, docs build steps, and the Pages environment URL are unchanged.  Validation: `actionlint .github/workflows/docs.yml`, YAML parsing, and `git diff --check` pass locally. Hosted checks run on this PR; the actual Pages upload and deploy are verified on main after merge because the workflow only deploys from `main`.  Evidence: - [attempt 1](https://github.com/lancedb/lancedb/actions/runs/45805006874/job/139857949931): upload succeeded, deploy logged `Found 0 artifact(s)`. - [attempt 2](https://github.com/lancedb/lancedb/actions/runs/45805006874/job/139875545904): upload succeeded, deploy logged `Found 2 artifact(s)` and failed with `Multiple artifacts named "githu
 
-- **Issue #5194** (2026-11-24): **fix(java): upgrade Apache HttpClient 5 to 5.6.5**
-  *Symptoms*: Supersedes #5185.  ## Summary  Upgrades `org.apache.httpcomponents.client5:httpclient5` from `5.2.1` to `5.6.5` in `java/lancedb-core/pom.xml`, and updates the inline dependency comment to reflect how the transport is used and resolved.  ## Why 5.6.5  - [CVE-2026-64607](https://www.cve.org/CVERecord?id=CVE-2026-64607) affects the Apache HttpClient 5 classic transport and is fixed in `5.6.3`. - At `5.6.3`, the same exported `org.apache.httpcomponents.client5:httpclient5` Maven artifact remains affected by [CVE-2026-71290](https://www.cve.org/CVERecord?id=CVE-2026-71290), an async TLS hostname verification issue fixed in `5.6.4` (classic transport is unaffected). - `5.6.5` includes both fixes.  ## Scope and Transport Resolution  Only `java/lancedb-core/pom.xml` is modified:  - `LanceDbRestClient` (constructed via `LanceDbNamespaceClientBuilder.buildRestClient()`) uses Apache HttpClient 5's classic transport directly. - `LanceDbNamespaceClientBuilder.build()` uses the JNI-backed `org.lance.namespace.RestNamespace` from `lance-core`, not the Apache HttpClient namespace transport. - Separately, the transitive `lance-namespace-apache-client` dependency (exposing `NamespaceApi` over Apache HttpClient 5's classic transport) declares `httpclient5` `5.2.1`. Declaring `5.6.5` directly on `lancedb-core` lets Maven's nearest-wins mediation select `5.6.5` over that transitive declaration for both `LanceDbRestClient` and `lance-namespace-apache-client`.  ## Verification  - **Dependency reso
+- **Issue #5220** (2026-11-26): **fix(python): preserve the requested package index on Function inspection**
+  *Symptoms*: Python callers inspecting a pinned Function version lose the explicit primary package index URL even when the server includes it. Preserve `runtime.environment.build.index_url` through `get_function` and canonical JSON.  The requested build view contains only the explicit primary URL. Extra indexes, other sources, and service defaults can still apply when that view is absent. Compare the server's `runtime_digest` with the authored runtime's digest for identity. The inspection view can omit inputs to that digest.  Typed registration rejects nonempty build settings before issuing a request. The existing decorator options and `refresh_lock` use the same registration path.  Loopback Flight tests exercised sync and async pinned reads with a primary index plus an extra index, and with only an extra index. They also verified that typed submission rejects unsupported settings before sending a request and still submits ordinary decorator definitions with `refresh_lock`. A separate local replay verified pinned readback against a published version with a credential-free primary index. The focused suites passed 547 Python and 129 Rust tests, with three Rust tests marked ignored.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1298,776 +1298,616 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef59dcfe` (2026-11-24)
-**Commit Message**: fix(java): upgrade Apache HttpClient 5 to 5.6.5 (#5194)
+### Incident Patch 1: `2806709b` (2026-11-26)
+**Commit Message**: fix(ci): hand off Pages artifact to a separate deploy job (#5236)
 
-Supersedes #5185.
+The docs workflow uploads `github-pages` and deploys in the same job. On
+`0adfd22`, attempt 1 finished the upload and the deploy immediately
+found zero artifacts; attempt 2 uploaded again and the deploy found two
+artifacts with the same name. Four earlier main runs show the same
+zero-artifact race.
 
-## Summary
+This uploads the site as `github-pages-<run_id>-<run_attempt>`, exposes
+that name as a `build` job output, and deploys from a separate `needs:
+build` job using the same name. A full workflow re-run gets a fresh
+name, while a deploy-only retry keeps the original build output and
+reuses the artifact uploaded by that build.
 
-Upgrades `org.apache.httpcomponents.client5:httpclient5` from `5.2.1` to
-`5.6.5` in `java/lancedb-core/pom.xml`, and updates the inline
-dependency comment to reflect how the transport is used and resolved.
+The existing action pins already expose the required inputs (`name` on
+`upload-pages-artifact`, `artifact_name` on `deploy-pages`), so this
+does not bump actions. Workflow triggers, permissions, concurrency, docs
+build steps, and the Pages environment URL are unchanged.
 
-## Why 5.6.5
+Validation: `actionlint .github/workflows/docs.yml`, YAML parsing, and
+`git diff --check` pass locally. Hosted checks run on this PR; the
+actual Pages upload and deploy are verified on main after merge because
+the workflow only deploys 
 
-- [CVE-2026-64607](https://www.cve.org/CVERecord?id=CVE-2026-64607)
-affects the Apache HttpClient 5 classic transport and is fixed in
-`5.6.3`.
-- At `5.6.3`, the same exported
-`org.apache.httpcomponents.client5:httpclient5` Maven artifact remains
-affected by
-[CVE-2026-71290](https://www.cve.org/CVERecord?id=CVE-2026-71290), an
-async TLS hostname verification issue fixed in `5.6.4` (classic
-transport is unaffected).
-- `5.6.5` includes both fixes.
-
-## Scope and Transport Resolution
-
-Only `java/lancedb-core/pom.xml` is modified:
-
-- `LanceDbRestClient` (constructed via
-`LanceDbNamespaceClientBuilder.buildRestClient()`) uses Apache
-HttpClient 5's classic transport directly.
-- `LanceDbNamespaceClientBuilder.build()` uses the JNI-backed
-`org.lance.namespace.RestNamespace` from `lance-core`, not the Apache
-HttpClient namespace transport.
-- Separately, the transitive `lance-namespace-apac
-
-**File**: `java/lancedb-core/pom.xml` (modified, +3/-3)
+**File**: `.github/workflows/docs.yml` (modified, +20/-4)
 ```diff
-@@ -37,12 +37,12 @@
-             <artifactId>arrow-memory-netty</artifactId>
-         </dependency>
+@@ -27,12 +27,10 @@ env:
+   PIP_EXTRA_INDEX_URL: "https://pypi.fury.io/lance-format/ https://pypi.fury.io/lancedb/"
  
--        <!-- Transport for the LanceDB routes outside the Lance Namespace spec.
--             Versions match what lance-namespace-apache-client resolves to. -->
-+        <!-- Direct transport dependency for LanceDbRestClient. Maven also selects this
-+             version for the transitive lance-namespace-apache-client transport. -->
-         <dependency>
-             <groupId>org.apache.httpcomponents.client5</groupId>
-             <artifactId>httpclient5</artifactId>
--            <version>5.2.1</version>
-+            <version>5.6.5</version>
-         </dependency>
- 
-         <dependency>
+ jobs:
+-  # Single deploy job since we're just deploying
+   build:
+-    environment:
+-      name: github-pages
+-      url: ${{ steps.deployment.outputs.page_url }}
+     runs-on: ubuntu-24.04
++    outputs:
++      artifact_name: ${{ steps.artifact-name.outputs.name }}
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v6
+@@ -68,10 +66,28 @@ jobs:
+           PYTHONPATH=. mkdocs build
+       - name: Setup Pages
+         uses: actions/configure-pages@v5
++      - name: Set artifact name
++        id: artifact-name
++        run: echo "name=github-pages-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+       - name: Upload artifact
+         uses: actions/upload-pages-artifact@v3
+         with:
++          name: ${{ steps.artifact-name.outputs.name }}
+           path: "docs/site"
++
++  # Deploy from a separate job so the Pages artifact upload has settled before
++  # the deploy action looks it up. The per-run name keeps a full workflow
++  # re-run from accumulating artifacts that share the default name.
++  deploy:
++    name: Deploy to GitHub Pages
++    needs: build
++    runs-on: ubuntu-24.04
++    environment:
++      name: github-pages
++      url: ${{ steps.deployment.outputs.page_url }}
++    steps:
+       - name: Deploy to GitHub Pages
+         id: deployment
+         uses: actions/deploy-pages@v4
++        with:
++          artifact_name: ${{ needs.build.outputs.artifact_name }}
 ```
 
 ---
 
-### Incident Patch 2: `90419814` (2026-11-24)
-**Commit Message**: fix(sdk): validate SQL job receipts consistently (#5175)
+### Incident Patch 2: `4a5c4a84` (2026-11-26)
+**Commit Message**: fix(python): preserve the requested package index on Function inspection (#5220)
 
-Compact and data PREWARM accepted whitespace-only job IDs that Cleanup
-rejected. All three remote SDK commands now use the same Flight SQL
-receipt reader to validate the registry ID before returning a job
-handle.
+Python callers inspecting a pinned Function version lose the explicit
+primary package index URL even when the server includes it. Preserve
+`runtime.environment.build.index_url` through `get_function` and
+canonical JSON.
 
-This was accomplished with the following changes:
+The requested build view contains only the explicit primary URL. Extra
+indexes, other sources, and service defaults can still apply when that
+view is absent. Compare the server's `runtime_digest` with the authored
+runtime's digest for identity. The inspection view can omit inputs to
+that digest.
 
-- Read through the end of the stream, retaining at most one candidate
-row. Require exactly one row with a nonblank UTF-8 `job_id` and preserve
-the ID as returned.
-- Validate PREWARM’s additional non-null UInt64 table version and
-preserve each command’s SQL error diagnostics.
-- Build the handle from the registry ID without a status poll. A
-malformed receipt tells the caller to inspect jobs before retrying,
-since the server may already have accepted the submission.
+Typed registration rejects nonempty build settings before issuing a
+request. The existing decorator options and `refresh_lock` use the same
+registration path.
 
-**File**: `rust/lancedb/src/remote/sql_test.rs` (modified, +201/-1)
+Loopback Flight tests exercised sync and async pinned reads with a
+primary index plus an extra index, and with only an extra index. They
+also verified that typed submission rejects unsupported settings before
+sending a request and still submits ordinary decorator definitions with
+`refresh_lock`. A separate local replay verified pinned readback against
+a published version with a credential-free primary index. The focused
+suites passed 5
+
+**File**: `docs/src/python/python.md` (modified, +6/-0)
 ```diff
-@@ -150,6 +150,7 @@ struct TestSqlService {
-     /// How many exchange responses have been dropped, finished or not.
-     exchange_drops: Arc<AtomicUsize>,
-     result: RecordBatch,
-+    result_tail: Vec<std::result::Result<RecordBatch, Status>>,
-     large_result: RecordBatch,
-     dictionary_result: RecordBatch,
- }
-@@ -330,6 +331,7 @@ impl Default for TestSqlService {
-             prewarm_azure_supported: false,
-             exchange_drops: Arc::new(AtomicUsize::new(0)),
-             result,
-+            result_tail: vec![],
-             large_result,
-             dictionary_result,
-         }
-@@ -569,7 +571,16 @@ impl FlightService for TestSqlService {
-             }
-             (!empty).then_some(Ok(result))
-         })
--        .filter_map(futures::future::ready);
-+        .filter_map(futures::future::ready)
-+        .chain(
-+            futures::stream::iter(self.result_tail.clone()).then(|item| async {
-+                // Let tonic flush the preceding batch before sending an error trailer.
-+                if item.is_err() {
-+                    tokio::task::yield_now().await;
-+                }
-+                item.map_err(|status| FlightError::Tonic(Box::new(status)))
-+            }),
-+        );
-         let mut encoder = FlightDataEncoderBuilder::new().with_schema(schema);
-         if large {
-             encoder = encoder.with_max_flight_data_size(8 * 1024 * 1024);
-@@ -711,6 +722,13 @@ impl FlightService for TestSqlService {
-         }
-         let rows =
-             parameters.ok_or_else(|| Status::invalid_argument("exchange without parameters"))?;
-+        let rows = self
-+            .result_overrides
-+            .lock()
-+            .unwrap()
-+            .get(&query)
-+            .cloned()
-+            .unwrap_or(rows);
-         let schema = rows.schema();
-         let rest: BoxStream<'static, arrow_flight::error::Result<RecordBatch>> =
-             if query == "SELECT exchange slow" {
-@@ -4563,6 +4581,188 @@ fn prewarm_result() -> RecordBatch {
-     .unwrap()
- }
+@@ -690,6 +690,10 @@ with BlobReader(read_range, len(payload)) as reader:
  
-+fn receipt_test_table(
-+    sql: SqlClient,
-+) -> RemoteTable<crate::remote::client::test_utils::MockSender> {
-+    RemoteTable::new_with_sql_client(
-+        client_with_handler(|r| -> http::Response<String> {
-+            panic!(
-+                "unexpected HTTP request while reading a job receipt: {}",
-+                r.url()
-+            )
-+        }),
-+        "analytics".into(),
-+        "events".into(),
-+        vec!["team".into()],
-+        "team$events".into(),
-+        Default::default(),
-+        Some(sql),
-+    )
-+}
+ ::: lancedb.functions.PythonEnvironmentSpec
+ 
++::: lancedb.functions.RequestedPythonEnvironment
 +
-+#[tokio::test]
-+async fn remote_maintenance_job_receipts_require_one_row_and_a_complete_stream() {
-+    let receipt = prewarm_result();
-+    let empty = receipt.slice(0, 0);
-+    let with_ids = |ids: ArrayRef| {
-+        let versions = arrow_array::UInt64Array::from(vec![42; ids.len()]);
-+        RecordBatch::try_from_iter([
-+            ("job_id", ids),
-+            ("table_version", Arc::new(versions) as ArrayRef),
-+        ])
-+        .unwrap()
-+    };
-+    let ids = |values: Vec<Option<&str>>| with_ids(Arc::new(StringArray::from(values)));
-+    let invalid = "inspect jobs before retrying";
-+    // All three commands receive the same wire response.
-+    for (first, tail, expected) in [
-+        (
-+            empty.clone(),
-+            vec![Ok(receipt.clone()), Ok(empty.clone())],
-+            Ok("warming-job"),
-+        ),
-+        (ids(vec![Some(" id ")]), vec![], Ok(" id ")),
-+        (empty, vec![], Err(invalid)),
-+        (ids(vec![None]), vec![], Err(invalid)),
-+        (ids(vec![Some("")]), vec![], Err(invalid)),
-+        (ids(vec![Some(" \t ")]), vec![], Err(invalid)),
-+        (
-+            with_ids(Arc::new(Int64Array::from(vec![7]))),
-+            vec![],
-+            Err(invalid),
-+        ),
-+        (receipt.project(&[1]).unwrap(), vec![], Err(invalid)),
-+        (ids(vec![Some("one"), Some("two")]), vec![], Err(invalid)),
-+        (receipt.clone(), vec![Ok(receipt.clone())], Err(invalid)),
-+        (
-+            receipt,
-+            vec![Err(Status::data_loss("receipt stream interrupted"))],
-+            Err("receipt stream interrupted"),
-+        ),
-+    ] {
-+        let service = TestSqlService {
-+            adaptive: true,
-+            result: first,
-+            result_tail: tail,
-+            ..Default::default()
-+        };
-+        let statements = service.statements.clone();
-+        let (sql, shutdown) = start_sql_service(service, ClientConfig::default()).await;
-+        let table = receipt_test_table(sql);
-+        let compact = table.compact_async(Default::default()).await;
-+        let prewarm = table.prewarm_data_async(Default::default()).await;
-+        let cleanup = table.cleanup_async(Default::default()).await;
-+        for (result, command) in [
-+            (compact.as_ref().map(|j| j.id()), "OPTIMIZE"),
-+            (prewarm.as_ref().map(|j| j.id()), "PREWARM"),
-+            (cleanup.as_ref().map(|j| j.id()), "VACUUM"),
-+        ] {
-+            match exp
++::: lancedb.functions.PythonEnvironmentBuild
++
+ ::: lancedb.functions.function
+ 
+ ::: lancedb.functions.FunctionDefinition
+@@ -724,6 +728,8 @@ with BlobReader(read_range, len(payload)) as reader:
+ 
+ ::: lancedb.functions.PythonRuntimeSpec
+ 
++::: lancedb.functions.RequestedPythonRuntime
++
+ ::: lancedb.GpuClass
+ 
+ ::: lancedb.functions.FunctionVersionRef
 ```
 
-**File**: `rust/lancedb/src/remote/table.rs` (modified, +11/-44)
+**File**: `python/python/lancedb/functions.py` (modified, +111/-21)
 ```diff
-@@ -9,10 +9,12 @@ mod optimize;
- mod prewarm;
- #[cfg(test)]
- mod profile_tests;
-+mod receipt;
- #[cfg(test)]
- mod write_tests;
+@@ -405,6 +405,54 @@ class PythonEnvironmentSpec(_RemoteValue):
+     image: Optional[str] = None
+     system_packages: tuple[str, ...] = ()
  
- use self::insert::{RemoteWriteExec, WriteOp};
-+use self::receipt::JobReceipt;
- use super::client::RequestResultExt;
- use super::client::{HttpSend, RestfulLanceDbClient, Sender};
- use super::db::ServerVersion;
-@@ -4315,25 +4317,15 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
-                 message: "manual cleanup requires a Flight SQL endpoint and SQL VACUUM support"
-                     .into(),
-             })?;
--        let query = client
-+        let submission = client
-             .execute(crate::database::ExecuteQueryRequest {
-                 query: statement,
-                 default_namespace_path: self.namespace.clone(),
-                 parameters: None,
-                 options: Default::default(),
-             })
--            .await
--            .map_err(cleanup::map_error)?;
--        let mut reader = query.reader().await.map_err(cleanup::map_error)?;
--        let mut batches = Vec::new();
--        while let Some(batch) = reader.try_next().await.map_err(cleanup::map_error)? {
--            batches.push(batch);
--        }
--        let job_id = cleanup::receipt(&batches)?;
--        Ok(Job::new_typed(Box::new(RemoteJob::new(
--            self.client.clone(),
--            job_id,
--        ))))
-+            .await;
-+        JobReceipt::Cleanup.accept(submission, &self.client).await
-     }
- 
-     async fn compact_async(
-@@ -4348,29 +4340,15 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
-             .ok_or_else(|| Error::NotSupported {
-                 message: "compaction jobs require a Flight SQL endpoint".into(),
-             })?;
--        let query = client
-+        let submission = client
-             .execute(crate::database::ExecuteQueryRequest {
-                 query: statement,
-                 default_namespace_path: self.namespace.clone(),
-                 parameters: None,
-                 options: Default::default(),
-             })
--            .await
--            .map_err(optimize::map_optimize_error)?;
--        let mut reader = query.reader().await.map_err(optimize::map_optimize_error)?;
--        let mut batches = Vec::new();
--        while let Some(batch) = reader
--            .try_next()
--            .await
--            .map_err(optimize::map_optimize_error)?
--        {
--            batches.push(batch);
--        }
--        let job_id = optimize::receipt(&batches)?;
--        Ok(Job::new_typed(Box::new(RemoteJob::new(
--            self.client.clone(),
--            job_id,
--        ))))
-+            .await;
-+        JobReceipt::Compact.accept(submission, &self.client).await
-     }
- 
-     async fn add_columns(
-@@ -5000,26 +4978,15 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
-                 message: "data prewarm requires a Flight SQL endpoint and SQL PREWARM support"
-                     .into(),
-             })?;
--        let query = client
-+        let submission = client
-             .execute_prewarm(crate::database::ExecuteQueryRequest {
-                 query: statement,
-                 default_namespace_path: self.namespace.clone(),
-                 parameters: options.parameters,
-                 options: Default::default(),
-             })
--            .await
--            .map_err(prewarm::map_error)?;
--        let mut reader = query.reader().await.map_err(prewarm::map_error)?;
--        let mut batches = Vec::new();
--        while let Some(batch) = reader.try_next().await.map_err(prewarm::map_error)? {
--            batches.push(batch);
--        }
--        let (job_id, _table_version) = prewarm::receipt(&batches)?;
--        // Construct lazily: submission must not require an HTTP status round trip.
--        Ok(Job::new_typed(Box::new(RemoteJob::new(
--            self.client.clone(),
--            job_id,
--        ))))
-+            .await;
-+        JobReceipt::Prewarm.accept(submission, &self.client).await
-     }
- 
-     async fn explain_prewarm_data(
-```
-
-**File**: `rust/lancedb/src/remote/table/cleanup.rs` (modified, +0/-50)
-```diff
-@@ -40,27 +40,6 @@ pub(super) fn statement(
-     Ok(sql)
- }
- 
--pub(super) fn receipt(batches: &[RecordBatch]) -> Result<String> {
--    let invalid = || {
--        Error::Runtime { message: "VACUUM did not return a single nonempty job_id receipt; inspect jobs before retrying because cleanup may already have been submitted".into() }
--    };
--    if batches.iter().map(RecordBatch::num_rows).sum::<usize>() != 1 {
--        return Err(invalid());
--    }
--    let batch = batches
--        .iter()
--        .find(|batch| batch.num_rows() == 1)
--        .ok_or_else(invalid)?;
--    let ids = batch
--        .column_by_name("job_id")
--        .and_then(|array| array.as_any().downcast_ref::<StringArray>())
--        .ok_or_else(invalid)?;
--    if ids.is_null(0) || ids.value(0).trim().is_empty() {
--        return Err(invalid());
--    }
--    Ok(ids.value(0).to_string())
--}
--
- pub(super) fn plan(batches: &[RecordBatch]) -> Result<crate::table::CleanupPlan> {
-     let invalid = || {
-         Error::Runtime { message: "EXPLAIN VACUUM did not return a valid versioned preview; a compatible EXPLAIN (FORMAT JSON) VACUUM server is required. No execution fallback was attempted".into() }
-@@ -170,35 +149,6 @@ mod tests {
-         assert!(statement("t", None, &CleanupOptions::new().min_age_seconds(u64::MAX)).is_err());
-     }
- 
--    #[test]
--    fn ambiguous_cleanup_receipts_never_become_query_handles() {
--        let batch = |values: Vec<Option<&str>>| {
--            RecordBatch::try_from_iter([(
--                "job_id",
--                Arc::new(StringArray::from(values)) as arrow_array::ArrayRef,
--            )])
--            .unwrap()
--        };
--        for batches in [
--            vec![],
--            vec![batch(vec![])],
--            vec![batch(vec![None])],
--            vec![batch(vec![Some("")])],
--            vec![batch(vec![Some("one"), Some("two")])],
--        ] {
--            assert!(
--                receipt(&batches)
--                    .unwrap_err()
--                    .to_string()
--                    .contains("inspect jobs before retrying")
--            );
--        }
--        assert_eq!(
--            receipt(&[batch(vec![]), batch(vec![Some("durable-job")])]).unwrap(),
--            "durable-job"
--        );
--    }
--
-     #[test]
-     fn cleanup_compatibility_preserves_permissions_and_transport_errors() {
-         for (code, diagnostic, expected) in [
-```
-
-**File**: `rust/lancedb/src/remote/table/optimize.rs` (modified, +0/-58)
-```diff
-@@ -23,30 +23,6 @@ pub(super) fn statement(
-     Ok(sql)
- }
- 
--/// Submission can already have created work: reject ambiguous receipts without
--/// retrying or confusing the SQL query's identity with the compaction job.
--pub(super) fn receipt(batches: &[arrow_array::RecordBatch]) -> Result<String> {
--    use arrow_array::{Array, StringArray};
--    let invalid = || {
--        Error::Runtime { message: "OPTIMIZE did not return a single nonempty job_id receipt; inspect jobs before retrying because compaction may already have been submitted".into() }
--    };
--    if batches.iter().map(|batch| batch.num_rows()).sum::<usize>() != 1 {
--        return Err(invalid());
--    }
--    let batch = batches
--        .iter()
--        .find(|batch| batch.num_rows() == 1)
--        .ok_or_else(invalid)?;
--    let ids = batch
--        .column_by_name("job_id")
--        .and_then(|a| a.as_any().downcast_ref::<StringArray>())
--        .ok_or_else(invalid)?;
--    if ids.is_null(0) || ids.value(0).is_empty() {
--        return Err(invalid());
--    }
--    Ok(ids.value(0).into())
--}
--
- pub(super) fn compaction_sql_options(
-     options: &crate::table::optimize::CompactionOverrides,
- ) -> Result<Vec<String>> {
-@@ -301,37 +277,3 @@ mod tests {
-         }
-     }
- }
--
--#[cfg(test)]
--mod receipt_tests {
--    use super::*;
--    use arrow_array::{ArrayRef, RecordBatch, StringArray};
--    use std::sync::Arc;
--
--    #[test]
--    fn compaction_receipt_requires_one_unambiguous_registry_id() {
--        let batch = |ids: Vec<Option<&str>>| {
--            RecordBatch::try_from_iter([("job_id", Arc::new(StringArray::from(ids)) as ArrayRef)])
--                .unwrap()
--        };
--        assert_eq!(
--            receipt(&[batch(vec![Some("compacting-job")])]).unwrap(),
--            "compacting-job"
--        );
--        for batches in [
--            vec![],
--            vec![batch(vec![])],
--            vec![batch(vec![None])],
--            vec![batch(vec![Some("")])],
--            vec![batch(vec![Some("a"), Some("b")])],
--            vec![batch(vec![Some("a")]), batch(vec![Some("b")])],
--        ] {
--            assert!(
--                receipt(&batches)
--                    .unwrap_err()
--                    .to_string()
--                    .contains("inspect jobs before retrying")
--            );
--        }
--    }
--}
-```
-
-**File**: `rust/lancedb/src/remote/table/prewarm.rs` (modified, +2/-70)
-```diff
-@@ -1,9 +1,9 @@
- // SPDX-License-Identifier: Apache-2.0
- // SPDX-FileCopyrightText: Copyright The LanceDB Authors
- 
--//! SQL submission and receipt validation for data-cache prewarm jobs.
-+//! SQL submission and preview decoding for data-cache prewarm jobs.
- 
--use arrow_array::{Array, RecordBatch, StringArray, UInt64Array};
-+use arrow_array::{Array, RecordBatch, StringArray};
- use datafusion_sql::sqlparser::{dialect::GenericDialect, parser::Parser, tokenizer::Token};
- 
- use super::{quote_sql_identifier, quote_sql_string};
-@@ -84,33 +84,6 @@ pub(super) fn statement(
-     Ok(sql)
- }
- 
--pub(super) fn receipt(batches: &[RecordBatch]) -> Result<(String, u64)> {
--    let invalid = || {
--        Error::Runtime {
--        message: "PREWARM did not return a single (job_id, table_version) receipt; inspect jobs before retrying because work may already have been submitted".into(),
--    }
--    };
--    if batches.iter().map(RecordBatch::num_rows).sum::<usize>() != 1 {
--        return Err(invalid());
--    }
--    let batch = batches
--        .iter()
--        .find(|batch| batch.num_rows() == 1)
--        .ok_or_else(invalid)?;
--    let id = batch
--        .column_by_name("job_id")
--        .and_then(|array| array.as_any().downcast_ref::<StringArray>())
--        .ok_or_else(invalid)?;
--    let version = batch
--        .column_by_name("table_version")
--        .and_then(|array| array.as_any().downcast_ref::<UInt64Array>())
--        .ok_or_else(invalid)?;
--    if id.is_null(0) || id.value(0).is_empty() || version.is_null(0) {
--        return Err(invalid());
--    }
--    Ok((id.value(0).into(), version.value(0)))
--}
--
- /// Decode the versioned JSON payload without depending on the display text.
- pub(super) fn plan(batches: &[RecordBatch]) -> Result<crate::table::PrewarmDataPlan> {
-     let invalid = || {
-@@ -219,7 +192,6 @@ pub(super) fn map_error(error: Error) -> Error {
- #[cfg(test)]
- mod tests {
-     use super::*;
--    use arrow_schema::{DataType, Field, Schema};
-     use std::sync::Arc;
- 
-     #[test]
-@@ -357,46 +329,6 @@ mod tests {
-         }
-     }
- 
--    fn batch(ids: Vec<Option<&str>>, versions: Vec<Option<u64>>) -> RecordBatch {
--        RecordBatch::try_from_iter([
--            (
--                "job_id",
--                Arc::new(StringArray::from(ids)) as arrow_array::ArrayRef,
--            ),
--            (
--                "table_version",
--                Arc::new(UInt64Array::from(versions)) as arrow_array::ArrayRef,
--            ),
--        ])
--        .unwrap()
--    }
--
--    #[test]
--    fn receipt_requires_one_non_null_job_and_version() {
--        assert_eq!(
--            receipt(&[batch(vec![Some("job-1")], vec![Some(42)])]).unwrap(),
--            ("job-1".into(), 42)
--        );
--        for batches in [
--            vec![],
--            vec![batch(vec![], vec![])],
--            vec![batch(vec![None], vec![Some(42)])],
--            vec![batch(vec![Some("")], vec![Some(42)])],
--            vec![batch(vec![Some("job")], vec![None])],
--            vec![batch(vec![Some("a"), Some("b")], vec![Some(1), Some(2)])],
--            vec![
--                batch(vec![Some("a")], vec![Some(1)]),
--                batch(vec![Some("b")], vec![Some(2)]),
--            ],
--            vec![RecordBatch::new_empty(Arc::new(Schema::new(vec![
--                Field::new("wrong", DataType::Utf8, false),
--            ])))],
--        ] {
--            let error = receipt(&batches).unwrap_err().to_string();
--            assert!(error.contains("inspect jobs before retrying"), "{error}");
--        }
--    }
--
-     #[test]
-     fn compatibility_errors_preserve_permission_and_predicate_diagnostics() {
-         for (code, message, unsupported) in [
-```
-
-**File**: `rust/lancedb/src/remote/table/receipt.rs` (added, +83/-0)
-```diff
-@@ -0,0 +1,83 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// SPDX-FileCopyrightText: Copyright The LanceDB Authors
++    @model_validator(mode="before")
++    @classmethod
++    def _validate_registration_build(cls, value):
++        if isinstance(value, Mapping):
++            build = value.get("build")
++            if build is not None and (not isinstance(build, Mapping) or build):
++                raise TypeError(
++                    "runtime.environment.build is unsupported "
++                    "in typed Function registration"
++                )
++        return value
 +
-+use arrow_array::{Array, StringArray, UInt64Array};
-+use futures::TryStreamExt;
-+use serde::de::DeserializeOwned;
 +
-+use super::{cleanup, optimize, prewarm};
-+use crate::job::Job;
-+use crate::remote::client::{HttpSend, RestfulLanceDbClient};
-+use crate::remote::job::RemoteJob;
-+use crate::sql::Query;
-+use crate::{Error, Result};
++class PythonEnvironmentBuild(_RemoteValue):
++    """Explicit primary package index URL reported on a Function version."""
 +
-+#[derive(Clone, Copy)]
-+pub(super) enum JobReceipt {
-+    Compact,
-+    Prewarm,
-+    Cleanup,
-+}
++    index_url: str
 +
-+impl JobReceipt {
-+    fn invalid(self) -> Error {
-+        let receipt = match self {
-+            Self::Compact => "OPTIMIZE did not return a single nonempty job_id receipt",
-+            Self::Prewarm => "PREWARM did not return a single (job_id, table_version) receipt",
-+            Self::Cleanup => "VACUUM did not return a single nonempty job_id receipt",
-+        };
-+        Error::Runtime {
-+            message: format!(
-+                "{receipt}; inspect jobs before retrying because work may already have been submitted"
-+            ),
-+        }
-+    }
 +
-+    /// A registry job can already be running when its SQL response is lost.
-+    /// Only construct the handle after reading one valid row and the end of the stream.
-+    pub(super) async fn accept<T, S>(
-+        self,
-+        submission: Result<Query>,
-+        client: &RestfulLanceDbClient<S>,
-+    ) -> Result<Job<T>>
-+    where
-+        T: Clone + DeserializeOwned + Send + Sync + 'static,
-+        S: HttpSend,
-+    {
-+        let map_error = match self {
-+            Self::Compact => optimize::map_optimize_error,
-+            Self::Prewarm => prewarm::map_error,
-+            Self::Cleanup => cleanup::map_error,
-+        };
-+        let query = submission.map_err(map_error)?;
-+        let mut reader = query.reader().await.map_err(map_error)?;
-+        let mut receipt = None;
-+        let mut rows = 0usize;
-+        while let Some(batch) = reader.try_next().await.map_err(map_error)? {
-+            rows = rows.saturating_add(batch.num_rows());
-+            if rows == 1 && batch.num_rows() == 1 {
-+                receipt = Some(batch);
-+            }
-+        }
-+        let batch = receipt
-+            .filter(|_| rows == 1)
-+            .ok_or_else(|| self.invalid())?;
-+        let ids = batch
-+            .column_by_name("job_id")
-+            .and_then(|column| column.as_any().downcast_ref::<StringArray>())
-+            .filter(|ids| !ids.is_null(0) && !ids.value(0).trim().is_empty())
-+            .ok_or_else(|| self.invalid())?;
-+        if matches!(self, Self::Prewarm) {
-+            batch
-+                .column_by_name("table_version")
-+                .and_then(|column| column.as_any().downcast_ref::<UInt64Array>())
-+                .filter(|versions| !versions.is_null(0))
-+                .ok_or_else(|| self.invalid())?;
-+        }
-+        let job_id = ids.value(0).to_owned();
-+        Ok(Job::new_typed(Box::new(RemoteJob::new(
-+            client.clone(),
-+            job_id,
-+        ))))
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `7a866175` (2026-11-24)
-**Commit Message**: fix(python): skip OpenAI embedding requests when no valid text remains (#5195)
-
-## Summary
-
-Follows up on #4005, which handled mixed batches in
-`OpenAIEmbeddings.generate_embeddings`. On `main`, when the input batch
-is empty (`[]`) or filtering leaves no valid texts (such as `[None,
-""]`), `generate_embeddings` still imports the `openai` SDK and calls
-`embeddings.create(input=[], ...)`.
-
-- Return `[None] * len(texts)` early in
-`python/python/lancedb/embeddings/openai.py` when no valid texts remain
-(`[]` for empty input, one `None` per item when all inputs are
-filtered), before importing the `openai` SDK or sending a request.
-- Add regression tests in `python/python/tests/test_embeddings.py`
-covering empty batches, all-filtered batches, and native-backed
-`table.add(..., on_bad_vectors="null")` verifying rows are kept with
-null vectors and no OpenAI request is made.
-
-## Attribution
-
-Successor to #3152. The early return and nullable ingestion test were
-originally contributed by @saudademjj in #3152.
-
-## Verification
-
-- 3 new regression tests failed before the fix (observing
-`embeddings.create(input=[], ...)`) and passed after.
-- Related embedding test suite: `148 passed, 1 skipped, 9 
-
-**File**: `python/python/lancedb/embeddings/openai.py` (modified, +5/-2)
-```diff
-@@ -99,15 +99,18 @@ def generate_embeddings(
-         texts: list[str] or np.ndarray (of str)
-             The texts to embed
++class RequestedPythonEnvironment(PythonEnvironmentSpec):
++    """Python environment metadata reported on a Function version.
++
++    ``build`` contains only the explicitly requested primary package index URL.
++    An omitted ``build`` can still accompany extra indexes, other sources, or
++    service defaults. See
++    [ResolvedEnvironmentProvenance][lancedb.functions.ResolvedEnvironmentProvenance]
++    for the sources reported by the build.
++    """
++
++    build: Optional[PythonEnvironmentBuild] = None
++
++    @model_validator(mode="before")
++    @classmethod
++    def _validate_registration_build(cls, value):
++        # Inspection accepts an authored model or a wire document with a build field.
++        if isinstance(value, PythonEnvironmentSpec) and not isinstance(value, cls):
++            return value._known_dict()
++        return value
++
++    @field_validator("build", mode="before")
++    @classmethod
++    def _read_primary_index(cls, build):
++        if isinstance(build, PythonEnvironmentBuild):
++            return build
++        if isinstance(build, Mapping) and isinstance(build.get("index_url"), str):
++            return {"index_url": build["index_url"]}
++        return None
++
+ 
+ _HUGGING_FACE_MODEL_REPO = re.compile(
+     r"^[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._-]*$"
+@@ -543,10 +591,11 @@ def digest(self) -> str:
+ 
+         Covers Python version, environment sources, environment variables, and
+         GPU settings. Package and system-package order is ignored; conda channel
+-        order is preserved. Compare with ``runtime_digest`` on
+-        [FunctionVersion][lancedb.functions.FunctionVersion].
+-        This identifies build inputs, not the resolved contents of unpinned
+-        dependencies or the deployment's default base image.
++        order is preserved. Compare an authored runtime's digest with
++        ``runtime_digest`` on [FunctionVersion][lancedb.functions.FunctionVersion].
++        A version's projected runtime fields can omit inputs from that digest.
++        This identity covers declared inputs; the installed contents of unpinned
++        dependencies and the deployment's default base image can vary.
          """
--        openai = attempt_import_or_raise("openai")
--
-         valid_texts = []
-         valid_indices = []
-         for idx, text in enumerate(texts):
-             if text:
-                 valid_texts.append(text)
-                 valid_indices.append(idx)
+         if self.kind not in {"python", "python_v2"}:
+             raise ValueError(f"cannot digest unknown runtime kind {self.kind!r}")
+@@ -567,6 +616,25 @@ def digest(self) -> str:
+         return f"sha256:{hashlib.sha256(encoded).hexdigest()}"
  
-+        if not valid_texts:
-+            return [None] * len(texts)
+ 
++class RequestedPythonRuntime(PythonRuntimeSpec):
++    """Requested runtime metadata available during Function version inspection.
 +
-+        openai = attempt_import_or_raise("openai")
++    The build view contains only an explicit primary package index URL. Other
++    sources can be present even when the build view is absent. Compare the
++    server's ``FunctionVersion.runtime_digest`` with the digest of an authored
++    runtime. The inspection view can omit inputs needed to reproduce that digest.
++    """
 +
-         # TODO retry, rate limit, token limit
-         def embed_batch(texts_batch, indices_batch):
-             kwargs = {
++    environment: Optional[RequestedPythonEnvironment] = None
++
++    @model_validator(mode="before")
++    @classmethod
++    def _discard_unknown_runtime_payload(cls, value):
++        if isinstance(value, PythonRuntimeSpec) and not isinstance(value, cls):
++            value = value._known_dict()
++        return super()._discard_unknown_runtime_payload(value)
++
++
+ class FunctionImage(_RemoteValue):
+     """A complete OCI Function image identified by its exact manifest digest.
+ 
+@@ -685,12 +753,12 @@ class FunctionEnvironment(NamedTuple):
+     and
+     [FunctionVersion.resolved_environment][lancedb.functions.FunctionVersion.resolved_environment].
+     It adds no wire field and performs no second parse. ``requested`` is the
+-    runtime specification supplied at registration; ``resolved`` is measured
+-    data and is ``None`` when unknown. For per-platform multiarchitecture
++    server's view of the runtime requested at registration. ``resolved`` is
++    measured data and is ``None`` when unknown. For per-platform multiarchitecture
+     measurements, use ``FunctionVersion.environment_report``.
+     """
+ 
+-    requested: Optional[PythonRuntimeSpec]
++    requested: Optional[RequestedPythonRuntime]
+     resolved: Optional[ResolvedEnvironment]
+ 
+ 
+@@ -745,16 +813,16 @@ class FunctionVersion(_RemoteValue):
+     catalog. They are ``N
 ```
 
-**File**: `python/python/tests/test_embeddings.py` (modified, +41/-0)
+**File**: `python/python/tests/test_first_class_function_slice2.py` (modified, +47/-0)
 ```diff
-@@ -1107,6 +1107,47 @@ def fake_create(input, model=None, **kwargs):
-     assert embeddings[1] is None
+@@ -33,6 +33,7 @@
+     FunctionSignature,
+     FunctionVersion,
+     HuggingFaceModel,
++    PythonEnvironmentBuild,
+     PythonRuntimeSpec,
+     SecretBinding,
+     SecretReference,
+@@ -2640,6 +2641,52 @@ def test_function_version_reads_requested_and_resolved_environments():
+         FunctionVersion.from_json(json.dumps(invalid))
  
  
-+@pytest.fixture
-+def mock_openai_client(monkeypatch):
-+    client = MagicMock()
-+    client.embeddings.create.return_value.data = []
-+    monkeypatch.setattr(
-+        "lancedb.embeddings.openai.attempt_import_or_raise", MagicMock()
-+    )
-+    monkeypatch.setattr(get_registry().get("openai"), "_openai_client", client)
-+    return client
-+
-+
++@pytest.mark.asyncio
 +@pytest.mark.parametrize(
-+    ("texts", "expected"),
-+    [([], []), ([None, ""], [None, None])],
-+    ids=["empty-batch", "all-inputs-filtered"],
++    "build",
++    [
++        {},
++        {"build": None},
++        {"build": {}},
++        {"build": {"index_url": None}},
++        {"build": {"index_url": 1}},
++        {"build": "invalid-build"},
++        {
++            "build": {
++                "index_url": "https://requested.example/simple/",
++                "find_links": ["https://downloads.example/wheels"],
++            },
++        },
++    ],
 +)
-+def test_openai_skips_batches_without_valid_text(mock_openai_client, texts, expected):
-+    model = get_registry().get("openai").create()
++async def test_get_pinned_function_preserves_only_the_requested_index_url(build):
++    payload = _function_version_with_resolved_environment()
++    payload["runtime"]["environment"].update(build)
++    catalog = _RawFunctionCatalog(payload, encode=True)
++    connection = AsyncConnection(catalog)
 +
-+    assert model.compute_source_embeddings(texts) == expected
-+    mock_openai_client.embeddings.create.assert_not_called()
++    version = await connection.get_function(payload["name"], version=1)
++
++    assert catalog.requested_versions == ["1"]
++    assert version.version == "1"
++    requested = version.runtime.environment.build
++    raw_build = build.get("build")
++    index_url = raw_build.get("index_url") if isinstance(raw_build, dict) else None
++    canonical = version.to_canonical_json()
++    encoded = json.loads(canonical)["runtime"]["environment"]
++    if not isinstance(index_url, str):
++        assert requested is None
++        assert "build" not in encoded
++    else:
++        assert isinstance(requested, PythonEnvironmentBuild)
++        assert requested.index_url == index_url
++        assert encoded["build"] == {"index_url": index_url}
++    assert version.resolved_environment.provenance.configured_index_urls == (
++        "https://packages.example/simple",
++    )
++    assert FunctionVersion.from_json(canonical) == version
 +
 +
-+def test_openai_add_all_invalid_texts_as_null_vectors(mock_openai_client, tmp_path):
-+    model = get_registry().get("openai").create(name="text-embedding-3-small", dim=2)
+ def test_function_version_reads_resolved_environments_by_platform():
+     legacy = json.loads(
+         (FIXTURES / "remote_function_version.canonical.json").read_text()
+```
+
+**File**: `python/python/tests/test_function_creation.py` (modified, +125/-13)
+```diff
+@@ -8,20 +8,30 @@
+ import pytest
+ 
+ import lancedb
+-from lancedb.functions import BlobWriter, function
++from lancedb.functions import (
++    BlobWriter,
++    FunctionDefinition,
++    FunctionRegistrationRequest,
++    FunctionVersion,
++    function,
++)
+ 
+ 
+-@pytest.mark.asyncio
+-@pytest.mark.parametrize("entry", ["sync", "sync_job", "async_job"])
+-@pytest.mark.parametrize("exist_ok", [None, False, True])
+-async def test_function_exist_ok_forwards_sql_and_keeps_stored_version(entry, exist_ok):
+-    flight = pytest.importorskip("pyarrow.flight")
++def _stored_function_version():
+     fixture = (
+         Path(__file__).parents[3]
+         / "rust/lancedb/tests/fixtures/first_class_functions/v1"
+         / "remote_function_version.canonical.json"
+     )
+-    stored = json.loads(fixture.read_text())
++    return json.loads(fixture.read_text())
 +
-+    class TextModel(LanceModel):
-+        text: Optional[str] = model.SourceField()
-+        vector: Optional[Vector(model.ndims())] = model.VectorField()
 +
-+    db = lancedb.connect(tmp_path)
-+    table = db.create_table("words", schema=TextModel)
-+    table.add([{"text": None}, {"text": ""}], on_bad_vectors="null")
++@pytest.mark.asyncio
++@pytest.mark.parametrize("entry", ["sync", "sync_job", "async_job"])
++@pytest.mark.parametrize("exist_ok", [None, False, True])
++async def test_function_exist_ok_forwards_sql_and_keeps_stored_version(entry, exist_ok):
++    flight = pytest.importorskip("pyarrow.flight")
++    stored = _stored_function_version()
+     result = pa.table({"definition": [json.dumps(stored)]})
+ 
+     @function(name=stored["name"])
+@@ -66,12 +76,7 @@ def do_get(self, context, ticket):
+ @pytest.mark.asyncio
+ async def test_blob_writer_paths_round_trip_through_function_registration():
+     flight = pytest.importorskip("pyarrow.flight")
+-    fixture = (
+-        Path(__file__).parents[3]
+-        / "rust/lancedb/tests/fixtures/first_class_functions/v1"
+-        / "remote_function_version.canonical.json"
+-    )
+-    stored = json.loads(fixture.read_text())
++    stored = _stored_function_version()
+     expected_paths = [[{"field": "item"}], [{"field": "variants"}, "item"]]
+     output_schema = pa.schema(
+         [
+@@ -131,3 +136,110 @@ def do_get(self, context, ticket):
+     application = version(text=lancedb.col("text")).rename(columns={"item": "payload"})
+     assert json.loads(application.to_canonical_json())["output"] == expected_output
+     assert application.columns == {"item": "payload"}
 +
-+    assert table.to_arrow().to_pylist() == [
-+        {"text": None, "vector": None},
-+        {"text": "", "vector": None},
-+    ]
-+    mock_openai_client.embeddings.create.assert_not_called()
 +
++@pytest.mark.asyncio
++@pytest.mark.parametrize("with_primary", [False, True])
++async def test_function_index_inspection_is_separate_from_registration(with_primary):
++    flight = pytest.importorskip("pyarrow.flight")
++    primary = "https://primary.example/simple/"
++    extra = "https://extra.example/simple/"
++    stored = _stored_function_version()
++    name = stored["name"]
 +
- def test_ollama_embeddings_pickle():
-     """OllamaEmbeddings must pickle even after the cached client is created."""
-     registry = get_registry()
++    def scale(value: float) -> float:
++        return 2 * value
++
++    authored = function(name=name, pip=["example==1.0"], python_version="3.12")(scale)
++    request = authored.registration_request
++    expected_runtime = {
++        "kind": "python",
++        "python_version": "3.12",
++        "environment": {"kind": "pip", "packages": ["example==1.0"]},
++    }
++    stored["runtime"] = json.loads(request.runtime.to_canonical_json())
++    build = {"extra_index_urls": [extra]}
++    if with_primary:
++        build["index_url"] = primary
++    stored["runtime"]["environment"]["build"] = build
++    stored["runtime_digest"] = "sha256:" + "1" * 64
++    stored["resolved_environment"] = {
++        "packages": [],
++        "provenance": {"configured_index_urls": [extra]},
++    }
++
++    class FunctionServer(flight.FlightServerBase):
++        def __init__(self):
++            super().__init__("grpc://127.0.0.1:0")
++            self.requests = []
++
++        def do_get(self, context, ticket):
++            self.requests.append(ticket.ticket)
++            return flight.RecordBatchStream(
++                pa.table({"definition": [json.dumps(stored)]})
++            )
++
++    class IndexedDefinition(FunctionDefinition):
++        def bind_secrets(self, secrets):
++            payload = json.loads(super().bind_secrets(secrets).to_canonical_json())
++            payload["runtime"]["environment"]["build"] = build
++            return FunctionRegistrationRequest.from_json(json.dumps(payload))
++
++    definition = IndexedDefinition(
++        scale,
++        name=name,
++        input_schema=None,
++        output_schema=None,
++        pip=("example==1.0",),
++        env={},
++        python_version="3.12",
++    )
++
++    with FunctionServer() as server:
++        options = {
++            "api_key": "test-key",
++            "host_override": "http://127.0.0.1:1",
++            "sql_host_override": f"grpc://127.0.0.1:{server.port}",
++        }
++        db = lancedb.connect("db://analytics", **options)
++        async_db = await lancedb.connect_async("db://analytics", **options)
++
++        message = r"runtime\.environment\.build is unsupported"
++        with pytest.raises(TypeError, match=message):
++            db.create_function(definition)
++        with pytest.raises(TypeError, match=message):
++            await async_db.create_function_async(definition)
++        assert server.requests == []
++
++        version = db.get_function(name, version=1)
++ 
+```
+
+**File**: `rust/lancedb/src/function.rs` (modified, +145/-6)
+```diff
+@@ -681,6 +681,39 @@ impl<'de> Deserialize<'de> for RowTimeoutSeconds {
+     }
+ }
+ 
++// Function inspection includes this build setting alongside the SDK's authored
++// runtime spec. Keep it on the readback model so registration keeps its own wire shape.
++#[derive(Debug, Clone, PartialEq, Eq)]
++struct RequestedPythonRuntime {
++    spec: PythonRuntimeSpec,
++    index_url: Option<String>,
++}
++
++impl<'de> Deserialize<'de> for RequestedPythonRuntime {
++    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
++        let document = Value::deserialize(deserializer)?;
++        let index_url = document
++            .pointer("/environment/build/index_url")
++            .and_then(Value::as_str)
++            .map(str::to_owned);
++        let spec: PythonRuntimeSpec =
++            serde_json::from_value(document).map_err(de::Error::custom)?;
++        let index_url = spec.environment().and(index_url);
++        Ok(Self { spec, index_url })
++    }
++}
++
++impl Serialize for RequestedPythonRuntime {
++    fn serialize<S: Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {
++        let Some(index_url) = &self.index_url else {
++            return self.spec.serialize(serializer);
++        };
++        let mut document = serde_json::to_value(&self.spec).map_err(serde::ser::Error::custom)?;
++        document["environment"]["build"] = serde_json::json!({"index_url": index_url});
++        document.serialize(serializer)
++    }
++}
++
+ /// One immutable Function object revision and its executable artifact.
+ ///
+ /// The Function is named by its parts, `name` and `namespace_path`, the way a
+@@ -764,7 +797,7 @@ pub struct FunctionVersion {
+     /// [`Self::resolved_environment`] when the caller needs actual package
+     /// versions.
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+-    runtime: Option<PythonRuntimeSpec>,
++    runtime: Option<RequestedPythonRuntime>,
+     /// Actual installed distributions, provenance, and registration warnings.
+     ///
+     /// This is the single-platform compatibility field. `None` on a
+@@ -838,7 +871,8 @@ impl FunctionVersion {
+ 
+     /// Digest of canonical runtime inputs, when provided by the server.
+     ///
+-    /// Includes Python version, environment sources, variables, and GPU settings.
++    /// Compare it with the digest of a locally authored runtime. The runtime
++    /// projection on this version can omit inputs needed to reproduce the digest.
+     /// A missing digest cannot establish that a local runtime matches. Reusing a
+     /// version also requires matching its source and other registration inputs.
+     pub fn runtime_digest(&self) -> Option<&str> {
+@@ -885,12 +919,21 @@ impl FunctionVersion {
+         self.result_stability.as_deref()
+     }
+ 
+-    /// The runtime specification requested at registration, when exposed by the
+-    /// server.
++    /// Runtime metadata requested at registration and exposed by the server.
+     ///
+-    /// This is the requested configuration, not evidence of what was installed.
++    /// This view can omit input needed to reproduce [`Self::runtime_digest`].
++    /// Read the explicit primary package index with [`Self::requested_index_url`],
++    /// and inspect installed distributions with [`Self::resolved_environment`].
+     pub fn runtime(&self) -> Option<&PythonRuntimeSpec> {
+-        self.runtime.as_ref()
++        self.runtime.as_ref().map(|runtime| &runtime.spec)
++    }
++
++    /// Explicit primary package index URL requested for this Function version.
++    ///
++    /// An absent value can still accompany extra indexes, other sources, or
++    /// service defaults. For build provenance, see [`ResolvedEnvironmentProvenance`].
++    pub fn requested_index_url(&self) -> Option<&str> {
++        self.runtime.as_ref()?.index_url.as_deref()
+     }
+ 
+     /// Actual installed distributions and registration warnings for a
+@@ -1083,6 +1126,7 @@ pub struct FunctionRegistrationRequest {
+     pub name: String,
+     pub artifact: FunctionArtifactRequest,
+     pub signature: FunctionSignature,
++    #[serde(deserialize_with = "deserialize_registration_runtime")]
+     pub runtime: PythonRuntimeSpec,
+     /// Maximum rows in one execution batch; the executor may use fewer.
+     #[serde(
+@@ -1144,8 +1188,25 @@ pub struct FunctionRegistrationRequest {
+     pub refresh_lock: bool,
+ }
+ 
++fn deserialize_registration_runtime<'de, D: Deserializer<'de>>(
++    deserializer: D,
++) -> std::result::Result<PythonRuntimeSpec, D::Error> {
++    let document = Value::deserialize(deserializer)?;
++    match document.pointer("/environment/build") {
++        None | Some(Value::Null) => {}
++        Some(Value::Object(build)) if build.is_empty() => {}
++        Some(_) => {
++            return Err(de::Error::custom(
++                "runtime.environment.build is unsupported in typed Function registration",
++            ));
++        }
++    }
++    serde_json::from_value(document).map_err(de::Error::custom)
++}
++
+ impl 
+```
+
+**File**: `rust/lancedb/src/remote/sql_test.rs` (modified, +14/-0)
+```diff
+@@ -3406,6 +3406,11 @@ async fn function_creation_and_description_use_sql_query_handles() {
+         version_json["row_timeout_seconds"] = serde_json::json!(8.0);
+         version_json["result_stability"] = serde_json::json!("input_and_context");
+         version_json["runtime"] = request_json["runtime"].clone();
++        let requested_index_url = "https://requested.example/simple/";
++        version_json["runtime"]["environment"]["build"] = serde_json::json!({
++            "index_url": requested_index_url,
++            "find_links": ["https://downloads.example/wheels"],
++        });
+         version_json["resolved_environment"] = serde_json::json!({
+             "packages": [
+                 {
+@@ -3551,6 +3556,7 @@ async fn function_creation_and_description_use_sql_query_handles() {
+         assert_eq!(described.row_timeout_seconds(), Some(8.0));
+         assert_eq!(described.result_stability(), Some("input_and_context"));
+         assert_eq!(described.runtime().unwrap().kind(), "python");
++        assert_eq!(described.requested_index_url(), Some(requested_index_url));
+         assert_eq!(
+             described
+                 .resolved_environment()
+@@ -3570,6 +3576,14 @@ async fn function_creation_and_description_use_sql_query_handles() {
+         assert_eq!(described_json["max_concurrency"], 4);
+         assert_eq!(described_json["row_timeout_seconds"], 8.0);
+         assert_eq!(described_json["result_stability"], "input_and_context");
++        assert_eq!(
++            described_json["runtime"]["environment"]["build"],
++            serde_json::json!({"index_url": requested_index_url})
++        );
++        assert_eq!(
++            described_json["resolved_environment"]["provenance"]["configured_index_urls"],
++            serde_json::json!(["https://packages.example/simple"])
++        );
+         let latest = db
+             .get_function_latest("embed", &["team".into()])
+             .await
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5198** (2026-11-24): docs(search): clarify Hamming distance without a vector index (@definitelynotguru)
-- **PR #5197** (2026-11-24): docs: add Homebrew installation to the CLI guide (@ChilePiquin)
-- **PR #5195** (2026-11-24): fix(python): skip OpenAI embedding requests when no valid text remains (@Xuanwo)
-- **PR #5194** (2026-11-24): fix(java): upgrade Apache HttpClient 5 to 5.6.5 (@Xuanwo)
-- **PR #5193** (2026-11-24): feat(embeddings): support Cohere v2 endpoints for Foundry text retrieval (@Xuanwo)
-- **PR #5192** (2026-11-24): chore(docs): upgrade mkdocs-material to 9.8.2 and mkdocstrings (@Xuanwo)
+- **PR #5238** (2026-11-26): feat(nodejs): open source-bearing blob descriptors (@Xuanwo)
+- **PR #5237** (2026-11-26): chore: update lance dependency to v16.0.0-beta.3 (@lancedb-robot)
+- **PR #5236** (2026-11-26): fix(ci): hand off Pages artifact to a separate deploy job (@Xuanwo)
+- **PR #5234** (2026-11-26): chore: update lance dependency to v16.0.0-beta.2 (@lancedb-robot)
+- **PR #5220** (2026-11-26): fix(python): preserve the requested package index on Function inspection (@Xuanwo)
+- **PR #5218** (2026-11-25): feat(rust): open a native table at a retained version (@Xuanwo)
 
 ---
 
@@ -2087,35 +1927,53 @@ originally contributed by @saudademjj in #3152.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. java): upgrade Apache HttpClient 5 to 5.6.5
+## X. ci): hand off Pages artifact to a separate deploy job
 
 **RULE**:
-When implementing operations in `java/lancedb-core/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/docs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef59dcfe`: java): upgrade Apache HttpClient 5 to 5.6.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2806709b`: ci): hand off Pages artifact to a separate deploy job. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/lancedb-core/pom.xml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docs.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        <!-- Direct transport dependency for LanceDbRestClient. Maven also selects this
-             version for the transitive lance-namespace-apache-client transport. -->
-            <version>5.6.5</version>
+    outputs:
+      artifact_name: ${{ steps.artifact-name.outputs.name }}
+      - name: Set artifact name
+        id: artifact-name
+        run: echo "name=github-pages-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+          name: ${{ steps.artifact-name.outputs.name }}
+
+  # Deploy from a separate job so the Pages artifact upload has settled before
+  # the deploy action looks it up. The per-run name keeps a full workflow
+  # re-run from accumulating artifacts that share the default name.
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+        with:
+          artifact_name: ${{ needs.build.outputs.artifact_name }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        <!-- Transport for the LanceDB routes outside the Lance Namespace spec.
-             Versions match what lance-namespace-apache-client resolves to. -->
-            <version>5.2.1</version>
+  # Single deploy job since we're just deploying
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef59dcfe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2806709b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

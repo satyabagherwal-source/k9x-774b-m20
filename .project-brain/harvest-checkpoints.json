@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T18:59:02.924Z",
+  "last_updated": "2026-11-26T19:07:49.044Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1100,14 +1100,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "content_hash": "f20faf0ade090f30cc522c566c352573001df2f1c3e85a7762cf8db937db6584",
-      "verified_at": "2026-11-23T05:27:26.568Z",
+      "content_hash": "eb0eceee45dab69903d845f55f44f4885bd01a81780d8938f60d539f8054aff8",
+      "verified_at": "2026-11-26T19:07:35.120Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T05:27:26.568Z"
+      "last_updated": "2026-11-26T19:07:35.120Z"
     },
     "MiniMaxAI/MiniMax-H3": {
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "3b812d0dd0f60aad7b3e6b29fa3f0b73dbe2b6224bf8cffdfe1fc17e4fbea83f",
-      "verified_at": "2026-11-25T12:09:03.613Z",
+      "content_hash": "c19ef42d7c3f92f9bcc569c7424c2919576778d0d39fdc851b34b41c432a3eb3",
+      "verified_at": "2026-11-26T19:07:37.603Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T12:09:03.613Z"
+      "last_updated": "2026-11-26T19:07:37.603Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "754141eb2afd72133b3bd01835d8698b8dee828aad27a2365c6939a3bfeda731",
-      "verified_at": "2026-11-26T00:34:58.226Z",
+      "content_hash": "f60a5d370f63a03f06714579537ae80084aec6a00b9c53b135a5c0057f07512b",
+      "verified_at": "2026-11-26T19:07:49.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T00:34:58.226Z"
+      "last_updated": "2026-11-26T19:07:49.044Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

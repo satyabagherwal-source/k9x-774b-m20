@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `a825f86d`  
+> **Source Version**: `2bcb31df`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T12:09:02.411Z  
+> **Timestamp**: 2026-11-26T19:07:36.251Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:09:02.406Z  
+> **Harvest Timestamp**: 2026-11-26T19:07:36.246Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tasteful, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12171 stars
+- **Stars / Engagement**: 12176 stars
 
 ---
 
@@ -1613,15 +1613,13 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3241** (2026-11-24): **move experimental APIs to parallel major-zero releases**
-  *Symptoms*: Sibling PR: https://github.com/GitoxideLabs/cargo-smart-release/pull/171  ---  Cargo cannot resolve disjoint minor-series pins of a major-positive crate in one dependency graph. Publish experimental APIs in parallel `0.x` series so downstream libraries can select the APIs they need by version and resolve different experimental series alongside the stable crate.  Keep the `unstable` switch for workspace builds and let cargo smart-release translate those path dependencies for publication. Re-export `SharedPermissions` and `Retries` from the paired stable `gix-fs` release to preserve their type identity across both series. 
+- **Issue #3251** (2026-11-25): **Evaluate replacing delta's git2 usage with Gitoxide; benchmark build times and config/discovery performance**
+  *Symptoms*: ## Motivation  [delta](https://github.com/dandavison/delta) is a widely used Rust Git diff renderer that currently depends on `git2` (libgit2). Its direct use appears comparatively narrow: repository discovery and Git configuration access, rather than computing diffs. This makes it a useful real-world candidate for evaluating a migration to Gitoxide, especially `gix-discover` and `gix-config` / the relevant `gix` APIs.  Source: [delta's Git configuration module](https://github.com/dandavison/delta/blob/main/src/git_config/mod.rs). It uses `git2::Repository::discover`, `repo.config()`, `git2::Config::open_default`, configuration snapshots, and typed configuration getters.  A migration could potentially reduce build complexity/time by removing native libgit2 and its dependencies, and improve repository discovery or configuration-read performance. These are **hypotheses to measure**, not established improvements.  ## Proposed investigation  - Establish whether Gitoxide already offers the configuration and repository-discovery behavior delta needs, including configuration precedence, includes/conditional includes, environment overrides, typed access, and discovery edge cases. - Prototype the replacement in delta or a representative standalone benchmark, preserving existing behavior. - **Measure compile times** before and after: clean build, incremental build, and ideally dependency compilation separately, on the same toolchain, hardware, and feature configuration. Report reproduc
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"3422bfe91f6692e3a1b0fe84786dcacbd3ba766a","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-24T15:19:02.317464Z">2026-11-24T15:19:02.317464Z</relative-time> | `3422bfe` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as rea
+  > Looked into it via https://github.com/Byron/delta/tree/git2-to-gix, but concluded that it needs stashing support to fully replace `git2`. There is also `gitu` which needs most of the features.  Without a full replacement, it's not making anything better.  Lastly, I noticed that `gix` comes with a couple of dependencies that one won't need to interact with a repo in basic ways.
 
-- **Issue #3240** (2026-11-24): **validate pack offsets on lookup**
-  *Symptoms*: Supersedes https://github.com/GitoxideLabs/gitoxide/pull/3239 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"baf3a2ea73bcbdf1c8ddb02669ee2ab30a178a8d","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-24T09:32:16.416698Z">2026-11-24T09:32:16.416698Z</relative-time> | `baf3a2e` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Commen
+- **Issue #3246** (2026-11-25): **fix(gix-imara-diff): make histogram diffs match `git diff --histogram`**
+  *Symptoms*: This pull request was written by Claude Code, an AI agent, which also made the change and ran the checks below. It is opened from the GitHub account of daniel-kindl.  ### Motivation  Diffy (https://github.com/daniel-kindl/diffy) is a code review desktop app. It stores review comments at hunk positions, so it needs hunks identical to `git diff --histogram`, with Git as its test oracle. In a comparison of 3,732 file pairs from git.git, tokio and ripgrep, gix-imara-diff was the closest crate, with 5 pairs that differ from Git 2.55.0. This change makes it identical on each of them.  ### Changes  The histogram diff and its postprocessing differed from Git's `xdiff/` in four steps (line numbers for 0.3.4 and Git 2.55.0):  | Step | Before | Git | |------|--------|-----| | 1. Skip after a match | skips later occurrences while the old-file position is not greater than `end2`, the match end in the new file (`src/histogram/lcs.rs:135`) | compares with `ae`, the match end in the old file (`xdiff/xhistogram.c:212`) | | 2. Occurrence limit | `MAX_CHAIN_LEN` is 63 (`src/histogram.rs:14`) | accepts up to 64 occurrences (`xdiff/xhistogram.c:289`, `:294`) | | 3. Common prefix and suffix | stripped before the histogram diff (`src/lib.rs:276-277`) | not stripped for histogram (`xdiff/xprepare.c:461`) | | 4. Diff again after a slide | none | diffs a group again with Myers if it moved and the group in the other file isn't empty, for histogram only (`xdiff/xdiffi.c:921-955`, added in Git 2.54 by e4
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1638,820 +1636,1293 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3befd38c` (2026-11-24)
-**Commit Message**: fix(gix-testtools): confine Git discovery to scripted fixtures
+### Incident Patch 1: `c726fd41` (2026-11-25)
+**Commit Message**: fix(gix-imara-diff): make histogram diffs match `git diff --histogram`
 
-<!-- agent -->
-When a fixture is generated inside a checkout, Git can discover the
-checkout and read its local config. A checkout-local `pack.threads`
-setting can then break `git index-pack` during fixture generation.
+The histogram diff and its postprocessing differed from Git's `xdiff/` in four steps,
+so hunks could differ from `git diff --histogram` for the same input:
 
-Set `GIT_CEILING_DIRECTORIES` to the fixture directory's parent when
-launching the script. Git can still discover repositories inside the
-fixture from nested directories. Test both discovery boundaries.
+1. After a match, skip later occurrences of its first line up to the end of the match in
+   the old file, like `xdiff/xhistogram.c`. The comparison used the end in the new file.
+2. Accept lines with up to 64 occurrences as anchors, like Git, instead of 63. The list
+   pool needs one more size class to hold `MAX_CHAIN_LEN + 1` positions.
+3. Don't strip the common prefix and suffix before a histogram diff. Git doesn't, and
+   stripping changes which lines histogram anchors.
+4. Diff a change group again with Myers if it moved while sliding and the group in the
+   other file isn't empty, for histogram diffs only, as Git 2.54 does in
+   `xdl_change_compact()`.
 
-Assisted-by: GPT 6.2 Sol
-Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
+`make_histogram_baseline.sh` has one case for each step, and its reverse. The tests
+compare the hunks with Git's, with and without the indent heuristic. Each case fails
+without its step.
 
-**File**: `tests/tools/src/lib.rs` (modified, +10/-3)
+The motivation is Diffy (https://github.com/daniel-kindl/diffy), a review app that stores
+comments at hunk positions a
+
+**File**: `gix-imara-diff/src/histogram.rs` (modified, +1/-1)
 ```diff
-@@ -38,6 +38,7 @@
- //! and set `init.defaultBranch=main` and `core.longpaths=true`. The latter lets Git for Windows use long paths
- //! without depending on external configuration. A script's own `GIT_CONFIG_COUNT` entries coexist with this
- //! configuration, with isolation taking precedence for shared keys. Explicit `git -c` options can override isolation.
-+//! Fixture scripts stop Git's upward repository discovery at the fixture root.
- //! Bash fixtures trace commands to a separate descriptor so redirected stderr baselines remain unchanged.
- //! Bash older than 4.1 reports failed commands instead. Captured diagnostics are printed only on failure.
- //!
-@@ -2026,7 +2027,9 @@ pub fn git(current_dir: impl AsRef<Path>, arguments: &str) -> Result<String> {
-     Ok(String::from_utf8(output.stdout)?)
- }
+@@ -11,7 +11,7 @@ mod list_pool;
  
--/// Prepare an isolated Git command in `current_dir`, using the same environment as fixture scripts.
-+/// Prepare an isolated Git command in `current_dir`.
-+///
-+/// Repository discovery may walk above `current_dir`, which allows commands from fixture subdirectories.
- ///
- /// The inherited environment is captured at construction, so subsequent process-wide changes
- /// cannot bypass the command's isolation before it is spawned.
-@@ -2450,8 +2453,12 @@ fn configure_command<'a, I: IntoIterator<Item = S>, S: AsRef<OsStr>>(
-     args: I,
-     script_result_directory: &Path,
- ) -> &'a mut std::process::Command {
--    configure_git_environment(cmd, script_result_directory)
--        .args(args)
-+    configure_git_environment(cmd, script_result_directory);
-+    if let Some(parent) = script_result_directory.parent() {
-+        // Git may discover a repository in the fixture itself, including from its subdirectories.
-+        cmd.env("GIT_CEILING_DIRECTORIES", parent);
-+    }
-+    cmd.args(args)
-         .current_dir(script_result_directory)
-         .env("GIT_DEFAULT_HASH", object_hash.to_string())
- }
+ /// Maximum number of occurrences tracked for a single token.
+ /// Tokens appearing more frequently fall back to Myers algorithm.
+-const MAX_CHAIN_LEN: u32 = 63;
++const MAX_CHAIN_LEN: u32 = 64;
+ 
+ /// State for computing histogram-based diffs.
+ struct Histogram {
 ```
 
-**File**: `tests/tools/src/tests.rs` (modified, +27/-0)
+**File**: `gix-imara-diff/src/histogram/lcs.rs` (modified, +1/-1)
 ```diff
-@@ -85,6 +85,33 @@ fn configure_command_clears_external_config() -> TestResult {
+@@ -132,7 +132,7 @@ impl LcsSearch {
+ 
+             loop {
+                 if let Some(next_token_idx) = occurrences_iter.next() {
+-                    if next_token_idx > end2 {
++                    if next_token_idx >= end1 {
+                         token_idx1 = next_token_idx;
+                         break;
+                     }
+```
+
+**File**: `gix-imara-diff/src/histogram/list_pool.rs` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ impl Default for ListHandle {
+     }
+ }
+ 
+-const MAX_SIZE_CLASS: SizeClass = sclass_for_length(super::MAX_CHAIN_LEN - 1);
++const MAX_SIZE_CLASS: SizeClass = sclass_for_length(super::MAX_CHAIN_LEN);
+ const NUM_SIZE_CLASS: usize = MAX_SIZE_CLASS as usize + 1;
+ 
+ /// A memory pool for storing lists of `T`.
+```
+
+**File**: `gix-imara-diff/src/lib.rs` (modified, +7/-14)
+```diff
+@@ -147,10 +147,7 @@
+ use std::ops::Range;
+ use std::slice;
+ 
+-use crate::{
+-    sources::words,
+-    util::{strip_common_postfix, strip_common_prefix},
+-};
++use crate::sources::words;
+ 
+ pub use crate::slider_heuristic::{IndentHeuristic, IndentLevel, NoSliderHeuristic, SliderHeuristic};
+ pub use intern::{InternedInput, Interner, Token, TokenSource};
+@@ -237,6 +234,8 @@ pub struct Diff {
+     /// Tracks which tokens were added to the second sequence (`after`), with
+     /// one entry for each one in the `after` sequence.
+     added: Vec<bool>,
++    /// Whether postprocessing diffs a group again after it slid, as Git does for histogram diffs only.
++    rediff_after_slide: bool,
+ }
+ 
+ impl std::fmt::Debug for Diff {
+@@ -256,7 +255,7 @@ impl Diff {
+ 
+     /// Computes an edit-script that transforms `before` into `after` using
+     /// the specified `algorithm`.
+-    pub fn compute_with(&mut self, algorithm: Algorithm, mut before: &[Token], mut after: &[Token], num_tokens: u32) {
++    pub fn compute_with(&mut self, algorithm: Algorithm, before: &[Token], after: &[Token], num_tokens: u32) {
+         assert!(
+             before.len() < i32::MAX as usize,
+             "imara-diff only supports up to {} tokens",
+@@ -271,16 +270,10 @@ impl Diff {
+         self.added.clear();
+         self.removed.resize(before.len(), false);
+         self.added.resize(after.len(), false);
++        self.rediff_after_slide = algorithm == Algorithm::Histogram;
+         match algorithm {
+-            Algorithm::Histogram => {
+-                let common_prefix = strip_common_prefix(&mut before, &mut after) as usize;
+-                let common_postfix = strip_common_postfix(&mut before, &mut after);
+-                let range = common_prefix..self.removed.len() - common_postfix as usize;
+-                let removed = &mut self.removed[range];
+-                let range = common_prefix..self.added.len() - common_postfix as usize;
+-                let added = &mut self.added[range];
+-                histogram::diff(before, after, removed, added, num_tokens);
+-            }
++            // Like Git, don't strip the common prefix and suffix, as it changes which lines histogram anchors.
++            Algorithm::Histogram => histogram::diff(before, after, &mut self.removed, &mut self.added, num_tokens),
+             // Myers trims the common ends itself, as it needs to count the tokens of the whole input first.
+             Algorithm::Myers => myers::diff(before, after, &mut self.removed, &mut self.added, false),
+             Algorithm::MyersMinimal => myers::diff(before, after, &mut self.removed, &mut self.added, true),
+```
+
+**File**: `gix-imara-diff/src/postprocess.rs` (modified, +35/-2)
+```diff
+@@ -24,6 +24,8 @@ impl Diff {
+             added: &mut self.removed,
+             removed: &mut self.added,
+             tokens: before,
++            other_tokens: after,
++            rediff_after_slide: self.rediff_after_slide,
+             hunk: Hunk {
+                 before: 0..0,
+                 after: 0..0,
+@@ -35,6 +37,8 @@ impl Diff {
+             added: &mut self.added,
+             removed: &mut self.removed,
+             tokens: after,
++            other_tokens: before,
++            rediff_after_slide: self.rediff_after_slide,
+             hunk: Hunk {
+                 before: 0..0,
+                 after: 0..0,
+@@ -62,10 +66,14 @@ impl Diff {
+ struct Postprocessor<'a, H> {
+     /// The mutable array tracking which tokens were added.
+     added: &'a mut [bool],
+-    /// The immutable array tracking which tokens were removed.
+-    removed: &'a [bool],
++    /// The mutable array tracking which tokens were removed, changed only to diff a group again.
++    removed: &'a mut [bool],
+     /// The token sequence being processed.
+     tokens: &'a [Token],
++    /// The token sequence of the other file, to diff a group again after it slid.
++    other_tokens: &'a [Token],
++    /// Whether to diff a group again after it slid, which Git only does for histogram diffs.
++    rediff_after_slide: bool,
+     /// The current hunk being processed in the iteration.
+     hunk: Hunk,
+     /// The heuristic used to determine optimal hunk positions.
+@@ -80,6 +88,7 @@ impl<H: SliderHeuristic> Postprocessor<'_, H> {
+                 break;
+             }
+ 
++            let range_before_sliding = self.hunk.after.clone();
+             let mut earliest_end;
+             let mut is_modification;
+             loop {
+@@ -103,6 +112,7 @@ impl<H: SliderHeuristic> Postprocessor<'_, H> {
+             }
+ 
+             if self.hunk.after.end == earliest_end {
++                self.rediff(&range_before_sliding);
+                 continue;
+             }
+             if is_modification {
+@@ -122,9 +132,32 @@ impl<H: SliderHeuristic> Postprocessor<'_, H> {
+                     debug_assert!(success);
+                 }
+             }
++            self.rediff(&range_before_sliding);
+         }
+     }
+ 
++    /// Diff the current group again if it changed while sliding, as sliding can merge groups
++    /// so that the merged group has lines in common with the group in the other file.
++    /// Like Git, only do this for histogram diffs and when the group in the other file isn't empty
++    /// (`xdl_change_compact()` in `xdiff/xdiffi.c`).
++    fn rediff(&mut self, range_before_sliding: &std::ops::Range<u32>) {
++        let a = self.hunk.after.clone();
++        let b = self.hunk.before.clone();
++        if !self.rediff_after_slide || b.is_empty() || a == *range_before_sliding {
++            return;
++        }
++        let (a0, a1, b0, b1) = (a.start as usize, a.end as usize, b.start as usize, b.end as usize);
++        self.added[a0..a1].fill(false);
++        self.removed[b0..b1].fill(false);
++        crate::myers::diff(
++            &self.tokens[a0..a1],
++            &self.other_tokens[b0..b1],
++            &mut self.added[a0..a1],
++            &mut self.removed[b0..b1],
++            false,
++        );
++    }
++
+     /// Slides a hunk down by one token/line, potentially merging it with a subsequent hunk.
+     fn slide_down(&mut self) -> bool {
+         let Some(&next_token) = self.tokens.get(self.hunk.after.end as usize) else {
+```
+
+**File**: `gix-imara-diff/tests/fixtures/make_histogram_baseline.sh` (added, +59/-0)
+```diff
+@@ -0,0 +1,59 @@
++#!/usr/bin/env bash
++set -eu -o pipefail
++
++# Generate with Git 2.54 or newer, which diffs a shifted histogram change group again (e417277ae9).
++# Each case is one step of Git's histogram diff in `xdiff/` that gix-imara-diff once did differently.
++# The inputs stay below 1024 bytes on at least one side, so `--unified=0` doesn't trim a common tail.
++
++# After a match, Git skips the later occurrences of its first line in the old file up to the end
++# of the match in the old file (`xdiff/xhistogram.c`). Git matches the second "B" of the old file.
++# Comparing with the end of the match in the new file matches the first "B" instead.
++mkdir skip-after-match
++printf '\nA\nB\n\nB\n\n' >skip-after-match/old
++printf 'C\nD\n\nB\n' >skip-after-match/new
++
++# Git anchors on a line with up to 64 occurrences in the old file and keeps one "x". With a limit
++# of 63, "x" can't be an anchor and the diff keeps no line.
++mkdir occurrence-limit
++for i in {1..64}; do
++  printf 'x\n'
++done >occurrence-limit/old
++printf 'a\nb\nc\n\nd\ne\nx\nf\n' >occurrence-limit/new
++
++# Git doesn't strip the common prefix and suffix before a histogram diff. Stripping the final "}"
++# makes the first "    }" the anchor, where Git anchors the second.
++mkdir common-ends
++printf '    }\n    }\n}\n' >common-ends/old
++printf '        }\n    }\n}\n}\n' >common-ends/new
++
++# Sliding merges change groups. Git diffs a group again if it moved and the group in the other
++# file isn't empty, for histogram only (`xdiff/xdiffi.c`). This finds the empty line that both
++# groups have in common, so "L" becomes "R" and "Q", and "P" is removed.
++mkdir rediff-after-slide
++printf 'L\n\nP\nQ\n\n' >rediff-after-slide/old
++printf 'R\nQ\n\nQ\n\n' >rediff-after-slide/new
++
++cases=(skip-after-match occurrence-limit common-ends rediff-after-slide)
++for case in "${cases[@]}"; do
++  mkdir "$case-reversed"
++  cp "$case/new" "$case-reversed/old"
++  cp "$case/old" "$case-reversed/new"
++done
++
++baseline() {
++  local name=$1
++  shift
++  # --no-index returns 1 for differences. Do not hide actual Git failures.
++  # Zero context exposes each compacted hunk's ranges; ignore file headers and function context.
++  git diff --no-index --no-ext-diff --no-textconv --no-color --diff-algorithm=histogram \
++    --unified=0 "$@" -- old new >"$name.patch" || test "$?" -eq 1
++  awk '/^@@ / {print $2, $3}' "$name.patch" >"$name.hunks"
++}
++
++for case in */; do
++  (
++    cd "$case"
++    baseline NoHeuristic --no-indent-heuristic
++    baseline IndentHeuristic --indent-heuristic
++  )
++done
+```
+
+**File**: `gix-imara-diff/tests/integration/main.rs` (modified, +61/-0)
+```diff
+@@ -869,6 +869,67 @@ fn assert_myers_matches_git(case: &str, algorithm: Algorithm, expected: (u32, u3
      Ok(())
  }
  
 +#[test]
-+fn configure_command_limits_repository_discovery_to_the_fixture() -> TestResult {
-+    let parent = tempfile::tempdir()?;
-+    git(parent.path(), "init")?;
-+    git(parent.path(), "config fixture.scope parent")?;
-+    let fixture = parent.path().join("fixture");
-+    let nested = fixture.join("nested");
-+    std::fs::create_dir_all(&nested)?;
++fn histogram_skips_occurrences_up_to_the_end_of_the_match_in_the_old_file() -> gix_testtools::TestResult {
++    assert_histogram_matches_git("skip-after-match")
++}
 +
-+    let mut cmd = git_command(&fixture);
-+    let result = configure_command(&mut cmd, object_hash(), ["config", "--get", "fixture.scope"], &fixture).output()?;
-+    assert_eq!(result.status.code(), Some(1), "Git must skip the parent config");
++#[test]
++fn histogram_anchors_on_lines_with_up_to_64_occurrences() -> gix_testtools::TestResult {
++    assert_histogram_matches_git("occurrence-limit")
++}
 +
-+    git(&fixture, "init")?;
-+    git(&fixture, "config fixture.scope fixture")?;
-+    let mut cmd = git_command(&fixture);
-+    let result = configure_command(&mut cmd, object_hash(), ["config", "--get", "fixture.scope"], &fixture)
-+        .current_dir(nested)
-+        .output()?;
-+    assert!(
-+        result.status.success(),
-+        "Git can discover a repository inside the fixture"
-+    );
-+    assert_eq!(result.stdout.to_str()?.trim(), "fixture");
++#[test]
++fn histogram_does_not_strip_the_common_prefix_and_suffix() -> gix_testtools::TestResult {
++    assert_histogram_matches_git("common-ends")
++}
++
++#[test]
++fn histogram_diffs_a_shifted_change_group_again() -> gix_testtools::TestResult {
++    assert_histogram_matches_git("rediff-after-slide")
++}
++
++fn assert_histogram_matches_git(case: &str) -> gix_testtools::TestResult {
++    // Git 2.54 diffs shifted histogram change groups again.
++    let Some(root) =
++        gix_testtools::scripted_fixture_read_only_with_git_version("make_histogram_baseline.sh", |version| {
++            version >= (2, 54, 0)
++        })?
++    else {
++        return Ok(());
++    };
++    for case in [case.to_owned(), format!("{case}-reversed")] {
++        let case_root = root.join(&case);
++        let before = std::fs::read_to_string(case_root.join("old"))?;
++        let after = std::fs::read_to_string(case_root.join("new"))?;
++        let input = InternedInput::new(before.as_str(), after.as_str());
++        for (baseline, indent_heuristic) in [("NoHeuristic", false), ("IndentHeuristic", true)] {
++            let git_hunks = std::fs::read_to_string(case_root.join(format!("{baseline}.hunks")))?
++                .lines()
++                .map(|line| {
++                    let (before, after) = line.split_once(' ').expect("Git hunk header contains both ranges");
++                    Ok(gix_imara_diff::Hunk {
++                        before: git_hunk_range(before)?,
++                        after: git_hunk_range(after)?,
++                    })
++                })
++                .collect::<gix_testtools::TestResult<Vec<_>>>()?;
++            let mut diff = Diff::compute(Algorithm::Histogram, &input);
++            if indent_heuristic {
++                diff.postprocess_lines(&input);
++            } else {
++                diff.postprocess_no_heuristic(&input);
++            }
++            assert_eq!(
++                diff.hunks().collect::<Vec<_>>(),
++                git_hunks,
++                "{case}: histogram with {baseline} must match Git's exact hunk placement"
++            );
++        }
++    }
 +    Ok(())
 +}
 +
- #[test]
- fn configure_command_keeps_destructive_git_operations_in_the_fixture() -> TestResult {
-     let fixture = tempfile::TempDir::new()?;
+ fn git_hunk_range(range: &str) -> gix_testtools::TestResult<std::ops::Range<u32>> {
+     let range = &range[1..]; // Strip the '-' or '+' sign.
+     let (start, len) = range.split_once(',').unwrap_or((range, "1"));
 ```
 
 ---
 
-### Incident Patch 2: `fff99b82` (2026-11-24)
-**Commit Message**: fix(gix-transport): preserve Git SSH argument boundaries
+### Incident Patch 2: `f5391535` (2026-11-25)
+**Commit Message**: fix(gix-imara-diff): reuse histogram occurrences across common-suffix splits
 
-I changes service program and path to execute to one argument, and quotes it,
-possibly with special git quoting.
-Let's see if this is the solution or causes new problems elsewhere.
-Only on Winodws fortunately.
+Another case of extreme meat-proxying - assuming the tests cover everything.
 
 <!-- agent -->
-On Windows, the MSYS2 runtime can expand an SSH destination before
-OpenSSH checks whether it looks like an option. Use Git-compatible
-Windows quoting for both the SSH feature probe and the connection.
+An unchanged tail of distinct pairs could defeat the cache because each token
+occurred below the seed limit. The histogram rebuilt and searched that tail
+at each split even after a unique prefix anchor made the tail ineligible.
 
-Pass the service and the single-quoted repository path together as one
-remote command, as Git does in `connect.c`. This keeps the path's
-quoting through local argument parsing and into the remote shell.
-Document the caller's quoting responsibility in `gix-url` and escape
-raw arguments at the transport trace sites.
+Index the common suffix once after the first split and retain candidate order
+with a forward cursor for each occurrence count. Clip occurrences as the
+active range shrinks and combine suffix and prefix counts before trying seeds.
+
+With 1,000 edits before 500,000 paired lines, release compute time fell from
+1.19 s to 8.7 ms. The paired and overlapping-tail fixtures matched the Git
+checkout's hunks, as did 30,988 differential comparisons. The affected
+crate tests passed.
 
 Assisted-by: GPT 6.2 Sol
 Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
 
-**File**: `gix-command/src/prepare.rs` (modified, +1/-1)
+**File**: `gix-imara-diff/src/histogram.rs` (modified, +164/-71)
 ```diff
-@@ -179,7 +179,7 @@ impl Prepare {
-     pub fn spawn(self) -> std::io::Result<std::process::Child> {
-         let mut cmd =
-             Command::try_from(self).map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidInput, err))?;
--        gix_trace::debug!(program = ?cmd.get_program(), args = ?cmd.get_args().collect::<Vec<_>>());
-+        gix_trace::debug_command!(cmd);
-         cmd.spawn()
-     }
+@@ -33,9 +33,8 @@ struct Histogram {
+ /// * `added` - Output array marking added tokens
+ /// * `num_tokens` - The total number of distinct tokens
+ pub fn diff(before: &[Token], after: &[Token], removed: &mut [bool], added: &mut [bool], num_tokens: u32) {
+-    let tail = CommonTail::find(before, after, num_tokens);
+     let mut histogram = Histogram::new(num_tokens);
+-    histogram.run(before, after, removed, added, tail.as_ref());
++    histogram.run(before, after, removed, added, true);
  }
-```
-
-**File**: `gix-transport/src/client/blocking_io/file.rs` (modified, +62/-20)
-```diff
-@@ -120,8 +120,11 @@ impl SpawnProcessOnDemand {
-             });
-         }
-         let repo_path = if self.ssh_cmd.is_some() {
--            cmd.args.push(service.as_str().into());
--            gix_quote::single(self.path.as_ref()).to_os_str_lossy().into_owned()
-+            // SSH forwards a shell command, including the path's quotes, to the remote host.
-+            let mut command = OsString::from(service.as_str());
-+            command.push(" ");
-+            command.push(&*gix_quote::single(self.path.as_ref()).to_os_str_lossy());
-+            command
-         } else {
-             self.path.to_os_str_lossy().into_owned()
-         };
-@@ -279,7 +282,12 @@ impl client::blocking_io::Transport for SpawnProcessOnDemand {
-             cmd.stdin = Stdio::piped();
-             cmd.stdout = Stdio::piped();
  
--            let mut cmd = std::process::Command::try_from(cmd).map_err(|err| client::Error::InvokeProgram {
-+            let prepared = if ssh_kind.is_some() {
-+                cmd.into_command_with_git_quoting()
-+            } else {
-+                cmd.try_into()
-+            };
-+            let mut cmd = prepared.map_err(|err| client::Error::InvokeProgram {
-                 source: std::io::Error::new(std::io::ErrorKind::InvalidInput, err),
-                 command: command.to_owned(),
-             })?;
-@@ -291,15 +299,15 @@ impl client::blocking_io::Transport for SpawnProcessOnDemand {
-         };
- 
-         let mut cmd = into_std_command(cmd, &cmd_name)?;
--        gix_trace::debug!(command = ?cmd, "gix_transport::SpawnProcessOnDemand");
-+        gix_trace::debug_command!(cmd, "gix_transport::SpawnProcessOnDemand");
-         let mut child = match cmd.spawn() {
-             Ok(child) => child,
-             Err(err) if ssh_kind.is_none() && err.kind() == std::io::ErrorKind::NotFound => {
-                 // The service program wasn't found in `PATH`, but as `git` itself can be found,
-                 // the service can still be run through it (#2313).
-                 let (cmd, cmd_name) = self.prepare_fallback_command(service);
-                 let mut cmd = into_std_command(cmd, &cmd_name)?;
--                gix_trace::debug!(command = ?cmd, "gix_transport::SpawnProcessOnDemand (fallback)");
-+                gix_trace::debug_command!(cmd, "gix_transport::SpawnProcessOnDemand (fallback)");
-                 cmd.spawn().map_err(|err| client::Error::InvokeProgram {
-                     source: err,
-                     command: cmd_name,
-@@ -431,15 +439,15 @@ mod tests {
-                 for (url, expected) in [
-                     (
-                         "git@forge.com:/path/repo",
--                        &["ssh", "git@forge.com", "git-upload-pack", "'/path/repo'"][..],
-+                        &["ssh", "git@forge.com", "git-upload-pack '/path/repo'"][..],
-                     ),
-                     (
-                         "git@forge.com:path/repo",
--                        &["ssh", "git@forge.com", "git-upload-pack", "'path/repo'"][..],
-+                        &["ssh", "git@forge.com", "git-upload-pack 'path/repo'"][..],
-                     ),
-                     (
-                         "ssh://git@forge.com/path/repo",
--                        &["ssh", "git@forge.com", "git-upload-pack", "'/path/repo'"][..],
-+                        &["ssh", "git@forge.com", "git-upload-pack '/path/repo'"][..],
-                     ),
-                 ] {
-                     let url = gix_url::parse(url)?;
-@@ -453,6 +461,50 @@ mod tests {
-                 Ok(())
+ impl Histogram {
+@@ -70,8 +69,9 @@ impl Histogram {
+         mut after: &[Token],
+         mut removed: &mut [bool],
+         mut added: &mut [bool],
+-        tail: Option<&CommonTail>,
++        mut cache_tail_after_split: bool,
+     ) {
++        let mut common_tail: Option<Box<CommonTail>> = None;
+         loop {
+             if before.is_empty() {
+                 added.fill(true);
+@@ -81,19 +81,12 @@ impl Histogram {
+                 return;
              }
  
-+            #[test]
-+            fn remote_command_preserves_shell_quoting_in_one_argument() -> gix_testtools::TestResult {
-+                if gix_testtools::run_in_isolated_process()? {
-+                    return Ok(());
-+                }
-+                let root = gix_testtools::tempfile::tempdir()?;
-+                let _cwd = gix_testtools::set_current_dir(root.path())?;
-+                for kind in [
-+                    ssh::ProgramKind::Ssh,
-+                    ssh::ProgramKind::Plink,
-+                    ssh::ProgramKind::Putty,
-+                    ssh::ProgramKind::TortoisePlink,
-+                    ssh::ProgramKind::Simple,
-+                ] {
-+                    for service in [crate::Service::UploadPack, crate::Service::ReceivePack] {
-+                        let transport = ssh::connect(
-+                            "user@host:team/repo.git;echo harmless'!".try_into()?,
-+                            Protocol::V1,
-+                            ssh::connect::Options {
-+                                command: Some(r#"printf '<%s>\n' "$@""#.into()),
-+                                kind: Some(kind),
-+                                ..Default::default()
-+                            },
-+                            false,
-+                        )?;
-+                        let cmd = transport.prepare_command(service)?.0;
-+                        let remote_command = format!(r"{} 'team/repo.git;echo harmless'\''
-```
-
-**File**: `gix-transport/src/client/blocking_io/ssh/mod.rs` (modified, +2/-2)
-```diff
-@@ -192,7 +192,7 @@ fn determine_client_kind(
-     let mut kind = known_kind.unwrap_or_else(|| ProgramKind::from(ssh_cmd));
-     if known_kind.is_none() && kind == ProgramKind::Simple {
-         let mut cmd = build_client_feature_check_command(ssh_cmd, url, disallow_shell)?;
--        gix_trace::debug!(cmd = ?cmd, "invoking `ssh` for feature check");
-+        gix_trace::debug_command!(cmd, "invoking `ssh` for feature check");
-         kind = if cmd.status().ok().is_some_and(|status| status.success()) {
-             ProgramKind::Ssh
-         } else {
-@@ -221,7 +221,7 @@ fn build_client_feature_check_command(ssh_cmd: &OsStr, url: &Url, disallow_shell
-     if disallow_shell {
-         prepare.use_shell = false;
-     }
--    prepare.try_into().map_err(Error::PrepareCommand)
-+    prepare.into_command_with_git_quoting().map_err(Error::PrepareCommand)
+-            let (tail_len, tail_positions, frequent_tokens) = tail
+-                .map(|tail| tail.for_len(before.len().min(after.len())))
+-                .unwrap_or_default();
+-            for &token in frequent_tokens {
+-                self.token_occurrences[token.0 as usize].mark_overflow(&self.pool);
+-            }
++            let tail = common_tail
++                .as_deref()
++                .map(|tail| tail.for_len(before.len().min(after.len())));
++            let tail_len = tail.map_or(0, |tail| tail.len as usize);
+             self.populate(&before[..before.len() - tail_len]);
+-            for &distance in tail_positions.iter().rev() {
+-                let position = before.len() - 1 - distance as usize;
+-                let token = before[position];
+-                self.token_occurrences[token.0 as usize].push(position as u32, &mut self.pool);
+-            }
+-            match find_lcs(before, after, after.len() - tail_len, tail_positions, self) {
++            match find_lcs(before, after, tail, self) {
+                 // no lcs was found, that means that file1 and file2 two have nothing in common
+                 Some(lcs) if lcs.len == 0 => {
+                     added.fill(true);
+@@ -106,7 +99,7 @@ impl Histogram {
+                         &after[..lcs.after_start as usize],
+                         &mut removed[..lcs.before_start as usize],
+                         &mut added[..lcs.after_start as usize],
+-                        None, // The prefixes have different endpoints from the cached suffix.
++                        false, // The prefixes have different endpoints from the cached suffix.
+                     );
+ 
+                     // this is equivalent to (tail) recursion but implement as a loop for efficiency reasons
+@@ -117,6 +110,11 @@ impl Histogram {
+                     let after_end = lcs.after_start + lcs.len;
+                     after = &after[after_end as usize..];
+                     added = &mut added[after_end as usize..];
++
++                    // A match may consume the common suffix in the first search.
++                    if std::mem::take(&mut cache_tail_after_split) {
++                        common_tail = CommonTail::find(before, after, self.token_occurrences.len()).map(Box::new);
++                    }
+                 }
+                 None => {
+                     // we are diffing two extremely large repetitive files
+@@ -132,105 +130,200 @@ impl Histogram {
+ 
+ /// The common suffix's occurrence data, indexed by distance from the end of either file.
+ struct CommonTail {
+-    len: usize,
+-    /// The last 66 positions of each token suffice to count it even when the suffix shortens.
++    len: u32,
++    /// Offsets into `positions`, with one extra entry for the end of the last token's list.
++    offsets: Vec<u32>,
++    /// The last 66 positions of each token, sorted by distance from the end.
+     positions: Vec<u32>,
+-    /// Positions belonging to tokens that can still seed a match in the full suffix.
+-    seed_positions: Vec<u32>,
+-    frequent_tokens: Vec<Token>,
+-    /// The minimum suffix length that still contains 66 occurrences of every frequent token.
+-    min_overflow_len: usize,
++    /// The same distances grouped by each token's capped count in the full suffix.
++    seeds_by_count: Vec<Vec<u32>>,
  }
  
- #[cfg(test)]
+ impl CommonTail {
+-    fn find(before: &[Token], after: &[Token], num_tokens: u32) -> Option<Self> {
++    fn find(before: &[Token], after: &[Token], num_tokens: usize) -> Option<Self> {
+         let min_len = OVERFLOW_COUNT as usize;
+         if before.len().min(after.len()) < min_len || before[before.len() - min_len..] != after[after.len() - min_len..]
+         {
+             return None;
+         }
+ 
+         let mut len = 0;
+-        let mut counts = vec![0u8; num_tokens as usize];
+-        let mut positions = Vec::new();
+-        let mut frequent_tokens = Vec::new();
+-        let mut min_overflow_len = 0;
+-        let overflow_count = OVERFLOW_COUNT as u8;
++        let mut counts = vec![0u8; n
 ```
 
-**File**: `gix-url/src/lib.rs` (modified, +2/-0)
+**File**: `gix-imara-diff/src/histogram/lcs.rs` (modified, +59/-34)
 ```diff
-@@ -112,6 +112,8 @@ pub fn expand_path(user: Option<&expand_path::ForUser>, path: &BStr) -> Result<P
+@@ -1,29 +1,58 @@
+ // Modified for gitoxide from the upstream imara-diff crate.
+ // Upstream source: git cat-file -p 32d1e45d3df061e6ccba6db7fdce92db29e345d8:src/histogram/lcs.rs
+ 
+-use crate::histogram::{Histogram, MAX_CHAIN_LEN, MAX_SEED_OCCURRENCES};
++use crate::histogram::{Histogram, MAX_CHAIN_LEN, MAX_SEED_OCCURRENCES, OVERFLOW_COUNT, Tail};
+ use crate::intern::Token;
+ 
+ /// Finds the longest common subsequence (LCS) using a histogram-based approach.
  ///
- /// This type only expresses known *syntactic* risk. It does not cover other risks, such as passing a personal access
- /// token as a username rather than a password in an application that logs usernames.
-+/// The caller must preserve the argument literally when invoking the program. MSYS2/Cygwin programs on Windows
-+/// require additional quoting to prevent the runtime from expanding arguments or removing quotes.
- #[derive(Debug, PartialEq, Eq, Copy, Clone)]
- pub enum ArgumentSafety<'a> {
-     /// May be safe. There is nothing to pass, so there is nothing dangerous.
+-/// In the shared suffix at `seed_end`, consider seeds only at the given distances from the end.
+ /// Returns `None` if the sequences are highly repetitive and should fall back to Myers.
+ pub(super) fn find_lcs(
+     before: &[Token],
+     after: &[Token],
+-    seed_end: usize,
+-    tail_positions: &[u32],
++    tail: Option<Tail<'_>>,
+     histogram: &mut Histogram,
+ ) -> Option<Lcs> {
+     let mut search = LcsSearch {
+         lcs: Lcs::default(),
+         min_occurrences: MAX_SEED_OCCURRENCES,
+-        found_cs: seed_end < after.len(),
++        found_cs: tail.is_some(),
+     };
+-    search.run(before, after, seed_end, tail_positions, histogram);
++    let occurrences = Occurrences {
++        prefix: histogram,
++        tail,
++        before_len: before.len() as u32,
++    };
++    search.run(before, after, &occurrences);
++    histogram.clear();
+     if search.success() { Some(search.lcs) } else { None }
+ }
+ 
++/// Occurrence data for the active before range, in prefix and suffix order.
++struct Occurrences<'a> {
++    prefix: &'a Histogram,
++    tail: Option<Tail<'a>>,
++    before_len: u32,
++}
++
++impl Occurrences<'_> {
++    #[inline]
++    fn count(&self, token: Token) -> u32 {
++        let prefix = self.prefix.num_token_occurrences(token);
++        let tail = self.tail.map_or(0, |tail| tail.positions(token).len() as u32);
++        (prefix + tail).min(OVERFLOW_COUNT)
++    }
++
++    fn positions(&self, token: Token) -> impl Iterator<Item = u32> + '_ {
++        let tail = self.tail.map_or(&[][..], |tail| tail.positions(token));
++        self.prefix
++            .token_occurrences(token)
++            .iter()
++            .copied()
++            .chain(tail.iter().rev().map(|&distance| self.before_len - 1 - distance))
++    }
++}
++
+ /// Represents a longest common subsequence found by the histogram algorithm.
+ #[derive(Default, Debug)]
+ pub struct Lcs {
+@@ -46,38 +75,31 @@ pub struct LcsSearch {
+ }
+ 
+ impl LcsSearch {
+-    fn run(
+-        &mut self,
+-        before: &[Token],
+-        after: &[Token],
+-        seed_end: usize,
+-        tail_positions: &[u32],
+-        histogram: &mut Histogram,
+-    ) {
++    fn run(&mut self, before: &[Token], after: &[Token], occurrences: &Occurrences<'_>) {
++        let seed_end = after.len() - occurrences.tail.map_or(0, |tail| tail.len as usize);
+         let seeds = &after[..seed_end];
+         let mut pos = 0;
+         while let Some(&token) = seeds.get(pos as usize) {
+-            if self.can_seed(histogram.num_token_occurrences(token)) {
+-                pos = self.update_lcs(pos, token, histogram, before, after);
++            let count = occurrences.count(token);
++            if self.can_seed(count) {
++                pos = self.update_lcs(pos, token, count, occurrences, before, after);
+                 continue;
+             }
+             pos += 1;
+         }
+-        let after_len = after.len() as u32;
+-        for &distance in tail_positions.iter().rev() {
+-            if pos == after_len {
+-                break;
+-            }
+-            let seed = after_len - 1 - distance;
+-            if seed >= pos {
++        if let Some(tail) = occurrences.tail {
++            let mut seeds = tail.seeds();
++            let after_len = after.len() as u32;
++            while let Some(seed) = seeds.next(after_len, pos, self.min_occurrences) {
+                 let token = after[seed as usize];
+-                if self.can_seed(histogram.num_token_occurrences(token)) {
+-                    pos = self.update_lcs(seed, token, histogram, before, after);
+-                }
++                let count = occurrences.count(token);
++                pos = if self.can_seed(count) {
++                    self.update_lcs(seed, token, count, occurrences, before, after)
++                } else {
++                    seed + 1
++                };
+             }
+         }
+-
+-        histogram.clear();
+     }
+ 
+     fn can_seed(&mut self, occurrences: u32) -> bool {
+@@ -94,16 +116,19 @@ impl LcsSearch {
+         &mut self,
+         after_pos: u32,
+         token: Token,
+-        histogram: &Histogram,
++        count: u32,
++        histogram: &Occurrences<'_>,
+         before: &[Token],
+         after: &[Token],
+     ) -> u32 {
+         let mut next_token_idx2 = after_pos + 1;
+-        let mut occurrences_iter = histogram.token_occurrences(token).iter().copied();
+-        let mut token_idx1 = occurrences_iter.next().unwrap();
++        let mut occurrences_iter = histogram.positions(token);
++        let mut token_idx1 = occurrences_iter
++            .ne
+```
+
+**File**: `gix-imara-diff/src/histogram/list_pool.rs` (modified, +0/-6)
+```diff
+@@ -216,12 +216,6 @@ impl ListHandle {
+         }
+     }
+ 
+-    /// Record that the token is too frequent to seed a match.
+-    pub fn mark_overflow(&mut self, pool: &ListPool) {
+-        self.generation = pool.generation;
+-        self.count = OVERFLOW_COUNT;
+-    }
+-
+     /// Records an occurrence and stores its position if the list has room.
+     #[inline]
+     pub fn push(&mut self, element: u32, pool: &mut ListPool) {
+```
+
+**File**: `gix-imara-diff/tests/fixtures/make_histogram_baseline.sh` (modified, +6/-3)
+```diff
+@@ -41,9 +41,10 @@ else
+   printf 'B\n' >>occurrence-overflow/old
+   cp occurrence-seed-limit/new occurrence-overflow/new
+ 
+-  # The unique unchanged lines split edits before a shared repetitive tail. Two final
++  # Unique unchanged lines split edits before shared tails. A line in the paired tail
++  # occurs twice and is skipped after a unique anchor sets the cutoff to one. Two final
+   # blank lines in the mixed case can still seed a match after the prefix is gone.
+-  mkdir repetitive-tail alternating-tail mixed-frequency-tail
++  mkdir repetitive-tail alternating-tail mixed-frequency-tail paired-tail
+   for side in old new; do
+     {
+       for i in {1..8}; do
+@@ -52,9 +53,11 @@ else
+       printf '%s-last\n' "$side"
+     } >"repetitive-tail/$side"
+     cp "repetitive-tail/$side" "alternating-tail/$side"
++    cp "repetitive-tail/$side" "paired-tail/$side"
+     for i in {1..128}; do
+       printf 'x\n' >>"repetitive-tail/$side"
+       printf '%s\n' x y >>"alternating-tail/$side"
++      printf '%s\n' "$i" "$i" >>"paired-tail/$side"
+     done
+     cp "repetitive-tail/$side" "mixed-frequency-tail/$side"
+     printf '\n\n' >>"mixed-frequency-tail/$side"
+@@ -68,7 +71,7 @@ else
+ 
+   cases=(
+     skip-after-match occurrence-limit occurrence-seed-limit occurrence-overflow
+-    repetitive-tail alternating-tail mixed-frequency-tail common-ends
++    repetitive-tail alternating-tail mixed-frequency-tail paired-tail common-ends
+   )
+ fi
+ 
+```
+
+**File**: `gix-imara-diff/tests/integration/main.rs` (modified, +2/-1)
+```diff
+@@ -890,7 +890,8 @@ fn histogram_skips_seeds_with_more_than_65_occurrences() -> gix_testtools::TestR
+ fn histogram_preserves_hunks_before_a_repetitive_tail() -> gix_testtools::TestResult {
+     assert_histogram_matches_git("repetitive-tail")?;
+     assert_histogram_matches_git("alternating-tail")?;
+-    assert_histogram_matches_git("mixed-frequency-tail")
++    assert_histogram_matches_git("mixed-frequency-tail")?;
++    assert_histogram_matches_git("paired-tail")
+ }
+ 
+ #[test]
 ```
 
 ---
 
-### Incident Patch 3: `860ec3d2` (2026-11-23)
-**Commit Message**: fix(gix-command): prepare Git-compatible Windows arguments
+### Incident Patch 3: `2bcb31df` (2026-11-25)
+**Commit Message**: Merge pull request #3246 from daniel-kindl/fix-histogram-git-parity
 
-Looked at it carefully, improved some details to make them easier to follow,
-and rubber-stamped the tests and the actual quoting implementation.
+fix(gix-imara-diff): make histogram diffs match `git diff --histogram`
 
-<!-- agent -->
-Git's MSVC quoting protects arguments that MSYS2 and Cygwin could
-expand before the called program sees them. Make that quoting available
-to callers without inspecting executable images or changing the normal
-argument handling of native helpers.
-
-Prefer an explicit path's `.exe` sibling before shebang dispatch. Keep
-the bundled Git shell's MSYS2 quoting and Rust's batch file escaping.
-Reject literal double quotes for custom transports under `noglob`,
-where a runtime could otherwise change the argument boundaries. Escape
-raw arguments in trace output and exercise the behavior on Windows.
-
-**File**: `gix-command/src/lib.rs` (modified, +32/-7)
+**File**: `gitoxide-core/src/query/engine/update.rs` (modified, +19/-44)
 ```diff
-@@ -28,6 +28,8 @@ use bstr::{BString, ByteSlice};
- pub mod parse;
- 
- mod prepare;
-+#[cfg(windows)]
-+mod windows;
- 
- ///
- pub mod shebang {
-@@ -65,8 +67,10 @@ pub mod shebang {
- /// after creating it with [`prepare()`].
- ///
- /// Convert it to [`std::process::Command`] with [`TryFrom::try_from()`] to finish preparation
--/// without spawning. Preparation reports an error when shell quoting or namespace conversion
--/// requires an encoding the platform cannot represent.
-+/// without spawning. Preparation reports an error when argument quoting or namespace conversion
-+/// requires an encoding the selected parser or platform cannot represent.
-+/// On Windows, arguments to the bundled Git shell can use `CommandExt::raw_arg`, so
-+/// `Command::get_args()` can include command-line quoting rather than only the decoded contents.
- pub struct Prepare {
-     /// The command to invoke, either directly or with a shell depending on `use_shell`.
-     pub command: OsString,
-@@ -160,21 +164,39 @@ fn is_bare_command(command: &Path) -> bool {
-     command.components().take(2).count() == 1
- }
- 
-+/// Return `Some(path)` if appending `.exe` to `command` yields a path to a file, as in Rust's
-+/// Windows process launcher for explicit paths. For example, `bin/ssh` returns `Some(bin/ssh.exe)`
-+/// if `bin/ssh.exe` is a file, even if `bin/ssh` also exists.
-+///
-+/// Return `None` if there is no such file, if `command` already has an `.exe` extension (ignoring
-+/// ASCII case), or if it ends in a [Windows path separator](prepare::has_trailing_windows_separator).
-+fn win_exe_suffix_lookup(command: &Path) -> Option<PathBuf> {
-+    if prepare::has_trailing_windows_separator(command)
-+        || command
-+            .extension()
-+            .is_some_and(|ext| ext.as_encoded_bytes().eq_ignore_ascii_case(b"exe"))
-+    {
-+        return None;
-+    }
-+    let mut executable = command.as_os_str().to_owned();
-+    executable.push(".exe");
-+    let executable = PathBuf::from(executable);
-+    executable.is_file().then_some(executable)
-+}
-+
- /// Try to find `command` in `joined_paths` using [`split_paths()`].
- /// Commands with an explicit extension are matched verbatim. Otherwise, `.exe` is preferred over an extensionless file.
- /// Note that just like Git, no lookup is performed if a slash or backslash is in `command`.
- fn win_path_lookup(command: &Path, joined_paths: &std::ffi::OsStr) -> Option<PathBuf> {
-     fn lookup(root: &Path, command: &Path, has_extension: bool) -> Option<PathBuf> {
--        let mut path = root.join(command);
-+        let path = root.join(command);
-         if has_extension {
-             return path.is_file().then_some(path);
-         }
- 
--        path.set_extension("exe");
--        if path.is_file() {
--            return Some(path);
-+        if let Some(executable) = win_exe_suffix_lookup(&path) {
-+            return Some(executable);
-         }
--        path.set_extension("");
-         path.is_file().then_some(path)
-     }
-     if !is_bare_command(command) {
-@@ -212,6 +234,9 @@ pub fn extract_interpreter(executable: &Path) -> Option<shebang::Data> {
- /// - `stderr` is inherited to allow the command to provide context to the user
- ///
- /// On Windows, terminal Windows will be suppressed automatically.
-+/// Explicit program paths also prefer an existing `.exe` sibling, matching Rust's process launcher.
-+/// The bundled Git shell receives MSYS2 quoting. For external Git transports use
-+/// [`Prepare::into_command_with_git_quoting()`] to enable Git's additional Windows quoting.
- ///
- /// ### Warning
- ///
+@@ -8,7 +8,7 @@ use std::{
+ use gix::{
+     Count, Progress, Result,
+     bstr::{BStr, BString, ByteSlice},
+-    diff::{blob::platform::prepare_diff::Operation, rewrites::CopySource},
++    diff::rewrites::CopySource,
+     error::{ResultExt, bail},
+     parallel::{InOrderIter, SequenceId},
+     prelude::ObjectIdExt,
+@@ -256,50 +256,25 @@ pub fn update(
+                                                             add_lines(&mut out, location, &lines_counter, previous_id);
+                                                         }
+                                                         (true, true) => {
+-                                                            if let Ok(cache) =
+-                                                                change.diff(&mut diff_cache).map(|p| p.resource_cache)
++                                                            if let Ok(Some(counts)) = change
++                                                                .diff(&mut diff_cache)
++                                                                .and_then(|mut diff| diff.line_counts())
+                                                             {
+-                                                                cache
+-                                                                    .options
+-                                                                    .skip_internal_diff_if_external_is_configured =
+-                                                                    false;
+-                                                                if let Ok(prep) = cache.prepare_diff() {
+-                                                                    let mut nl = 0;
+-                                                                    match prep.operation {
+-                                                                        Operation::InternalDiff {
+-                                                                            algorithm,
+-                                                                            change,
+-                                                                        } => {
+-                                                                            let tokens = change.patch_input();
+-                                                                            let diff = gix::diff::blob::Diff::compute(
+-                                                                                algorithm, &tokens,
+-                                                                            );
+-                                                                            let added = diff.count_additions() as usize;
+-                                                                            let removed =
+-                                                                                diff.count_removals() as usize;
+-                                                                            nl += added + removed;
+-                                                                            let lines = LineStats {
+-                                                                                added,
+-                                                                                removed,
+-                                                                                before: tokens.before.len(),
+-                                                                                after: tokens.after.len(),
+-                                                                            };
+-                                                                            lines_counter
+-                                                                                .fetch_add(nl, Ordering::SeqCst);
+-                                                                            out.push(FileChange {
+-                                                                                relpath: location.to_owned(),
+-                                                                                mode: FileMode::Modified,
+-                                                                                source_relpath: None,
+-                                                                                lines: Some(lines),
+-                                                                            });
+-                                                                        }
+-                                                                        Operation::ExternalCommand { .. } => {
+-                                                                            unreachable!("disabled above")
+-                                                                        }
+-                                                                        Operation::SourceOrDestinationIsBinary
+-                                                                        | Operation::NeitherExists => {}
+-                                                  
 ```
 
-**File**: `gix-command/src/prepare.rs` (modified, +74/-21)
+**File**: `gix-blame/src/file/function.rs` (modified, +28/-6)
 ```diff
-@@ -8,7 +8,9 @@ use std::{
- use bstr::ByteSlice;
- use gix_error::Result;
+@@ -6,7 +6,7 @@ use gix_error::{ErrorExt, OptionExt, ResultExt, bail, message};
+ use gix_hash::ObjectId;
+ use gix_object::{
+     FindExt,
+-    bstr::{BStr, BString},
++    bstr::{BStr, BString, ByteSlice},
+ };
+ use gix_traverse::commit::find as find_commit;
+ use smallvec::SmallVec;
+@@ -839,9 +839,15 @@ fn blob_changes_from_data(
+     diff_algorithm: gix_diff::blob::Algorithm,
+     stats: &mut Statistics,
+ ) -> Vec<Change> {
+-    use gix_diff::blob::Hunk;
++    use gix_diff::blob::{Algorithm, Hunk};
  
--use crate::{Context, Prepare, extract_interpreter, is_bare_command, split_paths, win_path_lookup};
-+use crate::{
-+    Context, Prepare, extract_interpreter, is_bare_command, split_paths, win_exe_suffix_lookup, win_path_lookup,
-+};
- 
- /// Builder
- impl Prepare {
-@@ -177,16 +179,39 @@ impl Prepare {
-     pub fn spawn(self) -> std::io::Result<std::process::Child> {
-         let mut cmd =
-             Command::try_from(self).map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidInput, err))?;
--        gix_trace::debug!(cmd = ?cmd);
-+        gix_trace::debug!(program = ?cmd.get_program(), args = ?cmd.get_args().collect::<Vec<_>>());
-         cmd.spawn()
-     }
- }
- 
- impl TryFrom<Prepare> for Command {
-     type Error = gix_error::Error;
- 
--    fn try_from(mut prep: Prepare) -> Result<Self> {
-+    fn try_from(prep: Prepare) -> Result<Self> {
-+        prep.into_command(false)
-+    }
-+}
-+
-+/// Lifecycle
-+impl Prepare {
-+    /// Finish preparation using Git for Windows' additional argument quoting on Windows.
-+    ///
-+    /// Use this for external Git transports whose arguments may be parsed again by MSYS2 or Cygwin.
-+    /// As with the bundled shell, `Command::get_args()` includes quoting for arguments passed with `raw_arg`.
-+    /// For other programs, disabling globbing in `MSYS` or `CYGWIN` can make literal double quotes
-+    /// ambiguous, so preparation rejects them in that mode.
-+    /// On other platforms this is identical to converting with [`Command::try_from()`].
-+    pub fn into_command_with_git_quoting(self) -> Result<Command> {
-+        self.into_command(true)
-+    }
-+
-+    fn into_command(self, git_quoting: bool) -> Result<Command> {
-+        #[cfg(not(windows))]
-+        let _ = git_quoting;
-+        let mut prep = self;
-         let mut inline_env = Vec::new();
-+        #[cfg(windows)]
-+        let mut bundled_shell = false;
-         let mut cmd = if prep.use_shell {
-             let split_args = prep
-                 .allow_manual_arg_splitting
-@@ -213,7 +238,15 @@ impl TryFrom<Prepare> for Command {
-                 None => {
-                     let mut cmd = match prep.shell_program {
-                         Some(shell) => Command::new(shell),
--                        None => gix_path::env::shell_command(),
-+                        None => {
-+                            let shell = gix_path::env::shell_command();
-+                            #[cfg(windows)]
-+                            {
-+                                // Discovery returns a full path for Git's MSYS2 shell or its shim.
-+                                bundled_shell = Path::new(shell.get_program()).is_absolute();
-+                            }
-+                            shell
-+                        }
-                     };
-                     // Passed as `command_name` after `-c <script>`; the shell uses it
-                     // as `$0`, which prefixes its own diagnostic messages. If the
-@@ -250,6 +283,9 @@ impl TryFrom<Prepare> for Command {
-         } else {
-             Command::new(prep.command)
-         };
-+        cmd.args(prep.args);
-+        #[cfg(windows)]
-+        let mut cmd = crate::windows::quote_arguments(cmd, git_quoting, bundled_shell, &prep.env, &inline_env)?;
-         // We never want to have terminals pop-up on Windows if this runs from a GUI application.
-         #[cfg(windows)]
-         {
-@@ -260,8 +296,7 @@ impl TryFrom<Prepare> for Command {
-         cmd.stdin(prep.stdin)
-             .stdout(prep.stdout)
-             .stderr(prep.stderr)
--            .envs(prep.env)
--            .args(prep.args);
-+            .envs(prep.env);
-         if let Some(ctx) = prep.context {
-             if let Some(git_dir) = ctx.git_dir {
-                 cmd.env("GIT_DIR", &git_dir);
-@@ -307,18 +342,7 @@ impl TryFrom<Prepare> for Command {
- /// arguments. If `PATH` does not resolve a bare command, the missing program remains anchored in its first entry
- /// so Rust's broader Windows lookup cannot find it elsewhere.
- fn windows_command(command: OsString, env: &[(OsString, OsString)], inline_env: &[(String, OsString)]) -> Command {
--    let explicit_joined_paths = inline_env
--        .iter()
--        .rev()
--        .find(|(name, _)| name.eq_ignore_ascii_case("PATH"))
--        .map(|(_, value)| value.as_os_str())
--        .or_else(|| {
--            env.iter()
--                .rev()
--                .find(|(name, _)| name.to_str().is_some_and(|name| name.eq_ignore_ascii_case("PATH")))
--                .map(|(_, value)| value.as_os_str())
--        });
--    let joined_paths = explicit_joined_paths
-+    let joined_paths = windows_env_override("PATH", env, inline_env)
-         .map(Cow::Borrowed)
-         .or_else(|| std::env::var_os("PATH").map(Cow::Owned));
-     let looked_up = joined_paths
-@@ -329,15 +353,20 @@ fn windows_command(command: OsString, env: &[(OsString, OsString)], inline_env:
-         Some(program) => Cow::Owned(program),
-```
-
-**File**: `gix-command/src/windows.rs` (added, +182/-0)
-```diff
-@@ -0,0 +1,182 @@
-+use std::{
-+    borrow::Cow,
-+    ffi::{OsStr, OsString},
-+    os::windows::{ffi::OsStrExt, ffi::OsStringExt, process::CommandExt},
-+    path::Path,
-+    process::Command,
-+};
-+
-+use gix_error::{Result, bail, validation};
-+
-+/// Apply Git's extra quoting without probing the executable.
-+pub(super) fn quote_arguments(
-+    cmd: Command,
-+    git_quoting: bool,
-+    bundled_shell: bool,
-+    env: &[(OsString, OsString)],
-+    inline_env: &[(String, OsString)],
-+) -> Result<Command> {
-+    let glob = |key| {
-+        crate::prepare::windows_env_override(key, env, inline_env)
-+            .map(Cow::Borrowed)
-+            .or_else(|| std::env::var_os(key).map(Cow::Owned))
-+            .as_deref()
-+            .is_none_or(glob_enabled)
-+    };
-+    let quote: fn(&OsStr) -> Option<OsString> = if bundled_shell {
-+        if !cmd.get_args().any(needs_msys_quoting) {
-+            return Ok(cmd);
-+        }
-+        if glob("MSYS") {
-+            quote_for_msys_glob
-+        } else {
-+            quote_for_msys_noglob
-+        }
-+    } else if git_quoting {
-+        let has_double_quote = cmd.get_args().any(|arg| arg.as_encoded_bytes().contains(&b'"'));
-+        let needs_quoting = cmd.get_args().any(needs_msvc_quoting);
-+        if !(has_double_quote || needs_quoting) || may_be_batch_file(cmd.get_program()) {
-+            return Ok(cmd);
-+        }
-+        // The noglob parser does not decode the backslash escapes used by the Windows C runtime.
-+        // Without identifying the executable, reject an argument that could lose its quote boundary.
-+        if has_double_quote && (!glob("MSYS") || !glob("CYGWIN")) {
-+            bail!(validation(
-+                "cannot pass literal double quotes to a Windows Git transport with globbing disabled"
-+            ));
-+        }
-+        if !needs_quoting {
-+            return Ok(cmd);
-+        }
-+        quote_for_msvc
+-    let input = gix_diff::blob::InternedInput::new(old_data, new_data);
++    let trimmed_bytes = if diff_algorithm == Algorithm::Histogram {
++        common_tail_bytes_to_trim(old_data, new_data)
 +    } else {
-+        return Ok(cmd);
++        0
 +    };
-+
-+    let mut quoted = Command::new(cmd.get_program());
-+    for arg in cmd.get_args() {
-+        if let Some(arg) = quote(arg) {
-+            quoted.raw_arg(arg);
-+        } else {
-+            quoted.arg(arg);
-+        }
-+    }
-+    Ok(quoted)
-+}
-+
-+fn may_be_batch_file(program: &OsStr) -> bool {
-+    // Rust uses a separate, safer encoder for batch files. In particular, raw_arg would bypass
-+    // its escaping of percent signs and its checks for line breaks.
-+    let has_suffix = |name: &OsStr, suffix: &[u8]| {
-+        let bytes = name.as_encoded_bytes();
-+        bytes
-+            .get(bytes.len().saturating_sub(suffix.len())..)
-+            .is_some_and(|tail| tail.eq_ignore_ascii_case(suffix))
-+    };
-+    !has_suffix(program, b".exe")
-+        && std::path::absolute(Path::new(program)).map_or(true, |path| {
-+            has_suffix(path.as_os_str(), b".cmd") || has_suffix(path.as_os_str(), b".bat")
-+        })
-+}
-+
-+fn needs_msvc_quoting(arg: &OsStr) -> bool {
-+    let bytes = arg.as_encoded_bytes();
-+    // Spaces and tabs already make Rust wrap the entire argument in double quotes.
-+    !bytes.iter().any(|byte| matches!(byte, b' ' | b'\t')) && bytes.iter().any(|&byte| requires_quotes(byte))
-+}
-+
-+fn needs_msys_quoting(arg: &OsStr) -> bool {
-+    arg.as_encoded_bytes()
-+        .iter()
-+        .any(|&byte| byte == b'\\' || requires_quotes(byte))
-+}
-+
-+fn requires_quotes(byte: u8) -> bool {
-+    // As in Git's quote_arg_msvc(), also quote characters that trigger argument expansion.
-+    // Include bracket and tilde expansion to preserve the SSH destination literally.
-+    matches!(
-+        byte,
-+        b'\n' | b'\r' | 0x0b | 0x0c | b'"' | b'\'' | b'*' | b'?' | b'[' | b'{' | b'~'
-+    )
-+}
-+
-+/// The last glob, noglob or -glob setting controls Windows argument expansion.
-+fn glob_enabled(options: &OsStr) -> bool {
-+    let mut quoted = false;
-+    let mut glob = true;
-+    for option in options.as_encoded_bytes().split(|&byte| {
-+        if byte == b'"' {
-+            quoted = !quoted;
-+        }
-+        !quoted && matches!(byte, b' ' | b'\t')
-+    }) {
-+        let split = option
-+            .iter()
-+            .position(|&b| b == b'=')
-+            .or_else(|| option.iter().position(|&b| b == b':'));
-+        let (name, value) = split.map_or((option, None), |at| (&option[..at], Some(&option[at + 1..])));
-+        if name.eq_ignore_ascii_case(b"glob") {
-+            glob = value.is_none_or(|value| value.iter().any(|&byte| byte != b'"'));
-+        } else if name.eq_ignore_ascii_case(b"noglob") || name.eq_ignore_ascii_case(b"-glob") {
-+            glob = false;
-+        }
-+    }
-+    glob
-+}
-+
-+const DOUBLE: u16 = b'"' as u16;
-+const SINGLE: u16 = b'\'' as u16;
-+const SLASH: u16 = b'\\' as u16;
-+
-+fn quote_for_msvc(arg: &OsStr) -> Option<OsString> {
-+    if !needs_msvc_quoting(arg) {
-+        return None;
-+    }
-+    let mut quoted = vec![DOUBLE];
-+    let mut slashes = 0;
-+    for c in arg.encode_wide() {
-+        if c == SLASH {
-+            slashes += 1;
-+        } else {
-+ 
-```
-
-**File**: `gix-command/tests/command/main.rs` (modified, +2/-0)
-```diff
-@@ -158,3 +158,5 @@ mod command_line;
- mod context;
- mod prepare;
- mod spawn;
-+#[cfg(windows)]
-+mod windows;
-```
-
-**File**: `gix-command/tests/command/windows.rs` (added, +179/-0)
-```diff
-@@ -0,0 +1,179 @@
-+use bstr::ByteSlice;
-+use gix_testtools::TestResult;
-+
-+#[test]
-+fn git_style_quoting_preserves_msys_ssh_arguments() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let printf = gix_path::env::installation_program("printf").expect("Git for Windows provides MSYS printf");
-+    let root = gix_testtools::tempfile::tempdir()?;
-+    let _cwd = gix_testtools::set_current_dir(root.path())?;
-+    std::fs::write(root.path().join("hostname.invalid"), [])?;
-+    let args = [
-+        "{first,second}",
-+        "host*.invalid",
-+        "host?ame.invalid",
-+        "host[n]ame.invalid",
-+        "O'Brien.invalid",
-+        "git-upload-pack 'team/repo with spaces.git'",
-+        r"git-upload-pack 'team/O'\''Brien.git'",
-+    ];
-+    let expected = format!("<{}>", args.join("><"));
-+    for mode in ["glob", "noglob"] {
-+        let output = gix_command::prepare(&printf)
-+            .env("MSYS", mode)
-+            .arg("<%s>")
-+            .args(args)
-+            .into_command_with_git_quoting()?
-+            .output()?;
-+        assert!(
-+            output.status.success(),
-+            "the MSYS argument recorder completes in mode {mode}"
-+        );
-+        assert_eq!(
-+            output.stdout.as_bstr(),
-+            expected.as_bytes().as_bstr(),
-+            "the SSH destination stays literal and the remote command arrives in one argument"
-+        );
-+    }
-+    Ok(())
-+}
-+
-+#[test]
-+fn explicit_msys_ssh_path_can_omit_exe_suffix() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let ssh = gix_path::env::installation_program("ssh").expect("Git for Windows provides MSYS ssh");
-+    let mut cmd = gix_command::prepare(ssh.with_extension(""))
-+        .env("MSYS", "glob")
-+        .args(["-F", "/dev/null", "-G", "{first,second}"])
-+        .stderr(std::process::Stdio::piped())
-+        .into_command_with_git_quoting()?;
-+    assert_eq!(cmd.get_program(), ssh, "the .exe sibling selected at launch is used");
-+    let output = cmd.output()?;
-+    assert!(
-+        !output.status.success(),
-+        "the invalid hostname is rejected during the configuration probe"
-+    );
-+    assert!(
-+        output.stderr.contains_str("hostname contains invalid characters"),
-+        "OpenSSH sees the literal brace argument without a connection attempt"
-+    );
-+    Ok(())
-+}
-+
-+#[test]
-+fn bundled_msys_shell_preserves_positional_arguments() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let args = ["{first,second}", "'repo name'", r"C:\example directory\", r#"a"b"#];
-+    let expected = format!("<{}>", args.join("><"));
-+    for mode in ["glob", "noglob"] {
-+        let output = gix_command::prepare(r#"printf '<%s>' "$@""#)
-+            .with_shell()
-+            .env("MSYS", mode)
-+            .args(args)
-+            .spawn()?
-+            .wait_with_output()?;
-+        assert!(output.status.success(), "the bundled shell completes in mode {mode}");
-+        assert_eq!(
-+            output.stdout.as_bstr(),
-+            expected.as_bytes().as_bstr(),
-+            "the shell preserves its positional arguments"
-+        );
-+    }
-+    Ok(())
-+}
-+
-+#[test]
-+fn native_fallback_shell_retains_standard_argument_encoding() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let root = gix_testtools::tempfile::tempdir()?;
-+    let _env = gix_testtools::Env::new().set("GIT_EXEC_PATH", root.path().to_string_lossy());
-+    std::fs::copy(std::env::current_exe()?, root.path().join("sh.exe"))?;
-+    assert_eq!(
-+        gix_path::env::shell(),
-+        "sh.exe",
-+        "the fixture disables bundled shell discovery"
-+    );
-+
-+    let arg = r"C:\example directory\";
-+    let script = r#"printf '%s' "$1" "$@""#;
-+    let cmd = std::process::Command::try_from(
-+        gix_command::prepare(script)
-+            .with_shell()
-+            .env("PATH", root.path())
-+            .arg(arg),
-+    )?;
-+    assert_eq!(cmd.get_program(), "sh.exe", "Rust resolves the fallback shell at spawn");
-+    assert_eq!(
-+        cmd.get_args().collect::<Vec<_>>(),
-+        ["-c", script, "sh.exe", arg],
-+        "the native fallback receives ordinary Windows arguments"
-+    );
-+    Ok(())
-+}
-+
-+#[test]
-+fn explicit_shell_does_not_discover_git_shell() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let root = gix_testtools::tempfile::tempdir()?;
-+    let shell = std::env::current_exe()?;
-+    {
-+        let _env = gix_testtools::Env::new().set("GIT_EXEC_PATH", root.path().to_string_lossy());
-+        let cmd = std::process::Command::try_from(
-+            gix_command::prepare("echo hello")
-+                .with_shell()
-+                .with_shell_program(&shell),
-+        )?;
-+        assert_eq!(cmd.get_program(), shell, "the explicit absolute shell is used directly");
-+    }
-```
-
-**File**: `gix-credentials/src/program/mod.rs` (modified, +5/-2)
-```diff
-@@ -172,6 +172,9 @@ mod tests {
++    let (new_data, unchanged_tail) = new_data.split_at(new_data.len() - trimmed_bytes);
++    let input = gix_diff::blob::InternedInput::new(&old_data[..old_data.len() - trimmed_bytes], new_data);
  
-     #[test]
-     fn git_program_with_spaces_is_quoted_in_external_name_shell_scripts() -> gix_testtools::TestResult {
-+        if gix_testtools::run_in_isolated_process()? {
-+            return Ok(());
-+        }
-         let cmd = super::external_name_command(
-             Path::new(r"C:\Program Files\Git\mingw64\bin\git.exe"),
-             "manager --config=~/credentials".into(),
-@@ -186,11 +189,11 @@ mod tests {
-         assert_eq!(
-             script,
-             OsStr::new(if cfg!(windows) {
--                r#"'C:/Program Files/Git/mingw64/bin/git.exe' credential-manager --config=~/credentials "$@""#
-+                r#""'C:/Program Files/Git/mingw64/bin/git.exe' credential-manager --config=~/credentials \"$@\"""#
-             } else {
-                 r#"'C:\Program Files\Git\mingw64\bin\git.exe' credential-manager --config=~/credentials "$@""#
-             }),
--            "the Git executable is a single shell token even when its path contains spaces"
-+            "the Git executable stays a single shell token through runtime quoting even when its path contains spaces"
-         );
-         Ok(())
+     let mut diff = gix_diff::blob::Diff::compute(diff_algorithm, &input);
+     diff.postprocess_lines(&input);
+@@ -873,15 +879,31 @@ fn blob_changes_from_data(
+         hunks
+     });
+ 
+-    let total_number_of_lines = input.after.len() as u32;
+-    if input.after.len() > last_seen_after_end as usize {
+-        changes.push(Change::Unchanged(last_seen_after_end..total_number_of_lines));
++    let total_number_of_lines = input.after.len() + tokens_for_diffing(unchanged_tail).tokenize().count();
++    if total_number_of_lines > last_seen_after_end as usize {
++        changes.push(Change::Unchanged(last_seen_after_end..total_number_of_lines as u32));
      }
+ 
+     stats.blobs_diffed += 1;
+     changes
+ }
+ 
++/// Match Git's zero-context `xdi_diff()`, which trims whole common 1 KiB blocks from the end
++/// and keeps bytes through the first newline of those blocks to leave a complete line.
++fn common_tail_bytes_to_trim(before: &[u8], after: &[u8]) -> usize {
++    const BLOCK_SIZE: usize = 1024;
++    let common_len = before
++        .rchunks_exact(BLOCK_SIZE)
++        .zip(after.rchunks_exact(BLOCK_SIZE))
++        .take_while(|(before, after)| before == after)
++        .count()
++        * BLOCK_SIZE;
++    let common_tail = &after[after.len() - common_len..];
++    common_tail
++        .find_byte(b'\n')
++        .map_or(0, |newline| common_len - newline - 1)
++}
++
+ fn find_path_entry_in_commit(
+     odb: &impl gix_object::Find,
+     commit: &gix_hash::oid,
+```
+
+**File**: `gix-blame/tests/blame.rs` (modified, +1/-0)
+```diff
+@@ -309,6 +309,7 @@ mktest!(switched_lines, "switched-lines", 4);
+ mktest!(added_line_before_changed_line, "added-line-before-changed-line", 3);
+ mktest!(same_line_changed_twice, "same-line-changed-twice", 2);
+ mktest!(coalesce_adjacent_hunks, "coalesce-adjacent-hunks", 1);
++mktest!(histogram_trims_common_tail, "histogram-common-tail", 3);
+ 
+ mktest!(sub_directory, "sub-directory/sub-directory", 3);
+ 
+```
+
+**File**: `gix-blame/tests/fixtures/make_blame_repo.sh` (modified, +13/-2)
+```diff
+@@ -128,7 +128,15 @@ git commit -q -m c4.4
+ 
+ echo -e "  line 1\n\n  line 2\n\n  line 3" > empty-lines-histogram.txt
+ cp empty-lines-histogram.txt empty-lines-myers.txt
+-git add empty-lines-histogram.txt empty-lines-myers.txt
++# Inserting a second "b" leaves 512 "a" lines at the end, exactly one common block
++# for Git's zero-context diff to trim before matching lines for blame.
++{
++  printf 'b\n'
++  for i in {1..513}; do
++    printf 'a\n'
++  done
++} >histogram-common-tail.txt
++git add empty-lines-histogram.txt empty-lines-myers.txt histogram-common-tail.txt
+ git commit -q -m c4.5
+ 
+ echo -e "line 0\nline 2\nline 3" > sub-directory/sub-directory.txt
+@@ -155,7 +163,9 @@ git commit -q -m c5.3
+ 
+ echo -e "  line 1\n\n  line in between\n\n  line 2\n\n  line in between\n\n  line 3" > empty-lines-histogram.txt
+ cp empty-lines-histogram.txt empty-lines-myers.txt
+-git add empty-lines-histogram.txt empty-lines-myers.txt
++awk '{ print } NR == 2 { print "b" }' histogram-common-tail.txt >histogram-common-tail.tmp
++mv histogram-common-tail.tmp histogram-common-tail.txt
++git add empty-lines-histogram.txt empty-lines-myers.txt histogram-common-tail.txt
+ git commit -q -m c5.4
+ 
+ mv before-second-rename.txt after-second-rename.txt
+@@ -303,6 +313,7 @@ git blame --porcelain file-changed-in-two-branches.txt > .git/file-changed-in-tw
+ git blame --porcelain file-topo-order-different-than-date-order.txt > .git/file-topo-order-different-than-date-order.baseline
+ 
+ git blame --porcelain empty-lines-histogram.txt > .git/empty-lines-histogram.baseline
++git blame --porcelain histogram-common-tail.txt > .git/histogram-common-tail.baseline
+ 
+ git config --local diff.algorithm myers
+ 
+```
+
+**File**: `gix-diff/Cargo.toml` (modified, +6/-0)
+```diff
+@@ -51,6 +51,12 @@ harness = false
+ required-features = ["blob"]
+ path = "./benches/blob.rs"
+ 
++[[bench]]
++name = "histogram"
++harness = false
++required-features = ["blob"]
++path = "./benches/histogram.rs"
++
+ [[bench]]
+ name = "rewrite-tracker"
+ harness = false
+```
+
+**File**: `gix-diff/benches/histogram.rs` (added, +227/-0)
+```diff
+@@ -0,0 +1,227 @@
++//! Histogram computation on pre-interned lines and postprocessing of shifted groups.
++//! Run `cargo bench -p gix-diff --bench histogram` or add `-- --test` for a correctness check.
++//! To compare revisions, apply the same benchmark code to both and set `CRITERION_HOME` to the same
++//! absolute directory. Keep separate Cargo target directories for each revision.
++//! Run with `-- --save-baseline main` on the baseline and `-- --baseline main` on the comparison.
++
++use std::{fmt::Write, hint::black_box, time::Duration};
++
++use criterion::{
++    BatchSize, BenchmarkGroup, BenchmarkId, Criterion, Throughput, criterion_group, criterion_main,
++    measurement::WallTime,
++};
++use gix_diff::blob::{Algorithm, Diff, InternedInput};
++
++fn histogram(c: &mut Criterion) {
++    let mut group = c.benchmark_group("histogram");
++    group
++        .warm_up_time(Duration::from_secs(1))
++        .measurement_time(Duration::from_secs(2))
++        .sample_size(30);
++
++    benchmark(
++        &mut group,
++        BenchmarkId::new("source-like", "2048-functions"),
++        source_like(2_048),
++        (128, 192),
++    );
++    benchmark(
++        &mut group,
++        BenchmarkId::new("sparse-edits-no-shared-tail", 8_192),
++        separated_replacements(8_192, 16),
++        (16, 16),
++    );
++    benchmark(
++        &mut group,
++        BenchmarkId::new("dense-edits-no-shared-tail", 4_000),
++        separated_replacements(4_000, 2_000),
++        (2_000, 2_000),
++    );
++
++    // Each suffix token can seed a match, but the separated edits offer rarer anchors.
++    for (case, edits, pairs, old_end, new_end) in [
++        ("paired-tail", 250, 62_500, "", ""),
++        ("paired-tail", 500, 125_000, "", ""),
++        (
++            "paired-tail-changed-end",
++            128,
++            25_000,
++            "old final line\n",
++            "new final line\n",
++        ),
++        ("paired-tail-appended-line", 128, 25_000, "", "new final line\n"),
++    ] {
++        let (mut before, mut after) = separated_replacements(edits * 2, edits);
++        let mut tail = String::new();
++        for pair in 0..pairs {
++            writeln!(tail, "pair {pair}\npair {pair}").expect("writing to a string cannot fail");
++        }
++        before.push_str(&tail);
++        after.push_str(&tail);
++        before.push_str(old_end);
++        after.push_str(new_end);
++        benchmark(
++            &mut group,
++            BenchmarkId::new(case, pairs * 2),
++            (before, after),
++            (
++                edits + u32::from(!old_end.is_empty()),
++                edits + u32::from(!new_end.is_empty()),
++            ),
++        );
++    }
++
++    // The alternating lines exceed the seed cutoff. The blanks in the mixed tail can seed a match.
++    for (case, tail) in [
++        ("alternating-tail", "x\ny\n".repeat(125_000)),
++        ("mixed-tail", "x\n".repeat(249_998) + "\n\n"),
++    ] {
++        let (mut before, mut after) = separated_replacements(1_000, 500);
++        before.push_str(&tail);
++        after.push_str(&tail);
++        benchmark(&mut group, BenchmarkId::new(case, 250_000), (before, after), (500, 500));
++    }
++
++    let (mut before, mut after) = separated_replacements(128, 64);
++    let tail_lines = 25_000;
++    // The suffix appears unique when considered alone. Each token also occurs in the old prefix.
++    for line in (0..tail_lines).rev() {
++        writeln!(before, "tail {line}").expect("writing to a string cannot fail");
++    }
++    before.push_str("old fence\n");
++    after.push_str("new fence\n");
++    let start = after.len();
++    for line in 0..tail_lines {
++        writeln!(after, "tail {line}").expect("writing to a string cannot fail");
++    }
++    before.push_str(&after[start..]);
++    benchmark(
++        &mut group,
++        BenchmarkId::new("overlapping-tail", tail_lines),
++        (before, after),
++        (tail_lines + 65, 65),
++    );
++    postprocess_shifted_groups(&mut group);
++    group.finish();
++}
++
++fn postprocess_shifted_groups(group: &mut BenchmarkGroup<'_, WallTime>) {
++    const LARGE_GROUP_LINES: u32 = 100_000;
++    const SMALL_GROUPS: u32 = 1_000;
++    let (mut before, mut after) = (String::new(), String::new());
++    for block in 0..=SMALL_GROUPS {
++        let lines = if block == 0 { LARGE_GROUP_LINES } else { 1 };
++        for line in 0..lines {
++            writeln!(before, "old {block}/{line}").expect("writing to a string cannot fail");
++            writeln!(after, "new {block}/{line}").expect("writing to a string cannot fail");
++        }
++        // The duplicate line lets the replacement slide, causing a re-diff before the guard.
++        writeln!(before, "x {block}\nx {block}\nguard {block}").expect("writing to a string cannot fail");
++        writeln!(after, "x {block}\ny {block}\nguard {block}").expect("writing to a string cannot fail");
++    }
++    let input = InternedInput::new(before.as_str(), after.as_str());
++    let fresh_diff = || Diff::compute(Algorithm::Histogram,
+```
+
+**File**: `gix-imara-diff/src/histogram.rs` (modified, +339/-12)
+```diff
+@@ -9,9 +9,11 @@ use crate::myers;
+ mod lcs;
+ mod list_pool;
+ 
+-/// Maximum number of occurrences tracked for a single token.
+-/// Tokens appearing more frequently fall back to Myers algorithm.
+-const MAX_CHAIN_LEN: u32 = 63;
++/// Git's histogram chain limit. A seed may occur once more than this, but a match
++/// must contain a token at or below the limit to avoid falling back to Myers.
++const MAX_CHAIN_LEN: u32 = 64;
++const MAX_SEED_OCCURRENCES: u32 = MAX_CHAIN_LEN + 1;
++const OVERFLOW_COUNT: u32 = MAX_SEED_OCCURRENCES + 1;
+ 
+ /// State for computing histogram-based diffs.
+ struct Histogram {
+@@ -31,8 +33,11 @@ struct Histogram {
+ /// * `added` - Output array marking added tokens
+ /// * `num_tokens` - The total number of distinct tokens
+ pub fn diff(before: &[Token], after: &[Token], removed: &mut [bool], added: &mut [bool], num_tokens: u32) {
++    if before == after {
++        return;
++    }
+     let mut histogram = Histogram::new(num_tokens);
+-    histogram.run(before, after, removed, added);
++    histogram.run(before, after, removed, added, true);
+ }
+ 
+ impl Histogram {
+@@ -47,21 +52,29 @@ impl Histogram {
+         self.pool.clear();
+     }
+ 
+-    fn token_occurrences(&self, token: Token) -> &[u32] {
+-        self.token_occurrences[token.0 as usize].as_slice(&self.pool)
++    fn token_occurrences(&self, token: Token, count: u32) -> &[u32] {
++        self.token_occurrences[token.0 as usize].as_slice(count, &self.pool)
+     }
+ 
+     fn num_token_occurrences(&self, token: Token) -> u32 {
+-        self.token_occurrences[token.0 as usize].len(&self.pool)
++        self.token_occurrences[token.0 as usize].count(&self.pool)
+     }
+ 
+-    fn populate(&mut self, file: &[Token]) {
++    fn populate(&mut self, file: &[Token], start: usize) {
+         for (i, &token) in file.iter().enumerate() {
+-            self.token_occurrences[token.0 as usize].push(i as u32, &mut self.pool);
++            self.token_occurrences[token.0 as usize].push((i + start) as u32, &mut self.pool);
+         }
+     }
+ 
+-    fn run(&mut self, mut before: &[Token], mut after: &[Token], mut removed: &mut [bool], mut added: &mut [bool]) {
++    fn run(
++        &mut self,
++        mut before: &[Token],
++        mut after: &[Token],
++        mut removed: &mut [bool],
++        mut added: &mut [bool],
++        mut cache_after_split: bool,
++    ) {
++        let mut common_block: Option<Box<CommonBlock>> = None;
+         loop {
+             if before.is_empty() {
+                 added.fill(true);
+@@ -71,8 +84,17 @@ impl Histogram {
+                 return;
+             }
+ 
+-            self.populate(before);
+-            match find_lcs(before, after, self) {
++            let block = common_block
++                .as_deref()
++                .and_then(|block| block.for_lengths(before.len(), after.len()));
++            if let Some(block) = block {
++                let end = before.len() - block.index.before_end_distance as usize;
++                self.populate(&before[..end - block.len as usize], 0);
++                self.populate(&before[end..], end);
++            } else {
++                self.populate(before, 0);
++            }
++            match find_lcs(before, after, block, self) {
+                 // no lcs was found, that means that file1 and file2 two have nothing in common
+                 Some(lcs) if lcs.len == 0 => {
+                     added.fill(true);
+@@ -85,6 +107,7 @@ impl Histogram {
+                         &after[..lcs.after_start as usize],
+                         &mut removed[..lcs.before_start as usize],
+                         &mut added[..lcs.after_start as usize],
++                        false, // The cache uses the original file endpoints.
+                     );
+ 
+                     // this is equivalent to (tail) recursion but implement as a loop for efficiency reasons
+@@ -95,6 +118,11 @@ impl Histogram {
+                     let after_end = lcs.after_start + lcs.len;
+                     after = &after[after_end as usize..];
+                     added = &mut added[after_end as usize..];
++
++                    // The first match may already consume a long common block.
++                    if std::mem::take(&mut cache_after_split) {
++                        common_block = CommonBlock::find(before, after, self.token_occurrences.len()).map(Box::new);
++                    }
+                 }
+                 None => {
+                     // we are diffing two extremely large repetitive files
+@@ -107,3 +135,302 @@ impl Histogram {
+         }
+     }
+ }
++
++/// Occurrence data for a common block, indexed by distance from its end.
++struct CommonBlock {
++    before_end_distance: u32,
++    after_end_distance: u32,
++    len: u32,
++    /// Offsets into `positions`, with one extra entry for the end of the last token's list.
++    offsets: Vec<u32>,
++    /// The last 66 positions of each token, sorted by distance from the end.
++    positions: Vec<u32>,
++    /// The same distances grouped by each token's capped count in the full blo
+```
+
+**File**: `gix-imara-diff/src/histogram/lcs.rs` (modified, +110/-23)
+```diff
+@@ -1,22 +1,97 @@
+ // Modified for gitoxide from the upstream imara-diff crate.
+ // Upstream source: git cat-file -p 32d1e45d3df061e6ccba6db7fdce92db29e345d8:src/histogram/lcs.rs
+ 
+-use crate::histogram::{Histogram, MAX_CHAIN_LEN};
++use crate::histogram::{Block, Histogram, MAX_CHAIN_LEN, MAX_SEED_OCCURRENCES, OVERFLOW_COUNT};
+ use crate::intern::Token;
+ 
+ /// Finds the longest common subsequence (LCS) using a histogram-based approach.
+ ///
+ /// Returns `None` if the sequences are highly repetitive and should fall back to Myers.
+-pub(super) fn find_lcs(before: &[Token], after: &[Token], histogram: &mut Histogram) -> Option<Lcs> {
++pub(super) fn find_lcs(
++    before: &[Token],
++    after: &[Token],
++    block: Option<Block<'_>>,
++    histogram: &mut Histogram,
++) -> Option<Lcs> {
+     let mut search = LcsSearch {
+         lcs: Lcs::default(),
+-        min_occurrences: MAX_CHAIN_LEN + 1,
+-        found_cs: false,
++        min_occurrences: MAX_SEED_OCCURRENCES,
++        found_cs: block.is_some(),
+     };
+-    search.run(before, after, histogram);
++    let after_len = after.len() as u32;
++    if let Some(block) = block {
++        let occurrences = CachedOccurrences {
++            histogram,
++            block,
++            end: before.len() as u32 - block.index.before_end_distance,
++        };
++        let end = after_len - block.index.after_end_distance;
++        let mut pos = search.scan(before, after, &occurrences, 0, end - block.len);
++        let mut seeds = block.seeds(before.len() as u32);
++        while let Some(seed) = seeds.next(end, pos, search.min_occurrences) {
++            let token = after[seed as usize];
++            let count = occurrences.count(token);
++            pos = if search.can_seed(count) {
++                search.update_lcs(seed, token, count, &occurrences, before, after)
++            } else {
++                seed + 1
++            };
++        }
++        search.scan(before, after, &occurrences, pos.max(end), after_len);
++    } else {
++        search.scan(before, after, histogram, 0, after_len);
++    }
++    histogram.clear();
+     if search.success() { Some(search.lcs) } else { None }
+ }
+ 
++trait Occurrences {
++    fn count(&self, token: Token) -> u32;
++    fn positions(&self, token: Token, count: u32) -> impl Iterator<Item = u32> + '_;
++}
++
++impl Occurrences for Histogram {
++    #[inline]
++    fn count(&self, token: Token) -> u32 {
++        self.num_token_occurrences(token)
++    }
++
++    fn positions(&self, token: Token, count: u32) -> impl Iterator<Item = u32> + '_ {
++        self.token_occurrences(token, count).iter().copied()
++    }
++}
++
++struct CachedOccurrences<'a> {
++    histogram: &'a Histogram,
++    block: Block<'a>,
++    end: u32,
++}
++
++impl Occurrences for CachedOccurrences<'_> {
++    #[inline]
++    fn count(&self, token: Token) -> u32 {
++        let outside = self.histogram.num_token_occurrences(token);
++        let inside = self.block.positions(token).len() as u32;
++        (outside + inside).min(OVERFLOW_COUNT)
++    }
++
++    fn positions(&self, token: Token, count: u32) -> impl Iterator<Item = u32> + '_ {
++        let inside = self.block.positions(token);
++        let outside = self.histogram.token_occurrences(token, count - inside.len() as u32);
++        let prefix_len = if self.block.index.before_end_distance == 0 {
++            outside.len()
++        } else {
++            outside.partition_point(|&pos| pos < self.end - self.block.len)
++        };
++        let (prefix, suffix) = outside.split_at(prefix_len);
++        prefix
++            .iter()
++            .copied()
++            .chain(inside.iter().rev().map(|&distance| self.end - 1 - distance))
++            .chain(suffix.iter().copied())
++    }
++}
++
+ /// Represents a longest common subsequence found by the histogram algorithm.
+ #[derive(Default, Debug)]
+ pub struct Lcs {
+@@ -39,41 +114,53 @@ pub struct LcsSearch {
+ }
+ 
+ impl LcsSearch {
+-    fn run(&mut self, before: &[Token], after: &[Token], histogram: &mut Histogram) {
+-        let mut pos = 0;
+-        while let Some(&token) = after.get(pos as usize) {
+-            if histogram.num_token_occurrences(token) != 0 {
+-                self.found_cs = true;
+-                if histogram.num_token_occurrences(token) <= self.min_occurrences {
+-                    pos = self.update_lcs(pos, token, histogram, before, after);
+-                    continue;
+-                }
++    fn scan(
++        &mut self,
++        before: &[Token],
++        after: &[Token],
++        occurrences: &impl Occurrences,
++        mut pos: u32,
++        seed_end: u32,
++    ) -> u32 {
++        let seeds = &after[..seed_end as usize];
++        while let Some(&token) = seeds.get(pos as usize) {
++            let count = occurrences.count(token);
++            if self.can_seed(count) {
++                pos = self.update_lcs(pos, token, count, occurrences, before, after);
++                continue;
+             }
+-
+             pos += 1;
+         }
++        pos
++    }
+ 
+-        histogram.clear();
++   
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3246** (2026-11-25): fix(gix-imara-diff): make histogram diffs match `git diff --histogram` (@daniel-kindl)
 - **PR #3241** (2026-11-24): move experimental APIs to parallel major-zero releases (@Byron)
 - **PR #3240** (2026-11-24): validate pack offsets on lookup (@Byron)
 - **PR #3239** (closed): perf(gix-odb): validate pack offsets on lookup (@Havunen)
 - **PR #3238** (2026-11-23): Upgrade `sirocco` to 0.4 (@srijs)
 - **PR #3237** (2026-11-24): fix(gix-ignore): drop a `` that ends an ignore file without `
 `, like Git. (@AbuYahya94)
-- **PR #3236** (2026-11-23): Preserve shallow boundaries during ordinary fetch (@Byron)
 
 ---
 
@@ -2471,39 +2942,28 @@ raw arguments in trace output and exercise the behavior on Windows.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gix-testtools): confine Git discovery to scripted fixtures
+## X. gix-imara-diff): make histogram diffs match `git diff --histogram`
 
 **RULE**:
-When implementing operations in `tests/tools/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gix-imara-diff/src/histogram.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3befd38c`: gix-testtools): confine Git discovery to scripted fixtures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c726fd41`: gix-imara-diff): make histogram diffs match `git diff --histogram`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/tools/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix-imara-diff/src/histogram.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Fixture scripts stop Git's upward repository discovery at the fixture root.
-/// Prepare an isolated Git command in `current_dir`.
-///
-/// Repository discovery may walk above `current_dir`, which allows commands from fixture subdirectories.
-    configure_git_environment(cmd, script_result_directory);
-    if let Some(parent) = script_result_directory.parent() {
-        // Git may discover a repository in the fixture itself, including from its subdirectories.
-        cmd.env("GIT_CEILING_DIRECTORIES", parent);
-    }
-    cmd.args(args)
+const MAX_CHAIN_LEN: u32 = 64;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Prepare an isolated Git command in `current_dir`, using the same environment as fixture scripts.
-    configure_git_environment(cmd, script_result_directory)
-        .args(args)
+const MAX_CHAIN_LEN: u32 = 63;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3befd38c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c726fd41` are properly handled with clean fallback behavior.

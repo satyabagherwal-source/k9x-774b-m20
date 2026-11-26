@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:59:08.800Z",
+  "last_updated": "2026-11-26T19:07:56.389Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T18:50:31.982Z",
@@ -643,7 +643,7 @@
       "staged_for_review": 1
     },
     "gitoxidelabs-gitoxide-learnings.md": {
-      "processed_at": "2026-11-25T12:09:18.861Z",
+      "processed_at": "2026-11-26T19:07:52.746Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1268,7 +1268,7 @@
       "staged_for_review": 0
     },
     "lancedb-lancedb-learnings.md": {
-      "processed_at": "2026-11-26T00:35:03.017Z",
+      "processed_at": "2026-11-26T19:07:54.692Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2283,7 +2283,7 @@
       "staged_for_review": 1
     },
     "hf-black-forest-labs-flux.1-schnell-learnings.md": {
-      "processed_at": "2026-11-23T05:27:30.291Z",
+      "processed_at": "2026-11-26T19:07:54.120Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3993,7 +3993,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4632,
+  "total_dossiers_evaluated": 4635,
   "total_canonical_promoted": 565,
-  "total_staged_for_review": 3487
+  "total_staged_for_review": 3489
 }

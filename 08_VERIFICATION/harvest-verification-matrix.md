@@ -13523,3 +13523,6 @@
 | `CYCLE-20261126-1JDR` | `2026-11-26T18:58:47.775Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10759` | Yes (`5273ec87...`) |
 | `CYCLE-20261126-1QH9` | `2026-11-26T18:58:56.973Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10760` | Yes (`0426bd1b...`) |
 | `CYCLE-20261126-1V1W` | `2026-11-26T18:59:02.900Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`fdc81522...`) |
+| `CYCLE-20261126-CU9I` | `2026-11-26T19:07:35.094Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`eb0eceee...`) |
+| `CYCLE-20261126-CW6G` | `2026-11-26T19:07:37.576Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10761` | Yes (`c19ef42d...`) |
+| `CYCLE-20261126-D508` | `2026-11-26T19:07:49.016Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10762` | Yes (`f60a5d37...`) |

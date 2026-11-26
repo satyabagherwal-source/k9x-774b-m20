@@ -13556,3 +13556,6 @@ Every entry in this ledger must capture:
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `98660b72` | Multi-dimensional audit evidence | 2026-11-26T18:58:47.780Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `ff323598` | Multi-dimensional audit evidence | 2026-11-26T18:58:56.978Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `f399f9fc` | Multi-dimensional audit evidence | 2026-11-26T18:59:02.904Z |
+| `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-26T19:07:35.098Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `2bcb31df` | Multi-dimensional audit evidence | 2026-11-26T19:07:37.581Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `1c011801` | Multi-dimensional audit evidence | 2026-11-26T19:07:49.021Z |
