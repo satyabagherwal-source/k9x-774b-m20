@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T01:36:40.547Z",
-    "lastVerified": "2026-11-26T01:36:40.547Z",
+    "lastChecked": "2026-11-26T01:45:17.883Z",
+    "lastVerified": "2026-11-26T01:45:17.883Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T01:08:09.337Z",
-    "lastVerified": "2026-11-26T01:08:09.337Z",
+    "lastChecked": "2026-11-26T01:45:17.874Z",
+    "lastVerified": "2026-11-26T01:45:17.874Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -367,8 +367,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T14:50:18.975Z",
-    "lastVerified": "2026-11-25T14:50:18.975Z",
+    "lastChecked": "2026-11-26T01:45:12.813Z",
+    "lastVerified": "2026-11-26T01:45:12.813Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -2620,9 +2620,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-11-25T00:16:52.675Z",
+    "lastChecked": "2026-11-26T01:45:15.233Z",
     "revisionIdentifier": "aec98ced",
-    "lastVerified": "2026-11-25T00:16:52.675Z"
+    "lastVerified": "2026-11-26T01:45:15.233Z"
   },
   "kuddev-pebrel": {
     "name": "pebrel",
@@ -5345,12 +5345,12 @@
     "lastVerified": "2026-11-24T18:17:24.566Z"
   },
   "encoredev-encore": {
-    "name": "encoredev/encore",
+    "name": "encore",
     "officialUrl": "https://github.com/encoredev/encore",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T01:18:27.082Z",
-    "lastVerified": "2026-11-25T01:18:27.082Z",
+    "lastChecked": "2026-11-26T01:45:10.360Z",
+    "lastVerified": "2026-11-26T01:45:10.360Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-encoredev-encore",
@@ -5359,7 +5359,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4bd01c70"
   },
   "sfu-db-connector-x": {
     "name": "sfu-db/connector-x",
@@ -6048,9 +6049,9 @@
   "gotham-rs-gotham": {
     "name": "gotham",
     "officialUrl": "https://github.com/gotham-rs/gotham",
-    "lastChecked": "2026-11-24T18:17:19.580Z",
+    "lastChecked": "2026-11-26T01:45:02.813Z",
     "revisionIdentifier": "53fe844b",
-    "lastVerified": "2026-11-24T18:17:19.580Z"
+    "lastVerified": "2026-11-26T01:45:02.813Z"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
     "name": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -10788,9 +10789,9 @@
   "krzysztofzablocki-inject": {
     "name": "Inject",
     "officialUrl": "https://github.com/krzysztofzablocki/Inject",
-    "lastChecked": "2026-11-23T16:02:51.579Z",
+    "lastChecked": "2026-11-26T01:45:07.844Z",
     "revisionIdentifier": "67e3ee9a",
-    "lastVerified": "2026-11-23T16:02:51.579Z"
+    "lastVerified": "2026-11-26T01:45:07.844Z"
   },
   "hf-sentinel7-h3": {
     "name": "Sentinel7/h3",
@@ -14143,12 +14144,12 @@
     "officialUrl": "https://huggingface.co/Viggle/Viggle-Remake",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T04:51:13.444Z",
-    "lastVerified": "2026-11-22T04:51:13.444Z",
+    "lastChecked": "2026-11-26T01:45:05.436Z",
+    "lastVerified": "2026-11-26T01:45:05.436Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-viggle-viggle-remake",
-    "contentHash": "57fa81f5621ce675d4d6b2907168b268a202269b52c9be5f0da99c3cb208550b",
+    "contentHash": "f5e2e48925cecfdf6a0f04dbf91b7385173b65de5f0602a36db1bddc7b9860b1",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

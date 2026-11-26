@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:36:36.986Z",
-  "total_cycles_completed": 12524,
-  "total_learnings_persisted": 12524,
+  "last_updated": "2026-11-26T01:45:06.085Z",
+  "total_cycles_completed": 12525,
+  "total_learnings_persisted": 12525,
   "total_rules_promoted": 11471,
   "history": [
-    {
-      "timestamp": "2026-11-25T07:04:30.678Z",
-      "repository": "googleworkspace/cli",
-      "learningId": "learn-github-googleworkspace-cli",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T07:04:37.920Z",
       "repository": "nginx/kubernetes-ingress",
@@ -1403,6 +1396,13 @@
       "repository": "infiniflow/infinity",
       "learningId": "learn-github-infiniflow-infinity",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:45:06.085Z",
+      "repository": "Viggle/Viggle-Remake",
+      "learningId": "learn-huggingface-viggle-viggle-remake",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

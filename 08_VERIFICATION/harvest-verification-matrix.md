@@ -13195,3 +13195,4 @@
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T01:27:00.836Z` | `aws-aws-cdk` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-F9C7458B` [Domain I] | Yes (`33391908...`) |
 | `CYCLE-20261126-SY2V` | `2026-11-26T01:36:21.127Z` | `PrunaAI/P-Image-OSS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | Yes (`2a47d2a3...`) |
 | `CYCLE-20261126-TAAT` | `2026-11-26T01:36:36.965Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10581` | Yes (`c7f4994f...`) |
+| `CYCLE-20261126-474Q` | `2026-11-26T01:45:06.074Z` | `Viggle/Viggle-Remake` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | Yes (`f5e2e489...`) |
