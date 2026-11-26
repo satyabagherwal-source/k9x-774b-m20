@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T11:29:15.737Z",
+  "last_updated": "2026-11-26T11:40:01.529Z",
   "total_verified_learnings": 9127,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25862,
+  "total_items": 25874,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -237434,8 +237434,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "11c43f77",
-      "content_hash": "4ef9bbe4a17e396c5ddddf80b4d29444847b3f77e9c445f6f7012844f34d3cbd",
+      "source_version": "1810e35c",
+      "content_hash": "7fb4ff4a74cb436c73e237ec57b16b566973c96b53d56c0a32854e9ddccdf7ae",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -237483,6 +237483,11 @@
           "number": 10503,
           "title": "gluing regression NBYDB-2712",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10668,
+          "title": "rename Fix_KIKIMR_14259 -> CleanupRowVersionsBelowLowWatermark",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237490,7 +237495,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T10:07:36.075Z",
+      "verified_at": "2026-11-26T11:39:54.770Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237532,10 +237537,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "repository": "ydb-platform/ydb",
-      "source_version": "11c43f77",
-      "content_hash": "57efc55747e4c4008374ee21f435f52862933e592e90de2b5680c0336db94157",
+      "source_version": "1810e35c",
+      "content_hash": "1f78c0925da9a578bfa05012a050c1ce3720573f782c84a2bf8bee3f3581663c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T10:07:36.737Z"
+      "persisted_at": "2026-11-26T11:39:55.474Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb",
@@ -237544,10 +237549,10 @@
       "relative_path": "08_VERIFICATION/ydb-platform-ydb-verification-protocol-empirical-defect-shield-for-ydb-platform-.md",
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform/ydb",
       "repository": "ydb-platform/ydb",
-      "source_version": "11c43f77",
-      "content_hash": "af983fa9ebd0a08cd7da4d68f73fb1f01d0c5ac7e38d0120424b3d69ce03b5f1",
+      "source_version": "1810e35c",
+      "content_hash": "93c1ded9675baaa2de2d32ece424dc5528b3f338525576a604cd10cf42c51c6c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:07:36.915Z"
+      "persisted_at": "2026-11-26T11:39:55.664Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -264869,8 +264874,8 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "279cc5c3",
-      "content_hash": "41dfaafcd39438d47aba495fce7a55af305114b9f5d29565cea8917f7ced2890",
+      "source_version": "79d1cfe3",
+      "content_hash": "e32925dfa5b054e0a9ea3cfe7d7cfdc4b17383951f11bd714e7ea7e9a647237e",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
@@ -264903,6 +264908,11 @@
           "number": 10258,
           "title": "Make Client download page consistent with landing page",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10667,
+          "title": "Warn about required dg version for network device preshared key",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -264910,7 +264920,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T16:46:07.261Z",
+      "verified_at": "2026-11-26T11:39:52.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264952,10 +264962,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "repository": "DefGuard/defguard",
-      "source_version": "279cc5c3",
-      "content_hash": "fdf400843ef0a63d3adf6fc41e190f94d24ba674ef798e3a1b5910d26af1cea3",
+      "source_version": "79d1cfe3",
+      "content_hash": "0e57a5045d800fa3335073cee01da0955665b029b6943f3254bd66b67a849b70",
       "domain_letter": "A",
-      "persisted_at": "2026-11-24T16:46:08.078Z"
+      "persisted_at": "2026-11-26T11:39:53.169Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard",
@@ -264964,10 +264974,10 @@
       "relative_path": "08_VERIFICATION/defguard-defguard-verification-protocol-empirical-defect-shield-for-defguard-def.md",
       "title": "Verification Protocol: Empirical Defect Shield for DefGuard/defguard",
       "repository": "DefGuard/defguard",
-      "source_version": "279cc5c3",
-      "content_hash": "25cf1e5bd97e72093a9fe80857b72f83e2bb0cdc603ca84070cb150119b4ae66",
+      "source_version": "79d1cfe3",
+      "content_hash": "0f2f6452d7fcfc401d1556e98e5598912776c5445fe7b600955e46d74f60dce1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:46:08.348Z"
+      "persisted_at": "2026-11-26T11:39:53.387Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -266650,8 +266660,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "fdb9684b",
-      "content_hash": "7256a66047c0283109c84d18fcde2393dd8c0b2a6c4f45338847ea5719e4c63b",
+      "source_version": "394c7561",
+      "content_hash": "0d0455ec528117351b5919162480c35e417dc1b3dc5de51c19a36b7b2fcb157b",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -266684,6 +266694,11 @@
           "number": 9990,
           "title": "validate PodChaos and BlockChaos action requirements in the CRD schema",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10666,
+          "title": "return cloud target encoding errors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -266691,7 +266706,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:56:10.421Z",
+      "verified_at": "2026-11-26T11:39:50.026Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266733,10 +266748,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-content-information-intelligence-chaos-mesh-chaos-mesh-cor.md",
       "title": "Content & Information Intelligence: chaos-mesh/chaos-mesh Core Invariants",
       "repository": "chaos-mesh/chaos-mesh",
-      "source_version": "fc8e171f",
-      "content_hash": "8c59bee6dd06840eaad318bf8e90e81bffca5e10e3229bd045c0d20c76ebdf59",
+      "source_version": "394c7561",
+      "content_hash": "f58d35145c178ef4ce92822842227c753759fa89b53037dc85a9e03ba3f1a5df",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T13:47:02.080Z"
+      "persisted_at": "2026-11-26T11:39:50.675Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh",
@@ -266745,10 +266760,10 @@
       "relative_path": "08_VERIFICATION/chaos-mesh-chaos-mesh-verification-protocol-empirical-defect-shield-for-chaos-me.md",
       "title": "Verification Protocol: Empirical Defect Shield for chaos-mesh/chaos-mesh",
       "repository": "chaos-mesh/chaos-mesh",
-      "source_version": "fdb9684b",
-      "content_hash": "869ed6e198928fd44dbe29db2fcba2562a84f2bd6902de13f770e650ea245b0f",
+      "source_version": "394c7561",
+      "content_hash": "bb286e77479cc103e721e3511aabdacbefe83dc1acc2223561b2b1ce3ef798e4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:56:11.444Z"
+      "persisted_at": "2026-11-26T11:39:50.862Z"
     },
     "rule-8813": {
       "learning_id": "rule-8813",
@@ -266832,9 +266847,9 @@
       "title": "Content & Information Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
       "repository": "chaos-mesh-chaos-mesh-learnings",
       "source_version": "HEAD",
-      "content_hash": "95ec6c9fcb5077c07c8083c1e8acfe780d64936fd8156eca1598d42539c874a9",
+      "content_hash": "4415f64e3275646008f624686a3445aea9c3a2bd9f7c62deaa2a6818ec0df7c5",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T13:47:47.605Z"
+      "persisted_at": "2026-11-26T11:40:01.342Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh-learning",
@@ -266844,9 +266859,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for chaos-mesh-chaos-mesh-learnings",
       "repository": "chaos-mesh-chaos-mesh-learnings",
       "source_version": "HEAD",
-      "content_hash": "b9729756ddbc9550f546abfafae3630e50111401a52e734276b4d389a563b9d4",
+      "content_hash": "f69b8e3f15f6f3c8e3cfaf162b55a917da0c2f090bcb5b8e9bcb06d53a35ee83",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:56:16.797Z"
+      "persisted_at": "2026-11-26T11:40:01.529Z"
     },
     "learn-github-aio-libs-aiohttp": {
       "learning_id": "learn-github-aio-libs-aiohttp",
@@ -270727,8 +270742,8 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "ec000790",
-      "content_hash": "e4f9f44c5e063790277e3e171409059b763b5cf70dc7d7f4ae0474249f943e23",
+      "source_version": "c868ce68",
+      "content_hash": "d8372a2e17d3554cfb6b07ace1715c49169f3d5a751f16fb2530b3edff2e107e",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
@@ -270746,6 +270761,11 @@
           "number": 10163,
           "title": "docs(security): add note about repo for plugin reports",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10665,
+          "title": "place child webviews at their bounds and size them from their room (fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -270753,7 +270773,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T01:07:20.074Z",
+      "verified_at": "2026-11-26T11:39:45.841Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270807,10 +270827,10 @@
       "relative_path": "08_VERIFICATION/tauri-apps-tauri-verification-protocol-empirical-defect-shield-for-tauri-apps-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for tauri-apps/tauri",
       "repository": "tauri-apps/tauri",
-      "source_version": "ec000790",
-      "content_hash": "aff351b4418fcf7f1af78f6b8ce369018f4671cddf7e55d5787ad70ec6cdcb82",
+      "source_version": "c868ce68",
+      "content_hash": "844a13ee0d7d76e0d90de8f9b3733c612e61e6a19d067aae4f9b8480cced7aec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:07:21.228Z"
+      "persisted_at": "2026-11-26T11:39:46.709Z"
     },
     "rule-8866": {
       "learning_id": "rule-8866",
@@ -270918,9 +270938,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tauri-apps-tauri-learnings",
       "repository": "tauri-apps-tauri-learnings",
       "source_version": "HEAD",
-      "content_hash": "d06e3e32aecb7c5516af817df171937b744add7e98c682e6bcc59af2dac3de8e",
+      "content_hash": "31564b668fdae66a6f1805f0f9dba490dd60421dbd38b1f2eea6cf95487fa9f4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:07:31.080Z"
+      "persisted_at": "2026-11-26T11:40:00.469Z"
     },
     "candidate_directive-shacl-hide-provenance-from-scoped-prebound-union-queries": {
       "item_id": "candidate_directive-shacl-hide-provenance-from-scoped-prebound-union-queries",
@@ -285580,7 +285600,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "79bd4873ed6d6ef660f478683436cd2d2480c3271f8fd74293d0e3a993a9fc98",
+      "content_hash": "a8fa0234013d6e72ce5156bb3182b68f70a46dc7471871d8ea851f08ccd79dca",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [],
@@ -285589,7 +285609,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T18:35:16.831Z",
+      "verified_at": "2026-11-26T11:39:37.122Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -285606,9 +285626,9 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/TeleOCR Core Invariants",
       "repository": "XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "6ec3c50059a634e411f42e0941566cb6b5f394102a0e76ad3b3b3ba0a1fc2fd9",
+      "content_hash": "19e38fa0dfa1af7bea9a795e504d4f6e1f8bf01b126f9a1dad1c504d240be1ae",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T18:35:17.267Z"
+      "persisted_at": "2026-11-26T11:39:37.683Z"
     },
     "rule-9085": {
       "learning_id": "rule-9085",
@@ -285696,9 +285716,9 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-teleocr-learnings Core Invariants",
       "repository": "hf-xingchen-agi-teleocr-learnings",
       "source_version": "HEAD",
-      "content_hash": "93fcc35ed28a15b76724a44c3b3cde9ca930e8402d98f9f51ad5dc5be41f86ec",
+      "content_hash": "3492bc416288f32a0dc9429be5b1cbf6887d63f4b224c146eb4c3c61335e3af7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T18:35:29.904Z"
+      "persisted_at": "2026-11-26T11:39:58.805Z"
     },
     "candidate_directive-cli-clean-up-full-uninstall-and-verify-installer-release-identity": {
       "item_id": "candidate_directive-cli-clean-up-full-uninstall-and-verify-installer-release-identity",
@@ -354312,6 +354332,158 @@
       "content_hash": "5ca2ada9a3d9b6927e7e9f198621ad2fe235dca78a3fd9e6014f28665368d170",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T11:29:13.328Z"
+    },
+    "rule-10665": {
+      "learning_id": "rule-10665",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10665,
+      "title": "place child webviews at their bounds and size them from their room (fix",
+      "source_url": "https://github.com/tauri-apps/tauri",
+      "source_version": "c868ce68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:39:45.841Z"
+    },
+    "candidate_directive-place-child-webviews-at-their-bounds-and-size-them-from-their-room-fix": {
+      "item_id": "candidate_directive-place-child-webviews-at-their-bounds-and-size-them-from-their-room-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CY6M-place-child-webviews-at-their-bounds-and-size-them-from-their-room-fix.md",
+      "title": "place child webviews at their bounds and size them from their room (fix",
+      "repository": "tauri-apps/tauri",
+      "source_version": "c868ce68",
+      "content_hash": "b03e06a92612bea2a170e92a44a8716b50a8dc2acc3ee83e39869b93d081573f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T11:39:46.324Z"
+    },
+    "domain_intelligence-architecture-intelligence-tauri-apps-tauri-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tauri-apps-tauri-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tauri-apps-tauri-architecture-intelligence-tauri-apps-tauri-core-invariants.md",
+      "title": "Architecture Intelligence: tauri-apps/tauri Core Invariants",
+      "repository": "tauri-apps/tauri",
+      "source_version": "c868ce68",
+      "content_hash": "9a16edf1105e23630bc6fca60804d3560642bad2c7aa392d97994903881b5d12",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T11:39:46.515Z"
+    },
+    "rule-10666": {
+      "learning_id": "rule-10666",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10666,
+      "title": "return cloud target encoding errors",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "394c7561",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:39:50.026Z"
+    },
+    "candidate_directive-return-cloud-target-encoding-errors": {
+      "item_id": "candidate_directive-return-cloud-target-encoding-errors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D1ED-return-cloud-target-encoding-errors.md",
+      "title": "return cloud target encoding errors",
+      "repository": "chaos-mesh/chaos-mesh",
+      "source_version": "394c7561",
+      "content_hash": "ec5411794891209906622761f1dd0db0161f38c5c5b8600482680c50eaccaf37",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T11:39:50.486Z"
+    },
+    "rule-10667": {
+      "learning_id": "rule-10667",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10667,
+      "title": "Warn about required dg version for network device preshared key",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "79d1cfe3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:39:52.464Z"
+    },
+    "candidate_directive-warn-about-required-dg-version-for-network-device-preshared-key": {
+      "item_id": "candidate_directive-warn-about-required-dg-version-for-network-device-preshared-key",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D3BR-warn-about-required-dg-version-for-network-device-preshared-key.md",
+      "title": "Warn about required dg version for network device preshared key",
+      "repository": "DefGuard/defguard",
+      "source_version": "79d1cfe3",
+      "content_hash": "909284d5394f9c5337c894f7c9f9fd901c8cb5aced7549d11220837fe38a8af1",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-26T11:39:52.989Z"
+    },
+    "rule-10668": {
+      "learning_id": "rule-10668",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10668,
+      "title": "rename Fix_KIKIMR_14259 -> CleanupRowVersionsBelowLowWatermark",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "1810e35c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:39:54.770Z"
+    },
+    "candidate_directive-rename-fix_kikimr_14259-cleanuprowversionsbelowlowwatermark": {
+      "item_id": "candidate_directive-rename-fix_kikimr_14259-cleanuprowversionsbelowlowwatermark",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D53G-rename-fix_kikimr_14259-cleanuprowversionsbelowlowwatermark.md",
+      "title": "rename Fix_KIKIMR_14259 -> CleanupRowVersionsBelowLowWatermark",
+      "repository": "ydb-platform/ydb",
+      "source_version": "1810e35c",
+      "content_hash": "8cdc0df6ece4a8a6c9d83e4b769b5548ba779dcfa4715abdb8f5140b94a7ef4e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T11:39:55.282Z"
+    },
+    "candidate_directive-linux-place-child-webviews-at-their-bounds-and-size-them-from-their-room-fix": {
+      "item_id": "candidate_directive-linux-place-child-webviews-at-their-bounds-and-size-them-from-their-room-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D8TJ-linux-place-child-webviews-at-their-bounds-and-size-them-from-their-room-fix.md",
+      "title": "linux): place child webviews at their bounds and size them from their room (fix",
+      "repository": "tauri-apps-tauri-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a200fb8df9fa14bfbc023a1f377ce362ab927b017942495e931efcd90be7fdd7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T11:40:00.109Z"
+    },
+    "domain_intelligence-architecture-intelligence-tauri-apps-tauri-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tauri-apps-tauri-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tauri-apps-tauri-learnings-architecture-intelligence-tauri-apps-tauri-learnings-.md",
+      "title": "Architecture Intelligence: tauri-apps-tauri-learnings Core Invariants",
+      "repository": "tauri-apps-tauri-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e9aa5a213a4672de7765a893333e3ce5e820c0af984d1bca259146d4198b149d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T11:40:00.282Z"
+    },
+    "candidate_directive-selector-return-cloud-target-encoding-errors": {
+      "item_id": "candidate_directive-selector-return-cloud-target-encoding-errors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D9MW-selector-return-cloud-target-encoding-errors.md",
+      "title": "selector): return cloud target encoding errors",
+      "repository": "chaos-mesh-chaos-mesh-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9eba2886b1b43961ccc6ab8fe21660694598d0ba4d01a947d58504cd350b436c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T11:40:01.161Z"
     }
   },
   "ai-builder-brain": {

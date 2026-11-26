@@ -13393,3 +13393,8 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `fbba2371` | Multi-dimensional audit evidence | 2026-11-26T11:28:54.970Z |
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `1b8f2fde` | Multi-dimensional audit evidence | 2026-11-26T11:29:01.172Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `e8eb093b` | Multi-dimensional audit evidence | 2026-11-26T11:29:09.026Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-26T11:39:37.448Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `c868ce68` | Multi-dimensional audit evidence | 2026-11-26T11:39:46.077Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `394c7561` | Multi-dimensional audit evidence | 2026-11-26T11:39:50.253Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `79d1cfe3` | Multi-dimensional audit evidence | 2026-11-26T11:39:52.741Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `1810e35c` | Multi-dimensional audit evidence | 2026-11-26T11:39:55.032Z |

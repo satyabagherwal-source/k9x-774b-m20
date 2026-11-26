@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T11:29:09.042Z",
-  "total_cycles_completed": 12677,
-  "total_learnings_persisted": 12677,
-  "total_rules_promoted": 11561,
+  "last_updated": "2026-11-26T11:39:55.046Z",
+  "total_cycles_completed": 12682,
+  "total_learnings_persisted": 12682,
+  "total_rules_promoted": 11565,
   "history": [
-    {
-      "timestamp": "2026-11-25T23:11:42.843Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:11:55.491Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:11:57.578Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:24:00.198Z",
-      "repository": "Qwen/Qwen3-Embedding-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:24:02.701Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T23:24:12.017Z",
       "repository": "RustCrypto/hashes",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-26T11:29:09.042Z",
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:39:37.461Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:39:46.091Z",
+      "repository": "tauri-apps/tauri",
+      "learningId": "learn-github-tauri-apps-tauri",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:39:50.267Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:39:52.754Z",
+      "repository": "DefGuard/defguard",
+      "learningId": "learn-github-defguard-defguard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:39:55.046Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

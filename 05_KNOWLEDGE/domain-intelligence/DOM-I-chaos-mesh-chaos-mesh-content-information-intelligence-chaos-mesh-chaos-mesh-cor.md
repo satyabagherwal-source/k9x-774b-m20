@@ -4,24 +4,24 @@
 {
   "source_repository": "chaos-mesh/chaos-mesh",
   "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-  "source_version": "fc8e171f",
+  "source_version": "394c7561",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T13:47:01.895Z",
+  "timestamp": "2026-11-26T11:39:50.485Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-chaos-mesh-chaos-mesh",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh) (Revision: `fc8e171f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T13:47:01.895Z`  
+> **Provenance**: Harvested from [chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh) (Revision: `394c7561`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T11:39:50.485Z`  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from chaos-mesh/chaos-mesh:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:47:00.432Z  
+> **Harvest Timestamp**: 2026-11-26T11:39:49.186Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7992 stars
+- **Stars / Engagement**: 7999 stars
 
 ---
 
@@ -931,13 +931,11 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5244** (2026-11-17): **fix(build): use pnpm 10 for release-2.7 Dashboard**
-  *Symptoms*: Use pnpm 10 in the release-2.7 build image. This matches the Dashboard CI toolchain and lets release builds install the existing workspace lockfile with `--frozen-lockfile`. 
+- **Issue #5272** (2026-11-26): **fix(dashboard): retry pause and resume on write conflicts**
+  *Symptoms*: ## What problem does this PR solve?  Dashboard pause and resume requests can return HTTP 500 when a controller updates the same Kubernetes object between the read and the patch. This caused the Dashboard permission test to fail in the [Integration Test workflow](https://github.com/chaos-mesh/chaos-mesh/actions/runs/45630318658/job/139261496238#step:10:3835).  ## What's changed and how does it work?  Retry conflicting annotation patches for experiments and schedules. Each attempt reads the current object, verifies its UID, and patches against its resource version.  Dashboard API tests pass for pause and resume after a concurrent update. They also verify that a request for the old UID leaves a same-named replacement untouched.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [x] Unit test - [ ] E2E test - [ ] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  Commits are signed off for DCO. 
 
-- **Issue #5242** (2026-11-16): **fix(httpchaos): upgrade chaos-tproxy to 0.6.0**
-  *Symptoms*: ## What problem does this PR solve?  External HTTP requests to the target Pod can keep timing out after HTTPChaos reports recovery.  ## What's changed and how does it work?  Upgrade the Chaos Daemon to [chaos-tproxy v0.6.0](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.6.0). The new version announces the restored MAC address so clients can reach the Pod again. Verified in the ARM64 Playground that requests through the Pod IP and Service recover after manual stop and experiment expiration.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits are signed off.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5242?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 34.47%. Comparing base ([`d60be9d`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/d60be9d4a14ec1ca47efdd1b74d2315ae09f8ba3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`2133238`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/213323836aacf3b3a401fd62d05adcbf34c9500d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff    
+- **Issue #5268** (2026-11-26): **feat(api): validate JVM, stress and physical machine chaos rules in the CRD schema**
+  *Symptoms*: ## What problem does this PR solve?  Part of #5220. This is the second of the two PRs we talked about on the issue, covering JVMChaos, StressChaos, KernelChaos, TimeChaos and PhysicalMachineChaos.  It's stacked on #5267 to avoid conflicts in the generated CRDs, the test file and the CHANGELOG, so only the last commit is new here until that one merges. I'll rebase once it does.  ## What's changed and how does it work?  I put CEL rules on the spec types for the checks that are easy to write and verify: the JVMChaos per-action fields (stress CPU count or memory type, class, method, exception, return value, latency, rule data, and the MySQL connector version and fault), the StressChaos "missing stressors" checks, and the PhysicalMachineChaos stress-cpu, stress-mem, disk payload, disk-fill, process and user_defined required fields. Each PhysicalMachineChaos rule only fires for its own action, like the webhook does, and all messages match the Go ones. The rules show up in the Schedule, Workflow and WorkflowNode CRDs too.  KernelChaos and TimeChaos don't get anything, since their webhook checks are only duration and time offset parsing plus selectors. For PhysicalMachineChaos I tried the "configuration corresponding to action is required" check as one rule over all 43 actions, but it went over the CEL cost budget once nested in Workflow templates, so it stays in Go. Same for the size, percent, correlation and DNS checks that need parsing or dynamic messages. I also left the network,
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -954,77 +952,436 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc8e171f` (2026-11-18)
-**Commit Message**: go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the go_modules group across 1 directory (#5237)
+### Incident Patch 1: `26da5ae0` (2026-11-25)
+**Commit Message**: fix(selector): return cloud target encoding errors (#4964)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+* fix(api): handle json.Marshal error in AWSSelector, GCPSelector, AzureSelector Id()
 
-**File**: `e2e-test/go.mod` (modified, +5/-4)
+The Id() methods in AWSSelector, GCPSelector, and AzureSelector were
+silently discarding the error from json.Marshal using the blank
+identifier (_). This meant that if marshaling ever failed, the method
+would return an empty string with no indication of why, making it
+impossible to diagnose selector identity issues.
+
+Since these selectors contain only basic Go types that json.Marshal
+cannot fail on, the error is truly impossible in practice. Replace the
+silent discard with an explicit panic so that any future change that
+introduces an unmarshalable field is caught immediately rather than
+silently producing an empty string.
+
+Signed-off-by: Pankaj231123 <[REDACTED_EMAIL]>
+
+* fix(selector): return cloud target encoding errors
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+* docs(changelog): note cloud selector ID handling
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Pankaj231123 <[REDACTED_EMAIL]>
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -105,12 +105,13 @@ require (
- 	github.com/xlab/treeprint v1.2.0 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.28.0 // indirect
+@@ -79,6 +79,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+ 
+ ### Fixed
+ 
++- Report target ID encoding errors before creating records for AWSChaos, AzureChaos, and GCPChaos. Go callers that used `Id()` on a cloud selector now call it on the target returned by `Select()`. [#4964](https://github.com/chaos-mesh/chaos-mesh/pull/4964)
+ - Return an error when the Helm chart repository responds with a non-success HTTP status. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
+ - Set the Pod owner reference on newly created PodIOChaos resources even when the Kubernetes client omits Pod type metadata. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
+ - Return a validation error when a Workflow chaos template omits its experiment specification. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
 ```
 
-**File**: `e2e-test/go.sum` (modified, +12/-10)
+**File**: `api/v1alpha1/awschaos_types.go` (modified, +1/-13)
 ```diff
-@@ -258,20 +258,22 @@ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ
- go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+@@ -15,11 +15,7 @@
+ 
+ package v1alpha1
+ 
+-import (
+-	"encoding/json"
+-
+-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+-)
++import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 
+ // +kubebuilder:object:root=true
+ // +kubebuilder:printcolumn:name="action",type=string,JSONPath=`.spec.action`
+@@ -115,11 +111,3 @@ func (obj *AWSChaos) GetSelectorSpecs() map[string]any {
+ 		".": &obj.Spec.AWSSelector,
+ 	}
+ }
+-
+-func (selector *AWSSelector) Id() string {
+-	// TODO: handle the error here
+-	// or ignore it is enough ?
+-	json, _ := json.Marshal(selector)
+-
+-	return string(json)
+-}
+```
+
+**File**: `api/v1alpha1/azurechaos_types.go` (modified, +1/-13)
+```diff
+@@ -15,11 +15,7 @@
+ 
+ package v1alpha1
+ 
+-import (
+-	"encoding/json"
+-
+-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+-)
++import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 
+ // +kubebuilder:object:root=true
+ // +kubebuilder:printcolumn:name="action",type=string,JSONPath=`.spec.action`
+@@ -108,11 +104,3 @@ func (obj *AzureChaos) GetSelectorSpecs() map[string]any {
+ 		".": &obj.Spec.AzureSelector,
+ 	}
+ }
+-
+-func (selector *AzureSelector) Id() string {
+-	// TODO: handle the error here
+-	// or ignore it is enough ?
+-	json, _ := json.Marshal(selector)
+-
+-	return string(json)
+-}
+```
+
+**File**: `api/v1alpha1/gcpchaos_types.go` (modified, +1/-13)
+```diff
+@@ -15,11 +15,7 @@
+ 
+ package v1alpha1
+ 
+-import (
+-	"encoding/json"
+-
+-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+-)
++import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 
+ // +kubebuilder:object:root=true
+ // +kubebuilder:printcolumn:name="action",type=string,JSONPath=`.spec.action`
+@@ -100,14 +96,6 @@ func (obj *GCPChaos) GetSelectorSpecs() map[string]any {
+ 	}
+ }
+ 
+-func (selector *GCPSelector) Id() string {
+-	// TODO: handle the error here
+-	// or ignore it is enough ?
+-	json, _ := json.Marshal(selector)
+-
+-	return string(json)
+-}
+-
+ // GCPChaosStatus represents the status of a GCPChaos
+ type GCPChaosStatus struct {
+ 	ChaosStatus `json:",inline"`
+```
+
+**File**: `pkg/selector/aws/selector.go` (modified, +3/-2)
+```diff
+@@ -20,12 +20,13 @@ import (
+ 	"context"
+ 
+ 	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++	"github.com/chaos-mesh/chaos-mesh/pkg/selector/internal/cloud"
+ )
+ 
+ type SelectImpl struct{}
+ 
+-func (impl *SelectImpl) Select(_ context.Context, awsSelector *v1alpha1.AWSSelector) ([]*v1alpha1.AWSSelector, error) {
+-	return []*v1alpha1.AWSSelector{awsSelector}, nil
++func (impl *SelectImpl) Select(_ context.Context, awsSelector *v1alpha1.AWSSelector) ([]cloud.Target, error) {
++	return cloud.Select(awsSelector)
+ }
+ 
+ func New() *SelectImpl {
+```
+
+**File**: `pkg/selector/azure/selector.go` (modified, +3/-2)
+```diff
+@@ -20,12 +20,13 @@ import (
+ 	"context"
+ 
+ 	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++	"github.com/chaos-mesh/chaos-mesh/pkg/selector/internal/cloud"
+ )
+ 
+ type SelectImpl struct{}
+ 
+-func (impl *SelectImpl) Select(_ context.Context, azureSelector *v1alpha1.AzureSelector) ([]*v1alpha1.AzureSelector, error) {
+-	return []*v1alpha1.AzureSelector{azureSelector}, nil
++func (impl *SelectImpl) Select(_ context.Context, azureSelector *v1alpha1.AzureSelector) ([]cloud.Target, error) {
++	return cloud.Select(azureSelector)
+ }
+ 
+ func New() *SelectImpl {
+```
+
+**File**: `pkg/selector/gcp/selector.go` (modified, +3/-2)
+```diff
+@@ -20,12 +20,13 @@ import (
+ 	"context"
+ 
+ 	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++	"github.com/chaos-mesh/chaos-mesh/pkg/selector/internal/cloud"
+ )
+ 
+ type SelectImpl struct{}
+ 
+-func (impl *SelectImpl) Select(_ context.Context, gcpSelector *v1alpha1.GCPSelector) ([]*v1alpha1.GCPSelector, error) {
+-	return []*v1alpha1.GCPSelector{gcpSelector}, nil
++func (impl *SelectImpl) Select(_ context.Context, gcpSelector *v1alpha1.GCPSelector) ([]cloud.Target, error) {
++	return cloud.Select(gcpSelector)
+ }
+ 
+ func New() *SelectImpl {
+```
+
+**File**: `pkg/selector/internal/cloud/selector.go` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++
++// Package cloud encodes cloud selectors as target IDs for experiment records.
++package cloud
++
++import (
++	"encoding/json"
++	"fmt"
++)
++
++type Target string
++
++//revive:disable-next-line:var-naming Preserve the selector.Target identity contract.
++func (t Target) Id() string {
++	return string(t)
++}
++
++func Select(spec any) ([]Target, error) {
++	id, err := json.Marshal(spec)
++	if err != nil {
++		return nil, fmt.Errorf("encode cloud selector %T: %w", spec, err)
++	}
++	return []Target{Target(id)}, nil
++}
+```
+
+---
+
+### Incident Patch 2: `d9c12d3e` (2026-11-26)
+**Commit Message**: fix(dashboard): retry pause and resume on write conflicts (#5272)
+
+* test(dashboard): reproduce pause and start write conflicts
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+* fix(dashboard): retry pause and resume on write conflicts
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+* docs(changelog): link the Dashboard conflict fix
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -79,6 +79,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+ 
+ ### Fixed
+ 
++- Fix intermittent Dashboard errors when pausing or resuming experiments and schedules during concurrent Kubernetes updates. [#5272](https://github.com/chaos-mesh/chaos-mesh/pull/5272)
+ - Report target ID encoding errors before creating records for AWSChaos, AzureChaos, and GCPChaos. Go callers that used `Id()` on a cloud selector now call it on the target returned by `Select()`. [#4964](https://github.com/chaos-mesh/chaos-mesh/pull/4964)
+ - Return an error when the Helm chart repository responds with a non-success HTTP status. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
+ - Set the Pod owner reference on newly created PodIOChaos resources even when the Kubernetes client omits Pod type metadata. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
+```
+
+**File**: `pkg/dashboard/apiserver/experiment/experiment.go` (modified, +14/-12)
+```diff
+@@ -531,19 +531,21 @@ func (s *Service) start(c *gin.Context) {
+ }
+ 
+ func patchExperiment(ctx context.Context, kubeCli client.Client, record *core.Experiment, annotations map[string]string) error {
+-	chaos, err := getChaosForExperiment(ctx, kubeCli, record)
+-	if err != nil {
+-		return err
+-	}
++	return retry.RetryOnConflict(retry.DefaultRetry, func() error {
++		chaos, err := getChaosForExperiment(ctx, kubeCli, record)
++		if err != nil {
++			return err
++		}
+ 
+-	before := chaos.DeepCopyObject().(client.Object)
+-	currentAnnotations := chaos.GetAnnotations()
+-	if currentAnnotations == nil {
+-		currentAnnotations = make(map[string]string, len(annotations))
+-	}
+-	maps.Copy(currentAnnotations, annotations)
+-	chaos.SetAnnotations(currentAnnotations)
+-	return kubeCli.Patch(ctx, chaos, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{}))
++		before := chaos.DeepCopyObject().(client.Object)
++		currentAnnotations := chaos.GetAnnotations()
++		if currentAnnotations == nil {
++			currentAnnotations = make(map[string]string, len(annotations))
++		}
++		maps.Copy(currentAnnotations, annotations)
++		chaos.SetAnnotations(currentAnnotations)
++		return kubeCli.Patch(ctx, chaos, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{}))
++	})
+ }
+ 
+ // @Summary Get the status of all experiments.
+```
+
+**File**: `pkg/dashboard/apiserver/resource_identity_test.go` (modified, +41/-1)
+```diff
+@@ -78,11 +78,13 @@ func TestUIDScopedWritesRejectReplacementAfterLookup(t *testing.T) {
+ 				key := client.ObjectKeyFromObject(original)
+ 				path := "/" + resource.endpoint + "/uid"
+ 				body := ""
++				expectedStatus := http.StatusInternalServerError
+ 				if method == http.MethodPut {
+ 					if resource.endpoint == "workflows" {
+ 						body = strings.Replace(resource.body, `"entry":"wait"`, `"entry":"other"`, 1)
+ 					} else {
+ 						path = "/" + resource.endpoint + "/pause/uid"
++						expectedStatus = http.StatusNotFound
+ 					}
+ 				}
+ 
+@@ -119,7 +121,7 @@ func TestUIDScopedWritesRejectReplacementAfterLookup(t *testing.T) {
+ 					},
+ 				}, nil)
+ 
+-				apiRequest(t, router, method, path, body, http.StatusInternalServerError)
++				apiRequest(t, router, method, path, body, expectedStatus)
+ 				require.NotNil(t, replacement, "request must reach the Kubernetes mutation")
+ 				actual := replacement.DeepCopyObject().(client.Object)
+ 				require.NoError(t, kube.Get(t.Context(), key, actual))
+@@ -129,6 +131,44 @@ func TestUIDScopedWritesRejectReplacementAfterLookup(t *testing.T) {
+ 	}
+ }
+ 
++func TestPauseAndStartWithConcurrentUpdate(t *testing.T) {
++	for _, resource := range apiResources()[:2] {
++		for _, action := range []struct{ name, before, after string }{
++			{"pause", "false", "true"},
++			{"start", "true", "false"},
++		} {
++			t.Run(resource.endpoint+"/"+action.name, func(t *testing.T) {
++				original := resource.object.DeepCopyObject().(client.Object)
++				require.NoError(t, json.Unmarshal([]byte(resource.body), original))
++				original.GetAnnotations()[v1alpha1.PauseAnnotationKey] = action.before
++				key := client.ObjectKeyFromObject(original)
++
++				firstPatch := true
++				router, kube := apiRouter(t, []client.Object{original}, interceptor.Funcs{
++					Patch: func(ctx context.Context, kube client.WithWatch, obj client.Object, patch client.Patch, opts ...client.PatchOption) error {
++						if firstPatch {
++							firstPatch = false
++							current := original.DeepCopyObject().(client.Object)
++							require.NoError(t, kube.Get(ctx, key, current))
++							current.GetAnnotations()["parallel"] = "preserved"
++							require.NoError(t, kube.Update(ctx, current))
++						}
++						return kube.Patch(ctx, obj, patch, opts...)
++					},
++				}, nil)
++
++				apiRequest(t, router, http.MethodPut, "/"+resource.endpoint+"/"+action.name+"/uid", "", http.StatusOK)
++				require.NoError(t, kube.Get(t.Context(), key, original))
++				require.Equal(t, map[string]string{
++					"keep":                      "value",
++					"parallel":                  "preserved",
++					v1alpha1.PauseAnnotationKey: action.after,
++				}, original.GetAnnotations())
++			})
++		}
++	}
++}
++
+ func TestForceDeleteExperimentRetriesOnlyAgainstOriginalUID(t *testing.T) {
+ 	for _, mode := range []string{"concurrent update", "replacement"} {
+ 		t.Run(mode, func(t *testing.T) {
+```
+
+**File**: `pkg/dashboard/apiserver/schedule/schedule.go` (modified, +15/-12)
+```diff
+@@ -31,6 +31,7 @@ import (
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/client-go/util/retry"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
+ 
+@@ -490,16 +491,18 @@ func (s *Service) startSchedule(c *gin.Context) {
+ }
+ 
+ func patchSchedule(ctx context.Context, kubeCli client.Client, record *core.Schedule, annotations map[string]string) error {
+-	sch, err := getSchedule(ctx, kubeCli, record)
+-	if err != nil {
+-		return err
+-	}
+-	before := sch.DeepCopy()
+-	currentAnnotations := sch.GetAnnotations()
+-	if currentAnnotations == nil {
+-		currentAnnotations = make(map[string]string, len(annotations))
+-	}
+-	maps.Copy(currentAnnotations, annotations)
+-	sch.SetAnnotations(currentAnnotations)
+-	return kubeCli.Patch(ctx, sch, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{}))
++	return retry.RetryOnConflict(retry.DefaultRetry, func() error {
++		sch, err := getSchedule(ctx, kubeCli, record)
++		if err != nil {
++			return err
++		}
++		before := sch.DeepCopy()
++		currentAnnotations := sch.GetAnnotations()
++		if currentAnnotations == nil {
++			currentAnnotations = make(map[string]string, len(annotations))
++		}
++		maps.Copy(currentAnnotations, annotations)
++		sch.SetAnnotations(currentAnnotations)
++		return kubeCli.Patch(ctx, sch, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{}))
++	})
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5244** (2026-11-17): fix(build): use pnpm 10 for release-2.7 Dashboard (@g1eny0ung)
-- **PR #5242** (2026-11-16): fix(httpchaos): upgrade chaos-tproxy to 0.6.0 (@g1eny0ung)
-- **PR #5241** (2026-11-17): chore(release): prepare v2.7.4 (@g1eny0ung)
-- **PR #5240** (2026-11-14): chore: pull images from cr.chaos-mesh.dev on release-2.7 (@g1eny0ung)
-- **PR #5239** (2026-11-14): fix(ui): backport dashboard dependency security updates to 2.7 (@g1eny0ung)
-- **PR #5238** (2026-11-14): fix(physicalmachinechaos): backport validation and UID fixes to 2.7 (@g1eny0ung)
+- **PR #5272** (2026-11-26): fix(dashboard): retry pause and resume on write conflicts (@g1eny0ung)
+- **PR #5268** (2026-11-26): feat(api): validate JVM, stress and physical machine chaos rules in the CRD schema (@cvas22)
+- **PR #5267** (2026-11-25): feat(api): validate NetworkChaos, cloud, IO, HTTP and DNS chaos rules in the CRD schema (@cvas22)
+- **PR #5266** (closed): docs(changelog): consolidate daemon and dashboard fixes (@g1eny0ung)
+- **PR #5264** (2026-11-22): fix(dashboard): protect resource identity and Helm lifecycle (@g1eny0ung)
+- **PR #5263** (2026-11-22): fix(daemon): harden fault application and recovery (@g1eny0ung)
 
 ---
 
@@ -1044,38 +1401,31 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the 
+## X. selector): return cloud target encoding errors
 
 **RULE**:
-When implementing operations in `e2e-test/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc8e171f`: go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the go_modules group across 1 directory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `26da5ae0`: selector): return cloud target encoding errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-test/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go.opentelemetry.io/otel v1.47.0 // indirect
-	go.opentelemetry.io/otel/log v1.47.0 // indirect
-	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+- Report target ID encoding errors before creating records for AWSChaos, AzureChaos, and GCPChaos. Go callers that used `Id()` on a cloud selector now call it on the target returned by `Select()`. [#4964](https://github.com/chaos-mesh/chaos-mesh/pull/4964)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	go.opentelemetry.io/otel v1.45.0 // indirect
-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc8e171f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `26da5ae0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

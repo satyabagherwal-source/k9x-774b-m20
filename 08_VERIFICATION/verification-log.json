@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-VCLX",
-    "timestamp": "2026-11-24T21:38:36.309Z",
-    "repository": "apache/maka",
-    "learningId": "learn-github-apache-maka",
-    "contentHash": "5605576365e848167dba90eefb9aaee7ff426dc067d484c848720a6c3478b92c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-E025",
-    "timestamp": "2026-11-24T21:53:06.509Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "53d5ea30116fbcd133c5716f8c001ce837cbf633cf3b3a1bd5a7648cacbc9175",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-WFSB",
-    "timestamp": "2026-11-24T22:07:26.699Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "c072ec0b7a1379a2f8c9b67f57f0cc4616c5f308e0a3bb61a7f72bcf2f3b7ecf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-WJY4",
-    "timestamp": "2026-11-24T22:07:32.092Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "fbb63a4bcd3af9a8cb3d53c6699e62e992ef7cfd5d642ec1f728234316945dfc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-78FH",
-    "timestamp": "2026-11-24T22:15:50.381Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "7b10871cdb9761f04b63215e9f66e5028964fe05ca94ad25ecacd4e9e75e7d2d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-79LS",
     "timestamp": "2026-11-24T22:15:51.904Z",
     "repository": "miso-belica/jusText",
@@ -7490,6 +7415,81 @@
     "repository": "GreptimeTeam/greptimedb",
     "learningId": "learn-github-greptimeteam-greptimedb",
     "contentHash": "b466ab27e7768ac80754f45dcece40cd41a4906d3dfb880d89d46eb5bdd7c644",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-CRC4",
+    "timestamp": "2026-11-26T11:39:37.444Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr",
+    "contentHash": "a8fa0234013d6e72ce5156bb3182b68f70a46dc7471871d8ea851f08ccd79dca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-CXZU",
+    "timestamp": "2026-11-26T11:39:46.074Z",
+    "repository": "tauri-apps/tauri",
+    "learningId": "learn-github-tauri-apps-tauri",
+    "contentHash": "d8372a2e17d3554cfb6b07ace1715c49169f3d5a751f16fb2530b3edff2e107e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-D17T",
+    "timestamp": "2026-11-26T11:39:50.249Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "0d0455ec528117351b5919162480c35e417dc1b3dc5de51c19a36b7b2fcb157b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-D34X",
+    "timestamp": "2026-11-26T11:39:52.737Z",
+    "repository": "DefGuard/defguard",
+    "learningId": "learn-github-defguard-defguard",
+    "contentHash": "e32925dfa5b054e0a9ea3cfe7d7cfdc4b17383951f11bd714e7ea7e9a647237e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-D4WK",
+    "timestamp": "2026-11-26T11:39:55.028Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "7fb4ff4a74cb436c73e237ec57b16b566973c96b53d56c0a32854e9ddccdf7ae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

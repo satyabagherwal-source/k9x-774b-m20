@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T11:29:14.873Z",
+  "updated_at": "2026-11-26T11:40:00.927Z",
   "stats": {
-    "total_discovered": 9738,
-    "approved_pending_harvest": 9238,
+    "total_discovered": 9745,
+    "approved_pending_harvest": 9245,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9225,
+      "COMMUNITY_AND_EXPERT": 9232,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210763,6 +210763,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
         "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-75534576F7E7": {
+      "id": "SRC-75534576F7E7",
+      "url": "https://github.com/tauri-apps/wry/pull/1957",
+      "title": "https://github.com/tauri-apps/wry/pull/1957",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:39:59.648Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-C93E94F81526": {
+      "id": "SRC-C93E94F81526",
+      "url": "https://github.com/tauri-apps/tauri/pull/15411",
+      "title": "https://github.com/tauri-apps/tauri/pull/15411",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:39:59.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-93352343CB92": {
+      "id": "SRC-93352343CB92",
+      "url": "https://github.com/tauri-apps/tauri/issues/12384",
+      "title": "https://github.com/tauri-apps/tauri/issues/12384",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:39:59.802Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-8D56D3D57004": {
+      "id": "SRC-8D56D3D57004",
+      "url": "https://www.freedesktop.org/wiki/Specifications/StatusNotifierItem",
+      "title": "https://www.freedesktop.org/wiki/Specifications/StatusNotifierItem",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:39:59.866Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-7C63EF8C57AF": {
+      "id": "SRC-7C63EF8C57AF",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/actions/runs/45630318658/job/139261496238",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/actions/runs/45630318658/job/139261496238",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:40:00.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-CA7F09D814CF": {
+      "id": "SRC-CA7F09D814CF",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/4964",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/4964",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:40:00.843Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-488C6B9EFEAD": {
+      "id": "SRC-488C6B9EFEAD",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5272",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5272",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:40:00.927Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
       }
     }
   }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T11:29:15.472Z",
-  "total_records": 2742,
+  "last_updated": "2026-11-26T11:40:01.342Z",
+  "total_records": 2744,
   "domains": {
     "A": {
       "total": 23,
@@ -1230,7 +1230,7 @@
       ]
     },
     "G": {
-      "total": 470,
+      "total": 472,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1701,7 +1701,9 @@
         "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-0xcub3-wblock-core-invariants",
         "domain_intelligence-architecture-intelligence-0xcub3-wblock-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-sfu-db-connector-x-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-sfu-db-connector-x-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-tauri-apps-tauri-core-invariants",
+        "domain_intelligence-architecture-intelligence-tauri-apps-tauri-learnings-core-invariants"
       ]
     },
     "H": {
@@ -17834,8 +17836,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "57efc55747e4c4008374ee21f435f52862933e592e90de2b5680c0336db94157",
-      "created_at": "2026-11-25T10:07:36.737Z"
+      "content_hash": "1f78c0925da9a578bfa05012a050c1ce3720573f782c84a2bf8bee3f3581663c",
+      "created_at": "2026-11-26T11:39:55.474Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -25285,8 +25287,8 @@
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "repository": "DefGuard/defguard",
-      "content_hash": "fdf400843ef0a63d3adf6fc41e190f94d24ba674ef798e3a1b5910d26af1cea3",
-      "created_at": "2026-11-24T16:46:08.078Z"
+      "content_hash": "0e57a5045d800fa3335073cee01da0955665b029b6943f3254bd66b67a849b70",
+      "created_at": "2026-11-26T11:39:53.169Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -25564,8 +25566,8 @@
       "title": "Content & Information Intelligence: chaos-mesh/chaos-mesh Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-content-information-intelligence-chaos-mesh-chaos-mesh-cor.md",
       "repository": "chaos-mesh/chaos-mesh",
-      "content_hash": "8c59bee6dd06840eaad318bf8e90e81bffca5e10e3229bd045c0d20c76ebdf59",
-      "created_at": "2026-11-18T13:47:02.080Z"
+      "content_hash": "f58d35145c178ef4ce92822842227c753759fa89b53037dc85a9e03ba3f1a5df",
+      "created_at": "2026-11-26T11:39:50.675Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants",
@@ -25582,8 +25584,8 @@
       "title": "Content & Information Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-learnings-content-information-intelligence-chaos-mesh-chao.md",
       "repository": "chaos-mesh-chaos-mesh-learnings",
-      "content_hash": "95ec6c9fcb5077c07c8083c1e8acfe780d64936fd8156eca1598d42539c874a9",
-      "created_at": "2026-11-18T13:47:47.605Z"
+      "content_hash": "4415f64e3275646008f624686a3445aea9c3a2bd9f7c62deaa2a6818ec0df7c5",
+      "created_at": "2026-11-26T11:40:01.342Z"
     },
     "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants",
@@ -29913,8 +29915,8 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/TeleOCR Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-research-knowledge-intelligence-xingchen-agi-teleocr-cor.md",
       "repository": "XingChen-AGI/TeleOCR",
-      "content_hash": "6ec3c50059a634e411f42e0941566cb6b5f394102a0e76ad3b3b3ba0a1fc2fd9",
-      "created_at": "2026-11-22T18:35:17.267Z"
+      "content_hash": "19e38fa0dfa1af7bea9a795e504d4f6e1f8bf01b126f9a1dad1c504d240be1ae",
+      "created_at": "2026-11-26T11:39:37.683Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant",
@@ -29922,8 +29924,8 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-teleocr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-learnings-research-knowledge-intelligence-hf-xingchen-ag.md",
       "repository": "hf-xingchen-agi-teleocr-learnings",
-      "content_hash": "93fcc35ed28a15b76724a44c3b3cde9ca930e8402d98f9f51ad5dc5be41f86ec",
-      "created_at": "2026-11-22T18:35:29.904Z"
+      "content_hash": "3492bc416288f32a0dc9429be5b1cbf6887d63f4b224c146eb4c3c61335e3af7",
+      "created_at": "2026-11-26T11:39:58.805Z"
     },
     "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants",
@@ -46334,6 +46336,24 @@
       "repository": "higress-group-higress-learnings",
       "content_hash": "2244da006ac4239b6b029dd767f04405ac674a3112e821624b08092aafcfc165",
       "created_at": "2026-11-26T11:16:24.804Z"
+    },
+    "domain_intelligence-architecture-intelligence-tauri-apps-tauri-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tauri-apps-tauri-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tauri-apps/tauri Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tauri-apps-tauri-architecture-intelligence-tauri-apps-tauri-core-invariants.md",
+      "repository": "tauri-apps/tauri",
+      "content_hash": "9a16edf1105e23630bc6fca60804d3560642bad2c7aa392d97994903881b5d12",
+      "created_at": "2026-11-26T11:39:46.515Z"
+    },
+    "domain_intelligence-architecture-intelligence-tauri-apps-tauri-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tauri-apps-tauri-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tauri-apps-tauri-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tauri-apps-tauri-learnings-architecture-intelligence-tauri-apps-tauri-learnings-.md",
+      "repository": "tauri-apps-tauri-learnings",
+      "content_hash": "e9aa5a213a4672de7765a893333e3ce5e820c0af984d1bca259146d4198b149d",
+      "created_at": "2026-11-26T11:40:00.282Z"
     }
   }
 }

@@ -305,8 +305,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "79bd4873ed6d6ef660f478683436cd2d2480c3271f8fd74293d0e3a993a9fc98",
-    "lastHarvestedAt": "2026-11-22T18:35:17.051Z",
+    "contentHash": "a8fa0234013d6e72ce5156bb3182b68f70a46dc7471871d8ea851f08ccd79dca",
+    "lastHarvestedAt": "2026-11-26T11:39:37.448Z",
     "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "fdb9684b",
+    "sourceVersion": "394c7561",
     "license": "Apache-2.0",
-    "contentHash": "7256a66047c0283109c84d18fcde2393dd8c0b2a6c4f45338847ea5719e4c63b",
-    "lastHarvestedAt": "2026-11-22T20:56:10.698Z",
+    "contentHash": "0d0455ec528117351b5919162480c35e417dc1b3dc5de51c19a36b7b2fcb157b",
+    "lastHarvestedAt": "2026-11-26T11:39:50.253Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "279cc5c3",
+    "sourceVersion": "79d1cfe3",
     "license": "NOASSERTION",
-    "contentHash": "41dfaafcd39438d47aba495fce7a55af305114b9f5d29565cea8917f7ced2890",
-    "lastHarvestedAt": "2026-11-24T16:46:07.523Z",
+    "contentHash": "e32925dfa5b054e0a9ea3cfe7d7cfdc4b17383951f11bd714e7ea7e9a647237e",
+    "lastHarvestedAt": "2026-11-26T11:39:52.741Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "11c43f77",
+    "sourceVersion": "1810e35c",
     "license": "Apache-2.0",
-    "contentHash": "4ef9bbe4a17e396c5ddddf80b4d29444847b3f77e9c445f6f7012844f34d3cbd",
-    "lastHarvestedAt": "2026-11-25T10:07:36.304Z",
+    "contentHash": "7fb4ff4a74cb436c73e237ec57b16b566973c96b53d56c0a32854e9ddccdf7ae",
+    "lastHarvestedAt": "2026-11-26T11:39:55.032Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -8483,10 +8483,10 @@
     "repository": "tauri-apps/tauri",
     "platform": "github",
     "sourceUrl": "https://github.com/tauri-apps/tauri",
-    "sourceVersion": "ec000790",
+    "sourceVersion": "c868ce68",
     "license": "Apache-2.0",
-    "contentHash": "e4f9f44c5e063790277e3e171409059b763b5cf70dc7d7f4ae0474249f943e23",
-    "lastHarvestedAt": "2026-11-24T01:07:20.368Z",
+    "contentHash": "d8372a2e17d3554cfb6b07ace1715c49169f3d5a751f16fb2530b3edff2e107e",
+    "lastHarvestedAt": "2026-11-26T11:39:46.077Z",
     "learningId": "learn-github-tauri-apps-tauri"
   },
   "oliviertassinari-react-swipeable-views": {

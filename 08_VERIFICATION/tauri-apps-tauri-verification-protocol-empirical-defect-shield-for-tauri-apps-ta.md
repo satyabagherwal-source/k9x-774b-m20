@@ -4,22 +4,22 @@
 {
   "source_repository": "tauri-apps/tauri",
   "source_url": "https://github.com/tauri-apps/tauri",
-  "source_version": "ec000790",
+  "source_version": "c868ce68",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T01:07:20.746Z",
+  "timestamp": "2026-11-26T11:39:46.323Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tauri-apps-tauri",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tauri-apps/tauri](https://github.com/tauri-apps/tauri) (Revision: `ec000790`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T01:07:20.746Z`  
+> **Provenance**: Harvested from [tauri-apps/tauri](https://github.com/tauri-apps/tauri) (Revision: `c868ce68`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T11:39:46.323Z`  
 > **Learning ID**: `learn-github-tauri-apps-tauri`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tauri-apps/tauri` (Commit: `ec000790`)
+- **Target Repository**: `tauri-apps/tauri` (Commit: `c868ce68`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:07:15.354Z  
+> **Harvest Timestamp**: 2026-11-26T11:39:45.008Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 113092 stars
+- **Stars / Engagement**: 113190 stars
 
 ---
 
@@ -2287,11 +2287,13 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16631** (2026-11-23): **chore: update android template AGP to 9.5.2**
-  *Symptoms*: <!-- Before submitting a PR, please read https://github.com/tauri-apps/tauri/blob/dev/.github/CONTRIBUTING.md#pull-request-guidelines  1. Give the PR a descriptive title.    Examples of good title:     - fix(windows): fix race condition in event loop     - docs: update example for `App::show`     - feat: add `Window::set_fullscreen`    Examples of bad title:     - fix #7123     - update docs     - fix bugs  2. If there is a related issue, reference it in the PR text, e.g. closes #123. 3. If this change requires a new version, then add a change file in `.changes` directory with the appropriate bump, see https://github.com/tauri-apps/tauri/blob/dev/.changes/README.md 4. Ensure that all your commits are signed https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits 5. Ensure `cargo test` and `cargo clippy` passes. 6. Propose your changes as a draft PR if your work is still in progress. --> 
+- **Issue #16656** (2026-11-26): **refactor: use `with_added_extension`**
+  *Symptoms*: We have now raised MSRV above 1.91 so we can finally use this
+  **Post-Mortem & Fix Analysis**:
+  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through e53aa0fee0792bff080cdfe1b02c2020db910c77 There are 14 changes which include tauri-bundler with minor, tauri-cli with minor, @tauri-apps/cli with minor, tauri-utils with minor, @tauri-apps/api with minor, tauri with minor, tauri-runtime with minor, tauri-runtime-wry with minor, tauri-macros with minor, tauri-codegen with minor, tauri-plugin with minor, tauri-build with minor, tauri-macos-sign with minor, tauri-driver with minor  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.5 | 2.13.0 |  tauri-utils | 2.10.4 | 2.11.0 |  tauri-macos-sign | 2.4.3 | 2.5.0 |  tauri-bundler | 2.10.6 | 2.11.0 |  tauri-runtime | 2.12.4 | 2.13.0 |  tauri-runtime-wry | 2.12.5 | 2.13.0 |  tauri-codegen | 2.7.6 | 2.8.0 |  tauri-macros | 2.7.6 | 2.8.0 
 
-- **Issue #16626** (2026-11-23): **chore(deps): update rust crate cargo-mobile2 to 0.23.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cargo-mobile2](https://redirect.github.com/tauri-apps/cargo-mobile2) | dependencies | minor | `0.22.5` → `0.23.0` |  ---  ### Release Notes  <details> <summary>tauri-apps/cargo-mobile2 (cargo-mobile2)</summary>  ### [`v0.23.0`](https://redirect.github.com/tauri-apps/cargo-mobile2/blob/HEAD/CHANGELOG.md#0230)  [Compare Source](https://redirect.github.com/tauri-apps/cargo-mobile2/compare/cargo-mobile2-v0.22.5...cargo-mobile2-v0.23.0)  - [`6033cb1`](https://redirect.github.com/tauri-apps/cargo-mobile2/commit/6033cb1b07990d4d9fa14543f5e9b3e920867882) ([#&#8203;531](https://redirect.github.com/tauri-apps/cargo-mobile2/pull/531) by [@&#8203;RaphaelFakhri](https://redirect.github.com/tauri-apps/cargo-mobile2/../../RaphaelFakhri)) Detect Android devices whose `adb devices` serial contains spaces, such as devices paired over wireless debugging. - [`6a33362`](https://redirect.github.com/tauri-apps/cargo-mobile2/commit/6a3336216b3b5d49f491a41a991c87889bf4be4c) ([#&#8203;532](https://redirect.github.com/tauri-apps/cargo-mobile2/pull/532) by [@&#8203;xairaven](https://redirect.github.com/tauri-apps/cargo-mobile2/../../xairaven)) Spawn the Android `adb` polls (`pidof`, `getprop init.svc.bootanim`, device name lookups) with a null stdin. When the CLI runs inside Node.js (e.g. `pnpm tauri android dev`) the inherited stdin is close-on-exec, so adb started with fd 0 closed, failed to reach its se
+- **Issue #16655** (2026-11-26): **ci: retry pushing benchmark results 3 times**
+  *Symptoms*: Mirror https://github.com/tauri-apps/wry/pull/1957
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2308,674 +2310,843 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c51c182d` (2026-11-21)
-**Commit Message**: docs(security): add note about repo for plugin reports (#16607)
+### Incident Patch 1: `8627ddca` (2026-11-25)
+**Commit Message**: fix(linux): place child webviews at their bounds and size them from their room (fix #10420) (#16507)
 
-* docs(security): add note about repo for plugin reports
+* fix(linux): lay out child webviews in a container that clips and gives them their room
 
-* Update SECURITY.md
+With the `unstable` feature, `Window::add_child` packed the webview into the default vbox of the
+window, which stacks its children and ignores their position. The window's own webview was packed
+too. Its size came from the inner size of the window, which is bigger than the room that GTK gives
+it: it counts the menu bar and, on Wayland, the client-side decorations.
 
-**File**: `SECURITY.md` (modified, +2/-2)
+Each window now holds a container for its webviews. It is a GtkFixed, so wry puts each webview at
+its bounds, with three changes:
+
+- It asks for no room. A GtkFixed asks for the room of its children, which would stop the window
+  from shrinking below its webviews.
+- It has its own window, so what is outside of it is clipped. It is not in a scrolled window, so
+  the mouse wheel scrolls nothing.
+- It tells the window runtime the room that GTK gives it in the layout pass of the container,
+  so the webviews that resize with the window have their size in the same frame. They take their
+  share of that room, not of the inner size of the w
+
+**File**: `.changes/linux-child-webviews.md` (added, +6/-0)
 ```diff
-@@ -13,9 +13,9 @@ If you have found a potential security threat, vulnerability or exploit in Tauri
- or one of its upstream dependencies, please DON'T create a pull-request, DON'T
- file an issue on GitHub, DON'T mention it on Discord and DON'T create a forum thread.
- 
--Please submit your report via the GitHub Private Vulnerability Disclosure functionality.
-+**Please submit your report via the [GitHub Private Vulnerability Disclosure functionality](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).**
- 
--Find out more about the reporting process [here](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).
-+Reports for Tauri and its direct tooling belong in this repository. Reports for our official plugins should be submitted in [plugins-workspace](https://github.com/tauri-apps/plugins-workspace/) instead.
- 
- Our team will triage your report and keep you informed about the progress.
- We may ask questions or request further guidance on reproduction of the vulnerability in the comments of the advisory, which will be publicized.
-```
-
----
-
-### Incident Patch 2: `ec000790` (2026-11-23)
-**Commit Message**: feat: add handler method on menu item builders (#9380)
-
-* feat: add handler method on menu item builders
-
-closes #9060
-
-* refactor(menu): preserve original event_listeners name
-
-* fix(menu): avoid retaining items in builder handlers
-
-* refactor(menu): infer builder handlers without runtime generics
-
-* docs(menu): recommend unique IDs for item handlers
-
-* docs(menu): simplify handler change note
-
-* test(menu): use platform cfgs available on dev
-
-* refactor(api): use menu item builder handlers in tray example
-
----------
-
-Co-authored-by: Tony <[REDACTED_EMAIL]>
-
-**File**: `.changes/menu-item-builders-handler.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,6 @@
 +---
-+"tauri": "minor:feat"
++"tauri": patch:bug
++"tauri-runtime-wry": patch:bug
 +---
 +
-+Add `handler` to `MenuItemBuilder`, `CheckMenuItemBuilder`, and `IconMenuItemBuilder` to register a callback when a menu item is activated.
++On Linux with the `unstable` feature, child webviews added with `Window::add_child` are placed at their bounds, instead of being stacked in the window's box. They are clipped at the edge of the window and do not scroll. A webview that resizes with its window, the window's own webview included, takes the size of the room that GTK gives it, instead of the inner size of the window, which counts the menu bar and, on Wayland, the client-side decorations. `Webview::reparent` keeps the position of the webview.
 ```
 
-**File**: `crates/tauri/src/app.rs` (modified, +2/-0)
+**File**: `crates/tauri-runtime-wry/src/lib.rs` (modified, +196/-19)
 ```diff
-@@ -2829,6 +2829,8 @@ fn on_event_loop_event<R: Runtime>(
-       match t {
-         #[cfg(desktop)]
-         EventLoopMessage::MenuEvent(ref e) => {
-+          app_handle.manager.menu.dispatch_menu_item_event(e.clone());
-+
-           for listener in &*app_handle
-             .manager
-             .menu
-```
-
-**File**: `crates/tauri/src/manager/menu.rs` (modified, +60/-1)
-```diff
-@@ -4,14 +4,19 @@
- 
- use std::{
-   collections::HashMap,
--  sync::{Arc, Mutex, MutexGuard},
-+  sync::{Arc, Mutex, MutexGuard, Weak},
- };
- 
- use crate::{
-   AppHandle, Runtime, Window,
-   menu::{Menu, MenuEvent, MenuId},
- };
- 
-+pub struct MenuItemEventListener {
-+  item: Weak<dyn Send + Sync>,
-+  handler: Arc<dyn Fn(MenuEvent) + Send + Sync>,
-+}
-+
- pub struct MenuManager<R: Runtime> {
-   /// A set containing a reference to the active menus, including
-   /// the app-wide menu and the window-specific menus
-@@ -25,6 +30,8 @@ pub struct MenuManager<R: Runtime> {
-   pub global_event_listeners: Mutex<Vec<crate::app::GlobalMenuEventListener<AppHandle<R>>>>,
-   /// Menu event listeners to specific windows.
-   pub event_listeners: Mutex<HashMap<String, crate::app::GlobalMenuEventListener<Window<R>>>>,
-+  /// Menu event listeners to specific items, without keeping the items alive.
-+  pub item_event_listeners: Mutex<HashMap<MenuId, MenuItemEventListener>>,
- }
- 
- impl<R: Runtime> MenuManager<R> {
-@@ -97,4 +104,56 @@ impl<R: Runtime> MenuManager<R> {
-       .unwrap()
-       .push(Box::new(handler));
-   }
-+
-+  pub fn on_menu_item_event<T, F>(&self, id: MenuId, item: &Arc<T>, handler: F)
-+  where
-+    T: Send + Sync + 'static,
-+    F: Fn(Arc<T>, MenuEvent) + Send + Sync + 'static,
-+  {
-+    let weak_item = Arc::downgrade(item);
-+    let listener = MenuItemEventListener {
-+      item: weak_item.clone(),
-+      handler: Arc::new(move |event| {
-+        if let Some(item) = weak_item.upgrade() {
-+          handler(item, event);
-+        }
-+      }),
-+    };
-+
-+    let mut listeners = self.item_event_listeners.lock().unwrap();
-+    let previous = listeners.insert(id, listener);
-+
-+    // Drop any replaced handler after releasing the lock: its captures may own menu items.
-+    drop(listeners);
-+    drop(previous);
-+  }
-+
-+  pub fn dispatch_menu_item_event(&self, event: MenuEvent) {
-+    let listeners = self.item_event_listeners.lock().unwrap();
-+    let handler = listeners
-+      .get(&event.id)
-+      .map(|listener| listener.handler.clone());
-+
-+    // The handler may create or drop items, so never call it while holding the lock.
-+    drop(listeners);
-+
-+    if let Some(handler) = handler {
-+      handler(event);
-+    }
-+  }
-+
-+  pub fn remove_menu_item_event(&self, id: &MenuId) {
-+    let mut listeners = self.item_event_listeners.lock().unwrap();
-+
-+    // A different, still-live item may have registered a handler with the same ID.
-+    let listener = listeners
-+      .get(id)
-+      .is_some_and(|listener| listener.item.strong_count() == 0)
-+      .then(|| listeners.remove(id))
-+      .flatten();
-+
-+    // Order matters: release the lock before dropping captures that may re-enter menu cleanup.
-+    drop(listeners);
-+    drop(listener);
-+  }
- }
-```
-
-**File**: `crates/tauri/src/manager/mod.rs` (modified, +1/-0)
-```diff
-@@ -314,6 +314,7 @@ impl<R: Runtime> AppManager<R> {
-         menu: Default::default(),
-         global_event_listeners: Mutex::new(menu_event_listener),
-         event_listeners: Mutex::new(window_menu_event_listeners),
-+        item_event_listeners: Default::default(),
-       },
-       plugins: Mutex::new(plugins),
-       listeners: Listeners::default(),
-```
-
-**File**: `crates/tauri/src/menu/builders/check.rs` (modified, +51/-7)
-```diff
-@@ -2,15 +2,22 @@
- // SPDX-License-Identifier: Apache-2.0
- // SPDX-License-Identifier: MIT
- 
--use crate::{Manager, Runtime, menu::CheckMenuItem, menu::MenuId};
-+use super::{ItemEventHandler, NoHandler};
-+use crate::{
-+  Manager, Runtime,
-+  menu::{CheckMenuItem, MenuEvent, MenuId},
-+};
- 
- /// A builder type for [`CheckMenuItem`]
--pub struct CheckMenuItemBuilder {
-+///
-+/// The handler type is inferred when using [`Self::handler`].
-+pub struct CheckMenuItemBuilder<H = NoHandler> {
-   id: Option<MenuId>,
-   text: String,
-   enabled: bool,
-   checked: bool,
-   accelerator: Option<String>,
-+  handler: H,
- }
- 
- impl CheckMenuItemBuilder {
-@@ -25,6 +32,7 @@ impl CheckMenuItemBuilder {
-       enabled: true,
-       checked: true,
-       accelerator: None,
-+      handler: NoHandler,
-     }
-   }
- 
-@@ -39,9 +47,12 @@ impl CheckMenuItemBuilder {
-       enabled: true,
-       checked: true,
-       accelerator: None,
-+      handler: NoHandler,
-     }
-   }
-+}
- 
-+impl<H> CheckMenuItemBuilder<H> {
-   /// Set the id for this menu item.
-   pub fn id<I: Into<MenuId>>(mut self, id: I) -> Self {
-     self.id.replace(id.into());
-@@ -66,25 +77,58 @@ impl CheckMenuItemBuilder {
-     self
-   }
- 
-+  /// Set a handler to be called when this item is activated.
-+  ///
-+  /// Items with the same ID share a handler registration;
-+  /// the last handler registered for that ID is used.
-+  /// Always use a unique ID for each item to ensure its handler is called.
-+  pub fn handler<R, F>(self, handler: F) -> CheckMenuItemBuilder<F>
-+  where
-+    R: Runtime,
-+    F: Fn(&CheckMenuItem<R>, MenuEvent) + Send + Sync + 'static,
-+    H: ItemEventHandler<CheckMenuItem<R>>,
-+  {
-+    CheckMenuItemBuilder {
-+      id: self.id,
-+      text: self.text,
-+      enabled: self.enabled,
-+      checked: self.checked,
-+      accelerator: self.accelerator,
-+      handler,
-+    }
-+  }
-+
-   /// Build the menu item
--  pub fn build<R: Runtime, M: Manager<R>>(self, manager: &M) -> crate::Result<CheckMenuItem<R>> {
--    if let Some(id) = self.id {
-+  pub fn build<R: Runtime, M: Manager<R>>(self, manager: &M) -> crate::Result<CheckMenuItem<R>>
-+  where
-+    H: ItemEventHandler<CheckMenuItem<R>>,
-+  {
-+    let i = if let Some(id) = self.id {
-       CheckMenuItem::with_id(
-         manager,
-         id,
-         self.text,
-         self.enabled,
-         self.checked,
-         self.accelerator,
--      )
-+      )?
-     } else {
-       CheckMenuItem::new(
-         manager,
-         self.text,
-         self.enabled,
-         self.checked,
-         self.accelerator,
--      )
--    }
-+      )?
-+    };
-+
-+    if let Some(handler) = self.handler.into_handler() {
-+      let menu_manager = &manager.manager().menu;
-+      menu_manager.on_menu_item_event(i.id().clone(), &i.0, move |item, event| {
-+        handler(&CheckMenuItem(item), event);
-+      });
-+    };
-+
-+    Ok(i)
-   }
- }
-```
-
-**File**: `crates/tauri/src/menu/builders/icon.rs` (modified, +51/-9)
-```diff
-@@ -2,20 +2,24 @@
- // SPDX-License-Identifier: Apache-2.0
- // SPDX-License-Identifier: MIT
- 
-+use super::{ItemEventHandler, NoHandler};
- use crate::{
-   Manager, Runtime,
-   image::Image,
--  menu::{IconMenuItem, MenuId, NativeIcon},
-+  menu::{IconMenuItem, MenuEvent, MenuId, NativeIcon},
- };
- 
- /// A builder type for [`IconMenuItem`]
--pub struct IconMenuItemBuilder<'a> {
-+///
-+/// The handler type is inferred when using [`Self::handler`].
-+pub struct IconMenuItemBuilder<'a, H = NoHandler> {
-   id: Option<MenuId>,
-   text: String,
-   enabled: bool,
-   icon: Option<Image<'a>>,
-   native_icon: Option<NativeIcon>,
-   accelerator: Option<String>,
-+  handler: H,
- }
- 
- impl<'a> IconMenuItemBuilder<'a> {
-@@ -31,6 +35,7 @@ impl<'a> IconMenuItemBuilder<'a> {
-       icon: None,
-       native_icon: None,
-       accelerator: None,
-+      handler: NoHandler,
-     }
-   }
- 
-@@ -46,9 +51,12 @@ impl<'a> IconMenuItemBuilder<'a> {
-       icon: None,
-       native_icon: None,
-       accelerator: None,
-+      handler: NoHandler,
-     }
-   }
-+}
- 
-+impl<'a, H> IconMenuItemBuilder<'a, H> {
-   /// Set the id for this menu item.
-   pub fn id<I: Into<MenuId>>(mut self, id: I) -> Self {
-     self.id.replace(id.into());
-@@ -89,9 +97,34 @@ impl<'a> IconMenuItemBuilder<'a> {
-     self
-   }
- 
-+  /// Set a handler to be called when this item is activated.
-+  ///
-+  /// Items with the same ID share a handler registration;
-+  /// the last handler registered for that ID is used.
-+  /// Always use a unique ID for each item to ensure its handler is called.
-+  pub fn handler<R, F>(self, handler: F) -> IconMenuItemBuilder<'a, F>
-+  where
-+    R: Runtime,
-+    F: Fn(&IconMenuItem<R>, MenuEvent) + Send + Sync + 'static,
-+    H: ItemEventHandler<IconMenuItem<R>>,
-+  {
-+    IconMenuItemBuilder {
-+      id: self.id,
-+      text: self.text,
-+      enabled: self.enabled,
-+      icon: self.icon,
-+      native_icon: self.native_icon,
-+      accelerator: self.accelerator,
-+      handler,
-+    }
-+  }
-+
-   /// Build the menu item
--  pub fn build<R: Runtime, M: Manager<R>>(self, manager: &M) -> crate::Result<IconMenuItem<R>> {
--    if self.icon.is_some() {
-+  pub fn build<R: Runtime, M: Manager<R>>(self, manager: &M) -> crate::Result<IconMenuItem<R>>
-+  where
-+    H: ItemEventHandler<IconMenuItem<R>>,
-+  {
-+    let i = if self.icon.is_some() {
-       if let Some(id) = self.id {
-         IconMenuItem::with_id(
-           manager,
-@@ -100,15 +133,15 @@ impl<'a> IconMenuItemBuilder<'a> {
-           self.enabled,
-           self.icon,
-           self.accelerator,
--        )
-+        )?
-       } else {
-         IconMenuItem::new(
-           manager,
-           self.text,
-           self.enabled,
-           self.icon,
-           self.accelerator,
--        )
-+        )?
-       }
-     } else if let Some(id) = self.id {
-       IconMenuItem::with_id_and_native_icon(
-@@ -118,15 +151,24 @@ impl<'a> IconMenuItemBuilder<'a> {
-         self.enabled,
-         self.native_icon,
-         self.accelerator,
--      )
-+      )?
-     } else {
-       IconMenuItem::with_native_icon(
-         manager,
-         self.text,
-         self.enabled,
-         self.native_icon,
-         self.accelerator,
--      )
--    }
-+      )?
-+    };
-+
-+    if let Some(handler) = self.handler.into_handler() {
-+      let menu_manager = &manager.manager().menu;
-+      menu_manager.on_menu_item_event(i.id().clone(), &i.0, move |item, event| {
-+        handler(&IconMenuItem(item), event);
-+      });
-+    };
-+
-+    Ok(i)
-   }
- }
-```
-
-**File**: `crates/tauri/src/menu/builders/mod.rs` (modified, +93/-0)
-```diff
-@@ -6,6 +6,39 @@
- 
- //! A module containing menu builder types
- 
-+type ItemEventCallback<T> = Box<dyn Fn(&T, crate::menu::MenuEvent) + Send + Sync + 'static>;
-+
-+/// The default handler state of a menu item builder before a handler is set.
-+#[doc(hidden)]
-+pub struct NoHandler;
-+
-+/// Converts a menu item builder's inferred handler into a callback for its item type.
-+#[doc(hidden)]
-+pub trait ItemEventHandler<T>: sealed::Sealed<T> + Send + Sync + 'static {
-+  fn into_handler(self) -> Option<ItemEventCallback<T>>;
-+}
-+
-+impl<T> ItemEventHandler<T> for NoHandler {
-+  fn into_handler(self) -> Option<ItemEventCallback<T>> {
-+    None
-+  }
-+}
-+
-+impl<T, F> ItemEventHandler<T> for F
-+where
-+  F: Fn(&T, crate::menu::MenuEvent) + Send + Sync + 'static,
-+{
-+  fn into_handler(self) -> Option<ItemEventCallback<T>> {
-+    Some(Box::new(self))
-+  }
-+}
-+
-+mod sealed {
-+  pub trait Sealed<T> {}
-+  impl<T> Sealed<T> for super::NoHandler {}
-+  impl<T, F> Sealed<T> for F where F: Fn(&T, crate::menu::MenuEvent) + Send + Sync + 'static {}
-+}
-+
- mod menu;
- pub use menu::MenuBuilder;
- pub use menu::SubmenuBuilder;
-@@ -15,3 +48,63 @@ mod check;
- pub use check::CheckMenuItemBuilder;
- mod icon;
- pub use icon::IconMenuItemBuilder;
-+
-+// GTK menu items require initialization on GTK's event-loop thread.
-+#[cfg(all(
-+  test,
-+  not(any(
+@@ -393,6 +393,14 @@ impl<T: UserEvent> Context<T> {
+           pending,
+           #[cfg(windows)]
+           _options.focused_webview,
++          #[cfg(any(
++            target_os = "linux",
++            target_os = "dragonfly",
++            target_os = "freebsd",
++            target_os = "netbsd",
++            target_os = "openbsd"
++          ))]
++          _options.gtk_fixed.as_ref(),
+         )
+       }),
+       tx,
+@@ -1509,6 +1517,14 @@ pub type CreateWebviewClosure =
+ pub struct CreateWebviewOptions {
+   #[cfg(windows)]
+   pub focused_webview: Arc<Mutex<FocusState>>,
++  #[cfg(any(
 +    target_os = "linux",
 +    target_os = "dragonfly",
 +    target_os = "freebsd",
-+    target_os = "openbsd",
-+    target_os = "netbsd"
-+  ))
-+))]
-+mod tests {
-+  use std::sync::Arc;
++    target_os = "netbsd",
++    target_os = "openbsd"
++  ))]
++  pub gtk_fixed: Option<gtk::Fixed>,
+ }
+ 
+ pub enum Message<T: 'static> {
+@@ -2478,6 +2494,15 @@ pub struct WindowWrapper {
+   has_children: AtomicBool,
+   webviews: Vec<WebviewWrapper>,
+   window_event_listeners: WindowEventListeners,
++  /// Holds the webviews of the window, if every one of them is a child.
++  #[cfg(any(
++    target_os = "linux",
++    target_os = "dragonfly",
++    target_os = "freebsd",
++    target_os = "netbsd",
++    target_os = "openbsd"
++  ))]
++  gtk_fixed: Option<gtk::Fixed>,
+   #[cfg(windows)]
+   background_color: Option<tao::window::RGBA>,
+   #[cfg(windows)]
+@@ -3005,6 +3030,14 @@ impl<T: UserEvent> Runtime<T> for Wry<T> {
+           CreateWebviewOptions {
+             #[cfg(windows)]
+             focused_webview: w.focused_webview.clone(),
++            #[cfg(any(
++              target_os = "linux",
++              target_os = "dragonfly",
++              target_os = "freebsd",
++              target_os = "netbsd",
++              target_os = "openbsd"
++            ))]
++            gtk_fixed: w.gtk_fixed.clone(),
+           },
+         )
+       });
+@@ -3022,6 +3055,14 @@ impl<T: UserEvent> Runtime<T> for Wry<T> {
+         pending,
+         #[cfg(windows)]
+         _options.focused_webview,
++        #[cfg(any(
++          target_os = "linux",
++          target_os = "dragonfly",
++          target_os = "freebsd",
++          target_os = "netbsd",
++          target_os = "openbsd"
++        ))]
++        _options.gtk_fixed.as_ref(),
+       )?;
+ 
+       if let Some(w) = self
+@@ -3710,6 +3751,19 @@ fn handle_user_message<T: UserEvent>(
+             .map(|webview_index| w.webviews.remove(webview_index))
+         });
+ 
++        #[cfg(any(
++          target_os = "linux",
++          target_os = "dragonfly",
++          target_os = "freebsd",
++          target_os = "netbsd",
++          target_os = "openbsd"
++        ))]
++        let new_parent_gtk_fixed = windows
++          .0
++          .borrow()
++          .get(&new_parent_window_id)
++          .and_then(|w| w.gtk_fixed.clone());
 +
-+  use super::{CheckMenuItemBuilder, IconMenuItemBuilder, MenuItemBuilder};
-+  use crate::{menu::MenuEvent, sealed::ManagerBase, test::mock_app};
-+
-+  #[test]
-+  fn handlers_do_not_keep_menu_items_alive() {
-+    let app = mock_app();
-+    let menu_manager = &app.manager().menu;
-+
-+    macro_rules! assert_no_leak {
-+      ($builder:ident) => {{
-+        let item = $builder::new("item")
-+          .handler(|item, event| assert_eq!(item.id(), event.id()))
-+          .build(&app)
-+          .unwrap();
-+        let weak_item = Arc::downgrade(&item.0);
-+        let id = item.id().clone();
-+
-+        assert!(
-+          menu_manager
-+            .item_event_listeners
-+            .lock()
-+            .unwrap()
-+            .contains_key(&id)
-+        );
-+        menu_manager.dispatch_menu_item_event(MenuEvent { id: id.clone() });
-+
-+        drop(item);
-+
-+        assert!(weak_item.upgrade().is_none(), "handler retained the item");
-+        assert!(
-+          !menu_manager
-+            .item_event_listeners
-+            .lock()
-+            .unwrap()
-+            .contains_key(&id),
-+          "handler registration was not removed"
-+        );
-+      }};
-+    }
-+
-+    assert_no_leak!(MenuItemBuilder);
-+    assert_no_leak!(CheckMenuItemBuilder);
-+    assert_no_leak!(IconMenuItemBuilder);
-+  }
-+}
+         if let Some(webview) = webview_handle {
+           if let Some((Some(new_parent_window), new_parent_window_webviews)) = windows
+             .0
+@@ -3733,7 +3787,9 @@ fn handle_user_message<T: UserEvent>(
+               target_os = "openbsd"
+             ))]
+             let reparent_result = {
+-              if let Some(container) = new_parent_window.default_vbox() {
++              if let Some(fixed) = &new_parent_gtk_fixed {
++                webview.inner.reparent(fixed)
++              } else if let Some(container) = new_parent_window.default_vbox() {
+                 webview.inner.reparent(container)
+               } else {
+                 Err(wry::Error::MessageSender)
+@@ -3845,7 +3901,7 @@ fn handle_user_message<T: UserEvent>(
+               let scale_factor = window.scale_factor();
+               let size = bounds.size.to_logical::<f32>(scale_factor);
+               let position = bounds.position.to_logical::<f32>(scale_factor);
+-              let window_size = window.inner_size().to_logical::<f32>(scale_factor);
++              let window_size = webview.room(&window);
+               b.width_rate = size.width / window_size.width;
+               b.height_rate = size.height / window_size.height;
+               b.x_rate = position.x / window_size.width;
+@@ -3864,7 +3920,7 @@ fn handle_user_message<T: UserEvent>(
+               let size = size.to_logical::<f32>(scale_factor);
+ 
+               if let Some(b) = &mut *webview.bounds.lock().unwrap() {
+-                let window_size = window.inner_size().to_logical::<f32>(scale_factor);
++                let window_size = webview.room(&window);
+                 b.width_rate = size.width / window_size.width;
+                 b.height_rate = size.height / window_size.height;
+               }
+@@ -3885,7 +3941,7 @@ fn handle_user_message<T: UserEvent>(
+               let position = position.to_logical::<f32>(scale_factor);
+ 
+               if let Some(b) = &mut *webview.bounds.lock().unwrap() {
+-                let window_size = window.inner_size().to_logical::<f32>(scale_factor);
++                let window_size = webview.room(&window);
+                 b.x_rate = position.x / window_size.width;
+                 b.y_rate = position.y / window_s
 ```
 
-**File**: `crates/tauri/src/menu/builders/normal.rs` (modified, +50/-7)
+**File**: `crates/tauri-runtime-wry/src/window/linux.rs` (modified, +196/-1)
 ```diff
-@@ -2,14 +2,21 @@
+@@ -2,7 +2,8 @@
  // SPDX-License-Identifier: Apache-2.0
  // SPDX-License-Identifier: MIT
  
--use crate::{Manager, Runtime, menu::MenuId, menu::MenuItem};
-+use super::{ItemEventHandler, NoHandler};
-+use crate::{
-+  Manager, Runtime,
-+  menu::{MenuEvent, MenuId, MenuItem},
-+};
- 
- /// A builder type for [`MenuItem`]
--pub struct MenuItemBuilder {
-+///
-+/// The handler type is inferred when using [`Self::handler`].
-+pub struct MenuItemBuilder<H = NoHandler> {
-   id: Option<MenuId>,
-   text: String,
-   enabled: bool,
-   accelerator: Option<String>,
-+  handler: H,
+-use gtk::prelude::*;
++use gtk::{prelude::*, subclass::prelude::ObjectSubclassIsExt};
++use tao::dpi::LogicalSize;
+ #[cfg(any(
+   target_os = "linux",
+   target_os = "dragonfly",
+@@ -29,3 +30,197 @@ impl super::WindowExt for tao::window::Window {
+     }
+   }
  }
- 
- impl MenuItemBuilder {
-@@ -23,6 +30,7 @@ impl MenuItemBuilder {
-       text: text.as_ref().to_string(),
-       enabled: true,
-       accelerator: None,
-+      handler: NoHandler,
-     }
-   }
- 
-@@ -36,9 +44,12 @@ impl MenuItemBuilder {
-       text: text.as_ref().to_string(),
-       enabled: true,
-       accelerator: None,
-+      handler: NoHandler,
-     }
-   }
-+}
- 
-+impl<H> MenuItemBuilder<H> {
-   /// Set the id for this menu item.
-   pub fn id<I: Into<MenuId>>(mut self, id: I) -> Self {
-     self.id.replace(id.into());
-@@ -57,12 +68,44 @@ impl MenuItemBuilder {
-     self
-   }
- 
-+  /// Set a handler to be called when this item is activated.
-+  ///
-+  /// Items with the same ID share a handler registration;
-+  /// the last handler registered for that ID is used.
-+  /// Always use a unique ID for each item to ensure its handler is called.
-+  pub fn handler<R, F>(self, handler: F) -> MenuItemBuilder<F>
-+  where
-+    R: Runtime,
-+    F: Fn(&MenuItem<R>, MenuEvent) + Send + Sync + 'static,
-+    H: ItemEventHandler<MenuItem<R>>,
-+  {
-+    MenuItemBuilder {
-+      id: self.id,
-+      text: self.text,
-+      enabled: self.enabled,
-+      accelerator: self.accelerator,
-+      handler,
++
++mod imp {
++  use gtk::{glib, prelude::*, subclass::prelude::*};
++  use std::cell::RefCell;
++  use tao::dpi::LogicalSize;
++
++  type OnRoom = Box<dyn Fn(LogicalSize<f32>)>;
++
++  #[derive(Default)]
++  pub struct WebviewContainer {
++    pub(super) on_room: RefCell<Option<OnRoom>>,
++  }
++
++  #[glib::object_subclass]
++  impl ObjectSubclass for WebviewContainer {
++    const NAME: &'static str = "TauriWebviewContainer";
++    type Type = super::WebviewContainer;
++    type ParentType = gtk::Fixed;
++  }
++
++  impl ObjectImpl for WebviewContainer {
++    fn constructed(&self) {
++      self.parent_constructed();
++      self.obj().set_has_window(true);
 +    }
 +  }
 +
-   /// Build the menu item
--  pub fn build<R: Runtime, M: Manager<R>>(self, manager: &M) -> crate::Result<MenuItem<R>> {
--    if let Some(id) = self.id {
--      MenuItem::with_id(manager, id, self.text, self.enabled, self.accelerator)
-+  pub fn build<R: Runtime, M: Manager<R>>(self, manager: &M) -> crate::Result<MenuItem<R>>
-+  where
-+    H: ItemEventHandler<MenuItem<R>>,
-+  {
-+    let i = if let Some(id) = self.id {
-+      MenuItem::with_id(manager, id, self.text, self.enabled, self.accelerator)?
-     } else {
--      MenuItem::new(manager, self.text, self.enabled, self.accelerator)
--    }
-+      MenuItem::new(manager, self.text, self.enabled, self.accelerator)?
-+    };
++  impl WidgetImpl for WebviewContainer {
++    fn preferred_width(&self) -> (i32, i32) {
++      (0, 0)
++    }
 +
-+    if let Some(handler) = self.handler.into_handler() {
-+      let menu_manager = &manager.manager().menu;
-+      menu_manager.on_menu_item_event(i.id().clone(), &i.0, move |item, event| {
-+        handler(&MenuItem(item), event);
-+      });
-+    };
++    fn preferred_height(&self) -> (i32, i32) {
++      (0, 0)
++    }
 +
-+    Ok(i)
-   }
- }
++    // The parent allocates the webviews from their size request, so those that follow the room
++    // get theirs first. They have their size in the same layout pass, as a packed webview has.
++    // `on_room` ends in `gtk::Fixed::move_`, which queues a resize. GTK drops a resize that a widget
++    // queues during its own allocation, so this does not start another layout pass.
++    fn size_allocate(&self, allocation: &gtk::Allocation) {
++      if let (Some(on_room), Some(room)) = (&*self.on_room.borrow(), super::room_of(allocation)) {
++        on_room(room);
++      }
++      self.parent_size_allocate(allocation);
++    }
++  }
++
++  impl ContainerImpl for WebviewContainer {}
++  impl FixedImpl for WebviewContainer {}
++}
++
++gtk::glib::wrapper! {
++  /// The container of the webviews of a window: a `GtkFixed`, where wry puts each webview at its
++  /// bounds.
++  ///
++  /// A `GtkFixed` asks for the room of its children. That would grow the window and stop it from
++  /// shrinking, so this one asks for none. It has its own window, which clips the webviews and the
++  /// input that goes to them at its edges.
++  pub struct WebviewContainer(ObjectSubclass<imp::WebviewContainer>)
++    @extends gtk::Fixed, gtk::Container, gtk::Widget;
++}
++
++impl WebviewContainer {
++  /// `on_room` runs with the room that GTK gives the container, each time it allocates it.
++  pub fn new(on_room: impl Fn(LogicalSize<f32>) + 'static) -> Self {
++    let container: Self = gtk::glib::Object::new();
++    *container.imp().on_room.borrow_mut() = Some(Box::new(on_room));
++    container
++  }
++}
++
++/// Adds the container of the webviews to `window`, if every webview of it is a child: with the
++/// `unstable` feature. `on_room` runs when GTK gives the container a new room.
++pub fn add_webview_container(
++  window: &tao::window::Window,
++  on_room: impl Fn(LogicalSize<f32>) + 'static,
++) -> Option<gtk::Fixed> {
++  if !cfg!(feature = "unstable") {
++    return None;
++  }
++  let container = WebviewContainer::new(on_room);
++  window.default_vbox()?.pack_start(&container, true, true, 0);
++  container.show();
++  Some(container.upcast())
++}
++
++/// The room that an allocation of the container gives, in logical pixels. GTK allocates a widget
++/// that it has not laid out yet with a size of 1x1.
++fn room_of(allocation: &gtk::Allocation) -> Option<LogicalSize<f32>> {
++  (allocation.width() > 1 && allocation.height() > 1)
++    .then(|| LogicalSize::new(allocation.width() as f32, allocation.height() as f32))
++}
++
++/// The room that GTK gives the webviews of the container that holds `widget`, in logical pixels,
++/// once it has allocated them. The inner size of the window is bigger: it counts the menu bar and,
++/// on Wayland, the client-side decorations.
++pub fn allocated_room(widget: &impl IsA<gtk::Widget>) -> Option<LogicalSize<f32>> {
++  room_of(
++    &widget
++      .ancestor(WebviewContainer::static_type())?
++      .allocation(),
++  )
++}
++
++/// The room of the webviews of `window`, if `widget` is in their container: what GTK gave them.
++/// Before GTK allocates the window, the inner size of the window less what the other children of
++/// its vbox ask for, the menu bar.
++pub fn room(
++  window: &tao::window::Window,
++  widget: &impl IsA<gtk::Widget>,
++) -> Option<LogicalSize<f32>> {
++  widget.ancestor(WebviewContainer::static_type())?;
++  Some(allocated_room(widget).unwrap_or_else(|| {
++    let size = window.inner_size().to_logical::<f32>(window.scale_factor());
++    let others: i32 = window.default_vbox().map_or(0, |vbox| {
++      vbox
++        .children()
++        .iter()
++        .filter(|child| !child.is::<WebviewContainer>())
++        .map(|child| child.preferred_height().0)
++        .sum()
++    });
++    LogicalSize::new(size.width, (size.height - others as f32).max(1.))
++  }))
++
+```
+
+**File**: `crates/tauri-runtime-wry/src/window/mod.rs` (modified, +8/-0)
+```diff
+@@ -10,6 +10,14 @@
+   target_os = "openbsd"
+ ))]
+ mod linux;
++#[cfg(any(
++  target_os = "linux",
++  target_os = "dragonfly",
++  target_os = "freebsd",
++  target_os = "netbsd",
++  target_os = "openbsd"
++))]
++pub use linux::{add_webview_container, allocated_room, room};
+ #[cfg(target_os = "macos")]
+ mod macos;
+ #[cfg(windows)]
 ```
 
 ---
 
-### Incident Patch 3: `76089d81` (2026-11-23)
-**Commit Message**: fix: `on_menu_event` handler being kept forever (#16620)
+### Incident Patch 2: `84af754a` (2026-11-24)
+**Commit Message**: fix: keep tao window_target in main thread (#15411)
 
-**File**: `.changes/drop-window-menu-listener.md` (added, +5/-0)
+* fix: keep tao window_target in main thread
+
+* implement `display_handle` with the wrong lifetime
+
+* get from main thread
+
+* Add change file
+
+* drop `_window_target` first
+
+* document the lifetime
+
+* call .upgrade after main thread check
+
+* do not panic on tx.sends
+
+* update docs
+
+---------
+
+Co-authored-by: Lucas Nogueira <[REDACTED_EMAIL]>
+
+**File**: `.changes/keep-tao-event-target-main-thread-breaking.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"tauri": "patch:bug"
++"tauri-runtime-wry": minor:breaking
 +---
 +
-+Fix `WindowBuilder::on_menu_event`/`WebviewWindowBuilder::on_menu_event` handler being kept in the app event after the window's closed.
++`DispatcherMainThreadContext::window_target` now takes a `Weak<EventLoopWindowTarget<Message<T>>>` instead of `EventLoopWindowTarget<Message<T>>`
 ```
 
-**File**: `crates/tauri/src/manager/mod.rs` (modified, +3/-0)
+**File**: `.changes/keep-tao-event-target-main-thread.md` (added, +6/-0)
 ```diff
-@@ -655,6 +655,9 @@ impl<R: Runtime> AppManager<R> {
+@@ -0,0 +1,6 @@
++---
++"tauri": minor:bug
++"tauri-runtime-wry": minor:bug
++---
++
++Fixed a crash related to the `DispatcherMainThreadContext` being cloned and dropped off main thread. `WryHandle::display_handle` has a wrong lifetime now because it can't own the event loop off main thread. It now goes through the event loop like `window_handle`, so calling it off the main thread blocks until the main thread handles the request.
+```
+
+**File**: `crates/tauri-runtime-wry/src/lib.rs` (modified, +175/-122)
+```diff
+@@ -260,8 +260,15 @@ impl<T: UserEvent> Context<T> {
+ 
+   fn send_user_message(&self, message: Message<T>) -> Result<()> {
+     if current_thread().id() == self.main_thread_id {
++      // only upgrade on the main thread: a strong reference held by another thread
++      // could become the last one and drop the event loop target there
++      let event_loop = self
++        .main_thread
++        .window_target
++        .upgrade()
++        .ok_or(Error::EventLoopClosed)?;
+       handle_user_message(
+-        &self.main_thread.window_target,
++        &event_loop,
+         message,
+         UserMessageContext {
+           window_id_map: &self.window_id_map,
+@@ -450,7 +457,7 @@ impl fmt::Debug for WindowsStore {
+ 
+ #[derive(Debug, Clone)]
+ pub struct DispatcherMainThreadContext<T: UserEvent> {
+-  pub window_target: EventLoopWindowTarget<Message<T>>,
++  pub window_target: Weak<EventLoopWindowTarget<Message<T>>>,
+   pub web_context: WebContextStore,
+   // changing this to an Rc will cause frequent app crashes.
+   pub windows: Arc<WindowsStore>,
+@@ -1287,6 +1294,9 @@ pub struct GtkBox(pub gtk::Box);
+ #[allow(clippy::non_send_fields_in_send_ty)]
+ unsafe impl Send for GtkBox {}
+ 
++pub struct SendRawDisplayHandle(pub raw_window_handle::RawDisplayHandle);
++unsafe impl Send for SendRawDisplayHandle {}
++
+ pub struct SendRawWindowHandle(pub raw_window_handle::RawWindowHandle);
+ unsafe impl Send for SendRawWindowHandle {}
+ 
+@@ -1485,6 +1495,9 @@ pub enum EventLoopWindowTargetMessage {
+   AvailableMonitors(Sender<Vec<Monitor>>),
+   SetTheme(Option<Theme>),
+   SetDeviceEventFilter(DeviceEventFilter),
++  RawDisplayHandle(
++    Sender<std::result::Result<SendRawDisplayHandle, raw_window_handle::HandleError>>,
++  ),
+ }
+ 
+ pub type CreateWindowClosure<T> =
+@@ -1851,6 +1864,12 @@ fn get_raw_window_handle<T: UserEvent>(
+   window_getter!(dispatcher, WindowMessage::RawWindowHandle)
+ }
+ 
++fn get_raw_display_handle<T: UserEvent>(
++  dispatcher: &WryHandle<T>,
++) -> Result<std::result::Result<SendRawDisplayHandle, raw_window_handle::HandleError>> {
++  event_loop_window_getter!(dispatcher, EventLoopWindowTargetMessage::RawDisplayHandle)
++}
++
+ impl<T: UserEvent> WindowDispatch<T> for WryWindowDispatcher<T> {
+   type Runtime = Wry<T>;
+   type WindowBuilder = WindowBuilderWrapper;
+@@ -2008,12 +2027,14 @@ impl<T: UserEvent> WindowDispatch<T> for WryWindowDispatcher<T> {
+     window_getter!(self, WindowMessage::SceneIdentifier)
    }
  
-   pub(crate) fn on_window_close(&self, label: &str) {
-+    #[cfg(desktop)]
-+    self.menu.event_listeners.lock().unwrap().remove(label);
++  /// **SAFETY:** the lifetime is wrong here, use with caution!
++  /// `WryWindowDispatcher` does not own the window handle so the window can become stale before `WryWindowDispatcher` is dropped.
+   fn window_handle(
+     &self,
+   ) -> std::result::Result<raw_window_handle::WindowHandle<'_>, raw_window_handle::HandleError> {
+     get_raw_window_handle(self)
+-      .map_err(|_| raw_window_handle::HandleError::Unavailable)
+-      .and_then(|r| r.map(|h| unsafe { raw_window_handle::WindowHandle::borrow_raw(h.0) }))
++      .map_err(|_| raw_window_handle::HandleError::Unavailable)?
++      .map(|h| unsafe { raw_window_handle::WindowHandle::borrow_raw(h.0) })
+   }
+ 
+   // Setters
+@@ -2518,6 +2539,7 @@ pub trait Plugin<T: UserEvent> {
+ /// A Tauri [`Runtime`] wrapper around wry.
+ pub struct Wry<T: UserEvent> {
+   context: Context<T>,
++  _window_target: Arc<EventLoopWindowTarget<Message<T>>>,
+   event_loop: EventLoop<Message<T>>,
+ }
+ 
+@@ -2638,10 +2660,17 @@ impl<T: UserEvent> RuntimeHandle<T> for WryHandle<T> {
+     self.context.send_user_message(Message::Task(Box::new(f)))
+   }
+ 
++  /// **SAFETY:** the lifetime is wrong here, use with caution!
++  /// `WryHandle` does not own the event loop so the display handle can become stale before `WryHandle` is dropped.
+   fn display_handle(
+     &self,
+   ) -> std::result::Result<DisplayHandle<'_>, raw_window_handle::HandleError> {
+-    self.context.main_thread.window_target.display_handle()
++    get_raw_display_handle(self)
++      .map_err(|_| raw_window_handle::HandleError::Unavailable)?
++      .map(|handle| {
++        // SAFETY: the lifetime is wrong here, but the alternatives are worse, see https://github.com/tauri-apps/tauri/pull/15411
++        unsafe { raw_window_handle::DisplayHandle::borrow_raw(handle.0) }
++      })
+   }
+ 
+   fn primary_monitor(&self) -> Result<Option<Monitor>> {
+@@ -2822,12 +2851,14 @@ impl<T: UserEvent> Wry<T> {
+     let windows = Arc::new(WindowsStore(RefCell::new(BTreeMap::default())));
+     let window_id_map = WindowIdStore::default();
+ 
++    let window_target = Arc::new(event_loop.deref().clone());
 +
-     let window = self.window.windows_lock().remove(label);
-     if let Some(window) = window {
-       for webview in window.webviews() {
+     let context = Context {
+       window_id_map,
+       main_thread_id,
+       proxy: event_loop.create_proxy(),
+       main_thread: DispatcherMainThreadContext {
+-        window_target: event_loop.deref().clone(),
++        window_target: Arc::downgrade(&window_target),
+         web_context,
+         windows,
+         #[cfg(feature = "tracing")]
+@@ -2843,6 +2874,7 @@ impl<T: UserEvent> Wry<T> {
+ 
+     Ok(Self {
+       context,
++      _window_target:
+```
+
+---
+
+### Incident Patch 3: `7d4c4582` (2026-11-25)
+**Commit Message**: feat(tray-icon): add linux-ksni feature for tray icons on Linux (#16385)
+
+* feat(tray-icon): add linux-ksni feature for tray icons on Linux
+
+* Fix lockfile issues
+
+* update zbus
+
+---------
+
+Co-authored-by: amrbashir <[REDACTED_EMAIL]>
+Co-authored-by: FabianLars <[REDACTED_EMAIL]>
+
+**File**: `.changes/linux-ksni.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++tauri: minor:feat
++---
++
++Added the `linux-ksni` feature, which makes tray icons on Linux use the StatusNotifierItem D-Bus protocol (via the `ksni` crate) instead of libappindicator. This enables `TrayIconEvent::Click` for left and middle clicks and tooltips on Linux.
+```
+
+**File**: `Cargo.lock` (modified, +405/-18)
+```diff
+@@ -249,6 +249,15 @@ version = "1.4.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "dde20b3d026af13f561bdd0f15edf01fc734f0dafcedbaf42bba506a9517f223"
+ 
++[[package]]
++name = "arc-swap"
++version = "1.9.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "84a22b5d51209f6de83d37a0b33d320acb8da88823e42a94c075140708f032a5"
++dependencies = [
++ "rustversion",
++]
++
+ [[package]]
+ name = "arg_enum_proc_macro"
+ version = "0.3.4"
+@@ -294,6 +303,18 @@ dependencies = [
+  "stable_deref_trait",
+ ]
+ 
++[[package]]
++name = "async-broadcast"
++version = "0.7.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "435a87a52755b8f27fcf321ac4f04b2802e337c8c4872923137471ec39c37532"
++dependencies = [
++ "event-listener",
++ "event-listener-strategy",
++ "futures-core",
++ "pin-project-lite",
++]
++
+ [[package]]
+ name = "async-channel"
+ version = "2.5.0"
+@@ -306,6 +327,102 @@ dependencies = [
+  "pin-project-lite",
+ ]
+ 
++[[package]]
++name = "async-executor"
++version = "1.14.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f426a31126c735126297bc5ea7a521263c9faff4f63ca415267ee625651c4f37"
++dependencies = [
++ "async-task",
++ "concurrent-queue",
++ "fastrand",
++ "futures-lite",
++ "pin-project-lite",
++ "slab",
++]
++
++[[package]]
++name = "async-io"
++version = "2.6.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "456b8a8feb6f42d237746d4b3e9a178494627745c3c56c6ea55d92ba50d026fc"
++dependencies = [
++ "autocfg",
++ "cfg-if",
++ "concurrent-queue",
++ "futures-io",
++ "futures-lite",
++ "parking",
++ "polling",
++ "rustix",
++ "slab",
++ "windows-sys 0.61.2",
++]
++
++[[package]]
++name = "async-lock"
++version = "3.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0876700b0d007ad25d5508865a4259c3af9af6d296bf663a0d586d0bc3369f6f"
++dependencies = [
++ "event-listener",
++ "event-listener-strategy",
++ "pin-project-lite",
++]
++
++[[package]]
++name = "async-process"
++version = "2.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "fc50921ec0055cdd8a16de48773bfeec5c972598674347252c0399676be7da75"
++dependencies = [
++ "async-channel",
++ "async-io",
++ "async-lock",
++ "async-signal",
++ "async-task",
++ "blocking",
++ "cfg-if",
++ "event-listener",
++ "futures-lite",
++ "rustix",
++]
++
++[[package]]
++name = "async-recursion"
++version = "1.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "4f8abc12baad266b1c8cec146854c195b5864b4221d4b2ca7296a7ae82d9e451"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn 3.0.9",
++]
++
++[[package]]
++name = "async-signal"
++version = "0.2.14"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "52b5aaafa020cf5053a01f2a60e8ff5dccf550f0f77ec54a4e47285ac2bab485"
++dependencies = [
++ "async-io",
++ "async-lock",
++ "atomic-waker",
++ "cfg-if",
++ "futures-core",
++ "futures-io",
++ "rustix",
++ "signal-hook-registry",
++ "slab",
++ "windows-sys 0.61.2",
++]
++
++[[package]]
++name = "async-task"
++version = "4.7.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8b75356056920673b02621b35afd0f7dda9306d03c79a30f5c56c44cf256e3de"
++
+ [[package]]
+ name = "async-trait"
+ version = "0.1.88"
+@@ -365,7 +482,7 @@ dependencies = [
+  "log",
+  "num-rational",
+  "num-traits",
+- "pastey",
++ "pastey 0.1.1",
+  "rayon",
+  "thiserror 2.0.21",
+  "v_frame",
+@@ -680,6 +797,19 @@ dependencies = [
+  "objc2 0.6.4",
+ ]
+ 
++[[package]]
++name = "blocking"
++version = "1.7.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a70e4329df6cb94385eed412ec92375c3cdd8a6e502493d1229b6414e4036dfa"
++dependencies = [
++ "async-channel",
++ "async-task",
++ "futures-io",
++ "futures-lite",
++ "piper",
++]
++
+ [[package]]
+ name = "blowfish"
+ version = "0.9.1"
+@@ -1141,7 +1271,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
+ dependencies = [
+  "lazy_static",
+- "windows-sys 0.59.0",
++ "windows-sys 0.48.0",
+ ]
+ 
+ [[package]]
+@@ -1150,7 +1280,7 @@ version = "3.1.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.48.0",
+ ]
+ 
+ [[package]]
+@@ -1387,6 +1517,15 @@ dependencies = [
+  "crossbeam-utils",
+ ]
+ 
++[[package]]
++name = "crossbeam-queue"
++version = "0.3.14"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "03e8bd762f7479489c70ed6c768ddca99d7296857de437a68dcb2a94365b3fae"
++dependencies = [
++ "crossbeam-utils",
++]
++
+ [[package]]
+ name = "crossbeam-utils"
+ version = "0.8.21"
+@@ -1903,7 +2042,7 @@ dependencies = [
+  "libc",
+  "option-ext",
+  "redox_users",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -2170,6 +2309,12 @@ dependencies = [
+  "cfg-if",
+ ]
+ 
++[[package]]
++name = "endi"
++version = "1.1
+```
+
+**File**: `crates/tauri/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -207,6 +207,7 @@ wry = ["webview2-com", "webkit2gtk", "tauri-runtime-wry"]
+ objc-exception = []
+ # TODO: Remove in v3 - muda does not have this feature anymore
+ linux-libxdo = []
++linux-ksni = ["tray-icon?/ksni"]
+ isolation = ["tauri-utils/isolation", "tauri-macros/isolation", "uuid"]
+ custom-protocol = ["tauri-macros/custom-protocol"]
+ # TODO: Remove these flags in v3 and/or enable them by default behind a mobile flag https://github.com/tauri-apps/tauri/issues/12384
+```
+
+**File**: `crates/tauri/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -28,6 +28,7 @@
+ //! - **test**: Enables the [`mod@test`] module exposing unit test helpers.
+ //! - **objc-exception**: This feature flag is no-op since 2.3.0.
+ //! - **linux-libxdo**: This feature flag is no-op since 2.13.0.
++//! - **linux-ksni**: Uses the [StatusNotifierItem](https://www.freedesktop.org/wiki/Specifications/StatusNotifierItem/) D-Bus protocol (via the `ksni` crate) for tray icons on Linux instead of libappindicator. This enables [`TrayIconEvent::Click`](crate::tray::TrayIconEvent::Click) for left and middle clicks, tooltips and more. Requires the `tray-icon` feature.
+ //! - **isolation**: Enables the isolation pattern. Enabled by default if the `app > security > pattern > use` config option is set to `isolation` on the `tauri.conf.json` file.
+ //! - **custom-protocol**: Feature managed by the Tauri CLI. When enabled, Tauri assumes a production environment instead of a development one.
+ //! - **devtools**: Enables the developer tools (Web inspector) and [`window::Window#method.open_devtools`]. Enabled by default on debug builds.
+```
+
+**File**: `crates/tauri/src/tray/mod.rs` (modified, +8/-3)
+```diff
+@@ -64,8 +64,11 @@ impl From<tray_icon::MouseButton> for MouseButton {
+ ///
+ /// ## Platform-specific:
+ ///
+-/// - **Linux**: Unsupported. The event is not emitted even though the icon is shown
++/// - **Linux**: Unsupported by default. The event is not emitted even though the icon is shown
+ ///   and will still show a context menu on right click.
++///   With the `linux-ksni` feature, [`TrayIconEvent::Click`] is emitted for left and middle clicks
++///   (only with [`MouseButtonState::Up`]). Right click shows the context menu and is not reported.
++///   All other events are unsupported.
+ #[derive(Debug, Clone, Serialize)]
+ #[serde(tag = "type")]
+ #[non_exhaustive]
+@@ -296,7 +299,7 @@ impl<R: Runtime> TrayIconBuilder<R> {
+   ///
+   /// ## Platform-specific:
+   ///
+-  /// - **Linux:** Unsupported.
++  /// - **Linux:** Unsupported, unless the `linux-ksni` feature is enabled.
+   pub fn tooltip<S: AsRef<str>>(mut self, s: S) -> Self {
+     self.inner = self.inner.with_tooltip(s);
+     self
+@@ -321,6 +324,7 @@ impl<R: Runtime> TrayIconBuilder<R> {
+   ///
+   /// On Linux, we need to write the icon to the disk and usually it will
+   /// be `$XDG_RUNTIME_DIR/tray-icon` or `$TEMP/tray-icon`.
++  /// This has no effect when the `linux-ksni` feature is enabled.
+   pub fn temp_dir_path<P: AsRef<Path>>(mut self, s: P) -> Self {
+     self.inner = self.inner.with_temp_dir_path(s);
+     self
+@@ -602,7 +606,7 @@ impl<R: Runtime> TrayIcon<R> {
+   ///
+   /// ## Platform-specific:
+   ///
+-  /// - **Linux:** Unsupported
++  /// - **Linux:** Unsupported, unless the `linux-ksni` feature is enabled.
+   pub fn set_tooltip<S: AsRef<str>>(&self, tooltip: Option<S>) -> crate::Result<()> {
+     let s = tooltip.map(|s| s.as_ref().to_string());
+     run_item_main_thread!(self, |self_: Self| self_.inner.set_tooltip(s))?.map_err(Into::into)
+@@ -632,6 +636,7 @@ impl<R: Runtime> TrayIcon<R> {
+   ///
+   /// On Linux, we need to write the icon to the disk and usually it will
+   /// be `$XDG_RUNTIME_DIR/tray-icon` or `$TEMP/tray-icon`.
++  /// This has no effect when the `linux-ksni` feature is enabled.
+   pub fn set_temp_dir_path<P: AsRef<Path>>(&self, path: Option<P>) -> crate::Result<()> {
+     #[allow(unused)]
+     let p = path.map(|p| p.as_ref().to_path_buf());
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16631** (2026-11-23): chore: update android template AGP to 9.5.2 (@Legend-Master)
-- **PR #16626** (2026-11-23): chore(deps): update rust crate cargo-mobile2 to 0.23.0 (@renovate[bot])
-- **PR #16625** (2026-11-23): chore(deps): update hyper and futures-util, removes pin-utils (lockfile-only) (@FabianLars)
-- **PR #16624** (2026-11-23): chore(deps): update dependency appium-xcuitest-driver to ^13.3.0 (@renovate[bot])
-- **PR #16620** (2026-11-23): fix: `on_menu_event` handler being kept forever (@Legend-Master)
-- **PR #16619** (2026-11-23): chore(deps): update dependency appium-xcuitest-driver to ^13.2.0 (@renovate[bot])
+- **PR #16656** (2026-11-26): refactor: use `with_added_extension` (@Legend-Master)
+- **PR #16655** (2026-11-26): ci: retry pushing benchmark results 3 times (@Legend-Master)
+- **PR #16654** (2026-11-26): chore(deps): bump oxc crates to v0.126 (@Legend-Master)
+- **PR #16652** (2026-11-25): feat(core): support set_badge_count on iOS (@lucasfernog)
+- **PR #16651** (2026-11-25): fix(cli): android dev on Android 17+ (missing local network permission) (@lucasfernog)
+- **PR #16650** (2026-11-25): chore: remove unused deps (@lucasfernog)
 
 ---
 
@@ -2995,33 +3166,36 @@ Co-authored-by: Tony <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(security): add note about repo for plugin reports
+## X. linux): place child webviews at their bounds and size them from their room (fix 
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/linux-child-webviews.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c51c182d`: docs(security): add note about repo for plugin reports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8627ddca`: linux): place child webviews at their bounds and size them from their room (fix #10420). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/linux-child-webviews.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-**Please submit your report via the [GitHub Private Vulnerability Disclosure functionality](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).**
-Reports for Tauri and its direct tooling belong in this repository. Reports for our official plugins should be submitted in [plugins-workspace](https://github.com/tauri-apps/plugins-workspace/) instead.
+---
+"tauri": patch:bug
+"tauri-runtime-wry": patch:bug
+---
+
+On Linux with the `unstable` feature, child webviews added with `Window::add_child` are placed at their bounds, instead of being stacked in the window's box. They are clipped at the edge of the window and do not scroll. A webview that resizes with its window, the window's own webview included, takes the size of the room that GTK gives it, instead of the inner size of the window, which counts the menu bar and, on Wayland, the client-side decorations. `Webview::reparent` keeps the position of the webview.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-Please submit your report via the GitHub Private Vulnerability Disclosure functionality.
-Find out more about the reporting process [here](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c51c182d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8627ddca` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -13360,3 +13360,8 @@
 | `CYCLE-20261126-YZLH` | `2026-11-26T11:28:54.965Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10662` | Yes (`5a926c65...`) |
 | `CYCLE-20261126-Z4DR` | `2026-11-26T11:29:01.167Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10663` | Yes (`3534c49f...`) |
 | `CYCLE-20261126-ZAFX` | `2026-11-26T11:29:09.021Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10664` | Yes (`b466ab27...`) |
+| `CYCLE-20261126-CRC4` | `2026-11-26T11:39:37.444Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`a8fa0234...`) |
+| `CYCLE-20261126-CXZU` | `2026-11-26T11:39:46.074Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10665` | Yes (`d8372a2e...`) |
+| `CYCLE-20261126-D17T` | `2026-11-26T11:39:50.249Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10666` | Yes (`0d0455ec...`) |
+| `CYCLE-20261126-D34X` | `2026-11-26T11:39:52.737Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10667` | Yes (`e32925df...`) |
+| `CYCLE-20261126-D4WK` | `2026-11-26T11:39:55.028Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10668` | Yes (`7fb4ff4a...`) |

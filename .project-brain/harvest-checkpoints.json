@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T11:29:09.053Z",
+  "last_updated": "2026-11-26T11:39:55.056Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -350,14 +350,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "79bd4873ed6d6ef660f478683436cd2d2480c3271f8fd74293d0e3a993a9fc98",
-      "verified_at": "2026-11-22T18:35:17.059Z",
+      "content_hash": "a8fa0234013d6e72ce5156bb3182b68f70a46dc7471871d8ea851f08ccd79dca",
+      "verified_at": "2026-11-26T11:39:37.463Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:35:17.059Z"
+      "last_updated": "2026-11-26T11:39:37.463Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "7256a66047c0283109c84d18fcde2393dd8c0b2a6c4f45338847ea5719e4c63b",
-      "verified_at": "2026-11-22T20:56:10.708Z",
+      "content_hash": "0d0455ec528117351b5919162480c35e417dc1b3dc5de51c19a36b7b2fcb157b",
+      "verified_at": "2026-11-26T11:39:50.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:56:10.708Z"
+      "last_updated": "2026-11-26T11:39:50.274Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "41dfaafcd39438d47aba495fce7a55af305114b9f5d29565cea8917f7ced2890",
-      "verified_at": "2026-11-24T16:46:07.542Z",
+      "content_hash": "e32925dfa5b054e0a9ea3cfe7d7cfdc4b17383951f11bd714e7ea7e9a647237e",
+      "verified_at": "2026-11-26T11:39:52.761Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:46:07.542Z"
+      "last_updated": "2026-11-26T11:39:52.761Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "4ef9bbe4a17e396c5ddddf80b4d29444847b3f77e9c445f6f7012844f34d3cbd",
-      "verified_at": "2026-11-25T10:07:36.321Z",
+      "content_hash": "7fb4ff4a74cb436c73e237ec57b16b566973c96b53d56c0a32854e9ddccdf7ae",
+      "verified_at": "2026-11-26T11:39:55.055Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T10:07:36.321Z"
+      "last_updated": "2026-11-26T11:39:55.055Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -12771,14 +12771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tauri-apps-tauri",
-      "content_hash": "e4f9f44c5e063790277e3e171409059b763b5cf70dc7d7f4ae0474249f943e23",
-      "verified_at": "2026-11-24T01:07:20.379Z",
+      "content_hash": "d8372a2e17d3554cfb6b07ace1715c49169f3d5a751f16fb2530b3edff2e107e",
+      "verified_at": "2026-11-26T11:39:46.099Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:07:20.379Z"
+      "last_updated": "2026-11-26T11:39:46.099Z"
     },
     "oliviertassinari/react-swipeable-views": {
       "repository": "oliviertassinari/react-swipeable-views",

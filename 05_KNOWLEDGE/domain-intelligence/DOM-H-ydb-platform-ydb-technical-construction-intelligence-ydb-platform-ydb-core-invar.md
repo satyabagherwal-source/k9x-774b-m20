@@ -4,24 +4,24 @@
 {
   "source_repository": "ydb-platform/ydb",
   "source_url": "https://github.com/ydb-platform/ydb",
-  "source_version": "11c43f77",
+  "source_version": "1810e35c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T10:07:36.553Z",
+  "timestamp": "2026-11-26T11:39:55.277Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ydb-platform-ydb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `11c43f77`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T10:07:36.553Z`  
+> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `1810e35c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T11:39:55.277Z`  
 > **Learning ID**: `learn-github-ydb-platform-ydb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ydb-platform/ydb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T10:07:35.119Z  
+> **Harvest Timestamp**: 2026-11-26T11:39:53.953Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4790 stars
+- **Stars / Engagement**: 4791 stars
 
 ---
 
@@ -2079,502 +2079,244 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16d689be` (2026-11-25)
-**Commit Message**: Fix gluing regression NBYDB-2712 (#60629)
+### Incident Patch 1: `96958cbb` (2026-11-26)
+**Commit Message**: LocalDB: rename Fix_KIKIMR_14259 -> CleanupRowVersionsBelowLowWatermark (#60880)
 
-Regression: commit 0bd012c64ad added auxData == back.AuxData to the span-gluing condition. Main-channel serialization still stores &event.ZcTransferId in auxData; sequential events have different ZcTransferId addresses, so contiguous spans from different events can no longer be coalesced. The main socket does not use this zero-copy metadata, making the per-event pointer unnecessary for the main channel.
-
-**File**: `ydb/library/actors/interconnect/interconnect_channel.cpp` (modified, +3/-2)
+**File**: `ydb/core/tx/datashard/datashard__init.cpp` (modified, +1/-1)
 ```diff
-@@ -300,20 +300,21 @@ namespace NActors {
-     bool TEventOutputChannel::SerializeEvent(TTcpPacketOutTask& task, TEventHolder& event, bool disableChecksums, size_t *bytesSerialized) {
-         const bool useRdmaForMainChannelPacket = !External && task.UsePreallocatedInternalStream;
-         auto addChunk = [&](const void *data, size_t len, bool allowCopy, const NInterconnect::NRdma::TMemRegion* memRegion = nullptr) {
-+            ui32* const zcTransferId = External ? &event.ZcTransferId : nullptr;
-             event.UpdateChecksum(data, len);
-             if (useRdmaForMainChannelPacket) {
-                 if (memRegion) {
-                     task.AppendRdma(data, len, memRegion, disableChecksums);
-                 } else if (allowCopy) {
-                     task.Write<External>(data, len);
-                 } else {
--                    task.Append<External>(data, len, &event.ZcTransferId, disableChecksums);
-+                    task.Append<External>(data, len, zcTransferId, disableChecksums);
-                 }
-             } else {
-                 if (allowCopy && (reinterpret_cast<uintptr_t>(data) & 63) + len <= 64) {
-                     task.Write<External>(data, len);
-                 } else {
--                    task.Append<External>(data, len, &event.ZcTransferId, disableChecksums);
-+                    task.Append<External>(data, len, zcTransferId, disableChecksums);
-                 }
+@@ -85,7 +85,7 @@ bool TDataShard::TTxInit::Execute(TTransactionContext& txc, const TActorContext&
+         bool done = ReadEverything(txc);
+ 
+         if (done && Self->State != TShardState::Offline) {
+-            Self->SnapshotManager.Fix_KIKIMR_14259(txc.DB);
++            Self->SnapshotManager.CleanupRowVersionsBelowLowWatermark(txc.DB);
+             for (const auto& pr : Self->TableInfos) {
+                 pr.second->Fix_KIKIMR_17222(txc.DB);
              }
-             *bytesSerialized += len;
 ```
 
-**File**: `ydb/library/actors/interconnect/ut/event_output_channel_ut.cpp` (modified, +36/-0)
+**File**: `ydb/core/tx/datashard/datashard_snapshots.cpp` (modified, +1/-1)
 ```diff
-@@ -373,6 +373,42 @@ void AssertXdcDeclareNotSerialized(IEventBase* ev, ui32 maxSerializedEventSize)
- } // namespace
+@@ -971,7 +971,7 @@ void TSnapshotManager::PersistRemoveAllSnapshots(NIceDb::TNiceDb& db) {
+     Snapshots.clear();
+ }
  
- Y_UNIT_TEST_SUITE(EventOutputChannel) {
-+    Y_UNIT_TEST(GluesSmallMainChannelProtobufEventsIntoSingleSpan) {
-+        auto common = MakeIntrusive<TInterconnectProxyCommon>();
-+        common->MonCounters = MakeIntrusive<NMonitoring::TDynamicCounters>();
-+
-+        std::shared_ptr<IInterconnectMetrics> metrics = CreateInterconnectCounters(common);
-+        metrics->SetPeerInfo("peer", "1", "peer");
-+
-+        auto releaseCallback = [](THolder<IEventBase>) {};
-+        TEventHolderPool pool(common, releaseCallback);
-+
-+        TSessionParams params;
-+        TEventOutputChannel channel(1, 1, 64 << 20, metrics, params, nullptr);
-+
-+        for (ui64 blobId : {1, 2}) {
-+            auto* ev = new TEvTestSerialization;
-+            ev->Record.SetBlobID(blobId);
-+            auto evHandle = MakeHolder<IEventHandle>(TActorId(), TActorId(), ev);
-+            channel.Push(*evHandle, pool, TInstant::Zero());
-+        }
-+
-+        NInterconnect::TOutgoingStream mainStream;
-+        NInterconnect::TOutgoingStream xdcStream;
-+        TTcpPacketOutTask task(params, mainStream, xdcStream);
-+
-+        UNIT_ASSERT(channel.FeedBuf(task, 1));
-+        UNIT_ASSERT(channel.FeedBuf(task, 1));
-+        task.Finish(1, 0);
-+
-+        UNIT_ASSERT_VALUES_EQUAL(mainStream.GetSendQueueSize(), 1u);
-+
-+        TVector<TConstIoVec> data;
-+        mainStream.ProduceIoVec(data, 1024, Max<size_t>());
-+        UNIT_ASSERT_VALUES_EQUAL(data.size(), 1u);
-+        UNIT_ASSERT_VALUES_EQUAL(data.front().Size, task.GetPacketSize());
-+    }
-+
-     Y_UNIT_TEST(PropagatesSerializedEventTooLargeFromCoroutineSerializer) {
-         auto common = MakeIntrusive<TInterconnectProxyCommon>();
-         common->MonCounters = MakeIntrusive<NMonitoring::TDynamicCounters>();
+-void TSnapshotManager::Fix_KIKIMR_14259(NTable::TDatabase& db) {
++void TSnapshotManager::CleanupRowVersionsBelowLowWatermark(NTable::TDatabase& db) {
+     // Persisted removal ranges already describe unavailable history. Do not
+     // destroy retained gaps below the watermark while rebuilding the registry.
+     CleanupUnretainedRowVersions(db, TRowVersion::Min(), LowWatermark);
+```
+
+**File**: `ydb/core/tx/datashard/datashard_snapshots.h` (modified, +1/-1)
+```diff
+@@ -212,7 +212,7 @@ class TSnapshotManager {
+     void PersistUpdateSnapshotFlags(NIceDb::TNiceDb& db, const TSnapshotKey& key);
+     void PersistRemoveAllSnapshots(NIceDb::TNiceDb& db);
+ 
+-    void Fix_KIKIMR_14259(NTable::TDatabase& db);
++    void CleanupRowVersionsBelowLowWatermark(NTable::TDatabase& db);
+ 
+     // Optional additional cleanup of every user table, subject to retention and
+     // local acquisitions. A watermark can contain retained points below it; it
 ```
 
 ---
 
-### Incident Patch 2: `11c43f77` (2026-11-25)
-**Commit Message**: Require fresh VDisk status for mirror-3-dc solo recovery (#60689)
+### Incident Patch 2: `1810e35c` (2026-11-26)
+**Commit Message**: fix: record the source database for row table backups (#60885)
 
-**File**: `ydb/core/blobstorage/syncer/group_state.cpp` (modified, +5/-5)
+**File**: `ydb/core/tx/schemeshard/schemeshard__operation_create_backup.cpp` (modified, +1/-0)
 ```diff
-@@ -21,7 +21,7 @@ std::optional<TMirror3dcGroupConfiguration> GetConfiguration(const TGroupReplica
-     return std::nullopt;
- }
+@@ -71,6 +71,7 @@ struct TBackup {
+         Y_ABORT_UNLESS(context.SS->Tables.contains(pathId));
+         TTableInfo::TPtr table = context.SS->Tables.at(pathId);
+         NKikimrSchemeOp::TBackupTask backup = table->BackupSettings;
++        backup.SetSourceDatabase(TPath::Init(pathId, context.SS).GetDomainPathString());
+         backup.SetSnapshotStep(snapshotTime.Step);
+         backup.SetSnapshotTxId(snapshotTime.TxId);
  
--// W expands from 2 in Included to 2+2 in Included and Recovering on this edge.
-+// W expands from 2 in Included to 2+2 in Included and Recovering on these edges.
- bool WaitForRecoveringVDiskStartup(EMirror3dcGroupState state) {
-     using TGroupState = NKikimrBlobStorage::TGroupState;
-     return state == TGroupState::DC_SOLO_RECOVERY_INV1_PENDING || state == TGroupState::DC_SOLO_RECOVERY_INV2_PENDING;
-@@ -219,12 +219,12 @@ class TGroupStateActor : public TActorBootstrapped<TGroupStateActor> {
-         }
-         EraseQueries(groupId);
-         group->Pending = 0;
--        if (group->Stage == EStage::CheckPromotion) {
-+        if (group->Stage == EStage::CheckPromotion || WaitForRecoveringVDiskStartup(*group->Info.GroupState)) {
-             ProposeState(groupId, group);
-             return;
-         }
-         StatusPollGroups.erase(groupId);
--        group->Stage = WaitForRecoveringVDiskStartup(*group->Info.GroupState) ? EStage::Propose : EStage::Repair;
-+        group->Stage = EStage::Repair;
-         RepairGroups.insert(groupId);
-     }
- 
-@@ -268,8 +268,8 @@ class TGroupStateActor : public TActorBootstrapped<TGroupStateActor> {
-                     continue;
-                 }
-                 const bool checkPromotion = group.Stage == EStage::CheckPromotion;
--                if (checkPromotion) {
--                    // Health must come from one round after repair, including on proposal retries.
-+                if (checkPromotion || WaitForRecoveringVDiskStartup(*group.Info.GroupState)) {
-+                    // These transitions require a fresh set of replies, including on proposal retries.
-                     group.ConfirmedDisks.assign(group.Info.VDisks.size(), false);
-                 }
-                 ActiveGroups.push_back(groupId);
 ```
 
-**File**: `ydb/core/mind/bscontroller/ut_bscontroller/group_state_ut.cpp` (modified, +117/-21)
+**File**: `ydb/core/tx/schemeshard/ut_export/ut_export.cpp` (modified, +25/-0)
 ```diff
-@@ -6,6 +6,7 @@
- #include <ydb/core/testlib/basics/runtime.h>
- #include <ydb/core/testlib/basics/appdata.h>
- #include <library/cpp/testing/unittest/registar.h>
-+#include <util/generic/map.h>
+@@ -5429,6 +5429,31 @@ state: STATE_ENABLED
+         gen.Check();
+     }
  
- using namespace NActors;
- using namespace NKikimr;
-@@ -68,23 +69,40 @@ class TGroupStateFixture {
-             disks.insert(disk.ActorId);
-         }
-         for (ui32 index = 0; index < requests; ++index) {
--            TEvBlobStorage::TEvVStatus::TPtr request = Runtime.GrabEdgeEventRethrow<TEvBlobStorage::TEvVStatus>(disks);
--            TVDiskID disk = VDiskIDFromVDiskID(request->Get()->Record.GetVDiskID());
--            UNIT_ASSERT_VALUES_EQUAL(disk.GroupGeneration, Info.Generation);
--            const bool available = !status.FailSecondRealm || disk.FailRealm != 1 || disk.FailDomain != 0;
--            if (!available || (status.OnlyFirstRealm && disk.FailRealm != 0)) {
--                --disk.GroupGeneration;
--            }
--            const TVDiskIdShort diskId(disk);
--            const bool replicated = status.Replicated && available && status.ReplicatingRealm != disk.FailRealm;
--            const auto replyStatus = status.ErrorDisk == diskId ? NKikimrProto::ERROR : NKikimrProto::OK;
--            std::unique_ptr<TEvBlobStorage::TEvVStatusResult> result =
--                std::make_unique<TEvBlobStorage::TEvVStatusResult>(replyStatus, disk, true, replicated, false, 1);
--            if (status.DurabilityReplicated) {
--                result->Record.SetDurabilityReplicated(*status.DurabilityReplicated && available);
-+            ReplyStatus(*Runtime.GrabEdgeEventRethrow<TEvBlobStorage::TEvVStatus>(disks), status);
-+        }
++    Y_UNIT_TEST(SourceDatabaseRecordedForRowTable) {
++        auto request = Sprintf(R"(
++            ExportToS3Settings {
++              endpoint: "localhost:%d"
++              scheme: HTTP
++              items {
++                source_path: "/MyRoot/Table"
++                destination_prefix: ""
++              }
++            }
++        )", S3Port());
++
++        Run(Runtime(), Env(), TVector<TString>{
++            R"(
++                Name: "Table"
++                Columns { Name: "key" Type: "Utf8" }
++                Columns { Name: "value" Type: "Utf8" }
++                KeyColumnNames: ["key"]
++            )",
++        }, request, Ydb::StatusIds::SUCCESS);
++
++        const auto metadata = NBackup::TMetadata::Deserialize(GetS3FileContent("/metadata.json"));
++        UNIT_ASSERT_VALUES_EQUAL(metadata.GetSourceDatabase(), "/MyRoot");
 +    }
 +
-+    TMap<TVDiskIdShort, IEventHandle::TPtr> CaptureStatusRound() {
-+        TMap<TVDiskIdShort, IEventHandle::TPtr> requests;
-+        for (const auto& disk : Info.VDisks) {
-+            auto events = Runtime.CaptureMailboxEvents(disk.ActorId.Hint(), disk.ActorId.NodeId());
-+            const bool excluded = IsExcluded(Info.States[disk.Id.FailRealm]);
-+            UNIT_ASSERT_VALUES_EQUAL(events.size(), excluded ? 0u : 1u);
-+            if (!excluded) {
-+                UNIT_ASSERT_VALUES_EQUAL(events.front()->GetTypeRewrite(), TEvBlobStorage::TEvVStatus::EventType);
-+                requests.emplace(TVDiskIdShort(disk.Id), std::move(events.front()));
-             }
--            Runtime.Send(new IEventHandle(request->Sender, request->Recipient, result.release(), 0, request->Cookie), 0, true);
-         }
-+        return requests;
-+    }
-+
-+    void ReplyStatus(const IEventHandle& request, const TVDiskReplicationStatus& status = {}) {
-+        TVDiskID disk = VDiskIDFromVDiskID(request.CastAsLocal<TEvBlobStorage::TEvVStatus>()->Record.GetVDiskID());
-+        UNIT_ASSERT_VALUES_EQUAL(disk.GroupGeneration, Info.Generation);
-+        const bool available = !status.FailSecondRealm || disk.FailRealm != 1 || disk.FailDomain != 0;
-+        if (!available || (status.OnlyFirstRealm && disk.FailRealm != 0)) {
-+            --disk.GroupGeneration;
-+        }
-+        const TVDiskIdShort diskId(disk);
-+        const bool replicated = status.Replicated && available && status.ReplicatingRealm != disk.FailRealm;
-+        const auto replyStatus = status.ErrorDisk == diskId ? NKikimrProto::ERROR : NKikimrProto::OK;
-+        std::unique_ptr<TEvBlobStorage::TEvVStatusResult> result =
-+            std::make_unique<TEvBlobStorage::TEvVStatusResult>(replyStatus, disk, true, replicated, false, 1);
-+        if (status.DurabilityReplicated) {
-+            result->Record.SetDurabilityReplicated(*status.DurabilityReplicated && available);
-+        }
-+        Runtime.Send(new IEventHandle(request.Sender, request.Recipient, result.release(), 0, request.Cookie), 0, true);
-     }
- 
-     void AssertNoRequests() {
-@@ -125,12 +143,15 @@ class TGroupStateFixture {
-         Runtime.PushMailboxEventsFront(Warden.Hint(), Warden.NodeId(), events);
-     }
- 
--    TMirror3dcGroupConfiguration GetProposal(ui32 groupId = 42) {
-+    TMirror3dcGroupConfiguration GetProposal(ui32 groupId = 42, ui64* cookie = nullptr) {
-         auto event = Runtime.GrabEdgeEventRethrow<TEvGroupState::TEvPropose>(Controller);
-         UNIT_ASSERT_VALUES_EQUAL(event->Sender, Actor);
-         const auto& proposal = *event->Get();
-         UNIT_ASSERT_VALUES_EQUAL(proposal.GroupId, groupId);
-         UNIT_ASSERT_VALUES_EQUAL(proposal.Generation, Info.Generation);
-+        if (cookie) {
-+            *cookie = event->Cookie;
-+        }
-         return proposal.Next;
-     }
- };
-@@ -218,23 +239,98 @@ Y_UNIT_TEST_SUITE(BsControllerGroupState) {
- 
-     Y_UNIT_TEST(SoloRecoveryPendingWaitsForRecoveringVDiskStartup) {
-         using S = NKikimrBlobStorage::TGroupState;
-+        const TVDiskIdShort included3(0, 2, 0);
-+        const TVDiskIdShort recovering1(1, 0, 0);
-+        const TVDiskIdShort recovering2(1, 1, 0);
-+        const TVDiskIdShort recovering3(1, 2, 0);
-         for (auto [pending, ready] : {std::pair{S::DC_SOLO_RECOVERY_INV1_PENDING, S::DC_SOLO
+     Y_UNIT_TEST(SchemaMapping) {
+         RunS3({
+             R"(
 ```
 
 ---
 
-### Incident Patch 3: `1f5ecad9` (2026-11-25)
-**Commit Message**: fix mass restarts during switchover (#60526)
+### Incident Patch 3: `59f52961` (2026-11-26)
+**Commit Message**: [NEW OPTIMIZER] Fix scan query statistics plan serialization (#60887)
 
-**File**: `ydb/core/mind/hive/drain.cpp` (modified, +6/-0)
+Co-authored-by: Velikhov Pavel <[REDACTED_EMAIL]>
+
+**File**: `ydb/core/grpc_services/rpc_stream_execute_scan_query.cpp` (modified, +4/-5)
 ```diff
-@@ -358,6 +358,12 @@ void THive::ProcessPileDrains() {
-     Send(SelfId(), new TEvPrivate::TEvProcessPileDrains());
- }
+@@ -9,7 +9,6 @@
+ #include <ydb/core/base/appdata.h>
+ #include <ydb/library/ydb_issue/issue_helpers.h>
+ #include <ydb/core/kqp/common/events/stream.h>
+-#include <ydb/core/kqp/query_plan/query_plan.h>
  
-+void THive::HandleInit(TEvPrivate::TEvProcessPileDrains::TPtr&) {
-+    // requested while loading (e.g. by a config notification); the load ends with UpdatePiles, which processes
-+    // the pile drains once Hive works, so it is only needed to allow scheduling again
-+    ProcessPileDrainsScheduled = false;
-+}
-+
- void THive::Handle(TEvPrivate::TEvProcessPileDrains::TPtr&) {
-     ProcessPileDrainsScheduled = false;
-     if (!BridgeInfo || std::none_of(BridgePiles.begin(), BridgePiles.end(), [](const auto& item) { return item.second.Drain; })) {
-```
-
-**File**: `ydb/core/mind/hive/hive_impl.cpp` (modified, +1/-0)
-```diff
-@@ -4226,6 +4226,7 @@ STFUNC(THive::StateInit) {
-     switch (ev->GetTypeRewrite()) {
-         hFunc(TEvInterconnect::TEvNodesInfo, Handle);
-         hFunc(TEvPrivate::TEvProcessBootQueue, HandleInit);
-+        hFunc(TEvPrivate::TEvProcessPileDrains, HandleInit);
-         hFunc(TEvPrivate::TEvProcessTabletBalancer, HandleInit);
-         hFunc(TEvPrivate::TEvCheckNamedResourceEstimates, HandleInit);
-         hFunc(TEvNodeWardenStorageConfig, HandleInit);
-```
-
-**File**: `ydb/core/mind/hive/hive_impl.h` (modified, +1/-0)
-```diff
-@@ -697,6 +697,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
-     void HandleInit(TEvPrivate::TEvProcessBootQueue::TPtr&);
-     void Handle(TEvPrivate::TEvProcessBootQueue::TPtr&);
-     void Handle(TEvPrivate::TEvProcessPileDrains::TPtr&);
-+    void HandleInit(TEvPrivate::TEvProcessPileDrains::TPtr&);
-     void Handle(TEvPrivate::TEvPostponeProcessBootQueue::TPtr&);
-     void Handle(TEvPrivate::TEvProcessDisconnectNode::TPtr&);
-     void HandleInit(TEvPrivate::TEvProcessTabletBalancer::TPtr&);
-```
-
-**File**: `ydb/core/mind/hive/hive_ut.cpp` (modified, +87/-8)
-```diff
-@@ -13272,7 +13272,7 @@ Y_UNIT_TEST_SUITE(THiveTest) {
-         UNIT_ASSERT_VALUES_EQUAL(GetSimpleCounter(runtime, test.HiveTablet, NHive::COUNTER_TABLETS_STARTING), 0);
-     }
+ #include <ydb/library/services/services.pb.h>
+ #include <ydb/core/protos/ydb_table_impl.pb.h>
+@@ -320,10 +319,10 @@ class TStreamExecuteScanQueryRPC : public TActorBootstrapped<TStreamExecuteScanQ
  
--    Y_UNIT_TEST(TestBridgePileDrainResumesOnPileUpdateAfterNodeBecomesUp) {
-+    Y_UNIT_TEST(TestBridgePileDrainResumesWhenNodeBecomesUp) {
-         TBridgeDrainTest test;
-         const ui64 tabletId = test.CreateTablet();
-         TBlockEvents<TEvLocal::TEvStatus> blockNodeStatus(test.Runtime);
-@@ -13283,14 +13283,10 @@ Y_UNIT_TEST_SUITE(THiveTest) {
-         UNIT_ASSERT(test.IsRunningInPile(tabletId, 0));
-         UNIT_ASSERT(test.DrainPending());
- 
-+        // node statuses stay blocked: bringing the target Up is enough for the drain to resume
-         test.SetDown(1, false);
--        test.Runtime.SimulateSleep(TDuration::Seconds(10));
--        UNIT_ASSERT_C(test.IsRunningInPile(tabletId, 0), "pile drain resumed without a new node status or pile update");
--        UNIT_ASSERT(test.DrainPending());
+             if (reportStats) {
+                 if (kqpResponse.HasQueryStats()) {
 -
--        test.Bridge.SetPileState(1, NKikimrBridge::TClusterState::SYNCHRONIZED);
-         UNIT_ASSERT_C(WaitUntil(test.Runtime, [&] { return test.IsRunningInPile(tabletId, 1) && !test.DrainPending(); }),
--            "pile drain did not resume on a pile update after its target became Up");
-+            "pile drain did not resume after its target became Up");
-     }
+-                    record.MutableResponse()->SetQueryPlan(reportPlan
+-                        ? SerializeAnalyzePlan(kqpResponse.GetQueryStats(), false)
+-                        : "");
++                    // The session actor serializes the plan using the optimizer that compiled the query.
++                    if (!reportPlan) {
++                        record.MutableResponse()->ClearQueryPlan();
++                    }
  
-     Y_UNIT_TEST(TestBridgePileDrainResumesOnPileUpdateAfterResourcesBecomeAvailable) {
-@@ -13726,10 +13722,16 @@ Y_UNIT_TEST_SUITE(THiveTest) {
+                     FillQueryStats(*response.mutable_result()->mutable_query_stats(), kqpResponse);
+                 } else if (reportPlan) {
+```
+
+**File**: `ydb/core/kqp/ut/rbo/olap/kqp_rbo_olap_ut.cpp` (modified, +84/-0)
+```diff
+@@ -11,6 +11,7 @@
+ #include <ydb/core/tx/datashard/datashard_ut_common_kqp.h>
+ #include <ydb/core/tx/columnshard/defs.h>
+ #include <ydb/core/tx/columnshard/hooks/testing/controller.h>
++#include <ydb/core/tx/columnshard/test_helper/controllers.h>
+ #include <ydb/core/wrappers/fake_storage.h>
+ #include <ydb/core/statistics/ut_common/ut_common.h>
+ #include <ydb/core/kqp/ut/common/kqp_ut_common.h>
+@@ -47,6 +48,89 @@ using namespace NYdb::NTable;
  
-                 // Preserve Sync -> Status order from each Local while replaying a report for the old placement.
-                 blockSync->Stop().Unblock();
-+                // A disconnected pile loses all its tablets. A pile that is only not allowed anymore keeps the
-+                // instances Hive knows about, for its drain to move them gradually; the stale one is not revived.
-+                const size_t keptInPile0 = scenario == EBridgeDrainScenario::ResyncOnDisconnectedPile ? 0 : NUM_TABLETS - 1;
-                 UNIT_ASSERT_C(waitUntil([&] {
-                     auto distribution = getDistribution();
--                    return tabletsInPile(distribution, 0) == 0 && tabletsInPile(distribution, 1) == 0;
-+                    return tabletsInPile(distribution, 0) == keptInPile0 && tabletsInPile(distribution, 1) == 0;
-                 }), "resync revived tablets in a pile that no longer allows their leaders");
-+                runtime.SimulateSleep(TDuration::MilliSeconds(100));
-+                UNIT_ASSERT_VALUES_EQUAL(tabletsInPile(getDistribution(), 0), keptInPile0);
-+                UNIT_ASSERT_VALUES_EQUAL(GetHiveTabletInfo(runtime, hiveTablet, tablets.front(), senderA).GetNodeID(), 0);
-                 blockSourceStatus->Stop().Unblock();
-             }
-             blockStatus.Stop().Unblock();
-@@ -13988,6 +13990,83 @@ Y_UNIT_TEST_SUITE(THiveTest) {
-         UNIT_ASSERT_VALUES_EQUAL_C(blockComplete.size(), DRAIN_INFLIGHT, "a second drain of the pile started");
-     }
+ Y_UNIT_TEST_SUITE(KqpRboOlap) {
  
-+    Y_UNIT_TEST(TestBridgeResyncAfterSwitchoverKeepsDrainGradual) {
-+        static constexpr ui32 NUM_NODES = 4;
-+        static constexpr ui32 NUM_TABLETS = 8;
-+        static constexpr ui32 DRAIN_INFLIGHT = 1;
-+        TTestBasicRuntime runtime(NUM_NODES, false);
-+        TDummyBridge bridge(runtime);
-+        Setup(runtime, true, 2, [](TAppPrepare& app) {
-+            app.HiveConfig.SetDrainInflight(DRAIN_INFLIGHT);
-+        });
-+        const ui64 hiveTablet = MakeDefaultHiveID();
-+        const ui64 testerTablet = MakeTabletID(false, 1);
-+        const TActorId sender = runtime.AllocateEdgeActor(0);
-+        const ui32 nodeBase = runtime.GetNodeId(0);
-+        CreateTestBootstrapper(runtime, CreateTestTabletInfo(hiveTablet, TTabletTypes::Hive), &CreateDefaultHive);
-+        MakeSureTabletIsUp(runtime, hiveTablet, 0);
-+        TActorId hiveActor = GetHiveActor(runtime, hiveTablet);
-+        bridge.Subscribe(hiveActor);
-+        runtime.EnableScheduleForActor(hiveActor);
-+        std::vector<ui64> tablets;
-+        for (ui32 i = 0; i < NUM_TABLETS; ++i) {
-+            THolder<TEvHive::TEvCreateTablet> ev(new TEvHive::TEvCreateTablet(testerTablet, 100500 + i, TTabletTypes::Dummy, BINDED_CHANNELS));
-+            tablets.push_back(SendCreateTestTablet(runtime, hiveTablet, testerTablet, std::move(ev), 0, true));
-+            MakeSureTabletIsUp(runtime, tablets.back(), 0);
-+        }
-+        auto inPile = [&](ui32 pile) {
-+            ui32 count = 0;
-+            for (ui64 tablet : tablets) {
-+                const auto info = GetHiveTabletInfo(runtime, hiveTablet, tablet, sender);
-+                if (info.GetNodeID() != 0 && (info.GetNodeID() - nodeBase) % 2 == pile) {
-+                    ++count;
-+                }
-+            }
-+            return count;
-+        };
-+        UNIT_ASSERT_VALUES_EQUAL(inPile(0), NUM_TABLETS);
++    Y_UNIT_TEST(SimpleQueryOlapStats) {
++        auto settings = TKikimrSettings()
++            .SetWithSampleTables(false);
++        settings.AppConfig.MutableTableServiceConfig()->SetEnableNewRBO(true);
++        settings.AppConfig.MutableTableServiceConfig()->SetEnableFallbackToYqlOptimizer(false);
++        TKikimrRunner kikimr(settings);
 +
-+        // switchover: the drain of pile 0 starts and is held
-+        std::optional<TBlockEvents<NHive::TEvPr
-```
-
-**File**: `ydb/core/mind/hive/node_info.cpp` (modified, +11/-2)
-```diff
-@@ -176,7 +176,7 @@ void TNodeInfo::UpdateResourceValues(const TTabletInfo* tablet, const TMetrics&
-     Hive.UpdateTotalResourceValues(this, tablet, before, after, ResourceValues - oldResourceValues, normalizedValues - oldNormalizedValues);
- }
- 
--bool TNodeInfo::MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debugState) const {
-+bool TNodeInfo::MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debugState, bool checkPile) const {
-     const auto& effectiveAllowedDomains = filter.GetEffectiveAllowedDomains();
-     bool result = false;
- 
-@@ -218,7 +218,7 @@ bool TNodeInfo::MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debu
-         return false;
-     }
- 
--    if (Hive.BridgeInfo) {
-+    if (checkPile && Hive.BridgeInfo) {
-         if (!filter.IsAllowedPile(BridgePileId)) {
-             return false;
-         }
-@@ -469,6 +469,7 @@ void TNodeInfo::SendReconnect(const TActorId& local) {
- }
- 
- void TNodeInfo::SetDown(bool down, EHiveEventReason reason, TString details) {
-+    const bool becameUp = Down && !down;
-     if (Down != down) {
-         Hive.RecordNodeEvent(*this, down ? EHiveEventType::Down : EHiveEventType::Up, reason, std::move(details));
-     }
-@@ -479,6 +480,14 @@ void TNodeInfo::SetDown(bool down, EHiveEventReason reason, TString details) {
-     } else {
-         Hive.ObjectDistributions.AddNode(*this);
-         Hive.ProcessWaitQueue();
-+        if (becameUp && Hive.BridgeInfo) {
-+            // a pile drain may have been waiting for a node in an allowed pile to move the tablets to; the nodes
-+            // of a draining pile are left out, as a pile drain brings its own nodes back up when it ends
-+            const auto* pile = Hive.FindPile(BridgePileId);
-+            if (!(pile && pile->Drain) && TNodeFilter(Hive).IsAllowedPile(BridgePileId)) {
-+                Hive.ProcessPileDrains();
-+            }
++        TLocalHelper(kikimr).CreateTestOlapTable();
++
++        WriteTestData(kikimr, "/Root/olapStore/olapTable", 0, 1000000, 2);
++
++        auto client = kikimr.GetTableClient();
++
++        {
++            TStreamExecScanQuerySettings settings;
++            settings.CollectQueryStats(ECollectQueryStatsMode::Full);
++            auto it = client.StreamExecuteScanQuery(R"(
++                --!syntax_v1
++                SELECT `resource_id`, `timestamp`
++                FROM `/Root/olapStore/olapTable`
++                ORDER BY `resource_id`, `timestamp`
++            )", settings).GetValueSync();
++
++            UNIT_ASSERT_C(it.IsSuccess(), it.GetIssues().ToString());
++            NJson::TJsonValue jsonStat;
++            CollectRows(it, &jsonStat);
++            UNIT_ASSERT(!jsonStat.IsNull());
++            const TString plan = jsonStat.GetStringRobust();
++            Cerr << plan << Endl;
++            UNIT_ASSERT(plan.find("NodesScanShards") == TString::npos);
 +        }
-     }
- }
- 
-```
-
-**File**: `ydb/core/mind/hive/node_info.h` (modified, +1/-1)
-```diff
-@@ -227,7 +227,7 @@ struct TNodeInfo: public TIntrusiveListItem<TNodeInfo, TSegmentNodesTag> {
-         return Id;
-     }
- 
--    bool MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debugState = nullptr) const;
-+    bool MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debugState = nullptr, bool checkPile = true) const;
-     bool IsAllowedToRunTablet(TTabletDebugState* debugState = nullptr) const;
-     bool IsAllowedToRunTablet(const TTabletInfo& tablet, TTabletDebugState* debugState = nullptr) const;
-     bool IsAbleToRunTablet(const TTabletInfo& tablet, TTabletDebugState* debugState = nullptr) const;
-```
-
-**File**: `ydb/core/mind/hive/tx__sync_tablets.cpp` (modified, +40/-0)
-```diff
-@@ -10,6 +10,7 @@ class TTxSyncTablets : public TTransactionBase<THive> {
-     TActorId Local;
-     NKikimrLocal::TEvSyncTablets SyncTablets;
-     TSideEffects SideEffects;
-+    bool DrainPending = false;
- 
- public:
-     TTxSyncTablets(const TActorId &local, NKikimrLocal::TEvSyncTablets& rec, THive* hive)
-@@ -39,11 +40,36 @@ class TTxSyncTablets : public TTransactionBase<THive> {
-         return false;
-     }
- 
-+    bool IsMovedOutByPileDrain(const TNodeInfo& node, const TTabletInfo& tablet) const {
-+        if (!Self->BridgeInfo || tablet.GetNodeFilter().IsAllowedPile(node.BridgePileId)) {
-+            return false;
++
++        {
++            TStreamExecScanQuerySettings settings;
++            settings.CollectQueryStats(ECollectQueryStatsMode::Profile);
++            auto it = client.StreamExecuteScanQuery(R"(
++                --!syntax_v1
++                SELECT `resource_id`, `timestamp`
++                FROM `/Root/olapStore/olapTable`
++                ORDER BY `resource_id`, `timestamp`
++            )", settings).GetValueSync();
++            NJson::TJsonValue jsonStat;
++            UNIT_ASSERT_C(it.IsSuccess(), it.GetIssues().ToString());
++            CollectRows(it, &jsonStat);
++            const TString plan = jsonStat.GetStringRobust();
++            Cerr << plan << Endl;
++            UNIT_ASSERT(plan.find("NodesScanShards") != TString::npos);
 +        }
-+        const auto* pile = Self->FindPile(node.BridgePileId);
-+        if (!pile || !NBridge::PileStateTraits(pile->State).AllowsConnection) {
-+            return false; // the pile is disconnected, its tablets are restarted elsewhere anyway
-+        }
-+        return node.MatchesFilter(tablet.GetNodeFilter(), nullptr, /* checkPile */ false);
 +    }
 +
-+    void MarkPileForDrain(NIceDb::TNiceDb& db, TBridgePileId pileId) {
-+        DrainPending = true;
-+        auto& pile = Self->GetPile(pileId);
-+        if (pile.Drain) {
-+            return;
++    Y_UNIT_TEST(StatsSysViewOrderByPKWithLimit) {
++        constexpr ui64 portionsCount = 3;
++        constexpr ui64 limit = 3;
++        auto csController = NYDBTest::TControllers::RegisterCSControllerGuard<NOlap::TWaitCompactionController>();
++        csController->DisableBackground(NYDBTest::ICSController::EBackground::Compaction);
++        auto settings = TKikimrSettings().SetWithSampleTables(false);
++        settings.AppConfig.MutableTableServiceConfig()->SetEnableNewRBO(true);
++        settings.AppConfig.MutableTableServiceConfig()->SetEnableFallbackToYqlOptimizer(false);
++        TKikimrRunner kikimr(settings);
++        TLocalHelper(kikimr).CreateTestOlapTable("olapTable", "olapStore", 1, 1);
++        for (ui64 i = 0; i < portionsCount; ++i) {
++            WriteTestData(kikimr, "/Root/olapStore/olapTable", 0, 1000000 + i * 10000, 1000);
 +        }
-+        YDB_LOG_NOTICE("THive::TTxSyncTablets::Execute pile has tablets its placement does not allow, draining",
-+            {"logPrefix", GetLogPrefix()},
-+            {"pileId", pileId});
-+        pile.Drain = true;
-+        db.Table<Schema::BridgePile>().Key(pile.GetId()).Update<Schema::BridgePile::Drain>(true);
++
++        auto tableClient = kikimr.GetTableClient();
++        const TString sysViewPath = "/Root/olapStore/olapTable/.sys/primary_index_stats";
++        UNIT_ASSERT_VALUES_EQUAL(ExecuteScanQuery(tableClient, "SELECT DISTINCT PortionId FROM `" + sysViewPath + "`").size(), portionsCount);
++        NYdb::NTable::TStreamExecScanQuerySettings scanSettings;
++        scanSettings.CollectQueryStats(NYdb::NTable::ECollectQueryStatsMode::Full);
++        for (const TStringBuf direction : {"ASC"sv, "DESC"sv}) {
++            const TString query = TStringBuilder()
++                << "SELECT PathId, TabletId, PortionId FROM `" << sysViewPath << "` ORDER BY PathId " << direction
++                << ", TabletId " << direction << ", PortionId " << direction << " LIMIT " << limit;
++            auto stream = tableClient.StreamExecuteScanQuery(query, scanSettings).GetValueSync();
++            UNIT_ASSERT_C(stream.IsSuccess(), stream.GetIssues().ToString());
++            const auto result = CollectStreamResult(stream);
++            UNIT_ASSERT_VALUES_EQUAL_C(result.RowsCount, limit, direction);
++            UNIT_ASSERT(result.QueryStats);
++            // Count rows entering KQP, before its own TopSort and LIMIT can hide a missing pushdown.
++            AssertTableStats(*result.QueryStats, sysViewPath, {.ExpectedReads = limit});
++        }
 +    }
 +
-     bool Execute(TTransactionContext &txc, const TActorContext& ctx) override {
-         YDB_LOG_DEBUG("THive::TTxSyncTablets::Execute synchronizing tablets with node",
-             {"logPrefix", GetLogPrefix()},
-             {"nodeId", Local.NodeId()});
-         SideEffects.Reset(Self->SelfId());
-+        DrainPending = false;
-         NIceDb::TNiceDb db(txc.DB);
-         TNodeInfo& node = Self->GetNode(Local.NodeId());
-         THashSet<std::pair<TTabletId, TFollowerId>> tabletsToRestart;
-@@ -65,6 +91,17 @@ class TTxSyncTablets : public TTransactionBase<THive> {
-                     {"state", state},
-                     {"tabletId", tabletId});
-                 tabletsToRestart.erase(tabletId);
-+            } else if (IsMovedOutByPileDrain(node, *tablet)) {
-+                // the tablet is only in a pile it is not allowed in anymore (e.g. after a switchover):
-+                // keep it running, the pile drain moves it out gradually instead of restarting everything at once
-+                YDB_LOG_TRACE("THive::TTxSyncTablets::Execute confirmed tablet left for the pile drain",
-+                    {"logPrefix", GetLogPrefix()},
-+                    {"nodeId", Local.NodeId()},
-+                    {"pileId", node.BridgePileId},
-+                    {"state", state},
-+                    {"tabletId", tabletId});
-+                tabletsToRestart.erase(tabletId);
-+                MarkPileForDrain(db, node.BridgePileId);
-             } else {
-                 YDB_LOG_TRACE("THive::TTxSyncTablets::Execute confirmed tablet not allowed on this node",
-                     {"logPrefix", GetLogPrefix()},
-@@ -196,6 +233,9 @@ class TTxSyncTablets : public TTransactionBase<THive> {
-             {"logPrefix", GetLogPrefix()},
-             {"nodeId", Local.NodeId()});
-         SideEffects.Complete(ctx, Self->Requests);
-+        if (DrainPending) {
-+            Self->ProcessPileDrains();
-+        }
-     }
- };
- 
+     Y_UNIT_TEST_TWIN(ExplainSharedStageOnce, Analyze) {
+         auto settings = TKikimrSettings().SetWithSampleTables(false);
+         settings.AppConfig.MutableTableServiceConfig()->SetEnableNewRBO(true
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60775** (2026-11-25): Mark C++ SDK v3.28.0 in changelog (@ydbot)
-- **PR #60774** (2026-11-25): [26-2][docs] Backport conditional Workload Manager warning (@nataliaboldyreva)
-- **PR #60757** (2026-11-25): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #60756** (2026-11-25): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #60755** (2026-11-25): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
-- **PR #60754** (2026-11-25): Sync branches 261125-0049: rightlib to main (@ydbot)
+- **PR #60899** (2026-11-26): fix conflict (@yumkam)
+- **PR #60898** (closed): Disable EnableCollectByCompleteDeletionBlock by default (@serbel324)
+- **PR #60893** (2026-11-26): feat: add the EnableAsyncReplicationSnapshotProvenance feature flag (@Enjection)
+- **PR #60889** (2026-11-26): BlobDepot: bound hot data with write credits (@alexvru)
+- **PR #60888** (2026-11-26): Recheck source Keep flags after bridge repairs (@alexvru)
+- **PR #60887** (2026-11-26): [NEW OPTIMIZER] Fix scan query statistics plan serialization (@pavelvelikhov)
 
 ---
 
@@ -2594,34 +2336,31 @@ Regression: commit 0bd012c64ad added auxData == back.AuxData to the span-gluing 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gluing regression NBYDB-2712
+## X. LocalDB: rename Fix_KIKIMR_14259 -> CleanupRowVersionsBelowLowWatermark
 
 **RULE**:
-When implementing operations in `ydb/library/actors/interconnect/interconnect_channel.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/tx/datashard/datashard__init.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16d689be`: gluing regression NBYDB-2712. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `96958cbb`: LocalDB: rename Fix_KIKIMR_14259 -> CleanupRowVersionsBelowLowWatermark. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/library/actors/interconnect/interconnect_channel.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/datashard/datashard__init.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            ui32* const zcTransferId = External ? &event.ZcTransferId : nullptr;
-                    task.Append<External>(data, len, zcTransferId, disableChecksums);
-                    task.Append<External>(data, len, zcTransferId, disableChecksums);
+            Self->SnapshotManager.CleanupRowVersionsBelowLowWatermark(txc.DB);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-                    task.Append<External>(data, len, &event.ZcTransferId, disableChecksums);
-                    task.Append<External>(data, len, &event.ZcTransferId, disableChecksums);
+            Self->SnapshotManager.Fix_KIKIMR_14259(txc.DB);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16d689be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `96958cbb` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

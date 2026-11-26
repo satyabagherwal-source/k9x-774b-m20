@@ -4,24 +4,24 @@
 {
   "source_repository": "DefGuard/defguard",
   "source_url": "https://github.com/DefGuard/defguard",
-  "source_version": "279cc5c3",
+  "source_version": "79d1cfe3",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T16:46:07.847Z",
+  "timestamp": "2026-11-26T11:39:52.983Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-defguard-defguard",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [DefGuard/defguard](https://github.com/DefGuard/defguard) (Revision: `279cc5c3`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T16:46:07.847Z`  
+> **Provenance**: Harvested from [DefGuard/defguard](https://github.com/DefGuard/defguard) (Revision: `79d1cfe3`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T11:39:52.983Z`  
 > **Learning ID**: `learn-github-defguard-defguard`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain A (Human & Need Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from DefGuard/defguard:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:46:06.600Z  
+> **Harvest Timestamp**: 2026-11-26T11:39:51.590Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2922 stars
+- **Stars / Engagement**: 2925 stars
 
 ---
 
@@ -2047,54 +2047,437 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `279cc5c3` (2026-11-24)
-**Commit Message**: 2.2.1 (#4100)
+### Incident Patch 1: `79d1cfe3` (2026-11-26)
+**Commit Message**: Warn about required dg version for network device preshared key (#4111)
 
-**File**: `Cargo.lock` (modified, +1/-1)
+**File**: `web/messages/en/modal.json` (modified, +1/-0)
 ```diff
-@@ -1538,7 +1538,7 @@ dependencies = [
- 
- [[package]]
- name = "defguard_common"
--version = "2.2.0"
-+version = "2.2.1"
- dependencies = [
-  "anyhow",
-  "argon2 0.6.0",
+@@ -154,6 +154,7 @@
+   "modal_network_device_psk_title": "Preshared key",
+   "modal_network_device_psk_content": "Adds a symmetric key to the WireGuard handshake. Use it to keep the preshared key of a peer you are migrating.",
+   "modal_network_device_psk_cli_content": "Adds a symmetric key to the WireGuard handshake. Defguard CLI receives the key automatically during enrollment.",
++  "modal_network_device_psk_cli_version_warning": "To use a preshared key, please make sure you are using Defguard CLI (dg) version 2.2.2 or newer. Otherwise the device may not be able to connect.",
+   "modal_network_device_psk_choice_generate": "Generate a preshared key",
+   "modal_network_device_psk_choice_manual": "Provide your own preshared key",
+   "modal_network_device_psk_generate_new": "Generate new preshared key",
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `web/src/pages/NetworkDevicesPage/modals/AddNetworkDeviceModal/AddNetworkDeviceModal.tsx` (modified, +22/-2)
 ```diff
-@@ -18,7 +18,7 @@ redundant_closure = "warn"
- [workspace.dependencies]
- # internal crates
- defguard_setup = { path = "./crates/defguard_setup", version = "0.0.0" }
--defguard_common = { path = "./crates/defguard_common", version = "2.2.0", default-features = false }
-+defguard_common = { path = "./crates/defguard_common", version = "2.2.1", default-features = false }
- defguard_static_ip = { path = "./crates/defguard_static_ip", version = "0.0.0" }
- defguard_core = { path = "./crates/defguard_core", version = "0.0.0", default-features = false }
- defguard_event_logger = { path = "./crates/defguard_event_logger", version = "0.0.0" }
+@@ -137,7 +137,10 @@ export const AddNetworkDeviceModal = () => {
+             <FormStep setModalState={handleStepStateChange} {...modalState} />
+           )}
+           {modalState.step === 'cli-finish' && isPresent(modalState.cliDevice) && (
+-            <CliStep data={modalState.cliDevice} />
++            <CliStep
++              data={modalState.cliDevice}
++              presharedKeySet={isPresent(modalState.presharedKey)}
++            />
+           )}
+           {modalState.step === 'show-config' && (
+             <ManualStep
+@@ -208,10 +211,26 @@ const ManualStep = ({
+   );
+ };
+ 
+-const CliStep = ({ data }: { data: StartEnrollmentResponse }) => {
++const CliStep = ({
++  data,
++  presharedKeySet,
++}: {
++  data: StartEnrollmentResponse;
++  presharedKeySet: boolean;
++}) => {
+   const command = `dg enroll -u ${data.enrollment_url} -t ${data.enrollment_token}`;
+   return (
+     <>
++      {presharedKeySet && (
++        <>
++          <InfoBanner
++            variant="warning"
++            icon={IconKind.WarningOutlined}
++            text={m.modal_network_device_psk_cli_version_warning()}
++          />
++          <SizedBox height={ThemeSpacing.Xl} />
++        </>
++      )}
+       <AppText font={TextStyle.TBodySm500}>
+         {m.modal_network_device_cli_step_title()}
+       </AppText>
+@@ -418,6 +437,7 @@ const FormStep = ({
+         setModalState({
+           step: 'cli-finish',
+           cliDevice: enrollment,
++          presharedKey,
+         });
+       } else {
+         const { data: createdDevice } = await addDevice({
+```
+
+---
+
+### Incident Patch 2: `740e25a8` (2026-11-26)
+**Commit Message**: Fix source code archive (#4106)
+
+**File**: `.github/workflows/release.yml` (modified, +8/-1)
+```diff
+@@ -259,7 +259,14 @@ jobs:
+           echo $! > "$RUNNER_TEMP/freebsd.pid"
+ 
+       - name: Build source code archive
+-        run: tar --exclude='.github' --exclude-vcs --exclude-vcs-ignores --xform='s|^\./|defguard-${{ env.VERSION }}/|' --xz -cf ${{ runner.temp }}/defguard-${{ env.VERSION }}.tar.xz .
++        run: |
++          set -euo pipefail
++          ARCHIVE="$RUNNER_TEMP/defguard-$VERSION.tar"
++          tar --exclude='.github' --exclude-vcs --exclude-vcs-ignores --xform="s|^\./|defguard-$VERSION/|" -cf "$ARCHIVE" .
++          # web/dist is gitignored, so the first pass skips it; the release build embeds it.
++          test -f web/dist/index.html
++          tar --xform="s|^|defguard-$VERSION/|" -rf "$ARCHIVE" web/dist
++          xz -9 -T0 "$ARCHIVE"
+ 
+       - name: Upload source code archive
+         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+```
+
+**File**: `Cargo.lock` (modified, +733/-417)
+```diff
+@@ -32,9 +32,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aes"
+-version = "0.9.3"
++version = "0.9.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "35f0f96ce78e38c3dc6d8948aa8163d06385be74000f3c7a95bf1eef35d3ea32"
++checksum = "fc0fc36d7440d015b45468ba08a21e80e056ebbd014c611c6298bb7503e04bd1"
+ dependencies = [
+  "cipher 0.5.2",
+  "cpubits",
+@@ -102,13 +102,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "annotate-snippets"
+-version = "0.12.16"
++version = "0.12.18"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f211a51805bc641f3ad5b7664c77d2547af685cc33b4cd8d31964027a46f13f1"
++checksum = "0258346f92c78dbc5b336b9a5b27c64447aa10643bc64e651db2edb145361564"
+ dependencies = [
+  "anstyle",
+  "memchr",
+- "unicode-width 0.2.2",
++ "unicode-width 0.2.3",
+ ]
+ 
+ [[package]]
+@@ -163,15 +163,24 @@ dependencies = [
+ 
+ [[package]]
+ name = "anyhow"
+-version = "1.0.104"
++version = "1.0.105"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
++checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
++
++[[package]]
++name = "ar_archive_writer"
++version = "0.5.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "523e5e187fff36fcb8d1d19ccf0ca4ca43ec3d158316057f66dc6f72716bc5ec"
++dependencies = [
++ "object",
++]
+ 
+ [[package]]
+ name = "arc-swap"
+-version = "1.9.3"
++version = "1.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "380962b3d93b99642e50b9febf72c071e97e8b32d86eae9cf4ef582bb960ae6e"
++checksum = "84a22b5d51209f6de83d37a0b33d320acb8da88823e42a94c075140708f032a5"
+ dependencies = [
+  "rustversion",
+ ]
+@@ -314,7 +323,7 @@ checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -340,19 +349,19 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
+ 
+ [[package]]
+ name = "aws-lc-rs"
+-version = "1.18.2"
++version = "1.19.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "faac5829c2b74c28f830747e7818ccfb684261b5f48a1118b1e2a13d36dfab13"
++checksum = "048006790404103c488e6c5616b3e7e702a71292aadda08e8f7698a9e0d2eb53"
+ dependencies = [
+  "aws-lc-sys",
+  "zeroize",
+ ]
+ 
+ [[package]]
+ name = "aws-lc-sys"
+-version = "0.46.0"
++version = "0.47.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f1622d8446a2d4b2ce0c7eefc73dd43a99779028d5ee5c2dd8073a658ba8a2bc"
++checksum = "8bfbe32ac36b3c428696ce315464181bc4029d689fd58e3f2a4e58c252242f52"
+ dependencies = [
+  "cc",
+  "cmake",
+@@ -658,25 +667,25 @@ dependencies = [
+ 
+ [[package]]
+ name = "bon"
+-version = "3.10.2"
++version = "3.10.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "214f5df094ce551a10a30ffb9c70243d61f121a3d985a6495933e181dee6a7d2"
++checksum = "a05442cd7005532d0cfedec676b5b9333d2b4c7c3afabe2b1a9ce2742fbe2ee6"
+ dependencies = [
+  "bon-macros",
+ ]
+ 
+ [[package]]
+ name = "bon-macros"
+-version = "3.10.2"
++version = "3.10.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2706da6c749998cc555d04184909608956a69ad3f8ab1a076fbc867b4a3c3ce5"
++checksum = "93833e97ac7c46ba97045afcf247238c27057538fcf2f06344662ddd5f567be6"
+ dependencies = [
+  "darling 0.24.1",
+  "ident_case",
+  "prettyplease 0.3.0",
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -690,9 +699,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "bstr"
+-version = "1.13.1"
++version = "1.14.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6bb31b46c14244e20ee9984b11bf5c992b91fb6939fea616e3512c8baecdbe5f"
++checksum = "a680398c10c7bc0488067c4612226ea905a85f607134b69f3068d505d58c4214"
+ dependencies = [
+  "memchr",
+  "serde_core",
+@@ -709,9 +718,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "bumpalo"
+-version = "3.20.3"
++version = "3.20.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
++checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
+ 
+ [[package]]
+ name = "bytemuck"
+@@ -733,9 +742,9 @@ checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
+ 
+ [[package]]
+ name = "bytes"
+-version = "1.12.1"
++version = "1.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
++checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
+ dependencies = [
+  "serde",
+ ]
+@@ -770,9 +779,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cc"
+-version = "1.9.0"
++version = "1.11.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
++checksum = "02f0e023adb368345ce0
 ```
 
 **File**: `crates/defguard_common/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "defguard_common"
--version = "2.2.0"
-+version = "2.2.1"
- edition.workspace = true
- license-file.workspace = true
- homepage.workspace = true
+@@ -16,7 +16,6 @@ argon2.workspace = true
+ base32.workspace = true
+ base64.workspace = true
+ chrono.workspace = true
+-claims.workspace = true
+ clap.workspace = true
+ ctap-hid-fido2.workspace = true
+ ed25519-dalek.workspace = true
+@@ -58,6 +57,7 @@ openapi = ["dep:utoipa"]
+ test-support = ["tokio/net", "tokio/io-util"]
+ 
+ [dev-dependencies]
++claims.workspace = true
+ 
+ [build-dependencies]
+ vergen-git2 = "10.0"
+```
+
+**File**: `crates/defguard_core/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -94,7 +94,6 @@ ua-parser.workspace = true
+ utoipa = { workspace = true, optional = true }
+ utoipa-swagger-ui = { workspace = true, optional = true }
+ uuid.workspace = true
+-webauthn-authenticator-rs.workspace = true
+ webauthn-rs.workspace = true
+ webauthn-rs-proto.workspace = true
+ x25519-dalek.workspace = true
+```
+
+**File**: `crates/defguard_core/src/handlers/settings.rs` (modified, +6/-21)
+```diff
+@@ -36,9 +36,6 @@ use crate::{
+     events::{ApiEvent, ApiEventType, ApiRequestContext},
+ };
+ 
+-static DEFAULT_NAV_LOGO_URL: &str = "/svg/defguard-nav-logo.svg";
+-static DEFAULT_MAIN_LOGO_URL: &str = "/svg/logo-defguard-white.svg";
+-
+ /// Wrap `PublicSettings` in the control message the proxy manager fans out to every connected
+ /// proxy. Build the payload with [`EnterpriseSettings::edge_public_settings`] or
+ /// [`unlicensed_edge_public_settings`] rather than by hand, so the two cases stay distinguishable.
+@@ -113,13 +110,7 @@ impl From<Settings> for SettingsResponse {
+ ))]
+ pub async fn get_settings(_admin: AdminRole, State(appstate): State<AppState>) -> ApiResult {
+     debug!("Retrieving settings");
+-    if let Some(mut settings) = Settings::get(&appstate.pool).await? {
+-        if settings.nav_logo_url.is_empty() {
+-            settings.nav_logo_url = DEFAULT_NAV_LOGO_URL.into();
+-        }
+-        if settings.main_logo_url.is_empty() {
+-            settings.main_logo_url = DEFAULT_MAIN_LOGO_URL.into();
+-        }
++    if let Some(settings) = Settings::get(&appstate.pool).await? {
+         return Ok(ApiResponse::json(
+             SettingsResponse::from(settings),
+             StatusCode::OK,
+@@ -215,8 +206,8 @@ pub(crate) async fn update_settings(
+     responses(
+         (status = 200, description = "Essential settings.", body = Object, example = json!({
+             "instance_name": "defguard",
+-            "main_logo_url": "/svg/logo-defguard-white.svg",
+-            "nav_logo_url": "/svg/defguard-nav-logo.svg",
++            "main_logo_url": "",
++            "nav_logo_url": "",
+             "wireguard_enabled": true,
+             "webhooks_enabled": true,
+             "worker_enabled": false,
+@@ -227,13 +218,7 @@ pub(crate) async fn update_settings(
+ ))]
+ pub async fn get_settings_essentials(Extension(pool): Extension<PgPool>) -> ApiResult {
+     debug!("Retrieving essential settings");
+-    let mut settings = SettingsEssentials::get_settings_essentials(&pool).await?;
+-    if settings.nav_logo_url.is_empty() {
+-        settings.nav_logo_url = DEFAULT_NAV_LOGO_URL.into();
+-    }
+-    if settings.main_logo_url.is_empty() {
+-        settings.main_logo_url = DEFAULT_MAIN_LOGO_URL.into();
+-    }
++    let settings = SettingsEssentials::get_settings_essentials(&pool).await?;
+ 
+     info!("Retrieved essential settings");
+ 
+@@ -274,8 +259,8 @@ pub(crate) async fn set_default_branding(
+     match settings {
+         Some(mut settings) => {
+             settings.instance_name = "Defguard".into();
+-            settings.nav_logo_url = DEFAULT_NAV_LOGO_URL.into();
+-            settings.main_logo_url = DEFAULT_MAIN_LOGO_URL.into();
++            settings.nav_logo_url = String::new();
++            settings.main_logo_url = String::new();
+             update_current_settings(&appstate.pool, settings.clone()).await?;
+             info!(
+                 "User {} restored default branding settings",
+```
+
+**File**: `crates/defguard_core/src/lib.rs` (modified, +1/-2)
+```diff
+@@ -44,7 +44,7 @@ use defguard_common::{
+ };
+ use defguard_proto::gateway::Configuration;
+ use defguard_version::server::DefguardVersionLayer;
+-use defguard_web_ui::{index, svg, web_asset};
++use defguard_web_ui::{index, web_asset};
+ use events::{ApiEvent, DirectorySyncEvent, LdapSyncEventType};
+ use handlers::{
+     activity_log::{get_activity_log_event, get_activity_log_events},
+@@ -322,7 +322,6 @@ pub fn build_webapp(
+         .route("/{*path}", get(index))
+         .route("/fonts/{*path}", get(web_asset))
+         .route("/assets/{*path}", get(web_asset))
+-        .route("/svg/{*path}", get(svg))
+         .fallback_service(get(handle_404));
+ 
+     // Collect all API routes into a single router so the rate-limiter can be scoped to API routes only
+```
+
+**File**: `crates/defguard_setup/src/migration.rs` (modified, +1/-2)
+```diff
+@@ -36,7 +36,7 @@ use defguard_core::{
+     health_check,
+     version::IncompatibleComponents,
+ };
+-use defguard_web_ui::{index, svg, web_asset};
++use defguard_web_ui::{index, web_asset};
+ use semver::Version;
+ use sqlx::PgPool;
+ use tokio::{
+@@ -103,7 +103,6 @@ pub fn build_migration_webapp(
+         .route("/{*path}", get(index))
+         .route("/fonts/{*path}", get(web_asset))
+         .route("/assets/{*path}", get(web_asset))
+-        .route("/svg/{*path}", get(svg))
+         .nest(
+             "/api/v1",
+             Router::new()
+```
+
+**File**: `crates/defguard_setup/src/setup_server.rs` (modified, +1/-2)
+```diff
+@@ -19,7 +19,7 @@ use defguard_core::{
+     },
+     health_check,
+ };
+-use defguard_web_ui::{index, svg, web_asset};
++use defguard_web_ui::{index, web_asset};
+ use semver::Version;
+ use sqlx::PgPool;
+ use tokio::{net::TcpListener, sync::oneshot::Sender as OneshotSender};
+@@ -48,7 +48,6 @@ pub fn build_setup_webapp(
+         .route("/{*path}", get(index))
+         .route("/fonts/{*path}", get(web_asset))
+         .route("/assets/{*path}", get(web_asset))
+-        .route("/svg/{*path}", get(svg))
+         .nest(
+             "/api/v1",
+             Router::<()>::new()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4111** (2026-11-26): Warn about required dg version for network device preshared key (@jakub-tldr)
+- **PR #4106** (2026-11-26): Fix source code archive (@moubctez)
 - **PR #4102** (2026-11-24): Pipeline fixes (@t-aleksander)
 - **PR #4100** (2026-11-24): Bump version to 2.2.1 (@t-aleksander)
 - **PR #4099** (2026-11-24): Make Client download page consistent with landing page (@t-aleksander)
 - **PR #4093** (2026-11-23): apply new design for network devices modals (@filipslezaklab)
-- **PR #4090** (2026-11-23): consistent UX around copy/download actions (@filipslezaklab)
-- **PR #4089** (2026-11-23): fix lint (@filipslezaklab)
 
 ---
 
@@ -2114,31 +2497,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Warn about required dg version for network device preshared key
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/messages/en/modal.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `279cc5c3`: 2.2.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79d1cfe3`: Warn about required dg version for network device preshared key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/messages/en/modal.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "2.2.1"
+  "modal_network_device_psk_cli_version_warning": "To use a preshared key, please make sure you are using Defguard CLI (dg) version 2.2.2 or newer. Otherwise the device may not be able to connect.",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "2.2.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `279cc5c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79d1cfe3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

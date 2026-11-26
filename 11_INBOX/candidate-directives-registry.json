@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T11:29:15.202Z",
+  "last_updated": "2026-11-26T11:40:01.161Z",
   "directives": [
     {
       "id": "CD-001",
@@ -64655,6 +64655,72 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A66A04-android-stack-v4-keep-a-popped-screen-s-.md",
       "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-CY6M",
+      "directive_title": "place child webviews at their bounds and size them from their room (fix",
+      "source_repo": "tauri-apps/tauri",
+      "source_commit": "c868ce68",
+      "staged_file": "11_INBOX/candidate-directives/CD-CY6M-place-child-webviews-at-their-bounds-and-size-them-from-their-room-fix.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-D1ED",
+      "directive_title": "return cloud target encoding errors",
+      "source_repo": "chaos-mesh/chaos-mesh",
+      "source_commit": "394c7561",
+      "staged_file": "11_INBOX/candidate-directives/CD-D1ED-return-cloud-target-encoding-errors.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-D3BR",
+      "directive_title": "Warn about required dg version for network device preshared key",
+      "source_repo": "DefGuard/defguard",
+      "source_commit": "79d1cfe3",
+      "staged_file": "11_INBOX/candidate-directives/CD-D3BR-warn-about-required-dg-version-for-network-device-preshared-key.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-D53G",
+      "directive_title": "rename Fix_KIKIMR_14259 -> CleanupRowVersionsBelowLowWatermark",
+      "source_repo": "ydb-platform/ydb",
+      "source_commit": "1810e35c",
+      "staged_file": "11_INBOX/candidate-directives/CD-D53G-rename-fix_kikimr_14259-cleanuprowversionsbelowlowwatermark.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-D8TJ",
+      "directive_title": "linux): place child webviews at their bounds and size them from their room (fix",
+      "source_repo": "tauri-apps-tauri-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-D8TJ-linux-place-child-webviews-at-their-bounds-and-size-them-from-their-room-fix.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-D9MW",
+      "directive_title": "selector): return cloud target encoding errors",
+      "source_repo": "chaos-mesh-chaos-mesh-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-D9MW-selector-return-cloud-target-encoding-errors.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
     }
   ]
 }
