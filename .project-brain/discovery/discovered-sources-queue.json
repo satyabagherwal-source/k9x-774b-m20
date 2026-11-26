@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T00:00:04.858Z",
+  "updated_at": "2026-11-26T00:09:39.518Z",
   "stats": {
-    "total_discovered": 9530,
-    "approved_pending_harvest": 9033,
+    "total_discovered": 9534,
+    "approved_pending_harvest": 9037,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9026,
+      "COMMUNITY_AND_EXPERT": 9030,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 151,
       "ENGINEERING_BLOGS": 7,
@@ -206208,6 +206208,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
         "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-0B67CCA4E699": {
+      "id": "SRC-0B67CCA4E699",
+      "url": "https://etcd.example:2379/",
+      "title": "https://etcd.example:2379/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:09:37.925Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-725EE7298491": {
+      "id": "SRC-725EE7298491",
+      "url": "https://sigstore.dev/cosign/sign/v1",
+      "title": "https://sigstore.dev/cosign/sign/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:09:39.345Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-5E80847E5ACD": {
+      "id": "SRC-5E80847E5ACD",
+      "url": "https://slsa.dev/provenance/v0.2",
+      "title": "https://slsa.dev/provenance/v0.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:09:39.432Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-26414A8AACBB": {
+      "id": "SRC-26414A8AACBB",
+      "url": "https://in-toto.io/Statement/v1",
+      "title": "https://in-toto.io/Statement/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:09:39.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
       }
     }
   }

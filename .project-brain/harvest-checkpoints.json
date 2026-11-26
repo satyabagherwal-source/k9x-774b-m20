@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T23:59:22.866Z",
+  "last_updated": "2026-11-26T00:09:33.335Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "20b647839cc17081bbefe2b06b3cf70730657d308e6d669173d353b79b0025ff",
-      "verified_at": "2026-11-25T13:06:00.255Z",
+      "content_hash": "a8640c3f42bb8b18e54abe332be6feebd2e48cdbf52c10d2d7633d671e83dee7",
+      "verified_at": "2026-11-26T00:09:31.116Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T13:06:00.255Z"
+      "last_updated": "2026-11-26T00:09:31.116Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "20d684bf82e880e1728373de318b1e30a35a59187cbce68f843fba50afe63a68",
-      "verified_at": "2026-11-24T23:50:57.845Z",
+      "content_hash": "1299bfdf8044c91e9bf5596d7559a0577a3388749f14354cb63743f962ee103d",
+      "verified_at": "2026-11-26T00:09:28.224Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:50:57.845Z"
+      "last_updated": "2026-11-26T00:09:28.224Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "2eb9e5f50a9cf3ca75af40c8ffffe6a5cce4deb024c087cc77272c17d36870c6",
-      "verified_at": "2026-11-24T22:42:37.215Z",
+      "content_hash": "8268516e92726b2bbd9aabd439c81bb0970062faca9317922a107e345096424f",
+      "verified_at": "2026-11-26T00:09:33.334Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T22:42:37.215Z"
+      "last_updated": "2026-11-26T00:09:33.334Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -17976,14 +17976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-      "content_hash": "7950e424f9c7d33c1dd4cd6a5f900f71e56ed28a4df707dc40a179805ec4e631",
-      "verified_at": "2026-11-22T02:53:11.675Z",
+      "content_hash": "3624385b887f0cccef8d5ee7bc2d0e19931b0b00198eba937c544d0bebcf2aff",
+      "verified_at": "2026-11-26T00:09:18.316Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T02:53:11.675Z"
+      "last_updated": "2026-11-26T00:09:18.316Z"
     },
     "ricursiveAI/Ripple-65B-Preview": {
       "repository": "ricursiveAI/Ripple-65B-Preview",

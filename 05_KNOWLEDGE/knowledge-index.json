@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T00:00:07.001Z",
+  "last_updated": "2026-11-26T00:09:40.463Z",
   "total_verified_learnings": 9121,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25555,
+  "total_items": 25562,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215731,8 +215731,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "fe49e548",
-      "content_hash": "2eb9e5f50a9cf3ca75af40c8ffffe6a5cce4deb024c087cc77272c17d36870c6",
+      "source_version": "9af55fa5",
+      "content_hash": "8268516e92726b2bbd9aabd439c81bb0970062faca9317922a107e345096424f",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -215765,6 +215765,11 @@
           "number": 10374,
           "title": "fold four UINT4 distance sums in AVX-512 lanes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10566,
+          "title": "preserve BufferStorage consistency and staged budget recovery",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215772,7 +215777,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T22:42:36.907Z",
+      "verified_at": "2026-11-26T00:09:33.006Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215826,10 +215831,10 @@
       "relative_path": "08_VERIFICATION/alibaba-zvec-verification-protocol-empirical-defect-shield-for-alibaba-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for alibaba/zvec",
       "repository": "alibaba/zvec",
-      "source_version": "fe49e548",
-      "content_hash": "b1a57c1e27aeb8d1eb7319d9b54a1758a43a6dc371fd50a0c00552eafd51ce87",
+      "source_version": "9af55fa5",
+      "content_hash": "ff26598f9100e3092fb95b0e31773c517f7da0b39f5320ae16e549b65686a184",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:42:37.983Z"
+      "persisted_at": "2026-11-26T00:09:34.188Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
@@ -217497,7 +217502,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
       "source_version": "hf-nvidia-nvidia-nemotronlabs-re-use",
-      "content_hash": "7950e424f9c7d33c1dd4cd6a5f900f71e56ed28a4df707dc40a179805ec4e631",
+      "content_hash": "3624385b887f0cccef8d5ee7bc2d0e19931b0b00198eba937c544d0bebcf2aff",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
       "promoted_rules": [],
@@ -217506,7 +217511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T02:53:11.310Z",
+      "verified_at": "2026-11-26T00:09:17.972Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217523,9 +217528,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-NemotronLabs-RE-USE Core Invariants",
       "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
       "source_version": "hf-nvidia-nvidia-nemotronlabs-re-use",
-      "content_hash": "b1d0442c3188fd123563e267b72940abc00fda5b2d18b9c3de9a620a39fa51e5",
+      "content_hash": "1fece616450a29d45df3c5332d91d61a6c0aa4d8df3698c8050d7833eb1104b0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T02:53:11.912Z"
+      "persisted_at": "2026-11-26T00:09:18.637Z"
     },
     "learn-github-streetwriters-notesnook": {
       "learning_id": "learn-github-streetwriters-notesnook",
@@ -217712,9 +217717,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotronlabs-re-use-learnings Core Invariants",
       "repository": "hf-nvidia-nvidia-nemotronlabs-re-use-learnings",
       "source_version": "HEAD",
-      "content_hash": "774f694bd72fe99fef0162e8dfa464172d4a23b2092c94e2aecb8b9af68d4410",
+      "content_hash": "bf026a7d49cd82476bec4da4e05039d733b2f618b939ffd8c3bfcffc0ce530aa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T02:53:23.530Z"
+      "persisted_at": "2026-11-26T00:09:37.531Z"
     },
     "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants",
@@ -255861,8 +255866,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "063f358d",
-      "content_hash": "20d684bf82e880e1728373de318b1e30a35a59187cbce68f843fba50afe63a68",
+      "source_version": "7a53df4a",
+      "content_hash": "1299bfdf8044c91e9bf5596d7559a0577a3388749f14354cb63743f962ee103d",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -255885,6 +255890,11 @@
           "number": 9485,
           "title": "use generation on Valid condition",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10564,
+          "title": "remove RBAC phase temp directory",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -255892,7 +255902,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:50:57.513Z",
+      "verified_at": "2026-11-26T00:09:27.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255934,10 +255944,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-architecture-intelligence-clastix-kamaji-core-invariants.md",
       "title": "Architecture Intelligence: clastix/kamaji Core Invariants",
       "repository": "clastix/kamaji",
-      "source_version": "063f358d",
-      "content_hash": "e46cb33eeb96fd67e1bbd92cd557e30f96f9ebe3967f84c7f3854e7f3f458267",
+      "source_version": "7a53df4a",
+      "content_hash": "9938e0d14fec55abb56c40f1c0074a991e781ce9f1e95b013971098e2f37473e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T23:50:58.407Z"
+      "persisted_at": "2026-11-26T00:09:28.820Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji",
@@ -255946,10 +255956,10 @@
       "relative_path": "08_VERIFICATION/clastix-kamaji-verification-protocol-empirical-defect-shield-for-clastix-kamaji.md",
       "title": "Verification Protocol: Empirical Defect Shield for clastix/kamaji",
       "repository": "clastix/kamaji",
-      "source_version": "063f358d",
-      "content_hash": "2d37bad474a8647d35b36c461f8ecc294d1f2048a5085322c8dbdf1d9add9e80",
+      "source_version": "7a53df4a",
+      "content_hash": "fff3774e2845f2358dff71385e7c44b77a6aa89be53f5f82741a5f05e354c1c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:50:58.671Z"
+      "persisted_at": "2026-11-26T00:09:29.076Z"
     },
     "candidate_directive-datastore-exclusive-etcd-datastore": {
       "item_id": "candidate_directive-datastore-exclusive-etcd-datastore",
@@ -255971,9 +255981,9 @@
       "title": "Architecture Intelligence: clastix-kamaji-learnings Core Invariants",
       "repository": "clastix-kamaji-learnings",
       "source_version": "HEAD",
-      "content_hash": "cfda9230f8db01d685a8e641506419daaf4ae75b75f361c36ddacb56da7281bb",
+      "content_hash": "b07d625a05e83d230649b9765ab0cea7af1dd46466be6500b394d5b2788f8758",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T23:51:08.988Z"
+      "persisted_at": "2026-11-26T00:09:38.536Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji-learnings",
@@ -255983,9 +255993,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clastix-kamaji-learnings",
       "repository": "clastix-kamaji-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4aba4c82f197f895e21ef4dc92967d284252054b8463337e9274e60b5fcf189",
+      "content_hash": "39bbe136da926903b572a9928484ab30a744d14e4f4734a641b8dbebbaa087c3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:51:09.224Z"
+      "persisted_at": "2026-11-26T00:09:38.789Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
@@ -263636,10 +263646,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "repository": "alibaba/zvec",
-      "source_version": "fe49e548",
-      "content_hash": "e0b11ec77b6f1acd8e32357e400c1eb8fea41aa44280a05b0bbdb88a4243e6a9",
+      "source_version": "9af55fa5",
+      "content_hash": "872c7e58897a386f20bcc21cb34f7f2c4c16fc028e5eeeb026c83bb729507477",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T22:42:37.751Z"
+      "persisted_at": "2026-11-26T00:09:33.934Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -265977,8 +265987,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "e70053f5",
-      "content_hash": "20b647839cc17081bbefe2b06b3cf70730657d308e6d669173d353b79b0025ff",
+      "source_version": "fd42a8ca",
+      "content_hash": "a8640c3f42bb8b18e54abe332be6feebd2e48cdbf52c10d2d7633d671e83dee7",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -266036,6 +266046,11 @@
           "number": 10531,
           "title": "Update sigstore-go to v1.4.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10565,
+          "title": "Have cosign verify require https://sigstore.dev/cosign/sign/v1 predicateType",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -266043,7 +266058,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T13:05:59.942Z",
+      "verified_at": "2026-11-26T00:09:30.777Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266085,10 +266100,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "repository": "sigstore/cosign",
-      "source_version": "e70053f5",
-      "content_hash": "3952db5630e3729b53ac77822e4b79a9de9a849365747e15be831888c74dbeeb",
+      "source_version": "fd42a8ca",
+      "content_hash": "e3910f6fe72d100d2964d1775c9b96658c43c930db4911e9be8417a0534d2be0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T13:06:00.829Z"
+      "persisted_at": "2026-11-26T00:09:31.720Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign",
@@ -266097,10 +266112,10 @@
       "relative_path": "08_VERIFICATION/sigstore-cosign-verification-protocol-empirical-defect-shield-for-sigstore-cosig.md",
       "title": "Verification Protocol: Empirical Defect Shield for sigstore/cosign",
       "repository": "sigstore/cosign",
-      "source_version": "e70053f5",
-      "content_hash": "0e962706947f5a8844860d8ae60047af355f87f5251d636cd5b4be6f5e53de85",
+      "source_version": "fd42a8ca",
+      "content_hash": "c6c2d747b45a8dab950d20231b22e8f78d2a7a5b08473fe8f4af2e8a10d62eef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:06:01.065Z"
+      "persisted_at": "2026-11-26T00:09:32.021Z"
     },
     "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized": {
       "item_id": "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized",
@@ -266146,9 +266161,9 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "15fecb135be59696185e8df5614e4d9bf2c7de8b10fd9ca993713b2e74482d5d",
+      "content_hash": "39e792b28c5fcb2a6df8acd3ef1462e4b27168e167f6fa92c9c231228323051d",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T13:06:10.310Z"
+      "persisted_at": "2026-11-26T00:09:40.187Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings",
@@ -266158,9 +266173,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sigstore-cosign-learnings",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "f116eb6f03774183e81f725bdc83ae7759892c852d67ee0a726eec87b4bbf264",
+      "content_hash": "d5f303bc1c3d9e70bb89d722a6258e798d1355ce543ba6b74e6bb97c9618e835",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:06:10.541Z"
+      "persisted_at": "2026-11-26T00:09:40.463Z"
     },
     "rule-8811": {
       "learning_id": "rule-8811",
@@ -349821,6 +349836,96 @@
       "content_hash": "b9a5195d365eb4bf274f92b1247fd6884c676942cf836cd257e585ea6bacbd80",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T00:00:05.521Z"
+    },
+    "rule-10564": {
+      "learning_id": "rule-10564",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10564,
+      "title": "remove RBAC phase temp directory",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "7a53df4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T00:09:27.887Z"
+    },
+    "candidate_directive-remove-rbac-phase-temp-directory": {
+      "item_id": "candidate_directive-remove-rbac-phase-temp-directory",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P817-remove-rbac-phase-temp-directory.md",
+      "title": "remove RBAC phase temp directory",
+      "repository": "clastix/kamaji",
+      "source_version": "7a53df4a",
+      "content_hash": "4547353cca19d8d8919bf785fb3f967a7f558b020591528695cac10ce85cd9d5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T00:09:28.556Z"
+    },
+    "rule-10565": {
+      "learning_id": "rule-10565",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10565,
+      "title": "Have cosign verify require https://sigstore.dev/cosign/sign/v1 predicateType",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "fd42a8ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T00:09:30.777Z"
+    },
+    "candidate_directive-have-cosign-verify-require-https-sigstore-dev-cosign-sign-v1-predicatetype": {
+      "item_id": "candidate_directive-have-cosign-verify-require-https-sigstore-dev-cosign-sign-v1-predicatetype",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PGT5-have-cosign-verify-require-https-sigstore-dev-cosign-sign-v1-predicatetype.md",
+      "title": "Have cosign verify require https://sigstore.dev/cosign/sign/v1 predicateType",
+      "repository": "sigstore-cosign-learnings",
+      "source_version": "HEAD",
+      "content_hash": "67eb4803cc206dfaf0158271ba15a81fa2daa31fe8449efce38c103ef9680d1e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T00:09:39.936Z"
+    },
+    "rule-10566": {
+      "learning_id": "rule-10566",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10566,
+      "title": "preserve BufferStorage consistency and staged budget recovery",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "9af55fa5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T00:09:33.006Z"
+    },
+    "candidate_directive-preserve-bufferstorage-consistency-and-staged-budget-recovery": {
+      "item_id": "candidate_directive-preserve-bufferstorage-consistency-and-staged-budget-recovery",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PBZH-preserve-bufferstorage-consistency-and-staged-budget-recovery.md",
+      "title": "preserve BufferStorage consistency and staged budget recovery",
+      "repository": "alibaba/zvec",
+      "source_version": "9af55fa5",
+      "content_hash": "d22f9baed446afdf9efd8d83f91d82f4cec18d9ce0c2a2656b32988d5b516162",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T00:09:33.684Z"
+    },
+    "candidate_directive-kubeadm-remove-rbac-phase-temp-directory": {
+      "item_id": "candidate_directive-kubeadm-remove-rbac-phase-temp-directory",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PFJ8-kubeadm-remove-rbac-phase-temp-directory.md",
+      "title": "kubeadm): remove RBAC phase temp directory",
+      "repository": "clastix-kamaji-learnings",
+      "source_version": "HEAD",
+      "content_hash": "393096aad3c9cbbfa331a0b17a52afdd58ba7d35b4faccacf45f66b7b35570c9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T00:09:38.277Z"
     }
   },
   "ai-builder-brain": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:00:06.482Z",
+  "last_updated": "2026-11-26T00:09:39.936Z",
   "directives": [
     {
       "id": "CD-001",
@@ -62188,6 +62188,59 @@
       "source_repo": "zama-ai-tfhe-rs",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CAE1B2-remove-in-python-ci-parser-the-slab-toml.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-P817",
+      "directive_title": "remove RBAC phase temp directory",
+      "source_repo": "clastix/kamaji",
+      "source_commit": "7a53df4a",
+      "staged_file": "11_INBOX/candidate-directives/CD-P817-remove-rbac-phase-temp-directory.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-PGT5",
+      "directive_title": "Have cosign verify require https://sigstore.dev/cosign/sign/v1 predicateType",
+      "source_repo": "sigstore-cosign-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PGT5-have-cosign-verify-require-https-sigstore-dev-cosign-sign-v1-predicatetype.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-PBZH",
+      "directive_title": "preserve BufferStorage consistency and staged budget recovery",
+      "source_repo": "alibaba/zvec",
+      "source_commit": "9af55fa5",
+      "staged_file": "11_INBOX/candidate-directives/CD-PBZH-preserve-bufferstorage-consistency-and-staged-budget-recovery.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-PFJ8",
+      "directive_title": "kubeadm): remove RBAC phase temp directory",
+      "source_repo": "clastix-kamaji-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PFJ8-kubeadm-remove-rbac-phase-temp-directory.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-C4BA74",
+      "directive_title": "Have cosign verify require https://sigstore.dev/cosign/sign/v1 predicateType",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sigstore-cosign",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C4BA74-have-cosign-verify-require-https-sigstor.md",
       "staged_date": "2026-11-26"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T00:00:06.740Z",
+  "last_updated": "2026-11-26T00:09:40.187Z",
   "total_records": 2693,
   "domains": {
     "A": {
@@ -11586,8 +11586,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-NemotronLabs-RE-USE Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotronlabs-re-use-research-knowledge-intelligence-nvidia-nvid.md",
       "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
-      "content_hash": "b1d0442c3188fd123563e267b72940abc00fda5b2d18b9c3de9a620a39fa51e5",
-      "created_at": "2026-11-22T02:53:11.912Z"
+      "content_hash": "1fece616450a29d45df3c5332d91d61a6c0aa4d8df3698c8050d7833eb1104b0",
+      "created_at": "2026-11-26T00:09:18.637Z"
     },
     "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants",
@@ -11646,8 +11646,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotronlabs-re-use-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-nvidia-nvidia-nemotronlabs-re-use-learnings",
-      "content_hash": "774f694bd72fe99fef0162e8dfa464172d4a23b2092c94e2aecb8b9af68d4410",
-      "created_at": "2026-11-22T02:53:23.530Z"
+      "content_hash": "bf026a7d49cd82476bec4da4e05039d733b2f618b939ffd8c3bfcffc0ce530aa",
+      "created_at": "2026-11-26T00:09:37.531Z"
     },
     "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants",
@@ -23615,8 +23615,8 @@
       "title": "Architecture Intelligence: clastix/kamaji Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-architecture-intelligence-clastix-kamaji-core-invariants.md",
       "repository": "clastix/kamaji",
-      "content_hash": "e46cb33eeb96fd67e1bbd92cd557e30f96f9ebe3967f84c7f3854e7f3f458267",
-      "created_at": "2026-11-24T23:50:58.407Z"
+      "content_hash": "9938e0d14fec55abb56c40f1c0074a991e781ce9f1e95b013971098e2f37473e",
+      "created_at": "2026-11-26T00:09:28.820Z"
     },
     "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants",
@@ -23624,8 +23624,8 @@
       "title": "Architecture Intelligence: clastix-kamaji-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-learnings-architecture-intelligence-clastix-kamaji-learnings-core.md",
       "repository": "clastix-kamaji-learnings",
-      "content_hash": "cfda9230f8db01d685a8e641506419daaf4ae75b75f361c36ddacb56da7281bb",
-      "created_at": "2026-11-24T23:51:08.988Z"
+      "content_hash": "b07d625a05e83d230649b9765ab0cea7af1dd46466be6500b394d5b2788f8758",
+      "created_at": "2026-11-26T00:09:38.536Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
@@ -25068,8 +25068,8 @@
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "repository": "alibaba/zvec",
-      "content_hash": "e0b11ec77b6f1acd8e32357e400c1eb8fea41aa44280a05b0bbdb88a4243e6a9",
-      "created_at": "2026-11-24T22:42:37.751Z"
+      "content_hash": "872c7e58897a386f20bcc21cb34f7f2c4c16fc028e5eeeb026c83bb729507477",
+      "created_at": "2026-11-26T00:09:33.934Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -25479,8 +25479,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "3952db5630e3729b53ac77822e4b79a9de9a849365747e15be831888c74dbeeb",
-      "created_at": "2026-11-25T13:06:00.829Z"
+      "content_hash": "e3910f6fe72d100d2964d1775c9b96658c43c930db4911e9be8417a0534d2be0",
+      "created_at": "2026-11-26T00:09:31.720Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -25497,8 +25497,8 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
       "repository": "sigstore-cosign-learnings",
-      "content_hash": "15fecb135be59696185e8df5614e4d9bf2c7de8b10fd9ca993713b2e74482d5d",
-      "created_at": "2026-11-25T13:06:10.310Z"
+      "content_hash": "39e792b28c5fcb2a6df8acd3ef1462e4b27168e167f6fa92c9c231228323051d",
+      "created_at": "2026-11-26T00:09:40.187Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",

@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "e70053f5",
+    "sourceVersion": "fd42a8ca",
     "license": "Apache-2.0",
-    "contentHash": "20b647839cc17081bbefe2b06b3cf70730657d308e6d669173d353b79b0025ff",
-    "lastHarvestedAt": "2026-11-25T13:06:00.235Z",
+    "contentHash": "a8640c3f42bb8b18e54abe332be6feebd2e48cdbf52c10d2d7633d671e83dee7",
+    "lastHarvestedAt": "2026-11-26T00:09:31.093Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "063f358d",
+    "sourceVersion": "7a53df4a",
     "license": "Apache-2.0",
-    "contentHash": "20d684bf82e880e1728373de318b1e30a35a59187cbce68f843fba50afe63a68",
-    "lastHarvestedAt": "2026-11-24T23:50:57.783Z",
+    "contentHash": "1299bfdf8044c91e9bf5596d7559a0577a3388749f14354cb63743f962ee103d",
+    "lastHarvestedAt": "2026-11-26T00:09:28.202Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "fe49e548",
+    "sourceVersion": "9af55fa5",
     "license": "Apache-2.0",
-    "contentHash": "2eb9e5f50a9cf3ca75af40c8ffffe6a5cce4deb024c087cc77272c17d36870c6",
-    "lastHarvestedAt": "2026-11-24T22:42:37.195Z",
+    "contentHash": "8268516e92726b2bbd9aabd439c81bb0970062faca9317922a107e345096424f",
+    "lastHarvestedAt": "2026-11-26T00:09:33.312Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -11945,8 +11945,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
     "sourceVersion": "hf-nvidia-nvidia-nemotronlabs-re-use",
     "license": "Open-Source",
-    "contentHash": "7950e424f9c7d33c1dd4cd6a5f900f71e56ed28a4df707dc40a179805ec4e631",
-    "lastHarvestedAt": "2026-11-22T02:53:11.664Z",
+    "contentHash": "3624385b887f0cccef8d5ee7bc2d0e19931b0b00198eba937c544d0bebcf2aff",
+    "lastHarvestedAt": "2026-11-26T00:09:18.294Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use"
   },
   "hf-ricursiveai-ripple-65b-preview": {

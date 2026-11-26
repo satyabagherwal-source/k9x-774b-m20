@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T23:51:08.608Z",
+  "timestamp": "2026-11-26T00:09:38.117Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clastix-kamaji-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clastix-kamaji-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T23:51:08.608Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T00:09:38.117Z`  
 > **Learning ID**: `LEARN-EVO-clastix-kamaji-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `063f358d`  
+> **Source Version**: `7a53df4a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T23:50:57.120Z  
+> **Timestamp**: 2026-11-26T00:09:26.597Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:50:57.113Z  
+> **Harvest Timestamp**: 2026-11-26T00:09:26.589Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -771,272 +771,150 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3cc809ab` (2026-11-24)
-**Commit Message**: docs(guides): run tenant control planes under the restricted pod security standard (#1432)
-
-**File**: `docs/content/guides/pod-security-restricted.md` (added, +97/-0)
-```diff
-@@ -0,0 +1,97 @@
-+# Pod Security Standards
-+
-+A Tenant Control Plane runs as a `Deployment` in the management cluster. When its namespace enforces the `restricted` [Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/), for example on a management cluster shared by several teams, every container of that Deployment must comply, or the Pods are rejected.
-+
-+Kamaji doesn't set any security context by default. This guide shows the fields to set on the `TenantControlPlane` so that its Pods pass the `restricted` profile.
-+
-+## Example
-+
-+The namespace enforces `restricted`:
-+
-+```bash
-+kubectl create namespace tenant-a
-+kubectl label namespace tenant-a pod-security.kubernetes.io/enforce=restricted
-+```
-+
-+The `TenantControlPlane` sets a security context for the Pod, for each control plane container, and for the Konnectivity server:
-+
-+```yaml
-+apiVersion: kamaji.clastix.io/v1alpha1
-+kind: TenantControlPlane
-+metadata:
-+  name: tenant-a
-+  namespace: tenant-a
-+spec:
-+  kubernetes:
-+    version: v1.36.3
-+    kubelet:
-+      cgroupfs: systemd
-+  networkProfile:
-+    port: 6443
-+  controlPlane:
-+    service:
-+      serviceType: LoadBalancer
-+    deployment:
-+      replicas: 1
-+      podSecurityContext:
-+        runAsNonRoot: true
-+        runAsUser: 65532
-+        runAsGroup: 65532
-+        fsGroup: 65532
-+        seccompProfile:
-+          type: RuntimeDefault
-+      containerSecurityContexts:
-+        apiServer:
-+          allowPrivilegeEscalation: false
-+          capabilities:
-+            drop: ["ALL"]
-+            add: ["NET_BIND_SERVICE"]
-+        controllerManager:
-+          allowPrivilegeEscalation: false
-+          capabilities:
-+            drop: ["ALL"]
-+        scheduler:
-+          allowPrivilegeEscalation: false
-+          capabilities:
-+            drop: ["ALL"]
-+  addons:
-+    coreDNS: {}
-+    kubeProxy: {}
-+    konnectivity:
-+      server:
-+        port: 8132
-+        securityContext:
-+          allowPrivilegeEscalation: false
-+          capabilities:
-+            drop: ["ALL"]
-+```
-+
-+- The upstream control plane images run as user `0` (root), so `runAsNonRoot: true` needs a numeric non-root `runAsUser`.
-+- `seccompProfile` is set once for the Pod and applies to every container.
-+
-+## Why the API server keeps `NET_BIND_SERVICE`
-+
-+The `kube-apiserver` binary in the upstream image is shipped with the file capability `cap_net_bind_service=ep`. When a container drops every capability and sets `allowPrivilegeEscalation: false`, the kernel refuses to execute a binary that carries a file capability outside the container's bounding set. The container then exits immediately with:
-+
-+```
-+exec /usr/local/bin/kube-apiserver: operation not permitted
-+```
-+
-+The `restricted` profile allows adding back exactly one capability, `NET_BIND_SERVICE`, which is what the `apiServer` security context above does. The controller manager and the scheduler binaries carry no file capability and run with every capability dropped.
-+
-+## Verify a namespace
-+
-+A server-side dry run shows which running Pods of a namespace would violate the profile, without changing the namespace:
-+
-+```bash
-+kubectl label --dry-run=server --overwrite namespace tenant-a \
-+  pod-security.kubernetes.io/enforce=restricted
-+```
-+
-+Every non-compliant Pod is listed as a warning. No warning means the Tenant Control Plane already complies.
-+
-+## Limitations
-+
-+- **Kine datastores.** With a MySQL, PostgreSQL or NATS `DataStore`, the Pod also runs the `kine` container and the `chmod` init container. `containerSecurityContexts` has no field for them, so these Tenant Control Planes can't comply with `restricted` yet. The example above uses an etcd `DataStore`.
-+- **Additional containers.** Containers added with `additionalContainers` or `additionalInitContainers` must set their own `securityContext`.
-+- **Resource quotas.** The default `RollingUpdate` strategy runs the old and the new Pod side by side during an update. In a namespace with a tight `ResourceQuota`, the new Pod can be rejected for exceeding the quota. Setting `spec.controlPlane.deployment.strategy.type: Recreate` avoids this, at the cost of a short API server downtime during updates.
-```
-
-**File**: `docs/mkdocs.yml` (modified, +1/-0)
-```diff
-@@ -77,6 +77,7 @@ nav:
-   - guides/certs-lifecycle.md
-   - guides/pausing.md
-   - guides/write-permissions.md
-+  - guides/pod-security-restricted.md
-   - guides/datastore-migration.md
-   - guides/datastore-overrides.md
-   - guides/gitops.md
-```
-
----
-
-### Incident Patch 2: `063f358d` (2026-11-24)
-**Commit Message**: fix(kubeadm): write RBAC phase kubeconfigs as 0600 (#1438)
+### Incident Patch 1: `7a53df4a` (2026-11-25)
+**Commit Message**: fix(kubeadm): remove RBAC phase temp directory (#1437)
 
 The cluster-admin RBAC phase writes the admin and super-admin
-kubeconfig files with os.ModePerm (0777). They carry cluster-admin
-client credentials of the Tenant Control Plane and are only read
-back by the same process.
+kubeconfig files into a directory created with os.MkdirTemp, and
+cleans it up with os.Remove. os.Remove only deletes empty
+directories, so the call fails and the error is discarded: the
+directory and both files are left behind at every run.
 
-Write them as 0600, like the CA files of the same flow.
+The phase has no checksum, so it runs at every reconciliation of
+the TenantControlPlane. With the chart mounting /tmp as a
+memory-backed emptyDir, the leftovers are charged to the pod memory
+and survive container restarts, until the controller is OOM killed.
+
+Use os.RemoveAll and cover it with a test.
 
 Signed-off-by: 박범균 <[REDACTED_EMAIL]>
 Co-authored-by: 박범균 <[REDACTED_EMAIL]>
 
 **File**: `internal/resources/kubeadm_phases.go` (modified, +1/-1)
 ```diff
-@@ -200,7 +200,7 @@ func (r *KubeadmPhase) GetKubeadmFunction(ctx context.Context, tcp *kamajiv1alph
- 					return nil, err
- 				}
- 
--				_ = os.WriteFile(fmt.Sprintf("%s/%s", tmp, i), kubeconfigValue, os.ModePerm)
-+				_ = os.WriteFile(fmt.Sprintf("%s/%s", tmp, i), kubeconfigValue, os.FileMode(0o600))
+@@ -180,7 +180,7 @@ func (r *KubeadmPhase) GetKubeadmFunction(ctx context.Context, tcp *kamajiv1alph
+ 				return nil, err
  			}
  
- 			localAPIEndpoint := kubeadmapi.APIEndpoint{
+-			defer func() { _ = os.Remove(tmp) }()
++			defer func() { _ = os.RemoveAll(tmp) }()
+ 
+ 			var caSecret corev1.Secret
+ 			if err = r.Client.Get(ctx, types.NamespacedName{Name: tcp.Status.Certificates.CA.SecretName, Namespace: tcp.Namespace}, &caSecret); err != nil {
 ```
 
----
-
-### Incident Patch 3: `1a47e723` (2026-11-24)
-**Commit Message**: fix(api): default networkProfile so its port default applies (#1433)
-
-**File**: `api/v1alpha1/networkprofile_types_test.go` (modified, +42/-0)
+**File**: `internal/resources/kubeadm_phases_test.go` (added, +100/-0)
 ```diff
-@@ -10,6 +10,7 @@ import (
- 	. "github.com/onsi/gomega"
- 	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
- )
- 
- var _ = Describe("NetworkProfile validation", func() {
-@@ -50,6 +51,47 @@ var _ = Describe("NetworkProfile validation", func() {
- 		}
- 	})
- 
-+	Context("defaults", func() {
-+		// A typed client always sends networkProfile (a struct is never omitted),
-+		// so the object is built as YAML users write it: without networkProfile.
-+		// Before networkProfile defaulted to {}, ClusterIP and NodePort were rejected
-+		// by the CEL rules ("no such key: networkProfile") and LoadBalancer was
-+		// accepted with no port, leaving a Service with port 0.
-+		DescribeTable("defaults networkProfile when it is omitted",
-+			func(serviceType ServiceType) {
-+				obj := &unstructured.Unstructured{Object: map[string]any{
-+					"apiVersion": GroupVersion.String(),
-+					"kind":       "TenantControlPlane",
-+					"metadata": map[string]any{
-+						"generateName": "tcp-network-",
-+						"namespace":    "default",
-+					},
-+					"spec": map[string]any{
-+						"controlPlane": map[string]any{
-+							"service": map[string]any{"serviceType": string(serviceType)},
-+						},
-+						"kubernetes": map[string]any{
-+							"version": "v1.36.3",
-+							"kubelet": map[string]any{"cgroupfs": "systemd"},
-+						},
-+					},
-+				}}
-+				Expect(k8sClient.Create(ctx, obj)).To(Succeed())
-+				DeferCleanup(func() {
-+					Expect(k8sClient.Delete(ctx, obj)).To(Succeed())
-+				})
+@@ -0,0 +1,100 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
 +
-+				port, found, err := unstructured.NestedInt64(obj.Object, "spec", "networkProfile", "port")
-+				Expect(err).NotTo(HaveOccurred())
-+				Expect(found).To(BeTrue(), "networkProfile.port was not defaulted")
-+				Expect(port).To(Equal(int64(6443)))
-+			},
-+			Entry("ClusterIP", ServiceTypeClusterIP),
-+			Entry("NodePort", ServiceTypeNodePort),
-+			Entry("LoadBalancer", ServiceTypeLoadBalancer),
-+		)
++package resources
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
++
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	k8sfake "k8s.io/client-go/kubernetes/fake"
++	kubeadmconstants "k8s.io/kubernetes/cmd/kubeadm/app/constants"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++
++	"github.com/clastix/kamaji/api/v1alpha1"
++	"github.com/clastix/kamaji/internal/kubeadm"
++)
++
++// TestClusterAdminRBACPhaseRemovesTemporaryDirectory verifies that the
++// cluster-admin RBAC phase leaves nothing behind in the temporary directory.
++// The phase has no checksum, so it runs at every reconciliation, and it writes
++// the admin and super-admin kubeconfig files there: anything left over piles
++// up for the lifetime of the pod.
++func TestClusterAdminRBACPhaseRemovesTemporaryDirectory(t *testing.T) {
++	pkiDir := filepath.Join(t.TempDir(), "pki")
++	workDir := t.TempDir()
++	// os.MkdirTemp("", ...) resolves the base directory through TMPDIR.
++	t.Setenv("TMPDIR", workDir)
++
++	tcp := &v1alpha1.TenantControlPlane{}
++	tcp.SetName("test-tcp")
++	tcp.SetNamespace("default")
++	tcp.SetUID("7c0f8a52-6a6c-4b55-9f0e-3f6f2d1c9b11")
++	tcp.Spec.NetworkProfile.Port = 6443
++	tcp.Status.Certificates.CA.SecretName = "test-tcp-ca"
++
++	config, err := kubeadm.CreateKubeadmInitConfiguration(kubeadm.Parameters{
++		TenantControlPlaneName:          tcp.GetName(),
++		TenantControlPlaneNamespace:     tcp.GetNamespace(),
++		TenantControlPlaneEndpoint:      "1.2.3.4:6443",
++		TenantControlPlaneAddress:       "1.2.3.4",
++		TenantControlPlanePort:          6443,
++		TenantControlPlaneClusterDomain: "cluster.local",
++		TenantControlPlanePodCIDR:       []string{"10.244.0.0/16"},
++		TenantControlPlaneServiceCIDR:   []string{"10.96.0.0/12"},
++		TenantControlPlaneVersion:       "v1.34.0",
++		ETCDs:                           []string{"https://etcd.example:2379"},
 +	})
++	if err != nil {
++		t.Fatalf("creating kubeadm configuration: %v", err)
++	}
 +
- 	Context("serviceCidr", func() {
- 		It("allows creation with the default IPv4 CIDR", func() {
- 			tcp.Spec.NetworkProfile.ServiceCIDR = "10.96.0.0/16"
-```
-
-**File**: `api/v1alpha1/tenantcontrolplane_types.go` (modified, +1/-0)
-```diff
-@@ -584,6 +584,7 @@ type TenantControlPlaneSpec struct {
- 	// Kubernetes specification for tenant control plane
- 	Kubernetes KubernetesSpec `json:"kubernetes"`
- 	// NetworkProfile specifies how the network is
-+	//+kubebuilder:default={}
- 	NetworkProfile NetworkProfileSpec `json:"networkProfile,omitempty"`
- 	// Addons contain which addons are enabled
- 	Addons AddonsSpec `json:"addons,omitempty"`
-```
-
-**File**: `charts/kamaji-crds/hack/kamaji.clastix.io_tenantcontrolplanes_spec.yaml` (modified, +1/-0)
-```diff
-@@ -8915,6 +8915,7 @@ versions:
-                   - version
-                 type: object
-               networkProfile:
-+                default: {}
-                 description: NetworkProfile specifies how the network is
-                 properties:
-                   address:
-```
-
-**File**: `charts/kamaji/crds/kamaji.clastix.io_tenantcontrolplanes.yaml` (modified, +1/-0)
-```diff
-@@ -8923,6 +8923,7 @@ spec:
-                     - version
-                   type: object
-                 networkProfile:
-+                  default: {}
-                   description: NetworkProfile specifies how the network is
-                   properties:
-                     address:
-```
-
-**File**: `docs/content/reference/api.md` (modified, +2/-0)
-```diff
-@@ -33549,6 +33549,8 @@ DataStoreUsername by concatenating the namespace and name of the TenantControlPl
-         <td>object</td>
-         <td>
-           NetworkProfile specifies how the network is<br/>
-+          <br/>
-+            <i>Default</i>: map[]<br/>
-         </td>
-         <td>false</td>
-       </tr><tr>
++	config.InitConfiguration.CertificatesDir = pkiDir
++
++	ca, err := kubeadm.GenerateCACertificatePrivateKeyPair(kubeadmconstants.CACertAndKeyBaseName, config)
++	if err != nil {
++		t.Fatalf("generating CA: %v", err)
++	}
++
++	caSecret := &corev1.Secret{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      tcp.Status.Certificates.CA.SecretName,
++			Namespace: tcp.GetNamespace(),
++		},
++		Data: map[string][]byte{
++			kubeadmconstants.CACertName: ca.Certificate,
++			kubeadmconstants.CAKeyName:  ca.PrivateKey,
++		},
++	}
++
++	phase := &KubeadmPhase{
++		Client: fake.NewClientBuilder().WithScheme(kubeadmUtilsTestScheme(t)).WithObjects(caSecret).Build(),
++		Phase:  PhaseClusterAdminRBAC,
++	}
++
++	fn, err := phase.GetKubeadmFunction(t.Context(), tcp)
++	if err != nil {
++		t.Fatalf("retrieving kubeadm function: %v", err)
++	}
++
++	if _, err = fn(k8sfake.NewClientset(), config); err != nil {
++		t.Fatalf("running the cluster-admin RBAC phase: %v", err)
++	}
++
++	entries, err := os.ReadDir(workDir)
++	if err != nil {
++		t.Fatalf("reading temporary directory: %v", err)
++	}
++
++	if len(entries) != 0 {
++		names := make([]string, 0, len(entries))
++		for _, entry := range entries {
++			names = append(names, entry.Name())
++		}
++
++		t.Fatalf("expected the phase to remove its temporary directory, found %v", names)
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1439** (closed): Add CODEOWNERS for the Voltage Park repo (@robTheBuildr)
 - **PR #1438** (2026-11-24): fix(kubeadm): write RBAC phase kubeconfigs as 0600 (@forq999)
+- **PR #1437** (2026-11-25): fix(kubeadm): remove RBAC phase temp directory (@forq999)
 - **PR #1434** (2026-11-24): feat(deps): bump the etcd group with 2 updates (@dependabot[bot])
 - **PR #1433** (2026-11-24): fix(api): default networkProfile so its port default applies (@lachgar-Azzeddine)
 - **PR #1432** (2026-11-24): docs(guides): run tenant control planes under the restricted pod security standard (@lachgar-Azzeddine)
-- **PR #1431** (2026-11-24): feat(deps): bump github.com/nats-io/nats.go from 1.55.0 to 1.56.0 (@dependabot[bot])
-- **PR #1430** (2026-11-24): feat(deps): bump github.com/go-sql-driver/mysql from 1.10.1 to 1.10.2 (@dependabot[bot])
 
 ---
 
@@ -1056,67 +934,31 @@ Co-authored-by: 박범균 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(guides): run tenant control planes under the restricted pod security standa
+## X. kubeadm): remove RBAC phase temp directory
 
 **RULE**:
-When implementing operations in `docs/content/guides/pod-security-restricted.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/resources/kubeadm_phases.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3cc809ab`: docs(guides): run tenant control planes under the restricted pod security standard. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a53df4a`: kubeadm): remove RBAC phase temp directory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/content/guides/pod-security-restricted.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/kubeadm_phases.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Pod Security Standards
-
-A Tenant Control Plane runs as a `Deployment` in the management cluster. When its namespace enforces the `restricted` [Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/), for example on a management cluster shared by several teams, every container of that Deployment must comply, or the Pods are rejected.
-
-Kamaji doesn't set any security context by default. This guide shows the fields to set on the `TenantControlPlane` so that its Pods pass the `restricted` profile.
-
-## Example
-
-The namespace enforces `restricted`:
-
-```bash
-kubectl create namespace tenant-a
-kubectl label namespace tenant-a pod-security.kubernetes.io/enforce=restricted
-```
-
-The `TenantControlPlane` sets a security context for the Pod, for each control plane container, and for the Konnectivity server:
-
-```yaml
-apiVersion: kamaji.clastix.io/v1alpha1
-kind: TenantControlPlane
-metadata:
-  name: tenant-a
-  namespace: tenant-a
-spec:
-  kubernetes:
-    version: v1.36.3
-    kubelet:
-      cgroupfs: systemd
-  networkProfile:
-    port: 6443
-  controlPlane:
-    service:
-      serviceType: LoadBalancer
-    deployment:
-      replicas: 1
-      podSecurityContext:
-  
+			defer func() { _ = os.RemoveAll(tmp) }()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+			defer func() { _ = os.Remove(tmp) }()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3cc809ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a53df4a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

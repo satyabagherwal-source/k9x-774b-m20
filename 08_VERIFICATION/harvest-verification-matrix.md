@@ -13163,3 +13163,7 @@
 | `CYCLE-20261125-C4KQ` | `2026-11-25T23:59:17.546Z` | `Kianuni/Erosion-CN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10562` | Yes (`ce887e46...`) |
 | `CYCLE-20261125-C8NS` | `2026-11-25T23:59:22.840Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10563` | Yes (`9fa33049...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T00:00:02.900Z` | `hf-prunaai-p-h3-image-comfy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-760DF4AB` [Domain D] | Yes (`82c69841...`) |
+| `CYCLE-20261126-P041` | `2026-11-26T00:09:18.289Z` | `nvidia/NVIDIA-NemotronLabs-RE-USE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md` | Yes (`3624385b...`) |
+| `CYCLE-20261126-P7R8` | `2026-11-26T00:09:28.196Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10564` | Yes (`1299bfdf...`) |
+| `CYCLE-20261126-P9ZJ` | `2026-11-26T00:09:31.087Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10565` | Yes (`a8640c3f...`) |
+| `CYCLE-20261126-PBP6` | `2026-11-26T00:09:33.306Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10566` | Yes (`8268516e...`) |

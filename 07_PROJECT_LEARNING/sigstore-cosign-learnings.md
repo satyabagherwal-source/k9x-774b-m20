@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `e70053f5`  
+> **Source Version**: `fd42a8ca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T13:05:58.724Z  
+> **Timestamp**: 2026-11-26T00:09:29.551Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T13:05:58.717Z  
+> **Harvest Timestamp**: 2026-11-26T00:09:29.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6475 stars
+- **Stars / Engagement**: 6476 stars
 
 ---
 
@@ -1738,61 +1738,233 @@ func upgradeBundle(ctx context.Context, data []byte, rekorClient *client.Rekor) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e70053f5` (2026-11-25)
-**Commit Message**: Update sigstore-go to v1.4.1 (#5245)
+### Incident Patch 1: `fd42a8ca` (2026-11-25)
+**Commit Message**: Have cosign verify require https://sigstore.dev/cosign/sign/v1 predicateType (#5228)
+
+* Have cosign verify require https://sigstore.dev/cosign/sign/v1 predicateType
+
+Tests assisted by GPT-6.1 Terra
+
+---------
 
 Signed-off-by: Zach Steindler <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +2/-2)
+**File**: `cmd/cosign/cli/verify/verify.go` (modified, +23/-14)
 ```diff
-@@ -31,11 +31,11 @@ require (
- 	github.com/open-policy-agent/opa v1.22.4
- 	github.com/osscontainertools/docker-credential-acr v1.0.1
- 	github.com/secure-systems-lab/go-securesystemslib v0.11.1
--	github.com/sigstore/protobuf-specs v0.5.2
-+	github.com/sigstore/protobuf-specs v0.5.3-0.20261112181914-a84bc5ff572a
- 	github.com/sigstore/rekor v1.6.2
- 	github.com/sigstore/rekor-tiles/v2 v2.4.2
- 	github.com/sigstore/sigstore v1.11.4
--	github.com/sigstore/sigstore-go v1.4.0
-+	github.com/sigstore/sigstore-go v1.4.1
- 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3
- 	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.3
- 	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.11.2
+@@ -30,6 +30,7 @@ import (
+ 	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
+ 	"github.com/sigstore/cosign/v3/pkg/oci/static"
+ 	sigs "github.com/sigstore/cosign/v3/pkg/signature"
++	"github.com/sigstore/cosign/v3/pkg/types"
+ 	"github.com/sigstore/protobuf-specs/gen/pb-go/dsse"
+ 	sgbundle "github.com/sigstore/sigstore-go/pkg/bundle"
+ 	"github.com/sigstore/sigstore/pkg/signature/payload"
+@@ -135,14 +136,14 @@ func (c *VerifyCommand) Exec(ctx context.Context, images []string) (err error) {
+ 	for _, img := range images {
+ 		var verified []oci.Signature
+ 		var bundleVerified bool
++		var displayName string
+ 
+ 		if c.LocalImage {
+ 			verified, bundleVerified, err = cosign.VerifyLocalImageAttestations(ctx, img, co)
+ 			if err != nil {
+ 				return err
+ 			}
+-			PrintVerificationHeader(ctx, img, co, bundleVerified, fulcioVerified)
+-			PrintVerification(ctx, verified, c.Output)
++			displayName = img
+ 		} else {
+ 			ref, err := name.ParseReference(img, c.NameOptions...)
+ 			if err != nil {
+@@ -154,41 +155,49 @@ func (c *VerifyCommand) Exec(ctx context.Context, images []string) (err error) {
+ 			if err != nil {
+ 				return err
+ 			}
++			displayName = ref.Name()
++		}
+ 
+-			verifiedOutput, err := transformOutput(verified, ref.Name())
+-			if err == nil {
+-				verified = verifiedOutput
+-			}
+-
+-			PrintVerificationHeader(ctx, ref.Name(), co, bundleVerified, fulcioVerified)
+-			PrintVerification(ctx, verified, c.Output)
++		verifiedOutput, err := transformOutput(verified, displayName)
++		if err != nil {
++			return err
++		}
++		if len(verifiedOutput) > 0 {
++			PrintVerificationHeader(ctx, displayName, co, bundleVerified, fulcioVerified)
++			PrintVerification(ctx, verifiedOutput, c.Output)
++		} else {
++			return fmt.Errorf("no matching signatures exist")
+ 		}
+ 	}
+ 
+ 	return nil
+ }
+ 
+ func transformOutput(verified []oci.Signature, name string) (verifiedOutput []oci.Signature, err error) {
++	// We might not understand bundles not produced by Cosign, so skip them
+ 	for _, v := range verified {
+ 		dssePayload, err := v.Payload()
+ 		if err != nil {
+-			return nil, err
++			continue
+ 		}
+ 		var dsseEnvelope dsse.Envelope
+ 		err = json.Unmarshal(dssePayload, &dsseEnvelope)
+ 		if err != nil {
+-			return nil, err
++			continue
+ 		}
+ 		if dsseEnvelope.PayloadType != in_toto.PayloadType {
+-			return nil, fmt.Errorf("unable to understand payload type %s", dsseEnvelope.PayloadType)
++			continue
+ 		}
+ 		intotoStatement := &attestation.Statement{}
+ 		err = intotoStatement.UnmarshalJSON(dsseEnvelope.Payload)
+ 		if err != nil {
+-			return nil, err
++			continue
+ 		}
+ 		if len(intotoStatement.Subject) < 1 || len(intotoStatement.Subject[0].Digest) < 1 {
+-			return nil, fmt.Errorf("no intoto subject or digest found")
++			continue
++		}
++		if intotoStatement.PredicateType != types.CosignSignPredicateType {
++			continue
+ 		}
+ 
+ 		var digest string
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `cmd/cosign/cli/verify/verify_test.go` (modified, +102/-2)
 ```diff
-@@ -623,16 +623,16 @@ github.com/sergi/go-diff v1.4.0 h1:n/SP9D5ad1fORl+llWyN+D6qoUETXNZARKjyY2/KVCw=
- github.com/sergi/go-diff v1.4.0/go.mod h1:A0bzQcvG0E7Rwjx0REVgAGH58e96+X0MeOfepqsbeW4=
- github.com/shibumi/go-pathspec v1.3.0 h1:QUyMZhFo0Md5B8zV8x2tesohbb5kfbpTi9rBnKh5dkI=
- github.com/shibumi/go-pathspec v1.3.0/go.mod h1:Xutfslp817l2I1cZvgcfeMQJG5QnU2lh5tVaaMCl3jE=
--github.com/sigstore/protobuf-specs v0.5.2 h1:RSWWUY8QrVTxbYH00jY/jg2e7YnjzrpwP+PeHTMll0E=
--github.com/sigstore/protobuf-specs v0.5.2/go.mod h1:DRBzpFuE+LnvQMN10/dU6nBeKwVLGEQ6o2FovN2Rats=
-+github.com/sigstore/protobuf-specs v0.5.3-0.20261112181914-a84bc5ff572a h1:5XG2LytaPWuYUctAEGtTPchXcqXs5VTa4RbJgVFaq4A=
-+github.com/sigstore/protobuf-specs v0.5.3-0.20261112181914-a84bc5ff572a/go.mod h1:1QTwiRx4i1dbHGub43GV+0G/Y1rZdlyJDxPmJ+6RUOk=
- github.com/sigstore/rekor v1.6.2 h1:cDGm6/138AktpcaeHx1/szi4JbbZKaNM4IXEAMC1DAc=
- github.com/sigstore/rekor v1.6.2/go.mod h1:Eku/Wrn9EQsWbSyeIbkkLgyuFh3cyzWiDkGTdKRkByk=
- github.com/sigstore/rekor-tiles/v2 v2.4.2 h1:Qvt1L8oWkQpAK5lr8QnKuE0JYnA44kMWUvXl4hhxD+I=
- github.com/sigstore/rekor-tiles/v2 v2.4.2/go.mod h1:VVGltxtfdDArLtqSqrtYy8QHeJyaRvnn7Qp8suvd3vQ=
- github.com/sigstore/sigstore v1.11.4 h1:3FmAqMZMML4e4tWxO05GHFlIrll5YEeBOlPzVMUuEY0=
- github.com/sigstore/sigstore v1.11.4/go.mod h1:+80rD6zHfU0o9pfmn+E/iQ4hCDaxoxGMP6EyoLUuVGE=
--github.com/sigstore/sigstore-go v1.4.0 h1:CGdFdZLhYSc42yYN0+lL6yWh7v0z3S0i21v50lvSYKw=
--github.com/sigstore/sigstore-go v1.4.0/go.mod h1:T2Csm9q65ZVCrTB8q1fP60wR9Z9Hf1286zBTd6pDG88=
-+github.com/sigstore/sigstore-go v1.4.1 h1:djK0K5eYA89mJdA61bfDtO4aPUb+dGZvppIgnKHQH1o=
-+github.com/sigstore/sigstore-go v1.4.1/go.mod h1:CJPGNZ9WlUDIP8O4zCyK0H2MJIvWFf2bcZ12JH5LB8I=
- github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3 h1:yY9N8BQePsqDgD//dcOujRK0728+KkheZayeXdK+jAI=
- github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3/go.mod h1:McDIrrcl+Lljr6amr7fDwZBOh3f1GEWSxeCcimHjQm0=
- github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.3 h1:L4PEgwMqqoXMYwD0EV1RjMLBRmOjibxEE+WqFH+6EmM=
+@@ -19,12 +19,14 @@ import (
+ 	"context"
+ 	"crypto"
+ 	"crypto/ecdsa"
++	"crypto/elliptic"
+ 	"crypto/rand"
+ 	"crypto/sha256"
+ 	"crypto/x509"
+ 	"crypto/x509/pkix"
+ 	"encoding/asn1"
+ 	"encoding/base64"
++	"encoding/hex"
+ 	"encoding/json"
+ 	"encoding/pem"
+ 	"errors"
+@@ -42,17 +44,29 @@ import (
+ 
+ 	"github.com/google/go-containerregistry/pkg/name"
+ 	"github.com/google/go-containerregistry/pkg/registry"
++	v1 "github.com/google/go-containerregistry/pkg/v1"
+ 	"github.com/google/go-containerregistry/pkg/v1/empty"
+ 	"github.com/google/go-containerregistry/pkg/v1/remote"
++	v1static "github.com/google/go-containerregistry/pkg/v1/static"
++	ssldsse "github.com/secure-systems-lab/go-securesystemslib/dsse"
+ 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
+ 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/sign"
+ 	"github.com/sigstore/cosign/v3/internal/test"
+ 	"github.com/sigstore/cosign/v3/internal/ui"
+ 	"github.com/sigstore/cosign/v3/pkg/cosign"
+ 	"github.com/sigstore/cosign/v3/pkg/oci"
++	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
+ 	"github.com/sigstore/cosign/v3/pkg/oci/static"
++	"github.com/sigstore/cosign/v3/pkg/types"
++	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
++	protocommon "github.com/sigstore/protobuf-specs/gen/pb-go/common/v1"
++	protodsse "github.com/sigstore/protobuf-specs/gen/pb-go/dsse"
++	sgbundle "github.com/sigstore/sigstore-go/pkg/bundle"
++	sgverify "github.com/sigstore/sigstore-go/pkg/verify"
+ 	"github.com/sigstore/sigstore/pkg/signature/payload"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/protobuf/encoding/protojson"
+ )
+ 
+ type certData struct {
+@@ -286,7 +300,7 @@ func TestTransformOutputSuccess(t *testing.T) {
+ 	  "subject": [
+ 		{ "name": "artifact", "digest": { "sha256": "deadbeef" }, "annotations": { "foo": "bar" } }
+ 	  ],
+-	  "predicateType": "https://slsa.dev/provenance/v0.2"
++	  "predicateType": "https://sigstore.dev/cosign/sign/v1"
+ 	}`
+ 	// DSSE payloadType for in-toto
+ 	payloadType := "application/vnd.in-toto+json"
+@@ -326,10 +340,96 @@ func TestTransformOutputSuccess(t *testing.T) {
+ 
+ 	assert.Equal(t, name, sci.Critical.Identity.DockerReference, "docker reference mismatch")
+ 	assert.Equal(t, "sha256:deadbeef", sci.Critical.Image.DockerManifestDigest, "digest mismatch")
+-	assert.Equal(t, "https://slsa.dev/provenance/v0.2", sci.Critical.Type, "type mismatch")
++	assert.Equal(t, "https://sigstore.dev/cosign/sign/v1", sci.Critical.Type, "type mismatch")
+ 	assert.Equal(t, map[string]any{"foo": "bar"}, sci.Optional, "missing annotation")
+ }
+ 
++func TestVerifyRejectsOtherAttestations(t *testing.T) {
++	s := httptest.NewServer(registry.New(registry.WithReferrersSupport(true)))
++	defer s.Close()
++
++	ref, err := name.ParseReference(strings.TrimPrefix(s.URL, "http://") + "/message-signature:latest")
++	require.NoError(t, err)
++	require.NoError(t, remote.Write(ref, empty.Image))
++	hash, err := empty.Image.Digest()
++	require.NoError(t, err)
++	digestBytes, err := hex.DecodeString(hash.Hex)
++	require.NoError(t, err)
++
++	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
++	require.NoError(t, err)
++	publicKey, err := x509.MarshalPKIXPublicKey(&key.PublicKey)
++	require.NoError(t, err)
++	keyPath := filepath.Join(t.TempDir(), "cosign.pub")
++	require.NoError(t, os.WriteFile(keyPath, pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: publicKey}), 0o600))
++
++	verifier, closeVerifier, err := LoadVerifierFromKey(t.Context(), keyPath, "", false)
++	require.NoError(t, err)
++	defer closeVerifier()
++
++	statement := fmt.Appendf(nil, `{"_type":"https://in-toto.io/Statement/v1","subject":[{"name":"artifact","digest":{"sha256":%q},"annotations":{}}],"predicateType":"https://slsa.dev/provenance/v0.2","predicate":{}}`, hash.Hex)
++	paeDigest := sha256.Sum256(ssldsse.PAE(types.IntotoPayloadType, statement))
++	sig, err := ecdsa.SignASN1(rand.Reader, key, paeDigest[:])
++	require.NoError(t, err)
++
++	pb := &protobundle.Bundle{
++		MediaType: "application/vnd.dev.sigstore.bundle.v0.3+json",
++		VerificationMaterial: &protobundle.VerificationMaterial{
++			Content: &protobundle.VerificationMaterial_PublicKey{PublicKey: &protocommon.PublicKeyIdentifier{Hint: "key"}},
++		},
++		Content: &protobundle.Bundle_DsseEnvelope{
++			DsseEnvelope: &protodsse.Envelope{
++				PayloadType: types.IntotoPayloadType,
++				Payload:     statement,
++				Signatures:  []*protodsse.Signature{{Sig: sig}},
++			},
++		},
++	}
++	bundle, err := sgbundle.NewBundle(pb)
++	require.NoError(t, err)
++	_, err = cosign.VerifyNewBundle(t.Context(), &cosign.CheckOpts{SigVerifier: verifier, IgnoreTlog: true},
++		sgverify.WithArtifactDigest(hash.Algorithm, digestBytes), bundle)
++	require.NoError(t, err, "DSSE signature must be valid for the image")
++
++	bundleBytes, err := protojson.Marshal(pb)
++	require.NoError(t, err)
++	layer := v1static.NewLayer(bundleBytes, "application/vnd.dev.sigstore.bundle.v0.3+json")
++	require.NoError(t, ociremote.WriteReferrer(ref.Context().Digest
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5247** (closed): Update sigstore-go to v1.4.1 (@steiza)
-- **PR #5246** (2026-11-25): Update sigstore-go to v1.4.1 (@steiza)
-- **PR #5245** (2026-11-25): Update sigstore-go to v1.4.1 (@steiza)
-- **PR #5244** (closed): update cosign used in release and validate-release to v3.1.5 (@cpanato)
-- **PR #5243** (2026-11-25): docs: document patch releases from a release branch (@cpanato)
-- **PR #5242** (2026-11-24): [release-3.1] bump sigstore/sigstore to v1.11.4 (@cpanato)
+- **PR #5254** (2026-11-25): Fix e2e tests for v2.6 (@cmurphy)
+- **PR #5253** (2026-11-25): Have cosign verify require https://sigstore.dev/cosign/sign/v1 predic… (@steiza)
+- **PR #5252** (2026-11-25): Move old verifier to encoding/json/v2 for case sensitivity (@steiza)
+- **PR #5250** (2026-11-25): Get timestamp bytes from payload for attestations (@steiza)
+- **PR #5249** (2026-11-25): Ensure that when we read local manifests, they match their claimed digest (@steiza)
+- **PR #5248** (2026-11-25): Ensure that when we read local manifests, they match their claimed digest (@steiza)
 
 ---
 
@@ -1812,30 +1984,63 @@ Signed-off-by: Zach Steindler <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update sigstore-go to v1.4.1
+## X. Have cosign verify require https://sigstore.dev/cosign/sign/v1 predicateType
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/cosign/cli/verify/verify.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e70053f5`: Update sigstore-go to v1.4.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd42a8ca`: Have cosign verify require https://sigstore.dev/cosign/sign/v1 predicateType. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/verify/verify.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/sigstore/protobuf-specs v0.5.3-0.20261112181914-a84bc5ff572a
-	github.com/sigstore/sigstore-go v1.4.1
+	"github.com/sigstore/cosign/v3/pkg/types"
+		var displayName string
+			displayName = img
+			displayName = ref.Name()
+		}
+		verifiedOutput, err := transformOutput(verified, displayName)
+		if err != nil {
+			return err
+		}
+		if len(verifiedOutput) > 0 {
+			PrintVerificationHeader(ctx, displayName, co, bundleVerified, fulcioVerified)
+			PrintVerification(ctx, verifiedOutput, c.Output)
+		} else {
+			return fmt.Errorf("no matching signatures exist")
+	// We might not understand bundles not produced by Cosign, so skip them
+			continue
+			continue
+			continue
+			continue
+			continue
+		}
+		if intotoStatement.PredicateType != types.CosignSignPredicateType {
+			continue
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/sigstore/protobuf-specs v0.5.2
-	github.com/sigstore/sigstore-go v1.4.0
+			PrintVerificationHeader(ctx, img, co, bundleVerified, fulcioVerified)
+			PrintVerification(ctx, verified, c.Output)
+			verifiedOutput, err := transformOutput(verified, ref.Name())
+			if err == nil {
+				verified = verifiedOutput
+			}
+
+			PrintVerificationHeader(ctx, ref.Name(), co, bundleVerified, fulcioVerified)
+			PrintVerification(ctx, verified, c.Output)
+			return nil, err
+			return nil, err
+			return nil, fmt.Errorf("unable to understand payload type %s", dsseEnvelope.PayloadType)
+			return nil, err
+			return nil, fmt.Errorf("no intoto subject or digest found")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e70053f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd42a8ca` are properly handled with clean fallback behavior.

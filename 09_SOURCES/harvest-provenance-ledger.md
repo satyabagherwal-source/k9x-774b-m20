@@ -13196,3 +13196,7 @@ Every entry in this ledger must capture:
 | `learn-github-kianuni-erosion-cn` | `https://github.com/Kianuni/Erosion-CN` | `094df45d` | Multi-dimensional audit evidence | 2026-11-25T23:59:17.551Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `aba54549` | Multi-dimensional audit evidence | 2026-11-25T23:59:22.845Z |
 | `learn-dom-d-760df4ab` | `project://hf-prunaai-p-h3-image-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | 2026-11-26T00:00:02.900Z |
+| `learn-huggingface-nvidia-nvidia-nemotronlabs-re-use` | `https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-26T00:09:18.294Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `7a53df4a` | Multi-dimensional audit evidence | 2026-11-26T00:09:28.202Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `fd42a8ca` | Multi-dimensional audit evidence | 2026-11-26T00:09:31.093Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `9af55fa5` | Multi-dimensional audit evidence | 2026-11-26T00:09:33.312Z |

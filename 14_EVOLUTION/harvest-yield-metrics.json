@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:59:22.852Z",
-  "total_cycles_completed": 12493,
-  "total_learnings_persisted": 12493,
-  "total_rules_promoted": 11452,
+  "last_updated": "2026-11-26T00:09:33.320Z",
+  "total_cycles_completed": 12497,
+  "total_learnings_persisted": 12497,
+  "total_rules_promoted": 11455,
   "history": [
-    {
-      "timestamp": "2026-11-25T05:10:27.577Z",
-      "repository": "Comfy-Org/MOSS-Image",
-      "learningId": "learn-huggingface-comfy-org-moss-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T05:10:43.967Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T05:19:43.299Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T05:19:53.710Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T05:28:56.157Z",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-25T23:59:22.852Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:09:18.302Z",
+      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:09:28.209Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:09:31.101Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:09:33.320Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `fe49e548`  
+> **Source Version**: `9af55fa5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:42:35.677Z  
+> **Timestamp**: 2026-11-26T00:09:31.735Z  
 > **Learning ID**: `learn-github-alibaba-zvec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:42:35.670Z  
+> **Harvest Timestamp**: 2026-11-26T00:09:31.724Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16284 stars
+- **Stars / Engagement**: 16290 stars
 
 ---
 
@@ -1096,65 +1096,992 @@ inline const std::string MULTI_CHUNK_CLUSTER_MARKOV_CHAIN_LENGTH =
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac3d0dd7` (2026-11-24)
-**Commit Message**: perf(turbo): fold four UINT4 distance sums in AVX-512 lanes (#930)
+### Incident Patch 1: `21229b48` (2026-11-25)
+**Commit Message**: fix: preserve BufferStorage consistency and staged budget recovery (#923)
 
-**File**: `src/turbo/distance/avx512_vnni/uniform_uint4/squared_euclidean.cc` (modified, +12/-26)
+**File**: `src/ailego/buffer/block_eviction_queue.cc` (modified, +471/-204)
 ```diff
-@@ -21,32 +21,18 @@ inline int32_t Reduce(__m512i value) {
- // keeps the entire reduction in SIMD registers.
- static ailego_force_inline __m128i ReduceFour(__m512i a, __m512i b, __m512i c,
-                                               __m512i d) {
--  const __m256i a8 = _mm256_add_epi32(_mm512_castsi512_si256(a),
--                                      _mm512_extracti64x4_epi64(a, 1));
--  const __m256i b8 = _mm256_add_epi32(_mm512_castsi512_si256(b),
--                                      _mm512_extracti64x4_epi64(b, 1));
--  const __m256i c8 = _mm256_add_epi32(_mm512_castsi512_si256(c),
--                                      _mm512_extracti64x4_epi64(c, 1));
--  const __m256i d8 = _mm256_add_epi32(_mm512_castsi512_si256(d),
--                                      _mm512_extracti64x4_epi64(d, 1));
--
--  const __m128i a4 = _mm_add_epi32(_mm256_castsi256_si128(a8),
--                                   _mm256_extracti128_si256(a8, 1));
--  const __m128i b4 = _mm_add_epi32(_mm256_castsi256_si128(b8),
--                                   _mm256_extracti128_si256(b8, 1));
--  const __m128i c4 = _mm_add_epi32(_mm256_castsi256_si128(c8),
--                                   _mm256_extracti128_si256(c8, 1));
--  const __m128i d4 = _mm_add_epi32(_mm256_castsi256_si128(d8),
--                                   _mm256_extracti128_si256(d8, 1));
--
--  const __m128i ab_low = _mm_unpacklo_epi32(a4, b4);
--  const __m128i cd_low = _mm_unpacklo_epi32(c4, d4);
--  const __m128i ab_high = _mm_unpackhi_epi32(a4, b4);
--  const __m128i cd_high = _mm_unpackhi_epi32(c4, d4);
--  return _mm_add_epi32(_mm_add_epi32(_mm_unpacklo_epi64(ab_low, cd_low),
--                                     _mm_unpackhi_epi64(ab_low, cd_low)),
--                       _mm_add_epi32(_mm_unpacklo_epi64(ab_high, cd_high),
--                                     _mm_unpackhi_epi64(ab_high, cd_high)));
-+  // Fold the four rows together while all four 128-bit lanes are active.
-+  // Each lane of abcd holds the partial sums for rows a, b, c and d.
-+  const __m512i ab = _mm512_add_epi32(_mm512_unpacklo_epi32(a, b),
-+                                      _mm512_unpackhi_epi32(a, b));
-+  const __m512i cd = _mm512_add_epi32(_mm512_unpacklo_epi32(c, d),
-+                                      _mm512_unpackhi_epi32(c, d));
-+  const __m512i abcd = _mm512_add_epi32(_mm512_unpacklo_epi64(ab, cd),
-+                                        _mm512_unpackhi_epi64(ab, cd));
-+  const __m256i halves = _mm256_add_epi32(_mm512_castsi512_si256(abcd),
-+                                          _mm512_extracti64x4_epi64(abcd, 1));
-+  return _mm_add_epi32(_mm256_castsi256_si128(halves),
-+                       _mm256_extracti128_si256(halves, 1));
+@@ -20,6 +20,8 @@
+ #include <cstdlib>
+ #include <limits>
+ #include <new>
++#include <optional>
++#include <utility>
+ #include <ailego/pattern/scope_guard.h>
+ #include <ailego/utility/memory_helper.h>
+ #include <ailego/utility/mobile_memory.h>
+@@ -65,6 +67,7 @@ constexpr size_t kMaxSlabDataPages = kSlabBytes / kMinimumPageBytes - 1;
+ constexpr size_t kQueueSmallBytes = 4096;
+ constexpr size_t kQueueSlabBytes = 64UL << 10;
+ constexpr size_t kQueueAlignment = alignof(std::max_align_t);
++thread_local size_t *initial_queue_backing = nullptr;
+ 
+ static_assert(kQueueSmallBytes % kQueueAlignment == 0,
+               "queue size classes must preserve maximum alignment");
+@@ -228,6 +231,7 @@ struct MemoryLimitPool::QueueMemorySlab {
+   size_t live_slots{0};
+   QueueAllocationHeader *free_head{nullptr};
+   ProcessRssBudget::MappingProjection projection{};
++  bool has_lifetime_slot{false};
+ };
+ 
+ void *EvictionQueueTraits::malloc(size_t bytes) {
+@@ -238,6 +242,23 @@ void EvictionQueueTraits::free(void *ptr) {
+   MemoryLimitPool::get_instance().free_queue_memory(ptr);
  }
  
- static ailego_force_inline void StoreFour(const __m512i *sums,
++void *BlockEvictionQueue::ProcessQueueTraits::malloc_lifetime(size_t bytes) {
++  // Process-wide queues keep their producers and indexes until process exit.
++  return MemoryLimitPool::get_instance().allocate_queue_memory(bytes, true);
++}
++
++BlockEvictionQueue::BlockEvictionQueue() {
++  // Only the queues' initial block pools are allocated through the traits
++  // during construction. They stay mapped for the lifetime of this instance.
++  auto *previous =
++      std::exchange(initial_queue_backing, &initial_backing_bytes_);
++  auto restore =
++      ScopeGuard::Make([previous] { initial_queue_backing = previous; });
++  for (size_t i = 0; i < kQueueCount; ++i) {
++    evict_queues_.emplace_back(kEvictQueueCapacity);
++  }
++}
++
+ void MemoryLimitPool::register_queue_mapping(QueueResidentMapping *mapping,
+                                              void *data, size_t bytes) {
+   mapping->data = data;
+@@ -272,7 +293,7 @@ bool MemoryLimitPool::unmap_queue_mapping(QueueResidentMapping *mapping) {
+   return true;
+ }
+ 
+-void *MemoryLimitPool::allocate_queue_memory(size_t bytes) {
++void *MemoryLimitPool::allocate_queue_memory(size_t bytes, bool lifetime) {
+   if (bytes > std::numeric_limits<size_t>::max() -
+                   sizeof(QueueAllocationHeader) - (kQueueAlignment - 1)) {
+     return nullptr;
+@@ -363,6 +384,11 @@ void *MemoryLimitPool::allocate_queue_memory(size_t bytes) {
+     header->bytes = total;
+     header->owner = slab;
+     ++slab->live_slots;
++    if (lifetime && !slab->has_lifetime_slot) {
++      slab->has_lifetime_slot = true;
++      queue_runtime_lifetime_size_.fetch_add(slab->mapping_bytes,
++                                             std::memory_order_relaxed);
++    }
+     if (!slab->has_space()) slab->unlink(queue_small_slabs_[index]);
+     return header + 1;
+   }
+@@ -388,6 +414,11 @@ void *MemoryLimitPool::allocate_queue_memory(size_t bytes) {
+   header->bytes = region_bytes;
+   header->owner = nullptr;
+   queue_allocated_size_.fetch_add(region_bytes, std::memory_order_relaxed);
++  if (initial_queue_backing) *initial_queue_backing += region_bytes;
++  if (lifetime) {
++    queue_runtime_lifetime_size_.fetch_add(region_bytes,
++                                           std::memory_order_relaxed);
++  }
+   return header + 1;
+ }
+ 
+@@ -442,7 +473,7 @@ void MemoryLimitPool::free_queue_memory(void *ptr) {
+   queue_allocated_size_.fetch_sub(bytes, std::memory_order_relaxed);
+   if (pool_size_.load(std::memory_order_relaxed) != 0) {
+     queue_charged_size_.fetch_sub(bytes, std::memory_order_relaxed);
+-    release_fixed(bytes, &metadata_used_size_, Backing::kLive, projection);
++    release_fixed(bytes, &metadata_used_size_, Backing::kUnmapped, projection);
+   }
+ }
+ 
+@@ -1071,10 +1102,12 @@ bool MemoryLimitPool::try_materialize_retained_block(void *data,
+   auto *block = reinterpret_cast<RetainedBlock *>(static_cast<char *>(data) -
+                                                   kRetainedBlockHeaderBytes);
+   const size_t bytes = block->bytes();
+-  const auto admit = [&] {
+-    return process_rss_.try_materialize_reusable(bytes, block->projection);
++  const auto admit = [&](AdmissionDenials *denials) {
++    return process_rss_.try_materialize_reusable(
++        bytes, block->projection, denials ? &denials->rss : nullptr,
++        denials ? &denials->rss_watch : nullptr);
+   };
+-  if (!required) return admit();
++  if (!required) return admit(nullptr);
+   // The caller pins the chunk, but must not hold its allocator mutex while
+   // maintenance proves residency or invokes a reclaimer that can use it.
+   std::shared_lock<std::shared_mutex> lifecycle_lock(lifecycle_mutex_);
+@@ -1107,7 +1140,7 @@ void MemoryLimitPool::release_retained_block(void *data) {
+     }
+     if (unmapped) {
+       retained_block_bytes_.fetch_sub(bytes, std::memory_order_relaxed);
+-      release_committed(bytes, Backing::kLive, projection);
++      release_committed(bytes, Back
+```
+
+**File**: `src/ailego/io/file.cc` (modified, +172/-41)
+```diff
+@@ -12,6 +12,8 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++#include <limits>
++#include <zvec/ailego/buffer/block_eviction_queue.h>
+ #include <zvec/ailego/internal/platform.h>
+ #include <zvec/ailego/io/file.h>
+ #if !defined(_WIN64) && !defined(_WIN32)
+@@ -31,8 +33,64 @@
+ namespace zvec {
+ namespace ailego {
+ 
++namespace {
++
++size_t ReserveMappedPages(size_t bytes, size_t page_offset = 0) {
++  if (bytes == 0) return 0;
++  auto &pool = MemoryLimitPool::get_instance();
++  const size_t page = pool.page_buffer_size();
++  if (bytes > (std::numeric_limits<size_t>::max)() - page_offset - (page - 1))
++    return 0;
++  const size_t rounded = ((page_offset + bytes + page - 1) / page) * page;
++  return pool.try_reserve_materialization(rounded) ? rounded : 0;
++}
++
++size_t ReserveMappedPages(const void *addr, size_t bytes) {
++  return ReserveMappedPages(bytes, reinterpret_cast<uintptr_t>(addr) %
++                                       MemoryLimitPool::page_buffer_size());
++}
++
++void FinishMappedPages(size_t bytes, bool materialized) {
++  if (!bytes) return;
++#if defined(_WIN64) || defined(_WIN32)
++  const auto error = ::GetLastError();
++#else
++  const int error = errno;
++#endif
++  MemoryLimitPool::get_instance().finish_materialization(bytes, materialized);
++#if defined(_WIN64) || defined(_WIN32)
++  ::SetLastError(error);
++#else
++  errno = error;
++#endif
++}
++
++}  // namespace
++
+ #if !defined(_WIN64) && !defined(_WIN32)
+ 
++File::Identity File::Identify(NativeHandle handle) {
++  struct stat st {};
++  if (::fstat(handle, &st) != 0) return {};
++  return {static_cast<uint64_t>(st.st_dev), static_cast<uint64_t>(st.st_ino),
++          true};
++}
++
++File::Identity File::IdentifyPath(const std::string &path) {
++  struct stat st {};
++  if (::lstat(path.c_str(), &st) != 0) return {};
++  return {static_cast<uint64_t>(st.st_dev), static_cast<uint64_t>(st.st_ino),
++          true};
++}
++
++bool File::DeleteIfSame(const std::string &path, const Identity &identity) {
++  if (!identity.valid) return false;
++  const auto current = IdentifyPath(path);
++  if (!current.valid) return errno == ENOENT;
++  if (!(current == identity)) return true;
++  return ::unlink(path.c_str()) == 0 || errno == ENOENT;
++}
++
+ static inline int OpenSafely(const char *path, int flags) {
+   // Set close-on-exec atomically with open: a later fcntl can race with a
+   // concurrent process launch and leave the child holding collection locks.
+@@ -170,6 +228,15 @@ bool File::create(const char *path, size_t len, bool direct) {
+   return true;
+ }
+ 
++bool File::create_exclusive(const char *path) {
++  ailego_false_if_false(native_handle_ == File::InvalidHandle && path);
++  int fd = OpenSafely(path, O_RDWR | O_CREAT | O_EXCL);
++  ailego_false_if_lt_zero(fd);
++  read_only_ = false;
++  native_handle_ = fd;
++  return true;
++}
++
+ bool File::open(const char *path, bool rdonly, bool direct) {
+   ailego_false_if_false(native_handle_ == File::InvalidHandle && path);
+ 
+@@ -318,7 +385,11 @@ void *File::MemoryMap(NativeHandle handle, ssize_t off, size_t len, int opts) {
+   int flags = (opts & File::MMAP_SHARED) ? MAP_SHARED : MAP_PRIVATE;
+ 
+ #if defined(MAP_POPULATE)
+-  if (opts & File::MMAP_POPULATE) {
++  // Populating the mapping is optional. Keep lazy access available when
++  // process pressure leaves no room to fault in the whole extent.
++  const size_t populate =
++      (opts & File::MMAP_POPULATE) ? ReserveMappedPages(len) : 0;
++  if (populate) {
+     flags |= MAP_POPULATE;
+   }
+ #endif
+@@ -330,12 +401,13 @@ void *File::MemoryMap(NativeHandle handle, ssize_t off, size_t len, int opts) {
+ #endif
+ 
+   void *addr = mmap(nullptr, len, prot, flags, handle, off);
++#if defined(MAP_POPULATE)
++  FinishMappedPages(populate, addr != MAP_FAILED);
++#endif
+   ailego_null_if_false(addr != MAP_FAILED);
+ 
+-  if (opts & File::MMAP_LOCKED) {
+-    mlock(addr, len);
+-  }
+-  if (opts & File::MMAP_WARMUP) {
++  const bool locked = (opts & File::MMAP_LOCKED) && MemoryLock(addr, len);
++  if (!locked && (opts & File::MMAP_WARMUP)) {
+     File::MemoryWarmup(addr, len);
+   }
+   return addr;
+@@ -352,7 +424,9 @@ void *File::MemoryMap(size_t len, int opts) {
+   int flags = (opts & File::MMAP_SHARED) ? MAP_SHARED | MAP_ANONYMOUS
+                                          : MAP_PRIVATE | MAP_ANONYMOUS;
+ #if defined(MAP_POPULATE)
+-  if (opts & File::MMAP_POPULATE) {
++  const size_t populate =
++      (opts & File::MMAP_POPULATE) ? ReserveMappedPages(len) : 0;
++  if (populate) {
+     flags |= MAP_POPULATE;
+   }
+ #endif
+@@ -362,6 +436,9 @@ void *File::MemoryMap(size_t len, int opts) {
+   }
+ #endif
+   void *addr = mmap(nullptr, len, prot, flags, -1, 0);
++#if defined(MAP_POPULATE)
++  FinishMappedPages(populate, addr != MAP_FAILED);
++#endif
+   ailego_null_if_false(addr != MAP_FAILED);
+   return addr;
+ #else
+@@ -402,11 +479,6 @@ bool File::MemoryFlush(void *addr, size_t len) {
+   return (msync(addr, len, MS_ASYNC) == 0);
+ }
+ 
+-bool File::MemoryLock(void *addr
+```
+
+**File**: `src/ailego/io/iouring_loader.cc` (modified, +291/-153)
+```diff
+@@ -24,6 +24,9 @@
+ #include <limits>
+ #include <thread>
+ #include <ailego/io/iouring_loader.h>
++#include <ailego/pattern/scope_guard.h>
++#include <zvec/ailego/buffer/block_eviction_queue.h>
++#include <zvec/ailego/buffer/budgeted_mapped_buffer.h>
+ #include <zvec/ailego/logger/logger.h>
+ 
+ namespace zvec {
+@@ -33,7 +36,55 @@ namespace ailego {
+ // returning EAGAIN/EBUSY (100 us sleep per retry, about one second total).
+ static constexpr size_t kIoUringDrainRetries = 10000;
+ 
++IoUringRing::IoUringRing() = default;
++
++int IoUringRing::enter(unsigned submit, unsigned minimum, unsigned flags) {
++  if (enter_override_) return enter_override_(ring_fd_, submit, minimum, flags);
++  return static_cast<int>(syscall(__NR_io_uring_enter, ring_fd_, submit,
++                                  minimum, flags, nullptr, size_t{0}));
++}
++
++IoUringRing::~IoUringRing() {
++  teardown();
++  if (prepaid_staging_bytes_ && !staging_)
++    MemoryLimitPool::get_instance().release_metadata(prepaid_staging_bytes_);
++}
++
++void IoUringRing::adopt_staging_reservation(size_t bytes) {
++  assert(staging_ == nullptr && staging_charge_ == 0 &&
++         prepaid_staging_bytes_ == 0);
++  prepaid_staging_bytes_ = bytes;
++}
++
++bool IoUringRing::release_staging() {
++  if (!staging_) return true;
++  if (!File::TryMemoryUnmap(staging_, staging_size_)) {
++    LOG_ERROR("io_uring staging unmap failed; size=%zu", staging_size_);
++    return false;
++  }
++  auto &pool = MemoryLimitPool::get_instance();
++  if (staging_charge_) {
++    pool.release_unmapped_external(staging_charge_, staging_projection_);
++  } else if (prepaid_staging_bytes_) {
++    pool.release_materialization(staging_size_, staging_projection_);
++  } else {
++    pool.release_unmapped_process_backing(staging_size_, staging_projection_);
++  }
++  staging_ = nullptr;
++  staging_size_ = 0;
++  staging_charge_ = 0;
++  staging_projection_ = {};
++  return true;
++}
++
+ bool IoUringRing::setup(uint32_t entries) {
++  return setup_with_status(entries) == SetupResult::kReady;
++}
++
++IoUringRing::SetupResult IoUringRing::setup_with_status(uint32_t entries) {
++  if (is_valid()) return SetupResult::kReady;
++  auto &pool = MemoryLimitPool::get_instance();
++  if (pool.under_process_rss_pressure()) return SetupResult::kNoMemory;
+   struct io_uring_params params;
+   std::memset(&params, 0, sizeof(params));
+ 
+@@ -44,15 +95,13 @@ bool IoUringRing::setup(uint32_t entries) {
+     // ENOSYS = kernel doesn't support io_uring.
+     // EPERM  = io_uring disabled via sysctl.
+     // EINVAL = invalid parameters.
+-    if (errno != ENOSYS) {
+-      LOG_WARN("io_uring_setup failed; errno=%d, %s", errno, ::strerror(errno));
++    const int error = errno;
++    if (error != ENOSYS) {
++      LOG_WARN("io_uring_setup failed; errno=%d, %s", error, ::strerror(error));
+     }
+-    return false;
++    return error == ENOMEM ? SetupResult::kNoMemory : SetupResult::kUnavailable;
+   }
+ 
+-  sq_entries_ = params.sq_entries;
+-  cq_entries_ = params.cq_entries;
+-
+   // The read path uses IORING_OP_READ (Linux 5.6+).  On older kernels
+   // (5.1–5.5) io_uring_setup() succeeds but every read would fail with
+   // -EINVAL, so reject the ring here and let callers fall back.
+@@ -61,46 +110,70 @@ bool IoUringRing::setup(uint32_t entries) {
+         "io_uring lacks IORING_OP_READ support (kernel < 5.6); falling "
+         "back");
+     teardown();
+-    return false;
++    return SetupResult::kUnavailable;
+   }
+ 
+-  // --- mmap the three shared regions ---
++  bool ready = false;
++  const auto rollback = ScopeGuard::Make([&] {
++    if (!ready) teardown();
++  });
++  const auto result = map_control_regions(params);
++  ready = result == SetupResult::kReady;
++  return result;
++}
+ 
+-  // 1. SQ ring (includes head, tail, mask, entries, flags, dropped, array).
++IoUringRing::SetupResult IoUringRing::map_control_regions(
++    const io_uring_params &params) {
++  sq_entries_ = params.sq_entries;
++  cq_entries_ = params.cq_entries;
+   sq_ring_size_ =
+       static_cast<size_t>(params.sq_off.array) + sq_entries_ * sizeof(uint32_t);
+-  sq_ring_ptr_ = ::mmap(nullptr, sq_ring_size_, PROT_READ | PROT_WRITE,
+-                        MAP_SHARED, ring_fd_, IORING_OFF_SQ_RING);
+-  if (sq_ring_ptr_ == MAP_FAILED) {
+-    LOG_ERROR("mmap SQ ring failed: %s", ::strerror(errno));
+-    sq_ring_ptr_ = nullptr;
+-    teardown();
+-    return false;
+-  }
+-
+-  // 2. SQE array.
+   sqes_size_ = sq_entries_ * sizeof(struct io_uring_sqe);
+-  sqes_ptr_ = reinterpret_cast<struct io_uring_sqe *>(
+-      ::mmap(nullptr, sqes_size_, PROT_READ | PROT_WRITE, MAP_SHARED, ring_fd_,
+-             IORING_OFF_SQES));
+-  if (sqes_ptr_ == MAP_FAILED) {
+-    LOG_ERROR("mmap SQEs failed: %s", ::strerror(errno));
+-    sqes_ptr_ = nullptr;
+-    teardown();
+-    return false;
+-  }
+-
+-  // 3. CQ ring (includes head, tail, mask, entries, overflow, cqes[]).
+   cq_ring_size_ = static_cast<size_t>(params.cq_off.cqes) +
+                   cq_entries_ * sizeof(struct io_uring_cqe);
+-  cq_ring_ptr_ = ::mmap(nullptr, cq
+```
+
+**File**: `src/ailego/io/iouring_loader.h` (modified, +27/-5)
+```diff
+@@ -33,6 +33,7 @@
+ #include <cstdlib>
+ #include <vector>
+ #include <ailego/io/iouring_def.h>
++#include <zvec/ailego/buffer/process_rss_budget.h>
+ 
+ namespace zvec {
+ namespace ailego {
+@@ -87,17 +88,17 @@ static constexpr size_t kIoUringStagingAlign = 4096;
+ 
+ class IoUringRing {
+  public:
+-  IoUringRing() = default;
+-  ~IoUringRing() {
+-    teardown();
+-  }
++  IoUringRing();
++  ~IoUringRing();
+ 
+   IoUringRing(const IoUringRing &) = delete;
+   IoUringRing &operator=(const IoUringRing &) = delete;
+ 
+   // Create an io_uring with `entries` queue slots.  Returns false if the
+   // kernel lacks io_uring or setup failed.  In iouring_loader.cc.
+   bool setup(uint32_t entries);
++  enum class SetupResult { kReady, kUnavailable, kNoMemory };
++  SetupResult setup_with_status(uint32_t entries);
+ 
+   // munmap all regions, close the ring fd, free staging.  Closing the fd
+   // only *starts* asynchronous cancellation of in-flight requests, so call
+@@ -109,12 +110,21 @@ class IoUringRing {
+   // the ring is quiesced (the old pool is freed here).  In iouring_loader.cc.
+   bool ensure_staging(size_t bytes);
+ 
++  // Take ownership of an existing metadata reservation for writeback staging.
++  // Must be called before staging allocation. No second charge is taken.
++  void adopt_staging_reservation(size_t bytes);
++
+   // Deliberately leak the staging pool when in-flight requests cannot be
+   // drained: the kernel may keep writing into it after the fd is closed.
+   // Caller buffers are never handed to the kernel and remain safe.
+   void abandon_staging() {
++    if (!staging_) return;
+     staging_ = nullptr;
+     staging_size_ = 0;
++    // The allocation has not been freed. Leave its charge quarantined too.
++    staging_charge_ = 0;
++    staging_projection_ = {};
++    prepaid_staging_bytes_ = 0;
+   }
+ 
+   bool is_valid() const {
+@@ -132,16 +142,22 @@ class IoUringRing {
+ 
+   // Execute a batch of aligned writes via io_uring. The call blocks until all
+   // accepted requests have completed, but the requests execute concurrently
+-  // in the kernel. Returns 0 on success and -1 on a safely drained failure.
++  // in the kernel. A quarantined write can still modify the file after return.
++  static constexpr int kQuarantined = -2;
+   int execute_writes(int fd, const IoUringWrite *write_reqs, size_t count);
+ 
+   int execute_writes(int fd, const std::vector<IoUringWrite> &write_reqs) {
+     return execute_writes(fd, write_reqs.data(), write_reqs.size());
+   }
+ 
+  private:
++  friend class IoUringStagingTestPeer;
++  SetupResult map_control_regions(const io_uring_params &params);
++  bool release_staging();
+   int execute_impl(int fd, const IoUringRead *read_reqs,
+                    const IoUringWrite *write_reqs, size_t count);
++  int enter(unsigned submit, unsigned minimum, unsigned flags);
++  int (*enter_override_)(int, unsigned, unsigned, unsigned){nullptr};
+ 
+   int ring_fd_{-1};
+ 
+@@ -152,6 +168,9 @@ class IoUringRing {
+   size_t sq_ring_size_{0};
+   size_t sqes_size_{0};
+   size_t cq_ring_size_{0};
++  ProcessRssBudget::MaterializationStamp sq_ring_projection_{};
++  ProcessRssBudget::MaterializationStamp sqes_projection_{};
++  ProcessRssBudget::MaterializationStamp cq_ring_projection_{};
+ 
+   // SQ ring field pointers (into sq_ring_ptr_).
+   unsigned *sq_head_{nullptr};
+@@ -177,6 +196,9 @@ class IoUringRing {
+   // io_uring teardown (see abandon_staging()).
+   char *staging_{nullptr};
+   size_t staging_size_{0};
++  size_t staging_charge_{0};
++  ProcessRssBudget::MaterializationStamp staging_projection_{};
++  size_t prepaid_staging_bytes_{0};
+ 
+   unsigned sq_entries_{0};
+   unsigned cq_entries_{0};
+```
+
+**File**: `src/ailego/io/libaio_loader.h` (modified, +95/-0)
+```diff
+@@ -30,9 +30,12 @@
+ 
+ #include <dlfcn.h>
+ #include <atomic>
++#include <cerrno>
+ #include <cstring>
++#include <limits>
+ #include <mutex>
+ #include <ailego/io/libaio_def.h>  // ABI-stable struct definitions (replaces <libaio.h>)
++#include <zvec/ailego/buffer/block_eviction_queue.h>
+ 
+ // Function-pointer typedefs for the four libaio syscalls used by DiskAnn.
+ typedef int (*aio_setup_fn)(int maxevents, io_context_t *ctxp);
+@@ -76,6 +79,66 @@ class LibAioLoader {
+     return available_.load(std::memory_order_acquire);
+   }
+ 
++  struct RingMemory {
++    size_t bytes{0};
++    zvec::ailego::ProcessRssBudget::MaterializationStamp projection{};
++  };
++
++  int setup_budgeted(int maxevents, io_context_t &ctx, RingMemory &memory) {
++    if (ctx || !io_setup || !io_destroy || maxevents <= 0) return -EINVAL;
++    auto &pool = zvec::ailego::MemoryLimitPool::get_instance();
++    const size_t page = pool.page_buffer_size();
++    // io_setup returns a completion-ring address. Reserve its header page
++    // before the syscall and admit the rest before any submission can use it.
++    if (pool.under_process_rss_pressure() ||
++        !pool.try_reserve_process_backing(page)) {
++      return -ENOMEM;
++    }
++
++    io_context_t ring = nullptr;
++    const int ret = io_setup(maxevents, &ring);
++    if (ret != 0) {
++      pool.finish_process_backing(page, false);
++      return ret;
++    }
++
++    const size_t size = completion_mapping_size(ring, page);
++    const size_t extra = size > page ? size - page : 0;
++    if (size == 0 || !pool.try_reserve_process_backing(extra)) {
++      if (destroy_ring(ring) == 0) {
++        pool.finish_process_backing(page, false);
++      } else {
++        const bool accounted =
++            !extra || pool.account_pending_process_backing(extra);
++        memory.bytes = page + (accounted ? extra : 0);
++        memory.projection = pool.finish_process_backing(memory.bytes, true);
++        // Leave the rejected ring with its owner for teardown. A terminal
++        // error prevents a caller from allocating another ring on every retry.
++        ctx = ring;
++        return -EIO;
++      }
++      return size == 0 ? -EINVAL : -ENOMEM;
++    }
++
++    memory = {size, pool.finish_process_backing(size, true)};
++    ctx = ring;
++    return 0;
++  }
++
++  int destroy_budgeted(io_context_t &ctx, RingMemory &memory) {
++    if (!ctx) return 0;
++    const int ret = destroy_ring(ctx);
++    if (ret == 0) {
++      if (memory.bytes) {
++        zvec::ailego::MemoryLimitPool::get_instance()
++            .release_unmapped_process_backing(memory.bytes, memory.projection);
++      }
++      ctx = nullptr;
++      memory = {};
++    }
++    return ret;
++  }
++
+   // Function pointers — nullptr until load() succeeds.
+   aio_setup_fn io_setup;
+   aio_destroy_fn io_destroy;
+@@ -86,6 +149,38 @@ class LibAioLoader {
+   LibAioLoader &operator=(const LibAioLoader &) = delete;
+ 
+  private:
++  int destroy_ring(io_context_t ctx) const {
++    int ret;
++    do {
++      ret = io_destroy(ctx);
++    } while (ret == -EINTR);
++    return ret;
++  }
++
++  static size_t completion_mapping_size(io_context_t ctx, size_t page) {
++    // This header is the Linux aio_ring ABI used by libaio's io_getevents
++    // fast path. Its event count reflects kernel and CPU-specific rounding.
++    constexpr uint32_t kRingMagic = 0xa10a10a1;
++    struct RingHeader {
++      uint32_t id, event_count, head, tail;
++      uint32_t magic, compat_features, incompat_features, header_bytes;
++    };
++    RingHeader header;
++    if (!ctx || page < sizeof(header)) return 0;
++    std::memcpy(&header, ctx, sizeof(header));
++    const size_t events = header.event_count;
++    const size_t header_bytes = header.header_bytes;
++    if (header.magic != kRingMagic || header.incompat_features != 0 ||
++        header_bytes < sizeof(header) || header_bytes > page || events == 0 ||
++        events >
++            (std::numeric_limits<size_t>::max() - header_bytes - (page - 1)) /
++                sizeof(io_event)) {
++      return 0;
++    }
++    const size_t bytes = header_bytes + events * sizeof(io_event);
++    return ((bytes + page - 1) / page) * page;
++  }
++
+   LibAioLoader()
+       : io_setup(nullptr),
+         io_destroy(nullptr),
+```
+
+**File**: `src/ailego/parallel/worker_memory.cc` (added, +76/-0)
+```diff
+@@ -0,0 +1,76 @@
++// Copyright 2025-present the zvec project
++// SPDX-License-Identifier: Apache-2.0
++#include <cassert>
++#include <mutex>
++#include <zvec/ailego/buffer/memory_reservation.h>
++#include <zvec/ailego/parallel/worker_memory.h>
++
++namespace zvec::ailego {
++namespace {
++class WorkerMemoryBudget {
++ public:
++  static WorkerMemoryBudget &instance() {
++    // Pools may finish during static teardown. Keep accounting alive until
++    // process exit, just like the permanently retained worker backing.
++    static auto *budget = new WorkerMemoryBudget;
++    return *budget;
++  }
++
++  void acquire(size_t bytes) {
++    std::lock_guard<std::mutex> lock(mutex_);
++    auto &pool = MemoryLimitPool::get_instance();
++    if (bytes > std::numeric_limits<size_t>::max() - active_)
++      throw std::bad_alloc();
++    const size_t target = active_ + bytes;
++    if (target > reservation_.bytes()) {
++      reservation_.add(target - reservation_.bytes(), bytes);
++    } else if (!pool.try_materialize(bytes)) {
++      throw std::bad_alloc();
++    }
++    active_ = target;
++  }
++  void started(size_t bytes) noexcept {
++    std::lock_guard<std::mutex> lock(mutex_);
++    started_ += bytes;
++    assert(started_ <= active_);
++    retained_ = std::max(retained_, started_);
++  }
++  void release(size_t bytes, size_t started) noexcept {
++    std::lock_guard<std::mutex> lock(mutex_);
++    assert(active_ >= bytes && started_ >= started);
++    active_ -= bytes;
++    started_ -= started;
++    reservation_.retain_at_most(std::max(active_, retained_));
++  }
++
++ private:
++  std::mutex mutex_;
++  MemoryReservation reservation_;
++  size_t active_{0};
++  size_t started_{0};
++  size_t retained_{0};
++};
++}  // namespace
++
++WorkerMemoryLease::WorkerMemoryLease(size_t workers) {
++  if (!workers || !MemoryLimitPool::get_instance().process_rss_limit()) return;
++  worker_bytes_ = DefaultNativeWorkerStackBytes();
++  if (!worker_bytes_) return;
++  if (workers > std::numeric_limits<size_t>::max() / worker_bytes_)
++    throw std::bad_alloc();
++  const size_t bytes = workers * worker_bytes_;
++  WorkerMemoryBudget::instance().acquire(bytes);
++  bytes_ = bytes;
++}
++
++void WorkerMemoryLease::worker_started() noexcept {
++  if (!bytes_) return;
++  assert(worker_bytes_ <= bytes_ - started_bytes_);
++  WorkerMemoryBudget::instance().started(worker_bytes_);
++  started_bytes_ += worker_bytes_;
++}
++
++WorkerMemoryLease::~WorkerMemoryLease() {
++  if (bytes_) WorkerMemoryBudget::instance().release(bytes_, started_bytes_);
++}
++}  // namespace zvec::ailego
+```
+
+**File**: `src/ailego/utility/file_helper.cc` (modified, +96/-0)
+```diff
+@@ -12,7 +12,9 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++#include <atomic>
+ #include <cerrno>
++#include <chrono>
+ #include <cstdio>
+ #include <cstring>
+ #include <filesystem>
+@@ -38,8 +40,13 @@
+ #if defined(__FreeBSD__)
+ #include <sys/sysctl.h>
+ #endif
++#include <sys/stat.h>
+ #include <fcntl.h>
+ #include <unistd.h>
++#if defined(__linux__)
++#include <linux/fs.h>
++#include <sys/syscall.h>
++#endif
+ #endif
+ 
+ namespace fs = std::filesystem;
+@@ -341,6 +348,95 @@ bool FileHelper::MakePath(const char *path) {
+   return MakePathImpl(PathFromUtf8(path));
+ }
+ 
++StagedPath::~StagedPath() {
++  if (directory_.empty()) return;
++  try {
++    FileHelper::RemoveDirectory(directory_.c_str());
++  } catch (...) {
++    // This path is private. Cleanup failure cannot remove a published file.
++  }
++}
++
++bool StagedPath::supported() {
++#if defined(_WIN32) || defined(_WIN64) || defined(__APPLE__) || \
++    (defined(__linux__) && defined(SYS_renameat2) &&            \
++     defined(RENAME_NOREPLACE))
++  return true;
++#else
++  return false;
++#endif
++}
++
++bool StagedPath::prepare(const std::string &destination) {
++  ClearFsError();
++  if (!directory_.empty() || !supported()) return false;
++  std::error_code absolute_error;
++  auto target =
++      fs::absolute(FileHelper::PathFromUtf8(destination), absolute_error);
++  if (absolute_error) {
++    SetFsError(absolute_error);
++    return false;
++  }
++  while (target.has_relative_path() &&
++         (!target.has_filename() || target.filename() == ".")) {
++    target = target.parent_path();
++  }
++  if (!target.has_filename() || target.filename() == "..") {
++    SetFsError(std::make_error_code(std::errc::invalid_argument));
++    return false;
++  }
++  auto parent = target.parent_path();
++  if (parent.empty()) parent = ".";
++  if (!MakePathImpl(parent)) return false;
++  destination_ = FileHelper::PathToUtf8(target);
++  static std::atomic<uint64_t> sequence{0};
++  const auto stamp =
++      std::chrono::steady_clock::now().time_since_epoch().count();
++  for (unsigned attempt = 0; attempt != 64; ++attempt) {
++    const auto unique = sequence.fetch_add(1, std::memory_order_relaxed);
++    auto directory = parent / (".zvec-create-" + std::to_string(stamp) + "-" +
++                               std::to_string(unique));
++    auto private_directory = FileHelper::PathToUtf8(directory);
++    auto private_path = FileHelper::PathToUtf8(directory / "data");
++#if defined(_WIN32) || defined(_WIN64)
++    std::error_code error;
++    const bool created = fs::create_directory(directory, error);
++    if (!created && error && error != std::errc::file_exists) {
++      SetFsError(error);
++      return false;
++    }
++#else
++    const bool created = ::mkdir(directory.c_str(), S_IRWXU) == 0;
++    if (!created && errno != EEXIST) return false;
++#endif
++    if (created) {
++      directory_.swap(private_directory);
++      path_.swap(private_path);
++      return true;
++    }
++  }
++  SetFsError(std::make_error_code(std::errc::file_exists));
++  return false;
++}
++
++bool StagedPath::publish() {
++  ClearFsError();
++  if (path_.empty()) return false;
++#if defined(_WIN32) || defined(_WIN64)
++  const auto source = FileHelper::PathFromUtf8(path_);
++  const auto target = FileHelper::PathFromUtf8(destination_);
++  return ::MoveFileExW(source.c_str(), target.c_str(), MOVEFILE_WRITE_THROUGH);
++#elif defined(__APPLE__)
++  return ::renamex_np(path_.c_str(), destination_.c_str(), RENAME_EXCL) == 0;
++#elif defined(__linux__) && defined(SYS_renameat2) && defined(RENAME_NOREPLACE)
++  return ::syscall(SYS_renameat2, AT_FDCWD, path_.c_str(), AT_FDCWD,
++                   destination_.c_str(), RENAME_NOREPLACE) == 0;
++#else
++  SetFsError(std::make_error_code(std::errc::operation_not_supported));
++  return false;
++#endif
++}
++
+ bool FileHelper::RemoveDirectory(const char *path) {
+   if (path == nullptr || *path == '\0') {
+     return false;
+```
+
+**File**: `src/core/algorithm/diskann/diskann_file_reader.cc` (modified, +266/-327)
+```diff
+@@ -15,6 +15,7 @@
+ #include "diskann_file_reader.h"
+ #include <algorithm>
+ #include <atomic>
++#include <bitset>
+ #include <cerrno>
+ #include <cstdio>
+ #include <cstdlib>
+@@ -26,6 +27,7 @@
+ #include <thread>
+ #include <utility>
+ #include <ailego/io/io_backend_def.h>
++#include <ailego/pattern/scope_guard.h>
+ #include <zvec/ailego/buffer/vector_page_table.h>
+ #include <zvec/ailego/io/io_backend.h>
+ #include <zvec/ailego/logger/logger.h>
+@@ -248,19 +250,24 @@ int setup_io_ctx(IOContext &ctx) {
+   }
+ 
+   // Priority 1: io_uring (raw kernel syscalls — zero dependency).
+-  if (selected == ailego::IOBackendType::kIoUring &&
+-      ctx->ring.setup(MAX_EVENTS)) {
+-    log_diskann_io_backend(ctx->type);
+-    return 0;
++  if (selected == ailego::IOBackendType::kIoUring) {
++    const auto setup = ctx->ring.setup_with_status(MAX_EVENTS);
++    if (setup != ailego::IoUringRing::SetupResult::kUnavailable) {
++      if (setup == ailego::IoUringRing::SetupResult::kNoMemory)
++        ctx->type = ailego::IOBackendType::kPread;
++      log_diskann_io_backend(ctx->type);
++      return 0;
++    }
+   }
+ 
+   // Priority 2: libaio (dlopen — soft dependency).
+   if (selected != ailego::IOBackendType::kPread &&
+-      LibAioLoader::Instance().load() &&
+-      LibAioLoader::Instance().is_available()) {
+-    int ret = LibAioLoader::Instance().io_setup(MAX_EVENTS, &ctx->aio_ctx);
+-    if (ret == 0) {
++      LibAioLoader::Instance().load()) {
++    const int ret = LibAioLoader::Instance().setup_budgeted(
++        MAX_EVENTS, ctx->aio_ctx, ctx->aio_memory);
++    if (ret == 0 || ctx->aio_ctx) {
+       ctx->type = ailego::IOBackendType::kLibAio;
++      ctx->aio_quarantined = ret != 0;
+       log_diskann_io_backend(ctx->type);
+       return 0;
+     }
+@@ -280,21 +287,24 @@ int destroy_io_ctx(IOContext &ctx) {
+     return 0;
+   }
+ 
++  int status = 0;
+ #if defined(_WIN32) || defined(_WIN64)
+   close_windows_io_handles(ctx);
+ #elif defined(__linux__) && !defined(__ANDROID__)
+   if (ctx->type == ailego::IOBackendType::kIoUring) {
+     ctx->ring.teardown();
+-  } else if (ctx->type == ailego::IOBackendType::kLibAio &&
+-             LibAioLoader::Instance().is_available()) {
+-    LibAioLoader::Instance().io_destroy(ctx->aio_ctx);
++  } else if (ctx->aio_ctx && LibAioLoader::Instance().destroy_budgeted(
++                                 ctx->aio_ctx, ctx->aio_memory) != 0) {
++    // Keep the buffer and its charge if the kernel still owns it.
++    (void)ctx->aio_staging.release();
++    status = IndexError_Runtime;
+   }
+   // IoUringRing destructor also calls teardown() — idempotent and safe.
+ #endif
+ 
+   delete ctx;
+   ctx = nullptr;
+-  return 0;
++  return status;
+ }
+ 
+ #if !defined(_WIN32) && !defined(_WIN64)
+@@ -341,155 +351,183 @@ static int execute_io_pread(int fd, std::vector<AlignedRead> &read_reqs) {
+ }
+ 
+ #if defined(__linux__) && !defined(__ANDROID__)
+-// io_getevents() should only fail permanently for an invalid context or
+-// invalid arguments. If that happens after submission, io_destroy() is the
+-// only safe way to quiesce the context before synchronous I/O touches the same
+-// destination buffers. Recreate the context so later reads can still use AIO.
+-static bool reset_aio_context(io_context_t &ctx) {
+-  auto &loader = LibAioLoader::Instance();
+-  int ret;
+-  do {
+-    ret = loader.io_destroy(ctx);
+-  } while (ret == -EINTR);
++// AIO never receives a caller-owned address. If cancelling a batch fails,
++// retain its staging in the context and fall back to pread for later reads.
++static void finish_libaio_reads(IoBackend &ctx) {
++  ctx.aio_active = false;
++  ctx.aio_batch = nullptr;
++  if (!ctx.aio_quarantined) ctx.aio_staging.reset();
++}
+ 
++static bool reset_aio_context(IoBackend &ctx) noexcept {
++  auto &loader = LibAioLoader::Instance();
++  int ret = loader.destroy_budgeted(ctx.aio_ctx, ctx.aio_memory);
++  ctx.aio_quarantined = ret != 0;
++  finish_libaio_reads(ctx);
+   if (ret != 0) {
+-    LOG_ERROR("io_destroy failed while draining AIO; returned: %d, %s", ret,
+-              ::strerror(-ret));
+     return false;
+   }
+ 
+-  ctx = nullptr;
+-  io_context_t replacement = nullptr;
+-  ret = loader.io_setup(MAX_EVENTS, &replacement);
+-  if (ret != 0) {
+-    LOG_ERROR(
+-        "io_setup failed while recreating an AIO context; returned: %d, %s. "
+-        "this context will use pread",
+-        ret, ::strerror(-ret));
+-    return true;
+-  }
+-  ctx = replacement;
++  ret = loader.setup_budgeted(MAX_EVENTS, ctx.aio_ctx, ctx.aio_memory);
++  ctx.aio_quarantined = ret != 0 && ctx.aio_ctx != nullptr;
+   return true;
+ }
+ 
+-int execute_io_libaio(io_context_t &ctx, int fd,
+-                      std::vector<AlignedRead> &read_reqs, uint64_t n_retries) {
+-  uint64_t iters = DiskAnnUtil::div_round_up(read_reqs.size(), MAX_EVENTS);
+-
+-  for (uint64_t iter = 0; iter < iters; iter++) {
+-    uint64_t n_ops = std::min((uint64_t)read_reqs.size() - (iter * MAX_EVENTS),
+-                              (uint64_t)MAX_EVENTS);
+-
+-    std::vector<iocb_t *> cbs(n_ops, nullpt
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #932** (2026-11-25): perf(vamana): pass query parameters directly and compact neighbor candidates (@JalinWang)
 - **PR #931** (2026-11-24): perf(flat): skip key tables for contiguous identity layouts (@luoxiaojian)
 - **PR #930** (2026-11-24): perf(turbo): fold four UINT4 distance sums in AVX-512 lanes (@luoxiaojian)
+- **PR #924** (closed): perf(db): cache scalar range prefixes within a shared memory budget (@iaojnh)
+- **PR #923** (2026-11-25): fix: preserve BufferStorage consistency and staged budget recovery (@iaojnh)
 - **PR #920** (2026-11-23): perf(storage): project requested columns before taking rows (@egolearner)
-- **PR #919** (2026-11-20): fix(ci): pin CMake for iOS builds (@luoxiaojian)
-- **PR #916** (closed): Support row-count HNSW partitions and merge segment top-k (@iaojnh)
-- **PR #915** (2026-11-18): fix(build): set policy minimum for CMake 4 compatibility (@egolearner)
 
 ---
 
@@ -1174,59 +2101,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. turbo): fold four UINT4 distance sums in AVX-512 lanes
+## X. preserve BufferStorage consistency and staged budget recovery
 
 **RULE**:
-When implementing operations in `src/turbo/distance/avx512_vnni/uniform_uint4/squared_euclidean.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/ailego/buffer/block_eviction_queue.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac3d0dd7`: turbo): fold four UINT4 distance sums in AVX-512 lanes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21229b48`: preserve BufferStorage consistency and staged budget recovery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/turbo/distance/avx512_vnni/uniform_uint4/squared_euclidean.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ailego/buffer/block_eviction_queue.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  // Fold the four rows together while all four 128-bit lanes are active.
-  // Each lane of abcd holds the partial sums for rows a, b, c and d.
-  const __m512i ab = _mm512_add_epi32(_mm512_unpacklo_epi32(a, b),
-                                      _mm512_unpackhi_epi32(a, b));
-  const __m512i cd = _mm512_add_epi32(_mm512_unpacklo_epi32(c, d),
-                                      _mm512_unpackhi_epi32(c, d));
-  const __m512i abcd = _mm512_add_epi32(_mm512_unpacklo_epi64(ab, cd),
-                                        _mm512_unpackhi_epi64(ab, cd));
-  const __m256i halves = _mm256_add_epi32(_mm512_castsi512_si256(abcd),
-                                          _mm512_extracti64x4_epi64(abcd, 1));
-  return _mm_add_epi32(_mm256_castsi256_si128(halves),
-                       _mm256_extracti128_si256(halves, 1));
+#include <optional>
+#include <utility>
+thread_local size_t *initial_queue_backing = nullptr;
+  bool has_lifetime_slot{false};
+void *BlockEvictionQueue::ProcessQueueTraits::malloc_lifetime(size_t bytes) {
+  // Process-wide queues keep their producers and indexes until process exit.
+  return MemoryLimitPool::get_instance().allocate_queue_memory(bytes, true);
+}
+
+BlockEvictionQueue::BlockEvictionQueue() {
+  // Only the queues' initial block pools are allocated through the traits
+  // during construction. They stay mapped for the lifetime of this instance.
+  auto *previous =
+      std::exchange(initial_queue_backing, &initial_backing_bytes_);
+  auto restore =
+      ScopeGuard::Make([previous] { initial_queue_backing = previous; });
+  for (size_t i = 0; i < kQueueCount; ++i) {
+    evict_queues_.emplace_back(kEvictQueueCapacity);
+  }
+}
+
+void *MemoryLimitPool::allocate_queue_memory(size_t bytes, bool lifetime) {
+    if (lifetime && !slab->has_lifetime_slot) {
+      slab->has_lifetime_slot = true;
+      queue_runtime_lifetime_size_.fetch_add(slab->mapping_bytes,
+                                             std::memory_order_relaxed);
+    }
+  if (initial_queue_backing) *initial_queue_backing
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  const __m256i a8 = _mm256_add_epi32(_mm512_castsi512_si256(a),
-                                      _mm512_extracti64x4_epi64(a, 1));
-  const __m256i b8 = _mm256_add_epi32(_mm512_castsi512_si256(b),
-                                      _mm512_extracti64x4_epi64(b, 1));
-  const __m256i c8 = _mm256_add_epi32(_mm512_castsi512_si256(c),
-                                      _mm512_extracti64x4_epi64(c, 1));
-  const __m256i d8 = _mm256_add_epi32(_mm512_castsi512_si256(d),
-                                      _mm512_extracti64x4_epi64(d, 1));
-
-  const __m128i a4 = _mm_add_epi32(_mm256_castsi256_si128(a8),
-                                   _mm256_extracti128_si256(a8, 1));
-  const __m128i b4 = _mm_add_epi32(_mm256_castsi256_si128(b8),
-                                   _mm256_extracti128_si256(b8, 1));
-  const __m128i c4 = _mm_add_epi32(_mm256_castsi256_si128(c8),
-                                   _mm256_extracti128_si256(c8, 1));
-  const __m128i d4 = _mm_add_epi32(_mm256_castsi256_si128(d8),
-                                   _mm256_extracti128_si256(d8, 1));
-
-  const __m128i ab_low = _mm_unpacklo_epi32(a4, b4);
-  const __m128i cd_low = _mm_unpacklo_epi32(c4, d4);
-  const __m128i 
+void *MemoryLimitPool::allocate_queue_memory(size_t bytes) {
+    release_fixed(bytes, &metadata_used_size_, Backing::kLive, projection);
+  const auto admit = [&] {
+    return process_rss_.try_materialize_reusable(bytes, block->projection);
+  if (!required) return admit();
+      release_committed(bytes, Backing::kLive, projection);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac3d0dd7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21229b48` are properly handled with clean fallback behavior.

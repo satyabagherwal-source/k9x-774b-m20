@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-PS1Q",
-    "timestamp": "2026-11-24T06:38:28.670Z",
-    "repository": "encoredev/encore",
-    "learningId": "learn-github-encoredev-encore",
-    "contentHash": "32dc69d610fe7e06397ca2fbe7a805a4c3e76c4faa787f45aba2830e771fec43",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-ZQIZ",
-    "timestamp": "2026-11-24T06:46:13.259Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "f9669db37d7a81eb4fce5223021821b47fa468a76782eb240b5888915619e095",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-ZU7Z",
-    "timestamp": "2026-11-24T06:46:18.047Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "a3961a0de6da642a68f797d9512fb5fa957e261f2470ebc075c3bbe3d218ff8d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-003E",
-    "timestamp": "2026-11-24T06:46:25.658Z",
-    "repository": "neuron-core/neuron-ai",
-    "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-BBAI",
     "timestamp": "2026-11-24T06:55:13.386Z",
     "repository": "meshery/meshery",
@@ -7490,6 +7430,66 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "9fa330493200d7b457460eb06bc104398acb8b1482959025f0e589c84ea5ffe1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-P041",
+    "timestamp": "2026-11-26T00:09:18.289Z",
+    "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+    "contentHash": "3624385b887f0cccef8d5ee7bc2d0e19931b0b00198eba937c544d0bebcf2aff",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-P7R8",
+    "timestamp": "2026-11-26T00:09:28.196Z",
+    "repository": "clastix/kamaji",
+    "learningId": "learn-github-clastix-kamaji",
+    "contentHash": "1299bfdf8044c91e9bf5596d7559a0577a3388749f14354cb63743f962ee103d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-P9ZJ",
+    "timestamp": "2026-11-26T00:09:31.087Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "a8640c3f42bb8b18e54abe332be6feebd2e48cdbf52c10d2d7633d671e83dee7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-PBP6",
+    "timestamp": "2026-11-26T00:09:33.306Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "8268516e92726b2bbd9aabd439c81bb0970062faca9317922a107e345096424f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
