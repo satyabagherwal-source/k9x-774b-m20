@@ -13276,3 +13276,6 @@ Every entry in this ledger must capture:
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `99cf558e` | Multi-dimensional audit evidence | 2026-11-26T04:39:17.772Z |
 | `learn-huggingface-edge0-edge0-145b-nvfp4` | `https://huggingface.co/Edge0/Edge0-145B-NVFP4` | `hf-edge0-e` | Multi-dimensional audit evidence | 2026-11-26T04:47:41.918Z |
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `93db1c80` | Multi-dimensional audit evidence | 2026-11-26T04:47:43.705Z |
+| `learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-26T04:56:03.000Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `40ec0264` | Multi-dimensional audit evidence | 2026-11-26T04:56:04.267Z |
+| `learn-dom-f-c1405a3a` | `project://restatedev-restate` | `40ec0264` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md` | 2026-11-26T04:56:44.382Z |

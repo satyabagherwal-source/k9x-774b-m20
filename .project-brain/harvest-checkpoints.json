@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T04:47:43.777Z",
+  "last_updated": "2026-11-26T04:56:04.284Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "58a29a68f2391c9456f1e8713eafb0dfa12383dfd81d35beff0d9d01b14874fd",
-      "verified_at": "2026-11-24T22:42:26.344Z",
+      "content_hash": "ebb60dc903e8921ebdbcaa38ffb3242f02eaca861af6e34714b1724562bc146c",
+      "verified_at": "2026-11-26T04:56:04.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T22:42:26.344Z"
+      "last_updated": "2026-11-26T04:56:04.284Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -18846,14 +18846,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-      "content_hash": "34dd1484ce823da74ab227d14d2f0aea41fc63c1ada6b407f422edab52c3cdc7",
-      "verified_at": "2026-11-22T08:22:56.444Z",
+      "content_hash": "ec1c9e229c9a82a75b6cc5f0c5504dcb7d32a54457b482e563412f08d6ab2e77",
+      "verified_at": "2026-11-26T04:56:03.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T08:22:56.444Z"
+      "last_updated": "2026-11-26T04:56:03.013Z"
     },
     "laion/clap-htsat-fused": {
       "repository": "laion/clap-htsat-fused",

@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T04:14:09.355Z",
+  "updated_at": "2026-11-26T04:56:44.379Z",
   "statistics": {
-    "total_nodes": 551,
-    "total_edges": 227,
+    "total_nodes": 552,
+    "total_edges": 228,
     "domain_distribution": {
       "D": 333,
       "M": 1,
@@ -14,14 +14,14 @@
       "K": 34,
       "L": 9,
       "G": 1,
-      "F": 30,
+      "F": 31,
       "B": 4,
       "E": 2,
       "I": 14,
       "C": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 223,
+      "CONSTRAINED_BY_ARCHITECTURE": 224,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12303,6 +12303,29 @@
       ],
       "created_at": "2026-11-26T04:14:09.355Z",
       "updated_at": "2026-11-26T04:14:09.355Z"
+    },
+    "DOM-F-C1405A3A": {
+      "id": "DOM-F-C1405A3A",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "[UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/re",
+      "summary": "Prevents defects observed in production commit `40ec0264`: [UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/res -> When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concur",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://restatedev-restate/restatedev-restate-learnings.md",
+        "source_version": "40ec0264",
+        "observed_at": "2026-11-26T04:56:03.106Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (restatedev-restate)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-26T04:56:44.378Z",
+      "updated_at": "2026-11-26T04:56:44.378Z"
     }
   },
   "edges": [
@@ -14575,6 +14598,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-F-973FB0DB [F] with Domain G",
       "created_at": "2026-11-26T02:10:14.262Z"
+    },
+    {
+      "id": "EDGE-27A2D825FA17",
+      "sourceId": "DOM-F-C1405A3A",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-F-C1405A3A [F] with Domain G",
+      "created_at": "2026-11-26T04:56:44.379Z"
     }
   ]
 }

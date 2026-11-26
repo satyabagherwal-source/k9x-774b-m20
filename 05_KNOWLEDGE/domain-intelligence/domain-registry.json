@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T04:47:55.536Z",
-  "total_records": 2705,
+  "last_updated": "2026-11-26T04:56:47.085Z",
+  "total_records": 2706,
   "domains": {
     "A": {
       "total": 22,
@@ -1099,7 +1099,7 @@
       ]
     },
     "F": {
-      "total": 115,
+      "total": 116,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1215,7 +1215,8 @@
         "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants",
         "DOM-F-BD142F65",
         "DOM-F-4026A5FE",
-        "DOM-F-973FB0DB"
+        "DOM-F-973FB0DB",
+        "DOM-F-C1405A3A"
       ]
     },
     "G": {
@@ -8475,8 +8476,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "0acf9f8c304f317ef6c9c3cd64f664b49513a73e4889f4cc0fbde337f39d1d7f",
-      "created_at": "2026-11-26T04:22:43.862Z"
+      "content_hash": "f1cdab2243fdb733fd1be9aed8ce4c4085cf5d0639efeecf7da11c5567bba932",
+      "created_at": "2026-11-26T04:56:47.085Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -14163,8 +14164,8 @@
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "repository": "restatedev/restate",
-      "content_hash": "a3a19011f596d0d4bbda0c2678af2c7b2765bbfb9d9f78068101b18b7dac5d71",
-      "created_at": "2026-11-24T22:42:26.928Z"
+      "content_hash": "8c53438736f0e81b50a89e25efd13f000817bf3c2bd958ff7bda166caa1049a5",
+      "created_at": "2026-11-26T04:56:04.706Z"
     },
     "DOM-H-948029CF": {
       "record_id": "DOM-H-948029CF",
@@ -14240,8 +14241,8 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
       "repository": "restatedev-restate-learnings",
-      "content_hash": "c1a220b9265a684ebb034c835ca46a228906075ae1059bbef01dc82bd59621e6",
-      "created_at": "2026-11-24T22:42:41.727Z"
+      "content_hash": "83fe6d354ef942f62acb2fedd7c7d860e5f3526d1bcf925b463d8ba538b5cae1",
+      "created_at": "2026-11-26T04:56:45.361Z"
     },
     "DOM-H-C33FF226": {
       "record_id": "DOM-H-C33FF226",
@@ -39878,8 +39879,8 @@
       "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-g.md",
       "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
-      "content_hash": "50ce32fff0455f38e7d2c8f08ce52c86bcb0ed1e6227473cc76af194917e36b1",
-      "created_at": "2026-11-22T08:22:56.645Z"
+      "content_hash": "a4e2ed352448973ebef5668b7eb8933e70176fd6cec6cc8eab3f512caec5666c",
+      "created_at": "2026-11-26T04:56:03.242Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor",
@@ -39887,8 +39888,8 @@
       "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-g.md",
       "repository": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings",
-      "content_hash": "0809373e1fe246adc52d81756eaf72d7b74813135546b0b3178f49b8d930008f",
-      "created_at": "2026-11-22T08:22:59.673Z"
+      "content_hash": "a1b055ef5a2fb4110334bd4d8c7df1e579169445ac02834d95e28b390b1c3012",
+      "created_at": "2026-11-26T04:56:46.074Z"
     },
     "domain_intelligence-architecture-intelligence-xevrion-hatchzip-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xevrion-hatchzip-core-invariants",
@@ -45667,6 +45668,48 @@
       "confidence": 0.81,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T04:14:09.327Z"
+    },
+    "DOM-F-C1405A3A": {
+      "record_id": "DOM-F-C1405A3A",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "[UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/re",
+      "content": "When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "11d9a374c45e334b5e519a7788ef18465f5332a448d4416a950e7066975f80a5",
+      "summary": "Prevents defects observed in production commit `40ec0264`: [UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/res -> When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concur",
+      "provenance": {
+        "source_uri": "project://restatedev-restate/restatedev-restate-learnings.md",
+        "source_version": "40ec0264",
+        "observed_at": "2026-11-26T04:56:03.106Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (restatedev-restate)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of restatedev-restate"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T04:56:44.350Z"
     }
   }
 }

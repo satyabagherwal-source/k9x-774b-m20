@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T04:47:53.237Z",
-    "lastVerified": "2026-11-26T04:47:53.237Z",
+    "lastChecked": "2026-11-26T04:56:14.851Z",
+    "lastVerified": "2026-11-26T04:56:14.851Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -392,8 +392,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T04:22:42.602Z",
-    "lastVerified": "2026-11-26T04:22:42.602Z",
+    "lastChecked": "2026-11-26T04:56:14.842Z",
+    "lastVerified": "2026-11-26T04:56:14.842Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2320,8 +2320,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-26T00:59:30.386Z",
-    "lastVerified": "2026-11-26T00:59:30.386Z",
+    "lastChecked": "2026-11-26T04:56:09.791Z",
+    "lastVerified": "2026-11-26T04:56:09.791Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -4048,9 +4048,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-25T03:36:53.579Z",
+    "lastChecked": "2026-11-26T04:56:12.338Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-25T03:36:53.579Z"
+    "lastVerified": "2026-11-26T04:56:12.338Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -6820,9 +6820,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-11-25T04:51:59.168Z",
+    "lastChecked": "2026-11-26T04:56:07.380Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-11-25T04:51:59.168Z"
+    "lastVerified": "2026-11-26T04:56:07.380Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",
@@ -7661,14 +7661,14 @@
     "officialUrl": "https://github.com/restatedev/restate",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T22:42:24.565Z",
-    "lastVerified": "2026-11-24T22:42:24.565Z",
+    "lastChecked": "2026-11-26T04:56:03.099Z",
+    "lastVerified": "2026-11-26T04:56:03.099Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-restatedev-restate",
-    "contentHash": "58a29a68f2391c9456f1e8713eafb0dfa12383dfd81d35beff0d9d01b14874fd",
+    "contentHash": "ebb60dc903e8921ebdbcaa38ffb3242f02eaca861af6e34714b1724562bc146c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11333,9 +11333,9 @@
   "ming1016-swiftpamphletapp": {
     "name": "SwiftPamphletApp",
     "officialUrl": "https://github.com/ming1016/SwiftPamphletApp",
-    "lastChecked": "2026-11-23T19:17:48.477Z",
+    "lastChecked": "2026-11-26T04:56:05.038Z",
     "revisionIdentifier": "0d07d106",
-    "lastVerified": "2026-11-23T19:17:48.477Z"
+    "lastVerified": "2026-11-26T04:56:05.038Z"
   },
   "psf-requests": {
     "name": "requests",
@@ -14546,12 +14546,12 @@
     "officialUrl": "https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T08:22:34.391Z",
-    "lastVerified": "2026-11-22T08:22:34.391Z",
+    "lastChecked": "2026-11-26T04:56:02.332Z",
+    "lastVerified": "2026-11-26T04:56:02.332Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-    "contentHash": "34dd1484ce823da74ab227d14d2f0aea41fc63c1ada6b407f422edab52c3cdc7",
+    "contentHash": "ec1c9e229c9a82a75b6cc5f0c5504dcb7d32a54457b482e563412f08d6ab2e77",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

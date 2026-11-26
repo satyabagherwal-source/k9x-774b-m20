@@ -4,24 +4,24 @@
 {
   "source_repository": "restatedev/restate",
   "source_url": "https://github.com/restatedev/restate",
-  "source_version": "d0c6ad20",
+  "source_version": "40ec0264",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T22:42:26.680Z",
+  "timestamp": "2026-11-26T04:56:04.507Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-restatedev-restate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [restatedev/restate](https://github.com/restatedev/restate) (Revision: `d0c6ad20`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T22:42:26.680Z`  
+> **Provenance**: Harvested from [restatedev/restate](https://github.com/restatedev/restate) (Revision: `40ec0264`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T04:56:04.507Z`  
 > **Learning ID**: `learn-github-restatedev-restate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: B (Product Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: B (Product Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from restatedev/restate:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:42:24.565Z  
+> **Harvest Timestamp**: 2026-11-26T04:56:03.099Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4740 stars
+- **Stars / Engagement**: 4746 stars
 
 ---
 
@@ -1652,780 +1652,46 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc09481a` (2026-11-23)
-**Commit Message**: [Invoker] Keep the per-invocation memory limit above the accepted message size
+### Incident Patch 1: `40ec0264` (2026-11-25)
+**Commit Message**: [UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/restate-web-ui/releases/download/v1.1.9/ui-v1.1.9.tar (#6051)
 
-The invoker accepts service messages up to the configured message size
-limit plus 256 KiB of framing headroom, but the per-invocation memory
-limit defaulted to exactly the configured limit and was capped at it. A
-state value or journal entry inside that headroom could be written but
-not read back, pausing every invocation that read it with an "upper
-bound exceeded" out-of-memory error.
+Co-authored-by: restatedev-web-ui[bot] <350330018+restatedev-web-ui[bot]@users.noreply.github.com>
 
-The per-invocation memory limit is now never smaller than the invoker's
-message size limit plus room for the stored entry envelope. The floor is
-derived from InvokerOptions::message_size_limit(), so the read budget
-follows any change to the write headroom. Smaller configured values are
-raised with a warning, and the limit can now be set above the networking
-message size limit.
-
-A message exceeding the message size limit is now a non-transient error:
-the service resends the same message on every retry.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/invoker-impl/src/error.rs` (modified, +31/-1)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -17,6 +17,7 @@ use http::{HeaderName, HeaderValue};
+@@ -9449,8 +9449,8 @@ dependencies = [
  
- use restate_memory::OutOfMemoryKind;
- use restate_service_client::ServiceClientError;
-+use restate_service_protocol_v4::message_codec::EncodingError;
- use restate_types::errors::{IdDecodeError, InvocationError, InvocationErrorCode, codes};
- use restate_types::identifiers::DeploymentId;
- use restate_types::journal::raw::RawEntryCodecError;
-@@ -66,7 +67,7 @@ pub(crate) enum InvokerError {
-     Encoder(
-         #[from]
-         #[code]
--        restate_service_protocol_v4::message_codec::EncodingError,
-+        EncodingError,
-     ),
-     #[error("cannot decode entry: {0}")]
-     #[code(restate_errors::RT0012)]
-@@ -234,6 +235,8 @@ impl InvokerError {
-         match self {
-             InvokerError::NotInvoked => false,
-             InvokerError::OutOfMemory(oom) => oom.kind != OutOfMemoryKind::UpperBoundExceeded,
-+            // The service sends the same message again on retry.
-+            InvokerError::Encoder(EncodingError::MessageSizeLimit(..)) => false,
-             _ => true,
-         }
-     }
-@@ -633,3 +636,30 @@ fn specialized_restate_error_code_for_invocation_error(
-         _ => &restate_errors::RT0007,
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use std::num::NonZeroUsize;
-+
-+    use super::*;
-+
-+    #[test]
-+    fn size_limit_errors_are_not_transient() {
-+        let message_size_limit = InvokerError::Encoder(EncodingError::MessageSizeLimit(
-+            2,
-+            NonZeroUsize::new(1).unwrap(),
-+        ));
-+        assert!(!message_size_limit.is_transient());
-+
-+        let memory = |kind| {
-+            InvokerError::OutOfMemory(InvocationMemoryExhausted {
-+                needed: NonZeroByteCount::new(NonZeroUsize::new(1).unwrap()),
-+                kind,
-+                context: "test",
-+            })
-+        };
-+        assert!(!memory(OutOfMemoryKind::UpperBoundExceeded).is_transient());
-+        assert!(memory(OutOfMemoryKind::PoolExhausted).is_transient());
-+        assert!(InvokerError::ContentTooLarge.is_transient());
-+    }
-+}
+ [[package]]
+ name = "restate-web-ui"
+-version = "1.1.8"
+-source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.8#0e3cce8c1d13619f7401681d033cfa102e4286d2"
++version = "1.1.9"
++source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.9#bc109ac99b7906168173ced877648b3b66f6b96b"
+ 
+ [[package]]
+ name = "restate-worker"
 ```
 
-**File**: `crates/invoker-impl/src/lib.rs` (modified, +3/-3)
+**File**: `crates/admin/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1491,9 +1491,9 @@ where
-     ///
-     /// Creates the outbound memory budget for an invocation.
-     ///
--    /// The upper bound caps how much memory a single invocation may use.
--    /// Defaults to `per_invocation_memory_limit` (which itself defaults to
--    /// `message_size_limit`).
-+    /// The upper bound caps how much memory a single invocation may use. It is
-+    /// `per_invocation_memory_limit`, which always covers the largest entry the invoker
-+    /// accepts from a service.
-     fn create_outbound_budget(
-         &self,
-         options: &InvokerOptions,
-```
-
-**File**: `crates/partition-store/src/tests/journal_table_v2_test/mod.rs` (modified, +86/-3)
-```diff
-@@ -8,21 +8,24 @@
- // the Business Source License, use of this software will be governed
- // by the Apache License, Version 2.0.
+@@ -40,7 +40,7 @@ restate-util-time = { workspace = true }
+ restate-types = { workspace = true }
+ restate-util-string = { workspace = true }
+ restate-wal-protocol = { workspace = true }
+-restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.8", tag = "v1.1.8" }
++restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.9", tag = "v1.1.9" }
  
-+use std::num::NonZeroUsize;
- use std::pin::pin;
- use std::time::Duration;
- 
- use super::{low_pri_executor, storage_test_environment};
- use bytes::Bytes;
- use bytestring::ByteString;
- use futures_util::StreamExt;
--use restate_memory::{LendableMemoryPool, LocalMemoryPool};
-+use restate_memory::{
-+    ByteCount, LendableMemoryPool, LocalMemoryPool, MemoryPool, NonZeroByteCount, OutOfMemoryKind,
-+};
- use restate_service_protocol_v4::entry_codec::ServiceProtocolV4Codec;
--use restate_storage_api::Transaction;
- use restate_storage_api::blob_table::{RawParts, ReadBlobTable};
- use restate_storage_api::journal_table_v2::{
-     NotificationEntryIndex, ReadJournalTable, WriteJournalTable,
- };
--use restate_types::config::Configuration;
-+use restate_storage_api::{BudgetedReadError, Transaction};
-+use restate_types::config::{Configuration, InvokerOptionsBuilder};
- use restate_types::identifiers::{InvocationId, InvocationUuid};
- use restate_types::invocation::{InvocationTarget, ServiceInvocationSpanContext};
- use restate_types::journal_v2::raw::{RawCommandSpecificMetadata, RawNotificationResultVariant};
-@@ -466,3 +469,83 @@ async fn journal_entry_content_blob() {
-             .is_none()
-     );
- }
-+
-+/// Every entry the invoker accepts from a service must be readable within the per-invocation
-+/// memory limit, including the envelope added when storing it.
-+#[restate_core::test]
-+async fn largest_accepted_entry_fits_per_invocation_memory_limit() {
-+    let mut rocksdb = storage_test_environment().await;
-+    let options = InvokerOptionsBuilder::default()
-+        .message_size_limit(Some(NonZeroByteCount::new(
-+            NonZeroUsize::new(1024 * 1024).unwrap(),
-+        )))
-+        .build()
-+        .unwrap();
-+    // The service protocol decoder rejects messages of `message_size_limit()` bytes or more.
-+    let largest_message = options.message_size_limit().get() - 1;
-+    let input = |payload_len| {
-+        Entry::from(InputCommand {
-+            headers: vec![],
-+            payload: Bytes::from(vec![7; payload_len]),
-+            name: Default::default(),
-+        })
-+        .encode::<ServiceProtocolV4Codec>()
-+    };
-+    let framing = input(largest_message).serialized_length() - largest_message;
-+    let entry = StoredRawEntry::new(
-+        StoredRawEntryHeader::new(MillisSinceEpoch::now()),
-+        input(largest_message - framing),
-+    );
-+    assert_eq!(entry.inner.serialized_length(), largest_message);
-+
-+    let mut txn = rocksdb.transaction();
-+    txn.put_journal_entry(&MOCK_INVOCATION_ID_1, 0, &entry, &[])
-+        .unwrap();
-+    txn.commit().await.unwrap();
-+    drop(txn);
-+
-+    let executor = low_pri_executor(&rocksdb);
-+    let pool = MemoryPool::with_capacity(NonZeroByteCount::new(
-+        NonZeroUsize::new(16 * 1024 * 1024).unwrap(),
-+    ));
-+    let budget = |upper_bound| {
-+        LocalMemoryPool::new(
-+            pool.clone(),
-+            pool.empty_lease(),
-+            ByteCount::ZERO,
-+            upper_bound,
-+        )
-+    };
-+
-+    // The stored envelope makes the entry larger than the accepted message.
-+    let result = rocksdb
-+        .get_journal_v2_entry_budgeted(
-+            MOCK_INVOCATION_ID_1,
-+            0,
-+            &mut budget(NonZeroByteCount::new(options.message_size_limit())),
-+            &executor,
-+        )
-+        .await;
-+    assert!(
-+        matches!(
-+            result,
-+            Err(BudgetedReadError::OutOfMemory {
-+                kind: OutOfMemoryKind::UpperBoundExceeded,
-+                ..
-+            })
-+        ),
-+        "{result:?}"
-+    );
-+
-+    let (read, _lease) = rocksdb
-+        .get_journal_v2_entry_budgeted(
-+            MOCK_INVOCATION_ID_1,
-+            0,
-+            &mut budget(options.per_invocation_memory_limit()),
-+            &executor,
-+        )
-+        .await
-+        .unwrap()
-+        .unwrap();
-+    assert_eq!(read, entry);
-+}
-```
-
-**File**: `crates/types/src/config/worker.rs` (modified, +92/-16)
-```diff
-@@ -43,6 +43,15 @@ const MAX_OBJECT_STORE_SINGLE_PUT_SIZE: u64 = 5 * 1024 * 1024 * 1024;
- const MIN_ROCKSDB_MEMORY: NonZeroByteCount =
-     NonZeroByteCount::new(NonZeroUsize::new(32 * 1024 * 1024).unwrap());
- 
-+/// Room the invoker accepts on top of the configured message size limit for the service
-+/// protocol framing around a payload, so that a payload of the configured size still fits.
-+const SERVICE_PROTOCOL_FRAMING_OVERHEAD: usize = MESSAGE_SIZE_OVERHEAD.div_ceil(4);
-+
-+/// Room the per-invocation memory limit keeps on top of the invoker's message size limit for
-+/// the envelope added when an accepted message is stored (stored journal entry, completion
-+/// notification carrying a stored value).
-+const STORED_ENTRY_OVERHEAD: usize = MESSAGE_SIZE_OVERHEAD.div_ceil(4);
-+
- const X_RESTATE_CLUSTER_NAME: http::HeaderName =
-     http::HeaderName::from_static("x-restate-cluster-name");
- 
-@@ -559,8 +568,13 @@ pub struct InvokerOptions {
-     /// outbound). Once an invocation's directional budget reaches this ceiling it must
-     /// wait for in-flight data to be consumed or yield back to the scheduler.
-     ///
--    /// If unset, defaults to `message-size-limit`. If set, it will be clamped at
--    /// the value of `message-size-limit`.
-+    /// A single journal entry or state value larger than this limit cannot be sent to the
-+    /// service, and the invocation is paused or killed according to its retry policy.
-+    ///
-+    /// Defaults to, and is never smaller than, the largest message the invoker accepts
-+    /// from a service (`message-size-limit` plus room for internal framing). It can be
-+    /// raised independently of `message-size-limit`; values above `memory-limit` have no
-+    /// additional effect.
-     ///
-     /// Since v1.7.0
-     #[serde(skip_serializing_if = "Option::is_none")]
-@@ -613,6 +627,7 @@ impl InvokerOptions {
-         self.concurrent_invocations_limit
-     }
- 
-+    /// Maximum size of a message the invoker accepts from a service deployment.
-     pub fn message_size_limit(&self) -> NonZeroUsize {
-         let limit = self
-             .message_size_limit
-@@ -623,18 +638,28 @@ impl InvokerOptions {
-             // In tests, we don't want to leave overhead
-             limit
-         } else {
--            // We only add 1/4 of the overhead to leave room for outer envelope/messages
--            limit.saturating_add(MESSAGE_SIZE_OVERHEAD.div_ceil(4))
-+            limit.saturating_add(SERVICE_PROTOCOL_FRAMING_OVERHEAD)
-         }
-     }
- 
-     /// Resolved per-invocation per-direction memory upper bound.
--    /// Falls back to `message_size_limit()` when unset.
-+    ///
-+    /// Never smaller than [`Self::min_per_invocation_memory_limit`], so that every journal
-+    /// entry and state value the invoker accepted can be read back.
-     pub fn per_invocation_memory_limit(&self) -> NonZeroByteCount {
--        self.per_invocation_memory_limit
--            .and_then(|v| NonZeroUsize::new(v.as_usize()))
--            .map(NonZeroByteCount::new)
--            .unwrap_or_else(|| NonZeroByteCount::new(self.message_size_limit()))
-+        let min = self.min_per_invocation_memory_limit();
-+        NonZeroByteCount::new(
-+            self.per_invocation_memory_limit
-+                .and_then(|limit| NonZeroUsize::new(limit.as_usize()))
-+                .map_or(min, |limit| min.max(limit)),
-+        )
-+    }
-+
-+    /// Derived from [`Self::message_size_limit`] so that the read budget always covers what
-+    /// the invoker accepts on the write path, plus the envelope added when storing it.
-+    fn min_per_invocation_memory_limit(&self) -> NonZeroUsize {
-+        self.message_size_limit()
-+            .saturating_add(STORED_ENTRY_OVERHEAD)
-     }
- 
-     /// Resolved eager state size limit in bytes. After `merge()`, this is guaranteed
-@@ -673,12 +698,17 @@ impl InvokerOptions {
-                 .unwrap_or(opts.message_size_limit),
-         );
- 
--        // Resolve per_invocation_memory_limit, clamped to message_size_limit
--        self.per_invocation_memory_limit = Some(
--            self.per_invocation_memory_limit
--                .map(|limit| limit.min(opts.message_size_limit.into()))
--                .unwrap_or_else(|| opts.message_size_limit.into()),
--        );
-+        let min_per_invocation_memory_limit = self.min_per_invocation_memory_limit();
-+        if let Some(limit) = self.per_invocation_memory_limit
-+            && limit.as_usize() < min_per_invocation_memory_limit.get()
-+        {
-+            warn!(
-+                "'worker.invoker.per-invocation-memory-limit' ({limit}) is smaller than the \
-+                 largest journal entry or state value the invoker accepts; raising it to {}.",
-+                ByteCount::from(min_per_invocation_memory_limit.get())
-+            );
-+        }
-+        self.per_invocation_memory_limit = Some(self.per_invocation_memory_limit().into());
- 
-         // Fuse deprecated disable_eager_state into eager_state_size_limit
-         if self.disable_eager_s
-```
-
-**File**: `release-notes/unreleased/per-invocation-memory-limit-floor.md` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+# Release Notes: Large state values and journal entries no longer pause invocations
-+
-+## Bug Fix
-+
-+### What Changed
-+Restate accepts messages from a service that are slightly larger than `message-size-limit`, so that
-+a payload of exactly that size still fits. The per-invocation memory limit, however, defaulted to
-+exactly `message-size-limit` and could not be set higher. A state value or journal entry close to
-+the limit could therefore be written but not read back: the invocation that tried to read it was
-+paused with an out-of-memory error (`RT0001`, "memory budget exhausted (upper bound exceeded) while
-+reading journal entries" or "while reading service state"). With default settings this affected
-+values of about 32 MiB.
-+
-+`worker.invoker.per-invocation-memory-limit` is now never smaller than the largest message Restate
-+accepts from a service, plus room for how Restate stores it. Smaller configured values are raised
-+with a warning at startup. It can also be set above `message-size-limit` now; before, it was capped
-+at that value.
-+
-+A message from a service that exceeds `message-size-limit` now pauses the invocation (or kills it, if
-+the retry policy sets `on-max-attempts = "kill"`) instead of being retried, since the service sends
-+the same message on every retry.
-+
-+### Impact on Users
-+- Invocations that read such a large state value or journal entry run instead of pausing.
-+- The default per-invocation memory limit is 512 KiB above `message-size-limit` instead of equal to
-+  it.
-+- Invocations whose service sends a message above `message-size-limit` pause after the first
-+  attempt instead of exhausting the retry policy first.
-+
-+### Migration Guidance
-+None required. Invocations paused by this problem can be resumed after upgrading.
-```
-
----
-
-### Incident Patch 2: `73ed0e9e` (2026-11-23)
-**Commit Message**: [QueryEngineV2] Read only the listed objects for `scope IN (…) OR scope IS NULL`
-
-A query for some objects in a few tenants plus the unscoped ones walked every
-object of every partition:
-
-```sql
-SELECT service_key, scope, key, value FROM state
-WHERE service_name = 'Counter'
-  AND service_key IN (…300 keys…)
-  AND (scope IN ('tenant-6', 'tenant-985', 'tenant-548', 'tenant-122') OR scope IS NULL)
-```
-
-Storage only learned about `col IS NULL OR …` when the column cannot be NULL,
-where the NULL arm is dropped (TopK filters for NULLS FIRST take that form).
-On the nullable `scope` the whole OR stayed residual, so the read had no scope
-and could not tell which partition keys hold the rows. A scoped object lives
-under its scope's hash and an unscoped one under its key's hash. Without the
-scope, every partition was read object by object, and each node spent 6 s to
-return about 100 rows (mk02, 22 partitions). The same rows read as a
-`UNION ALL` of the two scope conditions take about 15 ms.
-
-Now `IS NULL` is one more alternative of a same-column OR of equalities and IN
-lists, wherever it sits in the OR (`InList` carries a `null` member). On a
-nullable column NULL joins the values; on one that
-
-**File**: `crates/distributed-datafusion/src/query_correctness.rs` (modified, +38/-0)
-```diff
-@@ -395,6 +395,44 @@ const CASES: &[Case] = &[
-         anchor: Anchor::None,
-         outcome: ExpectedOutcome::Success,
-     },
-+    // Listed scopes or NULL: unscoped rows live under their service key's hash,
-+    // scoped rows under their scope's. `alpha` and `beta` exist both scoped and
-+    // unscoped, and `tenant-b` lies outside the lists, so losing the NULL
-+    // alternative or a tenant, or ignoring the scope, changes the rows.
-+    // Keep these last: distributed tests find earlier cases by position.
-+    Case {
-+        name: "scope-list-or-null-with-service-keys",
-+        sql: "SELECT service_key, scope, key, value_length, value FROM state \
-+              WHERE service_name = 'service' \
-+              AND service_key IN ('alpha', 'beta', 'gamma', 'delta') \
-+              AND (scope IN ('tenant-a', 'tenant-c', 'tenant-d', 'tenant-e') OR scope IS NULL) \
-+              AND value_length <= 2 LIMIT 1500",
-+        comparison: Comparison::Bag,
-+        expected_rows: 2,
-+        anchor: Anchor::None,
-+        outcome: ExpectedOutcome::Success,
-+    },
-+    Case {
-+        name: "scope-null-between-equalities",
-+        sql: "SELECT scope, service_key, key, value FROM state \
-+              WHERE (scope = 'tenant-a' OR scope IS NULL OR scope = 'tenant-c') \
-+              AND service_key IN ('alpha', 'gamma')",
-+        comparison: Comparison::Bag,
-+        expected_rows: 5,
-+        anchor: Anchor::None,
-+        outcome: ExpectedOutcome::Success,
-+    },
-+    Case {
-+        // DataFusion expands an IN list of up to three values into ORs.
-+        name: "scope-null-first-in-short-list",
-+        sql: "SELECT scope, service_name, service_key, key FROM state \
-+              WHERE (scope IS NULL OR scope IN ('tenant-b', 'tenant-z')) \
-+              AND service_key IN ('alpha', 'beta', 'gamma')",
-+        comparison: Comparison::Bag,
-+        expected_rows: 4,
-+        anchor: Anchor::None,
-+        outcome: ExpectedOutcome::Success,
-+    },
- ];
- 
- #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
-```
-
-**File**: `crates/partition-store/src/state_table/binding.rs` (modified, +59/-0)
-```diff
-@@ -588,5 +588,64 @@ mod tests {
-             .collect();
-         assert!(!owned.is_empty() && owned.len() < expected.len());
-         assert_eq!(found, owned);
-+
-+        // The same listing over the scoped layout, with `scope IN ('tenant') OR
-+        // scope IS NULL`: unscoped objects live under their key's partition key,
-+        // the tenant's objects under the tenant's. Both scopes name partition
-+        // keys, so the read still visits only those, not every object around them.
-+        let tenant = Scope::try_non_interned("tenant").unwrap();
-+        let mut rows = Vec::new();
-+        for scope in [None, Some(&tenant)] {
-+            for object in 0..200 {
-+                let service_key = format!("{object}");
-+                for state in 0..2 {
-+                    let mut bytes = Vec::new();
-+                    ScopedStateKey {
-+                        partition_key: HashPartitioner::compute_partition_key(
-+                            scope.map_or(service_key.as_str(), |scope| scope.as_str()),
-+                        ),
-+                        scope: scope.cloned(),
-+                        service_name: "Counter".into(),
-+                        service_key: service_key.as_str().into(),
-+                        state_key: Bytes::from(format!("k{state}")),
-+                    }
-+                    .serialize_to(&mut bytes);
-+                    rows.push((bytes, (scope.is_some(), object, state)));
-+                }
-+            }
-+        }
-+        rows.sort();
-+        let keys: Vec<_> = rows.iter().map(|(key, _)| key).collect();
-+        let selection = Selection::All
-+            .and(StateClause::ServiceName(ValuePredicate::Equal(
-+                "Counter".into(),
-+            )))
-+            .and(StateClause::ServiceKey(ValuePredicate::In(
-+                objects
-+                    .iter()
-+                    .map(|object| format!("{object}").into())
-+                    .collect(),
-+            )))
-+            .and(StateClause::Scope(ValuePredicate::In(vec![
-+                Some("tenant".into()),
-+                None,
-+            ])));
-+        let prepared = ScopedStateBinding::prepare(&selection).unwrap();
-+        let (matches, visited) = navigate(Arc::clone(prepared.request()), KeyRange::FULL, &keys);
-+        let mut found: Vec<_> = matches.into_iter().map(|index| rows[index].1).collect();
-+        found.sort_unstable();
-+        let expected: Vec<_> = [false, true]
-+            .into_iter()
-+            .flat_map(|scoped| {
-+                objects
-+                    .iter()
-+                    .flat_map(move |&object| (0..2).map(move |state| (scoped, object, state)))
-+            })
-+            .collect();
-+        assert_eq!(found, expected);
-+        assert!(
-+            visited <= 2 * expected.len(),
-+            "visits only the objects: {visited}"
-+        );
-     }
- }
-```
-
-**File**: `crates/storage-query-api/src/selection/model.rs` (modified, +1/-0)
-```diff
-@@ -208,6 +208,7 @@ pub trait LiveSelection<T: SelectionSchema>: Send {
- /// | `col = x` | `Equal(Some(x))` |
- /// | `col < x` | `Range { lower: Excluded(None), upper: Excluded(Some(x)) }` |
- /// | `col = NULL` | `In(vec![])`, because the comparison is never true |
-+/// | `col IN (x, y) OR col IS NULL` | `In(vec![Some(x), Some(y), None])` |
- ///
- /// Finite string enums instead enumerate names through
- /// [`SelectionValue::finite_strings`] and select matching native variants. For
-```
-
-**File**: `crates/storage-query-api/src/selection/typed.rs` (modified, +136/-18)
-```diff
-@@ -26,8 +26,11 @@
- //! - `<`, `<=`, `>`, and `>=`, including reversed comparisons, when the column's
- //!   value type supports order-preserving literal conversion or finite string values.
- //! - `!=` and `NOT IN` for finite string values, translated into native sets.
--//! - `IS NULL`. An `IS NULL OR <comparison or IN>` condition on the same column
--//!   can discard the NULL arm only when the target column cannot be NULL.
-+//! - `IS NULL`, also as an alternative of a same-column OR of equalities or IN
-+//!   lists, as in `scope = 'a' OR scope IS NULL OR scope IN ('b', 'c')`: on a
-+//!   nullable column NULL joins the values, on a column that cannot be NULL it
-+//!   matches nothing. `IS NULL OR <comparison or NOT IN>` drops the NULL arm when
-+//!   the column cannot be NULL, and otherwise stays residual.
- //! - Literal prefixes expressed as case-sensitive `LIKE 'prefix%'` or the
- //!   built-in `starts_with`, on columns declaring prefix support. LIKE escapes
- //!   are decoded; other wildcard patterns remain residual.
-@@ -116,7 +119,8 @@ pub fn comparison_domain<V: SelectionValue + Ord + Clone>(
-     predicate.build::<V>().map(Domain::from)
- }
- 
--/// Literal membership extracted from one column's equality, IN, or OR predicate.
-+/// Literal membership extracted from one column's equality, IN, `IS NULL`, or OR
-+/// predicate.
- ///
- /// Borrows and deduplicates literals without converting them or interpreting SQL
- /// NULLs. Shared by typed-clause compilation and partition/ID lookup extraction,
-@@ -126,10 +130,14 @@ pub fn comparison_domain<V: SelectionValue + Ord + Clone>(
- pub struct InList<'a> {
-     /// The column shared by every alternative, matched by name.
-     pub col: &'a Column,
--    /// Literal alternatives, including any SQL NULLs, in unspecified order.
-+    /// Literal alternatives, including any SQL NULLs, in unspecified order. A NULL
-+    /// literal matches nothing, not even a NULL value; see [`Self::null`].
-     pub list: HashSet<&'a ScalarValue>,
-     /// Whether the input is a standalone NOT IN expression.
-     pub negated: bool,
-+    /// Whether `col IS NULL` is one of the alternatives, so a NULL value matches.
-+    /// A user that cannot look NULL values up must reject the list, not drop it.
-+    pub null: bool,
- }
- 
- /// Compiles one supported condition against the target's logical column types.
-@@ -162,13 +170,13 @@ pub fn parse_clause<T: SelectionSchema>(predicate: &Arc<dyn PhysicalExpr>) -> Op
-     if let Some(binary) = predicate.downcast_ref::<BinaryExpr>()
-         && *binary.op() == Operator::Or
-     {
--        if let Some(clause) = parse_null_or::<T>(binary) {
--            return Some(clause);
--        }
-         // DataFusion expands short IN lists into ORs. Only normalize unions of
--        // literals on the same column; any unsupported arm keeps the whole OR residual.
--        let values = InList::parse(predicate, 64)?;
--        return T::value_clause(T::column_from_sql(values.col.name())?, values);
-+        // literals and IS NULL on the same column; any other arm keeps the whole
-+        // OR residual, except the TopK shape `parse_null_or` reads.
-+        return match InList::parse(predicate, 64) {
-+            Some(values) => T::value_clause(T::column_from_sql(values.col.name())?, values),
-+            None => parse_null_or::<T>(binary),
-+        };
-     }
-     if let Some(like) = predicate.downcast_ref::<LikeExpr>() {
-         if like.negated() || like.case_insensitive() {
-@@ -202,12 +210,15 @@ enum LiteralPredicate<'a> {
-     In(&'a [Arc<dyn PhysicalExpr>], bool),
- }
- 
--/// Builds the second arm of `col IS NULL OR <predicate>`. The NULL arm can only
--/// be dropped for value types that have no NULL; otherwise the OR stays residual.
-+/// Builds the second arm of `col IS NULL OR <predicate>` when it is no list
-+/// alternative, such as a range. The NULL arm can only be dropped for value types
-+/// that have no NULL; otherwise the OR stays residual, since one value predicate
-+/// cannot hold a range plus NULL.
- struct NonNullOr<'a>(LiteralPredicate<'a>);
- 
- impl<'a> InList<'a> {
--    /// Extracts equality, literal IN/NOT IN, or same-column positive OR alternatives.
-+    /// Extracts equality, literal IN/NOT IN, `IS NULL`, or same-column positive OR
-+    /// alternatives.
-     ///
-     /// Every OR arm must be understood; mixed columns, negated arms, and nonliteral
-     /// alternatives reject the whole expression. FALSE/NULL Boolean arms are
-@@ -232,6 +243,15 @@ impl<'a> InList<'a> {
-                 col,
-                 list,
-                 negated: in_list.negated(),
-+                null: false,
-+            });
-+        }
-+        if let Some(is_null) = predicate.downcast_ref::<IsNullExpr>() {
-+            return Some(Self {
-+                col: is_null.arg().downcast_ref::<Column>()?,
-+                list: HashSet::new(),
-+                negated: false,
-+                null: true,
-             });
-         }
- 
-@@ -245,6 +265,7 @@ impl<'a> InList<'a> {
-         
-```
-
----
-
-### Incident Patch 3: `f48e3733` (2026-11-24)
-**Commit Message**: Write stage keys with entry statuses in the vqueue entry fixtures
-
-The by-queue index (`_idx_entry_by_queue`) reads the scheduler's stage
-tables: it finds an entry only through its stage key, which production
-always writes together with the entry's status. Two fixtures of
-`sys_vqueue_entry_status` wrote the statuses alone, so a query by queue over
-them found nothing, though a scan found every entry.
-
-Both now write each entry's stage key with its status, as production does,
-and check their queue queries' rows against the scan:
-
-- `finished_entries_read_through_the_transition_index_match_the_scan`: all
-  140 entries of the queue, read by queue, equal the scan's.
-- `active_entries_read_through_the_status_index_match_the_scan`: the
-  queue's newest inbox entries, read by queue, equal the scan's.
-
-Writing the stage keys under another queue fails both.
-
-**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/tests.rs` (modified, +69/-3)
-```diff
-@@ -753,6 +753,17 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
-             } else {
-                 HandlerRef::UserHandler(["call", "run"][(n % 2) as usize])
-             };
-+            // As in production, the entry's stage table holds it too.
-+            tx.put_vqueue_inbox(
-+                &qid,
-+                stage,
-+                &key,
-+                &EntryValue {
-+                    status,
-+                    metadata: EntryMetadata::default(),
-+                    stats: stats.clone(),
-+                },
-+            );
-             tx.create_vqueue_entry_status(
-                 &EntryContext {
-                     qid: &qid,
-@@ -1092,6 +1103,23 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
-         "{analyzed}"
-     );
- 
-+    // The queue's entries read through its stage tables equal the scan's: the
-+    // fixture writes each entry's stage key with its status, as production does.
-+    let by_queue = format!(
-+        "SELECT entry_id, stage, status FROM sys_vqueue_entry_status WHERE vqueue_id = '{qid}'"
-+    );
-+    let explained = plan(&by_queue, false).await;
-+    assert!(
-+        explained.contains("index=_idx_entry_by_queue"),
-+        "{explained}"
-+    );
-+    let mut read = rows(&by_queue).await;
-+    let mut expected = scanned(&by_queue).await;
-+    read.sort();
-+    expected.sort();
-+    assert_eq!(read.len(), 140);
-+    assert_eq!(read, expected);
-+
-     // More runs than one read merges in its first hour, 260 services in one
-     // lane: the partition scans and sorts instead, before returning anything,
-     // and says why and what discovery examined.
-@@ -1127,6 +1155,17 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
-             ),
-         );
-         let name = format!("s{service}");
-+        let stats = EntryStatistics::new(created, key.run_at());
-+        tx.put_vqueue_inbox(
-+            &qid,
-+            Stage::Finished,
-+            &key,
-+            &EntryValue {
-+                status: Status::Succeeded,
-+                metadata: EntryMetadata::default(),
-+                stats: stats.clone(),
-+            },
-+        );
-         tx.create_vqueue_entry_status(
-             &EntryContext {
-                 qid: &qid,
-@@ -1141,7 +1180,7 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
-                 status: Status::Succeeded,
-                 entry_key: &key,
-                 metadata: &EntryMetadata::default(),
--                stats: &EntryStatistics::new(created, key.run_at()),
-+                stats: &stats,
-             },
-         );
-     }
-@@ -1223,6 +1262,18 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
-         } else {
-             HandlerRef::UserHandler(["call", "run"][(n % 2) as usize])
-         };
-+        // As in production, the entry's stage table holds it too.
-+        let stats = EntryStatistics::new(created, key.run_at());
-+        tx.put_vqueue_inbox(
-+            &qid,
-+            stage,
-+            &key,
-+            &EntryValue {
-+                status,
-+                metadata: EntryMetadata::default(),
-+                stats: stats.clone(),
-+            },
-+        );
-         tx.create_vqueue_entry_status(
-             &EntryContext {
-                 qid: &qid,
-@@ -1238,7 +1289,7 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
-                 status,
-                 entry_key: &key,
-                 metadata: &EntryMetadata::default(),
--                stats: &EntryStatistics::new(created, key.run_at()),
-+                stats: &stats,
-             },
-         );
-     }
-@@ -1380,6 +1431,10 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
-         explained.contains(STAGES) && !explained.contains(INDEX),
-         "{sql}: {explained}"
-     );
-+    let all = scanned(&sql.replace(" LIMIT", " LIMIT 1000000 --")).await;
-+    let read = rows(&sql).await;
-+    assert!(!read.is_empty(), "{sql}");
-+    same(&read, &scanned(&sql).await, &all, &sql);
-     let sql = format!("{select} WHERE stage IN ('inbox', 'paused') LIMIT 5");
-     let explained = plan(&sql, false).await;
-     assert!(
-@@ -1419,6 +1474,17 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
-             EntryId::new(EntryKind::Invocation, remainder),
-         );
-         let name = format!("s{service}");
-+        let stats = EntryStatistics::new(created, key.run_at());
-+        tx.put_vqueue_inbox(
-+            &qid,
-+            Stage::Inbox,
-+            &key,
-+            &EntryValue {
-+                status: Status::New,
-+                metadata: EntryMetadata::default(),
-+                stats: stats.clone(),
-+            },
-+        );
-         tx.create_vqueue_entry_status(
-             &EntryContext {
-                 qid: &qid,
-@@ -1433,7 +1499,7 @@ async fn active_entries_read_through_the_status_index_match_th
+ ahash = { workspace = true }
+ anyhow = { workspace = true }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6051** (2026-11-25): [Restate UI] Update to v1.1.9 (@restatedev-web-ui[bot])
+- **PR #6049** (2026-11-25): Update connection pool readme to match implementation (@muhamadazmy)
+- **PR #6048** (2026-11-25): [PartitionStore] Keep only the entry indexes in use (@AhmedSoliman)
 - **PR #6047** (2026-11-24): [QueryEngineV2] Move the leader at admission in the stale-owner tests (@AhmedSoliman)
 - **PR #6046** (2026-11-24): [QueryEngineV2] Name indexes after their storage definitions (@AhmedSoliman)
 - **PR #6045** (2026-11-24): [Admin] Report in /version whether the statistics tables can answer (@AhmedSoliman)
-- **PR #6044** (2026-11-24): Enable indexes and statistics with one option (@AhmedSoliman)
-- **PR #6043** (2026-11-24): [DataFusion] Never return partial statistics totals, also without num_entries (@AhmedSoliman)
-- **PR #6041** (2026-11-24): [DataFusion] Show scheduled_start_at whenever it is selected (@AhmedSoliman)
 
 ---
 
@@ -2445,61 +1711,33 @@ Writing the stage keys under another queue fails both.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Invoker] Keep the per-invocation memory limit above the accepted message size
+## X. [UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/re
 
 **RULE**:
-When implementing operations in `crates/invoker-impl/src/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc09481a`: [Invoker] Keep the per-invocation memory limit above the accepted message size. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40ec0264`: [UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/restate-web-ui/releases/download/v1.1.9/ui-v1.1.9.tar. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/invoker-impl/src/error.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use restate_service_protocol_v4::message_codec::EncodingError;
-        EncodingError,
-            // The service sends the same message again on retry.
-            InvokerError::Encoder(EncodingError::MessageSizeLimit(..)) => false,
-
-#[cfg(test)]
-mod tests {
-    use std::num::NonZeroUsize;
-
-    use super::*;
-
-    #[test]
-    fn size_limit_errors_are_not_transient() {
-        let message_size_limit = InvokerError::Encoder(EncodingError::MessageSizeLimit(
-            2,
-            NonZeroUsize::new(1).unwrap(),
-        ));
-        assert!(!message_size_limit.is_transient());
-
-        let memory = |kind| {
-            InvokerError::OutOfMemory(InvocationMemoryExhausted {
-                needed: NonZeroByteCount::new(NonZeroUsize::new(1).unwrap()),
-                kind,
-                context: "test",
-            })
-        };
-        assert!(!memory(OutOfMemoryKind::UpperBoundExceeded).is_transient());
-        assert!(memory(OutOfMemoryKind::PoolExhausted).is_transient());
-        assert!(InvokerError::ContentTooLarge.is_transient());
-    }
-}
+version = "1.1.9"
+source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.9#bc109ac99b7906168173ced877648b3b66f6b96b"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        restate_service_protocol_v4::message_codec::EncodingError,
+version = "1.1.8"
+source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.8#0e3cce8c1d13619f7401681d033cfa102e4286d2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc09481a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40ec0264` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

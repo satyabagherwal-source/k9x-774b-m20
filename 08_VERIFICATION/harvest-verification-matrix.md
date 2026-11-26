@@ -13243,3 +13243,6 @@
 | `CYCLE-20261126-C7PK` | `2026-11-26T04:39:17.768Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10598` | Yes (`eadcb599...`) |
 | `CYCLE-20261126-N0PM` | `2026-11-26T04:47:41.914Z` | `Edge0/Edge0-145B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md` | Yes (`9c6b3a9f...`) |
 | `CYCLE-20261126-N22L` | `2026-11-26T04:47:43.677Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10599` | Yes (`67f34c12...`) |
+| `CYCLE-20261126-XRCJ` | `2026-11-26T04:56:02.995Z` | `DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md` | Yes (`ec1c9e22...`) |
+| `CYCLE-20261126-XSBQ` | `2026-11-26T04:56:04.262Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10600` | Yes (`ebb60dc9...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T04:56:44.382Z` | `restatedev-restate` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-C1405A3A` [Domain F] | Yes (`11d9a374...`) |

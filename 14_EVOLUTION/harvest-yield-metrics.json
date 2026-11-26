@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:47:43.773Z",
-  "total_cycles_completed": 12569,
-  "total_learnings_persisted": 12569,
-  "total_rules_promoted": 11492,
+  "last_updated": "2026-11-26T04:56:04.281Z",
+  "total_cycles_completed": 12571,
+  "total_learnings_persisted": 12571,
+  "total_rules_promoted": 11493,
   "history": [
-    {
-      "timestamp": "2026-11-25T09:54:29.563Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T10:07:19.284Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T10:07:36.310Z",
       "repository": "ydb-platform/ydb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T04:47:43.773Z",
       "repository": "medialab/xan",
       "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:56:03.011Z",
+      "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:56:04.281Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

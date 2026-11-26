@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-OI97",
-    "timestamp": "2026-11-24T14:33:22.795Z",
-    "repository": "keybase/client",
-    "learningId": "learn-github-keybase-client",
-    "contentHash": "f80a285d3298d31113cfe6e5bbf486f0abd360dc2a198b9294f5c77711c99317",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-OLRV",
-    "timestamp": "2026-11-24T14:33:27.355Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "bd787176753c31c278b2f2e09e28956f60b57dea0924c6808a9869a48bacd9fa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-ZDQQ",
     "timestamp": "2026-11-24T14:41:50.162Z",
     "repository": "scrapy/scrapy",
@@ -7490,6 +7460,36 @@
     "repository": "medialab/xan",
     "learningId": "learn-github-medialab-xan",
     "contentHash": "67f34c1283c332ef97c7ef36465dfa02cea1bd9129b37a94f51aaba7f2d374ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-XRCJ",
+    "timestamp": "2026-11-26T04:56:02.995Z",
+    "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+    "contentHash": "ec1c9e229c9a82a75b6cc5f0c5504dcb7d32a54457b482e563412f08d6ab2e77",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-XSBQ",
+    "timestamp": "2026-11-26T04:56:04.262Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "ebb60dc903e8921ebdbcaa38ffb3242f02eaca861af6e34714b1724562bc146c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T04:47:55.748Z",
+  "last_updated": "2026-11-26T04:56:47.477Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25660,
+  "total_items": 25662,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0acf9f8c304f317ef6c9c3cd64f664b49513a73e4889f4cc0fbde337f39d1d7f",
+      "content_hash": "f1cdab2243fdb733fd1be9aed8ce4c4085cf5d0639efeecf7da11c5567bba932",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:22:43.862Z"
+      "persisted_at": "2026-11-26T04:56:47.085Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3e7e9188e0957483271a1d1d69c4cc1bde0c8023647cf6527f1a95b2d70c5a0e",
+      "content_hash": "3ea06ded98b3d233c95af016bfff75f68d0086ed8d728e6904301bdecc3192bd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:22:44.045Z"
+      "persisted_at": "2026-11-26T04:56:47.301Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbfa17da708c37f2717fa4c1fe320dcbe6c6a5a4311bd22991377e4a8a25ec40",
+      "content_hash": "05e67cabbfd6fef7ec4dd9b18dcbcbdc7ae5951243a038606dbe0898ba88b6df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:22:44.208Z"
+      "persisted_at": "2026-11-26T04:56:47.477Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -226242,8 +226242,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "d0c6ad20",
-      "content_hash": "58a29a68f2391c9456f1e8713eafb0dfa12383dfd81d35beff0d9d01b14874fd",
+      "source_version": "40ec0264",
+      "content_hash": "ebb60dc903e8921ebdbcaa38ffb3242f02eaca861af6e34714b1724562bc146c",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -226296,6 +226296,11 @@
           "number": 10372,
           "title": "[Invoker] Keep the per-invocation memory limit above the accepted message size",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10600,
+          "title": "[UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/re",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226303,7 +226308,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T22:42:26.022Z",
+      "verified_at": "2026-11-26T04:56:04.040Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226397,10 +226402,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "repository": "restatedev/restate",
-      "source_version": "d0c6ad20",
-      "content_hash": "a3a19011f596d0d4bbda0c2678af2c7b2765bbfb9d9f78068101b18b7dac5d71",
+      "source_version": "40ec0264",
+      "content_hash": "8c53438736f0e81b50a89e25efd13f000817bf3c2bd958ff7bda166caa1049a5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:42:26.928Z"
+      "persisted_at": "2026-11-26T04:56:04.706Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate",
@@ -226421,10 +226426,10 @@
       "relative_path": "08_VERIFICATION/restatedev-restate-verification-protocol-empirical-defect-shield-for-restatedev-.md",
       "title": "Verification Protocol: Empirical Defect Shield for restatedev/restate",
       "repository": "restatedev/restate",
-      "source_version": "ac734972",
-      "content_hash": "68cd3ef1d0917f82e6db7451f1ac68bb38ad55436cdab358a9796ece9c804f9d",
+      "source_version": "40ec0264",
+      "content_hash": "1d25e57dd89811175462787eb760b80074dc778d00126c18f087f7937607fa98",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:51:15.962Z"
+      "persisted_at": "2026-11-26T04:56:04.907Z"
     },
     "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants",
@@ -226434,9 +226439,9 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1a220b9265a684ebb034c835ca46a228906075ae1059bbef01dc82bd59621e6",
+      "content_hash": "83fe6d354ef942f62acb2fedd7c7d860e5f3526d1bcf925b463d8ba538b5cae1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:42:41.727Z"
+      "persisted_at": "2026-11-26T04:56:45.361Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings",
@@ -226458,9 +226463,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for restatedev-restate-learnings",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7063a4d8b696bd0d55d5af03cee8c67b546022a8590275ebc3d162af777dad6",
+      "content_hash": "3d20906b6a60c27a6f3c3cd6377d2bd1abcc8c37a686f584b6c771fb5e5d923f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:42:41.980Z"
+      "persisted_at": "2026-11-26T04:56:45.583Z"
     },
     "candidate_directive-dual-ar-state-decoupling-invariant": {
       "item_id": "candidate_directive-dual-ar-state-decoupling-invariant",
@@ -229387,7 +229392,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-      "content_hash": "34dd1484ce823da74ab227d14d2f0aea41fc63c1ada6b407f422edab52c3cdc7",
+      "content_hash": "ec1c9e229c9a82a75b6cc5f0c5504dcb7d32a54457b482e563412f08d6ab2e77",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md",
       "promoted_rules": [
@@ -229412,7 +229417,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T08:22:56.240Z",
+      "verified_at": "2026-11-26T04:56:02.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -323425,9 +323430,9 @@
       "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF Core Invariants",
       "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-      "content_hash": "50ce32fff0455f38e7d2c8f08ce52c86bcb0ed1e6227473cc76af194917e36b1",
+      "content_hash": "a4e2ed352448973ebef5668b7eb8933e70176fd6cec6cc8eab3f512caec5666c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T08:22:56.645Z"
+      "persisted_at": "2026-11-26T04:56:03.242Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor",
@@ -323437,9 +323442,9 @@
       "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings Core Invariants",
       "repository": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "0809373e1fe246adc52d81756eaf72d7b74813135546b0b3178f49b8d930008f",
+      "content_hash": "a1b055ef5a2fb4110334bd4d8c7df1e579169445ac02834d95e28b390b1c3012",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T08:22:59.673Z"
+      "persisted_at": "2026-11-26T04:56:46.074Z"
     },
     "candidate_directive-nuc-132-rust-string-boundary-method-aliases": {
       "item_id": "candidate_directive-nuc-132-rust-string-boundary-method-aliases",
@@ -342819,13 +342824,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QWO2-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YP6Y-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ed5b6c4165e056cee83ad8ac8c16158897a972afec5077087c453a01e6306dd6",
+      "content_hash": "f62042a3f9634e0f19bb276eb1bca51be3ad4f44138fdd65dace4f8b0914f3e6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:22:43.686Z"
+      "persisted_at": "2026-11-26T04:56:46.870Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -351347,6 +351352,32 @@
       "content_hash": "303cacf557cbc1eaf05e9e74ec9fb2cd4a26230e338bdf8fdded0943988284ef",
       "domain_letter": "I",
       "persisted_at": "2026-11-26T04:47:53.800Z"
+    },
+    "rule-10600": {
+      "learning_id": "rule-10600",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10600,
+      "title": "[UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/re",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "40ec0264",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T04:56:04.040Z"
+    },
+    "candidate_directive-ui-updating-restate-ui-to-v1-1-9-published-at-https-github-com-restatedev-re": {
+      "item_id": "candidate_directive-ui-updating-restate-ui-to-v1-1-9-published-at-https-github-com-restatedev-re",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YNV0-ui-updating-restate-ui-to-v1-1-9-published-at-https-github-com-restatedev-re.md",
+      "title": "[UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/re",
+      "repository": "restatedev-restate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3061e8e689d3f060db0237b0e29092a86997b404c319e36605953d9f0509e7d3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T04:56:45.133Z"
     }
   },
   "ai-builder-brain": {
