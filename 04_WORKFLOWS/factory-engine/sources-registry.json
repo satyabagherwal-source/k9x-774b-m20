@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T20:40:41.594Z",
-    "lastVerified": "2026-11-26T20:40:41.594Z",
+    "lastChecked": "2026-11-26T20:49:49.817Z",
+    "lastVerified": "2026-11-26T20:49:49.817Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -197,8 +197,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T20:14:05.828Z",
-    "lastVerified": "2026-11-26T20:14:05.828Z",
+    "lastChecked": "2026-11-26T20:49:49.805Z",
+    "lastVerified": "2026-11-26T20:49:49.805Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1087,9 +1087,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-26T16:49:20.428Z",
+    "lastChecked": "2026-11-26T20:49:44.767Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-26T16:49:20.428Z"
+    "lastVerified": "2026-11-26T20:49:44.767Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2920,9 +2920,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-26T02:18:42.821Z",
+    "lastChecked": "2026-11-26T20:49:47.160Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-26T02:18:42.821Z"
+    "lastVerified": "2026-11-26T20:49:47.160Z"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -3149,9 +3149,9 @@
   "akveo-react-native-ui-kitten": {
     "name": "react-native-ui-kitten",
     "officialUrl": "https://github.com/akveo/react-native-ui-kitten",
-    "lastChecked": "2026-11-24T13:03:59.398Z",
+    "lastChecked": "2026-11-26T20:49:39.851Z",
     "revisionIdentifier": "e73dce62",
-    "lastVerified": "2026-11-24T13:03:59.398Z"
+    "lastVerified": "2026-11-26T20:49:39.851Z"
   },
   "beclab-olares": {
     "name": "beclab/Olares",
@@ -4236,14 +4236,14 @@
     "officialUrl": "https://github.com/erkamyaman/rust-anything",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T13:49:20.289Z",
-    "lastVerified": "2026-11-25T13:49:20.289Z",
+    "lastChecked": "2026-11-26T20:49:38.798Z",
+    "lastVerified": "2026-11-26T20:49:38.798Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-erkamyaman-rust-anything",
-    "contentHash": "f3ebc86b6e4b8b7a7bc6f8e3716dc9a1cb2554f5122f9c8c18dd817635471642",
+    "contentHash": "dd55a64d82a840d25e5d8a7ead5714577ae06fe9c0f652668d7659072635478d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5174,12 +5174,12 @@
     "officialUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T07:28:39.399Z",
-    "lastVerified": "2026-11-23T07:28:39.399Z",
+    "lastChecked": "2026-11-26T20:49:37.481Z",
+    "lastVerified": "2026-11-26T20:49:37.481Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-    "contentHash": "e07357155fb841b15798bf4f843b4ca73a2acb2b9f8714c541ed9bd312e85f53",
+    "contentHash": "af161230f5429381b467bdc113b23a772ba8226c9bf1f07c9ad9244790d8167d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6055,8 +6055,8 @@
     "officialUrl": "https://github.com/octodns/octodns",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-26T03:13:02.340Z",
-    "lastVerified": "2026-11-26T03:13:02.340Z",
+    "lastChecked": "2026-11-26T20:49:42.274Z",
+    "lastVerified": "2026-11-26T20:49:42.274Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-octodns-octodns",

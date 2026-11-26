@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:41:13.099Z",
+  "last_updated": "2026-11-26T20:50:20.404Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-26T20:14:14.761Z",
+      "processed_at": "2026-11-26T20:50:19.269Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2383,7 +2383,7 @@
       "staged_for_review": 1
     },
     "hf-meta-llama-llama-2-7b-chat-hf-learnings.md": {
-      "processed_at": "2026-11-23T07:28:53.578Z",
+      "processed_at": "2026-11-26T20:50:18.759Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3458,9 +3458,9 @@
       "staged_for_review": 0
     },
     "erkamyaman-rust-anything-learnings.md": {
-      "processed_at": "2026-11-25T13:49:38.397Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-26T20:50:17.432Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "malisper-pgrust-learnings.md": {
       "processed_at": "2026-11-18T20:14:35.766Z",
@@ -3998,7 +3998,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4665,
-  "total_canonical_promoted": 567,
-  "total_staged_for_review": 3507
+  "total_dossiers_evaluated": 4668,
+  "total_canonical_promoted": 568,
+  "total_staged_for_review": 3508
 }

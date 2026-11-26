@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T20:41:12.704Z",
-  "total_records": 2775,
+  "last_updated": "2026-11-26T20:50:20.007Z",
+  "total_records": 2778,
   "domains": {
     "A": {
       "total": 23,
@@ -1115,7 +1115,7 @@
       ]
     },
     "F": {
-      "total": 118,
+      "total": 119,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1234,7 +1234,8 @@
         "DOM-F-973FB0DB",
         "DOM-F-C1405A3A",
         "domain_intelligence-design-intelligence-kividbio-kividb-core-invariants",
-        "domain_intelligence-design-intelligence-kividbio-kividb-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-kividbio-kividb-learnings-core-invariants",
+        "DOM-F-1B31BB0E"
       ]
     },
     "G": {
@@ -2628,7 +2629,7 @@
       ]
     },
     "K": {
-      "total": 173,
+      "total": 175,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2802,7 +2803,9 @@
         "domain_intelligence-quality-verification-intelligence-oven-sh-bun-core-invariants",
         "domain_intelligence-quality-verification-intelligence-oven-sh-bun-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-meta-folly-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-facebook-folly-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-facebook-folly-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-learnings-core-invari"
       ]
     },
     "L": {
@@ -13812,8 +13815,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b-chat-hf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-research-knowledge-intelligence-meta-llama-llam.md",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "content_hash": "cd4afc438a40883d76161e38882d9c0d8385e6c56925a935f067310b0bf791a0",
-      "created_at": "2026-11-23T07:28:40.307Z"
+      "content_hash": "a937bc4a215ea43b986fa931aaa9cc60c97035c7db99c6a0e6ffd2c9794b263d",
+      "created_at": "2026-11-26T20:49:38.416Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan",
@@ -13878,8 +13881,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-chat-hf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-learnings-research-knowledge-intelligence-hf-me.md",
       "repository": "hf-meta-llama-llama-2-7b-chat-hf-learnings",
-      "content_hash": "3638bf0b6df8882f9bb1bb6b6851132e20a17ae522e3ee0c005be8dcc368ec4c",
-      "created_at": "2026-11-23T07:28:53.840Z"
+      "content_hash": "b51b8e1a22282dba1daeb0d72f5d0dfbcc68c9f8fc25c6e2ffe19635e869c60a",
+      "created_at": "2026-11-26T20:50:19.034Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari",
@@ -46722,8 +46725,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a9de320aea4e4d637df644fd25c486a53b9527ccf15b5e889a8dce4a9b082ca3",
-      "created_at": "2026-11-26T20:14:15.661Z"
+      "content_hash": "714972da2785f93a656537981a6eca47e640f918b086828c7c2b20d5b17fd2a1",
+      "created_at": "2026-11-26T20:50:20.007Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -46862,6 +46865,66 @@
       "confidence": 0.86,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T20:41:10.527Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: erkamyaman/rust-anything Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-erkamyaman-rust-anything-quality-verification-intelligence-erkamyaman-rust-anyth.md",
+      "repository": "erkamyaman/rust-anything",
+      "content_hash": "926b9595681eb17d8a42041250b41c3b1695f4ad6c5ce5e6dbf48222962a6df1",
+      "created_at": "2026-11-26T20:49:40.459Z"
+    },
+    "DOM-F-1B31BB0E": {
+      "record_id": "DOM-F-1B31BB0E",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;",
+      "content": "When implementing operations in `CODE_OF_CONDUCT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "a2b2e9079200cc07f4d8d76126ffea8351836ecf5ca492e643e32746c8b3c543",
+      "summary": "Prevents defects observed in production commit `2cf86c53`: Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;  -> When implementing operations in `CODE_OF_CONDUCT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memor",
+      "provenance": {
+        "source_uri": "project://erkamyaman-rust-anything/erkamyaman-rust-anything-learnings.md",
+        "source_version": "a8e35878",
+        "observed_at": "2026-11-26T20:49:38.804Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (erkamyaman-rust-anything)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of erkamyaman-rust-anything"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T20:50:17.399Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-learnings-core-invari": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-learnings-core-invari",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-erkamyaman-rust-anything-learnings-quality-verification-intelligence-erkamyaman-.md",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "content_hash": "5e7245e3c4acb20eec2fa36a11a516f9d3e7effea3061dd25cfc8fb9ab2e5489",
+      "created_at": "2026-11-26T20:50:18.337Z"
     }
   }
 }

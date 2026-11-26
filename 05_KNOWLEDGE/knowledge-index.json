@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T20:41:12.920Z",
+  "last_updated": "2026-11-26T20:50:20.225Z",
   "total_verified_learnings": 9134,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26181,
+  "total_items": 26185,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e567561d94a358ee8a46736f604f53631dead81a670efff8187e4f84bfb710c",
+      "content_hash": "87f39b7bccab3d53d4b8756699784ece2f718dcc3684b1240591351a42cb6423",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:14:15.957Z"
+      "persisted_at": "2026-11-26T20:50:20.225Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -225304,7 +225304,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "e07357155fb841b15798bf4f843b4ca73a2acb2b9f8714c541ed9bd312e85f53",
+      "content_hash": "af161230f5429381b467bdc113b23a772ba8226c9bf1f07c9ad9244790d8167d",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [],
@@ -225313,7 +225313,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T07:28:39.740Z",
+      "verified_at": "2026-11-26T20:49:37.904Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225330,9 +225330,9 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b-chat-hf Core Invariants",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "cd4afc438a40883d76161e38882d9c0d8385e6c56925a935f067310b0bf791a0",
+      "content_hash": "a937bc4a215ea43b986fa931aaa9cc60c97035c7db99c6a0e6ffd2c9794b263d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T07:28:40.307Z"
+      "persisted_at": "2026-11-26T20:49:38.416Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan",
@@ -225354,9 +225354,9 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-chat-hf-learnings Core Invariants",
       "repository": "hf-meta-llama-llama-2-7b-chat-hf-learnings",
       "source_version": "HEAD",
-      "content_hash": "3638bf0b6df8882f9bb1bb6b6851132e20a17ae522e3ee0c005be8dcc368ec4c",
+      "content_hash": "b51b8e1a22282dba1daeb0d72f5d0dfbcc68c9f8fc25c6e2ffe19635e869c60a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T07:28:53.840Z"
+      "persisted_at": "2026-11-26T20:50:19.034Z"
     },
     "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1": {
       "learning_id": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
@@ -295980,8 +295980,8 @@
       "slug": "erkamyaman-rust-anything",
       "platform": "github",
       "source_url": "https://github.com/erkamyaman/rust-anything",
-      "source_version": "7f35f4d7",
-      "content_hash": "f3ebc86b6e4b8b7a7bc6f8e3716dc9a1cb2554f5122f9c8c18dd817635471642",
+      "source_version": "a8e35878",
+      "content_hash": "dd55a64d82a840d25e5d8a7ead5714577ae06fe9c0f652668d7659072635478d",
       "dossier_path": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "promoted_rules": [
@@ -296014,6 +296014,11 @@
           "number": 10534,
           "title": "reject zero timeout in app record and replay",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10775,
+          "title": "Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -296021,7 +296026,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T13:49:21.527Z",
+      "verified_at": "2026-11-26T20:49:39.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -296075,10 +296080,10 @@
       "relative_path": "08_VERIFICATION/erkamyaman-rust-anything-verification-protocol-empirical-defect-shield-for-erkam.md",
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman/rust-anything",
       "repository": "erkamyaman/rust-anything",
-      "source_version": "7f35f4d7",
-      "content_hash": "cd0b5719e01e184b76b051ea15f37641ddaf187d98cf7273c547d759efeb4e3e",
+      "source_version": "a8e35878",
+      "content_hash": "8b2b98cff64caf77357e11d9b16a496e206e22c74ad1c46de19016a64fefe954",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:49:22.666Z"
+      "persisted_at": "2026-11-26T20:49:40.659Z"
     },
     "rule-9273": {
       "learning_id": "rule-9273",
@@ -296126,9 +296131,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman-rust-anything-learnings",
       "repository": "erkamyaman-rust-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "c729d9897bef78489199bfa33a7bed992707455eff48b74d72c08a1d7c24549a",
+      "content_hash": "921b275b49d418ecc1d757a532dbf8c66a611eb9db7966d671c6bdce7989f26e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:49:39.265Z"
+      "persisted_at": "2026-11-26T20:50:18.555Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-",
@@ -357645,13 +357650,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QKWQ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0YYP-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "3e570b3bd6f3a1384105c0e3256097954d26300fd73a2eff6f984ee351b35586",
+      "content_hash": "8ca67836ca70ec0276c89773d2e71f2e12eb25fdc7afba2bcd0c577b7f76322e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T20:14:15.392Z"
+      "persisted_at": "2026-11-26T20:50:19.787Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357661,9 +357666,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9de320aea4e4d637df644fd25c486a53b9527ccf15b5e889a8dce4a9b082ca3",
+      "content_hash": "714972da2785f93a656537981a6eca47e640f918b086828c7c2b20d5b17fd2a1",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T20:14:15.661Z"
+      "persisted_at": "2026-11-26T20:50:20.007Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -359025,6 +359030,56 @@
       "content_hash": "28223f2efb17efb39682a1e7c3a3ef5cd63ba63ebfedec19127f0696c7104ec0",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T20:41:12.480Z"
+    },
+    "rule-10775": {
+      "learning_id": "rule-10775",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10775,
+      "title": "Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;",
+      "source_url": "https://github.com/erkamyaman/rust-anything",
+      "source_version": "a8e35878",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T20:49:39.757Z"
+    },
+    "candidate_directive-website-fixes-prettier-race-panel-right-to-left-layout-contrast-mobile-menu": {
+      "item_id": "candidate_directive-website-fixes-prettier-race-panel-right-to-left-layout-contrast-mobile-menu",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0XOA-website-fixes-prettier-race-panel-right-to-left-layout-contrast-mobile-menu.md",
+      "title": "Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4674a6aed79dc8fae3c1787704043e7214bf68dde0dcdbbc1b3ff4eea387594f",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-26T20:50:18.117Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-erkamyaman-rust-anything-quality-verification-intelligence-erkamyaman-rust-anyth.md",
+      "title": "Quality & Verification Intelligence: erkamyaman/rust-anything Core Invariants",
+      "repository": "erkamyaman/rust-anything",
+      "source_version": "a8e35878",
+      "content_hash": "926b9595681eb17d8a42041250b41c3b1695f4ad6c5ce5e6dbf48222962a6df1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T20:49:40.459Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-learnings-core-invari": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-erkamyaman-rust-anything-learnings-quality-verification-intelligence-erkamyaman-.md",
+      "title": "Quality & Verification Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5e7245e3c4acb20eec2fa36a11a516f9d3e7effea3061dd25cfc8fb9ab2e5489",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T20:50:18.337Z"
     }
   },
   "ai-builder-brain": {

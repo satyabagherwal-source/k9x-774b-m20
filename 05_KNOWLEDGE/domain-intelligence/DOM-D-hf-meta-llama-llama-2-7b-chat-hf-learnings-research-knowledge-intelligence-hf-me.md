@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T07:28:53.727Z",
+  "timestamp": "2026-11-26T20:50:18.905Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-meta-llama-llama-2-7b-chat-hf-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-meta-llama-llama-2-7b-chat-hf-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T07:28:53.727Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T20:50:18.905Z`  
 > **Learning ID**: `LEARN-EVO-hf-meta-llama-llama-2-7b-chat-hf-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-meta-llam`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T07:28:39.404Z  
+> **Timestamp**: 2026-11-26T20:49:37.600Z  
 > **Learning ID**: `learn-huggingface-meta-llama-llama-2-7b-chat-hf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/meta-llama/Llama-2-7b-chat-hf](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T07:28:39.399Z  
+> **Harvest Timestamp**: 2026-11-26T20:49:37.481Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 95543 downloads | 4974 likes
+- **Stars / Engagement**: 85031 downloads | 4980 likes
 
 ---
 

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:40:38.261Z",
-  "total_cycles_completed": 12864,
-  "total_learnings_persisted": 12864,
-  "total_rules_promoted": 11681,
+  "last_updated": "2026-11-26T20:49:40.027Z",
+  "total_cycles_completed": 12866,
+  "total_learnings_persisted": 12866,
+  "total_rules_promoted": 11682,
   "history": [
-    {
-      "timestamp": "2026-11-26T10:50:40.171Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T10:50:45.328Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T11:03:38.865Z",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T20:40:38.261Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:49:38.186Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:49:40.027Z",
+      "repository": "erkamyaman/rust-anything",
+      "learningId": "learn-github-erkamyaman-rust-anything",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

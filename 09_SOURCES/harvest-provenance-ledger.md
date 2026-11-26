@@ -13586,3 +13586,6 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `2d381dba` | Multi-dimensional audit evidence | 2026-11-26T20:40:28.579Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `e09ae3b9` | Multi-dimensional audit evidence | 2026-11-26T20:40:38.243Z |
 | `learn-dom-h-82ff7827` | `project://software-mansion-react-native-reanimated` | `2d381dba` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md` | 2026-11-26T20:41:10.560Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-26T20:49:38.174Z |
+| `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `a8e35878` | Multi-dimensional audit evidence | 2026-11-26T20:49:40.009Z |
+| `learn-dom-f-1b31bb0e` | `project://erkamyaman-rust-anything` | `a8e35878` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md` | 2026-11-26T20:50:17.432Z |

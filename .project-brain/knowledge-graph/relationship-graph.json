@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T20:41:10.557Z",
+  "updated_at": "2026-11-26T20:50:17.429Z",
   "statistics": {
-    "total_nodes": 567,
-    "total_edges": 233,
+    "total_nodes": 568,
+    "total_edges": 234,
     "domain_distribution": {
       "D": 341,
       "M": 1,
@@ -14,7 +14,7 @@
       "K": 34,
       "L": 9,
       "G": 1,
-      "F": 31,
+      "F": 32,
       "B": 4,
       "E": 2,
       "I": 14,
@@ -22,7 +22,7 @@
       "A": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 229,
+      "CONSTRAINED_BY_ARCHITECTURE": 230,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12653,6 +12653,29 @@
       ],
       "created_at": "2026-11-26T20:41:10.557Z",
       "updated_at": "2026-11-26T20:41:10.557Z"
+    },
+    "DOM-F-1B31BB0E": {
+      "id": "DOM-F-1B31BB0E",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;",
+      "summary": "Prevents defects observed in production commit `2cf86c53`: Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;  -> When implementing operations in `CODE_OF_CONDUCT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memor",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://erkamyaman-rust-anything/erkamyaman-rust-anything-learnings.md",
+        "source_version": "a8e35878",
+        "observed_at": "2026-11-26T20:49:38.804Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (erkamyaman-rust-anything)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-26T20:50:17.429Z",
+      "updated_at": "2026-11-26T20:50:17.429Z"
     }
   },
   "edges": [
@@ -14985,6 +15008,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-82FF7827 [H] with Domain G",
       "created_at": "2026-11-26T20:41:10.557Z"
+    },
+    {
+      "id": "EDGE-AFA7CD7C7883",
+      "sourceId": "DOM-F-1B31BB0E",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-F-1B31BB0E [F] with Domain G",
+      "created_at": "2026-11-26T20:50:17.429Z"
     }
   ]
 }

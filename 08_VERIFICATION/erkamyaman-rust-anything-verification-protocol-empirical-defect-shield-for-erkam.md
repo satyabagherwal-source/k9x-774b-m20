@@ -4,22 +4,22 @@
 {
   "source_repository": "erkamyaman/rust-anything",
   "source_url": "https://github.com/erkamyaman/rust-anything",
-  "source_version": "7f35f4d7",
-  "license": "MIT",
-  "timestamp": "2026-11-25T13:49:22.178Z",
+  "source_version": "a8e35878",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-26T20:49:40.255Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-erkamyaman-rust-anything",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `7f35f4d7`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T13:49:22.178Z`  
+> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `a8e35878`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T20:49:40.255Z`  
 > **Learning ID**: `learn-github-erkamyaman-rust-anything`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `erkamyaman/rust-anything` (Commit: `7f35f4d7`)
+- **Target Repository**: `erkamyaman/rust-anything` (Commit: `a8e35878`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,17 +28,17 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T13:49:20.289Z  
+> **Harvest Timestamp**: 2026-11-26T20:49:38.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `erkamyaman/rust-anything`
-- **Description**: Rewrite your whole app in Rust, one piece at a time, checked against the original's recorded behavior at every step. CLIs, HTTP servers and libraries in TypeScript, Python, C, Go, Ruby and Java.
+- **Description**: Rewrite your app in Rust, piece by piece, checked against the original at every step. Works with TypeScript, JavaScript, Python, Go, Ruby, Java, C, PHP, C#, Kotlin and PowerShell.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9461 stars
+- **Stars / Engagement**: 10133 stars
 
 ---
 
@@ -1930,13 +1930,11 @@ pub fn is_default_this_binding(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #539** (2026-11-25): **record --count 0 wipes the recorded cases and exits 0**
+  *Symptoms*: `rust-anything record <crate> --count 0` replaces the crate's recorded cases with an empty file and exits 0. Any earlier recording is gone.  `--count` is defined at `src/main.rs:120-122`:  ```rust /// Generated cases per function. #[arg(long, default_value_t = 200)] count: usize, ```  Nothing checks it before recording. `fuzz` already refuses the same mistake (`src/fuzz.rs:157-159`):  ```rust if opts.cases == 0 {     bail!("`--cases` must be at least 1"); } ```  **Repro** (any bridged unit, here a two-function TypeScript file)  ```sh rust-anything record rust/math-rs          # Recorded 425 cases ... wc -l rust/math-rs/cases.jsonl             # 425 rust-anything record rust/math-rs --count 0 # Recorded 0 cases (0 threw) in .../rust/math-rs/cases.jsonl   (exit 0) wc -l rust/math-rs/cases.jsonl             # 0 rust-anything diff rust/math-rs # error: no recorded cases to compare; run `rust-anything record` first ```  **Expected:** with no other source of cases, `--count 0` stops with an error before touching `cases.jsonl`, for example ``error: `--count 0` records nothing: pass --count 1 or more, or give cases with --inputs or --from-tests``.  `--count 0 --inputs cases.jsonl` (only your own cases) works today and should keep working, and so should `--count 0 --from-tests -- <cmd>`.  **Done when**  - `record --count 0` without `--inputs` or `--from-tests` exits 2 with a message that says what to pass, and `cases.jsonl` is unchanged. - `record --count 0 --inputs <file>` still reco
+
 - **Issue #503** (2026-11-25): **gate and go print "1 lines" and "1 hot functions"**
   *Symptoms*: #261 fixed the plural in `analyze`'s plan with the `count(n, word)` helper in `src/report.rs:284`. Two more messages still hard-code the plural:  - `src/gate.rs:190`, the `size` check: `"{rust} lines of Rust for {source} lines of {}"` - `src/go.rs:124`: `"none of the {} hot functions is exported by a portable unit"`  ## Repro  ```sh mkdir -p /tmp/ra-demo/src && cd /tmp/ra-demo echo '{"name":"demo","version":"1.0.0"}' > package.json echo 'export function add(a: number, b: number): number { return a + b; }' > src/add.ts ```  ```sh rust-anything bridge . src/add.ts --kind napi # port add in rust/add-rs/src/port.rs (return Ok(a + b)), then: rust-anything record rust/add-rs && rust-anything gate rust/add-rs | grep size # pass  size       4 lines of Rust for 1 lines of TypeScript/JavaScript (4.0x) ```  **Expected:** `4 lines of Rust for 1 line of TypeScript/JavaScript (4.0x)`.  ## Done when  - [ ] Both messages say `1 line` / `1 hot function` for one and the plural otherwise (reuse `count`, or move it somewhere both modules can call) - [ ] A test asserts the `size` detail for a one-line source  ## How to check  ```sh cargo test cargo run -- gate /tmp/ra-demo/rust/add-rs | grep size ``` 
-
-- **Issue #502** (2026-11-25): **package --version accepts any text, including empty and spaces**
-  *Symptoms*: `package --name` is checked against npm's rules (`validate_npm_name`, `src/package.rs:320`), but `--version` is copied as is (`src/package.rs:195-197`). An empty or malformed version goes into the generated package and only fails later at `npm publish` or the PyPI upload.  ## Repro  ```sh mkdir -p /tmp/ra-demo/src && cd /tmp/ra-demo echo '{"name":"demo","version":"1.0.0"}' > package.json echo 'export function add(a: number, b: number): number { return a + b; }' > src/add.ts ```  ```sh rust-anything bridge . src/add.ts --kind napi rust-anything package rust/add-rs --dry-run --version bogus # Would write 12 add-rs@bogus in .../rust/add-rs/package: rust-anything package rust/add-rs --dry-run --version '' # Would write 12 add-rs@ in .../rust/add-rs/package: rust-anything package rust/add-rs --dry-run --version ' 1.0.0' # Would write 12 add-rs@ 1.0.0 in .../rust/add-rs/package: ```  **Expected:** an error before anything is written, e.g. ``error: `bogus` is not a valid package version (MAJOR.MINOR.PATCH, e.g. 1.2.0); pass --version``.  ## Done when  - [ ] `--version` is refused when empty, when it has whitespace, or when it is not `MAJOR.MINOR.PATCH` with an optional `-prerelease` (npm's semver; also valid for PyPI) - [ ] The check also runs in `--dry-run`, and the MCP `package` tool gets it for free (same `src/package.rs` path) - [ ] Unit tests next to the `validate_npm_name` tests: `1.2.3` and `1.2.3-beta.1` pass; `''`, `bogus`, `1.0`, `' 1.0.0'` fail  ## How to check  ```sh car
-  **Post-Mortem & Fix Analysis**:
-  > I will take this one. I will validate --version in the package command so empty, whitespace-only and malformed values are rejected with a clear message, and add a test for each case.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1953,8 +1951,195 @@ pub fn is_default_this_binding(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `652f322a` (2026-11-25)
-**Commit Message**: fix(app): reject zero timeout in app record and replay (#514)
+### Incident Patch 1: `2cf86c53` (2026-11-26)
+**Commit Message**: Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu; [REDACTED_EMAIL] as contact
+
+Replaces the Prettier GIF with a live race panel timed to the measured 3.63 s and 0.20 s. Fixes the right-to-left layout (logical sides, code and numbers kept left to right), hydration errors from the external-link script, low-contrast orange text, the dark mobile menu (now light, closes on Escape), wrapping nav links and tabs, and clipped focus rings. Restores dark docs code blocks, orange links, title leads, the dark install band padding and the orange CTA. Adds [REDACTED_EMAIL] to the footer, sponsors section, README, SECURITY, Code of Conduct, and plugin and npm metadata.
+
+**File**: `CODE_OF_CONDUCT.md` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ someone represents the project elsewhere.
+ Report unacceptable behavior to the maintainer, [@erkamyaman](https://github.com/erkamyaman),
+ through GitHub. For something you'd rather not post in public, use
+ [Report a vulnerability](https://github.com/erkamyaman/rust-anything/security/advisories/new) and
+-say it's a conduct report. Every report is reviewed, and the reporter's privacy is respected.
++say it's a conduct report, or email [hello@rustanything.ai](mailto:hello@rustanything.ai). Every report is reviewed, and the reporter's privacy is respected.
+ 
+ The maintainer may remove, edit or reject comments, commits, code, issues and other contributions
+ that break this code, and may ban, temporarily or permanently, anyone whose behavior is harmful.
+```
+
+**File**: `README.md` (modified, +2/-0)
+```diff
+@@ -401,6 +401,8 @@ commands (see the [FAQ](docs/faq.md)).
+   <a href="https://buymeacoffee.com/erkamyaman"><img src="https://img.shields.io/badge/Buy_me_a_coffee-%E2%98%95-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" alt="Buy me a coffee"></a>
+ </p>
+ 
++<p align="center">Sponsoring as a company, or anything else? <a href="mailto:hello@rustanything.ai">hello@rustanything.ai</a></p>
++
+ ## Contributing
+ 
+ Issues and pull requests are welcome; [CONTRIBUTING.md](./CONTRIBUTING.md) covers the setup, where
+```
+
+**File**: `SECURITY.md` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ Security fixes go into the latest release. Upgrade with `cargo install rust-anyt
+ 
+ Please report it privately, not in a public issue: use
+ [Report a vulnerability](https://github.com/erkamyaman/rust-anything/security/advisories/new) on
+-the repository's Security tab.
++the repository's Security tab, or email [hello@rustanything.ai](mailto:hello@rustanything.ai).
+ 
+ Include what you found, how to reproduce it, which version and platform you used, and what an
+ attacker could do with it. You'll get a reply within a few days, and you'll hear when a fix is out.
+```
+
+**File**: `directory/.claude-plugin/plugin.json` (modified, +1/-0)
+```diff
+@@ -4,6 +4,7 @@
+   "description": "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step: profile, bridge, record, diff, bench, shadow and gate, for TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP and C#, with whole-app record and replay for apps in each; profile covers TypeScript/JavaScript, Python, Go, Java and Ruby, and shadow covers every language but PHP and C#. Uses the rust-anything CLI (cargo install rust-anything or npm install -g rust-anything).",
+   "author": {
+     "name": "Erkam Yaman",
++    "email": "hello@rustanything.ai",
+     "url": "https://github.com/erkamyaman"
+   },
+   "homepage": "https://github.com/erkamyaman/rust-anything",
+```
+
+**File**: `npm/rust-anything/package.json` (modified, +5/-0)
+```diff
+@@ -10,6 +10,11 @@
+     "url": "git+https://github.com/erkamyaman/rust-anything.git"
+   },
+   "homepage": "https://github.com/erkamyaman/rust-anything",
++  "author": {
++    "name": "Erkam Yaman",
++    "email": "hello@rustanything.ai",
++    "url": "https://github.com/erkamyaman"
++  },
+   "bin": {
+     "rust-anything": "bin/rust-anything.js"
+   },
+```
+
+**File**: `plugin/.claude-plugin/plugin.json` (modified, +1/-0)
+```diff
+@@ -4,6 +4,7 @@
+   "description": "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step: profile, bridge, record, diff, bench, shadow and gate, for TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP and C#, with whole-app record and replay for apps in each; profile covers TypeScript/JavaScript, Python, Go, Java and Ruby, and shadow covers every language but PHP, C# and PowerShell.",
+   "author": {
+     "name": "Erkam Yaman",
++    "email": "hello@rustanything.ai",
+     "url": "https://github.com/erkamyaman"
+   },
+   "homepage": "https://github.com/erkamyaman/rust-anything",
+```
+
+**File**: `plugin/.codex-plugin/plugin.json` (modified, +1/-0)
+```diff
+@@ -4,6 +4,7 @@
+   "description": "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step: profile, bridge, record, diff, bench, shadow and gate, for TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP and C#, with whole-app record and replay for apps in each; profile covers TypeScript/JavaScript, Python, Go, Java and Ruby, and shadow covers every language but PHP, C# and PowerShell.",
+   "author": {
+     "name": "Erkam Yaman",
++    "email": "hello@rustanything.ai",
+     "url": "https://github.com/erkamyaman"
+   },
+   "homepage": "https://github.com/erkamyaman/rust-anything",
+```
+
+**File**: `website/components/landing/Home.tsx` (modified, +52/-8)
+```diff
+@@ -14,15 +14,20 @@ const HOW_DOCS = [
+ ]
+ 
+ function Head({ id, title, desc, locale, dark }: { id: string; title: string; desc: string; locale: string; dark?: boolean }) {
+-  const cut = /^(.+?[.。!?])\s+([\s\S]+)$/.exec(desc)
+-  const lead = cut ? cut[1] : ''
+-  const rest = cut ? cut[2] : desc
++  const cut = /^(.+?[.。!?])\s*([\s\S]+)$/.exec(desc)
++  const short = !!cut && cut[1].length <= 64 && !cut[1].includes('`')
++  const lead = short && cut ? cut[1] : ''
++  const rest = short && cut ? cut[2] : desc
+   return (
+     <div className={`section-head${dark ? ' on-dark' : ''}`}>
+       <h2 id={id} className="section-title">
+         {title}
+-        {/[.。!?]$/.test(title) ? ' ' : '. '}
+-        {lead && <span className="soft">{lead}</span>}
++        {lead && (
++          <>
++            {/[.。!?]$/.test(title) ? ' ' : /[\u3040-\u30ff\u4e00-\u9fff]/.test(title) ? '。' : '. '}
++            <span className="soft">{lead}</span>
++          </>
++        )}
+       </h2>
+       <p className="section-desc">
+         <Rich text={rest} locale={locale} />
+@@ -95,9 +100,45 @@ export default function Home({ hero, install, locale = 'en' }: { hero: React.Rea
+       <section className="section" aria-labelledby="prettier-title">
+         <div className="wrap">
+           <Head id="prettier-title" title={m.prettierTitle} desc={m.prettierDesc} locale={locale} />
+-          <a href="https://github.com/erkamyaman/rust-anything/blob/main/docs/real-world.md#prettier" className="prettier-demo">
+-            <img src="/prettier.gif" width={820} alt={m.prettierAlt} loading="lazy" />
+-          </a>
++          <div className="race">
++            <div className="race-card">
++              <div className="race-lane">
++                <div className="race-top">
++                  <b>Prettier</b>
++                  <span className="race-chip">Node 24</span>
++                </div>
++                <code className="race-cmd">$ prettier &lt;file&gt;</code>
++                <div className="race-time">3.63 s</div>
++                <div className="race-bar">
++                  <span className="slow" />
++                </div>
++                <div className="race-meta">59 / 59 {m.raceFiles}</div>
++              </div>
++              <div className="race-lane rust">
++                <div className="race-top">
++                  <b>
++                    <span className="rust-word">Rust</span> port
++                  </b>
++                  <span className="race-chip">one binary</span>
++                </div>
++                <code className="race-cmd">$ prettier-rs &lt;file&gt;</code>
++                <div className="race-time">0.20 s</div>
++                <div className="race-bar">
++                  <span className="fast" />
++                </div>
++                <div className="race-meta">59 / 59 {m.raceFiles}</div>
++              </div>
++            </div>
++            <div className="race-result">
++              <span className="what">{m.raceSame}</span>
++              <code>59 / 59</code>
++              <span className="state ok">match</span>
++              <span className="race-x">
++                <b>18x</b> {m.raceFaster}
++              </span>
++              <a href="https://github.com/erkamyaman/rust-anything/blob/main/docs/real-world.md#prettier">{m.raceHow}</a>
++            </div>
++          </div>
+         </div>
+       </section>
+ 
+@@ -386,6 +427,9 @@ export default function Home({ hero, install, locale = 'en' }: { hero: React.Rea
+               {m.buyCoffee}
+             </a>
+           </div>
++          <p className="sponsor-mail">
++            {m.sponsorEmail} <a href="mailto:hello@rustanything.ai">hello@rustanything.ai</a>
++          </p>
+         </div>
+       </section>
+ 
+```
+
+---
+
+### Incident Patch 2: `a8e35878` (2026-11-26)
+**Commit Message**: fix(mcp): name a required path that is not a string instead of calling it missing (#688)
 
 **File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
@@ -1962,595 +2147,197 @@ Observed empirical fixes and code patches:
  
  ## Unreleased
  
-+- `app record --timeout 0` and `app replay --timeout 0` (and MCP `app_record` / `app_replay` with
-+  `timeout: 0`) are refused before anything runs, instead of killing every run at once; a saved
-+  `timeout_secs` of 0 is refused too, with a hint to pass `--timeout` (#497, #514 by @aloneangel45).
- - `app record --ready-timeout SECS` (and MCP `app_record`'s `ready_timeout`) sets how long a server
-   start waits for its port instead of a fixed 60 seconds. It is saved with the cases and used by
-   replay and the front door; 0 restores the default (#332, #478 by @XiaoBinGan).
++- Every MCP tool's required path (`root`, `repo` or `crate`) that is there but not a string is
++  refused with `` `root` must be a string, not 5 `` instead of `` missing `root` ``. An absent or
++  `null` path still says `` missing `root` `` (#685, #688 by @susheelg1197).
+ - The MCP `bridge` and `app_wire` tools refuse a `unit` that is not a string with
+   `` `unit` must be a string, not 5 `` instead of `` missing `unit` ``, and `bridge` refuses a `name`
+   that is not a string instead of writing the bridge under the default name. A missing or `null`
 ```
 
-**File**: `src/app.rs` (modified, +102/-5)
+**File**: `src/mcp.rs` (modified, +20/-2)
 ```diff
-@@ -121,6 +121,14 @@ pub(crate) fn default_timeout() -> u64 {
-     30
- }
+@@ -828,8 +828,7 @@ fn opt_bool(args: &Value, key: &str) -> Result<Option<bool>> {
  
-+pub(crate) fn check_timeout(timeout_secs: Option<u64>) -> Result<()> {
-+    ensure!(
-+        timeout_secs != Some(0),
-+        "--timeout must be at least 1 second"
-+    );
-+    Ok(())
-+}
-+
- impl Config {
-     pub fn load(repo: &Path) -> Result<Option<Config>> {
-         let path = cases_dir(repo).join(CONFIG_FILE);
-@@ -1923,6 +1931,7 @@ pub(crate) fn reserve_case_name(
- }
- 
- pub fn record(opts: &RecordOptions) -> Result<RecordOutcome> {
-+    check_timeout(opts.timeout_secs)?;
-     let repo = opts
-         .repo
-         .canonical()
-@@ -1963,6 +1972,14 @@ pub fn record(opts: &RecordOptions) -> Result<RecordOutcome> {
-         .map(str::to_string)
-         .or_else(|| existing.as_ref().map(|c| c.name.clone()));
-     let names = app_names(&repo, &run, explicit.as_deref());
-+    let timeout_secs = opts
-+        .timeout_secs
-+        .or(existing.as_ref().map(|c| c.timeout_secs))
-+        .unwrap_or_else(default_timeout);
-+    ensure!(
-+        timeout_secs >= 1,
-+        "--timeout must be at least 1 second (saved timeout_secs in {CONFIG_FILE} is 0; pass --timeout 1 or higher)"
-+    );
-     let mut config = Config {
-         schema: SCHEMA.to_string(),
-         name: explicit
-@@ -1971,10 +1988,7 @@ pub fn record(opts: &RecordOptions) -> Result<RecordOutcome> {
-         run,
-         normalize,
-         normalizers,
--        timeout_secs: opts
--            .timeout_secs
--            .or(existing.as_ref().map(|c| c.timeout_secs))
--            .unwrap_or_else(default_timeout),
-+        timeout_secs,
-         http: crate::http::merge_config(existing.as_ref().and_then(|c| c.http.clone()), opts),
-         float_tolerance: match opts.float_tolerance {
-             Some(t) => (crate::tolerance::check(t)? > 0.0).then_some(t),
-@@ -2642,6 +2656,7 @@ pub(crate) fn recorded_args(repo: &Path) -> Result<Vec<(Vec<String>, bool)>> {
- }
- 
- pub fn replay(opts: &ReplayOptions) -> Result<ReplayOutcome> {
-+    check_timeout(opts.timeout_secs)?;
-     let repo = opts
-         .repo
-         .canonical()
-@@ -2685,7 +2700,12 @@ pub fn replay(opts: &ReplayOptions) -> Result<ReplayOutcome> {
-         recorded: Vec::new(),
-     });
-     let norm = Normalizers::new(&config)?;
--    let timeout = Duration::from_secs(opts.timeout_secs.unwrap_or(config.timeout_secs));
-+    let timeout_secs = opts.timeout_secs.unwrap_or(config.timeout_secs);
-+    ensure!(
-+        timeout_secs >= 1,
-+        "--timeout must be at least 1 second (saved timeout_secs in {CONFIG_FILE} is 0; pass --timeout 1 or higher)"
-+    );
-+    let timeout = Duration::from_secs(timeout_secs);
-     if config.http.is_some() {
-         return crate::http::replay(
-             &repo, &config, &norm, &command, opts.port, opts.case, timeout,
-@@ -3310,4 +3330,81 @@ mod tests {
-         );
-         assert_eq!(shell_split(r"echo one\\two").unwrap(), ["echo", r"one\two"]);
-     }
-+
-+    #[test]
-+    fn record_and_replay_reject_zero_timeout_and_leave_cases_untouched() {
-+        let repo = temp_dir("zero-timeout").unwrap();
-+        let dir = cases_dir(&repo);
-+        std::fs::create_dir_all(&dir).unwrap();
-+        let sentinel_cfg = format!(
-+            r#"{{"schema":"{SCHEMA}","name":"app","run":["echo","ok"],"timeout_secs":30,"recorded":["no-args"]}}"#
-+        );
-+        let cfg_path = dir.join(CONFIG_FILE);
-+        let case_path = dir.join("no-args.toml");
-+        std::fs::write(&cfg_path, &sentinel_cfg).unwrap();
-+        std::fs::write(&case_path, "stdout = \"ok\\n\"\n").unwrap();
-+
-+        let rec_err = record(&RecordOptions {
-+            repo: &repo,
-+            run: &["definitely-not-run".to_string()],
-+            inputs: None,
-+            normalize: &[],
-+            name: None,
-+            traps: false,
-+            timeout_secs: Some(0),
-+            http: false,
-+            server_args: &[],
-+            fresh: &[],
-+            pace_ms: None,
-+            port: None,
-+            float_tolerance: None,
-+            float_files: &[],
-+            effects: None,
-+            ready_secs: None,
-+        })
-+        .unwrap_err();
-+        let rec_msg = format!("{rec_err:#}");
-+        assert!(
-+            rec_msg.contains("--timeout") && rec_msg.contains("1 second"),
-+            "{rec_msg}"
-+        );
-+
-+        let rep_err = replay(&ReplayOptions {
-+            repo: &repo,
-+            build: None,
-+            timeout_secs: Some(0),
-+            port: None,
-+            case: None,
-+        })
-+        .unwrap_err();
-+        let rep_msg = format!("{rep_err:#}");
-+        assert!(
-+            rep_msg.contains("--timeout") && rep_msg.contains("1 second"),
-+            "{rep_msg}"
-+        );
-+
-+        assert_eq!(std::fs::read_to_string(&cfg_path).unwrap(), sentinel_cfg);
-+        assert_eq!(
-+            std::fs::read_to_string(&case_path).unwrap(),
-+            "stdout = \"ok\\n\"\n"
-+        );
-+
-+        let zero_cfg = sentinel_cfg.replace(r#""timeout_secs":30"#, r#""timeout_se
-```
-
-**File**: `src/mcp.rs` (modified, +38/-2)
-```diff
-@@ -686,6 +686,18 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-             })
-             .unwrap_or_default()
+ fn call(name: &str, args: &Value) -> Result<Value> {
+     let path = |key: &str| -> Result<PathBuf> {
+-        args[key]
+-            .as_str()
++        opt_string(args, key)?
+             .map(PathBuf::from)
+             .with_context(|| format!("missing `{key}`"))
      };
-+    let opt_timeout = || -> Result<Option<u64>> {
-+        match args.get("timeout") {
-+            None | Some(Value::Null) => Ok(None),
-+            Some(v) => {
-+                let secs = v
-+                    .as_u64()
-+                    .ok_or_else(|| anyhow::anyhow!("--timeout must be at least 1 second"))?;
-+                app::check_timeout(Some(secs))?;
-+                Ok(Some(secs))
-+            }
-+        }
-+    };
-     Ok(match name {
-         "analyze" => {
-             let root = path("root")?;
-@@ -1020,6 +1032,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-         )?)?,
-         "app_record" => {
-             let repo = path("repo")?;
-+            let timeout_secs = opt_timeout()?;
-             let inputs = opt_path("inputs");
-             let effect_response = match args.get("effect_response") {
-                 None | Some(Value::Null) => Vec::new(),
-@@ -1048,7 +1061,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-                 normalize: &strings("normalize"),
-                 name: args["name"].as_str(),
-                 traps: args["traps"].as_bool().unwrap_or(true),
--                timeout_secs: args["timeout"].as_u64(),
-+                timeout_secs,
-                 http: args["http"].as_bool().unwrap_or(false),
-                 port: args["port"].as_u64().and_then(|p| u16::try_from(p).ok()),
-                 server_args: &strings("args"),
-@@ -1062,10 +1075,11 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-         }
-         "app_replay" => {
-             let repo = path("repo")?;
-+            let timeout_secs = opt_timeout()?;
-             serde_json::to_value(app::replay(&app::ReplayOptions {
-                 repo: &repo,
-                 build: args["build"].as_str(),
--                timeout_secs: args["timeout"].as_u64(),
-+                timeout_secs,
-                 port: args["port"].as_u64().and_then(|p| u16::try_from(p).ok()),
-                 case: args["case"].as_str(),
-             })?)?
-@@ -1427,4 +1441,26 @@ mod tests {
-         );
-         assert!(bad_mixed.is_err());
+@@ -1317,6 +1316,25 @@ mod tests {
+         assert_eq!(err, "`ready` must be a string, not 42");
      }
-+
+ 
 +    #[test]
-+    fn app_record_and_app_replay_reject_zero_or_negative_timeout() {
-+        let dir = std::env::temp_dir().join(format!("ra-mcp-timeout-{}", std::process::id()));
-+        let _ = std::fs::remove_dir_all(&dir);
-+        std::fs::create_dir_all(&dir).unwrap();
-+        for tool in ["app_record", "app_replay"] {
-+            for timeout in [json!(0), json!(-1)] {
-+                let err = call(tool, &json!({ "repo": dir, "timeout": timeout })).unwrap_err();
-+                let msg = format!("{err:#}");
-+                assert!(
-+                    msg.contains("--timeout") && msg.contains("1 second"),
-+                    "{tool} with {timeout}: {msg}"
-+                );
-+            }
-+        }
-+        assert!(
-+            !dir.join("rust").exists(),
-+            "rejected timeout must not create rust/app-cases"
++    fn a_required_path_that_is_not_a_string_is_named_not_reported_missing() {
++        // Issue #685: `"root": 5` was reported as `missing `root``, which sends the caller looking
++        // for a typo in the key instead of the value.
++        let err = |args: Value| call("analyze", &args).unwrap_err().to_string();
++        assert_eq!(err(json!({ "root": 5 })), "`root` must be a string, not 5");
++        assert_eq!(err(json!({})), "missing `root`");
++        assert_eq!(err(json!({ "root": null })), "missing `root`");
++        let err = |tool: &str, args: Value| call(tool, &args).unwrap_err().to_string();
++        assert_eq!(
++            err("app_lift", json!({ "repo": true })),
++            "`repo` must be a string, not true"
 +        );
-+        let _ = std::fs::remove_dir_all(&dir);
++        assert_eq!(
++            err("package", json!({ "crate": ["x"] })),
++            "`crate` must be a string, not [\"x\"]"
++        );
 +    }
- }
-```
-
-**File**: `tests/app.rs` (modified, +49/-0)
-```diff
-@@ -1067,3 +1067,52 @@ fn a_library_front_door_prints_one_export_in_the_singular() {
-         "{printed}"
-     );
- }
 +
-+#[test]
-+fn app_record_and_replay_cli_reject_zero_timeout_without_touching_cases() {
-+    let repo = one_off("zero-timeout-cli", &[("cli.py", "print('hi')\n")]);
-+    let cases_dir = repo.join("rust/app-cases");
-+    std::fs::create_dir_all(&cases_dir).unwrap();
-+    let cfg_path = cases_dir.join("rust-anything.json");
-+    let case_path = cases_dir.join("no-args.toml");
-+    let original_cfg = "{\"schema\":\"rust-anything/app@1\",\"name\":\"app\",\"run\":[\"python3\",\"cli.py\"],\"timeout_secs\":30,\"recorded\":[\"no-args\"]}\n";
-+    let original_case = "stdout = \"hi\\n\"\n";
-+    std::fs::write(&cfg_path, original_cfg).unwrap();
-+    std::fs::write(&case_path, original_case).unwrap();
-+
-+    let rec = Command::new(env!("CARGO_BIN_EXE_rust-anything"))
-+        .args([
-+            "app",
-+            "record",
-+            ".",
-+            "--timeout",
-+            "0",
-+            "--",
-+            "missing-command",
-+        ])
-+        .current_dir(&repo)
-+        .output()
-+        .unwrap();
-+    assert!(!rec.status.success(), "{rec:?}");
-+    let rec_err = String::from_utf8_lossy(&rec.stderr);
-+    assert!(
-+        rec_err.contains("--timeout") && rec_err.contains("1 second"),
-+        "{rec_err}"
-+    );
-+
-+    let rep = Command::new(env!("CARGO_BIN_EXE_rust-anything"))
-+        .args(["app", "replay", ".", "--timeout", "0"])
-+        .current_dir(&repo)
-+        .output()
-+        .unwrap();
-+    assert!(!rep.status.success(), "{rep:?}");
-+    let rep_err = String::from_utf8_lossy(&rep.stderr);
-+    assert!(
-+        rep_err.contains("--timeout") && rep_err.contains("1 second"),
-+        "{rep_err}"
-+    );
-+
-+    assert_eq!(std::fs::read_to_string(&cfg_path).unwrap(), original_cfg);
-+    assert_eq!(std::fs::read_to_string(&case_path).unwrap(), original_case);
-+    std::fs::remove_dir_all(&repo).unwrap();
-+}
+     #[test]
+     fn a_wrong_type_argument_is_classified_as_invalid_arguments_through_handle() {
+         // The type error keeps the machine-readable code a missing argument has, and a quoted value that
 ```
 
 ---
 
-### Incident Patch 2: `7f35f4d7` (2026-11-25)
-**Commit Message**: fix(mcp): reject invalid kind, profile and keep values instead of defaulting (#530)
+### Incident Patch 3: `682438e8` (2026-11-26)
+**Commit Message**: fix(mcp): refuse a bridge or app_wire unit, or a bridge name, that is not a string (#687)
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -2,6 +2,9 @@
+@@ -2,6 +2,11 @@
  
  ## Unreleased
  
-+- MCP `bridge` refuses a `kind` other than `"napi"` or `"wasm"`, `record`, `build` and `diff` refuse a
-+  non-string `profile`, and `fuzz` refuses a non-string `keep`, instead of silently falling back to
-+  the default (#530 by @Lewandox).
- - `bridge --name` (and MCP `bridge`'s `name`) is refused before any folder is written when it is
-   not a valid Cargo crate name: empty, padded, a path such as `../escape`, a leading digit, a Rust
-   keyword or a reserved Windows file name. A unit whose file name starts with a digit or has no
++- The MCP `bridge` and `app_wire` tools refuse a `unit` that is not a string with
++  `` `unit` must be a string, not 5 `` instead of `` missing `unit` ``, and `bridge` refuses a `name`
++  that is not a string instead of writing the bridge under the default name. A missing or `null`
++  `unit` still says `` missing `unit` ``. A wrong-type argument to any MCP tool now gets the
++  `invalid_arguments` code, not retryable, instead of `failed` (#684, #687 by @susheelg1197).
+ - `docs/whole-apps.md` says six of the seven `app` commands are MCP tools and that `app shadow` is
+   CLI only, instead of "All six are MCP tools too" (#672, #674 by @XiaoBinGan).
+ - The MCP `app_record` tool refuses a `ready`, `name`, `db_reset` or `db_dump` that is neither a
 ```
 
-**File**: `src/mcp.rs` (modified, +128/-27)
+**File**: `src/mcp.rs` (modified, +89/-3)
 ```diff
-@@ -657,6 +657,45 @@ fn tool_schemas() -> Value {
-     ])
+@@ -223,6 +223,14 @@ struct FailureKind {
+ 
+ /// Checked in order; the first match wins, `failed` otherwise.
+ const FAILURES: &[FailureKind] = &[
++    // An argument of the wrong type (`opt_string`, `req_string`, `opt_u64`): checked first, since the
++    // value it quotes may contain text another rule matches, such as "still running after".
++    FailureKind {
++        code: "invalid_arguments",
++        retryable: false,
++        matches: |t| t.starts_with('`') && t.contains("` must be ") && !t.contains('\n'),
++        next: None,
++    },
+     FailureKind {
+         code: "timed_out",
+         retryable: true,
+@@ -762,6 +770,12 @@ fn opt_string(args: &Value, key: &str) -> Result<Option<String>> {
+     }
  }
  
-+/// `bridge`'s `kind`: `None` (the plan's choice) when omitted or null, an error for any other
-+/// value than `"napi"` or `"wasm"`, so a mistyped argument never bridges with a different kind.
-+fn kind_arg(args: &Value) -> Result<Option<bridge::Kind>> {
-+    Ok(match args.get("kind") {
-+        None | Some(Value::Null) => None,
-+        Some(Value::String(s)) if s == "napi" => Some(bridge::Kind::Napi),
-+        Some(Value::String(s)) if s == "wasm" => Some(bridge::Kind::Wasm),
-+        Some(other) => anyhow::bail!("`kind` is \"napi\" or \"wasm\", not {other}"),
-+    })
++/// A string argument the tool cannot run without: absent or `null` is "missing", any other type is
++/// refused by name, so `"unit": 5` is not reported as if `unit` had not been sent.
++fn req_string(args: &Value, key: &str) -> Result<String> {
++    opt_string(args, key)?.with_context(|| format!("missing `{key}`"))
 +}
 +
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+enum Profile {
-+    Host,
-+    Android,
-+}
-+
-+/// `record`/`build`/`diff`'s `profile`: `Host` when omitted or null, an error for any other
-+/// value than `"host"` or `"android"`.
-+fn profile_arg(args: &Value) -> Result<Profile> {
-+    Ok(match args.get("profile") {
-+        None | Some(Value::Null) => Profile::Host,
-+        Some(Value::String(s)) if s == "host" => Profile::Host,
-+        Some(Value::String(s)) if s == "android" => Profile::Android,
-+        Some(other) => anyhow::bail!("`profile` is \"host\" or \"android\", not {other}"),
-+    })
-+}
-+
-+/// `fuzz`'s `keep`: `None` when omitted or null, an error for any other value than `"mismatches"`
-+/// or `"all"`.
-+fn keep_arg(args: &Value) -> Result<Option<crate::fuzz::Keep>> {
-+    Ok(match args.get("keep") {
-+        None | Some(Value::Null) => None,
-+        Some(Value::String(s)) if s == "mismatches" => Some(crate::fuzz::Keep::Mismatches),
-+        Some(Value::String(s)) if s == "all" => Some(crate::fuzz::Keep::All),
-+        Some(other) => anyhow::bail!("`keep` is \"mismatches\" or \"all\", not {other}"),
-+    })
-+}
-+
- /// `bridge`'s `allocator`: the default when omitted (or null), an error for any other value
- /// than the two names, so a mistyped argument never bridges with an allocator nobody chose.
- fn allocator_arg(args: &Value) -> Result<bridge::Allocator> {
-@@ -728,11 +767,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-             serde_json::to_value(report)?
-         }
-         "bridge" => {
--            let kind = match args["kind"].as_str() {
--                Some("napi") => Some(bridge::Kind::Napi),
--                Some("wasm") => Some(bridge::Kind::Wasm),
--                _ => None,
--            };
-+            let kind = kind_arg(args)?;
-             let root = path("root")?;
-             let allocator = allocator_arg(args)?;
+ fn opt_u64(args: &Value, key: &str) -> Result<Option<u64>> {
+     match args.get(key) {
+         None | Some(Value::Null) => Ok(None),
+@@ -865,10 +879,10 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+             let force = opt_bool(args, "force")?.unwrap_or(false);
              serde_json::to_value(bridge::bridge(&bridge::Options {
-@@ -751,13 +786,10 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-         }
-         "record" => {
-             let crate_dir = path("crate")?;
--            let profile = args["profile"].as_str().unwrap_or("host");
--            if profile == "host" && !args["device"].is_null() {
-+            let profile = profile_arg(args)?;
-+            if profile == Profile::Host && !args["device"].is_null() {
-                 anyhow::bail!("`device` needs profile `android`");
-             }
--            if !matches!(profile, "host" | "android") {
--                anyhow::bail!("unknown record profile `{profile}`: use host or android");
--            }
-             let mut inputs = opt_path("inputs");
-             let test_command = strings("test_command");
-             let captured = if test_command.is_empty() {
-@@ -803,9 +835,8 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-             };
-             let device = args["device"].as_str();
-             let mut out = serde_json::to_value(match profile {
--                "host" => harness::record(&opts)?,
--                "android" => harness::record_android(&opts, device)?,
--                other => anyhow::bail!("unknown record profile `{other}`: use host or android"),
-+                Profile::Host => harness::record(&opts)?,
-+                Profile::Android => harness::record_android(&opts, device)?,
-             })?;
-             if let Some(c) = captured {
-                 out["from_tests"] = c;
-@@ -837,8 +868,8 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-         }
-         "build" => {
-             let crate_dir = path("crate")?;
--            match args["profile"].as_str().unwrap_or("host") {
--                "android" => {
-+            match profile_arg(args)? {
-+                Profile::Android => {
-                     if !args["abi"].is_null() && !args["abi"].is_array() {
-                         anyhow::bail!("`abi` must be an array of Android ABI names");
-                     }
-@@ -860,7 +891,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-                         },
-                     )?)?
-                 }
--                "host" => {
-+                Profile::Host => {
-                     if !args["abi"].is_null()
-                         || !args["api"].is_null()
-                         || !args["ndk"].is_null()
-@@ -870,7 +901,6 @@ fn call(name: &str, args
-```
-
----
-
-### Incident Patch 3: `5fe6bfad` (2026-11-25)
-**Commit Message**: fix(bridge): validate --name and ensure derived crate names are Cargo-valid (#529)
-
-**File**: `CHANGELOG.md` (modified, +5/-1)
-```diff
-@@ -2,7 +2,11 @@
- 
- ## Unreleased
- 
--- `build`, `gate` and the other steps that run an outside tool say ``` `cargo` not found on PATH ```
-+- `bridge --name` (and MCP `bridge`'s `name`) is refused before any folder is written when it is
-+  not a valid Cargo crate name: empty, padded, a path such as `../escape`, a leading digit, a Rust
-+  keyword or a reserved Windows file name. A unit whose file name starts with a digit or has no
-+  letters gets a valid default name (`unit-123-rs`, `unit-rs`) (#529 by @Lewandox).
-+- `build`, `gate` and the other steps that run an outside tool say `` `cargo` not found on PATH ``
-   with `doctor`'s install command when the program is missing, instead of the raw `No such file or
-   directory (os error 2)`; `gate` no longer tells you to fix a compile error when the build never
-   started (#498, #525 by @Lewandox).
-```
-
-**File**: `src/bridge.rs` (modified, +142/-13)
-```diff
-@@ -1092,7 +1092,66 @@ pub(crate) const DYNAMIC_LOOKUP_BUILD_RS: &str = r#"fn main() {
- }
- "#;
- 
-+/// Rejects Cargo package names that would produce invalid `Cargo.toml` / Rust library names or
-+/// write outside `<root>/rust/` via path separators.
-+fn validate_crate_name(name: &str) -> Result<&str> {
-+    const RUST_KEYWORDS: &[&str] = &[
-+        "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum",
-+        "extern", "false", "fn", "for", "gen", "if", "impl", "in", "let", "loop", "match", "mod",
-+        "move", "mut", "pub", "ref", "return", "self", "Self", "static", "struct", "super",
-+        "trait", "true", "type", "unsafe", "use", "where", "while", "abstract", "become", "box",
-+        "do", "final", "macro", "override", "priv", "try", "typeof", "unsized", "virtual", "yield",
-+    ];
-+    const WINDOWS_RESERVED: &[&str] = &[
-+        "con", "prn", "aux", "nul", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8",
-+        "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
-+    ];
-+    let first = name.bytes().next();
-+    let valid_chars = first.is_some_and(|b| b.is_ascii_alphabetic() || b == b'_')
-+        && name
-+            .bytes()
-+            .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_');
-+    if !valid_chars {
-+        bail!(
-+            "invalid crate name `{name}`: must be non-empty, start with an ASCII letter or `_`, \
-+             and use only ASCII letters, digits, `-` and `_`"
-+        );
-+    }
-+    let lib = name.replace('-', "_");
-+    if lib == "_" || RUST_KEYWORDS.contains(&lib.as_str()) {
-+        bail!("invalid crate name `{name}`: `{lib}` is a reserved Rust keyword");
-+    }
-+    let lower = name.to_ascii_lowercase();
-+    if WINDOWS_RESERVED.contains(&lower.as_str()) {
-+        bail!("invalid crate name `{name}`: `{name}` is a reserved filename on Windows");
-+    }
-+    Ok(name)
-+}
-+
-+/// Derives a valid Cargo crate name from a unit's file/folder stem.
-+fn default_crate_name(stem: &str) -> String {
-+    let clean: String = stem
-+        .chars()
-+        .map(|c| {
-+            if c.is_ascii_alphanumeric() {
-+                c.to_ascii_lowercase()
-+            } else {
-+                '-'
-+            }
-+        })
-+        .collect();
-+    let trimmed = clean.trim_matches('-');
-+    if trimmed.is_empty() {
-+        "unit-rs".to_string()
-+    } else if trimmed.as_bytes()[0].is_ascii_digit() {
-+        format!("unit-{trimmed}-rs")
-+    } else {
-+        format!("{trimmed}-rs")
-+    }
-+}
-+
- pub fn bridge(opts: &Options) -> Result<Outcome> {
-+    let explicit_name = opts.name.as_deref().map(validate_crate_name).transpose()?;
-     let root = opts
-         .root
-         .canonical()
-@@ -1299,19 +1358,9 @@ pub fn bridge(opts: &Options) -> Result<Outcome> {
-         .split('.')
-         .next()
-         .unwrap_or("unit");
--    let crate_name = opts.name.clone().unwrap_or_else(|| {
--        let clean: String = stem
--            .chars()
--            .map(|c| {
--                if c.is_ascii_alphanumeric() {
--                    c.to_ascii_lowercase()
--                } else {
--                    '-'
--                }
--            })
--            .collect();
--        format!("{}-rs", clean.trim_matches('-'))
--    });
-+    let crate_name = explicit_name
-+        .map(str::to_string)
-+        .unwrap_or_else(|| default_crate_name(stem));
-     let crate_dir = opts
-         .out
-         .clone()
-@@ -2055,4 +2104,84 @@ mod tests {
-         assert_eq!(snake_case("self"), "self_");
-         assert_eq!(snake_case("Super"), "super_");
+                 root: &root,
+-                unit: args["unit"].as_str().context("missing `unit`")?,
++                unit: &req_string(args, "unit")?,
+                 kind,
+                 out: opt_path("out"),
+-                name: args["name"].as_str().map(str::to_string),
++                name: opt_string(args, "name")?,
+                 force,
+                 keep: strings("keep"),
+                 lang: None,
+@@ -1250,7 +1264,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+             let repo = path("repo")?;
+             serde_json::to_value(front_door::wire(&front_door::WireOptions {
+                 repo: &repo,
+-                unit: args["unit"].as_str().context("missing `unit`")?,
++                unit: &req_string(args, "unit")?,
+                 commands: &strings("commands"),
+                 routes: &strings("routes"),
+                 skip_gate: opt_bool(args, "skip_gate")?.unwrap_or(false),
+@@ -1303,6 +1317,60 @@ mod tests {
+         assert_eq!(err, "`ready` must be a string, not 42");
      }
-+
+ 
 +    #[test]
-+    fn validates_crate_names() {
-+        for good in ["add-rs", "my_crate", "_helper", "Foo2", "a-1_b"] {
-+            assert_eq!(validate_crate_name(good).unwrap(), good, "{good}");
-+        }
-+        for bad in [
-+            "",
-+            " ",
-+            " add-rs ",
-+            "foo bar",
-+            "123-rs",
-+            "-foo",
-+            "../escape",
-+            "a/b",
-+            "a\\b",
-+            "a\"b",
-+            "café",
-+            "_",
-+            "fn",
-+            "type",
-+            "self",
-+            "Self",
-+            "gen",
-+            "con",
-+            "NUL",
++    fn a_wrong_type_argument_is_classified_as_invalid_arguments_through_handle() {
++        // The type error keeps the machine-readable code a missing argument has, and a quoted value that
++        // reads like a timeout is not reported as retryable.
++        for arguments in [
++            json!({ "root": ".", "unit": 5, "kind": "napi" }),
++            json!({ "root": ".", "unit": { "x": "still running after 5s" }, "kind": "napi" }),
 +        ] {
-+            assert!(
-+                validate_crate_name(bad).is_err(),
-+                "expected error for {bad:?}"
-+            );
++            let response = handle(&json!({ "jsonrpc": "2.0", "id": 1, "method": "tools/call",
++                "params": { "name": "bridge", "arguments": arguments } }))
++            .unwrap();
++            let s = &response["result"]["structuredContent"];
++            assert_eq!(s["code"], "invalid_arguments", "{s}");
++            assert_eq!(s["retryable"], false, "{s}");
 +        }
 +    }
 +
 +    #[test]
-+    fn default_crate_name_is_always_valid_for_cargo() {
-+        assert_eq!(default_crate_name("add"), "add-rs");
-+        assert_eq!(default_crate_name("my_util"), "my-util-rs");
-+        assert_eq!(default_crate_name("123"), "unit-123-rs");
-+        assert_eq!(default_crate_name("---"), "unit-rs");
-+        assert_eq!(default_crate_name(""), "unit-rs");
-+        for stem in ["add", "my_util", "123", "---", "", "00-index", "café"] {
-+            let name = default_crate_name(stem);
-+            assert!(
-+                validate_crate_name(&name).is_ok(),
-+       
++    fn bridge_and_app_wire_refuse_a_unit_or_name_that_is_not_a_string() {
++        // Issue #684: `"unit": 5` used to read as a missing unit, and `"name": 7` was dropped, so the
++        // bridge was written under the default name. Both are refused before anything is written.
++        let dir =
++            std::env::temp_dir().join(format!("rust-anything-mcp-684-{}", std::process::id()));
++        std::fs::create_dir_all(&dir).unwrap();
++        let root = dir.to_str().unwrap();
++        let err = |tool: &str, args: Value| call(tool, &args).unwrap_err().to_string();
++        assert_eq!(
++            err("bridge", json!({ "root": root, "unit": 5, "kind": "napi" })),
++            "`unit` must be a string, not 5"
++        );
++        assert_eq!(
++            err("app_wire", json!({ "repo": root, "unit": 5 })),
++            "`unit` must be a string, not 5"
++        );
++        assert_eq!(
++            err(
++                "bridge",
++                json!({ "root": root, "unit": "src/math.ts", "kind": "napi", "name": 7 })
++            ),
++            "`name` must be a string, not 7"
++        );
++        assert_eq!(
++            err("bridge", json!({ "root": root, "kind": "napi" })),
++            "missing `unit`"
++        );
++        assert_eq!(
++            err("app_wire", json!({ "repo": root, "unit": null })),
++            "missing `unit`"
++        );
++        let written = std::fs::read_dir(&dir).unwrap().count();
++        std::fs::remove_dir_all(&dir).unwrap();
++        assert_eq!(written, 0);
++    }
++
+     #[test]
+     fn a_fuzz_time_too_large_for_a_duration_is_an_error_not_a_panic() {
+         // The conversion used to be `Duration::from_secs_f64`, which
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #530** (2026-11-25): fix(mcp): reject invalid kind, profile and keep values instead of defaulting (@Lewandox)
-- **PR #529** (2026-11-25): fix(bridge): validate --name and ensure derived crate names are Cargo-valid (@Lewandox)
-- **PR #528** (closed): fix(harness, gate): report missing cargo and runtimes with doctor guidance on spawn not found (@Papito084)
-- **PR #527** (closed): fix(package): validate --version before writing any files (#502) (@P-r-e-m-i-u-m)
-- **PR #526** (closed): fix(batch): list available functions and parameters on batch error (@Papito084)
-- **PR #525** (2026-11-25): fix(build,gate): report missing tools on PATH with doctor install guidance (@Lewandox)
+- **PR #695** (closed): fix(mcp): validate unit and name argument types in bridge and app_wire (#684) (@Papito084)
+- **PR #693** (closed): fix(mcp): report non-string path arguments as type errors (#685) (@Papito084)
+- **PR #688** (2026-11-26): fix(mcp): name a required path that is not a string instead of calling it missing (@susheelg1197)
+- **PR #687** (2026-11-26): fix(mcp): refuse a bridge or app_wire unit, or a bridge name, that is not a string (@susheelg1197)
+- **PR #677** (2026-11-26): fix(app): keep an HTTP input that repeats an earlier request (@antont)
+- **PR #676** (2026-11-26): fix(bridge): give ports an exact UTF-16 slice for substrings JS hands back (@antont)
 
 ---
 
@@ -2570,33 +2357,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. app): reject zero timeout in app record and replay
+## X. Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CODE_OF_CONDUCT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `652f322a`: app): reject zero timeout in app record and replay. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2cf86c53`: Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu; [REDACTED_EMAIL] as contact. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CODE_OF_CONDUCT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `app record --timeout 0` and `app replay --timeout 0` (and MCP `app_record` / `app_replay` with
-  `timeout: 0`) are refused before anything runs, instead of killing every run at once; a saved
-  `timeout_secs` of 0 is refused too, with a hint to pass `--timeout` (#497, #514 by @aloneangel45).
+say it's a conduct report, or email [hello@rustanything.ai](mailto:hello@rustanything.ai). Every report is reviewed, and the reporter's privacy is respected.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+say it's a conduct report. Every report is reviewed, and the reporter's privacy is respected.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `652f322a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2cf86c53` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

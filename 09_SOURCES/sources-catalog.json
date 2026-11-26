@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "e07357155fb841b15798bf4f843b4ca73a2acb2b9f8714c541ed9bd312e85f53",
-    "lastHarvestedAt": "2026-11-23T07:28:40.024Z",
+    "contentHash": "af161230f5429381b467bdc113b23a772ba8226c9bf1f07c9ad9244790d8167d",
+    "lastHarvestedAt": "2026-11-26T20:49:38.174Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -12913,10 +12913,10 @@
     "repository": "erkamyaman/rust-anything",
     "platform": "github",
     "sourceUrl": "https://github.com/erkamyaman/rust-anything",
-    "sourceVersion": "7f35f4d7",
-    "license": "MIT",
-    "contentHash": "f3ebc86b6e4b8b7a7bc6f8e3716dc9a1cb2554f5122f9c8c18dd817635471642",
-    "lastHarvestedAt": "2026-11-25T13:49:21.811Z",
+    "sourceVersion": "a8e35878",
+    "license": "Apache-2.0",
+    "contentHash": "dd55a64d82a840d25e5d8a7ead5714577ae06fe9c0f652668d7659072635478d",
+    "lastHarvestedAt": "2026-11-26T20:49:40.009Z",
     "learningId": "learn-github-erkamyaman-rust-anything"
   },
   "hf-akhaliq-minimax-h3-image-character-swap": {

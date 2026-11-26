@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-JPQZ",
-    "timestamp": "2026-11-25T09:37:23.483Z",
-    "repository": "modelcontextprotocol/kotlin-sdk",
-    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-    "contentHash": "1eef88ac08c697d249c2e88ce58e17c95251ada7d58e906ab9926c905781f40b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-JVAM",
-    "timestamp": "2026-11-25T09:37:30.670Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "00e4498f93ba3c78df4c46c5c197d8ff05912be43a77aa8a012dd3cf3d20cea4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-MTM5",
     "timestamp": "2026-11-25T09:39:48.461Z",
     "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "a02824aa867360119e6c199af326d8d19e9ae1844d5aa7cd1a111ed20eba5601",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-02UX",
+    "timestamp": "2026-11-26T20:49:38.169Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "af161230f5429381b467bdc113b23a772ba8226c9bf1f07c9ad9244790d8167d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-049X",
+    "timestamp": "2026-11-26T20:49:40.005Z",
+    "repository": "erkamyaman/rust-anything",
+    "learningId": "learn-github-erkamyaman-rust-anything",
+    "contentHash": "dd55a64d82a840d25e5d8a7ead5714577ae06fe9c0f652668d7659072635478d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

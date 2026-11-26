@@ -13553,3 +13553,6 @@
 | `CYCLE-20261126-OASF` | `2026-11-26T20:40:28.575Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10773` | Yes (`cf7b697b...`) |
 | `CYCLE-20261126-OI8V` | `2026-11-26T20:40:38.239Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10774` | Yes (`a02824aa...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T20:41:10.560Z` | `software-mansion-react-native-reanimated` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-82FF7827` [Domain H] | Yes (`5d0cc909...`) |
+| `CYCLE-20261126-02UX` | `2026-11-26T20:49:38.169Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`af161230...`) |
+| `CYCLE-20261126-049X` | `2026-11-26T20:49:40.005Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10775` | Yes (`dd55a64d...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T20:50:17.432Z` | `erkamyaman-rust-anything` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-1B31BB0E` [Domain F] | Yes (`a2b2e907...`) |
