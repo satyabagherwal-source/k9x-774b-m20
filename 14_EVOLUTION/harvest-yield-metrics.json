@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:49:40.027Z",
-  "total_cycles_completed": 12866,
-  "total_learnings_persisted": 12866,
-  "total_rules_promoted": 11682,
+  "last_updated": "2026-11-26T20:59:41.582Z",
+  "total_cycles_completed": 12869,
+  "total_learnings_persisted": 12869,
+  "total_rules_promoted": 11684,
   "history": [
-    {
-      "timestamp": "2026-11-26T11:03:38.865Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T11:03:50.953Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T11:03:51.302Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T11:15:35.525Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T20:49:40.027Z",
       "repository": "erkamyaman/rust-anything",
       "learningId": "learn-github-erkamyaman-rust-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:59:31.445Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:59:33.820Z",
+      "repository": "svenstaro/miniserve",
+      "learningId": "learn-github-svenstaro-miniserve",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:59:41.582Z",
+      "repository": "Checkmarx/kics",
+      "learningId": "learn-github-checkmarx-kics",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

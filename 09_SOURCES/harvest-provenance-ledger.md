@@ -13589,3 +13589,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-26T20:49:38.174Z |
 | `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `a8e35878` | Multi-dimensional audit evidence | 2026-11-26T20:49:40.009Z |
 | `learn-dom-f-1b31bb0e` | `project://erkamyaman-rust-anything` | `a8e35878` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md` | 2026-11-26T20:50:17.432Z |
+| `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-26T20:59:31.430Z |
+| `learn-github-svenstaro-miniserve` | `https://github.com/svenstaro/miniserve` | `7dae3bbd` | Multi-dimensional audit evidence | 2026-11-26T20:59:33.797Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `452b4d01` | Multi-dimensional audit evidence | 2026-11-26T20:59:41.559Z |

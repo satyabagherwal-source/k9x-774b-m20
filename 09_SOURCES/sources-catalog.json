@@ -985,8 +985,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
     "license": "Open-Source",
-    "contentHash": "64e28e27a7ac4eac97af2e93fcbc0975ecb74836aadf17d58f638e49e47d5cb7",
-    "lastHarvestedAt": "2026-11-23T07:36:43.897Z",
+    "contentHash": "893dbb835f4ae2f976779e07862a20dd1f102ea67ed0ba1bce6724b2285d4489",
+    "lastHarvestedAt": "2026-11-26T20:59:31.430Z",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1"
   },
   "hf-deepseek-ai-deepseek-v3": {
@@ -4543,10 +4543,10 @@
     "repository": "svenstaro/miniserve",
     "platform": "github",
     "sourceUrl": "https://github.com/svenstaro/miniserve",
-    "sourceVersion": "68b6f063",
+    "sourceVersion": "7dae3bbd",
     "license": "MIT",
-    "contentHash": "4d82a539c381212edfabc0e139ee766444c04a50830527221a5d79f65fe45b40",
-    "lastHarvestedAt": "2026-11-04T03:16:22.330Z",
+    "contentHash": "aa1f3a938ea17e6a242d2fc5e6e97d06b493577c4f5790af5223c3c4a13544d2",
+    "lastHarvestedAt": "2026-11-26T20:59:33.797Z",
     "learningId": "learn-github-svenstaro-miniserve"
   },
   "founded-labs-react-native-reusables": {
@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "a572efb2",
+    "sourceVersion": "452b4d01",
     "license": "Apache-2.0",
-    "contentHash": "7f1e17f730b84f9fc4bf0301a1e50a5a3bc2d7d24ab5145445abf0a01e221737",
-    "lastHarvestedAt": "2026-11-25T02:56:11.357Z",
+    "contentHash": "fad9b6f699620008acfac0d399202833efab6eacae2a0970bc577b495d4d053a",
+    "lastHarvestedAt": "2026-11-26T20:59:41.559Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {

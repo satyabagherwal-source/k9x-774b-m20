@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-MTM5",
-    "timestamp": "2026-11-25T09:39:48.461Z",
-    "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
-    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
-    "contentHash": "09fd4c328cce3a6b4c493da31f3ac3df2830ae2f8b10c76aa4ef54cf5c23f0d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-5E8W",
-    "timestamp": "2026-11-25T09:54:15.008Z",
-    "repository": "XHToken/Spark-X2.6-4B-GGUF",
-    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-    "contentHash": "9047342dc4393d826bd52eb108fbceceeba6a34db8f17447f1682bad8fd59e8e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-5FZA",
-    "timestamp": "2026-11-25T09:54:17.254Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "e5eb38a7fe39feb39f90fec6d0bf0969d24b68829ae3a772cd527ad6e3b37398",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-5PGX",
     "timestamp": "2026-11-25T09:54:29.553Z",
     "repository": "GreptimeTeam/greptimedb",
@@ -7490,6 +7445,51 @@
     "repository": "erkamyaman/rust-anything",
     "learningId": "learn-github-erkamyaman-rust-anything",
     "contentHash": "dd55a64d82a840d25e5d8a7ead5714577ae06fe9c0f652668d7659072635478d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-CSM9",
+    "timestamp": "2026-11-26T20:59:31.425Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "893dbb835f4ae2f976779e07862a20dd1f102ea67ed0ba1bce6724b2285d4489",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-CUFZ",
+    "timestamp": "2026-11-26T20:59:33.791Z",
+    "repository": "svenstaro/miniserve",
+    "learningId": "learn-github-svenstaro-miniserve",
+    "contentHash": "aa1f3a938ea17e6a242d2fc5e6e97d06b493577c4f5790af5223c3c4a13544d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-D0FM",
+    "timestamp": "2026-11-26T20:59:41.554Z",
+    "repository": "Checkmarx/kics",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "fad9b6f699620008acfac0d399202833efab6eacae2a0970bc577b495d4d053a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

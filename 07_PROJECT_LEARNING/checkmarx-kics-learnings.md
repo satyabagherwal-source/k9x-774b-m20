@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source**: github ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
-> **Source Version**: `a572efb2`  
+> **Source Version**: `452b4d01`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T02:56:10.253Z  
+> **Timestamp**: 2026-11-26T20:59:40.038Z  
 > **Learning ID**: `learn-github-checkmarx-kics`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:56:10.248Z  
+> **Harvest Timestamp**: 2026-11-26T20:59:40.031Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find security vulnerabilities, compliance issues, and infrastructure misconfigurations early in the development cycle of your infrastructure-as-code with KICS by Checkmarx.
 - **Primary Language / Ecosystem**: Open Policy Agent
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2752 stars
+- **Stars / Engagement**: 2754 stars
 
 ---
 
@@ -1628,532 +1628,367 @@ type SourceProvider interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cb4b894` (2026-11-24)
-**Commit Message**: [StepSecurity] Apply security best practices (#8194)
+### Incident Patch 1: `452b4d01` (2026-11-26)
+**Commit Message**: fix(query): detect string boolean values in Docker Compose "Privileged Containers Enabled" query  (#8208)
 
-* [StepSecurity] Apply security best practices
+* detect string boolean values in Docker Compose Privileged Containers Enabled query
 
-Signed-off-by: StepSecurity Bot <[REDACTED_EMAIL]>
-
-* update: packages
-
-* update: sdk/log package version
-
-* remove: unused replace statements on go.mod
-
-* update: package dependency
-
----------
-
-Signed-off-by: StepSecurity Bot <[REDACTED_EMAIL]>
-Co-authored-by: stepsecurity-app[bot] <188008098+stepsecurity-app[bot]@users.noreply.github.com>
-Co-authored-by: Artur Ribeiro <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/go-ci.yml` (modified, +1/-1)
-```diff
-@@ -185,7 +185,7 @@ jobs:
-         with:
-           persist-credentials: false
-       - name: Run Gosec Security Scanner
--        uses: securego/gosec@d2d3ae66bd8d340b78b5142b6fe610691783c2fe # v2.22.5
-+        uses: step-security/securego-gosec@3281807ab637177cdd8f594a9876c0d086a7bfb0 # v2.29.0
-         with:
-           args: "-no-fail -fmt sarif -out results.sarif ./..."
-       - name: Show results
-```
-
-**File**: `.github/workflows/run-projects.yaml` (modified, +1/-1)
-```diff
-@@ -48,7 +48,7 @@ jobs:
- 
-     steps:
-       - name: configure aws credentials
--        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
-+        uses: step-security/configure-aws-credentials@169c21e4c75dca522fb69a37bfdb5d8d634b9da4 # v6.3.0
-         with:
-           role-to-assume: ${{ secrets.CES_BUCKET_AWS_ROLE }}
-           aws-region: ${{ secrets.CES_BUCKET_AWS_REGION }}
-```
-
-**File**: `.github/workflows/sec-checks.yaml` (modified, +4/-4)
-```diff
-@@ -21,7 +21,7 @@ jobs:
-         with:
-           persist-credentials: false
-       - name: Run Trivy vulnerability scanner in repo mode
--        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 #v0.35.0
-+        uses: step-security/trivy-action@4d04e2d32ba36aae5693467644b22741d68f9115 # v0.36.0
-         with:
-           scan-type: 'fs'
-           ignore-unfixed: true
-@@ -71,7 +71,7 @@ jobs:
-           cache-from: type=local,src=/tmp/.buildx-cache
-           cache-to: type=local,dest=/tmp/.buildx-cache
-       - name: Run Trivy vulnerability scanner
--        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 #v0.36.0
-+        uses: step-security/trivy-action@4d04e2d32ba36aae5693467644b22741d68f9115 # v0.36.0
-         with:
-           image-ref: kics:sec-trivy-tests-${{ github.sha }}
-           ignore-unfixed: true
-@@ -102,7 +102,7 @@ jobs:
-           persist-credentials: false
-       - name: Run Grype vulnerability scanner in repo mode
-         id: grype-fs-scan
--        uses: anchore/scan-action@e1165082ffb1fe366ebaf02d8526e7c4989ea9d2 # 7.4.0
-+        uses: step-security/anchore-scan-action@a09aeacdedd17f1a8e912b3519ee9d7ea124498a # v7.4.2
-         with:
-           path: "."
-           only-fixed: true
-@@ -141,7 +141,7 @@ jobs:
-           cache-to: type=local,dest=/tmp/.buildx-cache
-       - name: Scan image
-         id: grype-image-scan
--        uses: anchore/scan-action@e1165082ffb1fe366ebaf02d8526e7c4989ea9d2 # 7.4.0
-+        uses: step-security/anchore-scan-action@a09aeacdedd17f1a8e912b3519ee9d7ea124498a # v7.4.2
-         with:
-           image: kics:sec-tests-${{ github.sha }}
-           only-fixed: true
-```
+* update: dockerfile images
 
 **File**: `Dockerfile` (modified, +2/-2)
 ```diff
 @@ -1,5 +1,5 @@
--ARG GO_BASE_IMAGE=checkmarx/go:1.27.3@sha256:94581adffb0633c4cdde4b15edc8834c192204e9af0a5247f85e91294ceb2e82
--ARG GIT_BASE_IMAGE=checkmarx/git:2.56.0@sha256:f9cad2bd61939058ef50a139cb2d8fbd3cf01b435a0992029e3584e9c6f10f61
-+ARG GO_BASE_IMAGE=checkmarx/go:1.27.4@sha256:f11d557e2e36c479cfd4cb97caa1272bdf5009e0c8638fff65cf83f9916c9d22
-+ARG GIT_BASE_IMAGE=checkmarx/git:2.56.1@sha256:9bcf2dd6cb6385a1035a8159a2629d4c7503ab5281bd773b5fdbcf75e75dcf67
+-ARG GO_BASE_IMAGE=checkmarx/go:1.27.4@sha256:f11d557e2e36c479cfd4cb97caa1272bdf5009e0c8638fff65cf83f9916c9d22
+-ARG GIT_BASE_IMAGE=checkmarx/git:2.56.1@sha256:9bcf2dd6cb6385a1035a8159a2629d4c7503ab5281bd773b5fdbcf75e75dcf67
++ARG GO_BASE_IMAGE=checkmarx/go:1.27.4@sha256:f73955925ad073823c06b4738214c28ad8ff4f52fe6d35abbd616c10c0ba4eb0
++ARG GIT_BASE_IMAGE=checkmarx/git:2.56.1@sha256:cbdf5cfebf96e817b54f797ef77aac3d716c4a52c99be249b72e251bfcb1f5ce
  FROM ${GO_BASE_IMAGE} AS build_env
  
  # Copy the source from the current directory to the Working Directory inside the container
 ```
 
-**File**: `go.mod` (modified, +3/-6)
+**File**: `assets/queries/dockerCompose/privileged_containers_enabled/query.rego` (modified, +18/-7)
 ```diff
-@@ -141,8 +141,8 @@ require (
- 	go.opentelemetry.io/otel v1.47.1-0.20261023144708-4224a8c4f9f2 // indirect
- 	go.opentelemetry.io/otel/log v1.47.0 // indirect
- 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
--	go.opentelemetry.io/otel/sdk/metric v1.46.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
- 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-@@ -270,8 +270,5 @@ require (
+@@ -4,16 +4,27 @@ import data.generic.common as common_lib
  
- replace (
- 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc => go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.22.0
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace => go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc => go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp => go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0
--	go.opentelemetry.io/otel/sdk/log => go.opentelemetry.io/otel/sdk/log v0.22.0
-+	go.opentelemetry.io/otel/sdk/log => go.opentelemetry.io/otel/sdk/log v1.47.0
- )
+ CxPolicy[result] {
+ 	resource := input.document[i]
+-	service_parameters := resource.services[name]	
+-    privileged := service_parameters.privileged    
+- 	privileged == true
+-    
++	service_parameters := resource.services[name]
++	privileged := service_parameters.privileged
++	privileged_enabled(privileged)
++
+ 	result := {
+ 		"documentId": sprintf("%s", [resource.id]),
+-		"searchKey": sprintf("services.%s.privileged",[name]),
++		"searchKey": sprintf("services.%s.privileged", [name]),
+ 		"issueType": "IncorrectValue",
+ 		"keyExpectedValue": "Docker compose file to have 'privileged' attribute set to false or not set",
+-		"keyActualValue": "Docker compose file has 'privileged' attribute as true",
+-		"searchLine":  common_lib.build_search_line(["services", name, "privileged"], []),
++		"keyActualValue": sprintf("Docker compose file has 'privileged' attribute as %v", [privileged]),
++		"searchLine": common_lib.build_search_line(["services", name, "privileged"], []),
+ 	}
+ }
++
++privileged_enabled(value) {
++	value == true
++}
++
++# Docker Compose (compose-go toBoolean) coerces these strings, case-insensitively and without trimming, to true
++privileged_enabled(value) {
++	is_string(value)
++	truthy_values := {"true", "y", "yes", "on"}
++	truthy_values[lower(value)]
++}
 ```
 
-**File**: `go.sum` (modified, +8/-8)
+**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/negative3.yaml` (added, +33/-0)
 ```diff
-@@ -608,14 +608,14 @@ go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lq
- go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
- go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
- go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
--go.opentelemetry.io/otel/metric/x v0.68.0 h1:TA/cBT23D3MnxYPwHL7YFOdYGdx0A0v+s7Mzotpd1dU=
--go.opentelemetry.io/otel/metric/x v0.68.0/go.mod h1:agudOmvWhwUTjgibWDzxD2PoWYnpw5Ht5jISYOD2Hd4=
--go.opentelemetry.io/otel/sdk v1.46.0 h1:h5CNQQjEbuQXY/JfZtgt3i7HVFV3aHPO2OAwO2eTYPI=
--go.opentelemetry.io/otel/sdk v1.46.0/go.mod h1:GAERFXFt5SYCEB+YiKUbMBeza6UaDH7GmGOZEfh2gSM=
--go.opentelemetry.io/otel/sdk/log v0.22.0 h1:PRL+s6P63XT4E/bheEflopPUpVxuvANqZwtt89yhoGk=
--go.opentelemetry.io/otel/sdk/log v0.22.0/go.mod h1:JNp0sBELrjCTcu5W3GzABVypeU6vDJjBS+X0JISuz+g=
--go.opentelemetry.io/otel/sdk/metric v1.46.0 h1:0piZ26EG4RBfebb2jhDH6ERCYHoVWduc3kLgPCwSnSE=
--go.opentelemetry.io/otel/sdk/metric v1.46.0/go.mod h1:I1PbKrdVc8Qu8HYVDNtqVIwLwjNrhsV/uFuxfwg8mO4=
-+go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
-+go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/log v1.47.0 h1:W4N/ZfgpkRRnmARnqYoQ6BrWA0mrj8IzVDNLlpmUJZY=
-+go.opentelemetry.io/otel/sdk/log v1.47.0/go.mod h1:Wu74Z2EmOKXi2FleSNAb0Hyau2G+r5kubSEMJw5aAMs=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
- go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
- go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
+@@ -0,0 +1,33 @@
++version: "3.9"
++
++services:
++  quoted_no:
++    image: busybox
++    privileged: "no"
++  quoted_n:
++    image: busybox
++    privileged: "n"
++  quoted_off:
++    image: busybox
++    privileged: "off"
++  quoted_false:
++    image: busybox
++    privileged: "false"
++  quoted_no_uppercase:
++    image: busybox
++    privileged: "NO"
++  quoted_false_capitalized:
++    image: busybox
++    privileged: "False"
++  unquoted_no:
++    image: busybox
++    privileged: no
++  unquoted_n:
++    image: busybox
++    privileged: n
++  unquoted_off:
++    image: busybox
++    privileged: off
++  unquoted_false_uppercase:
++    image: busybox
++    privileged: FALSE
 ```
 
----
-
-### Incident Patch 2: `a572efb2` (2026-11-24)
-**Commit Message**: revert(actions): remove CES CI workflows (#8187)
-
-* remove: CES CI workflows
-
-* update: runtime/build images and update package versions in go.mod
-
-* add: replace for sdk/log package
-
-**File**: `.github/workflows/cesar.yaml` (removed, +0/-102)
+**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/negative4.yaml` (added, +24/-0)
 ```diff
-@@ -1,102 +0,0 @@
--name: CESARt
--on:
--  pull_request:
--    types: [ labeled ]
--
--env:
--  ENGINE_VERSION: ${{ vars.CES_ENGINE_VERSION }}
--  PLATFORM: "LINUX_X64"
--  ENGINE: "kics"
--  REMOVE_HISTORY: "true"
--
--concurrency:
--  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
--  cancel-in-progress: true
--
--permissions:
--  contents: read # for actions/checkout to fetch code
--  id-token: none # default deny-write baseline; the ci-projects job below elevates to write for AWS OIDC
--
--jobs:
--  build:
--    name: Build KICS binary
--    if: (github.event.label.name == 'cesar' && github.event.pull_request.mergeable == true)
--    runs-on: cx-public-ubuntu-x64
--    steps:
--      - name: Checkout
--        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
--        with:
--          ref: refs/pull/${{ github.event.pull_request.number }}/merge
--          path: kics
--          persist-credentials: false
--      - name: Setup Go
--        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
--        with:
--          go-version-file: kics/go.mod
--          cache-dependency-path: kics/go.sum
--          cache: true
--
--      - name: Build kics Binary
--        env:
--          CGO_ENABLED: 0
--          GOOS: linux
--          GOARCH: amd64
--        run: |
--          cd $GITHUB_WORKSPACE/kics
--          go build -installsuffix cgo -ldflags "-s -w" -a -o ./bin/kics ./cmd/console/main.go
--          chmod +x ./bin/kics
--
--      - name: Create Metadata File
--        env:
--          PR_NUMBER: ${{ github.event.number }}
--          PR_TITLE: ${{ github.event.pull_request.title }}
--          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
--          PR_ACTOR: ${{ github.actor }}
--          PR_HEAD_REF: ${{ github.head_ref }}
--          PR_BASE_REF: ${{ github.base_ref }}
--        run: |
--          COMMIT_TIMESTAMP=$(git -C "$GITHUB_WORKSPACE/kics" log -1 --format=%ct)
--          METADATA_PATH="$GITHUB_WORKSPACE/pr-metadata.json"
--          CURR_TIMESTAMP=$(date +%s)
--          echo '{
--            "seq": "'"${CURR_TIMESTAMP}"'",
--            "tag": "'"${PR_NUMBER}"'",
--            "comment": "'"${PR_TITLE}"'",
--            "commit": "'"${PR_HEAD_SHA}"'",
--            "owner": "'"${PR_ACTOR}"'",
--            "branch": "'"${PR_HEAD_REF}"'",
--            "engine": "'"${ENGINE}"'",
--            "platform": "'"${PLATFORM}"'",
--            "version": "'"${ENGINE_VERSION}"'",
--            "forkSeq": "'"${CURR_TIMESTAMP}"'",
--            "forkBranch": "'"${PR_BASE_REF}"'",
--            "removeHistory" : "'"${REMOVE_HISTORY}"'"
--          }' > "$METADATA_PATH"
--
--      - name: Zip kics Folder
--        run: |
--          cd $GITHUB_WORKSPACE
--          zip -qr kics.zip kics/
--
--      - name: Save kics
--        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
--        with:
--          name: kics
--          path: ${{ github.workspace }}/kics.zip
--          retention-days: 1
--
--      - name: Pr parameters
--        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
--        with:
--          name: Metadata
--          path: ${{ github.workspace }}/pr-metadata.json
--          retention-days: 1
--
--  ci-projects:
--    permissions:
--      id-token: write # run kics againts the projects
--    needs: build
--    uses: $/.github/workflows/run-projects.yaml
--    with:
--      machines-count: 10
--    secrets: inherit # zizmor: ignore[secrets-inherit] run-projects.yaml is an internal same-repo reusable workflow, fixed caller set (here + ci-projects.yaml), needs several CES_*/GH_TOKEN secrets for AWS OIDC + private executor-repo checkout
+@@ -0,0 +1,24 @@
++version: "3.9"
++
++services:
++  unrelated_string:
++    image: busybox
++    privileged: "enabled"
++  numeric_string:
++    image: busybox
++    privileged: "1"
++  numeric_value:
++    image: busybox
++    privileged: 1
++  empty_string:
++    image: busybox
++    privileged: ""
++  leading_whitespace:
++    image: busybox
++    privileged: " yes"
++  trailing_whitespace:
++    image: busybox
++    privileged: "true "
++  null_value:
++    image: busybox
++    privileged: null
 ```
 
-**File**: `.github/workflows/ci-projects.yaml` (removed, +0/-100)
+**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/positive3.yaml` (added, +30/-0)
 ```diff
-@@ -1,100 +0,0 @@
--name: CI Projects
--on:
--  pull_request:
--    types: [closed]
--    branches:
--      - master
--
--env:
--  ENGINE_VERSION: ${{ vars.CES_ENGINE_VERSION }}
--  PLATFORM: "LINUX_X64"
--  ENGINE: "kics"
--
--concurrency:
--  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
--  cancel-in-progress: true
--
--permissions:
--  contents: read # for actions/checkout to fetch code
--
--jobs:
--  build:
--    name: Build Kics to run againts projects
--    if: github.event.pull_request.merged == true
--    runs-on: cx-public-ubuntu-x64
--    permissions:
--      contents: read # for actions/checkout to fetch code
--    steps:
--      - name: Checkout
--        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
--        with:
--          ref: ${{ github.event.pull_request.merge_commit_sha }}
--          path: kics
--          persist-credentials: false
--
--      - name: Setup Go
--        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
--        with:
--          go-version-file: kics/go.mod
--          cache-dependency-path: kics/go.sum
--          cache: true
--
--      - name: Build kics Binary
--        env:
--          CGO_ENABLED: 0
--          GOOS: linux
--          GOARCH: amd64
--        run: |
--          cd $GITHUB_WORKSPACE/kics
--          go build -installsuffix cgo -ldflags "-s -w" -a -o ./bin/kics ./cmd/console/main.go
--          chmod +x ./bin/kics
--
--      - name: Create Metadata File
--        env:
--          PR_NUMBER: ${{ github.event.number }}
--          PR_TITLE: ${{ github.event.pull_request.title }}
--          PR_SHA: ${{ github.sha }}
--          PR_ACTOR: ${{ github.actor }}
--          PR_BASE_REF: ${{ github.base_ref }}
--        run: |
--          COMMIT_TIMESTAMP=$(git -C "$GITHUB_WORKSPACE/kics" log -1 --format=%ct)
--          METADATA_PATH="$GITHUB_WORKSPACE/pr-metadata.json"
--          echo '{
--            "seq": "'"${COMMIT_TIMESTAMP}"'",
--            "tag": "'"${PR_NUMBER}"'",
--            "comment": "'"${PR_TITLE}"'",
--            "commit": "'"${PR_SHA}"'",
--            "owner": "'"${PR_ACTOR}"'",
--            "branch": "'"${PR_BASE_REF}"'",
--            "engine": "'"${ENGINE}"'",
--            "platform": "'"${PLATFORM}"'",
--            "version": "'"${ENGINE_VERSION}"'"
--          }' > "$METADATA_PATH"
--
--      - name: Zip kics Folder
--        run: |
--          cd $GITHUB_WORKSPACE
--          zip -qr kics.zip kics/
--
--      - name: Save kics
--        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
--        with:
--          name: kics
--          path: ${{ github.workspace }}/kics.zip
--          retention-days: 1
--
--      - name: Pr parameters
--        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
--        with:
--          name: Metadata
--          path: ${{ github.workspace }}/pr-metadata.json
--          retention-days: 1
--
--  ci-projects:
--    needs: build
--    permissions:
--      id-token: write # required to pass id-token permission through to run-projects.yaml for AWS OIDC federation
--    uses: $/.github/workflows/run-projects.yaml
--    with:
--      machines-count: 10
--    secrets: inherit # zizmor: ignore[secrets-inherit] run-projects.yaml is an internal same-repo reusable workflow, fixed caller set (here + cesar.yaml), needs several CES_*/GH_TOKEN secrets for AWS OIDC + private executor-repo checkout
+@@ -0,0 +1,30 @@
++version: "3.9"
++
++services:
++  quoted_yes:
++    image: busybox
++    privileged: "yes"
++  quoted_y:
++    image: busybox
++    privileged: "y"
++  quoted_on:
++    image: busybox
++    privileged: "on"
++  quoted_true:
++    image: busybox
++    privileged: "true"
++  quoted_yes_capitalized:
++    image: busybox
++    privileged: "Yes"
++  quoted_yes_uppercase:
++    image: busybox
++    privileged: "YES"
++  quoted_y_uppercase:
++    image: busybox
++    privileged: "Y"
++  quoted_on_mixed_case:
++    image: busybox
++    privileged: "oN"
++  quoted_true_uppercase:
++    image: busybox
++    privileged: "TRUE"
 ```
 
-**File**: `.github/workflows/run-projects.yaml` (removed, +0/-140)
+**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/positive4.yaml` (added, +24/-0)
 ```diff
-@@ -1,140 +0,0 @@
--name: Run CI Projects
+@@ -0,0 +1,24 @@
++version: "3.9"
++
++services:
++  unquoted_yes:
++    image: busybox
++    privileged: yes
++  unquoted_y:
++    image: busybox
++    privileged: y
++  unquoted_on:
++    image: busybox
++    privileged: on
++  unquoted_yes_uppercase:
++    image: busybox
++    privileged: YES
++  unquoted_on_capitalized:
++    image: busybox
++    privileged: On
++  unquoted_true_capitalized:
++    image: busybox
++    privileged: True
++  unquoted_true_uppercase:
++    image: busybox
++    privileged: TRUE
+```
+
+**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/positive_expected_result.json` (modified, +108/-12)
+```diff
+@@ -1,14 +1,110 @@
+ [
+-    {
+-      "queryName": "Privileged Containers Enabled",
+-      "severity": "HIGH",
+-      "line": 10,
+-      "filename": "positive1.yaml"
+-    },
+-    {
+-        "queryName": "Privileged Containers Enabled",
+-        "severity": "HIGH",
+-        "line": 13,
+-        "filename": "positive2.yaml"
+-    }
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 10,
++    "filename": "positive1.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 13,
++    "filename": "positive2.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 6,
++    "filename": "positive3.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 9,
++    "filename": "positive3.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 12,
++    "filename": "positive3.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 15,
++    "filename": "positive3.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 18,
++    "filename": "positive3.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 21,
++    "filename": "positive3.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 24,
++    "filename": "positive3.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 27,
++    "filename": "positive3.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 30,
++    "filename": "positive3.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 6,
++    "filename": "positive4.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 9,
++    "filename": "positive4.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 12,
++    "filename": "positive4.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 15,
++    "filename": "positive4.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 18,
++    "filename": "positive4.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 21,
++    "filename": "positive4.yaml"
++  },
++  {
++    "queryName": "Privileged Containers Enabled",
++    "severity": "HIGH",
++    "line": 24,
++    "filename": "positive4.yaml"
++  }
+ ]
+```
+
+**File**: `pkg/model/model_yaml.go` (modified, +8/-11)
+```diff
+@@ -242,7 +242,12 @@ func scalarNodeResolver(val *yaml.Node) interface{} {
+ 	var transformed interface{} = val.Value
+ 	switch val.Tag {
+ 	case "!!bool":
+-		transformed = transformBoolScalarNode(val.Value)
++		var b bool
++		if err := val.Decode(&b); err != nil {
++			log.Error().Msgf("failed to convert boolean in yaml parser")
++			return val.Value
++		}
++		transformed = b
+ 	case "!!int":
+ 		v, err := strconv.ParseInt(val.Value, 0, 64)
+ 		if err != nil {
+@@ -252,17 +257,9 @@ func scalarNodeResolver(val *yaml.Node) interface{} {
+ 		transformed = v
+ 	case "!!null":
+ 		transformed = nil
++	default:
++		// keep the raw string value for any other tag
+ 	}
+ 
+ 	return transformed
+ }
 -
--on:
--  workflow_call:
--    inputs:
--      machines-count:
--        description: 'Total number of machines'
--        required: true
--        type: number
--
--env:
--  ENGINE: "kics"
--  CES_ENVIRONMENT: "prod"
--
--permissions:
--  id-token: none # default deny baseline; the run-projects job below elevates to write for AWS OIDC
--
--jobs:
--  setup:
--    name: Setup
--    runs-on: cx-public-ubuntu-x64
--    outputs:
--      machines: ${{ steps.set-machines.outputs.machines }}
--    env:
--      MACHINES_COUNT: ${{ inputs.machines-count }}
--    steps:
--      - name: Generate Machine Matrix
--        id: set-machines
--        run: |
--          machines=$(seq -s, 0 $(("${MACHINES_COUNT}" - 1)))
--          echo "machines=[$machines]" >> "$GITHUB_OUTPUT"
--
--  run-projects:
--    name: Run kics againts projects
--    permissions:
--      id-token: write # permission to run kics againts project
--    needs: setup
--    runs-on: cx-public-ubuntu-x64
--    env:
--      AWS_REGION: ${{ secrets.CES_BUCKET_AWS_REGION }}
--      MACHINES_MATRIX: ${{ matrix.machine }}
--
--    strategy:
--      fail-fast: false
--      max-parallel: 10
--      matrix:
--        machine: ${{ fromJSON(needs.setup.outputs.machines) }}
--
--    steps:
--      - name: configure aws credentials
--        uses: step-security/configure-aws-credentials@169c21e4c75dca522fb69a37bfdb5d8d634b9da4 # v6.3.0
--        with:
--          role-to-assume: ${{ secrets.CES_BUCKET_AWS_ROLE }}
--          aws-region: ${{ secrets.CES_BUCKET_AWS_REGION }}
--
--      - name: Checkout
--        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
--        with:
--          repository: ${{ secrets.CES_EXECUTOR_REPO }}
--          token: ${{ secrets.GH_TOKEN }}
--          path: cli
--          ref: master
--          persist-credentials: false
--
--      - name: Setup Go
--        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
--        with:
--          go-version-file: cli/go.mod
--          cache: false
--
--      - name: Download kics
--        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c #v8.0.1
--        with:
--          name: kics
--          path: .
--
--      - name: Unzip kics
--        run: |
--          unzip -q kics.zip
--
--      - name: Download Json
--        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c #v8.0.1
--        with:
--          name: Metadata
--          path: .
--
--      - name: Build Engines Executor
--        run: |
--          cd cli
--          go build -o executor
--
--      - name: Set log file
--        run: |
--          LOG_FILE="$GITHUB_WORKSPACE/log_"${MACHINES_MATRIX}".log"
--          echo "LOG_FILE=$LOG_FILE" >> $GITHUB_ENV
--
--      - name: Select Projects
--        run: |
--          mkdir -p "$GITHUB_WORKSPACE/zips/"
--          cd cli
--          ./executor sources \
--          -s $GITHUB_WORKSPACE/zips/ \
--          -e $ENGINE \
--          --chunk "${MACHINES_MATRIX}" \
--          --machines "${MACHINES_COUNT}" \
--          >> "$LOG_FILE" 2>&1
--
--      - name: Prepare Projects
--        run: |
--          cd "$GITHUB_WORKSPACE/zips/"
--          for zip in *.zip; do
--            [ -e "$zip" ] || continue
--            zip_name=$(basename "$zip" .zip)
--            echo "::add-mask::$zip_name"
--            unzip -qqo "$zip" -d "./$zip_name" >> "$LOG_FILE" 2>&1
--          done
--
--      - name: Run Engines Executor
--        run: |
--          mkdir -p $GITHUB_WORKSPACE/results
--          ./cli/executor run kics \
--          -b $GITHUB_WORKSPACE/kics/bin/kics \
--          -s $GITHUB_WORKSPACE/zips/ \
--          -r $GITHUB_WORKSPACE/results \
--          -j $GITHUB_WORKSPACE/pr-metadata.json \
--          -q $GITHUB_WORKSPACE/kics/assets/queries/ \
--          --libraries $GITHUB_WORKSPACE/kics/assets/libraries/ \
--          --assets $GITHUB_WORKSPACE/kics/assets/similarityID_transition/ \
--          --env $CES_ENVIRONMENT \
--          >> $LOG_FILE 2>&1
--
--      - name: Upload log
--        if: failure()
--        run: |
--          ./cli/executor save-log \
--          -e $ENGINE \
--          -j $GITHUB_WORKSPACE/pr-metadata.json \
--          -l $LOG_FILE \
--          --env $CES_ENVIRONMENT \
--          > /dev/null 2>&1
+-// transformBoolScalarNode transforms a string value to its boolean representation
+-func transformBoolScalarNode(value string) bool {
+-	switch value {
+-	case "true", "True":
+-		return true
+-	default:
+-		return false
+-	}
+-}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8208** (2026-11-26): fix(query): detect string boolean values in Docker Compose "Privileged Containers Enabled" query  (@cx-artur-ribeiro)
 - **PR #8194** (2026-11-24): [StepSecurity] Apply security best practices (@stepsecurity-app[bot])
 - **PR #8187** (2026-11-24): revert(actions): remove CES CI workflows (@cx-artur-ribeiro)
 - **PR #8183** (closed): fix(query): fix FP on Terraform AWS port queries treating tcp/udp 0/0 range as all ports (@cx-carlos-mello)
 - **PR #8182** (closed): fix(query): fix FPs and FNs on Network ACL Unrestricted Access To RDP/SSH (Terraform) (@cx-carlos-mello)
 - **PR #8179** (2026-11-09): update(action): update kics github action version to 2.2.1 (@cx-artur-ribeiro)
-- **PR #8178** (2026-11-09): fix(actions): deploy docs latest alias as copy instead of symlink (@cx-artur-ribeiro)
 
 ---
 
@@ -2173,28 +2008,30 @@ Co-authored-by: Artur Ribeiro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [StepSecurity] Apply security best practices
+## X. query): detect string boolean values in Docker Compose "Privileged Containers En
 
 **RULE**:
-When implementing operations in `.github/workflows/go-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cb4b894`: [StepSecurity] Apply security best practices. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `452b4d01`: query): detect string boolean values in Docker Compose "Privileged Containers Enabled" query. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/go-ci.yml`.
+Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```open policy agent
 // Verified production-grade fix pattern:
-        uses: step-security/securego-gosec@3281807ab637177cdd8f594a9876c0d086a7bfb0 # v2.29.0
+ARG GO_BASE_IMAGE=checkmarx/go:1.27.4@sha256:f73955925ad073823c06b4738214c28ad8ff4f52fe6d35abbd616c10c0ba4eb0
+ARG GIT_BASE_IMAGE=checkmarx/git:2.56.1@sha256:cbdf5cfebf96e817b54f797ef77aac3d716c4a52c99be249b72e251bfcb1f5ce
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```open policy agent
 // Induced defect failure mode:
-        uses: securego/gosec@d2d3ae66bd8d340b78b5142b6fe610691783c2fe # v2.22.5
+ARG GO_BASE_IMAGE=checkmarx/go:1.27.4@sha256:f11d557e2e36c479cfd4cb97caa1272bdf5009e0c8638fff65cf83f9916c9d22
+ARG GIT_BASE_IMAGE=checkmarx/git:2.56.1@sha256:9bcf2dd6cb6385a1035a8159a2629d4c7503ab5281bd773b5fdbcf75e75dcf67
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cb4b894` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `452b4d01` are properly handled with clean fallback behavior.

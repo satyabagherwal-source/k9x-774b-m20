@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T20:49:40.030Z",
+  "last_updated": "2026-11-26T20:59:41.587Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1295,14 +1295,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "content_hash": "64e28e27a7ac4eac97af2e93fcbc0975ecb74836aadf17d58f638e49e47d5cb7",
-      "verified_at": "2026-11-23T07:36:43.904Z",
+      "content_hash": "893dbb835f4ae2f976779e07862a20dd1f102ea67ed0ba1bce6724b2285d4489",
+      "verified_at": "2026-11-26T20:59:31.449Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T07:36:43.904Z"
+      "last_updated": "2026-11-26T20:59:31.449Z"
     },
     "deepseek-ai/DeepSeek-V3": {
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -6936,14 +6936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-svenstaro-miniserve",
-      "content_hash": "4d82a539c381212edfabc0e139ee766444c04a50830527221a5d79f65fe45b40",
-      "verified_at": "2026-11-04T03:16:22.336Z",
+      "content_hash": "aa1f3a938ea17e6a242d2fc5e6e97d06b493577c4f5790af5223c3c4a13544d2",
+      "verified_at": "2026-11-26T20:59:33.824Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:16:22.336Z"
+      "last_updated": "2026-11-26T20:59:33.824Z"
     },
     "founded-labs/react-native-reusables": {
       "repository": "founded-labs/react-native-reusables",
@@ -8376,14 +8376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-checkmarx-kics",
-      "content_hash": "7f1e17f730b84f9fc4bf0301a1e50a5a3bc2d7d24ab5145445abf0a01e221737",
-      "verified_at": "2026-11-25T02:56:11.372Z",
+      "content_hash": "fad9b6f699620008acfac0d399202833efab6eacae2a0970bc577b495d4d053a",
+      "verified_at": "2026-11-26T20:59:41.586Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:56:11.372Z"
+      "last_updated": "2026-11-26T20:59:41.586Z"
     },
     "olric-data/olric": {
       "repository": "olric-data/olric",

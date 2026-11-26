@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T20:50:20.007Z",
-  "total_records": 2778,
+  "last_updated": "2026-11-26T20:59:48.974Z",
+  "total_records": 2780,
   "domains": {
     "A": {
       "total": 23,
@@ -1239,7 +1239,7 @@
       ]
     },
     "G": {
-      "total": 474,
+      "total": 476,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1714,7 +1714,9 @@
         "domain_intelligence-architecture-intelligence-tauri-apps-tauri-core-invariants",
         "domain_intelligence-architecture-intelligence-tauri-apps-tauri-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-core-invariants",
-        "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-open-wa-wa-automate-nodejs-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-svenstaro-miniserve-core-invariants",
+        "domain_intelligence-architecture-intelligence-svenstaro-miniserve-learnings-core-invariants"
       ]
     },
     "H": {
@@ -13890,8 +13892,8 @@
       "title": "Research & Knowledge Intelligence: mistralai/Mixtral-8x7B-Instruct-v0.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mixtral-8x7b-instruct-v0-1-research-knowledge-intelligence-mistrala.md",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "content_hash": "d1094a49928b44f0d70a9096199f7f6cfb67a909ebbbebde3348679e3064d0e6",
-      "created_at": "2026-11-23T07:36:44.099Z"
+      "content_hash": "5d69a18c7dbdfc9c35b9506185a6843c7400b210719301c23675c0cacf17a2d7",
+      "created_at": "2026-11-26T20:59:31.765Z"
     },
     "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants",
@@ -13968,8 +13970,8 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mixtral-8x7b-instruct-v0-1-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings",
-      "content_hash": "126ac30387ab4c5e8e64d5e851e6659c90849966ca6f3de0275418515ed1021a",
-      "created_at": "2026-11-23T07:37:04.192Z"
+      "content_hash": "3d6ee046eb56c4a7677098c18df280c7286b72c77cf48a6f8f75e31415472f7d",
+      "created_at": "2026-11-26T20:59:47.707Z"
     },
     "DOM-K-F74DEC74": {
       "record_id": "DOM-K-F74DEC74",
@@ -44286,8 +44288,8 @@
       "title": "Research & Knowledge Intelligence: Checkmarx/kics Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-checkmarx-kics-research-knowledge-intelligence-checkmarx-kics-core-invariants.md",
       "repository": "Checkmarx/kics",
-      "content_hash": "b901d654101edc21afdae036f36e4de5cbb1bb46b62c6708364b26adfbdab48f",
-      "created_at": "2026-11-25T02:56:11.778Z"
+      "content_hash": "917fb44bcd75a86f2e1855c703eefbed39092d04409ee34fc606b087c9e059fa",
+      "created_at": "2026-11-26T20:59:42.177Z"
     },
     "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants",
@@ -44295,8 +44297,8 @@
       "title": "Research & Knowledge Intelligence: checkmarx-kics-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-checkmarx-kics-learnings-research-knowledge-intelligence-checkmarx-kics-learning.md",
       "repository": "checkmarx-kics-learnings",
-      "content_hash": "586d9c0969071133084f150341719ed7f47d4090178daeb1f7a88489d24cdde2",
-      "created_at": "2026-11-25T02:56:19.204Z"
+      "content_hash": "c2da59488a480ed402bd591efdb811541a634cfb6b18ca85e24a834a90bbadfa",
+      "created_at": "2026-11-26T20:59:48.974Z"
     },
     "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants",
@@ -46925,6 +46927,24 @@
       "repository": "erkamyaman-rust-anything-learnings",
       "content_hash": "5e7245e3c4acb20eec2fa36a11a516f9d3e7effea3061dd25cfc8fb9ab2e5489",
       "created_at": "2026-11-26T20:50:18.337Z"
+    },
+    "domain_intelligence-architecture-intelligence-svenstaro-miniserve-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-svenstaro-miniserve-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: svenstaro/miniserve Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-svenstaro-miniserve-architecture-intelligence-svenstaro-miniserve-core-invariant.md",
+      "repository": "svenstaro/miniserve",
+      "content_hash": "2d22b2edbd8ee26391d55a08e67c3fd1950735fbee375eef7a6908866510d484",
+      "created_at": "2026-11-26T20:59:34.431Z"
+    },
+    "domain_intelligence-architecture-intelligence-svenstaro-miniserve-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-svenstaro-miniserve-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: svenstaro-miniserve-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-svenstaro-miniserve-learnings-architecture-intelligence-svenstaro-miniserve-lear.md",
+      "repository": "svenstaro-miniserve-learnings",
+      "content_hash": "828650ce8ead2125622699d969bcdc46205f8d617ee47f2b621c06085983b070",
+      "created_at": "2026-11-26T20:59:46.815Z"
     }
   }
 }

@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T20:50:17.833Z",
+  "updated_at": "2026-11-26T20:59:46.055Z",
   "stats": {
-    "total_discovered": 10037,
-    "approved_pending_harvest": 9515,
+    "total_discovered": 10044,
+    "approved_pending_harvest": 9522,
     "harvested_count": 0,
     "rejected_count": 522,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9520,
-      "OFFICIAL_DOCUMENTATION": 286,
+      "COMMUNITY_AND_EXPERT": 9526,
+      "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 55,
@@ -217187,6 +217187,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
         "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-713F1030FE3B": {
+      "id": "SRC-713F1030FE3B",
+      "url": "https://github.com/svenstaro/miniserve",
+      "title": "https://github.com/svenstaro/miniserve",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:59:45.517Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
+        "fileName": "svenstaro-miniserve-learnings.md"
+      }
+    },
+    "SRC-FF525617C8C7": {
+      "id": "SRC-FF525617C8C7",
+      "url": "https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html",
+      "title": "https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:59:45.602Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
+        "fileName": "svenstaro-miniserve-learnings.md"
+      }
+    },
+    "SRC-3BE2D4DD3EF9": {
+      "id": "SRC-3BE2D4DD3EF9",
+      "url": "https://github.com/actix/actix-web/issues/1313",
+      "title": "https://github.com/actix/actix-web/issues/1313",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:59:45.692Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
+        "fileName": "svenstaro-miniserve-learnings.md"
+      }
+    },
+    "SRC-B210F4113DA0": {
+      "id": "SRC-B210F4113DA0",
+      "url": "https://github.com/actix/actix-web/discussions/3011",
+      "title": "https://github.com/actix/actix-web/discussions/3011",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:59:45.785Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
+        "fileName": "svenstaro-miniserve-learnings.md"
+      }
+    },
+    "SRC-3D0DA7A961D5": {
+      "id": "SRC-3D0DA7A961D5",
+      "url": "https://url.spec.whatwg.org/",
+      "title": "https://url.spec.whatwg.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:59:45.882Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
+        "fileName": "svenstaro-miniserve-learnings.md"
+      }
+    },
+    "SRC-AC8BAA7A6A6A": {
+      "id": "SRC-AC8BAA7A6A6A",
+      "url": "https://docs.rs/actix-web/0.7.13/src/actix_web/fs.rs.html",
+      "title": "https://docs.rs/actix-web/0.7.13/src/actix_web/fs.rs.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:59:45.970Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
+        "fileName": "svenstaro-miniserve-learnings.md"
+      }
+    },
+    "SRC-4AC8117AB3AF": {
+      "id": "SRC-4AC8117AB3AF",
+      "url": "https://github.com/messense/dav-server-rs/pull/105",
+      "title": "https://github.com/messense/dav-server-rs/pull/105",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:59:46.055Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
+        "fileName": "svenstaro-miniserve-learnings.md"
       }
     }
   }

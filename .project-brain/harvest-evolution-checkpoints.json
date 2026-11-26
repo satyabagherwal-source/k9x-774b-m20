@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:50:20.404Z",
+  "last_updated": "2026-11-26T20:59:49.485Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T20:50:19.269Z",
@@ -2388,7 +2388,7 @@
       "staged_for_review": 0
     },
     "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md": {
-      "processed_at": "2026-11-23T07:37:03.984Z",
+      "processed_at": "2026-11-26T20:59:47.369Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3898,7 +3898,7 @@
       "staged_for_review": 0
     },
     "checkmarx-kics-learnings.md": {
-      "processed_at": "2026-11-25T02:56:18.285Z",
+      "processed_at": "2026-11-26T20:59:48.030Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3996,9 +3996,14 @@
       "processed_at": "2026-11-26T19:16:48.335Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "svenstaro-miniserve-learnings.md": {
+      "processed_at": "2026-11-26T20:59:45.453Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4668,
+  "total_dossiers_evaluated": 4671,
   "total_canonical_promoted": 568,
-  "total_staged_for_review": 3508
+  "total_staged_for_review": 3510
 }

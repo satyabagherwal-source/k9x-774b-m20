@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:50:19.787Z",
+  "last_updated": "2026-11-26T20:59:48.703Z",
   "directives": [
     {
       "id": "CD-001",
@@ -67091,6 +67091,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6C257E-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-D49V",
+      "directive_title": "Empirical Invariant Guard in style.scss",
+      "source_repo": "svenstaro-miniserve-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-D49V-empirical-invariant-guard-in-style-scss.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-D0P6",
+      "directive_title": "detect string boolean values in Docker Compose \"Privileged Containers En",
+      "source_repo": "Checkmarx/kics",
+      "source_commit": "452b4d01",
+      "staged_file": "11_INBOX/candidate-directives/CD-D0P6-detect-string-boolean-values-in-docker-compose-privileged-containers-en.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-099784",
+      "directive_title": "Empirical Invariant Guard in style.scss",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "svenstaro-miniserve",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-099784-empirical-invariant-guard-in-style-scss.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-D5Y1",
+      "directive_title": "query): detect string boolean values in Docker Compose \"Privileged Containers En",
+      "source_repo": "checkmarx-kics-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-D5Y1-query-detect-string-boolean-values-in-docker-compose-privileged-containers-en.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "L"
     }
   ]
 }
