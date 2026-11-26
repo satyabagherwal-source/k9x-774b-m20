@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T06:03:10.010Z",
+  "timestamp": "2026-11-26T14:04:20.901Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-max-sixty-worktrunk-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [max-sixty-worktrunk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T06:03:10.010Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T14:04:20.901Z`  
 > **Learning ID**: `LEARN-EVO-max-sixty-worktrunk-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `5666a698`  
+> **Source Version**: `3d80ecb8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T06:02:58.649Z  
+> **Timestamp**: 2026-11-26T14:04:01.648Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T06:02:58.643Z  
+> **Harvest Timestamp**: 2026-11-26T14:04:01.643Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12740 stars
+- **Stars / Engagement**: 12754 stars
 
 ---
 
@@ -2042,116 +2042,109 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f64e86b9` (2026-11-24)
-**Commit Message**: fix(shell): uninstall only files that open with worktrunk's header (#4909)
+### Incident Patch 1: `3d80ecb8` (2026-11-26)
+**Commit Message**: fix(test): let a caught SIGINT reach the hook trap on macOS sh (#4920)
 
-`wt config shell uninstall` now treats a fish or nushell file as
-worktrunk's only when the file opens with worktrunk's header. Before,
-the header text anywhere in the file was enough, so a user's own
-`functions/*.fish`, `completions/*.fish` or nushell autoload file that
-quoted `# worktrunk shell integration for fish` (or `# worktrunk
-completions for`) in a comment was listed for deletion as a whole. The
-prompt still lists the files, but `--yes` skips it.
-
-Uninstall has to read ownership from file contents because it takes no
-`--cmd` and scans directories the user owns. Every wrapper template
-(`templates/*`) and `fish_completion_content` puts its header on line 1,
-and the constants' docs already describe it as the header those files
-open with, so matching at the start of the file keeps every file
-worktrunk wrote and drops only mentions elsewhere. The legacy headerless
-`conf.d/{cmd}.fish` fallback is unchanged.
-
-The completion check moves from an inline closure to
-`is_worktrunk_completion_content` so it can be unit-tested. New cases in
-`test_managed_content_matches_wrappers_not_mentions` and
-`test_completion_
-
-**File**: `src/commands/configure_shell.rs` (modified, +24/-5)
+**File**: `src/signal_forwarder.rs` (modified, +3/-1)
 ```diff
-@@ -167,12 +167,18 @@ impl ConfigAction {
- }
+@@ -624,7 +624,9 @@ mod tests {
+         command
+             .args([
+                 "-c",
+-                "trap 'echo child-handled >&2; exit 0' INT; echo ready > \"$1\"; while :; do sleep 0.01; done",
++                // Background sleep: macOS bash 3.2 can drop one SIGINT across the
++                // fork of a foreground `sleep` (#4748). `wait` runs the trap.
++                "trap 'echo child-handled >&2; exit 0' INT; echo ready > \"$1\"; while :; do sleep 0.01 & wait $!; done",
+                 "sh",
+             ])
+             .arg(&marker);
+```
+
+**File**: `tests/common/mod.rs` (modified, +11/-0)
+```diff
+@@ -31,6 +31,17 @@ use worktrunk::path::to_posix_path;
+ #[cfg(unix)]
+ pub const FOREGROUND_TRACE_FILTER: &str = "worktrunk::wt_trace=debug,worktrunk::trace::emit=debug";
  
- /// The header comment every wrapper template worktrunk has shipped opens with,
--/// and which a user's own `wt.fish` / `wt.nu` would not carry.
--const WRAPPER_MARKER: &str = "worktrunk shell integration for";
-+/// and which a user's own `wt.fish` / `wt.nu` would not open with.
-+const WRAPPER_MARKER: &str = "# worktrunk shell integration for";
- 
- /// The header every fish completion file worktrunk has shipped opens with.
- const COMPLETION_MARKER: &str = "# worktrunk completions for";
- 
-+/// Whether a fish completion file is one worktrunk generated: it opens with
-+/// [`COMPLETION_MARKER`].
-+fn is_worktrunk_completion_content(content: &str) -> bool {
-+    content.starts_with(COMPLETION_MARKER)
++/// Foreground wait whose INT trap runs under macOS `/bin/sh` (bash 3.2).
++///
++/// `while :; do sleep 0.1; done` can drop one SIGINT: the signal arrives after
++/// bash has forked the next `sleep` and before `wait_for` runs the trap
++/// (#4748). Waiting on a background `sleep` makes SIGINT interrupt the `wait`
++/// builtin, which runs the trap. One keypress still stops the child.
++#[cfg(unix)]
++pub fn sigint_observable_wait(interval: &str) -> String {
++    format!("while :; do sleep {interval} & wait $!; done")
 +}
 +
- /// Whether a whole file is one worktrunk generated, and so is `uninstall`'s to
- /// delete.
- ///
-@@ -185,7 +191,7 @@ const COMPLETION_MARKER: &str = "# worktrunk completions for";
- ///
- /// The answer is independent of the binary name embedded in the file, so a
- /// wrapper installed as `wt.fish`, `git-wt.fish`, or `git-wt.nu` is recognized
--/// the same way. Every wrapper template worktrunk renders carries the header,
-+/// the same way. Every wrapper template worktrunk renders opens with the header,
- /// so that answers first. The fallback covers the legacy `conf.d/{cmd}.fish`,
- /// which predates the templates and holds nothing but the init line: a file
- /// qualifies only when every non-blank, non-comment line is an integration line
-@@ -197,7 +203,7 @@ const COMPLETION_MARKER: &str = "# worktrunk completions for";
- /// `wt config shell init` amid other code — or merely mentions it in a comment
- /// — survives; a whole-file substring test would delete it.
- fn is_worktrunk_managed_content(content: &str) -> bool {
--    if content.contains(WRAPPER_MARKER) {
-+    if content.starts_with(WRAPPER_MARKER) {
-         return true;
-     }
-     let code_lines = fish_code_lines(content);
-@@ -1487,7 +1493,7 @@ fn scan_for_uninstall(
-     if shells.contains(&Shell::Fish) {
-         let completions_dir = shell::fish_config_dir(&home).join("completions");
-         let completions =
--            scan_managed_files(&completions_dir, "fish", |c| c.contains(COMPLETION_MARKER))?;
-+            scan_managed_files(&completions_dir, "fish", is_worktrunk_completion_content)?;
-         if completions.is_empty() {
-             completion_not_found.push((Shell::Fish, completions_dir));
-         }
-@@ -1926,6 +1932,16 @@ mod tests {
-         assert_eq!(fish_code_lines(old), fish_code_lines(new));
-     }
- 
-+    #[test]
-+    fn test_completion_content_matches_only_a_file_opening_with_the_header() {
-+        assert!(is_worktrunk_completion_content(&fish_completion_content(
-+            "git-wt"
-+        )));
-+        assert!(!is_worktrunk_completion_content(
-+            "# my completions, after # worktrunk completions for fish\ncomplete -c foo\n"
-+        ));
-+    }
-+
-     #[test]
-     fn test_managed_content_matches_wrappers_not_mentions() {
-         // Ours: the header every wrapper template carries, under any binary
-@@ -1950,6 +1966,9 @@ mod tests {
-             "function notes\n    echo run wt config shell init fish to set up\nend\n",
-             "# reminder: wt config shell init fish\nfunction helpers\n    cat ~/.aliases | source\nend\n",
-             "function helper\n    command wt config shell init fish | source\nend\n",
-+            // The header only marks a file worktrunk wrote where the file opens
-+            // with it; a user's file that quotes it further down is theirs.
-+            "function my_wt\n    # adapted from: # worktrunk shell integration for fish\n    command wt $argv\nend\n",
-             "",
-         ] {
-             assert!(!is_worktrunk_managed_content(content), "{content}");
+ /// Child readiness may precede the parent's spawn return. Caught-signal tests
+ /// wait for wt to commit admission before delivering ordinary terminal input.
+ #[cfg(unix)]
+```
+
+**File**: `tests/integration_tests/for_each.rs` (modified, +2/-1)
+```diff
+@@ -345,7 +345,8 @@ fn test_for_each_stops_on_caught_ctrl_c(repo: TestRepo) {
+     let marker_dir = worktrunk::testing::tempdir().unwrap();
+     let pid_file = marker_dir.path().join("pid");
+     let script = format!(
+-        "trap 'exit 0' INT; touch {dir}/\"$(basename \"$PWD\")\"; echo $$ > {pid}; while :; do sleep 0.1; done",
++        "trap 'exit 0' INT; touch {dir}/\"$(basename \"$PWD\")\"; echo $$ > {pid}; {wait}",
++        wait = crate::common::sigint_observable_wait("0.1"),
+         dir = shell_escape::unix::escape(marker_dir.path().join("visited").to_string_lossy()),
+         pid = shell_escape::unix::escape(pid_file.to_string_lossy()),
+     );
+```
+
+**File**: `tests/integration_tests/remove.rs` (modified, +3/-2)
+```diff
+@@ -1407,8 +1407,9 @@ fn test_remove_interrupt_stops_batch(
+ fn test_remove_ctrl_c_caught_by_hook_stops_batch(mut repo: TestRepo, #[case] hook_exit: i32) {
+     let pid_file = repo.root_path().join("hook-pid");
+     let hook = format!(
+-        "trap 'exit {hook_exit}' INT; echo $$ > {}; while :; do sleep 0.1; done",
+-        shell_escape::unix::escape(pid_file.to_string_lossy())
++        "trap 'exit {hook_exit}' INT; echo $$ > {}; {}",
++        shell_escape::unix::escape(pid_file.to_string_lossy()),
++        crate::common::sigint_observable_wait("0.1"),
+     );
+     repo.write_project_config(&format!("pre-remove = {hook:?}"));
+     repo.commit("Add pre-remove hook that catches Ctrl-C");
+```
+
+**File**: `tests/integration_tests/step_alias.rs` (modified, +1/-1)
+```diff
+@@ -1436,7 +1436,7 @@ fn test_alias_group_sigint_does_not_escalate(
+ #[cfg(unix)]
+ fn test_alias_last_step_keeps_status_after_caught_ctrl_c(repo: TestRepo) {
+     repo.write_test_config(
+-        "[aliases]\nsignal-test = \"trap 'echo handled > int; while [ ! -e release ]; do sleep 0.01; done; exit 0' INT; echo $$ > pid; while :; do sleep 0.1; done\"\n",
++        "[aliases]\nsignal-test = \"trap 'echo handled > int; while [ ! -e release ]; do sleep 0.01; done; exit 0' INT; echo $$ > pid; while :; do sleep 0.1 & wait $!; done\"\n",
+     );
+     let stderr_path = repo.root_path().join("stderr");
+     let stderr = std::fs::File::create(&stderr_path).unwrap();
+```
+
+**File**: `tests/integration_tests/user_hooks.rs` (modified, +1/-1)
+```diff
+@@ -665,7 +665,7 @@ fn test_pre_merge_pipeline_aborts_on_signal_exit(repo: TestRepo) {
+ fn test_post_start_pipeline_stops_on_caught_ctrl_c(repo: TestRepo) {
+     repo.write_project_config(
+         r#"post-start = [
+-    "trap 'exit 130' INT; echo $$ > hook-pid; while :; do sleep 0.1; done",
++    "trap 'exit 130' INT; echo $$ > hook-pid; while :; do sleep 0.1 & wait $!; done",
+     "echo after > after.log",
+ ]
+ "#,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4920** (2026-11-26): fix(test): let a caught SIGINT reach the hook trap on macOS sh (@Jack-mi)
+- **PR #4919** (2026-11-26): chore: correct stale doc comments and drop the numstat parser's dead graph handling (@worktrunk-bot)
+- **PR #4917** (2026-11-25): ci: bound apt-get in test-setup and the remaining workflows so a wedged mirror fails in 5 min (@worktrunk-bot)
+- **PR #4914** (2026-11-25): docs: correct stale file pointers in AGENTS.md and skills, and stale doc comments (@worktrunk-bot)
+- **PR #4913** (2026-11-25): refactor(switch): drop the GitLab fork namespace display that never fired (@worktrunk-bot)
 - **PR #4912** (2026-11-25): chore: bump taiki-e/install-action from 2.90.6 to 2.90.8 (@dependabot[bot])
-- **PR #4910** (2026-11-24): chore: drop a dead stdout allowlist entry and correct two stale docs (@worktrunk-bot)
-- **PR #4909** (2026-11-24): fix(shell): uninstall only files that open with worktrunk's header (@worktrunk-bot)
-- **PR #4907** (2026-11-24): chore: bump cachix/install-nix-action from 31 to 32 (@dependabot[bot])
-- **PR #4905** (2026-11-24): refactor(shell_exec): build raw spawns through Cmd::into_command (@max-sixty)
-- **PR #4904** (2026-11-24): refactor: move PreApprovedGuidance and agent checks to their owners (@max-sixty)
 
 ---
 
@@ -2171,58 +2164,33 @@ The completion check moves from an inline closure to
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. shell): uninstall only files that open with worktrunk's header
+## X. test): let a caught SIGINT reach the hook trap on macOS sh
 
 **RULE**:
-When implementing operations in `src/commands/configure_shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/signal_forwarder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f64e86b9`: shell): uninstall only files that open with worktrunk's header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d80ecb8`: test): let a caught SIGINT reach the hook trap on macOS sh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/configure_shell.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/signal_forwarder.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// and which a user's own `wt.fish` / `wt.nu` would not open with.
-const WRAPPER_MARKER: &str = "# worktrunk shell integration for";
-/// Whether a fish completion file is one worktrunk generated: it opens with
-/// [`COMPLETION_MARKER`].
-fn is_worktrunk_completion_content(content: &str) -> bool {
-    content.starts_with(COMPLETION_MARKER)
-}
-
-/// the same way. Every wrapper template worktrunk renders opens with the header,
-    if content.starts_with(WRAPPER_MARKER) {
-            scan_managed_files(&completions_dir, "fish", is_worktrunk_completion_content)?;
-    #[test]
-    fn test_completion_content_matches_only_a_file_opening_with_the_header() {
-        assert!(is_worktrunk_completion_content(&fish_completion_content(
-            "git-wt"
-        )));
-        assert!(!is_worktrunk_completion_content(
-            "# my completions, after # worktrunk completions for fish\ncomplete -c foo\n"
-        ));
-    }
-
-            // The header only marks a file worktrunk wrote where the file opens
-            // with it; a user's file that quotes it further down is theirs.
-            "function my_wt\n    # adapted from: # worktrunk shell integration for fish\n    command wt $argv\nend\n",
+                // Background sleep: macOS bash 3.2 can drop one SIGINT across the
+                // fork of a foreground `sleep` (#4748). `wait` runs the trap.
+                "trap 'echo child-handled >&2; exit 0' INT; echo ready > \"$1\"; while :; do sleep 0.01 & wait $!; done",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// and which a user's own `wt.fish` / `wt.nu` would not carry.
-const WRAPPER_MARKER: &str = "worktrunk shell integration for";
-/// the same way. Every wrapper template worktrunk renders carries the header,
-    if content.contains(WRAPPER_MARKER) {
-            scan_managed_files(&completions_dir, "fish", |c| c.contains(COMPLETION_MARKER))?;
+                "trap 'echo child-handled >&2; exit 0' INT; echo ready > \"$1\"; while :; do sleep 0.01; done",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f64e86b9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d80ecb8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

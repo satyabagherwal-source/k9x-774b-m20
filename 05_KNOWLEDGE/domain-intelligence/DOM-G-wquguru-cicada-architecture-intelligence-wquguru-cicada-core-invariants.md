@@ -4,24 +4,24 @@
 {
   "source_repository": "wquguru/cicada",
   "source_url": "https://github.com/wquguru/cicada",
-  "source_version": "8450cb9d",
+  "source_version": "be9785d5",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T06:13:53.594Z",
+  "timestamp": "2026-11-26T14:04:08.865Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-wquguru-cicada",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [wquguru/cicada](https://github.com/wquguru/cicada) (Revision: `8450cb9d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T06:13:53.594Z`  
+> **Provenance**: Harvested from [wquguru/cicada](https://github.com/wquguru/cicada) (Revision: `be9785d5`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T14:04:08.865Z`  
 > **Learning ID**: `learn-github-wquguru-cicada`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), E (Creative Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), E (Creative Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from wquguru/cicada:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wquguru-cicada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wquguru/cicada](https://github.com/wquguru/cicada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T06:13:52.356Z  
+> **Harvest Timestamp**: 2026-11-26T14:04:07.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 知了 Cicada · 任何会议和直播的实时字幕、同声传译、AI 会议纪要，Mac、Windows、Linux、Android 免费开源。Live subtitles, interpreting and meeting notes for any call or stream, on Mac, Windows, Linux and Android.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2436 stars
+- **Stars / Engagement**: 3402 stars
 
 ---
 
@@ -1824,572 +1824,100 @@ class LingClient(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26248cff` (2026-11-17)
-**Commit Message**: fix(ios): the Dynamic Island shows when listening is paused instead of a clock still running
+### Incident Patch 1: `820ec6ea` (2026-11-25)
+**Commit Message**: fix(ios): listening to the room no longer stops a video playing in another app, and starting one no longer pauses listening
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `ios/LiveActivity/CicadaLive.swift` (modified, +16/-8)
+**File**: `ios/Sources/Cicada/RoomListen.swift` (modified, +3/-4)
 ```diff
-@@ -122,13 +122,16 @@ struct ListenLiveActivity: Widget {
-                 DynamicIslandExpandedRegion(.leading) {
-                     HStack(spacing: 8) {
-                         LiveLogo(size: 26)
--                        Text("正在听").font(.footnote.weight(.semibold)).foregroundStyle(LiveInk.accent)
-+                        Text(context.state.paused ? "已暂停" : "正在听").font(.footnote.weight(.semibold))
-+                            .foregroundStyle(context.state.paused ? .white.opacity(0.6) : LiveInk.accent)
-                     }
-                     .padding(.leading, 4)
-                 }
-                 DynamicIslandExpandedRegion(.trailing) {
--                    Elapsed(since: context.attributes.startedAt).font(.footnote.weight(.semibold))
--                        .foregroundStyle(.white).frame(maxWidth: 64, alignment: .trailing).padding(.trailing, 4)
-+                    if !context.state.paused {
-+                        Elapsed(since: context.attributes.startedAt).font(.footnote.weight(.semibold))
-+                            .foregroundStyle(.white).frame(maxWidth: 64, alignment: .trailing).padding(.trailing, 4)
-+                    }
-                 }
-                 DynamicIslandExpandedRegion(.bottom) {
-                     VStack(alignment: .leading, spacing: 4) {
-@@ -143,15 +146,20 @@ struct ListenLiveActivity: Widget {
-                 }
-             } compactLeading: {
-                 HStack(spacing: 5) {
--                    Circle().fill(LiveInk.accent).frame(width: 7, height: 7)
-+                    Circle().fill(context.state.paused ? LiveInk.grey : LiveInk.accent).frame(width: 7, height: 7)
-                     LiveLogo(size: 20)
-                 }
-             } compactTrailing: {
--                Elapsed(since: context.attributes.startedAt)
--                    .font(.caption.weight(.semibold)).foregroundStyle(LiveInk.accent)
--                    .frame(maxWidth: 46)
-+                // Paused: a still pause mark, not a clock that keeps running as if it were listening.
-+                if context.state.paused {
-+                    Image(systemName: "pause.fill").font(.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.6))
-+                } else {
-+                    Elapsed(since: context.attributes.startedAt)
-+                        .font(.caption.weight(.semibold)).foregroundStyle(LiveInk.accent)
-+                        .frame(maxWidth: 46)
-+                }
-             } minimal: {
--                Circle().fill(LiveInk.accent).frame(width: 9, height: 9)
-+                Circle().fill(context.state.paused ? LiveInk.grey : LiveInk.accent).frame(width: 9, height: 9)
-             }
-             .keylineTint(LiveInk.accent)
-         }
+@@ -248,7 +248,6 @@ final class RoomListen: ObservableObject {
+             startedAt = s.startedAt
+             notes.begin(s.id)
+             audio.voices = voices
+-            audio.mix = speakerMode
+             audio.onInterruption = { [weak self] began in self?.interrupted(began) }
+             // 保存会议录音 off: nothing is written; voiceprints still read the last minute in memory.
+             let keep = UserDefaults.standard.bool(forKey: Pref.recordAudio)
+@@ -814,8 +813,6 @@ final class RoomListen: ObservableObject {
+ /// the meeting's recording, a level and the last minute of 16 kHz audio for voiceprints.
+ final class RoomAudio: @unchecked Sendable {
+     var voices = true
+-    /// 手机外放: other apps keep playing beside us (without it, starting stops their audio).
+-    var mix = false
+     var onLevel: (@MainActor (Float) -> Void)?
+     /// true when a call, Siri or another app takes the audio, false when it gives it back.
+     var onInterruption: (@MainActor (Bool) -> Void)?
+@@ -888,7 +885,9 @@ final class RoomAudio: @unchecked Sendable {
+         let session = AVAudioSession.sharedInstance()
+         // .measurement: no voice processing, which would duck what the room says as "echo".
+         // .defaultToSpeaker sends every app's sound to the speaker, not the earpiece, while we record.
+-        try session.setCategory(.playAndRecord, mode: .measurement, options: mix ? [.defaultToSpeaker, .mixWithOthers] : [.defaultToSpeaker])
++        // .mixWithOthers in both modes: listening plays nothing, and a non-mixable session would stop
++        // a video that's playing when 开始听 is tapped, and be stopped itself when one starts.
++        try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker, .mixWithOthers])
+         try session.setActive(true)
+         engine = AVAudioEngine()
+         queue.sync {
 ```
 
 ---
 
-### Incident Patch 2: `187524f1` (2026-11-17)
-**Commit Message**: build(ios): device builds, signed with a profile, plus the icon, privacy manifest and scripts for provisioning and TestFlight
-
-DEVICE=1 ios/scripts/build.sh builds for an iPhone and signs each bundle with its profile's
-entitlements. CicadaIcon --ios draws the full-bleed opaque iOS icon (the Mac icon is unchanged),
-compiled by actool. ios/tools/provision.py makes App IDs, devices, certificates and profiles
-through the App Store Connect API (openssl-signed JWT, no packages); ios/scripts/device.sh
-installs on a connected device; ios/scripts/testflight.sh packs and uploads the .ipa.
+### Incident Patch 2: `af02e965` (2026-11-25)
+**Commit Message**: fix(ios): with Their language on Auto-detect, a meeting heard from across the room shows its lines within seconds instead of holding them for 90 s
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Sources/CicadaIcon/main.swift` (modified, +30/-10)
+**File**: `ios/Sources/Cicada/RoomListen.swift` (modified, +7/-0)
 ```diff
-@@ -82,21 +82,28 @@ enum CicadaLogo {
-     }
- }
+@@ -443,6 +443,13 @@ final class RoomListen: ObservableObject {
  
--func render(_ px: Int, dev: Bool) -> Data {
-+/// `ios`: the iPhone and iPad icon, a full-bleed opaque square (the system draws the corners and
-+/// App Store Connect refuses an alpha channel); otherwise the macOS grid with its margin and shadow.
-+func render(_ px: Int, dev: Bool, ios: Bool = false) -> Data {
-     let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: px, pixelsHigh: px, bitsPerSample: 8,
-                                samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
-                                bytesPerRow: 0, bitsPerPixel: 0)!
-     NSGraphicsContext.saveGraphicsState()
-     NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
-     let s = CGFloat(px) / 1024
-     // macOS icon grid: an 824 pt body inset 100 pt, corner ≈ 185 pt.
--    let body = NSRect(x: 100 * s, y: 100 * s, width: 824 * s, height: 824 * s)
--    let squircle = NSBezierPath(roundedRect: body, xRadius: 185 * s, yRadius: 185 * s)
--    let shadow = NSShadow()
--    shadow.shadowBlurRadius = 20 * s
--    shadow.shadowOffset = NSSize(width: 0, height: -8 * s)
--    shadow.shadowColor = NSColor.black.withAlphaComponent(0.25)
--    shadow.set()
-+    // iOS: the body overflows the canvas by 80 pt a side, so the logo's own rounded tile reaches
-+    // past every corner and the system's mask is the only rounding.
-+    let body = ios ? NSRect(x: -80 * s, y: -80 * s, width: 1184 * s, height: 1184 * s) : NSRect(x: 100 * s, y: 100 * s, width: 824 * s, height: 824 * s)
-+    let squircle = ios ? NSBezierPath(rect: NSRect(x: 0, y: 0, width: 1024 * s, height: 1024 * s))
-+        : NSBezierPath(roundedRect: body, xRadius: 185 * s, yRadius: 185 * s)
-+    if !ios {
-+        let shadow = NSShadow()
-+        shadow.shadowBlurRadius = 20 * s
-+        shadow.shadowOffset = NSSize(width: 0, height: -8 * s)
-+        shadow.shadowColor = NSColor.black.withAlphaComponent(0.25)
-+        shadow.set()
-+    }
-     orange.setFill()
-     squircle.fill()
-     NSShadow().set()
-@@ -115,21 +122,34 @@ func render(_ px: Int, dev: Bool) -> Data {
-         NSGraphicsContext.saveGraphicsState()
-         squircle.addClip()
-         ink.setFill()
--        NSRect(x: body.minX, y: body.minY, width: body.width, height: 170 * s).fill()
-+        let band = ios ? NSRect(x: 0, y: 0, width: 1024 * s, height: 190 * s) : NSRect(x: body.minX, y: body.minY, width: body.width, height: 170 * s)
-+        band.fill()
-         let font = NSFont.systemFont(ofSize: 110 * s, weight: .heavy)
-         let text = NSAttributedString(string: "DEV", attributes: [
-             .font: font, .foregroundColor: NSColor.white, .kern: 14 * s,
-         ])
-         let size = text.size()
--        text.draw(at: NSPoint(x: body.midX - size.width / 2 + 7 * s, y: body.minY + (170 * s - size.height) / 2 + 6 * s))
-+        text.draw(at: NSPoint(x: band.midX - size.width / 2 + 7 * s, y: band.minY + (band.height - size.height) / 2 + 6 * s))
-         NSGraphicsContext.restoreGraphicsState()
-     }
-     NSGraphicsContext.restoreGraphicsState()
-+    if ios, let image = rep.cgImage,
-+       let opaque = CGContext(data: nil, width: px, height: px, bitsPerComponent: 8, bytesPerRow: 0,
-+                              space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) {
-+        // Drawn again without an alpha channel: a fully opaque RGBA PNG is still refused.
-+        opaque.draw(image, in: CGRect(x: 0, y: 0, width: px, height: px))
-+        if let flat = opaque.makeImage() { return NSBitmapImageRep(cgImage: flat).representation(using: .png, properties: [:])! }
-+    }
-     return rep.representation(using: .png, properties: [:])!
- }
- 
- let args = Array(CommandLine.arguments.dropFirst())
- let dev = args.contains("--dev")
-+// --ios <file.png>: the 1024 px iOS icon only (ios/scripts/build.sh).
-+if let i = args.firstIndex(of: "--ios"), i + 1 < args.count {
-+    try render(1024, dev: dev, ios: true).write(to: URL(fileURLWithPath: args[i + 1]))
-+    exit(0)
-+}
- let out = URL(fileURLWithPath: args.first { $0 != "--dev" } ?? "AppIcon.iconset")
- try FileManager.default.createDirectory(at: out, withIntermediateDirectories: true)
- for size in [16, 32, 128, 256, 512] {
-```
-
-**File**: `ios/Resources/Info.plist` (modified, +2/-0)
-```diff
-@@ -32,6 +32,8 @@
- 	<array>
- 		<string>iPhoneSimulator</string>
- 	</array>
-+	<key>ITSAppUsesNonExemptEncryption</key>
-+	<false/>
- 	<key>LSRequiresIPhoneOS</key>
- 	<true/>
- 	<key>MinimumOSVersion</key>
-```
-
-**File**: `ios/Resources/PrivacyInfo.xcprivacy` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<!-- The app's privacy manifest (App Store Connect refuses builds without one that use these APIs).
-+     UserDefaults: the app's own settings (CA92.1). File timestamps: of files in the app's container,
-+     an imported copy's date and the voice clip's age (C617.1). No tracking. -->
-+<plist version="1.0">
-+<dict>
-+	<key>NSPrivacyTracking</key>
-+	<false/>
-+	<key>NSPrivacyTrackingDomains</key>
-+	<array/>
-+	<key>NSPrivacyCollectedDataTypes</key>
-+	<array/>
-+	<key>NSPrivacyAccessedAPITypes</key>
-+	<array>
-+		<dict>
-+			<key>NSPrivacyAccessedAPIType</key>
-+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
-+			<key>NSPrivacyAccessedAPITypeReasons</key>
-+			<array>
-+				<string>CA92.1</string>
-+			</array>
-+		</dict>
-+		<dict>
-+			<key>NSPrivacyAccessedAPIType</key>
-+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
-+			<key>NSPrivacyAccessedAPITypeReasons</key>
-+			<array>
-+				<string>C617.1</string>
-+			</array>
-+		</dict>
-+	</array>
-+</dict>
-+</plist>
-```
-
-**File**: `ios/scripts/build.sh` (modified, +66/-12)
-```diff
-@@ -1,13 +1,26 @@
- #!/usr/bin/env bash
--# Builds ios/build/Cicada.app for the iOS simulator: the shared Mac sources (ios/shared-sources.txt)
--# and ios/Sources in one module, bundled by hand like the Mac's scripts/build.sh (no .xcodeproj).
-+# Builds Cicada.app: the shared Mac sources (ios/shared-sources.txt) and ios/Sources in one module,
-+# bundled by hand like the Mac's scripts/build.sh (no .xcodeproj).
- # Without RELEASE=1 it is a dev build: "Cicada Dev", bundle id com.wquguru.cicada.dev, cicada-dev:// commands.
-+#   ios/scripts/build.sh                 the simulator: ios/build/Cicada.app, signed ad hoc
-+#   DEVICE=1 ios/scripts/build.sh        an iPhone or iPad: ios/build/device/Cicada.app, signed with
-+#                                        SIGN_IDENTITY and the profiles PROFILE (app) and PROFILE_LIVE
-+#                                        (the extension); ios/scripts/provision.sh makes them
-+# BUILD_NUMBER sets CFBundleVersion (TestFlight wants it to grow); default: the commit count.
- set -euo pipefail
- cd "$(dirname "$0")/../.."
- 
--SDK=iphonesimulator
--TARGET=arm64-apple-ios26.0-simulator
--APP=ios/build/Cicada.app
-+if [[ "${DEVICE:-}" == 1 ]]; then
-+  SDK=iphoneos
-+  TARGET=arm64-apple-ios26.0
-+  APP=ios/build/device/Cicada.app
-+  PLATFORM=iPhoneOS
-+else
-+  SDK=iphonesimulator
-+  TARGET=arm64-apple-ios26.0-simulator
-+  APP=ios/build/Cicada.app
-+  PLATFORM=iPhoneSimulator
-+fi
- rm -rf "$APP"
- mkdir -p "$APP"
- 
-@@ -45,6 +58,20 @@ xcrun --sdk "$SDK" swiftc -O -swift-version 5 -parse-as-library -module-name Cic
- intents_metadata Cicada "$APP" "$APP/Cicada" "${files[@]}"
- 
- cp ios/Resources/Info.plist "$APP/Info.plist"
-+cp ios/Resources/PrivacyInfo.xcprivacy "$APP/"
-+# The home screen icon: the Mac's renderer draws the full-bleed iOS square (no alpha), actool
-+# compiles it into Assets.car and says which Info.plist keys point at it.
-+ICON_TOOL=.build/release/CicadaIcon
-+[[ -x $ICON_TOOL ]] || swift build -c release --product CicadaIcon >/dev/null
-+mkdir -p "$WORK/Assets.xcassets/AppIcon.appiconset"
-+"$ICON_TOOL" --ios "$WORK/Assets.xcassets/AppIcon.appiconset/icon.png" $([[ "${RELEASE:-}" == 1 ]] || echo --dev)
-+printf '%s' '{"images":[{"filename":"icon.png","idiom":"universal","platform":"ios","size":"1024x1024"}],"info":{"author":"xcode","version":1}}' \
-+  > "$WORK/Assets.xcassets/AppIcon.appiconset/Contents.json"
-+printf '%s' '{"info":{"author":"xcode","version":1}}' > "$WORK/Assets.xcassets/Contents.json"
-+xcrun actool "$WORK/Assets.xcassets" --compile "$APP" --platform "$SDK" --minimum-deployment-target 26.0 \
-+  --app-icon AppIcon --target-device iphone --target-device ipad \
-+  --output-partial-info-plist "$WORK/assets.plist" --output-format human-readable-text >/dev/null
-+/usr/libexec/PlistBuddy -c "Merge $WORK/assets.plist" "$APP/Info.plist" >/dev/null
- # UI text is the Mac's: the Chinese source is the key, the other languages translate it.
- for d in Resources/*.lproj; do
-   mkdir -p "$APP/$(basename "$d")"
-@@ -56,8 +83,6 @@ cp Resources/sample/sample.m4a "$APP/"
- cp -R Resources/models/SpeakerEmbedding.mlpackage "$APP/"
- # The logo on the 听会议室 card: the Mac's own icon renderer (Sources/CicadaIcon), not a fourth
- # copy of the geometry. It is a host tool, built once.
--ICON_TOOL=.build/release/CicadaIcon
--[[ -x $ICON_TOOL ]] || swift build -c release --product CicadaIcon >/dev/null
- ICONS=$(mktemp -d)
- "$ICON_TOOL" "$ICONS/logo.iconset" >/dev/null
- cp "$ICONS/logo.iconset/icon_128x128@2x.png" "$APP/logo.png"
-@@ -80,7 +105,22 @@ cp "$APP/logo.png" "$APPEX/"
- for d in "$APP"/*.lproj; do cp -R "$d" "$APPEX/"; done
- 
- PLIST="$APP/Info.plist"
--/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $(tr -d '[:space:]' < VERSION)" "$PLIST"
-+BUILD=${BUILD_NUMBER:-$(git rev-list --count HEAD 2>/dev/null || echo 1)}
-+for p in "$PLIST" "$APPEX/Info.plist"; do
-+  /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $(tr -d '[:space:]' < VERSION)" \
-+    -c "Set :CFBundleVersion $BUILD" -c "Set :CFBundleSupportedPlatforms:0 $PLATFORM" "$p"
-+done
-+# What Xcode writes into every bundle it builds; App Store Connect checks them.
-+SDKVER=$(xcrun --sdk "$SDK" --show-sdk-version)
-+SDKBUILD=$(xcrun --sdk "$SDK" --show-sdk-build-version)
-+XCBUILD=$(xcodebuild -version | awk '/Build version/{print $3}')
-+XCVER=$(xcodebuild -version | awk '/^Xcode/{split($2,v,"."); printf "%d%d%d0", v[1], v[2], v[3]}')
-+for p in "$PLIST" "$APPEX/Info.plist"; do
-+  /usr/libexec/PlistBuddy -c "Add :DTPlatformName string $SDK" -c "Add :DTPlatformVersion string $SDKVER" \
-+    -c "Add :DTPlatformBuild string $SDKBUILD" -c "Add :DTSDKName string $SDK$SDKVER" -c "Add :DTSDKBuild string $SDKBUILD" \
-+    -c "Add :DTXcode string $XCVER" -c "Add :DTXcodeBuild string $XCBUILD" \
-+    -c "Add :DTCompiler string com.apple.compilers.llvm.clang.1_0" -c "Add :BuildMachineOSBuild string $(sw_vers -buildVersion)" "$p"
-+done
- if [[ "${RELEASE:-}" != 1 ]]; then
-   STAMP="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo local) @ $(git 
-```
-
-**File**: `ios/scripts/device.sh` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+#!/usr/bin/env bash
-+# Builds the dev app for a connected iPhone or iPad, installs and opens it.
-+#   ios/scripts/device.sh [<device name or UDID>]
-+# Signing: the variables ios/tools/provision.py development prints, read from
-+# ~/.cicada-signing/ios-development.env (run provision.py once and save its output there).
-+set -euo pipefail
-+cd "$(dirname "$0")/../.."
-+ENV=~/.cicada-signing/ios-development.env
-+[[ -f $ENV ]] || { echo "no $ENV: ios/tools/provision.py development > $ENV"; exit 1; }
-+# shellcheck disable=SC1090
-+source "$ENV"
-+DEVICE=1 ios/scripts/build.sh
-+TARGET=${1:-$(xcrun devicectl list devices | grep -E 'available \(paired\)|connected' | grep -v simulated | grep -oE '[0-9A-F]{8}-[0-9A-F]{16}' | head -1)}
-+[[ -n $TARGET ]] || { echo "no iPhone or iPad connected"; exit 1; }
-+xcrun devicectl device install app --device "$TARGET" ios/build/device/Cicada.app
-+xcrun devicectl device process launch --device "$TARGET" com.wquguru.cicada.dev
-```
-
-**File**: `ios/scripts/testflight.sh` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+#!/usr/bin/env bash
-+# Builds the release app for the App Store, packs it as an .ipa and uploads it to App Store Connect,
-+# where it shows up in TestFlight after processing (10–30 min).
-+#   ios/scripts/testflight.sh            build, pack and upload
-+#   ios/scripts/testflight.sh --no-upload
-+# Signing: ~/.cicada-signing/ios-appstore.env (ios/tools/provision.py appstore > that file).
-+# Upload: ASC_KEY_ID and ASC_ISSUER_ID, with the key's .p8 in ~/.cicada-signing (altool looks there
-+# through API_PRIVATE_KEYS_DIR). The app's record must exist in App Store Connect first.
-+set -euo pipefail
-+cd "$(dirname "$0")/../.."
-+ENV=~/.cicada-signing/ios-appstore.env
-+[[ -f $ENV ]] || { echo "no $ENV: ios/tools/provision.py appstore > $ENV"; exit 1; }
-+# shellcheck disable=SC1090
-+source "$ENV"
-+RELEASE=1 DEVICE=1 ios/scripts/build.sh
-+OUT=ios/build/testflight
-+rm -rf "$OUT" && mkdir -p "$OUT/Payload"
-+cp -R ios/build/device/Cicada.app "$OUT/Payload/"
-+(cd "$OUT" && zip -qry Cicada.ipa Payload)
-+echo "Packed $OUT/Cicada.ipa"
-+[[ "${1:-}" == --no-upload ]] && exit 0
-+: "${ASC_KEY_ID:?}" "${ASC_ISSUER_ID:?}"
-+API_PRIVATE_KEYS_DIR=~/.cicada-signing xcrun altool --validate-app -f "$OUT/Cicada.ipa" -t ios \
-+  --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
-+API_PRIVATE_KEYS_DIR=~/.cicada-signing xcrun altool --upload-app -f "$OUT/Cicada.ipa" -t ios \
-+  --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
-```
-
-**File**: `ios/tools/asc.py` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+#!/usr/bin/env python3
-+"""App Store Connect API for iOS signing, without Xcode's account sign-in and without third-party
-+packages: the JWT is signed with openssl (ES256), requests go through urllib.
-+
-+Credentials come from the environment (never from the repo):
-+  ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH (the .p8, e.g. ~/.cicada-signing/AuthKey_<id>.p8)
-+
-+  ios/tools/asc.py get <path>                  e.g. /v1/bundleIds?filter[identifier]=com.wquguru.cicada
-+  ios/tools/asc.py post <path> <json>
-+  ios/tools/asc.py delete <path>
-+Prints the JSON reply. ios/scripts/provision.sh builds on it.
-+"""
-+import base64, json, os, subprocess, sys, tempfile, time, urllib.error, urllib.request
-+
-+BASE = "https://api.appstoreconnect.apple.com"
-+
-+
-+def b64url(b: bytes) -> str:
-+    return base64.urlsafe_b64encode(b).rstrip(b"=").decode()
-+
-+
-+def der_to_raw(der: bytes) -> bytes:
-+    """openssl's ECDSA signature is DER (SEQUENCE of two INTEGERs); a JWT wants r || s, 32 bytes each."""
-+    def read_int(buf, i):
-+        assert buf[i] == 0x02
-+        n = buf[i + 1]
-+        v = buf[i + 2:i + 2 + n]
-+        return v.lstrip(b"\x00").rjust(32, b"\x00"), i + 2 + n
-+    assert der[0] == 0x30
-+    i = 2 if der[1] < 0x80 else 2 + (der[1] & 0x7F)
-+    r, i = read_int(der, i)
-+    s, _ = read_int(der, i)
-+    return r + s
-+
-+
-+def token() -> str:
-+    key_id, issuer, path = os.environ["ASC_KEY_ID"], os.environ["ASC_ISSUER_ID"], os.path.expanduser(os.environ["ASC_KEY_PATH"])
-+    now = int(time.time())
-+    head = b64url(json.dumps({"alg": "ES256", "kid": key_id, "typ": "JWT"}).encode())
-+    body = b64url(json.dumps({"iss": issuer, "iat": now, "exp": now + 1100, "aud": "appstoreconnect-v1"}).encode())
-+    signing = f"{head}.{body}".encode()
-+    der = subprocess.run(["openssl", "dgst", "-sha256", "-sign", path], input=signing, capture_output=True, check=True).stdout
-+    return f"{head}.{body}.{b64url(der_to_raw(der))}"
-+
-+
-+def call(method: str, path: str, data=None):
-+    req = urllib.request.Request(BASE + path, method=method,
-+                                 data=json.dumps(data).encode() if data is not None else None,
-+                                 headers={"Authorization": f"Bearer {token()}", "Content-Type": "application/json"})
-+    try:
-+        with urllib.request.urlopen(req, timeout=60) as r:
-+            raw = r.read()
-+            return r.status, json.loads(raw) if raw else {}
-+    except urllib.error.HTTPError as e:
-+        raw = e.read()
-+        try:
-+            return e.code, json.loads(raw)
-+        except ValueError:
-+            return e.code, {"raw": raw.decode(errors="replace")}
-+
-+
-+if __name__ == "__main__":
-+    if len(sys.argv) < 3:
-+        sys.exit(__doc__)
-+    method, path = sys.argv[1].upper(), sys.argv[2]
-+    data = json.loads(sys.argv[3]) if len(sys.argv) > 3 else None
-+    status, reply = call(method, path, data)
-+    print(json.dumps({"status": status, **reply} if isinstance(reply, dict) else {"status": status, "data": reply}, ensure_ascii=False, indent=1))
-+    sys.exit(0 if status < 400 else 1)
-```
-
-**File**: `ios/tools/provision.py` (added, +120/-0)
-```diff
-@@ -0,0 +1,120 @@
-+#!/usr/bin/env python3
-+"""Makes what a signed iOS build needs, through the App Store Connect API (ios/tools/asc.py):
-+the App IDs, the connected devices, a certificate whose private key is on this Mac, and the two
-+provisioning profiles (the app and the CicadaLive extension). Prints the variables
-+ios/scripts/build.sh signs with. Safe to run again: it reuses what is there.
-+
-+  ios/tools/provision.py development        Apple Development, the dev bundle ids, this Mac's devices
-+  ios/tools/provision.py appstore           Apple Distribution, the release bundle ids (TestFlight)
-+
-+Needs ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH for a key that may manage Certificates,
-+Identifiers & Profiles (Admin, or App Manager with that access). Keys and certificates live in
-+~/.cicada-signing (0700); the certificate goes into the login keychain, usable by codesign only.
-+"""
-+import base64, json, os, re, subprocess, sys
-+sys.path.insert(0, os.path.dirname(__file__))
-+from asc import call
-+
-+HOME = os.path.expanduser("~/.cicada-signing")
-+KIND = sys.argv[1] if len(sys.argv) > 1 else "development"
-+DEV = KIND == "development"
-+APP_ID = "com.wquguru.cicada.dev" if DEV else "com.wquguru.cicada"
-+IDS = {APP_ID: "Cicada Dev" if DEV else "Cicada", APP_ID + ".live": "Cicada Dev Live" if DEV else "Cicada Live"}
-+CERT_TYPE = "DEVELOPMENT" if DEV else "DISTRIBUTION"
-+PROFILE_TYPE = "IOS_APP_DEVELOPMENT" if DEV else "IOS_APP_STORE"
-+
-+
-+def ok(status, reply, what):
-+    if status >= 400:
-+        sys.exit(f"{what} failed ({status}): {json.dumps(reply.get('errors', reply), ensure_ascii=False)}")
-+    return reply
-+
-+
-+def run(*cmd, **kw):
-+    return subprocess.run(cmd, check=True, capture_output=True, text=True, **kw).stdout
-+
-+
-+def bundle_id(identifier, name):
-+    _, r = call("GET", f"/v1/bundleIds?filter[identifier]={identifier}&fields[bundleIds]=identifier,platform")
-+    found = [b for b in r.get("data", []) if b["attributes"]["identifier"] == identifier]
-+    if found:
-+        return found[0]["id"]
-+    r = ok(*call("POST", "/v1/bundleIds", {"data": {"type": "bundleIds", "attributes": {
-+        "identifier": identifier, "name": name, "platform": "IOS"}}}), f"register {identifier}")
-+    print(f"registered App ID {identifier}", file=sys.stderr)
-+    return r["data"]["id"]
-+
-+
-+def devices():
-+    """Physical devices this Mac is paired with, registered if they aren't yet."""
-+    out = run("xcrun", "devicectl", "list", "devices")
-+    udids = {m.group(2): m.group(1).strip() for m in re.finditer(r"^(\S.*?)\s{2,}.*?([0-9A-F]{8}-[0-9A-F]{16}) \(UDID\)", out, re.M)}
-+    _, r = call("GET", "/v1/devices?limit=200&fields[devices]=udid,name,status")
-+    known = {d["attributes"]["udid"]: d["id"] for d in r.get("data", [])}
-+    ids = []
-+    for udid, name in udids.items():
-+        if udid not in known:
-+            r2 = ok(*call("POST", "/v1/devices", {"data": {"type": "devices", "attributes": {
-+                "name": name, "udid": udid, "platform": "IOS"}}}), f"register device {name}")
-+            known[udid] = r2["data"]["id"]
-+            print(f"registered device {name} {udid}", file=sys.stderr)
-+        ids.append(known[udid])
-+    if not ids:
-+        sys.exit("no iPhone or iPad connected (xcrun devicectl list devices)")
-+    return ids
-+
-+
-+def certificate():
-+    """A certificate of this kind whose private key is in ~/.cicada-signing; made if there is none."""
-+    key, cer = f"{HOME}/ios-{KIND}.key", f"{HOME}/ios-{KIND}.cer"
-+    _, r = call("GET", f"/v1/certificates?filter[certificateType]={CERT_TYPE}&fields[certificates]=certificateContent,serialNumber,expirationDate")
-+    if os.path.exists(key) and os.path.exists(cer):
-+        mine = run("openssl", "x509", "-inform", "der", "-in", cer, "-noout", "-serial").split("=")[1].strip().upper()
-+        for c in r.get("data", []):
-+            if c["attributes"]["serialNumber"].upper().lstrip("0") == mine.lstrip("0"):
-+                return c["id"], cer
-+    os.makedirs(HOME, mode=0o700, exist_ok=True)
-+    run("openssl", "genrsa", "-out", key, "2048")
-+    os.chmod(key, 0o600)
-+    csr = run("openssl", "req", "-new", "-key", key, "-subj", f"/CN=Cicada iOS {KIND}/O=Indaloop LLC")
-+    r = ok(*call("POST", "/v1/certificates", {"data": {"type": "certificates", "attributes": {
-+        "certificateType": CERT_TYPE, "csrContent": csr}}}), f"create {CERT_TYPE} certificate")
-+    with open(cer, "wb") as f:
-+        f.write(base64.b64decode(r["data"]["attributes"]["certificateContent"]))
-+    # Into the login keychain, the key usable by codesign without a prompt.
-+    p12, password = f"{HOME}/ios-{KIND}.p12", base64.b64encode(os.urandom(18)).decode()
-+    pem = run("openssl", "x509", "-inform", "der", "-in", cer)
-+    run("openssl", "pkcs12", "-export", "-legacy", "-inkey", key, "-out", p12, "-passout", f"pass:{password}", input=pem)
-+    run("security", "import", p12, "-k", os.path.expanduser("~/Library/Keychains/login.keychain-db"),
-+        "-P", password, "-T
-```
-
----
-
-### Incident Patch 3: `55a395d2` (2026-11-17)
-**Commit Message**: fix(ios): AI service and key pages check the key again when opened after a failure, with a Check again button and pull to refresh
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `ios/Sources/Cicada/AIServicePage.swift` (modified, +13/-0)
-```diff
-@@ -138,6 +138,8 @@ struct AIServicePage: View {
-         }
-         .background(Ink.ground)
-         .navigationTitle(Text("AI 服务"))
-+        .onAppear { ling.recheckIfFailed() }
-+        .refreshable { await ling.check() }
-         .navigationBarTitleDisplayMode(.inline)
-     }
- 
-@@ -194,6 +196,17 @@ struct AIServicePage: View {
-     }
- }
- 
-+extension LingClient {
-+    /// Opening AI 服务 after a failed check asks again: what was wrong may have been fixed on the
-+    /// service's side (a key's model list, its credit) without anything changing here.
-+    func recheckIfFailed() {
-+        switch keyState {
-+        case .invalid, .unreachable, .unchecked: Task { await check() }
-+        default: break
+     private func handle(_ piece: Recognition.Piece, _ gen: Int) {
+         guard gen == generation else { return }
++        // Words heard are a voice too: across a room the level stays under the voice mark (a laptop
++        // a metre away peaked at 0.26), and without this 自动识别 never checked and held every line 90 s.
++        if !piece.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
++            heardVoice = true
++            lastVoiceAt = Date()
++            if !settled, status.isEmpty { status = L("正在识别语言…") }
 +        }
-+    }
-+}
-+
- extension AppModel {
-     /// The service, its address or a model changed: LingClient checks again and 面对面 takes the
-     /// service's voices.
+         // 自动识别 not settled: a line in what may be the wrong language waits, and no draft shows.
+         guard settled else {
+             if piece.isFinal { held.append(piece) }
 ```
 
-**File**: `ios/Sources/Cicada/SettingsView.swift` (modified, +4/-1)
+---
+
+### Incident Patch 3: `62f9e1b1` (2026-11-25)
+**Commit Message**: docs(site): the Windows record scrolling and Linux notes search fixes in the changelog
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `site/changelog.json` (modified, +16/-0)
 ```diff
-@@ -313,7 +313,9 @@ struct KeyPage: View {
-                 }
-                 if ling.key != nil && !editing {
-                     HStack {
--                        if case .unreachable = ling.keyState { Button("重试") { Task { await ling.check() } } }
-+                        // Any state: a key fixed on the service's side (its model list, its credit) is checked again here.
-+                        Button("重新检查") { Task { await ling.check() } }
-+                            .disabled(ling.keyState == .checking)
-                         Spacer()
-                         Button("移除", role: .destructive) { ling.removeKey() }
-                     }
-@@ -327,6 +329,7 @@ struct KeyPage: View {
-         }
-         .background(Ink.ground)
-         .navigationTitle(Text(verbatim: ling.provider.id == .custom ? "Key" : "\(ling.provider.name) key"))
-+        .onAppear { ling.recheckIfFailed() }
-         .navigationBarTitleDisplayMode(.inline)
-     }
- 
+@@ -24,6 +24,22 @@
+         ],
+         "title": "在会议记录里搜索，点开会议会直接跳到找到的那句并高亮。",
+         "text": "以前只会筛出会议列表。现在会打开文字记录、标出每一处，左侧显示“本场 1 / 3”，按回车或上下箭头逐个跳；识别错的同音名字也一起找到。"
++      },
++      {
++        "kind": "fixed",
++        "platforms": [
++          "windows"
++        ],
++        "title": "会议进行中看会议记录，每来一句新的话页面不会再跳回顶部。",
++        "text": "现在停在你看到的位置；搜索时也不会再被拉回当前找到的那句。"
++      },
++      {
++        "kind": "fixed",
++        "platforms": [
++          "linux"
++        ],
++        "title": "在笔记窗口的文字记录里搜索，会滚到找到的那句。",
++        "text": "以前计数会变，但那句可能停在看不到的地方。"
+       }
+     ]
+   },
 ```
 
 #### Recent Merged Pull Requests:
@@ -2418,53 +1946,36 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): the Dynamic Island shows when listening is paused instead of a clock still
+## X. ios): listening to the room no longer stops a video playing in another app, and 
 
 **RULE**:
-When implementing operations in `ios/LiveActivity/CicadaLive.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wquguru/cicada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ios/Sources/Cicada/RoomListen.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wquguru/cicada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26248cff`: ios): the Dynamic Island shows when listening is paused instead of a clock still running. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `820ec6ea`: ios): listening to the room no longer stops a video playing in another app, and starting one no longer pauses listening. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/LiveActivity/CicadaLive.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/Sources/Cicada/RoomListen.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                        Text(context.state.paused ? "已暂停" : "正在听").font(.footnote.weight(.semibold))
-                            .foregroundStyle(context.state.paused ? .white.opacity(0.6) : LiveInk.accent)
-                    if !context.state.paused {
-                        Elapsed(since: context.attributes.startedAt).font(.footnote.weight(.semibold))
-                            .foregroundStyle(.white).frame(maxWidth: 64, alignment: .trailing).padding(.trailing, 4)
-                    }
-                    Circle().fill(context.state.paused ? LiveInk.grey : LiveInk.accent).frame(width: 7, height: 7)
-                // Paused: a still pause mark, not a clock that keeps running as if it were listening.
-                if context.state.paused {
-                    Image(systemName: "pause.fill").font(.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.6))
-                } else {
-                    Elapsed(since: context.attributes.startedAt)
-                        .font(.caption.weight(.semibold)).foregroundStyle(LiveInk.accent)
-                        .frame(maxWidth: 46)
-                }
-                Circle().fill(context.state.paused ? LiveInk.grey : LiveInk.acc
+        // .mixWithOthers in both modes: listening plays nothing, and a non-mixable session would stop
+        // a video that's playing when 开始听 is tapped, and be stopped itself when one starts.
+        try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker, .mixWithOthers])
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-                        Text("正在听").font(.footnote.weight(.semibold)).foregroundStyle(LiveInk.accent)
-                    Elapsed(since: context.attributes.startedAt).font(.footnote.weight(.semibold))
-                        .foregroundStyle(.white).frame(maxWidth: 64, alignment: .trailing).padding(.trailing, 4)
-                    Circle().fill(LiveInk.accent).frame(width: 7, height: 7)
-                Elapsed(since: context.attributes.startedAt)
-                    .font(.caption.weight(.semibold)).foregroundStyle(LiveInk.accent)
-                    .frame(maxWidth: 46)
-                Circle().fill(LiveInk.accent).frame(width: 9, height: 9)
+            audio.mix = speakerMode
+    /// 手机外放: other apps keep playing beside us (without it, starting stops their audio).
+    var mix = false
+        try session.setCategory(.playAndRecord, mode: .measurement, options: mix ? [.defaultToSpeaker, .mixWithOthers] : [.defaultToSpeaker])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26248cff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `820ec6ea` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

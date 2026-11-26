@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:55:32.741Z",
+  "last_updated": "2026-11-26T14:04:22.366Z",
   "directives": [
     {
       "id": "CD-001",
@@ -65323,6 +65323,72 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D13127-add-hosted-upscaler-model-catalogs.md",
       "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-IHUE",
+      "directive_title": "let a caught SIGINT reach the hook trap on macOS sh",
+      "source_repo": "max-sixty/worktrunk",
+      "source_commit": "3d80ecb8",
+      "staged_file": "11_INBOX/candidate-directives/CD-IHUE-let-a-caught-sigint-reach-the-hook-trap-on-macos-sh.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-IM8X",
+      "directive_title": "listening to the room no longer stops a video playing in another app, and",
+      "source_repo": "wquguru/cicada",
+      "source_commit": "be9785d5",
+      "staged_file": "11_INBOX/candidate-directives/CD-IM8X-listening-to-the-room-no-longer-stops-a-video-playing-in-another-app-and.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-IPC8",
+      "directive_title": "use the configured HTTP client in reporting and verify TLS",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "fc120870",
+      "staged_file": "11_INBOX/candidate-directives/CD-IPC8-use-the-configured-http-client-in-reporting-and-verify-tls.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-ISU0",
+      "directive_title": "Empirical Invariant Guard in 05507_mv_source_merge_loop_executable_crash.sh",
+      "source_repo": "ClickHouse/ClickHouse",
+      "source_commit": "327564b0",
+      "staged_file": "11_INBOX/candidate-directives/CD-ISU0-empirical-invariant-guard-in-05507_mv_source_merge_loop_executable_crash-sh.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-IVMZ",
+      "directive_title": "test): let a caught SIGINT reach the hook trap on macOS sh",
+      "source_repo": "max-sixty-worktrunk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IVMZ-test-let-a-caught-sigint-reach-the-hook-trap-on-macos-sh.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-IWNV",
+      "directive_title": "ios): listening to the room no longer stops a video playing in another app, and",
+      "source_repo": "wquguru-cicada-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IWNV-ios-listening-to-the-room-no-longer-stops-a-video-playing-in-another-app-and.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
     }
   ]
 }

@@ -4,22 +4,22 @@
 {
   "source_repository": "ClickHouse/ClickHouse",
   "source_url": "https://github.com/ClickHouse/ClickHouse",
-  "source_version": "b88da85b",
+  "source_version": "327564b0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T12:48:05.337Z",
+  "timestamp": "2026-11-26T14:04:17.403Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clickhouse-clickhouse",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `b88da85b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T12:48:05.337Z`  
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `327564b0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T14:04:17.403Z`  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ClickHouse/ClickHouse` (Commit: `b88da85b`)
+- **Target Repository**: `ClickHouse/ClickHouse` (Commit: `327564b0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:48:03.940Z  
+> **Harvest Timestamp**: 2026-11-26T14:04:15.965Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51128 stars
+- **Stars / Engagement**: 51162 stars
 
 ---
 
@@ -1328,11 +1328,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #134206** (2026-11-26): **Column expired by TTL in a mutation leaves its files in the new part on object storage**
+  *Symptoms*: ### Company or project name  ClickHouse  ### Describe what's wrong  When a mutation (for example `ALTER TABLE ... MATERIALIZE TTL`) fully expires a column through its column TTL, the new part no longer has the column in its column list and its files are removed from `checksums.txt`, but on a disk with object storage the files themselves stay in the part directory. They remain orphaned there until the part is removed, and the removal then fails to remove the part directory by deleting the files listed in its checksums: it logs an error with `CANNOT_RMDIR` (`Directory not empty`) and falls back to a recursive removal. No data is lost, but the orphaned files take space for the part's lifetime and every such removal logs an error.  On a local disk the same mutation does not leave the files behind.  ### Does it reproduce on the most recent release?  Reproduces on current master (26.12.1.1). I did not check a release build.  ### How to reproduce  The script uses a `local_blob_storage` object storage disk, so it runs with `clickhouse local` without S3:  ```bash #!/usr/bin/env bash CH=${1:-clickhouse} DIR=$(mktemp -d) cat > "$DIR/config.xml" <<'XML' <clickhouse>     <storage_configuration>         <disks>             <blob>                 <type>object_storage</type>                 <object_storage_type>local_blob_storage</object_storage_type>                 <metadata_type>local</metadata_type>                 <path>blob/</path>             </blob>         </disks>         <policies
+
 - **Issue #134120** (2026-11-25): **Keeper: `std::condition_variable` lost-wakeup deadlock in `KeeperReadThreadPool::execute` / `threadFunction`**
   *Symptoms*: ### Summary  `KeeperReadThreadPool::threadFunction` decrements `busy_threads` and calls `done_cv.notify_all` **before** acquiring `mutex`, while `KeeperReadThreadPool::execute` waits on `done_cv` under `mutex` for `busy_threads.load() == 0`. This creates a classic C++ `std::condition_variable` lost-wakeup race that can permanently deadlock Keeper's read pipeline whenever `parallel_read_threads > 0` (the default is `8`).  ### Root Cause  In `src/Coordination/KeeperReadThreadPool.cpp`:  1. **`KeeperReadThreadPool::execute` (lines 45–107)** holds `std::unique_lock lock(mutex)` and waits for workers to finish:    ```cpp    done_cv.wait(lock, [&] { return busy_threads.load() == 0; });    ``` 2. **`KeeperReadThreadPool::threadFunction` (lines 159–164)** modifies `busy_threads` and notifies `done_cv` **outside** `lock`, right before calling `lock.lock()` on the very next line:    ```cpp    size_t prev_busy_threads = busy_threads.fetch_sub(1, std::memory_order_release);    chassert(prev_busy_threads > 0);    if (prev_busy_threads == 1)        done_cv.notify_all();     lock.lock();    ``` 3. **Lost-wakeup interleaving**:    - Thread A (`execute`, holding `mutex`): evaluates predicate `busy_threads.load() == 0` -> observes `1` -> returns `false`, and prepares to unlock `mutex` and sleep in `done_cv.wait`.    - Thread B (last worker in `threadFunction`, NOT holding `mutex`): executes `busy_threads.fetch_sub(1)` (`1 -> 0`) and calls `done_cv.notify_all()` — nobody is sleeping on `done_cv
-
-- **Issue #133698** (2026-11-24): **SHOW CREATE ROLES bypasses max_result_rows**
-  *Symptoms*: ### Describe what's wrong  On ClickHouse 26.11.1.2508, `SHOW CREATE ROLES` returns two rows successfully when `max_result_rows = 1` and `result_overflow_mode = 'throw'`. An equivalent query against `system.roles` correctly fails with `TOO_MANY_ROWS_OR_BYTES`.  ### Does it reproduce on the most recent release?  No  ### How to reproduce  Run as a user allowed to create and inspect roles:  ```sql CREATE ROLE role_a; CREATE ROLE role_b;  SET max_result_rows = 1; SET result_overflow_mode = 'throw';  SHOW CREATE ROLES role_a, role_b; -- Succeeds and returns: -- CREATE ROLE role_a -- CREATE ROLE role_b  SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name; -- Fails with TOO_MANY_ROWS_OR_BYTES. ```  ### Expected behavior  `SHOW CREATE ROLES` should enforce `max_result_rows` and fail because it produces two rows while the limit is one. The `max_result_rows` documentation states: “Limits the number of rows in the result. Also checked for subqueries, and on remote servers when running parts of a distributed query. No limit is applied when the value is `0`.”  ### Error message and/or stacktrace  ```text Received exception from server (version 26.11.1): Code: 396. DB::Exception: Received from localhost:9000. DB::Exception: Limit for result exceeded, max rows: 1.00, current rows: 2.00. (TOO_MANY_ROWS_OR_BYTES) (query: SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name;) ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1349,539 +1349,516 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b88da85b` (2026-11-25)
-**Commit Message**: Merge pull request #134144 from lazerg/fix/issue-134120-keeper-read-pool-lost-wakeup
+### Incident Patch 1: `072088d7` (2026-11-26)
+**Commit Message**: Merge pull request #134603 from groeneai/fix-05507-darwin-read-timeout
 
-Fix lost wakeup in KeeperReadThreadPool when the last worker finishes a batch
+Raise the script read timeout in `05507_mv_source_merge_loop_executable_crash`, flaky on the macOS Fast test
 
-**File**: `src/Coordination/KeeperReadThreadPool.cpp` (modified, +2/-2)
+**File**: `tests/queries/0_stateless/05507_mv_source_merge_loop_executable_crash.sh` (modified, +2/-2)
 ```diff
-@@ -155,13 +155,13 @@ void KeeperReadThreadPool::threadFunction()
-                     first_exception = std::current_exception();
-             }
+@@ -120,7 +120,7 @@ CREATE TABLE db_05507.dst (name String, block_rows UInt64, value UInt64) ENGINE
  
-+            lock.lock();
+ CREATE MATERIALIZED VIEW db_05507.mv_executable TO db_05507.dst AS
+     SELECT 'executable' AS name, count() AS block_rows,
+-        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0))) AS value
++        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0), SETTINGS command_read_timeout = 30000)) AS value
+     FROM db_05507.src;
+ 
+ INSERT INTO db_05507.src VALUES (1), (2), (3);
+@@ -137,7 +137,7 @@ SELECT 'append_refresh', * FROM db_05507.dst ORDER BY name;
+ TRUNCATE TABLE db_05507.dst;
+ CREATE MATERIALIZED VIEW db_05507.rmv_read REFRESH EVERY 1 YEAR APPEND TO db_05507.dst EMPTY AS
+     SELECT 'executable' AS name, count() AS block_rows,
+-        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0))) AS value
++        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0), SETTINGS command_read_timeout = 30000)) AS value
+     FROM db_05507.src;
+ SYSTEM REFRESH VIEW db_05507.rmv_read;
+ SYSTEM WAIT VIEW db_05507.rmv_read;
+```
+
+---
+
+### Incident Patch 2: `70dc3b53` (2026-11-26)
+**Commit Message**: Merge pull request #127586 from ClickHouse/fix-stats-for-string-filters
+
+Measure compressed blocks read for AutoPR input bytes instead of sampling
+
+**File**: `src/Compression/CachedCompressedReadBuffer.cpp` (modified, +2/-0)
+```diff
+@@ -89,6 +89,8 @@ bool CachedCompressedReadBuffer::nextImpl()
+         throw Exception(ErrorCodes::SEEK_POSITION_OUT_OF_BOUND, "Seek position is beyond the decompressed block (pos: "
+         "{}, block size: {})", nextimpl_working_buffer_offset, toString(working_buffer.size()));
+ 
++    if (ranges_read)
++        ranges_read->emplace_back(file_pos, file_pos + owned_cell->compressed_size);
+     file_pos += owned_cell->compressed_size;
+ 
+     return true;
+```
+
+**File**: `src/Compression/CompressedReadBufferBase.h` (modified, +11/-0)
+```diff
+@@ -4,6 +4,7 @@
+ #include <Compression/ICompressionCodec.h>
+ #include <IO/BufferBase.h>
+ 
++#include <Common/VectorWithMemoryTracking.h>
+ #include <city.h>
+ 
+ 
+@@ -13,6 +14,9 @@ namespace DB
+ class Exception;
+ class ReadBuffer;
+ 
++/// Ranges in a file, [begin, end), of compressed blocks.
++using CompressedBlockRanges = VectorWithMemoryTracking<std::pair<size_t, size_t>>;
 +
-             /// Report that this thread is finished with this batch.
-             size_t prev_busy_threads = busy_threads.fetch_sub(1, std::memory_order_release);
-             chassert(prev_busy_threads > 0);
-             if (prev_busy_threads == 1)
-                 done_cv.notify_all();
+ /** Basic functionality for implementation of
+   *  CompressedReadBuffer, CompressedReadBufferFromFile and CachedCompressedReadBuffer.
+   */
+@@ -61,6 +65,9 @@ class CompressedReadBufferBase
+     /// Adds diagnostics to the error message.
+     void addDiagnostics(Exception & e) const;
+ 
++    /// See `setRangesReadSink`. Maintained by the buffers that read from a file.
++    CompressedBlockRanges * ranges_read = nullptr;
++
+ public:
+     /// 'compressed_in' could be initialized lazily, but before first call of 'readCompressedData'.
+     explicit CompressedReadBufferBase(ReadBuffer * in = nullptr, bool allow_different_codecs_ = false, bool external_data_ = false);
+@@ -75,6 +82,10 @@ class CompressedReadBufferBase
+         disable_checksum = true;
+     }
+ 
++    /// Makes the buffer append the range in the file, [offset, offset + compressed size with the header and the checksum),
++    /// of every block it decompresses or takes decompressed from a cache, every time it loads it.
++    void setRangesReadSink(CompressedBlockRanges * ranges_read_) { ranges_read = ranges_read_; }
++
+     /// Identifies the column this buffer reads, see LZ4StatisticsHint.h.
+     void setStatisticsHint(UInt64 hint) { statistics_hint = hint; }
+ 
+```
+
+**File**: `src/Compression/CompressedReadBufferFromFile.cpp` (modified, +6/-0)
+```diff
+@@ -27,9 +27,12 @@ bool CompressedReadBufferFromFile::nextImpl()
+     {
+         size_t size_decompressed = 0;
+         size_t size_compressed_without_checksum = 0;
++        const size_t block_offset = ranges_read ? file_in.getPosition() : 0;
+         size_compressed = readCompressedData(size_decompressed, size_compressed_without_checksum, false);
+         if (!size_compressed)
+             return false;
++        if (ranges_read)
++            ranges_read->emplace_back(block_offset, block_offset + size_compressed);
+ 
+         auto additional_size_at_the_end_of_buffer = codec->getAdditionalSizeAtTheEndOfBuffer();
+ 
+@@ -135,10 +138,13 @@ size_t CompressedReadBufferFromFile::readBig(char * to, size_t n)
+             bytes += offset();
+             resetWorkingBuffer();
+             size_compressed = 0;
++            const size_t block_offset = ranges_read ? file_in.getPosition() : 0;
+             size_t new_size_compressed = readCompressedData(size_decompressed, size_compressed_without_checksum, false);
+ 
+             if (!new_size_compressed)
+                 return bytes_read;
++            if (ranges_read)
++                ranges_read->emplace_back(block_offset, block_offset + new_size_compressed);
+ 
+             auto additional_size_at_the_end_of_buffer = codec->getAdditionalSizeAtTheEndOfBuffer();
+ 
+```
+
+**File**: `src/Core/Settings.cpp` (modified, +0/-4)
+```diff
+@@ -1285,10 +1285,6 @@ Equality with a constant string is not moved for this reason: it is still applie
+ Supported for reading from `MergeTree` tables and from the `Parquet` format. In `Parquet`, the filter is applied to pages with
+ the `PLAIN`, `DELTA_LENGTH_BYTE_ARRAY`, `DELTA_BYTE_ARRAY`, and dictionary encodings.
+ 
+-Note that the estimation of the input bytes collected for the automatic decision about parallel replicas
+-(`RuntimeDataflowStatisticsInputBytes`) is based on the in-memory size of the read blocks, so it underestimates
+-the amount of data read from disk when the values are replaced by empty strings.
 -
--            lock.lock();
+ Possible values:
+ 
+ - 0 — Disabled.
+```
+
+**File**: `src/Processors/QueryPlan/Optimizations/RuntimeDataflowStatistics.cpp` (modified, +15/-141)
+```diff
+@@ -11,6 +11,7 @@
+ #include <IO/WriteBufferFromString.h>
+ #include <Interpreters/Aggregator.h>
+ #include <Interpreters/sortBlock.h>
++#include <Storages/MergeTree/MergeTreeReaderStream.h>
+ 
+ #include <Poco/Logger.h>
+ #include <Common/logger_useful.h>
+@@ -24,7 +25,6 @@ namespace ProfileEvents
+ extern const Event AutoParallelReplicasNoStatistics;
+ extern const Event RuntimeDataflowStatisticsInputBytes;
+ extern const Event RuntimeDataflowStatisticsOutputBytes;
+-extern const Event RuntimeDataflowStatisticsInputNanoseconds;
+ extern const Event RuntimeDataflowStatisticsOutputNanoseconds;
+ }
+ 
+@@ -101,27 +101,10 @@ RuntimeDataflowStatisticsBlock::~RuntimeDataflowStatisticsBlock()
+             stats.elapsed_microseconds);
+     };
+ 
+-    RuntimeDataflowStatistics res{.total_rows_to_read = total_rows_to_read};
+-    for (size_t i = 0; i < InputStatisticsType::MaxInputType; ++i)
+-    {
+-        const auto & stats = input_bytes_statistics[i];
+-        if (stats.compressed_bytes)
+-        {
+-            log_stats(stats, toString(static_cast<InputStatisticsType>(i)));
+-            const auto compression_ratio = static_cast<double>(stats.sample_bytes) / static_cast<double>(stats.compressed_bytes);
+-            res.input_bytes += static_cast<size_t>(static_cast<double>(stats.bytes) / compression_ratio);
+-        }
+-    }
+-    for (size_t i = 0; i < InputStatisticsType::MaxInputType; ++i)
+-    {
+-        const auto & stats = duplicated_bytes_statistics[i];
+-        if (stats.compressed_bytes)
+-        {
+-            log_stats(stats, fmt::format("Duplicated{}", toString(static_cast<InputStatisticsType>(i))));
+-            const auto compression_ratio = static_cast<double>(stats.sample_bytes) / static_cast<double>(stats.compressed_bytes);
+-            res.duplicated_bytes += static_cast<size_t>(static_cast<double>(stats.bytes) / compression_ratio);
+-        }
+-    }
++    RuntimeDataflowStatistics res{
++        .input_bytes = input_bytes_read.load(std::memory_order_relaxed),
++        .duplicated_bytes = duplicated_bytes_read.load(std::memory_order_relaxed),
++        .total_rows_to_read = total_rows_to_read};
+     for (size_t i = 0; i < OutputStatisticsType::MaxOutputType; ++i)
+     {
+         const auto & stats = output_bytes_statistics[i];
+@@ -156,35 +139,10 @@ RuntimeDataflowStatisticsBlock::~RuntimeDataflowStatisticsBlock()
+         dataflow_cache.forgetUndecided(undecided_query_key);
+ }
+ 
+-bool isSerializedAsSingleStreamOfColumnType(const ISerialization & serialization, const DataTypePtr & type)
+-{
+-    size_t num_streams = 0;
+-    bool stream_is_column_itself = false;
+-    serialization.enumerateStreams(
+-        [&](const auto & substream_path)
+-        {
+-            ++num_streams;
+-            const auto & substream_type = substream_path.back().data.type;
+-            stream_is_column_itself
+-                = ISerialization::isSpecialCompressionAllowed(substream_path) && substream_type && substream_type->equals(*type);
+-        },
+-        type);
+-    return num_streams == 1 && stream_is_column_itself;
+-}
+-
+ /// Tries to estimate compressed size of a column by serializing a sample of it.
+-static std::pair<size_t, size_t> estimateCompressedColumnSize(const ColumnWithTypeAndName & column, const ColumnCodecs & codecs)
++static std::pair<size_t, size_t> estimateCompressedColumnSize(const ColumnWithTypeAndName & column, const CompressionCodecPtr & codec)
+ {
+     auto [serialization, _, column_to_write] = NativeWriter::getSerializationAndColumn(DBMS_TCP_PROTOCOL_VERSION, column);
+-    /// What the sample buffer holds is only known here: the serialization is picked from the column at
+-    /// hand, so a column stored `Sparse` (or `Replicated`) arrives as several substreams funnelled into
+-    /// the one buffer below, and the column read from the part keeps the pre-`ALTER` type until the
+-    /// mutation that rewrites it has run. A type-specific codec then measures a stream it was never
+-    /// resolved for. Some codecs merely mismeasure it, but one that validates its input rejects it
+-    /// outright - `ALP` throws `CANNOT_COMPRESS` on a byte count that is not a whole number of floats.
+-    const bool sample_matches_type_specific_codec = codecs.type_specific && codecs.type_specific_for->equals(*column.type)
+-        && isSerializedAsSingleStreamOfColumnType(*serialization, column.type);
+-    const auto & codec = sample_matches_type_specific_codec ? codecs.type_specific : codecs.generic;
+     NullWriteBuffer null_buf;
+     CompressedWriteBuffer compressed_buf(null_buf, codec);
+     // To avoid spending too much time on serialization, we limit the number of rows to serialize.
+@@ -256,11 +214,9 @@ void RuntimeDataflowStatisticsCacheUpdater::recordColumns(
+     size_t compressed_bytes = 0;
+     if (shouldSampleBlock(statistics, num_rows))
+     {
+-        /// Only output columns get here, and they model what a replica sends to the initiator rather than
+-        /// anything stored in a part, so there is no column `CODEC` to reso
+```
+
+**File**: `src/Processors/QueryPlan/Optimizations/RuntimeDataflowStatistics.h` (modified, +9/-56)
+```diff
+@@ -9,11 +9,8 @@
+ #include <Core/NamesAndTypes.h>
+ #include <Processors/Chunk.h>
+ #include <Processors/ISimpleTransform.h>
+-#include <Compression/ICompressionCodec.h>
+-#include <Storages/ColumnSize.h>
+ #include <Common/CacheBase.h>
+ #include <Common/ProfileEvents.h>
+-#include <Common/UnorderedMapWithMemoryTracking.h>
+ 
+ #include <atomic>
+ #include <cstddef>
+@@ -32,6 +29,8 @@ extern const int BAD_ARGUMENTS;
+ 
+ class Aggregator;
+ struct AggregatedDataVariants;
++class ReadRangesRegistry;
++using ReadRangesRegistryPtr = std::shared_ptr<ReadRangesRegistry>;
+ 
+ struct RuntimeDataflowStatistics
+ {
+@@ -128,30 +127,6 @@ class RuntimeDataflowStatisticsCache
+ 
+ RuntimeDataflowStatisticsCache & getRuntimeDataflowStatisticsCache();
+ 
+-/// The codecs a column's `CODEC` resolves to, for the two shapes its serialized sample can have.
+-///
+-/// The writer resolves a `CODEC` per substream: a type-specific codec (`ALP`, `T64`, `Delta`, ...) is
+-/// applied only to a substream that carries the column type itself, and structural substreams (`Array`
+-/// offsets, null map, sparse offsets, ...) keep only the generic codecs. The estimate serializes a whole
+-/// column into a single buffer, so `type_specific` describes that buffer only when it holds exactly one
+-/// stream of `type_specific_for`. Neither is a property of the table metadata alone: the serialization is
+-/// chosen per block from the column at hand, and an unfinished `ALTER MODIFY COLUMN` leaves the part
+-/// holding the old type while the metadata already reports the new one.
+-struct ColumnCodecs
+-{
+-    /// Null when the column's `CODEC` has no resolution against a type - then only `generic` applies.
+-    CompressionCodecPtr type_specific = nullptr;
+-    DataTypePtr type_specific_for = nullptr;
+-    CompressionCodecPtr generic = nullptr;
+-};
+-
+-/// Only columns whose `CODEC` overrides the part's default; resolved once per read task.
+-using ColumnCodecByName = UnorderedMapWithMemoryTracking<String, ColumnCodecs>;
+-
+-/// Whether `serialization` writes the column as a single stream carrying `type` itself, the only layout
+-/// a type-specific codec may be applied to.
+-bool isSerializedAsSingleStreamOfColumnType(const ISerialization & serialization, const DataTypePtr & type);
+-
+ /// One execution's dataflow statistics, the single cache entry its updaters fill. Every updater of the
+ /// execution shares it, and it writes the entry when the last of them is gone.
+ struct RuntimeDataflowStatisticsBlock
+@@ -167,13 +142,6 @@ struct RuntimeDataflowStatisticsBlock
+         size_t elapsed_microseconds TSA_GUARDED_BY(mutex) = 0;
+     };
+ 
+-    enum InputStatisticsType
+-    {
+-        WithByteHint = 0,
+-        WithoutByteHint = 1,
+-        MaxInputType = 2,
+-    };
+-
+     enum OutputStatisticsType
+     {
+         AggregationState = 0,
+@@ -204,26 +172,21 @@ struct RuntimeDataflowStatisticsBlock
+ 
+     std::atomic_bool unsupported_case{false};
+ 
+-    std::array<Statistics, MaxInputType> input_bytes_statistics;
+-    std::array<Statistics, MaxInputType> duplicated_bytes_statistics;
++    /// The compressed bytes the readers loaded, see `ReadRangesRegistry`.
++    std::atomic_size_t input_bytes_read{0};
++    std::atomic_size_t duplicated_bytes_read{0};
+     std::array<Statistics, MaxOutputType> output_bytes_statistics;
+ };
+ 
+ class RuntimeDataflowStatisticsCacheUpdater
+ {
+-    using ColumnSizeByName = std::unordered_map<std::string, ColumnSize>; // STYLE_CHECK_ALLOW_STD_CONTAINERS -- mirrors `IMergeTreeDataPart::ColumnSizeByName`, which the callers pass directly
+     using Statistics = RuntimeDataflowStatisticsBlock::Statistics;
+-    using InputStatisticsType = RuntimeDataflowStatisticsBlock::InputStatisticsType;
+     using OutputStatisticsType = RuntimeDataflowStatisticsBlock::OutputStatisticsType;
+ 
+ public:
+     /// `duplicated` is set on the updater given to the reads parallel replicas would not split: each replica
+     /// performs them in full, so their bytes go to `duplicated_bytes` rather than to `input_bytes`.
+-    explicit RuntimeDataflowStatisticsCacheUpdater(std::shared_ptr<RuntimeDataflowStatisticsBlock> block_, bool duplicated_ = false)
+-        : block(std::move(block_))
+-        , duplicated(duplicated_)
+-    {
+-    }
++    explicit RuntimeDataflowStatisticsCacheUpdater(std::shared_ptr<RuntimeDataflowStatisticsBlock> block_, bool duplicated_ = false);
+ 
+     /// A permutation putting the sample into the order the replicas send it in. Evaluated only for a
+     /// block that is actually sampled, since building it costs a sort of the block's key columns.
+@@ -262,19 +225,8 @@ class RuntimeDataflowStatisticsCacheUpdater
+     /// rather than a hash table. Used by in-order aggregation where states are already materialized into columns (single-stream case).
+     void recordAggregationStateColumnSizes(const Chunk & chunk, const ColumnNumbers & keys_positions, const Block & header);
+ 
+-    /// Updates should_continue_sampling to true if the current read block is chosen for sampling.
+```
+
+**File**: `src/Processors/QueryPlan/Optimizations/considerEnablingParallelReplicas.cpp` (modified, +16/-2)
+```diff
+@@ -1648,7 +1648,9 @@ static bool decideAtBoundary(
+         if (reads->lazy_to_instrument)
+             reads->lazy_to_instrument->setRuntimeDataflowStatisticsCacheUpdater(updater);
+ 
+-        auto duplicated_reads_updater = std::make_shared<RuntimeDataflowStatisticsCacheUpdater>(statistics_block, /*duplicated=*/ true);
++        /// An updater for each read: the blocks are counted once by the updater, and two reads of a table load them twice.
++        /// The two halves of a lazily materialized read are one read, found by the rows they share, like the coordinated one.
++        UnorderedMapWithMemoryTracking<const LazyMaterializingRows *, RuntimeDataflowStatisticsCacheUpdaterPtr> lazy_read_updaters;
+         for (auto * read_step : collectReadSteps(*single_replica_plan_boundary))
+         {
+             /// The coordinated read and its own lazy half are set up above, and their bytes are `input_bytes`.
+@@ -1657,7 +1659,19 @@ static bool decideAtBoundary(
+                 continue;
+             if (!read_step->supportsDataflowStatisticsCollection())
+                 continue;
+-            read_step->setRuntimeDataflowStatisticsCacheUpdater(duplicated_reads_updater);
++            const LazyMaterializingRows * lazy_rows = nullptr;
++            if (const auto * read = typeid_cast<const ReadFromMergeTree *>(read_step))
++                lazy_rows = read->getLazyReadRows().get();
++            else if (const auto * lazy_read = typeid_cast<const LazilyReadFromMergeTree *>(read_step))
++                lazy_rows = lazy_read->getLazyMaterializingRows().get();
++            RuntimeDataflowStatisticsCacheUpdaterPtr updater_of_read = lazy_rows ? lazy_read_updaters[lazy_rows] : nullptr;
++            if (!updater_of_read)
++            {
++                updater_of_read = std::make_shared<RuntimeDataflowStatisticsCacheUpdater>(statistics_block, /*duplicated=*/ true);
++                if (lazy_rows)
++                    lazy_read_updaters[lazy_rows] = updater_of_read;
++            }
++            read_step->setRuntimeDataflowStatisticsCacheUpdater(updater_of_read);
          }
      }
-     catch (...)
+     return false;
+```
+
+**File**: `src/Storages/MergeTree/IMergeTreeReader.h` (modified, +18/-0)
+```diff
+@@ -105,6 +105,21 @@ class IMergeTreeReader : private boost::noncopyable
+     /// `fillMissingColumns` runs and must not be consumed as regular columns before that.
+     [[nodiscard]] const NameSet & getPartiallyReadColumns() const { return partially_read_columns; }
+ 
++    /// Registers the ranges of the compressed blocks loaded since the previous call (from the uncompressed cache too) in the
++    /// `ReadRangesRegistry` of `setReadRangesRegistry`.
++    virtual void registerReadRanges() = 0;
++
++    /// Enables `registerReadRanges`. The readers of a read share `registry`, so a block several of them load is counted
++    /// once. A reader is reused only for the tasks of its read, so `registry` doesn't change.
++    /// A granule served from the columns cache loads nothing from the part and could not be measured, so the reader stops
++    /// reading from the cache; it still writes to it.
++    virtual void setReadRangesRegistry(ReadRangesRegistryPtr registry)
++    {
++        chassert(!read_ranges_registry || read_ranges_registry == registry);
++        read_ranges_registry = std::move(registry);
++        columns_cache_reads_possible = false;
++    }
++
+     [[nodiscard]] size_t getFirstMarkToRead() const { return all_mark_ranges.front().begin; }
+ 
+     MergeTreeDataPartInfoForReaderPtr data_part_info_for_read;
+@@ -166,6 +181,9 @@ class IMergeTreeReader : private boost::noncopyable
+ 
+     void checkNumberOfColumns(size_t num_columns_to_read) const;
+ 
++    /// See `setReadRangesRegistry`.
++    ReadRangesRegistryPtr read_ranges_registry;
++
+     [[nodiscard]] String getMessageForDiagnosticOfBrokenPart(size_t from_mark, size_t max_rows_to_read) const;
+ 
+     /// avg_value_size_hints are used to reduce the number of reallocations when creating columns of variable size.
 ```
 
 ---
 
-### Incident Patch 2: `1c87825f` (2026-11-25)
-**Commit Message**: Merge pull request #133398 from groeneai/nullable-unary-grouped-batch
+### Incident Patch 3: `79366b76` (2026-11-26)
+**Commit Message**: Merge pull request #134298 from groeneai/fix-column-ttl-expired-files-object-storage
 
-Batch grouped aggregation of a Nullable argument when the block has no NULLs
+Fix leftover files of a column expired by TTL in a mutation on object storage
 
-**File**: `src/AggregateFunctions/Combinators/AggregateFunctionDistinct.h` (modified, +44/-9)
+**File**: `src/Storages/MergeTree/MergedColumnOnlyOutputStream.cpp` (modified, +5/-1)
 ```diff
-@@ -8,6 +8,7 @@
- #include <Common/HashTable/HashMap.h>
- #include <Common/HashTable/HashSet.h>
- #include <Common/assert_cast.h>
-+#include <base/scope_guard.h>
+@@ -104,7 +104,7 @@ MergeTreeData::DataPart::Checksums MergedColumnOnlyOutputStream::fillChecksums(M
  
- 
- namespace DB
-@@ -233,14 +234,15 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
-     /// Adds the rows in [row_begin, row_end) to the places returned by `get_place(row)` (nullptr to skip the row).
-     /// The rows with the values seen for the first time in their place are collected and passed to the nested function together,
-     /// because adding them one by one is slow for some nested functions (example: the conversion of `Variant` arguments).
-+    /// `places` with `place_offset`, if not nullptr, give the same places as `get_place` (they are changed during the call and restored).
-     template <typename GetPlace>
-     void addBatchToNested(
--        size_t row_begin, size_t row_end, const IColumn ** columns, Arena * arena, ssize_t if_argument_pos, GetPlace && get_place) const
-+        size_t row_begin, size_t row_end, const IColumn ** columns, Arena * arena, ssize_t if_argument_pos, GetPlace && get_place,
-+        AggregateDataPtr * places = nullptr, size_t place_offset = 0) const
+     for (const String & removed_file : removed_files)
      {
-         const UInt8 * flags = if_argument_pos >= 0 ? assert_cast<const ColumnUInt8 &>(*columns[if_argument_pos]).getData().data() : nullptr;
--        auto new_rows = ColumnUInt64::create();
--        auto & new_rows_data = new_rows->getData();
--        PaddedPODArray<AggregateDataPtr> new_places;
-+        PODArrayWithStackMemory<UInt64, 512> new_rows_data;
-+        PODArrayWithStackMemory<AggregateDataPtr, 512> new_places;
-         for (size_t row = row_begin; row < row_end; ++row)
-         {
-             if (flags && !flags[row])
-@@ -260,13 +262,45 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
-         if (new_rows_data.empty())
-             return;
- 
--        /// All rows are new and the places are indexed from zero, there is no need to copy the rows.
--        if (row_begin == 0 && new_rows_data.size() == row_end)
-+        /// All rows are new, there is no need to copy them.
-+        if (new_rows_data.size() == row_end - row_begin)
-         {
--            nested_func->addBatchWithNonNullPlaces(0, row_end, new_places.data(), prefix_size, columns, arena);
-+            if (places)
-+            {
-+                nested_func->addBatchWithNonNullPlaces(row_begin, row_end, places, place_offset + prefix_size, columns, arena);
-+                return;
-+            }
-+            if (row_begin == 0)
-+            {
-+                nested_func->addBatchWithNonNullPlaces(0, row_end, new_places.data(), prefix_size, columns, arena);
-+                return;
-+            }
-+        }
-+
-+        /// A short range is not copied: it is passed as it is, with the places of the rows that are not new set to nullptr for the call.
-+        static constexpr size_t max_rows_to_hide = 64;
-+        if (places && row_end - row_begin <= max_rows_to_hide)
-+        {
-+            const size_t num_rows = row_end - row_begin;
-+            AggregateDataPtr saved_places[max_rows_to_hide];
-+            memcpy(saved_places, places + row_begin, num_rows * sizeof(AggregateDataPtr));
-+            SCOPE_EXIT(memcpy(places + row_begin, saved_places, num_rows * sizeof(AggregateDataPtr)));
-+
-+            size_t next_new = 0;
-+            for (size_t row = row_begin; row < row_end; ++row)
-+            {
-+                if (next_new < new_rows_data.size() && new_rows_data[next_new] == row)
-+                    ++next_new;
-+                else
-+                    places[row] = nullptr;
-+            }
-+
-+            nested_func->addBatch(row_begin, row_end, places, place_offset + prefix_size, columns, arena);
-             return;
-         }
- 
-+        auto new_rows = ColumnUInt64::create();
-+        new_rows->getData().assign(new_rows_data.begin(), new_rows_data.end());
-         auto new_columns = indexColumns(columns, *new_rows);
-         nested_func->addBatchWithNonNullPlaces(0, new_rows_data.size(), new_places.data(), prefix_size, new_columns.second.data(), arena);
-     }
-@@ -373,7 +407,7 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
-         ssize_t if_argument_pos) const override
-     {
-         addBatchToNested(row_begin, row_end, columns, arena, if_argument_pos,
--            [&](size_t row) { return places[row] ? places[row] + place_offset : nullptr; });
-+            [&](size_t row) { return places[row] ? places[row] + place_offset : nullptr; }, places, place_offset);
+-        new_part->getDataPartStorage().removeFileIfExists(removed_file);
++        files_to_remove_after_finish.insert(removed_file);
+         all_checksums.files.erase(removed_file);
      }
  
-     void addBatchWithNonNullPlaces(
-@@ -383,7 +417,8 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
-         Arena * arena,
-         ssize_t if_argument_pos) const override
-     {
--        addBatchToNested(row_begin, row_end, columns, arena, if_argument_pos, [&](size_t row) { return places[row] + place_offset; });
-+        addBatchToNested(
-+            row_begin, row_end, c
+@@ -115,6 +115,10 @@ MergeTreeData::DataPart::Checksums MergedColumnOnlyOutputStream::fillChecksums(M
+ void MergedColumnOnlyOutputStream::finish(bool sync)
+ {
+     writer->finish(sync);
++
++    /// Only after the writer finishes: a disk transaction registers a written file when its buffer is finalized.
++    for (const auto & file : files_to_remove_after_finish)
++        data_part_storage->removeFileIfExists(file);
+ }
+ 
+ void MergedColumnOnlyOutputStream::cancel() noexcept
 ```
 
-**File**: `src/AggregateFunctions/Combinators/AggregateFunctionNull.h` (modified, +188/-0)
+**File**: `src/Storages/MergeTree/MergedColumnOnlyOutputStream.h` (modified, +3/-0)
 ```diff
-@@ -9,6 +9,7 @@
- #include <IO/WriteHelpers.h>
- #include <Common/VectorWithMemoryTracking.h>
- #include <Common/assert_cast.h>
-+#include <base/find_symbols.h>
- 
- #include <absl/container/inlined_vector.h>
- 
-@@ -593,6 +594,71 @@ class AggregateFunctionNullUnary final
-         }
-     }
- 
-+    void addBatch( /// NOLINT
-+        size_t row_begin,
-+        size_t row_end,
-+        AggregateDataPtr * places,
-+        size_t place_offset,
-+        const IColumn ** columns,
-+        Arena * arena,
-+        ssize_t if_argument_pos = -1) const override
-+    {
-+        addBatchImpl<false>(row_begin, row_end, places, place_offset, columns, arena, if_argument_pos);
-+    }
+@@ -43,6 +43,9 @@ class MergedColumnOnlyOutputStream final : public IMergedBlockOutputStream
+     [[nodiscard]] const ColumnsSubstreams & getColumnsSubstreams() const { return writer->getColumnsSubstreams(); }
+     void finish(bool sync);
+     void cancel() noexcept override;
 +
-+    void addBatchWithNonNullPlaces( /// NOLINT
-+        size_t row_begin,
-+        size_t row_end,
-+        AggregateDataPtr * places,
-+        size_t place_offset,
-+        const IColumn ** columns,
-+        Arena * arena,
-+        ssize_t if_argument_pos = -1) const override
-+    {
-+        addBatchImpl<true>(row_begin, row_end, places, place_offset, columns, arena, if_argument_pos);
-+    }
-+
-+    void addBatchLookupTable8(
-+        size_t row_begin,
-+        size_t row_end,
-+        AggregateDataPtr * map,
-+        size_t place_offset,
-+        std::function<void(AggregateDataPtr &)> init,
-+        const UInt8 * key,
-+        const IColumn ** columns,
-+        Arena * arena) const override
-+    {
-+        const ColumnNullable * column = assert_cast<const ColumnNullable *>(columns[0]);
-+        const UInt8 * null_map = column->getNullMapData().data();
-+        const bool has_nulls = !memoryIsZero(null_map, row_begin, row_end);
-+        if (has_nulls && hasManyNulls(null_map, row_begin, row_end))
-+        {
-+            addBatchLookupTable8RowByRow(row_begin, row_end, map, place_offset, std::move(init), key, columns, arena);
-+            return;
-+        }
-+
-+        /// The nested addBatchLookupTable8 reorders the rows of a key, which changes order-dependent functions such as deltaSum.
-+        PaddedPODArray<AggregateDataPtr> places(row_end);
-+        for (size_t i = row_begin; i < row_end; ++i)
-+        {
-+            AggregateDataPtr & place = map[key[i]];
-+            if (unlikely(!place))
-+                init(place);
-+            places[i] = place;
-+        }
-+
-+        if (!has_nulls)
-+        {
-+            addBatchWithoutNulls<true>(row_begin, row_end, places.data(), place_offset, &column->getNestedColumn(), arena);
-+            return;
-+        }
-+
-+        forEachRangeWithoutNulls(null_map, row_begin, row_end, [&](size_t begin, size_t end)
-+        {
-+            addBatchWithoutNulls<true>(begin, end, places.data(), place_offset, &column->getNestedColumn(), arena);
-+        });
-+    }
-+
- #if USE_EMBEDDED_COMPILER
- 
-     void compileAdd(llvm::IRBuilderBase & builder, llvm::Value * aggregate_data_ptr, const ValuesWithType & arguments) const override
-@@ -630,6 +696,128 @@ class AggregateFunctionNullUnary final
- 
- #endif
- 
 +private:
-+    template <bool places_are_non_null>
-+    void addBatchImpl(
-+        size_t row_begin,
-+        size_t row_end,
-+        AggregateDataPtr * places,
-+        size_t place_offset,
-+        const IColumn ** columns,
-+        Arena * arena,
-+        ssize_t if_argument_pos) const
-+    {
-+        const ColumnNullable * column = assert_cast<const ColumnNullable *>(columns[0]);
-+        const UInt8 * null_map = column->getNullMapData().data();
-+        const bool has_nulls = !memoryIsZero(null_map, row_begin, row_end);
-+        if (if_argument_pos >= 0 || (has_nulls && hasManyNulls(null_map, row_begin, row_end)))
-+        {
-+            addBatchRowByRow<places_are_non_null>(row_begin, row_end, places, place_offset, columns, arena, if_argument_pos);
-+            return;
-+        }
-+
-+        if (!has_nulls)
-+        {
-+            addBatchWithoutNulls<places_are_non_null>(row_begin, row_end, places, place_offset, &column->getNestedColumn(), arena);
-+            return;
-+        }
-+
-+        forEachRangeWithoutNulls(null_map, row_begin, row_end, [&](size_t begin, size_t end)
-+        {
-+            addBatchWithoutNulls<places_are_non_null>(begin, end, places, place_offset, &column->getNestedColumn(), arena);
-+        });
-+    }
-+
-+    /// With more NULLs the ranges between them are short, and the nested function may pay a setup cost per range.
-+    static bool hasManyNulls(const UInt8 * null_map, size_t row_begin, size_t row_end)
-+    {
-+        static constexpr size_t min_rows_per_null = 16;
-+        return countBytesInFilter(null_map, row_begin, row_end) * min_rows_per_null > row_end - row_begin;
-+    }
-+
-+    /// Not inlined, so that the row loops are compiled as in IAggregateFunctionHelper.
-+    template <bool places_are_non_null>
-+    NO_INLINE void addBatchRowByRow(
-+        size_t row_begin,
-+        size_t row_end,
-+        AggregateDataPtr * places,
-+        size_t place_offset,
-+        const IColumn ** columns,
-+        Arena * arena,
-+        ssize_t if_argument_pos) const
-+    {
-+        if constexpr (pla
-```
-
-**File**: `tests/performance/aggregation_nullable_arguments.xml` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+<test>
-+    <settings>
-+        <!-- JIT compiles some of these functions after a few runs and then bypasses the batch path -->
-+        <compile_aggregate_expressions>0</compile_aggregate_expressions>
-+    </settings>
-+
-+    <create_query>CREATE TABLE nullable_arguments (k8 UInt8, k4 UInt32, k1000 UInt32, k_many UInt32, v Nullable(Decimal(15, 2)), v_rare_nulls Nullable(Decimal(15, 2)), v_half_nulls Nullable(Decimal(15, 2)), v_sixteenth_nulls Nullable(Decimal(15, 2))) ENGINE = Memory</create_query>
-+    <fill_query>INSERT INTO nullable_arguments SELECT number % 6, number % 4, number % 1000, number % 1000000, number % 1000, if(number % 20000 = 0, NULL, number % 1000), if(cityHash64(number) % 2 = 0, NULL, number % 1000), if(number % 16 = 0, NULL, number % 1000) FROM numbers_mt(30000000)</fill_query>
-+
-+    <query>SELECT k8, sum(v), avg(v) FROM nullable_arguments GROUP BY k8 FORMAT Null</query>
-+    <query>SELECT k4, sum(v), avg(v) FROM nullable_arguments GROUP BY k4 FORMAT Null</query>
-+    <query>SELECT k1000, sum(v), avg(v) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
-+    <query>SELECT k_many, sum(v), avg(v) FROM nullable_arguments GROUP BY k_many FORMAT Null</query>
-+    <query>SELECT k4, uniqExact(v) FROM nullable_arguments GROUP BY k4 FORMAT Null</query>
-+    <query>SELECT k8, sum(v_rare_nulls), avg(v_rare_nulls) FROM nullable_arguments GROUP BY k8 FORMAT Null</query>
-+    <query>SELECT k1000, sum(v_rare_nulls), avg(v_rare_nulls) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
-+    <query>SELECT k8, sum(v_half_nulls), avg(v_half_nulls) FROM nullable_arguments GROUP BY k8 FORMAT Null</query>
-+    <query>SELECT k1000, sumDistinct(v_half_nulls) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
-+    <query>SELECT k1000, sumDistinct(v_sixteenth_nulls) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
-+    <query>SELECT k, sumDistinct(x) FROM (SELECT toUInt8(number % 6) AS k, if(number % 16 = 0, NULL, if(cityHash64(number) % 5 &lt; 3, toDecimal64(number, 2), toDecimal64(number % 1000, 2))) AS x FROM numbers_mt(3000000)) GROUP BY k FORMAT Null</query>
-+    <query>SELECT k, sumDistinct(x) FROM (SELECT number % 1000 AS k, if(number % 16 = 0, NULL, if(cityHash64(number) % 5 &lt; 3, toDecimal64(number, 2), toDecimal64(number % 1000, 2))) AS x FROM numbers_mt(3000000)) GROUP BY k FORMAT Null</query>
-+
-+    <drop_query>DROP TABLE IF EXISTS nullable_arguments</drop_query>
-+</test>
-```
-
-**File**: `tests/queries/0_stateless/04003_tuple_combinator.sql` (modified, +2/-2)
-```diff
-@@ -154,8 +154,8 @@ SELECT sumTuple(t) FROM (SELECT if(number % 3 = 0, CAST(NULL, 'Nullable(Tuple(In
- -- `-TupleIf` over `Nullable(Tuple)`: both the if-flag and the null map filter rows. cond = number % 2
- -- keeps odd numbers 1,3,5, of which 3 is NULL -> kept 1,5 -> sums 6.
- SELECT sumTupleIf(t, cond) FROM (SELECT number % 2 AS cond, if(number % 3 = 0, CAST(NULL, 'Nullable(Tuple(Int64, Float64))'), CAST(tuple(toInt64(number), toFloat64(number)), 'Nullable(Tuple(Int64, Float64))')) AS t FROM numbers(6));
---- GROUP BY over `Nullable(Tuple)` goes through the `Null` wrapper's generic batch loop, which calls
---- the nested `-Tuple` `add` fallback row by row (the wrapper has no keyed batch override):
-+-- GROUP BY over `Nullable(Tuple)` with this many NULLs goes through the `Null` wrapper's row loop, which calls
-+-- the nested `-Tuple` `add` fallback row by row:
- -- k=0 keeps 2,4 (0 is NULL); k=1 keeps 1,5 (3 is NULL).
- SELECT k, sumTuple(t) FROM (SELECT number % 2 AS k, if(number % 3 = 0, CAST(NULL, 'Nullable(Tuple(Int64, Float64))'), CAST(tuple(toInt64(number), toFloat64(number)), 'Nullable(Tuple(Int64, Float64))')) AS t FROM numbers(6)) GROUP BY k ORDER BY k;
++    NameSet files_to_remove_after_finish;
+ };
  
+ using MergedColumnOnlyOutputStreamPtr = std::shared_ptr<MergedColumnOnlyOutputStream>;
 ```
 
-**File**: `tests/queries/0_stateless/05839_nullable_argument_grouped_batch.reference` (added, +87/-0)
+**File**: `tests/queries/0_stateless/05874_column_ttl_expired_column_files_on_object_storage.reference` (added, +4/-0)
 ```diff
-@@ -0,0 +1,87 @@
-+0	109888905	20152.008985879333	8	5453	(109888905,5453)	109888905
-+1	112499041	20157.50600250851	2	5581	(112499041,5581)	112499041
-+2	112514751	20160.32091023114	10	5581	(112514751,5581)	112514751
-+3	112490456	20155.967747715462	4	5581	(112490456,5581)	112490456
-+4	112475174	20160.454203262234	12	5579	(112475174,5579)	112475174
-+5	112501898	20158.017917935853	6	5581	(112501898,5581)	112501898
-+6	112538601	20160.981906126835	14	5582	(112538601,5582)	112538601
-+7	\N	\N	\N	0	(0,0)	\N
-+8	250000	500	1	500	(250000,500)	250000
-+9	10187167	30500.5	30001	334	(10187167,334)	10187167
-+0	109888905	20152.008985879333	8	5453	(109888905,5453)	109888905	109888905	109888905	20152.008985879333
-+1	112499041	20157.50600250851	2	5581	(112499041,5581)	112499041	112499041	112499041	20157.50600250851
-+2	112514751	20160.32091023114	10	5581	(112514751,5581)	112514751	112514751	112514751	20160.32091023114
-+3	112490456	20155.967747715462	4	5581	(112490456,5581)	112490456	112490456	112490456	20155.967747715462
-+4	112475174	20160.454203262234	12	5579	(112475174,5579)	112475174	112475174	112475174	20160.454203262234
-+5	112501898	20158.017917935853	6	5581	(112501898,5581)	112501898	112501898	112501898	20158.017917935853
-+6	112538601	20160.981906126835	14	5582	(112538601,5582)	112538601	112538601	112538601	20160.981906126835
-+7	\N	\N	\N	0	(0,0)	\N	\N	\N	\N
-+8	250000	500	1	500	(250000,500)	250000	250000	250000	500
-+9	10187167	30500.5	30001	334	(10187167,334)	10187167	10187167	10187167	30500.5
-+0	109888905	20152.008985879333	5453
-+1	112499041	20157.50600250851	5581
-+2	112514751	20160.32091023114	5581
-+3	112490456	20155.967747715462	5581
-+4	112475174	20160.454203262234	5579
-+5	112501898	20158.017917935853	5581
-+6	112538601	20160.981906126835	5582
-+8	250000	500	500
-+40000	228	795345993
-+0	39991	39991
-+1	39998	39998
-+2	39984	39984
-+3	39991	39991
-+4	39984	39984
-+5	39991	39991
-+6	39984	39984
-+7	0	\N
-+8	998	998
-+9	999	999
-+0	28550024	10000.008406304729	1	2855	28550024	19999	19999
-+1	28532682	9997.435879467414	2	2854	28532682	19992	19992
-+2	28513935	9997.873422159888	3	2852	28513935	19992	19992
-+3	28549097	9999.683712784588	4	2855	28549097	19992	19992
-+4	28541853	10000.64926419061	5	2854	28541853	19992	19992
-+5	28544609	10001.61492641906	6	2854	28544609	19992	19992
-+6	28547267	10002.546250875963	7	2854	28547267	19992	19992
-+7	\N	\N	\N	0	\N	0	\N
-+8	94018	10446.444444444445	10002	9	94018	900	900
-+0	28550024	10000.008406304729	1	2855	28550024	19999	19999
-+1	28532682	9997.435879467414	2	2854	28532682	19992	19992
-+2	28513935	9997.873422159888	3	2852	28513935	19992	19992
-+3	28549097	9999.683712784588	4	2855	28549097	19992	19992
-+4	28541853	10000.64926419061	5	2854	28541853	19992	19992
-+5	28544609	10001.61492641906	6	2854	28544609	19992	19992
-+6	28547267	10002.546250875963	7	2854	28547267	19992	19992
-+7	\N	\N	\N	0	\N	0	\N
-+8	94018	10446.444444444445	10002	9	94018	900	900
-+0	28550024	2855
-+1	28532682	2854
-+2	28513935	2852
-+3	28549097	2855
-+4	28541853	2854
-+5	28544609	2854
-+6	28547267	2854
-+0	677195	2198.685064935065	308	1442023748108963931	9
-+1	14746078	10340.868162692846	1426	15984173844227074289	9997
-+2	14744023	10339.427068723702	1426	18397824656854838453	9998
-+3	14747575	10341.917952314165	1426	16319926023925023316	9999
-+4	14755303	10340.086194814296	1427	10598553716428402786	9993
-+5	14750052	10343.654978962131	1426	7631658335113871590	9994
-+6	14755780	10340.42046250876	1427	2853712106680580092	9995
-+7	14065997	12178.352380952381	1155	10423346422504321616	9996
-+0	677195	2198.685064935065	308	1442023748108963931	9
-+1	14746078	10340.868162692846	1426	15984173844227074289	9997
-+2	14744023	10339.427068723702	1426	18397824656854838453	9998
-+3	14747575	10341.917952314165	1426	16319926023925023316	9999
-+4	14755303	10340.086194814296	1427	10598553716428402786	9993
-+5	14750052	10343.654978962131	1426	7631658335113871590	9994
-+6	14755780	10340.42046250876	1427	2853712106680580092	9995
-+7	14065997	12178.352380952381	1155	10423346422504321616	9996
-+0	677195	1442023748108963931
-+1	14746078	15984173844227074289
-+2	14744023	18397824656854838453
-+3	14747575	16319926023925023316
-+4	14755303	10598553716428402786
-+5	14750052	7631658335113871590
-+6	14755780	2853712106680580092
+@@ -0,0 +1,4 @@
++0
++1
++1
++1		(0)	x
 ```
 
-**File**: `tests/queries/0_stateless/05839_nullable_argument_grouped_batch.sql` (added, +96/-0)
+**File**: `tests/queries/0_stateless/05874_column_ttl_expired_column_files_on_object_storage.sql` (added, +35/-0)
 ```diff
-@@ -0,0 +1,96 @@
-+-- Aggregate functions with a Nullable argument under GROUP BY, over blocks of 1000 rows with and without NULLs.
-+-- Only block 20 (rows 20000-20999) contains NULLs. Key 7 is NULL in every row and occurs only in block 20,
-+-- key 8 occurs only in block 0, key 9 only in block 30.
+@@ -0,0 +1,35 @@
++-- A column expired by its TTL in a mutation must not leave its files in the new part on an object storage disk.
++-- https://github.com/ClickHouse/ClickHouse/issues/134206
 +
-+SET compile_aggregate_expressions = 0;
-+SET optimize_injective_functions_in_group_by = 0;
++DROP TABLE IF EXISTS t_ttl_expired_obj;
 +
-+DROP VIEW IF EXISTS tab;
-+CREATE VIEW tab AS
-+SELECT
-+    multiIf(number < 1000 AND number % 2 = 0, 8,
-+            number BETWEEN 20000 AND 20999 AND number % 10 = 0, 7,
-+            number BETWEEN 30000 AND 30999 AND number % 3 = 0, 9,
-+            number % 7) AS k,
-+    if(number BETWEEN 20000 AND 20999 AND (number % 7 = 0 OR number % 10 = 0), NULL, number + 1) AS v
-+FROM numbers(40000);
++-- Wide parts in full storage: otherwise MATERIALIZE TTL rewrites every column.
++CREATE TABLE t_ttl_expired_obj
++(
++    id UInt64,
++    d DateTime,
++    c String TTL d + INTERVAL 1 SECOND,
++    t Tuple(a Int32) TTL d + INTERVAL 1 SECOND,
++    payload String
++)
++ENGINE = MergeTree ORDER BY id
++SETTINGS disk = 'local_disk', min_bytes_for_wide_part = 0, min_rows_for_wide_part = 0, min_bytes_for_full_part_storage = 0;
 +
-+-- A UInt8 key
-+SELECT toUInt8(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumCount(v), sumOrNull(v)
-+FROM tab GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000;
++-- Keep the expiration in the mutation.
++SYSTEM STOP TTL MERGES t_ttl_expired_obj;
 +
-+-- A String key
-+SELECT toString(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumCount(v), sum(toLowCardinality(v)),
-+    finalizeAggregation(sumState(v)), sum(toDecimal64(v, 2)), avg(toDecimal64(v, 2))
-+FROM tab GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000;
++INSERT INTO t_ttl_expired_obj VALUES (1, '2000-01-01 00:00:00', 'abc', tuple(5), 'payload');
++ALTER TABLE t_ttl_expired_obj MATERIALIZE TTL SETTINGS mutations_sync = 2;
 +
-+-- The rows of the keys that do not fit into max_rows_to_group_by are skipped
-+SELECT toString(k) AS key, sum(v), avg(v), uniqExact(v)
-+FROM tab GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000, max_threads = 1, max_rows_to_group_by = 4, group_by_overflow_mode = 'any',
-+    max_bytes_before_external_group_by = 0, max_bytes_ratio_before_external_group_by = 0, enable_adaptive_aggregator = 0;
++SELECT countIf(column IN ('c', 't')) FROM system.parts_columns
++WHERE database = currentDatabase() AND table = 't_ttl_expired_obj' AND active;
 +
-+-- One state per row
-+SELECT count(), countIf(isNull(s)), sum(s)
-+FROM (SELECT initializeAggregation('sum', v) AS s FROM tab)
-+SETTINGS max_block_size = 1000;
++CHECK TABLE t_ttl_expired_obj SETTINGS check_query_single_value_result = 1;
 +
-+-- Every state receives its rows in order, also with a UInt8 key: deltaSum of an increasing value is max - min
-+SELECT toUInt8(k) AS key, deltaSum(toUInt32(v)), max(v) - min(v)
-+FROM tab GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000, max_threads = 1;
++ALTER TABLE t_ttl_expired_obj UPDATE payload = 'x' WHERE 1 SETTINGS mutations_sync = 2;
 +
-+DROP VIEW tab;
++CHECK TABLE t_ttl_expired_obj SETTINGS check_query_single_value_result = 1;
 +
-+-- Block 10 (rows 10000-10999) has 13 NULLs, few enough to be added range by range between them: at the first and
-+-- the last row of the block, in a run of three and every 100 rows. Key 7 is NULL in every row, key 8 occurs only in block 10.
-+DROP VIEW IF EXISTS tab_few;
-+CREATE VIEW tab_few AS
-+SELECT
-+    multiIf(number BETWEEN 10000 AND 10999 AND number % 100 = 0, 7,
-+            number BETWEEN 10000 AND 10999 AND number % 100 = 1, 8,
-+            number % 7) AS k,
-+    if(number BETWEEN 10000 AND 10999 AND (number % 100 = 0 OR number IN (10501, 10502, 10999)), NULL, number + 1) AS v
-+FROM numbers(20000);
++SELECT id, c, t, payload FROM t_ttl_expired_obj;
 +
-+SELECT toUInt8(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumOrNull(v), deltaSum(toUInt32(v)), max(v) - min(v)
-+FROM tab_few GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000, max_threads = 1;
-+
-+SELECT toString(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumOrNull(v), deltaSum(toUInt32(v)), max(v) - min(v)
-+FROM tab_few GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000, max_threads = 1;
-+
-+SELECT toString(k) AS key, sum(v), uniqExact(v)
-+FROM tab_few GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000, max_threads = 1, max_rows_to_group_by = 4, group_by_overflow_mode = 'any',
-+    max_bytes_before_external_group_by = 0, max_bytes_ratio_before_external_group_by = 0, enable_adaptive_aggregator = 0;
-+
-+DROP VIEW tab_few;
-+
-+-- -Distinct over the ranges between NULLs: in rows 0-9999 one NULL per 20 rows (ranges of 19 rows), in rows 10000-19999
-+-- one per 200 rows (ranges of 199 rows). The values repeat in the even blocks and are new in the odd blocks.
-+-- Key 7 occurs from row 5000.
-+DROP VIEW IF EXISTS tab_distinct;
-+CREATE VIEW tab_distinct AS
-+SELECT
-+    if(number >= 5000 AND number % 7 = 0, 7, number % 7) AS k,
-+    if(number % if(number < 10000, 20, 200) = 3, NULL, if(intDiv(number, 1000) % 2 = 0, number % 37, number)) AS v
-+FROM numbers(20000);
-+
-+SELECT toUInt8(k) AS key, sumDistinct(v), avgDistinct(v), uniqExactDistinct(v), cityHash64(groupArrayDistinct(v)), maxDistinct(toString(v))
-+FROM tab_distinct GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000, max_threads = 1;
-+
-+SELECT toString(k) AS key, sumDistinct(v), avgDistinct(v), uniqExactDistinct(v), cityHash64(groupArrayDistinct(v)), maxDistinct(toString(v))
-+FROM tab_distinct GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000, max_threads = 1;
-+
-+SELECT toString(k) AS key, sumDistinct(v), cityHash64(groupArrayDistinct(v))
-+FROM tab_distinct GROUP BY key ORDER BY key
-+SETTINGS max_block_size = 1000, max_threads = 1, max_rows_to_group_by = 4, group_by_overflow_mode = 'any',
-+    max_bytes_before_external_group_by = 0, max_bytes_ratio_before_external_group_by = 0, enable_adaptive_aggregator = 0;
-+
-+DROP VIEW tab_distinct;
-```
-
----
-
-### Incident Patch 3: `3a1d800d` (2026-11-25)
-**Commit Message**: Merge pull request #134374 from zlareb1/docs/link-loom-coding-agent-memory
-
-Docs: Link the MCP overview to Loom shared memory
-
-**File**: `docs/concepts/features/connect-to-clickhouse/native-tools/mcp.mdx` (modified, +3/-0)
-```diff
-@@ -33,6 +33,9 @@ MCP follows a client-server architecture:
- 
- You can find community-maintained collections of [MCP clients](https://github.com/punkpeye/awesome-mcp-clients) and [MCP servers](https://github.com/punkpeye/awesome-mcp-servers) on GitHub.
- 
-+[ClickHouse Loom provides shared memory for coding agents](https://loom.clickhouse.com/docs/use-cases/agent-memory) through a self-hosted MCP server.
-+It carries project decisions across sessions and links saved lessons to indexed code.
-+
- ## ClickHouse MCP server {#clickhouse-mcp-server}
- 
- The [ClickHouse MCP server](https://github.com/ClickHouse/mcp-clickhouse) lets an AI assistant discover databases and tables, inspect schemas, and run SQL queries against a ClickHouse cluster.
++DROP TABLE t_ttl_expired_obj;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #134415** (2026-11-25): Backport #134050 to 26.11: Fix `LIKE` on a `String` sorting key column ignoring lightweight deletes and updates in patch parts (@robot-ch-test-poll4)
-- **PR #134412** (2026-11-25): Data lake fuzzer: do not drop a partition source column in the PyIceberg writer (@groeneai)
-- **PR #134409** (2026-11-25): Backport #129438 to 26.11: Keep sizes of Nested arrays when a column TTL resets a subcolumn (@robot-ch-test-poll4)
-- **PR #134405** (closed): Remove `eu-west-1` from Gen 2 availability (@Blargian)
-- **PR #134401** (2026-11-25): Backport #129581 to 26.10: Count references in the tupleElement default when pruning ARRAY JOIN columns (@robot-ch-test-poll3)
-- **PR #134386** (2026-11-25): Backport #131034 to 26.10: Fix TOO_SLOW in external aggregation overflow any tests (@robot-clickhouse)
+- **PR #134710** (2026-11-26): 26.3: Do not reuse `MacroExpansionInfo` for consecutive `expand` calls in queue storages (@PedroTadim)
+- **PR #134694** (2026-11-26): Backport #123268 to 26.9: Fix `if` over tuples when an element is `NULL` in both branches (@robot-clickhouse)
+- **PR #134693** (2026-11-26): Backport #123268 to 26.8: Fix `if` over tuples when an element is `NULL` in both branches (@robot-clickhouse)
+- **PR #134688** (closed): Fix per-statement column ordering in `MySQLDump` (@EscaperLL)
+- **PR #134687** (2026-11-26): Backport #132931 to 26.11: Validate the leaf types of Parquet variant columns (@robot-ch-test-poll4)
+- **PR #134675** (closed): Fix std::condition_variable lost-wakeup deadlock in KeeperReadThreadPool (@hemal9102)
 
 ---
 
@@ -1901,33 +1878,33 @@ Docs: Link the MCP overview to Loom shared memory
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in KeeperReadThreadPool.cpp
+## X. Empirical Invariant Guard in 05507_mv_source_merge_loop_executable_crash.sh
 
 **RULE**:
-When implementing operations in `src/Coordination/KeeperReadThreadPool.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/queries/0_stateless/05507_mv_source_merge_loop_executable_crash.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b88da85b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `072088d7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Coordination/KeeperReadThreadPool.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/queries/0_stateless/05507_mv_source_merge_loop_executable_crash.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            lock.lock();
-
+        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0), SETTINGS command_read_timeout = 30000)) AS value
+        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0), SETTINGS command_read_timeout = 30000)) AS value
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-
-            lock.lock();
+        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0))) AS value
+        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0))) AS value
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b88da85b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `072088d7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

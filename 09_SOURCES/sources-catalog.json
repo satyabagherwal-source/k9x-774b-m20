@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "577f5fcb9472a09fabd7712d310df0df908d626b4f2d38d30b1536c56bd2f734",
-    "lastHarvestedAt": "2026-11-22T20:55:59.677Z",
+    "contentHash": "4ff32246a3b2ba383bbf01305c3174662c20acfd70a1f90f32c9964f28689760",
+    "lastHarvestedAt": "2026-11-26T14:04:00.599Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "5666a698",
+    "sourceVersion": "3d80ecb8",
     "license": "Apache-2.0",
-    "contentHash": "3bf43c4fd8af50c2a8fa04c27e4132cedb6bb6bd06d3b6f9a6316255f92c6e95",
-    "lastHarvestedAt": "2026-11-25T06:02:59.836Z",
+    "contentHash": "6239bcf4b665504a0b2dc6a976f7a8c80b37f15df35cf7368994506f3a01dab7",
+    "lastHarvestedAt": "2026-11-26T14:04:02.897Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "dd2df86c",
+    "sourceVersion": "fc120870",
     "license": "MIT",
-    "contentHash": "d29e96e54662731e5c1b3b53b987516affe2fe73be061ab040b94af5d7aafa6e",
-    "lastHarvestedAt": "2026-11-26T09:12:29.125Z",
+    "contentHash": "c4dc07246ac4a6b0a9a81596243989e8b88faf6678dbb8dfa31bb12ed6bc05f3",
+    "lastHarvestedAt": "2026-11-26T14:04:12.612Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "b88da85b",
+    "sourceVersion": "327564b0",
     "license": "Apache-2.0",
-    "contentHash": "347610a96cf9e29230169a1711d807fe8c89eec87753f885997ab5838f23f1ea",
-    "lastHarvestedAt": "2026-11-25T12:48:05.090Z",
+    "contentHash": "c6802b61cc1f4bbdb6cd721657d69f634644edb3ff857edbec209f521fd0067c",
+    "lastHarvestedAt": "2026-11-26T14:04:17.151Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -12223,10 +12223,10 @@
     "repository": "wquguru/cicada",
     "platform": "github",
     "sourceUrl": "https://github.com/wquguru/cicada",
-    "sourceVersion": "8450cb9d",
+    "sourceVersion": "be9785d5",
     "license": "Apache-2.0",
-    "contentHash": "fe2db3ad11a1aa22a8bf8016a6f770e8a6b64bef8eab9f2c44bfe4e4e96ada86",
-    "lastHarvestedAt": "2026-11-21T06:13:53.379Z",
+    "contentHash": "3b2711e6fc0cf734aec343692419f932972c88b3862fa4ba26bd2c6351b0c283",
+    "lastHarvestedAt": "2026-11-26T14:04:08.603Z",
     "learningId": "learn-github-wquguru-cicada"
   },
   "heymrun-heym": {

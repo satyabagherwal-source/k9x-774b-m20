@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
   "source_version": "hf-comfy-org-qwen-image-2.1",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T20:55:59.957Z",
+  "timestamp": "2026-11-26T14:04:00.833Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) (Revision: `hf-comfy-o`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T20:55:59.957Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T14:04:00.833Z`  
 > **Learning ID**: `learn-huggingface-comfy-org-qwen-image-2-1`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T20:55:58.770Z  
+> **Harvest Timestamp**: 2026-11-26T14:03:59.931Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9274421 downloads | 1357 likes
+- **Stars / Engagement**: 8999407 downloads | 1375 likes
 
 ---
 

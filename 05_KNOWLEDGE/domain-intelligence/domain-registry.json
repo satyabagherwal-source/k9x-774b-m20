@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T13:55:32.925Z",
+  "last_updated": "2026-11-26T14:04:22.564Z",
   "total_records": 2753,
   "domains": {
     "A": {
@@ -8754,8 +8754,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "1e61ef1f317055a2cfe8dad9010e2676fd51cc4b20f8d4eda6b0a6f4d6c4d27f",
-      "created_at": "2026-11-25T12:48:05.519Z"
+      "content_hash": "3d4ccd6c8d941e60f6fb889d7b35569f7b5c09fdd5461fa2f24eacfc7855a6e9",
+      "created_at": "2026-11-26T14:04:17.599Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -9312,8 +9312,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Qwen-Image-2.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-research-knowledge-intelligence-comfy-org-qwen-image.md",
       "repository": "Comfy-Org/Qwen-Image-2.1",
-      "content_hash": "9bdb7ffe72afaf61998738456c1c1946043f25a1eb6852d5a722ec166c42b32e",
-      "created_at": "2026-11-22T20:55:59.958Z"
+      "content_hash": "adaec81b3032fe38bae69417ac63ec119532b3e225f70666da337aa531803f83",
+      "created_at": "2026-11-26T14:04:00.834Z"
     },
     "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants",
@@ -9381,8 +9381,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-qwen-image-2.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-comfy-o.md",
       "repository": "hf-comfy-org-qwen-image-2.1-learnings",
-      "content_hash": "f725d04e50e986c5ed439e25b28784e9b338c6650ef6058c1e90b78025ba6579",
-      "created_at": "2026-11-22T20:56:14.635Z"
+      "content_hash": "24e69cb7fe4ef26ba2921e65d1c29b3c2d2331ec9b134f4f46c3a9b81efe4010",
+      "created_at": "2026-11-26T14:04:21.848Z"
     },
     "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants",
@@ -16102,8 +16102,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "fe10febc13fa7bc55c650d18ffbdb5ea35930770a0af41369f441b3e18749544",
-      "created_at": "2026-11-26T09:12:29.662Z"
+      "content_hash": "8035e34a0b0e13669a1364945db3b1daa3067aef2c7c0594bcba44106bef196e",
+      "created_at": "2026-11-26T14:04:13.078Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -18710,8 +18710,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "cbb27bd5f750c95b56de329cb103944b0da122e80827b53f629ef1f66527c91c",
-      "created_at": "2026-11-25T06:03:00.271Z"
+      "content_hash": "d7a341c8942a0de866e82b3aa3245ead4969e4304663cebe4be81d0fa095102e",
+      "created_at": "2026-11-26T14:04:03.370Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -18719,8 +18719,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "75a30a05d05214a1ab5a20d4f1aa4feb8ae8d6f6ca161c2d0d422748688e8238",
-      "created_at": "2026-11-25T06:03:10.338Z"
+      "content_hash": "226e7438e05bca1c69c6ed9217af6b56c4a4887a97845953cb03f5f70f27d422",
+      "created_at": "2026-11-26T14:04:21.240Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -25164,8 +25164,8 @@
       "title": "Architecture Intelligence: wquguru/cicada Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wquguru-cicada-architecture-intelligence-wquguru-cicada-core-invariants.md",
       "repository": "wquguru/cicada",
-      "content_hash": "07a48b2f01d99f948e70997931759f2c436f420bc85691043480a00b37d31d3d",
-      "created_at": "2026-11-21T06:13:53.754Z"
+      "content_hash": "b1ff52e12284b601cc05f97e7c48aa40bcd9fa0421fc1cc406d0e4c6efb6c933",
+      "created_at": "2026-11-26T14:04:09.073Z"
     },
     "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants",
@@ -25182,8 +25182,8 @@
       "title": "Architecture Intelligence: wquguru-cicada-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wquguru-cicada-learnings-architecture-intelligence-wquguru-cicada-learnings-core.md",
       "repository": "wquguru-cicada-learnings",
-      "content_hash": "42021e72a4ae27ecc0021dca24a2004ddd54ed0c7ed3ec1075a5beebcf7f1e39",
-      "created_at": "2026-11-21T06:14:04.835Z"
+      "content_hash": "208052ede026d12e9b67c3ed717729a32aa29f8104061910220fa2b9d2bfdc09",
+      "created_at": "2026-11-26T14:04:22.564Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-css-select-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-css-select-core-invariants",

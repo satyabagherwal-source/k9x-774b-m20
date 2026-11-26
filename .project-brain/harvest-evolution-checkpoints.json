@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:55:33.311Z",
+  "last_updated": "2026-11-26T14:04:22.957Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -293,7 +293,7 @@
       "staged_for_review": 1
     },
     "max-sixty-worktrunk-learnings.md": {
-      "processed_at": "2026-11-25T06:03:09.781Z",
+      "processed_at": "2026-11-26T14:04:20.675Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1578,7 +1578,7 @@
       "staged_for_review": 1
     },
     "wquguru-cicada-learnings.md": {
-      "processed_at": "2026-11-21T06:14:04.417Z",
+      "processed_at": "2026-11-26T14:04:22.086Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1983,7 +1983,7 @@
       "staged_for_review": 0
     },
     "hf-comfy-org-qwen-image-2.1-learnings.md": {
-      "processed_at": "2026-11-22T20:56:14.346Z",
+      "processed_at": "2026-11-26T14:04:21.620Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3978,7 +3978,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4536,
+  "total_dossiers_evaluated": 4539,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3422
+  "total_staged_for_review": 3424
 }

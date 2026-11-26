@@ -13445,3 +13445,8 @@ Every entry in this ledger must capture:
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `7d074972` | Multi-dimensional audit evidence | 2026-11-26T13:55:18.968Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `c330d437` | Multi-dimensional audit evidence | 2026-11-26T13:55:25.116Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `c826f8f7` | Multi-dimensional audit evidence | 2026-11-26T13:55:27.425Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-26T14:04:00.599Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `3d80ecb8` | Multi-dimensional audit evidence | 2026-11-26T14:04:02.897Z |
+| `learn-github-wquguru-cicada` | `https://github.com/wquguru/cicada` | `be9785d5` | Multi-dimensional audit evidence | 2026-11-26T14:04:08.603Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `fc120870` | Multi-dimensional audit evidence | 2026-11-26T14:04:12.612Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `327564b0` | Multi-dimensional audit evidence | 2026-11-26T14:04:17.151Z |

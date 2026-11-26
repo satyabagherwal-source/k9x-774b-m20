@@ -13412,3 +13412,8 @@
 | `CYCLE-20261126-79DG` | `2026-11-26T13:55:18.964Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10545` | Yes (`a2f2e44c...`) |
 | `CYCLE-20261126-7E49` | `2026-11-26T13:55:25.113Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10696` | Yes (`29ba5ab7...`) |
 | `CYCLE-20261126-7FWD` | `2026-11-26T13:55:27.421Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10697` | Yes (`fae6131f...`) |
+| `CYCLE-20261126-IFV7` | `2026-11-26T14:04:00.595Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`4ff32246...`) |
+| `CYCLE-20261126-IHN0` | `2026-11-26T14:04:02.892Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10698` | Yes (`6239bcf4...`) |
+| `CYCLE-20261126-IM1I` | `2026-11-26T14:04:08.598Z` | `wquguru/cicada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10699` | Yes (`3b2711e6...`) |
+| `CYCLE-20261126-IP4V` | `2026-11-26T14:04:12.607Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10700` | Yes (`c4dc0724...`) |
+| `CYCLE-20261126-ISMY` | `2026-11-26T14:04:17.146Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10701` | Yes (`c6802b61...`) |

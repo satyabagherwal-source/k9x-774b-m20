@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `dd2df86c`  
+> **Source Version**: `fc120870`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T09:12:28.170Z  
+> **Timestamp**: 2026-11-26T14:04:11.372Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T09:12:28.164Z  
+> **Harvest Timestamp**: 2026-11-26T14:04:11.367Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33308 stars
+- **Stars / Engagement**: 33317 stars
 
 ---
 
@@ -1658,95 +1658,572 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd2df86c` (2026-11-26)
-**Commit Message**: Merge pull request #8110 from projectdiscovery/bump-goja-fixes
+### Incident Patch 1: `fc120870` (2026-11-26)
+**Commit Message**: use the configured HTTP client in reporting and verify TLS (#8038)
 
-bump goja to pick up the nesting depth limit and the context argument fix
+* tracker client
 
-**File**: `go.mod` (modified, +2/-2)
+* tls verify
+
+* tls dialer
+
+* all trackers
+
+* review fixes
+
+* unwrap sharing
+
+**File**: `pkg/protocols/http/httpcache/httpcache.go` (modified, +6/-0)
 ```diff
-@@ -85,7 +85,7 @@ require (
- 	github.com/projectdiscovery/gcache v0.0.0-20241015120333-12546c6e3f4c
- 	github.com/projectdiscovery/goflags v0.2.1
- 	github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb
--	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
-+	github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed
- 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
- 	github.com/projectdiscovery/gologger v1.1.76
- 	github.com/projectdiscovery/gostruct v0.0.2
-@@ -234,7 +234,7 @@ require (
- 	github.com/dimchansky/utfbom v1.1.1 // indirect
- 	github.com/distribution/reference v0.6.0 // indirect
- 	github.com/djherbis/times v1.6.0 // indirect
--	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
-+	github.com/dlclark/regexp2/v2 v2.11.0 // indirect
- 	github.com/docker/cli v29.2.0+incompatible // indirect
- 	github.com/docker/go-connections v0.7.0 // indirect
- 	github.com/dop251/goja v0.0.0-20260311135729-065cd970411c // indirect
+@@ -122,6 +122,12 @@ func newCachingTransport(base *cache.Transport, next http.RoundTripper) *transpo
+ 	return &transport{cache: base.WithNext(originMarker{next: next}), next: next}
+ }
+ 
++// Unwrap returns the transport the cache wraps, so code that must not use the
++// cache, such as reporting clients that need TLS verification, can reach it.
++func (t *transport) Unwrap() http.RoundTripper {
++	return t.next
++}
++
+ // carriesIdentity reports whether req has a credential or browser-origin
+ // field the cache key does not include. Header keys are compared
+ // case-insensitively because a builder can store a non-canonical key.
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `pkg/protocols/http/httpcache/httpcache_test.go` (modified, +23/-0)
 ```diff
-@@ -356,8 +356,8 @@ github.com/djherbis/times v1.6.0 h1:w2ctJ92J8fBvWPxugmXIv7Nz7Q3iDMKNx9v5ocVH20c=
- github.com/djherbis/times v1.6.0/go.mod h1:gOHeRAz2h+VJNZ5Gmc/o7iD9k4wW7NMVqieYCY99oc0=
- github.com/dlclark/regexp2 v1.11.5 h1:Q/sSnsKerHeCkc/jSTNq1oCm7KiVgUMZRDUoRu0JQZQ=
- github.com/dlclark/regexp2 v1.11.5/go.mod h1:DHkYz0B9wPfa6wondMfaivmHpzrQ3v9q8cnmRbL6yW8=
--github.com/dlclark/regexp2/v2 v2.2.1 h1:mf4KkFUj0gJuarK8P+LgiS+Lit7m9N1yAwEfPbee7R0=
--github.com/dlclark/regexp2/v2 v2.2.1/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
-+github.com/dlclark/regexp2/v2 v2.11.0 h1:z5uRPHav+eTVpoffDSuUP2KPS4f1ONZaPDK73S8HA0w=
-+github.com/dlclark/regexp2/v2 v2.11.0/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
- github.com/docker/cli v29.2.0+incompatible h1:9oBd9+YM7rxjZLfyMGxjraKBKE4/nVyvVfN4qNl9XRM=
- github.com/docker/cli v29.2.0+incompatible/go.mod h1:JLrzqnKDaYBop7H2jaqPtU4hHvMKP+vjCwu2uszcLI8=
- github.com/docker/go-connections v0.7.0 h1:6SsRfJddP22WMrCkj19x9WKjEDTB+ahsdiGYf0mN39c=
-@@ -943,8 +943,8 @@ github.com/projectdiscovery/goflags v0.2.1 h1:XnSYvsCjUwHbZaaJUZ3YznCJPoXRk/IhTF
- github.com/projectdiscovery/goflags v0.2.1/go.mod h1:7nAP1r2Dqgn/rwmOE3EWbZWUCEJKNIhVSBGpuzJAIns=
- github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb h1:+L1yW2PblRHSSHQRTmvxLkGDPZnM52N62oeBd2xHKF0=
- github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb/go.mod h1:bfgULaYf+6pjjcLCekpXIYElnLJbmhvTttxMAbQJvhY=
--github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c h1:4H/CfVNlue9PIwsCM1IGxOynDI7cir+emXuDvGJTLJs=
--github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c/go.mod h1:SO0AP+uKfYeeoR6jyVH/PKRYJE/f5gJrPMAM00iGEMc=
-+github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed h1:h6aBYgIrjnapch77HWnpCPPz+bTU2OMfWOrr1fr0knA=
-+github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed/go.mod h1:sjYPrVMMCZNujHasGmCZGs3Hx8DymbJA2plsJjlC3LA=
- github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d h1:fqqH9LHpN2WDz9QuxFrhKNxXSRtzk+Sa6jAhbB7tXcQ=
- github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d/go.mod h1:Ezmbgdaw4EunGGBU4MQViLoGMJc37LA3ip55YV3KeRI=
- github.com/projectdiscovery/gologger v1.1.76 h1:QeIZ2VT9ZdRNx+XBuE7XkH3S33plPYtKA4l/TgsSsks=
+@@ -1,6 +1,7 @@
+ package httpcache
+ 
+ import (
++	"crypto/tls"
+ 	"errors"
+ 	"fmt"
+ 	"io"
+@@ -11,6 +12,7 @@ import (
+ 	"sync/atomic"
+ 	"testing"
+ 
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/tlsverify"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/httpbody"
+ 	"go.dw1.io/x/net/http/cache"
+ )
+@@ -382,3 +384,24 @@ func bodyOf(t *testing.T, resp *http.Response) string {
+ 	}
+ 	return string(body)
+ }
++
++// Reporting clients send tokens, so tlsverify must reach the scan transport
++// under the cache wrapper and turn certificate verification on.
++func TestTransportWrapperUnwrapsForTLSVerification(t *testing.T) {
++	c, err := cache.New(nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	base := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
++	var wrapped http.RoundTripper = newCachingTransport(c, base)
++	u, ok := wrapped.(interface{ Unwrap() http.RoundTripper })
++	if !ok || u.Unwrap() != base {
++		t.Fatal("the cache wrapper does not unwrap to the scan transport")
++	}
++
++	got, ok := tlsverify.Client(&http.Client{Transport: wrapped}).Transport.(*http.Transport)
++	if !ok || got.TLSClientConfig.InsecureSkipVerify {
++		t.Fatal("tlsverify did not turn verification on under the cache wrapper")
++	}
++}
 ```
 
-**File**: `pkg/js/compiler/goja_regression_test.go` (added, +33/-0)
+**File**: `pkg/protocols/http/httpclientpool/clientpool.go` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,33 @@
-+package compiler
+@@ -166,6 +166,11 @@ func (t *connTrackingTransport) RoundTrip(req *http.Request) (*http.Response, er
+ 	return resp, err
+ }
+ 
++// Unwrap returns the underlying transport.
++func (t *connTrackingTransport) Unwrap() http.RoundTripper {
++	return t.base
++}
++
+ func (t *connTrackingTransport) CloseIdleConnections() {
+ 	type closeIdler interface{ CloseIdleConnections() }
+ 	if ci, ok := t.base.(closeIdler); ok {
+```
+
+**File**: `pkg/protocols/http/httpclientpool/shared_responses.go` (modified, +6/-0)
+```diff
+@@ -124,6 +124,12 @@ func (t *sharingTransport) RoundTrip(req *http.Request) (*http.Response, error)
+ 	return entry.response.copyFor(req), nil
+ }
+ 
++// Unwrap returns the underlying transport, so reporting clients that need TLS
++// verification reach the scan transport and never share responses.
++func (t *sharingTransport) Unwrap() http.RoundTripper {
++	return t.base
++}
++
+ func (t *sharingTransport) CloseIdleConnections() {
+ 	type closeIdler interface{ CloseIdleConnections() }
+ 	if ci, ok := t.base.(closeIdler); ok {
+```
+
+**File**: `pkg/protocols/http/httpclientpool/shared_responses_test.go` (modified, +13/-0)
+```diff
+@@ -3,6 +3,7 @@ package httpclientpool
+ import (
+ 	"container/list"
+ 	"context"
++	"crypto/tls"
+ 	"errors"
+ 	"fmt"
+ 	"io"
+@@ -14,6 +15,7 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/tlsverify"
+ 	"github.com/projectdiscovery/retryablehttp-go"
+ 	"github.com/projectdiscovery/useragent"
+ 	"github.com/stretchr/testify/require"
+@@ -306,3 +308,14 @@ func TestSharedResponsesDoNotKeepShortReads(t *testing.T) {
+ 	_ = second.Body.Close()
+ 	require.EqualValues(t, 2, base.hits.Load(), "a short read is not reused")
+ }
++
++// Reporting clients send tokens, so tlsverify must reach the scan transport
++// under the sharing wrapper and turn certificate verification on.
++func TestSharingTransportUnwrapsForTLSVerification(t *testing.T) {
++	base := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
++	wrapped := newSharingTransport(&connTrackingTransport{base: base})
++
++	got, ok := tlsverify.Client(&http.Client{Transport: wrapped}).Transport.(*http.Transport)
++	require.True(t, ok, "tlsverify did not reach the scan transport under the sharing wrapper")
++	require.False(t, got.TLSClientConfig.InsecureSkipVerify)
++}
+```
+
+**File**: `pkg/reporting/reporting.go` (modified, +13/-0)
+```diff
+@@ -21,13 +21,15 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/pdf"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/sarif"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/splunk"
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/tlsverify"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/filters"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/gitea"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/github"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/gitlab"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/jira"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/linear"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/yaml"
++	"github.com/projectdiscovery/retryablehttp-go"
+ 	"github.com/projectdiscovery/utils/errkit"
+ 	fileutil "github.com/projectdiscovery/utils/file"
+ 	"go.uber.org/multierr"
+@@ -77,6 +79,17 @@ type IssueTrackerStats struct {
+ func New(options *Options, db string, doNotDedupe bool) (Client, error) {
+ 	client := &ReportingClient{options: options}
+ 
++	// The caller can pass the scan client, which skips TLS verification;
++	// trackers and exporters send tokens and passwords, so they get a copy
++	// that verifies certificates.
++	if options.HttpClient != nil && options.HttpClient.HTTPClient != nil {
++		if hc := tlsverify.Client(options.HttpClient.HTTPClient); hc != options.HttpClient.HTTPClient {
++			opts := retryablehttp.DefaultOptionsSingle
++			opts.Timeout = hc.Timeout // keep the caller's timeout, also when it is 0
++			options.HttpClient = retryablehttp.NewWithHTTPClient(hc, opts)
++		}
++	}
++
+ 	if options.GitHub != nil {
+ 		options.GitHub.HttpClient = options.HttpClient
+ 		options.GitHub.OmitRaw = options.OmitRaw
+```
+
+**File**: `pkg/reporting/reporting_tls_test.go` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
++package reporting_test
 +
 +import (
-+	"strings"
++	"io"
++	"net"
++	"net/http"
++	"net/http/httptest"
++	"sync/atomic"
 +	"testing"
 +
++	"github.com/projectdiscovery/nuclei/v3/pkg/model"
++	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpclientpool"
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting"
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/es"
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/exporters/splunk"
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/gitea"
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/github"
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/gitlab"
++	"github.com/projectdiscovery/nuclei/v3/pkg/reporting/trackers/jira"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// A Set that contains itself used to overflow the Go stack on export and kill the process.
-+func TestExecuteSelfReferencingSetResult(t *testing.T) {
-+	result, err := executeScript(t, t.Name(), false, `var s = new Set(); s.add(s); s`)
++// connectProxy tunnels every CONNECT to target, whatever host the client asked
++// for, so no name is resolved and nothing leaves 127.0.0.1.
++func connectProxy(t *testing.T, target string) *httptest.Server {
++	p := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Method != http.MethodConnect {
++			http.Error(w, "connect only", http.StatusMethodNotAllowed)
++			return
++		}
++		up, err := net.Dial("tcp", target)
++		if err != nil {
++			http.Error(w, err.Error(), http.StatusBadGateway)
++			return
++		}
++		c, _, err := w.(http.Hijacker).Hijack()
++		if err != nil {
++			_ = up.Close()
++			return
++		}
++		_, _ = c.Write([]byte("HTTP/1.1 200 Connection established\r\n\r\n"))
++		go func() { _, _ = io.Copy(up, c); _ = up.Close() }()
++		go func() { _, _ = io.Copy(c, up); _ = c.Close() }()
++	}))
++	t.Cleanup(p.Close)
++	return p
++}
++
++// With -pi and a proxy, the runner gives reporting the scan client, which skips
++// TLS verification. No tracker or exporter may send its secret to a server with
++// an untrusted certificate.
++func TestNewVerifiesTLSWithScanClient(t *testing.T) {
++	var hits atomic.Int32
++	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		hits.Add(1)
++		w.WriteHeader(http.StatusUnauthorized)
++	}))
++	t.Cleanup(srv.Close)
++	proxy := connectProxy(t, srv.Listener.Addr().String())
++
++	opts := types.DefaultOptions()
++	opts.SetExecutionID("reporting-tls-test")
++	opts.ProxyInternal = true
++	opts.AliveHttpProxy = proxy.URL
++	require.NoError(t, protocolstate.Init(opts))
++	t.Cleanup(func() { protocolstate.Close(opts.ExecutionId) })
++	scanClient, err := httpclientpool.Get(opts, &httpclientpool.Configuration{}, "")
 +	require.NoError(t, err)
-+	require.NotNil(t, result["response"])
++
++	event := &output.ResultEvent{
++		TemplateID: "test-template",
++		Host:       "https://target.example",
++		Matched:    "https://target.example/",
++		Info:       model.Info{Name: "test", SeverityHolder: severity.Holder{Severity: severity.High}},
++	}
++	configs := map[string]*reporting.Options{
++		"github":        {GitHub: &github.Options{BaseURL: "https://github.victim.example/", Username: "u", Owner: "o", ProjectName: "r", Token: "test-token"}},
++		"gitlab":        {GitLab: &gitlab.Options{BaseURL: "https://gitlab.victim.example/", Username: "u", Token: "test-token", ProjectName: "1"}},
++		"gitea":         {Gitea: &gitea.Options{BaseURL: "https://gitea.victim.example/", Token: "test-token", ProjectOwner: "o", ProjectName: "r"}},
++		"jira":          {Jira: &jira.Options{Cloud: true, URL: "https://jira.victim.example", AccountID: "a", Email: "u@victim.example", Token: "test-token", ProjectName: "P", IssueType: "Bug"}},
++		"elasticsearch": {ElasticsearchExporter: &es.Options{Host: "es.victim.example", Port: 443, SSL: true, Username: "u", Password: "test-password", IndexName: "n"}},
++		"splunk":        {SplunkExporter: &splunk.Options{Host: "splunk.victim.example", Port: 443, SSL: true, Token: "test-token", IndexName: "n"}},
++	}
++	for name, ro := range configs {
++		ro.HttpClient = scanClient
++		ro.ExecutionId = opts.ExecutionId
++		client, err := reporting.New(ro, "", true)
++		if err == nil {
++			_ = client.CreateIssue(event)
++			client.Close()
++		}
++		require.Zero(t, hits.Load(), "%s sent a request to a server with an untrusted certificate", name)
++	}
++}
+```
+
+**File**: `pkg/reporting/tlsverify/tlsverify.go` (added, +68/-0)
+```diff
+@@ -0,0 +1,68 @@
++// Package tlsverify gives trackers and exporters an HTTP client that verifies
++// TLS certificates, since they send tokens and passwords.
++package tlsverify
++
++import (
++	"crypto/tls"
++	"errors"
++	"net/http"
++)
++
++// errTLSDialerOnly is returned when a transport dials HTTPS only through a
++// custom TLS dialer: dropping that dialer would also drop its route or address
++// policy, so the copy refuses requests instead.
++var errTLSDialerOnly = errors.New("tlsverify: the transport has a custom TLS dialer and no DialContext, so certificate verification cannot be enforced")
++
++type refusingTransport struct{}
++
++func (refusingTransport) RoundTrip(*http.Request) (*http.Response, error) {
++	return nil, errTLSDialerOnly
 +}
 +
-+// Deeply nested source used to overflow the Go stack in the parser.
-+func TestCompileDeepNesting(t *testing.T) {
-+	const n = 1000000
-+	_, err := SourceAutoMode(strings.Repeat("(", n)+"a"+strings.Repeat(")", n), false)
-+	require.ErrorContains(t, err, "Maximum nesting depth exceeded")
++// Client returns c, or a copy of c whose transport verifies TLS certificates
++// when c can skip verification (the scan client can). The copy keeps the proxy
++// and the dialer, so the address policy still applies, but it drops a custom
++// TLS dialer, because that dialer can use the scan TLS config. So the token
++// never goes over an unverified connection.
++//
++// A transport with an Unwrap() http.RoundTripper method declares that its
++// RoundTrip only observes or caches requests and enforces no policy; the copy
++// uses the unwrapped transport. Other transports are returned unchanged.
++func Client(c *http.Client) *http.Client {
++	rt := c.Transport
++	for {
++		u, ok := rt.(interface{ Unwrap() http.RoundTripper })
++		if !ok {
++			break
++		}
++		rt = u.Unwrap()
++	}
++	t, ok := rt.(*http.Transport)
++	if !ok {
++		return c
++	}
++	insecure := t.TLSClientConfig != nil && t.TLSClientConfig.InsecureSkipVerify
++	tlsDialer := t.DialTLSContext != nil || t.DialTLS != nil //nolint:staticcheck // DialTLS is deprecated but still used
++	if !insecure && !tlsDialer {
++		return c
++	}
++	copied := *c
++	if tlsDialer && t.DialContext == nil && t.Dial == nil { //nolint:staticcheck // Dial is deprecated but still used
++		copied.Transport = refusingTransport{}
++		return &copied
++	}
++	verifying := t.Clone()
++	verifying.DialTLSContext = nil
++	verifying.DialTLS = nil //nolint:staticcheck // DialTLS is deprecated but still used
++	if insecure {
++		// Keep the caller's roots, client certificates and checks; the server
++		// name of the scan config belongs to a scan target, not to this host.
++		verifying.TLSClientConfig.InsecureSkipVerify = false
++		verifying.TLSClientConfig.ServerName = ""
++		if verifying.TLSClientConfig.MinVersion < tls.VersionTLS12 {
++			verifying.TLSClientConfig.MinVersion = tls.VersionTLS12
++		}
++	}
++	copied.Transport = verifying
++	return &copied
 +}
-+
-+// A context-first Go function called with fewer arguments used to panic in reflect.
-+// The missing port must reach GetServerInfo as 0, so its dial error names 127.0.0.1:0.
-+func TestContextFunctionMissingArguments(t *testing.T) {
-+	result, err := executeScript(t, t.Name(), false, `require("nuclei/redis").GetServerInfo("127.0.0.1")`)
-+	require.ErrorContains(t, err, "127.0.0.1:0")
-+	errText, _ := result["error"].(string)
-+	require.Contains(t, errText, "127.0.0.1:0")
-+	require.NotContains(t, errText, "reflect")
-+	require.NotContains(t, errText, "panic")
-+}
+```
+
+---
+
+### Incident Patch 2: `6bfd9dfa` (2026-11-26)
+**Commit Message**: Switch to projectdiscovery rod fork (#8127)
+
+* rod module
+
+* bump rod
+
+* bump rod
+
+* bump rod
+
+* bump rod
+
+**File**: `go.mod` (modified, +2/-6)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/projectdiscovery/nuclei/v3
+ 
+-go 1.27.3
++go 1.27.4
+ 
+ require (
+ 	carvel.dev/ytt v0.52.0
+@@ -46,7 +46,6 @@ require (
+ 	github.com/go-pdf/fpdf v0.9.0
+ 	github.com/go-pg/pg/v10 v10.15.0
+ 	github.com/go-playground/validator/v10 v10.26.0
+-	github.com/go-rod/rod v0.116.2
+ 	github.com/go-sql-driver/mysql v1.10.0
+ 	github.com/gobwas/ws v1.4.0
+ 	github.com/goccy/go-json v0.10.5
+@@ -101,6 +100,7 @@ require (
+ 	github.com/projectdiscovery/rawhttp v0.3.1
+ 	github.com/projectdiscovery/retryabledns v1.0.119
+ 	github.com/projectdiscovery/retryablehttp-go v1.3.35
++	github.com/projectdiscovery/rod v0.116.3-0.20261113214723-dd0abeca2a24
+ 	github.com/projectdiscovery/sarif v0.1.0
+ 	github.com/projectdiscovery/tlsx v1.5.0
+ 	github.com/projectdiscovery/uncover v1.2.1
+@@ -425,11 +425,7 @@ require (
+ 	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
+ 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+ 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
+-	github.com/ysmood/fetchup v0.2.3 // indirect
+-	github.com/ysmood/goob v0.4.0 // indirect
+-	github.com/ysmood/got v0.40.0 // indirect
+ 	github.com/ysmood/gson v0.7.3 // indirect
+-	github.com/ysmood/leakless v0.9.0 // indirect
+ 	github.com/yuin/goldmark v1.8.6 // indirect
+ 	github.com/yuin/goldmark-emoji v1.0.6 // indirect
+ 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
+```
+
+**File**: `go.sum` (modified, +6/-12)
+```diff
+@@ -491,8 +491,6 @@ github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJn
+ github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
+ github.com/go-playground/validator/v10 v10.26.0 h1:SP05Nqhjcvz81uJaRfEV0YBSSSGMc/iMaVtFbr3Sw2k=
+ github.com/go-playground/validator/v10 v10.26.0/go.mod h1:I5QpIEbmr8On7W0TktmJAumgzX4CA1XNl4ZmDuVHKKo=
+-github.com/go-rod/rod v0.116.2 h1:A5t2Ky2A+5eD/ZJQr1EfsQSe5rms5Xof/qj296e+ZqA=
+-github.com/go-rod/rod v0.116.2/go.mod h1:H+CMO9SCNc2TJ2WfrG+pKhITz57uGNYU43qYHh438Mg=
+ github.com/go-sourcemap/sourcemap v2.1.4+incompatible h1:a+iTbH5auLKxaNwQFg0B+TCYl6lbukKPc7b5x0n1s6Q=
+ github.com/go-sourcemap/sourcemap v2.1.4+incompatible/go.mod h1:F8jJfvm2KbVjc5NqelyYJmf/v5J0dwNLS2mL4sNA1Jg=
+ github.com/go-sql-driver/mysql v1.10.0 h1:Q+1LV8DkHJvSYAdR83XzuhDaTykuDx0l6fkXxoWCWfw=
+@@ -981,6 +979,8 @@ github.com/projectdiscovery/retryabledns v1.0.119 h1:QljvfDIQ9qw3qtsgyl3g5dkW87R
+ github.com/projectdiscovery/retryabledns v1.0.119/go.mod h1:DzJqF5OpIgjSm4fR087gHSDYC05JsTRi1RTbbpvrJo8=
+ github.com/projectdiscovery/retryablehttp-go v1.3.35 h1:u4ZnTMh7ZE46buZRBrFL3Yyk0uCrDudcVOlT/VkDWGU=
+ github.com/projectdiscovery/retryablehttp-go v1.3.35/go.mod h1:+UvjTjyTxKJRfPgm023lb84MjAjpDT3jjs1ZO5KuAIE=
++github.com/projectdiscovery/rod v0.116.3-0.20261113214723-dd0abeca2a24 h1:Hot/bpOreHagjzK10d939dAzEuiDsbScyz/JQ4OTolA=
++github.com/projectdiscovery/rod v0.116.3-0.20261113214723-dd0abeca2a24/go.mod h1:FLVLMgXw6OFcOU5nd4Il8cdSWgDfAlDeRZMol3drmGs=
+ github.com/projectdiscovery/sarif v0.1.0 h1:O541T+a448nSJsmIMnXXSOeDQEzpnCAYvRfe0eG5h74=
+ github.com/projectdiscovery/sarif v0.1.0/go.mod h1:LBC+reM3bkI3qIIhE0rZaINaYX6VG+En6u2hHa5mA7E=
+ github.com/projectdiscovery/stringsutil v0.0.2 h1:uzmw3IVLJSMW1kEg8eCStG/cGbYYZAja8BH3LqqJXMA=
+@@ -1205,20 +1205,14 @@ github.com/yl2chen/cidranger v1.0.2 h1:lbOWZVCG1tCRX4u24kuM1Tb4nHqWkDxwLdoS+Seva
+ github.com/yl2chen/cidranger v1.0.2/go.mod h1:9U1yz7WPYDwf0vpNWFaeRh0bjwz5RVgRy/9UEQfHl0g=
+ github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 h1:ilQV1hzziu+LLM3zUTJ0trRztfwgjqKnBWNtSRkbmwM=
+ github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78/go.mod h1:aL8wCCfTfSfmXjznFBSZNN13rSJjlIOI1fUNAtF7rmI=
+-github.com/ysmood/fetchup v0.2.3 h1:ulX+SonA0Vma5zUFXtv52Kzip/xe7aj4vqT5AJwQ+ZQ=
+-github.com/ysmood/fetchup v0.2.3/go.mod h1:xhibcRKziSvol0H1/pj33dnKrYyI2ebIvz5cOOkYGns=
+-github.com/ysmood/goob v0.4.0 h1:HsxXhyLBeGzWXnqVKtmT9qM7EuVs/XOgkX7T6r1o1AQ=
+-github.com/ysmood/goob v0.4.0/go.mod h1:u6yx7ZhS4Exf2MwciFr6nIM8knHQIE22lFpWHnfql18=
+-github.com/ysmood/gop v0.2.0 h1:+tFrG0TWPxT6p9ZaZs+VY+opCvHU8/3Fk6BaNv6kqKg=
+-github.com/ysmood/gop v0.2.0/go.mod h1:rr5z2z27oGEbyB787hpEcx4ab8cCiPnKxn0SUHt6xzk=
+-github.com/ysmood/got v0.40.0 h1:ZQk1B55zIvS7zflRrkGfPDrPG3d7+JOza1ZkNxcc74Q=
+-github.com/ysmood/got v0.40.0/go.mod h1:W7DdpuX6skL3NszLmAsC5hT7JAhuLZhByVzHTq874Qg=
++github.com/ysmood/gop v0.4.2 h1:KtW1/RugapWs1iW9ynQdk52BK6TWdP9zC0qDOhW8EDE=
++github.com/ysmood/gop v0.4.2/go.mod h1:K4LAB/BdLArknXrVSy+DyXcfb8P85JwAtwYM8zlb0mU=
++github.com/ysmood/got v0.43.0 h1:bcHlKg+qnhFz5JxNZ+j4fIfxxB8WWjTh6qdqeS8FfZw=
++github.com/ysmood/got v0.43.0/go.mod h1:rsfH2KJ5rcS/5n9pmybIGodoHlT/NTYxjgh3ob7UdSU=
+ github.com/ysmood/gotrace v0.6.0 h1:SyI1d4jclswLhg7SWTL6os3L1WOKeNn/ZtzVQF8QmdY=
+ github.com/ysmood/gotrace v0.6.0/go.mod h1:TzhIG7nHDry5//eYZDYcTzuJLYQIkykJzCRIo4/dzQM=
+ github.com/ysmood/gson v0.7.3 h1:QFkWbTH8MxyUTKPkVWAENJhxqdBa4lYTQWqZCiLG6kE=
+ github.com/ysmood/gson v0.7.3/go.mod h1:3Kzs5zDl21g5F/BlLTNcuAGAYLKt2lV5G8D1zF3RNmg=
+-github.com/ysmood/leakless v0.9.0 h1:qxCG5VirSBvmi3uynXFkcnLMzkphdh3xx5FtrORwDCU=
+-github.com/ysmood/leakless v0.9.0/go.mod h1:R8iAXPRaG97QJwqxs74RdwzcRHT1SWCGTNqY8q0JvMQ=
+ github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
+ github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
+ github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
+```
+
+**File**: `pkg/protocols/common/protocolstate/headless.go` (modified, +2/-2)
+```diff
+@@ -7,10 +7,10 @@ import (
+ 	"strings"
+ 	"sync"
+ 
+-	"github.com/go-rod/rod"
+-	"github.com/go-rod/rod/lib/proto"
+ 	"github.com/projectdiscovery/networkpolicy"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/projectdiscovery/rod"
++	"github.com/projectdiscovery/rod/lib/proto"
+ 	"github.com/projectdiscovery/utils/errkit"
+ 	stringsutil "github.com/projectdiscovery/utils/strings"
+ 	urlutil "github.com/projectdiscovery/utils/url"
+```
+
+**File**: `pkg/protocols/common/protocolstate/memguardian_test.go` (modified, +2/-2)
+```diff
+@@ -15,7 +15,7 @@ func TestMemGuardianGoroutineLeak(t *testing.T) {
+ 	defer goleak.VerifyNone(t,
+ 		goleak.IgnoreAnyContainingPkg("go.opencensus.io/stats/view"),
+ 		goleak.IgnoreAnyContainingPkg("github.com/syndtr/goleveldb"),
+-		goleak.IgnoreAnyContainingPkg("github.com/go-rod/rod"),
++		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/rod"),
+ 		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/interactsh/pkg/server"),
+ 		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/ratelimit"),
+ 		// expirable LRU cache creates a background goroutine for TTL expiration that persists
+@@ -104,7 +104,7 @@ func TestMemGuardianReset(t *testing.T) {
+ 	defer goleak.VerifyNone(t,
+ 		goleak.IgnoreAnyContainingPkg("go.opencensus.io/stats/view"),
+ 		goleak.IgnoreAnyContainingPkg("github.com/syndtr/goleveldb"),
+-		goleak.IgnoreAnyContainingPkg("github.com/go-rod/rod"),
++		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/rod"),
+ 		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/interactsh/pkg/server"),
+ 		goleak.IgnoreAnyContainingPkg("github.com/projectdiscovery/ratelimit"),
+ 		// expirable LRU cache creates a background goroutine for TTL expiration that persists
+```
+
+**File**: `pkg/protocols/headless/engine/engine.go` (modified, +3/-3)
+```diff
+@@ -7,10 +7,10 @@ import (
+ 	"strings"
+ 	"sync"
+ 
+-	"github.com/go-rod/rod"
+-	"github.com/go-rod/rod/lib/launcher"
+-	"github.com/go-rod/rod/lib/launcher/flags"
+ 	"github.com/pkg/errors"
++	"github.com/projectdiscovery/rod"
++	"github.com/projectdiscovery/rod/lib/launcher"
++	"github.com/projectdiscovery/rod/lib/launcher/flags"
+ 
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+```
+
+**File**: `pkg/protocols/headless/engine/hijack.go` (modified, +2/-2)
+```diff
+@@ -5,8 +5,8 @@ package engine
+ import (
+ 	"encoding/base64"
+ 
+-	"github.com/go-rod/rod"
+-	"github.com/go-rod/rod/lib/proto"
++	"github.com/projectdiscovery/rod"
++	"github.com/projectdiscovery/rod/lib/proto"
+ )
+ 
+ // NewHijack create hijack from page.
+```
+
+**File**: `pkg/protocols/headless/engine/instance.go` (modified, +2/-2)
+```diff
+@@ -5,11 +5,11 @@ import (
+ 	"errors"
+ 	"time"
+ 
+-	"github.com/go-rod/rod"
+-	"github.com/go-rod/rod/lib/utils"
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/render"
++	"github.com/projectdiscovery/rod"
++	"github.com/projectdiscovery/rod/lib/utils"
+ )
+ 
+ // Instance is an isolated browser instance opened for doing operations with it.
+```
+
+**File**: `pkg/protocols/headless/engine/instance_test.go` (modified, +3/-3)
+```diff
+@@ -5,9 +5,9 @@ import (
+ 	"testing"
+ 	"time"
+ 
+-	"github.com/go-rod/rod"
+-	"github.com/go-rod/rod/lib/cdp"
+-	"github.com/go-rod/rod/lib/proto"
++	"github.com/projectdiscovery/rod"
++	"github.com/projectdiscovery/rod/lib/cdp"
++	"github.com/projectdiscovery/rod/lib/proto"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1775,30 +2252,33 @@ bump goja to pick up the nesting depth limit and the context argument fix
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in go.mod
+## X. use the configured HTTP client in reporting and verify TLS
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/http/httpcache/httpcache.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd2df86c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc120870`: use the configured HTTP client in reporting and verify TLS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/httpcache/httpcache.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed
-	github.com/dlclark/regexp2/v2 v2.11.0 // indirect
+// Unwrap returns the transport the cache wraps, so code that must not use the
+// cache, such as reporting clients that need TLS verification, can reach it.
+func (t *transport) Unwrap() http.RoundTripper {
+	return t.next
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
-	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd2df86c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc120870` are properly handled with clean fallback behavior.
