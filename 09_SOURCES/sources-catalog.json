@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "07e1d2e5",
+    "sourceVersion": "68c2c3ad",
     "license": "MIT",
-    "contentHash": "daff00187f711586e797cab064b347671759219a570951695cdc8efde89664e4",
-    "lastHarvestedAt": "2026-11-25T07:04:42.268Z",
+    "contentHash": "1cb0e6aa05252c8c2f798d254f08f5486280739ff279e0de5c80728909252496",
+    "lastHarvestedAt": "2026-11-26T08:22:44.729Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "caaa90bc",
+    "sourceVersion": "1413bf88",
     "license": "Apache-2.0",
-    "contentHash": "16eb885d8711eb4ea9157b34f9f1c087862d6c42069cad8e09df08f9b07b4b17",
-    "lastHarvestedAt": "2026-11-25T01:44:19.330Z",
+    "contentHash": "3f8da7855f37b0bdfa7449474e8b16344f9b3d8782e9cc224884dc28041ff74f",
+    "lastHarvestedAt": "2026-11-26T08:26:35.209Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {
@@ -12855,8 +12855,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy4-flash",
     "sourceVersion": "hf-tencent-hy4-flash",
     "license": "Open-Source",
-    "contentHash": "2f2be2c1dfdfefb8f0c5681740be21f5e8a530d7031cbe2dd66fb4b6c6f053ff",
-    "lastHarvestedAt": "2026-11-22T15:09:04.854Z",
+    "contentHash": "4eef8ac1cd302be31cb22c0a1bbfae6dec4b0a38e49161ac57bfb4e812dc9a63",
+    "lastHarvestedAt": "2026-11-26T08:22:14.916Z",
     "learningId": "learn-huggingface-tencent-hy4-flash"
   },
   "eclipse-theia-theia": {

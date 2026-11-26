@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T08:10:21.710Z",
+  "last_updated": "2026-11-26T08:26:35.226Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "daff00187f711586e797cab064b347671759219a570951695cdc8efde89664e4",
-      "verified_at": "2026-11-25T07:04:42.281Z",
+      "content_hash": "1cb0e6aa05252c8c2f798d254f08f5486280739ff279e0de5c80728909252496",
+      "verified_at": "2026-11-26T08:22:44.744Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T07:04:42.281Z"
+      "last_updated": "2026-11-26T08:22:44.744Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "16eb885d8711eb4ea9157b34f9f1c087862d6c42069cad8e09df08f9b07b4b17",
-      "verified_at": "2026-11-25T01:44:19.351Z",
+      "content_hash": "3f8da7855f37b0bdfa7449474e8b16344f9b3d8782e9cc224884dc28041ff74f",
+      "verified_at": "2026-11-26T08:26:35.226Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:44:19.351Z"
+      "last_updated": "2026-11-26T08:26:35.226Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",
@@ -19371,14 +19371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy4-flash",
-      "content_hash": "2f2be2c1dfdfefb8f0c5681740be21f5e8a530d7031cbe2dd66fb4b6c6f053ff",
-      "verified_at": "2026-11-22T15:09:04.862Z",
+      "content_hash": "4eef8ac1cd302be31cb22c0a1bbfae6dec4b0a38e49161ac57bfb4e812dc9a63",
+      "verified_at": "2026-11-26T08:22:14.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T15:09:04.862Z"
+      "last_updated": "2026-11-26T08:22:14.923Z"
     },
     "eclipse-theia/theia": {
       "repository": "eclipse-theia/theia",

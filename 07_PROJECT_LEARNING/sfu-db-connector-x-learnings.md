@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `07e1d2e5`  
+> **Source Version**: `68c2c3ad`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T07:04:41.216Z  
+> **Timestamp**: 2026-11-26T08:22:43.573Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T07:04:41.211Z  
+> **Harvest Timestamp**: 2026-11-26T08:22:14.455Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fastest library to load data from DB to DataFrames in Rust and Python
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2665 stars
+- **Stars / Engagement**: 2664 stars
 
 ---
 
@@ -923,537 +923,239 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f3475c5` (2026-11-24)
-**Commit Message**: fix(oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports
+### Incident Patch 1: `6dbb5f8c` (2026-11-25)
+**Commit Message**: Merge pull request #1125 from dbascoules/fix/oracle-timestamptz-offset
 
-Both Oracle -> Arrow transports declared `TimestampTz` columns as `DateTimeTz` (which holds `DateTime<Utc>`) while
-converting the values to `DateTimeWrapperMicro`, so reading any `TIMESTAMP WITH TIME ZONE` column into Arrow failed on
-the first row with `TypeCheckFailed("DateTimeTz(true)", "...DateTimeWrapperMicro")`. Map it to `DateTimeTzMicro`, as
-the Postgres and MSSQL transports do for their time-zone-aware types.
+fix(oracle): convert TIMESTAMP WITH TIME ZONE to UTC instead of dropping the offset
 
-Not covered so far: the only Rust Oracle test reads through the source parser, and the Python Oracle tests use the
-pandas destination, which has its own (correct) transport.
-
-Tests: type-mapping unit tests for both transports (they fail without the fix), and ignored integration tests reading
-`admin.test_types.test_timestamptz` through `get_arrow` and `new_record_batch_iter`. Values are unchanged: the
-wall-clock time, as the pandas destination returns it.
-
-**File**: `connectorx/src/transports/oracle_arrow.rs` (modified, +67/-1)
+**File**: `connectorx-python/connectorx/tests/test_oracle.py` (modified, +6/-6)
 ```diff
-@@ -50,7 +50,7 @@ impl_transport!(
-         { Date[NaiveDateTime]               => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion option }
-         { Timestamp[NaiveDateTime]          => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion none }
-         { TimestampNano[NaiveDateTime]      => Date64[NaiveDateTime]                    | conversion auto }
--        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
-+        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
-         { TimestampTzNano[DateTime<Utc>]    => DateTimeTz[DateTime<Utc>]                | conversion auto }
-         { Boolean[bool]                     => Boolean[bool]                            | conversion auto }
-     }
-@@ -67,3 +67,69 @@ impl TypeConversion<DateTime<Utc>, DateTimeWrapperMicro> for OracleArrowTranspor
-         DateTimeWrapperMicro(val)
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::typesystem::{Transport, TypeSystem};
-+
-+    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
-+    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
-+    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
-+    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
-+    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
-+    where
-+        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-+        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-+    {
-+        if nullable {
-+            ts.check::<Option<T>>().is_ok()
-+        } else {
-+            ts.check::<T>().is_ok()
-+        }
-+    }
-+
-+    #[test]
-+    fn date_and_time_types_hold_the_converted_values() {
-+        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
-+        for nullable in [true, false] {
-+            let tz = dst(OracleTypeSystem::TimestampTz(nullable));
-+            assert!(
-+                holds::<DateTimeWrapperMicro>(tz, nullable),
-+                "TIMESTAMP WITH TIME ZONE -> {tz:?}"
-+            );
-+
-+            let tz_nano = dst(OracleTypeSystem::TimestampTzNano(nullable));
-+            assert!(
-+                holds::<DateTime<Utc>>(tz_nano, nullable),
-+                "TIMESTAMP(7..9) WITH TIME ZONE -> {tz_nano:?}"
-+            );
-+
-+            for naive in [
-+                OracleTypeSystem::Date(nullable),
-+                OracleTypeSystem::Timestamp(nullable),
-+            ] {
-+                let ts = dst(naive);
-+                assert!(
-+                    holds::<NaiveDateTimeWrapperMicro>(ts, nullable),
-+                    "{naive:?} -> {ts:?}"
-+                );
-+            }
-+            let nano = dst(OracleTypeSystem::TimestampNano(nullable));
-+            assert!(
-+                holds::<NaiveDateTime>(nano, nullable),
-+                "TIMESTAMP(7..9) -> {nano:?}"
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn timestamp_with_time_zone_converts_at_microsecond_precision() {
-+        let utc = DateTime::from_timestamp_micros(944_074_800_123_456).unwrap();
-+        let converted: Option<DateTimeWrapperMicro> = <OracleArrowTransport as TypeConversion<
-+            Option<DateTime<Utc>>,
-+            Option<DateTimeWrapperMicro>,
-+        >>::convert(Some(utc));
-+        assert_eq!(converted.map(|w| w.0), Some(utc));
-+    }
-+}
+@@ -268,18 +268,18 @@ def test_oracle_types(oracle_url: str) -> None:
+             ),
+             "TEST_TIMESTAMPTZ": pd.Series(
+                 [
+-                    "1999-12-01 11:00:00",
+-                    "1899-12-01 11:00:00",
+-                        "9999-12-31 11:00:00",
++                    "1999-12-01 19:00:00",  # 11:00:00 -8:00
++                    "1899-12-01 10:00:00",  # 11:00:00 +1:00
++                        "9999-12-31 10:00:00",  # 11:00:00 +1:00
+                     None,
+                 ],
+                 dtype="datetime64[us]",
+             ),
+             "TEST_TIMESTAMPTZ9": pd.Series(
+                 [
+-                    "1999-12-01 11:00:00.987654321",
+-                    "1899-12-01 11:00:00.123456789",
+-                    "2021-01-01 03:04:05.999999999",
++                    "1999-12-01 19:00:00.987654321",  # -8:00
++                    "1899-12-01 10:00:00.123456789",  # +1:00
++                    "2021-01-01 02:04:05.999999999",  # +1:00
+                     None,
+                 ],
+                 dtype="datetime64[ns]",
 ```
 
-**File**: `connectorx/src/transports/oracle_arrowstream.rs` (modified, +67/-1)
+**File**: `connectorx/src/sources/oracle/mod.rs` (modified, +40/-11)
 ```diff
-@@ -50,7 +50,7 @@ impl_transport!(
-         { Date[NaiveDateTime]               => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion option }
-         { Timestamp[NaiveDateTime]          => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion none }
-         { TimestampNano[NaiveDateTime]      => Date64[NaiveDateTime]                    | conversion auto }
--        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
-+        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
-         { TimestampTzNano[DateTime<Utc>]    => DateTimeTz[DateTime<Utc>]                | conversion auto }
-         { Boolean[bool]                     => Boolean[bool]                            | conversion auto }
-     }
-@@ -67,3 +67,69 @@ impl TypeConversion<DateTime<Utc>, DateTimeWrapperMicro> for OracleArrowTranspor
-         DateTimeWrapperMicro(val)
-     }
+@@ -14,7 +14,7 @@ use crate::{
+     sql::{count_query, limit0_query_oracle, CXQuery},
+     utils::DummyBox,
+ };
+-use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
++use chrono::{DateTime, FixedOffset, NaiveDate, NaiveDateTime, Utc};
+ use fehler::{throw, throws};
+ use log::debug;
+ use r2d2::{Pool, PooledConnection};
+@@ -402,16 +402,35 @@ macro_rules! impl_produce_text {
+     };
  }
+ 
+-impl_produce_text!(
+-    i64,
+-    bool,
+-    f64,
+-    String,
+-    NaiveDate,
+-    NaiveDateTime,
+-    DateTime<Utc>,
+-    Vec<u8>,
+-);
++impl_produce_text!(i64, bool, f64, String, NaiveDate, NaiveDateTime, Vec<u8>,);
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::typesystem::{Transport, TypeSystem};
++// `TIMESTAMP WITH TIME ZONE`: rust-oracle's `FromSql for DateTime<Utc>` reads the wall-clock time as if it were UTC
++// and drops the offset (`11:00:00 -08:00` would become `11:00:00 UTC`). Read it with its offset, then convert.
++fn timestamp_tz_to_utc(value: DateTime<FixedOffset>) -> DateTime<Utc> {
++    value.with_timezone(&Utc)
++}
 +
-+    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
-+    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
-+    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
-+    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
-+    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
-+    where
-+        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-+        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-+    {
-+        if nullable {
-+            ts.check::<Option<T>>().is_ok()
-+        } else {
-+            ts.check::<T>().is_ok()
-+        }
-+    }
++impl<'r, 'a> Produce<'r, DateTime<Utc>> for OracleTextSourceParser<'a> {
++    type Error = OracleSourceError;
 +
-+    #[test]
-+    fn date_and_time_types_hold_the_converted_values() {
-+        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
-+        for nullable in [true, false] {
-+            let tz = dst(OracleTypeSystem::TimestampTz(nullable));
-+            assert!(
-+                holds::<DateTimeWrapperMicro>(tz, nullable),
-+                "TIMESTAMP WITH TIME ZONE -> {tz:?}"
-+            );
-+
-+            let tz_nano = dst(OracleTypeSystem::TimestampTzNano(nullable));
-+            assert!(
-+                holds::<DateTime<Utc>>(tz_nano, nullable),
-+                "TIMESTAMP(7..9) WITH TIME ZONE -> {tz_nano:?}"
-+            );
-+
-+            for naive in [
-+                OracleTypeSystem::Date(nullable),
-+                OracleTypeSystem::Timestamp(nullable),
-+            ] {
-+                let ts = dst(naive);
-+                assert!(
-+                    holds::<NaiveDateTimeWrapperMicro>(ts, nullable),
-+                    "{naive:?} -> {ts:?}"
-+                );
-+            }
-+            let nano = dst(OracleTypeSystem::TimestampNano(nullable));
-+            assert!(
-+                holds::<NaiveDateTime>(nano, nullable),
-+                "TIMESTAMP(7..9) -> {nano:?}"
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn timestamp_with_time_zone_converts_at_microsecond_precision() {
-+        let utc = DateTime::from_timestamp_micros(944_074_800_123_456).unwrap();
-+        let converted: Option<DateTimeWrapperMicro> = <OracleArrowTransport as TypeConversion<
-+            Option<DateTime<Utc>>,
-+            Option<DateTimeWrapperMicro>,
-+        >>::convert(Some(utc));
-+        assert_eq!(converted.map(|w| w.0), Some(utc));
++    #[throws(OracleSourceError)]
++    fn produce(&'r mut self) -> DateTime<Utc> {
++        let (ridx, cidx) = self.next_loc()?;
++        let value: DateTime<FixedOffset> = self.rowbuf[ridx].get(cidx)?;
++        timestamp_tz_to_utc(value)
 +    }
 +}
++
++impl<'r, 'a> Produce<'r, Option<DateTime<Utc>>> for OracleTextSourceParser<'a> {
++    type Error = OracleSourceError;
++
++    #[throws(OracleSourceError)]
++    fn produce(&'r mut self) -> Option<DateTime<Utc>> {
++        let (ridx, cidx) = self.next_loc()?;
++        let value: Option<DateTime<FixedOffset>> = self.rowbuf[ridx].get(cidx)?;
++        value.map(timestamp_tz_to_utc)
++    }
++}
+ 
+ // Manual implementation for Decimal since Oracle doesn't support it directly via FromSql
+ impl<'r, 'a> Produce<'r, Decimal> for OracleTextSourceParser<'a> {
+@@ -444,6 +463,16 @@ impl<'r, 'a> Produce<'r, Option<Decimal>> for OracleTextSourceParser<'a> {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn timestamp_with_time_zone_keeps_the_instant() {
++        let west = FixedOffset::west_opt(8 * 3600).unwrap();
++        let value = chrono::TimeZone::with_ymd_and_hms(&west, 1999, 12, 1, 11, 0, 0).unwrap();
++        assert_eq!(
++            timestamp_tz_to_utc(value).to_rfc3339(),
++            "1999-12-01T19:00:00+00:00"
++        );
++    }
++
+     #[test]
+     fn boolean_client_threshold() {
+         // versions as reported by `Version::client()` for the Instant Client zips
 ```
 
-**File**: `connectorx/tests/test_oracle.rs` (modified, +77/-0)
+**File**: `connectorx/tests/test_oracle.rs` (modified, +66/-13)
 ```diff
-@@ -52,3 +52,80 @@ fn test_types() {
-         rows
+@@ -53,21 +53,35 @@ fn test_types() {
      );
  }
+ 
+-/// `TIMESTAMP WITH TIME ZONE` values of `admin.test_types` (scripts/oracle.sql), sorted, NULL last. The source
+-/// returns the wall-clock time without applying the offset, as the pandas destination does (`test_oracle_types` in
+-/// connectorx-python): `1999-12-01 11:00:00 -8:00` reads as `1999-12-01 11:00:00`.
++/// UTC instants of `admin.test_types` (scripts/oracle.sql), sorted, NULL last, in microseconds or nanoseconds. The
++/// offset is applied: `1999-12-01 11:00:00 -8:00` is `1999-12-01 19:00:00 UTC`.
+ #[cfg(feature = "dst_arrow")]
+-fn expected_timestamptz() -> Vec<Option<i64>> {
++fn expected_instants(values: &[&str], nanos: bool) -> Vec<Option<i64>> {
+     use chrono::DateTime;
+-    [
+-        "1899-12-01T11:00:00Z",
+-        "1999-12-01T11:00:00Z",
+-        "9999-12-31T11:00:00Z",
+-    ]
+-    .iter()
+-    .map(|s| Some(DateTime::parse_from_rfc3339(s).unwrap().timestamp_micros()))
+-    .chain([None])
+-    .collect()
++    values
++        .iter()
++        .map(|s| {
++            let instant = DateTime::parse_from_rfc3339(s).unwrap();
++            Some(if nanos {
++                instant.timestamp_nanos_opt().unwrap()
++            } else {
++                instant.timestamp_micros()
++            })
++        })
++        .chain([None])
++        .collect()
++}
 +
-+/// `TIMESTAMP WITH TIME ZONE` values of `admin.test_types` (scripts/oracle.sql), sorted, NULL last. The source
-+/// returns the wall-clock time without applying the offset, as the pandas destination does (`test_oracle_types` in
-+/// connectorx-python): `1999-12-01 11:00:00 -8:00` reads as `1999-12-01 11:00:00`.
 +#[cfg(feature = "dst_arrow")]
 +fn expected_timestamptz() -> Vec<Option<i64>> {
-+    use chrono::DateTime;
-+    [
-+        "1899-12-01T11:00:00Z",
-+        "1999-12-01T11:00:00Z",
-+        "9999-12-31T11:00:00Z",
-+    ]
-+    .iter()
-+    .map(|s| Some(DateTime::parse_from_rfc3339(s).unwrap().timestamp_micros()))
-+    .chain([None])
-+    .collect()
-+}
++    expected_instants(
++        &[
++            "1899-12-01T10:00:00Z", // 1899-12-01 11:00:00 +1:00
++            "1999-12-01T19:00:00Z", // 1999-12-01 11:00:00 -8:00
++            "9999-12-31T10:00:00Z", // 9999-12-31 11:00:00 +1:00
++        ],
++        false,
++    )
+ }
+ 
+ #[cfg(feature = "dst_arrow")]
+@@ -129,3 +143,42 @@ fn test_oracle_timestamptz_arrow() {
+         .unwrap();
+     assert_eq!(timestamptz_values(&batches), expected_timestamptz());
+ }
 +
-+#[cfg(feature = "dst_arrow")]
-+const TIMESTAMPTZ_QUERY: &str =
-+    "select test_timestamptz from admin.test_types order by test_timestamptz nulls last";
-+
-+/// Reads the single `Timestamp(Microsecond, "+00:00")` column of `batches` as microseconds.
-+#[cfg(feature = "dst_arrow")]
-+fn timestamptz_values(batches: &[arrow::record_batch::RecordBatch]) -> Vec<Option<i64>> {
-+    use arrow::array::{Array, TimestampMicrosecondArray};
-+    use arrow::datatypes::{DataType, TimeUnit};
-+    let mut values = Vec::new();
-+    for batch in batches {
-+        let column = batch.column(0);
-+        assert_eq!(
-+            column.data_type(),
-+            &DataType::Timestamp(TimeUnit::Microsecond, Some("+00:00".into()))
-+        );
-+        let column = column
-+            .as_any()
-+            .downcast_ref::<TimestampMicrosecondArray>()
-+            .unwrap();
-+        values.extend((0..column.len()).map(|i| column.is_valid(i).then(|| column.value(i))));
-+    }
-+    values
-+}
-+
-+/// `TIMESTAMP WITH TIME ZONE` through the streaming Arrow destination (used to fail with "Data type unexpected:
-+/// DateTimeTz(true) expected, DateTimeWrapperMicro found").
++/// `TIMESTAMP(9) WITH TIME ZONE` through the batch Arrow destination, at nanosecond precision.
 +#[test]
 +#[ignore]
 +#[cfg(feature = "dst_arrow")]
-+fn test_oracle_timestamptz_arrow_stream() {
-+    use connectorx::get_arrow::new_record_batch_iter;
-+
-+    let source_conn = SourceConn::try_from(test_db::oracle_url().as_str()).unwrap();
-+    let queries = [CXQuery::naked(TIMESTAMPTZ_QUERY.to_string())];
-+    let mut iter = new_record_batch_iter(&source_conn, None, &queries, 2, None).unwrap();
-+    iter.prepare();
-+    let mut batches = Vec::new();
-+    while let Some(batch) = iter.next_batch() {
-+        batches.push(batch.unwrap());
-+    }
-+    assert_eq!(timestamptz_values(&batches), expected_timestamptz());
-+}
-+
-+/// Same values through the batch Arrow destination.
-+#[test]
-+#[ignore]
-+#[cfg(feature = "dst_arrow")]
-+fn test_oracle_timestamptz_arrow() {
++fn test_oracle_timestamptz9_arrow() {
++    use arrow::array::{Array, TimestampNanosecondArray};
 +    use connectorx::get_arrow::get_arrow;
 +
 +    let source_conn = SourceConn::try_from(test_db::oracle_url().as_str()).unwrap();
-+    let queries = [CXQuery::naked(TIMESTAMPTZ_QUERY.to_string())];
++    let queries = [CXQuery::naked(
++        "select test_timestamptz9 from admin.test_types order by test_timestamptz9 nulls last"
++            .to_string(),
++    )];
 +    let batches = get_arrow(&source_conn, None, &queries, None)
 +        .unwrap()
 +        .arrow()
 +        .unwrap();
-+    assert_eq!(timestamptz_values(&batches), expected_timestamptz());
++    let mut values = Vec::new();
++    for batch in &batches {
++        let column = batch
++            .column(0)
++            .as_any()
++            .downcast_ref::<TimestampNanosecondArray>()
++            .unwrap();
++        values.extend((0..column.len()).map(|i| column.is_valid(i).then(|| column.value(i))));
++    }
++    assert_eq!(
++        values,
++        expected_instants(
++            &[
++                "1899-12-01T10:00:00.123456789Z", // 1899-12-01 11:00:00.123456789 +1:00
++                "1999-12-01T19:00:00.987654321Z", // 1999-12-01 11:00:00.987654321 -8:00
++                "2021-01-01T02:04:05.999999999Z", // 2021-01-01 03:04:05.999999999 +1:00
++            ],
++            true,
++        )
++    );
 +}
+```
+
+**File**: `docs/databases/oracle.md` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@ cx.read_sql(conn, query)
+ | NVarchar2                 | object                      |                                    |
+ | DATE                      | datetime64[ns]              |                                    |
+ | TIMESTAMP                 | datetime64[ns]              |                                    |
+-| TIMESTAMP WITH TIME ZONE  | datetime64[ns]              |                                    |
++| TIMESTAMP WITH TIME ZONE  | datetime64[ns]              | Converted to UTC (offset applied), as for PostgreSQL `TIMESTAMPTZ` |
+ | BOOLEAN                   | bool, boolean(nullable)     | Native `BOOLEAN` column type, available since Oracle 23ai |
+ 
+ ```{warning}
 ```
 
 ---
 
-### Incident Patch 2: `07e1d2e5` (2026-11-25)
-**Commit Message**: Merge pull request #1124 from dbascoules/fix/oracle-timestamptz-arrow-type
+### Incident Patch 2: `6711b533` (2026-11-25)
+**Commit Message**: Merge branch 'main' into fix/oracle-timestamptz-offset
 
-fix(oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports
 
-**File**: `connectorx/src/transports/oracle_arrow.rs` (modified, +67/-1)
-```diff
-@@ -50,7 +50,7 @@ impl_transport!(
-         { Date[NaiveDateTime]               => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion option }
-         { Timestamp[NaiveDateTime]          => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion none }
-         { TimestampNano[NaiveDateTime]      => Date64[NaiveDateTime]                    | conversion auto }
--        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
-+        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
-         { TimestampTzNano[DateTime<Utc>]    => DateTimeTz[DateTime<Utc>]                | conversion auto }
-         { Boolean[bool]                     => Boolean[bool]                            | conversion auto }
-     }
-@@ -67,3 +67,69 @@ impl TypeConversion<DateTime<Utc>, DateTimeWrapperMicro> for OracleArrowTranspor
-         DateTimeWrapperMicro(val)
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::typesystem::{Transport, TypeSystem};
-+
-+    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
-+    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
-+    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
-+    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
-+    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
-+    where
-+        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-+        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-+    {
-+        if nullable {
-+            ts.check::<Option<T>>().is_ok()
-+        } else {
-+            ts.check::<T>().is_ok()
-+        }
-+    }
-+
-+    #[test]
-+    fn date_and_time_types_hold_the_converted_values() {
-+        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
-+        for nullable in [true, false] {
-+            let tz = dst(OracleTypeSystem::TimestampTz(nullable));
-+            assert!(
-+                holds::<DateTimeWrapperMicro>(tz, nullable),
-+                "TIMESTAMP WITH TIME ZONE -> {tz:?}"
-+            );
-+
-+            let tz_nano = dst(OracleTypeSystem::TimestampTzNano(nullable));
-+            assert!(
-+                holds::<DateTime<Utc>>(tz_nano, nullable),
-+                "TIMESTAMP(7..9) WITH TIME ZONE -> {tz_nano:?}"
-+            );
-+
-+            for naive in [
-+                OracleTypeSystem::Date(nullable),
-+                OracleTypeSystem::Timestamp(nullable),
-+            ] {
-+                let ts = dst(naive);
-+                assert!(
-+                    holds::<NaiveDateTimeWrapperMicro>(ts, nullable),
-+                    "{naive:?} -> {ts:?}"
-+                );
-+            }
-+            let nano = dst(OracleTypeSystem::TimestampNano(nullable));
-+            assert!(
-+                holds::<NaiveDateTime>(nano, nullable),
-+                "TIMESTAMP(7..9) -> {nano:?}"
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn timestamp_with_time_zone_converts_at_microsecond_precision() {
-+        let utc = DateTime::from_timestamp_micros(944_074_800_123_456).unwrap();
-+        let converted: Option<DateTimeWrapperMicro> = <OracleArrowTransport as TypeConversion<
-+            Option<DateTime<Utc>>,
-+            Option<DateTimeWrapperMicro>,
-+        >>::convert(Some(utc));
-+        assert_eq!(converted.map(|w| w.0), Some(utc));
-+    }
-+}
-```
-
-**File**: `connectorx/src/transports/oracle_arrowstream.rs` (modified, +67/-1)
-```diff
-@@ -50,7 +50,7 @@ impl_transport!(
-         { Date[NaiveDateTime]               => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion option }
-         { Timestamp[NaiveDateTime]          => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion none }
-         { TimestampNano[NaiveDateTime]      => Date64[NaiveDateTime]                    | conversion auto }
--        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
-+        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
-         { TimestampTzNano[DateTime<Utc>]    => DateTimeTz[DateTime<Utc>]                | conversion auto }
-         { Boolean[bool]                     => Boolean[bool]                            | conversion auto }
-     }
-@@ -67,3 +67,69 @@ impl TypeConversion<DateTime<Utc>, DateTimeWrapperMicro> for OracleArrowTranspor
-         DateTimeWrapperMicro(val)
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::typesystem::{Transport, TypeSystem};
-+
-+    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
-+    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
-+    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
-+    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
-+    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
-+    where
-+        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-+        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-+    {
-+        if nullable {
-+            ts.check::<Option<T>>().is_ok()
-+        } else {
-+            ts.check::<T>().is_ok()
-+        }
-+    }
-+
-+    #[test]
-+    fn date_and_time_types_hold_the_converted_values() {
-+        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
-+        for nullable in [true, false] {
-+            let tz = dst(OracleTypeSystem::TimestampTz(nullable));
-+            assert!(
-+                holds::<DateTimeWrapperMicro>(tz, nullable),
-+                "TIMESTAMP WITH TIME ZONE -> {tz:?}"
-+            );
-+
-+            let tz_nano = dst(OracleTypeSystem::TimestampTzNano(nullable));
-+            assert!(
-+                holds::<DateTime<Utc>>(tz_nano, nullable),
-+                "TIMESTAMP(7..9) WITH TIME ZONE -> {tz_nano:?}"
-+            );
-+
-+            for naive in [
-+                OracleTypeSystem::Date(nullable),
-+                OracleTypeSystem::Timestamp(nullable),
-+            ] {
-+                let ts = dst(naive);
-+                assert!(
-+                    holds::<NaiveDateTimeWrapperMicro>(ts, nullable),
-+                    "{naive:?} -> {ts:?}"
-+                );
-+            }
-+            let nano = dst(OracleTypeSystem::TimestampNano(nullable));
-+            assert!(
-+                holds::<NaiveDateTime>(nano, nullable),
-+                "TIMESTAMP(7..9) -> {nano:?}"
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn timestamp_with_time_zone_converts_at_microsecond_precision() {
-+        let utc = DateTime::from_timestamp_micros(944_074_800_123_456).unwrap();
-+        let converted: Option<DateTimeWrapperMicro> = <OracleArrowTransport as TypeConversion<
-+            Option<DateTime<Utc>>,
-+            Option<DateTimeWrapperMicro>,
-+        >>::convert(Some(utc));
-+        assert_eq!(converted.map(|w| w.0), Some(utc));
-+    }
-+}
-```
-
-**File**: `connectorx/tests/test_oracle.rs` (modified, +77/-0)
-```diff
-@@ -52,3 +52,80 @@ fn test_types() {
-         rows
-     );
- }
-+
-+/// `TIMESTAMP WITH TIME ZONE` values of `admin.test_types` (scripts/oracle.sql), sorted, NULL last. The source
-+/// returns the wall-clock time without applying the offset, as the pandas destination does (`test_oracle_types` in
-+/// connectorx-python): `1999-12-01 11:00:00 -8:00` reads as `1999-12-01 11:00:00`.
-+#[cfg(feature = "dst_arrow")]
-+fn expected_timestamptz() -> Vec<Option<i64>> {
-+    use chrono::DateTime;
-+    [
-+        "1899-12-01T11:00:00Z",
-+        "1999-12-01T11:00:00Z",
-+        "9999-12-31T11:00:00Z",
-+    ]
-+    .iter()
-+    .map(|s| Some(DateTime::parse_from_rfc3339(s).unwrap().timestamp_micros()))
-+    .chain([None])
-+    .collect()
-+}
-+
-+#[cfg(feature = "dst_arrow")]
-+const TIMESTAMPTZ_QUERY: &str =
-+    "select test_timestamptz from admin.test_types order by test_timestamptz nulls last";
-+
-+/// Reads the single `Timestamp(Microsecond, "+00:00")` column of `batches` as microseconds.
-+#[cfg(feature = "dst_arrow")]
-+fn timestamptz_values(batches: &[arrow::record_batch::RecordBatch]) -> Vec<Option<i64>> {
-+    use arrow::array::{Array, TimestampMicrosecondArray};
-+    use arrow::datatypes::{DataType, TimeUnit};
-+    let mut values = Vec::new();
-+    for batch in batches {
-+        let column = batch.column(0);
-+        assert_eq!(
-+            column.data_type(),
-+            &DataType::Timestamp(TimeUnit::Microsecond, Some("+00:00".into()))
-+        );
-+        let column = column
-+            .as_any()
-+            .downcast_ref::<TimestampMicrosecondArray>()
-+            .unwrap();
-+        values.extend((0..column.len()).map(|i| column.is_valid(i).then(|| column.value(i))));
-+    }
-+    values
-+}
-+
-+/// `TIMESTAMP WITH TIME ZONE` through the streaming Arrow destination (used to fail with "Data type unexpected:
-+/// DateTimeTz(true) expected, DateTimeWrapperMicro found").
-+#[test]
-+#[ignore]
-+#[cfg(feature = "dst_arrow")]
-+fn test_oracle_timestamptz_arrow_stream() {
-+    use connectorx::get_arrow::new_record_batch_iter;
-+
-+    let source_conn = SourceConn::try_from(test_db::oracle_url().as_str()).unwrap();
-+    let queries = [CXQuery::naked(TIMESTAMPTZ_QUERY.to_string())];
-+    let mut iter = new_record_batch_iter(&source_conn, None, &queries, 2, None).unwrap();
-+    iter.prepare();
-+    let mut batches = Vec::new();
-+    while let Some(batch) = iter.next_batch() {
-+        batches.push(batch.unwrap());
-+    }
-+    assert_eq!(timestamptz_values(&batches), expected_timestamptz());
-+}
-+
-+/// Same values through the batch Arrow destination.
-+#[test]
-+#[ignore]
-+#[cfg(feature = "dst_arrow")]
-+fn test_oracle_timestamptz_arrow() {
-+    use connectorx::get_arrow::get_arrow;
-+
-+    let source_conn = SourceConn::try_from(test_db::oracle_url().as_str()).unwrap();
-+    let queries = [CXQuery::naked(TIMESTAMPTZ_QUERY.to_string())];
-+    let batches = get_arrow(&source_conn, None, &queries, None)
-+        .unwrap()
-+        .arrow()
-+        .unwrap();
-+    assert_eq!(timestamptz_values(&batches), expected_timestamptz());
-+}
-```
 
 #### Recent Merged Pull Requests:
+- **PR #1126** (2026-11-25): feat: move redshift-iam behind its own src_redshift feature (@dbascoules)
+- **PR #1125** (2026-11-25): fix(oracle): convert TIMESTAMP WITH TIME ZONE to UTC instead of dropping the offset (@dbascoules)
 - **PR #1124** (2026-11-25): fix(oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports (@dbascoules)
 - **PR #1122** (2026-11-22): fix(build): target macOS 10.15 so mssql-tds 0.4 builds on Intel Macs (@tschm)
 - **PR #1121** (2026-11-22): fix(rust): silence warnings in single-source connectorx builds (@tschm)
 - **PR #1119** (2026-11-22): fix(rust): replace owning_ref with an internal OwningHandle (@tschm)
-- **PR #1118** (2026-11-22): fix(rust): silence unused-code warnings in connectorx builds (@tschm)
-- **PR #1115** (2026-11-22): build(rust): bump ndarray to 0.17 in connectorx-python (@tschm)
 
 ---
 
@@ -1473,55 +1175,38 @@ fix(oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transp
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports
+## X. Empirical Invariant Guard in test_oracle.py
 
 **RULE**:
-When implementing operations in `connectorx/src/transports/oracle_arrow.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `connectorx-python/connectorx/tests/test_oracle.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f3475c5`: oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6dbb5f8c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx/src/transports/oracle_arrow.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx-python/connectorx/tests/test_oracle.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::typesystem::{Transport, TypeSystem};
-
-    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
-    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
-    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
-    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
-    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
-    where
-        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
-    {
-        if nullable {
-            ts.check::<Option<T>>().is_ok()
-        } else {
-            ts.check::<T>().is_ok()
-        }
-    }
-
-    #[test]
-    fn date_and_time_types_hold_the_converted_values() {
-        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
-        for nullable in [true, false] {
-            let tz = dst(OracleTypeSystem::TimestampTz(nullable)
+                    "1999-12-01 19:00:00",  # 11:00:00 -8:00
+                    "1899-12-01 10:00:00",  # 11:00:00 +1:00
+                        "9999-12-31 10:00:00",  # 11:00:00 +1:00
+                    "1999-12-01 19:00:00.987654321",  # -8:00
+                    "1899-12-01 10:00:00.123456789",  # +1:00
+                    "2021-01-01 02:04:05.999999999",  # +1:00
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
+                    "1999-12-01 11:00:00",
+                    "1899-12-01 11:00:00",
+                        "9999-12-31 11:00:00",
+                    "1999-12-01 11:00:00.987654321",
+                    "1899-12-01 11:00:00.123456789",
+                    "2021-01-01 03:04:05.999999999",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f3475c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6dbb5f8c` are properly handled with clean fallback behavior.

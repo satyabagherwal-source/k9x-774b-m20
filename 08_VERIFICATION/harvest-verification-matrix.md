@@ -13302,3 +13302,6 @@
 | `CYCLE-20261126-VGYZ` | `2026-11-26T08:10:13.547Z` | `apple/FastFrames-L` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md` | Yes (`01715e01...`) |
 | `CYCLE-20261126-VIJZ` | `2026-11-26T08:10:15.599Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10628` | Yes (`e0825208...`) |
 | `CYCLE-20261126-VN93` | `2026-11-26T08:10:21.687Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10629` | Yes (`aca6b17c...`) |
+| `CYCLE-20261126-AXKW` | `2026-11-26T08:22:14.912Z` | `tencent/Hy4-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md` | Yes (`4eef8ac1...`) |
+| `CYCLE-20261126-BKL1` | `2026-11-26T08:22:44.725Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10630` | Yes (`1cb0e6aa...`) |
+| `CYCLE-20261126-GIF6` | `2026-11-26T08:26:35.202Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10631` | Yes (`3f8da785...`) |

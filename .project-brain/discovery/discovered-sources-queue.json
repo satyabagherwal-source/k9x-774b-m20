@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T08:10:27.984Z",
+  "updated_at": "2026-11-26T08:26:40.223Z",
   "stats": {
-    "total_discovered": 9680,
-    "approved_pending_harvest": 9180,
+    "total_discovered": 9699,
+    "approved_pending_harvest": 9199,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9167,
+      "COMMUNITY_AND_EXPERT": 9186,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -209487,6 +209487,424 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
         "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-46D1BA2D621F": {
+      "id": "SRC-46D1BA2D621F",
+      "url": "https://agentscan.tools/user/aloneangel45",
+      "title": "https://agentscan.tools/user/aloneangel45",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:38.895Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-F62DE1E1C6AC": {
+      "id": "SRC-F62DE1E1C6AC",
+      "url": "https://redirect.github.com/aminueza/terraform-provider-minio/pull/1427",
+      "title": "https://redirect.github.com/aminueza/terraform-provider-minio/pull/1427",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:38.961Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-BBD17A509AD9": {
+      "id": "SRC-BBD17A509AD9",
+      "url": "https://redirect.github.com/aminueza/terraform-provider-minio/pull/1432",
+      "title": "https://redirect.github.com/aminueza/terraform-provider-minio/pull/1432",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-D2691A938A7B": {
+      "id": "SRC-D2691A938A7B",
+      "url": "https://redirect.github.com/kenn-io/agentsview/pull/3370",
+      "title": "https://redirect.github.com/kenn-io/agentsview/pull/3370",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-DB03CB8ECAC5": {
+      "id": "SRC-DB03CB8ECAC5",
+      "url": "https://redirect.github.com/version-fox/vfox/pull/831",
+      "title": "https://redirect.github.com/version-fox/vfox/pull/831",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.157Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-616AF9A0EFAE": {
+      "id": "SRC-616AF9A0EFAE",
+      "url": "https://redirect.github.com/aminueza/terraform-provider-minio/pull/1434",
+      "title": "https://redirect.github.com/aminueza/terraform-provider-minio/pull/1434",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.221Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-DB53E7E36A5E": {
+      "id": "SRC-DB53E7E36A5E",
+      "url": "https://maskray.me/blog/relative-relocations-and-relr",
+      "title": "https://maskray.me/blog/relative-relocations-and-relr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-9AA9DC5CDE1A": {
+      "id": "SRC-9AA9DC5CDE1A",
+      "url": "https://glandium.org/blog/?p=4297",
+      "title": "https://glandium.org/blog/?p=4297",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.343Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-C8B167713F77": {
+      "id": "SRC-C8B167713F77",
+      "url": "https://rfc.archlinux.page/0023-pack-relative-relocs",
+      "title": "https://rfc.archlinux.page/0023-pack-relative-relocs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.406Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-36D678708FFF": {
+      "id": "SRC-36D678708FFF",
+      "url": "https://github.com/siketyan/biome/new/build/musl-relative-relocations?filename=.changeset%2Ffive-pets-cross.md&value=---%0A%0A---%0A%0Aci%3A+pack+the+relative+relocations+of+the+musl+binaries%0A",
+      "title": "https://github.com/siketyan/biome/new/build/musl-relative-relocations?filename=.changeset%2Ffive-pets-cross.md&value=---%0A%0A---%0A%0Aci%3A+pack+the+relative+relocations+of+the+musl+binaries%0A",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.491Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-87F43B9ABD09": {
+      "id": "SRC-87F43B9ABD09",
+      "url": "https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13424?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13424?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.552Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-88B2DB36C105": {
+      "id": "SRC-88B2DB36C105",
+      "url": "https://biomejs.dev/linter/rules/no-break-in-nested-loop",
+      "title": "https://biomejs.dev/linter/rules/no-break-in-nested-loop",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-DDB19AACCD11": {
+      "id": "SRC-DDB19AACCD11",
+      "url": "https://biomejs.dev/linter/rules/no-base-to-string",
+      "title": "https://biomejs.dev/linter/rules/no-base-to-string",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.757Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-4DF9ABCAC85F": {
+      "id": "SRC-4DF9ABCAC85F",
+      "url": "https://biomejs.dev/linter/rules/no-boolean-sort-comparator",
+      "title": "https://biomejs.dev/linter/rules/no-boolean-sort-comparator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.819Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-7DF4E5DD3D1F": {
+      "id": "SRC-7DF4E5DD3D1F",
+      "url": "https://biomejs.dev/linter/rules/no-bun-modules",
+      "title": "https://biomejs.dev/linter/rules/no-bun-modules",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.911Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-D59A1016FA2C": {
+      "id": "SRC-D59A1016FA2C",
+      "url": "https://biomejs.dev/linter/rules/no-canvas-to-image",
+      "title": "https://biomejs.dev/linter/rules/no-canvas-to-image",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:39.988Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-FF87204A23B9": {
+      "id": "SRC-FF87204A23B9",
+      "url": "https://biomejs.dev/linter/rules/use-early-continue",
+      "title": "https://biomejs.dev/linter/rules/use-early-continue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:40.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-3C8AB73C6C1D": {
+      "id": "SRC-3C8AB73C6C1D",
+      "url": "https://biomejs.de/",
+      "title": "https://biomejs.de/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:40.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-AACA23E3F214": {
+      "id": "SRC-AACA23E3F214",
+      "url": "https://biomejs.dev/linter/rules/no-scss-deprecated-color-functions",
+      "title": "https://biomejs.dev/linter/rules/no-scss-deprecated-color-functions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:26:40.223Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
       }
     }
   }

@@ -13335,3 +13335,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-apple-fastframes-l` | `https://huggingface.co/apple/FastFrames-L` | `hf-apple-f` | Multi-dimensional audit evidence | 2026-11-26T08:10:13.552Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `a6682352` | Multi-dimensional audit evidence | 2026-11-26T08:10:15.603Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `c57711cf` | Multi-dimensional audit evidence | 2026-11-26T08:10:21.692Z |
+| `learn-huggingface-tencent-hy4-flash` | `https://huggingface.co/tencent/Hy4-flash` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-26T08:22:14.916Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `68c2c3ad` | Multi-dimensional audit evidence | 2026-11-26T08:22:44.729Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `1413bf88` | Multi-dimensional audit evidence | 2026-11-26T08:26:35.209Z |

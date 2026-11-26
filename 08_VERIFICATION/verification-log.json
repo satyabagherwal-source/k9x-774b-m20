@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-FQTZ",
-    "timestamp": "2026-11-24T17:42:31.319Z",
-    "repository": "baidu/ERNIE-5.5-Flash-Preview",
-    "learningId": "learn-huggingface-baidu-ernie-5-5-flash-preview",
-    "contentHash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-FWQO",
-    "timestamp": "2026-11-24T17:42:38.976Z",
-    "repository": "fb55/css-select",
-    "learningId": "learn-github-fb55-css-select",
-    "contentHash": "aa142c80da6e97ff860ae49fa8c053d1188971861f430670c4dbe57e24e0adb0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-G30B",
-    "timestamp": "2026-11-24T17:42:47.099Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "b0700cbc695eb7f990d8f1eeaf45b3a909160724047f1203288221ab9e4046df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-G6QX",
     "timestamp": "2026-11-24T17:42:51.945Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7490,6 +7445,51 @@
     "repository": "gardener/gardener",
     "learningId": "learn-github-gardener-gardener",
     "contentHash": "aca6b17c7c01f3bf204b96766f3e5accf0c5c67a6ebbcc179044e05de99fc50a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-AXKW",
+    "timestamp": "2026-11-26T08:22:14.912Z",
+    "repository": "tencent/Hy4-flash",
+    "learningId": "learn-huggingface-tencent-hy4-flash",
+    "contentHash": "4eef8ac1cd302be31cb22c0a1bbfae6dec4b0a38e49161ac57bfb4e812dc9a63",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-BKL1",
+    "timestamp": "2026-11-26T08:22:44.725Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "1cb0e6aa05252c8c2f798d254f08f5486280739ff279e0de5c80728909252496",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-GIF6",
+    "timestamp": "2026-11-26T08:26:35.202Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "3f8da7855f37b0bdfa7449474e8b16344f9b3d8782e9cc224884dc28041ff74f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

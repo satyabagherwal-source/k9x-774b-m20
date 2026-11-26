@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T08:10:28.640Z",
-  "total_records": 2722,
+  "last_updated": "2026-11-26T08:26:42.111Z",
+  "total_records": 2723,
   "domains": {
     "A": {
       "total": 22,
@@ -1222,7 +1222,7 @@
       ]
     },
     "G": {
-      "total": 469,
+      "total": 470,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1692,7 +1692,8 @@
         "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-core-invariants",
         "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-0xcub3-wblock-core-invariants",
-        "domain_intelligence-architecture-intelligence-0xcub3-wblock-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-0xcub3-wblock-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-sfu-db-connector-x-learnings-core-invariants"
       ]
     },
     "H": {
@@ -30846,8 +30847,8 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy4-flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-flash-research-knowledge-intelligence-tencent-hy4-flash-core-inva.md",
       "repository": "tencent/Hy4-flash",
-      "content_hash": "0b94879d7d2ce2745772fe7b64bd962d05b261a12ef20389cd4dc603d7aa8320",
-      "created_at": "2026-11-22T15:09:05.056Z"
+      "content_hash": "2abc342adf11d762266df2573857ad3fd47e15547a2a700a3628b6dcaffd3378",
+      "created_at": "2026-11-26T08:22:15.159Z"
     },
     "DOM-D-C631C795": {
       "record_id": "DOM-D-C631C795",
@@ -30897,8 +30898,8 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy4-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-flash-learnings-research-knowledge-intelligence-hf-tencent-hy4-fl.md",
       "repository": "hf-tencent-hy4-flash-learnings",
-      "content_hash": "7e368df68fb3ab739da450ad3a66978a65aed55832b9b389ee80812bd607e1b6",
-      "created_at": "2026-11-22T15:09:19.708Z"
+      "content_hash": "8833c4c91f56dd9e3a4fe7e822c38ca9ea1536471dfc15ecf34bc90fa502848a",
+      "created_at": "2026-11-26T08:26:41.347Z"
     },
     "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants",
@@ -34038,8 +34039,8 @@
       "title": "Design Intelligence: biomejs/biome Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-biomejs-biome-design-intelligence-biomejs-biome-core-invariants.md",
       "repository": "biomejs/biome",
-      "content_hash": "c95cc47603f32dcac044a46430a0163b91f67b8a9ab1e72475826e3683b246d6",
-      "created_at": "2026-11-19T15:50:50.954Z"
+      "content_hash": "2ab8a712bd6ffd62c376130675345c06d13fe0043f8a71c89d0d825776e4d9b8",
+      "created_at": "2026-11-26T08:26:35.683Z"
     },
     "domain_intelligence-design-intelligence-biomejs-biome-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-biomejs-biome-learnings-core-invariants",
@@ -34047,8 +34048,8 @@
       "title": "Design Intelligence: biomejs-biome-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-biomejs-biome-learnings-design-intelligence-biomejs-biome-learnings-core-invaria.md",
       "repository": "biomejs-biome-learnings",
-      "content_hash": "f3aed1e4fb868f089b38d3f765bde16c7007a50904e27b3155441ee38dcf77e2",
-      "created_at": "2026-11-19T15:50:58.547Z"
+      "content_hash": "da20d476650eabc868cfb5832f3b9039492f2a30670584afff107b55c009a819",
+      "created_at": "2026-11-26T08:26:40.705Z"
     },
     "domain_intelligence-quality-verification-intelligence-meshtastic-meshtastic-android-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-meshtastic-meshtastic-android-core-invariants",
@@ -39949,8 +39950,8 @@
       "title": "Architecture Intelligence: sfu-db/connector-x Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sfu-db-connector-x-architecture-intelligence-sfu-db-connector-x-core-invariants.md",
       "repository": "sfu-db/connector-x",
-      "content_hash": "a62d040da66c10a643a571cb5cc0b7cc5e6648e9dacc96b85cde23284aef76f6",
-      "created_at": "2026-11-22T11:35:12.087Z"
+      "content_hash": "512d3705dc8f2f7c58848bf59bd3335be669016a81016bd668b5381c43f144d3",
+      "created_at": "2026-11-26T08:22:45.245Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants",
@@ -46002,6 +46003,15 @@
       "repository": "kube-rs-kube-learnings",
       "content_hash": "0a8459cee7cbd4876a8d7ec1aa367a6545649c4179d1f323d7f4964a04297418",
       "created_at": "2026-11-26T07:58:01.505Z"
+    },
+    "domain_intelligence-architecture-intelligence-sfu-db-connector-x-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sfu-db-connector-x-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sfu-db-connector-x-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sfu-db-connector-x-learnings-architecture-intelligence-sfu-db-connector-x-learni.md",
+      "repository": "sfu-db-connector-x-learnings",
+      "content_hash": "03312db8574a8259145eb19ffbec76eb72a5c6d65ad283504c4b6249c6e2148e",
+      "created_at": "2026-11-26T08:26:42.111Z"
     }
   }
 }
