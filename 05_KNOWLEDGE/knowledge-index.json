@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T10:41:49.344Z",
+  "last_updated": "2026-11-26T10:50:50.812Z",
   "total_verified_learnings": 9126,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25828,
+  "total_items": 25836,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223498,8 +223498,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "9dd9b9ed",
-      "content_hash": "e7efcf6b9bc9b750d17c6dc4dc70a85c193ce2f6228613f3ea10caa18b86e197",
+      "source_version": "9ced8eeb",
+      "content_hash": "8689fe0f13545dce48c5c22c9681a40c7b2186be7a60eb4d64a5d212c2dd409e",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -223552,6 +223552,11 @@
           "number": 10507,
           "title": "don't panic machined on bogus cpufreq sysfs reads",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10655,
+          "title": "support BGP graceful restart helper mode per neighbor",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223559,7 +223564,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T10:35:22.548Z",
+      "verified_at": "2026-11-26T10:50:39.926Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223601,10 +223606,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "9dd9b9ed",
-      "content_hash": "eae9f97489d7be1d92b00b19305487038bdb04777edac42b8570693d69924ec3",
+      "source_version": "9ced8eeb",
+      "content_hash": "ccca3a2c2b76573a268ed3348f9c2d231250e0f421f12aa8755cf72a0e403812",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T10:35:23.191Z"
+      "persisted_at": "2026-11-26T10:50:40.602Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -223613,10 +223618,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "9dd9b9ed",
-      "content_hash": "521ae4c86dd87f483dea7da1051f3ae65588151ff107a765ea087e3d218376a1",
+      "source_version": "9ced8eeb",
+      "content_hash": "1e6e6f95668937919ad4b16893149d3793c8c3cdc49671407e0d85c84c3f6e23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:35:23.390Z"
+      "persisted_at": "2026-11-26T10:50:40.791Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -235512,8 +235517,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "921d5c4b",
-      "content_hash": "014d4acc8554c7df58894de834cebc86698583da7be7bba9692c86ff63242e61",
+      "source_version": "95ccbc34",
+      "content_hash": "66b3dc0b35d9d73d729c19e45995ee83fa4541e95e80644fdade25f440d50d66",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -235581,6 +235586,11 @@
           "number": 10495,
           "title": "[BugFix] Lock the base table of a [_SYNC_MV_] read before planning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10656,
+          "title": "[BugFix] Leave a recursive CTE's self-reference out of the planner lock set",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235588,7 +235598,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T09:08:05.932Z",
+      "verified_at": "2026-11-26T10:50:45.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235630,10 +235640,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "repository": "StarRocks/starrocks",
-      "source_version": "921d5c4b",
-      "content_hash": "e1d08432f2a2ad589275b014b61e3459bb275b601edf4db902de6a6557f65893",
+      "source_version": "95ccbc34",
+      "content_hash": "8ab6d0e5a1df9a272a6875679008fef90919e4262ff08a46593fc5ef831dc387",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T09:08:06.829Z"
+      "persisted_at": "2026-11-26T10:50:45.735Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks",
@@ -235642,10 +235652,10 @@
       "relative_path": "08_VERIFICATION/starrocks-starrocks-verification-protocol-empirical-defect-shield-for-starrocks-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarRocks/starrocks",
       "repository": "StarRocks/starrocks",
-      "source_version": "07de763f",
-      "content_hash": "9c77f06625c49e563f71dfa2acdc9b65e5fc17909a26abc68309632ba865d2de",
+      "source_version": "95ccbc34",
+      "content_hash": "7ca17965fb7fb9d4772b81cb08427bc5c37fd60a4eaeaca5bcf3cb2fcd0cdcdb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:50:45.291Z"
+      "persisted_at": "2026-11-26T10:50:45.938Z"
     },
     "learn-huggingface-autotrust-jev-27b-vl": {
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
@@ -237621,8 +237631,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "afcf25e3",
-      "content_hash": "0f985a2e8af37fd26217f8125cfcc286b9c30f65784047b8a57361dfaa87359e",
+      "source_version": "4d6f18eb",
+      "content_hash": "8322c8d3d6d2d7c8c245334a40300495c5e77a76e3c581d1d4d82302a4eb6dac",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -237665,6 +237675,11 @@
           "number": 10443,
           "title": "Drop unused fields from SubreleaseStatsEntry.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10653,
+          "title": "ssize_t overflow when clamping the background release amount",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237672,7 +237687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T03:28:22.829Z",
+      "verified_at": "2026-11-26T10:50:32.066Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237714,10 +237729,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "repository": "google/tcmalloc",
-      "source_version": "afcf25e3",
-      "content_hash": "cfd8f8be347f0bb32bc0e6d38f2d761a01757cff3817ca1a8e7dbc1d864391b2",
+      "source_version": "4d6f18eb",
+      "content_hash": "cc05ee33058bddc7f4677588773f665ecf322e13eb4787192271ee4e03ce7433",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:28:23.689Z"
+      "persisted_at": "2026-11-26T10:50:32.714Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc",
@@ -237726,10 +237741,10 @@
       "relative_path": "08_VERIFICATION/google-tcmalloc-verification-protocol-empirical-defect-shield-for-google-tcmallo.md",
       "title": "Verification Protocol: Empirical Defect Shield for google/tcmalloc",
       "repository": "google/tcmalloc",
-      "source_version": "afcf25e3",
-      "content_hash": "9a6469aed1d7c346b1618bf47086cf7a008fb6f7be069943d569ec3bc2571d6c",
+      "source_version": "4d6f18eb",
+      "content_hash": "19e1005df988b9d397c7cc7f35739d0ddab490b9214b109c2f8c55485b287140",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:28:23.916Z"
+      "persisted_at": "2026-11-26T10:50:32.906Z"
     },
     "learn-github-open-ani-animeko": {
       "learning_id": "learn-github-open-ani-animeko",
@@ -237849,9 +237864,9 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "repository": "google-tcmalloc-learnings",
       "source_version": "HEAD",
-      "content_hash": "81345e5bf69d44e9a76efa1f2aa3ede59c472669872f5119bfb7d426f953e1a9",
+      "content_hash": "628355ea328a9b1d6b66b21d040b4f099f0e5d595f26a5eaa650ff7885a42141",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:28:32.846Z"
+      "persisted_at": "2026-11-26T10:50:49.374Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings",
@@ -237861,9 +237876,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for google-tcmalloc-learnings",
       "repository": "google-tcmalloc-learnings",
       "source_version": "HEAD",
-      "content_hash": "33b0f42de0e5ac6e07fc526765fc1eba4708c5957626916578f25f34c7f992a1",
+      "content_hash": "e34816f8fd26f06c938d475a670bc907195485f68f7c88e4d258d3719f69da08",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:28:33.082Z"
+      "persisted_at": "2026-11-26T10:50:49.561Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants",
@@ -269639,8 +269654,8 @@
       "slug": "sweetpad-dev-sweetpad",
       "platform": "github",
       "source_url": "https://github.com/sweetpad-dev/sweetpad",
-      "source_version": "11b271ee",
-      "content_hash": "975a8dc964d4b0d13e74339da9bebe3eee3e97843800d549b8eeb94d88065bb4",
+      "source_version": "685c517e",
+      "content_hash": "312bc5e0058300bbcf66be44e693b3256cfd5447353eb8c74360847a0ae0ce84",
       "dossier_path": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "promoted_rules": [
@@ -269653,6 +269668,11 @@
           "number": 10153,
           "title": "Restart the test simulator after a hot-reload install timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10654,
+          "title": "App Clip signing on Linux and verify it end to end",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269660,7 +269680,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:31:44.395Z",
+      "verified_at": "2026-11-26T10:50:37.273Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269702,10 +269722,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sweetpad-dev-sweetpad-architecture-intelligence-sweetpad-dev-sweetpad-core-invar.md",
       "title": "Architecture Intelligence: sweetpad-dev/sweetpad Core Invariants",
       "repository": "sweetpad-dev/sweetpad",
-      "source_version": "4b5b7817",
-      "content_hash": "a86242db67288f551b858cf42b82a18da14d96e626fbf9c8b78730c812d19068",
+      "source_version": "685c517e",
+      "content_hash": "94810cd83569dc70d8db749ed7888e71022a4270454fee4c3d66ac824a434dac",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T03:34:15.995Z"
+      "persisted_at": "2026-11-26T10:50:37.917Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sweetpad-dev-sweetpad": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sweetpad-dev-sweetpad",
@@ -269714,10 +269734,10 @@
       "relative_path": "08_VERIFICATION/sweetpad-dev-sweetpad-verification-protocol-empirical-defect-shield-for-sweetpad.md",
       "title": "Verification Protocol: Empirical Defect Shield for sweetpad-dev/sweetpad",
       "repository": "sweetpad-dev/sweetpad",
-      "source_version": "11b271ee",
-      "content_hash": "03e3806cc48ca664e45ca95f29178c4822de96c9b565c7568f14e4bd997180bc",
+      "source_version": "685c517e",
+      "content_hash": "f2eff222166afa84487a0c2f716d3343ace966160e5fd73602b66ff4b2a74eb8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:31:45.218Z"
+      "persisted_at": "2026-11-26T10:50:38.162Z"
     },
     "rule-8855": {
       "learning_id": "rule-8855",
@@ -269765,9 +269785,9 @@
       "title": "Architecture Intelligence: sweetpad-dev-sweetpad-learnings Core Invariants",
       "repository": "sweetpad-dev-sweetpad-learnings",
       "source_version": "HEAD",
-      "content_hash": "9dee2f644f1390cb16ba0b6e68258e9240d44b67473a445839ce5fb521047845",
+      "content_hash": "6ed82fca6eaef51ccc37967ff00e4fecf4c7c82395326460d17843d93ada265a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T03:34:24.397Z"
+      "persisted_at": "2026-11-26T10:50:50.627Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sweetpad-dev-sweetpad-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sweetpad-dev-sweetpad-learning",
@@ -269777,9 +269797,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sweetpad-dev-sweetpad-learnings",
       "repository": "sweetpad-dev-sweetpad-learnings",
       "source_version": "HEAD",
-      "content_hash": "d82f9bbb20a20d876deee90131657166ef5c37b379ab9a5379785812ca1ca766",
+      "content_hash": "9a30119edc1f6af71ea6828786a67fc861667a3e144f893d08dfae221a4fc9ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:31:56.583Z"
+      "persisted_at": "2026-11-26T10:50:50.812Z"
     },
     "candidate_directive-build-bump-rust-toolchain-pin-to-1-95-0-to-unblock-wasmtime-48": {
       "item_id": "candidate_directive-build-bump-rust-toolchain-pin-to-1-95-0-to-unblock-wasmtime-48",
@@ -285164,7 +285184,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "04aeb1d2b2541d78eea88179c00860a56bede92c68a6a66e77f899f497c9f669",
+      "content_hash": "112e4d5cbf6735e874fa57be8ff3b80462607a599eecf4ae3a3b99ec50f6210e",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "promoted_rules": [],
@@ -285173,7 +285193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T17:53:05.082Z",
+      "verified_at": "2026-11-26T10:50:29.104Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -285190,9 +285210,9 @@
       "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3 Core Invariants",
       "repository": "moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "231958c289d2fb88ec0e2d5fb183eaad21cf144ab2ce36b188ed728a6f5c3581",
+      "content_hash": "e7649633261a486753b849ad94e0078f23a7370bb7480ad3c5f2969969316ee9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T17:53:05.646Z"
+      "persisted_at": "2026-11-26T10:50:29.573Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants",
@@ -285202,9 +285222,9 @@
       "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3-learnings Core Invariants",
       "repository": "hf-moonshotai-kimi-k3-learnings",
       "source_version": "HEAD",
-      "content_hash": "c4a675794338378a9b19ab64f9a608ffb37657276b6d281f1ced5e01a79c405c",
+      "content_hash": "fd75c24fafc7f595e27f4956f047f15665ecf4e77baaf911f280c7cffb75afb6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T17:53:17.102Z"
+      "persisted_at": "2026-11-26T10:50:49.948Z"
     },
     "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria",
@@ -353804,6 +353824,110 @@
       "content_hash": "b31ae2fac32929c8d35812446dd1827808e6588eb197cda960ba5f7411860e40",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T10:41:10.425Z"
+    },
+    "rule-10653": {
+      "learning_id": "rule-10653",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10653,
+      "title": "ssize_t overflow when clamping the background release amount",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "4d6f18eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T10:50:32.066Z"
+    },
+    "candidate_directive-ssize_t-overflow-when-clamping-the-background-release-amount": {
+      "item_id": "candidate_directive-ssize_t-overflow-when-clamping-the-background-release-amount",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LZVJ-ssize_t-overflow-when-clamping-the-background-release-amount.md",
+      "title": "ssize_t overflow when clamping the background release amount",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e2f306068b57305c531be5007a617820c669f22628b4e40810f5524a27aaff1b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T10:50:49.184Z"
+    },
+    "rule-10654": {
+      "learning_id": "rule-10654",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10654,
+      "title": "App Clip signing on Linux and verify it end to end",
+      "source_url": "https://github.com/sweetpad-dev/sweetpad",
+      "source_version": "685c517e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T10:50:37.273Z"
+    },
+    "candidate_directive-app-clip-signing-on-linux-and-verify-it-end-to-end": {
+      "item_id": "candidate_directive-app-clip-signing-on-linux-and-verify-it-end-to-end",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M0UA-app-clip-signing-on-linux-and-verify-it-end-to-end.md",
+      "title": "App Clip signing on Linux and verify it end to end",
+      "repository": "sweetpad-dev-sweetpad-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0850dc0f6ec61156c454c7d81ccd4d723f1c812decb56871224feb265d2928b5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T10:50:50.434Z"
+    },
+    "rule-10655": {
+      "learning_id": "rule-10655",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10655,
+      "title": "support BGP graceful restart helper mode per neighbor",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "9ced8eeb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T10:50:39.926Z"
+    },
+    "candidate_directive-support-bgp-graceful-restart-helper-mode-per-neighbor": {
+      "item_id": "candidate_directive-support-bgp-graceful-restart-helper-mode-per-neighbor",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LT3R-support-bgp-graceful-restart-helper-mode-per-neighbor.md",
+      "title": "support BGP graceful restart helper mode per neighbor",
+      "repository": "siderolabs/talos",
+      "source_version": "9ced8eeb",
+      "content_hash": "a67e46644e56fa1f63d1944205167a6f8b52d7508642f42dfdd96223c4525297",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T10:50:40.410Z"
+    },
+    "rule-10656": {
+      "learning_id": "rule-10656",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10656,
+      "title": "[BugFix] Leave a recursive CTE's self-reference out of the planner lock set",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "95ccbc34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T10:50:45.088Z"
+    },
+    "candidate_directive-bugfix-leave-a-recursive-cte-s-self-reference-out-of-the-planner-lock-set": {
+      "item_id": "candidate_directive-bugfix-leave-a-recursive-cte-s-self-reference-out-of-the-planner-lock-set",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LX2Q-bugfix-leave-a-recursive-cte-s-self-reference-out-of-the-planner-lock-set.md",
+      "title": "[BugFix] Leave a recursive CTE's self-reference out of the planner lock set",
+      "repository": "StarRocks/starrocks",
+      "source_version": "95ccbc34",
+      "content_hash": "c8a15a350ff215bca3f0286363e10ab1f49dda87cc8cd4aaac36f89c8b803b99",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T10:50:45.557Z"
     }
   },
   "ai-builder-brain": {

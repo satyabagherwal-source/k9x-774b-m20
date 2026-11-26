@@ -13376,3 +13376,8 @@ Every entry in this ledger must capture:
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `1145cb57` | Multi-dimensional audit evidence | 2026-11-26T10:41:01.140Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `5290ba9e` | Multi-dimensional audit evidence | 2026-11-26T10:41:05.658Z |
 | `learn-dom-d-68a82b80` | `project://signerlabs-klee` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md` | 2026-11-26T10:41:48.717Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-26T10:50:29.350Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `4d6f18eb` | Multi-dimensional audit evidence | 2026-11-26T10:50:32.298Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `685c517e` | Multi-dimensional audit evidence | 2026-11-26T10:50:37.503Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `9ced8eeb` | Multi-dimensional audit evidence | 2026-11-26T10:50:40.159Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `95ccbc34` | Multi-dimensional audit evidence | 2026-11-26T10:50:45.317Z |

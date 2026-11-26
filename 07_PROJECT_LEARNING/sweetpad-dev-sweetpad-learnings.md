@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source**: github ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
-> **Source Version**: `11b271ee`  
+> **Source Version**: `685c517e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T00:31:43.503Z  
+> **Timestamp**: 2026-11-26T10:50:36.368Z  
 > **Learning ID**: `learn-github-sweetpad-dev-sweetpad`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:31:43.498Z  
+> **Harvest Timestamp**: 2026-11-26T10:50:36.364Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, watchOS, and visionOS apps from your terminal.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 1936 stars
+- **Stars / Engagement**: 1938 stars
 
 ---
 
@@ -374,11 +374,11 @@ public typealias GenCoreDataFrameworkManagedObject = NSManagedObject
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #367** (2026-11-25): **Fix App Clip signing on Linux and verify it end to end**
+  *Symptoms*: Linux could produce a correctly signed IPA whose host was missing the entitlement that identifies its App Clip. It also accepted a device Clip that omitted its parent application identifier. Xcode rejected the same Clip.  The Linux signer now takes the host association from the selected provisioning profile during build and export. Archive and re-export also check that the Clip names exactly its containing app.  The delivery fixture includes a host, an embedded Clip, and a standalone UI test that exercises the prebuilt Linux and Xcode products. [Instructions for reproducing the checks](https://github.com/sweetpad-dev/sweetpad/blob/1c2e74210453b1c55d457bf3019361cd5fa3280e/sweetpad-lib/ci/fixture-delivery/README.md#app-clips)  ## Verification  - Built on Linux arm64 and with Xcode. Both hosts launched on an iPhone 17 Pro simulator. Each installed Clip displayed the fresh HTTPS URL supplied by XCTest, and its installed binaries matched the originals. - Compared both Release device archives and the Linux development IPA. The host and Clip entitlements matched Xcode. Apple's tools verified the signatures, and the checker matched the signing certificates to the profiles and the archive dSYMs to the executables. - Re-exported an older ad hoc archive and verified that it gained the host association. Both engines rejected a new archive missing the Clip's parent entitlement, and Linux rejected re-exporting an older archive with the same defect. - Workspace library tests passed (1,616 p
+
 - **Issue #366** (2026-11-22): **Fix Linux watchOS linking, setup races, and CLI failure output**
   *Symptoms*: ## Changes  - Fix watchOS Simulator links for dynamic SwiftPM frameworks by letting Swift Build select the linker flag for each compiler driver. Add a watchOS test project and check its framework and XCTest Mach-O binaries in the opt-in private-SDK Linux package job. - Create owner-only cache directories under umask 0002, including when the build-settings catalog writes first. Verify bundled hot-reload client bytes before reuse. - Write one-shot JSON errors to stdout so redirection captures both outcomes. Failed test runs return exit 3 and include the same error and available test report in JSON and the final NDJSON event. NDJSON retains its compact stderr diagnostic. - Serialize Swift installation and archive access across setup processes. Verify the compiler in staging before publishing the installation.  ## Verification  The macOS CLI and shared-library suites passed 1,802 tests with one ignored. Clippy and formatting passed. In the arm64 Linux VM, the packaged CLI built an iOS device app and linked the watchOS Simulator dynamic framework and XCTest bundle using an imported Apple SDK. Two concurrent setup processes shared one download, and a waiting process recovered when the downloader was interrupted. 
-
-- **Issue #365** (2026-11-21): **Address 104 Dependabot alerts across SweetPad dependencies**
-  *Symptoms*: ## Changes  The updated lockfiles resolve outside the affected ranges for 104 of the 106 Dependabot alerts open when this change was prepared.  - Upgrade the CLI’s ZIP dependency from 2.6.1 to 9.8.1 and adapt archive member lookup to the fallible filename API. - Update the extension and docs npm dependencies, including scoped overrides for packages whose parents still request affected releases. - Update both React Native CI fixtures. Patch the pinned template’s manifest constraints so a fresh checkout can install the updated lockfiles in frozen mode.  ## Remaining alerts  Both React Native fixtures still resolve Active Support 7.x. The first patched release is 8.0.5.2, and CocoaPods Core 1.17.0 still requires Active Support below 8. [Alert 209](https://github.com/sweetpad-dev/sweetpad/security/dependabot/209) · [Alert 210](https://github.com/sweetpad-dev/sweetpad/security/dependabot/210)  ## Verification  - Built and type-checked the extension. All 675 unit tests and 19 VS Code end-to-end tests passed. - Ran the Rust ZIP, notarization, and upload tests, along with formatting and CLI Clippy checks. - Type-checked and built the docs, including a separate production build with two rendering workers. - Ran frozen dependency preparation and CocoaPods deployment installs for both React Native fixtures on macOS.  A separate npm audit reported existing advisories for glob and diff in the workspace tooling. Both packages resolve to the same versions as on the base commit. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -395,420 +395,459 @@ public typealias GenCoreDataFrameworkManagedObject = NSManagedObject
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2ff0f84` (2026-11-21)
-**Commit Message**: Restart the test simulator after a hot-reload install timeout
+### Incident Patch 1: `685c517e` (2026-11-25)
+**Commit Message**: Fix App Clip signing on Linux and verify it end to end (#367)
 
-**File**: `sweetpad-lib/ci/hot-reload-e2e.sh` (modified, +20/-6)
+**File**: `sweetpad-cli/PLAN_LINUX.md` (modified, +8/-1)
 ```diff
-@@ -61,22 +61,36 @@ esac
- cleanup() {
-   perl -e 'alarm shift; exec @ARGV' 30 xcrun simctl shutdown "$UDID" >/dev/null 2>&1 || true
-   perl -e 'alarm shift; exec @ARGV' 30 xcrun simctl delete "$UDID" >/dev/null 2>&1 || true
-+  if [ -n "${selfcheck_log:-}" ]; then rm -f "$selfcheck_log"; fi
+@@ -1110,7 +1110,14 @@ Clippy with `-D warnings`, formatting and diff checks also pass.
+ - [x] App extensions and widgets: an `embeddedBinaryValidationUtility`
+       stand-in makes Xcode's checks (bundle ID prefix, matching versions);
+       a widget built here registers in the simulator
+-- [ ] App Clips
++- [x] App Clips. The [delivery fixture](../sweetpad-lib/ci/fixture-delivery/README.md#app-clips)
++      builds a host with an embedded Clip on Linux and with Xcode. Both hosts
++      launch on an iPhone simulator, and each installed Clip displays a fresh
++      HTTPS invocation URL in XCTest. The Release device archives and Linux
++      development IPA match on host/Clip entitlements and bundle metadata.
++      Apple's tools verify both signatures, their provisioning profiles, and
++      both archive dSYMs. Both engines reject a signed Clip missing its parent
++      entitlement.
+ - [x] Test targets: `test build` adds the selected test plan's targets, or
+       the scheme's testables, as `build-for-testing` does, and leaves the
+       testing frameworks out of the host app like Xcode 27. The bundle passes
+```
+
+**File**: `sweetpad-cli/src/cli/codesign/provisioning.rs` (modified, +36/-7)
+```diff
+@@ -153,13 +153,7 @@ pub(super) fn answer(
+     }
+     merge(&mut entitlements, project);
+     if let Some(profile) = &profile {
+-        for key in ["aps-environment", "com.apple.developer.aps-environment"] {
+-            if plist::get(&entitlements, key).is_some()
+-                && let Some(value) = plist::get(&profile.entitlements, key)
+-            {
+-                plist::set(&mut entitlements, key, value.clone());
+-            }
+-        }
++        profile.apply_capabilities(&mut entitlements, mac);
+     }
+     if !mac || profile.is_some() {
+         plist::set(
+@@ -485,6 +479,21 @@ pub(super) fn check_entitlements(
+     Ok(())
  }
-+selfcheck_log=
- trap cleanup EXIT
-+selfcheck_log=$(mktemp)
- DEST="platform=iOS Simulator,id=$UDID"
- echo "  $DEST"
--xcrun simctl boot "$UDID"
--perl -e 'alarm shift; exec @ARGV' 600 xcrun simctl bootstatus "$UDID" -b \
--  || fail "simulator $UDID failed to boot (10-minute timeout)"
-+boot_simulator() {
-+  perl -e 'alarm shift; exec @ARGV' 600 xcrun simctl bootstatus "$UDID" -b \
-+    || fail "simulator $UDID failed to boot (10-minute timeout)"
+ 
++/// A signed App Clip identifies exactly one full app, including its App ID prefix.
++pub(crate) fn check_clip_parent(entitlements: &Plist, host_id: &str) -> Result<(), String> {
++    let key = "com.apple.developer.parent-application-identifiers";
++    if let Some(Plist::Array(parents)) = plist::get(entitlements, key)
++        && let [Plist::String(parent)] = parents.as_slice()
++        && parent == host_id
++    {
++        return Ok(());
++    }
++    Err(format!(
++        "The {key} entitlement of an App Clip must match the application-identifier entitlement \
++         ('{host_id}') of its containing parent app."
++    ))
 +}
-+boot_simulator
- 
- # `app run --hot --hot-selfcheck` exits 0 only on a confirmed `.injected` whose
- # new code demonstrably ran (nonce observed in the unified log).
- run_selfcheck() {
-   local mode="$1"
-   section "hot reload self-check — iOS Simulator, $mode recompiler"
--  "$BIN" app run --project "$APP" --scheme SweetpadCIApp --destination "$DEST" \
--    --hot --hot-recompiler "$mode" --hot-selfcheck "$SRC" \
--    || fail "simulator/$mode: injection self-check failed"
-+  local args=(app run --project "$APP" --scheme SweetpadCIApp --destination "$DEST"
-+    --hot --hot-recompiler "$mode" --hot-selfcheck "$SRC")
-+  if ! "$BIN" "${args[@]}" 2>&1 | tee "$selfcheck_log"; then
-+    # CoreSimulator can report a completed boot while app installation is wedged.
-+    grep -Fq "'xcrun simctl install' didn't finish within" "$selfcheck_log" \
-+      || fail "simulator/$mode: injection self-check failed"
-+    echo "  Install timed out. Restarting test simulator $UDID and retrying $mode once."
-+    perl -e 'alarm shift; exec @ARGV' 60 xcrun simctl shutdown "$UDID" \
-+      || fail "simulator $UDID failed to shut down for install recovery"
-+    boot_simulator
-+    "$BIN" "${args[@]}" || fail "simulator/$mode: injection self-check failed after restart"
-+  fi
-   echo "  ✓ simulator/$mode injected"
++
+ /// Whether a profile has to grant entitlement `key`.
+ fn provisioned(key: &str) -> bool {
+     (key.starts_with("com.apple.developer.") && key != "com.apple.developer.team-identifier")
+@@ -636,6 +645,26 @@ impl Profile {
  }
  
-```
-
----
-
-### Incident Patch 2: `11b271ee` (2026-11-23)
-**Commit Message**: Move the Apple SDK license warning to the top of the Linux build post
-
-**File**: `sweetpad-docs/blog/2026-11-21-build-xcode-projects-on-linux.md` (modified, +6/-8)
-```diff
-@@ -10,6 +10,12 @@ SweetPad is a command-line tool for building, running, and testing Xcode project
- 
- <!-- truncate -->
- 
-+:::warning Apple SDK license
-+The build needs the iPhone SDK from Xcode, and Apple licenses that SDK with conditions on where it runs.
+ impl Profile {
++    /// Xcode takes the requested push environment from the profile. It also
++    /// signs an iOS host with its registered App Clip association, even when
++    /// the project has no entitlements file or this build embeds no Clip.
++    pub(super) fn apply_capabilities(&self, entitlements: &mut Plist, mac: bool) {
++        for key in ["aps-environment", "com.apple.developer.aps-environment"] {
++            if plist::get(entitlements, key).is_some()
++                && let Some(value) = plist::get(&self.entitlements, key)
++            {
++                plist::set(entitlements, key, value.clone());
++            }
++        }
++        let clips = "com.apple.developer.associated-appclip-app-identifiers";
++        if !mac
++            && plist::get(entitlements, clips).is_none()
++            && let Some(value) = plist::get(&self.entitlements, clips)
++        {
++            plist::set(entitlements, clips, value.clone());
++        }
++    }
 +
-+Using an Apple SDK on hardware that Apple didn’t make may violate your agreement with Apple. Apple’s standard terms limit execution to Apple-branded hardware running macOS. Before you import the SDK, check that your terms permit the machine you build on. See the [Xcode and Apple SDKs Agreement](https://www.apple.com/legal/sla/docs/xcode.pdf).
-+:::
+     /// The application identifier it allows, with its team: exact, or a
+     /// prefix ending in `*`. A macOS profile names it with Apple's prefix.
+     pub fn application_identifier(&self) -> Option<&str> {
+```
+
+**File**: `sweetpad-cli/src/cli/codesign/resign.rs` (modified, +9/-14)
+```diff
+@@ -127,12 +127,9 @@ pub(super) fn plan_with(
+     let app = &request.app;
+     let info = read_info(app)?;
+     let mac = app.join("Contents").is_dir();
++    let default_platform = if mac { "macosx" } else { "iphoneos" };
+     let platform =
+-        provisioning::platform(plist::string(&info, "DTPlatformName").unwrap_or(if mac {
+-            "macosx"
+-        } else {
+-            "iphoneos"
+-        }));
++        provisioning::platform(plist::string(&info, "DTPlatformName").unwrap_or(default_platform));
+     let archived = archived(app)?;
+     let team = match (
+         &request.team,
+@@ -162,7 +159,7 @@ pub(super) fn plan_with(
+         if is_provisioned(&path) {
+             let id = bundle_id(&path)?;
+             let bundle = bundle.insert(id);
+-            let archived = archived_entitlements(&path)?;
++            let archived = signed_entitlements(&path)?;
+             // A Developer ID app embeds a profile only for what Apple grants
+             // through one, or when ExportOptions names one.
+             let provisioned = request.method != Method::DeveloperId
+@@ -184,6 +181,9 @@ pub(super) fn plan_with(
+             } else {
+                 unprovisioned(archived, &team)
+             };
++            if path.parent() == Some(app.join("AppClips").as_path()) {
++                provisioning::check_clip_parent(&signed, &format!("{team}.{}", bundle_id(app)?))?;
++            }
+             let icloud = "com.apple.developer.icloud-container-environment";
+             if let Some(environment) = &request.icloud_environment
+                 && plist::get(&signed, icloud).is_some()
+@@ -387,7 +387,8 @@ fn archived(bundle: &Path) -> Result<Option<blobs::Existing>, String> {
+     Ok(layout.signature(&slice.data).and_then(blobs::read_existing))
+ }
+ 
+-fn archived_entitlements(bundle: &Path) -> Result<Plist, String> {
++/// The entitlements in the code signature of a bundle's main executable.
++pub(crate) fn signed_entitlements(bundle: &Path) -> Result<Plist, String> {
+     match archived(bundle)?.and_then(|e| e.entitlements) {
+         Some(xml) => plist::parse(&xml),
+         None => Ok(Plist::Dict(Vec::new())),
+@@ -523,13 +524,7 @@ pub(super) fn transform(
+         let allow = granted("get-task-allow").unwrap_or(Plist::Bool(false));
+         plist::set(&mut entitlements, "get-task-allow", allow);
+     }
+-    for key in ["aps-environment", "com.apple.developer.aps-environment"] {
+-        if plist::get(&entitlements, key).is_some()
+-            && let Some(value) = granted(key)
+-        {
+-            plist::set(&mut entitlements, key, value);
+-        }
+-    }
++    profile.apply_capabilities(&mut entitlements, mac);
+     if let Some(value) = granted("beta-reports-active") {
+         plist::set(&mut entitlements, "beta-reports-active", value);
+     }
+```
+
+**File**: `sweetpad-cli/src/cli/codesign/tests.rs` (modified, +47/-0)
+```diff
+@@ -1336,6 +1336,53 @@ fn an_export_refuses_a_profile_of_another_kind_or_a_missing_one() {
+     assert!(teams.contains("names no team"), "{teams}");
+ }
+ 
++#[test]
++fn a_signed_app_clip_must_name_exactly_its_host() {
++    let host = "TESTTEAM01.dev.sweetpad.app";
++    let parent = Plist::String(host.into());
++    let other = Plist::String("TESTTEAM01.dev.sweetpad.other".into());
++    let check = |parents| {
++        let rights = Plist::Dict(vec![(
++            "com.apple.developer.parent-application-identifiers".into(),
++            Plist::Array(parents),
++        )]);
++        provisioning::check_clip_parent(&rights, host)
++    };
++    assert!(check(vec![parent.clone()]).is_ok());
++    assert!(check(vec![other.clone()]).is_err());
++    assert!(check(vec![parent, other]).is_err());
++    assert!(provisioning::check_clip_parent(&Plist::Dict(vec![]), host).is_err());
++}
 +
- On Linux, SweetPad reads the Xcode project, describes it to Swift Build, and lets Swift Build run the build. The Linux Swift compiler, Clang, and LLD produce the iPhone code against the SDK imported from Xcode. SweetPad stands in for the Xcode tools that compile resources and sign the app.
- 
- <ThemedImage
-@@ -155,11 +161,3 @@ Two builds that share a DerivedData folder run one after the other. The second p
- ## Next steps
- 
- To see the greeting on a phone, [build with development signing](/docs/cli/linux/signing-and-testing#configure-development-signing), then [install the signed app](/docs/cli/linux/ubuntu-usb#build-install-and-launch). For iOS tests, Linux can build the test bundles and write the manifest Xcode needs to [run them on a Mac](/docs/cli/linux/signing-and-testing#run-the-tests-on-a-mac).
--
--## Apple’s license terms
--
--The build needs the iPhone SDK from Xcode, and Apple licenses that SDK with conditions on where it runs.
--
--:::warning Apple SDK license
--Using an Apple SDK on hardware that Apple didn’t make may violate your agreement with Apple. Apple’s standard terms limit execution to Apple-branded hardware running macOS. Before you import the SDK, check that your terms permit the machine you build on. See the [Xcode and Apple SDKs Agreement](https://www.apple.com/legal/sla/docs/xcode.pdf).
--:::
-```
-
----
-
-### Incident Patch 3: `ac276a38` (2026-11-22)
-**Commit Message**: Fix Linux watchOS test links, cache permissions, concurrent setup, and CLI error output (#366)
-
-**File**: `.github/workflows/linux-arm64-package.yaml` (modified, +31/-0)
-```diff
-@@ -24,6 +24,11 @@ on:
-       - ".github/workflows/cli-release.yaml"
-       - ".github/workflows/cli-distribute.yaml"
-   workflow_dispatch:
-+    inputs:
-+      private_sdk:
-+        description: Build the iOS and watchOS fixtures on the provisioned SDK runner
-+        type: boolean
-+        default: false
-   workflow_call:
- permissions:
-   contents: read
-@@ -293,3 +298,29 @@ jobs:
-           name: linux-helpers-${{ matrix.arch }}-${{ strategy.job-index }}
-           path: ${{ runner.temp }}/helpers/run/*
-           if-no-files-found: warn
++#[test]
++fn export_restores_the_profiles_app_clip_association_to_an_ad_hoc_archive() {
++    let mut profile =
++        provisioning::find_named(kind_profiles(), "Sweetpad Kinds app-store").unwrap();
++    let key = "com.apple.developer.associated-appclip-app-identifiers";
++    let clip = Plist::Array(vec![Plist::String(
++        "TESTTEAM01.dev.sweetpad.kinds.app.Clip".into(),
++    )]);
++    plist::set(&mut profile.entitlements, key, clip.clone());
++    let export = |archived| {
++        resign::transform(
++            archived,
++            &profile,
++            "TESTTEAM01",
++            "dev.sweetpad.kinds.app",
++            false,
++            resign::Method::AppStoreConnect,
++        )
++    };
++    let signed = export(Plist::Dict(vec![])).unwrap();
++    assert_eq!(plist::get(&signed, key), Some(&clip));
 +
-+  private-sdk:
-+    name: iOS device and watchOS simulator package builds
-+    if: >-
-+      (github.event_name == 'workflow_dispatch' && inputs.private_sdk) ||
-+      (github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.SWEETPAD_PRIVATE_SDK_CI == 'true')
-+    needs: package
-+    runs-on: [self-hosted, Linux, ARM64, sweetpad-linux]
-+    timeout-minutes: 20
-+    steps:
-+      - uses: actions/checkout@v7
-+        with:
-+          persist-credentials: false
-+      - uses: actions/download-artifact@v8
-+        with:
-+          name: cli-tarball-linux-arm64
-+          path: dist
-+      - name: Build and inspect the linked Mach-O products
-+        run: |
-+          version=$(jq -r .swift sweetpad-lib/ci/linux-toolchain.json)
-+          archives=(dist/*.tar.gz)
-+          test "${#archives[@]}" -eq 1
-+          python3 sweetpad-cli/ci/check-linux-sdk-install.py \
-+            --archive "${archives[0]}" --out "$RUNNER_TEMP/sdk-check-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
-+            --swift "$HOME/swift/swift-$version-RELEASE" \
-+            --sdk "$HOME/.swiftpm/swift-sdks/darwin.artifactbundle"
++    let other = Plist::Array(vec![Plist::String(
++        "TESTTEAM01.dev.sweetpad.other.Clip".into(),
++    )]);
++    let mismatch = export(Plist::Dict(vec![(key.into(), other)])).unwrap_err();
++    assert!(mismatch.contains(key), "{mismatch}");
++}
++
+ #[test]
+ #[allow(clippy::too_many_lines)] // one table of entitlements per method
+ fn export_entitlements_move_to_the_profile_and_team() {
 ```
 
-**File**: `skills/sweetpad/SKILL.md` (modified, +4/-4)
+**File**: `sweetpad-cli/src/cli/darwin_tools/embedded_binary.rs` (modified, +18/-7)
 ```diff
-@@ -22,12 +22,12 @@ projects. This skill covers the everyday flows and how to discover the rest.
- ## Read results correctly
+@@ -2,17 +2,17 @@
+ //! Info.plist> [-signing-cert <name>]`, which Swift Build runs on each app
+ //! extension, App Clip or watch app it embeds in an app.
+ //!
+-//! It makes the checks of Xcode's that hold without signing: an error when
+-//! the embedded bundle's identifier doesn't start with the app's, and a
+-//! warning when its `CFBundleVersion`, or else its
+-//! `CFBundleShortVersionString`, differs from the app's or is missing. The messages are
+-//! Xcode's, on stderr, where Swift Build reads them.
++//! Checks the embedded bundle's identifier and versions against its host.
++//! A device App Clip must also name its host in its signed entitlements.
  
- - Success is `{"schema":N,"ok":true,"data":{…}}` on stdout. Errors are
--  `{"schema":1,"ok":false,"error":{"code":…,"message":…}}` on stderr, where
-+  `{"schema":1,"ok":false,"error":{"code":…,"message":…}}` on stdout, where
-   `code` is one of: `generic`, `usage_error`, `build_failure`,
-   `target_resolution`, `tool_missing`, `user_cancel`.
--- `ok: true` means "the command ran", not "the outcome was good". A failing test
--  run still reports `ok: true` with `data.passed: false` — read the payload's own
--  status field, not just `ok`.
-+- A failing test run exits 3 with `ok: false`. Read the available test summary
-+  from `data` in the same envelope. A completed diagnostic report such as
-+  `doctor` can have `ok: true` and exit nonzero when it finds problems.
- - Exit codes: `0` ok · `1` generic · `2` bad flags, or a flag a prompt needs
-   off a terminal (`--yes`, `--product`) · `3` build/test failure ·
-   `4` target resolution (unknown scheme/destination) · `5` missing tool ·
+ use std::path::{Path, PathBuf};
+ use std::process::ExitCode;
+ 
+ use sweetpad_lib::derived_data::plist_strings;
+ 
++use crate::cli::codesign::{provisioning::check_clip_parent, resign::signed_entitlements};
++use crate::cli::property_list as plist;
++
+ pub(super) fn main(args: &[String]) -> ExitCode {
+     match validate(args) {
+         Ok(warnings) => {
+@@ -36,7 +36,6 @@ fn validate(args: &[String]) -> Result<Vec<String>, String> {
+     while let Some(arg) = it.next() {
+         match arg.as_str() {
+             "-info-plist-path" => host_plist = Some(PathBuf::from(super::value(arg, &mut it)?)),
+-            // Nothing is signed during the build here.
+             "-signing-cert" => {
+                 super::value(arg, &mut it)?;
+             }
+@@ -54,7 +53,19 @@ fn validate(args: &[String]) -> Result<Vec<String>, String> {
+         ));
+     }
+     let own = plist_strings(&info_plist(&embedded));
+-    Ok(check(&own, &host)?.into_iter().collect())
++    let warning = check(&own, &host)?;
++    if embedded
++        .parent()
++        .is_some_and(|dir| dir.ends_with("AppClips"))
++        && own
++            .iter()
++            .any(|(k, v)| k == "DTPlatformName" && v == "iphoneos")
++        && let Some(app) = host_plist.parent()
++        && let Some(host_id) = plist::string(&signed_entitlements(app)?, "application-identifier")
++    {
++        check_clip_parent(&signed_entitlements(&embedded)?, host_id)?;
++    }
++    Ok(warning.into_iter().collect())
+ }
+ 
+ /// A bundle's Info.plist: at its root on iOS, in `Contents` on macOS.
 ```
 
-**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +14/-19)
+**File**: `sweetpad-docs/docs/cli/linux/reference.md` (modified, +1/-1)
 ```diff
-@@ -307,13 +307,13 @@ builds it with real `xcodebuild`.
+@@ -8,7 +8,7 @@ sidebar_label: Support and configuration
  
- - Success: `{"schema": 1, "ok": true, "data": …}` on **stdout**,
-   pretty-printed. Errors: `{"schema": 1, "ok": false, "error": {code,
--  message}}` on **stderr**, compact single-line by design (robust to scrape
--  even when child-process stderr interleaves). A build failure adds the
-+  message}}` on **stdout**, compact on one line. A build failure adds the
-   parsed `diagnostics`; a failure that points at a next command adds it as
-   `tip`, which human output prints as its closing `tip:` line even when the
-   streamed log already showed the error.
--- **`ok` means "the command executed"**, not "the outcome was good": a red
--  test suite is `ok: true` with `data.passed: false` (exit 3), `doctor` with
-+- A red test suite returns `ok: false` and `error.code: "build_failure"` (exit 3).
-+  Its report stays in the same envelope under `data`, including `data.passed: false`.
-+  A completed diagnostic report can identify problems: `doctor` with
-   problems is `ok: true` with per-check statuses (exit 1), `device info` on a
-   device that is not ready is `ok: true` with `data.ready: false` (exit 1),
-   `format --check` reports findings in `data` (exit 3). Every such payload
-@@ -330,8 +330,7 @@ builds it with real `xcodebuild`.
-   `log stream` NDJSON events (one JSON object per line, no envelope; on macOS,
-   captured stdout/stderr lines are `{"source":"stdout",…}`), except under
-   `--exits`, whose finite report takes the envelope like any other;
--  `completions` ignores it. Clap usage errors (exit 2) print clap's human
--  text on stderr regardless of `--json`.
-+  `completions` ignores it. Clap usage errors produce a `usage_error` envelope when JSON mode is recognized.
- 
- ### The NDJSON stream (`-o ndjson`)
- 
-@@ -390,8 +389,7 @@ simulator) exits 1 instead of 0, since the app may still be running. A
- session already exiting non-zero keeps its code and prints the stop's error
- too (`quit_result`).
- 
--Exit 2 has two sources. clap reports what it can't parse, in its own text
--even under `--json`. The command reports what it parses but refuses: a flag
-+Exit 2 has two sources. clap reports what it can't parse. The command reports what it parses but refuses: a flag
- on a verb it means nothing to (`test build --failed`, `build diagnostics
- --clean`), two flags that can't go together (`--on` with `--destination`,
- `--gh-annotations` with `-o json`, `app debug --batch` with `-o json`,
-@@ -953,8 +951,8 @@ Notes / heuristics:
-   for its members, and a local package's for its products. Scheme files for
-   other targets don't stand in the way, so `scheme list`, `settings show` and
-   the build's product lookup agree on the set `xcodebuild -list` prints.
--- `test run` exits non-zero on failures; the `--json` summary lands on stdout
--  and the failure error on stderr, so both are independently consumable.
-+- A failed test suite exits 3. The JSON envelope and final NDJSON result both include
-+  `ok: false`, `error.code: "build_failure"`, and the available summary in `data` on stdout.
- - simulator inline logs use a best-effort `processImagePath CONTAINS` log
-   predicate; may need refinement per app.
- - New deps (under the `cli` feature only): `clap_complete`, `dialoguer`, `libc`
-@@ -4754,15 +4752,12 @@ are copied as they are. An import writes a receipt, `sweetpad-sdk.json`,
- whose `importerVersion` changes whenever the layout does, and setup reuses a
- bundle only while the receipt matches.
- 
--**The engine's additions sit above the user's settings.** Some overrides
--add to a setting rather than set it: `-fuse-ld=lld` in `OTHER_LDFLAGS` for
--tvOS, watchOS and visionOS, and the Swift library and header search paths.
--Swift Build stacks a request's levels as command-line settings, then the
--`-xcconfig` file, then the environment config, so an addition among the
--command-line settings is lost to a user's `OTHER_LDFLAGS=-ObjC` or to an
--xcconfig that sets the flags without `$(inherited)`. The additions go in the
--environment-config table instead, where `$(inherited)` takes in everything
--below: `-ObjC -fuse-ld=lld`.
-+**Linker selection and search paths.** For tvOS, watchOS and visionOS, the
-+engine sets `ALTERNATE_LINKER=lld` for the target SDK. Swift Build then passes
-+`-use-ld=lld` to Swift and `-fuse-ld=lld` to Clang. Projects can supply their
-+own `OTHER_LDFLAGS`. The engine appends the Swift library and header search
-+paths in the environment-config table. At that level, `$(inherited)` includes
-+the project's settings, command-line overrides and the user's `-xcconfig` file.
- 
- **A stand-in is the sweetpad binary under the tool's name.** The engine
- links the binary into the stand-ins' folder under each name, puts the folder
+ | Operation | On Linux |
+ | --- | --- |
+-| Build iOS apps, extensions, and widgets | Supported. |
++| Build iOS apps, extensions, widgets, and App Clips | Supported. App Clips embed in their host and can be exported in a development-signed IPA. |
+ | Build macOS apps | Supported. Running them needs a Mac. |
+ | Build tvOS, watchOS, and visionOS simulator targets | Builds and links. Running them and device signing are untested. |
+ | Build Mac Catalyst targets | Untested. |
 ```
 
-**File**: `sweetpad-cli/ci/check-linux-gaps.py` (modified, +1/-1)
+**File**: `sweetpad-lib/ci/check-app-clip.py` (added, +178/-0)
 ```diff
-@@ -38,7 +38,7 @@ def invoke(name, arguments, success=True, environment=None):
-         (out / (name + ".stderr")).write_text(result.stderr)
-         if (result.returncode == 0) != success:
-             raise AssertionError(f"{name}: exit {result.returncode}; see {out / (name + '.stderr')}")
--        return json.loads(result.stdout if success else result.stderr)
-+        return json.loads(result.stdout)
- 
-     build = ["build", *common, "--destination", "generic/platform=iOS Simulator,arch=arm64", "--", "ARCHS=arm64", "CODE_SIGNING_ALLOWED=NO"]
-     built=invoke("script-build", build)["data"]
-```
-
-**File**: `sweetpad-cli/ci/check-linux-package.py` (modified, +6/-6)
-```diff
-@@ -79,26 +79,26 @@ def invoke(name, args, success=True):
-     missing_session = out / "missing-apple-session.json"
-     auth_login = invoke("auth-no-session", [binary, "auth", "login", "--apple-id", "synthetic@example.com",
-                                             "--session-file", missing_session, "--json"], success=False)
--    assert "needs a terminal" in json.loads(auth_login.stderr)["error"]["message"]
-+    assert "needs a terminal" in json.loads(auth_login.stdout)["error"]["message"]
-     for name, arguments in [("download-no-session", ["sdk", "download"]), ("setup-xcode-no-session", ["setup"])]:
-         response = invoke(name, [binary, *arguments, "--xcode", "27.3 beta", "--session-file", missing_session, "--json"], success=False)
--        assert "no Apple session file" in json.loads(response.stderr)["error"]["message"]
-+        assert "no Apple session file" in json.loads(response.stdout)["error"]["message"]
-     logged_out = invoke("auth-logout-empty", [binary, "auth", "logout", "--session-file", missing_session, "--json"])
-     assert json.loads(logged_out.stdout)["data"]["loggedOut"] is True
-     assert not missing_session.exists()
-     invalid_sdk=out / "invalid-sdk.tar.gz"
-     invalid_sdk.write_bytes(b"not an SDK archive")
-     invalid_sdk.with_name(invalid_sdk.name + ".sha256").write_text(f"{hashlib.sha256(invalid_sdk.read_bytes()).hexdigest()}  {invalid_sdk.name}\n")
-     raw_setup=invoke("raw-setup-source-discovery", [extracted / "sweetpad", "setup", "--sdk", invalid_sdk, "--json"], success=False)
--    raw_error=json.loads(raw_setup.stderr)["error"]
-+    raw_error=json.loads(raw_setup.stdout)["error"]
-     assert "Expected a Sweetpad SDK export" in raw_error["message"]
-     installed_setup=invoke("standalone-setup-source-discovery", [binary, "setup", "--sdk", invalid_sdk, "--json"], success=False)
--    assert "Expected a Sweetpad SDK export" in json.loads(installed_setup.stderr)["error"]["message"]
-+    assert "Expected a Sweetpad SDK export" in json.loads(installed_setup.stdout)["error"]["message"]
-     doctor = json.loads(invoke("linux-doctor-missing-tools", [binary, "doctor", "--target", "ios", "--json"], success=False).stdout)
-     assert doctor["ok"] and doctor["data"]["summary"]["problems"] > 0
-     checks = {c["name"]: c for c in doctor["data"]["checks"]}
-     missing = invoke("missing-host-packages", [binary, "setup", "--no-sdk", "--json"], success=False)
--    message = json.loads(missing.stderr)["error"]["message"]
-+    message = json.loads(missing.stdout)["error"]["message"]
-     assert checks["Host packages"]["status"] == "problem", checks["Host packages"]
-     assert checks["Host packages"]["detail"] == message and "apt-get install" in message, message
-     assert checks["Swift Build"]["status"] == "ok", checks["Swift Build"]
-@@ -113,7 +113,7 @@ def invoke(name, args, success=True):
-     assert value["ok"] and "LinuxApp" in json.dumps(value["data"])
-     result = invoke("missing-toolchain", [binary, "build", "--project", project, "--scheme", "LinuxApp",
-                     "--destination", "generic/platform=iOS Simulator", "--json"], success=False)
--    error = json.loads(result.stderr)
-+    error = json.loads(result.stdout)
-     assert error["ok"] is False and any(s in error["error"]["message"].lower() for s in ["sdk", "swift", "swbuild"])
-     assert shutil.which("swift", path=env["PATH"]) is None
-     report = {"passed": True, "archiveSha256": expected[0], "binarySha256": manifest["files"]["sweetpad"],
-```
-
-**File**: `sweetpad-cli/ci/check-linux-sdk-install.py` (modified, +29/-5)
-```diff
-@@ -1,5 +1,5 @@
- #!/usr/bin/env python3
--"""Build the packaged example with a fresh home and explicit read-only tools.
-+"""Build the iOS sample and watchOS test fixture with the packaged CLI and a fresh home.
- 
- Bubblewrap exposes no developer home, source checkout, signing files, or app
- build cache. The private SDK and the public compiler are prerequisites; Swift
-@@ -22,6 +22,8 @@ def check(args):
-     unpacked, work = out / "unpacked", out / "work"
-     unpacked.mkdir()
-     work.mkdir()
-+    fixture = Path(__file__).resolve().parent.parent / "fixtures/watch-link"
-+    shutil.copytree(fixture, work / "WatchLink", ignore=shutil.ignore_patterns(".build", "xcuserdata"))
-     with tarfile.open(args.archive) as source:
-         source.extractall(unpacked, filter="data")
-     manifest = json.loads((unpacked / "manifest.json").read_text())
-@@ -42,6 +44,7 @@ def check(args):
-                 "--setenv", "SWEETPAD_DARWIN_SDK", "/opt/darwin-sdk",
-                 "--setenv", "LANG", "C.UTF-8", "--setenv", "NO_COLOR", "1"]
-     script = '''set -eu
-+umask 0002
- mkdir -p "$HOME"
- mkdir -p "$HOME/.local/bin"
- # A link on PATH to the unpacked archive, which keeps libexec/sweetpad beside
-@@ -60,18 +63,38 @@ def check(args):
- sweetpad build --project /work/Example/LinuxApp.xcodeproj --scheme LinuxApp \
-   --destination 'generic/platform=iOS' --json --non-interactive -- \
-   -derivedDataPath /work/DerivedData CODE_SIGNING_ALLOWED=NO > /work/build.json
-+sweetpad test build --project /work/WatchLink/WatchLink.xcodeproj --scheme WatchProbe \
-+  --destination 'generic/platform=watchOS Simulator,arch=arm64' --json --non-interactive -- \
-+  -derivedDataPath /work/WatchDerivedData CODE_SIGNING_ALLOWED=NO OTHER_LDFLAGS=-lz > /work/watch-build.json
- '''
-     result = subprocess.run([*command, "/bin/bash", "-c", script], capture_output=True, text=True, timeout=600)
-     (out / "sandbox.stdout").write_text(result.stdout)
-     (out / "sandbox.stderr").write_text(result.stderr)
--    result.check_returncode()
+@@ -0,0 +1,178 @@
++#!/usr/bin/env python3
++"""Compare the delivery fixture's prebuilt App Clip products on a Mac with Xcode."""
++import argparse
++import hashlib
++import json
++import os
++from pathlib import Path
++import plistlib
++import subprocess
++import tempfile
++
++
++FIXTURE = Path(__file__).resolve().parent / "fixture-delivery"
++PARENT = "com.apple.developer.parent-application-identifiers"
++CLIPS = "com.apple.developer.associated-appclip-app-identifiers"
++ON_DEMAND = "com.apple.developer.on-demand-install-capable"
++
++
++def run(*command, timeout=240):
++    result = subprocess.run(command, capture_output=True, timeout=timeout)
 +    if result.returncode:
-+        for name in ("build.json", "watch-build.json"):
-+            envelope = work / name
-+            if envelope.exists():
-+                print(envelope.read_text())
-+        print(result.stderr)
-+        result.check_returncode()
-     build = json.loads((work / "build.json").read_text())
-     assert build["ok"] and build["data"]["built"]
-     product = work / Path(build["data"]["productPath"]).relative_to("/work")
-     executable = product / "LinuxApp"
-     assert executable.is_file()
-     description = subprocess.check_output(["file", str(executable)], text=True).strip()
-     assert "Mach-O" in description and "arm64" in description
-+    watch = json.loads((work / "watch-build.json").read_text())
-+    assert watch["ok"] and watch["data"]["built"], watch
-+    products = work / "WatchDerivedData/Build/Products/Debug-watchsimulator"
-+    watch_binaries = {}
-+    for name, kind in [
-+        ("PackageFrameworks/ValueKit.framework/ValueKit", "shared library"),
-+        ("WatchTests.xctest/WatchTests", "bundle"),
-+    ]:
-+        info = subprocess.check_output(["file", "-b", str(products / name)], text=True).strip()
-+        assert all(word in info for word in ("Mach-O", "arm64", kind)), (name, info)
-+        watch_binaries[name] = info
-     doctor = {c["name"]: c for c in json.loads((work / "doctor.json").read_text())["data"]["checks"]}
-     for name in ("Swift Build", "Swift Build service", "Swift Build patches", "Macro plugin"):
-         assert doctor[name]["status"] == "ok", doctor[name]
-@@ -80,13 +103,14 @@ def check(args):
-               "developerHomeVisible": False, "networkAvailable": False, "appBuildCacheReused": False,
-               "toolchainsReadOnly": True, "sdkReadOnly": True, "signingMaterialAvailable": False,
-               "installedBinarySha256": manifest["files"]["sweetpad"], "packagedSwiftHelpers": True,
--              "product": str(product), "executableDescription": description,
-+              "watchSimulatorBinaries": watch_binaries, "product": str(product), "executableDescription": description,
-               "scope": "Fresh app build from the installed release artifact; compiler and SDK installation are explicit prerequisites."}
-     (out / "summary.json").write_text(json.dumps(report, indent=2) + "\n")
-     print(json.dumps(report, indent=2))
-     if not args.keep_build_cache:
--        for relative in ["Build/Intermediates.noindex", "ModuleCache.noindex", "SDKStatCaches.noindex", "Index.noindex"]:
--            shutil.rmtree(work / "DerivedData" / relative, ignore_errors=True)
-+        for build_dir in ["DerivedData", "WatchDerivedData"]:
-+            for relative in ["Build/Intermediates.noindex", "ModuleCache.noindex", "SDKStatCaches.noindex", "Index.noindex"]:
-+                shutil.rmtree(work / build_dir / relative, ignore_errors=True)
- 
- 
- if __name__ == "__main__":
++        raise RuntimeError(f"{command[0]} failed: {(result.stderr + result.stdout).decode(errors='replace')}")
++    return result.stdout
++
++
++def equal(what, actual, expected):
++    if actual != expected:
++        raise ValueError(f"{what}: expected {expected!r}, got {actual!r}")
++
++
++def inspect(app, simulator):
++    clip = app / "AppClips/DeliveryClip.app"
++    equal("embedded Clips", list(clip.parent.glob("*.app")), [clip])
++    metadata, rights = {}, {}
++    for role, bundle in [("host", app), ("clip", clip)]:
++        run("codesign", "--verify", "--deep", "--strict", bundle)
++        info = plistlib.loads((bundle / "Info.plist").read_bytes())
++        metadata[role] = {key: info[key] for key in (
++            "CFBundleIdentifier", "CFBundleExecutable", "CFBundleVersion",
++            "CFBundleShortVersionString", "MinimumOSVersion", "UIDeviceFamily", "DTPlatformName")}
++        equal(f"{role} platform", info["DTPlatformName"], "iphonesimulator" if simulator else "iphoneos")
++        if role == "clip":
++            metadata[role]["NSAppClip"] = info["NSAppClip"]
++        if simulator:
++            # Simulator entitlements live in the Mach-O, outside the ad hoc signature.
++            with tempfile.TemporaryDirectory() as temp:
++                output = Path(temp) / "simulated.plist"
++                run("xcrun", "segedit", bundle / info["CFBundleExecutable"],
++                    "-extract", "__TEXT", "__entitlements", output)
++                rights[role] = plistlib.loads(output.read_bytes().rstrip(b"\0"))
++        else:
++            rights[role] = plistlib.loads(run("codesign", "-d", "--entitlements", "-", "--xml", bundle))
++            profile = plistlib.loads(run("security", "cms", "-D", "-i", bundle / "embedded.mobileprovision"))
++            with tempfile.TemporaryDirectory() as temp:
++                run("codesign", "-d", f"--extract-certificates={temp}/signer", bundle)
++                signer = (Path(temp) / "signer0").read_bytes()
++                if signer not in profile["DeveloperCertificates"]:
++                    raise ValueError(f"{role} signing certificate is missing from its profile")
++            association = (CLIPS,) if role == "host" else (PARENT, ON_DEMAND)
++            for key in ("application-identifier", "get-task-allow", *association):
++                equal(f"{role} signed/profile {key}", rights[role][key], profile["Entitlements"][key])
++            equal(f"{role} development signature", rights[role]["get-task-allow"], True)
++
++    equal("Clip bundle ID", metadata["clip"]["CFBundleIdentifier"], metadata["host"]["CFBundleIdentifier"] + ".Clip")
++    equal("Clip parent", rights["clip"][PARENT], [rights["host"]["application-identifier"]])
++    equal("on-demand capability", rights["clip"][ON_DEMAND], True)
++    if not simulator:
++        equal("host association", rights["host"][CLIPS], [rights["clip"]["application-identifier"]])
++    return {"info": metadata, "entitlements": rights}
++
++
++def binary_hashes(app):
++    info = plistlib.loads((app / "Info.plist").read_bytes())
++    executable = app / info["CFBundleExecutable"]
++    binaries = [executable]
++    # When Xcode emits a debug launcher, the Swift code lives in this dylib.
++    debug_dylib = app / (executable.name + ".debug.dylib")
++    if debug_dylib.is_file():
++        binaries.append(debug_dylib)
++    return {binary.name: hashlib.sha256(binary.read_bytes()).hexdigest() for binary in binaries}
++
++
++def install_on_simulator(udid, bundle):
++    # CoreSimulator's install service cannot read some Linux VM mounts.
++    with tempfile.TemporaryDirectory() as temp:
++        local = Path(temp) / bundle.name
++        run("ditto", bundle, local)
++        run("xcrun", "simctl", "install", udid, local)
++
++
++def simulator_check(args):
++    reference = inspect(args.xcode, True)
++    equal("Linux simulator product", inspect(args.linux, True), reference)
++    host_id = reference["info"]["host"]["CFBundleIdentifier"]
++    equal("UI test fixture identifier", host_id, "dev.example.delivery")
++    clip_id = reference["info"]["clip"]["CFBundleIdentifier"]
++    simctl = ("xcrun", "simctl")
++    report = {}
++    for label, app in [("xcode", args.xcode), ("linux", args.linux)]:
++        install_on_simulator(args.simulator, app)
++        try:
++            run(*simctl, "launch", args.simulator, host_i
 ```
 
-**File**: `sweetpad-cli/ci/linux-release-README.md` (modified, +7/-0)
+**File**: `sweetpad-lib/ci/fixture-delivery/Delivery.xcodeproj/project.pbxproj` (modified, +317/-0)
 ```diff
-@@ -81,6 +81,7 @@ Installing system packages takes sudo or a root shell. Run `sudo -v` first if yo
- sweetpad finds Swift and the SDK on its own. Source `~/.config/sweetpad/linux-env.sh` only to run `swift` by hand.
- An unchanged archive reuses the installed SDK. A different archive requires `--replace-sdk`.
- The SDK stays private. The prebuilt CLI requires no Rust installation or Sweetpad source checkout.
-+
- App signing requires your development identity and profiles, configured separately.
+@@ -11,6 +11,7 @@
+ 		1767D6861271A76B6A685D67 /* DeliveryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2857443B0F2678AE8E2E6B /* DeliveryApp.swift */; };
+ 		18C3B4B68C4C7D49A656C636 /* DeliveryWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D6DB43B64FE333E4423ACF10 /* DeliveryWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+ 		28C8A9B24024AA01EC1CDF56 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787770103BFE1EEC0AA281B9 /* Assets.xcassets */; };
++		2D7E245A315DDE12EEA0B7A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787770103BFE1EEC0AA281B9 /* Assets.xcassets */; };
+ 		2F0659BA97AEEEBAB7F5C789 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787770103BFE1EEC0AA281B9 /* Assets.xcassets */; };
+ 		2F920C745BA412A0F4BB88A6 /* DeliveryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1745C2A8762C8B9CEB4608 /* DeliveryWidget.swift */; };
+ 		4094B33B25AE89A0F9757B40 /* DeliveryKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BB7D8BE893070FB3A27298D /* DeliveryKit.framework */; };
+@@ -20,13 +21,18 @@
+ 		4E148B05AA156DC2E01D5BC8 /* DeliveryKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BB7D8BE893070FB3A27298D /* DeliveryKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+ 		4EBB519487E625CF30EF27AE /* DeliveryKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3F738A7B82970DE911D9B1 /* DeliveryKit.swift */; };
+ 		51055E2CE488DC2FE207355C /* DeliveryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2857443B0F2678AE8E2E6B /* DeliveryApp.swift */; };
++		5CD49DD94BDFF656F7C7DF31 /* DeliveryClip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = B145D1CDAFEBF029DFF75E31 /* DeliveryClip.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
++		5D76E5D70A6BB0C40D615233 /* DeliveryClipInvocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC607C42011920F61BB35F5A /* DeliveryClipInvocationTests.swift */; };
+ 		61D1F00500B2972D9A98135E /* Stickers.xcstickers in Resources */ = {isa = PBXBuildFile; fileRef = 9D33BFE8597B90CB36E4C97C /* Stickers.xcstickers */; };
+ 		7F95D6040E32E6B70F1374E6 /* DeliveryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1745C2A8762C8B9CEB4608 /* DeliveryWidget.swift */; };
+ 		8A1EF9D22F9303B250D0D749 /* DeliveryKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B66A42A93FB081CD43CD1B60 /* DeliveryKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+ 		8D39D4D04B38808627D960BC /* DeliveryWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 5979151531102AEB88B7E8F6 /* DeliveryWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
++		A4162E428FDBCEA3F0023984 /* DeliveryClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF5AF1040C832FE730AE8C7 /* DeliveryClipApp.swift */; };
+ 		B76280CEC8B62D45615F35A0 /* DeliveryWatchExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AF48D7A1CAEC2F21D8A38498 /* DeliveryWatchExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
++		BFD831851B8A12D17915EF27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787770103BFE1EEC0AA281B9 /* Assets.xcassets */; };
+ 		C7EF64F40FDDEE294F27BD85 /* DeliveryKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66A42A93FB081CD43CD1B60 /* DeliveryKit.framework */; };
+ 		E561AFCF774A6AB4057C2100 /* DeliveryStickers.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D1287DA92E32BB492EB4CB25 /* DeliveryStickers.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
++		FAD9FE1625C7E81AB3D33C84 /* DeliveryClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF5AF1040C832FE730AE8C7 /* DeliveryClipApp.swift */; };
+ /* End PBXBuildFile section */
  
- CLI 0.1.22 also accepts private Xcode `.xip` downloads directly:
-@@ -109,6 +110,12 @@ Other Linux architectures, including 32-bit x86, are not release targets.
- Public host-toolchain checks cover Ubuntu, Debian, and Arch. Private SDK app builds cover these distributions separately.
- Additional distributions remain unverified.
+ /* Begin PBXContainerItemProxy section */
+@@ -37,6 +43,13 @@
+ 			remoteGlobalIDString = EAC9D63AA5CE8D3638F64DBC;
+ 			remoteInfo = "DeliveryKit-macOS";
+ 		};
++		08F1056EC823BCF23D0346EB /* PBXContainerItemProxy */ = {
++			isa = PBXContainerItemProxy;
++			containerPortal = 21C744D40939B74039A1F09A /* Project object */;
++			proxyType = 1;
++			remoteGlobalIDString = 803F0E1FDD05666ADCEA3BB6;
++			remoteInfo = DeliveryClip;
++		};
+ 		18953895144B34320B1DA4EA /* PBXContainerItemProxy */ = {
+ 			isa = PBXContainerItemProxy;
+ 			containerPortal = 21C744D40939B74039A1F09A /* Project object */;
+@@ -82,6 +95,17 @@
+ /* End PBXContainerItemProxy section */
  
-+The Linux packages workflow can also build the iOS device sample and the watchOS Simulator
-+test fixture on the provisioned ARM64 runner. Select `private_sdk` when starting a manual run,
-+or set the repository variable `SWEETPAD_PRIVATE_SDK_CI=true` to enable it on package builds
-+pushed to `main`. The check uses the package from the same run and verifies the arm64 Mach-O
-+types of the watch package framework and XCTest bundle.
-+
- Run `sweetpad help linux-devices` for pairing and bounded logs.
- See the [Linux guide](https://sweetpad.hyzyla.dev/docs/cli/linux) for build setup and current limitations.
- 
-```
-
-**File**: `sweetpad-cli/fixtures/watch-link/Probe/WatchProbe.swift` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+import ValueKit
-+public func probe() -> Int { value }
+ /* Begin PBXCopyFilesBuildPhase section */
++		0CA75BE903753F11072AD79F /* Embed App Clips */ = {
++			isa = PBXCopyFilesBuildPhase;
++			buildActionMask = 2147483647;
++			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
++			dstSubfolderSpec = 16;
++			files = (
++				5CD49DD94BDFF656F7C7DF31 /* DeliveryClip.app in Embed App Clips */,
++			);
++			name = "Embed App Clip
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #367** (2026-11-25): Fix App Clip signing on Linux and verify it end to end (@hyzyla)
 - **PR #366** (2026-11-22): Fix Linux watchOS linking, setup races, and CLI failure output (@hyzyla)
 - **PR #365** (2026-11-21): Address 104 Dependabot alerts across SweetPad dependencies (@hyzyla)
 - **PR #364** (2026-11-21): Set up Linux builds with sweetpad's own SDK import and LLVM linker (@hyzyla)
 - **PR #362** (2026-11-15): Close most of the open Linux backlog (@hyzyla)
 - **PR #361** (2026-11-15): Fix six Linux backlog items (@hyzyla)
-- **PR #360** (2026-11-15): Export, upload and notarize Apple builds from Linux and macOS (@hyzyla)
 
 ---
 
@@ -828,52 +867,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Restart the test simulator after a hot-reload install timeout
+## X. App Clip signing on Linux and verify it end to end
 
 **RULE**:
-When implementing operations in `sweetpad-lib/ci/hot-reload-e2e.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sweetpad-cli/PLAN_LINUX.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2ff0f84`: Restart the test simulator after a hot-reload install timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `685c517e`: App Clip signing on Linux and verify it end to end. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-lib/ci/hot-reload-e2e.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-cli/PLAN_LINUX.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  if [ -n "${selfcheck_log:-}" ]; then rm -f "$selfcheck_log"; fi
-selfcheck_log=
-selfcheck_log=$(mktemp)
-boot_simulator() {
-  perl -e 'alarm shift; exec @ARGV' 600 xcrun simctl bootstatus "$UDID" -b \
-    || fail "simulator $UDID failed to boot (10-minute timeout)"
-}
-boot_simulator
-  local args=(app run --project "$APP" --scheme SweetpadCIApp --destination "$DEST"
-    --hot --hot-recompiler "$mode" --hot-selfcheck "$SRC")
-  if ! "$BIN" "${args[@]}" 2>&1 | tee "$selfcheck_log"; then
-    # CoreSimulator can report a completed boot while app installation is wedged.
-    grep -Fq "'xcrun simctl install' didn't finish within" "$selfcheck_log" \
-      || fail "simulator/$mode: injection self-check failed"
-    echo "  Install timed out. Restarting test simulator $UDID and retrying $mode once."
-    perl -e 'alarm shift; exec @ARGV' 60 xcrun simctl shutdown "$UDID" \
-      || fail "simulator $UDID failed to shut down for install recovery"
-    boot_simulator
-    "$BIN" "${args[@]}" || fail "simulator/$mode: injection self-check failed after restart"
-  fi
+- [x] App Clips. The [delivery fixture](../sweetpad-lib/ci/fixture-delivery/README.md#app-clips)
+      builds a host with an embedded Clip on Linux and with Xcode. Both hosts
+      launch on an iPhone simulator, and each installed Clip displays a fresh
+      HTTPS invocation URL in XCTest. The Release device archives and Linux
+      development IPA match on host/Clip entitlements and bundle metadata.
+      Apple's tools verify both signatures, their provisioning profiles, and
+      both archive dSYMs. Both engines reject a signed Clip missing its parent
+      entitlement.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-xcrun simctl boot "$UDID"
-perl -e 'alarm shift; exec @ARGV' 600 xcrun simctl bootstatus "$UDID" -b \
-  || fail "simulator $UDID failed to boot (10-minute timeout)"
-  "$BIN" app run --project "$APP" --scheme SweetpadCIApp --destination "$DEST" \
-    --hot --hot-recompiler "$mode" --hot-selfcheck "$SRC" \
-    || fail "simulator/$mode: injection self-check failed"
+- [ ] App Clips
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2ff0f84` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `685c517e` are properly handled with clean fallback behavior.

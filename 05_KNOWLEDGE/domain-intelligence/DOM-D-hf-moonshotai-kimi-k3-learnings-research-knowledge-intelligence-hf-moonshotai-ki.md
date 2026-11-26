@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T17:53:16.986Z",
+  "timestamp": "2026-11-26T10:50:49.837Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-moonshotai-kimi-k3-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-moonshotai-kimi-k3-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T17:53:16.986Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T10:50:49.837Z`  
 > **Learning ID**: `LEARN-EVO-hf-moonshotai-kimi-k3-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-moonshota`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T17:53:04.751Z  
+> **Timestamp**: 2026-11-26T10:50:28.810Z  
 > **Learning ID**: `learn-huggingface-moonshotai-kimi-k3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/moonshotai/Kimi-K3](https://huggingface.co/moonshotai/Kimi-K3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T17:53:04.553Z  
+> **Harvest Timestamp**: 2026-11-26T10:50:28.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 718528 downloads | 12011 likes
+- **Stars / Engagement**: 674720 downloads | 12027 likes
 
 ---
 

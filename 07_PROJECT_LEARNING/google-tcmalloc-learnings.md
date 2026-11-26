@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `afcf25e3`  
+> **Source Version**: `4d6f18eb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T03:28:21.615Z  
+> **Timestamp**: 2026-11-26T10:50:31.160Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T03:28:21.349Z  
+> **Harvest Timestamp**: 2026-11-26T10:50:31.155Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5413 stars
+- **Stars / Engagement**: 5414 stars
 
 ---
 
@@ -1247,15 +1247,15 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1961** (2026-11-24): **No public description**
-  *Symptoms*: No public description 
+- **Issue #1968** (2026-11-26): **Internal change**
+  *Symptoms*: Internal change  Co-authored-by: Chris Kennelly <ckennelly@google.com> 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1961/checks?check_run_id=138236406616) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1968/checks?check_run_id=139572967566) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
-- **Issue #1960** (2026-11-24): **No public description**
-  *Symptoms*: No public description 
+- **Issue #1967** (2026-11-25): **Add backed hit-rate and per-epoch churn timeseries telemetry to HugeRegionSet.**
+  *Symptoms*: Add backed hit-rate and per-epoch churn timeseries telemetry to HugeRegionSet.  `HugeRegionDetails` currently reports only lifetime cumulative unbacked bytes, so telemetry cannot separate recent 10-minute churn from startup bursts or limit-triggered releases. `HugeRegionSet` also lacks a backed hit-rate counter like `HugeCache`, making it hard to measure how often `MaybeGet` reuses already-backed hugepages versus faulting unbacked ones.  Track `MaybeGet` backed hits and misses to report `huge_region_hit_rate`, and add a 600-slot, 1-second activity timeseries recording newly backed and unbacked hugepages alongside 10-minute summary totals. Quiet epochs with zero backing or unbacking activity are omitted from serialized output while preserving `time_offset_ms` alignment with `huge_region_usage_history`. Also update a stale comment on `ReleasePages` that still referenced capping adaptive releases by `desired`.  Co-authored-by: Chris Kennelly <ckennelly@google.com> 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1960/checks?check_run_id=138223826326) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1967/checks?check_run_id=139505394906) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1272,474 +1272,80 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `afcf25e3` (2026-11-24)
-**Commit Message**: Drop unused fields from SubreleaseStatsEntry.
+### Incident Patch 1: `4d6f18eb` (2026-11-26)
+**Commit Message**: Fix ssize_t overflow when clamping the background release amount
 
-Replace the two-element SubreleaseStats array with only the four fields read by
-SubreleaseStatsTracker, shrinking each TimeSeriesTracker slot from 96 to 64
-bytes.  This saves 18.75 KiB per 600-slot tracker (37.5 to 75 KiB across 2 to 4
-heaps per process) of eagerly faulted metadata with identical output.
+In `ProcessBackgroundActions()`, `calculated_bytes >= kMaxSsize ? std::numeric_limits<ssize_t>::max() : calculated_bytes` has type `double`, so the clamped branch converts 2^63 back to `ssize_t`, which is undefined behavior. Once the release rate times the elapsed time reaches 2^63 bytes, this traps under `-fsanitize=float-cast-overflow`; otherwise it typically releases nothing.
 
-PiperOrigin-RevId: 1029130764
+Clamp in floating point and only convert in-range values. NaN and non-positive values still map to zero.
 
-**File**: `tcmalloc/huge_page_subrelease.h` (modified, +33/-36)
+PiperOrigin-RevId: 1030525244
+
+**File**: `tcmalloc/background.cc` (modified, +7/-4)
 ```diff
-@@ -299,8 +299,7 @@ class SubreleaseStatsTracker {
-         // decisions.
-         auto most_recent_record = tracker_.GetMostRecentRecord();
-         if (most_recent_record.epoch_taken <= summary_epochs_) {
--          peak = std::max(
--              peak, most_recent_record.data.stats[kStatsAtMaxDemand].num_pages);
-+          peak = std::max(peak, most_recent_record.data.max_demand_pages);
-         }
-         skipped_subrelease_correctness_.ReportUpdatedPeak(peak, now);
-       }
-@@ -428,14 +427,13 @@ class SubreleaseStatsTracker {
-   }
+@@ -212,10 +212,13 @@ void MallocExtension_Internal_ProcessBackgroundActions() {
+       constexpr double kMaxSsize =
+           static_cast<double>(std::numeric_limits<ssize_t>::max());
  
-  private:
--  // We collect subrelease statistics at four "interesting points" within each
--  // time step: at min/max demand of pages and at min/max use of hugepages. This
--  // allows us to approximate the envelope of the different metrics.
--  enum StatsType { kStatsAtMinDemand, kStatsAtMaxDemand, kNumStatsTypes };
--
-   struct SubreleaseStatsEntry {
--    // Collect stats at "interesting points" (minimum/maximum page demand).
--    SubreleaseStats stats[kNumStatsTypes] = {};
-+    // Collect demand bounds within this epoch. Only peak-demand free and
-+    // unmapped counts are reported by Print().
-+    Length min_demand_pages;
-+    Length max_demand_pages;
-+    Length max_demand_free_pages;
-+    Length max_demand_unmapped_pages;
-     static constexpr Length kDefaultValue = Length::max();
-     Length min_free_pages = kDefaultValue;
-     Length min_free_backed_pages = kDefaultValue;
-@@ -447,19 +445,19 @@ class SubreleaseStatsTracker {
+-      ssize_t bytes_to_release = calculated_bytes >= kMaxSsize
+-                                     ? std::numeric_limits<ssize_t>::max()
+-                                     : calculated_bytes;
+-      bytes_to_release = std::max<ssize_t>(bytes_to_release, 0);
++      // Clamp in floating point before converting.
++      ssize_t bytes_to_release = 0;
++      if (calculated_bytes >= kMaxSsize) {
++        bytes_to_release = std::numeric_limits<ssize_t>::max();
++      } else if (calculated_bytes > 0) {
++        bytes_to_release = static_cast<ssize_t>(calculated_bytes);
++      }
  
-     void Report(const SubreleaseStats& e) {
-       if (empty()) {
--        for (int i = 0; i < kNumStatsTypes; i++) {
--          stats[i] = e;
-+        min_demand_pages = e.num_pages;
-+        max_demand_pages = e.num_pages;
-+        max_demand_free_pages = e.free_pages;
-+        max_demand_unmapped_pages = e.unmapped_pages;
-+      } else {
-+        min_demand_pages = std::min(min_demand_pages, e.num_pages);
-+        if (e.num_pages > max_demand_pages) {
-+          max_demand_pages = e.num_pages;
-+          max_demand_free_pages = e.free_pages;
-+          max_demand_unmapped_pages = e.unmapped_pages;
-         }
-       }
- 
--      if (e.num_pages < stats[kStatsAtMinDemand].num_pages) {
--        stats[kStatsAtMinDemand] = e;
--      }
--
--      if (e.num_pages > stats[kStatsAtMaxDemand].num_pages) {
--        stats[kStatsAtMaxDemand] = e;
--      }
--
-       min_free_pages =
-           std::min(min_free_pages, e.free_pages + e.unmapped_pages);
-       min_free_backed_pages = std::min(min_free_backed_pages, e.free_pages);
-@@ -482,8 +480,8 @@ class SubreleaseStatsTracker {
-           if (!e.empty()) {
-             // Identify the maximum number of demand pages we have seen within
-             // the time interval.
--            if (e.stats[kStatsAtMaxDemand].num_pages > max_demand_pages) {
--              max_demand_pages = e.stats[kStatsAtMaxDemand].num_pages;
-+            if (e.max_demand_pages > max_demand_pages) {
-+              max_demand_pages = e.max_demand_pages;
-             }
-           }
-         },
-@@ -507,8 +505,7 @@ class SubreleaseStatsTracker {
-     tracker_.IterBackwards(
-         [&](size_t offset, size_t epoch_delta, const SubreleaseStatsEntry& e) {
-           if (!e.empty()) {
--            Length demand_difference = e.stats[kStatsAtMaxDemand].num_pages -
--                                       e.stats[kStatsAtMinDemand].num_pages;
-+            Length demand_difference = e.max_demand_pages - e.min_demand_pages;
-             // Identifies the highest demand fluctuation (i.e., difference
-             // between max_demand and min_demand) that we have seen within the
-             // time interval.
-@@ -523,8 +520,8 @@ class SubreleaseStatsTracker {
-           if (!e.empty()) {
-             // Identifies the long-term demand peak (i.e., largest minimum
-             // demand) that we have seen within the time interval.
--            if (e.stats[kStatsAtMinDemand].num_pages > long_term_trend_pages) {
--              long_term_trend_pages = e.stats[kStatsAtMinDemand].num_pages;
-+            if (e.min_demand_pages > long_term_trend_pages) {
-+              long_term_trend_pages = e.min_demand_pages;
-             }
-           }
-         },
-@@ -574,18 +571,17 @@ void SubreleaseStatsTracker<kSlots>::Print(Printer& out,
-       [&](size_t offset, size_t epoch_delta, const SubreleaseStatsEntry& e) {
-         if (!e.empty()) {
-           if (at_peak_demand.empty() ||
--              at_peak_demand.stats[kStatsAtMaxDemand].num_pages <
--                  e.stats[kStatsAtMaxDemand].num_pages) {
-+              at_peak_demand.max_demand_pages < e.max_demand_pages) {
-             at_peak_demand = e;
-           }
-         }
-       },
-       summary_interval_);
- 
-   out.printf("%s: at peak demand: %v pages (and %v free, %v unmapped)\n", field,
--             at_peak_demand.stats[kStatsAtMaxDemand].num_pages,
--             at_peak_demand.stats[kStatsAtMaxDemand].free_pages,
--             at_peak_demand.stats[kStatsAtMaxDemand].unmapped_pages);
-+             at_peak_
+       // If release rate is set to 0, do not release memory to system. However,
+       // if we want to release free and backed hugepages from HugeRegion,
 ```
 
-**File**: `tcmalloc/huge_page_subrelease_test.cc` (modified, +73/-0)
+**File**: `tcmalloc/testing/background_test.cc` (modified, +18/-0)
 ```diff
-@@ -80,6 +80,20 @@ class StatsTrackerTest : public testing::Test {
-   // Generates a data point with a particular amount of demand pages, while
-   // ignoring the specific number of hugepages.
-   void GenerateDemandPoint(Length num_pages, Length num_free_pages);
-+
-+  void ReportStats(Length num_pages, Length free_pages, Length unmapped_pages) {
-+    StatsTrackerType::SubreleaseStats stats;
-+    stats.num_pages = num_pages;
-+    stats.free_pages = free_pages;
-+    stats.unmapped_pages = unmapped_pages;
-+    tracker_.Report(stats, clock_);
-+  }
-+
-+  [[nodiscard]] std::string PrintSummary() const {
-+    return PrintToString(1024 * 1024, [&](Printer& printer) {
-+      tracker_.Print(printer, "StatsTracker");
-+    });
-+  }
- };
+@@ -15,6 +15,7 @@
+ #include <stddef.h>
+ #include <sys/types.h>
  
- int64_t StatsTrackerTest::clock_{0};
-@@ -343,6 +357,65 @@ TEST_F(StatsTrackerTest, NegativeAndUnboundedSubreleaseIntervals) {
-             Length(150));
++#include <limits>
+ #include <thread>
+ 
+ #include "gtest/gtest.h"
+@@ -82,6 +83,23 @@ TEST(BackgroundTest, DisableInterruptsSleep) {
+   EXPECT_LT(elapsed, absl::Seconds(10));
  }
  
-+TEST_F(StatsTrackerTest, PeakDemandTieBreakingAndEmptyPrint) {
-+  EXPECT_THAT(
-+      PrintSummary(),
-+      testing::HasSubstr(
-+          "StatsTracker: at peak demand: 0 pages (and 0 free, 0 unmapped)\n"));
++TEST(BackgroundTest, HugeReleaseRateDoesNotOverflow) {
++  // With the maximum release rate, rate * elapsed time exceeds 2^63 bytes after
++  // about half a second. Clamping that to ssize_t must not overflow.
++  ScopedBackgroundReleaseRate release_rate(
++      MallocExtension::BytesPerSecond{std::numeric_limits<size_t>::max()});
++  ScopedBackgroundProcessSleepInterval sleep_time(absl::Milliseconds(600));
 +
-+  ReportStats(/*num_pages=*/Length(100), /*free_pages=*/Length(20),
-+              /*unmapped_pages=*/Length(5));
++  std::thread background([]() { MallocExtension::ProcessBackgroundActions(); });
 +
-+  // Equal max demand in the same epoch must preserve the first peak's free and
-+  // unmapped counts (strict '>').
-+  ReportStats(/*num_pages=*/Length(100), /*free_pages=*/Length(99),
-+              /*unmapped_pages=*/Length(88));
++  // Let several iterations run, each seeing about 600ms of elapsed time.
++  absl::SleepFor(absl::Seconds(2));
 +
-+  // Lower demand updates min_demand_pages without overwriting peak stats.
-+  ReportStats(/*num_pages=*/Length(60), /*free_pages=*/Length(10),
-+              /*unmapped_pages=*/Length(1));
-+
-+  EXPECT_THAT(PrintSummary(),
-+              testing::HasSubstr("StatsTracker: at peak demand: 100 pages (and "
-+                                 "20 free, 5 unmapped)\n"));
-+  EXPECT_EQ(tracker_.GetRecentDemand(absl::ZeroDuration(), absl::Minutes(1)),
-+            Length(60));
-+  EXPECT_EQ(tracker_.GetRecentDemand(absl::Minutes(1), absl::ZeroDuration()),
-+            Length(40));
-+
-+  // Strictly higher demand updates peak pages, free pages, and unmapped pages.
-+  ReportStats(/*num_pages=*/Length(150), /*free_pages=*/Length(40),
-+              /*unmapped_pages=*/Length(12));
-+
-+  EXPECT_THAT(PrintSummary(),
-+              testing::HasSubstr("StatsTracker: at peak demand: 150 pages (and "
-+                                 "40 free, 12 unmapped)\n"));
-+  EXPECT_EQ(tracker_.GetRecentPeak(absl::Minutes(1)), Length(150));
-+  EXPECT_EQ(tracker_.GetRecentDemand(absl::ZeroDuration(), absl::Minutes(1)),
-+            Length(60));
-+  EXPECT_EQ(tracker_.GetRecentDemand(absl::Minutes(1), absl::ZeroDuration()),
-+            Length(90));
-+}
-+
-+TEST_F(StatsTrackerTest, ZeroDemandNonEmptyReport) {
-+  ReportStats(/*num_pages=*/Length(0), /*free_pages=*/Length(7),
-+              /*unmapped_pages=*/Length(3));
-+  // Equal zero demand in the same epoch preserves the first free/unmapped
-+  // counts.
-+  ReportStats(/*num_pages=*/Length(0), /*free_pages=*/Length(99),
-+              /*unmapped_pages=*/Length(88));
-+
-+  EXPECT_THAT(
-+      PrintSummary(),
-+      testing::HasSubstr(
-+          "StatsTracker: at peak demand: 0 pages (and 7 free, 3 unmapped)\n"));
-+  EXPECT_EQ(tracker_.GetRecentPeak(absl::Minutes(1)), Length(0));
-+  EXPECT_EQ(tracker_.GetRecentDemand(absl::ZeroDuration(), absl::Minutes(1)),
-+            Length(0));
-+  EXPECT_EQ(tracker_.min_free_pages(absl::Minutes(1)).free, Length(10));
-+  EXPECT_EQ(tracker_.min_free_pages(absl::Minutes(1)).free_backed, Length(7));
++  ScopedBackgroundProcessActionsEnabled background_process_enabled(
++      /*value=*/false);
++  background.join();
 +}
 +
  }  // namespace
- }  // namespace tcmalloc_internal
  }  // namespace tcmalloc
-```
-
----
-
-### Incident Patch 2: `c4fdfff6` (2026-11-24)
-**Commit Message**: Record remote NUMA residency on heap profile samples.
-
-This reports the bytes resident on NUMA nodes other than the profiler
-collection thread's home NUMA node via a remote_numa_space sample type on heap
-profiles.
-
-Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
-PiperOrigin-RevId: 1029107329
-
-**File**: `tcmalloc/internal/profile_builder.cc` (modified, +32/-6)
-```diff
-@@ -167,6 +167,7 @@ struct SampleMergedData {
-   std::optional<size_t> locked_size;
-   std::optional<size_t> incompressible_size;
-   std::optional<uint64_t> stale_scan_period;
-+  size_t remote_numa_size = 0;
-   size_t compressed_size = 0;
-   size_t zero_size = 0;
  
-@@ -228,6 +229,9 @@ struct SampleMergeResult {
-   // Collection being enabled does not imply this: analysis is skipped for any
-   // sample lacking residency information, a span address, or a requested size.
-   bool measured_compressibility = false;
-+  // Whether Residency::GetRemoteNumaBytes produced a result for at least one
-+  // sample.
-+  bool measured_numa = false;
- };
- 
- SampleMergeResult MergeProfileSamplesAndMaybeGetResidencyInfo(
-@@ -240,6 +244,7 @@ SampleMergeResult MergeProfileSamplesAndMaybeGetResidencyInfo(
-     compression_analyzer.emplace();
-   }
-   absl::BitGen rng;
-+  const int local_numa_node = GetCurrentNumaNode();
- 
-   profile.Iterate([&](const tcmalloc::Profile::Sample& entry) {
-     SampleMergedData& data = map[entry];
-@@ -269,6 +274,17 @@ SampleMergeResult MergeProfileSamplesAndMaybeGetResidencyInfo(
-           data.resident_size.value() += resident_size;
-           data.swapped_size.value() += swapped_size;
-         }
-+        if (residency_info->bytes_resident > 0 &&
-+            entry.span_start_address != nullptr) {
-+          std::optional<size_t> remote_bytes = residency->GetRemoteNumaBytes(
-+              entry.span_start_address, size, local_numa_node);
-+          if (remote_bytes.has_value()) {
-+            result.measured_numa = true;
-+            data.remote_numa_size +=
-+                entry.count *
-+                std::min(*remote_bytes, residency_info->bytes_resident);
-+          }
-+        }
-       }
-     }
- 
-@@ -1089,6 +1105,9 @@ absl::StatusOr<std::unique_ptr<perftools::profiles::Profile>> MakeProfileProto(
-   // Bytes on pages marked incompressible by kernel pageflags (unit: "bytes").
-   const int incompressible_space_id =
-       builder.InternString("incompressible_space");
-+  // Bytes resident on NUMA nodes other than the profiler collection thread's
-+  // home NUMA node (unit: "bytes").
-+  const int remote_numa_space_id = builder.InternString("remote_numa_space");
- 
-   // Sample types: content compressibility analysis (`kHeap` profiles).
-   // Estimated ZSTD-compressed size of backed (`resident_space + swapped_space`)
-@@ -1157,14 +1176,18 @@ absl::StatusOr<std::unique_ptr<perftools::profiles::Profile>> MakeProfileProto(
- 
-   bool collecting_compressibility = false;
- 
--  // Only advertise space_compressed/zero_space when at least one sample was
--  // actually analyzed.  Emitting the columns with a zero in every sample is
--  // indistinguishable downstream from a genuinely incompressible heap, so a
--  // profile that never ran the analyzer would otherwise be reported as 100%
--  // compressible rather than as having no data.
--  const auto [samples, exporting_compressibility] =
-+  // Only advertise space_compressed/zero_space and remote_numa_space when at
-+  // least one sample was actually measured.  Emitting the columns with a zero
-+  // in every sample is indistinguishable downstream from a genuinely
-+  // incompressible or 100% NUMA-local heap.
-+  const auto [samples, exporting_compressibility, exporting_numa] =
-       MergeProfileSamplesAndMaybeGetResidencyInfo(profile, pageflags, residency,
-                                                   collecting_compressibility);
-+  if (exporting_residency && exporting_numa) {
-+    perftools::profiles::ValueType* sample_type = converted.add_sample_type();
-+    sample_type->set_type(remote_numa_space_id);
-+    sample_type->set_unit(bytes_id);
-+  }
-   if (exporting_compressibility) {
-     perftools::profiles::ValueType* sample_type = nullptr;
- 
-@@ -1207,6 +1230,9 @@ absl::StatusOr<std::unique_ptr<perftools::profiles::Profile>> MakeProfileProto(
-       sample.add_value(data.stale_size.value_or(0));
-       sample.add_value(data.locked_size.value_or(0));
-       sample.add_value(data.incompressible_size.value_or(0));
-+      if (exporting_numa) {
-+        sample.add_value(data.remote_numa_size);
-+      }
-     }
-     if (exporting_compressibility) {
-       sample.add_value(data.zero_size);
-```
-
-**File**: `tcmalloc/internal/profile_builder_test.cc` (modified, +120/-12)
-```diff
-@@ -72,8 +72,8 @@ using ::testing::IsSupersetOf;
- using ::testing::Key;
- using ::testing::Not;
- using ::testing::Pair;
--using ::testing::SizeIs;
- using ::testing::UnorderedElementsAre;
-+using ::testing::UnorderedElementsAreArray;
- 
- class StubPageFlags final : public PageFlagsBase {
-  public:
-@@ -147,13 +147,29 @@ class StubResidency final : public NoopResidency {
-     return std::nullopt;
-   }
- 
-+  std::optional<size_t> GetRemoteNumaBytes(const void* addr, size_t size,
-+                                           int local_node) override {
-+    uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
-+    auto it = remote_numa_bytes_.find(uaddr);
-+    if (it != remote_numa_bytes_.end()) {
-+      return std::min(it->second, size);
-+    }
-+    return std::nullopt;
-+  }
-+
-   void SetInfo(const void* addr, Info info) {
-     uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
-     infos_[uaddr] = info;
-   }
- 
-+  void SetRemoteNumaBytes(const void* addr, size_t bytes) {
-+    uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
-+    remote_numa_bytes_[uaddr] = bytes;
-+  }
-+
-  private:
-   absl::flat_hash_map<uintptr_t, Info> infos_;
-+  absl::flat_hash_map<uintptr_t, size_t> remote_numa_bytes_;
- };
- 
- // Returns the fully resolved path of this program.
-@@ -620,20 +636,26 @@ TEST(ProfileConverterTest, HeapProfile) {
-   // Require that the default_sample_type appeared in sample_type.
-   EXPECT_THAT(sample_types, testing::Contains(converted.default_sample_type()));
- 
--  constexpr int kNumSampleTypes = 7
--      ;
-   // This is slightly redundant with the next line, but we need to loop over
-   // each of the samples later.
-   constexpr int kNumSamples = 6;
--  EXPECT_THAT(extracted_sample_type, SizeIs(kNumSampleTypes));
--  EXPECT_THAT(
--      extracted_sample_type,
--      UnorderedElementsAre(
--          Pair("objects", "count"), Pair("space", "bytes"),
--          Pair("resident_space", "bytes"), Pair("stale_space", "bytes"),
--          Pair("locked_space", "bytes"), Pair("incompressible_space", "bytes"),
--          Pair("swapped_space", "bytes")
--          ));
-+  std::vector<std::pair<std::string, std::string>> expected_sample_types = {
-+      {"objects", "count"},
-+      {"space", "bytes"},
-+      {"resident_space", "bytes"},
-+      {"stale_space", "bytes"},
-+      {"locked_space", "bytes"},
-+      {"incompressible_space", "bytes"},
-+      {"swapped_space", "bytes"},
-+  };
-+  if (ResidencyPageMap()
-+          .GetRemoteNumaBytes(&converted, sizeof(converted),
-+                              GetCurrentNumaNode())
-+          .has_value()) {
-+    expected_sample_types.emplace_back("remote_numa_space", "bytes");
-+  }
-+  EXPECT_THAT(extracted_sample_type,
-+              UnorderedElementsAreArray(expected_sample_types));
- 
-   SampleLabels extracted_labels;
-   {
-@@ -1568,6 +1590,7 @@ TEST(ProfileConverterTest, NoCompressibilityColumnsWithoutMeasurements) {
-   EXPECT_THAT(types, Not(Contains("space_compressed")));
-   EXPECT_THAT(types, Not(Contains("zero_space")));
-   EXPECT_THAT(types, Not(Contains("analyzed_compressibility_space")));
-+  EXPECT_THAT(types, Not(Contains("remote_numa_space")));
- 
-   // Every sample must still agree with the advertised sample types.
-   for (const auto& s : converted.sample()) {
-@@ -1884,6 +1907,91 @@ TEST(ProfileBuilderTest, DisabledSamplingReturnsNotFound) {
-             absl::StatusCode::kNotFound);
- }
- 
-+TEST(ProfileConverterTest, HeapProfileRemoteNumaSpace) {
-+  std::vector<char> buf_local(64, 'a');
-+  std::vector<char> buf_remote(64, 'b');
-+  std::vector<char> buf_mixed(64, 'm');
-+  std::vector<char> buf_clamped(64, 'd');
-+  std::vector<char> buf_unbacked(64, 'c');
-+
-+  Profile::Sample sample_local = {};
-+  sample_local.sum = 64;
-+  sample_local.count = 1;
-+  sample_local.requested_size = 64;
-+  sample_local.allocated_size = 64;
-+  sample_local.span_start_address = buf_local.data();
-+  sample_local.depth = 2;
-+  sample_local.stack[0] =
-+      reinterpret_cast<void*>(&ProfileAccessor::MakeProfile);
-+  sample_local.stack[1] = reinterpret_cast<void*>(&RealPath);
-+  sample_local.guarded_status = Profile::Sample::GuardedStatus::NotAttempted;
-+  sample_local.type = AllocationType::Malloc;
-+
-+  Profile::Sample sample_remote = sample_local;
-+  sample_remote.sum = 128;
-+  sample_remote.count = 2;
-+  sample_remote.span_start_address = buf_remote.data();
-+
-+  Profile::Sample sample_mixed = sample_local;
-+  sample_mixed.sum = 128;
-+  sample_mixed.count = 2;
-+  sample_mixed.span_start_address = buf_mixed.data();
-+
-+  Profile::Sample sample_clamped = sample_local;
-+  sample_clamped.sum = 128;
-+  sample_clamped.count = 2;
-+  sample_clamped.span_start_address = buf_clamped.data();
-+
-+  Profile::Sample sample_unbacked = sample_local;
-+  sample_unbacked.sum = 256;
-+  sample_unbacked.count = 4;
-+  sample_unbacked.span_start_address = buf_unbacked.data();
-+
-+  StubPageFlags pageflags;
-+  StubResidency residency;
-+  Residency::Info info;
-+  info.bytes_resident = 64;
-+  info.page_is_resident.SetBit(0);
-+  residency.S
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1961** (closed): No public description (@copybara-service[bot])
-- **PR #1960** (2026-11-24): No public description (@copybara-service[bot])
-- **PR #1959** (2026-11-23): Return NotFoundError instead of InvalidArgumentError when TCMalloc is unavailable in MakeProfileProto. (@copybara-service[bot])
-- **PR #1958** (2026-11-24): Record remote NUMA residency on heap profile samples. (@copybara-service[bot])
-- **PR #1957** (2026-11-23): Retire TCMALLOC_SONIC_FILLER_APPEND_ON_FREE. (@copybara-service[bot])
-- **PR #1956** (closed): No public description (@copybara-service[bot])
+- **PR #1968** (2026-11-26): Internal change (@copybara-service[bot])
+- **PR #1967** (2026-11-25): Add backed hit-rate and per-epoch churn timeseries telemetry to HugeRegionSet. (@copybara-service[bot])
+- **PR #1966** (2026-11-25): Convert TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K_SPARSE_64K into a holdback. (@copybara-service[bot])
+- **PR #1965** (2026-11-26): Fix ssize_t overflow when clamping the background release amount (@copybara-service[bot])
+- **PR #1964** (2026-11-25): Open up for mocking the TCMalloc clock in more places. (@copybara-service[bot])
+- **PR #1963** (2026-11-25): Add filler option to prefer released regular hugepages over donated ones (@copybara-service[bot])
 
 ---
 
@@ -1759,74 +1365,37 @@ PiperOrigin-RevId: 1029107329
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Drop unused fields from SubreleaseStatsEntry.
+## X. ssize_t overflow when clamping the background release amount
 
 **RULE**:
-When implementing operations in `tcmalloc/huge_page_subrelease.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/background.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `afcf25e3`: Drop unused fields from SubreleaseStatsEntry.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d6f18eb`: ssize_t overflow when clamping the background release amount. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/huge_page_subrelease.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/background.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-          peak = std::max(peak, most_recent_record.data.max_demand_pages);
-    // Collect demand bounds within this epoch. Only peak-demand free and
-    // unmapped counts are reported by Print().
-    Length min_demand_pages;
-    Length max_demand_pages;
-    Length max_demand_free_pages;
-    Length max_demand_unmapped_pages;
-        min_demand_pages = e.num_pages;
-        max_demand_pages = e.num_pages;
-        max_demand_free_pages = e.free_pages;
-        max_demand_unmapped_pages = e.unmapped_pages;
-      } else {
-        min_demand_pages = std::min(min_demand_pages, e.num_pages);
-        if (e.num_pages > max_demand_pages) {
-          max_demand_pages = e.num_pages;
-          max_demand_free_pages = e.free_pages;
-          max_demand_unmapped_pages = e.unmapped_pages;
-            if (e.max_demand_pages > max_demand_pages) {
-              max_demand_pages = e.max_demand_pages;
-            Length demand_difference = e.max_demand_pages - e.min_demand_pages;
-            if (e.min_demand_pages > long_term_trend_pages) {
-              long_term_trend_pages = e.min_demand_pages;
-              at_peak_demand.max_demand_pages < e.max_demand_pages) {
-             at_peak_
+      // Clamp in floating point before converting.
+      ssize_t bytes_to_release = 0;
+      if (calculated_bytes >= kMaxSsize) {
+        bytes_to_release = std::numeric_limits<ssize_t>::max();
+      } else if (calculated_bytes > 0) {
+        bytes_to_release = static_cast<ssize_t>(calculated_bytes);
+      }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-          peak = std::max(
-              peak, most_recent_record.data.stats[kStatsAtMaxDemand].num_pages);
-  // We collect subrelease statistics at four "interesting points" within each
-  // time step: at min/max demand of pages and at min/max use of hugepages. This
-  // allows us to approximate the envelope of the different metrics.
-  enum StatsType { kStatsAtMinDemand, kStatsAtMaxDemand, kNumStatsTypes };
-
-    // Collect stats at "interesting points" (minimum/maximum page demand).
-    SubreleaseStats stats[kNumStatsTypes] = {};
-        for (int i = 0; i < kNumStatsTypes; i++) {
-          stats[i] = e;
-      if (e.num_pages < stats[kStatsAtMinDemand].num_pages) {
-        stats[kStatsAtMinDemand] = e;
-      }
-
-      if (e.num_pages > stats[kStatsAtMaxDemand].num_pages) {
-        stats[kStatsAtMaxDemand] = e;
-      }
-
-            if (e.stats[kStatsAtMaxDemand].num_pages > max_demand_pages) {
-              max_demand_pages = e.stats[kStatsAtMaxDemand].num_pages;
-            Length demand_difference = e.stats[kStatsAtMaxDemand].num_pages -
-                                       e.stats[kStatsAtMinDemand].num_pages;
-            if (e.stats[kStatsAtMinDemand].num_pages > long_term_tren
+      ssize_t bytes_to_release = calculated_bytes >= kMaxSsize
+                                     ? std::numeric_limits<ssize_t>::max()
+                                     : calculated_bytes;
+      bytes_to_release = std::max<ssize_t>(bytes_to_release, 0);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `afcf25e3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d6f18eb` are properly handled with clean fallback behavior.

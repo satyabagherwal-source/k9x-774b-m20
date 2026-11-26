@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T10:41:49.344Z",
+  "last_updated": "2026-11-26T10:50:50.627Z",
   "total_records": 2736,
   "domains": {
     "A": {
@@ -13441,8 +13441,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "eae9f97489d7be1d92b00b19305487038bdb04777edac42b8570693d69924ec3",
-      "created_at": "2026-11-25T10:35:23.191Z"
+      "content_hash": "ccca3a2c2b76573a268ed3348f9c2d231250e0f421f12aa8755cf72a0e403812",
+      "created_at": "2026-11-26T10:50:40.602Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -17297,8 +17297,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "e1d08432f2a2ad589275b014b61e3459bb275b601edf4db902de6a6557f65893",
-      "created_at": "2026-11-25T09:08:06.829Z"
+      "content_hash": "8ab6d0e5a1df9a272a6875679008fef90919e4262ff08a46593fc5ef831dc387",
+      "created_at": "2026-11-26T10:50:45.735Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -17915,8 +17915,8 @@
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "repository": "google/tcmalloc",
-      "content_hash": "cfd8f8be347f0bb32bc0e6d38f2d761a01757cff3817ca1a8e7dbc1d864391b2",
-      "created_at": "2026-11-25T03:28:23.689Z"
+      "content_hash": "cc05ee33058bddc7f4677588773f665ecf322e13eb4787192271ee4e03ce7433",
+      "created_at": "2026-11-26T10:50:32.714Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
@@ -17933,8 +17933,8 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-learnings-technical-construction-intelligence-google-tcmalloc-le.md",
       "repository": "google-tcmalloc-learnings",
-      "content_hash": "81345e5bf69d44e9a76efa1f2aa3ede59c472669872f5119bfb7d426f953e1a9",
-      "created_at": "2026-11-25T03:28:32.846Z"
+      "content_hash": "628355ea328a9b1d6b66b21d040b4f099f0e5d595f26a5eaa650ff7885a42141",
+      "created_at": "2026-11-26T10:50:49.374Z"
     },
     "DOM-D-301C83AD": {
       "record_id": "DOM-D-301C83AD",
@@ -26202,8 +26202,8 @@
       "title": "Architecture Intelligence: sweetpad-dev/sweetpad Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sweetpad-dev-sweetpad-architecture-intelligence-sweetpad-dev-sweetpad-core-invar.md",
       "repository": "sweetpad-dev/sweetpad",
-      "content_hash": "a86242db67288f551b858cf42b82a18da14d96e626fbf9c8b78730c812d19068",
-      "created_at": "2026-11-17T03:34:15.995Z"
+      "content_hash": "94810cd83569dc70d8db749ed7888e71022a4270454fee4c3d66ac824a434dac",
+      "created_at": "2026-11-26T10:50:37.917Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-mage-vl-cowork-learnings-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-mage-vl-cowork-learnings-core-invar",
@@ -26220,8 +26220,8 @@
       "title": "Architecture Intelligence: sweetpad-dev-sweetpad-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sweetpad-dev-sweetpad-learnings-architecture-intelligence-sweetpad-dev-sweetpad-.md",
       "repository": "sweetpad-dev-sweetpad-learnings",
-      "content_hash": "9dee2f644f1390cb16ba0b6e68258e9240d44b67473a445839ce5fb521047845",
-      "created_at": "2026-11-17T03:34:24.397Z"
+      "content_hash": "6ed82fca6eaef51ccc37967ff00e4fecf4c7c82395326460d17843d93ada265a",
+      "created_at": "2026-11-26T10:50:50.627Z"
     },
     "domain_intelligence-technical-construction-intelligence-google-closure-compiler-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-google-closure-compiler-core-invariants",
@@ -29776,8 +29776,8 @@
       "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-research-knowledge-intelligence-moonshotai-kimi-k3-core-in.md",
       "repository": "moonshotai/Kimi-K3",
-      "content_hash": "231958c289d2fb88ec0e2d5fb183eaad21cf144ab2ce36b188ed728a6f5c3581",
-      "created_at": "2026-11-22T17:53:05.646Z"
+      "content_hash": "e7649633261a486753b849ad94e0078f23a7370bb7480ad3c5f2969969316ee9",
+      "created_at": "2026-11-26T10:50:29.573Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants",
@@ -29785,8 +29785,8 @@
       "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-learnings-research-knowledge-intelligence-hf-moonshotai-ki.md",
       "repository": "hf-moonshotai-kimi-k3-learnings",
-      "content_hash": "c4a675794338378a9b19ab64f9a608ffb37657276b6d281f1ced5e01a79c405c",
-      "created_at": "2026-11-22T17:53:17.102Z"
+      "content_hash": "fd75c24fafc7f595e27f4956f047f15665ecf4e77baaf911f280c7cffb75afb6",
+      "created_at": "2026-11-26T10:50:49.948Z"
     },
     "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria",

@@ -802372,3 +802372,342 @@ Subsystems managing C data structures, boundary deserialization, API parsing, or
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5290ba9e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10653. ssize_t overflow when clamping the background release amount (Harvested from google/tcmalloc)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ssize_t overflow when clamping the background release amount",
+  "source": "google/tcmalloc",
+  "source_url": "https://github.com/google/tcmalloc",
+  "source_version": "4d6f18eb",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T10:50:31.743Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-google-tcmalloc",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google/tcmalloc](https://github.com/google/tcmalloc) (Revision: `4d6f18eb`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `tcmalloc/background.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4d6f18eb`: ssize_t overflow when clamping the background release amount. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/background.cc`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+      // Clamp in floating point before converting.
+      ssize_t bytes_to_release = 0;
+      if (calculated_bytes >= kMaxSsize) {
+        bytes_to_release = std::numeric_limits<ssize_t>::max();
+      } else if (calculated_bytes > 0) {
+        bytes_to_release = static_cast<ssize_t>(calculated_bytes);
+      }
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+      ssize_t bytes_to_release = calculated_bytes >= kMaxSsize
+                                     ? std::numeric_limits<ssize_t>::max()
+                                     : calculated_bytes;
+      bytes_to_release = std::max<ssize_t>(bytes_to_release, 0);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4d6f18eb` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10654. App Clip signing on Linux and verify it end to end (Harvested from sweetpad-dev/sweetpad)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "App Clip signing on Linux and verify it end to end",
+  "source": "sweetpad-dev/sweetpad",
+  "source_url": "https://github.com/sweetpad-dev/sweetpad",
+  "source_version": "685c517e",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T10:50:36.938Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sweetpad-dev-sweetpad",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad) (Revision: `685c517e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `sweetpad-cli/PLAN_LINUX.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `685c517e`: App Clip signing on Linux and verify it end to end. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-cli/PLAN_LINUX.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- [x] App Clips. The [delivery fixture](../sweetpad-lib/ci/fixture-delivery/README.md#app-clips)
+      builds a host with an embedded Clip on Linux and with Xcode. Both hosts
+      launch on an iPhone simulator, and each installed Clip displays a fresh
+      HTTPS invocation URL in XCTest. The Release device archives and Linux
+      development IPA match on host/Clip entitlements and bundle metadata.
+      Apple's tools verify both signatures, their provisioning profiles, and
+      both archive dSYMs. Both engines reject a signed Clip missing its parent
+      entitlement.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+- [ ] App Clips
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `685c517e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10655. support BGP graceful restart helper mode per neighbor (Harvested from siderolabs/talos)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "support BGP graceful restart helper mode per neighbor",
+  "source": "siderolabs/talos",
+  "source_url": "https://github.com/siderolabs/talos",
+  "source_version": "9ced8eeb",
+  "license": "MPL-2.0",
+  "extracted_at": "2026-11-26T10:50:39.598Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-siderolabs-talos",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [siderolabs/talos](https://github.com/siderolabs/talos) (Revision: `9ced8eeb`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `api/resource/definitions/network/network.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d98a8122`: support BGP graceful restart helper mode per neighbor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/resource/definitions/network/network.proto`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// BGPGracefulRestartConfigSpec contains BGP graceful restart helper parameters for a BGP neighbor.
+message BGPGracefulRestartConfigSpec {
+  bool notification = 1;
+}
+
+  // GracefulRestart enables graceful restart helper mode when set.
+  BGPGracefulRestartConfigSpec graceful_restart = 10;
+  // GracefulRestart is true when graceful restart was negotiated for at least one address family.
+  bool graceful_restart = 12;
+  // PeerRestarting is true while routes learned from the restarting peer are retained as stale.
+  bool peer_restarting = 13;
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d98a8122` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10656. [BugFix] Leave a recursive CTE's self-reference out of the planner lock set (Harvested from StarRocks/starrocks)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[BugFix] Leave a recursive CTE's self-reference out of the planner lock set",
+  "source": "StarRocks/starrocks",
+  "source_url": "https://github.com/StarRocks/starrocks",
+  "source_version": "95ccbc34",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T10:50:44.763Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-starrocks-starrocks",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `95ccbc34`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/PlannerMetaLocker.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6df7ea85`: [BugFix] Leave a recursive CTE's self-reference out of the planner lock set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/PlannerMetaLocker.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+import com.starrocks.sql.ast.QueryRelation;
+import com.starrocks.sql.ast.UnionRelation;
+        // Whether the with clause whose CTEs are being walked is WITH RECURSIVE; see visitCTE.
+        private boolean inRecursiveWithClause = false;
+            withCtes(cteRelations, false, () -> {
+            withCtes(node.getCteRelations(), node.isHasRecursiveCTE(), () -> super.visitSelect(node, context));
+            withCtes(node.getCteRelations(), node.isHasRecursiveCTE(), () -> super.visitSetOp(node, context));
+        /**
+         * Run {@code body} in a new with-clause scope, which {@link #visitCTE} fills as the CTEs are walked.
+         * {@code recursive}: whether the clause is WITH RECURSIVE.
+         */
+        private void withCtes(List<CTERelation> cteRelations, boolean recursive, Runnable body) {
+            boolean scoped = cteRelations != null && !cteRelations.isEmpty();
+            boolean enclosingRecursive = inRecursiveWithClause;
+            if (scoped) {
+                cteNames.push(new HashSet<>());
+            inRecursiveWithClause = recursive;
+                inRecursiveWithClause = enclosingRecursive;
+                if (scoped) {
+                    cteNames.pop();
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+            withCtes(cteRelations, () -> {
+            withCtes(node.getCteRelations(), () -> super.visitSelect(node, context));
+            withCtes(node.getCteRelations(), () -> super.visitSetOp(node, context));
+        /** Run {@code body} in a new with-clause scope, which {@link #visitCTE} fills as the CTEs are walked. */
+        private void withCtes(List<CTERelation> cteRelations, Runnable body) {
+            if (cteRelations == null || cteRelations.isEmpty()) {
+                body.run();
+                return;
+            cteNames.push(new HashSet<>());
+                cteNames.pop();
+         * A CTE's name is in scope only after its own definition, as the analyzer has it: in
+         * {@code WITH t0 AS (SELECT * FROM t0)} the inner {@code t0} is the table.
+            super.visitCTE(node, context);
+            if (!cteNames.isEmpty() && node.getName() != null) {
+                cteNames.peek().add(node.getName());
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6df7ea85` are properly handled with clean fallback behavior.

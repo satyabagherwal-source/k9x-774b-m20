@@ -4,24 +4,24 @@
 {
   "source_repository": "StarRocks/starrocks",
   "source_url": "https://github.com/StarRocks/starrocks",
-  "source_version": "921d5c4b",
+  "source_version": "95ccbc34",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T09:08:06.585Z",
+  "timestamp": "2026-11-26T10:50:45.554Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-starrocks-starrocks",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `921d5c4b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T09:08:06.585Z`  
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `95ccbc34`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T10:50:45.554Z`  
 > **Learning ID**: `learn-github-starrocks-starrocks`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from StarRocks/starrocks:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T09:08:04.832Z  
+> **Harvest Timestamp**: 2026-11-26T10:50:44.202Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12286 stars
+- **Stars / Engagement**: 12291 stars
 
 ---
 
@@ -1832,349 +1832,634 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a930786b` (2026-11-25)
-**Commit Message**: [BugFix] Lock the base table of a [_SYNC_MV_] read before planning (#84000)
+### Incident Patch 1: `6df7ea85` (2026-11-26)
+**Commit Message**: [BugFix] Leave a recursive CTE's self-reference out of the planner lock set (#84444)
 
 Signed-off-by: trueeyu <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/PlannerMetaLocker.java` (modified, +76/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/PlannerMetaLocker.java` (modified, +54/-15)
 ```diff
-@@ -18,6 +18,7 @@
- import com.starrocks.catalog.Column;
- import com.starrocks.catalog.Database;
- import com.starrocks.catalog.InternalCatalog;
-+import com.starrocks.catalog.OlapTable;
- import com.starrocks.catalog.Table;
- import com.starrocks.catalog.TableName;
- import com.starrocks.catalog.View;
-@@ -118,9 +119,14 @@ public class PlannerMetaLocker implements AutoCloseable {
-     private record WalkedView(TableName name, View view, String inlineViewDef, long sqlMode) {
-     }
+@@ -38,13 +38,15 @@
+ import com.starrocks.sql.ast.InsertStmt;
+ import com.starrocks.sql.ast.MergeIntoStmt;
+ import com.starrocks.sql.ast.ParseNode;
++import com.starrocks.sql.ast.QueryRelation;
+ import com.starrocks.sql.ast.QueryStatement;
+ import com.starrocks.sql.ast.Relation;
+ import com.starrocks.sql.ast.SelectRelation;
+ import com.starrocks.sql.ast.SetOperationRelation;
+ import com.starrocks.sql.ast.StatementBase;
+ import com.starrocks.sql.ast.TableRef;
+ import com.starrocks.sql.ast.TableRelation;
++import com.starrocks.sql.ast.UnionRelation;
+ import com.starrocks.sql.ast.UpdateStmt;
+ import com.starrocks.sql.ast.ViewRelation;
+ import com.starrocks.sql.ast.expression.Expr;
+@@ -548,6 +550,8 @@ private static class TableCollector extends AstTraverser<Void, Void> {
+         // The CTE names of the with clauses in scope, innermost first. A table of the same name stays unlocked only
+         // where the analyzer would read the CTE instead, never more: that would leave a table it reads unlocked.
+         private final Deque<Set<String>> cteNames = new ArrayDeque<>();
++        // Whether the with clause whose CTEs are being walked is WITH RECURSIVE; see visitCTE.
++        private boolean inRecursiveWithClause = false;
+         private final List<WalkedView> walkedViews = new ArrayList<>();
+         private final List<WalkedSyncMV> walkedSyncMVs = new ArrayList<>();
+         // Whether the relations being walked get a policy injected by the analyzer, besides the ones the statement
+@@ -614,7 +618,7 @@ public Void visitDeleteStatement(DeleteStmt node, Void context) {
+          */
+         private void visitRawDmlClauses(List<CTERelation> cteRelations, List<Relation> relations,
+                                         Expr wherePredicate) {
+-            withCtes(cteRelations, () -> {
++            withCtes(cteRelations, false, () -> {
+                 if (cteRelations != null) {
+                     cteRelations.forEach(this::visitIfPresent);
+                 }
+@@ -675,43 +679,78 @@ public Void visitAlterMaterializedViewStatement(AlterMaterializedViewStmt statem
  
-+    /** A [_SYNC_MV_] relation, with the ids of the tables its index name resolved to for the lock set. */
-+    private record WalkedSyncMV(TableName indexName, Set<Long> baseTableIds) {
-+    }
-+
-     // The session the views were resolved in; null for a locker built by forAllTablesOf, which walks no view body.
-     private final ConnectContext session;
-     private final List<WalkedView> walkedViews;
-+    private final List<WalkedSyncMV> walkedSyncMVs;
-     private boolean walkedViewsChecked = false;
-     // Whether the statement reads an external table a policy may apply to; see mayReachExternalTablePolicy.
-     private boolean mayReachExternalTablePolicy = false;
-@@ -134,6 +140,7 @@ public PlannerMetaLocker(ConnectContext session, StatementBase statementBase) {
-         this.queryId = session.getQueryId();
-         this.session = session;
-         this.walkedViews = collector.walkedViews;
-+        this.walkedSyncMVs = collector.walkedSyncMVs;
-         this.mayReachExternalTablePolicy = collector.mayReachExternalTablePolicy;
-     }
+         @Override
+         public Void visitSelect(SelectRelation node, Void context) {
+-            withCtes(node.getCteRelations(), () -> super.visitSelect(node, context));
++            withCtes(node.getCteRelations(), node.isHasRecursiveCTE(), () -> super.visitSelect(node, context));
+             return null;
+         }
  
-@@ -152,6 +159,7 @@ private PlannerMetaLocker(UUID queryId, long acquireTimeoutMs) {
-         this.acquireTimeoutMs = acquireTimeoutMs;
-         this.session = null;
-         this.walkedViews = List.of();
-+        this.walkedSyncMVs = List.of();
-     }
+         @Override
+         public Void visitSetOp(SetOperationRelation node, Void context) {
+-            withCtes(node.getCteRelations(), () -> super.visitSetOp(node, context));
++            withCtes(node.getCteRelations(), node.isHasRecursiveCTE(), () -> super.visitSetOp(node, context));
+             return null;
+         }
  
-     /**
-@@ -180,6 +188,18 @@ private void checkWalkedViewsOnFirstLock() {
-                         + "being planned, please retry", walked.name()), ErrorType.INTERNAL_ERROR);
+-        /** Run {@code body} in a new with-clause scope, which {@link #visitCTE} fills as the CTEs are walked. */
+-        private void withCtes(List<CTERelation> cteRelations, Runnable body) {
+-            if (cteRelations == null || cteRelations.isEmpty()) {
+-                body.run();
+-                return;
++        /**
++         * Run {@code body} in a new with-clause scope, which {@link #visitCTE} fills as the CTEs are walked.
++         * {@code recursive}: whether the clause is WITH RECURSIVE.
++         */
++        private void withCtes(List<CTERelation> cteRelations, boolean recursive, Runnable body) {
++            boolean scoped = cteRelations != null && !cteRelations.isEmpty();
++            boolean enclosingRecursive = inRecursiveWithClause;
++            if (scoped) {
++                cteNames.push(new HashSet<>());
+             }
+-            cteNames.push(new HashSet<>());
++            inRecursiveWithClause = recursive;
+             try {
+                 body.run();
+             } finally {
+-                cteNames.pop();
++                inRecursiveWithClause = enclosingRecursive;
++                if (scoped) {
++                    cteNames.pop();
++                }
              }
          }
-+        // The analyzer copies the base table of a [_SYNC_MV_] read while analyzing, before the coverage check of
-+        // StatementPlanner#copyOlapTablesAndUnlock can see it. A base table dropped and recreated, or an index of that
-+        // name added or dropped, between the walk and this lock would leave it copying a table this lock does not
-+        // hold. With those locked, their indexes stay as they are.
-+        for (WalkedSyncMV walked : walkedSyncMVs) {
-+            if (!walked.baseTableIds().equals(tableIdsOf(resolveSyncMVBaseTables(session, walked.indexName())))) {
-+                unlock();
-+                throw new StarRocksPlannerException(String.format("The base table of %s [_SYNC_MV_] was changed "
-+                        + "while the statement was being planned, please retry", walked.indexName()),
-+                        ErrorType.INTERNAL_ERROR);
-+            }
-+        }
-     }
  
-     /**
-@@ -470,6 +490,51 @@ private static Pair<Database, Table> resolveTable(ConnectContext session, TableN
-         return new Pair<>(db, table);
+         /**
+-         * A CTE's name is in scope only after its own definition, as the analyzer has it: in
+-         * {@code WITH t0 AS (SELECT * FROM t0)} the inner {@code t0} is the table.
++         * A CTE's name comes into scope where the analyzer brings it in: after its own definition, so in
++         * {@code WITH t0 AS (SELECT * FROM t0)} the inner {@code t0} is the table, but before the recursive
++         * members of a recursive one, where a self-reference is the CTE.
+          */
+         @Override
+         public Void visitCTE(CTERelation node, Void context) {
+-            super.visitCTE(node, context);
+-            if (!cteNames.isEmpty() && node.getName() != null) {
+-                cteNames.peek().add(node.getName());
++            if (node.isRecursive() && !node.isAnchor()) {
++                // A reference to a recursive CTE, in an analyzed statement: it shares the definition's query, which
++                // contains it. AstTraverser#visitCTE stops here too; walking on would go roun
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/analyzer/CopyUnsafeTablesCollectorTest.java` (modified, +50/-0)
+```diff
+@@ -158,6 +158,56 @@ public void testACteIsNotLockedAsATable() throws Exception {
+                         + "delete from test.tprimary using t1 where tprimary.pk = t1.v1"));
      }
  
 +    /**
-+     * The tables that may be behind a {@code [_SYNC_MV_]} relation: every olap table of the database with a rollup or
-+     * synchronous materialized view of that name. As in {@code Database#getMaterializedViewIndexes}, which the analyzer
-+     * reads it with, the base index of a table, named after the table, is not one, and the temporary tables of other
-+     * sessions are left out. The analyzer picks the one whose index is visible; locking every table that has one,
-+     * visible or not, covers it. Empty when nothing matches -- the analyzer reports that.
-+     *
-+     * <p>Run before the lock is taken, and again under it by {@link #checkWalkedViewsOnFirstLock} and the slow path of
-+     * {@code StatementPlanner#copyOlapTablesAndUnlock}, holding the locks of other tables only. So it reads nothing a
-+     * concurrent DDL on another table mutates in place: the database's table map is concurrent, and an index name is
-+     * looked up in its table rather than found by iterating its indexes ({@code Database#getMaterializedViewIndexes}
-+     * does that, and a rollup change on any table of the database can make it throw). Nor does it take a lock: under
-+     * the lock it would take one out of order.
++     * In WITH RECURSIVE a CTE defined by a union is in scope after its anchor, as the analyzer has it: a
++     * self-reference in a recursive member is the CTE, not a table of that name, and stays out of the lock set.
++     * The anchor is still before the CTE, so a same-named table read there is locked. Without RECURSIVE the CTE
++     * is in scope only after its whole definition.
 +     */
-+    private static List<Pair<Database, Table>> resolveSyncMVBaseTables(ConnectContext session, TableName indexName) {
-+        TableName qualified = qualify(session, indexName);
-+        if (qualified == null || !CatalogMgr.isInternalCatalog(qualified.getCatalog())) {
-+            return List.of();
++    @Test
++    public void testARecursiveCteSelfReferenceIsNotLockedAsATable() throws Exception {
++        Assertions.assertEquals(Set.of(tableId("test", "t0")),
++                lockedTableIds("with recursive t1 as (select v1 from test.t0 "
++                        + "union all select v1 + 1 from t1 where v1 < 3) select * from t1"));
++        Assertions.assertEquals(Set.of(tableId("test", "t1")),
++                lockedTableIds("with recursive t1 as (select v4 from t1 "
++                        + "union all select v4 + 1 from t1 where v4 < 3) select * from t1"));
++        Assertions.assertEquals(Set.of(tableId("test", "t0"), tableId("test", "t1")),
++                lockedTableIds("with t1 as (select v1 from test.t0 "
++                        + "union all select v4 from t1) select * from t1"));
++    }
++
++    /**
++     * A recursive CTE's definition is analyzed operand by operand, without the union's own with clause; finding no
++     * self-reference, the analyzer analyzes the whole definition again, with that with clause. Here the operands read
++     * the table t0, the union's t0 CTE not being in scope for them, and that CTE reads t1: both are read, so both are
++     * locked.
++     */
++    @Test
++    public void testARecursiveCteUnionWithClauseIsLocked() throws Exception {
++        Assertions.assertEquals(Set.of(tableId("test", "t0"), tableId("test", "t1")),
++                lockedTableIds("with recursive r as (with t0 as (select v4 as v1 from test.t1) "
++                        + "select v1 from t0 union all select v1 from t0) select * from r"));
++    }
++
++    /**
++     * The lock collection also walks analyzed statements, to check the lock covers what analysis brought in. There a
++     * reference to a recursive CTE shares the definition's query, so walking into it goes round a cycle. A recursive
++     * member with a WITH RECURSIVE of its own has the walk treat such a reference as a recursive CTE definition.
++     */
++    @Test
++    public void testLockCollectionOverAnAnalyzedRecursiveCteEnds() throws Exception {
++        String sql = "with recursive r as (select v1 from test.t0 union all "
++                + "(with recursive x as (select 1 as m) select r.v1 + x.m from r, x where r.v1 < 3)) select * from r";
++        StatementBase parsed = UtFrameUtils.parseStmtWithNewParserNotIncludeAnalyzer(sql, connectContext);
++        StatementBase analyzed = UtFrameUtils.parseStmtWithNewParser(sql, connectContext);
++        try (PlannerMetaLocker locker = new PlannerMetaLocker(connectContext, parsed)) {
++            PlannerMetaLocker all =
++                    Assertions.assertDoesNotThrow(() -> locker.forAllTablesOf(connectContext, analyzed));
++            Assertions.assertFalse(all.isEmpty(), "t0 has to be in the lock set");
 +        }
-+        Database db = GlobalStateMgr.getCurrentState().getLocalMetastore().getDb(qualified.getDb());
-+        if (db == null) {
-+            return List.of();
-+        }
-+        List<Pair<Database, Table>> baseTables = new ArrayList<>();
-+        for (Table table : db.getTables()) {
-+            if (!(table instanceof OlapTable olapTable) || !olapTable.isMetaLockTarget
++    }
++
+     /**
+      * ENGINE=MYSQL and ENGINE=JDBC from a resource live in an internal database, but nothing writes a published
+      * one, so they are no lock target: neither in the lock set nor a vote for holding the lock over the whole
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/QueryAnalyzer.java` (modified, +7/-4)
+---
+
+### Incident Patch 2: `e38ba278` (2026-11-26)
+**Commit Message**: [BugFix] Keep malformed UDF cloud metadata from blocking FE replay (#82921)
+
+Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
+Co-authored-by: stephen <[REDACTED_EMAIL]>
+Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/Function.java` (modified, +24/-8)
 ```diff
-@@ -2889,12 +2889,15 @@ public Table resolveTable(TableRelation tableRelation) {
-                         Table mvTable = materializedIndex.first;
-                         Preconditions.checkState(mvTable != null);
-                         Preconditions.checkState(mvTable instanceof OlapTable);
--                        // Add read lock to avoid concurrent problems.
-                         OlapTable mvOlapTable = new OlapTable(mvTable.getType());
--                        // Known: PlannerMetaLocker does not collect a [_SYNC_MV_] relation, so this copies the
--                        // base table without its lock. Tracked as 2-g in the FE lock todo, fixed on its own.
-+                        // Known: when a statement is planned, PlannerMetaLocker collects the base table of a
-+                        // [_SYNC_MV_] relation by its index name, so this copy is taken under its READ lock -- but not
-+                        // yet for a read in GROUP BY, which that collection does not walk before analysis. Nor does
-+                        // every analysis run under the planner lock: CREATE VIEW analyzes its query
-+                        // holding none, and the copy is taken all the same. Tracked as 2-g in the FE lock todo: the
-+                        // analyzer is to stop copying, leaving the copy to the planner.
-                         try (SnapshotCopyValidator.KnownViolation known = SnapshotCopyValidator.exemptKnownViolation(
--                                "[_SYNC_MV_] relation is not in the planner lock set (2-g)")) {
-+                                "[_SYNC_MV_] base table copied by analysis outside the planner lock (2-g)")) {
-                             ((OlapTable) mvTable).copyOnlyForQuery(mvOlapTable);
-                         }
-                         // Copy the necessary olap table meta to avoid changing original meta;
+@@ -65,8 +65,9 @@
+ import com.starrocks.type.Type;
+ import com.starrocks.type.TypeSerializer;
+ import org.apache.commons.lang.ArrayUtils;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
+ 
+-import java.io.IOException;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.HashMap;
+@@ -81,6 +82,7 @@
+  * Base class for all functions.
+  */
+ public class Function implements Writable, GsonPostProcessable {
++    private static final Logger LOG = LogManager.getLogger(Function.class);
+     private static final String MASKED_LOCATION = "***";
+ 
+     // Enum for how to compare function signatures.
+@@ -342,12 +344,20 @@ public void setCloudConfiguration(CloudConfiguration cloudConfiguration) {
+     }
+ 
+     @Override
+-    public void gsonPostProcess() throws IOException {
++    public void gsonPostProcess() {
+         if (cloudConfigurationProperties != null) {
+-            cloudConfiguration = CloudConfigurationFactory.buildCloudConfigurationForStorage(cloudConfigurationProperties);
+-            if (cloudConfiguration.getCloudType() == CloudType.DEFAULT) {
+-                throw new IOException("Cannot restore UDF cloud configuration from persisted properties");
++            cloudConfiguration = null;
++            try {
++                CloudConfiguration restored =
++                        CloudConfigurationFactory.buildCloudConfigurationForStorage(cloudConfigurationProperties);
++                if (restored != null && restored.getCloudType() != CloudType.DEFAULT) {
++                    cloudConfiguration = restored;
++                    return;
++                }
++            } catch (RuntimeException e) {
++                // A malformed function must not prevent the FE from loading its image or edit log.
+             }
++            LOG.warn("Cannot restore cloud configuration for UDF {}; recreate the function before using it", name);
+         }
+     }
+ 
+@@ -829,9 +839,15 @@ public static String rectifyFunctionName(String s) {
+     }
+ 
+     public TFunction toThrift() {
+-        if (legacyCloudConfiguration != null && cloudConfiguration == null) {
+-            throw new IllegalStateException("UDF cloud configuration was saved in an unsupported format; "
+-                    + "recreate the function");
++        if (cloudConfiguration == null) {
++            if (legacyCloudConfiguration != null) {
++                throw new IllegalStateException("UDF cloud configuration was saved in an unsupported format; "
++                        + "recreate the function");
++            }
++            if (cloudConfigurationProperties != null) {
++                throw new IllegalStateException("UDF cloud configuration could not be restored from persisted properties; "
++                        + "recreate the function");
++            }
+         }
+         TFunction fn = new TFunction();
+         fn.setName(name.toThrift());
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/PlanningSnapshotViewLockTest.java` (modified, +184/-1)
+**File**: `fe/fe-core/src/test/java/com/starrocks/catalog/FunctionCloudConfigurationPersistTest.java` (modified, +55/-0)
 ```diff
-@@ -17,6 +17,7 @@
- import com.starrocks.catalog.OlapTable;
+@@ -14,11 +14,15 @@
+ 
+ package com.starrocks.catalog;
+ 
++import com.google.gson.JsonNull;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParser;
++import com.starrocks.common.io.Text;
+ import com.starrocks.credential.CloudConfiguration;
+ import com.starrocks.credential.CloudConfigurationFactory;
+ import com.starrocks.credential.CloudType;
++import com.starrocks.persist.EditLogDeserializer;
++import com.starrocks.persist.OperationType;
+ import com.starrocks.persist.gson.GsonUtils;
+ import com.starrocks.thrift.TFunction;
+ import com.starrocks.thrift.TFunctionBinaryType;
+@@ -29,6 +33,10 @@
+ import org.junit.jupiter.api.Assertions;
+ import org.junit.jupiter.api.Test;
+ 
++import java.io.ByteArrayInputStream;
++import java.io.ByteArrayOutputStream;
++import java.io.DataInputStream;
++import java.io.DataOutputStream;
+ import java.util.HashMap;
+ import java.util.Map;
+ 
+@@ -95,4 +103,51 @@ public void testOldFunctionMetadataRequiresRecreation() {
+         IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, restored::toThrift);
+         Assertions.assertTrue(exception.getMessage().contains("recreate the function"));
+     }
++
++    @Test
++    public void testUnrestorableCloudConfigurationDoesNotAbortReplay() {
++        JsonObject metadata = JsonParser.parseString(GsonUtils.GSON.toJson(
++                newUdf(Map.of(AWS_S3_USE_AWS_SDK_DEFAULT_BEHAVIOR, "true")))).getAsJsonObject();
++        metadata.add("cloud_configuration_properties", new JsonObject());
++
++        Function restored = Assertions.assertDoesNotThrow(() -> GsonUtils.GSON.fromJson(metadata, Function.class));
++        Assertions.assertNull(restored.getCloudConfiguration());
++        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, restored::toThrift);
++        Assertions.assertTrue(exception.getMessage().contains("could not be restored"));
++        Assertions.assertTrue(exception.getMessage().contains("recreate the function"));
++        Assertions.assertThrows(IllegalStateException.class, () -> restored.copy().toThrift());
++    }
++
++    @Test
++    public void testMalformedCloudConfigurationDoesNotAbortReplay() {
++        JsonObject metadata = JsonParser.parseString(GsonUtils.GSON.toJson(
++                newUdf(Map.of(AWS_S3_USE_AWS_SDK_DEFAULT_BEHAVIOR, "true")))).getAsJsonObject();
++        JsonObject malformedProperties = new JsonObject();
++        malformedProperties.add(AWS_S3_ACCESS_KEY, JsonNull.INSTANCE);
++        malformedProperties.addProperty(AWS_S3_SECRET_KEY, "test-secret-key");
++        metadata.add("cloud_configuration_properties", malformedProperties);
++
++        Function restored = Assertions.assertDoesNotThrow(() -> GsonUtils.GSON.fromJson(metadata, Function.class));
++        Assertions.assertNull(restored.getCloudConfiguration());
++        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, restored::toThrift);
++        Assertions.assertTrue(exception.getMessage().contains("could not be restored"));
++        Assertions.assertFalse(exception.getMessage().contains("test-secret-key"));
++    }
++
++    @Test
++    public void testMalformedCloudConfigurationDoesNotAbortJournalDeserialization() throws Exception {
++        JsonObject metadata = JsonParser.parseString(GsonUtils.GSON.toJson(
++                newUdf(Map.of(AWS_S3_USE_AWS_SDK_DEFAULT_BEHAVIOR, "true")))).getAsJsonObject();
++        JsonObject malformedProperties = new JsonObject();
++        malformedProperties.add(AWS_S3_ACCESS_KEY, JsonNull.INSTANCE);
++        malformedProperties.addProperty(AWS_S3_SECRET_KEY, "test-secret-key");
++        metadata.add("cloud_configuration_properties", malformedProperties);
++
++        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
++        Text.writeString(new DataOutputStream(bytes), metadata.toString());
++        Function restored = (Function) Assertions.assertDoesNotThrow(() -> EditLogDeserializer.deserialize(
++                OperationType.OP_ADD_FUNCTION_V2, new DataInputStream(new ByteArrayInputStream(bytes.toByteArray()))));
++        Assertions.assertNull(restored.getCloudConfiguration());
++        Assertions.assertThrows(IllegalStateException.class, restored::toThrift);
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `e26cc716` (2026-11-26)
+**Commit Message**: [BugFix] Protect first-load statistics row counts with table locks (#82917)
+
+Co-authored-by: stephen <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/listener/LoadJobStatsListener.java` (modified, +6/-5)
+```diff
+@@ -41,13 +41,15 @@ public class LoadJobStatsListener implements LoadJobListener {
+ 
+     @Override
+     public void onStreamLoadTransactionFinish(TransactionState transactionState) {
+-        onTransactionFinish(transactionState, false);
++        // Stream-load callbacks run after the publisher releases its table and transaction locks.
++        onTransactionFinish(transactionState, false, true);
+     }
+ 
+     @Override
+     public void onLoadJobTransactionFinish(TransactionState transactionState) {
+         // For compatibility reasons, broker load still uses async collect.
+-        onTransactionFinish(transactionState, false);
++        // Its afterVisible callback already holds the publisher's table WRITE lock.
++        onTransactionFinish(transactionState, false, false);
+     }
+ 
+     @Override
+@@ -79,7 +81,7 @@ private boolean needTrigger() {
+         return true;
+     }
+ 
+-    private void onTransactionFinish(TransactionState transactionState, boolean sync) {
++    private void onTransactionFinish(TransactionState transactionState, boolean sync, boolean useLock) {
+         if (!needTrigger()) {
+             return;
+         }
+@@ -105,8 +107,7 @@ private void onTransactionFinish(TransactionState transactionState, boolean sync
+                     .filter(t -> !t.isMaterializedView()) // skip mvs since its stats will be triggered after refresh
+                     .collect(Collectors.toList());
+             for (Table table : tables) {
+-                // stream load and broker load do not need lock
+-                StatisticUtils.triggerCollectionOnFirstLoad(transactionState, db, table, sync, false,
++                StatisticUtils.triggerCollectionOnFirstLoad(transactionState, db, table, sync, useLock,
+                         DmlType.INSERT_INTO);
+             }
+         } catch (Exception t) {
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/statistic/StatisticsCollectionTrigger.java` (modified, +6/-6)
+```diff
+@@ -287,6 +287,7 @@ private void waitFinish() {
+ 
+     private void prepareAnalyzeJobForLoad() {
+         TableCommitInfo tableCommitInfo = txnState.getIdToTableCommitInfos().get(table.getId());
++        // The broker-load publisher already holds the table WRITE lock when useLock is false.
+         Locker locker = new Locker();
+         if (useLock) {
+             locker.lockTablesWithIntensiveDbLock(db.getId(), List.of(table.getId()), LockType.READ);
+@@ -342,17 +343,16 @@ private void prepareAnalyzeJobForLoad() {
+                     LOG.debug("Statistics collection not triggered for DML type: {}", dmlType);
+                 }
+             }
++            if (partitionIds.isEmpty()) {
++                return;
++            }
++            // Partition row counts traverse mutable subpartition maps, so read them before releasing the lock.
++            analyzeType = decideAnalyzeTypeForLoad(txnState, (OlapTable) table);
+         } finally {
+             if (useLock) {
+                 locker.unLockTablesWithIntensiveDbLock(db.getId(), List.of(table.getId()), LockType.READ);
+             }
+         }
+-        if (partitionIds.isEmpty()) {
+-            return;
+-        }
+-
+-        analyzeType = decideAnalyzeTypeForLoad(txnState, (OlapTable) table);
+-
+         if (analyzeType != SAMPLE) {
+             partitionTabletRowCounts.clear();
+         }
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/listener/LoadJobStatsListenerTest.java` (added, +140/-0)
+```diff
+@@ -0,0 +1,140 @@
++// Copyright 2021-present StarRocks, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package com.starrocks.listener;
++
++import com.starrocks.catalog.Database;
++import com.starrocks.catalog.OlapTable;
++import com.starrocks.catalog.Partition;
++import com.starrocks.common.util.concurrent.lock.LockType;
++import com.starrocks.common.util.concurrent.lock.Locker;
++import com.starrocks.load.streamload.StreamLoadTxnCommitAttachment;
++import com.starrocks.server.GlobalStateMgr;
++import com.starrocks.sql.plan.PlanTestBase;
++import com.starrocks.transaction.PartitionCommitInfo;
++import com.starrocks.transaction.TableCommitInfo;
++import com.starrocks.transaction.TransactionState;
++import mockit.Invocation;
++import mockit.Mock;
++import mockit.MockUp;
++import org.junit.jupiter.api.Assertions;
++import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.Test;
++
++import java.util.List;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicInteger;
++
++public class LoadJobStatsListenerTest extends PlanTestBase {
++    @BeforeAll
++    public static void beforeClass() throws Exception {
++        PlanTestBase.beforeClass();
++    }
++
++    @Test
++    public void streamLoadProtectsPartitionRowCount() throws Exception {
++        verifyPartitionRowCountLock(false);
++    }
++
++    @Test
++    public void brokerLoadReusesPublishWriteLock() throws Exception {
++        verifyPartitionRowCountLock(true);
++    }
++
++    private void verifyPartitionRowCountLock(boolean brokerLoad) throws Exception {
++        String dbName = "test_statistics_listener";
++        String tableName = brokerLoad ? "broker_load" : "stream_load";
++        starRocksAssert.withDatabase(dbName).useDatabase(dbName);
++        starRocksAssert.withTable("create table " + tableName + " (c1 int not null, c2 int not null) " +
++                "partition by (c1) properties('replication_num'='1', 'enable_statistic_collect_on_first_load'='true')");
++        starRocksAssert.ddl("alter table " + tableName + " add partition p1 values in ('1')");
++        Database db = GlobalStateMgr.getCurrentState().getLocalMetastore().getDb(dbName);
++        OlapTable table = (OlapTable) db.getTable(tableName);
++        Partition partition = table.getPartition("p1");
++        TransactionState transactionState = new TransactionState();
++        transactionState.setDbId(db.getId());
++        TableCommitInfo commitInfo = new TableCommitInfo(table.getId());
++        commitInfo.addPartitionCommitInfo(new PartitionCommitInfo(partition.getDefaultPhysicalPartition().getId(),
++                Partition.PARTITION_INIT_VERSION + 1, 1));
++        transactionState.putIdToTableCommitInfo(table.getId(), commitInfo);
++        // A small load skips collection after reading the partition's row count.
++        transactionState.setTxnCommitAttachment(new StreamLoadTxnCommitAttachment(0, 0, 0, 0, 0, 1, 0, 0, 0, ""));
++        new MockUp<GlobalStateMgr>() {
++            @Mock
++            public boolean isLeader() {
++                return true;
++            }
++
++            @Mock
++            public boolean isReady() {
++                return true;
++            }
++        };
++
++        AtomicInteger rowCountReads = new AtomicInteger();
++        ExecutorService writer = Executors.newSingleThreadExecutor();
++        new MockUp<Partition>() {
++            @Mock
++            public long getRowCount(Invocation invocation) throws Exception {
++                Partition current = invocation.getInvokedInstance();
++                if (current.getId() != partition.getId()) {
++                    return invocation.proceed();
++                }
++                rowCountReads.incrementAndGet();
++                Assertions.assertFalse(writer.submit(() -> tryWriteLock(db, table)).get(5, TimeUnit.SECONDS),
++                        "partition row counts must be read while a metadata lock excludes concurrent writers");
++                return 1000;
++            }
++        };
++
++        Locker publisher = new Locker();
++        if (brokerLoad) {
++            publisher.lockTablesWithIntensiveDbLock(db.getId(), List.of(table.getId()), LockType.WRITE);
++        }
++        try {
++            if (brokerLoad) {
++                // A new Locker cannot reacquire the publisher's WRITE lock, even on this thread.
++                new MockUp<Locker>() {
++                
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/statistic/StatisticsCollectionTriggerTest.java` (modified, +117/-0)
+```diff
+@@ -21,6 +21,8 @@
+ import com.starrocks.catalog.PhysicalPartition;
  import com.starrocks.catalog.Table;
  import com.starrocks.common.Config;
-+import com.starrocks.common.FeConstants;
- import com.starrocks.common.util.concurrent.lock.LockInvariantViolations;
- import com.starrocks.common.util.concurrent.lock.LockManager;
- import com.starrocks.common.util.concurrent.lock.LockType;
-@@ -62,6 +63,9 @@ public class PlanningSnapshotViewLockTest extends ConnectorPlanTestBase {
-     private static final String CONNECTOR_TABLE = "hive0.partitioned_db.lineitem_par";
-     private static final String VIEW = "test.v_snapshot_lock";
-     private static final String NESTED_VIEW = "test.v_snapshot_lock_outer";
-+    // A [_SYNC_MV_] read names the index, not its base table, and the analyzer copies the base table itself.
-+    private static final String SYNC_MV_BASE = "t_sync_mv_snapshot_lock";
-+    private static final String SYNC_MV = "mv_sync_snapshot_lock";
++import com.starrocks.common.util.concurrent.lock.LockType;
++import com.starrocks.common.util.concurrent.lock.Locker;
+ import com.starrocks.qe.ConnectContext;
+ import com.starrocks.qe.DmlType;
+ import com.starrocks.server.GlobalStateMgr;
+@@ -39,11 +41,18 @@
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.EnumSource;
+ import org.mockito.Mockito;
  
-     private final Set<String> copied = new CopyOnWriteArraySet<>();
-     private final List<String> copiedWithoutLock = new CopyOnWriteArrayList<>();
-@@ -70,6 +74,11 @@ public class PlanningSnapshotViewLockTest extends ConnectorPlanTestBase {
-     public static void createViews() throws Exception {
-         starRocksAssert.withView("CREATE VIEW " + VIEW + " AS SELECT v1, v2, v3 FROM test.t0");
-         starRocksAssert.withView("CREATE VIEW " + NESTED_VIEW + " AS SELECT v1, v2, v3 FROM " + VIEW);
-+        starRocksAssert.useDatabase("test");
-+        starRocksAssert.withTable("CREATE TABLE " + SYNC_MV_BASE + " (k1 INT NOT NULL, k2 INT NOT NULL, v1 INT) "
-+                + "DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 PROPERTIES ('replication_num' = '1')");
-+        starRocksAssert.withMaterializedView("CREATE MATERIALIZED VIEW " + SYNC_MV
-+                + " AS SELECT k1, sum(v1) FROM " + SYNC_MV_BASE + " GROUP BY k1");
+ import java.time.LocalDateTime;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Optional;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicBoolean;
+ 
+ public class StatisticsCollectionTriggerTest extends PlanTestBase {
+ 
+@@ -289,6 +298,114 @@ public void triggerOnFirstLoadSkipsEmptyOrUnknownLoad() throws Exception {
+         Assertions.assertNull(trigger.getAnalyzeType());
      }
  
-     @BeforeEach
-@@ -108,7 +117,7 @@ private void assertEveryCopyWasLockedOf(String sql, String table) throws Excepti
- 
-     private void assertNothingLeftLocked(String sql) {
-         LockManager lockManager = GlobalStateMgr.getCurrentState().getLockManager();
--        for (String name : List.of("t0", "t1", "tprimary", "v_snapshot_lock", "v_snapshot_lock_outer")) {
-+        for (String name : List.of("t0", "t1", "tprimary", "v_snapshot_lock", "v_snapshot_lock_outer", SYNC_MV_BASE)) {
-             Table table = GlobalStateMgr.getCurrentState().getLocalMetastore().getTable("test", name);
-             Assertions.assertFalse(lockManager.isOwnedByCurrentThread(table.getId(), LockType.READ),
-                     name + " is still read-locked after planning: " + sql);
-@@ -295,6 +304,180 @@ private static void dropPartitionElsewhere(String sql) {
-         Assertions.assertNull(failure.get(), String.valueOf(failure.get()));
-     }
- 
-+    /**
-+     * Plan {@code sql}, which reads {@link #SYNC_MV} through [_SYNC_MV_], and assert the analyzer copied the view's base
-+     * table under its READ lock. Not through the test harness's CREATE VIEW round trip
-+     * ({@code UtFrameUtils#testView}): that analysis holds no planner lock, and copies the base table without it -- the
-+     * known 2-g violation, see {@link #testCreateViewOverASyncMVReadIsAKnownViolation}.
-+     */
-+    private void assertSyncMVBaseTableCopiedUnderItsLock(String sql) throws Exception {
-+        boolean savedUnitTestView = FeConstants.unitTestView;
-+        FeConstants.unitTestView = false;
++    @ParameterizedTest
++    @EnumSource(value = DmlType.class, names = {"INSERT_INTO", "UPDATE"})
++    public void triggerOnLoadProtectsRowCountsButDoesNotLockCollection(DmlType dmlType) throws Exception {
++        final String dbName = "test_statistics";
++        final String tableName = dmlType == DmlType.INSERT_INTO ? "t_insert_row_count_lock" : "t_update_row_count_lock";
++        starRocksAssert.withDatabase(dbName).useDatabase(dbName);
++        createPartitionedTable(tableName, "");
++
++        Database db = GlobalStateMgr.getCurrentState().getLocalMetastore().getDb(dbName);
++        OlapTable table = Mockito.spy((OlapTable) db.getTable(tableName));
++        Partition partition = Mockito.spy(table.getPartition("p1"));
++        long partitionId = partition.getId();
++        Mockito.doReturn(Optional.of(partition)).when(table).mayGetPartition(partitionId);
++        if (dmlType == DmlType.INSERT_INTO) {
++            // INSERT must protect the partition read even when table statistics are already available.
++            BasicStatsMeta statsMeta = new BasicStatsMeta(db.getId(), table.getId(), List.of(),
++                    StatsConstants.AnalyzeType.SAMPLE, LocalDateTime.now(), Map.of(), 1_000_000_000L);
++            GlobalStateMgr.getCurrentState().getAnalyzeMgr().getBasicStatsMetaMap().put(table.getId(), statsMeta);
++        } else {
++            // UPDATE falls back to the same partition read when no table statistics exist.
++            GlobalStateMgr.getCurrentState().getAnalyzeMgr().getBasicStatsMetaMap().remove(table.getId());
++        }
++
++        ExecutorService writer = Executors.newSingleThreadExecutor();
 +        try {
-+            copied.clear();
-+            assertEveryCopyWasLockedOf(sql, SYNC_MV_BASE);
++            Mockito.doAnswer(invocation -> {
++                // Wait for an actual competing writer while getRowCount is still on the reader's stack.
++                // A bounded lock attempt makes this deterministic without scheduling sleeps.
++                Assertions.assertFalse(writer.submit(() -> tryTableWriteLock(db, table))
++                        .get(5, TimeUnit.SECONDS), "a writer must not enter while partition row counts are read");
++                return 1000L;
++            }).when(partition).getRowCount();
++
++            AtomicBoolean collectionCanWrite = new AtomicBoolean();
++            new MockUp<StatisticExecutor>() {
++                @Mock
++                public AnalyzeStatus collectStatistics(ConnectContext context, StatisticsCollectJob job,
++                                                        AnalyzeStatus status, boolean refreshAsync,
++                                                        boolean resetWarehouse) {
++                    // This runs on the real analyze worker while the triggering thread waits for it.
++                    collectionCanWrite.set(tryTableWriteLock(db, table));
++                    return status;
++                }
++            };
++
++            TransactionState transactionState = firstLoadTransaction(table, partition);
++            StatisticsCollectionTrigger trigger = StatisticsCollectionTrigger.triggerOnFirstLoad(
++                    transactionState, db, table, true, true, dmlType);
++
++            Assertions.assertEquals(StatsConstants.AnalyzeType.FULL, trigger.getAnalyzeType());
++            Mockito.verify(partition).getRowCount();
++            Assertions.assertTrue(collectionCanWrite.get(),
++                    "the table lock must be released before collection runs and the trigger waits for completion");
 +        } finally {
-+            FeConstants.unitTestView = savedUnitTestView;
++            writer.shutdownNow();
++            Assertions.assertTrue(writer.awaitTermination(5, TimeUnit.SECONDS));
 +        }
 +    }
 +
-+    /** The analyzer copies the base table behind a [_SYNC_MV_] read: the lock taken before analysis has to cover it. */
 +    @Test
-+    public void testSyncMVReadLocksItsBaseTable() throws Exception {
-+        AtomicInteger reLocks = countReLocks();
-+        assertSyncMVBaseTableCopiedUnderItsLock("SELECT count(*) FROM test." + SYNC_MV + " [_SYNC_MV_]");
-+        Assertions.assertEquals(0, reLocks.get());
-+    }
-+
-+    /**
-+     * #81799: in a SELECT without FROM the tables are read only by the subqueries of the select list. The lock
-+     * collection walks them before analysis (#82970), and has to resolve the [_SYNC_MV_] read to its base table: it
-+     * used to resolve it to nothing, so the statement took the whole set again, whose names resolved again under the
-+     * lock missed the base table too, and failed the statement with "dropped or replaced". Now the lock taken before
-+     * analysis covers it.
-+     */
-+    @Test
-+    public void testSyncMVReadInTheSelectListOfASelectWithoutFrom() throws Exception {
-+        AtomicInteger reLocks = countReLocks();
-+        String sql = "SELECT (SELECT count(*) FROM test." + SYNC_MV + " [_SYNC_MV_]) = (SELECT count(*) FROM test.t1)";
-+        assertSyncMVBaseTableCopiedUnderItsLock(sql);
-+        Assertions.assertEquals(0, reLocks.get());
-+  
-```
-
----
-
-### Incident Patch 2: `4e2ae144` (2026-11-25)
-**Commit Message**: [UT] Disable the metric calculator in BrokerLoadJobTest to fix a flaky ConcurrentModificationException (#84451)
-
-Co-authored-by: trueeyu <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/load/loadv2/BrokerLoadJobTest.java` (modified, +15/-0)
-```diff
-@@ -42,6 +42,7 @@
- import com.starrocks.catalog.FakeEditLog;
- import com.starrocks.catalog.OlapTable;
- import com.starrocks.catalog.Table;
-+import com.starrocks.common.Config;
- import com.starrocks.common.DdlException;
- import com.starrocks.common.LabelAlreadyUsedException;
- import com.starrocks.common.LoadException;
-@@ -85,6 +86,7 @@
- import mockit.Mocked;
- import mockit.Verifications;
- import org.apache.spark.sql.AnalysisException;
-+import org.junit.jupiter.api.AfterAll;
- import org.junit.jupiter.api.Assertions;
- import org.junit.jupiter.api.BeforeAll;
- import org.junit.jupiter.api.Test;
-@@ -99,11 +101,24 @@
- 
- public class BrokerLoadJobTest {
- 
-+    private static boolean savedEnableMetricCalculator;
-+
-     @BeforeAll
-     public static void start() {
-+        // MetricRepo.init() otherwise schedules MetricCalculator, which calls the @Mocked GlobalStateMgr
-+        // on a background thread. A call that cascades a new mocked type (e.g. getRoutineLoadMgr()) registers
-+        // it in JMockit's shared state while the test thread iterates that state, and the test fails with a
-+        // ConcurrentModificationException.
-+        savedEnableMetricCalculator = Config.enable_metric_calculator;
-+        Config.enable_metric_calculator = false;
-         MetricRepo.init();
-     }
- 
-+    @AfterAll
-+    public static void tearDown() {
-+        Config.enable_metric_calculator = savedEnableMetricCalculator;
-+    }
-+
-     @Test
-     public void testFromLoadStmt(@Injectable LoadStmt loadStmt,
-                                  @Injectable LabelName labelName,
-```
-
----
-
-### Incident Patch 3: `063e0f7e` (2026-11-25)
-**Commit Message**: [BugFix] Reject non-list PARTITION BY for Iceberg/Hive CREATE TABLE instead of throwing ClassCastException (#84321)
-
-Signed-off-by: Gavin <[REDACTED_EMAIL]>
-Co-authored-by: Gavin <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/CreateTableAnalyzer.java` (modified, +13/-2)
-```diff
-@@ -767,9 +767,20 @@ public static void analyzePartitionDesc(CreateTableStmt stmt) {
-                 PaimonCreateTableAnalyzer.analyzePartitionDesc(stmt);
-             } else if (engineName.equalsIgnoreCase(Table.TableType.ELASTICSEARCH.name())) {
-                 EsUtil.analyzePartitionDesc(partitionDesc);
--            } else if (engineName.equalsIgnoreCase(Table.TableType.ICEBERG.name())
--                    || engineName.equalsIgnoreCase(Table.TableType.HIVE.name())) {
-+            } else if (engineName.equalsIgnoreCase(Table.TableType.ICEBERG.name())) {
-                 if (partitionDesc != null) {
-+                    if (!(partitionDesc instanceof ListPartitionDesc)) {
-+                        throw new SemanticException("Create iceberg table only supports PARTITION BY (column or transform, ...)",
-+                                partitionDesc.getPos());
-+                    }
-+                    ((ListPartitionDesc) partitionDesc).analyzeExternalPartitionColumns(stmt.getColumnDefs(), engineName);
-+                }
-+            } else if (engineName.equalsIgnoreCase(Table.TableType.HIVE.name())) {
-+                if (partitionDesc != null) {
-+                    if (!(partitionDesc instanceof ListPartitionDesc)) {
-+                        throw new SemanticException("Create hive table only supports PARTITION BY (column, ...)",
-+                                partitionDesc.getPos());
-+                    }
-                     ((ListPartitionDesc) partitionDesc).analyzeExternalPartitionColumns(stmt.getColumnDefs(), engineName);
-                 }
-             } else {
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/analyzer/AnalyzeCreateTableTest.java` (modified, +15/-1)
-```diff
-@@ -396,13 +396,21 @@ public void testIceberg() throws Exception {
-                 metadata.getDb((ConnectContext) any, "hive_catalog", "hive_db");
-                 result = new Database();
-                 minTimes = 0;
-+
-+                metadata.tableExists((ConnectContext) any, "hive_catalog", "hive_db", anyString);
-+                result = false;
-+                minTimes = 0;
-             }
-         };
- 
-         AnalyzeTestUtil.getConnectContext().setCurrentCatalog(InternalCatalog.DEFAULT_INTERNAL_CATALOG_NAME);
-         AnalyzeTestUtil.getConnectContext().setDatabase("test");
- 
--        analyzeSuccess("create external table iceberg_catalog.iceberg_db.iceberg_table" 
-+        analyzeFail("create external table hive_catalog.hive_db.hive_table"
-+                        + "(k1 int, k2 int) partition by range(k1) (partition p1 values less than ('100'))",
-+                "Create hive table only supports PARTITION BY (column, ...)");
-+
-+        analyzeSuccess("create external table iceberg_catalog.iceberg_db.iceberg_table"
-                         + "(k1 int, k2 date) partition by year(k2)");
-         analyzeSuccess("create external table iceberg_catalog.iceberg_db.iceberg_table" 
-                         + "(k1 int, k2 date) partition by month(k2)");
-@@ -503,6 +511,12 @@ public void testIcebergPartitionTransformError() throws Exception {
-         analyzeFail("create external table iceberg_catalog.iceberg_db.iceberg_table"
-                         + "(k1 int, k2 varchar(10)) partition by truncate(4, k2)",
-                 "No matching function with signature: truncate(tinyint(4), varchar(10))");
-+        analyzeFail("create external table iceberg_catalog.iceberg_db.iceberg_table"
-+                        + "(k1 int, k2 int) partition by range(k1) (partition p1 values less than ('100'))",
-+                "Create iceberg table only supports PARTITION BY (column or transform, ...)");
-+        analyzeFail("create table iceberg_catalog.iceberg_db.iceberg_table"
-+                        + " partition by range(k1) (partition p1 values less than ('100')) as select 1 as k1, 2 as k2",
-+                "Create iceberg table only supports PARTITION BY (column or transform, ...)");
-         AnalyzeTestUtil.getStarRocksAssert().dropCatalog("iceberg_catalog");
-     }
- 
++    public void triggerOnLoadReleasesTableLockWhenReadingRowsFails() throws Exception {
++        final String dbName = "test_statistics";
++        final String tableName = "t_load_row_count_f
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #84453** (2026-11-25): [BugFix] Link prev_garbage_version to the base FE asked for when a file bundling publish retry moves the base (@starrocks-xupeng)
-- **PR #84452** (2026-11-25): [BugFix] Link prev_garbage_version to the base FE asked for when a file bundling publish retry moves the base (@starrocks-xupeng)
-- **PR #84451** (2026-11-25): [UT] Disable the metric calculator in BrokerLoadJobTest to fix a flaky ConcurrentModificationException (@starrocks-bot[bot])
-- **PR #84449** (2026-11-25): [Refactor] Remove the unused convert_helper (backport #84431) (@mergify[bot])
-- **PR #84445** (2026-11-25): [BugFix] Accept an FE plugin dir created concurrently (backport #84381) (@mergify[bot])
-- **PR #84443** (2026-11-25): [BugFix] Accept an FE plugin dir created concurrently (backport #84381) (@mergify[bot])
+- **PR #84690** (2026-11-26): [Doc] Add Spark Connector 1.1.5 Doc (backport #83641) (backport #84367) (@mergify[bot])
+- **PR #84689** (2026-11-26): [Doc] Add Flink Connector 1.2.17 Doc (backport #83634) (backport #84370) (@mergify[bot])
+- **PR #84685** (2026-11-26): [BugFix] Fix ClassCastException in RBO join reorder (backport #83723) (@mergify[bot])
+- **PR #84684** (2026-11-26): [BugFix] Fix ClassCastException in RBO join reorder (backport #83723) (@mergify[bot])
+- **PR #84683** (2026-11-26): [BugFix] Fix ClassCastException in RBO join reorder (backport #83723) (@mergify[bot])
+- **PR #84676** (2026-11-26): [Enhancement] Add automatic fallback for Paimon Global Index scans (backport #84157) (@mergify[bot])
 
 ---
 
@@ -2194,13 +2479,13 @@ Co-authored-by: Gavin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Lock the base table of a [_SYNC_MV_] read before planning
+## X. [BugFix] Leave a recursive CTE's self-reference out of the planner lock set
 
 **RULE**:
 When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/PlannerMetaLocker.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a930786b`: [BugFix] Lock the base table of a [_SYNC_MV_] read before planning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6df7ea85`: [BugFix] Leave a recursive CTE's self-reference out of the planner lock set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/PlannerMetaLocker.java`.
@@ -2208,33 +2493,50 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import com.starrocks.catalog.OlapTable;
-    /** A [_SYNC_MV_] relation, with the ids of the tables its index name resolved to for the lock set. */
-    private record WalkedSyncMV(TableName indexName, Set<Long> baseTableIds) {
-    }
-
-    private final List<WalkedSyncMV> walkedSyncMVs;
-        this.walkedSyncMVs = collector.walkedSyncMVs;
-        this.walkedSyncMVs = List.of();
-        // The analyzer copies the base table of a [_SYNC_MV_] read while analyzing, before the coverage check of
-        // StatementPlanner#copyOlapTablesAndUnlock can see it. A base table dropped and recreated, or an index of that
-        // name added or dropped, between the walk and this lock would leave it copying a table this lock does not
-        // hold. With those locked, their indexes stay as they are.
-        for (WalkedSyncMV walked : walkedSyncMVs) {
-            if (!walked.baseTableIds().equals(tableIdsOf(resolveSyncMVBaseTables(session, walked.indexName())))) {
-                unlock();
-                throw new StarRocksPlannerException(String.format("The base table of %s [_SYNC_MV_] was changed "
-                        + "while the statement was being planned, please retry", walked.indexName
+import com.starrocks.sql.ast.QueryRelation;
+import com.starrocks.sql.ast.UnionRelation;
+        // Whether the with clause whose CTEs are being walked is WITH RECURSIVE; see visitCTE.
+        private boolean inRecursiveWithClause = false;
+            withCtes(cteRelations, false, () -> {
+            withCtes(node.getCteRelations(), node.isHasRecursiveCTE(), () -> super.visitSelect(node, context));
+            withCtes(node.getCteRelations(), node.isHasRecursiveCTE(), () -> super.visitSetOp(node, context));
+        /**
+         * Run {@code body} in a new with-clause scope, which {@link #visitCTE} fills as the CTEs are walked.
+         * {@code recursive}: whether the clause is WITH RECURSIVE.
+         */
+        private void withCtes(List<CTERelation> cteRelations, boolean recursive, Runnable body) {
+            boolean scoped = cteRelations != null && !cteRelations.isEmpty();
+            boolean enclosingRecursive = inRecursiveWithClause;
+            if (scoped) {
+                cteNames.push(new HashSet<>());
+            inRecursiveWithClause = recursive;
+                inRecursiveWithClause = enclosingRecursive;
+                if (scoped) {
+                    cteNames.pop();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            withCtes(cteRelations, () -> {
+            withCtes(node.getCteRelations(), () -> super.visitSelect(node, context));
+            withCtes(node.getCteRelations(), () -> super.visitSetOp(node, context));
+        /** Run {@code body} in a new with-clause scope, which {@link #visitCTE} fills as the CTEs are walked. */
+        private void withCtes(List<CTERelation> cteRelations, Runnable body) {
+            if (cteRelations == null || cteRelations.isEmpty()) {
+                body.run();
+                return;
+            cteNames.push(new HashSet<>());
+                cteNames.pop();
+         * A CTE's name is in scope only after its own definition, as the analyzer has it: in
+         * {@code WITH t0 AS (SELECT * FROM t0)} the inner {@code t0} is the table.
+            super.visitCTE(node, context);
+            if (!cteNames.isEmpty() && node.getName() != null) {
+                cteNames.peek().add(node.getName());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a930786b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6df7ea85` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

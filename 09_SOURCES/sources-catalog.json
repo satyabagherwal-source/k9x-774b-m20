@@ -275,8 +275,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "04aeb1d2b2541d78eea88179c00860a56bede92c68a6a66e77f899f497c9f669",
-    "lastHarvestedAt": "2026-11-22T17:53:05.362Z",
+    "contentHash": "112e4d5cbf6735e874fa57be8ff3b80462607a599eecf4ae3a3b99ec50f6210e",
+    "lastHarvestedAt": "2026-11-26T10:50:29.350Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "921d5c4b",
+    "sourceVersion": "95ccbc34",
     "license": "Apache-2.0",
-    "contentHash": "014d4acc8554c7df58894de834cebc86698583da7be7bba9692c86ff63242e61",
-    "lastHarvestedAt": "2026-11-25T09:08:06.207Z",
+    "contentHash": "66b3dc0b35d9d73d729c19e45995ee83fa4541e95e80644fdade25f440d50d66",
+    "lastHarvestedAt": "2026-11-26T10:50:45.317Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "9dd9b9ed",
+    "sourceVersion": "9ced8eeb",
     "license": "MPL-2.0",
-    "contentHash": "e7efcf6b9bc9b750d17c6dc4dc70a85c193ce2f6228613f3ea10caa18b86e197",
-    "lastHarvestedAt": "2026-11-25T10:35:22.767Z",
+    "contentHash": "8689fe0f13545dce48c5c22c9681a40c7b2186be7a60eb4d64a5d212c2dd409e",
+    "lastHarvestedAt": "2026-11-26T10:50:40.159Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "afcf25e3",
+    "sourceVersion": "4d6f18eb",
     "license": "Apache-2.0",
-    "contentHash": "0f985a2e8af37fd26217f8125cfcc286b9c30f65784047b8a57361dfaa87359e",
-    "lastHarvestedAt": "2026-11-25T03:28:23.111Z",
+    "contentHash": "8322c8d3d6d2d7c8c245334a40300495c5e77a76e3c581d1d4d82302a4eb6dac",
+    "lastHarvestedAt": "2026-11-26T10:50:32.298Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
@@ -10183,10 +10183,10 @@
     "repository": "sweetpad-dev/sweetpad",
     "platform": "github",
     "sourceUrl": "https://github.com/sweetpad-dev/sweetpad",
-    "sourceVersion": "11b271ee",
+    "sourceVersion": "685c517e",
     "license": "MIT",
-    "contentHash": "975a8dc964d4b0d13e74339da9bebe3eee3e97843800d549b8eeb94d88065bb4",
-    "lastHarvestedAt": "2026-11-24T00:31:44.619Z",
+    "contentHash": "312bc5e0058300bbcf66be44e693b3256cfd5447353eb8c74360847a0ae0ce84",
+    "lastHarvestedAt": "2026-11-26T10:50:37.503Z",
     "learningId": "learn-github-sweetpad-dev-sweetpad"
   },
   "wcandillon-react-native-skia": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T10:41:05.688Z",
+  "last_updated": "2026-11-26T10:50:45.336Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -305,14 +305,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3",
-      "content_hash": "04aeb1d2b2541d78eea88179c00860a56bede92c68a6a66e77f899f497c9f669",
-      "verified_at": "2026-11-22T17:53:05.372Z",
+      "content_hash": "112e4d5cbf6735e874fa57be8ff3b80462607a599eecf4ae3a3b99ec50f6210e",
+      "verified_at": "2026-11-26T10:50:29.364Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T17:53:05.372Z"
+      "last_updated": "2026-11-26T10:50:29.364Z"
     },
     "stabilityai/stable-diffusion-xl-base-1.0": {
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "014d4acc8554c7df58894de834cebc86698583da7be7bba9692c86ff63242e61",
-      "verified_at": "2026-11-25T09:08:06.229Z",
+      "content_hash": "66b3dc0b35d9d73d729c19e45995ee83fa4541e95e80644fdade25f440d50d66",
+      "verified_at": "2026-11-26T10:50:45.335Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T09:08:06.229Z"
+      "last_updated": "2026-11-26T10:50:45.335Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "e7efcf6b9bc9b750d17c6dc4dc70a85c193ce2f6228613f3ea10caa18b86e197",
-      "verified_at": "2026-11-25T10:35:22.783Z",
+      "content_hash": "8689fe0f13545dce48c5c22c9681a40c7b2186be7a60eb4d64a5d212c2dd409e",
+      "verified_at": "2026-11-26T10:50:40.179Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T10:35:22.783Z"
+      "last_updated": "2026-11-26T10:50:40.179Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "0f985a2e8af37fd26217f8125cfcc286b9c30f65784047b8a57361dfaa87359e",
-      "verified_at": "2026-11-25T03:28:23.131Z",
+      "content_hash": "8322c8d3d6d2d7c8c245334a40300495c5e77a76e3c581d1d4d82302a4eb6dac",
+      "verified_at": "2026-11-26T10:50:32.314Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T03:28:23.131Z"
+      "last_updated": "2026-11-26T10:50:32.314Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
@@ -15321,14 +15321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
-      "content_hash": "975a8dc964d4b0d13e74339da9bebe3eee3e97843800d549b8eeb94d88065bb4",
-      "verified_at": "2026-11-24T00:31:44.627Z",
+      "content_hash": "312bc5e0058300bbcf66be44e693b3256cfd5447353eb8c74360847a0ae0ce84",
+      "verified_at": "2026-11-26T10:50:37.516Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:31:44.627Z"
+      "last_updated": "2026-11-26T10:50:37.516Z"
     },
     "testing-library/dom-testing-library": {
       "repository": "testing-library/dom-testing-library",

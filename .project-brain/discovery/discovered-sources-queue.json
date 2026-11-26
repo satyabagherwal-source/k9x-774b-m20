@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T10:19:35.294Z",
+  "updated_at": "2026-11-26T10:50:50.207Z",
   "stats": {
-    "total_discovered": 9730,
-    "approved_pending_harvest": 9230,
+    "total_discovered": 9733,
+    "approved_pending_harvest": 9233,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9217,
+      "COMMUNITY_AND_EXPERT": 9220,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210587,6 +210587,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
         "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-223F122D8494": {
+      "id": "SRC-223F122D8494",
+      "url": "https://github.com/google/tcmalloc/pull/1968/checks?check_run_id=139572967566",
+      "title": "https://github.com/google/tcmalloc/pull/1968/checks?check_run_id=139572967566",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T10:50:48.882Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+        "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-758809D01F76": {
+      "id": "SRC-758809D01F76",
+      "url": "https://github.com/google/tcmalloc/pull/1967/checks?check_run_id=139505394906",
+      "title": "https://github.com/google/tcmalloc/pull/1967/checks?check_run_id=139505394906",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T10:50:48.941Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+        "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-0A453EB4298D": {
+      "id": "SRC-0A453EB4298D",
+      "url": "https://github.com/sweetpad-dev/sweetpad/blob/1c2e74210453b1c55d457bf3019361cd5fa3280e/sweetpad-lib/ci/fixture-delivery/README.md",
+      "title": "https://github.com/sweetpad-dev/sweetpad/blob/1c2e74210453b1c55d457bf3019361cd5fa3280e/sweetpad-lib/ci/fixture-delivery/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T10:50:50.207Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
+        "fileName": "sweetpad-dev-sweetpad-learnings.md"
       }
     }
   }

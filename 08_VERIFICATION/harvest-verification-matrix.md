@@ -13343,3 +13343,8 @@
 | `CYCLE-20261126-9E4U` | `2026-11-26T10:41:01.134Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10651` | Yes (`9d288c09...`) |
 | `CYCLE-20261126-9HMC` | `2026-11-26T10:41:05.652Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10652` | Yes (`8525134d...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T10:41:48.717Z` | `signerlabs-klee` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-68A82B80` [Domain D] | Yes (`f0fa21db...`) |
+| `CYCLE-20261126-LKKI` | `2026-11-26T10:50:29.346Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`112e4d5c...`) |
+| `CYCLE-20261126-LMUD` | `2026-11-26T10:50:32.293Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10653` | Yes (`8322c8d3...`) |
+| `CYCLE-20261126-LQUZ` | `2026-11-26T10:50:37.499Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10654` | Yes (`312bc5e0...`) |
+| `CYCLE-20261126-LSWR` | `2026-11-26T10:50:40.155Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10655` | Yes (`8689fe0f...`) |
+| `CYCLE-20261126-LWW1` | `2026-11-26T10:50:45.313Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10656` | Yes (`66b3dc0b...`) |

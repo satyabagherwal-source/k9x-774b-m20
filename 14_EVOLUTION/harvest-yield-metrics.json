@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T10:41:05.675Z",
-  "total_cycles_completed": 12661,
-  "total_learnings_persisted": 12661,
-  "total_rules_promoted": 11549,
+  "last_updated": "2026-11-26T10:50:45.328Z",
+  "total_cycles_completed": 12666,
+  "total_learnings_persisted": 12666,
+  "total_rules_promoted": 11553,
   "history": [
-    {
-      "timestamp": "2026-11-25T15:38:59.897Z",
-      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T15:47:27.584Z",
-      "repository": "withcoral/coral",
-      "learningId": "learn-github-withcoral-coral",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T15:47:29.412Z",
-      "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
-      "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T15:47:43.286Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T15:57:28.404Z",
-      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
-      "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T15:57:35.405Z",
       "repository": "JuulLabs/kable",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-26T10:41:05.675Z",
       "repository": "citusdata/citus",
       "learningId": "learn-github-citusdata-citus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:50:29.361Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:50:32.307Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:50:37.514Z",
+      "repository": "sweetpad-dev/sweetpad",
+      "learningId": "learn-github-sweetpad-dev-sweetpad",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:50:40.171Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:50:45.328Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
