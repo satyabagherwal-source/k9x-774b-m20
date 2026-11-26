@@ -13356,3 +13356,7 @@
 | `CYCLE-20261126-I1IS` | `2026-11-26T11:15:44.308Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10660` | Yes (`550b364c...`) |
 | `CYCLE-20261126-I6PY` | `2026-11-26T11:15:51.046Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10661` | Yes (`44eb813a...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T11:16:24.150Z` | `higress-group-higress` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D48F999D` [Domain H] | Yes (`21f7f77e...`) |
+| `CYCLE-20261126-YYQ0` | `2026-11-26T11:28:53.832Z` | `KORMo-VL/KORMo-Web-11B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md` | Yes (`da9f71c6...`) |
+| `CYCLE-20261126-YZLH` | `2026-11-26T11:28:54.965Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10662` | Yes (`5a926c65...`) |
+| `CYCLE-20261126-Z4DR` | `2026-11-26T11:29:01.167Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10663` | Yes (`3534c49f...`) |
+| `CYCLE-20261126-ZAFX` | `2026-11-26T11:29:09.021Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10664` | Yes (`b466ab27...`) |

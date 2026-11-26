@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
-> **Source Version**: `0bb871d5`  
+> **Source Version**: `1b8f2fde`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T00:57:19.211Z  
+> **Timestamp**: 2026-11-26T11:28:59.662Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:57:19.206Z  
+> **Harvest Timestamp**: 2026-11-26T11:28:59.655Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Native navigation primitives for your React Native app.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3757 stars
+- **Stars / Engagement**: 3756 stars
 
 ---
 
@@ -365,13 +365,11 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5312** (2026-11-23): **[iOS, Fabric] Is the main-queue hop in RNSScreenStackView mountingTransactionDidMount still needed?**
-  *Symptoms*: ### Description  On Fabric, `-[RNSScreenStackView mountingTransactionDidMount:withSurfaceTelemetry:]` (`ios/legacy/RNSScreenStack.mm`, `main`) defers `maybeAddToParentAndUpdateContainer` with `dispatch_async(dispatch_get_main_queue(), …)`. The comment says the children do not have their layout yet. That holds for Paper's `didUpdateReactSubviews`, where the comment comes from. On Fabric, this callback runs after the whole mount transaction, layout updates included. The hop arrived with #2249, which moved the update here from `mountChildComponentView`.  Is the hop still needed on Fabric, for example to keep UIKit transitions out of the mount transaction? Or can the container be updated synchronously?  ### Measurements  With the hop replaced by a direct call:  - The container update ran 0.1 ms after `mountingTransactionDidMount` instead of about 1 ms after. Estimated saving: about 1 ms per stack change on an idle main thread. - The presented screen did not reach the window sooner: median about 44 ms after touch-up with and without the hop, n=40 each. `presentViewController:animated:NO` attaches the view in UIKit's next update cycle (`_UIAfterCACommitBlock`) either way.  Tested with the synchronous call: a `transparentModal` with `animation: 'none'` and `gestureEnabled: false`, presented and dismissed 40 times from a native stack. No crashes, and every present and dismiss completed.  Not tested: - animated push or modal - headers - form sheets - nested stacks - `preventNativeDism
+- **Issue #5350** (2026-11-25): **fix(test): remove duplicate expectTabBarItemByLabel e2e helper**
+  *Symptoms*: ## Description  #4747 and #4818 each added an `expectTabBarItemByLabel` helper to `FabricExample/e2e/helpers/framework/tab-bar.ts`, and they merged within seconds of each other, so `main` has both. Every spec importing `tab-bar.ts` now fails to compile with `TS2300: Duplicate identifier 'expectTabBarItemByLabel'`. On `main`'s Android e2e run this broke 4 suites: both `tabs-stack-v5` specs, `test-tabs-special-effects-scroll-to-top` and `test-stack-svm-tabs-special-effects`.  ## Changes  - **`tab-bar.ts`**: removed the `const` added by #4818 and kept the `async function` from #4747. On iOS the function checks that the tab bar item exists, because the selected button fails Detox's visibility threshold on iOS 26; on Android it checks visibility. The #4818 spec (`test-stack-tabs-stack-in-tabs-header-persistence`) runs only on Android, so its assertions are unchanged. 
 
-- **Issue #5301** (2026-11-23): **refactor(v5): remove unused sheet background effect aliases**
-  *Symptoms*: ## Description  Removes the `FormSheet` and `PageSheet` aliases that no prop or field uses.  Closes https://github.com/software-mansion/react-native-screens-labs/issues/2094  ## Changes  - `FormSheetBackgroundEffectColor`, `FormSheetBackgroundEffectBlur`,   `FormSheetBackgroundEffectBlurStyle` and the same three `PageSheet*` types   are removed. `backgroundEffect` goes through `FormSheetBackgroundEffect` /   `PageSheetBackgroundEffect`, whose members are the shared   `SheetBackgroundEffectColor` and `SheetBackgroundEffectBlur`, so these   aliases were unused. - The `test-form-sheet-background-effect-ios` test imports   `SheetBackgroundEffectBlurStyle` instead of the removed   `FormSheetBackgroundEffectBlurStyle`. - The `backgroundEffect` props of `FormSheet` and `PageSheet` no longer have a   `@see` to their own type, as   [RFC-1947](https://github.com/software-mansion/react-native-screens-labs/pull/1947)   asks: the page already links to the prop's type.  ## Test plan  No runtime changes. `yarn check-types`, `yarn lint-js` and `yarn format-js` pass.  ## Checklist  - [ ] Included code example that can be used to test this change. - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change. - [x] For API changes, updated relevant public types. - [ ] Ensured that CI passes 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5301?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <de
+- **Issue #5343** (2026-11-25): **fix(Android): load native libraries with SoLoader**
+  *Symptoms*: ## Description  On Android 12 - 14, an app can crash when React Native starts in a process that has already been running for a while. It happens when a split APK (a part of the app that is delivered separately, e.g. translations for one language) was installed without killing the process, and any library had been loaded with `System.loadLibrary` before that install.  Such an install moves the app to a new directory in `/data/app` and the old one is deleted a few seconds later. `System.loadLibrary("rnscreens")` in `ScreensModule` can still resolve to the deleted directory and fail. `SoLoader`, which React Native uses for its own libraries, detects that the app has moved and retries with the current path.  This PR loads our libraries with `SoLoader` and removes the `catch` that hid the load error in `ScreensModule`.  Closes #5117.  Thanks to @malopezr7 for reporting the issue and pointing at the mechanism!  ### Details  - **Problem.** The load error is caught and only logged, then `initialize()` creates `NativeProxy`, whose native methods live in the library that has not been loaded. The app crashes with an error that points away from the cause:    ```   Exception in HostObject::get for prop 'RNSModule': java.lang.UnsatisfiedLinkError: No implementation found for com.facebook.jni.HybridData com.swmansion.rnscreens.legacy.NativeProxy.initHybrid()   ```  - **Why it happens.** After the install, Android appends the new path to the native search path of the running class loader and
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -388,295 +386,493 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d0ebe7e` (2026-11-23)
-**Commit Message**: fix(iOS, Stack v4): keep navigation bar after cancelled back-button pop (#5162)
+### Incident Patch 1: `e21b804a` (2026-11-25)
+**Commit Message**: fix(Android, Stack v4): keep a popped screen's content during its exit animation (#5267)
 
 ## Description
 
-Fixes the navigation bar of a screen that prevents its native dismissal
-(`preventNativeDismiss`, e.g. React Navigation's `usePreventRemove`)
-breaking after the user taps its native back button and the dismissal is
-cancelled, when the screen below has `headerShown: false`. On iOS 18 it
-also keeps that screen's back button from staying faded after such a
-cancelled pop (see [Back button fade on iOS
-18](#back-button-fade-on-ios-18)).
+On Android, a screen popped from the native stack (v4) sometimes plays
+its exit animation without its content: an empty screen slides out.
+#4570 reports this from a production app.
 
-Reproduced on an iOS 26.5 simulator (iPhone 17 Pro) with `Test5158`:
+The mount transaction of a pop removes the screen's descendants before
+the screen itself. The screen keeps drawing its content only if
+`Screen.startRemovalTransition()` calls `startViewTransition()` on its
+children before that transaction mounts. `RNSScreenRemovalListener` sees
+the pop when the transaction is pulled, and
+`NativeProxy.notifyScreenRemoved` posted `startRemovalTransition()` to
+the UI thread. That post races the mount:
 
-- **Liquid Glass stripped** in 13 of 13 attempts with unmodified timing,
-and in 4 of 4 more with the cancel delayed by 0.4 s. The bar stays
-visible but flat and opaque, and the back button and `headerRight` items
-lose their glass platters until the screen is left.
-- **Bar gone for good** (`navigationBarHidden == YES` on the guarded
-screen) in 6 of 6 attempts, but only with an artificial pause at the
-point where the reporter's LLDB breakpoint stops (see [Error
-mechanism](#error-mechanism)). I could not trigger it without that
-pause, so the "1 in 10 under heavy load" from the issue is explaine
+- **Push model (default).** The JS thread pulls and the batch mounts in
+a later frame callback. The post usually runs first, but loses when a
+frame is already pending (the case #4444 describes).
+- **Synchronous mount on the UI thread.** A synchronous mount on the UI
+thread executes every pending transaction at once, including a pop the
+JS thread has already pulled. Reanimated can flush pending transactions
+this way during its animation frames, for example while a layout
 
-**File**: `apps/src/tests/issue-tests/Test5158.tsx` (added, +134/-0)
+
+**File**: `android/src/fabric/java/com/swmansion/rnscreens/legacy/NativeProxy.kt` (modified, +37/-14)
 ```diff
-@@ -0,0 +1,134 @@
-+import React from 'react';
-+import { Alert, Button, StyleSheet, Switch, Text, View } from 'react-native';
-+import {
-+  NavigationContainer,
-+  usePreventRemove,
-+} from '@react-navigation/native';
+@@ -3,11 +3,17 @@ package com.swmansion.rnscreens.legacy
+ import android.util.Log
+ import com.facebook.jni.HybridData
+ import com.facebook.proguard.annotations.DoNotStrip
++import com.facebook.react.bridge.UIManager
++import com.facebook.react.bridge.UIManagerListener
++import com.facebook.react.bridge.UiThreadUtil
++import com.facebook.react.common.annotations.UnstableReactNativeAPI
+ import com.facebook.react.fabric.FabricUIManager
+ import java.lang.ref.WeakReference
+ import java.util.concurrent.ConcurrentHashMap
++import java.util.concurrent.ConcurrentLinkedQueue
+ 
+-class NativeProxy {
++@OptIn(UnstableReactNativeAPI::class)
++class NativeProxy : UIManagerListener {
+     @DoNotStrip
+     @Suppress("unused")
+     private val mHybridData: HybridData
+@@ -29,6 +35,12 @@ class NativeProxy {
+         // and written to on the UI thread.
+         private val viewsMap = ConcurrentHashMap<Int, WeakReference<Screen>>()
+ 
++        // Added by the thread that pulled the transaction removing the screen, drained on the UI
++        // thread before that transaction mounts. Shared by all proxies, because the native removal
++        // listener notifies only the most recently installed one. Never cleared: invalidating one
++        // React instance must not drop another instance's screens.
++        private val screensPendingRemovalTransition = ConcurrentLinkedQueue<WeakReference<Screen>>()
++
+         fun addScreenToMap(
+             tag: Int,
+             view: Screen,
+@@ -45,8 +57,8 @@ class NativeProxy {
+         }
+     }
+ 
+-    // Called from native. Currently this method is called from MountingCoordinator thread,
+-    // which usually is not UI thread.
++    // Called from native, on the thread that pulls the mounting transaction: the JS thread in
++    // the push model, the UI thread in the pull model or when rendering synchronously.
+     @DoNotStrip
+     public fun notifyScreenRemoved(screenTag: Int) {
+         // Since RN 0.78 the screenTag we receive as argument here might not belong to a screen
+@@ -63,20 +75,31 @@ class NativeProxy {
+ 
+         val screen = weakScreeRef.get()
+         if (screen is Screen) {
+-            // Fabric's mounting transaction removes the screen on a Choreographer frame callback,
+-            // which can execute before `startRemovalTransition` (scheduled via `Handler.post`).
+-            // To prevent `Screen.isBeingRemoved` from being read as false during teardown,
+-            // we must set this flag synchronously here.
+-            screen.markAsBeingRemoved()
+-            val isScheduled =
+-                screen.post {
+-                    screen.startRemovalTransition()
+-                }
+-            if (!isScheduled) {
+-                Log.w("[RNScreens]", "Failed to schedule removal transition start for screen with tag $screenTag")
++            // The transaction removes the screen's children before the screen, so the transition
++            // must start before the transaction mounts. A transaction pulled on the UI thread can't
++            // mount before the pull returns.
++            if (UiThreadUtil.isOnUiThread()) {
++                screen.startRemovalTransition()
++            } else {
++                screensPendingRemovalTransition.add(weakScreeRef)
+             }
+         } else {
+             Log.w("[RNScreens]", "Reference stored in NativeProxy for tag $screenTag no longer points to valid object.")
+         }
+     }
++
++    // Fabric calls it on the UI thread before each dispatch of queued mount items, after it has taken
++    // those items.
++    override fun willMountItems(uiManager: UIManager) {
++        generateSequence { screensPendingRemovalTransition.poll() }
++            .forEach { it.get()?.startRemovalTransition() }
++    }
++
++    override fun didMountItems(uiManager: UIManager) = Unit
++
++    override fun didDispatchMountItems(uiManager: UIManager) = Unit
++
++    override fun didScheduleMountItems(uiManager: UIManager) = Unit
++
++    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
+ }
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/Screen.kt` (modified, +0/-10)
+```diff
+@@ -79,8 +79,6 @@ class Screen(
+     var screenId: String? = null
+     var isStatusBarAnimated: Boolean? = null
+ 
+-    // Can be set on the mounting coordinator's thread (see `markAsBeingRemoved`), read on the UI thread.
+-    @Volatile
+     var isBeingRemoved = false
+         private set
+ 
+@@ -453,14 +451,6 @@ class Screen(
+ 
+     var nativeBackButtonDismissalEnabled: Boolean = true
+ 
+-    /**
+-     * Marks this screen as being removed from the native stack. Safe to call off the UI thread;
+-     * must run before the mount transaction removing this screen executes.
+-     */
+-    fun markAsBeingRemoved() {
+-        isBeingRemoved = true
+-    }
+-
+     fun startRemovalTransition() {
+         isBeingRemoved = true
+         if (!isRemovalTransitionStarted) {
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/module/ScreensModule.kt` (modified, +5/-0)
+```diff
+@@ -5,6 +5,7 @@ import com.facebook.proguard.annotations.DoNotStrip
+ import com.facebook.react.bridge.LifecycleEventListener
+ import com.facebook.react.bridge.ReactApplicationContext
+ import com.facebook.react.bridge.UiThreadUtil
++import com.facebook.react.common.annotations.UnstableReactNativeAPI
+ import com.facebook.react.fabric.FabricUIManager
+ import com.facebook.react.module.annotations.ReactModule
+ import com.facebook.react.uimanager.UIManagerHelper
+@@ -16,6 +17,7 @@ import com.swmansion.rnscreens.legacy.ScreenStack // legacy-compat: v4 manual tr
+ import com.swmansion.rnscreens.legacy.events.ScreenTransitionProgressEvent // legacy-compat: v4 manual transition progress
+ import java.util.concurrent.atomic.AtomicBoolean
+ 
++@OptIn(UnstableReactNativeAPI::class)
+ @ReactModule(name = ScreensModule.NAME)
+ class ScreensModule(
+     private val reactContext: ReactApplicationContext,
+@@ -67,6 +69,9 @@ class ScreensModule(
+         val uiManager = UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) ?: return
+         proxy?.apply {
+             nativeAddMutationsListener(uiManager as FabricUIManager)
++            // setupFabric runs again on every host resume, so the listener is removed before it is added.
++            uiManager.removeUIManagerEventListener(this)
++            uiManager.addUIManagerEventListener(this)
+         }
+     }
+ 
+```
+
+**File**: `apps/src/tests/issue-tests/Test4570.tsx` (added, +142/-0)
+```diff
+@@ -0,0 +1,142 @@
++import React, { useEffect, useState } from 'react';
++import { Button, StyleSheet, Text, View } from 'react-native';
++import { NavigationContainer } from '@react-navigation/native';
 +import {
 +  createNativeStackNavigator,
-+  type NativeStackNavigationProp,
++  type NativeStackScreenProps,
 +} from '@react-navigation/native-stack';
-+import { Colors } from '@apps/shared/styling';
++import Animated, {
++  Easing,
++  LinearTransition,
++  useAnimatedStyle,
++  useSharedValue,
++  withRepeat,
++  withTiming,
++} from 'react-native-reanimated';
 +
-+// Reproduces https://github.com/software-mansion/react-native-screens/issues/5158
-+//
-+// Home has `headerShown: false`. Guarded prevents its removal with
-+// `usePreventRemove`. Tap Guarded's native back button, then "Stay" in the
-+// alert. Expected: Guarded's navigation bar (back button, title, "Save") is
-+// still there, with its Liquid Glass platters intact (iOS 26+).
-+// Bug: the bar items lose their glass. The issue also reports the whole bar
-+// gone; that variant needs the cancel delayed (e.g. an LLDB breakpoint on
-+// `-[UIPercentDrivenInteractiveTransition cancelInteractiveTransition]`) and
-+// does not reproduce with this screen alone.
++type DetailAnimation = 'none' | 'layout' | 'spinner';
 +
-+type StackParamList = {
-+  Home: undefined;
-+  Guarded: undefined;
-+};
++type Routes = { Home: undefined; Detail: { animation: DetailAnimation } };
 +
-+const Stack = createNativeStackNavigator<StackParamList>();
++const Stack = createNativeStackNavigator<Routes>();
 +
-+function Home({
-+  navigation,
-+}: {
-+  navigation: NativeStackNavigationProp<StackParamList, 'Home'>;
-+}) {
-+  const [headerShown, setHeaderShown] = React.useState(false);
++// Restarts a layout transition before the previous one ends, so a Reanimated
++// layout animation is running when the screen is popped.
++function LayoutAnimationTicker() {
++  const [wide, setWide] = useState(false);
 +
-+  React.useLayoutEffect(() => {
-+    navigation.setOptions({ headerShown });
-+  }, [navigation, headerShown]);
++  useEffect(() => {
++    const interval = setInterval(() => setWide(value => !value), 500);
++    return () => clearInterval(interval);
++  }, []);
 +
 +  return (
-+    <View style={styles.container}>
-+      <Text>Home</Text>
-+      <View style={styles.row}>
-+        <Text>Home header shown</Text>
-+        <Switch
-+          value={headerShown}
-+          onValueChange={setHeaderShown}
-+          testID="home-header-switch"
-+        />
-+      </View>
++    <Animated.View
++      layout={LinearTransition.duration(700)}
++      style={[styles.ticker, { width: wide ? '90%' : '20%' }]}
++    />
++  );
++}
++
++// Animates a transform on the UI thread every frame, like the spinner in #4570.
++function Spinner() {
++  const rotation = useSharedValue(0);
++
++  useEffect(() => {
++    rotation.value = withRepeat(
++      withTiming(360, { duration: 1000, easing: Easing.linear }),
++      -1,
++    );
++  }, [rotation]);
++
++  const animatedStyle = useAnimatedStyle(() => ({
++    transform: [{ rotate: `${rotation.value}deg` }],
++  }));
++
++  return <Animated.View style={[styles.spinner, animatedStyle]} />;
++}
++
++function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
++  return (
++    <View style={styles.home}>
++      <Text>
++        Push the detail screen and pop it. The orange content must stay visible
++        until the exit animation ends, with and without a running Reanimated
++        animation.
++      </Text>
 +      <Button
-+        title="Open guarded screen"
-+        onPress={() => navigation.navigate('Guarded')}
-+        testID="home-open-guarded"
++        testID="test4570-push-detail"
++        title="Push detail"
++        onPress={() => navigation.navigate('Detail', { animation: 'none' })}
++      />
++      <Button
++        testID="test4570-push-detail-with-layout-animation"
++        title="Push detail with layout animation"
++        onPress={() => navigation.navigate('Detail', { animation: 'layout' })}
++      />
++      <Button
++        testID="test4570-push-detail-with-spinner"
++        title="Push detail with spinner"
++        onPress={() => navigation.navigate('Detail', { animation: 'spinner' })}
 +      />
 +    </View>
 +  );
 +}
 +
-+function Guarded({
++function Detail({
 +  navigation,
-+}: {
-+  navigation: NativeStackNavigationProp<StackParamList, 'Guarded'>;
-+}) {
-+  const [preventRemove, setPreventRemove] = React.useState(true);
-+
-+  usePreventRemove(preventRemove, ({ data }) => {
-+    Alert.alert('Unsaved changes', 'Leave this screen?', [
-+      { text: 'Stay', style: 'cancel' },
-+      {
-+        text: 'Leave',
-+        style: 'destructive',
-+        onPress: () => navigation.dispatch(data.action),
-+      },
-+    ]);
-+  });
-+
++  route,
++}: NativeStackScreenProps<Routes, 'Detail'>) {
 +  return (
-+    <View style={styles.container}>
-+      <Text>Guarded</Text>
-+      <View style={styles.row}>
-+        <Text>Prevent remove</Text>
-+        <Switch
-+          value={preventRemove}
-+          onValueChange={setPreventRemove}
-+          testID="guarded-prevent-switch"
-+        />
-+      </View>
++    <View style={styles.detail}>
++      {route.params.animation === 'layout' && <LayoutAnimationTicker />}
++      {route.params.animation === 'spinner' && <Spinner />}
++      <Text style={styles.detailText}>DETAIL CONTENT</Text>
++      <Button
++        testID="test4570-pop"
++        title="Pop"
++        onPress={() => navigation.goBack()}
++      />
 +    </View>
 +  );
 +}
 +
-+function SaveButton() {
-+  return <Button title="Save" onPress={() => {}} testID="guarded-save" />;
-+}
-+
-+export default function Test5158() {
++export default function App() {
 +  return (
 +    <NavigationContainer>
-+      <Stack.Navigator>
-+        <Stack.Screen
-+          name="Home"
-+          component={Home}
-+          options={{ title: 'Home', headerShown: false }}
-+        />
-+        <Stack.Screen
-+          name="Guarded"
-+          component={Guarded}
-+          options={{
-+            title: 'Guarded',
-+            headerRight: SaveButton,
-+          }}
-+        />
++      <Stack.Navigator screenOptions={{ animation: 'slide_from_right' }}>
++        <Stack.Screen name="Home" component={Home} />
++        <Stack.Screen name="Detail" component={Detail} />
 +      </Stack.Navigator>
 +    </NavigationContainer>
 +  );
 +}
 +
 +const styles = StyleSheet.create({
-+  container: {
++  home: {
++    flex: 1,
++    gap: 16,
++    padding: 16,
++    backgroundColor: '#cfe8ff',
++  },
++  ticker: {
++    height: 24,
++    backgroundColor: '#1f6feb',
++  },
++  detail: {
 +    flex: 1,
 +    alignItems: 'center',
 +    justifyContent: 'center',
-+    gap: 16,
-+    backgroundColor: Colors.White,
++    gap: 24,
++    backgroundColor: '#ff8c00',
 +  },
-+  row: {
-+    flexDirection: 'row',
-+    alignItems: 'center',
-+    gap: 12,
++  spinner: {
++    width: 48,
++    height: 48,
++    backgroundColor: '#1f6feb',
++  },
++  detailText: {
++    fontSize: 32,
++    fontWeight: '700',
 +  },
 +});
 ```
 
 **File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
 ```diff
-@@ -235,6 +235,7 @@ export { default as Test5092 } from './Test5092';
- export { default as Test5112 } from './Test5112';
- export { default as Test5127 } from './Test5127';
- export { default as Test5143 } from './Test5143';
-+export { default as Test5158 } from './Test5158';
- export { default as TestScreenAnimation } from './TestScreenAnimation';
- // The following test was meant to demo the "go back" gesture using Reanimated
- // but the associated PR in react-navigation is currently put on hold
-```
-
-**File**: `ios/legacy/RNSScreenStack.mm` (modified, +28/-0)
-```diff
-@@ -268,6 +268,10 @@ @implementation RNSScreenStackView {
-   BOOL _invalidated;
-   BOOL _isFullWidthSwipingWithPanGesture; // used only for content swipe with RNSPanGestureRecognizer
-   RNSPercentDrivenInteractiveTransition *_interactionController;
-+  // Destination of a native pop that we cancel because a popped screen prevents its native dismissal.
-+  // Set in `navigationController:interactionControllerForAnimationController:` and cleared when the scheduled cancel
-+  // is sent. The cancelled transition itself may still be running after that.
-+  __weak UIViewController *_destinationOfCancelledPop;
-   __weak RNSScreenStackManager *_manager;
-   BOOL _updateScheduled;
- }
-@@ -345,6 +349,16 @@ - (void)navigationController:(UINavigationController *)navigationController
-     // so we don't trigger the method
-     return;
-   }
-+  if (viewController == _destinationOfCancelledPop) {
-+    // This pop is about to be cancelled (see `navigationController:interactionControllerForAnimationController:`),
-+    // so its destination is never shown. Applying the destination's header config here would hide the navigation bar
-+    // (if that screen has no header) inside a transition that is then cancelled.
-+    // UIKit implementation details (observed on iOS 18.6 and 26.5, not documented behaviour): UIKit does not fully
-+    // undo that hide. The bar can stay hidden, depending on whether this method is called for the screen that stays
-+    // before or after UIKit rolls the hide back, and on iOS 26 that screen's bar loses its Liquid Glass.
-+    // See https://github.com/software-mansion/react-native-screens/issues/5158
-+    return;
-+  }
-   auto *screenView = static_cast<RNSScreenView *>(viewController.view);
-   [RNSScreenStackHeaderConfig willShowViewController:viewController
-                                             animated:animated
-@@ -1127,9 +1141,23 @@ - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
-     BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:fromView toView:toView];
-     if (shouldCancelDismiss) {
-       _interactionController = [RNSPercentDrivenInteractiveTransition new];
-+      _destinationOfCancelledPop =
-+          [_controller.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
-+      if (@available(iOS 26.0, *)) {
-+        // Not affected.
-+      } else if (@available(iOS 18.0, *)) {
-+        // A back-button tap leaves the button's un-highlight (its label and chevron fading back from alpha 0.2) waiting
-+        // for the next layout pass. On iOS 18, UIKit runs that pass inside the navigation bar transition of this pop
-+        // and records the fade as part of the interactive transition, so cancelling the pop sets the alpha back to 0.2
-+        // for good. Lay the bar out now, before that transition starts. UIKit implementation details, observed on
-+        // iOS 18.6; iOS 17.5 and 26.5 are not affected.
-+        // See https://github.com/software-mansion/react-native-screens/pull/5162
-+        [_controller.navigationBar layoutIfNeeded];
-+      }
-       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-         [self->_interactionController cancelInteractiveTransition];
-         self->_interactionController = nil;
-+        self->_destinationOfCancelledPop = nil;
-         int fromIndex = (int)[self->_reactSubviews indexOfObject:fromView];
-         int toIndex = (int)[self->_reactSubviews indexOfObject:toView];
-         int indexDiff = fromIndex - toIndex;
+@@ -214,6 +214,7 @@ export { default as Test4423 } from './Test4423';
+ export { default as Test4504 } from './Test4504';
+ export { default as Test4519 } from './Test4519';
+ export { default as Test4551 } from './Test4551';
++export { default as Test4570 } from './Test4570';
+ export { default as Test4571 } from './Test4571';
+ export { default as Test4605 } from './Test4605';
+ export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu key requires Apple TV remote
 ```
 
 ---
 
-### Incident Patch 2: `0d00d0df` (2026-11-23)
-**Commit Message**: fix(Android, Stack v5): accept a repeated screenKey (#5269)
+### Incident Patch 2: `e369aa10` (2026-11-25)
+**Commit Message**: fix(Android): load native libraries with SoLoader (#5343)
 
 ## Description
 
-We are testing React Native's pull model on Android
-(`enableMountingCoordinatorPullModelAndroid`). It requires
-`enableAccumulatedUpdatesInRawPropsAndroid`, and with that flag on,
-Stack v5 crashes as soon as its first screen mounts:
+On Android 12 - 14, an app can crash when React Native starts in a
+process that has already been running for a while. It happens when a
+split APK (a part of the app that is delivered separately, e.g.
+translations for one language) was installed without killing the
+process, and any library had been loaded with `System.loadLibrary`
+before that install.
 
-```
-java.lang.IllegalArgumentException: [RNScreens] StackScreen can't change its screenKey.
+Such an install moves the app to a new directory in `/data/app` and the
+old one is deleted a few seconds later.
+`System.loadLibrary("rnscreens")` in `ScreensModule` can still resolve
+to the deleted directory and fail. `SoLoader`, which React Native uses
+for its own libraries, detects that the app has moved and retries with
+the current path.
+
+This PR loads our libraries with `SoLoader` and removes the `catch` that
+hid the load error in `ScreensModule`.
+
+Closes #5117.
+
+Thanks to @malopezr7 for reporting the issue and pointing at the
+mechanism!
+
+### Details
+
+- **Problem.** The load error is caught and only logged, then
+`initialize()` creates `NativeProxy`, whose native methods live in the
+library that has not been loaded. The app crashes with an error that
+points 
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/utils/ScreenDummyLayoutHelper.kt` (modified, +2/-1)
+```diff
+@@ -12,6 +12,7 @@ import com.facebook.jni.annotations.DoNotStrip
+ import com.facebook.react.bridge.LifecycleEventListener
+ import com.facebook.react.bridge.ReactApplicationContext
+ import com.facebook.react.uimanager.PixelUtil
++import com.facebook.soloader.SoLoader
+ import com.google.android.material.appbar.AppBarLayout
+ import com.swmansion.rnscreens.legacy.ScreenStackHeaderConfig
+ import java.lang.ref.WeakReference
+@@ -52,7 +53,7 @@ internal class ScreenDummyLayoutHelper(
+         // Basically we leak this object to C++, as its lifecycle should span throughout whole application
+         // lifecycle anyway.
+         try {
+-            System.loadLibrary(LIBRARY_NAME)
++            SoLoader.loadLibrary(LIBRARY_NAME)
+         } catch (e: UnsatisfiedLinkError) {
+             Log.w(TAG, "[RNScreens] Failed to load $LIBRARY_NAME library.")
+         }
 ```
 
-With accumulated props, Fabric sends a view's initial props again when
-the view is inserted, after they were already set when it was created.
-`StackScreen.screenKey` accepted only one set, so the second set of the
-same key threw. The crash comes from
-`enableAccumulatedUpdatesInRawPropsAndroid` alone, with or without the
-pull model. Props 2.0 (`enablePropsUpdateReconciliationAndroid`) doesn't
-avoid it. RN's `enablePreallocatedPropsDiffOnInsertAndroid` does, but
-it's an optional optimization and shouldn't be required for correctness.
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/module/ScreensModule.kt` (modified, +13/-10)
+```diff
+@@ -10,6 +10,7 @@ import com.facebook.react.fabric.FabricUIManager
+ import com.facebook.react.module.annotations.ReactModule
+ import com.facebook.react.uimanager.UIManagerHelper
+ import com.facebook.react.uimanager.common.UIManagerType
++import com.facebook.soloader.SoLoader
+ import com.swmansion.rnscreens.NativeScreensModuleSpec
+ import com.swmansion.rnscreens.legacy.NativeProxy // legacy-compat: v4 stack mounting listener (Fabric)
+ import com.swmansion.rnscreens.legacy.ScreenFragment // legacy-compat: v4 manual transition progress
+@@ -28,16 +29,11 @@ class ScreensModule(
+     private var proxy: NativeProxy? = null
+ 
+     init {
+-        try {
+-            System.loadLibrary("rnscreens")
+-            val jsContext = reactApplicationContext.javaScriptContextHolder
+-            if (jsContext != null) {
+-                nativeInstall(jsContext.get())
+-            } else {
+-                Log.e("[RNScreens]", "Could not install JSI bindings.")
+-            }
+-        } catch (exception: UnsatisfiedLinkError) {
+-            Log.w("[RNScreens]", "Could not load RNScreens module.")
++        val jsContext = reactApplicationContext.javaScriptContextHolder
++        if (jsContext != null) {
++            nativeInstall(jsContext.get())
++        } else {
++            Log.e("[RNScreens]", "Could not install JSI bindings.")
+         }
+     }
+ 
+@@ -165,5 +161,12 @@ class ScreensModule(
+ 
+     companion object {
+         const val NAME = "RNSModule"
++
++        init {
++            // Not System.loadLibrary: it can resolve to an install directory that a split install
++            // has replaced and deleted without killing the process. SoLoader recovers from that.
++            // See https://github.com/software-mansion/react-native-screens/issues/5117
++            SoLoader.loadLibrary("rnscreens")
++        }
+     }
+ }
+```
+
+---
+
+### Incident Patch 3: `1b8f2fde` (2026-11-25)
+**Commit Message**: fix(test): remove duplicate expectTabBarItemByLabel e2e helper (#5350)
+
+## Description
+
+#4747 and #4818 each added an `expectTabBarItemByLabel` helper to
+`FabricExample/e2e/helpers/framework/tab-bar.ts`, and they merged within
+seconds of each other, so `main` has both. Every spec importing
+`tab-bar.ts` now fails to compile with `TS2300: Duplicate identifier
+'expectTabBarItemByLabel'`. On `main`'s Android e2e run this broke 4
+suites: both `tabs-stack-v5` specs,
+`test-tabs-special-effects-scroll-to-top` and
+`test-stack-svm-tabs-special-effects`.
 
 ## Changes
 
-- `StackScreen.screenKey` accepts the same key again and still rejects a
-different one.
-- The error for a different key names the screen's tag and both keys.
+- **`tab-bar.ts`**: removed the `const` added by #4818 and kept the
+`async function` from #4747. On iOS the function checks that the tab bar
+item exists, because the selected button fails Detox's visibility
+threshold on iOS 26; on Android it checks visibility. The #4818 spec
+(`test-stack-tabs-stack-in-tabs-header-persistence`) runs only on
+Android, so its assertions are unchanged.
 
-## Test plan
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Enable `enableAccumulatedUpdatesInRawPropsAndroid` in `FabricExample`
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/stack/screen/StackScreen.kt` (modified, +2/-2)
+**File**: `FabricExample/e2e/helpers/framework/tab-bar.ts` (modified, +0/-5)
 ```diff
-@@ -71,8 +71,8 @@ internal class StackScreen(
-     var screenKey: String? = null
-         set(value) {
-             require(
--                field == null,
--            ) { "[RNScreens] StackScreen can't change its screenKey." }
-+                field == null || field == value,
-+            ) { "[RNScreens] StackScreen [$id] can't change its screenKey from $field to $value." }
-             field = value
-         }
+@@ -28,11 +28,6 @@ export async function forceSelectTabByLabel(label: string) {
+   }
+ }
  
+-/** Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
+- * is in the tab bar. */
+-export const expectTabBarItemByLabel = (label: string) =>
+-  expect(element(by.label(label))).toBeVisible();
+-
+ /**
+  * Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
+  * is in the tab bar. Existence only on iOS: the selected button fails Detox's
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5301** (2026-11-23): refactor(v5): remove unused sheet background effect aliases (@Loloekk)
-- **PR #5295** (2026-11-20): docs(v5): unify @defaultValue tags (@Loloekk)
-- **PR #5293** (2026-11-20): test(iOS, Split): move the Split and Stack scenarios to the integration tests (@t0maboro)
-- **PR #5290** (2026-11-20): fix(iOS, Split): a column shown after the Split collapses has the size of the collapsed Split (@t0maboro)
-- **PR #5288** (2026-11-20): refactor(v5): declare union values once (@Loloekk)
-- **PR #5287** (2026-11-20): refactor(v5): use family aliases for common types (@Loloekk)
+- **PR #5350** (2026-11-25): fix(test): remove duplicate expectTabBarItemByLabel e2e helper (@LKuchno)
+- **PR #5343** (2026-11-25): fix(Android): load native libraries with SoLoader (@kligarski)
+- **PR #5337** (2026-11-25): docs(v5): list union values per the RFC-1947 value-list rule (@Loloekk)
+- **PR #5322** (2026-11-25): refactor(iOS, Stack v5): distinguish button and custom header items by type (@kmichalikk)
+- **PR #5321** (2026-11-24): refactor(v5): give `ContainedModalOverContent` and `ContainedModalReplacingContent` their own props types (@kmichalikk)
+- **PR #5320** (2026-11-25): fix(iOS, Stack v4): hide the toolbar when recycling a stack (@Ubax)
 
 ---
 
@@ -696,61 +892,58 @@ Enable `enableAccumulatedUpdatesInRawPropsAndroid` in `FabricExample`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS, Stack v4): keep navigation bar after cancelled back-button pop
+## X. Android, Stack v4): keep a popped screen's content during its exit animation
 
 **RULE**:
-When implementing operations in `apps/src/tests/issue-tests/Test5158.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/fabric/java/com/swmansion/rnscreens/legacy/NativeProxy.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d0ebe7e`: iOS, Stack v4): keep navigation bar after cancelled back-button pop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e21b804a`: Android, Stack v4): keep a popped screen's content during its exit animation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/src/tests/issue-tests/Test5158.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/fabric/java/com/swmansion/rnscreens/legacy/NativeProxy.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import React from 'react';
-import { Alert, Button, StyleSheet, Switch, Text, View } from 'react-native';
-import {
-  NavigationContainer,
-  usePreventRemove,
-} from '@react-navigation/native';
-import {
-  createNativeStackNavigator,
-  type NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
-import { Colors } from '@apps/shared/styling';
+import com.facebook.react.bridge.UIManager
+import com.facebook.react.bridge.UIManagerListener
+import com.facebook.react.bridge.UiThreadUtil
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
+import java.util.concurrent.ConcurrentLinkedQueue
+@OptIn(UnstableReactNativeAPI::class)
+class NativeProxy : UIManagerListener {
+        // Added by the thread that pulled the transaction removing the screen, drained on the UI
+        // thread before that transaction mounts. Shared by all proxies, because the native removal
+        // listener notifies only the most recently installed one. Never cleared: invalidating one
+        // React instance must not drop another instance's screens.
+        private val screensPendingRemovalTransition = ConcurrentLinkedQueue<WeakReference<Screen>>()
 
-// Reproduces https://github.com/software-mansion/react-native-screens/issues/5158
-//
-// Home has `headerShown: false`. Guarded prevents its removal with
-// `usePreventRemove`. Tap Guarded's native back button, then "Stay" in the
-// alert. Expected: Guarded's navigation bar (back button, title, "Save") is
-// still there, with its Liquid Glass platters intact (iOS 26+).
-// Bug: the bar items lose their glass. The issue also reports the whole bar
-// gone; that variant needs the cancel delayed (e.g. an LLDB breakpoint on
-// `-[UIPercentDrivenInteractiveTransition cancelInteractiveTransition]`) and
-// does not reproduce with this screen alone.
-
-type StackParamList = {
-  Home: undefined;
-  Guarded: undefined;
-};
-
-const Stack = createNativeStackNavigator<StackParamList>();
-
-function Home({
-  navigation,
-}: {
-  navigation: NativeStackNavigat
+    // Called from native, on the thread that pulls the mounting transaction: the JS thread in
+    // the push model, the UI thread in the pull model or when rendering synchronously.
+            // The transaction removes the screen's children before the screen, so the transition
+            // must start before the transaction mounts. A transaction pulled on the UI thread can't
+            // 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+class NativeProxy {
+    // Called from native. Currently this method is called from MountingCoordinator thread,
+    // which usually is not UI thread.
+            // Fabric's mounting transaction removes the screen on a Choreographer frame callback,
+            // which can execute before `startRemovalTransition` (scheduled via `Handler.post`).
+            // To prevent `Screen.isBeingRemoved` from being read as false during teardown,
+            // we must set this flag synchronously here.
+            screen.markAsBeingRemoved()
+            val isScheduled =
+                screen.post {
+                    screen.startRemovalTransition()
+                }
+            if (!isScheduled) {
+                Log.w("[RNScreens]", "Failed to schedule removal transition start for screen with tag $screenTag")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d0ebe7e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e21b804a` are properly handled with clean fallback behavior.

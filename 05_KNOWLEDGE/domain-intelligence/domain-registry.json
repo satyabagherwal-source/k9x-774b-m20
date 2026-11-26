@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T11:16:24.804Z",
+  "last_updated": "2026-11-26T11:29:15.472Z",
   "total_records": 2742,
   "domains": {
     "A": {
@@ -17729,8 +17729,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "c375a33fe0cf04b8344f2ef9a2a8c49f1ac5f214a32ab3ffd753d0bca2358e2f",
-      "created_at": "2026-11-25T09:54:29.989Z"
+      "content_hash": "6c98b5c2f4bd98d15932231ffe80ada97aee2a08173f37906a9167d2cdd14428",
+      "created_at": "2026-11-26T11:29:09.640Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -18095,8 +18095,8 @@
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "repository": "tw93/Pake",
-      "content_hash": "7e5fdb0ac45cdceb7fa25157d7de5ac13d4855bc38551a9a6662f102e56a1379",
-      "created_at": "2026-11-25T03:50:49.244Z"
+      "content_hash": "8f40b92335428261fe9f2105f04238eaa36ff125d5e8f687976315fddcf2a911",
+      "created_at": "2026-11-26T11:28:55.585Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
@@ -18113,8 +18113,8 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
       "repository": "tw93-pake-learnings",
-      "content_hash": "a5a71bd5314e68d8e80635db1408d27d5536bf7be80672dda9e3293fe3e37374",
-      "created_at": "2026-11-25T03:50:58.065Z"
+      "content_hash": "3ccd7f21616690bb9bb8f21a71a3b51418d9bbd3c198ff55022665da9570b726",
+      "created_at": "2026-11-26T11:29:13.592Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -26367,8 +26367,8 @@
       "title": "Technical Construction Intelligence: software-mansion/react-native-screens Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-technical-construction-intelligence-softwa.md",
       "repository": "software-mansion/react-native-screens",
-      "content_hash": "8beb16e71707411e491cb03bf65cbcd59ebf181b4da11aa96b38d86fe17405db",
-      "created_at": "2026-11-24T00:57:20.736Z"
+      "content_hash": "1f59748c5d1fab98f318348db03eb154aa58637b51a85e4bb145a0711cb6355d",
+      "created_at": "2026-11-26T11:29:01.781Z"
     },
     "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants",
@@ -26394,8 +26394,8 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-screens-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-learnings-technical-construction-intellige.md",
       "repository": "software-mansion-react-native-screens-learnings",
-      "content_hash": "c223325c7fd4253c00f31f180b2a31f7691abc12d5b24685f9e9fe2e30a825e3",
-      "created_at": "2026-11-24T00:57:33.373Z"
+      "content_hash": "4174f63008451668109e506cef46b8e923f8cc023fb5e0201384a218ebd1fc13",
+      "created_at": "2026-11-26T11:29:15.472Z"
     },
     "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants",
@@ -31715,8 +31715,8 @@
       "title": "Research & Knowledge Intelligence: KORMo-VL/KORMo-Web-11B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-kormo-vl-kormo-web-11b-research-knowledge-intelligence-kormo-vl-kormo-web-11b.md",
       "repository": "KORMo-VL/KORMo-Web-11B",
-      "content_hash": "13c9cbf6faf2c52bbec048293a2975fded0d33a3b717342e23188c0bf078d956",
-      "created_at": "2026-11-22T18:21:24.517Z"
+      "content_hash": "3e78606fce8e6ffcfe25204194a7dd196705efa834bfefd5f356a2bd0dc64aa9",
+      "created_at": "2026-11-26T11:28:54.195Z"
     },
     "DOM-D-E01F5E82": {
       "record_id": "DOM-D-E01F5E82",
@@ -31766,8 +31766,8 @@
       "title": "Research & Knowledge Intelligence: hf-kormo-vl-kormo-web-11b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-kormo-vl-kormo-web-11b-learnings-research-knowledge-intelligence-hf-kormo-vl-.md",
       "repository": "hf-kormo-vl-kormo-web-11b-learnings",
-      "content_hash": "50bf4f68337cb0c608470eca248b6dafd850d45344c08e12a4dc4ae87e459a17",
-      "created_at": "2026-11-22T18:21:38.877Z"
+      "content_hash": "13637a5db1e68478bef057913ea0ff6282bd03af0ae4413a57f5393ef2bedd9e",
+      "created_at": "2026-11-26T11:29:14.436Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants",

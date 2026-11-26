@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T11:16:25.022Z",
+  "last_updated": "2026-11-26T11:29:15.737Z",
   "total_verified_learnings": 9127,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25855,
+  "total_items": 25862,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -222078,13 +222078,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-software-mansion-react-native-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/software-mansion-react-native-reanimated-learnings-verification-protocol-empiric.md",
-      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-reanimated-learnings",
-      "repository": "software-mansion-react-native-reanimated-learnings",
+      "relative_path": "08_VERIFICATION/software-mansion-react-native-screens-learnings-verification-protocol-empirical-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-screens-learnings",
+      "repository": "software-mansion-react-native-screens-learnings",
       "source_version": "HEAD",
-      "content_hash": "61b58e83d01f2e05a80b6dec35889a85ef0a4eccb528e278e6b7ea6678260f0b",
+      "content_hash": "aa1524eb85d978fb618dc5dde44ee00f829a2f8c317e8670dc5466da86d64264",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:54:41.802Z"
+      "persisted_at": "2026-11-26T11:29:15.737Z"
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -236999,8 +236999,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "0813fc35",
-      "content_hash": "d722b1b62f77871a6a42f2e018f500877510522575e1d0d519720096fd254183",
+      "source_version": "e8eb093b",
+      "content_hash": "b466ab27e7768ac80754f45dcece40cd41a4906d3dfb880d89d46eb5bdd7c644",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -237043,6 +237043,11 @@
           "number": 10502,
           "title": "preserve table column order and primary key indices during reconciliation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10664,
+          "title": "run the work held back by the Leader lease wait once the region can run",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237050,7 +237055,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T09:54:29.334Z",
+      "verified_at": "2026-11-26T11:29:08.698Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237092,10 +237097,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "0813fc35",
-      "content_hash": "c375a33fe0cf04b8344f2ef9a2a8c49f1ac5f214a32ab3ffd753d0bca2358e2f",
+      "source_version": "e8eb093b",
+      "content_hash": "6c98b5c2f4bd98d15932231ffe80ada97aee2a08173f37906a9167d2cdd14428",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:54:29.989Z"
+      "persisted_at": "2026-11-26T11:29:09.640Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb",
@@ -237104,10 +237109,10 @@
       "relative_path": "08_VERIFICATION/greptimeteam-greptimedb-verification-protocol-empirical-defect-shield-for-grepti.md",
       "title": "Verification Protocol: Empirical Defect Shield for GreptimeTeam/greptimedb",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "0813fc35",
-      "content_hash": "290af8f78bd2c4b89721914e0344ec20115d13da54bbf9c6ad10652baf55af1d",
+      "source_version": "e8eb093b",
+      "content_hash": "44bdc93e1e96d6c118a874b1c326f3a68e7b54d42494bad718601108eb77d11d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:54:30.170Z"
+      "persisted_at": "2026-11-26T11:29:09.905Z"
     },
     "candidate_directive-gh-51043-python-reject-null-required-arrow-objects": {
       "item_id": "candidate_directive-gh-51043-python-reject-null-required-arrow-objects",
@@ -238198,8 +238203,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "afb688ef",
-      "content_hash": "27cf034847681fb4862b9ae8f4a234c4fd50e7882917d7c70e80f1bd5c2dbcbe",
+      "source_version": "fbba2371",
+      "content_hash": "5a926c6501a0cf7fb1cf9f0032d8d7c32e04545ea2e0f0ddb167b75abbbb21ce",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -238242,6 +238247,11 @@
           "number": 10446,
           "title": "fix the sign-in popup note, the inject example and the gallery platforms",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10662,
+          "title": "open a local entry page whose name has # or ?",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238249,7 +238259,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T03:50:48.350Z",
+      "verified_at": "2026-11-26T11:28:54.646Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238291,10 +238301,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "repository": "tw93/Pake",
-      "source_version": "afb688ef",
-      "content_hash": "7e5fdb0ac45cdceb7fa25157d7de5ac13d4855bc38551a9a6662f102e56a1379",
+      "source_version": "fbba2371",
+      "content_hash": "8f40b92335428261fe9f2105f04238eaa36ff125d5e8f687976315fddcf2a911",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:50:49.244Z"
+      "persisted_at": "2026-11-26T11:28:55.585Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake",
@@ -238303,10 +238313,10 @@
       "relative_path": "08_VERIFICATION/tw93-pake-verification-protocol-empirical-defect-shield-for-tw93-pake.md",
       "title": "Verification Protocol: Empirical Defect Shield for tw93/Pake",
       "repository": "tw93/Pake",
-      "source_version": "afb688ef",
-      "content_hash": "4fa598204acee275e0cc8ed707b6197f910d3bcbf90b02c2df9e2857973c75b1",
+      "source_version": "fbba2371",
+      "content_hash": "eb672788a942094de86e8eec8037b0946cfbb245ac39cab2456c801485936a8d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:50:49.474Z"
+      "persisted_at": "2026-11-26T11:28:55.869Z"
     },
     "learn-github-aquasecurity-trivy": {
       "learning_id": "learn-github-aquasecurity-trivy",
@@ -238477,9 +238487,9 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "a5a71bd5314e68d8e80635db1408d27d5536bf7be80672dda9e3293fe3e37374",
+      "content_hash": "3ccd7f21616690bb9bb8f21a71a3b51418d9bbd3c198ff55022665da9570b726",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:50:58.065Z"
+      "persisted_at": "2026-11-26T11:29:13.592Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings",
@@ -238489,9 +238499,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tw93-pake-learnings",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "fcd2d282699a192b5ad07b1c1bf804cff42ea185be7a34ae388c3acc8bb2250d",
+      "content_hash": "55ef35760825c80e3891e8cc4bae9ac0efd0dc8059b2a8eb0f0ee3aa0ec40da6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:50:58.313Z"
+      "persisted_at": "2026-11-26T11:29:13.862Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -270428,8 +270438,8 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "0bb871d5",
-      "content_hash": "5445b9301cb4d4ebe678c018fba9169529101742b1c39c0a571ff824633992c5",
+      "source_version": "1b8f2fde",
+      "content_hash": "3534c49f7779ab0685cd88a5ca72218d1e8afb677214f6ef044011a86ed4d695",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
@@ -270447,6 +270457,11 @@
           "number": 10160,
           "title": "iOS, Stack v4): keep navigation bar after cancelled back-button pop",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10663,
+          "title": "Android, Stack v4): keep a popped screen's content during its exit animation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -270454,7 +270469,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:57:20.096Z",
+      "verified_at": "2026-11-26T11:29:00.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270496,10 +270511,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-technical-construction-intelligence-softwa.md",
       "title": "Technical Construction Intelligence: software-mansion/react-native-screens Core Invariants",
       "repository": "software-mansion/react-native-screens",
-      "source_version": "0bb871d5",
-      "content_hash": "8beb16e71707411e491cb03bf65cbcd59ebf181b4da11aa96b38d86fe17405db",
+      "source_version": "1b8f2fde",
+      "content_hash": "1f59748c5d1fab98f318348db03eb154aa58637b51a85e4bb145a0711cb6355d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T00:57:20.736Z"
+      "persisted_at": "2026-11-26T11:29:01.781Z"
     },
     "rule-8863": {
       "learning_id": "rule-8863",
@@ -270583,9 +270598,9 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-screens-learnings Core Invariants",
       "repository": "software-mansion-react-native-screens-learnings",
       "source_version": "HEAD",
-      "content_hash": "c223325c7fd4253c00f31f180b2a31f7691abc12d5b24685f9e9fe2e30a825e3",
+      "content_hash": "4174f63008451668109e506cef46b8e923f8cc023fb5e0201384a218ebd1fc13",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T00:57:33.373Z"
+      "persisted_at": "2026-11-26T11:29:15.472Z"
     },
     "candidate_directive-helm-prevent-concurrent-chart-download-directory-conflicts": {
       "item_id": "candidate_directive-helm-prevent-concurrent-chart-download-directory-conflicts",
@@ -292661,7 +292676,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/KORMo-VL/KORMo-Web-11B",
       "source_version": "hf-kormo-vl-kormo-web-11b",
-      "content_hash": "63787e6ad3c22a6394a12518a3909c84a16548f2e4c16d976d17ccca6a239837",
+      "content_hash": "da9f71c616502ca062cf847454290983599ddca14c44dfa0459179b3927ba2a9",
       "dossier_path": "07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md",
       "promoted_rules": [],
@@ -292670,7 +292685,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T18:21:24.058Z",
+      "verified_at": "2026-11-26T11:28:53.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -292687,9 +292702,9 @@
       "title": "Research & Knowledge Intelligence: KORMo-VL/KORMo-Web-11B Core Invariants",
       "repository": "KORMo-VL/KORMo-Web-11B",
       "source_version": "hf-kormo-vl-kormo-web-11b",
-      "content_hash": "13c9cbf6faf2c52bbec048293a2975fded0d33a3b717342e23188c0bf078d956",
+      "content_hash": "3e78606fce8e6ffcfe25204194a7dd196705efa834bfefd5f356a2bd0dc64aa9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T18:21:24.517Z"
+      "persisted_at": "2026-11-26T11:28:54.195Z"
     },
     "candidate_directive-bump-the-all-dependencies-group-with-5-updates": {
       "item_id": "candidate_directive-bump-the-all-dependencies-group-with-5-updates",
@@ -292737,9 +292752,9 @@
       "title": "Research & Knowledge Intelligence: hf-kormo-vl-kormo-web-11b-learnings Core Invariants",
       "repository": "hf-kormo-vl-kormo-web-11b-learnings",
       "source_version": "HEAD",
-      "content_hash": "50bf4f68337cb0c608470eca248b6dafd850d45344c08e12a4dc4ae87e459a17",
+      "content_hash": "13637a5db1e68478bef057913ea0ff6282bd03af0ae4413a57f5393ef2bedd9e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T18:21:38.877Z"
+      "persisted_at": "2026-11-26T11:29:14.436Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants",
@@ -354207,6 +354222,96 @@
       "content_hash": "2244da006ac4239b6b029dd767f04405ac674a3112e821624b08092aafcfc165",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T11:16:24.804Z"
+    },
+    "rule-10662": {
+      "learning_id": "rule-10662",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10662,
+      "title": "open a local entry page whose name has # or ?",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "fbba2371",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:28:54.646Z"
+    },
+    "candidate_directive-open-a-local-entry-page-whose-name-has-or": {
+      "item_id": "candidate_directive-open-a-local-entry-page-whose-name-has-or",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YZV3-open-a-local-entry-page-whose-name-has-or.md",
+      "title": "open a local entry page whose name has # or ?",
+      "repository": "tw93/Pake",
+      "source_version": "fbba2371",
+      "content_hash": "df7e1436a3b0ef1f282cca258481ce34d13eca8a33cecc5c17d8d4a70c2c8794",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T11:28:55.313Z"
+    },
+    "rule-10663": {
+      "learning_id": "rule-10663",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10663,
+      "title": "Android, Stack v4): keep a popped screen's content during its exit animation",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "1b8f2fde",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:29:00.851Z"
+    },
+    "candidate_directive-android-stack-v4-keep-a-popped-screen-s-content-during-its-exit-animation": {
+      "item_id": "candidate_directive-android-stack-v4-keep-a-popped-screen-s-content-during-its-exit-animation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZF7M-android-stack-v4-keep-a-popped-screen-s-content-during-its-exit-animation.md",
+      "title": "Android, Stack v4): keep a popped screen's content during its exit animation",
+      "repository": "software-mansion-react-native-screens-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bc9430cf5494b5a377c85672f6551b76efd67bb7224b0156ef05c4c37ae12597",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T11:29:15.202Z"
+    },
+    "rule-10664": {
+      "learning_id": "rule-10664",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10664,
+      "title": "run the work held back by the Leader lease wait once the region can run",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "e8eb093b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:29:08.698Z"
+    },
+    "candidate_directive-run-the-work-held-back-by-the-leader-lease-wait-once-the-region-can-run": {
+      "item_id": "candidate_directive-run-the-work-held-back-by-the-leader-lease-wait-once-the-region-can-run",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZAPK-run-the-work-held-back-by-the-leader-lease-wait-once-the-region-can-run.md",
+      "title": "run the work held back by the Leader lease wait once the region can run",
+      "repository": "GreptimeTeam/greptimedb",
+      "source_version": "e8eb093b",
+      "content_hash": "6d72ec109185e0a2a259adcec04d3bd91a8b316a4fce1a05f978a9bc1153b271",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T11:29:09.375Z"
+    },
+    "candidate_directive-runtime-open-a-local-entry-page-whose-name-has-or": {
+      "item_id": "candidate_directive-runtime-open-a-local-entry-page-whose-name-has-or",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZDRE-runtime-open-a-local-entry-page-whose-name-has-or.md",
+      "title": "runtime): open a local entry page whose name has # or ?",
+      "repository": "tw93-pake-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5ca2ada9a3d9b6927e7e9f198621ad2fe235dca78a3fd9e6014f28665368d170",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T11:29:13.328Z"
     }
   },
   "ai-builder-brain": {

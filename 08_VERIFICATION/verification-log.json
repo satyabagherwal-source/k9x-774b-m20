@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-1P0H",
-    "timestamp": "2026-11-24T21:15:32.705Z",
-    "repository": "unsloth/Inkling-2-Mini-GGUF",
-    "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
-    "contentHash": "6be3bcb4386548f3f43e880936832103c98d3a33647be09b34cffaa0d4ca2526",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-20YR",
-    "timestamp": "2026-11-24T21:15:48.195Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "041113dd366d0d15fa37aa9e1afe093609807c5fbf351e68692a8326e9cbe986",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-23PG",
-    "timestamp": "2026-11-24T21:15:51.748Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "45c958622b18b49dfa0f22e5468e66d71ca5055b950572f256ad644e8aa13daf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-D1T8",
-    "timestamp": "2026-11-24T21:24:22.508Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "22a97ca174db3922f34aa10a43ff67db0d7cb9dbb572c50681752b762f43816b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-VCLX",
     "timestamp": "2026-11-24T21:38:36.309Z",
     "repository": "apache/maka",
@@ -7490,6 +7430,66 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "44eb813aa09e81afe28f21db83ac62fc8c5fd23a78b4afe4efc727e1fdcd7fc9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-YYQ0",
+    "timestamp": "2026-11-26T11:28:53.832Z",
+    "repository": "KORMo-VL/KORMo-Web-11B",
+    "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
+    "contentHash": "da9f71c616502ca062cf847454290983599ddca14c44dfa0459179b3927ba2a9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-YZLH",
+    "timestamp": "2026-11-26T11:28:54.965Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "5a926c6501a0cf7fb1cf9f0032d8d7c32e04545ea2e0f0ddb167b75abbbb21ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-Z4DR",
+    "timestamp": "2026-11-26T11:29:01.167Z",
+    "repository": "software-mansion/react-native-screens",
+    "learningId": "learn-github-software-mansion-react-native-screens",
+    "contentHash": "3534c49f7779ab0685cd88a5ca72218d1e8afb677214f6ef044011a86ed4d695",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-ZAFX",
+    "timestamp": "2026-11-26T11:29:09.021Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "b466ab27e7768ac80754f45dcece40cd41a4906d3dfb880d89d46eb5bdd7c644",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

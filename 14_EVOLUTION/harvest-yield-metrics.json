@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T11:15:51.065Z",
-  "total_cycles_completed": 12673,
-  "total_learnings_persisted": 12673,
-  "total_rules_promoted": 11558,
+  "last_updated": "2026-11-26T11:29:09.042Z",
+  "total_cycles_completed": 12677,
+  "total_learnings_persisted": 12677,
+  "total_rules_promoted": 11561,
   "history": [
-    {
-      "timestamp": "2026-11-25T23:01:58.823Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:02:01.200Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:02:03.778Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:11:40.948Z",
-      "repository": "microsoft/Mage-VL-Cowork",
-      "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T23:11:42.843Z",
       "repository": "grpc/grpc-rust",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T11:15:51.065Z",
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:28:53.857Z",
+      "repository": "KORMo-VL/KORMo-Web-11B",
+      "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:28:54.985Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:29:01.189Z",
+      "repository": "software-mansion/react-native-screens",
+      "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:29:09.042Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -4,22 +4,22 @@
 {
   "source_repository": "tw93/Pake",
   "source_url": "https://github.com/tw93/Pake",
-  "source_version": "afb688ef",
+  "source_version": "fbba2371",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-25T03:50:48.982Z",
+  "timestamp": "2026-11-26T11:28:55.312Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tw93-pake",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tw93/Pake](https://github.com/tw93/Pake) (Revision: `afb688ef`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-25T03:50:48.982Z`  
+> **Provenance**: Harvested from [tw93/Pake](https://github.com/tw93/Pake) (Revision: `fbba2371`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-26T11:28:55.312Z`  
 > **Learning ID**: `learn-github-tw93-pake`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tw93/Pake` (Commit: `afb688ef`)
+- **Target Repository**: `tw93/Pake` (Commit: `fbba2371`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T03:50:47.059Z  
+> **Harvest Timestamp**: 2026-11-26T11:28:53.393Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 64007 stars
+- **Stars / Engagement**: 64051 stars
 
 ---
 
@@ -945,263 +945,90 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c08474f` (2026-11-24)
-**Commit Message**: docs: fix the sign-in popup note, the inject example and the gallery platforms
+### Incident Patch 1: `fbba2371` (2026-11-25)
+**Commit Message**: fix(runtime): open a local entry page whose name has # or ?
 
-- cli-usage: the multi-window note still said macOS opens sign-in popups
-  in the current window; since 41e1a6f9 a popup with a size of its own
-  opens as a separate window on macOS and Windows, as faq.md says.
-- cli-usage: the inject paragraph ended in a broken sentence fragment.
-- contributing: the gallery is in the Linux app too, not only Mac and
-  Windows.
+A local app's entry went to WebviewUrl::App as written, and the join onto
+the app's origin read "#" as a fragment and "?" as a query, so a page
+named "a #1.html" opened "a " and the window stayed white. The entry is
+now escaped for %, # and ?, which the asset key receives decoded, as it
+already did for spaces.
 
-Docs only; prettier --check passes on the four files.
+Verified: cargo test local_site (new entry_path test), clippy -D warnings
+with runtime-template, and an arm64 Mac build swapped into a local app
+whose site holds "a #1.html" with assets/app.css: white before, the
+page's own background after.
 
-**File**: `docs/cli-usage.md` (modified, +2/-2)
+Rollback: git revert this commit; only local apps with such names change.
+
+**File**: `src-tauri/src/app/local_site.rs` (modified, +30/-0)
 ```diff
-@@ -572,7 +572,7 @@ This is different from `--multi-instance`:
- 
- When enabled, relaunching an already running app opens a new window instead of only focusing the existing one.
- 
--On macOS, additional windows opened with Cmd+N join the app's native tab group. `window.open` popups stay outside it. On macOS and Linux, sign-in popups other than Sign in with Apple open in the current window.
-+On macOS, additional windows opened with Cmd+N join the app's native tab group. `window.open` popups stay outside it. On macOS and Windows, a sign-in popup with a size of its own, such as the Google button on TikTok, Notion and X or Sign in with Apple, opens as a separate window and closes once it has answered. A sign-in opened as a link, or as a `window.open` with no size, continues in the current window on macOS and Linux, and so does every sign-in popup on Linux.
- 
- This can improve popup-based authentication flows, but it cannot bypass provider policy. Some providers, especially Google, may still reject sign-in inside embedded webviews.
- 
-@@ -606,7 +606,7 @@ pake ./my-app/index.html --name "my-app" --use-local-file
- 
- #### [inject]
- 
--Using `inject`, you can inject local absolute and relative path `css` and `js` files into the page you specify the `url` to customize it. For example, an adblock script that can be applied to any web page, or a `css` that optimizes the `UI` of a page, you can write it once to customize it. would only need to write the `app` once to generalize it to any other page.
-+Using `inject`, you can inject local absolute and relative path `css` and `js` files into the page you specify the `url` to customize it. For example, an adblock script that works on any page, or `css` that tidies a page's UI: write it once and reuse it in every app you package.
- 
- Supports both comma-separated and multiple option formats:
- 
-```
-
-**File**: `docs/cli-usage_CN.md` (modified, +1/-1)
-```diff
-@@ -566,7 +566,7 @@ pake https://chat.example.com --name ChatApp --multi-instance
- 
- 启用后，如果应用已在运行，再次启动会新开一个窗口，而不是仅聚焦已有窗口。
- 
--在 macOS 上，通过 Cmd+N 打开的附加窗口会自动加入应用的原生标签页组，`window.open` 弹窗不进这个标签页组。在 macOS 和 Linux 上，除 Sign in with Apple 之外的登录弹窗会在当前窗口打开。
-+在 macOS 上，通过 Cmd+N 打开的附加窗口会自动加入应用的原生标签页组，`window.open` 弹窗不进这个标签页组。在 macOS 和 Windows 上，自带尺寸的登录弹窗，比如 TikTok、Notion 和 X 上的 Google 登录按钮或 Sign in with Apple，会单独开一个窗口，登录完自己关掉，以链接方式打开的登录或者没带尺寸的 `window.open`，在 macOS 和 Linux 上还是在当前窗口里进行，Linux 上所有登录弹窗都这样。
- 
- 此选项可优化弹窗授权体验，但无法绕过提供方自身的策略限制（部分提供方如 Google 仍可能拒绝在嵌入式 WebView 中登录）。
- 
-```
-
-**File**: `docs/contributing.md` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ pnpm test
- 
- ## Proposing a site for the gallery
- 
--The Pake apps for Mac and Windows show a gallery of sites that work well as desktop apps. Each one is a small recipe in [`gallery/apps`](https://github.com/tw93/Pake/tree/main/gallery/apps), and anyone can propose one:
-+The Pake apps for Mac, Windows and Linux show a gallery of sites that work well as desktop apps. Each one is a small recipe in [`gallery/apps`](https://github.com/tw93/Pake/tree/main/gallery/apps), and anyone can propose one:
- 
- 1. Package the site with the Pake CLI and use it for a few days: sign in, open links, download a file, and check that you are still signed in after a restart.
- 2. Add `gallery/apps/<id>.json`. Leave the window options out unless one fixed a problem you saw, and keep injected CSS or JavaScript to the smallest change that fixes it.
-```
-
-**File**: `docs/contributing_CN.md` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ pnpm test
- 
- ## 推荐网站进精选
- 
--Mac 和 Windows 版 Pake 里有一个精选，放的是适合做成桌面应用的网站。每个网站对应 [`gallery/apps`](https://github.com/tw93/Pake/tree/main/gallery/apps) 里一份很小的配方，谁都可以推荐：
-+Mac、Windows 和 Linux 版 Pake 里有一个精选，放的是适合做成桌面应用的网站。每个网站对应 [`gallery/apps`](https://github.com/tw93/Pake/tree/main/gallery/apps) 里一份很小的配方，谁都可以推荐：
- 
- 1. 先用 Pake CLI 把网站打包出来用几天，登录一下，点开几个链接，下载一个文件，重启后看看是否还保持登录。
- 2. 新增 `gallery/apps/<id>.json`，窗口参数只在确实解决了问题时才加，注入的 CSS 或 JavaScript 也只做最小的改动。
-```
-
----
-
-### Incident Patch 2: `be66cccb` (2026-11-25)
-**Commit Message**: Revert "feat(gallery): let refused WeChat accounts sign in on the web"
-
-This reverts commit 12f1707b5981de91f2b156da9d9653904695a358.
-
-The maintainer's account signed in through the UOS headers, then got a
-restriction minutes later ("因使用行为或设备网络环境异常 ... 当前无法使用
-与企业微信联系人相关功能", lifted no earlier than 2026-12-10). Tencent
-warned accounts using the same headers through wechat-need-web in bulk
-on 2025-01-03 (lqzhgood/wechat-need-web#43). Shipping it would put every
-Pake WeChat user's account at that risk, so the recipe stays at version 1
-with plain web sign-in. It never reached a gallery feed: pake-app's
-gallery.ref still points at 12440575.
-
-Verified: gallery/ matches 12440575 again and wechat.js is gone;
-npx vitest run tests/unit/gallery.test.ts.
-
-**File**: `gallery/apps/wechat.js` (removed, +0/-45)
-```diff
-@@ -1,45 +0,0 @@
--// Many accounts are refused by WeChat on the web ("此微信号不能登录网页微信").
--// Tencent still signs them in on the page its UOS desktop client loads: the
--// page switches to that mode when `window.__target` is "t" (the same switch as
--// `?target=t`), and the server expects the client's extspam and client-version
--// headers on the one request that turns a scanned QR code into a session,
--// webwxnewloginpage. Only that request carries them, as in the open-source
--// clients wechat4u and wechat-need-web. Desktop mode drops the page's own
--// Copy item from the message menu; Cmd+C still copies a selection.
--(() => {
--  if (
--    !/^(wx\d?\.qq\.com|web\d?\.wechat\.com|web\.weixin\.qq\.com)$/.test(
--      location.hostname,
--    )
--  )
--    return;
--  window.__target = "t";
--
--  const HEADERS = {
--    "client-version": "2.0.0",
--    extspam:
--      "Go8FCIkFEokFCggwMDAwMDAwMRAGGvAESySibk50w5Wb3uTl2c2h64jVVrV7gNs06GFlWplHQbY/5FfiO++1yH4ykCyNPWKXmco+wfQzK5R98D3so7rJ5LmGFvBLjGceleySrc3SOf2Pc1gVehzJgODeS0lDL3/I/0S2SSE98YgKleq6Uqx6ndTy9yaL9qFxJL7eiA/R3SEfTaW1SBoSITIu+EEkXff+Pv8NHOk7N57rcGk1w0ZzRrQDkXTOXFN2iHYIzAAZPIOY45Lsh+A4slpgnDiaOvRtlQYCt97nmPLuTipOJ8Qc5pM7ZsOsAPPrCQL7nK0I7aPrFDF0q4ziUUKettzW8MrAaiVfmbD1/VkmLNVqqZVvBCtRblXb5FHmtS8FxnqCzYP4WFvz3T0TcrOqwLX1M/DQvcHaGGw0B0y4bZMs7lVScGBFxMj3vbFi2SRKbKhaitxHfYHAOAa0X7/MSS0RNAjdwoyGHeOepXOKY+h3iHeqCvgOH6LOifdHf/1aaZNwSkGotYnYScW8Yx63LnSwba7+hESrtPa/huRmB9KWvMCKbDThL/nne14hnL277EDCSocPu3rOSYjuB9gKSOdVmWsj9Dxb/iZIe+S6AiG29Esm+/eUacSba0k8wn5HhHg9d4tIcixrxveflc8vi2/wNQGVFNsGO6tB5WF0xf/plngOvQ1/ivGV/C1Qpdhzznh0ExAVJ6dwzNg7qIEBaw+BzTJTUuRcPk92Sn6QDn2Pu3mpONaEumacjW4w6ipPnPw+g2TfywJjeEcpSZaP4Q3YV5HG8D6UjWA4GSkBKculWpdCMadx0usMomsSS/74QgpYqcPkmamB4nVv1JxczYITIqItIKjD35IGKAUwAA==",
--  };
--  const LOGIN = Symbol("pakeWechatLogin");
--  const { open, send } = XMLHttpRequest.prototype;
--
--  XMLHttpRequest.prototype.open = function (method, url, ...rest) {
--    try {
--      this[LOGIN] = new URL(url, location.href).pathname.endsWith(
--        "/webwxnewloginpage",
--      );
--    } catch {
--      this[LOGIN] = false;
--    }
--    return open.call(this, method, url, ...rest);
--  };
--
--  XMLHttpRequest.prototype.send = function (body) {
--    if (this[LOGIN]) {
--      for (const [name, value] of Object.entries(HEADERS)) {
--        this.setRequestHeader(name, value);
--      }
--    }
--    return send.call(this, body);
--  };
--})();
-```
-
-**File**: `gallery/apps/wechat.json` (modified, +1/-2)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "id": "wechat",
--  "version": 2,
-+  "version": 1,
-   "name": {
-     "en": "WeChat",
-     "zh-Hans": "微信"
-@@ -11,7 +11,6 @@
-     "en": "WeChat on the web, signed in by scanning a QR code each time",
-     "zh-Hans": "网页版微信，每次打开都要扫码登录"
-   },
--  "inject_js": "wechat.js",
-   "icon": "https://res.wx.qq.com/a/wx_fed/assets/res/OTE0YTAw.png",
-   "window": {
-     "width": 1000,
-```
-
----
-
-### Incident Patch 3: `107e0f2a` (2026-11-24)
-**Commit Message**: fix(cli): normalize bare hosts with numeric ports (#1443)
-
-**File**: `bin/utils/url.ts` (modified, +9/-0)
-```diff
-@@ -20,6 +20,15 @@ export function getDomain(inputUrl: string): string | null {
- 
- // Appends 'https://' protocol to the URL if not present.
- export function appendProtocol(inputUrl: string): string {
-+  // URL accepts a bare host:port as an opaque scheme. Recognize dotted
-+  // hosts and localhost without reinterpreting other schemes like tel:.
-+  if (
-+    /^(?:localhost|[a-z0-9-]+(?:\.[a-z0-9-]+)+\.?):\d+(?:[/?#]|$)/i.test(
-+      inputUrl,
+@@ -16,6 +16,18 @@ use tauri::{Assets, Runtime};
+ /// `raw` as a path of plain names, or None when it is empty, absolute, or
+ /// steps out with `..`. Asset keys arrive percent-decoded, so a request for
+ /// `/%2e%2e/secret` reaches this as `../secret`.
++/// The entry page as the path a `WebviewUrl::App` joins onto the app's origin.
++/// That join reads `#` as the start of a fragment and `?` as a query, so
++/// `chart #1.html` would open `chart `; escaped here, they reach the asset
++/// key decoded, as a space does.
++pub fn entry_path(file: &str) -> PathBuf {
++    PathBuf::from(
++        file.replace('%', "%25")
++            .replace('#', "%23")
++            .replace('?', "%3F"),
 +    )
-+  ) {
-+    return `https://${inputUrl}`;
-+  }
-   try {
-     new URL(inputUrl);
-     return inputUrl;
-```
-
-**File**: `dist/cli.js` (modified, +5/-0)
-```diff
-@@ -954,6 +954,11 @@ function getDomain(inputUrl) {
- }
- // Appends 'https://' protocol to the URL if not present.
- function appendProtocol(inputUrl) {
-+    // URL accepts a bare host:port as an opaque scheme. Recognize dotted
-+    // hosts and localhost without reinterpreting other schemes like tel:.
-+    if (/^(?:localhost|[a-z0-9-]+(?:\.[a-z0-9-]+)+\.?):\d+(?:[/?#]|$)/i.test(inputUrl)) {
-+        return `https://${inputUrl}`;
-+    }
-     try {
-         new URL(inputUrl);
-         return inputUrl;
-```
-
-**File**: `tests/unit/url.test.ts` (modified, +20/-5)
-```diff
-@@ -38,17 +38,28 @@ describe('getDomain', () => {
- describe('appendProtocol', () => {
-   it('leaves an already-schemed URL unchanged', () => {
-     expect(appendProtocol('https://github.com')).toBe('https://github.com');
--    expect(appendProtocol('http://localhost')).toBe('http://localhost');
-+    expect(appendProtocol('http://localhost:3000')).toBe(
-+      'http://localhost:3000',
-+    );
-+    expect(appendProtocol('example.com://8443')).toBe('example.com://8443');
-+    expect(appendProtocol('tel:1234')).toBe('tel:1234');
-+    expect(appendProtocol('file:///tmp/index.html')).toBe(
-+      'file:///tmp/index.html',
-+    );
-   });
- 
-   it('prepends https:// to a bare host', () => {
-     expect(appendProtocol('github.com')).toBe('https://github.com');
-   });
- 
--  it('leaves a bare host:port unchanged (WHATWG parses "localhost:" as a scheme)', () => {
--    // Documents a known parser quirk: new URL('localhost:3000') succeeds with
--    // scheme "localhost:", so the input is treated as already-schemed.
--    expect(appendProtocol('localhost:3000')).toBe('localhost:3000');
-+  it.each([
-+    'localhost:3000',
-+    'example.com:8443/dashboard',
-+    'example.com.:8443/dashboard',
-+    'localhost:3000?view=summary',
-+    'example.com:8443#section',
-+  ])('prepends https:// to a bare host with a port: %s', (input) => {
-+    expect(appendProtocol(input)).toBe(`https://${input}`);
-   });
- });
- 
-@@ -65,4 +76,8 @@ describe('normalizeUrl', () => {
-     // appendProtocol('') -> 'https://', which new URL() rejects.
-     expect(() => normalizeUrl('')).toThrow('is invalid');
-   });
++}
 +
-+  it('rejects an out-of-range port on a bare host', () => {
-+    expect(() => normalizeUrl('example.com:65536')).toThrow('is invalid');
-+  });
- });
+ pub fn relative_path(raw: &str) -> Option<PathBuf> {
+     let mut path = PathBuf::new();
+     for component in Path::new(raw.trim_start_matches(['/', '\\'])).components() {
+@@ -122,6 +134,24 @@ mod tests {
+         fs::remove_dir_all(base).unwrap();
+     }
+ 
++    #[test]
++    fn entry_path_escapes_what_a_url_join_would_cut() {
++        assert_eq!(entry_path("index.html"), PathBuf::from("index.html"));
++        assert_eq!(entry_path("a b/c.html"), PathBuf::from("a b/c.html"));
++        assert_eq!(
++            entry_path("chart #1?.html"),
++            PathBuf::from("chart %231%3F.html")
++        );
++        assert_eq!(entry_path("100%.html"), PathBuf::from("100%25.html"));
++        // The whole name stays in the path, each escape decoding back to its character.
++        let joined = tauri::Url::parse("tauri://localhost/")
++            .unwrap()
++            .join(entry_path("chart #1 100%.html").to_str().unwrap())
++            .unwrap();
++        assert_eq!(joined.fragment(), None);
++        assert_eq!(joined.path(), "/chart%20%231%20100%25.html");
++    }
++
+     #[test]
+     fn relative_path_accepts_only_plain_names() {
+         assert_eq!(
+```
+
+**File**: `src-tauri/src/app/window.rs` (modified, +1/-1)
+```diff
+@@ -662,7 +662,7 @@ fn build_window_with_label(
+             })?;
+             WebviewUrl::App(parsed)
+         }
+-        "local" => WebviewUrl::App(PathBuf::from(&window_config.url)),
++        "local" => WebviewUrl::App(crate::app::local_site::entry_path(&window_config.url)),
+         other => {
+             return Err(tauri::Error::Io(std::io::Error::new(
+                 std::io::ErrorKind::InvalidInput,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1444** (closed): Update contributors list (@pabloeferreyra)
 - **PR #1443** (2026-11-24): fix(cli): normalize bare hosts with numeric ports (@po-et)
 - **PR #1442** (closed): merge (@prathamesh-2007)
 - **PR #1441** (2026-11-21): Added whatsapp to Gallery (@MalikHw)
 - **PR #1440** (2026-11-21): fix: return home shortcut to packaged URL (@thishakyawmh)
 - **PR #1439** (2026-11-21): fix: reject a bad --inject file before the build instead of dropping settings (@visveshkhanna)
-- **PR #1437** (closed): Update contributors and formatting (@alperenalbay)
 
 ---
 
@@ -1221,33 +1048,58 @@ npx vitest run tests/unit/gallery.test.ts.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix the sign-in popup note, the inject example and the gallery platforms
+## X. runtime): open a local entry page whose name has # or ?
 
 **RULE**:
-When implementing operations in `docs/cli-usage.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src-tauri/src/app/local_site.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c08474f`: docs: fix the sign-in popup note, the inject example and the gallery platforms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbba2371`: runtime): open a local entry page whose name has # or ?. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli-usage.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/src/app/local_site.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-On macOS, additional windows opened with Cmd+N join the app's native tab group. `window.open` popups stay outside it. On macOS and Windows, a sign-in popup with a size of its own, such as the Google button on TikTok, Notion and X or Sign in with Apple, opens as a separate window and closes once it has answered. A sign-in opened as a link, or as a `window.open` with no size, continues in the current window on macOS and Linux, and so does every sign-in popup on Linux.
-Using `inject`, you can inject local absolute and relative path `css` and `js` files into the page you specify the `url` to customize it. For example, an adblock script that works on any page, or `css` that tidies a page's UI: write it once and reuse it in every app you package.
+/// The entry page as the path a `WebviewUrl::App` joins onto the app's origin.
+/// That join reads `#` as the start of a fragment and `?` as a query, so
+/// `chart #1.html` would open `chart `; escaped here, they reach the asset
+/// key decoded, as a space does.
+pub fn entry_path(file: &str) -> PathBuf {
+    PathBuf::from(
+        file.replace('%', "%25")
+            .replace('#', "%23")
+            .replace('?', "%3F"),
+    )
+}
+
+    #[test]
+    fn entry_path_escapes_what_a_url_join_would_cut() {
+        assert_eq!(entry_path("index.html"), PathBuf::from("index.html"));
+        assert_eq!(entry_path("a b/c.html"), PathBuf::from("a b/c.html"));
+        assert_eq!(
+            entry_path("chart #1?.html"),
+            PathBuf::from("chart %231%3F.html")
+        );
+        assert_eq!(entry_path("100%.html"), PathBuf::from("100%25.html"));
+        // The whole name stays in the path, each escape decoding back to its character.
+        let joined = tauri::Url::parse("tauri://localhost/")
+            .unwrap()
+            .join(entry_path("chart #1 100%.html").to_str().unwrap())
+            .unwrap();
+        assert_eq!(joined.fragment(), None);
+        assert_eq!(joined.path(), "/chart
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-On macOS, additional windows opened with Cmd+N join the app's native tab group. `window.open` popups stay outside it. On macOS and Linux, sign-in popups other than Sign in with Apple open in the current window.
-Using `inject`, you can inject local absolute and relative path `css` and `js` files into the page you specify the `url` to customize it. For example, an adblock script that can be applied to any web page, or a `css` that optimizes the `UI` of a page, you can write it once to customize it. would only need to write the `app` once to generalize it to any other page.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c08474f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbba2371` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

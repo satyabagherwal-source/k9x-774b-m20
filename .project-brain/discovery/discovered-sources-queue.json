@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T11:15:54.619Z",
+  "updated_at": "2026-11-26T11:29:14.873Z",
   "stats": {
-    "total_discovered": 9737,
-    "approved_pending_harvest": 9237,
+    "total_discovered": 9738,
+    "approved_pending_harvest": 9238,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9224,
+      "COMMUNITY_AND_EXPERT": 9225,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210741,6 +210741,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kividbio-kividb-learnings.md",
         "fileName": "kividbio-kividb-learnings.md"
+      }
+    },
+    "SRC-B33CC621D126": {
+      "id": "SRC-B33CC621D126",
+      "url": "https://github.com/software-mansion/react-native-screens/issues/5117",
+      "title": "https://github.com/software-mansion/react-native-screens/issues/5117",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:29:14.873Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
       }
     }
   }

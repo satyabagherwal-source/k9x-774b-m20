@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T11:16:25.202Z",
+  "last_updated": "2026-11-26T11:29:15.984Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -183,7 +183,7 @@
       "staged_for_review": 1
     },
     "tw93-pake-learnings.md": {
-      "processed_at": "2026-11-25T03:50:57.020Z",
+      "processed_at": "2026-11-26T11:29:12.931Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1888,7 +1888,7 @@
       "staged_for_review": 0
     },
     "software-mansion-react-native-screens-learnings.md": {
-      "processed_at": "2026-11-24T00:57:32.594Z",
+      "processed_at": "2026-11-26T11:29:14.746Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3423,7 +3423,7 @@
       "staged_for_review": 1
     },
     "hf-kormo-vl-kormo-web-11b-learnings.md": {
-      "processed_at": "2026-11-22T18:21:38.659Z",
+      "processed_at": "2026-11-26T11:29:14.113Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3968,7 +3968,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4488,
+  "total_dossiers_evaluated": 4491,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3390
+  "total_staged_for_review": 3392
 }

@@ -13389,3 +13389,7 @@ Every entry in this ledger must capture:
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `879a6512` | Multi-dimensional audit evidence | 2026-11-26T11:15:44.313Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `1b9b8270` | Multi-dimensional audit evidence | 2026-11-26T11:15:51.051Z |
 | `learn-dom-h-d48f999d` | `project://higress-group-higress` | `879a6512` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md` | 2026-11-26T11:16:24.150Z |
+| `learn-huggingface-kormo-vl-kormo-web-11b` | `https://huggingface.co/KORMo-VL/KORMo-Web-11B` | `hf-kormo-v` | Multi-dimensional audit evidence | 2026-11-26T11:28:53.837Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `fbba2371` | Multi-dimensional audit evidence | 2026-11-26T11:28:54.970Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `1b8f2fde` | Multi-dimensional audit evidence | 2026-11-26T11:29:01.172Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `e8eb093b` | Multi-dimensional audit evidence | 2026-11-26T11:29:09.026Z |
