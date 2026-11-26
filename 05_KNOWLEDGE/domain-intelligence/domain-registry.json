@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T04:05:13.186Z",
-  "total_records": 2704,
+  "last_updated": "2026-11-26T04:14:10.042Z",
+  "total_records": 2705,
   "domains": {
     "A": {
       "total": 22,
@@ -1693,7 +1693,7 @@
       ]
     },
     "H": {
-      "total": 644,
+      "total": 645,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2338,7 +2338,8 @@
         "domain_intelligence-technical-construction-intelligence-cloudwego-volo-core-invariants",
         "domain_intelligence-technical-construction-intelligence-cloudwego-volo-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-learnings-core-invariants",
+        "DOM-H-BC714522"
       ]
     },
     "I": {
@@ -13654,8 +13655,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "9b7072fdba4b15b072107bd581e33dd62392c7fdfca221cac9a334b6ed43b838",
-      "created_at": "2026-11-25T02:47:50.603Z"
+      "content_hash": "e2755fb2cab4511e66b2d53f03ec534ec12882dc40f047403656a97fbb044e2d",
+      "created_at": "2026-11-26T04:13:36.573Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -22370,8 +22371,8 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-learnings-technical-construction-intelligence-doobid.md",
       "repository": "doobidoo-mcp-memory-service-learnings",
-      "content_hash": "7001d8cef91e13f7fd36efb3ebed0565d0b0e51cd872e01bb725ab49dc186383",
-      "created_at": "2026-11-25T02:47:55.167Z"
+      "content_hash": "6623f396ba3432de318a17b61b35afb655cd42f029fd9af6af15e6af3d531973",
+      "created_at": "2026-11-26T04:14:10.042Z"
     },
     "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core",
@@ -29032,8 +29033,8 @@
       "title": "Research & Knowledge Intelligence: huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-research-knowledge-intelligence.md",
       "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
-      "content_hash": "73612e9b9671a5f6a1fa935c2fd65859a31924105f8c75163d5e85e204d2d0e9",
-      "created_at": "2026-11-22T07:27:29.744Z"
+      "content_hash": "2f58bc553bf8be6ed311ed6da76dcf5cf67c62cc58f9178fd1dc0703def955e9",
+      "created_at": "2026-11-26T04:13:21.141Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
@@ -29041,8 +29042,8 @@
       "title": "Research & Knowledge Intelligence: hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-learnings-research-knowledge-in.md",
       "repository": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings",
-      "content_hash": "8589ded81c22181233e72306f62e01d7e34c0789a531b2e6f4d43542eacb739a",
-      "created_at": "2026-11-22T07:29:03.871Z"
+      "content_hash": "bfca2a74ddc2717e3d6a03e59d9392d8b946ea62e0adcf8e10840bf1b1fa34b8",
+      "created_at": "2026-11-26T04:13:41.035Z"
     },
     "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-",
@@ -39745,8 +39746,8 @@
       "title": "Technical Construction Intelligence: apache/maka Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-technical-construction-intelligence-apache-maka-core-invariants.md",
       "repository": "apache/maka",
-      "content_hash": "12ff6074f9427046b8cb09a9ca2a2b5f7b2acbb363e89ce889980bcb54c8aa7d",
-      "created_at": "2026-11-24T21:38:36.877Z"
+      "content_hash": "619c77e5a6586d99dc244ed8d02a2bc611932f796ee1b9a22d65e83c7678167f",
+      "created_at": "2026-11-26T04:13:24.579Z"
     },
     "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants",
@@ -39754,8 +39755,8 @@
       "title": "Technical Construction Intelligence: apache-maka-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-learnings-technical-construction-intelligence-apache-maka-learnings-.md",
       "repository": "apache-maka-learnings",
-      "content_hash": "18fc77b3babec93928b3c4c59cadae678e96f784cf236c181a059be33baae7e2",
-      "created_at": "2026-11-24T21:38:45.587Z"
+      "content_hash": "241e5ae1506ad8cb94cfa3a59d1962899794767e75e114778c61c03f9fd565c4",
+      "created_at": "2026-11-26T04:13:40.439Z"
     },
     "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants",
@@ -45624,6 +45625,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T03:55:53.482Z"
+    },
+    "DOM-H-BC714522": {
+      "record_id": "DOM-H-BC714522",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "ontology): point coerced-type warnings at `memory ontology add`",
+      "content": "When implementing operations in `changelog.d/2127.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "8f61942ce9da8a35b606f7ab616da5af703f561ef9d317dbc1098d36081e2fdd",
+      "summary": "Prevents defects observed in production commit `5b8b8b7c`: ontology): point coerced-type warnings at `memory ontology add`. Unvalidated exec -> When implementing operations in `changelog.d/2127.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, an",
+      "provenance": {
+        "source_uri": "project://doobidoo-mcp-memory-service/doobidoo-mcp-memory-service-learnings.md",
+        "source_version": "02f525cb",
+        "observed_at": "2026-11-26T04:13:34.957Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (doobidoo-mcp-memory-service)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of doobidoo-mcp-memory-service"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T04:14:09.327Z"
     }
   }
 }

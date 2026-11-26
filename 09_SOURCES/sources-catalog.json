@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "f4eac406",
+    "sourceVersion": "02f525cb",
     "license": "Apache-2.0",
-    "contentHash": "e129aabb37fb828d5625416eb3f0c33da2b708354da4c1fca590280583a8cfb2",
-    "lastHarvestedAt": "2026-11-25T02:47:50.189Z",
+    "contentHash": "1207486f59bcb945d7ec1bac8ff1e4c1a287aa9dbe08218e7bc76d101456cb97",
+    "lastHarvestedAt": "2026-11-26T04:13:36.128Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -12435,8 +12435,8 @@
     "sourceUrl": "https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
     "sourceVersion": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "10a80b008abd7b6e46e340dd52612c31ed040068f5b494296e3597ec612dd5a4",
-    "lastHarvestedAt": "2026-11-22T07:27:29.455Z",
+    "contentHash": "0558c0a397134845cfb0973571e326edba1a9161ad56637bd91e4761987a861c",
+    "lastHarvestedAt": "2026-11-26T04:13:20.917Z",
     "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf"
   },
   "hf-thinkingmachines-inkling-2-small": {
@@ -13163,10 +13163,10 @@
     "repository": "apache/maka",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/maka",
-    "sourceVersion": "16e3a770",
+    "sourceVersion": "00c6027a",
     "license": "Apache-2.0",
-    "contentHash": "5605576365e848167dba90eefb9aaee7ff426dc067d484c848720a6c3478b92c",
-    "lastHarvestedAt": "2026-11-24T21:38:36.315Z",
+    "contentHash": "5456f5001dab66d2731ae3ac1ab9eef80298355f17f80a9c82db28ae3573f158",
+    "lastHarvestedAt": "2026-11-26T04:13:24.138Z",
     "learningId": "learn-github-apache-maka"
   },
   "hf-lakonik-pi-h3": {

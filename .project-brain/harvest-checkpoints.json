@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T04:04:58.431Z",
+  "last_updated": "2026-11-26T04:13:36.145Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "e129aabb37fb828d5625416eb3f0c33da2b708354da4c1fca590280583a8cfb2",
-      "verified_at": "2026-11-25T02:47:50.203Z",
+      "content_hash": "1207486f59bcb945d7ec1bac8ff1e4c1a287aa9dbe08218e7bc76d101456cb97",
+      "verified_at": "2026-11-26T04:13:36.145Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:47:50.203Z"
+      "last_updated": "2026-11-26T04:13:36.145Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -18711,14 +18711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
-      "content_hash": "10a80b008abd7b6e46e340dd52612c31ed040068f5b494296e3597ec612dd5a4",
-      "verified_at": "2026-11-22T07:27:29.466Z",
+      "content_hash": "0558c0a397134845cfb0973571e326edba1a9161ad56637bd91e4761987a861c",
+      "verified_at": "2026-11-26T04:13:20.932Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:27:29.466Z"
+      "last_updated": "2026-11-26T04:13:20.932Z"
     },
     "thinkingmachines/Inkling-2-Small": {
       "repository": "thinkingmachines/Inkling-2-Small",
@@ -19866,14 +19866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-maka",
-      "content_hash": "5605576365e848167dba90eefb9aaee7ff426dc067d484c848720a6c3478b92c",
-      "verified_at": "2026-11-24T21:38:36.335Z",
+      "content_hash": "5456f5001dab66d2731ae3ac1ab9eef80298355f17f80a9c82db28ae3573f158",
+      "verified_at": "2026-11-26T04:13:24.154Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T21:38:36.335Z"
+      "last_updated": "2026-11-26T04:13:24.154Z"
     },
     "Lakonik/pi-H3": {
       "repository": "Lakonik/pi-H3",

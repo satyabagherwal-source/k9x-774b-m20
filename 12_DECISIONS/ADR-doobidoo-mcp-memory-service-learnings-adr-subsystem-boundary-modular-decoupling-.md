@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T02:47:54.850Z",
+  "timestamp": "2026-11-26T04:14:09.683Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-doobidoo-mcp-memory-service-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [doobidoo-mcp-memory-service-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T02:47:54.850Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:14:09.683Z`  
 > **Learning ID**: `LEARN-EVO-doobidoo-mcp-memory-service-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of doobidoo-mcp-memory-service-learnings, modular boundar
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `f4eac406`  
+> **Source Version**: `02f525cb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T02:47:49.079Z  
+> **Timestamp**: 2026-11-26T04:13:34.957Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of doobidoo-mcp-memory-service-learnings, modular boundar
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:47:49.073Z  
+> **Harvest Timestamp**: 2026-11-26T04:13:34.951Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of doobidoo-mcp-memory-service-learnings, modular boundar
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2154 stars
+- **Stars / Engagement**: 2155 stars
 
 ---
 
@@ -2959,539 +2959,1420 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41b792b2` (2026-11-24)
-**Commit Message**: fix(graph): confine entity reads to the claimed store (#2118) (#2121)
+### Incident Patch 1: `5b8b8b7c` (2026-11-25)
+**Commit Message**: fix(ontology): point coerced-type warnings at `memory ontology add` (#2127) (#2131)
 
-* fix(graph): confine entity reads to the claimed store
+Both store paths warned that an unknown memory_type was stored as
+observation and told the caller to set MCP_CUSTOM_MEMORY_TYPES, which only
+takes effect after a restart. They now name `memory ontology add <name>`
+first and keep the env var as the startup alternative.
 
-`memory_graph` carries no store column of its own, so every `GraphStorage`
-entity read was global: `list_entities`, `get_entity_profile`,
-`find_memories_by_entity` and `get_entities_for_memory` counted and returned
-links from every store, and `_discover_related_entities` walked
-`common_neighbors` unfiltered.
+The text could not change in place: handle_store_memory and the REST
+store_memory sat over the complexity budget, so any edit to them blocked
+the gate. Both are split into module-level helpers first:
 
-`get_entity_detail` already confined `chunks` by post-filtering `get_by_hash`,
-but `related_entities` was not confined at all, so a store-scoped
-`memory_detail` returned entity names reachable only through another store's
-memories.
+- handle_store_memory: restore_deleted validation, the refused/failed
+  responses, the failed-chunk check, the response message (headline,
+  dedup, coercion, contradiction notes) and the on-store NLI and belief
+  checks each get their own function.
+- store_memory: hostname, agent tag, SSE broadcast, the coercion warning,
+  the refused-chunks note and the success and not-stored responses.
 
-The graph is opened from the same SQLite file as `memories`, so the readers now
-confine through the store of the edge's source memory instead of a new column
-and a migration: `_store_predicate` builds the fragment, and `None`/`"all"`
-produce nothing so every unscoped caller is byte-identical. The `limit * 10`
-scan-then-filter window in `get_entity_detail` is gone with it, since the query
-filters now.
+Every other part of both responses is unchanged, and the guidance test
+gets the two source-file assertions back.
 
-`MilvusGraphStorage` accepts the same `store` keyword to keep the
-signature-parity guard green and refuses a named store wi
+**File**: `changelog.d/2127.fixed.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- **A coerced memory type still pointed at the env var that needs a restart (#2127, Dhruv-Sharma29).**
++  When a store names a type the ontology does not know, the MCP `memory_store` response and
++  `POST /api/memories` warn that it was stored as `observation`. Both warnings told the caller
++  to set `MCP_CUSTOM_MEMORY_TYPES`, which only takes effect after a restart, although #2126
++  added a runtime path. They now name `memory ontology add <name>` first and keep the env var
++  as the startup alternative. To make that one-line change possible, `handle_store_memory` and
++  the REST `store_memory` were split into module-level helpers (failure handling, the response
++  message, the on-store checks); every other part of both responses is unchanged.
+```
 
-**File**: `changelog.d/2118.fixed.md` (added, +1/-0)
+**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +176/-144)
+```diff
+@@ -294,6 +294,172 @@ async def _auto_capture_note(server, arguments: dict, content, result: dict, con
+     return ""
+ 
+ 
++def _restore_deleted_flag(arguments: dict) -> bool:
++    """The caller's restore_deleted, which must be a real boolean (#1560).
++
++    `bool("false")` is True. The /mcp route hands tool arguments to this
++    handler without validating them against the tool schema, so a restore
++    must be asked for with a real boolean, never a string.
++    """
++    restore_deleted = arguments.get("restore_deleted", False)
++    if not isinstance(restore_deleted, bool):
++        raise ValueError(
++            "restore_deleted must be a boolean (true/false), "
++            f"got {type(restore_deleted).__name__}"
++        )
++    return restore_deleted
++
++
++def _not_stored_response(result: dict) -> List[types.TextContent]:
++    """Answer a store the MemoryService refused, or raise when it failed."""
++    error_msg = f"{result.get('error', 'Unknown error')}{_dedup_outcome_note(result)}"
++    if result.get("refused_recreate"):
++        # #1560: a refused re-create is the answer the caller chose by not
++        # passing restore_deleted — plain text, not isError. Unlike the
++        # failures #1601 covers, nothing was lost here: the tombstone is
++        # intact and the message says how to proceed.
++        return [types.TextContent(type="text", text=error_msg)]
++    # A refused write is a failure. Return-as-text made the MCP envelope
++    # report isError=False while nothing was stored, so automation counted
++    # it as success (#1601). Raise: the SDK answers isError=True.
++    raise RuntimeError(f"Error storing memory: {error_msg}")
++
++
++def _raise_on_failed_chunks(result: dict) -> None:
++    """Partial writes are failures too (#1601).
++
++    Some chunks never reached the database, so reporting success lets a
++    harvester skip them permanently.
++    """
++    failed_chunks = result.get("failed_chunks") or 0
++    if failed_chunks:
++        raise RuntimeError(
++            f"Error storing memory: {failed_chunks} of "
++            f"{result.get('total_chunks', '?')} chunks failed to store"
++        )
++
++
++def _stored_headline(result: dict) -> tuple:
++    """The success line with its dedup notes, and the type the memory was stored as."""
++    if "memories" in result:
++        # Chunked response - multiple memories created
++        num_chunks = len(result["memories"])
++        original_hash = result.get("original_hash", "unknown")
++        message = f"Successfully stored {num_chunks} memory chunks (original hash: {original_hash})"
++        effective_type = result["memories"][0].get("memory_type") if result["memories"] else None
++    else:
++        message = f"Memory stored successfully (hash: {result['memory']['content_hash']})"
++        effective_type = result["memory"].get("memory_type")
++    return message + _dedup_outcome_note(result), effective_type
++
++
++def _coercion_warning(requested, effective) -> str:
++    """Name the runtime registration when an unknown memory_type was coerced (#2127).
++
++    Memory.__post_init__ rewrites a type the ontology does not know to
++    "observation" and only logs it. Without this echo the caller sees
++    "success" while their type filter silently breaks.
++    """
++    if not effective or effective == requested:
++        return ""
++    return (
++        f"\nWarning: requested memory_type '{requested}' is not in the "
++        f"ontology — stored as '{effective}'. "
++        f"Register it without a restart with `memory ontology add {requested}`, "
++        f"or at startup via the MCP_CUSTOM_MEMORY_TYPES env var, "
++        f"e.g. '{{\"{requested}\": []}}'."
++    )
++
++
++def _contradiction_note(result: dict) -> str:
++    """Issue #1216 (1b): say when a near-duplicate was filed as a contradiction."""
++    if result.get("filed_as_contradiction"):
++        # A value-swap rescued from dedup rejection, not silently dropped.
++        return (
++            "\n⚠️ Filed as a contradiction of an existing near-duplicate and "
++            "quarantined, rather than dropped as a duplicate."
++        )
++    failed = result.get("contradiction_filing_failed")
++    if not failed:
++        return ""
++    # Stored past dedup, but the quarantine step failed: say so, and name the
++    # memory so it can be quarantined or deleted by hand.
++    stored_hash = (result.get("memory") or {}).get("content_hash", "")
++    err = (failed.get("quarantine") or {}).get("message", "unknown error")
++    # The backend error can carry paths / SQL / provider detail: keep it in
++    # the log (sanitized), give the client a stable public message.
++    logger.warning(
++        "Quarantine filing failed for %s (contradicts %s): %s",
++        stored_hash[:8], str(failed.get("contradicts", ""))[:8], _sanitize_log_value(err),
++    )
++    return (
++        f"\n⚠️ Stored past semantic dedup because it contradicts near-duplicate "
++        f"{failed.get('contradicts', '')[:8]}, but quarantining it FAILED. "
++        f"It i
+```
+
+**File**: `src/mcp_memory_service/web/api/memories.py` (modified, +118/-118)
+```diff
+@@ -216,6 +216,117 @@ def memory_to_response(memory: Memory) -> MemoryResponse:
+     )
+ 
+ 
++def _client_hostname(request: MemoryCreateRequest, http_request: Request) -> Optional[str]:
++    """Hostname for consistent tagging (the tagging itself happens in the service).
++
++    Client-provided hostname first, then the X-Client-Hostname header, then
++    this server's hostname (the original behavior).
++    """
++    if not INCLUDE_HOSTNAME:
++        return None
++    return (
++        request.client_hostname
++        or http_request.headers.get('X-Client-Hostname')
++        or socket.gethostname()
++    )
++
++
++def _tags_with_agent(request: MemoryCreateRequest, http_request: Request) -> List[str]:
++    """The request's tags, plus agent:<id> when the X-Agent-ID header names one."""
++    tags = list(request.tags)
++    agent_id = http_request.headers.get('X-Agent-ID')
++    if agent_id and f"agent:{agent_id}" not in tags:
++        tags.append(f"agent:{agent_id}")
++    return tags
++
++
++async def _broadcast_stored(result: dict, store: str) -> None:
++    """Send the memory_stored SSE event; a failed broadcast never fails the request."""
++    try:
++        # A chunked store is announced with its first chunk.
++        stored = result["memory"] if "memory" in result else result["memories"][0]
++        memory_data = {
++            "content_hash": stored["content_hash"],
++            "content": stored["content"],
++            "tags": stored["tags"],
++            "memory_type": stored["memory_type"],
++        }
++        await sse_manager.broadcast_event(create_memory_stored_event(memory_data, store=store))
++    except Exception as e:
++        logger.warning("Failed to broadcast memory_stored event: %s", _sanitize_log_value(e))
++
++
++def _coercion_warning(requested: Optional[str], effective: Optional[str]) -> str:
++    """Name the runtime registration when an unknown memory_type was coerced (#2127).
++
++    Memory.__post_init__ rewrites a type the ontology does not know to
++    "observation". Without an explicit warning the caller sees "success"
++    while their type filter silently breaks. `is not None` (not truthy), so
++    an explicit empty string, also coerced to 'observation', still warns;
++    this mirrors the MCP handler's presence-based check.
++    """
++    if requested is None or not effective or requested == effective:
++        return ""
++    return (
++        f" Warning: requested memory_type '{requested}' is not in "
++        f"the ontology — stored as '{effective}'. Register it without a "
++        f"restart with `memory ontology add {requested}`, or at startup via "
++        f"MCP_CUSTOM_MEMORY_TYPES, e.g. '{{\"{requested}\": []}}'."
++    )
++
++
++def _refused_chunks_note(result: dict) -> str:
++    """#1560: name the chunks a recorded delete kept out, and how to bring them back."""
++    refused_chunks = result.get("refused_chunks") or []
++    if not refused_chunks:
++        return ""
++    return (
++        f"; {len(refused_chunks)} chunk(s) not stored: deleted on "
++        f"{refused_chunks[0]['deleted_at']}, pass restore_deleted=true "
++        f"to bring them back"
++    )
++
++
++def _created_response(result: dict, requested_type: Optional[str]) -> MemoryCreateResponse:
++    """The success response for a single memory, or for a chunked store by its first chunk."""
++    if "memory" in result:
++        stored = result["memory"]
++        message = _with_supersede_note(result, "Memory stored successfully")
++    else:
++        stored = result["memories"][0]
++        message = _with_supersede_note(
++            result, f"Memory stored as {result['total_chunks']} chunks"
++        ) + _refused_chunks_note(result)
++    return MemoryCreateResponse(
++        success=True,
++        message=message + _coercion_warning(requested_type, stored.get("memory_type")),
++        content_hash=stored["content_hash"],
++        memory=stored,
++        **_dedup_response_fields(result),
++    )
++
++
++def _not_stored_response(result: dict) -> MemoryCreateResponse:
++    """The answer to a store the MemoryService did not perform."""
++    refused = result.get("refused_recreate")
++    if refused:
++        # #1560: re-sending content this server deleted conflicts with the
++        # recorded delete — 409, naming the delete, until the client says
++        # restore_deleted=true. Not a 200/success=false: bundled clients
++        # would log and move on, and the memory would quietly come back
++        # on the next sync.
++        raise HTTPException(
++            status_code=409,
++            detail={"message": result.get("error", "Not stored"), **refused},
++        )
++    return MemoryCreateResponse(
++        success=False,
++        message=str(result.get("error", "Failed to store memory")),
++        content_hash=None,
++        **_dedup_response_fields(result),
++    )
++
++
+ @router.post("/memories", response_model=MemoryCreateResponse, tags=["memories"])
+ async def store_memory(
+     request: MemoryCreateRequest,
+@@ -230,27 +341,8 @@ async def store_memory(
+```
+
+**File**: `tests/server/test_store_memory_handler.py` (modified, +2/-0)
+```diff
+@@ -173,6 +173,8 @@ async def test_store_memory_unknown_type_warns_about_coercion():
+     assert "Warning" in text
+     assert "'foo'" in text
+     assert "'observation'" in text
++    # #2127: the runtime command first, the env var as the startup alternative.
++    assert "memory ontology add foo" in text
+     assert "MCP_CUSTOM_MEMORY_TYPES" in text
+ 
+ 
+```
+
+**File**: `tests/unit/test_ontology_registration_guidance.py` (modified, +26/-0)
+```diff
+@@ -69,3 +69,29 @@ def test_documents_the_runtime_command(self, relative_path):
+         source = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
+ 
+         assert CLI_HINT in source
++
++
++@pytest.mark.parametrize(
++    "relative_path",
++    [
++        "src/mcp_memory_service/server/handlers/memory.py",
++        "src/mcp_memory_service/web/api/memories.py",
++    ],
++)
++class TestCoercionWarnings:
++    """The warning a caller reads right after a coerced store (#2127).
++
++    Both files build it at the moment the caller wants the answer, so both name
++    the command that needs no restart and keep the env var for startup.
++    """
++
++    def test_names_the_runtime_command(self, relative_path):
++        source = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
++
++        assert CLI_HINT in source
++
++    def test_keeps_the_env_var_as_the_startup_alternative(self, relative_path):
++        source = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
++
++        assert "MCP_CUSTOM_MEMORY_TYPES" in source
++        assert "at startup" in source
+```
+
+**File**: `tests/web/api/test_memories_api.py` (modified, +16/-0)
+```diff
+@@ -117,6 +117,22 @@ def test_store_memory_with_agent_id_header_appends_agent_tag(test_app):
+     assert "rate-limit" in stored_tags
+ 
+ 
++@pytest.mark.integration
++def test_store_memory_coercion_warning_names_the_runtime_command(test_app):
++    """#2127: an unknown memory_type is coerced; the warning says how to register it now."""
++    response = test_app.post(
++        "/api/memories",
++        json={"content": "A lesson about retries and backoff", "memory_type": "bogus_type_2127"},
++    )
++
++    assert response.status_code == 200
++    data = response.json()
++    assert data["memory"]["memory_type"] == "observation"
++    assert "requested memory_type 'bogus_type_2127'" in data["message"]
++    assert "memory ontology add bogus_type_2127" in data["message"]
++    assert "MCP_CUSTOM_MEMORY_TYPES" in data["message"]
++
++
+ @pytest.mark.integration
+ def test_store_memory_without_agent_id_header_no_agent_tag(test_app):
+     """Without X-Agent-ID header, no agent: tag is added."""
+```
+
+---
+
+### Incident Patch 2: `02f525cb` (2026-11-25)
+**Commit Message**: fix(milvus): confine the read paths to the claimed store (#1958) (#2133)
+
+* fix(milvus): confine the read paths to the claimed store (#1958)
+
+* fix(milvus): confine the read paths to the claimed store
+
+Since #1962 the hash-addressed calls confine, but the eleven read paths accepted
+`store` and dropped it, several with a comment saying so. A `read:<store>`
+credential would have searched, listed, counted and recalled across every
+partition, which is why `get_by_hash_is_store_scoped` stayed `False` here.
+
+Each path now resolves its scope through `_store_scope()`: `None` and `"all"`
+stay unscoped, `"default"` confines like the other backends, and a collection
+without the `store` field refuses a named store instead of serving every
+partition. `get_graph_visualization_data` reads the association collection's own
+`store` field from #2119 and fails closed when that collection predates it; the
+analytics endpoints do accept a store, and `require_store_read`, so it is
+reachable by a per-store credential and had to be confined too.
+
+With every read path confining or refusing, the capability flag is `True`.
+
+Two functions exceeded the complexity budget once touched, so they are split:
+`search_m
+
+**File**: `changelog.d/1958.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+- **Store-scoped entity reads no longer cross partitions (#2118, part of #1880).** `memory_graph` has no store column, so every `GraphStorage` entity read was global: `list_entities`, `get_entity_profile`, `find_memories_by_entity` and `get_entities_for_memory` counted and returned links from every store, and `_discover_related_entities` walked `common_neighbors` unfiltered. A credential scoped to one store therefore received `related_entities` reachable only through another store's memories — `chunks` was already confined by post-filtering `get_by_hash`, `related_entities` was not. The graph shares its SQLite file with `memories`, so each of those reads now confines through the store of the edge's source memory, and `memory_detail` passes its claimed store down instead of scanning a `limit * 10` window and discarding the difference. `None` and `"all"` stay unscoped, so single-store installs and every unscoped caller see exactly what they saw before. `MilvusGraphStorage` accepts the same `store` keyword to keep the signature-parity guard green and returns nothing for a named store until #2119 gives its collection the field — refusing rather than serving the global answer.
++- **Milvus read paths honour the claimed store, and the backend claims store scoping (#1958, part of #1683).** Since #1962 the hash-addressed calls confine, but the eleven read paths accepted `store` and dropped it — `search_memories`, `retrieve`, `recall`, `get_all_memories`, `count_all_memories`, `get_memories_by_time_range`, `get_by_exact_content`, `get_all_tags_with_counts`, `get_memory_timestamps`, `delete_by_tags` and `get_graph_visualization_data`. A `read:<store>` credential would have searched, listed, counted and recalled across every partition, which is why `get_by_hash_is_store_scoped` stayed `False` on this backend. Each path now builds its filter through `_store_scope()`, so `None` and `"all"` stay unscoped and `"default"` confines like the other backends; a collection without the `store` field refuses a named store instead of serving every partition. The graph view reads the association collection's own `store` field from #2119 and fails closed when that collection predates it. The flag is `True` now, so `memory_explore` and `memory_detail` can take per-store grants once #2120 adds them to `STORE_CONFINED_TOOLS`.
 ```
 
-**File**: `src/mcp_memory_service/server/handlers/graph.py` (modified, +37/-37)
+**File**: `src/mcp_memory_service/server/handlers/entity_rebuild.py` (modified, +0/-7)
 ```diff
-@@ -680,6 +680,7 @@ async def _select_explore_entities(
-     graph: Any,
-     chunk_pool: List[Dict[str, Any]],
-     max_entities: int,
-+    store: Optional[str] = None,
- ) -> tuple[List[Dict[str, Any]], Dict[str, set]]:
-     """Select entities linked to the highest-relevance retrieved chunks.
- 
-@@ -708,7 +709,7 @@ async def _select_explore_entities(
-         memory_hash = chunk.get("hash")
-         if not memory_hash:
-             continue
--        for name in await graph.get_entities_for_memory(memory_hash):
-+        for name in await graph.get_entities_for_memory(memory_hash, store=store):
-             if not name:
-                 continue
-             entity_id = normalize_entity_id(name)
-@@ -722,7 +723,7 @@ async def _select_explore_entities(
- 
-     if entities:
-         return entities, hashes_by_entity
--    return await graph.list_entities(limit=max_entities), {}
-+    return await graph.list_entities(limit=max_entities, store=store), {}
- 
- 
- def extract_extractive_summary(
-@@ -743,7 +744,8 @@ def extract_extractive_summary(
- 
- 
- async def _build_knowledge_map(
--    graph, entities_raw, chunk_pool, chunks_per_entity, scoring=None, hashes_by_entity=None
-+    graph, entities_raw, chunk_pool, chunks_per_entity, scoring=None,
-+    hashes_by_entity=None, store=None
- ):
-     """Assemble the memory_explore response shape from discovered entities.
- 
-@@ -759,7 +761,7 @@ async def _build_knowledge_map(
-     knowledge_map = []
-     for ent in entities_raw:
-         name = ent.get("entity_name", "")
--        profile = await graph.get_entity_profile(name) if graph else {}
-+        profile = await graph.get_entity_profile(name, store=store) if graph else {}
-         entity_types = profile.get("entity_types") or []
- 
-         # Entity-specific chunk filtering
-@@ -770,7 +772,7 @@ async def _build_knowledge_map(
-             # without the very chunk that caused it to be selected -- leaving
-             # top_chunks empty and summary blank. Union in the links found
-             # while selecting, which are retrieved chunks by construction.
--            entity_hashes = set(await graph.find_memories_by_entity(name))
-+            entity_hashes = set(await graph.find_memories_by_entity(name, store=store))
-             entity_hashes |= (hashes_by_entity or {}).get(normalize_entity_id(name), set())
-             entity_chunks = [chunk_by_hash[h] for h in entity_hashes if h in chunk_by_hash]
- 
-@@ -860,7 +862,7 @@ async def handle_memory_explore(server, arguments: dict) -> List[types.TextConte
-         # 2. Entity discovery — scoped to entities linked from retrieved chunks.
-         graph = await get_graph_storage()
-         entities_raw, hashes_by_entity = await _select_explore_entities(
--            graph, chunk_pool, max_entities
-+            graph, chunk_pool, max_entities, store=store
-         )
- 
-         knowledge_map = await _build_knowledge_map(
-@@ -870,6 +872,7 @@ async def handle_memory_explore(server, arguments: dict) -> List[types.TextConte
-             chunks_per_entity,
-             scoring=scoring,
-             hashes_by_entity=hashes_by_entity,
-+            store=store,
-         )
-         knowledge_map = knowledge_map[:max_entities]
- 
-@@ -895,9 +898,13 @@ async def handle_memory_explore(server, arguments: dict) -> List[types.TextConte
-         )]
- 
- 
--async def _resolve_entity_name(graph, entity_id: str):
--    """Resolve a canonical slug back to its stored entity name (or None)."""
--    entities = await graph.list_entities(limit=500)
-+async def _resolve_entity_name(graph, entity_id: str, store=None):
-+    """Resolve a canonical slug back to its stored entity name (or None).
-+
-+    ``store`` keeps the resolution inside the caller's partition, so a slug that
-+    only exists elsewhere does not resolve to another store's entity (#2118).
-+    """
-+    entities = await graph.list_entities(limit=500, store=store)
-     return next(
-         (e.get("entity_name", "") for e in entities
-          if normalize_entity_id(e.get("entity_name", "")) == entity_id),
-@@ -949,18 +956,22 @@ async def _hydrate_chunks(storage, memory_hashes, scoring=None, graph=None, enti
-     return chunks
- 
- 
--async def _discover_related_entities(graph, memory_hashes, max_hops: int):
-+async def _discover_related_entities(graph, memory_hashes, max_hops: int, store=None):
-     """Discover related entities via shared neighbours with dedup and ranking.
- 
-     Resolves memory hashes to linked entity names via graph.get_entities_for_memory.
-     Deduplicates by entity_id, merging shared_count for same entity.
-     Returns top 10 sorted by shared_count descending.
-+
-+    ``store`` confines both the neighbour walk and the entity resolution, so a
-+    store-scoped caller never sees entities reachable only through another
-+    partition (#2118).
-     """
-     entity_map: dict = {}  # entity_id -> {name, shared_count}
-     for h in memory_hashes[:max_hops + 1]:
--        for cand_hash, shared, _deg in await graph.common_neighbors(h):
-+        for cand_hash,
+@@ -86,13 +86,6 @@ async def _rebuild(server: Any, dry_run: bool, report: dict) -> None:
+             raise RuntimeError(
+                 "Memory scan was incomplete or the store changed; no edges deleted"
+             )
+-        # Milvus listings include tombstones stored inside metadata, unlike
+-        # SQLite's deleted_at SQL filter. Verify the raw count before filtering.
+-        if isinstance(graph, MilvusGraphStorage):
+-            rows = [
+-                (m, store) for m, store in rows
+-                if m.metadata.get("deleted_at") is None
+-            ]
+         memories = [m for m, _ in rows]
+         store_of = None
+         if isinstance(graph, MilvusGraphStorage) and await _confines_store(graph):
 ```
 
-**File**: `src/mcp_memory_service/storage/graph.py` (modified, +147/-45)
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +731/-354)
 ```diff
-@@ -149,6 +149,88 @@ def __init__(self, db_path: str):
-         self._lock = asyncio.Lock()  # Instance-level lock for thread safety
-         logger.info(f"Initialized GraphStorage with database: {_sanitize_log_value(db_path)}")
+@@ -208,6 +208,11 @@ class MilvusMemoryStorage(MemoryStorage):
+     # A named-store call against a legacy collection is refused with one
+     # warning per instance, not one per call.
+     _legacy_store_warned = False
++    # Whether the paired graph collection carries ``store`` (#2119). None until
++    # probed. Every read path confines now, and a legacy collection refuses a
++    # named store, so the flag can be claimed (#1958).
++    _graph_has_store: Optional[bool] = None
++    get_by_hash_is_store_scoped = True
  
-+    @staticmethod
-+    def _store_predicate(
-+        store: Optional[str],
-+        alias: str = "memory_graph",
-+        both_endpoints: bool = False,
-+    ) -> Tuple[str, List[Any]]:
-+        """SQL fragment confining edges to one store, plus its parameters.
+     @property
+     def max_content_length(self) -> Optional[int]:
+@@ -882,6 +887,44 @@ def _store_scope(self, store: Optional[str]) -> Tuple[bool, Optional[str]]:
+             )
+         return True, None
+ 
++    async def _graph_collection_has_store(self) -> bool:
++        """Whether ``{collection}_graph`` carries the ``store`` field (#2119).
 +
-+        Entity links and associations live in ``memory_graph``, which has no
-+        store column of its own. It is opened from the same SQLite file as
-+        ``memories`` (both callers pass the memory database path), so an edge is
-+        confined through the store of the memory behind it (#2118). Soft-deleted
-+        memories are excluded, the same rule ``get_by_hash`` applies.
-+
-+        An edge "lives in" a store when every endpoint that is a memory lives
-+        there. ``source_hash`` is always a memory, so it is always checked.
-+        ``target_hash`` is an entity name on ``has_entity`` rows and a memory on
-+        every association, so ``both_endpoints`` adds the target check for the
-+        associations only — an association whose far end sits in another store
-+        must not be traversed, or two in-store memories would be linked through
-+        a foreign one (Greptile, #2121).
-+
-+        ``None`` and ``"all"`` are unscoped and produce nothing, which leaves
-+        every pre-#2118 query path byte-identical.
++        Probed once. A graph collection created before #2119 has none, so an
++        edge cannot be attributed to a partition and a named-store graph view
++        fails closed rather than showing every one.
 +        """
-+        if store in (None, "all"):
-+            return "", []
-+        in_store = (
-+            "IN (SELECT content_hash FROM memories "
-+            "WHERE store = ? AND deleted_at IS NULL)"
-+        )
-+        fragment = f"AND {alias}.source_hash {in_store}"
-+        params: List[Any] = [store]
-+        if both_endpoints:
-+            fragment += (
-+                f" AND ({alias}.relationship_type = 'has_entity'"
-+                f" OR {alias}.target_hash {in_store})"
-+            )
-+            params.append(store)
-+        return fragment, params
-+
-+    @classmethod
-+    def _common_neighbors_sql(cls, store: Optional[str]) -> Tuple[str, List[Any]]:
-+        """Self-join query for ``common_neighbors``, plus its store parameters.
-+
-+        Both the seed edges and the expansion edges are confined on both
-+        endpoints, so a named store never reaches a candidate through another
-+        partition's memory (#2118). Returns the SQL with ``(memory_hash, memory_hash, memory_hash,
-+        *store_params, memory_hash, min_shared)`` as its parameters.
-+        """
-+        seed_filter, seed_params = cls._store_predicate(store, both_endpoints=True)
-+        join_filter, join_params = cls._store_predicate(
-+            store, alias="mg", both_endpoints=True
-+        )
-+        sql = f"""
-+                    WITH my_neighbors AS (
-+                        -- All direct neighbors of the source (both directions)
-+                        SELECT CASE WHEN source_hash = ? THEN target_hash ELSE source_hash END as neighbor
-+                        FROM memory_graph
-+                        WHERE (source_hash = ? OR target_hash = ?) {seed_filter}
-+                    ),
-+                    my_degree AS (
-+                        SELECT COUNT(*) as deg FROM my_neighbors
-+                    ),
-+                    candidates AS (
-+                        -- For each of my neighbors, find THEIR neighbors (2-hop from me)
-+                        SELECT CASE WHEN mg.source_hash = mn.neighbor THEN mg.target_hash ELSE mg.source_hash END as candidate
-+                        FROM my_neighbors mn
-+                        JOIN memory_graph mg ON (mg.source_hash = mn.neighbor OR mg.target_hash = mn.neighbor) {join_filter}
-+                        WHERE CASE WHEN mg.source_hash = mn.neighbor THEN mg.target_hash ELSE mg.source_hash END != ?
-+                    )
-+                    SELECT c.candidate, COUNT(*) as shared_count, (SELECT deg FROM my_degree) as source_degree
-+                    FROM candidates c
-+                    -- Exclude already-connected nodes
-+                    WHERE c.candidate NOT IN (SELECT neighbor FROM my_neighbors)
-+                    GROUP BY c.candidate
-+                    HAVING COUNT(*) >= ?
-+                    ORDER BY shared_count DESC
-+                    LIMIT 10
-+                """
-+        return sql, [*seed_params, *join_params]
-+
-     async def _get_connection(self) -> sqlite3.Connection:
-         """Get or create database connection with optimizations."""
-         if self._connection is None:
-@@ -900,17 +982,25 @@ async def store_entity_link(self, memory_hash: str, entity_name: str, entity_typ
-             logger.error(f"Failed to store entity link: {_sanitize_log_value(e)}")
-             return False
- 
--    async def list_entities(self, limit: int = 50) -> List[Dict[str, Any]]:
--        """List all known entities with count and types."""
-+    async def 
-```
-
-**File**: `src/mcp_memory_service/storage/milvus_graph.py` (modified, +77/-7)
-```diff
-@@ -52,6 +52,36 @@
- 
- logger = logging.getLogger(__name__)
- 
-+
-+def _named_store_refused(storage, store: Optional[str], method: str) -> bool:
-+    """Whether a named-store read must be refused on the Milvus graph.
-+
-+    The association collection has no store field yet, so it cannot confine an
-+    entity read to one partition. Refusing is the only honest answer: falling
-+    through to the unscoped query would hand a store-scoped caller another
-+    store's entities, which is the leak #2118 closes for SQLite. #2119 adds the
-+    field, the filter and the real implementation.
-+
-+    ``None`` and ``"all"`` are unscoped, as everywhere else. Warns once per
-+    instance rather than once per call.
-+    """
-+    if store in (None, "all"):
-+        return False
-+    if not getattr(storage, "_store_scope_warned", False):
++        if self._graph_has_store is not None:
++            return self._graph_has_store
++        graph_collection = f"{self.collection_name}_graph"
 +        try:
-+            storage._store_scope_warned = True
-+        except AttributeError:
-+            # A slotted or foreign storage cannot carry the flag; the warning
-+            # then repeats, which is louder than silence but still honest.
-+            pass
-+        logger.warning(
-+            "Milvus graph storage cannot confine %s to store %s yet (#2119); "
-+            "returning no results for a named store",
-+            _sanitize_log_value(method),
-+            _sanitize_log_value(store),
++            described = await self._call_client(
++                "describe_collection", collection_name=graph_collection
++            )
++            fields = {field.get("name") for field in described.get("fields", [])}
++        except Exception as exc:  # noqa: BLE001
++            logger.warning(
++                "Could not describe graph collection '%s': %s",
++                _sanitize_log_value(graph_collection),
++                _sanitize_log_value(exc),
++            )
++            return False
++        self._graph_has_store = "store" in fields
++        if not self._graph_has_store:
++            logger.warning(
++                "Graph collection '%s' has no 'store' field; a store-scoped "
++                "graph view is refused until it is recreated (#2123).",
++                _sanitize_log_value(graph_collection),
++            )
++        return self._graph_has_store
++
++    @staticmethod
++    def _store_filter(confine_to: Optional[str]) -> Optional[str]:
++        """``store == "<name>"`` for a confined read, or None when unscoped (#1958)."""
++        if confine_to is None:
++            return None
++        return f'store == "{escape_expr_value(confine_to)}"'
++
+     def _row_fields(self, base: Tuple[str, ...]) -> List[str]:
+         """``base`` plus ``store`` when the collection has it."""
+         fields = list(base)
+@@ -2300,9 +2343,14 @@ async def retrieve(
+         if query_embedding is None:
+             return []
+ 
++        refused, confine_to = self._store_scope(store)
++        if refused:
++            return []
++
+         tag_filter, ok = self._build_tag_filter(tags)
+         if not ok:
+             return []
++        tag_filter = self._combine_filter(tag_filter, self._store_filter(confine_to))
+ 
+         fetch_n = self._retrieve_fetch_limit(n_results, tag_filter)
+         if self._has_bm25:
+@@ -2511,11 +2559,18 @@ async def delete_by_tags(self, tags: List[str], store: Optional[str] = None) ->
+         if not tags:
+             return 0, "No tags provided", []
+ 
++        refused, confine_to = self._store_scope(store)
++        if refused:
++            return 0, f"Store-scoped delete is not supported by this collection", []
++
+         tag_filter, matched = self._tag_like_clauses(tags, joiner="or")
+         if not matched:
+             return 0, f"No memories found matching any of the {len(tags)} tags", []
+ 
+-        hashes = await self._collect_hashes(tag_filter, any_of_tags=tags)
++        hashes = await self._collect_hashes(
++            self._combine_filter(tag_filter, self._store_filter(confine_to)),
++            any_of_tags=tags,
 +        )
-+    return True
-+
- # Milvus per-call result limit ceiling.
- _MILVUS_MAX_LIMIT = 16384
+         if not hashes:
+             return 0, f"No memories found matching any of the {len(tags)} tags", []
  
-@@ -1067,12 +1097,20 @@ async def store_entity_link(
-             logger.error("Failed to store entity link: %s", _sanitize_log_value(exc))
-             return False
- 
--    async def list_entities(self, limit: int = 50) -> List[Dict[str, Any]]:
-+    async def list_entities(
-+        self, limit: int = 50, store: Optional[str] = None
-+    ) -> List[Dict[str, Any]]:
-         """List all known entities with link count and last activity.
- 
-         Milvus has no GROUP BY, so the has_entity edges are drained and
-         aggregated in Python — the same shape GraphStorage returns via SQL.
-+
-+        ``store`` is accepted for parity with GraphStorage (#2118) and refused
-+        with an empty result until #2119 teaches this backend the field.
-         """
-+        if _named_store_refused(self, store, "list_entities"):
-+            return []
-+
-         if not self._ensure_ready():
+@@ -2722,26 +2777,63 @@ async def get_by_exact_content(self, content: str, store: Optional[str] = None)
+         if not self._ensure_initialized():
              return []
  
-@@ -1104,9 +1142,16 @@ async def list_entities(self, limit: int = 50) -> List[Dict[str, Any]]:
-         return ordered[:limit]
- 
-     async def find_memories_by_entity(
--        self, entity_name: str, limit: int = 20
-+        self, entity_name: str, limit: int = 20, store: Optional[str] = None
-     ) -> List[str]:
--        """Find memory hashes linked to a given entity name, newest first."""
-+        """Find memory hashes linked to a given entity name, newest first.
-+
-+        ``store`` is accepted for parity with GraphStorage (#2118) and refused
-+        with an empty result until #2119 teaches this backend the field.
-+        """
-+        if _named_store_refused(self, store, "find_memories_by_entity"):
++        refused, _ = self._store_scope(store)
++        if refused:
 +            return []
 +
-         if not self._ensure_ready():
+         if not self._has_content_lower:
+-            return await self._get_by_exact_content_fallback(content)
++            return await self._get_by_exact_content_fallback(content, store=store)
+ 
+         needle = _escape_like(content.lower())
+         if not needle:
              return []
- 
-@@ -1121,8 +1166,17 @@ async def find_memories_by_entity(
-         rows.sort(key=lambda r: float(r.get("created_at") or 0.0), reverse=True)
-         return [r["source_hash"] for r in rows[:limit] if r.get("source_hash")]
- 
--    async def get_entities_for_memory(self, memory_hash: str) -> List[str]:
--        """Get entity names linked to a memory hash."""
-+    async def get_entities_for_memory(
-+        self, memory_hash: str, store: Optional[str] = None
-+    ) -> List[str]:
-+        """Get entity names linked to a memory hash.
-+
-+        ``store`` is accepted for parity with GraphStorage (#2118) and refused
-+        with an empty result until #2119 teaches this backend the field.
-+        """
-+        if _named_store_refused(self, store, "get_entities_for_memory"):
+         safe = escape_expr_value(needle)
+-        filter_expr = f'content_lower like "%{safe}%"'
++        refused, confine_to = self._store_scope(store)
++        if refused:
 +            return []
-+
-         if not self._ensure_ready():
-             return []
- 
-@@ -1137,8 +1191,17 @@ async def get_entities_for_memory(self, memory_hash: str) -> List[str]:
-         names = [self._entity_name_from_row(r) for r in rows]
-         return [n for n in names if n]
- 
--    async def get_entity_profile(self, entity_name: str) -> Dict[str, Any]:
--        """Get entity profile: memory count, entity types, last activity."""
-+    async def get_entity_profile(
-+        self, entity_name: str, store: Optional[str] = None
-+    ) -> Dict[str, Any]:
-+        """Get entity profile: memory count, entity types, last activity.
-+
-+        ``store`` is accepted for parity with GraphStorage (#2118) and refused
-+        with an empty result until #2119 teaches this backend the field.
-+        """
-+        if _named_store_refused(self, store, "get_entity_profile"):
-+            return {}
-+
-         if not self._ensure_ready():
-             return {}
- 
-@@ -1269,13 +1332,20 @@ async def common_neighbors(
-         self,
-         memory_hash: str,
-         min_
++        filter_expr = self._combine_filter(
++            f'content_lower like "%{safe}%"', self._store_filter(confine_to)
++        )
+         return await self._query_memories(
+             filter_expr=filter_expr,
+             limit=None,
+             sort_desc_key="created
 ```
 
-**File**: `tests/test_two_phase_aggregation.py` (modified, +2/-2)
+**File**: `tests/storage/test_milvus_low_priority.py` (modified, +3/-1)
 ```diff
-@@ -180,7 +180,7 @@ async def test_uses_entities_linked_to_highest_relevance_chunks(self):
+@@ -11,6 +11,7 @@
  
-         graph = AsyncMock()
-         graph.get_entities_for_memory = AsyncMock(
--            side_effect=lambda memory_hash: {
-+            side_effect=lambda memory_hash, store=None: {
-                 "high": ["Python", "Testing"],
-                 "low": ["Testing", "python", "SQLite"],
-             }[memory_hash]
-@@ -220,7 +220,7 @@ async def test_falls_back_to_global_entities_when_chunks_have_no_links(self):
+ from __future__ import annotations
+ 
++import asyncio
+ import json
+ import time
+ from typing import Any, Dict, List, Optional
+@@ -31,7 +32,6 @@
+ 
+ def _make_storage() -> MilvusMemoryStorage:
+     """Return a MilvusMemoryStorage skipping __init__."""
+-    import asyncio
+     storage = MilvusMemoryStorage.__new__(MilvusMemoryStorage)
+     storage.collection_name = "unit_test_collection"
+     storage.embedding_dimension = 4
+@@ -44,6 +44,8 @@ def _make_storage() -> MilvusMemoryStorage:
+     storage._lock = None
+     storage._write_lock = asyncio.Lock()
+     storage._call_client = AsyncMock()
++    # The count reads subtract the tombstones a scan finds; none by default.
++    storage._drain_rows = AsyncMock(return_value=[])
+     storage._generate_embedding = MagicMock(return_value=[0.1, 0.2, 0.3, 0.4])
+     return storage
+ 
+```
+
+**File**: `tests/storage/test_milvus_parity_methods.py` (modified, +11/-6)
+```diff
+@@ -56,8 +56,10 @@ def _make_storage(uri: str = "./milvus.db") -> MilvusMemoryStorage:
+     storage._has_access_collection = False
+     storage._lock = None
+     storage._call_client = AsyncMock()
++    # The count reads subtract the tombstones a scan finds; none by default.
++    storage._drain_rows = AsyncMock(return_value=[])
+     storage._generate_embedding = MagicMock(return_value=[0.1, 0.2, 0.3, 0.4])
+-    storage._fetch_live_hashes = AsyncMock(side_effect=lambda hashes: set(hashes))
++    storage._fetch_live_hashes = AsyncMock(side_effect=lambda hashes, store=None: set(hashes))
+     return storage
+ 
+ 
+@@ -206,7 +208,7 @@ async def test_min_connections_filters_nodes(self):
+             _edge("a", "b"), _edge("a", "c"), _edge("d", "e"),
+         ])
+         storage._fetch_memories_by_hashes = AsyncMock(
+-            side_effect=lambda hashes: [_memory(h) for h in hashes]
++            side_effect=lambda hashes, store=None: [_memory(h) for h in hashes]
          )
  
-         assert result == [{"entity_name": "Global", "count": 3}]
--        graph.list_entities.assert_awaited_once_with(limit=1)
-+        graph.list_entities.assert_awaited_once_with(limit=1, store=None)
-         # The fallback path has no retrieved-chunk link to report, so the
-         # builder still leaves those entities' chunks empty.
-         assert hashes_by_entity == {}
+         result = await storage.get_graph_visualization_data(min_connections=2)
+@@ -222,7 +224,7 @@ async def test_connection_count_uses_distinct_targets(self):
+             _edge("a", "b", "causes"), _edge("a", "b", "related"),
+         ])
+         storage._fetch_memories_by_hashes = AsyncMock(
+-            side_effect=lambda hashes: [_memory(h) for h in hashes]
++            side_effect=lambda hashes, store=None: [_memory(h) for h in hashes]
+         )
+ 
+         result = await storage.get_graph_visualization_data()
+@@ -254,10 +256,10 @@ async def test_deleted_targets_do_not_consume_node_limit(self):
+         ])
+         live_hashes = {"live-source", "live-target"}
+         storage._fetch_live_hashes = AsyncMock(
+-            side_effect=lambda hashes: set(hashes) & live_hashes
++            side_effect=lambda hashes, store=None: set(hashes) & live_hashes
+         )
+         storage._fetch_memories_by_hashes = AsyncMock(
+-            side_effect=lambda hashes: [_memory(h) for h in hashes]
++            side_effect=lambda hashes, store=None: [_memory(h) for h in hashes]
+         )
+ 
+         result = await storage.get_graph_visualization_data(limit=1)
+@@ -274,7 +276,7 @@ async def test_bounded_graph_loads_only_selected_source_records(self):
+             _edge("a", "b"), _edge("c", "d"), _edge("e", "f"),
+         ])
+         storage._fetch_memories_by_hashes = AsyncMock(
+-            side_effect=lambda hashes: [_memory(h) for h in hashes]
++            side_effect=lambda hashes, store=None: [_memory(h) for h in hashes]
+         )
+ 
+         result = await storage.get_graph_visualization_data(limit=1)
+@@ -470,6 +472,9 @@ async def test_full_iterator_scan_holds_write_lock(self):
+         storage._call_client = MilvusMemoryStorage._call_client.__get__(
+             storage, MilvusMemoryStorage,
+         )
++        storage._drain_rows = MilvusMemoryStorage._drain_rows.__get__(
++            storage, MilvusMemoryStorage,
++        )
+         scan_started = threading.Event()
+         release_scan = threading.Event()
+         delete_started = threading.Event()
 ```
 
-**File**: `tests/unit/test_store_scoped_entity_graph.py` (added, +307/-0)
+**File**: `tests/storage/test_milvus_read_paths_store_scope.py` (added, +398/-0)
 ```diff
-@@ -0,0 +1,307 @@
-+"""Store confinement for the entity graph (#2118).
+@@ -0,0 +1,398 @@
++# Copyright 2024 Heinrich Krupp
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
 +
-+The entity graph carries no store of its own: entity links are rows in
-+``memory_graph`` with ``relationship_type='has_entity'``, and the table shares
-+its SQLite file with ``memories``. Before the fix every entity read in
-+``GraphStorage`` was global, so a credential scoped to one store could reach
-+entity names through another store's memories. ``get_entity_detail`` confined
-+``chunks`` by post-filtering ``get_by_hash``, but ``_discover_related_entities``
-+walked ``common_neighbors`` unfiltered and returned ``related_entities`` from
-+every partition.
++"""Milvus read paths confine to the claimed store (#1958).
 +
-+These tests are red before the fix and green after it. They seed two stores with
-+an entity that exists in both (``Shared``) plus one entity each that exists only
-+in that store, then assert that a store-scoped read never crosses over while the
-+unscoped read stays exactly as wide as before.
++#1962 taught the hash-addressed operations to confine and left
++`get_by_hash_is_store_scoped` at `False`, because the read paths still ignored
++`store`: a `read:<store>` credential could have searched, listed, counted and
++recalled across every partition. Eleven methods accepted `store` and dropped it,
++several with a comment saying so.
++
++This pins the confinement at the layer each method drives — the filter
++expression it hands to the query helper — so a later refactor cannot quietly
++stop passing it. The legacy case is the other half: a collection without the
++`store` field refuses a named store instead of serving every partition, which is
++what lets the capability flag be `True`.
 +"""
 +
 +from __future__ import annotations
 +
-+import json
-+import sqlite3
-+from pathlib import Path
++from typing import Any
++from unittest.mock import AsyncMock, MagicMock
 +
 +import pytest
 +
-+from mcp_memory_service.server.handlers.graph import (
-+    _discover_related_entities,
-+    get_entity_detail,
-+)
-+from mcp_memory_service.storage.graph import GraphStorage
++from mcp_memory_service.storage.milvus import MilvusMemoryStorage
 +
-+STORE_A = "alpha"
-+STORE_B = "beta"
-+
-+MEM_A1 = "a1" * 32
-+MEM_A2 = "a2" * 32
-+MEM_B1 = "b1" * 32
-+MEM_B2 = "b2" * 32
-+# A pair of in-store memories that a foreign memory associates with on both
-+# sides, plus a soft-deleted memory that still carries an entity link.
-+MEM_X1 = "x1" * 32
-+MEM_X2 = "x2" * 32
-+MEM_Y1 = "y1" * 32
-+MEM_D1 = "d1" * 32
++STORE = "alpha"
++OTHER = "beta"
 +
 +
-+def _seed_database(db_path: Path) -> None:
-+    """Two stores, two memories each, and the entity links that connect them.
++def _make_storage(has_store: bool = True) -> MilvusMemoryStorage:
++    """A MilvusMemoryStorage with __init__ skipped and the client mocked."""
++    storage = MilvusMemoryStorage.__new__(MilvusMemoryStorage)
++    storage.uri = "./milvus.db"
++    storage.collection_name = "unit_test_collection"
++    storage.embedding_dimension = 4
++    storage.embedding_model_name = "test-model"
++    storage.embedding_model = MagicMock()
++    storage._initialized = True
++    storage.client = MagicMock()
++    storage._has_content_lower = True
++    storage._has_bm25 = False
++    storage._has_access_collection = False
++    storage._has_store = has_store
++    storage._legacy_store_warned = False
++    storage._graph_has_store = None
++    storage.semantic_dedup_enabled = False
++    storage._generate_embedding = MagicMock(return_value=[0.1, 0.2, 0.3, 0.4])
++    storage._detect_conflicts = AsyncMock(return_value=[])
++    storage._delete_graph_edges = AsyncMock()
++    return storage
 +
-+    ``Shared`` is carried by memories in both stores, so a global read counts it
-+    more often than a scoped read. ``OnlyB`` is reachable from ``MEM_A1`` only
-+    through ``MEM_B1`` — that is the hop the old code allowed.
++
++def _captured_filter(call: Any) -> str:
++    """The filter expression a mocked helper was called with."""
++    kwargs = call.kwargs or {}
++    if "filter_expr" in kwargs:
++        return kwargs["filter_expr"]
++    if "store_filter" in kwargs:
++        return kwargs["store_filter"] or ""
++    args = call.args or ()
++    return next((a for a in args if isinstance(a, str)), "")
++
++
++class TestFlagIsClaimed:
++    def test_milvus_claims_store_scoping(self):
++        """Only safe because every read path confines or refuses below."""
++        assert MilvusMemoryStorage.get_by_hash_is_store_scoped is True
++
++
++class TestQueryFiltersCarryTheStore:
++    async def test_get_by_exact_content(self):
++        storage = _make_storage()
++        storage._query_memories = AsyncMock(return_value=[])
++
++        await storage.get_by_exact_content("needle", store=STORE)
++
++        assert f'store == "{STORE}"' in _captured_filter(storage._query_memories.call_args)
++
++    async def test_get_memories_by_time_range(self):
++        storage = _make_storage()
++        storage._query_memories = AsyncMock(return_value=[])
++
++        await storage.get_memories_by_time_range(1.0, 2.0, store=STORE)
++
++        assert f'store == "{STORE}"' in _captured_filter(storage._query_memories.call_args)
++
++    async def test_get_all_memories(self):
++        storage = _make_storage()
++        storage._query_memories = AsyncMock(return_value=[])
++
++        await storage.get_all_memories(store=STORE)
++
++        assert f'store == "{STORE}"' in _captured_filter(storage._query_memories.call_args)
++
++    async def test_search_memories(self):
++        storage = _make_storage()
++        storage._query_memories = AsyncMock(return_value=[])
++        storage._drain_rows = AsyncMock(return_value=[])
++
++        # Without a query the scan branch runs and hands its filter to
++        # _query_memories(filter_expr=...).
++        await storage.search_memories(query=None, store=STORE)
++
++        assert f'store == "{STORE}"' in _captured_filter(storage._query_memories.call_args)
++
++    async def test_get_memory_timestamps(self):
++        storage = _make_storage()
++        storage._drain_rows = AsyncMock(return_value=[])
++
++        await storage.get_memory_timestamps(store=STORE)
++
++        assert f'store == "{STORE}"' in _captured_filter(storage._drain_rows.call_args)
++
++    async def test_get_all_tags_with_counts(self):
++        storag
+```
+
+**File**: `tests/storage/test_milvus_search_methods.py` (modified, +5/-3)
+```diff
+@@ -282,7 +282,9 @@ async def test_exact_mode_uses_get_by_exact_content(self):
+         result = await storage.search_memories(query="exact match", mode="exact")
+ 
+         assert result["total"] == 1
+-        storage.get_by_exact_content.assert_called_once_with("exact match")
++        # The fallback carries the scope through, otherwise it would read every
++        # partition while the pushed-down path confines (#1958).
++        storage.get_by_exact_content.assert_called_once_with("exact match", store="default")
+ 
+     @pytest.mark.asyncio
+     async def test_time_filter_pushed_to_milvus(self):
+@@ -366,7 +368,7 @@ async def test_time_only_search_reconnects_lite_after_channel_death(self, monkey
+         Before, the error escaped the iterator and search_memories returned an
+         empty successful result, and every later search failed the same way.
+         """
+-        import mcp_memory_service.storage.milvus as milvus_module
++        import mcp_memory_service.storage.milvus as milvus_module  # inline import: patched per test
+ 
+         storage = _make_storage()
+         storage.uri = "milvus-test.db"
+@@ -401,7 +403,7 @@ async def test_time_only_search_reconnects_lite_after_channel_death(self, monkey
+     @pytest.mark.asyncio
+     async def test_iterator_scan_does_not_reconnect_on_other_errors(self, monkeypatch):
+         """Only the Lite dead-channel signature triggers a reconnect."""
+-        import mcp_memory_service.storage.milvus as milvus_module
++        import mcp_memory_service.storage.milvus as milvus_module  # inline import: patched per test
+ 
+         storage = _make_storage()
+         storage.uri = "milvus-test.db"
+```
+
+**File**: `tests/storage/test_milvus_soft_delete_e2e.py` (modified, +30/-0)
+```diff
+@@ -110,3 +110,33 @@ async def test_live_memory_is_visible_and_not_deleted(storage):
+ @pytest.mark.asyncio
+ async def test_is_deleted_false_for_absent_memory(storage):
+     assert (await storage.is_deleted(generate_content_hash("never stored"))) is False
++
++
++@pytest.mark.asyncio
++async def test_count_and_listing_agree_once_a_memory_is_tombstoned(storage):
++    """`memory_list` shows a page next to this total, so both drop the tombstone.
++
++    Runs against a real collection because the count narrows its tombstone scan
++    with a ``like`` on the metadata string, which a mocked client cannot vouch
++    for (#2133 review).
 +    """
-+    conn = sqlite3.connect(db_path)
-+    try:
-+        conn.execute(
-+            "CREATE TABLE memories ("
-+            "content_hash TEXT PRIMARY KEY, store TEXT NOT NULL, deleted_at REAL)"
-+        )
-+        conn.execute(
-+            """
-+            CREATE TABLE memory_graph (
-+                source_hash TEXT NOT NULL,
-+                target_hash TEXT NOT NULL,
-+                similarity REAL NOT NULL,
-+                connection_types TEXT NOT NULL,
-+                metadata TEXT,
-+                created_at REAL NOT NULL,
-+                relationship_type TEXT NOT NULL DEFAULT 'related',
-+                PRIMARY KEY (source_hash, target_hash)
++    kept = await _store_live(storage, "a memory that stays")
++    gone = await _store_live(storage, "a memory that gets tombstoned")
++    ok, msg = await storage.update_memory_metadata(
++        gone, {"metadata": {"deleted_at": time.time()}}
++    )
++    assert ok, msg
++
++    listed = await storage.get_all_memories(limit=None)
++
++    assert [m.content_hash for m in listed] == [kept]
++    assert await storage.count_all_memories() == 1
++    assert await storage.count_all_memories(include_superseded=False) == 1
++    assert await storage.count_all_memories(memory_type="note", tags=["t"]) == 1
++    assert [m.content_hash for m, _ in await storage.get_all_memories_with_store()] == [kept]
++    # The tag total sits next to the paged tag listing, the stats total next to
++    # the dashboard's list: neither may count the tombstone either.
++    assert [m.content_hash for m in await storage.search_by_tags(["t"])] == [kept]
++    assert await storage.count_memories_by_tag(["t"]) == 1
++    stats = await storage.get_stats()
++    assert (stats["total_memories"], stats["memories_this_week"]) == (1, 1)
+```
+
+---
+
+### Incident Patch 3: `a68237b3` (2026-11-25)
+**Commit Message**: fix(milvus): rebuild entities without cross-store shares_entity pairs (#2123) (#2130)
+
+* fix(milvus): rebuild entities without cross-store shares_entity pairs (#2123)
+
+Since #2119 the Milvus graph refuses a shares_entity pair whose two
+memories live in different stores. The rebuild planned such pairs, deleted
+every entity edge, then stopped on the first refused write.
+
+The Milvus scan the rebuild counts now carries each row's store, and the
+plan drops pairs across two stores, or with an end it cannot attribute,
+in build(), so the preview counts them. A preview reads the association
+schema, and an unreadable schema stops before anything is deleted.
+
+* changelog: name the fragment after the PR (#2130)
+
+---------
+
+Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/2130.fixed.md` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++- **An entity rebuild over a multi-store Milvus backend completes instead of stopping
++  after it has deleted the old edges (#2123).** Since #2119 the Milvus graph refuses a
++  `shares_entity` pair whose two memories live in different stores, and the rebuild
++  planned such pairs, deleted every entity edge, then raised on the first refused write.
++  The Milvus scan the rebuild counts now carries each row's store, and the plan drops a
++  pair whose ends are in two stores, or whose store it cannot tell, before the preview is
++  shown. The report gains `shares_entity_pairs_skipped_cross_store` and
++  `shares_entity_pairs_skipped_unknown_store`, with one warning per run. A preview now
++  reads the association collection's schema, and an unreadable schema stops the rebuild
++  before anything is deleted, with a message that names it. SQLite and hybrid are
++  unchanged.
+```
+
+**File**: `src/mcp_memory_service/reasoning/entity_rebuild.py` (modified, +44/-2)
+```diff
+@@ -1,11 +1,14 @@
+ """Plan entity-graph replacement before making any destructive writes."""
+ 
++import logging
+ from collections import Counter, defaultdict, deque
+-from typing import Any, Callable
++from typing import Any, Callable, Optional
+ 
+ from .entities import Entity, EntityExtractor
+ from .entity_linker import ENTITY_RELATIONSHIPS, EntityLinker, MAX_LINKS_PER_ENTITY
+ 
++logger = logging.getLogger(__name__)
++
+ 
+ def _tags(value: object) -> list[str]:
+     """Accept current list tags and legacy comma-separated metadata tags."""
+@@ -29,12 +32,23 @@ class EntityRebuildPlan:
+     including the just-inserted memory. Protected pairs cannot be overwritten
+     by symmetric shares_entity writes. Counts are physical edge rows; pairs
+     are reported separately.
++
++    ``store_of`` maps each scanned memory hash to its store. With a map, a
++    shares_entity pair is kept only when both ends are known and in the same
++    store, the rule the Milvus graph enforces at store time (#2119, #2123);
++    without one (SQLite and hybrid) every pair is kept, as before.
+     """
+ 
+     def __init__(
+-        self, snapshot: list[dict], entity_key: Callable[[str], str]
++        self,
++        snapshot: list[dict],
++        entity_key: Callable[[str], str],
++        store_of: Optional[dict[str, str]] = None,
+     ) -> None:
+         self.entity_key = entity_key
++        self.store_of = store_of
++        self.skipped_cross_store = 0
++        self.skipped_unknown_store = 0
+         self.protected = {
+             (row["source_hash"], row["target_hash"])
+             for row in snapshot
+@@ -109,6 +123,32 @@ async def build(self, memories: list) -> None:
+                 memory.content_hash, [e.name for e in entities], self
+             )
+             self.memories_scanned += 1
++        if self.store_of is not None:
++            self._drop_pairs_outside_one_store()
++
++    def _drop_pairs_outside_one_store(self) -> None:
++        """Remove pairs the store-scoped graph would refuse, so apply() never sees them.
++
++        Done once after the replay, so the preview counts them too. Equivalent
++        to refusing them as they are proposed: the candidate window holds at
++        most MAX_LINKS_PER_ENTITY hashes, so the linker's cap never cuts a
++        candidate and a dropped pair cannot have displaced another.
++        """
++        for pair in list(self.associations):
++            stores = [self.store_of.get(memory_hash) for memory_hash in pair]
++            if None in stores:
++                self.skipped_unknown_store += 1
++            elif stores[0] != stores[1]:
++                self.skipped_cross_store += 1
++            else:
++                continue
++            del self.associations[pair]
++        if self.skipped_cross_store or self.skipped_unknown_store:
++            logger.warning(
++                "Entity rebuild skipped %d cross-store and %d unattributed "
++                "shares_entity pairs; the graph keeps edges within one store (#2123)",
++                self.skipped_cross_store, self.skipped_unknown_store,
 +            )
-+            """
-+        )
-+        conn.executemany(
-+            "INSERT INTO memories (content_hash, store, deleted_at) VALUES (?, ?, ?)",
-+            [
-+                (MEM_A1, STORE_A, None),
-+                (MEM_A2, STORE_A, None),
-+                (MEM_B1, STORE_B, None),
-+                (MEM_B2, STORE_B, None),
-+                (MEM_X1, STORE_A, None),
-+                (MEM_X2, STORE_A, None),
-+                (MEM_Y1, STORE_B, None),
-+                # Soft-deleted: its edges must not count for a scoped read.
-+                (MEM_D1, STORE_A, 1234.0),
-+            ],
-+        )
-+        # Entity links: source is the memory, target is the entity name.
-+        conn.executemany(
-+            "INSERT INTO memory_graph (source_hash, target_hash, similarity,"
-+            " connection_types, metadata, created_at, relationship_type)"
-+            " VALUES (?, ?, 1.0, '[\"entity\"]', ?, 1.0, 'has_entity')",
-+            [
-+                (MEM_A1, "Shared", json.dumps({"entity_type": "concept"})),
-+                (MEM_A2, "Shared", json.dumps({"entity_type": "concept"})),
-+                (MEM_A2, "OnlyA", json.dumps({"entity_type": "concept"})),
-+                (MEM_B1, "Shared", json.dumps({"entity_type": "concept"})),
-+                (MEM_B1, "OnlyB", json.dumps({"entity_type": "concept"})),
-+                (MEM_B2, "Shared", json.dumps({"entity_type": "concept"})),
-+                (MEM_D1, "Ghost", json.dumps({"entity_type": "concept"})),
-+            ],
-+        )
-+        # A foreign memory (Y1, store beta) associated with both X1 and X2 in
-+        # store alpha. Symmetric "related" edges are stored in both directions.
-+        conn.executemany(
-+            "INSERT INTO memory_graph (source_hash, target_hash, similarity,"
-+            " connection_types, metadata, created_at, relationship_type)"
-+            " VALUES (?, ?, 0.8, '[\"semantic\"]', '{}', 2.0, 'related')",
-+            [
-+                (MEM_X1, MEM_Y1),
-+                (MEM_Y1, MEM_X1),
-+                (MEM_X2, MEM_Y1),
-+                (MEM_Y1, MEM_X2),
-+            ],
-+        )
-+        conn.commit()
-+    finally:
-+        conn.close()
+ 
+     def describe(self) -> dict:
+         """Return the preview without exposing memory contents."""
+@@ -122,6 +162,8 @@ def describe(self) -> dict:
+             "shares_entity_pairs_before": self.pairs_before,
+             "shares_entity_pairs_after": len(self.associations),
+             "protected_edges": len(self.protected),
++            "shares_entity_pairs_skipped_cross_store": self.skipped_cross_store,
++            "shares_entity_pairs_skipped_unknown_store": self.skipped_unknown_store,
+         }
+ 
+     async def apply(self, graph: Any, report: dict) -> None:
+```
+
+**File**: `src/mcp_memory_service/server/handlers/entity_rebuild.py` (modified, +38/-5)
+```diff
+@@ -46,27 +46,60 @@ async def _open_graph(
+         await graph.close()
+ 
+ 
++async def _confines_store(graph: MilvusGraphStorage) -> bool:
++    """Whether the Milvus graph refuses a shares_entity pair across two stores.
++
++    True when the association collection carries ``store``, and for a preview
++    of a missing collection, which the real run creates with the field. An
++    unreadable schema refuses every write, so the rebuild stops before it
++    deletes anything rather than after.
++    """
++    if graph._has_store is None:
++        if await graph._call_client(
++            "has_collection", collection_name=graph.collection_name
++        ):
++            raise RuntimeError(
++                "Milvus association collection schema could not be read, so "
++                "every graph write would be refused (#2119); no edges deleted"
++            )
++        return True
++    return graph._has_store
 +
 +
-+@pytest.fixture
-+async def graph(tmp_path):
-+    db_path = tmp_path / "graph.db"
-+    _seed_database(db_path)
-+    storage = GraphStorage(str(db_path))
+ async def _rebuild(server: Any, dry_run: bool, report: dict) -> None:
+     storage = await server._ensure_storage_initialized()
+     primary = storage.primary if isinstance(storage, HybridMemoryStorage) else storage
+     async with _open_graph(primary, dry_run) as graph:
+         # None means every named store; limit=None drains Milvus's full iterator.
++        # On Milvus the same scan carries each row's store, so the list that is
++        # counted is the list the pairs are attributed from (#2123).
+         with strict_reads():
+-            memories = await primary.get_all_memories(limit=None, store=None)
++            if isinstance(primary, MilvusMemoryStorage):
++                rows = await primary.get_all_memories_with_store()
++            else:
++                rows = [
++                    (m, None)
++                    for m in await primary.get_all_memories(limit=None, store=None)
++                ]
+             expected = await primary.count_all_memories(store=None)
+-        if len(memories) != expected:
++        if len(rows) != expected:
+             raise RuntimeError(
+                 "Memory scan was incomplete or the store changed; no edges deleted"
+             )
+         # Milvus listings include tombstones stored inside metadata, unlike
+         # SQLite's deleted_at SQL filter. Verify the raw count before filtering.
+         if isinstance(graph, MilvusGraphStorage):
+-            memories = [
+-                m for m in memories if m.metadata.get("deleted_at") is None
++            rows = [
++                (m, store) for m, store in rows
++                if m.metadata.get("deleted_at") is None
+             ]
++        memories = [m for m, _ in rows]
++        store_of = None
++        if isinstance(graph, MilvusGraphStorage) and await _confines_store(graph):
++            store_of = {m.content_hash: store for m, store in rows}
+         snapshot = await graph.get_edge_snapshot()
+         key = (lambda name: name) if isinstance(graph, GraphStorage) else _entity_key
+-        plan = EntityRebuildPlan(snapshot, entity_key=key)
++        plan = EntityRebuildPlan(snapshot, entity_key=key, store_of=store_of)
+         await plan.build(memories)
+         report.update(plan.describe())
+         if not dry_run:
+```
+
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +28/-0)
+```diff
+@@ -4516,6 +4516,27 @@ async def get_all_memories(
+             drop_superseded=not include_superseded,
+         )
+ 
++    async def get_all_memories_with_store(self) -> List[Tuple[Memory, str]]:
++        """Every row, newest first, paired with the store it belongs to.
++
++        The same scan as ``get_all_memories(limit=None, store=None)``, with
++        ``store`` added to the requested fields, so the entity rebuild checks one
++        list against ``count_all_memories`` and attributes every pair from that
++        same list (#2123). Rows of a collection without the field, and rows
++        written without the key, report ``"default"``, as :meth:`_row_store`
++        does everywhere else.
++        """
++        if not self._ensure_initialized():
++            return []
++        rows = await self._iterate_all_rows("", with_store=True)
++        pairs: List[Tuple[Memory, str]] = []
++        for row in rows:
++            mem = self._entity_to_memory(row)
++            if mem is not None:
++                pairs.append((mem, self._row_store(row)))
++        pairs.sort(key=lambda pair: pair[0].created_at or 0.0, reverse=True)
++        return pairs
++
+     async def count_all_memories(
+         self,
+         memory_type: Optional[str] = None,
+@@ -5379,6 +5400,7 @@ async def _iterate_all_rows(
+         self,
+         filter_expr: str,
+         include_embeddings: bool = False,
++        with_store: bool = False,
+     ) -> List[Dict[str, Any]]:
+         """Collect every row matching ``filter_expr`` using ``QueryIterator``.
+ 
+@@ -5389,12 +5411,15 @@ async def _iterate_all_rows(
+             include_embeddings: If True, request the ``vector`` field in
+                 ``output_fields`` so :meth:`_entity_to_memory` can hydrate
+                 ``Memory.embedding``.
++            with_store: If True, also request ``store`` when the collection
++                has it, for :meth:`_row_store`.
+         """
+         async with self._write_lock:
+             if self.client is None:
+                 raise RuntimeError("MilvusMemoryStorage was not initialized")
+             return await self._scan_with_lite_retry(
+                 self._drain_query_iterator, filter_expr, include_embeddings,
++                with_store,
+             )
+ 
+     async def _scan_with_lite_retry(self, drain, *args):
+@@ -5424,6 +5449,7 @@ def _drain_query_iterator(
+         self,
+         filter_expr: str,
+         include_embeddings: bool = False,
++        with_store: bool = False,
+     ) -> List[Dict[str, Any]]:
+         """Sync helper that drains a ``QueryIterator`` into a plain list.
+ 
+@@ -5437,6 +5463,8 @@ def _drain_query_iterator(
+             if include_embeddings
+             else self._OUTPUT_FIELDS_BASE
+         )
++        if with_store:
++            fields = tuple(self._row_fields(fields))
+         iterator = self.client.query_iterator(
+             collection_name=self.collection_name,
+             filter=filter_expr or "",
+```
+
+**File**: `src/mcp_memory_service/storage/milvus_graph.py` (modified, +13/-1)
+```diff
+@@ -199,10 +199,22 @@ def __init__(
+     # -- Initialization ------------------------------------------------------
+ 
+     async def initialize(self, create_if_missing: bool = True) -> None:
+-        """Connect, optionally leaving an absent collection untouched for previews."""
++        """Connect, optionally leaving an absent collection untouched for previews.
++
++        A preview still reads the schema of a collection that exists, so its
++        store-field state is the one a real run would act on (#2123).
++        """
+         await asyncio.to_thread(self._connect_client)
+         if create_if_missing:
+             await asyncio.to_thread(self._ensure_collection)
++        else:
++            await asyncio.to_thread(self._detect_existing_store_field)
++
++    def _detect_existing_store_field(self) -> None:
++        """Read the store-field state without creating a missing collection."""
++        assert self.client is not None
++        if self.client.has_collection(collection_name=self.collection_name):
++            self._detect_store_field()
+ 
+     def _connect_client(self) -> None:
+         kwargs: Dict[str, Any] = {"uri": self.uri}
+```
+
+**File**: `tests/quality/test_rebuild_entities.py` (modified, +15/-5)
+```diff
+@@ -167,21 +167,31 @@ async def test_rebuild_covers_all_stores_and_deleted_rows(backend, monkeypatch):
+     assert await graph.store_entity_link(gone.content_hash, "stale", "tag")
+     if isinstance(primary, MilvusMemoryStorage):
+         tombstone = await _store(primary, 4, ["task:tombstone"])
+-        assert (await primary.update_memory_metadata(
+-            tombstone.content_hash, {"metadata": {"deleted_at": time.time()}}
+-        ))[0]
++        # Link before the tombstone: since #2119 the graph refuses a new link
++        # on a soft-deleted memory, so the stale edge has to predate it.
+         assert await graph.store_entity_link(
+             tombstone.content_hash, "tombstone", "tag"
+         )
++        assert (await primary.update_memory_metadata(
++            tombstone.content_hash, {"metadata": {"deleted_at": time.time()}}
++        ))[0]
+     snapshots = [await primary.get_by_hash(m.content_hash) for m in (a, b)]
+ 
+     result = await _run(storage, dry_run=False)
+     assert result["success"], result
+     assert result["memories_scanned"] == 2
+-    assert result["edges_after"] == {"has_entity": 2, "shares_entity": 2}
+     assert await graph.get_entities_for_memory(gone.content_hash) == []
+     assert await graph.find_memories_by_entity("tombstone") == []
+-    assert await graph.has_edge(a.content_hash, b.content_hash, "shares_entity")
++    # a and b are in different stores. SQLite writes the pair and hides it from
++    # store-scoped reads (#2121); Milvus refuses it, so the rebuild skips it (#2123).
++    cross_store = isinstance(primary, MilvusMemoryStorage)
++    assert result["edges_after"] == {
++        "has_entity": 2, "shares_entity": 0 if cross_store else 2,
++    }
++    assert result["shares_entity_pairs_skipped_cross_store"] == int(cross_store)
++    assert await graph.has_edge(
++        a.content_hash, b.content_hash, "shares_entity"
++    ) is not cross_store
+     assert [await primary.get_by_hash(m.content_hash) for m in (a, b)] == snapshots
+ 
+ 
+```
+
+**File**: `tests/storage/test_milvus_rebuild_store_scope.py` (added, +156/-0)
+```diff
+@@ -0,0 +1,156 @@
++"""Entity rebuild over a multi-store Milvus backend, on Milvus Lite (#2123).
++
++Since #2119 the Milvus graph refuses a ``shares_entity`` pair whose two
++memories live in different stores. The rebuild used to plan such pairs, delete
++every entity edge and then stop on the first refused write. These cases drive
++the real ``rebuild_entities`` tool against a real Milvus Lite memory collection
++and association collection; only the embedding is stubbed.
++
++Run: pytest tests/storage/test_milvus_rebuild_store_scope.py -v
++"""
++
++import hashlib
++import json
++import uuid
++
++import numpy as np
++import pytest
++import pytest_asyncio
++
++pymilvus = pytest.importorskip("pymilvus")
++milvus_lite = pytest.importorskip("milvus_lite")
++
++import mcp_memory_service.config as cfg
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.server import MemoryServer
++from mcp_memory_service.storage.milvus import MilvusMemoryStorage
++from mcp_memory_service.storage.milvus_graph import MilvusGraphStorage
++from mcp_memory_service.utils.hashing import generate_content_hash
++
++
++class _Encoder:
++    """Offline embeddings, independent of the graph behaviour under test."""
++
++    def encode(self, texts, **kwargs):
++        return np.array([
++            np.random.default_rng(int(hashlib.sha256(t.encode()).hexdigest()[:8], 16))
++            .standard_normal(64).astype(np.float32)
++            for t in texts
++        ])
++
++
++@pytest_asyncio.fixture
++async def backend(tmp_path, monkeypatch):
++    async def offline_embeddings(self):
++        self.embedding_model = _Encoder()
++        self.embedding_dimension = 64
++
++    monkeypatch.setattr(
++        MilvusMemoryStorage, "_initialize_embedding_model", offline_embeddings
++    )
++    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
++    monkeypatch.setattr(cfg, "MCP_ENTITY_TAG_INCLUDE", "")
++    monkeypatch.setattr(cfg, "MCP_ENTITY_TAG_EXCLUDE", "")
++    monkeypatch.setattr(cfg, "MCP_ENTITY_CUSTOM_TERMS", "")
++    monkeypatch.setenv("MCP_ENTITY_LINKING_ENABLED", "true")
++    storage = MilvusMemoryStorage(
++        uri=str(tmp_path / "milvus.db"),
++        collection_name=f"rebuild_{uuid.uuid4().hex[:12]}",
++        embedding_model="offline",
++    )
++    await storage.initialize()
++    graph = await storage._get_graph_storage()
 +    try:
-+        yield storage
++        yield storage, graph
 +    finally:
-+        await s
++        await graph.close()
++        await storage.close()
++
++
++async def _store(storage, index, tags, store="default"):
++    content = f"plain note number {index}"
++    memory = Memory(
++        content=content,
++        content_hash=generate_content_hash(content),
++        tags=tags,
++        created_at=1_700_000_000.0 + index,
++    )
++    ok, message = await storage.store(memory, store=store)
++    assert ok, message
++    return memory.content_hash
++
++
++async def _run(storage, **arguments):
++    server = MemoryServer(storage=storage)
++    result = await server.handle_memory_quality(
++        {"action": "rebuild_entities", **arguments}
++    )
++    return json.loads(result[0].text)
++
++
++async def _shares_entity_pairs(graph):
++    rows = await graph._drain_edges(
++        'relationship_type == "shares_entity"', ["source_hash", "target_hash"]
++    )
++    return {tuple(sorted((r["source_hash"], r["target_hash"]))) for r in rows}
++
++
++async def test_multi_store_rebuild_skips_cross_store_pairs(backend):
++    storage, graph = backend
++    a = await _store(storage, 1, ["shared"], store="docs")
++    b = await _store(storage, 2, ["shared"], store="docs")
++    c = await _store(storage, 3, ["shared"], store="notes")
++    assert graph._has_store is True
++
++    preview = await _run(storage)
++    assert preview["success"], preview
++    assert preview["shares_entity_pairs_after"] == 1
++    assert preview["shares_entity_pairs_skipped_cross_store"] == 2
++    assert preview["shares_entity_pairs_skipped_unknown_store"] == 0
++
++    result = await _run(storage, dry_run=False)
++    assert result["success"], result
++    assert result["edges_created"] == {"has_entity": 3, "shares_entity": 2}
++    assert result["edges_created"] == preview["edges_after"]
++    assert result["shares_entity_pairs_skipped_cross_store"] == 2
++    assert await _shares_entity_pairs(graph) == {tuple(sorted((a, b)))}
++    assert c not in {h for pair in await _shares_entity_pairs(graph) for h in pair}
++
++
++async def test_preview_of_a_missing_collection_counts_the_skips(backend):
++    storage, graph = backend
++    await _store(storage, 1, ["shared"], store="docs")
++    await _store(storage, 2, ["shared"], store="notes")
++    await storage._call_client(
++        "drop_collection", collection_name=graph.collection_name
++    )
++
++    preview = await _run(storage)
++    assert preview["success"], preview
++    assert preview["shares_entity_pairs_skipped_cross_store"] == 1
++    assert not await storage._call_client(
++        "has_collection", collection_name=graph.collection_name
++    )
++    applied = await _run(storage, dry_run=Fals
+```
+
+**File**: `tests/unit/test_entity_rebuild_store_scope.py` (added, +110/-0)
+```diff
+@@ -0,0 +1,110 @@
++"""The rebuild plan keeps shares_entity pairs inside one store when asked (#2123).
++
++Backend-free: the plan is fed Memory objects and a store map directly, and its
++output is written to a stand-in graph that refuses a cross-store pair the way
++MilvusGraphStorage.store_association does since #2119. The Milvus Lite cases are
++in tests/storage/test_milvus_rebuild_store_scope.py.
++"""
++
++import pytest
++
++import mcp_memory_service.config as cfg
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.reasoning.entity_rebuild import EntityRebuildPlan
++from mcp_memory_service.utils.hashing import generate_content_hash
++
++
++def _key(name):
++    return name
++
++
++@pytest.fixture(autouse=True)
++def _entity_config(monkeypatch):
++    monkeypatch.setattr(cfg, "MCP_ENTITY_TAG_INCLUDE", "")
++    monkeypatch.setattr(cfg, "MCP_ENTITY_TAG_EXCLUDE", "")
++    monkeypatch.setattr(cfg, "MCP_ENTITY_CUSTOM_TERMS", "")
++
++
++def _memory(index):
++    content = f"plain note number {index}"
++    return Memory(
++        content=content,
++        content_hash=generate_content_hash(content),
++        tags=["shared"],
++        created_at=1_700_000_000.0 + index,
++    )
++
++
++class _OneStoreGraph:
++    """Accepts a pair only when both ends are known and in the same store."""
++
++    def __init__(self, store_of):
++        self.store_of = store_of
++        self.pairs = []
++        self.links = []
++
++    async def delete_edges_by_relationship_types(self, kinds):
++        return 0
++
++    async def store_entity_link(self, memory_hash, name, kind):
++        self.links.append(memory_hash)
++        return True
++
++    async def store_association(self, source_hash, target_hash, **edge):
++        source = self.store_of.get(source_hash)
++        if source is None or source != self.store_of.get(target_hash):
++            return False
++        self.pairs.append(tuple(sorted((source_hash, target_hash))))
++        return True
++
++
++def _report():
++    return {"edges_deleted": 0, "edges_created": {"has_entity": 0, "shares_entity": 0}}
++
++
++async def test_cross_store_pairs_are_dropped_and_counted_before_apply():
++    a, b, c = (_memory(i) for i in range(3))
++    store_of = {a.content_hash: "docs", b.content_hash: "docs", c.content_hash: "notes"}
++    plan = EntityRebuildPlan([], entity_key=_key, store_of=store_of)
++    await plan.build([a, b, c])
++
++    preview = plan.describe()
++    assert preview["shares_entity_pairs_after"] == 1
++    assert preview["shares_entity_pairs_skipped_cross_store"] == 2
++    assert preview["shares_entity_pairs_skipped_unknown_store"] == 0
++    assert preview["edges_after"] == {"has_entity": 3, "shares_entity": 2}
++
++    graph, report = _OneStoreGraph(store_of), _report()
++    await plan.apply(graph, report)
++    assert graph.pairs == [tuple(sorted((a.content_hash, b.content_hash)))]
++    assert report["edges_created"] == preview["edges_after"]
++
++
++async def test_an_endpoint_without_a_store_is_skipped_separately():
++    a, b, c = (_memory(i) for i in range(3))
++    store_of = {a.content_hash: "docs", b.content_hash: "docs"}
++    plan = EntityRebuildPlan([], entity_key=_key, store_of=store_of)
++    await plan.build([a, b, c])
++
++    preview = plan.describe()
++    assert preview["shares_entity_pairs_skipped_unknown_store"] == 2
++    assert preview["shares_entity_pairs_skipped_cross_store"] == 0
++    # apply() is never handed a pair the plan could not attribute.
++    await plan.apply(_OneStoreGraph(store_of), _report())
++
++
++async def test_without_a_store_map_every_pair_is_kept():
++    memories = [_memory(i) for i in range(3)]
++    plan = EntityRebuildPlan([], entity_key=_key)
++    await plan.build(list(memories))
++    unscoped = plan.describe()
++    assert unscoped["shares_entity_pairs_after"] == 3
++    assert unscoped["shares_entity_pairs_skipped_cross_store"] == 0
++    assert unscoped["shares_entity_pairs_skipped_unknown_store"] == 0
++
++    same_store = EntityRebuildPlan(
++        [], entity_key=_key,
++        store_of={m.content_hash: "default" for m in memories},
++    )
++    await same_store.build(list(memories))
++    assert same_store.associations == plan.associations
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2122** (2026-11-24): feat(milvus): carry the store on graph edges and confine entity reads (#2119) (@doobidoo)
-- **PR #2121** (2026-11-24): fix(graph): confine entity reads to the claimed store (#2118) (@doobidoo)
-- **PR #2116** (2026-11-22): test(dsh): add a live functional test for the bundle (@doobidoo)
-- **PR #2115** (2026-11-22): feat(dsh): capture turn outcomes and skip non-project directories (@doobidoo)
-- **PR #2114** (2026-11-22): feat(dsh): inject project memories into new DeepSeek Harness agents (@doobidoo)
-- **PR #2113** (2026-11-22): docs(changelog): record the DeepSeek Harness integration from #2112 (@doobidoo)
+- **PR #2133** (2026-11-25): fix(milvus): confine the read paths to the claimed store (#1958) (@doobidoo)
+- **PR #2132** (2026-11-25): refactor(logging): guard storage/sync/orchestrator.py and wrap the apply reason (#1146) (@massimiliano1991)
+- **PR #2131** (2026-11-25): fix(ontology): point coerced-type warnings at `memory ontology add` (#2127) (@Dhruv-Sharma29)
+- **PR #2130** (2026-11-25): fix(milvus): rebuild entities without cross-store shares_entity pairs (#2123) (@massimiliano1991)
+- **PR #2128** (2026-11-25): feat(ontology): let an agent register a type without a restart (#2126) (@doobidoo)
+- **PR #2125** (2026-11-25): chore(deps): bump the uv group with 9 updates (@dependabot[bot])
 
 ---
 
@@ -3511,21 +4392,28 @@ signature-parity guard green and refuses a named store wi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. graph): confine entity reads to the claimed store
+## X. ontology): point coerced-type warnings at `memory ontology add`
 
 **RULE**:
-When implementing operations in `changelog.d/2118.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/2127.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41b792b2`: graph): confine entity reads to the claimed store. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b8b8b7c`: ontology): point coerced-type warnings at `memory ontology add`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2118.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2127.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Store-scoped entity reads no longer cross partitions (#2118, part of #1880).** `memory_graph` has no store column, so every `GraphStorage` entity read was global: `list_entities`, `get_entity_profile`, `find_memories_by_entity` and `get_entities_for_memory` counted and returned links from every store, and `_discover_related_entities` walked `common_neighbors` unfiltered. A credential scoped to one store therefore received `related_entities` reachable only through another store's memories — `chunks` was already confined by post-filtering `get_by_hash`, `related_entities` was not. The graph shares its SQLite file with `memories`, so each of those reads now confines through the store of the edge's source memory, and `memory_detail` passes its claimed store down instead of scanning a `limit * 10` window and discarding the difference. `None` and `"all"` stay unscoped, so single-store installs and every unscoped caller see exactly what they saw before. `MilvusGraphStorage` accepts the same `store` keyword to keep the signature-parity guard green and returns nothing for a named store until #2119 gives its collection the field — refusing rather than serving the global answer.
+- **A coerced memory type still pointed at the env var that needs a restart (#2127, Dhruv-Sharma29).**
+  When a store names a type the ontology does not know, the MCP `memory_store` response and
+  `POST /api/memories` warn that it was stored as `observation`. Both warnings told the caller
+  to set `MCP_CUSTOM_MEMORY_TYPES`, which only takes effect after a restart, although #2126
+  added a runtime path. They now name `memory ontology add <name>` first and keep the env var
+  as the startup alternative. To make that one-line change possible, `handle_store_memory` and
+  the REST `store_memory` were split into module-level helpers (failure handling, the response
+  message, the on-store checks); every other part of both responses is unchanged.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3535,7 +4423,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41b792b2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b8b8b7c` are properly handled with clean fallback behavior.
 
 
 ## Consequences

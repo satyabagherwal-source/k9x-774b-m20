@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T21:38:45.130Z",
+  "timestamp": "2026-11-26T04:13:40.096Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-maka-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-maka-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T21:38:45.130Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:13:40.096Z`  
 > **Learning ID**: `LEARN-EVO-apache-maka-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-maka-learnings.md`  
 > **Source**: github ([https://github.com/apache/maka](https://github.com/apache/maka))  
-> **Source Version**: `16e3a770`  
+> **Source Version**: `00c6027a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T21:38:34.860Z  
+> **Timestamp**: 2026-11-26T04:13:22.998Z  
 > **Learning ID**: `learn-github-apache-maka`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-maka-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/maka](https://github.com/apache/maka))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T21:38:34.697Z  
+> **Harvest Timestamp**: 2026-11-26T04:13:22.992Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Apache Maka (Incubating) is a high-performance agent workspace that keeps a complete record of everything it did.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 6005 stars
+- **Stars / Engagement**: 6008 stars
 
 ---
 
@@ -2923,730 +2923,394 @@ impl Lifecycle {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a1bf52b` (2026-11-24)
-**Commit Message**: fix(agent): keep proactive summary model wait open until closure or interruption (#7228)
+### Incident Patch 1: `9bd44203` (2026-11-26)
+**Commit Message**: feat(workbench): show left-side Markdown TOC for overflowing turn replies (#7256)
 
-* fix(agent): keep proactive summary model wait open until closure or interruption
+Add a left-side Markdown table of contents overlay in Conversation for
+whichever turn's final assistant or bot output is currently viewed when
+it contains Markdown headings and its rendered height exceeds the
+viewport height.
 
-When a proactive background summary fails with a non-terminal error (such as
-stream idle timeout or mid-stream truncation), the worker writes
-ModelSourceFailureCaptured and ModelCleanupObserved(Confirmed) before emitting
-Err(error) for the driver loop to publish ModelInterrupted.
+- Expose native TextView heading and block-navigation primitives in NSH
+  (HeadingsChange, VisibleBlocksChange, TextView::headings(), and
+  scroll_to_block() backed by virtual_list.scroll_to_index()) so headings
+  come directly from TextView's parsed document without re-parsing
+  Markdown in JS, mutating extensions during streaming, or reporting
+  off-screen blocks when only footnotes are visible.
+- Coordinate turn-level TOC state in turnToc.ts by combining live mounted
+  TextView bindings (with per-instance spare-cell isolation) with
+  cached native-parsed outlines for virtualized output rows of the same
+  turn, gating active-heading selection on both outer-row and inner-block
+  visibility, and relaying cross-row jumps from outer List scroll to
+  inner TextView scrollToBlock.
+- Render MarkdownToc as a desktop left-margin overlay that adapts
+  between a docked quiet heading lis
 
-During that window the attempt is still open (closed == None && interrupted ==
-None) while cleanup is already Confirmed and WorkKey::Model remains live:
-1. reconcile satisfied due_at=None WaitReason::Model waits on cleanup ==
-   Confirmed alone, satisfying the wait before ModelInterrupted was recorded
-   and immediately looping back without polling work.next().
-2. On the next iteration (or even without an earlier wait, on adopt: true or
-   compactable ContextOverflow), CompactionLevel::Pending tried to register
-   WaitReason::Model again, which fold rejected with:
-   "invalid event transition: model wait requires an open observable original,
-   an admitted proactive Summary or unconfirmed admitted cleanup".
-
-Require closed.is_some() |
-
-**File**: `plugins/agent/engine/src/reconcile.rs` (modified, +20/-5)
+**File**: `plugins/agent/conversations/ui/Conversation.tsx` (modified, +121/-17)
 ```diff
-@@ -280,6 +280,17 @@ pub(crate) fn wait(
-         Action::Wait(reason, due)
-     }
- }
-+
-+fn wait_proactive_summary(view: &RunView, attempt: ModelAttemptId, now: UnixMillis) -> Action {
-+    let summary = &view.attempts[&attempt];
-+    if summary.admission.is_some()
-+        && summary.cleanup != maka_plugin_core::operation::OperationCleanup::Confirmed
-+    {
-+        wait(view, WaitReason::Model { attempt }, None, now)
-+    } else {
-+        Action::Idle
-+    }
-+}
- fn recovered_cell(view: &RunView, tool: &maka_agent_state::fold::Tool) -> Option<CellId> {
-     if tool.accepted.is_some()
-         || tool.local_returned.as_ref().is_some_and(|result| {
-@@ -790,9 +801,12 @@ pub(crate) fn next(
-         return Action::Idle;
-     }
-     if let Some((attempt, original)) = view.attempts.iter().find(|(id, attempt)| {
--        Some(**id) != view.proactive_summary
--            && attempt.admission.is_some()
-+        attempt.admission.is_some()
-             && attempt.cleanup != maka_plugin_core::operation::OperationCleanup::Confirmed
-+            && (Some(**id) != view.proactive_summary
-+                || (matches!(action, Action::Terminate(Terminal::Completed))
-+                    && (view.finish_requested() || complete_at_budget)
-+                    && (attempt.closed.is_some() || attempt.interrupted.is_some())))
-     }) {
-         if original.closed.is_none() && original.interrupted.is_none() {
-             return Action::Idle;
-@@ -892,7 +906,8 @@ fn next_action(
-             WaitReason::Blocker { blocker } => view.blockers.get(blocker).is_none_or(|blocker| !active(blocker)),
-             WaitReason::Model { attempt } => view.attempts.get(attempt).is_some_and(|attempt| {
-                 if pending.due_at.is_none() {
--                    attempt.cleanup == maka_plugin_core::operation::OperationCleanup::Confirmed
-+                    (attempt.closed.is_some() || attempt.interrupted.is_some())
-+                        && attempt.cleanup == maka_plugin_core::operation::OperationCleanup::Confirmed
-                 } else {
-                     attempt.closed.is_some() || attempt.interrupted.is_some()
-                 }
-@@ -1396,7 +1411,7 @@ fn next_action(
-                 attempt,
-                 adopt: true,
-             }) => {
--                return wait(view, WaitReason::Model { attempt }, None, now);
-+                return wait_proactive_summary(view, attempt, now);
-             }
-             Some(CompactionLevel::Candidate {
-                 origin,
-@@ -1610,7 +1625,7 @@ fn next_action(
-                 && let Some(CompactionLevel::Pending { attempt, .. }) =
-                     model.map(|model| model.compaction)
-             {
--                return wait(view, WaitReason::Model { attempt }, None, now);
-+                return wait_proactive_summary(view, attempt, now);
-             }
-             if compactable && live.work.contains(&WorkKey::PrepareProactiveSummary) {
-                 return Action::Idle;
+@@ -117,6 +117,7 @@ import {
+   acceptedSend,
+   activityMessage,
+   applyWorkTailThought,
++  hasTextPrefix,
+   sameHistoryRow,
+   compareHistoryOrder,
+   historyTurnKey,
+@@ -223,6 +224,8 @@ import {
+   MessageRow,
+   type MessageViewState,
+ } from '../../../../products/maka/workbench/app/MessageRow';
++import { MarkdownToc } from '../../../../products/maka/workbench/app/MarkdownToc';
++import { createTurnToc } from '../../../../products/maka/workbench/app/turnToc';
+ import { compactTranscriptSize } from '../../../../products/maka/workbench/app/QuickBar';
+ import { FinalActions } from '../../../../products/maka/workbench/app/FinalActions';
+ import { SideNotes, SideQuoteTray } from '../../../../products/maka/workbench/app/SideQuestionCard';
+@@ -1800,6 +1803,7 @@ export function Conversation(props: ConversationProps) {
+   const entryTurn = (key: string) => {
+     const entry = displayEntry(key);
+     if (entry?.kind === 'process') return entry.group.turnKey;
++    if (entry?.kind === 'bot') return entry.turnId;
+     if (entry && 'turnKey' in entry) return entry.turnKey ?? null;
+     return null;
+   };
+@@ -4894,18 +4898,70 @@ export function Conversation(props: ConversationProps) {
+       cancel={inputAction(cancelNavigation, navigatingTurn())}
+     />
+   );
++  const turnToc = createTurnToc({
++    enabled: () => !props.compact && ready() && reading() === 'chat',
++    listRef: () => list,
++    listWidth: historyWidth,
++    viewportHeight: () => readingSize().height,
++    railInset,
++    atBottom: () => !historyBelow(),
++    isTerminal: () => platform.idiom === 'terminal',
++    rowTurnKey: entryTurn,
++    turnOutputRowKeys: (turnKey) => {
++      if (botView() === 'bot') {
++        return bot.forTurn(turnKey).length > 0 ? [`bot/${turnKey}`] : [];
++      }
++      const turn = projectedTurn(turnKey);
++      if (!turn) return [];
++      const ids = turn.finalOutputIds.length > 0 ? turn.finalOutputIds : turn.answerOutputIds;
++      return ids.filter((id) => !currentRow(id)?.sourceCitation);
++    },
++    rowOutputSources: (rowKey) => {
++      if (rowKey.startsWith('bot/')) {
++        const turnKey = rowKey.slice(4);
++        return bot.forTurn(turnKey).map((message) => ({
++          keyPrefix: `${message.sequence}:`,
++          text: message.text,
++          streaming: false,
++        }));
++      }
++      if (rowStates.get(rowKey)?.sourceMode()) return [];
++      const row = currentRow(rowKey);
++      if (
++        !row ||
++        row.role !== 'assistant' ||
++        row.field !== 'body' ||
++        row.tool ||
++        row.sourceCitation ||
++        !hasTextPrefix(row)
++      ) {
++        return [];
++      }
++      return [{ keyPrefix: '', text: row.text, streaming: true }];
++    },
++    scrollToRow: (rowKey) => {
++      const index = displayKeys().indexOf(rowKey);
++      if (index < 0 || !list) return false;
++      list.scrollToIndex({ index, viewPosition: 0, animated: false });
++      return true;
++    },
++    onBeforeJump: () => {
++      cancelNavigation();
++      historyScrollInput = 'idle';
++      batch(() => {
++        historyFollowPaused.set(true);
++        innerReader.set(null);
++      });
++    },
++  });
+   const transcriptSize = props.compact ? compactTranscriptSize() : undefined;
+   const entryRow = (key: () => string) => (
+-    <View
+-      style={readingColumn}
+-      onLayout={
+-        transcriptSize
+-          ? ({ bounds }) => transcriptSize.measure(key(), bounds.size.height)
+-          : undefined
+-      }
+-    >
+-      <Each of={[key()]} key={(id: string) => id}>
+-        {(ownedKey) => {
++    <Each of={[key()]} key={(id: string) => id}>
++      {(ownedKey) => {
++        const rowId = ownedKey();
++        const tocRow = !props.compact ? turnToc.bindRow(rowId) : undefined;
++        if (tocRow) cleanup(tocRow.dispose);
++        const renderEntryBody = () => {
+           const initial = displayEntry(ownedKey());
+           if (!initial) return <View />;
+           const entry = () => displayEntry(ownedKey()) ?? initial;
+@@ -5185,6 +5241,7 @@ export function Conversation(props: ConversationProps) {
+             };
+             return (
+               <BotReply
++                bindToc={tocRow?.bindTextView}
+                 metrics={
+                   props.compact
+                     ? (at) => {
+@@ -5253,11 +5310,20 @@ export function Conversation(props: ConversationProps) {
+           const first = currentRow(initial.rowId);
+           if (!first) return <View />;
+           const row = () => currentRow(initial.rowId) ?? first;
++          const bindToc =
++            tocRow &&
++            first.role === 'assistant' &&
++            first.field === 'body' &&
++            !first.tool &&
++            !first.sourceCitation
++              ? tocRow.bindTextView
++              : undefined;
+           return (
+             <MessageRow
+               item={row}
+               compactChat={props.compact}
+               beside={props.side}
++              bindToc={bindToc}
+               hasSources={() => {
+      
 ```
 
-**File**: `plugins/agent/engine/src/reconcile/tests.rs` (modified, +291/-0)
+**File**: `products/maka/terminal-shell/tests/real_host/desktop_new_session.rs` (modified, +642/-0)
 ```diff
-@@ -658,6 +658,108 @@ fn spent_budget_preserves_final_success_and_waits_for_original_cleanup_ack() {
-     assert_eq!(view.terminal, Some(Terminal::Completed));
+@@ -3099,6 +3099,640 @@ async fn desktop_external_agent_satisfies_new_session_connection_prompt() {
+     fixture.finish().await;
  }
  
-+#[test]
-+fn spent_budget_waits_for_closed_proactive_summary_cleanup_before_completing() {
-+    use maka_agent_facts::{accounting::Outcome, context::ModelPurpose, model::ModelFinishReason};
-+    use maka_plugin_core::operation::OperationCleanup;
++async fn desktop_markdown_toc_follows_active_turn_and_jumps_to_headings() {
++    let mut fixture = Fixture::open().await;
++    let desktop = Desktop::open_at(
++        &fixture,
++        &fixture.address,
++        size(
++            nsh_terminal::DevicePixels(1560),
++            nsh_terminal::DevicePixels(600),
++        ),
++        nsh_core::platform::Appearance::Dark,
++    )
++    .await;
++    desktop.new_draft().await;
 +
-+    let mut view = policy_view(Some(110));
-+    let spec = ContentBlob::json(&view.spec).unwrap();
-+    apply_policy_fact(
-+        &mut view,
-+        Fact::RunAdmitted {
-+            spec: spec.reference().clone(),
-+        },
++    let long_block = |tag: &str, count: usize| {
++        (1..=count)
++            .map(|i| {
++                format!(
++                    "{tag} paragraph {i}: detailed explanation spanning multiple lines so the reply overflows the visible reading window cleanly."
++                )
++            })
++            .collect::<Vec<_>>()
++            .join("\n\n")
++    };
++
++    // Turn 1: stream across headings in multiple chunks, including a fenced code block
++    // inside a list item and a long sparse middle section + wide single-line JSON block.
++    desktop.type_text("Turn one long markdown").await;
++    desktop.submit().await;
++    let mut reply1 = desktop.request(&mut fixture).await;
++    reply1
++        .delta(&format!(
++            "# Turn One Overview\n\n<details><summary>Overview Marker</summary>Overview details.</details>\n\n{}\n\n1. ```python\n   # code comment ignored\n   print(1)\n   ```\n\n",
++            long_block("overview", 8),
++        ))
++        .await;
++    let wide_json = format!(r#"{{"entries":[{}]}}"#, r#""payload","#.repeat(600));
++    reply1
++        .delta(&format!(
++            "## Architecture\n\n{}\n\n```json\n{wide_json}\n```\n\n",
++            long_block("arch", 28),
++        ))
++        .await;
++    reply1
++        .delta(&format!(
++            "### Deep Dive\n\n<details><summary>Deep Dive Marker</summary>Deep dive details.</details>\n\n{}\n\n<details><summary>Turn One End</summary>End of turn one.</details>",
++            long_block("deep", 10),
++        ))
++        .await;
++    desktop
++        .wait("turn 1 reply did not finish", reply1.finish())
++        .await;
++    desktop
++        .until("turn 1 did not settle", || {
++            desktop.controls("Stop response").is_empty().then_some(())
++        })
++        .await;
++
++    // Wait for all three streamed headings before reading settled TOC bounds.
++    let deep_toc = desktop.control("Jump to section: Deep Dive").await;
++    let arch_toc = desktop.control("Jump to section: Architecture").await;
++    let overview_toc = desktop.control("Jump to section: Turn One Overview").await;
++    assert!(
++        desktop
++            .controls("Jump to section: code comment ignored")
++            .is_empty(),
++        "list-nested fenced code comment must not appear in TOC"
 +    );
-+    let (mut view, request, main) = model_closure(
-+        view,
-+        ModelPurpose::Main,
-+        ModelFinishReason::Stop,
-+        Outcome::Success,
-+        false,
++    // TOC sits in the left margin beside the reading column.
++    assert!(
++        overview_toc.origin.x < px(520.)
++            && arch_toc.origin.x < px(520.)
++            && deep_toc.origin.x < px(520.),
++        "docked TOC should render in the left margin: overview={overview_toc:?}"
 +    );
-+    let summary_step = StepId::new();
-+    let summary = ModelAttemptId::new();
-+    for fact in [
-+        Fact::ProactiveSummaryPrepared {
-+            step: summary_step,
-+            request: view.spec.input.clone(),
-+            attempt: summary,
-+        },
-+        Fact::ModelAttemptAdmitted {
-+            attempt: summary,
-+            upstream: serde_json::json!({}),
-+        },
-+        Fact::ModelClosed {
-+            attempt: summary,
-+            outcome: Outcome::Success,
-+            diagnostic: None,
-+            usage: Default::default(),
-+            protocol: serde_json::json!({}),
-+        },
-+        Fact::ModelCleanupObserved {
-+            attempt: main,
-+            cleanup: OperationCleanup::Confirmed,
-+        },
-+        Fact::BudgetCharged { tokens: 110 },
-+    ] {
-+        apply_policy_fact(&mut view, fact);
-+    }
++    desktop.artifact("toc-turn1-wide");
 +
-+    let now = UnixMillis(1);
-+    let mut live = Live::default();
-+    // Without budget/finish fencing, next() preserves Terminate(Completed) so driver.rs
-+    // checks queued steering before waiting on background summary cleanup.
-+    let mut normal_turn = view.clone();
-+    normal_turn.spec.budget.tokens = None;
-+    assert!(matches!(
-+        next(&normal_turn, &live, now, None, false),
-+        Action::Terminate(Terminal::Completed)
-+    ));
-+
-+    live.work.insert(WorkKey::Model(summary));
-+    assert!(complete_at_budget(&view, &request, now));
-+    assert!(matches!(
-+        next(&view, &live, now, None, true),
-+        Action::Wait(WaitReason::Model { attempt }, None) if attempt == summary
-+    ));
-+    let wait = WaitId::new();
-+    apply_policy_fact(
-+        &mut view,
-+        Fact::WaitRegistered {
-+            wait,
-+            reason: WaitReason::Model { attempt: summary },
-+            due_at: None,
-+        },
++    // Clicking the first heading scrolls the top section into the viewport.
++    desktop.press("Jump to section: Turn One Overview").await;
++    let overview_marker = desktop.control("▸ Overview Marker").await;
++    assert!(
++        overview_marker.origin.y < px(320.),
++        "Overview Marker should land near the top of the viewport: {overview_marker:?}"
 +    );
-+    assert!(matches!(next(&view, &live, now, None, true), Action::Idle));
-+    apply_policy_fact(
-+        &mut view,
-+        Fact::ModelCleanupObserved {
-+            attempt: summary,
-+            cleanup: OperationCleanup::Confirmed,
-+        },
++    desktop.artifact("toc-turn1-overview");
++
++    // Clicking a distant virtualized heading across 28 paragraphs + wide JSON lands on Deep Dive.
++    desktop.press("Jump to section: Deep Dive").await;
++    let deep_marker = desktop.control("▸ Deep Dive Marker").await;
++    assert!(
++        deep_marker.origin.y < px(320.),
++        "Deep Dive Marker should land near the top of the viewport: {deep_marker:?}"
 +    );
-+    assert!(matches!(
-+        next(&view, &live, now, None, true),
-+        Action::Satisfy(id) if id == wait
-+    ));
-+    let evidence = view.spec.input.clone();
-+    apply_policy_fact(&mut view, Fact::WaitSatisfied { wait, evidence });
-+    assert!(matches!(
-+        next(&view, &live, now, None, true),
-+        Action::Terminate(Terminal::Completed)
-+    ));
-+    apply_policy_fact(
-+        &mut view,
-+        Fact::RunTerminated {
-+            terminal: Terminal::Completed,
-+            diagnostic: None,
-+        },
-+    );
-+    assert_eq!(view.terminal, Some(Terminal::Completed));
-+}
++    desktop.artifact("toc-turn1-deep-dive");
 +
- #[test]
- fn spent_budget_never_dispatches_a_tool_or_prepares_its_continuation() {
-     use maka_agent_facts::{accounting::Outcome, context::ModelPurpose, model::ModelFinishReason};
-@@ -1846,3 +1948,192 @@ fn a_tool_call_on_an_uninterrupted_overflow_is_rejected_without_execution() {
-         Action::Reject(rejected, ToolRejection::PreparationFailed { .. }) if rejected == key
-     ));
- }
-+
-+fn pending_proactive_summary_model(attempt: ModelAttemptId, adopt: bool) -> ModelLevel {
-+    ModelLevel {
-+        handoff: None,
-+        input: maka_agent_facts::input::RunInput::ContextCompact {
-+            request_fingerprint: String::new(),
-+        },
-+        request: None,
-+        baseline: None,
-+        compaction: CompactionLevel::Pending { attempt, adopt },
-+        failure: None,
-+        fallback_available: false,
-+        codex: false,
-+    }
-+}
-+
-+fn proactive_summary_base_view() -> (RunView, ModelAttemptId, ModelAttemptId) {
-+    let mut view = policy_view(None);
-+    let source = view.spec.input.clone();
-+    let spec = ContentBlob::json(&view.spec).unwrap();
-+    let step = StepId::new();
-+    let main = ModelAttemptId::new();
-+    let summary = ModelAttemptId::new();
-+    for fact in [
-+        Fact::RunAdmitted {
-+            spec: spec.reference().clone(),
-+        },
-+        Fact::StepPrepared {
-+            step,
-+            request: source.clone(),
-+            adjudications: vec![],
-+        },
-+        Fact::ModelAttemptPrepared {
-+            attempt: mai
-```
-
-**File**: `plugins/agent/native/src/owner/driver/tests.rs` (modified, +172/-0)
-```diff
-@@ -7236,6 +7236,178 @@ async fn failed_background_summary_is_prepared_again_on_the_next_step() {
-     }
- }
- 
-+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+async fn interrupted_proactive_summary_with_active_model_wait_falls_back_to_foreground_compaction()
-+{
-+    use maka_agent_engine::{DriverExit, Engine, ports::Preparation};
-+    use maka_mock_ai::FinishReason;
-+
-+    const SUMMARY: &str = "Foreground fallback summary.";
-+    let mut rig = Rig::new().unwrap();
-+    rig.model_overrides = json!({"llama3.2":{"compactionThreshold":1_900}});
-+    let listener =
-+        tokio::net::TcpListener::from_std(rig.model_listener.try_clone().unwrap()).unwrap();
-+    let mut server = MockAiBuilder::new()
-+        .interactive(8)
-+        .start_with_listener(listener)
-+        .await
-+        .unwrap();
-+    let mut turns = server.take_interactive_rx().unwrap();
-+    let result = AssertUnwindSafe(tokio::time::timeout(Duration::from_secs(30), async {
-+        let session = rig.start().await?;
-+        rig.assemble_model(
-+            &session,
-+            Budget {
-+                tokens: None,
-+                retries: 0,
-+                deadline: None,
-+            },
-+            false,
++    // Turn 2: short Markdown reply with a heading that fits inside the viewport -> TOC hides.
++    desktop.press("Return to latest").await;
++    desktop.control("▸ Turn One End").await;
++    desktop.type_text("Turn two short markdown").await;
++    desktop.submit().await;
++    let mut reply2 = desktop.request(&mut fixture).await;
++    // Fits completely within the 406pt reading viewport while taking >50% of it so Turn 2
++    // becomes the viewed turn instead of Turn 1's tail above it.
++    reply2
++        .delta(
++            "# Short Note\n\n- First concise point.\n- Second concise point.\n- Third concise point.\n\nThis short answer fills most of the screen without overflowing.",
 +        )
-+        .await?;
-+        let driver = rig.driver.as_ref().unwrap();
-+        let run = driver.access.execution().run_id;
-+        rig.record_model_reply(Preparation::Initial, None).await?;
-+        let view = driver.state.frontier(run).await?;
-+        let mut main = driver
-+            .model()?
-+            .prepare_step(&view, Preparation::Initial, driver)
-+            .await?;
-+        let body = ContentBlob::json(&main.request)?;
-+        main.contents.push(body.clone());
-+        rig.append(
-+            vec![Fact::StepPrepared {
-+                step: main.request.step,
-+                request: body.reference().clone(),
-+                adjudications: vec![],
-+            }],
-+            main.contents,
-+        )
-+        .await?;
-+
-+        let is_summary = |handle: &maka_mock_ai::TurnHandle| {
-+            handle.body()["tools"].as_array().is_none_or(Vec::is_empty)
-+        };
-+        let orchestrate = async {
-+            let mut changes = driver.state.subscribe()?;
-+            let mut first_main = None;
-+            let mut bg_summary = None;
-+            while first_main.is_none() || bg_summary.is_none() {
-+                let turn = turns.recv().await.ok_or("mock-ai channel closed early")?;
-+                if is_summary(&turn) {
-+                    turn.delta("Partial background summary").await;
-+                    bg_summary = Some(turn);
-+                } else {
-+                    first_main = Some(turn);
-+                }
-+            }
-+            let first_main = first_main.unwrap();
-+            let bg_summary = bg_summary.unwrap();
-+            let background = loop {
-+                changes.borrow_and_update();
-+                if let Some(background) = driver.state.frontier(run).await?.proactive_summary
-+                    && driver.state.history(run, 0, 256).await?.iter().any(|fact| {
-+                        matches!(fact.fact, Fact::ModelFirstTokenObserved { attempt } if attempt == background)
-+                    })
-+                {
-+                    break background;
-+                }
-+                changes.changed().await?;
-+            };
-+            first_main.delta("Long output. ".repeat(600)).await;
-+            first_main.finish_with(FinishReason::Length).await;
-+            loop {
-+                changes.borrow_and_update();
-+                let view = driver.state.frontier(run).await?;
-+                if view.waits.values().any(|wait| {
-+                    wait.satisfied.is_none()
-+                        && wait.cancelled.is_none()
-+                        && wait.due_at.is_none()
-+                        && matches!(wait.reason, WaitReason::Model { attempt } if attempt == background)
-+                }) {
-+                    break;
-+                }
-+                changes.changed().await?;
-+            }
-+            bg_summary.truncate_eof().await;
-+            let fg_summary = turns.recv().await.ok_or("foreground summary missing")?;
-+            assert!(is_summary(&fg_summary));
-+            fg_summary.reply_text(SUMMARY);
-+            let final_main = turns.recv().await.ok_or("final main turn missing")?;
-+            assert!(!is_summary(&final_main));
-+            let final_body = final_main.body().to_string();
-+            assert!(final_body.contains(SUMMARY), "{final_body}");
-+            final_main.reply_text("Done.");
-+            Ok::<_, Box<dyn Error + Send + Sync>>(background)
-+        };
-+        let engine = Engine::new(driver.state.clone());
-+        let drive = async {
-+            let mut changes = driver.state.subscribe()?;
-+            loop {
-+                changes.borrow_and_update();
-+                let exit = engine
-+                    .drive(
-+                        driver.access.claim().clone(),
-+               
++        .await;
++    desktop
++        .wait("turn 2 reply did not finish", reply2.finish())
++        .await;
++    desktop
++        .until("turn 2 did not settle", || {
++            desktop.controls("Stop response").is_empty().then_some(())
++        })
++ 
 ```
 
----
-
-### Incident Patch 2: `69af2805` (2026-11-24)
-**Commit Message**: feat(i18n): full 12-locale CJK & LTR support across UI, LLM context, and nsh (#7224)
-
-* feat(i18n): full 12-locale CJK & LTR support across UI, LLM context, and nsh
-
-Replace hardcoded 3-locale (en/zh-CN/zh-TW) Rust enums and inline TypeScript
-dictionaries with a single manifest-driven i18n architecture covering 12
-mainstream LTR locales (en, zh-CN, zh-TW, zh-HK overlay, ja, ko, es, fr, de,
-pt-BR, ru, it) across both human UI and LLM-facing context, fix macOS/Windows
-automatic OS locale detection, and upgrade vendored third-party/nsh for CJK
-Han unification glyph shaping and QuickJS Intl support.
-
-Highlights:
-- Single locale source of truth in locales.manifest.json backed by maka-i18n
-  (BCP 47 canonicalization, script-aware negotiation, zh-HK -> zh-TW -> en
-  fallback without leaking into zh-CN, CLDR cardinal plural rules for all 12
-  locales, unified OS locale detection) and maka-i18n-build (compile-time ICU
-  codegen and zstd-compressed localized Markdown docs with protocol-marker
-  verification).
-- Fix macOS/Windows auto-detection: honor sys_locale::get_locales() preference
-  order instead of letting terminal LANG=en_US.UTF-8 hijack OS language, emit
-  12-locale CFBundleLocaliza
-
-**File**: `Cargo.lock` (modified, +26/-2)
+**File**: `products/maka/workbench/app/BotReply.tsx` (modified, +19/-1)
 ```diff
-@@ -8272,6 +8272,8 @@ dependencies = [
-  "base64 0.23.1",
-  "bytes",
-  "hex",
-+ "maka-i18n",
-+ "maka-i18n-build",
-  "maka-plugin-core",
-  "maka-provider-protocol",
-  "maka-sandbox",
-@@ -8635,6 +8637,8 @@ dependencies = [
-  "maka-agent-facts",
-  "maka-capabilities",
-  "maka-code-runtime",
-+ "maka-i18n",
-+ "maka-i18n-build",
-  "maka-js-runtime",
-  "maka-plugin-core",
-  "markdown",
-@@ -8662,6 +8666,7 @@ dependencies = [
-  "unicode-segmentation",
-  "uuid",
-  "windows-sys 0.61.2",
-+ "zstd 0.14.3",
- ]
+@@ -17,7 +17,7 @@
+  * under the License.
+  */
  
- [[package]]
-@@ -8678,7 +8683,6 @@ dependencies = [
-  "serde",
-  "serde_json",
-  "sha2 0.11.1",
-- "sys-locale",
-  "tempfile",
-  "thiserror 2.0.21",
-  "tokio",
-@@ -8971,6 +8975,25 @@ dependencies = [
-  "libc",
- ]
+-import { Clipboard, computed, platform, signal, Text, View } from 'nsh';
++import { cleanup, Clipboard, computed, platform, signal, Text, View } from 'nsh';
+ import { Button, ContextMenu, MenuItem, TextView } from 'nsh/base';
+ import { MarkdownImageView } from './MarkdownImage';
+ import { MermaidView } from './MermaidView';
+@@ -29,11 +29,13 @@ import type { replyMetrics } from './replyDetails';
+ import { Icon } from './Icon';
+ import { ShimmerText, ThinkingMark } from './Loading';
+ import { splitSpecMarkdown } from './spec/session.ts';
++import type { BindTextViewToc } from './turnToc';
+ import { C, bodyTextStyle, captionTextStyle } from './ui';
  
-+[[package]]
-+name = "maka-i18n"
-+version = "0.3.0"
-+dependencies = [
-+ "schemars 1.2.3",
-+ "serde",
-+ "serde_json",
-+ "sys-locale",
-+]
-+
-+[[package]]
-+name = "maka-i18n-build"
-+version = "0.3.0"
-+dependencies = [
-+ "serde",
-+ "serde_json",
-+ "zstd 0.14.3",
-+]
-+
- [[package]]
- name = "maka-insights"
- version = "0.3.0"
-@@ -9474,6 +9497,7 @@ dependencies = [
- name = "maka-session-title"
- version = "0.3.0"
- dependencies = [
-+ "maka-agent-facts",
-  "maka-agent-ports",
-  "unicode-normalization",
- ]
-@@ -9687,7 +9711,6 @@ dependencies = [
-  "serde",
-  "serde_json",
-  "sha2 0.11.1",
-- "sys-locale",
-  "tempfile",
-  "thiserror 2.0.21",
- ]
-@@ -9769,6 +9792,7 @@ dependencies = [
-  "maka-capabilities",
-  "maka-event-log",
-  "maka-host-runtime",
-+ "maka-i18n",
-  "maka-packages",
-  "maka-plugin-core",
-  "maka-process",
+ /** Messages the Bot sent with `SendUser`, shown as its reply in the Chat view. */
+ export function BotReply(props: {
+   messages: () => BotTranscriptMessage[];
++  bindToc?: BindTextViewToc;
+   sessionId?: string;
+   metrics?(at: number): ReturnType<typeof replyMetrics>;
+   openLink(target: string, restoreFocus: () => boolean): Promise<void>;
+@@ -72,6 +74,15 @@ export function BotReply(props: {
+                     const selected = signal('');
+                     const menuText = signal('');
+                     let menuOpen = false;
++                    const initialSeg = seg();
++                    const toc =
++                      initialSeg.kind === 'markdown'
++                        ? props.bindToc?.(
++                            `${message().sequence}:${initialSeg.key}`,
++                            message().sequence * 1e9 + initialSeg.start,
++                          )
++                        : undefined;
++                    if (toc) cleanup(() => toc.dispose());
+                     return (
+                       <If
+                         when={seg().kind === 'spec'}
+@@ -83,6 +94,13 @@ export function BotReply(props: {
+                             }}
+                             trigger={
+                               <TextView
++                                ref={toc ? (node) => toc.onRef(node) : undefined}
++                                onHeadingsChange={
++                                  toc ? (event) => toc.onHeadingsChange(event) : undefined
++                                }
++                                onVisibleBlocksChange={
++                                  toc ? (event) => toc.onVisibleBlocksChange(event) : undefined
++                                }
+                                 markdown={(() => {
+                                   const s = seg();
+                                   return s.kind === 'markdown' ? s.text : '';
 ```
 
-**File**: `Cargo.toml` (modified, +4/-0)
+**File**: `products/maka/workbench/app/MarkdownBody.tsx` (modified, +13/-0)
 ```diff
-@@ -78,11 +78,13 @@ members = [
-     "plugins/skills/core",
-     "plugins/agent/tool-catalog",
-     "plugins/agent/tools",
-+    "platform/i18n",
-     "platform/ui-support",
-     "plugins/workspace/workspace-web/native",
-     "plugins/workspace/workspace-computer/native",
-     "products/eval",
-     "tools/mock-ai",
-+    "tools/i18n-build",
-     "tools/ui-build",
- ]
- resolver = "3"
-@@ -189,6 +191,8 @@ maka-tool-catalog = { path = "plugins/agent/tool-catalog" }
- maka-tools = { path = "plugins/agent/tools" }
- maka-terminal-shell = { path = "products/maka/terminal-shell" }
- maka-updater = { path = "products/maka/updater" }
-+maka-i18n = { path = "platform/i18n" }
-+maka-i18n-build = { path = "tools/i18n-build" }
- maka-ui-support = { path = "platform/ui-support" }
- maka-web = { path = "plugins/workspace/workspace-web/native" }
- maka-workbench = { path = "products/maka/workbench" }
-```
-
-**File**: `justfile` (modified, +6/-1)
-```diff
-@@ -43,7 +43,7 @@ product *args: setup
+@@ -31,11 +31,13 @@ import { SourceText } from './SourceText';
+ import { tr } from './locale';
+ import { notePassage, type SideMark } from './sideQuestions';
+ import { splitSpecMarkdown } from './spec/session.ts';
++import type { BindTextViewToc } from './turnToc';
+ import { C, bodyTextStyle, isDark, secondaryTextStyle } from './ui';
  
- # Check the root workspace, product, tooling and terminal; setup runs once.
- [group('Checks')]
--check: setup fmt-check typecheck test-js test test-termina licenses migrations
-+check: setup fmt-check typecheck test-js test test-termina licenses migrations i18n
- 
- # Format Rust, JavaScript, TypeScript and project metadata.
- [group('Checks')]
-@@ -93,6 +93,11 @@ licenses: setup
- migrations:
-     node scripts/ci.mjs check migrations
- 
-+# Verify all locale catalogs, ICU placeholders, and localized docs stay synchronized.
-+[group('Checks')]
-+i18n:
-+    node scripts/ci.mjs check i18n
-+
- # Build a source-bound native npm package without publishing.
- [group('Release')]
- package source target build_id output="native-preview": setup
+ export function MarkdownBody(props: {
+   row: () => Row;
+   citations?(): readonly InlineCitation[] | undefined;
++  bindToc?: BindTextViewToc;
+   sourceId: string;
+   sessionId: string;
+   compact?: boolean;
+@@ -182,6 +184,12 @@ export function MarkdownBody(props: {
+                 if (segmentMatches.delete(segKey)) reportMatches();
+               });
+               const atSegment = () => segmentMarkers().get(seg().key);
++              const initialSeg = seg();
++              const toc =
++                initialSeg.kind === 'markdown'
++                  ? props.bindToc?.(initialSeg.key, initialSeg.start)
++                  : undefined;
++              if (toc) cleanup(() => toc.dispose());
+               const extensions = () => {
+                 const base = props.interactiveBlocks === false ? [] : markdownExtensions;
+                 const inline = atSegment();
+@@ -194,6 +202,11 @@ export function MarkdownBody(props: {
+                   when={seg().kind === 'spec'}
+                   else={
+                     <TextView
++                      ref={toc ? (node) => toc.onRef(node) : undefined}
++                      onHeadingsChange={toc ? (event) => toc.onHeadingsChange(event) : undefined}
++                      onVisibleBlocksChange={
++                        toc ? (event) => toc.onVisibleBlocksChange(event) : undefined
++                      }
+                       markdown={(() => {
+                         const s = seg();
+                         return s.kind === 'markdown' ? s.text : '';
 ```
 
-**File**: `locales.manifest.json` (added, +78/-0)
+**File**: `products/maka/workbench/app/MarkdownToc.tsx` (added, +461/-0)
 ```diff
-@@ -0,0 +1,78 @@
-+{
-+  "defaultLocale": "en",
-+  "locales": [
-+    {
-+      "tag": "en",
-+      "autonym": "English",
-+      "appleLocalization": "en",
-+      "fallbacks": []
-+    },
-+    {
-+      "tag": "zh-CN",
-+      "autonym": "简体中文",
-+      "appleLocalization": "zh-Hans",
-+      "fallbacks": ["en"]
-+    },
-+    {
-+      "tag": "zh-TW",
-+      "autonym": "繁體中文（中國台灣）",
-+      "appleLocalization": "zh-Hant",
-+      "fallbacks": ["en"]
-+    },
-+    {
-+      "tag": "zh-HK",
-+      "autonym": "繁體中文（中國香港）",
-+      "appleLocalization": "zh-HK",
-+      "overlay": "zh-TW",
-+      "fallbacks": ["zh-TW", "en"]
-+    },
-+    {
-+      "tag": "ja",
-+      "autonym": "日本語",
-+      "appleLocalization": "ja",
-+      "fallbacks": ["en"]
-+    },
-+    {
-+      "tag": "ko",
-+      "autonym": "한국어",
-+      "appleLocalization": "ko",
-+      "fallbacks": ["en"]
-+    },
-+    {
-+      "tag": "es",
-+      "autonym": "Español",
-+      "appleLocalization": "es",
-+      "fallbacks": ["en"]
-+    },
-+    {
-+      "tag": "fr",
-+      "autonym": "Français",
-+      "appleLocalization": "fr",
-+      "fallbacks": ["en"]
-+    },
-+    {
-+      "tag": "de",
-+      "autonym": "Deutsch",
-+      "appleLocalization": "de",
-+      "fallbacks": ["en"]
-+    },
-+    {
-+      "tag": "pt-BR",
-+      "autonym": "Português (Brasil)",
-+      "appleLocalization": "pt-BR",
-+      "fallbacks": ["en"]
-+    },
-+    {
-+      "tag": "ru",
-+      "autonym": "Русский",
-+      "appleLocalization": "ru",
-+      "fallbacks": ["en"]
-+    },
-+    {
-+      "tag": "it",
-+      "autonym": "Italiano",
-+      "appleLocalization": "it",
-+      "fallbacks": ["en"]
-+    }
-+  ]
-+}
-```
-
-**File**: `packages/plugin-sdk/src/contracts.ts` (modified, +18/-5)
-```diff
-@@ -59993,7 +59993,10 @@ export const contracts: {
-               },
-               Language: {
-                 type: 'string',
--                enum: ['en', 'zh-CN', 'zh-TW'],
-+                minLength: 2,
-+                maxLength: 35,
-+                description:
-+                  'Resolved canonical BCP 47 language tag (for example en, zh-CN, zh-TW, zh-HK, ja, ko, es, fr, de, pt-BR, ru, it).',
-               },
-               ExecutionIdentity: {
-                 type: 'object',
-@@ -62917,7 +62920,10 @@ export const contracts: {
-               },
-               Language: {
-                 type: 'string',
--                enum: ['en', 'zh-CN', 'zh-TW'],
-+                minLength: 2,
-+                maxLength: 35,
-+                description:
-+                  'Resolved canonical BCP 47 language tag (for example en, zh-CN, zh-TW, zh-HK, ja, ko, es, fr, de, pt-BR, ru, it).',
-               },
-             },
-           },
-@@ -69722,12 +69728,17 @@ export const contracts: {
-                 ],
-               },
-               LanguagePreference: {
-+                description: 'Language preference: "auto" or a canonical BCP 47 locale tag.',
-                 type: 'string',
--                enum: ['auto', 'en', 'zh-CN', 'zh-TW'],
-+                minLength: 2,
-+                maxLength: 35,
-               },
-               Language: {
-+                description:
-+                  'Resolved canonical BCP 47 language tag (for example en, zh-CN, zh-TW, zh-HK, ja, ko, es, fr, de, pt-BR, ru, it).',
-                 type: 'string',
--                enum: ['en', 'zh-CN', 'zh-TW'],
-+                minLength: 2,
-+                maxLength: 35,
-               },
-               ProfileAvatar: {
-                 type: 'string',
-@@ -74891,8 +74902,10 @@ export const contracts: {
-                 ],
-               },
-               LanguagePreference: {
-+                description: 'Language preference: "auto" or a canonical BCP 47 locale tag.',
-                 type: 'string',
--                enum: ['auto', 'en', 'zh-CN', 'zh-TW'],
-+                minLength: 2,
-+                maxLength: 35,
-               },
-               ProfileAvatar: {
-                 type: 'string',
-```
-
-**File**: `packages/plugin-sdk/src/generated/methods.ts` (modified, +8/-6)
-```diff
-@@ -2589,12 +2589,14 @@ export type AgentUpdatePresetOutput_ThinkingLevel =
-   | 'xhigh'
-   | 'max'
-   | 'ultra';
--export type SettingsAssistantPreferencesOutput_LanguagePreference =
--  | 'auto'
--  | 'en'
--  | 'zh-CN'
--  | 'zh-TW';
--export type SettingsAssistantPreferencesOutput_Language = 'en' | 'zh-CN' | 'zh-TW';
-+/**
-+ * Language preference: "auto" or a canonical BCP 47 locale tag.
-+ */
-+export type SettingsAssistantPreferencesOutput_LanguagePreference = string;
-+/**
-+ * Resolved canonical BCP 47 language tag (for example en, zh-CN, zh-TW, zh-HK, ja, ko, es, fr, de, pt-BR, ru, it).
-+ */
-+export type SettingsAssistantPreferencesOutput_Language = string;
- export type SettingsAssistantPreferencesOutput_ProfileAvatar = 'blue' | 'green' | 'rose' | 'amber';
- /**
-  * User-facing isolation preset, independent of whether approval may be requested.
-```
-
-**File**: `packages/plugin-sdk/src/generated/runtime.ts` (modified, +8/-2)
-```diff
-@@ -1028,7 +1028,10 @@ export type AgentExternalModels =
-       detail: string;
-     };
- export type ExternalTaskId = string;
--export type Language = 'en' | 'zh-CN' | 'zh-TW';
-+/**
-+ * Resolved canonical BCP 47 language tag (for example en, zh-CN, zh-TW, zh-HK, ja, ko, es, fr, de, pt-BR, ru, it).
-+ */
-+export type Language = string;
- export type RunId = string;
- export type ExecutorSetupAction =
-   | {
-@@ -1609,7 +1612,10 @@ export type PricingMutation =
-       kind: 'delete';
-       modelKey: string;
-     };
--export type LanguagePreference = 'auto' | 'en' | 'zh-CN' | 'zh-TW';
-+/**
-+ * Language preference: "auto" or a canonical BCP 47 locale tag.
-+ */
-+export type LanguagePreference = string;
- export type ProfileAvatar = 'blue' | 'green' | 'rose' | 'amber';
- /**
-  * User-facing isolation preset, independent of whether approval may be requested.
-```
-
-**File**: `packages/plugin-sdk/src/i18n.ts` (added, +642/-0)
-```diff
-@@ -0,0 +1,642 @@
+@@ -0,0 +1,461 @@
 +/*
 + * Licensed to the Apache Software Foundation (ASF) under one
 + * or more contributor license agreements.  See the NOTICE file
@@ -3666,338 +3330,1020 @@ Highlights:
 + * under the License.
 + */
 +
-+import type { DisplayText } from './generated/runtime.js';
++import {
++  Canvas,
++  cleanup,
++  computed,
++  effect,
++  List,
++  platform,
++  signal,
++  Text,
++  untracked,
++  View,
++  windowSize,
++  type ListRef,
++} from 'nsh';
++import { Button, Popover, Tooltip } from 'nsh/base';
++import { tr } from './locale';
++import type { TocHeadingItem, TocLayoutMode } from './markdownTocModel';
++import { C, captionTextStyle, floatingStyle, tooltipStyle, tooltipTextStyle } from './ui';
 +
-+export type PluralCategory = 'zero' | 'one' | 'two' | 'few' | 'many' | 'other';
++const ROW_HEIGHT = platform.idiom === 'terminal' ? 16 : 26;
++const FADE_HEIGHT = 24;
++const RAIL_WIDTH = 20;
++const MAX_RAIL_MARKS = 24;
++const RAIL_HOVER_CLOSE_MS = 160;
++const MARK_WIDTHS = [10, 7, 5] as const;
 +
-+export interface SupportedLocaleInfo {
-+  readonly tag: SupportedLocaleTag;
-+  readonly autonym: string;
-+  readonly fallbacks: readonly SupportedLocaleTag[];
++function TocFade(props: {
++  readonly bottom?: boolean;
++  readonly height: number;
++  readonly width: number;
++  readonly surface: () => string;
++}) {
++  return (
++    <Canvas
++      accessibilityElementsHidden
++      style={[
++        {
++          position: 'absolute',
++          left: 0,
++          right: 0,
++          top: props.bottom ? undefined : 0,
++          bottom: props.bottom ? 0 : undefined,
++          height: props.height,
++        },
++        { pointerEvents: 'none' },
++      ]}
++      draw={(cx) => {
++        const bg = props.surface();
++        const fade = cx.createLinearGradient(0, 0, 0, props.height);
++        fade.addColorStop(0, props.bottom ? `${bg}00` : bg);
++        fade.addColorStop(1, props.bottom ? bg : `${bg}00`);
++        cx.fillStyle = fade;
++        cx.fillRect(0, 0, props.width, props.height);
++      }}
++    />
++  );
 +}
 +
-+export type SupportedLocaleTag =
-+  | 'en'
-+  | 'zh-CN'
-+  | 'zh-TW'
-+  | 'zh-HK'
-+  | 'ja'
-+  | 'ko'
-+  | 'es'
-+  | 'fr'
-+  | 'de'
-+  | 'pt-BR'
-+  | 'ru'
-+  | 'it';
++function TocHeadingList(props: {
++  readonly turnKey: () => string | null;
++  readonly items: () => readonly TocHeadingItem[];
++  readonly active: () => string | null;
++  readonly baseLevel: () => number;
++  readonly width: () => number;
++  readonly availableHeight: () => number;
++  readonly floating: boolean;
++  readonly select: (item: TocHeadingItem) => void;
++}) {
++  const scrollOffset = signal(0);
++  const listRef = signal<ListRef | undefined>(undefined);
++  let hovered = false;
 +
-+/** Authoritative manifest of built-in locales (synchronized with locales.manifest.json). */
-+export const SUPPORTED_LOCALES: readonly SupportedLocaleInfo[] = [
-+  { tag: 'en', autonym: 'English', fallbacks: [] },
-+  { tag: 'zh-CN', autonym: '简体中文', fallbacks: ['en'] },
-+  { tag: 'zh-TW', autonym: '繁體中文（中國台灣）', fallbacks: ['en'] },
-+  { tag: 'zh-HK', autonym: '繁體中文（中國香港）', fallbacks: ['zh-TW', 'en'] },
-+  { tag: 'ja', autonym: '日本語', fallbacks: ['en'] },
-+  { tag: 'ko', autonym: '한국어', fallbacks: ['en'] },
-+  { tag: 'es', autonym: 'Español', fallbacks: ['en'] },
-+  { tag: 'fr', autonym: 'Français', fallbacks: ['en'] },
-+  { tag: 'de', autonym: 'Deutsch', fallbacks: ['en'] },
-+  { tag: 'pt-BR', autonym: 'Português (Brasil)', fallbacks: ['en'] },
-+  { tag: 'ru', autonym: 'Русский', fallbacks: ['en'] },
-+  { tag: 'it', autonym: 'Italiano', fallbacks: ['en'] },
-+] as const;
++  const contentHeight = computed(() => props.items().length * ROW_HEIGHT);
++  const frameHeight = computed(() => {
++    const maxBudget = Math.min(
++      480,
++      windowSize().height * 0.65,
++      Math.max(0, props.availableHeight() - (props.floating ? 36 : 24)),
++    );
++    if (platform.idiom === 'terminal') {
++      return Math.min(contentHeight(), Math.floor(maxBudget / ROW_HEIGHT) * ROW_HEIGHT);
++    }
++    return Math.min(contentHeight(), maxBudget);
++  });
 +
-+const LOCALE_INFO_BY_TAG: Readonly<Record<SupportedLocaleTag, SupportedLocaleInfo>> =
-+  Object.fromEntries(SUPPORTED_LOCALES.map((entry) => [entry.tag, entry])) as Record<
-+    SupportedLocaleTag,
-+    SupportedLocaleInfo
-+  >;
++  const edgeFade = computed(() => {
++    const content = contentHeight();
++    const frame = frameHeight();
++    if (content <= frame + 1) return { top: 0, bottom: 0 };
++    const offset = Math.max(0, Math.min(scrollOffset(), content - frame));
++    return {
++      top: Math.min(FADE_HEIGHT, offset),
++      bottom: Math.min(FADE_HEIGHT, Math.max(0, content - frame - offset)),
++    };
++  });
 +
-+const EXACT_TAG_MAP = new Map<string, SupportedLocaleTag>(
-+  SUPPORTED_LOCALES.map((entry) => [entry.tag.toLowerCase(), entry.tag]),
-+);
++  const activeIndex = computed(() => {
++    const id = props.active();
++    return id === null ? -1 : props.items().findIndex((item) => item.id === id);
++  });
 +
-+/** Normalize POSIX/BCP 47 locale tags into canonical BCP 47 casing. */
-+export function normalizeLocaleTag(raw: string): string | null {
-+  const head = raw.trim().split(/[.@]/, 1)[0]?.trim() ?? '';
-+  if (!head || head.length > 35) return null;
-+  const parts = head.replaceAll('_', '-').split('-');
-+  const first = parts[0];
-+  if (!first || !/^[a-zA-Z]{2,3}$/.test(first)) return null;
-+  const out = [first.toLowerCase()];
-+  let inExtension = false;
-+  for (let i = 1; i < parts.length; i += 1) {
-+    const part = parts[i]!;
-+    if (!/^[a-zA-Z0-9]{1,8}$/.test(part)) return null;
-+    if (part.length === 1) {
-+      inExtension = true;
-+      out.push(part.toLowerCase());
-+    } else if (inExtension) {
-+      out.push(part.toLowerCase());
-+    } else if (i === 1 && /^[a-zA-Z]{4}$/.test(part)) {
-+      out.push(part[0]!.toUpperCase() + part.slice(1).toLowerCase());
-+    } else if (/^[a-zA-Z]{2}$/.test(part) || /^[0-9]{3}$/.test(part)) {
-+      out.push(part.toUpperCase());
-+    } else {
-+      out.push(part.toLowerCase());
++  let syncedTurn: string | null = null;
++  effect(() => {
++    const turn = props.turnKey();
++    const list = listRef();
++    const index = activeIndex();
++    const frame = frameHeight();
++    if (!list || index < 0 || frame < ROW_HEIGHT) return;
++    const turnChanged = turn !== syncedTurn;
++    syncedTurn = turn;
++    if (hovered && !turnChanged) return;
++    const start = index * ROW_HEIGHT;
++    const current = untracked(scrollOffset);
++    if (turnChanged || start < current || start + ROW_HEIGHT > current + frame) {
++      list.scrollToIndex({
++        index,
++        viewPosition: start <= current ? 0 : 1,
++        animated: false,
++      });
++    }
++  });
++
++  const surface = () => (props.floating ? C.floating : C.panel);
++
++  return (
++    <View
++      onMouseEnter={() => {
++        hovered = true;
++      }}
++      onMouseLeave={() => {
++        hovered = false;
++      }}
++      style={{ width: props.width(), height: frameHeight(), minHeight: 0 }}
++    >
++      <List
++        ref={(node) => {
++          listRef.set(node);
++        }}
++        testID="markdown-toc-list"
++        accessibilit
+```
+
+**File**: `products/maka/workbench/app/MessageRow.tsx` (modified, +4/-0)
+```diff
+@@ -38,6 +38,7 @@ import {
+ import type { MessageOrigin } from '../../../../packages/plugin-sdk/src/index.js';
+ import type { InlineCitation } from './answerCitations';
+ import { MarkdownBody } from './MarkdownBody';
++import type { BindTextViewToc } from './turnToc';
+ import { SourceText } from './SourceText';
+ import { compactCopyInset, CompactReplyFooter, LocalMessageCopy } from './CompactReplyFooter';
+ import { replyDetails, replyMetrics } from './replyDetails';
+@@ -172,6 +173,7 @@ export function MessageRow({
+   compactChat,
+   beside,
+   citations,
++  bindToc,
+   hasSources,
+   openSources,
+   highlighted,
+@@ -204,6 +206,7 @@ export function MessageRow({
+   beside?: boolean;
+   localQuickReply?: boolean;
+   citations?(): readonly InlineCitation[] | undefined;
++  bindToc?: BindTextViewToc;
+   hasSources?(): boolean;
+   openSources?(): void;
+   highlighted?: () => boolean;
+@@ -625,6 +628,7 @@ export function MessageRow({
+                           >
+                             <MarkdownBody
+                               citations={citations}
++                              bindToc={bindToc}
+                               sessionId={sessionId}
+                               row={row}
+                               sourceId={sourceId()}
+```
+
+**File**: `products/maka/workbench/app/markdownTocModel.ts` (added, +168/-0)
+```diff
+@@ -0,0 +1,168 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++
++export type TocHeadingItem = {
++  readonly id: string;
++  readonly level: number;
++  readonly title: string;
++};
++
++export type TocLayoutMode =
++  | { readonly kind: 'docked'; readonly width: number; readonly left: number }
++  | { readonly kind: 'compact'; readonly railLeft: number; readonly popoverWidth: number }
++  | { readonly kind: 'hidden' };
++
++export type TurnViewportSpan = {
++  readonly turnKey: string;
++  readonly top: number;
++  readonly bottom: number;
++};
++
++export type PartVisibleBlocks = {
++  readonly partKey: string;
++  readonly firstBlock: number | null;
++  readonly lastBlock: number | null;
++};
++
++export type PartHeadingRef = {
++  readonly id: string;
++  readonly partKey: string;
++  readonly blockIndex: number;
++};
++
++const READING_COLUMN_MAX_WIDTH = 800;
++const DOCKED_MIN_MARGIN = 196;
++const DOCKED_MAX_WIDTH = 220;
++const DOCKED_EDGE_INSET = 12;
++const DOCKED_COLUMN_GAP = 12;
++const COMPACT_MIN_MARGIN = 32;
++const COMPACT_RAIL_WIDTH = 20;
++const COMPACT_POPOVER_WIDTH = 220;
++
++export function tocLayoutMode(input: {
++  readonly listWidth: number;
++  readonly railInset: number;
++  readonly terminal: boolean;
++}): TocLayoutMode {
++  const { listWidth, railInset, terminal } = input;
++  if (listWidth <= 0) return { kind: 'hidden' };
++  const contentWidth = Math.max(0, listWidth - railInset * 2);
++  const readingColumnLeft = railInset + Math.max(0, (contentWidth - READING_COLUMN_MAX_WIDTH) / 2);
++  if (readingColumnLeft >= DOCKED_MIN_MARGIN) {
++    const width = Math.min(
++      DOCKED_MAX_WIDTH,
++      Math.floor(readingColumnLeft - DOCKED_EDGE_INSET - DOCKED_COLUMN_GAP),
++    );
++    return { kind: 'docked', width, left: DOCKED_EDGE_INSET };
++  }
++  if (!terminal && readingColumnLeft >= COMPACT_MIN_MARGIN) {
++    const railLeft = Math.max(
++      4,
++      Math.min(DOCKED_EDGE_INSET, Math.floor((readingColumnLeft - COMPACT_RAIL_WIDTH) / 2)),
++    );
++    return { kind: 'compact', railLeft, popoverWidth: COMPACT_POPOVER_WIDTH };
++  }
++  return { kind: 'hidden' };
++}
++
++export function pickViewedTurn(
++  turns: readonly TurnViewportSpan[],
++  viewportTop: number,
++  viewportBottom: number,
++  preferredTurnKey: string | null = null,
++): string | null {
++  if (turns.length === 0 || viewportBottom <= viewportTop) return null;
++  let bestKey: string | null = null;
++  let bestOverlap = 0;
++  for (const turn of turns) {
++    const overlap = Math.max(
++      0,
++      Math.min(turn.bottom, viewportBottom) - Math.max(turn.top, viewportTop),
++    );
++    if (overlap <= 0) continue;
++    if (
++      overlap > bestOverlap + 1 ||
++      (Math.abs(overlap - bestOverlap) <= 1 && turn.turnKey === preferredTurnKey)
++    ) {
++      bestOverlap = overlap;
++      bestKey = turn.turnKey;
 +    }
 +  }
-+  return out.join('-');
++  return bestKey;
 +}
 +
-+/** Script-aware BCP 47 negotiation of a single tag against built-in locales; null if unsupported. */
-+export function negotiateSingleLocale(locale: string): SupportedLocaleTag | null {
-+  const normalized = normalizeLocaleTag(locale);
-+  if (!normalized) return null;
-+  const exact = EXACT_TAG_MAP.get(normalized.toLowerCase());
-+  if (exact) return exact;
-+  const parts = normalized.toLowerCase().split('-');
-+  const lang = parts[0];
-+  // Stop before BCP 47 extension / private-use singletons (u, t, x, ...).
-+  const rest: string[] = [];
-+  for (let i = 1; i < parts.length; i += 1) {
-+    const part = parts[i]!;
-+    if (part.length === 1) break;
-+    rest.push(part);
++export function pickActiveHeading(
++  items: readonly PartHeadingRef[],
++  partsInOrder: readonly PartVisibleBlocks[],
++  atBottom: boolean,
++  fallbackId: string | null = null,
++): string | null {
++  if (items.length === 0) return null;
++  const partOrder = new Map<string, number>();
++  let firstVisibleOrder = -1;
++  let firstVisibleBlock = -1;
++  let lastVisibleOrder = -1;
++  let lastVisibleBlock = -1;
++
++  for (let i = 0; i < partsInOrder.length; i += 1) {
++    const part = partsInOrder[i]!;
++    partOrder.set(part.partKey, i);
++    if (part.firstBlock !== null && firstVisibleOrder < 0) {
++      firstVisibleOrder = i;
++      firstVisibleBlock = part.firstBlock;
++    }
++    if (part.lastBlock !== null) {
++      lastVisibleOrder = i;
++      lastVisibleBlock = part.lastBlock;
++    }
 +  }
-+  switch (lang) {
-+    case 'zh':
-+      if (rest.includes('hans')) return 'zh-CN';
-+      if (rest.includes('hant')) {
-+        return rest.includes('hk') || rest.includes('mo') ? 'zh-HK' : 'zh-TW';
-+      }
-+      if (rest.includes('hk') || rest.includes('mo')) return 'zh-HK';
-+      if (rest.includes('tw')) return 'zh-TW';
-+      return 'zh-CN';
-+    case 'yue':
-+      return rest.includes('hans') ? 'zh-CN' : 'zh-HK';
-+    case 'ja':
-+      return 'ja';
-+    case 'ko':
-+      return 'ko';
-+    case 'es':
-+      return 'es';
-+    case 'fr':
-+      return 'fr';
-+    case 'de':
-+      return 'de';
-+    case 'pt':
-+      return 'pt-BR';
-+ 
++
++  if (atBottom && lastVisibleOrder >= 0) {
++    const lastItem = items[items.length - 1]!;
++    const itemOrder = partOrder.get(lastItem.partKey) ?? -1;
++    if (
++      itemOrder >= 0 &&
++      (itemOrder < lastVisibleOrder ||
++        (itemOrder === lastVisibleOrder && lastItem.blockIndex <= lastVisibleBlock))
++    ) {
++      return lastItem.id;
++    }
++  }
++
++  if (firstVisibleOrder < 0) {
++    if (atBottom) return items[items.length - 1]!.id;
++    if (fallbackId !== null && items.some((item) => item.id === fallbackId)) return fallbackId;
++    return items[0]!.id;
++  }
++
++
+```
+
+**File**: `products/maka/workbench/app/processGroups.ts` (modified, +6/-0)
+```diff
+@@ -503,6 +503,12 @@ export function projectProcessGroups(input: {
+       } else {
+         flush(true);
+         entries.push({ kind: 'message', key: position.rowId, rowId: position.rowId });
++        if (row.role === 'assistant' && row.field === 'body' && !row.sourceCitation) {
++          const presentation = turn(rowTurn);
++          if (!presentation.answerOutputIds.includes(position.rowId)) {
++            presentation.answerOutputIds.push(position.rowId);
++          }
++        }
+       }
+       continue;
+     }
 ```
 
 ---
 
-### Incident Patch 3: `14897e5b` (2026-11-24)
-**Commit Message**: fix(agent): compact an overflow whose interruption was not recorded (#7211)
+### Incident Patch 2: `37a6782d` (2026-11-25)
+**Commit Message**: feat(executor): support isolated external executors across macOS, Linux, and Windows (#7253)
 
-* fix(agent): compact an overflow whose interruption was not recorded
+* feat(process): support isolated native tasks on Linux
 
-A Main request that overflows records its source failure and leaves the
-attempt open; the driver then writes ModelInterrupted from the failed
-stream, and only an interrupted attempt may take ContextOverflow recovery.
-When that interruption is not written (the publish loses a revision race
-and returns Ok(false), or the driver retires before writing it),
-reconcile sees an open attempt with no live model work and assesses it
-first. The assessment records ContextOverflow, fold rejects it with
-"context overflow requires an original interrupted model attempt", and
-the Run fails instead of compacting.
+Generated-by: Maka
 
-A captured source failure proves the stream ended, so there is nothing
-left to observe. Reconcile now interrupts such an attempt before
-assessing it, the same order the live driver uses.
+* feat(process): support isolated native tasks on Windows
 
-Refs #7111
+Anchor private snapshots, launch material, and output evidence to Windows directory handles and retain full file IDs. Carry the trusted sandbox backend through the detached helper and settle the provider tree and terminal output before publishing closure.
 
-Generated-by: Claude Code
+Use MXC 1.1.0 to keep namespace denials alongside per-task read and write grants. Exercise managed pipes and live ConPTY through the real CLI.
 
-* fix(agent): preserve failure diagnostic and guard tools on uninterrupted source failure
+Generated-by: Maka
 
-Two small peer follow-ups to the captured source-failure interrupt path:
-- Skip deciding unadmitted tool calls while an attempt has
+* feat(executor): deliver receipt-verified programs to isolated native tasks
 
-**File**: `plugins/agent/engine/src/reconcile.rs` (modified, +13/-1)
+Publish the verified server and helper together and retain setup inputs through provider shutdown. Exercise ACP setup and receipt delivery across macOS, Linux and Windows, including native MXC and original process cleanup.
+
+Generated-by: Maka
+
+* fix(executor): settle isolation cleanup before confirming native jobs
+
+Generated-by: Maka
+
+* fix(process): harden isolated tasks across Windows accounts, AppData, and runtime cleanup
+
+Address round-2 independent review findin
+
+**File**: `.cargo/config.toml` (modified, +5/-0)
 ```diff
-@@ -1254,7 +1254,9 @@ fn next_action(
-                     },
-                 );
-             }
--            if attempt.interrupted.is_some() && attempt.recovery.is_none() {
-+            if (attempt.interrupted.is_some() || attempt.source_failure.is_some())
-+                && attempt.recovery.is_none()
-+            {
-                 continue;
-             }
-         }
-@@ -1415,6 +1417,16 @@ fn next_action(
-     if attempt.admission.is_none() && attempt.closed.is_none() && attempt.interrupted.is_none() {
-         return Action::Start(id);
-     }
-+    // A captured source failure proves the stream ended, so there is nothing left to observe.
-+    // Interrupt before assessing, as the live driver does: overflow recovery needs it.
-+    if attempt.source_failure.is_some() && attempt.closed.is_none() && attempt.interrupted.is_none()
-+    {
-+        let diagnostic = model
-+            .and_then(|model| model.failure.as_ref())
-+            .map(|protocol| protocol.failure.to_string())
-+            .unwrap_or_else(|| "Original model source failed".into());
-+        return Action::Interrupt(id, diagnostic);
-+    }
-     if attempt.recovery.is_none()
-         && attempt.closed.as_ref().is_none_or(|closed| {
-             closed.diagnostic.is_some()
+@@ -39,3 +39,8 @@ rustc-wrapper = ""
+ # without relying on a racy runtime sqlite3_config() call.
+ [env]
+ LIBSQLITE3_FLAGS = "SQLITE_DEFAULT_MEMSTATUS=0"
++
++# MXC's release build otherwise enables Required ETW diagnostics independently
++# of the per-request telemetry preference. Use the SDK's unrouted build.
++MXC_TELEMETRY_COMPONENT_PATH = { value = "", force = true }
++MXC_TELEMETRY_TEST_KEYWORDS = { value = "", force = true }
 ```
 
-**File**: `plugins/agent/engine/src/reconcile/tests.rs` (modified, +154/-0)
+**File**: `Cargo.lock` (modified, +21/-6)
 ```diff
-@@ -1692,3 +1692,157 @@ fn historical_run_wide_fallback_folds_after_earlier_step_succeeded() {
-         RetryStreak::AfterFallbackTransition { charged: 0 }
-     );
+@@ -8656,6 +8656,7 @@ dependencies = [
+ name = "maka-acp-native"
+ version = "0.3.0"
+ dependencies = [
++ "dunce",
+  "futures-util",
+  "hex",
+  "maka-agent-api",
+@@ -8668,6 +8669,7 @@ dependencies = [
+  "maka-host-runtime",
+  "maka-interactions-api",
+  "maka-plugin-core",
++ "maka-process",
+  "maka-workspace-api",
+  "serde",
+  "serde_json",
+@@ -8859,6 +8861,7 @@ dependencies = [
+  "tracing-subscriber",
+  "unicode-normalization",
+  "uuid",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -8994,6 +8997,7 @@ dependencies = [
+  "base64 0.23.1",
+  "clap",
+  "crossterm",
++ "dunce",
+  "flate2",
+  "futures-util",
+  "hex",
+@@ -9018,6 +9022,7 @@ dependencies = [
+  "maka-computer-use",
+  "maka-config",
+  "maka-event-log",
++ "maka-external-agent",
+  "maka-fs-tools",
+  "maka-host-js",
+  "maka-host-runtime",
+@@ -9327,12 +9332,15 @@ dependencies = [
+  "base64 0.23.1",
+  "cap-fs-ext",
+  "cap-std",
++ "dunce",
+  "futures-util",
+  "hex",
++ "libc",
+  "maka-agent-facts",
+  "maka-agent-ports",
+  "maka-capabilities",
+  "maka-plugin-core",
++ "maka-process",
+  "schemars 1.2.3",
+  "serde",
+  "serde_json",
+@@ -9751,9 +9759,11 @@ name = "maka-process"
+ version = "0.3.0"
+ dependencies = [
+  "alacritty_terminal",
++ "dirs",
+  "dunce",
+  "libc",
+  "maka-agent-facts",
++ "maka-event-log",
+  "maka-network",
+  "maka-plugin-core",
+  "maka-sandbox",
+@@ -9762,6 +9772,7 @@ dependencies = [
+  "schemars 1.2.3",
+  "serde",
+  "serde_json",
++ "sha2 0.11.1",
+  "tempfile",
+  "thiserror 2.0.21",
+  "tokio",
+@@ -9938,8 +9949,6 @@ version = "0.3.0"
+ dependencies = [
+  "cap-fs-ext",
+  "cap-std",
+- "dunce",
+- "flatbuffers",
+  "globset",
+  "hex",
+  "libc",
+@@ -10799,8 +10808,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "mxc-sdk"
+-version = "1.0.1"
+-source = "git+https://github.com/microsoft/mxc?rev=05a430bc17a3e1b3fa2131524fc52e4319e07298#05a430bc17a3e1b3fa2131524fc52e4319e07298"
++version = "1.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a6f702443261f9e5d12f607f16f591e99ea3ff6fd886281e041b700cbbb2b5de"
+ dependencies = [
+  "anyhow",
+  "base64 0.22.1",
+@@ -10810,6 +10820,7 @@ dependencies = [
+  "flatbuffers",
+  "getrandom 0.2.17",
+  "libc",
++ "native-tls",
+  "nix 0.29.0",
+  "same-file",
+  "semver",
+@@ -10822,6 +10833,7 @@ dependencies = [
+  "tokio",
+  "tracelogging",
+  "unicode-general-category",
++ "ureq",
+  "url",
+  "uuid",
+  "widestring",
+@@ -11321,9 +11333,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "notify"
+-version = "8.2.1"
++version = "8.2.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "82f812702fbc75d35416d3f884e04925be7e9498f4eceea2e24ba34559284674"
++checksum = "c41a04a5f59df9322cc657286dd2d79f90816119b22c5f847607c850110205ab"
+ dependencies = [
+  "bitflags 2.13.2",
+  "inotify",
+@@ -19258,14 +19270,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3ac5cecf619ca81f66a96482db09687c9f7465af65f4300a8c30cca05bd5a59d"
+ dependencies = [
+  "base64 0.23.1",
++ "der 0.8.2",
+  "flate2",
+  "log",
++ "native-tls",
+  "percent-encoding",
+  "rustls",
+  "rustls-pki-types",
+  "rustls-platform-verifier",
+  "ureq-proto",
+  "utf8-zero",
++ "webpki-root-certs",
+  "webpki-roots 1.0.11",
+ ]
+ 
+```
+
+**File**: `Cargo.toml` (modified, +1/-2)
+```diff
+@@ -100,8 +100,7 @@ publish = false
+ [workspace.dependencies]
+ zstd = { version = "0.14.3", default-features = false }
+ asyncband = "*"
+-mxc-sdk = { git = "https://github.com/microsoft/mxc", rev = "05a430bc17a3e1b3fa2131524fc52e4319e07298" }
+-flatbuffers = "25.12.19"
++mxc-sdk = "1.1.0"
+ maka-python-runtime = { path = "platform/python-runtime" }
+ maka-mcp = { path = "plugins/agent/mcp" }
+ hex = "0.4.3"
+```
+
+**File**: `platform/event-log/src/root/windows.rs` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ pub use filesystem::{
+     FileIdentity, create_private_directory, create_private_file, file_identity, open_nofollow,
+     private_directory,
+ };
+-pub use security::{PrivateSecurity, validate_private};
++pub use security::{PrivateSecurity, validate_private, validate_protected_private};
+ 
+ use std::{ffi::c_void, io, os::windows::ffi::OsStrExt};
+ use windows_sys::Win32::Foundation::LocalFree;
+```
+
+**File**: `platform/event-log/src/root/windows/security.rs` (modified, +22/-4)
+```diff
+@@ -158,12 +158,30 @@ impl SecurityInfo {
+     }
  }
-+
-+#[test]
-+fn an_overflow_whose_interruption_was_not_recorded_still_recovers() {
-+    let mut view = policy_view(None);
-+    let spec = ContentBlob::json(&view.spec).unwrap();
-+    apply_policy_fact(
-+        &mut view,
-+        Fact::RunAdmitted {
-+            spec: spec.reference().clone(),
-+        },
-+    );
-+    let step = StepId::new();
-+    let attempt = ModelAttemptId::new();
-+    let request = ContentBlob::json(&serde_json::json!({})).unwrap();
-+    apply_policy_fact(
-+        &mut view,
-+        Fact::StepPrepared {
-+            step,
-+            request: request.reference().clone(),
-+            adjudications: vec![],
-+        },
-+    );
-+    apply_policy_fact(&mut view, Fact::ModelAttemptPrepared { attempt, step });
-+    apply_policy_fact(
-+        &mut view,
-+        Fact::ModelAttemptAdmitted {
-+            attempt,
-+            upstream: serde_json::json!({}),
-+        },
-+    );
-+    let protocol = maka_agent_facts::context::ModelFailureProtocol {
-+        failure: maka_model::ModelError::ContextOverflow {
-+            observed_output: true,
-+        },
-+        transport: None,
-+    };
-+    let failure = ContentBlob::json(&protocol).unwrap();
-+    apply_policy_fact(
-+        &mut view,
-+        Fact::ModelSourceFailureCaptured {
-+            attempt,
-+            failure: failure.reference().clone(),
-+        },
-+    );
-+    let mut model = fallback_model_level(step, request.reference());
-+    model.failure = Some(protocol.clone());
-+    // The stream's failure is recorded, but the interruption the driver published for it
-+    // lost a revision race, or the Host stopped before writing it.
-+    for _ in 0..2 {
-+        match next(&view, &Live::default(), UnixMillis(1), Some(&model), false) {
-+            Action::Interrupt(id, diagnostic) if id == attempt => apply_policy_fact(
-+                &mut view,
-+                Fact::ModelInterrupted {
-+                    attempt,
-+                    diagnostic,
-+                },
-+            ),
-+            // The native adapter assesses a captured overflow as overflow recovery.
-+            Action::Assess(id) if id == attempt => apply_policy_fact(
-+                &mut view,
-+                Fact::AttemptRecoveryRecorded {
-+                    attempt,
-+                    recovery: AttemptRecovery::ContextOverflow {
-+                        observed_output: true,
-+                    },
-+                },
-+            ),
-+            _ => panic!("expected the overflowed attempt to be interrupted or assessed"),
-+        }
+ 
+-/// Validate the held object, not a separately resolved pathname. Unknown ACE
+-/// forms fail closed; inherited account/SYSTEM entries are valid for child files.
+-pub fn validate_private(file: &File) -> io::Result<()> {
++/// Private task evidence requires a protected DACL on the held object itself.
++pub fn validate_protected_private(file: &File) -> io::Result<()> {
++    use windows_sys::Win32::Security::{GetSecurityDescriptorControl, SE_DACL_PROTECTED};
+     let info = SecurityInfo::read(file)?;
++    let mut control = 0;
++    let mut revision = 0;
++    // SAFETY: GetSecurityInfo owns the descriptor for the duration of this query.
++    checked(unsafe {
++        GetSecurityDescriptorControl(info._allocation.0, &mut control, &mut revision)
++    })?;
++    if control & SE_DACL_PROTECTED == 0 {
++        return Err(denied());
 +    }
-+    assert_eq!(
-+        view.attempts[&attempt].interrupted.as_deref(),
-+        Some(protocol.failure.to_string().as_str())
-+    );
-+    assert!(view.attempts[&attempt].compactable_overflow());
++    validate_account_acl(&info)
 +}
 +
-+#[test]
-+fn a_tool_call_on_an_uninterrupted_overflow_is_rejected_without_execution() {
-+    let (mut view, request) = admitted_retry_view(0);
-+    let step = StepId::new();
-+    let attempt = ModelAttemptId::new();
-+    let call_id = "call-before-uninterrupted-overflow".to_owned();
-+    let failure = ContentBlob::json(&maka_agent_facts::context::ModelFailureProtocol {
-+        failure: maka_model::ModelError::ContextOverflow {
-+            observed_output: true,
++/// Root children may inherit account/SYSTEM entries from their private parent.
++pub fn validate_private(file: &File) -> io::Result<()> {
++    validate_account_acl(&SecurityInfo::read(file)?)
++}
++
++fn validate_account_acl(info: &SecurityInfo) -> io::Result<()> {
+     let account = AccountSid::current()?;
+-    validate_owner(&info, &account)?;
++    validate_owner(info, &account)?;
+     // SAFETY: Windows returned a valid ACL and owns its structural validation.
+     for index in 0..unsafe { (*info.dacl).AceCount } {
+         let mut ace = ptr::null_mut();
+```
+
+**File**: `platform/host-runtime/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -70,7 +70,7 @@ tempfile.workspace = true
+ windows-sys = { version = "0.61.2", features = ["Win32_Security"] }
+ 
+ [target.'cfg(windows)'.dependencies]
+-windows-sys = { version = "0.61.2", features = ["Win32_Storage_FileSystem", "Win32_System_Threading"] }
++windows-sys = { version = "0.61.2", features = ["Win32_Storage_FileSystem", "Win32_System_Threading", "Win32_System_Pipes"] }
+ 
+ [[test]]
+ name = "integration"
+```
+
+**File**: `platform/host-runtime/examples/windows_mxc.rs` (modified, +55/-31)
+```diff
+@@ -359,7 +359,7 @@ mod native {
+         run_case!(hardlink_conflict);
+         run_case!(protected_ancestor);
+         run_case!(guard_registry);
+-        run_case!(unsupported_reopening);
++        run_case!(reopened_descendants);
+         run_case!(arguments_and_environment);
+         run_case!(pipe_input);
+         run_case!(cancel_hung_admission);
+@@ -729,41 +729,47 @@ mod native {
+         Ok(())
+     }
+ 
+-    async fn unsupported_reopening(fixture: &Fixture) -> Result<()> {
+-        let reopened = fixture.work.join("private/reopened");
+-        std::fs::create_dir(&reopened)?;
++    async fn reopened_descendants(fixture: &Fixture) -> Result<()> {
++        let private = fixture.work.join("private");
++        let workspace = private.join("workspace");
++        let inputs = private.join("inputs");
++        let hidden = private.join("existing");
++        for path in [&workspace, &inputs, &hidden] {
++            std::fs::create_dir_all(path)?;
++        }
++        std::fs::write(inputs.join("input"), b"input")?;
++        std::fs::write(hidden.join("secret"), b"existing")?;
+         let filesystem = Policy {
+             default: Access::Read,
+             rules: vec![
+-                Rule::subtree(&fixture.work, Access::Write),
+-                Rule::subtree(fixture.work.join("private"), Access::Deny),
+-                Rule::subtree(&reopened, Access::Write),
++                Rule::subtree(&private, Access::Deny),
++                Rule::subtree(&workspace, Access::Write),
++                Rule::subtree(&inputs, Access::Read),
+             ],
+-            deny_globs: vec![],
++            deny_globs: Vec::new(),
+         };
+-        assert!(matches!(
+-            maka_sandbox::windows::mxc::PreparedPolicy::new(&filesystem, &Network::Denied, &fixture.work),
+-            Err(maka_sandbox::Error::Unsupported(reason)) if reason == "native MXC cannot reopen a descendant of a denied path"
+-        ));
+-        let command =
+-            fixture
+-                .command("must-not-run", Network::Denied)?
+-                .sandbox(&Sandbox::Managed {
+-                    filesystem,
+-                    network: Network::Denied,
+-                })?;
+-        let failure = match pipe::spawn(command).await {
+-            Err(failure) => failure,
+-            Ok(_) => return Err("unsupported denial reopening executed a command".into()),
+-        };
+-        assert!(
+-            failure
+-                .to_string()
+-                .contains("native MXC cannot reopen a descendant of a denied path"),
+-            "{failure}"
+-        );
+-        assert!(!fixture.work.join("unexpected-execution").exists());
+-        println!("PASS unrepresentable Deny→Write policy rejects before execution");
++        let mut command = Command::new(&fixture.executable, &workspace)
++            .with_backend(fixture.backend.clone())
++            .sandbox(&Sandbox::Managed {
++                filesystem,
++                network: Network::Denied,
++            })?;
++        command.args(["__fixture", "reopened"]);
++        let mut spawned = pipe::spawn(command).await?;
++        let mut output = tokio::io::BufReader::new(spawned.stdout);
++        let mut line = String::new();
++        output.read_line(&mut line).await?;
++        assert_eq!(line.trim(), "ready");
++        std::fs::create_dir(private.join("future"))?;
++        std::fs::write(private.join("future/secret"), b"future")?;
++        spawned.stdin.write_all(b"go").await?;
++        drop(spawned.stdin);
++        let mut errors = Vec::new();
++        let (status, _) = tokio::try_join!(
++            spawned.child.wait(),
++            spawned.stderr.read_to_end(&mut errors)
++        )?;
++        assert!(status.success(), "{}", String::from_utf8_lossy(&errors));
+         Ok(())
+     }
+ 
+@@ -1187,6 +1193,24 @@ mod native {
+ 
+     fn worker(args: Vec<String>) -> Result<()> {
+         match args.first().map(String::as_str) {
++            Some("reopened") => {
++                std::fs::write("probe", b"write")?;
++                assert_eq!(std::fs::read("probe")?, b"write");
++                assert_eq!(std::fs::read("../inputs/input")?, b"input");
++                assert_eq!(
++                    std::fs::write("../inputs/input", b"x")
++                        .unwrap_err()
++                        .raw_os_error(),
++                    Some(5)
++                );
++                println!("ready");
++                std::io::stdout().flush()?;
++                let mut go = [0; 2];
++                std::io::stdin().read_exact(&mut go)?;
++                for name in ["../existing/secret", "../future/secret"] {
++                    assert_eq!(std::fs::read(name).unwrap_err().raw_os_error(), Some(5));
++                }
++            }
+             Some("filesystem") => {
+                 std::fs::write("文件 with spaces.txt", "写入 😀")?;
+                 denied_write(Path::new(&args[1]));
+```
+
+**File**: `platform/host-runtime/src/ipc/windows/stream.rs` (modified, +13/-0)
+```diff
+@@ -38,6 +38,19 @@ enum Pipe {
+     Client(NamedPipeClient),
+ }
+ impl LocalStream {
++    pub fn client_pid(&self) -> io::Result<u32> {
++        use std::os::windows::io::AsRawHandle;
++        use windows_sys::Win32::System::Pipes::GetNamedPipeClientProcessId;
++        let Some(Pipe::Server(pipe)) = &self.pipe else {
++            return Err(io::Error::other("Expected a connected pipe server"));
++        };
++        let mut pid = 0;
++        // SAFETY: the connected server owns the handle throughout the query.
++        if unsafe { GetNamedPipeClientProcessId(pipe.as_raw_handle(), &mut pid) } == 0 {
++            return Err(io::Error::last_os_error());
++        }
++        Ok(pid)
++    }
+     pub(super) fn server(pipe: NamedPipeServer) -> Self {
+         Self {
+             pipe: Some(Pipe::Server(pipe)),
+```
+
+---
+
+### Incident Patch 3: `aaaa6a66` (2026-11-25)
+**Commit Message**: fix(agent): cold-rebuild stale snapshot derived indexes on demand (#7260)
+
+* fix(agent): cold-rebuild stale snapshot derived indexes on demand
+
+After #7245 bumped snapshot navigation VERSION from 3 to 4, persisted snapshots from prior releases still carried version 3 in agent_history_snapshot_nav_heads. Read paths that required a ready snapshot derived index failed immediately instead of triggering Snapshot::ensure_navigation, breaking post-merge Upgrade Compatibility across all historical capsules.
+
+Make snapshot derived-index readiness self-healing and type-enforced across all read paths:
+- Return typed IndexedRead / IndexedReadError from navigation::require_ready, metrics_metadata::require_ready, and Snapshot::catalog_summary_in_snapshot so no query can bypass cold rebuild, with zero extra queries or allocations on the already-ready hot path.
+- Wire shared run_with_snapshot_rebuild retry across every peer path: SessionHistory::{metrics, current_model_context, calibration_sample}, HistoryDataSource::{model_request_traces_for_reader, compaction_duration_ms}, Snapshot::{navigation_find, navigation_landmark_count, navigation_landmarks, terminated}, SessionCatalog::{page, record, pla
+
+**File**: `plugins/agent/native/src/owner/catalog.rs` (modified, +6/-1)
+```diff
+@@ -35,12 +35,17 @@ impl Owner {
+         .map_err(|error| error.to_string())
+     }
+ 
+-    pub(crate) async fn session_summary(&self, id: &str) -> Result<Session, String> {
++    pub(crate) async fn session_summary(
++        &self,
++        id: &str,
++        stop: &tokio_util::sync::CancellationToken,
++    ) -> Result<Session, String> {
+         if !self.owns(id) {
+             return Err("agent_session_unavailable".into());
+         }
+         let record = self
+             .canonical_catalog()?
++            .with_cancellation(stop.clone())
+             .record(id)
+             .await
+             .map_err(|error| error.to_string())?
+```
+
+**File**: `plugins/agent/native/src/owner/driver/tests/tool_history.rs` (modified, +343/-1)
+```diff
+@@ -2133,7 +2133,7 @@ async fn assert_restricted_retry_history(
+     reader.finish().await?;
+ 
+     let traces = HistoryDataSource::Snapshot(earlier)
+-        .model_request_traces_for_reader(driver.access.execution().run_id, 0, 24, true)
++        .model_request_traces_for_reader(driver.access.execution().run_id, 0, 24, true, None)
+         .await?;
+     assert!(!traces.run_terminated);
+     assert_eq!(traces.requests.len(), 2);
+@@ -4554,3 +4554,345 @@ async fn wait_terminal(client: &HostClient, session: &str, run_id: Value) -> Tes
+         tokio::time::sleep(Duration::from_millis(10)).await;
+     }
+ }
++
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn stale_snapshot_indexes_rebuild_without_skipping_pages_or_aborting_sibling_writes()
++-> TestResult<()> {
++    use maka_agent_state::{
++        recall::{RecallStore, SearchQuery},
++        session_catalog::{Filter, Position as CatalogPosition, SideQuestions},
++        session_history::{
++            navigation::SourceFind,
++            source_tree::{HistoryDataSource, SourceTree},
 +        },
-+        transport: None,
-+    })
-+    .unwrap();
-+    for fact in [
-+        Fact::StepPrepared {
-+            step,
-+            request,
-+            adjudications: vec![],
-+        },
-+        Fact::ModelAttemptPrepared { attempt, step },
-+        Fact::ModelAttemptAdmitted {
-+            attempt,
-+            upstream: serde_json::json!({}),
-+        },
-+        Fact::ModelObserved {
-+            attempt,
-+            index: 0,
-+            part: maka_agent_facts::model::ModelPart::ToolCall {
-+                call: maka_agent_facts::model::ModelToolCall {
-+                    id: call_id.clone(),
-+                    name: "Write".into(),
-+                    input: maka_agent_facts::model::ToolInput::Json(serde_json::json!({})),
-+                    provider_options: None,
-+                    provider_executed: false,
-+                },
-+            },
-+            continuation: None,
-+        },
-+        Fact::ModelSourceFailureCaptured {
-+            attempt,
-+            failure: failure.reference().clone(),
-+        },
-+    ] {
-+        apply_policy_fact(&mut view, fact);
++    };
++    use maka_event_log::{
++        StoreError,
++        connection::Query,
++        sessions::{CatalogFilter, CatalogScope},
++        writeback::{Notification, Prepared, Statement},
++    };
++
++    struct SqlWrite<F>(F);
++    impl<F: FnOnce(&rusqlite::Connection) -> Result<bool, StoreError> + Send + 'static> Statement
++        for SqlWrite<F>
++    {
++        type Value = ();
++        type Output = ();
++        fn execute(self, c: &rusqlite::Connection) -> Result<Prepared<()>, StoreError> {
++            let changed = (self.0)(c)?;
++            Ok(Prepared {
++                value: (),
++                changed,
++                notification: Notification::NONE,
++            })
++        }
++        fn committed(_: ()) {}
++        fn isolated_rejection(_: &StoreError) -> bool {
++            false
++        }
++    }
++    struct SqlQuery<F>(F);
++    impl<
++        T: Send + 'static,
++        F: FnOnce(&rusqlite::Connection) -> Result<T, StoreError> + Send + 'static,
++    > Query for SqlQuery<F>
++    {
++        type Output = T;
++        fn execute(self, c: &rusqlite::Connection) -> Result<T, StoreError> {
++            (self.0)(c)
++        }
 +    }
 +
-+    for _ in 0..2 {
-+        match next(&view, &Live::default(), UnixMillis(1), None, false) {
-+            Action::Interrupt(id, diagnostic) if id == attempt => apply_policy_fact(
-+                &mut view,
-+                Fact::ModelInterrupted {
-+                    attempt,
-+                    diagnostic,
-+                },
-+            ),
-+            Action::Assess(id) if id == attempt => apply_policy_fact(
-+                &mut view,
-+                Fact::AttemptRecoveryRecorded {
++    let mut rig = Rig::new()?;
++    let base = rig.directory.path().to_path_buf();
++    let server = MockAiBuilder::new()
++        .scripted(vec![
++            TurnPlan::new()
++                .push_text("Alpha milestone answer.")
++                .with_usage(Usage::new(120, 40)),
++            TurnPlan::new()
++                .push_text("Beta followup answer.")
++                .with_usage(Usage::new(180, 50)),
++            TurnPlan::new()
++                .push_text("Compacted summary.")
++                .with_usage(Usage::new(90, 30)),
++        ])
++        .start()
++        .await?;
++    let boot = model_recovery::bootstrap(&base, server.base_url(), false).await?;
++    model_recovery::attach(&mut rig, &boot).await?;
++
++    let result = AssertUnwindSafe(tokio::time::timeout(
++        Duration::from_secs(60),
++        Box::pin(async {
++            let client = rig.client.as_ref().ok_or("client missing")?;
++            let owner = rig.captured.lock().unwrap().clone().ok_or("owner missing")?;
++            let writer = owner.store.data_writer()?;
++            let run_owner = owner.run_owner();
++
++            let conns = model_recovery::call(client, "settings", "connections", json!({"kind": "start"})).await?;
++            let conn_id = model_recovery::call(client, "settings", "create", json!({
++                "expectedCatalogRevision": conns["revision"],
++                "connection": {
++                    "slug": "snapshot-rebuild", "name": "Snapshot Rebuild",
++                    "provider": {"packageId":"maka.providers","entryId":"maka.providers","scope":"profile","name":"ollama"},
++                    "configuration": {"baseUrl": boot.base_url},
++                    "enabled": true, "enabledModelIds": ["llama3.2"],
++                    "modelOverrides": {"llama3.2": {"apiProtocol": "openai-chat-completions"}}
++                }
++            })).await?["connection"]["connectionId"].clone();
++            let backend = json!({"kind": "model", "connectionId": conn_id, "modelId": "llama3.2"});
++
++            let create_session = |title: &str| {
++                let (title, path) = (title.to_owned(), base.join("workspace"));
++                async move {
++                    let r = model_recovery::call(client, "agent", "create", json!({
++                        "title": title, "automaticTitle": false, "labels": [],
++                        "workspace": {"kind": "directory", "path": path}
++                    })).await?;
++                    Ok::<String, Box<dyn Error + Send + Sync>>(r["session"]["id"].as_str().ok_or("session id")?.to_owned())
++                }
++            };
++            let fork_session = |source: &str, title: &str| {
++                let (owner, source, title) = (owner.clone(), source.to_
+```
 
+**File**: `plugins/agent/native/src/owner/driver_model/codex_switch.rs` (modified, +5/-1)
+```diff
+@@ -165,7 +165,11 @@ impl DriverModel {
+             model_context_window: target.context.as_ref().and_then(|c| c.model_context_window),
+             provenance,
+         };
+-        let Some(previous) = self.history.current_model_context(cut).await? else {
++        let Some(previous) = self
++            .history
++            .current_model_context(cut, Some(&self.cancellation))
++            .await?
++        else {
+             return Ok(None);
+         };
+         let reader = match previous.source {
+```
+
+**File**: `plugins/agent/native/src/owner/driver_model/compacted.rs` (modified, +3/-1)
+```diff
+@@ -436,7 +436,9 @@ impl DriverModel {
+         let history = self
+             .state
+             .session_history(view.spec.owner.clone(), view.spec.session_id.clone());
+-        let sample = history.calibration_sample(&source.current).await?;
++        let sample = history
++            .calibration_sample(&source.current, Some(&self.cancellation))
++            .await?;
+         let route = preparation::route_identity(&model.provider)?;
+         Ok(sample.and_then(|sample| {
+             maka_agent_engine::preparation::Calibration::for_route(
+```
+
+**File**: `plugins/agent/native/src/owner/fork.rs` (modified, +3/-1)
+```diff
+@@ -350,7 +350,9 @@ impl Owner {
+             .map_err(fork_failure)?;
+         let at = now();
+         let recorded_at = UnixMillis(at.try_into().map_err(|_| "agent_clock_invalid")?);
+-        let catalog = self.canonical_catalog()?;
++        let catalog = self
++            .canonical_catalog()?
++            .with_cancellation(scope.cancellation.clone());
+         let control = catalog.control_statement(
+             claim.session_id.clone(),
+             ControlCommand {
+```
+
+**File**: `plugins/agent/native/src/owner/imports.rs` (modified, +4/-1)
+```diff
+@@ -252,7 +252,10 @@ impl Owner {
+                     .imported_sessions(self.run_owner(), self.prefix.clone(), after, 16)
+                     .await
+                     .map_err(Failure::from)?;
+-                let catalog = self.canonical_catalog().map_err(|_| Failure::Unavailable)?;
++                let catalog = self
++                    .canonical_catalog()
++                    .map_err(|_| Failure::Unavailable)?
++                    .with_cancellation(scope.cancellation.clone());
+                 let mut sessions = Vec::with_capacity(page.ids.len());
+                 for id in page.ids {
+                     if let Some(session) = catalog
+```
+
+**File**: `plugins/agent/native/src/owner/recall.rs` (modified, +1/-1)
+```diff
+@@ -86,7 +86,7 @@ impl Recall {
+             }
+             RecallStore::new(data, self.owner.clone(), self.prefix.clone())
+                 .map_err(failed)?
+-                .validate_execution(execution.clone())
++                .validate_execution(execution.clone(), &call.cancellation)
+                 .await
+                 .map_err(failed)?;
+         }
+```
+
+**File**: `plugins/agent/native/src/owner/session_tools.rs` (modified, +1/-0)
+```diff
+@@ -398,6 +398,7 @@ impl Owner {
+                     scope: list_scope.clone(),
+                     title_query: String::new(),
+                 },
++                &scope.cancellation,
+             )
+             .await
+             .map_err(humanize_agent_error)?;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7236** (2026-11-24): feat(workbench): one row leads a turn at work, and the wait for a reply moves without cuts (@UncertaintyDeterminesYou4ndMe)
-- **PR #7235** (2026-11-24): fix(workbench): a thought's window shows its text without Markdown marks (@UncertaintyDeterminesYou4ndMe)
-- **PR #7234** (2026-11-24): fix(model): retry transient HTTP proxy tunnel failures (@sunrioa)
-- **PR #7233** (2026-11-24): feat(agent): enforce control-plane session execution grants (@MicroGery)
-- **PR #7230** (2026-11-24): fix(sandbox): project resolved Windows paths into policy spelling (@me2seeks)
-- **PR #7228** (2026-11-24): fix(agent): keep proactive summary model wait open until closure or interruption (@M4n5ter)
+- **PR #7295** (2026-11-26): perf(workbench): keep the settings pages list so a palette slider drags smoothly (@UncertaintyDeterminesYou4ndMe)
+- **PR #7294** (2026-11-26): fix(cli,agent): synchronize waiter signal test and locate fixture quote (@M4n5ter)
+- **PR #7293** (2026-11-26): fix(updater): honor Windows system proxy settings (@ARE404)
+- **PR #7292** (2026-11-26): feat(agent,workbench): smooth WorkspaceWrite MCP UX, project consent decline, and prefix-cache preservation (@M4n5ter)
+- **PR #7282** (2026-11-26): fix(nsh,workbench): keep upward scrolling from jumping to the bottom during async reflow (@M4n5ter)
+- **PR #7281** (2026-11-26): feat(workbench,i18n): format numeric UI values by default (@Colafornia)
 
 ---
 
@@ -4017,54 +4363,67 @@ Two small peer follow-ups to the captured source-failure interrupt path:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent): keep proactive summary model wait open until closure or interruption
+## X. workbench): show left-side Markdown TOC for overflowing turn replies
 
 **RULE**:
-When implementing operations in `plugins/agent/engine/src/reconcile.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/maka. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/agent/conversations/ui/Conversation.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/maka. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a1bf52b`: agent): keep proactive summary model wait open until closure or interruption. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bd44203`: workbench): show left-side Markdown TOC for overflowing turn replies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/agent/engine/src/reconcile.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/agent/conversations/ui/Conversation.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-fn wait_proactive_summary(view: &RunView, attempt: ModelAttemptId, now: UnixMillis) -> Action {
-    let summary = &view.attempts[&attempt];
-    if summary.admission.is_some()
-        && summary.cleanup != maka_plugin_core::operation::OperationCleanup::Confirmed
-    {
-        wait(view, WaitReason::Model { attempt }, None, now)
-    } else {
-        Action::Idle
-    }
-}
-        attempt.admission.is_some()
-            && (Some(**id) != view.proactive_summary
-                || (matches!(action, Action::Terminate(Terminal::Completed))
-                    && (view.finish_requested() || complete_at_budget)
-                    && (attempt.closed.is_some() || attempt.interrupted.is_some())))
-                    (attempt.closed.is_some() || attempt.interrupted.is_some())
-                        && attempt.cleanup == maka_plugin_core::operation::OperationCleanup::Confirmed
-                return wait_proactive_summary(view, attempt, now);
-                return wait_proactive_summary(view, attempt, now);
+  hasTextPrefix,
+import { MarkdownToc } from '../../../../products/maka/workbench/app/MarkdownToc';
+import { createTurnToc } from '../../../../products/maka/workbench/app/turnToc';
+    if (entry?.kind === 'bot') return entry.turnId;
+  const turnToc = createTurnToc({
+    enabled: () => !props.compact && ready() && reading() === 'chat',
+    listRef: () => list,
+    listWidth: historyWidth,
+    viewportHeight: () => readingSize().height,
+    railInset,
+    atBottom: () => !historyBelow(),
+    isTerminal: () => platform.idiom === 'terminal',
+    rowTurnKey: entryTurn,
+    turnOutputRowKeys: (turnKey) => {
+      if (botView() === 'bot') {
+        return bot.forTurn(turnKey).length > 0 ? [`bot/${turnKey}`] : [];
+      }
+      const turn = projectedTurn(turnKey);
+      if (!turn) return [];
+      const ids = turn.finalOutputIds.length > 0 ? turn.finalOutputIds : turn.answerOutputIds;
+      return ids.filter((id) => !currentRow(id)?.sourceCitation);
+    },
+    rowOutputSources: (rowKey) => {
+      if (rowKey.startsWith('bot/')) {
+        const turnKey = rowKey.slice(4);
+        return bot.forTurn(turnKey).map((message) => ({
+          keyPrefix: `${message.sequence}:`,
+          text: mess
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        Some(**id) != view.proactive_summary
-            && attempt.admission.is_some()
-                    attempt.cleanup == maka_plugin_core::operation::OperationCleanup::Confirmed
-                return wait(view, WaitReason::Model { attempt }, None, now);
-                return wait(view, WaitReason::Model { attempt }, None, now);
+    <View
+      style={readingColumn}
+      onLayout={
+        transcriptSize
+          ? ({ bounds }) => transcriptSize.measure(key(), bounds.size.height)
+          : undefined
+      }
+    >
+      <Each of={[key()]} key={(id: string) => id}>
+        {(ownedKey) => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a1bf52b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bd44203` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

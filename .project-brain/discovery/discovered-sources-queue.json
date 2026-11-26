@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T03:55:53.637Z",
+  "updated_at": "2026-11-26T04:13:39.970Z",
   "stats": {
-    "total_discovered": 9575,
-    "approved_pending_harvest": 9076,
+    "total_discovered": 9577,
+    "approved_pending_harvest": 9078,
     "harvested_count": 0,
     "rejected_count": 499,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9066,
+      "COMMUNITY_AND_EXPERT": 9068,
       "OFFICIAL_DOCUMENTATION": 282,
       "STANDARDS_AND_SPECIFICATIONS": 155,
       "ENGINEERING_BLOGS": 7,
@@ -207184,6 +207184,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
         "fileName": "matrixorigin-matrixone-learnings.md"
+      }
+    },
+    "SRC-CB986258C3C2": {
+      "id": "SRC-CB986258C3C2",
+      "url": "https://github.com/microsoft/mxc?rev=05a430bc17a3e1b3fa2131524fc52e4319e07298",
+      "title": "https://github.com/microsoft/mxc?rev=05a430bc17a3e1b3fa2131524fc52e4319e07298",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T04:13:39.868Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-maka-learnings.md",
+        "fileName": "apache-maka-learnings.md"
+      }
+    },
+    "SRC-0B10079A9E5F": {
+      "id": "SRC-0B10079A9E5F",
+      "url": "https://github.com/microsoft/mxc",
+      "title": "https://github.com/microsoft/mxc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T04:13:39.970Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-maka-learnings.md",
+        "fileName": "apache-maka-learnings.md"
       }
     }
   }

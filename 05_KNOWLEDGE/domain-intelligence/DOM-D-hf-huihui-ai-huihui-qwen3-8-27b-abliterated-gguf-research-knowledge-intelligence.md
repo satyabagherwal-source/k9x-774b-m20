@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
   "source_version": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T07:27:29.743Z",
+  "timestamp": "2026-11-26T04:13:21.140Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF](https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF) (Revision: `hf-huihui-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T07:27:29.743Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:13:21.140Z`  
 > **Learning ID**: `learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF](https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:27:28.650Z  
+> **Harvest Timestamp**: 2026-11-26T04:13:20.277Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4489052 downloads | 2450 likes
+- **Stars / Engagement**: 4628141 downloads | 2651 likes
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:05:13.655Z",
+  "last_updated": "2026-11-26T04:14:10.581Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T03:46:54.300Z",
@@ -373,9 +373,9 @@
       "staged_for_review": 1
     },
     "doobidoo-mcp-memory-service-learnings.md": {
-      "processed_at": "2026-11-25T02:47:54.588Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-26T04:14:09.358Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "cachix-devenv-learnings.md": {
       "processed_at": "2026-11-25T07:13:09.537Z",
@@ -1618,7 +1618,7 @@
       "staged_for_review": 1
     },
     "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md": {
-      "processed_at": "2026-11-22T07:29:03.581Z",
+      "processed_at": "2026-11-26T04:13:40.808Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3703,7 +3703,7 @@
       "staged_for_review": 0
     },
     "apache-maka-learnings.md": {
-      "processed_at": "2026-11-24T21:38:44.934Z",
+      "processed_at": "2026-11-26T04:13:39.772Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4368,
-  "total_canonical_promoted": 551,
-  "total_staged_for_review": 3312
+  "total_dossiers_evaluated": 4371,
+  "total_canonical_promoted": 552,
+  "total_staged_for_review": 3314
 }

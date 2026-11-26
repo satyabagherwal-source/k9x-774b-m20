@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T03:55:53.520Z",
+  "updated_at": "2026-11-26T04:14:09.355Z",
   "statistics": {
-    "total_nodes": 550,
+    "total_nodes": 551,
     "total_edges": 227,
     "domain_distribution": {
       "D": 333,
       "M": 1,
-      "H": 99,
+      "H": 100,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -12281,6 +12281,28 @@
       ],
       "created_at": "2026-11-26T03:55:53.520Z",
       "updated_at": "2026-11-26T03:55:53.520Z"
+    },
+    "DOM-H-BC714522": {
+      "id": "DOM-H-BC714522",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "ontology): point coerced-type warnings at `memory ontology add`",
+      "summary": "Prevents defects observed in production commit `5b8b8b7c`: ontology): point coerced-type warnings at `memory ontology add`. Unvalidated exec -> When implementing operations in `changelog.d/2127.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, an",
+      "confidence": 0.81,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://doobidoo-mcp-memory-service/doobidoo-mcp-memory-service-learnings.md",
+        "source_version": "02f525cb",
+        "observed_at": "2026-11-26T04:13:34.957Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (doobidoo-mcp-memory-service)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-26T04:14:09.355Z",
+      "updated_at": "2026-11-26T04:14:09.355Z"
     }
   },
   "edges": [

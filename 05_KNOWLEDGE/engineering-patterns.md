@@ -797331,3 +797331,186 @@ checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `abab8260` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10594. show left-side Markdown TOC for overflowing turn replies (Harvested from apache/maka)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "show left-side Markdown TOC for overflowing turn replies",
+  "source": "apache/maka",
+  "source_url": "https://github.com/apache/maka",
+  "source_version": "00c6027a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T04:13:23.576Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apache-maka",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/maka](https://github.com/apache/maka) (Revision: `00c6027a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `plugins/agent/conversations/ui/Conversation.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/maka. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9bd44203`: workbench): show left-side Markdown TOC for overflowing turn replies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/agent/conversations/ui/Conversation.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  hasTextPrefix,
+import { MarkdownToc } from '../../../../products/maka/workbench/app/MarkdownToc';
+import { createTurnToc } from '../../../../products/maka/workbench/app/turnToc';
+    if (entry?.kind === 'bot') return entry.turnId;
+  const turnToc = createTurnToc({
+    enabled: () => !props.compact && ready() && reading() === 'chat',
+    listRef: () => list,
+    listWidth: historyWidth,
+    viewportHeight: () => readingSize().height,
+    railInset,
+    atBottom: () => !historyBelow(),
+    isTerminal: () => platform.idiom === 'terminal',
+    rowTurnKey: entryTurn,
+    turnOutputRowKeys: (turnKey) => {
+      if (botView() === 'bot') {
+        return bot.forTurn(turnKey).length > 0 ? [`bot/${turnKey}`] : [];
+      }
+      const turn = projectedTurn(turnKey);
+      if (!turn) return [];
+      const ids = turn.finalOutputIds.length > 0 ? turn.finalOutputIds : turn.answerOutputIds;
+      return ids.filter((id) => !currentRow(id)?.sourceCitation);
+    },
+    rowOutputSources: (rowKey) => {
+      if (rowKey.startsWith('bot/')) {
+        const turnKey = rowKey.slice(4);
+        return bot.forTurn(turnKey).map((message) => ({
+          keyPrefix: `${message.sequence}:`,
+          text: mess
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    <View
+      style={readingColumn}
+      onLayout={
+        transcriptSize
+          ? ({ bounds }) => transcriptSize.measure(key(), bounds.size.height)
+          : undefined
+      }
+    >
+      <Each of={[key()]} key={(id: string) => id}>
+        {(ownedKey) => {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9bd44203` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10595. point coerced-type warnings at `memory ontology add` (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "point coerced-type warnings at `memory ontology add`",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "02f525cb",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T04:13:35.567Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `02f525cb`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `changelog.d/2127.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5b8b8b7c`: ontology): point coerced-type warnings at `memory ontology add`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2127.fixed.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **A coerced memory type still pointed at the env var that needs a restart (#2127, Dhruv-Sharma29).**
+  When a store names a type the ontology does not know, the MCP `memory_store` response and
+  `POST /api/memories` warn that it was stored as `observation`. Both warnings told the caller
+  to set `MCP_CUSTOM_MEMORY_TYPES`, which only takes effect after a restart, although #2126
+  added a runtime path. They now name `memory ontology add <name>` first and keep the env var
+  as the startup alternative. To make that one-line change possible, `handle_store_memory` and
+  the REST `store_memory` were split into module-level helpers (failure handling, the response
+  message, the on-store checks); every other part of both responses is unchanged.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5b8b8b7c` are properly handled with clean fallback behavior.

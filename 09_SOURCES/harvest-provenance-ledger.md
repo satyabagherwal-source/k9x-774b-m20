@@ -13264,3 +13264,7 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e5d6f92f` | Multi-dimensional audit evidence | 2026-11-26T03:55:19.028Z |
 | `learn-dom-d-5c5bc093` | `project://matrixorigin-matrixone` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | 2026-11-26T03:55:53.523Z |
 | `learn-huggingface-lakonik-pi-h3` | `https://huggingface.co/Lakonik/pi-H3` | `hf-lakonik` | Multi-dimensional audit evidence | 2026-11-26T04:04:58.411Z |
+| `learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf` | `https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | `hf-huihui-` | Multi-dimensional audit evidence | 2026-11-26T04:13:20.917Z |
+| `learn-github-apache-maka` | `https://github.com/apache/maka` | `00c6027a` | Multi-dimensional audit evidence | 2026-11-26T04:13:24.138Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `02f525cb` | Multi-dimensional audit evidence | 2026-11-26T04:13:36.128Z |
+| `learn-dom-h-bc714522` | `project://doobidoo-mcp-memory-service` | `02f525cb` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md` | 2026-11-26T04:14:09.358Z |

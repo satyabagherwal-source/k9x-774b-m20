@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:04:58.426Z",
-  "total_cycles_completed": 12558,
-  "total_learnings_persisted": 12558,
-  "total_rules_promoted": 11486,
+  "last_updated": "2026-11-26T04:13:36.142Z",
+  "total_cycles_completed": 12561,
+  "total_learnings_persisted": 12561,
+  "total_rules_promoted": 11488,
   "history": [
-    {
-      "timestamp": "2026-11-25T09:07:53.350Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T09:08:01.672Z",
-      "repository": "Nanbeige/Nanbeige4.3-33B",
-      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T09:08:06.214Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T09:08:06.902Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1382,27 @@
       "repository": "Lakonik/pi-H3",
       "learningId": "learn-huggingface-lakonik-pi-h3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:13:20.930Z",
+      "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:13:24.152Z",
+      "repository": "apache/maka",
+      "learningId": "learn-github-apache-maka",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:13:36.142Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

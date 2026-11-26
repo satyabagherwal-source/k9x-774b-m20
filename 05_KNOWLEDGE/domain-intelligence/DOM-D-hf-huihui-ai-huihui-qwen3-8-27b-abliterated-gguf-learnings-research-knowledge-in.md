@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T07:29:03.759Z",
+  "timestamp": "2026-11-26T04:13:40.914Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T07:29:03.759Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:13:40.914Z`  
 > **Learning ID**: `LEARN-EVO-hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-huihui-ai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T07:27:28.842Z  
+> **Timestamp**: 2026-11-26T04:13:20.391Z  
 > **Learning ID**: `learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF](https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:27:28.650Z  
+> **Harvest Timestamp**: 2026-11-26T04:13:20.277Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4489052 downloads | 2450 likes
+- **Stars / Engagement**: 4628141 downloads | 2651 likes
 
 ---
 
