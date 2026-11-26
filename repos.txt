@@ -5454,3 +5454,7 @@ https://huggingface.co/llamaindex/OCRia-1
 # --- Automatically Discovered by AI Scout Engine [2026-11-26T17:22:48.855Z] ---
 # [AI-AGENTS] open-wa/wa-automate-nodejs (2508 score) -  💬 🤖  The most reliable tool for chatbots with advanced features. Be sure to �
 https://github.com/open-wa/wa-automate-nodejs
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-26T19:16:01.075Z] ---
+# [HUGGINGFACE-AI-MODELS] kandinskylab/Kandinsky-ImageSR-2.0 (864 score) - Verified Hugging Face Model: kandinskylab/Kandinsky-ImageSR-2.0 (86 likes, 4 dow
+https://huggingface.co/kandinskylab/Kandinsky-ImageSR-2.0

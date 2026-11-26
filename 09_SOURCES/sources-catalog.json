@@ -865,8 +865,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceVersion": "hf-minimaxai-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "56a0e798f3fe9c5bcfe5f5ed5245b0cf1dd6d57a0c1896bde16b2c76f0104c5b",
-    "lastHarvestedAt": "2026-11-23T05:35:21.940Z",
+    "contentHash": "8ddfb6611c45fb3509a8bfef5370e8884269266a743d83eb5c1345e61d7b9549",
+    "lastHarvestedAt": "2026-11-26T19:16:10.184Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3"
   },
   "hf-qwen-qwen3.8-flash-next": {
@@ -13568,5 +13568,15 @@
     "contentHash": "d2fe9df7d6b869d03e6182a8f179f7b40b4cb53686eaac45f0fade1ebb575865",
     "lastHarvestedAt": "2026-11-26T17:22:56.636Z",
     "learningId": "learn-github-open-wa-wa-automate-nodejs"
+  },
+  "hf-kandinskylab-kandinsky-imagesr-2.0": {
+    "repository": "kandinskylab/Kandinsky-ImageSR-2.0",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/kandinskylab/Kandinsky-ImageSR-2.0",
+    "sourceVersion": "hf-kandinskylab-kandinsky-imagesr-2.0",
+    "license": "Open-Source",
+    "contentHash": "ff57166043015aedef0e9f1c8ab2f6a9dcc5671b48b84ba7e24e8f5c85ea06b6",
+    "lastHarvestedAt": "2026-11-26T19:16:07.570Z",
+    "learningId": "learn-huggingface-kandinskylab-kandinsky-imagesr-2-0"
   }
 }

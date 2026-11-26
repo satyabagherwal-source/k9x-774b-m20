@@ -22444,5 +22444,17 @@
     "qualityScore": 2508,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-26T17:19:20.145Z"
+  },
+  {
+    "name": "kandinskylab/Kandinsky-ImageSR-2.0",
+    "fullName": "kandinskylab/Kandinsky-ImageSR-2.0",
+    "url": "https://huggingface.co/kandinskylab/Kandinsky-ImageSR-2.0",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: kandinskylab/Kandinsky-ImageSR-2.0 (86 likes, 4 downloads)",
+    "likes": 86,
+    "downloads": 4,
+    "qualityScore": 864,
+    "discoveredAt": "2026-11-26T19:13:53.185Z"
   }
 ]

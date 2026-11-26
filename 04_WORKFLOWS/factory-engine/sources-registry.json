@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T19:07:52.551Z",
-    "lastVerified": "2026-11-26T19:07:52.551Z",
+    "lastChecked": "2026-11-26T19:16:21.688Z",
+    "lastVerified": "2026-11-26T19:16:21.688Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -172,9 +172,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-26T15:02:16.642Z",
+    "lastChecked": "2026-11-26T19:16:16.688Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-26T15:02:16.642Z"
+    "lastVerified": "2026-11-26T19:16:16.688Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -400,8 +400,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T18:41:47.178Z",
-    "lastVerified": "2026-11-26T18:41:47.178Z",
+    "lastChecked": "2026-11-26T19:16:21.679Z",
+    "lastVerified": "2026-11-26T19:16:21.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2180,9 +2180,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-26T00:46:32.798Z",
+    "lastChecked": "2026-11-26T19:16:19.212Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-26T00:46:32.798Z"
+    "lastVerified": "2026-11-26T19:16:19.212Z"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -2481,9 +2481,9 @@
   "wix-react-native-navigation": {
     "name": "react-native-navigation",
     "officialUrl": "https://github.com/wix/react-native-navigation",
-    "lastChecked": "2026-11-24T11:04:49.278Z",
+    "lastChecked": "2026-11-26T19:16:11.902Z",
     "revisionIdentifier": "f5ab5e81",
-    "lastVerified": "2026-11-24T11:04:49.278Z"
+    "lastVerified": "2026-11-26T19:16:11.902Z"
   },
   "alexellis-k3sup": {
     "name": "k3sup",
@@ -4504,12 +4504,12 @@
     "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T05:35:21.178Z",
-    "lastVerified": "2026-11-23T05:35:21.178Z",
+    "lastChecked": "2026-11-26T19:16:09.648Z",
+    "lastVerified": "2026-11-26T19:16:09.648Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "56a0e798f3fe9c5bcfe5f5ed5245b0cf1dd6d57a0c1896bde16b2c76f0104c5b",
+    "contentHash": "8ddfb6611c45fb3509a8bfef5370e8884269266a743d83eb5c1345e61d7b9549",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5364,8 +5364,8 @@
     "officialUrl": "https://github.com/encoredev/encore",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T01:45:10.360Z",
-    "lastVerified": "2026-11-26T01:45:10.360Z",
+    "lastChecked": "2026-11-26T19:16:14.208Z",
+    "lastVerified": "2026-11-26T19:16:14.208Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-encoredev-encore",
@@ -15630,6 +15630,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-kandinskylab-kandinsky-imagesr-2.0": {
+    "name": "kandinskylab/Kandinsky-ImageSR-2.0",
+    "officialUrl": "https://huggingface.co/kandinskylab/Kandinsky-ImageSR-2.0",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-26T19:16:06.917Z",
+    "lastVerified": "2026-11-26T19:16:06.917Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-kandinskylab-kandinsky-imagesr-2-0",
+    "contentHash": "ff57166043015aedef0e9f1c8ab2f6a9dcc5671b48b84ba7e24e8f5c85ea06b6",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

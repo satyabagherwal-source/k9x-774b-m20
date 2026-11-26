@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T19:07:49.040Z",
-  "total_cycles_completed": 12839,
-  "total_learnings_persisted": 12839,
+  "last_updated": "2026-11-26T19:16:10.195Z",
+  "total_cycles_completed": 12841,
+  "total_learnings_persisted": 12841,
   "total_rules_promoted": 11668,
   "history": [
-    {
-      "timestamp": "2026-11-26T09:22:09.364Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T09:35:49.997Z",
-      "repository": "rqlite/rqlite",
-      "learningId": "learn-github-rqlite-rqlite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T09:37:46.190Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1403,6 +1389,20 @@
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T19:16:07.581Z",
+      "repository": "kandinskylab/Kandinsky-ImageSR-2.0",
+      "learningId": "learn-huggingface-kandinskylab-kandinsky-imagesr-2-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T19:16:10.195Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T19:07:49.044Z",
+  "last_updated": "2026-11-26T19:16:10.198Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1115,14 +1115,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3",
-      "content_hash": "56a0e798f3fe9c5bcfe5f5ed5245b0cf1dd6d57a0c1896bde16b2c76f0104c5b",
-      "verified_at": "2026-11-23T05:35:21.949Z",
+      "content_hash": "8ddfb6611c45fb3509a8bfef5370e8884269266a743d83eb5c1345e61d7b9549",
+      "verified_at": "2026-11-26T19:16:10.197Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T05:35:21.949Z"
+      "last_updated": "2026-11-26T19:16:10.197Z"
     },
     "Qwen/Qwen3.8-Flash-Next": {
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -20474,6 +20474,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-26T17:22:56.659Z"
+    },
+    "kandinskylab/Kandinsky-ImageSR-2.0": {
+      "repository": "kandinskylab/Kandinsky-ImageSR-2.0",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-kandinskylab-kandinsky-imagesr-2-0",
+      "content_hash": "ff57166043015aedef0e9f1c8ab2f6a9dcc5671b48b84ba7e24e8f5c85ea06b6",
+      "verified_at": "2026-11-26T19:16:07.584Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-26T19:16:07.584Z"
     }
   },
   "repos": {

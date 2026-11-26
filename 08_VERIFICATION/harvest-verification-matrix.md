@@ -13526,3 +13526,6 @@
 | `CYCLE-20261126-CU9I` | `2026-11-26T19:07:35.094Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`eb0eceee...`) |
 | `CYCLE-20261126-CW6G` | `2026-11-26T19:07:37.576Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10761` | Yes (`c19ef42d...`) |
 | `CYCLE-20261126-D508` | `2026-11-26T19:07:49.016Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10762` | Yes (`f60a5d37...`) |
+| `CYCLE-20261126-NTOU` | `2026-11-26T19:16:07.566Z` | `kandinskylab/Kandinsky-ImageSR-2.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-kandinskylab-kandinsky-imagesr-2.0-learnings.md` | Yes (`ff571660...`) |
+| `CYCLE-20261126-NVPG` | `2026-11-26T19:16:10.180Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`8ddfb661...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T19:16:48.335Z` | `hf-kandinskylab-kandinsky-imagesr-2.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-95F35A51` [Domain D] | Yes (`a1e03bfc...`) |

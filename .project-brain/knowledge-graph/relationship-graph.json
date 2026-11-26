@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T16:41:28.831Z",
+  "updated_at": "2026-11-26T19:16:48.332Z",
   "statistics": {
-    "total_nodes": 565,
+    "total_nodes": 566,
     "total_edges": 232,
     "domain_distribution": {
-      "D": 340,
+      "D": 341,
       "M": 1,
       "H": 105,
       "J": 22,
@@ -12608,6 +12608,28 @@
       ],
       "created_at": "2026-11-26T16:41:28.830Z",
       "updated_at": "2026-11-26T16:41:28.830Z"
+    },
+    "DOM-D-95F35A51": {
+      "id": "DOM-D-95F35A51",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): kandinskylab/Kandinsky-ImageSR-2.0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-kandinskylab-kandinsky-imagesr-2.0-learnings.md`  \n> **Source**: huggingface ([ht -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-kandinskylab-kandinsky-imagesr-2.0-learnings.md`  \n> **Source**: huggingface ([ht",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-kandinskylab-kandinsky-imagesr-2.0/hf-kandinskylab-kandinsky-imagesr-2.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T19:16:21.817Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-kandinskylab-kandinsky-imagesr-2.0)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-26T19:16:48.332Z",
+      "updated_at": "2026-11-26T19:16:48.332Z"
     }
   },
   "edges": [
