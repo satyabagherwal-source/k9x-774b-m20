@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T04:20:38.224Z",
+  "timestamp": "2026-11-26T14:33:55.003Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-jithin-sabu-purge-app-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [jithin-sabu-purge-app-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T04:20:38.224Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T14:33:55.003Z`  
 > **Learning ID**: `LEARN-EVO-jithin-sabu-purge-app-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md`  
 > **Source**: github ([https://github.com/jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app))  
-> **Source Version**: `7f2412e2`  
+> **Source Version**: `1a3e8d35`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T04:20:22.013Z  
+> **Timestamp**: 2026-11-26T14:33:42.299Z  
 > **Learning ID**: `learn-github-jithin-sabu-purge-app`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T04:20:22.007Z  
+> **Harvest Timestamp**: 2026-11-26T14:33:42.289Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Free up your Mac. Safely. A free, open-source native Mac app that clears the cache and junk your Mac piles up on its own. Files go to the Trash by default, so you can put them back.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 2014 stars
+- **Stars / Engagement**: 2028 stars
 
 ---
 
@@ -1361,1365 +1361,946 @@ nonisolated enum ContainerAccessGate {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84a40b77` (2026-11-23)
-**Commit Message**: fix: keep the Dock icon hidden when macOS opens a running Purge (#438) (#439)
+### Incident Patch 1: `e229dc5d` (2026-11-25)
+**Commit Message**: feat: guide every trip to System Settings with one redesigned panel (#450) (#455)
 
-* fix: keep the Dock icon hidden when macOS opens a running Purge (#438)
+* feat: guide every trip to System Settings with one panel (#450)
 
-When LaunchServices opens a copy that is already running, it makes the
-app a regular one, and Purge sets .accessory only at launch. The
-deleted-apps watcher opens Purge this way, so a review left Purge in
-the Dock until it quit. open -a, Spotlight and Finder do the same.
+The guide panel now shows a copy of the row to switch on, says it is
+waiting, and turns into a check when the change lands, then closes and
+brings Purge back. It shows only while System Settings is in front,
+follows the window ten times a second, and points at it from whichever
+side it sits on.
 
-The open and reopen callbacks now apply the Dock setting again. The
-policy already reads .regular by the time they run, and setting it
-there holds. The store's live value is used, not the saved one.
+Full Disk Access and the secure removal helper now get the guide too.
+Look Deeper and the clean failure card share one wait through
+FullDiskAccessGuide, and the rows that failed for lack of access retry
+once it lands.
 
-* fix: leave a closed window closed when the watcher opens Purge (#438)
+* fix: draw the guide's switch in the accent colour (#450)
 
-Applying the Dock setting again went through the full DockIconPolicy,
-which reveals the window after switching to accessory. A closed window
-still counts as revealable, since SwiftUI keeps it in NSApp.windows. So
-the watcher's link opened the window before any review was built, and
-left it open when there was nothing to review.
+A real Toggle drew dimmed, because the guide panel is never the key
+window. The profile name now wraps instead of being cut off.
 
-DockIconPolicy.apply takes revealsWindow. The open route passes false,
-and the review shows the window when it needs it. Reopen keeps the
-reveal, since showing the window
+* test: a Full Disk Access row retried after a grant still meets the gate (#450)
 
-**File**: `PurgeTests/DockIconPolicyTests.swift` (modified, +73/-0)
+* fix: show Purge's icon once in the guide (#450)
+
+The header icon is gone, and the Full Disk Access row is now the thing
+to drag onto the list, so the separate drag tile and its icon are gone
+too. A line under the steps says the row can be dragged.
+
+* fix: show
+
+**File**: `PurgeTests/FullDiskAccessGuideTests.swift` (added, +157/-0)
 ```diff
-@@ -35,6 +35,18 @@ struct DockIconPolicyTests {
-         /// Synchronous so the test does not have to spin a runloop. The real hop
-         /// is covered by manual verification, not here.
-         func afterCurrentRunloopTurn(_ work: @escaping () -> Void) { work() }
-+
-+        /// Held until the test ends the modal, as the real run loop holds it.
-+        private var waitingForModal: [() -> Void] = []
-+
-+        func afterModalEnds(_ work: @escaping () -> Void) { waitingForModal.append(work) }
-+
-+        func endModal() {
-+            isShowingModal = false
-+            let work = waitingForModal
-+            waitingForModal = []
-+            work.forEach { $0() }
-+        }
-     }
- 
-     @Test("Hiding the Dock icon switches to accessory, then re-fronts the open window")
-@@ -90,6 +102,67 @@ struct DockIconPolicyTests {
-         #expect(host.calls == [.setPolicy(.accessory)])
-     }
- 
-+    /// The watcher's link opens Purge, which macOS answers by making it a regular
-+    /// app (#438). Hiding the Dock icon again there must not bring back a window
-+    /// the user closed: SwiftUI keeps a closed window, so it counts as revealable.
-+    @Test("Hiding again after an open leaves a closed window closed")
-+    func hidingWithoutRevealLeavesTheWindowAlone() {
-+        let host = FakeHost()
-+
-+        DockIconPolicy.apply(hidesDockIcon: true, revealsWindow: false, host: host)
-+
-+        #expect(host.calls == [.setPolicy(.accessory)])
-+    }
-+
-+    /// A reopen is the user asking for the window, so it keeps the reveal.
-+    @Test("Hiding again after a reopen still re-fronts the window")
-+    func hidingWithRevealAfterReopen() {
-+        let host = FakeHost()
-+
-+        DockIconPolicy.apply(hidesDockIcon: true, revealsWindow: true, host: host)
-+
-+        #expect(host.calls == [.setPolicy(.accessory), .reveal])
-+    }
-+
-+    /// An open can arrive while the cleaning alert is up (#438). The policy must
-+    /// not change under the alert, and must change once it closes, or the Dock
-+    /// icon stays after Keep Cleaning.
-+    @Test("An open during a modal alert hides the Dock icon once the alert closes")
-+    func restoreWaitsForTheModalToEnd() {
-+        let host = FakeHost()
-+        host.isShowingModal = true
-+
-+        DockIconPolicy.restoreAfterOpen(revealsWindow: false, host: host) { true }
-+        #expect(host.calls.isEmpty)
-+
-+        host.endModal()
-+        #expect(host.calls == [.setPolicy(.accessory)])
-+    }
-+
-+    /// The setting may change while the alert is up; the value applied is the
-+    /// one in effect when it closes.
-+    @Test("The value applied after a modal is read when the modal ends")
-+    func restoreReadsTheValueAfterTheModal() {
-+        let host = FakeHost()
-+        host.isShowingModal = true
-+        var hides = true
-+
-+        DockIconPolicy.restoreAfterOpen(revealsWindow: false, host: host) { hides }
-+        hides = false
-+        host.endModal()
-+
-+        #expect(host.calls.isEmpty)
-+    }
-+
-+    @Test("With no modal up, an open hides the Dock icon at once")
-+    func restoreWithoutAModalAppliesAtOnce() {
-+        let host = FakeHost()
-+
-+        DockIconPolicy.restoreAfterOpen(revealsWindow: false, host: host) { true }
-+
-+        #expect(host.calls == [.setPolicy(.accessory)])
-+    }
-+
-     /// The cleaning confirmation runs a modal loop; changing policy underneath it
-     /// can take the alert with it.
-     @Test("Nothing happens while a modal is up")
-```
-
-**File**: `purge/Services/DockIconPolicy.swift` (modified, +49/-3)
-```diff
-@@ -29,6 +29,7 @@ protocol ActivationPolicyHost: AnyObject {
-     func setPolicy(_ policy: NSApplication.ActivationPolicy) -> Bool
-     func revealWindow()
-     func afterCurrentRunloopTurn(_ work: @escaping () -> Void)
-+    func afterModalEnds(_ work: @escaping () -> Void)
- }
- 
- extension NSApplication: ActivationPolicyHost {
-@@ -48,6 +49,14 @@ extension NSApplication: ActivationPolicyHost {
-     func afterCurrentRunloopTurn(_ work: @escaping () -> Void) {
-         onNextRunloopTurn(work)
-     }
-+
-+    /// A modal alert runs the run loop in its own mode, so a block queued for the
-+    /// default mode waits until the alert has closed, then runs at once.
-+    func afterModalEnds(_ work: @escaping () -> Void) {
-+        RunLoop.main.perform(inModes: [.default]) {
-+            MainActor.assumeIsolated(work)
-+        }
-+    }
- }
- 
- /// Shows or hides the Dock icon by flipping the app's activation policy.
-@@ -56,7 +65,11 @@ extension NSApplication: ActivationPolicyHost {
- /// entry, and no app menu bar along the top of the screen.
- @MainActor
- enum DockIconPolicy {
--    static func apply(hidesDockIcon: Bool, host: ActivationPolicyHost) {
-+    /// `revealsWindow: false` changes the policy and stops there. The open route
-+    /// uses it (#438): the watcher's link must not bring back a window the user
-+    /// closed, because the deleted-apps review decides whether the window shows.
-+    /// `hasRevealableWindow` matches a closed window too, since SwiftUI keeps it.
-+    static func apply(hidesDockIcon: Bool, revealsWindow: Bool = true, host: ActivationPolicyHost) {
-         let target: NSApplication.ActivationPolicy = hidesDockIcon ? .accessory : .regular
- 
-         // Re-applying the current policy makes the menu bar flicker for nothing.
-@@ -66,6 +79,7 @@ enum DockIconPolicy {
-         // so skipping is enough — the pref is persisted and applies on next launch.
-         guard !host.isShowingModal else { return }
-         guard host.setPolicy(target) else { return }
-+        guard revealsWindow else { return }
- 
-         // Hiding with no window open: nothing to bring forward, and activating would
-         // steal focus to show the user nothing. Showing always reveals, because that
-@@ -78,7 +92,39 @@ enum DockIconPolicy {
-         }
-     }
- 
--    static func apply(hidesDockIcon: Bool) {
--        apply(hidesDockIcon: hidesDockIcon, host: NSApplication.shared)
-+    static func apply(hidesDockIcon: Bool, revealsWindow: Bool = true) {
-+        apply(hidesDockIcon: hidesDockIcon, revealsWindow: revealsWindow, host: NSApplication.shared)
-+    }
-+
-+    /// Hides the Dock icon again after macOS brought it back (#438).
-+    ///
-+    /// When LaunchServices opens a copy that is already running, it makes the app
-+    /// a regular one: the watcher's `purge://` link, `open -a`, Spotlight and
-+    /// Finder all do it, and the Dock icon then stays until Purge quits. By the
-+    /// time the open or reopen callback runs, the switch has already happened,
-+    /// and setting the policy again there holds. Reads the store's live value, not
-+    /// the saved one, so a state that keeps the Dock icon on purpose keeps it.
-+    ///
-+    /// An open can arrive while the cleaning alert's modal loop runs. `apply`
-+    /// will not change the policy under the alert, so this waits until the alert
-+    /// closes, then reads the value again and applies it.
-+    static func restoreAfterOpen(
-+        revealsWindow: Bool,
-+        host: ActivationPolicyHost,
-+        hidesDockIcon: @escaping @MainActor () -> Bool
-+    ) {
-+        guard !host.isShowingModal else {
-+            host.afterModalEnds {
-+                restoreAfterOpen(revealsWindow: revealsWindow, host: host, hidesDockIcon: hidesDockIcon)
-+            }
-+            return
-+        }
-+        apply(hidesDockIcon: hidesDockIcon(), revealsWindow: revealsWindow, host: host)
-+    }
-+
-+    static func restoreAfterOpen(revealsWindow: Bool) {
-+        restoreAfterOpen(revealsWindow: revealsWindow, host: NSApplication.shared) {
-+            StartupPreferenceStore.shared.hidesDockIcon
-+        }
-     }
- }
-```
-
-**File**: `purge/purgeApp.swift` (modified, +6/-0)
-```diff
-@@ -84,6 +84,9 @@ final class PurgeAppDelegate: NSObject, NSApplicationDelegate {
-     /// is already running — the only "click the app" route left once the Dock
-     /// icon is hidden.
-     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
-+        // The reopen itself put Purge back in the Dock (#438). Showing the window
-+        // is the point of a reopen, so the policy switch may reveal it.
-+        DockIconPolicy.restoreAfterOpen(revealsWindow: true)
-         RemovedAppMonitor.shared.userOpenedWindow()
-         guard !hasVisibleWindows else { return true }
-         // No window object to raise: let SwiftUI make one rather than guessing.
-@@ -95,6 +98,9 @@ final class PurgeAppDelegate: NSObject, NSApplicationDelegate {
-     /// `purge://` links from the deleted-apps watcher, and app bundles dropped
-     /// on the Dock icon (`CFBundleDocumentTypes` in Info.plist).
-     func application(_ application: NSApplication, open urls: [URL]) {
-+        // Opening a running Purge put it back in the Dock (#438). No reveal: the
-+        // deleted-apps review shows the window only when it has something to show.
-+        DockIconPolicy.restoreAfterOpen(revealsWindow: false)
-         let dropped = urls.filter(\.isFileURL)
-         if !dropped.isEmpty {
-             ExternalUninstallHandler.handle(urls: dropped)
-```
-
----
-
-### Incident Patch 2: `a901b056` (2026-11-23)
-**Commit Message**: fix: fit row explanations in two lines and show the right row icons (#445) (#446)
-
-* fix: fit every scan row explanation in two lines
-
-A scan row cuts its explanation off after two lines, and there is no way
-to read the rest. Measured at the real column width for each badge and
-language, 3 English, 1 Chinese, 215 Russian and 116 Turkish explanations
-needed three lines or more. All of them are rewritten to fit.
-
-Simulator runtime and Xcode component rows showed only one line, so the
-Metal Toolchain text lost its download command. They now get two lines,
-like other rows. Simulator device rows keep one line, and their Russian
-and Turkish text is shortened to fit it.
-
-ExplanationFitTests measures every explanations.json entry in all four
-languages, and the Dev Tools texts built in code, with 6 pt to spare.
-
-* fix: show the right icon on more scan rows
-
-Rows whose tool has a bundled glyph now use it: Bun, Deno, Vite, Jest,
-Vitest, ESLint, Nx, Storybook, Turborepo, Next.js, Python, uv, Ruff,
-Kotlin, Gradle, Swift, Rust, pnpm, Yarn, Composer, Claude and Codex
-caches showed a generic symbol or another tool's logo before.
-
-A definition with no glyph now shows the installed app named by its
-
-
-**File**: `PurgeTests/CacheKindTests.swift` (modified, +42/-1)
-```diff
-@@ -37,10 +37,51 @@ struct CacheKindTests {
- 
-     @Test
-     func aDefinitionWithoutABrandShowsItsKindSymbol() {
--        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "claude-updater", folder: "claude-updater"))
-+        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "shipit-updater-cache", folder: "shipit-updater-cache"))
-         #expect(icon == .symbol(CacheKind.updater.symbolName))
-     }
- 
-+    /// Every slug a definition maps to must be a bundled glyph, or the row
-+    /// quietly falls back to a symbol.
-+    @Test
-+    func everyMappedGlyphIsBundled() throws {
-+        for key in try allDefinitionKeys() {
-+            guard let slug = BrandIconMapping.slug(forDefinitionKey: key) else { continue }
-+            #expect(BrandIconService.shared.brandGlyph(slug: slug) != nil, "\(key) maps to \(slug), which is not bundled")
-+        }
-+    }
-+
-+    /// Mail ships with every Mac, so its row borrows Mail's icon on any machine.
-+    @Test
-+    func aDefinitionNamingAnInstalledAppShowsTheAppsIcon() {
-+        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "apple-mail", folder: "com.apple.mail"))
-+        guard case .appIcon = icon else {
-+            Issue.record("Expected Mail's icon, got \(icon)")
-+            return
-+        }
-+    }
-+
-+    @Test
-+    func aServiceRowBorrowsItsAppsIcon() {
-+        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "messages-previews", folder: "messages-previews"))
-+        guard case .appIcon = icon else {
-+            Issue.record("Expected Messages' icon, got \(icon)")
-+            return
-+        }
-+    }
-+
-+    /// A cache Purge has no entry for, in a folder named after an installed app,
-+    /// shows that app's icon rather than the unknown folder. TextEdit ships with
-+    /// every Mac.
-+    @Test(arguments: ["com.apple.TextEdit", "TextEdit"])
-+    func anUnlistedCacheNamedAfterAnInstalledAppShowsItsIcon(folder: String) {
-+        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: nil, folder: folder))
-+        guard case .appIcon = icon else {
-+            Issue.record("Expected TextEdit's icon, got \(icon)")
-+            return
-+        }
-+    }
-+
-     @Test
-     func aKnownBrandShowsItsGlyph() {
-         let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "raycast", folder: "com.raycast.macos"))
-```
-
-**File**: `PurgeTests/ExplanationFitTests.swift` (added, +198/-0)
-```diff
-@@ -0,0 +1,198 @@
-+import AppKit
-+import SwiftUI
-+import Testing
-+@testable import Purge
-+
-+/// A scan row shows its explanation in two lines and cuts the rest off with no way
-+/// to read it. Every explanation in `explanations.json`, and its translation in each
-+/// language the app ships, must fit in two lines of the real column.
-+///
-+/// The window is a fixed 980 pt wide. The explanation column and the trailing
-+/// column (size above the safety badge) share 550 pt: a probe of the App Caches
-+/// list measured 464 pt next to an 86 pt "Safe to Clean" column. The badge's width
-+/// depends on the level and the language, so the column is worked out for each.
-+/// The test keeps 6 pt in hand so a small change in text layout between macOS
-+/// versions does not push a line over.
-+@MainActor
-+@Suite("Explanations fit in two lines")
-+struct ExplanationFitTests {
-+    static let sharedWidth: CGFloat = 550
-+    static let margin: CGFloat = 6
-+    static let languages = ["en", "zh-Hans", "ru", "tr"]
-+
-+    private struct Entry: Decodable {
-+        let key: String
-+        let tag: String
-+        let explanation: String
-+    }
-+
-+    static func bundle(for language: String) throws -> Bundle {
-+        if language == "en" { return .main }
-+        let path = try #require(Bundle.main.path(forResource: language, ofType: "lproj"))
-+        return try #require(Bundle(path: path))
-+    }
-+
-+    static func level(_ tag: String) -> SafetyLevel {
-+        switch tag {
-+        case "safe": .safe
-+        case "medium": .medium
-+        default: .unknown
-+        }
-+    }
-+
-+    static func badgeLabel(_ level: SafetyLevel, in bundle: Bundle) -> String {
-+        let english: String
-+        switch level {
-+        case .safe: english = "Safe to Clean"
-+        case .medium: english = "Check First"
-+        case .unknown: english = "Not Sure"
-+        }
-+        return bundle.localizedString(forKey: english, value: english, table: nil)
-+    }
-+
-+    static func fittingSize<V: View>(_ view: V) -> CGSize {
-+        NSHostingView(rootView: view).fittingSize
-+    }
-+
-+    /// The trailing column is as wide as its widest line: the size or the badge.
-+    static func trailingWidth(_ level: SafetyLevel, in bundle: Bundle) -> CGFloat {
-+        let badge = fittingSize(AppBadge(text: badgeLabel(level, in: bundle))).width
-+        let size = fittingSize(
-+            Text(verbatim: "999.9 MB")
-+                .font(AppStyle.Typography.metadata.weight(.medium).numbers)
-+                .monospacedDigit()
-+        ).width
-+        return max(badge, size)
-+    }
-+
-+    static func columnWidth(_ level: SafetyLevel, in bundle: Bundle) -> CGFloat {
-+        sharedWidth - trailingWidth(level, in: bundle) - margin
-+    }
-+
-+    static func lineCount(_ text: String, width: CGFloat) -> Int {
-+        func height(_ string: String) -> CGFloat {
-+            fittingSize(
-+                Text(verbatim: string)
-+                    .font(AppStyle.Typography.metadata)
-+                    .fixedSize(horizontal: false, vertical: true)
-+                    .frame(width: width, alignment: .leading)
-+            ).height
-+        }
-+        return Int((height(text) / height("Ag")).rounded())
-+    }
-+
-+    @Test(arguments: languages)
-+    func everyBundledExplanationFitsInTwoLines(language: String) throws {
-+        let url = try #require(Bundle.main.url(forResource: "explanations", withExtension: "json"))
-+        let entries = try JSONDecoder().decode([Entry].self, from: Data(contentsOf: url))
-+        let bundle = try Self.bundle(for: language)
-+        var widths: [SafetyLevel: CGFloat] = [:]
-+        var tooLong: [String] = []
-+        for entry in entries {
-+            let level = Self.level(entry.tag)
-+            let width = widths[level] ?? Self.columnWidth(level, in: bundle)
-+            widths[level] = width
-+            let text = bundle.localizedString(forKey: entry.explanation, value: entry.explanation, table: "Explanations")
-+            let lines = Self.lineCount(text, width: width)
-+            if lines > 2 {
-+                tooLong.append("\(entry.key) (\(lines) lines at \(Int(width)) pt): \(text)")
-+            }
-+        }
-+        #expect(tooLong.isEmpty, "\(tooLong.count) explanations need more than two lines:\n\(tooLong.joined(separator: "\n"))")
-+    }
-+
-+    /// Dev Tools builds these in code. Runtime and Xcode component rows have two
-+    /// lines; simulator device rows have one. Checked at their longest: a large
-+    /// size, the longest reach prefix and a usage sentence with a count.
-+    @Test func devToolsExplanationsFitTheirRows() throws {
-+        let width = Self.columnWidth(.medium, in: .main)
-+        let now = Date()
-+        let elevenMonthsAgo = try #require(Calendar.current.date(byAdding: .month, value: -11, to: now))
-+        let twoLines: [String] = [
-+            XcodeComponent.safetyInfo(kind: .metalToolchain, sizeBytes: 1_023_900_000).explanation,
-+            SimulatorRuntime.safetyInfo(
-+              
-```
-
-**File**: `PurgeTests/SimulatorRuntimeTests.swift` (modified, +1/-1)
-```diff
-@@ -258,7 +258,7 @@ struct SimulatorRuntimeTests {
-         #expect(!list.isEmpty)
-         #expect(list.allSatisfy { $0.safetyInfo.level == .medium })
-         #expect(list.allSatisfy {
--            $0.safetyInfo.explanation.hasPrefix("Could not check whether Xcode uses it for new simulators.")
-+            $0.safetyInfo.explanation.hasPrefix("Could not check if Xcode uses it for new simulators.")
-         })
-     }
- 
-```
-
-**File**: `purge/Models/SimulatorRuntime.swift` (modified, +1/-1)
-```diff
-@@ -370,7 +370,7 @@ nonisolated struct SimulatorRuntime: Identifiable, Hashable {
-             return info(String(localized: "Xcode lists it as \(state.lowercased()). \(cost)"))
-         }
-         guard let isXcodeDefault else {
--            return info(String(localized: "Could not check whether Xcode uses it for new simulators. \(cost)"))
-+            return info(String(localized: "Could not check if Xcode uses it for new simulators. \(cost)"))
-         }
-         if isXcodeDefault {
-             return info(String(localized: "Xcode creates new simulators on this runtime. \(cost)"))
-```
-
-**File**: `purge/Models/XcodeComponent.swift` (modified, +1/-1)
-```diff
-@@ -174,7 +174,7 @@ nonisolated struct XcodeComponent: Identifiable, Hashable {
-             return SafetyInfo(
-                 level: .medium,
-                 headline: kind.displayName,
--                explanation: String(localized: "Xcode's compiler for Metal shaders, an optional download that every account on this Mac shares. Xcode downloads it again (\(formatBytes(sizeBytes))) when a project needs it, or run \(kind.downloadCommand)."),
-+                explanation: String(localized: "Xcode's shader compiler for every account on this Mac. Xcode downloads it again (\(formatBytes(sizeBytes))) if needed, or run \(kind.downloadCommand)."),
-                 recoverySteps: "",
-                 reinstallCommand: nil
-             )
-```
-
-**File**: `purge/Resources/explanations.json` (modified, +5/-5)
-```diff
-@@ -390,7 +390,7 @@
-     "aliases": [
-       "com.apple.e5rt.e5bundlecache"
-     ],
--    "kind": "system"
-+    "kind": "ai"
-   },
-   {
-     "key": "feature-access-agent",
-@@ -3630,7 +3630,7 @@
-     "key": "uv-python-version",
-     "display_name": "uv Python Version",
-     "tag": "medium",
--    "explanation": "An older Python patch version uv kept after an upgrade. uv's link for this minor version points at a newer one, and no environment, .python-version file or interpreter setting Purge found uses it. Anything else that runs it stops working until you put the folder back from the Trash, or the tool that made it sets it up again. uv python install brings the version back.",
-+    "explanation": "An older uv Python patch. No environment, .python-version or setting Purge found uses it. Tools that call it by path break until uv python install restores it.",
-     "bundle_ids": [],
-     "aliases": [],
-     "kind": "packages"
-@@ -3666,7 +3666,7 @@
-     "key": "clang-module-cache",
-     "display_name": "Clang Module Cache",
-     "tag": "safe",
--    "explanation": "Compiled module files clang and the Swift compiler keep for command-line builds and scripts. Xcode's own builds use another folder. Safe to delete; the next compile builds them again.",
-+    "explanation": "Compiled modules clang and swiftc keep for command-line builds. Xcode's own builds use another folder. Safe to delete; the next compile rebuilds them.",
-     "bundle_ids": [],
-     "aliases": [],
-     "kind": "build"
-@@ -3699,12 +3699,12 @@
-     "key": "intelligenceflowd-cache",
-     "display_name": "Apple Intelligence Service Cache",
-     "tag": "safe",
--    "explanation": "Web downloads and compiled model files a background Apple Intelligence service keeps. The Apple Intelligence models are not touched. Safe to delete; macOS builds these again when the service next needs them.",
-+    "explanation": "Web downloads and compiled models an Apple Intelligence service keeps. The Apple Intelligence models stay. Safe to delete; macOS rebuilds them when needed.",
-     "bundle_ids": [],
-     "aliases": [
-       "com.apple.intelligenceflow.intelligenceflowd"
-     ],
--    "kind": "system"
-+    "kind": "ai"
-   },
-   {
-     "key": "swift-frontend-cache",
-```
-
-**File**: `purge/Services/BrandIconMapping.swift` (modified, +110/-27)
-```diff
-@@ -69,23 +69,25 @@ enum BrandIconMapping {
-         "xcode-archives": "xcode",
-         "xcode-device-support": "xcode",
-         "xcode-itunes-service": "xcode",
-+        "claude-updater": "anthropic",
-+        "openai-codex": "openai",
-     ]
- 
-     // MARK: - Dev Tools global rows
- 
-     private static let devToolDefinitionKeyToSlug: [String: String] = [
-         "npm-cache": "nodedotjs",
-         "npm": "nodedotjs",
--        "pnpm-store": "nodedotjs",
--        "pnpm": "nodedotjs",
--        "yarn-cache": "nodedotjs",
--        "yarn": "nodedotjs",
-+        "pnpm-store": "pnpm",
-+        "pnpm": "pnpm",
-+        "yarn-cache": "yarn",
-+        "yarn": "yarn",
-         "homebrew-cache": "homebrew",
-         "homebrew": "homebrew",
-         "docker": "docker",
--        "gradle-cache": "android",
--        "gradle-global-cache": "android",
--        "gradle": "android",
-+        "gradle-cache": "gradle",
-+        "gradle-global-cache": "gradle",
-+        "gradle": "gradle",
-         "cocoapods-cache": "swift",
-         "cocoapods-spec-repos": "swift",
-         "cocoapods": "swift",
-@@ -96,7 +98,7 @@ enum BrandIconMapping {
-         "sbt": "scala",
-         "rubygems": "ruby",
-         "bundler": "ruby",
--        "composer": "php",
-+        "composer": "composer",
-         "terraform": "terraform",
-         "githubactions": "github",
-         "vagrant": "vagrant",
-@@ -130,14 +132,56 @@ enum BrandIconMapping {
-         "android-system-images": "androidstudio",
-         "old-figma-profiles": "figma",
-         "orphaned-git-worktree": "git",
--        "zsh": "iterm2",
-+        // Tools with a glyph in the bundle that their rows did not use.
-+        "bun-cache": "bun",
-+        "deno-cache": "deno",
-+        "turbo-cache": "turbo",
-+        "nextjs-cache": "nextdotjs",
-+        "next-build": "nextdotjs",
-+        "vite-cache": "vite",
-+        "eslint-cache": "eslint",
-+        "jest-cache": "jest",
-+        "vitest-cache": "vitest",
-+        "storybook-cache": "storybook",
-+        "nx-cache": "nx",
-+        "python-cache": "python",
-+        "pytest-cache": "python",
-+        "mypy-cache": "python",
-+        "tox-environments": "python",
-+        "venv": "python",
-+        "apple-python-cache": "python",
-+        "uv-cache": "uv",
-+        "ruff-cache": "ruff",
-+        "kotlin-build": "kotlin",
-+        "android-build": "android",
-+        "gradle-build": "gradle",
-+        "gradle-leftovers": "gradle",
-+        "maven-target": "openjdk",
-+        "swift-build": "swift",
-+        "swiftpm-build": "swift",
-+        "swiftpm-cache": "swift",
-+        "swift-frontend-cache": "swift",
-+        "rust-target": "rust",
-+        "nvm-cache": "nodedotjs",
-+        "nvm-download-cache": "nodedotjs",
-+        "node-modules": "nodedotjs",
-+        "checkpoint-nodejs": "nodedotjs",
-+        "node-gyp-headers": "nodedotjs",
-+        "dart-tool": "flutter",
-+        "pub-cache": "flutter",
-+        "bundler-vendor": "ruby",
-+        "composer-vendor": "php",
-+        "terraform-plugins": "terraform",
-+        "claude-cli-cache": "anthropic",
-+        "cursor-compile-cache": "cursor",
-     ]
- 
-     // MARK: - Brands with no glyph
- 
-     /// Brands Simple Icons doesn't carry: Microsoft had its logos removed, and the
-     /// smaller apps were never added. Their rows show the installed app's icon in
-     /// greyscale, found by the definition's bundle IDs first and then by this name.
-+    /// A definition whose bundle IDs name an installed app needs no entry here.
-     private static let definitionKeyToApplicationName: [String: String] = [
-         "vscode": "Visual Studio Code",
-         "microsoft-teams": "Microsoft Teams",
-@@ -154,14 +198,48 @@ enum BrandIconMapping {
-         "bartender": "Bartender 5",
-         "lungo": "Lungo",
-         "granola": "Granola",
-+        "yab": "Yab",
-+    ]
-+
-+    /// Apps whose icon a definition borrows, by bundle ID, when its own
-+    /// `bundle_ids` name a background service rather than the app. Only the icon
-+    /// comes from here: `explanations.json` bundle IDs also match folders, these never do.
-+    private static let definitionKeyToIconBundleIDs: [String: [String]] = [
-+        "maps-tile-cache": ["com.apple.Maps"],
-+        "messages-previews": ["com.apple.MobileSMS"],
-+        "mail-downloads": ["com.apple.mail"],
-+        "findmy": ["com.apple.findmy"],
-+        "homed": ["com.apple.Home"],
-+        "remindd": ["com.apple.reminders"],
-+        "tipsd": ["com.apple.helpviewer"],
-+        "helpd": ["com.apple.helpviewer"],
-+        "videoconference": ["com.apple.FaceTime"],
-+        "itunes": ["com.apple.Music"],
-+        "amp-library-agent": ["com.apple.Music"],
-+        "dictionary-services": ["com.apple.Dictionary"],
-+        "assistantd": ["com.apple.siri.launcher"],
-+        "siri-tts": ["com.apple.siri.launcher"],
-+        "parsecd": ["com.apple.siri.launcher"],
-+        "duetexpertd": ["com.apple.siri.launcher"],
-+        "proactive-eventtracker": ["com.apple.siri.launcher"],
-```
-
-**File**: `purge/Services/BrandIconService.swift` (modified, +46/-17)
-```diff
-@@ -25,10 +25,12 @@ enum BrandRowIcon: Equatable {
- }
- 
- /// Resolves row icons for App Caches, Dev Tools and project groups. A known brand
--/// gets its monochrome glyph, or its installed app's icon in greyscale when Simple
--/// Icons doesn't carry it. Otherwise the definition's `kind` picks an SF Symbol
--/// that says what the cache is. Caches Purge doesn't recognise get
--/// `questionmark.folder`, so they look different from known ones.
-+/// gets its monochrome glyph. A definition with no glyph gets the icon of an app it
-+/// names, in greyscale, when that app is installed. Otherwise the definition's
-+/// `kind` picks an SF Symbol that says what the cache is. A cache with no
-+/// definition is often still named after its app, by bundle ID in
-+/// `~/Library/Caches` or by name in Application Support, and gets that app's icon.
-+/// Anything else gets `questionmark.folder`, so it looks different from known ones.
- ///
- /// Main actor by name, not only by the project default: the caches below are
- /// plain dictionaries, and a caller off the main actor could write them from
-@@ -70,14 +72,19 @@ final class BrandIconService {
-             let definitionKey = item.definitionKey
-                 ?? ExplanationDatabase.definitionKey(forFolderName: item.bundleID)
-                 ?? ExplanationDatabase.definitionKey(forFolderName: item.appName)
--            guard let definitionKey else { return .symbol(Self.unknownSymbolName) }
--            return icon(forDefinitionKey: definitionKey)
-+            if let definitionKey, let icon = icon(forDefinitionKey: definitionKey) {
-+                return icon
-+            }
-+            if let image = installedAppIcon(forFolderName: item.bundleID) {
-+                return .appIcon(image)
-+            }
-+            return .symbol(Self.unknownSymbolName)
-         }
-     }
- 
-     func rowIcon(forDevTool tool: DevTool) -> BrandRowIcon {
-         cachedRowIcon(key: "t|\(tool.definitionKey)") {
--            icon(forDefinitionKey: tool.definitionKey)
-+            icon(forDefinitionKey: tool.definitionKey) ?? .symbol(Self.unknownSymbolName)
-         }
-     }
- 
-@@ -114,18 +121,19 @@ final class BrandIconService {
-         return .symbol(Self.projectFolderSymbolName)
-     }
- 
--    private func icon(forDefinitionKey key: String) -> BrandRowIcon {
-+    /// Nil when the definition names no brand, no installed app and no kind.
-+    private func icon(forDefinitionKey key: String) -> BrandRowIcon? {
-         if let slug = BrandIconMapping.slug(forDefinitionKey: key),
-            let image = brandGlyph(slug: slug) {
-             return .glyph(image)
-         }
--        if let image = installedBrandAppIcon(forDefinitionKey: key) {
-+        if let image = installedDefinitionAppIcon(forDefinitionKey: key) {
-             return .appIcon(image)
-         }
-         if let kind = ExplanationDatabase.kind(forKey: key) {
-             return .symbol(kind.symbolName)
-         }
--        return .symbol(Self.unknownSymbolName)
-+        return nil
-     }
- 
-     private func cachedRowIcon(key: String, resolve: () -> BrandRowIcon) -> BrandRowIcon {
-@@ -168,21 +176,38 @@ final class BrandIconService {
-         return image
-     }
- 
--    /// The installed app's icon in greyscale for a brand with no glyph, or nil when
--    /// the key isn't one of those brands or the app isn't installed.
--    private func installedBrandAppIcon(forDefinitionKey key: String) -> NSImage? {
--        guard let appName = BrandIconMapping.applicationName(forDefinitionKey: key) else { return nil }
-+    /// The icon, in greyscale, of an installed app the definition names: by its
-+    /// bundle IDs, the icon-only bundle IDs in `BrandIconMapping`, then by app name.
-+    /// Nil when it names none or none is installed.
-+    private func installedDefinitionAppIcon(forDefinitionKey key: String) -> NSImage? {
-         let cacheKey = "g|\(key)"
-         if let cached = installedAppIconCache[cacheKey] {
-             return cached
-         }
--        let icon = ExplanationDatabase.allBundleIDs(forKey: key).lazy.compactMap(installedAppIcon(bundleID:)).first
--            ?? installedAppIcon(appName: appName)
-+        let bundleIDs = ExplanationDatabase.allBundleIDs(forKey: key) + BrandIconMapping.iconBundleIDs(forDefinitionKey: key)
-+        let icon = bundleIDs.lazy.compactMap(installedAppIcon(bundleID:)).first
-+            ?? BrandIconMapping.applicationName(forDefinitionKey: key).flatMap(installedAppIcon(appName:))
-         let image = icon.map(Self.greyscale)
-         installedAppIconCache[cacheKey] = image
-         return image
-     }
- 
-+    /// The icon, in greyscale, of the installed app a cache folder is named after:
-+    /// a bundle ID such as `com.anysphere.sand`, or an app name such as `Grok Bot`.
-+    private func installedAppIcon(forFolderName name: String) -> NSImage? {
-+        guard !name.isEmpty else { return nil }
-+        let cacheKey = "f|\(name)"
-+        if let cached = installedAppIconCache[cacheKey] {
-+            return
-```
-
----
-
-### Incident Patch 3: `bbf5ace1` (2026-11-23)
-**Commit Message**: feat: show paused deleted-app reviews as a sidebar row with a Login Items guide (#447) (#448)
-
-* feat: show paused deleted-app reviews as a sidebar row with a Login Items guide (#447)
-
-The sidebar card for a blocked or stopped watcher is now a one-line row,
-like Limited scan, and both use one view, SidebarNoticeRow. The row opens a
-sheet with the full explanation, the fix and Turn Off.
-
-Opening Login Items for the watcher now shows the floating guide the Apple
-Intelligence profile flow uses, with the section name for this macOS
-version. Purge checks once a second and closes the guide when macOS allows
-the watcher. The guide only hides itself, never the profile flow's.
-
-"Restarting…" is now translated; the old card passed it as a plain String.
-
-* fix: keep the sheet through a restart and stop the guide waiting forever (#447)
-
-The sheet now stays open while a restart runs, showing the last problem.
-If the watcher still needs attention when the restart ends, it says the
-restart didn't work.
-
-The Login Items guide gives up after 10 minutes, like the profile guide.
-Each tick reads only the Login Items status; the agent is probed once,
-after macOS allows it.
-
-The profile flow now hides o
-
-**File**: `PurgeTests/SettingsGuidePanelTests.swift` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,157 @@
 +import Foundation
 +import Testing
 +@testable import Purge
 +
-+/// The Apple Intelligence profile flow and the deleted-apps watcher share one
-+/// System Settings guide panel (#447). One flow must never leave the other
-+/// waiting with no guide, and a guide that is replaced must stop its flow, not
-+/// move it on.
-+@Suite("Two flows share the System Settings guide without breaking each other")
++/// Every Full Disk Access ask waits through one guide (#450). A grant runs each
++/// caller's follow-up once; a cancel or a replaced guide runs none.
++@Suite("The Full Disk Access guide waits for the grant")
 +@MainActor
-+struct SettingsGuidePanelTests {
-+    private let defaults = ThrowawayDefaults()
-+
-+    /// The watcher's guide replaces the profile guide, so the profile flow is
-+    /// told it was cancelled. Its wait then ends at once, and a cancelled wait
-+    /// returns before any request to the asset service.
-+    @Test func aReplacedProfileGuideStopsTheProfileWait() async {
-+        let panel = SettingsGuidePanel()
-+        let store = AppleIntelligenceModelStore(defaults: defaults.defaults)
-+        panel.show(.removeProfile) { store.cancelWaiting() }
-+        panel.show(.allowInBackground) {}
-+        defer { panel.hide() }
-+
-+        #expect(panel.shown == .allowInBackground)
-+        let start = Date()
-+        let removed = await store.waitUntil({ false }, limit: 3)
-+        #expect(!removed)
-+        #expect(Date().timeIntervalSince(start) < 1)
++struct FullDiskAccessGuideTests {
++    /// A probe the test flips, read from the guide's background checks.
++    private final class Access: @unchecked Sendable {
++        private let lock = NSLock()
++        private var value = false
++        var granted: Bool {
++            get { lock.withLock { value } }
++            set { lock.withLock { value = newValue } }
++        }
 +    }
 +
-+    /// Showing the same guide again is not a replacement: its owner keeps waiting.
-+    @Test func showingTheSameGuideAgainCancelsNothing() {
-+        let panel = SettingsGuidePanel()
-+        var cancels = 0
-+        panel.show(.allowInBackground) { cancels += 1 }
-+        panel.show(.allowInBackground) { cancels += 1 }
-+        defer { panel.hide() }
-+        #expect(cancels == 0)
-+        #expect(panel.shown == .allowInBackground)
++    private func makeGuide(panel: SettingsGuidePanel, access: Access, limit: TimeInterval = 60) -> (FullDiskAccessGuide, () -> Int) {
++        var opens = 0
++        let guide = FullDiskAccessGuide(
++            panel: panel,
++            probe: { access.granted },
++            openPane: { opens += 1 },
++            pollInterval: .milliseconds(20),
++            limit: limit
++        )
++        return (guide, { opens })
 +    }
 +
-+    /// Each flow hides only its own guide.
-+    @Test func eachFlowHidesOnlyItsOwnGuide() {
++    private func settle(until condition: () -> Bool) async {
++        for _ in 0..<200 where !condition() {
++            try? await Task.sleep(for: .milliseconds(10))
++        }
++    }
++
++    @Test func aGrantRunsEachFollowUpOnceAndClosesTheGuide() async {
 +        let panel = SettingsGuidePanel()
-+        panel.show(.allowInBackground) {}
 +        defer { panel.hide() }
++        let access = Access()
++        let (guide, opens) = makeGuide(panel: panel, access: access)
++        var first = 0
++        var second = 0
++        guide.open { first += 1 }
++        guide.open { second += 1 }
++        #expect(opens() == 2)
++        #expect(panel.shown == .fullDiskAccess)
++        #expect(guide.isWaiting)
 +
-+        panel.hide(.installProfile)
-+        panel.hide(.removeProfile)
-+        #expect(panel.shown == .allowInBackground)
-+
-+        panel.hide(.allowInBackground)
++        access.granted = true
++        await settle { !guide.isWaiting }
++        try? await Task.sleep(for: .milliseconds(60))
++        #expect(first == 1)
++        #expect(second == 1)
 +        #expect(panel.shown == nil)
 +    }
-+}
++
++    @Test func cancelEndsTheWaitWithoutAGrant() async {
++        let panel = SettingsGuidePanel()
++        defer { panel.hide() }
++        let access = Access()
++        let (guide, _) = makeGuide(panel: panel, access: access)
++        var granted = 0
++        let request = guide.open { granted += 1 }
++        guide.cancel(request)
++        #expect(!guide.isWaiting)
++        #expect(panel.shown == nil)
++
++        access.granted = true
++        try? await Task.sleep(for: .milliseconds(100))
++        #expect(granted == 0)
++    }
++
++    /// Another flow's guide takes the panel: this wait stops, as Not Now stops it.
++    @Test func aReplacedGuideStopsTheWait() async {
++        let panel = SettingsGuidePanel()
++        defer { panel.hide() }
++        let access = Access()
++        let (guide, _) = makeGuide(panel: panel, access: access)
++        var granted = 0
++        let other = NSObject()
++        guide.open { granted += 1 }
++        panel.show(.removeProfile, owner: other) {}
++        #expect(!guide.isWaiting)
++
++        access.granted = true
++        try? await Task.sleep(for: .milliseconds(100))
++        #expect(granted == 0)
++        #expect(panel.shown == .removeProfile)
++    }
++
++    @Test func theWaitGivesUp() async {
++        let panel = SettingsGuidePanel()
++        defer { panel.hide() }
++        let access = Access()
++        let (guide, _) = makeGuide(panel: panel, access: access, limit: 0.1)
++        guide.open()
++        await settle { !guide.isWaiting }
++        #expect(!guide.isWaiting)
++        #expect(panel.shown == nil)
++    }
++
++    /// Cancelling with nothing waiting leaves another flow's guide alone.
++    @Test func cancelWithNoWaitTouchesNothing() {
++        let panel = SettingsGuidePanel()
++        defer { panel.hide() }
++        let (guide, _) = makeGuide(panel: panel, access: Access())
++        let other = NSObject()
++        panel.show(.allowInBackground, owner: other) {}
++        guide.cancel(FullDiskAccessGuide.Request())
++        #expect(panel.shown == .allowInBackground)
++    }
++
++    /// A second click replaces the screen's request: opening the new one before
++    /// cancelling the old keeps the wait and the guide, and a grant runs only
++    /// the new follow-up.
++    @Test func replacingARequestKeepsTheWait() async {
++        let panel = SettingsGuidePanel()
++        defer { panel.hide() }
++        let access = Access()
++        let (guide, _) = makeGuide(panel: panel, access: access)
++        var first = 0
++        var second = 0
++        let old = guide.open { first += 1 }
++        guide.open { second += 1 }
++        guide.cancel(old)
++        #expect(guide.isWaiting)
++        #expect(panel.shown == .fullDiskAccess)
++
++        access.granted = true
++        await settle { !guide.isWaiting }
++        #expect(first == 0)
++        #expect(second == 1)
++    }
++
++    /// The failure card closing ends only its own request. Look Deeper's wait
++    /// goes on, and a grant runs Look Deeper's follo
 ```
 
-**File**: `purge/Services/AppleIntelligenceModelStore.swift` (modified, +4/-3)
+**File**: `PurgeTests/PurgeStoreRetryTests.swift` (modified, +86/-0)
 ```diff
-@@ -437,7 +437,8 @@ final class AppleIntelligenceModelStore: ObservableObject {
+@@ -99,6 +99,92 @@ struct PurgeStoreRetryTests {
+         #expect(session.movedToTrashCount == 0)
+     }
+ 
++    // MARK: Full Disk Access granted from the guide (#450)
++
++    /// After the user opens Full Disk Access from the completion screen and the
++    /// guide sees the grant, only rows that failed for lack of access go again,
++    /// and only on a route that can't reach the root helper or start its setup.
++    @Test("A Full Disk Access grant retries only plain access rows")
++    func fullDiskAccessRetryTargets() {
++        func row(_ path: String, _ reason: CleanFailureReason, _ route: DeletionRoute) -> CleanFailureItem {
++            CleanFailureItem(path: path, displayName: "", reason: reason, route: route)
++        }
++        let cache = row("/Users/x/Library/Caches/a", .needsFullDiskAccess, .cache)
++        let largeFile = row("/Users/x/Downloads/b", .needsFullDiskAccess, .userSelected(isAIModel: false, privilegedEligible: false))
++        let model = row("/Users/x/models/c", .needsFullDiskAccess, .userSelected(isAIModel: true, privilegedEligible: false))
++        let helperLeftover = row("/Library/Application Support/d", .needsFullDiskAccess, .userSelected(isAIModel: false, privilegedEligible: true))
++        let heldApp = row("/Applications/E.app", .needsFullDiskAccess, .lockedUninstall)
++        let installLeftover = row("/System/Volumes/Data/macOS Install Data/Cryptexes", .needsFullDiskAccess, .cache)
++        let inUse = row("/Users/x/Library/Caches/f", .inUse, .cache)
++        #expect(installLeftover.isMacOSInstallLeftover)
++
++        let targets = PurgeStore.fullDiskAccessRetryTargets(
++            in: [cache, largeFile, model, helperLeftover, heldApp, installLeftover, inUse]
++        )
++
++        #expect(targets.map(\.id) == [cache.id, largeFile.id, model.id])
++    }
++
++    /// A user-picked row retried after a grant meets its own gate again: one
++    /// `LargeFileScanPolicy` and `AppUninstallScanPolicy` both refuse stays on
++    /// disk and becomes a safety skip.
++    @Test("A user-picked Full Disk Access row retried after a grant still meets its gate")
++    func fullDiskAccessUserSelectedRetryMeetsTheGate() async throws {
++        let home = try Home()
++        defer { home.remove() }
++        let keychains = home.url.appendingPathComponent("Library/Keychains", isDirectory: true)
++        try FileManager.default.createDirectory(at: keychains, withIntermediateDirectories: true)
++        let keychain = keychains.appendingPathComponent("login.keychain-db")
++        try Data(repeating: 0xCD, count: 2048).write(to: keychain)
++        let trash = FakeTrash()
++        let scans = FakeScans()
++        defer { scans.cleanUp() }
++        let store = scans.makeStore(fileDeleter: FileDeleter(home: home.url, trash: trash.trash))
++        let failure = CleanFailureItem(
++            path: keychain.standardizedFileURL.path,
++            displayName: "login.keychain-db",
++            reason: .needsFullDiskAccess,
++            sizeBytes: 2048,
++            route: .userSelected(isAIModel: false, privilegedEligible: false)
++        )
++        #expect(PurgeStore.fullDiskAccessRetryTargets(in: [failure]).count == 1)
++        let session = Self.finishedRun(with: failure)
++
++        let moved = await store.retryCleanFailure(failure, session: session)
++
++        #expect(moved == nil)
++        #expect(trash.trashedPaths.isEmpty)
++        #expect(FileManager.default.fileExists(atPath: keychain.path))
++        #expect(session.failedItems.first?.reason == .safetySkipped)
++    }
++
++    /// The same for a cache-route row: the allowlist refuses a file in Downloads,
++    /// so it stays on disk and becomes a safety skip.
++    @Test("A Full Disk Access row retried after a grant still meets the gate")
++    func fullDiskAccessRetryMeetsTheGate() async throws {
++        let home = try Home()
++        defer { home.remove() }
++        let trash = FakeTrash()
++        let scans = FakeScans()
++        defer { scans.cleanUp() }
++        let store = scans.makeStore(fileDeleter: FileDeleter(home: home.url, trash: trash.trash))
++        let failure = CleanFailureItem(
++            path: home.payload.standardizedFileURL.path,
++            displayName: "payload.bin",
++            reason: .needsFullDiskAccess,
++            sizeBytes: 2048,
++            route: .cache
++        )
++        let session = Self.finishedRun(with: failure)
++
++        let moved = await store.retryCleanFailure(failure, session: session)
++
++        #expect(moved == nil)
++        #expect(trash.trashedPaths.isEmpty)
++        #expect(FileManager.default.fileExists(atPath: home.payload.path))
++        #expect(session.failedItems.first?.reason == .safetySkipped)
++    }
++
+     @Test("A row for a file that is already gone is dropped and credited nothing")
+     func goneRowIsDropped() async throws {
+         let home = try Home()
+```
+
+**File**: `PurgeTests/SettingsGuidePanelTests.swift` (modified, +165/-8)
+```diff
+@@ -1,3 +1,4 @@
++import AppKit
+ import Foundation
+ import Testing
+ @testable import Purge
+@@ -17,8 +18,9 @@ struct SettingsGuidePanelTests {
+     @Test func aReplacedProfileGuideStopsTheProfileWait() async {
+         let panel = SettingsGuidePanel()
+         let store = AppleIntelligenceModelStore(defaults: defaults.defaults)
+-        panel.show(.removeProfile) { store.cancelWaiting() }
+-        panel.show(.allowInBackground) {}
++        let watcher = NSObject()
++        panel.show(.removeProfile, owner: store) { store.cancelWaiting() }
++        panel.show(.allowInBackground, owner: watcher) {}
+         defer { panel.hide() }
+ 
+         #expect(panel.shown == .allowInBackground)
+@@ -31,25 +33,180 @@ struct SettingsGuidePanelTests {
+     /// Showing the same guide again is not a replacement: its owner keeps waiting.
+     @Test func showingTheSameGuideAgainCancelsNothing() {
+         let panel = SettingsGuidePanel()
++        let owner = NSObject()
+         var cancels = 0
+-        panel.show(.allowInBackground) { cancels += 1 }
+-        panel.show(.allowInBackground) { cancels += 1 }
++        panel.show(.allowInBackground, owner: owner) { cancels += 1 }
++        panel.show(.allowInBackground, owner: owner) { cancels += 1 }
+         defer { panel.hide() }
+         #expect(cancels == 0)
+         #expect(panel.shown == .allowInBackground)
++        #expect(panel.ownerCount == 1)
+     }
+ 
+     /// Each flow hides only its own guide.
+     @Test func eachFlowHidesOnlyItsOwnGuide() {
+         let panel = SettingsGuidePanel()
+-        panel.show(.allowInBackground) {}
++        let owner = NSObject()
++        panel.show(.allowInBackground, owner: owner) {}
+         defer { panel.hide() }
+ 
+-        panel.hide(.installProfile)
+-        panel.hide(.removeProfile)
++        panel.hide(.installProfile, owner: owner)
++        panel.hide(.removeProfile, owner: owner)
+         #expect(panel.shown == .allowInBackground)
+ 
+-        panel.hide(.allowInBackground)
++        panel.hide(.allowInBackground, owner: owner)
+         #expect(panel.shown == nil)
+     }
++
++    /// A finished guide is no longer the one shown, so its owner's later hide
++    /// and another flow's show both behave as if it were gone.
++    @Test func finishingAGuideClearsIt() {
++        let panel = SettingsGuidePanel()
++        let owner = NSObject()
++        var cancels = 0
++        panel.show(.fullDiskAccess, owner: owner) { cancels += 1 }
++        defer { panel.hide() }
++        panel.finish(.fullDiskAccess, owner: owner)
++        #expect(panel.shown == nil)
++        panel.show(.installProfile, owner: NSObject()) {}
++        #expect(cancels == 0)
++    }
++
++    /// One flow can't finish another's guide.
++    @Test func finishingAnotherGuideDoesNothing() {
++        let panel = SettingsGuidePanel()
++        let owner = NSObject()
++        panel.show(.allowInBackground, owner: owner) {}
++        defer { panel.hide() }
++        panel.finish(.fullDiskAccess, owner: owner)
++        panel.finish(.removeProfile, owner: owner)
++        #expect(panel.shown == .allowInBackground)
++    }
++
++    // MARK: Two flows on one guide
++
++    /// The helper and the deleted-apps watcher both wait on Allow in the
++    /// Background. One giving up leaves the guide up for the other.
++    @Test func oneOwnerHidingKeepsTheGuideForTheOther() {
++        let panel = SettingsGuidePanel()
++        let helper = NSObject()
++        let watcher = NSObject()
++        var cancels = 0
++        panel.show(.allowInBackground, owner: watcher) { cancels += 1 }
++        panel.show(.allowInBackground, owner: helper) { cancels += 1 }
++        defer { panel.hide() }
++
++        panel.hide(.allowInBackground, owner: helper)
++        #expect(panel.shown == .allowInBackground)
++        #expect(panel.ownerCount == 1)
++        #expect(cancels == 0)
++
++        panel.hide(.allowInBackground, owner: helper)
++        #expect(panel.ownerCount == 1)
++
++        panel.hide(.allowInBackground, owner: watcher)
++        #expect(panel.shown == nil)
++    }
++
++    /// One owner's change landing does not finish the guide while the other
++    /// still waits; the last one does.
++    @Test func theGuideFinishesWithItsLastOwner() {
++        let panel = SettingsGuidePanel()
++        let helper = NSObject()
++        let watcher = NSObject()
++        panel.show(.allowInBackground, owner: watcher) {}
++        panel.show(.allowInBackground, owner: helper) {}
++        defer { panel.hide() }
++
++        panel.finish(.allowInBackground, owner: helper)
++        #expect(panel.shown == .allowInBackground)
++        #expect(panel.ownerCount == 1)
++
++        panel.finish(.allowInBackground, owner: watcher)
++        #expect(panel.shown == nil)
++    }
++
++    /// A flow that went away without hiding never holds the guide open for
++    /// the one still there.
++    @Test func aGoneOwnerDoesNotHoldTheGuide() {
++        let panel = SettingsGuidePanel()
++        let helper = NSObject()
++        do {
++            let watcher = NSObject()
++           
+```
+
+**File**: `docs/design-system.md` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ Tokens are named by job. The neutrals are a warm graphite: low-chroma greys lean
+ 
+ Hover and pressed shades exist for `actionPrimary` and `actionDestructive` too. `AppColors.Chart` holds the Overview breakdown colours (Okabe and Ito, colour-blind safe) and the warm greys for "everything else" and free space, and `purgeableStripe`, the stripes drawn over free space to mark purgeable space. It also holds the four Everything else page colours (#159), named for what the user can do: `managedInApps` blue, `yourFiles` amber, `leftAlone` coral and `managedByMacOS` grey. They differ in lightness as well as hue. Text on them is `bucketLabel`, except on the grey tile, which uses `managedByMacOSLabel`.
+ 
+-The cleanup celebration follows the app's appearance and draws on `surfaceBase`, so it uses the ordinary tokens in both modes. Plain white and black are only for shadows, masks, glyphs on coloured chart tiles, and the menu bar dropdown's native selection highlight.
++The cleanup celebration follows the app's appearance and draws on `surfaceBase`, so it uses the ordinary tokens in both modes. Plain white and black are only for shadows, masks, glyphs on coloured chart tiles, and the menu bar dropdown's native selection highlight. `systemControlAccent` and `systemControlKnob` are the user's macOS accent and white, only for copies of macOS's own controls, like the switch in the System Settings guide.
+ 
+ ## Buttons
+ 
+```
+
+**File**: `purge/PrivilegedHelper/PrivilegedHelperPreferenceStore.swift` (modified, +48/-8)
+```diff
+@@ -63,7 +63,7 @@ final class PrivilegedHelperPreferenceStore: ObservableObject {
+     func setEnabled(_ enabled: Bool) {
+         desiredEnabled = enabled
+         lastRegistrationFailed = false
+-        if !enabled { approvalMonitorTask?.cancel() }
++        if !enabled { stopWaitingForApproval() }
+         let previous = applyTask
+         applyTask = Task { @MainActor in
+             _ = await previous?.value
+@@ -73,12 +73,11 @@ final class PrivilegedHelperPreferenceStore: ObservableObject {
+                 switch manager.register() {
+                 case .enabled:
+                     approvalMonitorTask?.cancel()
+-                    break
++                    SettingsGuidePanel.shared.finish(.allowInBackground, owner: self)
+                 case .needsApproval:
+-                    monitorPendingApproval()
+-                    manager.openLoginItemsSettings()
++                    guideApproval()
+                 case .failed(let detail):
+-                    approvalMonitorTask?.cancel()
++                    stopWaitingForApproval()
+                     lastRegistrationFailed = true
+                     NSLog("Purge: helper registration failed — %@", detail)
+                 }
+@@ -109,16 +108,57 @@ final class PrivilegedHelperPreferenceStore: ObservableObject {
+                 } catch {
+                     return
+                 }
+-                guard desiredEnabled == true else { return }
++                guard desiredEnabled == true else { break }
+                 let latest = await manager.statusOffMain()
+-                guard desiredEnabled == true, !Task.isCancelled else { return }
++                guard !Task.isCancelled else { return }
++                guard desiredEnabled == true else { break }
+                 apply(latest)
+-                if isEnabled || !needsApproval { return }
++                if isEnabled {
++                    SettingsGuidePanel.shared.finish(.allowInBackground, owner: self)
++                    return
++                }
++                if !needsApproval { break }
+             }
++            guard !Task.isCancelled else { return }
++            SettingsGuidePanel.shared.hide(.allowInBackground, owner: self)
+         }
+     }
+ 
++    /// Opens Login Items and nothing else. Uninstall Purge uses it to help the
++    /// user switch background parts off, so it never shows the guide that asks
++    /// to switch the helper on.
+     func openLoginItemsSettings() {
+         manager.openLoginItemsSettings()
+     }
++
++    /// Settings' "Open System Settings" for a helper waiting for approval. The
++    /// guide shows beside Login Items and Purge watches for the switch (#450).
++    func openApprovalSettings() {
++        if needsApproval {
++            guideApproval()
++        } else {
++            manager.openLoginItemsSettings()
++        }
++    }
++
++    private func guideApproval() {
++        // The user asked for the helper off: never guide them to switch it on.
++        guard desiredEnabled != false else {
++            manager.openLoginItemsSettings()
++            return
++        }
++        // Approval pending from an earlier launch: the switch already reads on,
++        // so going to approve it is asking for it on.
++        if desiredEnabled == nil { desiredEnabled = true }
++        manager.openLoginItemsSettings()
++        SettingsGuidePanel.shared.show(.allowInBackground, owner: self) { [weak self] in
++            self?.approvalMonitorTask?.cancel()
++        }
++        monitorPendingApproval()
++    }
++
++    private func stopWaitingForApproval() {
++        approvalMonitorTask?.cancel()
++        SettingsGuidePanel.shared.hide(.allowInBackground, owner: self)
++    }
+ }
+```
+
+**File**: `purge/Services/AppleIntelligenceModelStore.swift` (modified, +14/-6)
+```diff
+@@ -437,8 +437,8 @@ final class AppleIntelligenceModelStore: ObservableObject {
  
      func cancelWaiting() {
          waitCancelled = true
--        SettingsGuidePanel.shared.hide()
-+        SettingsGuidePanel.shared.hide(.installProfile)
-+        SettingsGuidePanel.shared.hide(.removeProfile)
+-        SettingsGuidePanel.shared.hide(.installProfile)
+-        SettingsGuidePanel.shared.hide(.removeProfile)
++        SettingsGuidePanel.shared.hide(.installProfile, owner: self)
++        SettingsGuidePanel.shared.hide(.removeProfile, owner: self)
      }
  
      /// Stops a removal before its next request to the service.
-@@ -531,7 +532,7 @@ final class AppleIntelligenceModelStore: ObservableObject {
+@@ -526,13 +526,17 @@ final class AppleIntelligenceModelStore: ObservableObject {
+             phase = .waitingForProfileInstall
+             try? await Task.sleep(for: .seconds(1))
+             openProfilesPane()
+-            SettingsGuidePanel.shared.show(.installProfile) { [weak self] in self?.cancelWaiting() }
++            SettingsGuidePanel.shared.show(.installProfile, owner: self) { [weak self] in self?.cancelWaiting() }
+             let readBlocks = services.installedBlocks
+             let installed = await waitUntil {
                  let now = readBlocks()
                  return blockTypes.allSatisfy { now.contains($0) }
              }
--            SettingsGuidePanel.shared.hide()
-+            SettingsGuidePanel.shared.hide(.installProfile)
+-            SettingsGuidePanel.shared.hide(.installProfile)
++            if installed {
++                SettingsGuidePanel.shared.finish(.installProfile, owner: self)
++            } else {
++                SettingsGuidePanel.shared.hide(.installProfile, owner: self)
++            }
              // System Settings keeps its own copy once opened; the file would only
              // linger. Only Purge's own regular file goes, nothing that replaced it.
              AppleIntelligenceDownloadBlock.removeProfile(at: profileURL)
-@@ -757,7 +758,7 @@ final class AppleIntelligenceModelStore: ObservableObject {
-             SettingsGuidePanel.shared.show(.removeProfile) { [weak self] in self?.cancelWaiting() }
+@@ -755,10 +759,14 @@ final class AppleIntelligenceModelStore: ObservableObject {
+             waitCancelled = false
+             phase = .waitingForProfileRemoval
+             openProfilesPane()
+-            SettingsGuidePanel.shared.show(.removeProfile) { [weak self] in self?.cancelWaiting() }
++            SettingsGuidePanel.shared.show(.removeProfile, owner: self) { [weak self] in self?.cancelWaiting() }
              let readBlocks = services.installedBlocks
              let removed = await waitUntil { readBlocks().isEmpty }
--            SettingsGuidePanel.shared.hide()
-+            SettingsGuidePanel.shared.hide(.removeProfile)
+-            SettingsGuidePanel.shared.hide(.removeProfile)
++            if removed {
++                SettingsGuidePanel.shared.finish(.removeProfile, owner: self)
++            } else {
++                SettingsGuidePanel.shared.hide(.removeProfile, owner: self)
++            }
              installedBlocks = services.installedBlocks()
              guard removed else {
                  phase = .idle
 ```
 
-**File**: `purge/Services/RemovedAppMonitor.swift` (modified, +47/-5)
+**File**: `purge/Services/FullDiskAccessGuide.swift` (added, +105/-0)
 ```diff
-@@ -41,6 +41,8 @@ final class RemovedAppMonitor: ObservableObject {
-     /// Whether the agent has answered the check that is running now.
-     private var answeredDuringProbe = false
-     private var probeTask: Task<Void, Never>?
-+    /// Runs while the Login Items guide is up (`openLoginItemsSettings`).
-+    private var approvalTimer: Timer?
- 
-     private enum Phase {
-         case idle
-@@ -304,8 +306,44 @@ final class RemovedAppMonitor: ObservableObject {
+@@ -0,0 +1,105 @@
++import Foundation
++
++/// Opens Full Disk Access in System Settings with the guide panel beside it, and
++/// waits for the grant (#450). Every place that asks for access goes through
++/// here: Look Deeper in onboarding and in the main window, and a clean that
++/// failed for lack of access.
++///
++/// macOS grants access to a running process without telling it, so the only way
++/// to notice is to keep probing. The probe runs off the main actor, once a
++/// second, for at most `wait`. On a grant the guide shows its check and each
++/// caller's `onGranted` runs once. Not Now on the guide ends the wait without
++/// running them. Each caller cancels only its own request: the wait and the
++/// guide end with the last one.
++@MainActor
++final class FullDiskAccessGuide {
++    static let shared = FullDiskAccessGuide(
++        panel: .shared,
++        probe: { await Task.detached(priority: .utility) { PermissionChecker().hasFullDiskAccess() }.value },
++        openPane: openFullDiskAccessSettings
++    )
++
++    /// As long as the other guides wait (`AppleIntelligenceModelStore.settingsWait`).
++    nonisolated static let wait: TimeInterval = 10 * 60
++
++    private let panel: SettingsGuidePanel
++    private let probe: @Sendable () async -> Bool
++    private let openPane: () -> Void
++    private let pollInterval: Duration
++    private let limit: TimeInterval
++    private var task: Task<Void, Never>?
++    private var grantHandlers: [(request: Request, run: () -> Void)] = []
++
++    /// One caller's place in the wait, for `cancel(_:)`.
++    struct Request: Hashable {
++        let id = UUID()
++    }
++
++    init(
++        panel: SettingsGuidePanel,
++        probe: @escaping @Sendable () async -> Bool,
++        openPane: @escaping () -> Void,
++        pollInterval: Duration = .seconds(1),
++        limit: TimeInterval = wait
++    ) {
++        self.panel = panel
++        self.probe = probe
++        self.openPane = openPane
++        self.pollInterval = pollInterval
++        self.limit = limit
++    }
++
++    var isWaiting: Bool { task != nil }
++
++    /// Opens the pane and shows the guide. A second call while one wait runs adds
++    /// its `onGranted` to the same wait.
++    @discardableResult
++    func open(onGranted: @escaping () -> Void = {}) -> Request {
++        openPane()
++        let request = Request()
++        grantHandlers.append((request, onGranted))
++        panel.show(.fullDiskAccess, owner: self) { [weak self] in self?.stopWaiting(hideGuide: false) }
++        if task == nil {
++            task = Task { [weak self] in await self?.waitForGrant() }
++        }
++        return request
++    }
++
++    /// The screen that made `request` went away: its `onGranted` never runs.
++    /// When no other caller waits, the wait stops and the guide closes. A
++    /// request that already ran or ended does nothing.
++    func cancel(_ request: Request) {
++        guard let index = grantHandlers.firstIndex(where: { $0.request == request }) else { return }
++        grantHandlers.remove(at: index)
++        if grantHandlers.isEmpty { stopWaiting(hideGuide: true) }
++    }
++
++    private func waitForGrant() async {
++        let deadline = Date().addingTimeInterval(limit)
++        while Date() < deadline {
++            let granted = await probe()
++            guard !Task.isCancelled else { return }
++            if granted {
++                let handlers = grantHandlers
++                grantHandlers = []
++                task = nil
++                panel.finish(.fullDiskAccess, owner: self)
++                handlers.forEach { $0.run() }
++                return
++            }
++            do {
++                try await Task.sleep(for: pollInterval)
++            } catch {
++                return
++            }
++        }
++        stopWaiting(hideGuide: true)
++    }
++
++    private func stopWaiting(hideGuide: Bool) {
++        task?.cancel()
++        task = nil
++        grantHandlers = []
++        if hideGuide { panel.hide(.fullDiskAccess, owner: self) }
++    }
++}
+```
+
+**File**: `purge/Services/PurgeStore.swift` (modified, +17/-0)
+```diff
+@@ -1726,6 +1726,23 @@ final class PurgeStore: ObservableObject {
          }
      }
  
-+    /// How long the Login Items guide waits for the user, as long as the profile
-+    /// guide waits (`AppleIntelligenceModelStore.settingsWait`). After that the
-+    /// guide closes; the sidebar row is still there to start again.
-+    static let approvalWait: TimeInterval = 10 * 60
-+
-+    /// Opens Login Items with a guide beside it that says which switch to turn on,
-+    /// then checks once a second until macOS allows the watcher. The guide closes
-+    /// itself then, when the problem changes, when the user cancels it, or after
-+    /// `approvalWait`. Each check reads only the Login Items status; the agent is
-+    /// probed once, after macOS allows it.
-     func openLoginItemsSettings() {
-         SMAppService.openSystemSettingsLoginItems()
-+        guard watcherHealth == .needsApproval else { return }
-+        SettingsGuidePanel.shared.show(.allowInBackground) { [weak self] in
-+            self?.stopWaitingForApproval(hideGuide: false)
-+        }
-+        approvalTimer?.invalidate()
-+        let deadline = Date().addingTimeInterval(Self.approvalWait)
-+        approvalTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-+            MainActor.assumeIsolated {
-+                guard let self else { return }
-+                guard self.isEnabled, self.managesLiveAgent, self.watcherHealth == .needsApproval,
-+                      Date() < deadline
-+                else {
-+                    self.stopWaitingForApproval(hideGuide: true)
-+                    return
-+                }
-+                guard self.agentService.status != .requiresApproval else { return }
-+                self.stopWaitingForApproval(hideGuide: true)
-+                self.refreshAgentStatus()
++    /// The rows a Full Disk Access grant retries by itself (#450): those that
++    /// failed only for lack of access, on a route that can't reach the root
++    /// helper. A leftover the helper may move, a held app and leftover macOS
++    /// update files keep their own Retry, since retrying them can hand them to
++    /// the helper or start its setup.
++    static func fullDiskAccessRetryTargets(in failures: [CleanFailureItem]) -> [CleanFailureItem] {
++        failures.filter { item in
++            guard item.reason == .needsFullDiskAccess, !item.isMacOSInstallLeftover else { return false }
++            switch item.route {
++            case .cache, .userSelected(isAIModel: _, privilegedEligible: false):
++                return true
++            case .userSelected(isAIModel: _, privilegedEligible: true), .lockedUninstall:
++                return false
 +            }
 +        }
 +    }
 +
-+    private func stopWaitingForApproval(hideGuide: Bool) {
-+        approvalTimer?.invalidate()
-+        approvalTimer = nil
-+        if hideGuide { SettingsGuidePanel.shared.hide(.allowInBackground) }
+     /// Retries leftover macOS update files in one helper request (#127). Retrying them
+     /// one by one would fail after the first: every move changes the folder's date,
+     /// and the helper refuses the rest of the folder after that. If the helper is not
+```
+
+---
+
+### Incident Patch 2: `db58c413` (2026-11-24)
+**Commit Message**: fix: read the Chromium shape again before every move (#452) (#454)
+
+* fix: read the Chromium shape again before every move, not only for folders this session rated (#452)
+
+The move check for a folder directly in ~/Library/Caches read the Chromium
+shape again only when a scan in the same process had rated it by that shape.
+A clean of rows this process did not rate, such as saved last-scan rows or an
+App Intent, skipped it.
+
+The check now works it out from the folder's name, the bundled entries and the
+tier rules. A folder that only the shape could rate Safe, unlisted or marked
+needs_chromium_shape like Yab, moves only while it still has the shape. The
+in-memory set is gone.
+
+Also: a Service Worker folder fails the shape in any case, and Yab's entry
+applies only when the shape holds and the tier is Safe, not when another rule
+rates the folder Safe.
+
+Clean tests whose made-up rows sat in ~/Library/Caches with names no rule
+knows now use .ShipIt names, which the tier list rates.
+
+* fix: let the updater entry exempt only an updater layout from the shape check
+
+A -updater folder the Chromium shape rated Safe could gain a pending folder
+before the clean. It then moved under the Electron u
+
+**File**: `PurgeTests/FileDeleterOffMainTests.swift` (modified, +3/-1)
+```diff
+@@ -39,8 +39,10 @@ struct FileDeleterOffMainTests {
+         // The cache allowlist only offers paths under the real home, so the folder
+         // is named there. It is never made, and the fake Trash moves nothing, so
+         // nothing on disk is written or moved (#171).
++        // Named so the tier list rates it (`.ShipIt`): before a move, a folder in
++        // `~/Library/Caches` no rule knows must have a browser cache's shape (#452).
+         let dir = FileManager.default.homeDirectoryForCurrentUser
+-            .appendingPathComponent("Library/Caches/PurgeOffMainTests-\(UUID().uuidString)", isDirectory: true)
++            .appendingPathComponent("Library/Caches/PurgeOffMainTests-\(UUID().uuidString).ShipIt", isDirectory: true)
+         try #require(!FileManager.default.fileExists(atPath: dir.path))
+ 
+         let flag = MainThreadFlag()
+```
+
+**File**: `PurgeTests/IntentRouterTests.swift` (modified, +3/-1)
+```diff
+@@ -137,7 +137,9 @@ struct IntentRouterTests {
+     @Test("Safe rows the scan found are cleaned, and nothing else")
+     func cleanMovesOnlySafeRows() async {
+         func row(_ level: SafetyLevel) -> CacheItem {
+-            let folder = "com.purge.test.intent-\(UUID().uuidString)"
++            // Named so the tier list rates it (`.ShipIt`): before a move, a folder in
++            // `~/Library/Caches` no rule knows must have a browser cache's shape (#452).
++            let folder = "com.purge.test.intent-\(UUID().uuidString).ShipIt"
+             return CacheItem(
+                 definitionKey: nil,
+                 location: CacheLocation(
+```
+
+**File**: `PurgeTests/KeyboardDeletionStoreTests.swift` (modified, +7/-5)
+```diff
+@@ -77,12 +77,14 @@ struct KeyboardDeletionStoreTests {
+     /// Only the one row reaches the Trash, and the user's other ticks stay;
+     /// Clean Selected would have cleared them all. The gate reads the real home,
+     /// so both rows are folders under `~/Library/Caches` that are never made, as
+-    /// in `FileDeleterCacheRouteTests`, and the fake Trash moves nothing.
++    /// in `FileDeleterCacheRouteTests`, and the fake Trash moves nothing. Their
++    /// `.ShipIt` names are ones the tier list rates, so the move check lets them
++    /// go without a browser cache's shape (#452).
+     @Test func aOneRowCleanKeepsTheOtherTicks() async throws {
+         let caches = URL(fileURLWithPath: DeletionSafetyPolicy.cachedHomePath)
+             .appendingPathComponent("Library/Caches", isDirectory: true)
+-        let picked = cacheRow(caches.appendingPathComponent("com.purge.test.picked-\(UUID().uuidString)", isDirectory: true))
+-        let ticked = cacheRow(caches.appendingPathComponent("com.purge.test.ticked-\(UUID().uuidString)", isDirectory: true))
++        let picked = cacheRow(caches.appendingPathComponent("com.purge.test.picked-\(UUID().uuidString).ShipIt", isDirectory: true))
++        let ticked = cacheRow(caches.appendingPathComponent("com.purge.test.ticked-\(UUID().uuidString).ShipIt", isDirectory: true))
+         let scans = FakeScans()
+         scans.hasAccess = true
+         defer { scans.cleanUp() }
+@@ -107,8 +109,8 @@ struct KeyboardDeletionStoreTests {
+     @Test func aSecondConfirmAddsNothing() async throws {
+         let caches = URL(fileURLWithPath: DeletionSafetyPolicy.cachedHomePath)
+             .appendingPathComponent("Library/Caches", isDirectory: true)
+-        let picked = cacheRow(caches.appendingPathComponent("com.purge.test.picked-\(UUID().uuidString)", isDirectory: true))
+-        let ticked = cacheRow(caches.appendingPathComponent("com.purge.test.ticked-\(UUID().uuidString)", isDirectory: true))
++        let picked = cacheRow(caches.appendingPathComponent("com.purge.test.picked-\(UUID().uuidString).ShipIt", isDirectory: true))
++        let ticked = cacheRow(caches.appendingPathComponent("com.purge.test.ticked-\(UUID().uuidString).ShipIt", isDirectory: true))
+         let scans = FakeScans()
+         scans.hasAccess = true
+         defer { scans.cleanUp() }
+```
+
+**File**: `PurgeTests/LibraryCachesBrowserShapeTests.swift` (modified, +196/-11)
+```diff
+@@ -351,9 +351,9 @@ struct LibraryCachesBrowserShapeTests {
+         #expect(!check(worker))
      }
  
-     /// Called by Purge's uninstaller before it moves bundles, so the agent does not
-@@ -891,12 +929,16 @@ nonisolated enum WatcherHealth: Equatable, Sendable {
-         }
-     }
- 
--    /// The same problem in a line, for the sidebar notice.
--    var shortMessage: String? {
-+    /// The sidebar row's title. The sheet it opens uses `problemTitle`, which is too
-+    /// long for the row at sidebar width.
-+    static let shortTitle = String(localized: "Reviews paused")
+-    /// Only a folder rated Safe by its shape is read again. A folder rated by
+-    /// its name or by another rule, and any path outside the home's Caches,
+-    /// passes as before.
++    /// Only a folder that nothing but its shape could rate Safe is read again.
++    /// A folder rated by its name, a bundle ID or another rule, and any path
++    /// outside the home's Caches, passes as before.
+     @Test
+     func moveCheckLeavesOtherPathsAlone() throws {
+         let (caches, cleanup) = try makeCaches()
+@@ -363,16 +363,164 @@ struct LibraryCachesBrowserShapeTests {
+         try lay(chrome, folders: ["Chrome/Default/Cache/Cache_Data"], files: ["Chrome/Default/Local State"])
+         let support = cleanup.appendingPathComponent("Library/Application Support/NewBrowser/Cache", isDirectory: true)
+         try lay(support, folders: [], files: ["file"])
++        let homebrew = caches.appendingPathComponent("Homebrew", isDirectory: true)
++        try lay(homebrew, folders: ["downloads"], files: ["downloads/wget.bottle.tar.gz"])
++        let slack = caches.appendingPathComponent("com.tinyspeck.slackmacgap", isDirectory: true)
++        try lay(slack, folders: [], files: ["Cache.db"])
++        let dropbox = caches.appendingPathComponent("com.dropbox.client2", isDirectory: true)
++        try lay(dropbox, folders: [], files: ["data.db"])
++        // An Electron updater cache, which the scan rates under its own entry.
++        let updater = caches.appendingPathComponent("example-updater", isDirectory: true)
++        try lay(updater, folders: ["pending"], files: ["pending/installer.zip"])
 +
-+    /// The problem in a few words, under the sidebar row's title.
-+    var shortHint: String? {
-         switch self {
--        case .needsApproval: return String(localized: "macOS is blocking Purge's background watcher, so deleted apps go unnoticed.")
--        case .notRunning: return String(localized: "The background watcher isn't running, so deleted apps go unnoticed.")
--        case .failedToStart: return String(localized: "The background watcher couldn't start, so deleted apps go unnoticed.")
-+        case .needsApproval: return String(localized: "Blocked in Login Items")
-+        case .notRunning: return String(localized: "The watcher stopped")
-+        case .failedToStart: return String(localized: "The watcher didn't start")
-         case .off, .checking, .running: return nil
++        for url in [chrome, support, homebrew, slack, dropbox, updater] {
++            #expect(!SafetyTierList.dependsOnChromiumShape(url, home: home), "\(url.lastPathComponent)")
++            #expect(SafetyTierList.passesChromiumShapeBoundary(url, home: home), "\(url.lastPathComponent)")
++        }
++        #expect(FileDeleter.defaultImmediateMoveCheck(home: home)(updater))
++    }
+ 
+-        // A folder no rule rated by its shape, such as an Electron updater cache
+-        // the scan rates under another name.
+-        let unrated = caches.appendingPathComponent("com.example.app.updater", isDirectory: true)
+-        try lay(unrated, folders: [], files: ["installer.zip"])
++    /// The move check holds nothing in memory (#452). A scan in one session
++    /// rates the folder Safe. The clean runs in another, from a saved row, an
++    /// App Intent or another process, where nothing rated it. Here that is a
++    /// second home this test process never rated. The folder there gains
++    /// profile data before the move, and the move is refused.
++    @Test
++    func moveReadsTheShapeForAFolderAnotherSessionRated() throws {
++        let (sessionOneCaches, sessionOneCleanup) = try makeCaches()
++        defer { try? FileManager.default.removeItem(at: sessionOneCleanup) }
++        let rated = sessionOneCaches.appendingPathComponent("NewBrowser", isDirectory: true)
++        try lay(rated, folders: Self.yabFolders)
++        #expect(tier(rated) == .safe)
+ 
+-        #expect(SafetyTierList.passesChromiumShapeBoundary(chrome, home: home))
+-        #expect(SafetyTierList.passesChromiumShapeBoundary(support, home: home))
+-        #expect(SafetyTierList.passesChromiumShapeBoundary(unrated, home: home))
+-        #expect(FileDeleter.defaultImmediateMoveCheck(home: home)(unrated))
++        let (caches, cleanup) = try makeCaches()
++        defer { try? FileManager.default.removeItem(at: cleanup) }
++        let home = cleanup.path
++        let check = FileDeleter.defaultImmediateMoveCheck(home: home)
++        let browser = caches.appendingPathComponent("NewBrowser", isDirectory: true)
++        try lay(browser, folders: Self.yabFolders)
++        #expect(SafetyTierList.dependsOnChromiumShape(browser, home: home))
++        #expect(check(browser))
++
++        try lay(browser, folders: [], files: ["Chromium/Default/Local State"])
++        #expect(!SafetyTierList.passesChromiumShapeBoundary(browser, home: home))
++        #expect(!check(browser))
++
++        // The folder session one rated is read again the same way.
++        try lay(rated, folders: ["Chromium/Default/Service Worker/CacheStorage"])
++        #expect(!SafetyTierList.passesChromiumShapeBoundary(rated, home: self.home(of: rated)))
++    }
++
++    /// A folder directly in the home's Caches that no entry or rule knows can
++    /// only have been rated Safe by its shape. Without the shape it never moves,
++    /// whatever row asked for it.
++    @Test
++    func moveRefusesAnUnlistedFolderWithoutTheShape() throws {
++        let (caches, cleanup) = try makeCaches()
++        defer { try? FileManager.default.removeItem(at: cleanup) }
++        let home = cleanup.path
++        let unlisted = caches.appendingPathComponent("com.example.app.updater", isDirectory: true)
++        try lay(unlisted, folders: [], files:
+```
+
+**File**: `PurgeTests/MenuCleanOutcomeTests.swift` (modified, +3/-1)
+```diff
+@@ -13,7 +13,9 @@ import Testing
+ @Suite("The menu's clean outcome")
+ struct MenuCleanOutcomeTests {
+     private static func row() -> CacheItem {
+-        let folder = "com.purge.test.menu-clean-\(UUID().uuidString)"
++        // Named so the tier list rates it (`.ShipIt`): before a move, a folder in
++        // `~/Library/Caches` no rule knows must have a browser cache's shape (#452).
++        let folder = "com.purge.test.menu-clean-\(UUID().uuidString).ShipIt"
+         return CacheItem(
+             definitionKey: folder,
+             location: CacheLocation(
+```
+
+**File**: `PurgeTests/PyenvPythonVersionTests.swift` (modified, +1/-1)
+```diff
+@@ -347,7 +347,7 @@ struct PyenvPythonVersionShapeTests {
+             )
          }
+         #expect(check(PY.context())(path("\(PY.root)/\(PY.old)")))
+-        #expect(check(PY.context())(path("Library/Caches/something")))
++        #expect(check(PY.context())(path("Library/Caches/Homebrew")))
+         #expect(!check(PY.context(environment: ["3.11.9"]))(path("\(PY.root)/\(PY.old)")), "pyenv's part runs")
+         #expect(!check(PY.context(lsof: nil))(path("\(PY.root)/\(PY.old)")))
      }
 ```
 
-**File**: `purge/Services/SettingsGuidePanel.swift` (modified, +33/-4)
+**File**: `PurgeTests/RustupToolchainTests.swift` (modified, +1/-1)
 ```diff
-@@ -2,31 +2,43 @@ import AppKit
- import SwiftUI
- 
- /// A small floating panel that sits beside the System Settings window and says
--/// what to click, for the two moments Purge has to hand over to macOS: installing
--/// the Apple Intelligence download-block profile and removing it (#133). The
-+/// what to click, for the moments Purge has to hand over to macOS: installing
-+/// the Apple Intelligence download-block profile and removing it (#133), and
-+/// allowing the deleted-apps watcher in Login Items. The
- /// window list gives System Settings' position without any permission, so the
- /// panel follows the window as it moves and comes back when it is behind
--/// something. It never takes focus, and it goes away on its own once the store
--/// sees the profile change.
-+/// something. It never takes focus, and it goes away on its own once its owner
-+/// sees the change it asked for.
- @MainActor
- final class SettingsGuidePanel {
-     static let shared = SettingsGuidePanel()
- 
-     enum Guide: Equatable {
-         case installProfile
-         case removeProfile
-+        case allowInBackground
-     }
- 
-     private var panel: NSPanel?
-+    private(set) var shown: Guide?
-     private var timer: Timer?
-     private var onCancel: (() -> Void)?
- 
-     private static let width: CGFloat = 300
-     private static let gap: CGFloat = AppStyle.Spacing.medium
-     private static let systemSettingsBundleID = "com.apple.systempreferences"
- 
-+    /// Shows `guide`. One System Settings pane is on screen at a time, so a guide
-+    /// for another flow is replaced, and that flow is told its guide was
-+    /// cancelled, so it stops waiting instead of waiting with no guide.
-     func show(_ guide: Guide, onCancel: @escaping () -> Void) {
-+        if let previous = shown, previous != guide, let replaced = self.onCancel {
-+            self.onCancel = nil
-+            shown = nil
-+            replaced()
-+        }
-         self.onCancel = onCancel
-+        shown = guide
-         let content = SettingsGuideView(guide: guide) { [weak self] in self?.cancel() }
-         let hosting = NSHostingView(rootView: content)
-         hosting.setFrameSize(hosting.fittingSize)
-@@ -48,9 +60,16 @@ final class SettingsGuidePanel {
-         timer?.invalidate()
-         timer = nil
-         onCancel = nil
-+        shown = nil
-         panel?.orderOut(nil)
-     }
- 
-+    /// Hides the panel only while it shows `guide`, so one flow never closes
-+    /// another's guide.
-+    func hide(_ guide: Guide) {
-+        if shown == guide { hide() }
-+    }
-+
-     private func cancel() {
-         let handler = onCancel
-         hide()
-@@ -178,6 +197,7 @@ struct SettingsGuideView: View {
-         switch guide {
-         case .installProfile: return String(localized: "Install the Purge profile")
-         case .removeProfile: return String(localized: "Remove the Purge profile")
-+        case .allowInBackground: return String(localized: "Allow Purge in the background")
-         }
-     }
- 
-@@ -195,6 +215,15 @@ struct SettingsGuideView: View {
-                 String(localized: "Click the minus button below the list, then Remove."),
-                 String(localized: "Enter your password if it asks for one."),
-             ]
-+        case .allowInBackground:
-+            // macOS 27 renamed the section; 13 through 26 call it Allow in the Background.
-+            let renamed = ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27
-+            return [
-+                renamed
-+                    ? String(localized: "Scroll down to Background App Activity.")
-+                    : String(localized: "Scroll down to Allow in the Background."),
-+                String(localized: "Switch Purge on."),
-+            ]
-         }
-     }
- }
-```
-
-**File**: `purge/Views/DeletedAppsWatcherNotice.swift` (modified, +121/-55)
-```diff
-@@ -1,86 +1,152 @@
- import SwiftUI
- 
--/// Sidebar card shown while deleted-app reviews are on but the background watcher
-+/// Sidebar row shown while deleted-app reviews are on but the background watcher
- /// is blocked or not running. Without it the feature fails in silence: an app goes
- /// to the Trash, nothing happens, and the user has no way to learn why. It sits in
- /// the sidebar so it is on every tab, and stays until the problem is fixed or the
--/// feature is turned off.
-+/// feature is turned off. The row only names the problem; the sheet it opens
-+/// explains it and holds the fix, so the sidebar carries no main action of its own.
- struct DeletedAppsWatcherNotice: View {
-     @ObservedObject private var monitor = RemovedAppMonitor.shared
- 
-     var body: some View {
--        DeletedAppsWatcherNoticeCard(
--            health: monitor.watcherHealth,
--            isRestarting: monitor.isRestartingWatcher,
--            onFix: { monitor.fixWatcher() },
--            onTurnOff: { monitor.setEnabled(false) }
-+        // The presenter is created and destroyed with the problem, so its sheet
-+        // state never outlives it: a fixed watcher closes an open sheet, and the
-+        // next problem starts with the sheet closed. A restart passes through
-+        // `.checking`, which needs no attention, so the presenter also stays while
-+        // one runs: the sheet shows its progress and whether it worked.
-+        if monitor.watcherHealth.needsAttention || monitor.isRestartingWatcher {
-+            DeletedAppsWatcherNoticePresenter(monitor: monitor)
-+        }
-+    }
-+}
-+
-+private struct DeletedAppsWatcherNoticePresenter: View {
-+    @ObservedObject var monitor: RemovedAppMonitor
-+    @State private var isSheetPresented = false
-+    /// The last problem seen. It stays on the row and in the sheet while a
-+    /// restart runs, when the health itself reads `.checking`.
-+    @State private var problem: WatcherHealth
-+    /// A restart ended and the watcher still needs attention.
-+    @State private var restartFailed = false
-+
-+    init(monitor: RemovedAppMonitor) {
-+        self.monitor = monitor
-+        _problem = State(initialValue: monitor.watcherHealth)
-+    }
-+
-+    var body: some View {
-+        DeletedAppsWatcherNoticeRow(
-+            health: problem,
-+            onOpen: { isSheetPresented = true }
+@@ -366,7 +366,7 @@ struct RustupToolchainShapeTests {
+         func path(_ relative: String) -> URL { home.appendingPathComponent(relative) }
+         let check = FileDeleter.defaultImmediateMoveCheck(home: home.path, nvm: nvm, vitePlus: vitePlus, rustup: RT.context())
+         #expect(check(path("\(RT.root)/\(RT.old)")))
+-        #expect(check(path("Library/Caches/something")))
++        #expect(check(path("Library/Caches/Homebrew")))
+         let pinned = FileDeleter.defaultImmediateMoveCheck(
+             home: home.path, nvm: nvm, vitePlus: vitePlus, rustup: RT.context(environment: ["1.84.0"])
          )
-+        .onChange(of: monitor.watcherHealth) { health in
-+            if health.needsAttention { problem = health }
-+        }
-+        .onChange(of: monitor.isRestartingWatcher) { isRestarting in
-+            restartFailed = !isRestarting && monitor.watcherHealth.needsAttention
-+        }
-+        .sheet(isPresented: $isSheetPresented) {
-+            DeletedAppsWatcherSheet(
-+                health: problem,
-+                isRestarting: monitor.isRestartingWatcher,
-+                restartFailed: restartFailed,
-+                onFix: {
-+                    monitor.fixWatcher()
-+                    // System Settings takes over from here. A restart keeps the
-+                    // sheet open to show its progress; success closes it with the row.
-+                    if monitor.watcherHealth == .needsApproval { isSheetPresented = false }
-+                },
-+                onTurnOff: {
-+                    isSheetPresented = false
-+                    monitor.setEnabled(false)
-+                },
-+                onClose: { isSheetPresented = false }
-+            )
-+        }
-     }
- }
- 
--struct DeletedAppsWatcherNoticeCard: View {
-+struct DeletedAppsWatcherNoticeRow: View {
-+    let health: WatcherHealth
-+    let onOpen: () -> Void
-+
-+    var body: some View {
-+        if let hint = health.shortHint {
-+            SidebarNoticeRow(
-+                systemImage: "exclamationmark.triangle.fill",
-+                iconColor: AppColors.statusCheckText,
-+                title: WatcherHealth.shortTitle,
-+                subtitle: hint,
-+                accessibilityLabel: "\(WatcherHealth.problemTitle). \(hint)",
-+                action: onOpen
-+            )
-+        }
-+    }
-+}
-+
-+/// The explanation and the one fix for the current problem, opened from the row.
-+struct DeletedAppsWatcherSheet: View {
-     let health: WatcherHealth
-     let isRestarting: Bool
-+    var restartFailed = false
-     let onFix: () -> Void
-     let onTurnOff: () -> Void
-+    let onClose: () -> Void
- 
--    private enum NoticeFont {
--        static let title = AppStyle.Typography.callout.weight(.semibold)
--        static let body = AppStyle.Typography.metadataEmphasis
--    }
-+    static let width: CGFloat = 480
- 
-     var body: some View {
--        if health.needsAttention, let message = health.shortMessage, let fixTitle = health.fixTitle {
--            VStack(alignment: .leading, spacing: 0) {
--                HStack(alignment: .firstTextBaseline, spacing: AppStyle.Spacing.xxSmallPlus) {
--                    Image(systemName: "exclamationmark.triangle.fill")
--                        .font(.system(size: 11, weight: .se
 ```
 
-**File**: `purge/Views/LimitedAccessViews.swift` (modified, +8/-44)
+**File**: `PurgeTests/TrashPendingAccountingTests.swift` (modified, +3/-1)
 ```diff
-@@ -99,49 +99,13 @@ struct LimitedScanNotice: View {
-     @EnvironmentObject private var store: PurgeStore
- 
-     var body: some View {
--        Button {
--            store.isLookDeeperPresented = true
--        } label: {
--            HStack(spacing: AppStyle.Spacing.xSmall) {
--                Image(systemName: "lock")
--                    .font(.system(size: 14, weight: .semibold))
--                    .foregroundStyle(AppColors.textSecondary)
--                    .frame(width: 20)
--                    .accessibilityHidden(true)
--
--                VStack(alignment: .leading, spacing: AppStyle.Spacing.xxxSmall) {
--                    Text("Limited scan")
--                        .font(AppStyle.Typography.callout.weight(.semibold))
--                        .foregroundStyle(AppColors.textPrimary)
--                    Text("Let Purge look deeper")
--                        .font(AppStyle.Typography.metadataEmphasis)
--                        .foregroundStyle(AppColors.textSecondary)
--                }
--
--                Spacer(minLength: 0)
--
--                Image(systemName: "chevron.right")
--                    .font(.system(size: 10, weight: .semibold))
--                    .foregroundStyle(AppColors.textTertiary)
--                    .accessibilityHidden(true)
--            }
--            .padding(.horizontal, AppStyle.Spacing.small)
--            .padding(.vertical, AppStyle.Spacing.small)
--            .background(
--                RoundedRectangle(cornerRadius: AppStyle.Radius.lg, style: .continuous)
--                    .fill(AppColors.fillSecondary)
--            )
--            .contentShape(RoundedRectangle(cornerRadius: AppStyle.Radius.lg, style: .continuous))
--        }
--        .buttonStyle(LimitedScanNoticeButtonStyle())
--        .accessibilityLabel("Limited scan. Let Purge look deeper.")
--        .transition(.opacity)
--    }
--}
--
--private struct LimitedScanNoticeButtonStyle: ButtonStyle {
--    func makeBody(configuration: Configuration) -> some View {
--        configuration.label
--            .opacity(configuration.isPressed ? 0.7 : 1)
-+        SidebarNoticeRow(
-+            systemImage: "lock",
-+            iconColor: AppColors.textSecondary,
-+            title: String(localized: "Limited scan"),
-+            subtitle: String(localized: "Let Purge look deeper"),
-+            accessibilityLabel: String(localized: "Limited scan. Let Purge look deeper."),
-+            action: { store.isLookDeeperPresented = true }
-+        )
-     }
- }
-```
-
-**File**: `purge/Views/SidebarNoticeRow.swift` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+import SwiftUI
-+
-+/// A one-line notice at the foot of the sidebar: an icon, a title, a short hint and
-+/// a chevron, on the same card as the Trash total. Clicking it opens the place that
-+/// explains the problem and fixes it, so the sidebar never carries a big button that
-+/// competes with the page's own main action. Limited scan and the paused deleted-app
-+/// reviews both use it, so stacked notices read as one family.
-+struct SidebarNoticeRow: View {
-+    let systemImage: String
-+    let iconColor: Color
-+    let title: String
-+    let subtitle: String
-+    let accessibilityLabel: String
-+    let action: () -> Void
-+
-+    var body: some View {
-+        Button(action: action) {
-+            HStack(spacing: AppStyle.Spacing.xSmall) {
-+                Image(systemName: systemImage)
-+                    .font(.system(size: 14, weight: .semibold))
-+                    .foregroundStyle(iconColor)
-+                    .frame(width: 20)
-+                    .accessibilityHidden(true)
-+
-+                VStack(alignment: .leading, spacing: AppStyle.Spacing.xxxSmall) {
-+                    Text(title)
-+                        .font(AppStyle.Typography.callout.weight(.semibold))
-+                        .foregroundStyle(AppColors.textPrimary)
-+                    Text(subtitle)
-+                        .font(AppStyle.Typography.metadataEmphasis)
-+                        .foregroundStyle(AppColors.textSecondary)
-+                        .fixedSize(horizontal: false, vertical: true)
-+                }
-+
-+                Spacer(minLength: 0)
-+
-+                Image(systemName: "chevron.right")
-+                    .font(.system(size: 10, weight: .semibold))
-+                    .foregroundStyle(AppColors.textTertiary)
-+                    .accessibilityHidden(true)
-+            }
-+            .padding(.horizontal, AppStyle.Spacing.small)
-+            .padding(.vertical, AppStyle.Spacing.small)
-+            .background(
-+                RoundedRectangle(cornerRadius: AppStyle.Radius.lg, style: .continuous)
-+                    .fill(AppColors.fillSecondary)
-+            )
-+            .contentShape(RoundedRectangle(cornerRadius: AppStyle.Radius.lg, style: .continuous))
-+        }
-+        .buttonStyle(SidebarNoticeButtonStyle())
-+        .accessibilityLabel(accessibilityLabel)
-+        .transition(.opacity)
-+    }
-+}
-+
-+private struct SidebarNoticeButtonStyle: ButtonStyle {
-+    func makeBody(configuration: Configuration) -> some View {
-+        configuration.label
-+            .opacity(configuration.isPressed ? 0.7 : 1)
-+    }
-+}
-```
-
-**File**: `purge/ru.lproj/Localizable.strings` (modified, +10/-3)
-```diff
-@@ -183,6 +183,7 @@
- "All %lld files sync with iCloud, so they also leave your other devices." = "Все %lld файлов синхронизируются с iCloud, поэтому они исчезнут и с других ваших устройств.";
- "All detected projects appear in Developer Projects regardless of when they were last used, except ones in use right now. Projects worked on in the last 6 months are marked Check First, so Clean Safe Items and scheduled cleans skip them." = "Все обнаруженные проекты отображаются в «Проектах разработчика» независимо от того, когда их последний раз использовали, кроме тех, что используются сейчас. Проекты, с которыми работали последние 6 месяцев, помечаются «Сначала проверить», поэтому «Очистить безопасное» и плановые очистки их пропускают.";
- "All removed" = "Всё удалено";
-+"Allow Purge in the background" = "Разрешите Purge работать в фоне";
- "Also in this cleanup" = "Также в этой очистке";
- "Also move settings and history to the Trash" = "Также переместить настройки и историю в Корзину";
- "Also select" = "Также выбрать";
-@@ -194,8 +195,11 @@
- "An app manages this library and expects every file in it. Removing parts of it from outside the app can corrupt the library, so Purge only ever shows it." = "Этой библиотекой управляет приложение, и ему нужны все файлы в ней. Удаление части файлов извне может повредить библиотеку, поэтому Purge только показывает её.";
- "An unused leftover Chromium framework in %@. Relaunch the browser to clean versions still loaded; relaunching also removes old ones." = "Неиспользуемый остаток Chromium в %@. Перезапустите браузер: это очистит ещё загруженные версии и удалит старые.";
- "Android NDK %@" = "Android NDK %@";
-+"Blocked in Login Items" = "Заблокировано в объектах входа";
- "Node.js %@ (nvm)" = "Node.js %@ (nvm)";
- "Node.js %@ (Vite+)" = "Node.js %@ (Vite+)";
-+"Not Now" = "Не сейчас";
-+"Reviews paused" = "Проверки приостановлены";
- "Rust %@ (rustup)" = "Rust %@ (rustup)";
- "Python %@ (uv)" = "Python %@ (uv)";
- "Python %@ (pyenv)" = "Python %@ (pyenv)";
-@@ -251,6 +255,12 @@
- "Available after the scan finishes" = "Доступно после завершения сканирования";
- "Available for new files" = "Доступно для новых файлов";
- "Purgeable" = "Очищаемое место";
-+"Scroll down to Allow in the Background." = "Прокрутите вниз до раздела «Разрешить в фоновом режиме».";
-+"Scroll down to Background App Activity." = "Прокрутите вниз до раздела «Фоновая активность приложений».";
-+"Switch Purge on." = "Включите Purge.";
-+"The restart didn't work." = "Перезапуск не помог.";
-+"The watcher didn't start" = "Монитор не запустился";
-+"The watcher stopped" = "Монитор остановлен";
- "macOS frees this by itself when it needs room" = "macOS освобождает его сама, когда нужно место";
- "What is purgeable space?" = "Что такое очищаемое место?";
- "About purgeable space" = "Об очищаемом месте";
-@@ -1162,8 +1172,6 @@
- "The application bundle. Moving it to the Trash removes the app itself." = "Пакет приложения. Перемещение в Корзину удаляет само приложение.";
- "The application itself" = "Само приложение";
- "The asset service call stopped without an answer (status %lld)" = "Вызов службы ресурсов прервался без ответа (статус %lld)";
--"The background watcher couldn't start, so deleted apps go unnoticed." = "Фоновый монитор не запустился, поэтому удалённые приложения остаются незамеченными.";
--"The background watcher isn't running, so deleted apps go unnoticed." = "Фоновый наблюдатель не работает, поэтому удалённые приложения остаются незамеченными.";
- "The clean couldn't finish, so nothing was moved. Try again in a moment." = "Очистка не завершилась, поэтому ничего не перемещено. Повторите через минуту.";
- "The libraries Photos, Music, TV, iMovie and GarageBand keep." = "Библиотеки, которые хранят «Фото», «Музыка», TV, iMovie и GarageBand.";
- "The map is on its way." = "Карта скоро появится.";
-@@ -1422,7 +1430,6 @@
- "macOS didn't accept the download request: %@" = "macOS не приняла запрос на загрузку: %@";
- "macOS didn’t let Purge move itself." = "macOS не дала Purge переместиться самостоятельно.";
- "macOS hasn't finished removing them" = "macOS ещё не завершила удаление";
--"macOS is blocking Purge's background watcher, so deleted apps go unnoticed." = "macOS блокирует фоновый монитор Purge, поэтому удалённые приложения остаются незамеченными.";
- "macOS is keeping this file on this Mac, for example because it's set to Keep Downloaded." = "macOS оставляет этот файл на этом Mac — например, потому что для него выбрано «Оставить в загрузках».";
- "macOS is stopping Purge from running in the background. In System Settings, open Login Items and switch Purge on." = "macOS не даёт Purge работать в фоне. Откройте в Системных настройках раздел «Объекты входа» и включите Purge.";
- "macOS kept the %@ download (%@), so that space is still in use." = "macOS сохранил загрузку %@ (%@), поэтому это место всё ещё занято.";
+@@ -69,8 +69,10 @@ struct TrashPendingAccountingTests {
+     /// from one cache folder it moves and one runtime it removes outright. The folder
+     /// is never made, and the fake Trash moves nothing.
+     @Test func directRemovalsAreNotCountedAsPendingInTrash() async throws {
++        // Named so the tier list rates it (`.ShipIt`): before a move, a folder in
++        // `~/Library/Caches` no rule knows must have a browser cache's shape (#452).
+         let cache = FileManager.default.homeDirectoryForCurrentUser
+-            .appendingPathComponent("Library/Caches/PurgeTrashPendingTests-\(UUID().uuidString)", isDirectory: true)
++            .appendingPathComponent("Library/Caches/PurgeTrashPendingTests-\(UUID().uuidString).ShipIt", isDirectory: true)
+         let runtime = URL(fileURLWithPath: "/Library/Developer/CoreSimulator/Volumes/iOS_TEST1", isDirectory: true)
+         let cacheKey = cache.standardizedFileURL.path
+         let runtimeKey = runtime.standardizedFileURL.path
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #459** (2026-11-25): perf: stop hidden loading animations and repeated disk checks (#457) (@jithin-sabu)
+- **PR #455** (2026-11-25): feat: guide every trip to System Settings with one redesigned panel (#450) (@jithin-sabu)
+- **PR #454** (2026-11-24): fix: read the Chromium shape again before every move (#452) (@jithin-sabu)
 - **PR #453** (2026-11-24): feat: list each Time Machine snapshot before removing it (#331) (@jithin-sabu)
 - **PR #451** (2026-11-24): feat: show the first scheduled clean's list before it moves anything (#331) (@jithin-sabu)
 - **PR #448** (2026-11-23): feat: show paused deleted-app reviews as a sidebar row with a Login Items guide (#447) (@jithin-sabu)
-- **PR #446** (2026-11-23): fix: fit row explanations in two lines and show the right row icons (#445) (@jithin-sabu)
-- **PR #444** (2026-11-23): fix: count a Chromium HTTP cache only when its marker is real (#443) (@jithin-sabu)
-- **PR #442** (2026-11-23): feat: open a folder on the Everything else map to see what is inside (#437) (@jithin-sabu)
 
 ---
 
@@ -2739,50 +2320,54 @@ The profile flow now hides o
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep the Dock icon hidden when macOS opens a running Purge
+## X. guide every trip to System Settings with one redesigned panel
 
 **RULE**:
-When implementing operations in `PurgeTests/DockIconPolicyTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jithin-sabu/purge-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `PurgeTests/FullDiskAccessGuideTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jithin-sabu/purge-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84a40b77`: keep the Dock icon hidden when macOS opens a running Purge. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e229dc5d`: guide every trip to System Settings with one redesigned panel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PurgeTests/DockIconPolicyTests.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PurgeTests/FullDiskAccessGuideTests.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
+import Foundation
+import Testing
+@testable import Purge
 
-        /// Held until the test ends the modal, as the real run loop holds it.
-        private var waitingForModal: [() -> Void] = []
-
-        func afterModalEnds(_ work: @escaping () -> Void) { waitingForModal.append(work) }
-
-        func endModal() {
-            isShowingModal = false
-            let work = waitingForModal
-            waitingForModal = []
-            work.forEach { $0() }
+/// Every Full Disk Access ask waits through one guide (#450). A grant runs each
+/// caller's follow-up once; a cancel or a replaced guide runs none.
+@Suite("The Full Disk Access guide waits for the grant")
+@MainActor
+struct FullDiskAccessGuideTests {
+    /// A probe the test flips, read from the guide's background checks.
+    private final class Access: @unchecked Sendable {
+        private let lock = NSLock()
+        private var value = false
+        var granted: Bool {
+            get { lock.withLock { value } }
+            set { lock.withLock { value = newValue } }
         }
-    /// The watcher's link opens Purge, which macOS answers by making it a regular
-    /// app (#438). Hiding the Dock icon again there must not bring back a window
-    /// the user closed: SwiftUI keeps a closed window, so it counts as revealable.
-    @Test("Hiding again after an open leaves a closed window closed")
-    func hidingWithoutRevealLeavesTheWindowAlone() {
-        let host = FakeHost()
-
-        DockIconPolicy.apply(hidesDockIcon: true, revealsWindow: false, host: host)
-
-        #expect(host.calls == [.setPolicy(.accessory)])
     }
 
-    /// A reopen is the user asking for the window, so it keeps the reveal.
-    @Test("Hiding again after a reopen still re-fronts the window")
-    func hidingWithRevealAfterReopen() {
-        let host = FakeHost()
+    private func makeGuide(panel: SettingsGuidePanel, access: Access, limit: TimeInterval = 60) -> (FullDiskAccessGuide, () -> Int) {
+        var opens = 0
+        let guide = FullDiskAccessGuide(
+            panel: panel,
+            probe: { access.granted },
+            openPane: { opens += 1 },
+            pollInterval: .milliseconds(20),
+            limit: limit
+        )
+        return (guide, { opens })
+    }
 
-        DockIconPolicy.apply
+    private func settle(until condition: () -> Bool) async {
+        for _ in 0..<200 where !condition() {
+            try? await
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2792,7 +2377,7 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84a40b77` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e229dc5d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

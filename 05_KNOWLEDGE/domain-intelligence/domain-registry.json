@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T14:22:57.482Z",
+  "last_updated": "2026-11-26T14:33:55.481Z",
   "total_records": 2754,
   "domains": {
     "A": {
@@ -9592,8 +9592,8 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/Ming-Image-0.1-Design Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-research-knowledge-intelligence-inclusionai.md",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "content_hash": "6eed78375da4fc14026ca54467435b2a4d67bc78a5214c412c2a3b3bb5958e4a",
-      "created_at": "2026-11-22T21:40:49.094Z"
+      "content_hash": "e82cc396df484e5cc5ec1d38e95fc4fe16584bd80639144c3469e37ddb8d33ca",
+      "created_at": "2026-11-26T14:33:35.485Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants",
@@ -9676,8 +9676,8 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-ming-image-0.1-design-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-inclusionai-ming-image-0.1-design-learnings",
-      "content_hash": "3e41b90ef3dcb58f67fd14da9912726c9003c44317e17dd9e979d42cb8dab88c",
-      "created_at": "2026-11-22T21:41:06.445Z"
+      "content_hash": "75d79e7265f3f6f62b5a491d58cb66339fdb8327d16432cda283cd2daa4ade27",
+      "created_at": "2026-11-26T14:33:54.539Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants",
@@ -15677,8 +15677,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "a4f89e9bef4e8ff2202158061bfd53c2839e3b28c0269674556bbde89389d188",
-      "created_at": "2026-11-25T14:23:56.009Z"
+      "content_hash": "79d823008a9cb2f1c67b68b91ef5938bc165b6c1ce851e25b02612c55c059386",
+      "created_at": "2026-11-26T14:33:49.700Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -25288,8 +25288,8 @@
       "title": "Design Intelligence: sharkdp/bat Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-design-intelligence-sharkdp-bat-core-invariants.md",
       "repository": "sharkdp/bat",
-      "content_hash": "56d8fb6de9ecdc3906e2ef1499e88d0b6b73c571726ac1a72ed194fc1d3e496b",
-      "created_at": "2026-11-24T04:28:47.571Z"
+      "content_hash": "9c92140f569e66d035fee3e89372d9b713ac1c05618835009a99c41ece4ed4ac",
+      "created_at": "2026-11-26T14:33:40.849Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants",
@@ -25306,8 +25306,8 @@
       "title": "Design Intelligence: sharkdp-bat-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-learnings-design-intelligence-sharkdp-bat-learnings-core-invariants.md",
       "repository": "sharkdp-bat-learnings",
-      "content_hash": "d8432a8bd4fd7d1124513f84301b234678ca2d153c99f7271eb6fdf2984c95d7",
-      "created_at": "2026-11-24T04:28:57.367Z"
+      "content_hash": "b8403e47d423c2639678aff165d9a0f02cd1ea094be241e5a5fa0b2e283fca1d",
+      "created_at": "2026-11-26T14:33:53.671Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",
@@ -42010,8 +42010,8 @@
       "title": "Content & Information Intelligence: jithin-sabu/purge-app Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-jithin-sabu-purge-app-content-information-intelligence-jithin-sabu-purge-app-cor.md",
       "repository": "jithin-sabu/purge-app",
-      "content_hash": "3a60b60a96e83abd36c44194729c522e14dfef1078b290d9dab80dd267ebe1f7",
-      "created_at": "2026-11-24T04:20:23.573Z"
+      "content_hash": "67b42eb150f1278b35bb6beb0e5e329ca9415bb5bbeb99cb5aeecf41519869ea",
+      "created_at": "2026-11-26T14:33:44.634Z"
     },
     "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -42019,8 +42019,8 @@
       "title": "Content & Information Intelligence: jithin-sabu-purge-app-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-jithin-sabu-purge-app-learnings-content-information-intelligence-jithin-sabu-pur.md",
       "repository": "jithin-sabu-purge-app-learnings",
-      "content_hash": "f21d75647729c3e622908627433e54598133fcdc6b46f492c3160916cde1e546",
-      "created_at": "2026-11-24T04:20:38.534Z"
+      "content_hash": "2e8747cf7d8d4accf556fb7c6332d2989227197bfa79fa1eca40a170b2729349",
+      "created_at": "2026-11-26T14:33:55.481Z"
     },
     "DOM-H-F2861F87": {
       "record_id": "DOM-H-F2861F87",

@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "67f1055c029ea5288f1b46a511fa09b8a9249f1ff56cb5e9e9c30674d65fc397",
-    "lastHarvestedAt": "2026-11-22T21:40:48.899Z",
+    "contentHash": "646a361117eae719fb9d1c58d8e8983bbb4e68ccd15e5cd5eb6111e7040f2e76",
+    "lastHarvestedAt": "2026-11-26T14:33:35.144Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "4bd5c5b6",
+    "sourceVersion": "c3fe1436",
     "license": "Apache-2.0",
-    "contentHash": "10c19903f59718333631781d16537653dc0c6a11bc267d01657735a3037fa2b9",
-    "lastHarvestedAt": "2026-11-24T04:28:47.174Z",
+    "contentHash": "3f9306a148303580e8ef3b203a17a52f128da71042f82f850d8653622e1fff26",
+    "lastHarvestedAt": "2026-11-26T14:33:40.209Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "bf2f2dc1",
+    "sourceVersion": "ce0c9eba",
     "license": "Apache-2.0",
-    "contentHash": "570c1b46bd3e19057b0ec30e136a969eb167bef8bb29b76c836850670ee52c97",
-    "lastHarvestedAt": "2026-11-25T14:23:55.507Z",
+    "contentHash": "4a6c6b8566e61d02576f3b8aff5b3762af16098999d30872bdaa3d624a376b50",
+    "lastHarvestedAt": "2026-11-26T14:33:49.079Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -12583,10 +12583,10 @@
     "repository": "jithin-sabu/purge-app",
     "platform": "github",
     "sourceUrl": "https://github.com/jithin-sabu/purge-app",
-    "sourceVersion": "7f2412e2",
+    "sourceVersion": "1a3e8d35",
     "license": "MIT",
-    "contentHash": "abd9e17ece6586f6b5420f76a45fa9ca68538180a42291eb9d61ea47210ff369",
-    "lastHarvestedAt": "2026-11-24T04:20:23.136Z",
+    "contentHash": "fa4cf232c4d5209c8946f6d2d9c096d6547400c00f9f874cb3dc2acc8e67f3ff",
+    "lastHarvestedAt": "2026-11-26T14:33:43.992Z",
     "learningId": "learn-github-jithin-sabu-purge-app"
   },
   "hf-conceptcountry-qwen-concept-27b": {

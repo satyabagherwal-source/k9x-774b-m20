@@ -4,24 +4,24 @@
 {
   "source_repository": "skyhook-io/radar",
   "source_url": "https://github.com/skyhook-io/radar",
-  "source_version": "bf2f2dc1",
+  "source_version": "ce0c9eba",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T14:23:55.811Z",
+  "timestamp": "2026-11-26T14:33:49.424Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-skyhook-io-radar",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `bf2f2dc1`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T14:23:55.811Z`  
+> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `ce0c9eba`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T14:33:49.424Z`  
 > **Learning ID**: `learn-github-skyhook-io-radar`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), E (Creative Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from skyhook-io/radar:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:23:54.272Z  
+> **Harvest Timestamp**: 2026-11-26T14:33:47.385Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4231 stars
+- **Stars / Engagement**: 4236 stars
 
 ---
 
@@ -2439,1233 +2439,586 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fca91040` (2026-11-25)
-**Commit Message**: Answer Flux dependsOn in Related Resources, not only on the Topology screen (#2819)
+### Incident Patch 1: `ce0c9eba` (2026-11-26)
+**Commit Message**: Build with Go 1.27 and keep JSON responses as fast as on Go 1.26 (#2953)
 
 ## Summary
 
-A Flux Kustomization or HelmRelease named in another one's
-`spec.dependsOn` now appears in Related Resources:
-- **The dependent** lists it under **Depends On**.
-- **The object depended on** lists the dependent under **Required By**,
-a reverse lookup that no Flux view offered before.
+Builds Radar with Go 1.27 without paying for Go 1.27's JSON regression
+on large responses.
 
-AI context and MCP `get_resource` list both directions too.
+Go 1.27 reimplements `encoding/json` on top of `encoding/json/v2`. Its
+`Encoder` encodes into a buffer from a shared pool that throws away a
+large buffer once small encodes have used it a few times in a row
+(`jsontext/pools.go`). Kubernetes types call `json.Marshal` on small
+values from their own `MarshalJSON` methods (`IntOrString` does), so
+every large list response hands its buffer to those small calls, loses
+it, and grows a new one from 64 bytes. On a 3,200-pod test cluster,
+stock Go 1.27 used **+38% process CPU** and **2.6× the allocations** of
+Go 1.26 for the same requests, and full pod lists got 13% slower.
 
-#2630 drew this relationship in the display builder, which serves the
-Topology screen, the GitOps tree and MCP `get_topology`. Related
-Resources comes from the relation families in `pkg/relations`, though,
-and no family read `spec.dependsOn`. So the Topology screen showed the
-edge while the drawer for the same object didn't.
+`writeJSON` now encodes with `encoding/json/v2`'s `MarshalWrite` and
+`json.DefaultOptionsV1()` into a buffer Radar owns, taken from a pool of
+four slots that keeps buffers up to 16 MiB. That avoids the evicting
+pool, and the output is byte-for-byte what Go 1.27's
+`json.NewEncoder(w).Encode` writes.
 
-**For OSS users:** this helps anyone running Flux, locally or
-in-cluster. On clusters without Flux it does nothing: the family covers
-only Flux Kustomizations and HelmReleases, adds no watches or
-permissions, and changes no API shape.
+## What changed
 
-| Dependent (`radar-review-2819/radar-review-app`) | Depended on
-(`flux-system/radar-review-base`) |
-|---|---|
-| ![Depends On lists both Kustomizations it waits for, across
-namespaces](https://
+**JSON responses (`internal/server/server.go`).** `writeJSON` encodes
+the whole v
 
-**File**: `docs/ownership.md` (modified, +1/-0)
+**File**: `.github/workflows/appimage-smoke.yml` (modified, +1/-1)
 ```diff
-@@ -142,6 +142,7 @@ The families so far:
- | `FluxSources` | Flux Kustomizations, HelmReleases, HelmCharts → the GitRepository, OCIRepository, Bucket, ExternalArtifact, HelmRepository or HelmChart they build from, in any namespace (an inline HelmRelease also declares the HelmChart the controller recorded); up the artifact chain, ExternalArtifacts → the ArtifactGenerator their `spec.sourceRef` names (another producer isn't followed), and ArtifactGenerators → the GitRepository, OCIRepository, Bucket, HelmChart or ExternalArtifact their `spec.sources` list | `families.go` |
- | `NodeClasses` | Karpenter NodePools → their provider's NodeClass, or EKS Auto Mode's (`IsTarget`: each provider defines its own kind) | `families.go` |
- | `ClusterClasses` | Cluster API Clusters → the ClusterClass their topology names, in any namespace | `families.go` |
-+| `FluxDependsOn` | A Flux Kustomization or HelmRelease → the object of its own kind it waits for through `spec.dependsOn`, in any namespace (an entry without a namespace means the object's own); Depends On on the waiting object, Required By on the one it waits for | `families.go` |
- | `KnativeEventDestinations` | Knative Triggers, event sources and Channels → where they send events (subscriber, sink, backing channel), in any namespace: core Services and any kind in a Knative group, such as JobSink | `families.go` |
- | `KnativeTriggerBrokers` | Knative Triggers → the Broker they subscribe to (`brokerRef` in any namespace, or the older same-namespace `broker`) | `families.go` |
- | `KnativeRouteRevisions` | Knative Routes → the Revisions their status sends traffic to | `families.go` |
+@@ -43,7 +43,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+ 
+       - name: Set up Node.js
+         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
 ```
 
-**File**: `packages/k8s-ui/src/components/resources/renderers/FluxHelmReleaseRenderer.tsx` (modified, +1/-21)
+**File**: `.github/workflows/ci.yml` (modified, +6/-5)
 ```diff
-@@ -1,6 +1,6 @@
- import type { ReactNode } from 'react'
- import { FluxHealthCheckExprs } from './FluxHealthCheckExprs'
--import { Package, Settings, CheckCircle2, History, FileCode2, GitBranch } from 'lucide-react'
-+import { Package, Settings, CheckCircle2, History, FileCode2 } from 'lucide-react'
- import { clsx } from 'clsx'
- import { Section, PropertyList, Property, ConditionsSection, ProblemAlerts, ResourceLink } from '../../ui/drawer-components'
- import { GitOpsStatusBadge, ManagedResourcesList, SyncCountdown } from '../../gitops'
-@@ -79,9 +79,6 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
-   const values = spec.values || {}
-   const valueKeys = Object.keys(values)
+@@ -125,6 +125,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
++          # Exercise pkg with the Go version Radar Hub uses.
+           go-version: '1.26'
+           cache: false
  
--  // Dependencies
--  const dependsOn: Array<{ name: string; namespace?: string }> = spec.dependsOn || []
--
-   // Chart reference
-   const chartRef = spec.chart?.spec || {}
-   const sourceRef = chartRef.sourceRef || {}
-@@ -138,23 +135,6 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
-         </PropertyList>
-       </Section>
+@@ -177,7 +178,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+           cache: false
  
--      {/* Dependencies */}
--      {dependsOn.length > 0 && (
--        <Section title={`Dependencies (${dependsOn.length})`} icon={GitBranch}>
--          <div className="flex flex-wrap gap-1">
--            {dependsOn.map((dep, idx) => (
--              <ResourceLink
--                key={idx}
--                name={dep.name}
--                kind="helmreleases"
--                namespace={dep.namespace || data.metadata?.namespace || ''}
--                onNavigate={onNavigate}
--              />
--            ))}
--          </div>
--        </Section>
--      )}
--
-       {/* Values */}
-       {(valuesFrom.length > 0 || valueKeys.length > 0) && (
-         <Section title="Values" icon={FileCode2} defaultExpanded={valuesFrom.length > 0}>
+       - name: Restore Go caches
+@@ -226,7 +227,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+           cache: false
+ 
+       - name: Restore Go caches
+@@ -264,7 +265,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+           cache: false
+ 
+       - name: Restore Go caches
+@@ -293,7 +294,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+           cache: false
+ 
+       - name: Restore Go caches
+@@ -357,7 +358,7 @@ jobs:
+       - uses: actions/checkout@v7
+       - uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+           cache: false
+       - name: Restore Go caches
+         uses: ./.github/actions/go-cache-restore
 ```
 
-**File**: `packages/k8s-ui/src/components/resources/renderers/KustomizationRenderer.tsx` (modified, +3/-23)
+**File**: `.github/workflows/codeql.yml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
--import { Layers, FolderTree, GitBranch } from 'lucide-react'
-+import { Layers, FolderTree } from 'lucide-react'
- import { FluxHealthCheckExprs } from './FluxHealthCheckExprs'
--import { Section, PropertyList, Property, ConditionsSection, ProblemAlerts, ResourceLink } from '../../ui/drawer-components'
-+import { Section, PropertyList, Property, ConditionsSection, ProblemAlerts } from '../../ui/drawer-components'
- import { GitOpsStatusBadge, ManagedResourcesList, SyncCountdown } from '../../gitops'
- import { fluxConditionsToGitOpsStatus, parseFluxInventory, type FluxCondition } from '../../../types/gitops'
- import { TimeValue } from '../../ui/ScheduleValue'
-@@ -12,7 +12,7 @@ interface KustomizationRendererProps {
-   onNavigate?: (ref: { kind: string; namespace: string; name: string }) => void
- }
+@@ -37,7 +37,7 @@ jobs:
+         if: matrix.language == 'go'
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
  
--export function KustomizationRenderer({ data, onNavigate }: KustomizationRendererProps) {
-+export function KustomizationRenderer({ data }: KustomizationRendererProps) {
-   const status = data.status || {}
-   const spec = data.spec || {}
-   const conditions = (status.conditions || []) as FluxCondition[]
-@@ -62,9 +62,6 @@ export function KustomizationRenderer({ data, onNavigate }: KustomizationRendere
-     })
-   }
- 
--  // Dependencies
--  const dependsOn: Array<{ name: string; namespace?: string }> = spec.dependsOn || []
--
-   // Source reference
-   const sourceRef = spec.sourceRef || {}
- 
-@@ -119,23 +116,6 @@ export function KustomizationRenderer({ data, onNavigate }: KustomizationRendere
-         </PropertyList>
-       </Section>
- 
--      {/* Dependencies */}
--      {dependsOn.length > 0 && (
--        <Section title={`Dependencies (${dependsOn.length})`} icon={GitBranch}>
--          <div className="flex flex-wrap gap-1">
--            {dependsOn.map((dep, idx) => (
--              <ResourceLink
--                key={idx}
--                name={dep.name}
--                kind="kustomizations"
--                namespace={dep.namespace || data.metadata?.namespace || ''}
--                onNavigate={onNavigate}
--              />
--            ))}
--          </div>
--        </Section>
--      )}
--
-       {/* Health checks */}
-       {spec.healthChecks && spec.healthChecks.length > 0 && (
-         <Section title={`Health Checks (${spec.healthChecks.length})`} defaultExpanded={false}>
+       - name: Initialize CodeQL
+         uses: github/codeql-action/init@v4
 ```
 
-**File**: `pkg/gitops/insights/flux_sources.go` (modified, +10/-17)
+**File**: `.github/workflows/helm-refresh-windows.yml` (modified, +1/-1)
 ```diff
-@@ -48,26 +48,19 @@ func attachFluxBlocker(issue Issue, root *unstructured.Unstructured, tree *gitop
- 	if tree == nil {
- 		return issue
- 	}
--	switch issue.Reason {
--	case "SourceNotReady", "ArtifactFailed", "DependencyNotReady":
--	default:
--		return issue
--	}
- 	direct := map[Ref]bool{}
--	for _, source := range gitops.FluxSourceReferences(root) {
--		if issue.Reason == "DependencyNotReady" {
--			break
-+	switch issue.Reason {
-+	case "SourceNotReady", "ArtifactFailed":
-+		for _, source := range gitops.FluxSourceReferences(root) {
-+			direct[Ref(source.Ref)] = true
- 		}
--		direct[Ref{Group: source.Group, Kind: source.Kind, Namespace: source.Namespace, Name: source.Name}] = true
--	}
--	// Inventory ownership can replace a dependsOn edge without erasing the declaration.
--	deps, _, _ := unstructured.NestedSlice(root.Object, "spec", "dependsOn")
--	for _, raw := range deps {
--		dep, ok := raw.(map[string]any)
--		if issue.Reason != "DependencyNotReady" || !ok || gitops.StringValue(dep["name"]) == "" {
--			continue
-+	case "DependencyNotReady":
-+		// Inventory ownership can replace a dependsOn edge without erasing the declaration.
-+		for _, dep := range gitops.FluxDependsOn(root) {
-+			direct[Ref(dep)] = true
- 		}
--		direct[Ref{Group: tree.Root.Ref.Group, Kind: tree.Root.Ref.Kind, Namespace: firstNonEmpty(gitops.StringValue(dep["namespace"]), root.GetNamespace()), Name: gitops.StringValue(dep["name"])}] = true
-+	default:
-+		return issue
- 	}
- 	quoted := fluxQuotedReference.FindAllStringSubmatch(issue.Message, -1)
- 	sourceMessage := strings.ToLower(issue.Message)
+@@ -36,7 +36,7 @@ jobs:
+       - uses: actions/checkout@v7
+       - uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+           cache-dependency-path: go.sum
+       - name: Test Windows cache file sharing
+         run: go test ./internal/helm/repository_cache_windows.go ./internal/helm/repository_cache_windows_test.go -count=1 -timeout 30s
 ```
 
-**File**: `pkg/gitops/source_refs.go` (modified, +34/-0)
+**File**: `.github/workflows/release-desktop.yml` (modified, +11/-5)
 ```diff
-@@ -82,6 +82,40 @@ func FluxSourceReferences(root *unstructured.Unstructured) []FluxSourceRef {
- 	return append([]FluxSourceRef{{Ref: resourceid.NewRef(group, kind, namespace, name), Role: role, Path: strings.Join(fields, ".")}}, chartRefs...)
- }
+@@ -28,7 +28,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
  
-+// FluxDependsOn reads a Kustomization's or HelmRelease's spec.dependsOn: each
-+// entry names an object of the root's own kind and API group, the only
-+// targets Flux accepts there, in the root's namespace unless the entry names
-+// another. An entry without a name, or naming the root itself, names nothing.
-+func FluxDependsOn(root *unstructured.Unstructured) []resourceid.Ref {
-+	if root == nil {
-+		return nil
-+	}
-+	kind := resourceid.GroupKind{Group: resourceid.GroupFromAPIVersion(root.GetAPIVersion()), Kind: root.GetKind()}
-+	if kind != fluxKustomizationKind && kind != fluxHelmReleaseKind {
-+		return nil
-+	}
-+	entries, _, _ := unstructured.NestedSlice(root.Object, "spec", "dependsOn")
-+	var refs []resourceid.Ref
-+	for _, entry := range entries {
-+		dep, ok := entry.(map[string]any)
-+		if !ok {
-+			continue
-+		}
-+		name, namespace := StringValue(dep["name"]), StringValue(dep["namespace"])
-+		if name == "" {
-+			continue
-+		}
-+		if namespace == "" {
-+			namespace = root.GetNamespace()
-+		}
-+		if namespace == root.GetNamespace() && name == root.GetName() {
-+			continue
-+		}
-+		refs = append(refs, resourceid.NewRef(kind.Group, kind.Kind, namespace, name))
-+	}
-+	return refs
-+}
+       - name: Set up Node.js
+         uses: actions/setup-node@v6
+@@ -81,8 +81,12 @@ jobs:
+       - name: Build macOS .app (universal)
+         run: cd cmd/desktop && wails build -platform darwin/universal -ldflags "-X main.version=${GITHUB_REF_NAME#v}"
+ 
+-      - name: Update bundle identifier
+-        run: plutil -replace CFBundleIdentifier -string "io.skyhook.radar" build/bin/radar-desktop.app/Contents/Info.plist
++      # Go 1.27 binaries need macOS 13; declaring it lets macOS refuse the app
++      # with a clear message instead of a crash at launch.
++      - name: Update bundle identifier and minimum macOS
++        run: |
++          plutil -replace CFBundleIdentifier -string "io.skyhook.radar" build/bin/radar-desktop.app/Contents/Info.plist
++          plutil -replace LSMinimumSystemVersion -string "13.0" build/bin/radar-desktop.app/Contents/Info.plist
+ 
+       - name: Codesign with Developer ID
+         run: |
+@@ -161,7 +165,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+ 
+       - name: Set up Node.js
+         uses: actions/setup-node@v6
+@@ -267,7 +271,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+ 
+       - name: Set up Node.js
+         uses: actions/setup-node@v6
+@@ -495,6 +499,8 @@ jobs:
+             desc "Kubernetes visibility — topology, traffic, and Helm management"
+             homepage "https://github.com/skyhook-io/radar"
+ 
++            depends_on macos: :ventura
 +
- func isSourceMap(raw any) bool { _, ok := raw.(map[string]any); return ok }
+             app "Radar.app"
  
- // externalArtifactGenerator follows an ExternalArtifact to the ArtifactGenerator
+             # No caveats needed — app is signed and notarized
 ```
 
-**File**: `pkg/gitops/source_refs_test.go` (modified, +36/-0)
+**File**: `.github/workflows/release-image.yml` (modified, +1/-1)
 ```diff
-@@ -51,6 +51,42 @@ func TestFluxSourceReferencesRejectInvalidDeclarations(t *testing.T) {
- 	}
+@@ -52,7 +52,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+ 
+       - name: Set up Node.js
+         uses: actions/setup-node@v6
+```
+
+**File**: `.github/workflows/release.yml` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: '1.26'
++          go-version: '1.27'
+           cache: false
+ 
+       # CI runs claim setup-go's default cache key with linux/amd64 objects only,
+```
+
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
+```diff
+@@ -61,7 +61,7 @@ For detailed architecture, API reference, and release process, see [DEVELOPMENT.
+ 
+ ### Prerequisites
+ 
+-- Go 1.26+
++- Go 1.27+
+ - Node.js 24+
+ - npm
+ - Access to a Kubernetes cluster (minikube, kind, or remote)
+```
+
+---
+
+### Incident Patch 2: `691fa362` (2026-11-25)
+**Commit Message**: Move the built-in workload action handlers out of server.go (no functional change) (#2921)
+
+## Summary
+
+A pure move, with no functional change. The built-in workload and
+CronJob action handlers leave `internal/server/server.go`, now 6,400
+lines, for `internal/server/workload_actions.go`. That puts them next to
+the other per-action handler files (`workload_restart.go`,
+`workload_images_handlers.go`, `rollouts_handlers.go`,
+`node_handlers.go`, `workflow_stop.go`).
+
+## What changed
+
+- **Moved byte for byte:**
+  - CronJob trigger, suspend and resume
+  - Deployment pause and resume
+  - scale
+- revisions and rollback, with the `rollbackableWorkloadKinds` gate,
+`errCodeWorkloadPaused`, and the rollback error mapping
+
+That's 359 lines. Only the package clause and import blocks are new;
+`server.go` drops the now-unused `pkg/rollouts` import.
+- **Unchanged:** route registrations stay in `server.go`, and so does
+every request, response and Kubernetes call.
+- **Docs:** CLAUDE.md now names the new file as the home of
+`rollbackableWorkloadKinds`, and `docs/STRUCTURE.md` lists it.
+
+## Testing
+
+- **Byte-identical move, checked by script:** the lines removed from
+`server.go`, minus one blank separa
+
+**File**: `CLAUDE.md` (modified, +1/-1)
+```diff
+@@ -147,7 +147,7 @@ After `make <name>-demo`, run `kubectl config use-context kind-radar-<name>-demo
+ - MCP: `/mcp` (Streamable HTTP — POST for JSON-RPC, GET for SSE)
+ - Sealed Secrets: `GET /api/sealedsecrets/controller?sealedSecretNamespace=` — the controller serving that namespace (not `namespace`, the filter the totals honour), chosen from its Deployment flags (caller's `get deployments` in its namespace), sealing-key names and `tls.crt` dates ordered by the controller's own key order (caller's `list secrets` there; never key material, labels or annotations) and the SealedSecret totals the caller can list. A denied part is a state in a 200 (`controllerState` / `keysState`), never a whole-response 403; `ambiguous` is the same for every caller and names no candidate; `atKubesealDefault` is set even for a denied controller. `GET /api/sealedsecrets/cert?sealedSecretNamespace=` returns that controller's public certificate `{certPem, certFingerprint, controller}` from its fixed `/v1/cert.pem` (409 `ambiguous`/`unknown` rather than a guess; auth on: `get services/proxy` on the kubeseal Service-and-port name; capability `sealedSecretsCert`). Rules in docs/integrations.md (Bitnami Sealed Secrets)
+ - Helm: `/api/helm/releases/...`. `/api/helm/inventory` (+ `/{namespace}/{name}`) is the list as far as the caller's access reaches: where the read of Helm's release Secrets is denied, rows come from the stamps on objects the caller can read, through `search.Scan`'s per-user gates, and never from a Secret. See [docs/helm.md](docs/helm.md#without-access-to-secrets)
+-- Workloads: `/api/workloads/{kind}/{ns}/{name}/...` (logs, restart, scale, pause, resume, revisions, rollback, images, history). With `workloadRestartPreconditions`, `restart` accepts an optional reviewed-restart body (`{uid, resourceVersion?}`); an empty request keeps the unconditional restart. The contract and refusal codes are on `handleRestartWorkload` in `internal/server/workload_restart.go`. `pause`/`resume` set `spec.paused` and accept Deployment only (400 otherwise). `revisions`/`rollback` accept Deployment, StatefulSet, DaemonSet and **Rollout**, gated by `rollbackableWorkloadKinds` in `server.go`; `images` accepts the same four through a separate map, `workloadImageRoots` in `pkg/k8score/workload_images.go` (a new kind needs both), uses compare-and-swap JSON Patch, and follows a Rollout's `workloadRef`. `history` is the workload's own timeline and never includes sibling workloads — scope rules live in `workload_history.go` and `pkg/timeline`'s `ResourceScope`
++- Workloads: `/api/workloads/{kind}/{ns}/{name}/...` (logs, restart, scale, pause, resume, revisions, rollback, images, history). With `workloadRestartPreconditions`, `restart` accepts an optional reviewed-restart body (`{uid, resourceVersion?}`); an empty request keeps the unconditional restart. The contract and refusal codes are on `handleRestartWorkload` in `internal/server/workload_restart.go`. `pause`/`resume` set `spec.paused` and accept Deployment only (400 otherwise). `revisions`/`rollback` accept Deployment, StatefulSet, DaemonSet and **Rollout**, gated by `rollbackableWorkloadKinds` in `internal/server/workload_actions.go`; `images` accepts the same four through a separate map, `workloadImageRoots` in `pkg/k8score/workload_images.go` (a new kind needs both), uses compare-and-swap JSON Patch, and follows a Rollout's `workloadRef`. `history` is the workload's own timeline and never includes sibling workloads — scope rules live in `workload_history.go` and `pkg/timeline`'s `ResourceScope`
+ - Argo Rollouts: `/api/rollouts/{ns}/{name}/{abort,retry,promote,promote-full,skip-step}` (POST) + `/capabilities` (GET); rollback/history deliberately live on the `/workloads` routes. The status verbs patch the `rollouts/status` subresource, so capabilities SAR `rollouts` **and** `rollouts/status` separately — `patch rollouts` does not imply `patch rollouts/status`. Promotion waits for the controller to observe the current pod template, so `promote-full` can return **503** (`ErrControllerNotCaughtUp`) and is safe to retry; for a `workloadRef` Rollout the caller must be able to `get` the referenced workload. Engine `pkg/rollouts`, handlers `internal/server/rollouts_handlers.go`
+ - GitOps write evidence: `POST /api/gitops/write-evidence` `{kind, group, namespace, name, paths[], owner?}` reads the target (and its GitOps owner) as the caller and returns, per field path, whether it is in last-applied, which field managers own it and whether an ignore rule covers it, plus the owner's sync policy — never raw managedFields/last-applied. Classification is the pure `evaluateGitOpsWriteGuard` in k8s-ui (`utils/gitops-write-guard.ts`); Set image and Diagnose Apply show it via `GitOpsWriteWarning` + `web/src/hooks/useGitOpsWriteGuard.ts`. Copy never promises a change won't be reverted. See docs/gitops.md
+ - GitOps controller actions: `/api/argo/applications/...` (sync, refresh, terminate, suspend, resume, rollb
+```
+
+**File**: `docs/STRUCTURE.md` (modified, +1/-0)
+```diff
+@@ -66,6 +66,7 @@ radar/
+ │   │   ├── portforward.go     # Port forwarding sessions
+ │   │   ├── resource_counts.go # Resource counting
+ │   │   ├── dashboard.go       # Dashboard summary endpoint
++│   │   ├── workload_actions.go # Built-in workload and CronJob actions: scale, pause/resume, revisions/rollback, CronJob trigger/suspend/resume
+ │   │   ├── argo_handlers.go   # ArgoCD sync/refresh/terminate/suspend/resume/rollback/selective-sync
+ │   │   ├── flux_handlers.go   # FluxCD reconcile/suspend/resume/sync-with-source
+ │   │   ├── gitops_handlers.go # /api/gitops/tree + /api/gitops/insights handlers
+```
+
+**File**: `internal/server/server.go` (modified, +0/-361)
+```diff
+@@ -77,7 +77,6 @@ import (
+ 	"github.com/skyhook-io/radar/pkg/rbac"
+ 	"github.com/skyhook-io/radar/pkg/readreason"
+ 	"github.com/skyhook-io/radar/pkg/resourceid"
+-	"github.com/skyhook-io/radar/pkg/rollouts"
+ 	topology "github.com/skyhook-io/radar/pkg/topology"
+ 	"github.com/skyhook-io/radar/pkg/urlutil"
+ )
+@@ -4776,366 +4775,6 @@ func (s *Server) handleCascadeDeletePreview(w http.ResponseWriter, r *http.Reque
+ 	s.writeJSON(w, preview)
  }
  
-+func TestFluxDependsOn(t *testing.T) {
-+	if got := FluxDependsOn(nil); len(got) != 0 {
-+		t.Fatalf("nil root declares %v", got)
-+	}
-+	for _, tc := range []struct{ group, version, kind string }{
-+		{"kustomize.toolkit.fluxcd.io", "v1", "Kustomization"},
-+		{"helm.toolkit.fluxcd.io", "v2", "HelmRelease"},
-+	} {
-+		t.Run(tc.kind, func(t *testing.T) {
-+			root := &unstructured.Unstructured{Object: map[string]any{
-+				"apiVersion": tc.group + "/" + tc.version, "kind": tc.kind,
-+				"metadata": map[string]any{"namespace": "team", "name": "app"},
-+				"spec": map[string]any{"dependsOn": []any{
-+					map[string]any{"name": "base"},
-+					map[string]any{"name": "app"},
-+					map[string]any{"name": ""},
-+					map[string]any{"namespace": "shared"},
-+					"invalid",
-+					map[string]any{"name": "app", "namespace": "shared"},
-+				}},
-+			}}
-+			want := []resourceid.Ref{
-+				resourceid.NewRef(tc.group, tc.kind, "team", "base"),
-+				resourceid.NewRef(tc.group, tc.kind, "shared", "app"),
-+			}
-+			if got := FluxDependsOn(root); !reflect.DeepEqual(got, want) {
-+				t.Fatalf("dependencies = %v, want %v", got, want)
-+			}
-+			root.SetAPIVersion("custom.example/v1")
-+			if got := FluxDependsOn(root); len(got) != 0 {
-+				t.Fatalf("foreign %s declares %v", tc.kind, got)
-+			}
-+		})
-+	}
-+}
-+
- func TestInlineHelmReleaseUsesRecordedChart(t *testing.T) {
- 	root := &unstructured.Unstructured{Object: map[string]any{
- 		"apiVersion": "helm.toolkit.fluxcd.io/v2", "kind": "HelmRelease",
-```
-
-**File**: `pkg/gitops/tree/flux.go` (modified, +2/-27)
-```diff
-@@ -28,12 +28,6 @@ const (
- 
- func fluxRelatedResources(root *unstructured.Unstructured) []relatedResource {
- 	var out []relatedResource
--	rootRef := ResourceRef{
--		Group:     apiGroup(root),
--		Kind:      root.GetKind(),
--		Namespace: root.GetNamespace(),
--		Name:      root.GetName(),
+-// handleTriggerCronJob creates a Job from a CronJob. The optional body
+-// {"jobName": "..."} names the Job; without it the API server generates
+-// "<cronjob>-manual-xxxxx" (advertised as features.cronJobTriggerJobName).
+-func (s *Server) handleTriggerCronJob(w http.ResponseWriter, r *http.Request) {
+-	namespace := chi.URLParam(r, "namespace")
+-	name := chi.URLParam(r, "name")
+-
+-	// A pointer so a JSON null, which decodes without error, can be refused.
+-	req := &struct {
+-		JobName string `json:"jobName"`
+-	}{}
+-	if err := decodeBoundedJSONBody(w, r, 4096, &req); err != nil && !errors.Is(err, io.EOF) {
+-		var tooLarge *http.MaxBytesError
+-		if errors.As(err, &tooLarge) {
+-			s.writeError(w, http.StatusRequestEntityTooLarge, "trigger request is too large")
+-			return
+-		}
+-		s.writeError(w, http.StatusBadRequest, "invalid request body: "+err.Error())
+-		return
 -	}
- 
- 	for _, source := range gitops.FluxSourceReferences(root) {
- 		out = append(out, relatedResource{
-@@ -43,28 +37,9 @@ func fluxRelatedResources(root *unstructured.Unstructured) []relatedResource {
- 		})
- 	}
- 
--	deps, _, _ := unstructured.NestedSlice(root.Object, "spec", "dependsOn")
--	for _, item := range deps {
--		m, ok := item.(map[string]any)
--		if !ok {
--			continue
+-	if req == nil {
+-		s.writeError(w, http.StatusBadRequest, "invalid request body: the body must be a JSON object")
+-		return
+-	}
+-
+-	auth.AuditLog(r, namespace, name)
+-	client := s.getDynamicClientForRequest(r)
+-	if client == nil {
+-		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
+-		return
+-	}
+-	result, err := k8s.TriggerCronJobWithClient(r.Context(), namespace, name, req.JobName, client)
+-	if err != nil {
+-		if errors.Is(err, k8score.ErrInvalidJobName) {
+-			s.writeError(w, http.StatusBadRequest, err.Error())
+-			return
 -		}
--		name := gitops.StringValue(m["name"])
--		if name == "" {
--			continue
+-		if apierrors.IsAlreadyExists(err) {
+-			s.writeError(w, http.StatusConflict, err.Error())
+-			return
 -		}
--		namespace := gitops.StringValue(m["namespace"])
--		if namespace == "" {
--			namespace = root.GetNamespace()
+-		if apierrors.IsInvalid(err) || apierrors.IsBadRequest(err) {
+-			s.writeError(w, http.StatusBadRequest, err.Error())
+-			return
 -		}
--		ref := ResourceRef{
--			Group:     rootRef.Group,
--			Kind:      rootRef.Kind,
--			Namespace: namespace,
--			Name:      name,
+-		if apierrors.IsForbidden(err) {
+-			s.writeError(w, http.StatusForbidden, err.Error())
+-			return
 -		}
-+	for _, dep := range gitops.FluxDependsOn(root) {
- 		out = append(out, relatedResource{
--			Ref:  ref,
-+			Ref:  ResourceRef{Group: dep.Group, Kind: dep.Kind, Namespace: dep.Namespace, Name: dep.Name},
- 			Type: EdgeDependsOn,
- 			Data: map[string]any{"relationship": "depends on"},
- 		})
+-		if strings.Contains(err.Error(), "not found") {
+-			s.writeError(w, http.StatusNotFound, err.Error())
+-			return
+-		}
+-		log.Printf("[cronjob] Failed to trigger %s/%s: %v", namespace, name, err)
+-		s.writeError(w, http.StatusInternalServerError, err.Error())
+-		return
+-	}
+-
+-	s.writeJSON(w, map[string]any{
+-		"message": "Job created successfully",
+-		"jobName": result.GetName(),
+-	})
+-}
+-
+-// handleSuspendCronJob suspends a CronJob
+-func (s *Server) handleSuspendCronJob(w http.ResponseWriter, r *http.Request) {
+-	namespace := chi.URLParam(r, "namespace")
+-	name := chi.URLParam(r, "name")
+-
+-	auth.AuditLog(r, namespace, name)
+-	client := s.getDynamicClientForRequest(r)
+-	if client == nil {
+-		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
+-		return
+-	}
+-	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, true, client)
+-	if err != nil {
+-		if strings.Contains(err.Error(), "not found") {
+-			s.writeError(w, http.StatusNotFound, err.Error())
+-			return
+-		}
+-		s.writeError(w, http.StatusInternalServerError, err.Error())
+-		return
+-	}
+-
+-	s.writeJSON(w, map[string]string{"message": "CronJob suspended"})
+-}
+-
+-// handleResumeCronJob resumes a suspended CronJob
+-func (s *Server) handleResumeCronJob(w http.ResponseWriter, r *http.Request) {
+-	namespace := chi.URLParam(r, "namespace")
+-	name := chi.URLParam(r, "name")
+-
+-	auth.AuditLog(r, namespace, name)
+-	client := s.getDynamicClientForRequest(r)
+-	if client == nil {
+-		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
+-		return
+-	}
+-	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, false, client)
+-	if err != nil {
+-		if strings.Contains(err.Error(), "not found") {
+-			s.writeError(w, http.StatusNotFound, err.Error())
+-			return
+-		}
+-		s.writeError(w, http.StatusInternalServerError, err.Error())
+-		return
+-	}
+-
+-	s.writeJSON(w, map[string]string{"message": "CronJob resumed"})
+-}
+-
+-// handlePauseDeployment holds a Deployment's pod template changes without rolling them out.
+-func (s *Server) handlePauseDeployment(w http.ResponseWriter, r *http.Request) {
+-	s.setDeploymentPaused(w, r, true)
+-}
+-
+-// handleResumeDeployment lets a paused Deployment roll out its pod template again.
+-func (s *Server) handleResumeDeployment(w http.ResponseWriter, r *http.Request) {
+-	s.setDeploymentPaused(w, r, false)
+-}
+-
+-// setDeploymentPaused patches as the caller, so Kubernetes RBAC decides, and it
+-// returns 403 when the caller can't patch the Deployment. Without authentication
+-// it acts with Radar's own identity, and requireSameOrigin keeps a page on another
+-// site from reaching it.
+-func (s *Serve
 ```
 
-**File**: `pkg/relations/families.go` (modified, +30/-2)
+**File**: `internal/server/workload_actions.go` (added, +378/-0)
 ```diff
-@@ -251,8 +251,8 @@ var FluxSources = &Family{
- 	Name:          "fluxSources",
- 	Projection:    project("configures", true, "Dependencies,ConfigRefs", "Consumers,Dependents"),
- 	Sources: []Source{
--		{Kind: resourceid.GroupKind{Group: "kustomize.toolkit.fluxcd.io", Kind: "Kustomization"}, Targets: []resourceid.GroupKind{fluxSource("GitRepository"), fluxSource("OCIRepository"), fluxSource("Bucket"), fluxSource("ExternalArtifact")}},
--		{Kind: resourceid.GroupKind{Group: "helm.toolkit.fluxcd.io", Kind: "HelmRelease"}},
-+		{Kind: fluxKustomization, Targets: []resourceid.GroupKind{fluxSource("GitRepository"), fluxSource("OCIRepository"), fluxSource("Bucket"), fluxSource("ExternalArtifact")}},
-+		{Kind: fluxHelmRelease},
- 		{Kind: fluxSource("HelmChart"), Targets: []resourceid.GroupKind{fluxSource("HelmRepository"), fluxSource("GitRepository"), fluxSource("Bucket")}},
- 		{Kind: fluxSource("ExternalArtifact"), Targets: []resourceid.GroupKind{fluxArtifactGenerator}},
- 		{Kind: fluxArtifactGenerator, Targets: []resourceid.GroupKind{fluxSource("GitRepository"), fluxSource("OCIRepository"), fluxSource("Bucket"), fluxSource("HelmChart"), fluxSource("ExternalArtifact")}},
-@@ -269,6 +269,34 @@ var FluxSources = &Family{
- 	},
- }
- 
-+// FluxDependsOn is the family of the Kustomization or HelmRelease a Flux
-+// Kustomization or HelmRelease waits for through spec.dependsOn: an object of
-+// its own kind, in any namespace.
-+var FluxDependsOn = &Family{
-+	ScanRationale: "Indexing a Flux object's dependsOn exceeds the per-update admission bar (BenchmarkRelationIndexUpdate), as its sourceRef does.",
-+	Name:          "fluxDependsOn",
-+	Projection:    project("uses", false, "Dependencies", "Dependents"),
-+	Sources: []Source{
-+		{Kind: fluxKustomization, Targets: []resourceid.GroupKind{fluxKustomization}},
-+		{Kind: fluxHelmRelease, Targets: []resourceid.GroupKind{fluxHelmRelease}},
-+	},
-+	Targets:        []resourceid.GroupKind{fluxKustomization, fluxHelmRelease},
-+	CrossNamespace: true,
-+	Declared: func(obj runtime.Object, visit func(Declaration)) error {
-+		if u, ok := obj.(*unstructured.Unstructured); ok {
-+			for _, r := range gitops.FluxDependsOn(u) {
-+				visit(Declaration{Target: r, Path: "spec.dependsOn[]"})
-+			}
-+		}
-+		return nil
-+	},
-+}
+@@ -0,0 +1,378 @@
++package server
 +
-+var (
-+	fluxKustomization = resourceid.GroupKind{Group: "kustomize.toolkit.fluxcd.io", Kind: "Kustomization"}
-+	fluxHelmRelease   = resourceid.GroupKind{Group: "helm.toolkit.fluxcd.io", Kind: "HelmRelease"}
++import (
++	"encoding/json"
++	"errors"
++	"fmt"
++	"io"
++	"log"
++	"net/http"
++	"strings"
++
++	"github.com/go-chi/chi/v5"
++	"github.com/skyhook-io/radar/internal/auth"
++	"github.com/skyhook-io/radar/internal/k8s"
++	"github.com/skyhook-io/radar/pkg/k8score"
++	"github.com/skyhook-io/radar/pkg/rollouts"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
 +)
 +
- // NodeClasses is the family of the NodeClass a Karpenter NodePool's nodes
- // are launched from, whichever provider defines it: a Karpenter provider's,
- // or EKS Auto Mode's NodeClass.
-```
-
----
-
-### Incident Patch 2: `e34e1c92` (2026-11-25)
-**Commit Message**: Keep Related Resources quiet while Radar warms up, and refresh the open view (#2917)
-
-## Summary
-
-Right after Radar starts, its informers take tens of seconds to a few
-minutes to sync on a CRD-heavy cluster. Until then, Related Resources
-listed every kind still loading as a warning, and the open drawer never
-refreshed:
-
-> Couldn't check GlobalAccelerator (still loading),
-WorkflowArtifactGCTask (still loading), WorkflowEventBinding (still
-loading), … (dozens of kinds)
-
-On a ConfigMap or Pod, which have no children, this created a Children
-section whose only content was that list. The "Radar doesn't collect…"
-hint likewise named every uncollected kind; one test cluster had 162.
-
-Now:
-- **Startup loading** is a short hint beside the Children (or Managed
-By) label, not body text.
-- **Every kind list** names three and counts the rest.
-- **The open view refreshes itself** until loading finishes.
-
-The server's coverage answer is unchanged, so MCP, the cascade-delete
-dialog and other readers still see every gap.
-
-**For OSS users:** visible right after every Radar start, locally and
-in-cluster, and in Radar Hub's embedded views. No API, permission or
-default changes.
-
-| Before (main, at sta
-
-**File**: `packages/k8s-ui/src/components/ui/drawer-components.test.tsx` (modified, +70/-7)
-```diff
-@@ -156,12 +156,16 @@ describe('RelatedResourcesSection ownership', () => {
-     }
-   })
- 
--  it('says outright when children could not be checked for an unusual reason, even with none found', () => {
-+  it('keeps loading in the hint beside a Children section', () => {
-     const loading = renderToString(
--      <RelatedResourcesSection relationships={{ ownership: { children: { complete: false, notChecked: [{ kind: 'Pod', namespace: 'shop', reason: 'kind_sync_pending' }] } } }} />,
-+      <RelatedResourcesSection kind="deployments" relationships={{ ownership: { children: { complete: false, notChecked: [{ kind: 'Pod', namespace: 'shop', reason: 'kind_sync_pending' }] } } }} />,
-     )
-     expect(loading).toContain('Children')
--    expect(loading).toContain('Couldn&#x27;t check Pod (still loading).')
-+    expect(loading).toContain('aria-label="Radar is still loading Pod objects, so children of that kind aren&#x27;t listed yet."')
-+    expect(loading).toContain('No children among the kinds Radar checked.')
-+  })
++// handleTriggerCronJob creates a Job from a CronJob. The optional body
++// {"jobName": "..."} names the Job; without it the API server generates
++// "<cronjob>-manual-xxxxx" (advertised as features.cronJobTriggerJobName).
++func (s *Server) handleTriggerCronJob(w http.ResponseWriter, r *http.Request) {
++	namespace := chi.URLParam(r, "namespace")
++	name := chi.URLParam(r, "name")
 +
-+  it('keeps routine collection limits in the hint', () => {
-     const routine = renderToString(
-       <RelatedResourcesSection relationships={{ ownership: { children: { complete: false, notChecked: [{ kind: 'Lease', namespace: 'shop', reason: 'radar_kind_not_collected' }] } } }} />,
-     )
-@@ -186,6 +190,57 @@ describe('RelatedResourcesSection ownership', () => {
-     expect(elsewhere).not.toContain('Couldn&#x27;t check')
-   })
- 
-+  it('hides a 90-kind warmup on a leaf and counts it beside Children on a parent', () => {
-+    const notChecked = Array.from({ length: 90 }, (_, i) => ({ kind: `Pending${i}`, reason: 'kind_sync_pending' }))
-+    const ownership = { children: { complete: false, notChecked } }
-+    const leaf = renderToString(<RelatedResourcesSection kind="configmaps" relationships={{ owner: rs, ownership }} />)
-+    expect(leaf).toContain('Owner')
-+    expect(leaf).not.toContain('Children')
-+    const parent = renderToString(<RelatedResourcesSection kind="deployments" relationships={{ ownership }} />)
-+    expect(parent).toContain('No children among the kinds Radar checked.')
-+    expect(parent).toContain('aria-label="Radar is still loading 90 resource kinds (Pending0, Pending1, Pending2 and 87 more), so children of those kinds aren&#x27;t listed yet."')
-+    expect(parent).not.toContain('Pending3')
-+  })
-+
-+  it('groups and bounds warnings by reason while keeping uncollected kinds in the hint', () => {
-+    const notChecked = [
-+      ...['A', 'B', 'C', 'D', 'E'].map(kind => ({ kind, reason: 'radar_forbidden' })),
-+      { kind: 'B', namespace: 'other', reason: 'radar_forbidden' },
-+      { kind: 'F', reason: 'kind_sync_timed_out' },
-+      { kind: 'L', reason: 'kind_sync_failed' },
-+      { kind: 'G', reason: 'kind_not_watchable' },
-+      ...['H', 'I', 'J', 'K'].map(kind => ({ kind, reason: 'radar_kind_not_collected' })),
-+    ]
-+    const html = renderToString(<RelatedResourcesSection kind="configmaps" relationships={{ ownership: { children: { complete: false, notChecked } } }} />)
-+    expect(html).toContain('>Couldn&#x27;t check A, B, C and 2 more (Radar may not list it); F and L (loading is overdue); G (its API can&#x27;t be watched).</div>')
-+    expect(html).toContain('aria-label="Radar doesn&#x27;t collect objects of 4 kinds (H, I, J and 1 more), so none of those are listed."')
-+  })
-+
-+  it('merges warnings with the same wording and preserves distinct reasons for the same kind', () => {
-+    const notChecked = [
-+      { group: 'apps', kind: 'Deployment', namespace: 'shop', reason: 'radar_forbidden' },
-+      { group: 'apps', kind: 'Deployment', namespace: 'ops', reason: 'radar_credentials_rejected' },
-+      { group: 'apps', kind: 'StatefulSet', reason: 'radar_credentials_rejected' },
-+      { group: 'apps', kind: 'Deployment', namespace: 'dev', reason: 'future_read_code' },
-+      { kind: 'Pod', reason: 'read_error' },
-+    ]
-+    const html = renderToString(<RelatedResourcesSection relationships={{ ownership: { children: { complete: false, notChecked } } }} />)
-+    expect(html).toContain('>Couldn&#x27;t check Deployment and StatefulSet (Radar may not list it); Deployment and Pod (the read failed).</div>')
-+  })
-+
-+  it('distinguishes kinds sharing a name across groups and collapses namespaces', () => {
-+    const notChecked = [
-+      { kind: 'Service', namespace: 'first', reason: 'kind_sync_pending' },
-+      { kind: 'Service', namespace: 'second', reason: 'kind_sync_pending' },
-+      { kind: 'Service', group: 'serving.knative.dev', reason: 'kind_sync_pending' },
-+      { kind: 'Cluster', group: 'postgresql.cnpg.io', reason: 'radar_forbidden' },
-+      { kind: 'Cluster', group: 'cluster.x-k8s.io', reason: 'kind_sync_timed_out' },
-+    ]
-+    const html = renderToString(<RelatedResourcesSection relationships={{ ownership: { children: { complete: false, notChecked } } }} />)
-+    expect(html).toContain('Radar is still loading Service (core) and Service (serving.knative.de
-```
-
-**File**: `packages/k8s-ui/src/components/ui/drawer-components.tsx` (modified, +64/-37)
-```diff
-@@ -1,5 +1,5 @@
- import { dedupeResourceRefs, omitResourceRefs, resourceRefKey } from '../../utils/resource-refs'
--import { gapReasonText } from '../../utils/read-actions'
-+import { canonicalReadCode, gapReasonText } from '../../utils/read-actions'
- import { customResourceDefinitionRef, getCRDDefinitionsSnapshot, subscribeCRDDefinitions } from '../../utils/navigation'
- import { Disclosure } from './Disclosure'
- import { createContext, useContext, useState, useSyncExternalStore } from 'react'
-@@ -845,7 +845,7 @@ export type CopyHandler = (text: string, key: string) => void
- // RELATED RESOURCES SECTION
- // ============================================================================
- 
--import type { TimelineEvent, Relationships, ResourceRef, OwnershipCoverage, ManagerAnswer } from '../../types'
-+import type { TimelineEvent, Relationships, ResourceRef, OwnershipCoverage, OwnershipGap, ManagerAnswer } from '../../types'
- import { isChangeEvent, isK8sEvent } from '../../types'
- import { Info, Link } from 'lucide-react'
- import { formatRelativeAgeTime } from '../../utils/format'
-@@ -1061,35 +1061,73 @@ export function ownerNote(coverage: OwnershipCoverage | undefined): Relationship
-   return undefined
- }
- 
--// childrenNote says what a Children list may be missing. Kinds Radar doesn't
--// collect are a hint, since most lists miss a few; kinds it couldn't check
--// for any other reason, a list cut short, and places the viewer may not read
--// are said outright.
--function childrenNote(coverage: OwnershipCoverage | undefined): RelationshipNote | undefined {
--  const children = coverage?.children
--  if (!children) return undefined
--  const uncollected = new Set<string>()
--  let someNamespaces = false
-+function boundedKinds(kinds: string[], conjunction: 'and' | 'or') {
-+  if (kinds.length > 3) return `${kinds.slice(0, 3).join(', ')} and ${kinds.length - 3} more`
-+  if (kinds.length === 1) return kinds[0]
-+  return `${kinds.slice(0, -1).join(', ')} ${conjunction} ${kinds[kinds.length - 1]}`
-+}
-+
-+function coverageGapNote(gaps: OwnershipGap[], relation: 'children' | 'managers') {
-+  const groups = new Map<string, Set<string>>()
-+  for (const { kind, group = '' } of gaps) {
-+    if (!kind) continue
-+    if (!groups.has(kind)) groups.set(kind, new Set())
-+    groups.get(kind)!.add(group)
-+  }
-+
-+  const byReason = new Map<string, Set<string>>()
-   let undiscovered = false
--  const pressing = new Map<string, string>()
--  for (const g of children.notChecked ?? []) {
--    if (!g.kind) undiscovered = true
--    else if (g.reason === 'radar_kind_not_collected') uncollected.add(g.kind)
--    else if (g.reason === 'radar_namespace_not_collected') someNamespaces = true
--    else if (!pressing.has(g.kind)) pressing.set(g.kind, gapReasonText(g.reason))
-+  for (const { kind, group = '', reason } of gaps) {
-+    if (!kind) {
-+      undiscovered = true
-+      continue
-+    }
-+    const label = groups.get(kind)!.size > 1 ? `${kind} (${group || 'core'})` : kind
-+    const code = String(canonicalReadCode(reason))
-+    if (!byReason.has(code)) byReason.set(code, new Set())
-+    byReason.get(code)!.add(label)
-   }
--  const note: RelationshipNote = {}
-+
-   const hint: string[] = []
--  if (uncollected.size > 0) hint.push(`Radar doesn't collect ${joinOr(Array.from(uncollected))} objects, so none of those are listed.`)
--  if (someNamespaces) hint.push("Radar doesn't collect every namespace, so children in the others aren't listed.")
-+  const warnings = new Map<string, Set<string>>()
-+  const children = relation === 'children'
-+  for (const [reason, labels] of byReason) {
-+    const kinds = [...labels]
-+    if (reason === 'kind_sync_pending') {
-+      const names = boundedKinds(kinds, 'and')
-+      const loading = kinds.length <= 3 ? `${names} objects` : `${kinds.length} resource kinds (${names})`
-+      const which = kinds.length === 1 ? 'that kind' : 'those kinds'
-+      hint.push(`Radar is still loading ${loading}, so ${relation} of ${which} aren't ${children ? 'listed yet' : 'checked yet'}.`)
-+    } else if (reason === 'radar_kind_not_collected' || (!children && reason === 'read_error')) {
-+      const verb = reason === 'read_error' ? "couldn't search" : "doesn't collect"
-+      const objects = kinds.length <= 3 ? `${boundedKinds(kinds, 'or')} objects` : `objects of ${kinds.length} kinds (${boundedKinds(kinds, 'or')})`
-+      hint.push(`Radar ${verb} ${objects}, so ${children ? 'none of those are listed' : "those managers aren't checked"}.`)
-+    } else if (children && reason === 'radar_namespace_not_collected') {
-+      hint.push("Radar doesn't collect every namespace, so children in the others aren't listed.")
-+    } else {
-+      const text = gapReasonText(reason)
-+      const combined = warnings.get(text) ?? new Set<string>()
-+      for (const label of labels) combined.add(label)
-+      warnings.set(text, combined)
-+    }
-+  }
-   // An API group whose discovery fails, often a metrics API with no server
-   // behind it, leaves every answer 
-```
-
-**File**: `web/src/api/client.pendingOwnership.test.tsx` (added, +197/-0)
-```diff
-@@ -0,0 +1,197 @@
-+// @vitest-environment jsdom
-+import { act } from 'react'
-+import { createRoot } from 'react-dom/client'
-+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
-+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-+import type { OwnershipCoverage } from '@skyhook-io/k8s-ui/types'
-+import { useResourceWithRelationships } from './client'
-+import { getApiBase, setApiBase } from './config'
-+
-+const pending = 'kind_sync_pending'
-+const settled = { children: { complete: true } }
-+const loading = { children: { complete: false, notChecked: [{ kind: 'Pod', reason: pending }] } }
-+
-+let client: QueryClient
-+let host: HTMLDivElement
-+let root: ReturnType<typeof createRoot>
-+let originalBase: string
-+let ownership: Partial<OwnershipCoverage>
-+let requests: number[]
-+let status: number
-+
-+beforeEach(() => {
-+  vi.useFakeTimers()
-+  vi.setSystemTime(0)
-+  vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
-+  client = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false } } })
-+  host = document.createElement('div')
-+  root = createRoot(host)
-+  originalBase = getApiBase()
-+  ownership = loading
-+  requests = []
-+  status = 200
-+  vi.stubGlobal('fetch', vi.fn(async () => {
-+    requests.push(Date.now())
-+    if (status !== 200) return Response.json({ error: 'read failed' }, { status })
-+    return Response.json({ resource: {}, relationships: { ownership } })
-+  }))
-+})
-+
-+afterEach(() => {
-+  act(() => root.unmount())
-+  client.clear()
-+  setApiBase(originalBase)
-+  focusManager.setFocused(undefined)
-+  vi.unstubAllGlobals()
-+  vi.useRealTimers()
-+})
-+
-+const key = ['resource', 'pods', 'shop', 'web', '']
-+const eightPolls = [5000, 15_000, 35_000, 65_000, 95_000, 125_000, 155_000, 185_000]
-+
-+function Probe({ poll }: { poll?: boolean }) {
-+  const result = useResourceWithRelationships('pods', 'shop', 'web', '', { pollPendingOwnership: poll })
-+  return <span>{result.data?.relationships?.ownership?.children?.complete ? 'complete' : 'partial'}</span>
-+}
-+
-+async function observe(poll?: boolean) {
-+  await act(async () => {
-+    root.render(<QueryClientProvider client={client}><Probe poll={poll} /></QueryClientProvider>)
-+  })
-+}
-+
-+async function advance(ms: number) {
-+  await act(async () => { await vi.advanceTimersByTimeAsync(ms) })
-+}
-+
-+it.each<[string, OwnershipCoverage]>([
-+  ['ownership', { ...settled, unavailableReason: pending }],
-+  ['owner', { ...settled, ownerReason: pending }],
-+  ['manages', { ...settled, manages: { membership: 'unreadable', unavailableReason: pending } }],
-+  ['managers', { ...settled, managers: { notChecked: [{ kind: 'Application', reason: pending }] } }],
-+  ['manager chain stop', {
-+    ...settled,
-+    manager: {
-+      state: 'unknown',
-+      direct: { object: { kind: 'Pod', namespace: 'shop', name: 'web' } },
-+      chainEnd: 'unfollowed',
-+      stop: { at: { kind: 'ReplicaSet', namespace: 'shop', name: 'web-rs' }, state: 'unknown', reason: pending },
-+    },
-+  }],
-+  ['children', loading],
-+])('polls pending %s coverage and stops on an answer containing only other gaps', async (_, initial) => {
-+  ownership = initial
-+  await observe(true)
-+  ownership = { children: { complete: false, notChecked: [{ kind: 'Pod', reason: 'kind_sync_timed_out' }] } }
-+  await advance(240_000)
-+  expect(requests).toEqual([0, 5000])
-+})
-+
-+it('stops after eight foreground polls and starts again when the cached resource reopens', async () => {
-+  await observe(true)
-+  const query = client.getQueryCache().find({ queryKey: key, exact: true })
-+  expect(query).toBeDefined()
-+  await advance(240_000)
-+  expect(requests).toEqual([0, ...eightPolls])
-+
-+  await act(async () => root.render(<QueryClientProvider client={client}>{null}</QueryClientProvider>))
-+  await advance(1000)
-+  await observe(true)
-+  expect(client.getQueryCache().find({ queryKey: key, exact: true })).toBe(query)
-+  await advance(240_000)
-+  expect(requests).toEqual([0, ...eightPolls, 241_000, ...eightPolls.map(t => t + 241_000)])
-+})
-+
-+it('gives a new cluster a fresh budget on the same mounted observer and query key', async () => {
-+  setApiBase('/c/first/api')
-+  await observe(true)
-+  const query = client.getQueryCache().find({ queryKey: key, exact: true })
-+  expect(query).toBeDefined()
-+  await advance(240_000)
-+  expect(requests).toEqual([0, ...eightPolls])
-+
-+  expect(fetch).toHaveBeenLastCalledWith('/c/first/api/resources/pods/shop/web', expect.anything())
-+  setApiBase('/c/second/api')
-+  await observe(true)
-+  await act(async () => { await client.invalidateQueries({ queryKey: key, exact: true }) })
-+  expect(client.getQueryCache().find({ queryKey: key, exact: true })).toBe(query)
-+  await advance(240_000)
-+  expect(requests).toEqual([0, ...eightPolls, 240_000, ...eightPolls.map(t => t + 240_000)])
-+  expect(fetch).toHaveBeenLastCalledWith('/c/second/api/resources/pods/shop/web', expect.anything())
-+})
-+
-+it('starts a new episode after the pending gap c
-```
-
-**File**: `web/src/api/client.ts` (modified, +78/-17)
-```diff
-@@ -37,7 +37,7 @@ import type {
-   YamlDocumentIdentity,
-   YamlSchemaLoadResult,
- } from '@skyhook-io/k8s-ui'
--import { focusManager, useInfiniteQuery, useQuery, useMutation, useQueryClient, skipToken, type QueryClient } from '@tanstack/react-query'
-+import { focusManager, onlineManager, useInfiniteQuery, useQuery, useMutation, useQueryClient, skipToken, type QueryClient } from '@tanstack/react-query'
- import { showApiError, showApiSuccess, showApiNotice } from '../components/ui/Toast'
- import { useIsAuthEnabled, useNamespacedCapabilities } from '../contexts/CapabilitiesContext'
- import { applyTabPick, cleanPick, ownsTabPick, pruneTabPick, withActives, writeTabPick } from '../utils/namespacePick'
-@@ -3219,29 +3219,90 @@ export function useResourceAvailability(kind: string, namespace: string, name: s
-   });
- }
- 
-+function hasPendingOwnership(data?: ResourceWithRelationships): boolean {
-+  const coverage = data?.relationships?.ownership;
-+  if (!coverage) return false;
-+  const pending = "kind_sync_pending";
-+  return coverage.unavailableReason === pending ||
-+    coverage.ownerReason === pending ||
-+    coverage.manager?.stop?.reason === pending ||
-+    coverage.manages?.unavailableReason === pending ||
-+    !!coverage.managers?.notChecked?.some(gap => gap.reason === pending) ||
-+    !!coverage.children?.notChecked?.some(gap => gap.reason === pending);
-+}
-+
- // Hook that returns full response with relationships explicitly
- export function useResourceWithRelationships<T>(
-   kind: string,
-   namespace: string,
-   name: string,
-   group?: string,
--  options?: { cacheScope?: string },
-+  options?: { cacheScope?: string; pollPendingOwnership?: boolean },
- ) {
--  return useQuery<ResourceWithRelationships<T>>({
--    queryKey: ["resource", kind, namespace, name, group, ...(options?.cacheScope ? [options.cacheScope] : [])],
--    queryFn: () => fetchResourceWithRelationships<T>(kind, namespace, name, group),
--    enabled: Boolean(kind && name),
--    refetchInterval: (query) => goneRecheckInterval(query, undefined),
--    // Deep-linked detail views can mount while the kind's informer is still
--    // completing its initial sync: keep polling instead of erroring out.
--    retry: (failureCount, error) => {
--      if (isStillLoadingError(error)) return true;
--      if (isKindSyncFailed(error)) return false;
--      return failureCount < 1; // one retry, 4xx included, unlike the QueryClient default
--    },
--    retryDelay: (failureCount, error) =>
--      isStillLoadingError(error) ? 2000 : Math.min(1000 * 2 ** failureCount, 30000),
--  });
-+  const client = useQueryClient();
-+  const cacheScope = options?.cacheScope;
-+  const resourceOptions = useMemo(
-+    () => resourceQueryOptions<T>(kind, namespace, name, group, { cacheScope }),
-+    [kind, namespace, name, group, cacheScope],
-+  );
-+  const query = useQuery<ResourceWithRelationships<T>>({ ...resourceOptions, refetchIntervalInBackground: false });
-+  const { refetch } = query;
-+  const poll = options?.pollPendingOwnership;
-+  const apiBase = getApiBase();
-+
-+  useEffect(() => {
-+    if (!poll || !resourceOptions.enabled) return;
-+    const cache = client.getQueryCache();
-+    const { queryHash } = client.defaultQueryOptions(resourceOptions);
-+    let attempts = 0;
-+    let timer: ReturnType<typeof setTimeout> | undefined;
-+
-+    function schedule() {
-+      clearTimeout(timer);
-+      timer = undefined;
-+      const state = cache.get<ResourceWithRelationships<T>>(queryHash)?.state;
-+      if (!state || state.error || !hasPendingOwnership(state.data)) {
-+        attempts = 0;
-+        return;
-+      }
-+      // A hidden or offline view waits without timers; focus and reconnect
-+      // resume it below.
-+      if (!focusManager.isFocused() || !onlineManager.isOnline()) return;
-+      if (state.fetchStatus !== "idle" || attempts >= 8) return;
-+      timer = setTimeout(() => {
-+        timer = undefined;
-+        if (apiBase !== getApiBase()) return;
-+        attempts++;
-+        void refetch({ cancelRefetch: false });
-+      }, Math.min(5000 * 2 ** attempts, 30_000));
-+    }
-+
-+    // Other observers and SSE can change this answer, including after the last
-+    // poll. Only this view's timer spends attempts; a settled answer resets them.
-+    const unsubscribe = cache.subscribe(event => {
-+      if ((event.type === "updated" || event.type === "removed") && event.query.queryHash === queryHash) schedule();
-+    });
-+    // Redundant focus or online events must not restart a running countdown.
-+    const resume = () => {
-+      if (!focusManager.isFocused() || !onlineManager.isOnline()) {
-+        clearTimeout(timer);
-+        timer = undefined;
-+      } else if (timer === undefined) {
-+        schedule();
-+      }
-+    };
-+    const unsubscribeFocus = focusManager.subscribe(resume);
-+    const unsubscribeOnline = onlineManager.subscribe(resume);
-+    schedule();
-+    return () => {
-+      unsubscribe();
-+      unsubscribeFocus();
-+      unsubscribeOnline();
-+      clearTi
-```
-
-**File**: `web/src/components/workload/WorkloadView.pendingOwnership.test.tsx` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+// @vitest-environment jsdom
-+import { renderToString } from 'react-dom/server'
-+import { MemoryRouter } from 'react-router-dom'
-+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-+import { DockProvider, ToastProvider } from '@skyhook-io/k8s-ui'
-+import { expect, it, vi } from 'vitest'
-+import * as api from '../../api/client'
-+import { WorkloadView, WorkloadViewRoute } from './WorkloadView'
-+
-+it.each([
-+  ['full-page route', undefined, true],
-+  ['active drawer layer', true, true],
-+  ['prewarm or outgoing drawer layer', false, false],
-+] as const)('sets ownership polling for the %s', (_, active, expected) => {
-+  const client = new QueryClient()
-+  const hook = vi.spyOn(api, 'useResourceWithRelationships')
-+  try {
-+    renderToString(
-+      <QueryClientProvider client={client}>
-+        <ToastProvider><DockProvider>
-+          <MemoryRouter initialEntries={['/workload/configmaps/shop/settings']}>
-+            {active === undefined
-+              ? <WorkloadViewRoute />
-+              : <WorkloadView kind="configmaps" namespace="shop" name="settings" group="" onBack={() => {}} active={active} />}
-+          </MemoryRouter>
-+        </DockProvider></ToastProvider>
-+      </QueryClientProvider>,
-+    )
-+    expect(hook).toHaveBeenCalledWith('configmaps', 'shop', 'settings', '', { pollPendingOwnership: expected })
-+  } finally {
-+    hook.mockRestore()
-+    client.clear()
-+  }
-+})
-```
-
-**File**: `web/src/components/workload/WorkloadView.tsx` (modified, +3/-1)
-```diff
-@@ -649,7 +649,9 @@ export function WorkloadView({
-     isFetching: resourceFetching,
-     error: resourceError,
-     refetch: refetchResource,
--  } = useResourceWithRelationships<any>(apiKind, namespace, name, rest.group)
-+  } = useResourceWithRelationships<any>(apiKind, namespace, name, rest.group, {
-+    pollPendingOwnership: rest.active !== false,
-+  })
-   const resource = resourceResponse?.resource
-   const relationships = resourceResponse?.relationships
-   useRefreshRevisionsOnNewRollout(
-```
-
----
-
-### Incident Patch 3: `5f87badd` (2026-11-25)
-**Commit Message**: Start a debug container from Pod details (#2889)
-
-A working application shell can still lack a diagnostic tool. Choose
-**Debug** alongside **Terminal** on a running Pod, or open the same
-chooser when an ordinary terminal reports that its container has no
-shell. The chooser preselects the target, shows the effective server
-debug image, and accepts an image override for this session. Leaving the
-default untouched lets the server resolve `--debug-image`.
-
-Radar opens a dock tab as soon as Kubernetes accepts the ephemeral
-container. It shows kubelet pull and startup failures, connects
-automatically on recovery, and explains when a bad image name requires a
-new session. A terminated container and a denied status read have
-distinct outcomes. Checking status or reconnecting a terminal never adds
-another container.
-
-The action requires a running application container or native sidecar,
-`get pods`, `create pods/exec`, and `update pods/ephemeralcontainers` in
-the Pod’s namespace. The caller’s Kubernetes identity performs the
-write. Reviewed requests pin the Pod UID and cluster connection, refuse
-a stopped target, and retain uncertain outcomes across navigation.
-Hosted views and older servers
-
-**File**: `deploy/helm/radar/README.md` (modified, +12/-0)
-```diff
-@@ -588,6 +588,7 @@ Disabled by default for security:
- |---------|-------|-------------|
- | Secrets | `rbac.secrets: true` | View secrets in resource list. Also granted by `rbac.helm` (Helm stores releases in Secrets), by auth (`auth.mode` other than `none`), and in cloud mode, where every Secret read is re-checked against the requesting user's own RBAC. The grant is cluster-wide `get/list/watch` on all Secrets; `rbac.secrets: false` does not remove it in those modes. |
- | Terminal | `rbac.podExec: true` | Shell access to pods |
-+| Pod Debug | A namespaced grant to `update` core `pods/ephemeralcontainers`, in addition to terminal access and `get pods` | Add an ephemeral toolbox container and open its terminal |
- | Port Forward | `rbac.portForward: true` | Port forwarding to pods. Also the fallback for traffic sources (Hubble/Caretta) — Radar dials the relay/metrics Service directly first, so in-cluster installs only need this when a NetworkPolicy or routing blocks Radar's namespace from reaching the service |
- | Logs | `rbac.podLogs: true` | View pod logs (**enabled by default**) |
- | Helm Write | `rbac.helm: true` | Install/upgrade/rollback/uninstall Helm releases. Installs with auth and Cloud off: grants Radar's ServiceAccount create/update/patch/delete on all resource types, since Helm runs as it. Under auth or cloud-mode Helm runs as the signed-in user, so the ServiceAccount gets no write grant; instead a split helm add-on ClusterRole is emitted — `radar-helm` (member-safe: CRDs, storage, namespaces) and `radar-helm-admin` (owner-only: RBAC, webhooks, ApiServices) |
-@@ -596,6 +597,17 @@ Disabled by default for security:
- | Admission policies view | `rbac.viewAdmissionPolicies: true` | Show native validating and mutating admission policies and bindings in the resource browser. Off by default for no-auth installs because the declarations expose admission-control coverage and gaps. Auto-enabled under auth or cloud mode, where reads are re-checked per user. |
- | Node runtime evidence | `rbac.viewNodeRuntime: true` | Let upgrade-impact checks inspect kubelet metrics and effective configuration through `nodes/proxy`. Off by default because this exposes node-level runtime and configuration details to anyone who can reach a no-auth Radar install. Under auth, grant `get` on `nodes/proxy` to each Kubernetes identity that should inspect this evidence. |
- 
-+For Pod Debug, bind the extra `pods/ephemeralcontainers` permission in the target namespace. With authentication off, bind Radar’s ServiceAccount. With per-user authentication, grant the signed-in user or their group. Pod Debug is available in standalone and in-cluster Radar. The Radar Hub UI omits both the Pod action and the missing-shell recovery action.
-+
-+For example, add the separate grant for an existing per-user group in one namespace:
-+
-+```sh
-+kubectl -n payments create role pod-debugger --verb=update --resource=pods/ephemeralcontainers
-+kubectl -n payments create rolebinding pod-debugger --role=pod-debugger --group=payments-oncall
-+```
-+
-+With authentication off, use `--serviceaccount=<radar-namespace>:<radar-serviceaccount>` in place of `--group`. These commands add only the ephemeral-container permission.
-+
- ### MCP container commands
- 
- `mcp.execTools` registers `exec_pod`, and `mcp.httpTools` independently registers
-```
-
-**File**: `docs/configuration.md` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ installed version. Several flags also take a persistent default from `~/.radar/c
- | `--disable-helm-write` | `false` | Disable release writes, per-release source updates, values previews and `manage_helm`; also global repository/OCI changes without auth. Signed-in global source management and Cloud install/upgrade continue |
- | `--disable-local-terminal` | `false` | Disable the host local terminal |
- | `--disable-auto-port-forward` | `false` | Never open a port-forward on Radar's own initiative (metrics, traffic, cost and Argo CD discovery). Port-forwards you start still work. See [Automatic port-forwarding](#automatic-port-forwarding) |
--| `--debug-image` | `busybox:latest` | Image for ephemeral debug containers and node debug pods. If built-in restricted PodSecurity rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default; point at a compatible mirror for air-gapped / private-registry clusters. |
-+| `--debug-image` | `busybox:latest` | Default image for ephemeral debug containers and node debug pods. On a running Pod, **Debug** opens a target container and image chooser. The chooser shows this default. Leave it unchanged or clear the field to use the server setting. If built-in restricted PodSecurity rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default; point at a compatible mirror for air-gapped / private-registry clusters. |
- | `--list-page-size` | `0` (off) | Paginate the initial LIST of high-cardinality kinds (Pods, ReplicaSets) at this size. Helps very large clusters that fail to sync; only used when WatchList streaming is unavailable. Try `2000`. |
- | `--context-switch-timeout` | See description | Overrides the target connectivity check (normally 5s, or 11s with a kubeconfig exec credential plugin). Synchronous switches and in-cluster recovery use a 30s initialization deadline by default. Setting this option overrides that deadline too. Widen on high-latency control planes — see [Tuning for slow clusters](#tuning-for-slow-or-high-latency-clusters). Env: `RADAR_CONTEXT_SWITCH_TIMEOUT`. |
- | `--first-paint-backstop` | `5m` | Hard upper bound on the initial critical-cache sync wait before Radar falls through to a partial-data render. Env: `RADAR_FIRST_PAINT_BACKSTOP`. |
-```
-
-**File**: `docs/in-cluster.md` (modified, +3/-1)
-```diff
-@@ -451,7 +451,9 @@ rbac:
-   helm: false         # Enable Helm write operations (broad permissions)
- ```
- 
--The terminal's **Debug** action launches a throwaway container (ephemeral container on a pod, or a privileged pod on a node) using `busybox:latest` by default. If the built-in restricted Pod Security Standard rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default, so custom images used in restricted namespaces must work as a non-root user. In air-gapped or private-registry clusters where the default image can't be pulled, point it at a reachable mirror:
-+Pod **Debug** requires `get pods`, `create pods/exec`, and a separate `update pods/ephemeralcontainers` grant in the Pod’s namespace. The chart’s `rbac.podExec` grants exec only. Use a namespaced Role and RoleBinding for Radar’s ServiceAccount when authentication is off, or for the signed-in user or group when per-user authentication is enabled. The Pod action and the missing-shell recovery action are available in standalone and in-cluster Radar. Both are intentionally disabled in the Radar Hub UI.
-+
-+The **Debug** action launches a throwaway container (ephemeral container on a pod, or a privileged pod on a node) using `busybox:latest` by default. If the built-in restricted Pod Security Standard rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default, so custom images used in restricted namespaces must work as a non-root user. In air-gapped or private-registry clusters where the default image can't be pulled, point it at a reachable mirror:
- 
- ```yaml
- # values.yaml
-```
-
-**File**: `internal/k8s/capabilities.go` (modified, +22/-12)
-```diff
-@@ -114,16 +114,18 @@ func (r *PermissionCheckResult) CredentialRejectedNamespaces(resource string, na
- // Capabilities represents the features available based on RBAC permissions
- type Capabilities struct {
- 	ConfigManagement       string                   `json:"configManagement"`
--	Exec                   bool                     `json:"exec"`           // Can create pods/exec (terminal feature)
--	LocalTerminal          bool                     `json:"localTerminal"`  // Local terminal available (not in-cluster, not disabled)
--	LocalShell             string                   `json:"localShell"`     // Shell family where a hand-off command runs: "powershell" on Windows, else "posix"
--	Logs                   bool                     `json:"logs"`           // Can get pods/log (log viewer)
--	PortForward            bool                     `json:"portForward"`    // Can create pods/portforward
--	Secrets                bool                     `json:"secrets"`        // Can list secrets
--	SecretsUpdate          bool                     `json:"secretsUpdate"`  // Can update secrets (inline editing)
--	HelmWrite              bool                     `json:"helmWrite"`      // Helm write ops (detected via secrets/create as sentinel RBAC check)
--	NodeWrite              bool                     `json:"nodeWrite"`      // Can patch nodes (cordon/uncordon/drain)
--	WorkloadWrites         WorkloadWritePermissions `json:"workloadWrites"` // Can patch workload kinds (restart/scale controls)
-+	Exec                   bool                     `json:"exec"` // Can create pods/exec (terminal feature)
-+	PodDebugImage          string                   `json:"podDebugImage,omitempty"`
-+	PodDebug               bool                     `json:"podDebug,omitempty"` // Scoped to the requested namespace.
-+	LocalTerminal          bool                     `json:"localTerminal"`      // Local terminal available (not in-cluster, not disabled)
-+	LocalShell             string                   `json:"localShell"`         // Shell family where a hand-off command runs: "powershell" on Windows, else "posix"
-+	Logs                   bool                     `json:"logs"`               // Can get pods/log (log viewer)
-+	PortForward            bool                     `json:"portForward"`        // Can create pods/portforward
-+	Secrets                bool                     `json:"secrets"`            // Can list secrets
-+	SecretsUpdate          bool                     `json:"secretsUpdate"`      // Can update secrets (inline editing)
-+	HelmWrite              bool                     `json:"helmWrite"`          // Helm write ops (detected via secrets/create as sentinel RBAC check)
-+	NodeWrite              bool                     `json:"nodeWrite"`          // Can patch nodes (cordon/uncordon/drain)
-+	WorkloadWrites         WorkloadWritePermissions `json:"workloadWrites"`     // Can patch workload kinds (restart/scale controls)
- 	MCPReadOnly            bool                     `json:"mcpReadOnly"`
- 	MCPExecTools           bool                     `json:"mcpExecTools"`
- 	MCPHelmTools           bool                     `json:"mcpHelmTools"` // Native Helm MCP tool registered; target Kubernetes permissions still required
-@@ -283,6 +285,7 @@ type WorkloadWriteCapabilityErrors struct {
- }
- 
- type NamespaceCapabilityErrors struct {
-+	PodDebug       bool
- 	Exec           bool
- 	Logs           bool
- 	PortForward    bool
-@@ -292,6 +295,7 @@ type NamespaceCapabilityErrors struct {
- 
- // NamespaceCapabilities holds the effective capabilities for a specific namespace.
- type NamespaceCapabilities struct {
-+	PodDebug       bool                      `json:"podDebug"`
- 	Exec           bool                      `json:"exec"`
- 	Logs           bool                      `json:"logs"`
- 	PortForward    bool                      `json:"portForward"`
-@@ -600,7 +604,10 @@ func CheckNamespaceCapabilities(ctx context.Context, namespace string) (*Namespa
- 
- 	var checks []capCheck
- 	if !ForceDisableExec {
--		checks = append(checks, capCheck{resource: "pods/exec", verb: "create", result: &result.Exec, apiError: &result.Errors.Exec})
-+		checks = append(checks,
-+			capCheck{resource: "pods/exec", verb: "create", result: &result.Exec, apiError: &result.Errors.Exec},
-+			capCheck{resource: "pods/ephemeralcontainers", verb: "update", result: &result.PodDebug, apiError: &result.Errors.PodDebug},
-+		)
- 	}
- 	checks = append(checks,
- 		capCheck{resource: "pods/log", verb: "get", result: &result.Logs, apiError: &result.Errors.Logs},
-@@ -851,7 +858,10 @@ func CheckNamespaceCapabilitiesForUser(ctx context.Context, username string, gro
- 
- 	var checks []capCheck
- 	if !ForceDisableExec {
--		checks = append(checks, capCheck{resource: "pods/exec", verb: "create", result: &result.Exec, apiError: &result.Errors.Exec})
-+		checks = append(checks,
-+			capCheck{resource: "pods/exec", verb: "create", result: &result.Exec, apiError: &result.Errors.Exec},
-+			capCheck{resource: "pods/ephemeralcontain
-```
-
-**File**: `internal/k8s/ephemeral.go` (modified, +0/-6)
-```diff
-@@ -2,7 +2,6 @@ package k8s
- 
- import (
- 	"context"
--	"time"
- 
- 	corev1 "k8s.io/api/core/v1"
- 	"k8s.io/client-go/kubernetes"
-@@ -28,8 +27,3 @@ func CreateEphemeralContainerWithClient(ctx context.Context, opts EphemeralConta
- 	}
- 	return k8score.CreateEphemeralContainer(ctx, client, opts)
- }
--
--// WaitForEphemeralContainer polls until an ephemeral container reaches Running state or timeout.
--func WaitForEphemeralContainer(ctx context.Context, namespace, podName, containerName string, timeout time.Duration) error {
--	return k8score.WaitForEphemeralContainer(ctx, GetClient(), namespace, podName, containerName, timeout)
--}
-```
-
-**File**: `internal/server/capabilities_test.go` (modified, +22/-0)
-```diff
-@@ -82,3 +82,25 @@ func TestMergeNamespaceCapabilitiesHelmWrite(t *testing.T) {
- 		t.Fatal("a clean namespace deny should override a global Helm write grant")
- 	}
- }
-+
-+func TestPodDebugNeedsBothNamespacePermissions(t *testing.T) {
-+	t.Setenv("RADAR_CLOUD_MODE", "false")
-+	for _, exec := range []bool{false, true} {
-+		for _, update := range []bool{false, true} {
-+			caps := &k8s.Capabilities{Exec: true, PodDebug: true}
-+			mergeNamespaceCapabilities(caps, &k8s.NamespaceCapabilities{Exec: exec, PodDebug: update})
-+			if caps.PodDebug != (exec && update) {
-+				t.Errorf("exec=%v, update ephemeralcontainers=%v: podDebug=%v", exec, update, caps.PodDebug)
-+			}
-+		}
-+	}
-+}
-+
-+func TestPodDebugHiddenInCloudMode(t *testing.T) {
-+	t.Setenv("RADAR_CLOUD_MODE", "true")
-+	caps := &k8s.Capabilities{}
-+	mergeNamespaceCapabilities(caps, &k8s.NamespaceCapabilities{Exec: true, PodDebug: true})
-+	if caps.PodDebug {
-+		t.Fatal("hosted view offered the direct debug action")
-+	}
-+}
-```
-
-**File**: `internal/server/exec.go` (modified, +36/-17)
-```diff
-@@ -337,11 +337,13 @@ func (s *Server) handlePodExec(w http.ResponseWriter, r *http.Request) {
- 	// kubectl does. Pod-fetch failure is non-fatal: log, assume Linux, and let
- 	// the apiserver apply its own containers[0] default.
- 	var podOS string
-+	var podUID types.UID
- 	if overrideShell == "" || container == "" {
- 		pod, err := client.CoreV1().Pods(namespace).Get(r.Context(), podName, metav1.GetOptions{})
- 		if err != nil {
- 			log.Printf("[exec] pod fetch failed for %s/%s (OS detection + container defaulting skipped): %v", k8s.SanitizeForLog(namespace), k8s.SanitizeForLog(podName), err)
- 		} else {
-+			podUID = pod.UID
- 			if overrideShell == "" {
- 				podOS = detectPodOS(r.Context(), pod, nodeLabelsLookupFor(client))
- 			}
-@@ -438,7 +440,7 @@ func (s *Server) handlePodExec(w http.ResponseWriter, r *http.Request) {
- 					log.Printf("[exec] WARNING: error looks shell-related but isShellNotFoundError did not match — kubelet error text may have drifted; update isShellNotFoundError patterns if this recurs. errMsg=%q", errMsg)
- 				}
- 				log.Printf("Exec failed (%s): %v", errorType, err)
--				sendWSErrorWithType(conn, errorType, errMsg)
-+				sendWSErrorWithType(conn, errorType, errMsg, podUID)
- 			}
- 			// Give browser time to process the error message before closing.
- 			// Without this delay, conn.Close() tears down TCP before the
-@@ -493,18 +495,20 @@ cleanup:
- }
- 
- func sendWSError(conn *websocket.Conn, msg string) {
--	sendWSErrorWithType(conn, "exec_error", msg)
-+	sendWSErrorWithType(conn, "exec_error", msg, "")
- }
- 
- // sendWSErrorWithType sends an error with a specific error type to help frontend distinguish error causes
--func sendWSErrorWithType(conn *websocket.Conn, errorType, msg string) {
-+func sendWSErrorWithType(conn *websocket.Conn, errorType, msg string, podUID types.UID) {
- 	errMsg := struct {
--		Type      string `json:"type"`
--		ErrorType string `json:"errorType,omitempty"`
--		Data      string `json:"data"`
-+		Type      string    `json:"type"`
-+		ErrorType string    `json:"errorType,omitempty"`
-+		PodUID    types.UID `json:"podUID,omitempty"`
-+		Data      string    `json:"data"`
- 	}{
- 		Type:      "error",
- 		ErrorType: errorType,
-+		PodUID:    podUID,
- 		Data:      msg,
- 	}
- 	data, err := json.Marshal(errMsg)
-@@ -705,8 +709,10 @@ func (s *Server) handleNodeDebugCleanup(w http.ResponseWriter, r *http.Request)
- 
- // DebugContainerRequest is the request body for creating a debug container
- type DebugContainerRequest struct {
--	TargetContainer string `json:"targetContainer,omitempty"`
--	Image           string `json:"image,omitempty"`
-+	PodUID            types.UID `json:"uid,omitempty"`
-+	TargetContainer   string    `json:"targetContainer,omitempty"`
-+	Image             string    `json:"image,omitempty"`
-+	ReturnImmediately bool      `json:"returnImmediately,omitempty"`
- }
- 
- // DebugContainerResponse is the response after creating a debug container
-@@ -740,17 +746,29 @@ func (s *Server) handleCreateDebugContainer(w http.ResponseWriter, r *http.Reque
- 	ec, err := k8s.CreateEphemeralContainerWithClient(r.Context(), k8s.EphemeralContainerOptions{
- 		Namespace:       namespace,
- 		PodName:         podName,
-+		PodUID:          req.PodUID,
- 		TargetContainer: req.TargetContainer,
- 		Image:           s.resolveDebugImage(req.Image),
- 	}, client)
- 	if err != nil {
- 		errMsg := err.Error()
--		if strings.Contains(errMsg, "not found") {
-+		if apierrors.IsForbidden(err) {
-+			s.writeError(w, http.StatusForbidden, errMsg)
++	// A pointer so a JSON null, which decodes without error, can be refused.
++	req := &struct {
++		JobName string `json:"jobName"`
++	}{}
++	if err := decodeBoundedJSONBody(w, r, 4096, &req); err != nil && !errors.Is(err, io.EOF) {
++		var tooLarge *http.MaxBytesError
++		if errors.As(err, &tooLarge) {
++			s.writeError(w, http.StatusRequestEntityTooLarge, "trigger request is too large")
 +			return
 +		}
-+		if apierrors.IsConflict(err) {
-+			s.writeError(w, http.StatusConflict, errMsg)
++		s.writeError(w, http.StatusBadRequest, "invalid request body: "+err.Error())
++		return
++	}
++	if req == nil {
++		s.writeError(w, http.StatusBadRequest, "invalid request body: the body must be a JSON object")
++		return
++	}
++
++	auth.AuditLog(r, namespace, name)
++	client := s.getDynamicClientForRequest(r)
++	if client == nil {
++		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
++		return
++	}
++	result, err := k8s.TriggerCronJobWithClient(r.Context(), namespace, name, req.JobName, client)
++	if err != nil {
++		if errors.Is(err, k8score.ErrInvalidJobName) {
++			s.writeError(w, http.StatusBadRequest, err.Error())
 +			return
 +		}
-+		if apierrors.IsNotFound(err) {
- 			s.writeError(w, http.StatusNotFound, errMsg)
- 			return
- 		}
--		if strings.Contains(errMsg, "ephemeral containers are disabled") ||
--			strings.Contains(errMsg, "ephemeralcontainers") {
++		if apierrors.IsAlreadyExists(err) {
++			s.writeError(w, http.StatusConflict, err.Error())
++			return
++		}
 +		if apierrors.IsInvalid(err) || apierrors.IsBadRequest(err) {
-+			s.writeError(w, http.StatusBadRequest, errMsg)
++			s.writeError(w, http.StatusBadRequest, err.Error())
 +			return
 +		}
-+		if strings.Contains(errMsg, "ephemeral containers are disabled") {
- 			s.writeError(w, http.StatusBadRequest, "ephemeral containers are not enabled on this cluster")
- 			return
- 		}
-@@ -759,12 +777,13 @@ func (s *Server) handleCreateDebugContainer(w http.ResponseWriter, r *http.Reque
- 		return
- 	}
- 
--	// Wait for container to be running (with timeout)
--	err = k8s.WaitForEphemeralContainer(r.Context(), namespace, podName, ec.Name, 30*time.Second)
--	status := "running"
--	if err != nil {
--		status = "pending"
--		log.Printf("[exec] Debug container %s created but not yet running: %v", ec.Name, err)
-+	status := "pending"
-+	if !req.ReturnImmediately {
-+		if err = k8score.WaitForEphemeralContainer(r.Context(), client, namespace, podName, ec.Name, 30*time.Second); err == nil {
-+			status = "running"
-+		} else {
-+			log.Printf("[exec] Debug container %s created but not yet running: %v", ec.Name, err)
++		if apierrors.IsForbidden(err) {
++			s.writeError(w, http.StatusForbidden, err.Error())
++			return
 +		}
- 	}
- 
- 	s.writeJSON(w, DebugContainerResponse{
-```
-
-**File**: `internal/server/server.go` (modified, +4/-0)
-```diff
-@@ -1656,6 +1656,9 @@ func (s *Server) handleCapabilities(w http.ResponseWriter, r *http.Request) {
- 			log.Printf("[capabilities] namespace-scoped check for %q failed: %v", ns, err)
- 		} else if nsCaps != nil {
- 			mergeNamespaceCapabilities(caps, nsCaps)
-+			if caps.PodDebug {
-+				caps.PodDebugImage = s.resolveDebugImage("")
-+			}
- 			if nsCaps.Errors != (k8s.NamespaceCapabilityErrors{}) {
- 				caps.ChecksIncomplete = true
- 			}
-@@ -1717,6 +1720,7 @@ func (s *Server) handleCapabilities(w http.ResponseWriter, r *http.Request) {
- }
- 
- func mergeNamespaceCapabilities(caps *k8s.Capabilities, nsCaps *k8s.NamespaceCapabilities) {
-+	caps.PodDebug = !cloudMode() && nsCaps.Exec && nsCaps.PodDebug
- 	caps.Exec = mergeNamespaceCapability(caps.Exec, nsCaps.Exec, nsCaps.Errors.Exec)
- 	caps.Logs = mergeNamespaceCapability(caps.Logs, nsCaps.Logs, nsCaps.Errors.Logs)
- 	caps.PortForward = mergeNamespaceCapability(caps.PortForward, nsCaps.PortForward, nsCaps.Errors.PortForward)
++		if strings.Contains(err.Error(), "not found") {
++			s.writeError(w, http.StatusNotFound, err.Error())
++			return
++		}
++		log.Printf("[cronjob] Failed to trigger %s/%s: %v", namespace, name, err)
++		s.writeError(w, http.StatusInternalServerError, err.Error())
++		return
++	}
++
++	s.writeJSON(w, map[string]any{
++		"message": "Job created successfully",
++		"jobName": result.GetName(),
++	})
++}
++
++// handleSuspendCronJob suspends a CronJob
++func (s *Server) handleSuspendCronJob(w http.ResponseWriter, r *http.Request) {
++	namespace := chi.URLParam(r, "namespace")
++	name := chi.URLParam(r, "name")
++
++	auth.AuditLog(r, namespace, name)
++	client := s.getDynamicClientForRequest(r)
++	if client == nil {
++		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
++		return
++	}
++	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, true, client)
++	if err != nil {
++		if strings.Contains(err.Error(), "not found") {
++			s.writeError(w, http.StatusNotFound, err.Error())
++			return
++		}
++		s.writeError(w, http.StatusInternalServerError, err.Error())
++		return
++	}
++
++	s.writeJSON(w, map[string]string{"message": "CronJob suspended"})
++}
++
++// handleResumeCronJob resumes a suspended CronJob
++func (s *Server) handleResumeCronJob(w http.ResponseWriter, r *http.Request) {
++	namespace := chi.URLParam(r, "namespace")
++	name := chi.URLParam(r, "name")
++
++	auth.AuditLog(r, namespace, name)
++	client := s.getDynamicClientForRequest(r)
++	if client == nil {
++		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
++		return
++	}
++	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, false, client)
++	if err != nil {
++		if strings.Contains(err.Error(), "not found") {
++			s.writeError(w, http.StatusNotFound, err.Error())
++			return
++		}
++		s.writeError(w, http.StatusInternalServerError, err.Error())
++		return
++	}
++
++	s.writeJSON(w, map[string]string{"message": "CronJob resumed"})
++}
++
++// handlePauseDeployment holds a Deployment's pod template changes without rolling them out.
++func (s *Server) handlePauseDeployment(w http.ResponseWriter, r *http.Request) {
++	s.setDeploymentPaused(w, r, true)
++}
++
++// handleResumeDeployment lets a paused Deployment roll out its pod template again.
++func (s *Server) handleResumeDeployment(w http.ResponseWriter, r *http.Request) {
++	s.setDeploymentPaused(w, r, false)
++}
++
++// setDeploymentPaused patches as the caller, so Kubernetes RBAC decides, and it
++// returns 403 when the caller can't patch the Deployment. Without authentication
++// it acts with Radar's own identity, and requireSameOrigin keeps a page on another
++// site from reaching it.
++func (s *Server) setDeploymentPaused(w http.ResponseWriter, r *http.Re
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2917** (2026-11-25): Keep Related Resources quiet while Radar warms up, and refresh the open view (@nadaverell)
-- **PR #2916** (2026-11-25): Keep Pod terminal tabs in sync with their active container (@nadaverell)
-- **PR #2915** (2026-11-25): Stop the export workload-budget test from flaking under load (@nadaverell)
-- **PR #2912** (2026-11-25): Let users stop or terminate a running Argo Workflow from its page (@nadaverell)
-- **PR #2911** (2026-11-25): Preserve Pod terminal input and reopen running debug containers (@nadaverell)
-- **PR #2908** (2026-11-25): deps: batch weekly Dependabot updates (2026-11-25) (@nadaverell)
+- **PR #2953** (2026-11-26): Build with Go 1.27 and keep JSON responses as fast as on Go 1.26 (@nadaverell)
+- **PR #2946** (2026-11-26): Group related issues in application panels and expand linked issues (@nadaverell)
+- **PR #2944** (2026-11-26): Align the OpenObserve metrics settings with the other connection forms (@arlenvasconcelos)
+- **PR #2938** (2026-11-26): Share the revision-locked settings file (@nadaverell)
+- **PR #2937** (2026-11-26): Keep acronyms whole in generated labels; share shellWord (@nadaverell)
+- **PR #2936** (2026-11-26): Share workspace summary cards and conditions; CNPG uses them (@nadaverell)
 
 ---
 
@@ -3685,31 +3038,31 @@ Hosted views and older servers
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Answer Flux dependsOn in Related Resources, not only on the Topology screen
+## X. Build with Go 1.27 and keep JSON responses as fast as on Go 1.26
 
 **RULE**:
-When implementing operations in `docs/ownership.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/appimage-smoke.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fca91040`: Answer Flux dependsOn in Related Resources, not only on the Topology screen. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce0c9eba`: Build with Go 1.27 and keep JSON responses as fast as on Go 1.26. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/ownership.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/appimage-smoke.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| `FluxDependsOn` | A Flux Kustomization or HelmRelease → the object of its own kind it waits for through `spec.dependsOn`, in any namespace (an entry without a namespace means the object's own); Depends On on the waiting object, Required By on the one it waits for | `families.go` |
+          go-version: '1.27'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+          go-version: '1.26'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fca91040` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce0c9eba` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

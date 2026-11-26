@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T04:28:57.061Z",
+  "timestamp": "2026-11-26T14:33:53.206Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sharkdp-bat-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sharkdp-bat-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T04:28:57.061Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T14:33:53.206Z`  
 > **Learning ID**: `LEARN-EVO-sharkdp-bat-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
-> **Source Version**: `4bd5c5b6`  
+> **Source Version**: `c3fe1436`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T04:28:46.428Z  
+> **Timestamp**: 2026-11-26T14:33:38.993Z  
 > **Learning ID**: `learn-github-sharkdp-bat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T04:28:46.263Z  
+> **Harvest Timestamp**: 2026-11-26T14:33:38.986Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A cat(1) clone with wings.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 61393 stars
+- **Stars / Engagement**: 61519 stars
 
 ---
 
@@ -633,382 +633,115 @@ impl AssetsMetadata {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4bd5c5b6` (2026-11-22)
-**Commit Message**: Merge pull request #4141 from curious-rabbit/sanitize-modes
+### Incident Patch 1: `c3fe1436` (2026-11-26)
+**Commit Message**: Merge pull request #4151 from draarivpatel-ui/fix/decorations-auto-piped
 
-fix sanitize config options
+Do not show style decorations when piped with --decorations=auto
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -94,6 +94,7 @@
- - Fix zsh tab completion word-splitting language names containing spaces (e.g. `HTML (Jinja2)`, `Apache Conf`), see #3693 (@YoshKoz)
- - Fix zsh tab completion offering invalid `-l` arguments (file globs, paths, hidden filenames) sourced from the second column of `--list-languages`. Closes #3735, see #3737 (@truffle-dev)
- - Fix `usize` underflow in `--list-languages` when `--terminal-width` is smaller than the longest language name, see #3812 (@greymoth-jp)
-+- `--sanitize=always` now also sanitizes piped output. `--sanitize=auto` now sanitizes every file type, but only when the output is a terminal, see #4141 (@curious-rabbit)
- - Show changes in `--diff` mode and the change-marker column in Git repositories that use the SHA-256 object format (`git init --object-format=sha256`), see #4143 (@BlueX888)
+@@ -35,6 +35,7 @@
  
- ## Other
+ ## Bugfixes
+ 
++- Only show style decorations with `--decorations=auto` when stdout is interactive, so piped `--color=always` output no longer includes the header, grid, or line numbers, see #4151 (@draarivpatel-ui)
+ - Fix `bat cache --help` returning exit code 1 instead of 0. Remove `.arg_required_else_help(true)` from the cache subcommand and show help when no arguments are provided. See #3798, #3831 and #3837 (@Amilliox)
+ - Fix builtin pager (minus) not responding to search (`/`, `?`, `n`, `N`) and navigation (`PgUp`, `PgDown`, arrows, `g`, `G`) keys. `HashedEventRegister` was overriding all default `minus` bindings instead of extending them. Add `generate_default_bindings()` before custom bindings. See #3831, #3798 and #3837 (@Amilliox)
+ - Build the cache automatically on first run when custom themes or syntaxes are in subdirectories, see #4131 (@NotAFlightRisk)
 ```
 
-**File**: `README.md` (modified, +2/-0)
+**File**: `src/bin/bat/app.rs` (modified, +24/-0)
 ```diff
-@@ -852,6 +852,8 @@ passing the `--color=never --wrap=never` options to `bat`.
- For untrusted input, the `--sanitize=auto|always|never` option replaces terminal-active control
- bytes, including the escape character, and Unicode bidi / zero-width formatting characters with the
- Unicode replacement character. Escape sequences are not removed, so they cannot hide text.
-+The `auto` mode only sanitizes output to a terminal. Use `always` to also sanitize piped output,
-+for example in a file-manager preview pane.
+@@ -599,6 +599,30 @@ impl App {
+             ])));
+         }
  
- > [!NOTE]
- > The `auto` option of `--strip-ansi` avoids removing escape sequences when the syntax is plain text.
-```
-
-**File**: `doc/long-help.txt` (modified, +3/-2)
-```diff
-@@ -180,8 +180,9 @@ Options:
-           Unicode bidi / zero-width formatting characters with the Unicode replacement character
-           (U+FFFD). Escape sequences are not removed, so they cannot hide text. Overrides
-           --strip-ansi. Tab, LF, FF, and CRLF pass through. Useful for displaying untrusted file
--          content (e.g. file-manager preview panes). Piped output is not sanitized. Possible values:
--          auto, always, *never*.
-+          content (e.g. file-manager preview panes). The automatic mode only sanitizes if an
-+          interactive terminal is detected. Use 'always' to also sanitize piped output. Possible
-+          values: auto, always, *never*.
- 
-       --style <components>
-           Configure which elements (line numbers, file headers, grid borders, Git modifications, ..)
-```
-
-**File**: `src/bin/bat/app.rs` (modified, +10/-6)
-```diff
-@@ -460,12 +460,16 @@ impl App {
-                     .map(|s| s.as_str()),
-                 "--strip-ansi",
-             ),
--            sanitize: parse_strip_ansi_value(
--                self.matches
--                    .get_one::<String>("sanitize")
--                    .map(|s| s.as_str()),
--                "--sanitize",
--            ),
-+            sanitize: match self
-+                .matches
-+                .get_one::<String>("sanitize")
-+                .map(|s| s.as_str())
++        // With `--decorations=auto` (the default), decorations may only be shown when
++        // stdout is an interactive terminal. `-n`/`-b` above and `--decorations=always`
++        // (including `--force-colorization`, which implies it) are explicit exceptions.
++        let decorations = self
++            .matches
++            .get_one::<String>("decorations")
++            .map(|s| s.as_str());
++        if !self.interactive_output
++            && decorations != Some("always")
++            && !self.matches.get_flag("force-colorization")
++        {
++            let mut components = HashSet::new();
++            // When --diff is active, preserve change markers and snip separators
++            // so that diff output remains visually useful.
++            if self.matches.try_contains_id("diff").unwrap_or_default()
++                && self.matches.get_flag("diff")
 +            {
-+                Some("always") => true,
-+                // Piped output stays unchanged unless sanitizing is forced.
-+                Some("auto") => self.interactive_output,
-+                _ => false,
-+            },
-             quiet_empty: self.matches.get_flag("quiet-empty"),
-             unbuffered: self.matches.get_flag("unbuffered"),
-             number_nonblank: self.matches.get_flag("number-nonblank")
++                #[cfg(feature = "git")]
++                components.insert(StyleComponent::Changes);
++                components.insert(StyleComponent::Snip);
++            }
++            return Some(StyleComponents(components));
++        }
++
+         // Plain if `--plain` is specified at least once.
+         if self.matches.get_count("plain") > 0 {
+             let mut components = HashSet::from([StyleComponent::Plain]);
 ```
 
-**File**: `src/bin/bat/clap_app.rs` (modified, +3/-1)
+**File**: `tests/integration_tests.rs` (modified, +39/-0)
 ```diff
-@@ -524,7 +524,9 @@ pub fn build_app(interactive_output: bool) -> Command {
-                 removed, so they cannot hide text. Overrides --strip-ansi. \
-                 Tab, LF, FF, and CRLF pass through. Useful \
-                 for displaying untrusted file content (e.g. file-manager preview panes). \
--                Piped output is not sanitized. Possible values: auto, always, *never*.")
-+                The automatic mode only sanitizes if an interactive terminal is detected. \
-+                Use 'always' to also sanitize piped output. \
-+                Possible values: auto, always, *never*.")
-                 .hide_short_help(true)
-         )
-         .arg(
-```
-
-**File**: `src/config.rs` (modified, +1/-1)
-```diff
-@@ -112,7 +112,7 @@ pub struct Config<'a> {
-     pub strip_ansi: StripAnsiMode,
- 
-     /// Substitute terminal-active and spoofing-relevant bytes; overrides strip_ansi.
--    pub sanitize: StripAnsiMode,
-+    pub sanitize: bool,
- 
-     /// Whether or not to produce no output when input is empty
-     pub quiet_empty: bool,
-```
-
-**File**: `src/preprocessor.rs` (modified, +0/-3)
-```diff
-@@ -307,9 +307,6 @@ pub fn strip_overstrike(line: &str, first_backspace: usize) -> String {
+@@ -731,6 +731,45 @@ fn piped_output_with_line_numbers_with_header_grid_style_flag() {
+         .stdout("hello\nworld\n");
  }
  
- /// Specify when to strip ANSI escape sequences from the input.
--///
--/// Used for both the `--strip-ansi` and the `--sanitize` option, the latter
--/// implying the former with the same value.
- #[derive(Debug, PartialEq, Clone, Copy, Default)]
- pub enum StripAnsiMode {
-     /// Keep escape sequences in the output
-```
-
-**File**: `src/pretty_printer.rs` (modified, +3/-3)
-```diff
-@@ -192,11 +192,11 @@ impl<'a> PrettyPrinter<'a> {
-         self
-     }
- 
--    /// Whether to sanitize untrusted input for safe display (default: never)
-+    /// Whether to sanitize untrusted input for safe display (default: false)
-     ///
-     /// Substitutes control bytes and bidi / zero-width codepoints with U+FFFD. Overrides `strip_ansi`.
--    pub fn sanitize(&mut self, mode: StripAnsiMode) -> &mut Self {
--        self.config.sanitize = mode;
-+    pub fn sanitize(&mut self, yes: bool) -> &mut Self {
-+        self.config.sanitize = yes;
-         self
-     }
- 
-```
-
----
-
-### Incident Patch 2: `25d43020` (2026-11-22)
-**Commit Message**: Merge branch 'master' into sanitize-modes
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -11,6 +11,7 @@
- - Update Cargo dependencies to resolve current RustSec advisories, see #3861 (@TyceHerrman)
- - Add instructions for removing fish help abbreviations to README, see #3655 (@claw-explorer). Closes #3536
- - Add .NET slnx extension, see #3682 (@ltrzesniewski)
-+- Remove `BAT_WIDTH`, `BAT_PAGING`, `BAT_THEME_DARK` and `BAT_THEME_LIGHT` from the test environment, so exporting them no longer breaks `cargo test`, see #4137 (@divya0795)
- 
- ## Features
- 
-@@ -94,6 +95,7 @@
- - Fix zsh tab completion offering invalid `-l` arguments (file globs, paths, hidden filenames) sourced from the second column of `--list-languages`. Closes #3735, see #3737 (@truffle-dev)
- - Fix `usize` underflow in `--list-languages` when `--terminal-width` is smaller than the longest language name, see #3812 (@greymoth-jp)
- - `--sanitize=always` now also sanitizes piped output. `--sanitize=auto` now sanitizes every file type, but only when the output is a terminal, see #4141 (@curious-rabbit)
-+- Show changes in `--diff` mode and the change-marker column in Git repositories that use the SHA-256 object format (`git init --object-format=sha256`), see #4143 (@BlueX888)
- 
- ## Other
- - Use git version of cross. See #3533 (@OctopusET)
-```
-
-**File**: `Cargo.lock` (modified, +64/-0)
-```diff
-@@ -215,6 +215,15 @@ version = "2.13.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
- 
-+[[package]]
-+name = "block-buffer"
-+version = "0.12.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d2f6c7dbe95a6ed67ad9f18e57daf93a2f034c524b99fd2b76d18fdfeb6660aa"
-+dependencies = [
-+ "hybrid-array",
-+]
++#[test]
++fn piped_output_with_color_always_and_auto_decorations_is_plain() {
++    // `--decorations=auto` must not enable decorations when stdout is not a terminal,
++    // even if `--color=always` forces colorized output.
++    bat()
++        .arg("multiline.txt")
++        .arg("--color=always")
++        .arg("--decorations=auto")
++        .assert()
++        .success()
++        .stdout(predicate::str::contains("\u{1b}["))
++        .stdout(predicate::str::contains("File:").not())
++        .stdout(predicate::str::contains("\u{2502}").not());
++}
 +
- [[package]]
- name = "bstr"
- version = "1.12.1"
-@@ -372,6 +381,15 @@ version = "0.8.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
- 
-+[[package]]
-+name = "cpufeatures"
-+version = "0.3.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566"
-+dependencies = [
-+ "libc",
-+]
++#[test]
++fn piped_output_with_color_always_ignores_style_decorations_when_auto() {
++    bat()
++        .arg("multiline.txt")
++        .arg("--color=always")
++        .arg("--decorations=auto")
++        .arg("--style=full")
++        .assert()
++        .success()
++        .stdout(predicate::str::contains("File:").not())
++        .stdout(predicate::str::contains("\u{2502}").not());
++}
 +
- [[package]]
- name = "crc32fast"
- version = "1.5.2"
-@@ -442,6 +460,15 @@ dependencies = [
-  "winapi",
- ]
- 
-+[[package]]
-+name = "crypto-common"
-+version = "0.2.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453"
-+dependencies = [
-+ "hybrid-array",
-+]
++#[test]
++fn piped_output_with_color_always_and_always_decorations_keeps_decorations() {
++    bat()
++        .arg("multiline.txt")
++        .arg("--color=always")
++        .arg("--decorations=always")
++        .assert()
++        .success()
++        .stdout(predicate::str::contains("File:"));
++}
 +
- [[package]]
- name = "darling"
- version = "0.23.0"
-@@ -581,6 +608,16 @@ version = "0.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "6184e33543162437515c2e2b48714794e37845ec9851711914eec9d308f6ebe8"
- 
-+[[package]]
-+name = "digest"
-+version = "0.11.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2"
-+dependencies = [
-+ "block-buffer",
-+ "crypto-common",
-+]
-+
- [[package]]
- name = "dissimilar"
- version = "1.0.11"
-@@ -1078,6 +1115,7 @@ dependencies = [
-  "gix-error",
-  "gix-utils",
-  "sha1dc",
-+ "sha2",
- ]
- 
- [[package]]
-@@ -1651,6 +1689,15 @@ dependencies = [
-  "stable_deref_trait",
- ]
- 
-+[[package]]
-+name = "hybrid-array"
-+version = "0.4.15"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "27f864f10dfb56725ce5ce5472bc52252c8f93a4ab86327122cebf62c5f59a17"
-+dependencies = [
-+ "typenum",
-+]
-+
- [[package]]
- name = "ident_case"
- version = "1.0.1"
-@@ -2339,6 +2386,17 @@ version = "0.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c5b0ebf6537e3e8db8bb7d21ecb6d7399738c953c757945c6b95e46c4e95df7b"
- 
-+[[package]]
-+name = "sha2"
-+version = "0.11.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "47d7069beb7d6ac7b9acd1039986e73443f24234f41074da099d6f994ac9ad19"
-+dependencies = [
-+ "cfg-if",
-+ "cpufeatures",
-+ "digest",
-+]
-+
- [[package]]
- name = "shell-escape"
- version = "0.1.5"
-@@ -2654,6 +2712,12 @@ version = "1.1.1+spec-1.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "756daf9b1013ebe47a8776667b466417e2d4c5679d441c26230efd9ef78692db"
- 
-+[[package]]
-+name = "typenum"
-+version = "1.20.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
-+
- [[package]]
- name = "unicode-bom"
- version = "2.0.3"
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -79,7 +79,7 @@ itertools = "0.14.0"
- version = "0.90"
- optional = true
- default-features = false
--features = ["sha1", "blob-diff"]
-+features = ["sha1", "sha256", "blob-diff"]
- 
- [dependencies.syntect]
- version = "5.3.0"
-```
-
-**File**: `src/diff.rs` (modified, +26/-0)
-```diff
-@@ -149,6 +149,32 @@ mod tests {
-         assert_eq!(get_git_diff(&file), None);
-     }
- 
-+    #[test]
-+    fn diff_is_calculated_in_sha256_repository() {
-+        let dir = tempfile::tempdir().expect("can create temporary directory");
-+        let repo = dir.path();
-+        let init = Command::new("git")
-+            .args(["init", "--object-format=sha256"])
-+            .current_dir(repo)
-+            .output()
-+            .expect("git command can run");
-+        if !init.status.success() {
-+            eprintln!("skipping: git does not support sha256 repositories");
-+            return;
-+        }
-+        git(repo, &["config", "user.email", "test@test.test"]);
-+        git(repo, &["config", "user.name", "Test"]);
-+        let filepath = repo.join("file.txt");
-+        std::fs::write(&filepath, "file\n").expect("can write file");
-+        git(repo, &["add", "file.txt"]);
-+        git(repo, &["commit", "-m", "initial"]);
-+
-+        std::fs::write(&filepath, "file\nline 2 added\n").expect("can write file");
-+
-+        let changes = get_git_diff(&filepath).expect("one change");
-+        assert_eq!(changes.get(&2), Some(&LineChange::Added));
-+    }
-+
-     #[test]
-     fn diff_is_calculated_against_index() {
-         let repo = setup_repo();
-```
-
-**File**: `tests/syntax-tests/create_highlighted_versions.py` (modified, +4/-0)
-```diff
-@@ -48,9 +48,13 @@ def create_highlighted_version(args):
-     env.pop("BAT_CONFIG_PATH", None)
-     env.pop("BAT_OPTS", None)
-     env.pop("BAT_PAGER", None)
-+    env.pop("BAT_PAGING", None)
-     env.pop("BAT_STYLE", None)
-     env.pop("BAT_TABS", None)
-     env.pop("BAT_THEME", None)
-+    env.pop("BAT_THEME_DARK", None)
-+    env.pop("BAT_THEME_LIGHT", None)
-+    env.pop("BAT_WIDTH", None)
-     env.pop("NO_COLOR", None)
-     env.pop("PAGER", None)
-     env["COLORTERM"] = "truecolor"  # make sure to output 24bit colors
-```
-
-**File**: `tests/utils/command.rs` (modified, +4/-0)
-```diff
-@@ -11,9 +11,13 @@ pub fn bat_raw_command_with_config() -> Command {
-     cmd.env_remove("BAT_CONFIG_PATH");
-     cmd.env_remove("BAT_OPTS");
-     cmd.env_remove("BAT_PAGER");
-+    cmd.env_remove("BAT_PAGING");
-     cmd.env_remove("BAT_STYLE");
-     cmd.env_remove("BAT_TABS");
-     cmd.env_remove("BAT_THEME");
-+    cmd.env_remove("BAT_THEME_DARK");
-+    cmd.env_remove("BAT_THEME_LIGHT");
-+    cmd.env_remove("BAT_WIDTH");
-     cmd.env_remove("COLORTERM");
-     cmd.env_remove("NO_COLOR");
-     cmd.env_remove("PAGER");
+ #[test]
+ fn piped_output_with_auto_style() {
+     bat()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4151** (2026-11-26): Do not show style decorations when piped with --decorations=auto (@draarivpatel-ui)
+- **PR #4150** (2026-11-25): Map .clang-tidy to YAML syntax highlighting (@yusufemreboyraz)
 - **PR #4143** (2026-11-21): fix: support SHA-256 git repositories in --diff (@BlueX888)
 - **PR #4141** (2026-11-22): fix sanitize config options (@curious-rabbit)
 - **PR #4137** (2026-11-20): Remove BAT_WIDTH, BAT_PAGING and BAT_THEME_DARK/LIGHT in test harnesses (@divya0795)
 - **PR #4132** (2026-11-16): cargo upgrade -i -p gix (@keith-hall)
-- **PR #4131** (2026-11-15): Auto-build the cache when custom themes or syntaxes are in subfolders (@NotAFlightRisk)
-- **PR #4130** (2026-11-15): fix: keep automatic cache build progress off stdout (@intertermux-code)
 
 ---
 
@@ -1034,7 +767,7 @@ fix sanitize config options
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4bd5c5b6`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c3fe1436`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1042,7 +775,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `--sanitize=always` now also sanitizes piped output. `--sanitize=auto` now sanitizes every file type, but only when the output is a terminal, see #4141 (@curious-rabbit)
+- Only show style decorations with `--decorations=auto` when stdout is interactive, so piped `--color=always` output no longer includes the header, grid, or line numbers, see #4151 (@draarivpatel-ui)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1052,7 +785,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4bd5c5b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c3fe1436` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -13423,3 +13423,7 @@
 | `CYCLE-20261126-5V4A` | `2026-11-26T14:22:13.450Z` | `lingyired/status-trio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10703` | Yes (`7aeebdff...`) |
 | `CYCLE-20261126-621X` | `2026-11-26T14:22:22.437Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md` | Yes (`45be5df8...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T14:22:56.885Z` | `tursodatabase-limbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-15A70146` [Domain D] | Yes (`f37e127b...`) |
+| `CYCLE-20261126-KH42` | `2026-11-26T14:33:35.138Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`646a3611...`) |
+| `CYCLE-20261126-KL0R` | `2026-11-26T14:33:40.203Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`3f9306a1...`) |
+| `CYCLE-20261126-KNXV` | `2026-11-26T14:33:43.987Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10704` | Yes (`fa4cf232...`) |
+| `CYCLE-20261126-KRV5` | `2026-11-26T14:33:49.073Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10705` | Yes (`4a6c6b85...`) |

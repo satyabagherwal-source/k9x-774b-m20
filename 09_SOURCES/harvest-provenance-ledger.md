@@ -13456,3 +13456,7 @@ Every entry in this ledger must capture:
 | `learn-github-lingyired-status-trio` | `https://github.com/lingyired/status-trio` | `3d68fcd8` | Multi-dimensional audit evidence | 2026-11-26T14:22:13.455Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `519c09cd` | Multi-dimensional audit evidence | 2026-11-26T14:22:22.442Z |
 | `learn-dom-d-15a70146` | `project://tursodatabase-limbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md` | 2026-11-26T14:22:56.885Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-26T14:33:35.144Z |
+| `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `c3fe1436` | Multi-dimensional audit evidence | 2026-11-26T14:33:40.209Z |
+| `learn-github-jithin-sabu-purge-app` | `https://github.com/jithin-sabu/purge-app` | `1a3e8d35` | Multi-dimensional audit evidence | 2026-11-26T14:33:43.992Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `ce0c9eba` | Multi-dimensional audit evidence | 2026-11-26T14:33:49.079Z |

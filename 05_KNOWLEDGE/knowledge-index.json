@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T14:22:57.482Z",
+  "last_updated": "2026-11-26T14:33:55.755Z",
   "total_verified_learnings": 9129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25973,
+  "total_items": 25977,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113914,9 +113914,9 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/Ming-Image-0.1-Design Core Invariants",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "6eed78375da4fc14026ca54467435b2a4d67bc78a5214c412c2a3b3bb5958e4a",
+      "content_hash": "e82cc396df484e5cc5ec1d38e95fc4fe16584bd80639144c3469e37ddb8d33ca",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T21:40:49.094Z"
+      "persisted_at": "2026-11-26T14:33:35.485Z"
     },
     "candidate_directive-fix-fix-what-the-local-stores-campaign-found-in-maildir-and-mbox": {
       "item_id": "candidate_directive-fix-fix-what-the-local-stores-campaign-found-in-maildir-and-mbox",
@@ -114022,9 +114022,9 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-ming-image-0.1-design-learnings Core Invariants",
       "repository": "hf-inclusionai-ming-image-0.1-design-learnings",
       "source_version": "HEAD",
-      "content_hash": "3e41b90ef3dcb58f67fd14da9912726c9003c44317e17dd9e979d42cb8dab88c",
+      "content_hash": "75d79e7265f3f6f62b5a491d58cb66339fdb8327d16432cda283cd2daa4ade27",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T21:41:06.445Z"
+      "persisted_at": "2026-11-26T14:33:54.539Z"
     },
     "candidate_directive-record-the-board-signature-after-autoroute-import_ses-and-refill_zones": {
       "item_id": "candidate_directive-record-the-board-signature-after-autoroute-import_ses-and-refill_zones",
@@ -220941,13 +220941,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FAFI-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KV73-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "smallstep-cli-learnings",
+      "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d928d57b0d9ac59dd1536056d3620166368d36af1868bf4990fa301d3abda57",
+      "content_hash": "7d589cf9bf1b471e95522d46757b2241a4b080865b6308f85680b7b03ec66bbc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T01:53:43.569Z"
+      "persisted_at": "2026-11-26T14:33:53.392Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -230402,8 +230402,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "bf2f2dc1",
-      "content_hash": "570c1b46bd3e19057b0ec30e136a969eb167bef8bb29b76c836850670ee52c97",
+      "source_version": "ce0c9eba",
+      "content_hash": "4a6c6b8566e61d02576f3b8aff5b3762af16098999d30872bdaa3d624a376b50",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -230456,6 +230456,11 @@
           "number": 10539,
           "title": "Answer Flux dependsOn in Related Resources, not only on the Topology screen",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10705,
+          "title": "Build with Go 1.27 and keep JSON responses as fast as on Go 1.26",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230463,7 +230468,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T14:23:55.256Z",
+      "verified_at": "2026-11-26T14:33:48.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230505,10 +230510,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "repository": "skyhook-io/radar",
-      "source_version": "bf2f2dc1",
-      "content_hash": "a4f89e9bef4e8ff2202158061bfd53c2839e3b28c0269674556bbde89389d188",
+      "source_version": "ce0c9eba",
+      "content_hash": "79d823008a9cb2f1c67b68b91ef5938bc165b6c1ce851e25b02612c55c059386",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:23:56.009Z"
+      "persisted_at": "2026-11-26T14:33:49.700Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar",
@@ -230517,10 +230522,10 @@
       "relative_path": "08_VERIFICATION/skyhook-io-radar-verification-protocol-empirical-defect-shield-for-skyhook-io-ra.md",
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io/radar",
       "repository": "skyhook-io/radar",
-      "source_version": "bf2f2dc1",
-      "content_hash": "243a7eafd5e0d884199f994be40decb3a94d940312937a6d4dfafde283525dfc",
+      "source_version": "ce0c9eba",
+      "content_hash": "097c4e19dc38b91a9d0345e94ffb8ec5e9b92034d8ba2ad88fbe4b49510f82c0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:23:56.205Z"
+      "persisted_at": "2026-11-26T14:33:49.974Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
@@ -234141,8 +234146,8 @@
       "slug": "jithin-sabu-purge-app",
       "platform": "github",
       "source_url": "https://github.com/jithin-sabu/purge-app",
-      "source_version": "7f2412e2",
-      "content_hash": "abd9e17ece6586f6b5420f76a45fa9ca68538180a42291eb9d61ea47210ff369",
+      "source_version": "1a3e8d35",
+      "content_hash": "fa4cf232c4d5209c8946f6d2d9c096d6547400c00f9f874cb3dc2acc8e67f3ff",
       "dossier_path": "07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
       "promoted_rules": [
@@ -234165,6 +234170,11 @@
           "number": 10197,
           "title": "keep the Dock icon hidden when macOS opens a running Purge",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10704,
+          "title": "guide every trip to System Settings with one redesigned panel",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234172,7 +234182,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T04:20:22.918Z",
+      "verified_at": "2026-11-26T14:33:43.635Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234226,10 +234236,10 @@
       "relative_path": "08_VERIFICATION/jithin-sabu-purge-app-verification-protocol-empirical-defect-shield-for-jithin-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for jithin-sabu/purge-app",
       "repository": "jithin-sabu/purge-app",
-      "source_version": "7f2412e2",
-      "content_hash": "e8ca71737a1edaf2c35797382fa02db8d18007681491fdb3cae6a93dc2df2b2e",
+      "source_version": "1a3e8d35",
+      "content_hash": "3112d9f4b92385d4aba488c63dc528005c289d5900cd371703cd378d1ee355e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:20:23.758Z"
+      "persisted_at": "2026-11-26T14:33:44.912Z"
     },
     "learn-github-arangodb-arangodb": {
       "learning_id": "learn-github-arangodb-arangodb",
@@ -234384,9 +234394,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for jithin-sabu-purge-app-learnings",
       "repository": "jithin-sabu-purge-app-learnings",
       "source_version": "HEAD",
-      "content_hash": "e5a53f3f55003d6a96d134c7eec8c1c4410085cf1e117dabbfaa506d5a8610df",
+      "content_hash": "d88560297c15723faff865daf1d34d6fc76a069acf788508cd0de0c68472d55f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:20:38.707Z"
+      "persisted_at": "2026-11-26T14:33:55.755Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-large-en-v1-5-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-large-en-v1-5-learnings-core-invaria",
@@ -241746,14 +241756,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8545,
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_url": "https://github.com/smallstep/cli",
-      "source_version": "40c1f2bb",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "c3fe1436",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-26T01:53:35.530Z"
+      "verified_at": "2026-11-26T14:33:39.850Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -264904,8 +264914,8 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "4bd5c5b6",
-      "content_hash": "10c19903f59718333631781d16537653dc0c6a11bc267d01657735a3037fa2b9",
+      "source_version": "c3fe1436",
+      "content_hash": "3f9306a148303580e8ef3b203a17a52f128da71042f82f850d8653622e1fff26",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
@@ -264925,7 +264935,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T04:28:46.955Z",
+      "verified_at": "2026-11-26T14:33:39.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264967,10 +264977,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-design-intelligence-sharkdp-bat-core-invariants.md",
       "title": "Design Intelligence: sharkdp/bat Core Invariants",
       "repository": "sharkdp/bat",
-      "source_version": "4bd5c5b6",
-      "content_hash": "56d8fb6de9ecdc3906e2ef1499e88d0b6b73c571726ac1a72ed194fc1d3e496b",
+      "source_version": "c3fe1436",
+      "content_hash": "9c92140f569e66d035fee3e89372d9b713ac1c05618835009a99c41ece4ed4ac",
       "domain_letter": "F",
-      "persisted_at": "2026-11-24T04:28:47.571Z"
+      "persisted_at": "2026-11-26T14:33:40.849Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat",
@@ -264979,10 +264989,10 @@
       "relative_path": "08_VERIFICATION/sharkdp-bat-verification-protocol-empirical-defect-shield-for-sharkdp-bat.md",
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp/bat",
       "repository": "sharkdp/bat",
-      "source_version": "4bd5c5b6",
-      "content_hash": "4788f4beaf3e12d50663c2ec76f33a42943a549605eae240f000c82234c253c0",
+      "source_version": "c3fe1436",
+      "content_hash": "ec1fdfb1376cf99a2ae7479328f3d3cd05de0f801b0af069a96ed63ebb9bc601",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:28:47.741Z"
+      "persisted_at": "2026-11-26T14:33:41.138Z"
     },
     "candidate_directive-release-0-17-0": {
       "item_id": "candidate_directive-release-0-17-0",
@@ -265117,9 +265127,9 @@
       "title": "Design Intelligence: sharkdp-bat-learnings Core Invariants",
       "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8432a8bd4fd7d1124513f84301b234678ca2d153c99f7271eb6fdf2984c95d7",
+      "content_hash": "b8403e47d423c2639678aff165d9a0f02cd1ea094be241e5a5fa0b2e283fca1d",
       "domain_letter": "F",
-      "persisted_at": "2026-11-24T04:28:57.367Z"
+      "persisted_at": "2026-11-26T14:33:53.671Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat-learnings",
@@ -265129,9 +265139,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp-bat-learnings",
       "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "5fe9a6b25539f7766b04e25d198ac9bbdf21a10c5300e1c04b3dc8fd3f940ab0",
+      "content_hash": "7a26626e1ebe3fd1fc4466e0c2c82446622f4f651d0f7dfd9e70e8391b691bda",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:28:57.533Z"
+      "persisted_at": "2026-11-26T14:33:53.945Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",
@@ -288395,7 +288405,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "67f1055c029ea5288f1b46a511fa09b8a9249f1ff56cb5e9e9c30674d65fc397",
+      "content_hash": "646a361117eae719fb9d1c58d8e8983bbb4e68ccd15e5cd5eb6111e7040f2e76",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [],
@@ -288404,7 +288414,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T21:40:48.659Z",
+      "verified_at": "2026-11-26T14:33:34.762Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -335559,10 +335569,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-jithin-sabu-purge-app-content-information-intelligence-jithin-sabu-purge-app-cor.md",
       "title": "Content & Information Intelligence: jithin-sabu/purge-app Core Invariants",
       "repository": "jithin-sabu/purge-app",
-      "source_version": "7f2412e2",
-      "content_hash": "3a60b60a96e83abd36c44194729c522e14dfef1078b290d9dab80dd267ebe1f7",
+      "source_version": "1a3e8d35",
+      "content_hash": "67b42eb150f1278b35bb6beb0e5e329ca9415bb5bbeb99cb5aeecf41519869ea",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T04:20:23.573Z"
+      "persisted_at": "2026-11-26T14:33:44.634Z"
     },
     "rule-10198": {
       "learning_id": "rule-10198",
@@ -335610,9 +335620,9 @@
       "title": "Content & Information Intelligence: jithin-sabu-purge-app-learnings Core Invariants",
       "repository": "jithin-sabu-purge-app-learnings",
       "source_version": "HEAD",
-      "content_hash": "f21d75647729c3e622908627433e54598133fcdc6b46f492c3160916cde1e546",
+      "content_hash": "2e8747cf7d8d4accf556fb7c6332d2989227197bfa79fa1eca40a170b2729349",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T04:20:38.534Z"
+      "persisted_at": "2026-11-26T14:33:55.481Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-ontos-ai-knowhere-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-ontos-ai-knowhere-learnings",
@@ -355949,6 +355959,58 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-26T14:22:13.199Z"
+    },
+    "rule-10704": {
+      "learning_id": "rule-10704",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10704,
+      "title": "guide every trip to System Settings with one redesigned panel",
+      "source_url": "https://github.com/jithin-sabu/purge-app",
+      "source_version": "1a3e8d35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T14:33:43.635Z"
+    },
+    "candidate_directive-guide-every-trip-to-system-settings-with-one-redesigned-panel": {
+      "item_id": "candidate_directive-guide-every-trip-to-system-settings-with-one-redesigned-panel",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KWLA-guide-every-trip-to-system-settings-with-one-redesigned-panel.md",
+      "title": "guide every trip to System Settings with one redesigned panel",
+      "repository": "jithin-sabu-purge-app-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b34aa7d5232744d81d2b69c320f4d7a4dac4c9a239d230feca52aa3d3d4e1a8",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T14:33:55.202Z"
+    },
+    "rule-10705": {
+      "learning_id": "rule-10705",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10705,
+      "title": "Build with Go 1.27 and keep JSON responses as fast as on Go 1.26",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "ce0c9eba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T14:33:48.731Z"
+    },
+    "candidate_directive-build-with-go-1-27-and-keep-json-responses-as-fast-as-on-go-1-26": {
+      "item_id": "candidate_directive-build-with-go-1-27-and-keep-json-responses-as-fast-as-on-go-1-26",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KS4W-build-with-go-1-27-and-keep-json-responses-as-fast-as-on-go-1-26.md",
+      "title": "Build with Go 1.27 and keep JSON responses as fast as on Go 1.26",
+      "repository": "skyhook-io/radar",
+      "source_version": "ce0c9eba",
+      "content_hash": "b38a35d97b2a2c5b54a097535a94e24e78b8de96bdf82c270df87e3bed3debee",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T14:33:49.428Z"
     }
   },
   "ai-builder-brain": {

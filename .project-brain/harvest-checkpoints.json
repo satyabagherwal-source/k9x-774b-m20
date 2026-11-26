@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T14:22:22.459Z",
+  "last_updated": "2026-11-26T14:33:49.108Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -620,14 +620,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "67f1055c029ea5288f1b46a511fa09b8a9249f1ff56cb5e9e9c30674d65fc397",
-      "verified_at": "2026-11-22T21:40:48.906Z",
+      "content_hash": "646a361117eae719fb9d1c58d8e8983bbb4e68ccd15e5cd5eb6111e7040f2e76",
+      "verified_at": "2026-11-26T14:33:35.166Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:40:48.906Z"
+      "last_updated": "2026-11-26T14:33:35.166Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -3861,14 +3861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-bat",
-      "content_hash": "10c19903f59718333631781d16537653dc0c6a11bc267d01657735a3037fa2b9",
-      "verified_at": "2026-11-24T04:28:47.189Z",
+      "content_hash": "3f9306a148303580e8ef3b203a17a52f128da71042f82f850d8653622e1fff26",
+      "verified_at": "2026-11-26T14:33:40.241Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T04:28:47.189Z"
+      "last_updated": "2026-11-26T14:33:40.241Z"
     },
     "karakeep-app/karakeep": {
       "repository": "karakeep-app/karakeep",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "570c1b46bd3e19057b0ec30e136a969eb167bef8bb29b76c836850670ee52c97",
-      "verified_at": "2026-11-25T14:23:55.528Z",
+      "content_hash": "4a6c6b8566e61d02576f3b8aff5b3762af16098999d30872bdaa3d624a376b50",
+      "verified_at": "2026-11-26T14:33:49.107Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T14:23:55.528Z"
+      "last_updated": "2026-11-26T14:33:49.107Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -18936,14 +18936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jithin-sabu-purge-app",
-      "content_hash": "abd9e17ece6586f6b5420f76a45fa9ca68538180a42291eb9d61ea47210ff369",
-      "verified_at": "2026-11-24T04:20:23.153Z",
+      "content_hash": "fa4cf232c4d5209c8946f6d2d9c096d6547400c00f9f874cb3dc2acc8e67f3ff",
+      "verified_at": "2026-11-26T14:33:44.021Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T04:20:23.153Z"
+      "last_updated": "2026-11-26T14:33:44.021Z"
     },
     "autotrust/AutoTrust-Decider-Pro-Vision-27B": {
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",

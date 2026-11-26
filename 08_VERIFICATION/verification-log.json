@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-12UL",
-    "timestamp": "2026-11-25T01:27:00.525Z",
-    "repository": "crossplane/crossplane",
-    "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "dd5fc6ff2143012d2f63bd10a341bce19512e7e9f1847c12838c0a16b2beddaf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-CLL8",
-    "timestamp": "2026-11-25T01:35:58.028Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "6557dbe6d31decd6ad8b1c24133b9b5c9fd0104401cadf824fc0741ac4decb35",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-CS8A",
-    "timestamp": "2026-11-25T01:36:06.634Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "ab3671ed76678412d743aceeb06a459c93d56812b948a4e5913e9711b35d302f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-NCE5",
-    "timestamp": "2026-11-25T01:44:19.325Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "16eb885d8711eb4ea9157b34f9f1c087862d6c42069cad8e09df08f9b07b4b17",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-ND9R",
     "timestamp": "2026-11-25T01:44:20.463Z",
     "repository": "avajs/ava",
@@ -7492,6 +7432,66 @@
     "contentHash": "45be5df87da36fb967cf80e5207389fe86692ed66aa89abd7d5837d1d5fb3a19",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-KH42",
+    "timestamp": "2026-11-26T14:33:35.138Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "646a361117eae719fb9d1c58d8e8983bbb4e68ccd15e5cd5eb6111e7040f2e76",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-KL0R",
+    "timestamp": "2026-11-26T14:33:40.203Z",
+    "repository": "sharkdp/bat",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "3f9306a148303580e8ef3b203a17a52f128da71042f82f850d8653622e1fff26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-KNXV",
+    "timestamp": "2026-11-26T14:33:43.987Z",
+    "repository": "jithin-sabu/purge-app",
+    "learningId": "learn-github-jithin-sabu-purge-app",
+    "contentHash": "fa4cf232c4d5209c8946f6d2d9c096d6547400c00f9f874cb3dc2acc8e67f3ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-KRV5",
+    "timestamp": "2026-11-26T14:33:49.073Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "4a6c6b8566e61d02576f3b8aff5b3762af16098999d30872bdaa3d624a376b50",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
