@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:26:22.489Z",
-  "total_cycles_completed": 12502,
-  "total_learnings_persisted": 12502,
-  "total_rules_promoted": 11457,
+  "last_updated": "2026-11-26T00:34:58.217Z",
+  "total_cycles_completed": 12505,
+  "total_learnings_persisted": 12505,
+  "total_rules_promoted": 11459,
   "history": [
-    {
-      "timestamp": "2026-11-25T05:45:34.551Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T05:54:33.494Z",
-      "repository": "reflection/Beam-1.0-501B-A23B",
-      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T05:54:35.115Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T05:54:42.831Z",
       "repository": "k3s-io/k3s",
@@ -1403,6 +1382,27 @@
       "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
       "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:34:44.983Z",
+      "repository": "microsoft/Florence-2-base",
+      "learningId": "learn-huggingface-microsoft-florence-2-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:34:46.693Z",
+      "repository": "indexable-inc/blaze",
+      "learningId": "learn-github-indexable-inc-blaze",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:34:58.217Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

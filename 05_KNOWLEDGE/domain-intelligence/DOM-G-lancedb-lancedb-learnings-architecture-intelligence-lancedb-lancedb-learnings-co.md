@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T00:48:36.699Z",
+  "timestamp": "2026-11-26T00:35:03.150Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lancedb-lancedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lancedb-lancedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T00:48:36.699Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T00:35:03.150Z`  
 > **Learning ID**: `LEARN-EVO-lancedb-lancedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lancedb-lancedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `f38d42e9`  
+> **Source Version**: `7c3d68e9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T00:48:32.023Z  
+> **Timestamp**: 2026-11-26T00:34:57.111Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T00:48:32.018Z  
+> **Harvest Timestamp**: 2026-11-26T00:34:57.106Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11968 stars
+- **Stars / Engagement**: 11986 stars
 
 ---
 
@@ -591,6 +591,8 @@ def retry_with_exponential_backoff(
     jitter: bool = True,
     max_retries: int = 7,
     max_delay: float = 60,
+    *,
+    do_not_retry: Callable[[Exception], bool] | None = None,
 ):
     """Retry a function with exponential backoff.
 
@@ -614,6 +616,7 @@ def retry_with_exponential_backoff(
         max_retries (int): Maximum number of retries (default is 7).
         max_delay (float): Maximum delay between two attempts, in seconds
             (default is 60).
+        do_not_retry: Optional predicate for additional permanent failures.
 
     Returns:
         function: The decorated function.
@@ -635,7 +638,9 @@ def retry_with_exponential_backoff(
             except Exception as e:  # noqa: PERF203
                 # Don't retry permanent failures (e.g., OpenAI 401 or 404). They
                 # won't be fixed by retrying and would only delay the real error.
-                if _is_non_retryable_error(e):
+                if _is_non_retryable_error(e) or (
+                    do_not_retry is not None and do_not_retry(e)
+                ):
                     raise
 
                 num_retries += 1
@@ -671,15 +676,7 @@ _RETRYABLE_AWS_ERROR_CODES = (
     "TooManyRequests",
     "RequestLimitExceeded",
     "ProvisionedThroughputExceeded",
-    "ModelNotReady",
-    "ModelTimeout",
-)
 
-
-def _get_http_status(error: Exception):
-    """Best-effort extraction of an HTTP status code from an exception.
-
-    Provider SDKs expose it in different ways: ``status_code`` (openai, co
 ```
 
 ### Core Architecture Module: `python/python/lancedb/namespace_utils.py`
@@ -1294,11 +1291,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5160** (2026-11-22): **fix: reject blob request concurrency above semaphore limit**
-  *Symptoms*: ## Summary  A `blob_request_concurrency` value above tokio's `Semaphore::MAX_PERMITS` reached `Semaphore::new` and panicked, aborting the process instead of reporting a configuration error. The value can come from explicit client configuration or `LANCE_CLIENT_BLOB_REQUEST_CONCURRENCY`, with a default of 8.  Resolve the value with the existing precedence, preserve the existing zero and parse errors, and return `Error::InvalidInput` for values above `Semaphore::MAX_PERMITS`. The supported range is documented on `ClientConfig::blob_request_concurrency`.  ## Tests  Added a focused resolver test covering the maximum accepted value and one above it. The test passes an explicit value and does not mutate environment variables.
+- **Issue #5216** (2026-11-25): **fix(remote): preserve blob snapshot identity across credential refresh**
+  *Symptoms*: ## What  Fix the refresh path for direct Blob handles opened from a SQL `blob_descriptor`.  `open_blob_file` acquired the resolver's immutable snapshot identity, but the `PresignedBlobRangeRequester` used `blob_locations_context_for_source`, which only copied the table handle's `expected_query_snapshot`. For an ordinary table handle that is `None`, so a provider credential expiry and refresh could establish a different identity at the same numeric version. The refreshed handle could then accept replacement-table bytes.  The refresh context now carries the identity acquired by the first resolver response, matching the whole-read, range-read and `fetch_blob_files` paths.  ## Coverage  Adds five focused tests through the normal `open_blob_file` entrypoint:  - proactive refresh inside the 30s expiry skew before any object GET; - provider credentials expiring earlier than the advertised URL TTL (far-future `expires_at`, object store returns 403); - single-shot re-resolution: a second 403 after refresh fails without a third resolver call; - renewal with a different snapshot identity is rejected before accepting bytes; - renewal resolver `403` propagates as an auth failure.  Existing `direct_blob_file_refreshes_expired_url_once` covered only reactive refresh with no advertised expiry.  ## Signer contract  The SDK treats object-store `401`/`403` as expiry and refreshes once. If the resolver signs the refreshed URL with still-expired provider credentials, the second object GET fails a
 
-- **Issue #5158** (2026-11-22): **fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592**
-  *Symptoms*: Updates the lockfile from `url` 2.5.8 to 2.5.9, the first release patched for RUSTSEC-2026-0592, and from `form_urlencoded` 1.2.2 to 1.2.3, which `url` 2.5.9 requires (`^1.2.3`).  `main` also locks `url` 2.5.8. The advisory is the cargo-deny failure currently blocking #5157, whose Lance beta.26 bump leaves the same lockfile entry in place.  No dependency requirement or advisory ignore changes: `url = "2"` already permits 2.5.9. `url` 2.5.9 declares MSRV 1.63 and `form_urlencoded` 1.2.3 declares 1.51, both below the workspace's 1.95.0.  Validation: - `cargo metadata --locked` - `cargo tree -i url@2.5.9 --locked` - `git diff --check`
+- **Issue #5195** (2026-11-24): **fix(python): skip OpenAI embedding requests when no valid text remains**
+  *Symptoms*: ## Summary  Follows up on #4005, which handled mixed batches in `OpenAIEmbeddings.generate_embeddings`. On `main`, when the input batch is empty (`[]`) or filtering leaves no valid texts (such as `[None, ""]`), `generate_embeddings` still imports the `openai` SDK and calls `embeddings.create(input=[], ...)`.  - Return `[None] * len(texts)` early in `python/python/lancedb/embeddings/openai.py` when no valid texts remain (`[]` for empty input, one `None` per item when all inputs are filtered), before importing the `openai` SDK or sending a request. - Add regression tests in `python/python/tests/test_embeddings.py` covering empty batches, all-filtered batches, and native-backed `table.add(..., on_bad_vectors="null")` verifying rows are kept with null vectors and no OpenAI request is made.  ## Attribution  Successor to #3152. The early return and nullable ingestion test were originally contributed by @saudademjj in #3152.  ## Verification  - 3 new regression tests failed before the fix (observing `embeddings.create(input=[], ...)`) and passed after. - Related embedding test suite: `148 passed, 1 skipped, 9 deselected` (mocked client only; no live OpenAI API calls). - Ruff check and format checks are clean for the changed `python/` tree (scoped to `python/` only).  Co-authored-by: saudademjj <128795969+saudademjj@users.noreply.github.com> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1315,146 +1312,158 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b63cec40` (2026-11-22)
-**Commit Message**: fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592 (#5158)
+### Incident Patch 1: `3d558adc` (2026-11-25)
+**Commit Message**: fix(remote): preserve blob snapshot identity across credential refresh (#5216)
 
-Updates the lockfile from `url` 2.5.8 to 2.5.9, the first release
-patched for RUSTSEC-2026-0592, and from `form_urlencoded` 1.2.2 to
-1.2.3, which `url` 2.5.9 requires (`^1.2.3`).
+## What
 
-`main` also locks `url` 2.5.8. The advisory is the cargo-deny failure
-currently blocking #5157, whose Lance beta.26 bump leaves the same
-lockfile entry in place.
+Fix the refresh path for direct Blob handles opened from a SQL
+`blob_descriptor`.
 
-No dependency requirement or advisory ignore changes: `url = "2"`
-already permits 2.5.9. `url` 2.5.9 declares MSRV 1.63 and
-`form_urlencoded` 1.2.3 declares 1.51, both below the workspace's
-1.95.0.
+`open_blob_file` acquired the resolver's immutable snapshot identity,
+but the `PresignedBlobRangeRequester` used
+`blob_locations_context_for_source`, which only copied the table
+handle's `expected_query_snapshot`. For an ordinary table handle that is
+`None`, so a provider credential expiry and refresh could establish a
+different identity at the same numeric version. The refreshed handle
+could then accept replacement-table bytes.
 
-Validation:
-- `cargo metadata --locked`
-- `cargo tree -i url@2.5.9 --locked`
-- `git diff --check`
+The refresh context now carries the identity acquired by the first
+resolver response, matching the whole-read, range-read and
+`fetch_blob_files` paths.
 
-**File**: `Cargo.lock` (modified, +4/-4)
+## Coverage
+
+Adds five focused tests through the normal `open_blob_file` entrypoint:
+
+- proactive refresh inside the 30s expiry skew before any object GET;
+- provider credentials expiring earlier than the advertised URL TTL
+(far-future `expires_at`, object store returns 403);
+- single-shot re-resolution: a second 403 after refresh fails without a
+third resolver call;
+- renewal with a different snapshot identity is rejected before
+accepti
+
+**File**: `rust/lancedb/src/remote/table/blobs.rs` (modified, +215/-2)
 ```diff
-@@ -3737,9 +3737,9 @@ checksum = "ee1b05cbd864bcaecbd3455d6d967862d446e4ebfc3c2e5e5b9841e53cba6673"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -11788,9 +11788,9 @@ dependencies = [
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
-```
-
----
-
-### Incident Patch 2: `59615eaf` (2026-11-22)
-**Commit Message**: fix: reject blob request concurrency above semaphore limit (#5160)
-
-## Summary
-
-A `blob_request_concurrency` value above tokio's
-`Semaphore::MAX_PERMITS` reached `Semaphore::new` and panicked, aborting
-the process instead of reporting a configuration error. The value can
-come from explicit client configuration or
-`LANCE_CLIENT_BLOB_REQUEST_CONCURRENCY`, with a default of 8.
-
-Resolve the value with the existing precedence, preserve the existing
-zero and parse errors, and return `Error::InvalidInput` for values above
-`Semaphore::MAX_PERMITS`. The supported range is documented on
-`ClientConfig::blob_request_concurrency`.
-
-## Tests
-
-Added a focused resolver test covering the maximum accepted value and
-one above it. The test passes an explicit value and does not mutate
-environment variables.
-
-**File**: `rust/lancedb/src/remote/client.rs` (modified, +34/-1)
-```diff
-@@ -87,7 +87,9 @@ pub struct ClientConfig {
-     /// Maximum concurrent blob HTTP requests for this connection, shared by all
-     /// tables and blob handles. Defaults to 8. The environment variable
-     /// `LANCE_CLIENT_BLOB_REQUEST_CONCURRENCY` can also set this limit.
--    /// The value must be greater than zero.
-+    /// The value must be between 1 and [`Semaphore::MAX_PERMITS`], inclusive.
-+    /// Values outside that range are rejected with [`Error::InvalidInput`] when
-+    /// the connection is created.
-     pub blob_request_concurrency: Option<usize>,
-     /// User agent to use for requests. The default provides the library
-     /// name and version.
-@@ -648,6 +650,14 @@ impl RestfulLanceDbClient<Sender> {
-                 message: "blob request concurrency must be greater than zero".into(),
-             });
+@@ -798,9 +798,10 @@ impl<S: HttpSend> BlobLocationsContext<S> {
+             }
          }
-+        if value > Semaphore::MAX_PERMITS {
-+            return Err(Error::InvalidInput {
-+                message: format!(
-+                    "blob request concurrency must be at most {}, got {value}",
-+                    Semaphore::MAX_PERMITS
-+                ),
-+            });
-+        }
-         Ok(value)
-     }
- 
-@@ -1505,6 +1515,29 @@ mod tests {
+         log::debug!(
+-            "blob_locations resolved rows={} version={} elapsed_ms={:.3}",
++            "blob_locations resolved rows={} version={} identity={} elapsed_ms={:.3}",
+             row_ids.len(),
+             version,
++            identity.as_deref().unwrap_or(""),
+             started.elapsed().as_secs_f64() * 1000.0
          );
+         Ok(ResolvedBlobLocations {
+@@ -1096,13 +1097,18 @@ impl<S: HttpSend> BlobRangeRequester for PresignedBlobRangeRequester<S> {
+                         expires <= now.saturating_add(BLOB_PRESIGN_REFRESH_SKEW.as_secs())
+                     }) && !refreshed
+                     {
++                        log::debug!(
++                            "blob_direct refresh row={} reason=proactive expires_at={expires:?}",
++                            self.row_id
++                        );
+                         self.refresh().await?;
+                         refreshed = true;
+                         continue;
+                     }
+                     match self.direct_read(&url, base_offset, range.clone()).await {
+                         Ok(response) => return Ok(response),
+                         Err(PresignedReadError::Expired) if !refreshed => {
++                            log::debug!("blob_direct refresh row={} reason=reactive", self.row_id);
+                             self.refresh().await?;
+                             refreshed = true;
+                         }
+@@ -2564,8 +2570,19 @@ impl<S: HttpSend> RemoteTable<S> {
+                                 resolved.sources.len()
+                             ),
+                         })?;
++                let refresh_context = self.blob_locations_context(
++                    &source.column,
++                    Some(source.version),
++                    source.branch.clone(),
++                    Some(source),
++                    resolved
++                        .identity
++                        .clone()
++                        .or_else(|| self.expected_query_snapshot.clone()),
++                    None,
++                );
+                 Arc::new(PresignedBlobRangeRequester::new(
+-                    self.blob_locations_context_for_source(source),
++                    refresh_context,
+                     source.row_reference,
+                     size,
+                     self.client.blob_presign_threshold_bytes,
+@@ -6288,4 +6305,200 @@ mod tests {
+         let file = files.pop().unwrap().unwrap();
+         assert_eq!(file.read_range(0..1).await.unwrap().as_ref(), b"A");
      }
- 
-+    /// A semaphore cannot hold more than `MAX_PERMITS`, so a larger configured
-+    /// value is refused where it was set instead of panicking when the
-+    /// connection is created.
-+    #[test]
-+    fn test_blob_request_concurrency_must_fit_a_semaphore() {
-+        let error = RestfulLanceDbClient::<Sender>::resolve_blob_request_concurrency(Some(
-+            super::Semaphore::MAX_PERMITS + 1,
-+        ))
-+        .expect_err("a concurrency above the semaphore limit must be refused");
-+        assert!(matches!(error, Error::InvalidInput { .. }));
-+        assert!(
-+            error.to_string().contains("blob request concurrency"),
-+            "{error}"
-+        );
-+        assert_eq!(
-+            RestfulLanceDbClient::<Sender>::resolve_blob_request_concurrency(Some(
-+                super::Semaphore::MAX_PERMITS
-+            ))
-+            .unwrap(),
-+            super::Semaphore::MAX_PERMITS
-+        );
++
++    struct RefreshHarness {
++        table: RemoteTable<crate::remote::client::test_utils::MockSender>,
++        resolves: Arc<AtomicUsize>,
++        objects: Arc<AtomicUsize>,
 +    }
 +
-     use super::*;
-     use serial_test::serial;
-     use std::time::Duration;
++    fn refresh_harness(
++        first_expires: Option<u64>,
++        second_expires: Option<u64>,
++        second_identity: &'static str,
++        second_location_status: Option<StatusCode>,
++        fail_second_object: bool,
++    ) -> RefreshHarness {
++        let resolves = Arc::new(AtomicUsize::new(0));
++        let objects = Arc::new(AtomicUsize::new(0));
++        let captured_resolves = resolves.clone();
++        let captured_objects = objects.clone();
++        let mut table = RemoteTable::new_mock(
++            "my_table".to_string(),
++            move |request| {
++                if request.url().host_str() == Some("objects.example") {
++                    captured_objects.fetch_add(1, Ordering::SeqCst);
++                    let old = request
++                        .url()
++                        .query()
++                        .is_some_and(|query| query.contains("sig=old"));
++                    if old || fail_second_object {
++                        return http::Response::builder()
++                            .status(StatusCode::FORBIDDEN)
++                            .body(Vec::new())
++                            .unwrap();
++                    }
++                    return http::Response::builder()
++                        .status(StatusCode::PARTIAL_CONTENT)
++                        .header(header::CONTENT_RANGE, "bytes 0-0/1")
++                        .body(b"A".to_vec())
++                        .unwrap();
++                }
++                let path = request.url().path();
++                if path == "/v1/table/my_table/blob_locations/" {
++                    let call = captured_resolves.fetch_add(1, Ordering::SeqCst) + 1;
++                    if call == 2
++                        && let Some(status) = second_location_status
++                    {
++                        return http::Response::builder()
++                            .status(status)
++                            .body(Vec::new())
++                            .unwrap();
++                    }
++                    let body: serde_json::Value =
++                        serde_json::from_slice(request.body().unwrap().as_bytes().unwrap())
++                         
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5160** (2026-11-22): fix: reject blob request concurrency above semaphore limit (@Xuanwo)
-- **PR #5159** (2026-11-22): chore: update lance dependency to v15.0.0-beta.27 (@lancedb-robot)
-- **PR #5158** (2026-11-22): fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592 (@Xuanwo)
-- **PR #5157** (2026-11-22): chore: update lance dependency to v15.0.0-beta.26 (@lancedb-robot)
-- **PR #5154** (2026-11-22): feat: report capacity waits in function refresh job status (@BubbleCal)
-- **PR #5153** (2026-11-22): feat: resume a failed Function refresh from its table (@BubbleCal)
+- **PR #5218** (2026-11-25): feat(rust): open a native table at a retained version (@Xuanwo)
+- **PR #5217** (2026-11-25): chore: update lance dependency to v15.1.0-beta.2 (@lancedb-robot)
+- **PR #5216** (2026-11-25): fix(remote): preserve blob snapshot identity across credential refresh (@Xuanwo)
+- **PR #5214** (2026-11-25): feat(cli): package release binaries as lancedb-tools wheels (@ChilePiquin)
+- **PR #5213** (2026-11-25): chore: update lance dependency to v15.1.0-beta.1 (@lancedb-robot)
+- **PR #5210** (2026-11-25): feat(remote): add presigned direct Blob V2 reads (@Xuanwo)
 
 ---
 
@@ -1474,37 +1483,61 @@ environment variables.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update url to 2.5.9 for RUSTSEC-2026-0592
+## X. remote): preserve blob snapshot identity across credential refresh
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/lancedb/src/remote/table/blobs.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b63cec40`: deps): update url to 2.5.9 for RUSTSEC-2026-0592. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d558adc`: remote): preserve blob snapshot identity across credential refresh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/remote/table/blobs.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+            "blob_locations resolved rows={} version={} identity={} elapsed_ms={:.3}",
+            identity.as_deref().unwrap_or(""),
+                        log::debug!(
+                            "blob_direct refresh row={} reason=proactive expires_at={expires:?}",
+                            self.row_id
+                        );
+                            log::debug!("blob_direct refresh row={} reason=reactive", self.row_id);
+                let refresh_context = self.blob_locations_context(
+                    &source.column,
+                    Some(source.version),
+                    source.branch.clone(),
+                    Some(source),
+                    resolved
+                        .identity
+                        .clone()
+                        .or_else(|| self.expected_query_snapshot.clone()),
+                    None,
+                );
+                    refresh_context,
+
+    struct RefreshHarness {
+        table: RemoteTable<crate::remote::client::test_utils::MockSender>,
+        resolves: Arc<AtomicUsize>,
+        objects: Arc<AtomicUsize>,
+    }
+
+    fn refresh_harness(
+        first_expires: Option<u64>,
+        second_expires: Option<u64>,
+        se
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+            "blob_locations resolved rows={} version={} elapsed_ms={:.3}",
+                    self.blob_locations_context_for_source(source),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b63cec40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d558adc` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

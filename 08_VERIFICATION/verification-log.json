@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-O6LC",
-    "timestamp": "2026-11-24T07:33:13.440Z",
-    "repository": "NervJS/taro",
-    "learningId": "learn-github-nervjs-taro",
-    "contentHash": "f1b6ed67b2d821e2382a778f15514b79d93c7585cfc4747d10b45c5a6b6ffe9e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-674K",
-    "timestamp": "2026-11-24T07:47:13.940Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "6ffb1a6248e25858529e1df13ae0440635a5e2c9105b379482697a7f46f6c9b6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-6A36",
-    "timestamp": "2026-11-24T07:47:17.778Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "dc41417a1e31638ce0f42404dc4d3f879ea515e2ed8e97b1049257d963644809",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-6AL3",
     "timestamp": "2026-11-24T07:47:18.423Z",
     "repository": "SeekStorm/SeekStorm",
@@ -7492,6 +7447,51 @@
     "contentHash": "ac9e97bda3f636e3dd4abd52fb3f43122095093ec2e3720f007f3ff463259d39",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LQ3W",
+    "timestamp": "2026-11-26T00:34:44.972Z",
+    "repository": "microsoft/Florence-2-base",
+    "learningId": "learn-huggingface-microsoft-florence-2-base",
+    "contentHash": "2beed75feacc704af399219a77dc3124bb23ee7e679f7a3a28b1ca462b6493e7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LRFE",
+    "timestamp": "2026-11-26T00:34:46.682Z",
+    "repository": "indexable-inc/blaze",
+    "learningId": "learn-github-indexable-inc-blaze",
+    "contentHash": "fbb740c28cf7b7aad0ac2e9d9e3752586a36904e7381f6b427da59e174ca01b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-M0BK",
+    "timestamp": "2026-11-26T00:34:58.208Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "754141eb2afd72133b3bd01835d8698b8dee828aad27a2365c6939a3bfeda731",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

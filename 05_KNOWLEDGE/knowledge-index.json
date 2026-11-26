@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T00:26:36.325Z",
+  "last_updated": "2026-11-26T00:35:03.653Z",
   "total_verified_learnings": 9121,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25566,
+  "total_items": 25572,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217241,8 +217241,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "fc6dfca1",
-      "content_hash": "9f634c724810c92deb7a5f2556aa894df22d5d5c96816c84ddf0fd161be8d782",
+      "source_version": "7c3d68e9",
+      "content_hash": "754141eb2afd72133b3bd01835d8698b8dee828aad27a2365c6939a3bfeda731",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -217300,6 +217300,11 @@
           "number": 10380,
           "title": "upgrade Apache HttpClient 5 to 5.6.5",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10570,
+          "title": "preserve blob snapshot identity across credential refresh",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217307,7 +217312,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:14:01.710Z",
+      "verified_at": "2026-11-26T00:34:58.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217361,10 +217366,10 @@
       "relative_path": "08_VERIFICATION/lancedb-lancedb-verification-protocol-empirical-defect-shield-for-lancedb-lanced.md",
       "title": "Verification Protocol: Empirical Defect Shield for lancedb/lancedb",
       "repository": "lancedb/lancedb",
-      "source_version": "fc6dfca1",
-      "content_hash": "1897e08abee336ac54e4cfd79379cc4b67c7e8f8e2c9679e7c404c7707b16266",
+      "source_version": "7c3d68e9",
+      "content_hash": "8dbb3d2817609bbdbad5034ebd5d8c78a27cf1972006cc92ed2015d9ee120d6c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:14:02.664Z"
+      "persisted_at": "2026-11-26T00:34:58.789Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -248560,9 +248565,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lancedb-lancedb-learnings",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "25d4f302e5f5cf801d6097f980cff8664e4df529f28c1c24d5a1a5a95a1d9ec0",
+      "content_hash": "71e288cbd94d5c0d06a18c8d7551a48a9c9124dca8281cf965cfe760f0d19776",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:14:08.576Z"
+      "persisted_at": "2026-11-26T00:35:03.653Z"
     },
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
@@ -254179,7 +254184,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/Florence-2-base",
       "source_version": "hf-microsoft-florence-2-base",
-      "content_hash": "f6055a802ae01b888da45218e374a6243d4ea6153229c000b53b1c6f8be74a43",
+      "content_hash": "2beed75feacc704af399219a77dc3124bb23ee7e679f7a3a28b1ca462b6493e7",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
       "promoted_rules": [],
@@ -254188,7 +254193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T03:24:52.865Z",
+      "verified_at": "2026-11-26T00:34:44.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254205,9 +254210,9 @@
       "title": "Research & Knowledge Intelligence: microsoft/Florence-2-base Core Invariants",
       "repository": "microsoft/Florence-2-base",
       "source_version": "hf-microsoft-florence-2-base",
-      "content_hash": "b4ab63868cae70792f64f572f4aeb45016fdb5cc9424fa2ed1a36b50df0b9cef",
+      "content_hash": "6a3beff98c322d8e68a4c81db70a9777c140268a0c340e5818f9eb99f9f69221",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T03:24:53.272Z"
+      "persisted_at": "2026-11-26T00:34:45.206Z"
     },
     "learn-github-jellyfin-swiftfin": {
       "learning_id": "learn-github-jellyfin-swiftfin",
@@ -254341,9 +254346,9 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-florence-2-base-learnings Core Invariants",
       "repository": "hf-microsoft-florence-2-base-learnings",
       "source_version": "HEAD",
-      "content_hash": "137f09974c785b480266e6185b9ed301b8648efc4c515c8771b5c6a8ce385172",
+      "content_hash": "015c7584a926543e7b067ac70f1d365482ba716c724c081aca8461e2cb54acd0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T03:25:05.050Z"
+      "persisted_at": "2026-11-26T00:35:02.812Z"
     },
     "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants",
@@ -311641,10 +311646,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-architecture-intelligence-lancedb-lancedb-core-invariants.md",
       "title": "Architecture Intelligence: lancedb/lancedb Core Invariants",
       "repository": "lancedb/lancedb",
-      "source_version": "f38d42e9",
-      "content_hash": "2ae79031f7f7ea3a3a11e27897c0614cca081106377631c9fc38a7ace7fcb82e",
+      "source_version": "7c3d68e9",
+      "content_hash": "a8c44951959d8f47f4bacbf718e1af3edb8e7d837426d215a4b5a26a67aa9844",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T00:48:33.167Z"
+      "persisted_at": "2026-11-26T00:34:58.617Z"
     },
     "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants",
@@ -311654,9 +311659,9 @@
       "title": "Architecture Intelligence: lancedb-lancedb-learnings Core Invariants",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "4bea07d9fbc6bc17b1084264cd766a158732f55588ce0a3057a6b2a84a24e804",
+      "content_hash": "0267de1d237ee4931d1da38a65a70893f13fc5feb0cc5722c85bfdc85385d777",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T00:48:36.988Z"
+      "persisted_at": "2026-11-26T00:35:03.463Z"
     },
     "rule-9641": {
       "learning_id": "rule-9641",
@@ -339325,14 +339330,19 @@
       "slug": "indexable-inc-blaze",
       "platform": "github",
       "source_url": "https://github.com/indexable-inc/blaze",
-      "source_version": "06036d58",
-      "content_hash": "0469ed4d1ad0b61bd916f1cf8682b312995c9c2f6c12bce1ac6d4cd973877ff0",
+      "source_version": "a5b3c536",
+      "content_hash": "fbb740c28cf7b7aad0ac2e9d9e3752586a36904e7381f6b427da59e174ca01b8",
       "dossier_path": "07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md",
       "promoted_rules": [
         {
           "number": 10308,
           "title": "sota,lir,build): canonicalize non-RPO blocks before SOTA regalloc and preserve u",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10569,
+          "title": "stop swallowing Cmd+H and native macOS shortcuts",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -339341,7 +339351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T16:54:33.654Z",
+      "verified_at": "2026-11-26T00:34:46.454Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -339383,10 +339393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-indexable-inc-blaze-quality-verification-intelligence-indexable-inc-blaze-core-i.md",
       "title": "Quality & Verification Intelligence: indexable-inc/blaze Core Invariants",
       "repository": "indexable-inc/blaze",
-      "source_version": "06036d58",
-      "content_hash": "79ac49a45da1d0e7d7bc3ae9e0ed27ba5d43fb3cf6c635c421013fbc7962d6c5",
+      "source_version": "a5b3c536",
+      "content_hash": "baa585098c9c421c816107f5ba57aa0eb8b7ba1419211e6d4ef1b12c1832084c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:54:34.301Z"
+      "persisted_at": "2026-11-26T00:34:47.134Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze",
@@ -339395,10 +339405,10 @@
       "relative_path": "12_DECISIONS/ADR-indexable-inc-blaze-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-b.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in indexable-inc/blaze",
       "repository": "indexable-inc/blaze",
-      "source_version": "06036d58",
-      "content_hash": "82ab40f05f1095bdf8eb94561382fe3fd56f7a4106f6d0797a6b8ab236c6b2e9",
+      "source_version": "a5b3c536",
+      "content_hash": "5c1bba34633c178fafbb2100f3cc3000d19e68b6d6e0dc2fd8bf01b30949abdb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:54:34.474Z"
+      "persisted_at": "2026-11-26T00:34:47.309Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze",
@@ -339407,10 +339417,10 @@
       "relative_path": "08_VERIFICATION/indexable-inc-blaze-verification-protocol-empirical-defect-shield-for-indexable-.md",
       "title": "Verification Protocol: Empirical Defect Shield for indexable-inc/blaze",
       "repository": "indexable-inc/blaze",
-      "source_version": "06036d58",
-      "content_hash": "3e327458afda204a99109737206d499d4893e76796ada4a9571455103e05d7e4",
+      "source_version": "a5b3c536",
+      "content_hash": "67a348448eadd62b81328b2f400c097bd82496312dc7124fb271659c1efbb40d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:54:34.617Z"
+      "persisted_at": "2026-11-26T00:34:47.481Z"
     },
     "rule-10309": {
       "learning_id": "rule-10309",
@@ -339446,9 +339456,9 @@
       "title": "Quality & Verification Intelligence: indexable-inc-blaze-learnings Core Invariants",
       "repository": "indexable-inc-blaze-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d152afdd995ed5b9383b501ad173315ff77b72d93bb24946bef45c7de9194a2",
+      "content_hash": "70d5c5ea73d18d608e3f485672837e17c8769372e7343085d49fef3e5aec5ed8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:54:51.821Z"
+      "persisted_at": "2026-11-26T00:35:02.104Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze-learnings",
@@ -339458,9 +339468,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in indexable-inc-blaze-learnings",
       "repository": "indexable-inc-blaze-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d46a723eb74a69e2239126cc940055c997da4058f7507064deefcef11c1850e",
+      "content_hash": "260bdda34dd6de8f845802bc95021836c3911fe989d49c38016b51ebf05474b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:54:52.008Z"
+      "persisted_at": "2026-11-26T00:35:02.285Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze-learnings",
@@ -339470,9 +339480,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for indexable-inc-blaze-learnings",
       "repository": "indexable-inc-blaze-learnings",
       "source_version": "HEAD",
-      "content_hash": "aed03ccdc5fee04b281dd48fa3d5ceb6767e3b0f8aa0a0efe338d1a1f82c0f56",
+      "content_hash": "00a33f0bff91f2e089ce2e28ce0b3ab52762aa85f513c4b4ac64fe775a31b972",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:54:52.144Z"
+      "persisted_at": "2026-11-26T00:35:02.430Z"
     },
     "candidate_directive-media-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo": {
       "item_id": "candidate_directive-media-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo",
@@ -349981,6 +349991,82 @@
       "content_hash": "f7b0f18d2b7547789a723d0b85b715b8e2fde180f9692939c04fcb083c278b17",
       "domain_letter": "B",
       "persisted_at": "2026-11-26T00:18:10.608Z"
+    },
+    "rule-10569": {
+      "learning_id": "rule-10569",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10569,
+      "title": "stop swallowing Cmd+H and native macOS shortcuts",
+      "source_url": "https://github.com/indexable-inc/blaze",
+      "source_version": "a5b3c536",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T00:34:46.454Z"
+    },
+    "candidate_directive-stop-swallowing-cmd-h-and-native-macos-shortcuts": {
+      "item_id": "candidate_directive-stop-swallowing-cmd-h-and-native-macos-shortcuts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LRMR-stop-swallowing-cmd-h-and-native-macos-shortcuts.md",
+      "title": "stop swallowing Cmd+H and native macOS shortcuts",
+      "repository": "indexable-inc/blaze",
+      "source_version": "a5b3c536",
+      "content_hash": "f7cc4c547609efa5ecf85ba79762815969a47eb233ac8100ef992f310bad69f7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T00:34:46.951Z"
+    },
+    "rule-10570": {
+      "learning_id": "rule-10570",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10570,
+      "title": "preserve blob snapshot identity across credential refresh",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "7c3d68e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T00:34:58.001Z"
+    },
+    "candidate_directive-preserve-blob-snapshot-identity-across-credential-refresh": {
+      "item_id": "candidate_directive-preserve-blob-snapshot-identity-across-credential-refresh",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M0I1-preserve-blob-snapshot-identity-across-credential-refresh.md",
+      "title": "preserve blob snapshot identity across credential refresh",
+      "repository": "lancedb/lancedb",
+      "source_version": "7c3d68e9",
+      "content_hash": "9027810f9382c1d0c28600f35793358979555baede11229fc89b0761c1227227",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T00:34:58.442Z"
+    },
+    "candidate_directive-blaze-shell-stop-swallowing-cmd-h-and-native-macos-shortcuts": {
+      "item_id": "candidate_directive-blaze-shell-stop-swallowing-cmd-h-and-native-macos-shortcuts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M36L-blaze-shell-stop-swallowing-cmd-h-and-native-macos-shortcuts.md",
+      "title": "blaze-shell): stop swallowing Cmd+H and native macOS shortcuts",
+      "repository": "indexable-inc-blaze-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6720e01c91a8fa09882472f3a872e4cd80ae48b9acc80545325a261bffac750f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T00:35:01.923Z"
+    },
+    "candidate_directive-remote-preserve-blob-snapshot-identity-across-credential-refresh": {
+      "item_id": "candidate_directive-remote-preserve-blob-snapshot-identity-across-credential-refresh",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M48F-remote-preserve-blob-snapshot-identity-across-credential-refresh.md",
+      "title": "remote): preserve blob snapshot identity across credential refresh",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "388ed3ab793e6b428f938eb0fa3e3c78bc1043a7cba20762f2d89f16c38535c5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T00:35:03.280Z"
     }
   },
   "ai-builder-brain": {

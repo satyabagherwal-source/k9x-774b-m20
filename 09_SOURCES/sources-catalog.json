@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "fc6dfca1",
+    "sourceVersion": "7c3d68e9",
     "license": "Apache-2.0",
-    "contentHash": "9f634c724810c92deb7a5f2556aa894df22d5d5c96816c84ddf0fd161be8d782",
-    "lastHarvestedAt": "2026-11-24T23:14:01.982Z",
+    "contentHash": "754141eb2afd72133b3bd01835d8698b8dee828aad27a2365c6939a3bfeda731",
+    "lastHarvestedAt": "2026-11-26T00:34:58.212Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -12055,8 +12055,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Florence-2-base",
     "sourceVersion": "hf-microsoft-florence-2-base",
     "license": "Open-Source",
-    "contentHash": "f6055a802ae01b888da45218e374a6243d4ea6153229c000b53b1c6f8be74a43",
-    "lastHarvestedAt": "2026-11-22T03:24:53.091Z",
+    "contentHash": "2beed75feacc704af399219a77dc3124bb23ee7e679f7a3a28b1ca462b6493e7",
+    "lastHarvestedAt": "2026-11-26T00:34:44.977Z",
     "learningId": "learn-huggingface-microsoft-florence-2-base"
   },
   "hf-webai-official-twil-8b": {
@@ -13353,10 +13353,10 @@
     "repository": "indexable-inc/blaze",
     "platform": "github",
     "sourceUrl": "https://github.com/indexable-inc/blaze",
-    "sourceVersion": "06036d58",
+    "sourceVersion": "a5b3c536",
     "license": "Apache-2.0",
-    "contentHash": "0469ed4d1ad0b61bd916f1cf8682b312995c9c2f6c12bce1ac6d4cd973877ff0",
-    "lastHarvestedAt": "2026-11-24T16:54:33.873Z",
+    "contentHash": "fbb740c28cf7b7aad0ac2e9d9e3752586a36904e7381f6b427da59e174ca01b8",
+    "lastHarvestedAt": "2026-11-26T00:34:46.687Z",
     "learningId": "learn-github-indexable-inc-blaze"
   },
   "hf-aleph-alpha-kolibri-1.1": {

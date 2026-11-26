@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T00:26:22.499Z",
+  "last_updated": "2026-11-26T00:34:58.226Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "9f634c724810c92deb7a5f2556aa894df22d5d5c96816c84ddf0fd161be8d782",
-      "verified_at": "2026-11-24T23:14:01.999Z",
+      "content_hash": "754141eb2afd72133b3bd01835d8698b8dee828aad27a2365c6939a3bfeda731",
+      "verified_at": "2026-11-26T00:34:58.226Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:14:01.999Z"
+      "last_updated": "2026-11-26T00:34:58.226Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -18141,14 +18141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-florence-2-base",
-      "content_hash": "f6055a802ae01b888da45218e374a6243d4ea6153229c000b53b1c6f8be74a43",
-      "verified_at": "2026-11-22T03:24:53.098Z",
+      "content_hash": "2beed75feacc704af399219a77dc3124bb23ee7e679f7a3a28b1ca462b6493e7",
+      "verified_at": "2026-11-26T00:34:44.992Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:24:53.098Z"
+      "last_updated": "2026-11-26T00:34:44.992Z"
     },
     "webAI-Official/TwIL-8B": {
       "repository": "webAI-Official/TwIL-8B",
@@ -20151,14 +20151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-indexable-inc-blaze",
-      "content_hash": "0469ed4d1ad0b61bd916f1cf8682b312995c9c2f6c12bce1ac6d4cd973877ff0",
-      "verified_at": "2026-11-24T16:54:33.889Z",
+      "content_hash": "fbb740c28cf7b7aad0ac2e9d9e3752586a36904e7381f6b427da59e174ca01b8",
+      "verified_at": "2026-11-26T00:34:46.704Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:54:33.889Z"
+      "last_updated": "2026-11-26T00:34:46.704Z"
     },
     "Aleph-Alpha/Kolibri-1.1": {
       "repository": "Aleph-Alpha/Kolibri-1.1",

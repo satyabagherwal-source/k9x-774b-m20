@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:26:36.475Z",
+  "last_updated": "2026-11-26T00:35:03.796Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T00:26:35.558Z",
@@ -1268,7 +1268,7 @@
       "staged_for_review": 0
     },
     "lancedb-lancedb-learnings.md": {
-      "processed_at": "2026-11-24T23:14:07.641Z",
+      "processed_at": "2026-11-26T00:35:03.017Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3078,7 +3078,7 @@
       "staged_for_review": 1
     },
     "hf-microsoft-florence-2-base-learnings.md": {
-      "processed_at": "2026-11-22T03:25:04.843Z",
+      "processed_at": "2026-11-26T00:35:02.591Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3833,7 +3833,7 @@
       "staged_for_review": 1
     },
     "indexable-inc-blaze-learnings.md": {
-      "processed_at": "2026-11-24T16:54:51.360Z",
+      "processed_at": "2026-11-26T00:35:01.623Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3943,7 +3943,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4296,
+  "total_dossiers_evaluated": 4299,
   "total_canonical_promoted": 548,
-  "total_staged_for_review": 3264
+  "total_staged_for_review": 3266
 }

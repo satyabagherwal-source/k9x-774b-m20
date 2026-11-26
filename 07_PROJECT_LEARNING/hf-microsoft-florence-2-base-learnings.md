@@ -3,7 +3,7 @@
 > **Source Version**: `hf-microsoft`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T03:24:52.619Z  
+> **Timestamp**: 2026-11-26T00:34:44.463Z  
 > **Learning ID**: `learn-huggingface-microsoft-florence-2-base`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/microsoft/Florence-2-base](https://huggingface.co/microsoft/Florence-2-base))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T03:24:52.476Z  
+> **Harvest Timestamp**: 2026-11-26T00:34:44.346Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 21318167 downloads | 443 likes
+- **Stars / Engagement**: 23651722 downloads | 445 likes
 
 ---
 

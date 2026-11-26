@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T00:26:36.149Z",
+  "last_updated": "2026-11-26T00:35:03.463Z",
   "total_records": 2693,
   "domains": {
     "A": {
@@ -23160,8 +23160,8 @@
       "title": "Research & Knowledge Intelligence: microsoft/Florence-2-base Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-florence-2-base-research-knowledge-intelligence-microsoft-florence-.md",
       "repository": "microsoft/Florence-2-base",
-      "content_hash": "b4ab63868cae70792f64f572f4aeb45016fdb5cc9424fa2ed1a36b50df0b9cef",
-      "created_at": "2026-11-22T03:24:53.272Z"
+      "content_hash": "6a3beff98c322d8e68a4c81db70a9777c140268a0c340e5818f9eb99f9f69221",
+      "created_at": "2026-11-26T00:34:45.206Z"
     },
     "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-core-invariants",
@@ -23178,8 +23178,8 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-florence-2-base-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-florence-2-base-learnings-research-knowledge-intelligence-hf-micros.md",
       "repository": "hf-microsoft-florence-2-base-learnings",
-      "content_hash": "137f09974c785b480266e6185b9ed301b8648efc4c515c8771b5c6a8ce385172",
-      "created_at": "2026-11-22T03:25:05.050Z"
+      "content_hash": "015c7584a926543e7b067ac70f1d365482ba716c724c081aca8461e2cb54acd0",
+      "created_at": "2026-11-26T00:35:02.812Z"
     },
     "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants",
@@ -37152,8 +37152,8 @@
       "title": "Architecture Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-architecture-intelligence-lancedb-lancedb-core-invariants.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "2ae79031f7f7ea3a3a11e27897c0614cca081106377631c9fc38a7ace7fcb82e",
-      "created_at": "2026-11-23T00:48:33.167Z"
+      "content_hash": "a8c44951959d8f47f4bacbf718e1af3edb8e7d837426d215a4b5a26a67aa9844",
+      "created_at": "2026-11-26T00:34:58.617Z"
     },
     "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants",
@@ -37161,8 +37161,8 @@
       "title": "Architecture Intelligence: lancedb-lancedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-learnings-architecture-intelligence-lancedb-lancedb-learnings-co.md",
       "repository": "lancedb-lancedb-learnings",
-      "content_hash": "4bea07d9fbc6bc17b1084264cd766a158732f55588ce0a3057a6b2a84a24e804",
-      "created_at": "2026-11-23T00:48:36.988Z"
+      "content_hash": "0267de1d237ee4931d1da38a65a70893f13fc5feb0cc5722c85bfdc85385d777",
+      "created_at": "2026-11-26T00:35:03.463Z"
     },
     "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants",
@@ -42910,8 +42910,8 @@
       "title": "Quality & Verification Intelligence: indexable-inc/blaze Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-indexable-inc-blaze-quality-verification-intelligence-indexable-inc-blaze-core-i.md",
       "repository": "indexable-inc/blaze",
-      "content_hash": "79ac49a45da1d0e7d7bc3ae9e0ed27ba5d43fb3cf6c635c421013fbc7962d6c5",
-      "created_at": "2026-11-24T16:54:34.301Z"
+      "content_hash": "baa585098c9c421c816107f5ba57aa0eb8b7ba1419211e6d4ef1b12c1832084c",
+      "created_at": "2026-11-26T00:34:47.134Z"
     },
     "domain_intelligence-quality-verification-intelligence-indexable-inc-blaze-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-indexable-inc-blaze-learnings-core-invariants",
@@ -42919,8 +42919,8 @@
       "title": "Quality & Verification Intelligence: indexable-inc-blaze-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-indexable-inc-blaze-learnings-quality-verification-intelligence-indexable-inc-bl.md",
       "repository": "indexable-inc-blaze-learnings",
-      "content_hash": "2d152afdd995ed5b9383b501ad173315ff77b72d93bb24946bef45c7de9194a2",
-      "created_at": "2026-11-24T16:54:51.821Z"
+      "content_hash": "70d5c5ea73d18d608e3f485672837e17c8769372e7343085d49fef3e5aec5ed8",
+      "created_at": "2026-11-26T00:35:02.104Z"
     },
     "domain_intelligence-quality-verification-intelligence-higress-group-higress-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-higress-group-higress-core-invariants",

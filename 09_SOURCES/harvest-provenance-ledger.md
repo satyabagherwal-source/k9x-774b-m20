@@ -13205,3 +13205,6 @@ Every entry in this ledger must capture:
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `f21a2468` | Multi-dimensional audit evidence | 2026-11-26T00:18:04.520Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f2e66637` | Multi-dimensional audit evidence | 2026-11-26T00:18:04.876Z |
 | `learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-26T00:26:22.483Z |
+| `learn-huggingface-microsoft-florence-2-base` | `https://huggingface.co/microsoft/Florence-2-base` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-26T00:34:44.977Z |
+| `learn-github-indexable-inc-blaze` | `https://github.com/indexable-inc/blaze` | `a5b3c536` | Multi-dimensional audit evidence | 2026-11-26T00:34:46.687Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `7c3d68e9` | Multi-dimensional audit evidence | 2026-11-26T00:34:58.212Z |

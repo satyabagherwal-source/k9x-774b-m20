@@ -13172,3 +13172,6 @@
 | `CYCLE-20261126-0A5F` | `2026-11-26T00:18:04.515Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md` | Yes (`cad71c92...`) |
 | `CYCLE-20261126-0AFC` | `2026-11-26T00:18:04.872Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10568` | Yes (`ae71faba...`) |
 | `CYCLE-20261126-AYDR` | `2026-11-26T00:26:22.479Z` | `ccore/Qwen3.5-4B-GLB-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md` | Yes (`ac9e97bd...`) |
+| `CYCLE-20261126-LQ3W` | `2026-11-26T00:34:44.972Z` | `microsoft/Florence-2-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md` | Yes (`2beed75f...`) |
+| `CYCLE-20261126-LRFE` | `2026-11-26T00:34:46.682Z` | `indexable-inc/blaze` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10569` | Yes (`fbb740c2...`) |
+| `CYCLE-20261126-M0BK` | `2026-11-26T00:34:58.208Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10570` | Yes (`754141eb...`) |

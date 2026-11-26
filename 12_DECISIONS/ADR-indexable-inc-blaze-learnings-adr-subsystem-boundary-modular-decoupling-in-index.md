@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T16:54:51.513Z",
+  "timestamp": "2026-11-26T00:35:01.774Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-indexable-inc-blaze-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [indexable-inc-blaze-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T16:54:51.513Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T00:35:01.774Z`  
 > **Learning ID**: `LEARN-EVO-indexable-inc-blaze-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of indexable-inc-blaze-learnings, modular boundaries, per
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md`  
 > **Source**: github ([https://github.com/indexable-inc/blaze](https://github.com/indexable-inc/blaze))  
-> **Source Version**: `06036d58`  
+> **Source Version**: `a5b3c536`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:54:32.755Z  
+> **Timestamp**: 2026-11-26T00:34:45.553Z  
 > **Learning ID**: `learn-github-indexable-inc-blaze`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of indexable-inc-blaze-learnings, modular boundaries, per
 > **Canonical Artifact**: `07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/indexable-inc/blaze](https://github.com/indexable-inc/blaze))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:54:32.555Z  
+> **Harvest Timestamp**: 2026-11-26T00:34:45.546Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of indexable-inc-blaze-learnings, modular boundaries, per
 - **Description**: Incremental rust builds up to 92x faster than cargo/rustc. Backed by Y Combinator (F26).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 2512 stars
+- **Stars / Engagement**: 2791 stars
 
 ---
 
@@ -567,7 +567,7 @@ use blaze_keyed::{
     store::{ALIGN, ENTRY, FOOTER, HEADER, Holder, Put, RowRefused, SEGMENT_MOST, SegmentId, StoreError, StoreFile, TwoValues},
 };
 
-use super::bloom::{BLOOM_ALLOC, BloomBuilder, BloomIndex, BloomMapped, BloomRef};
+use super::bloom::{BLOOM_ALLOC, BloomBuilder, BloomIndex, BloomMapped, BloomRef, ROOT_BITS_PER_KEY, root_bloom_digest};
 use super::format::{
     self, Entry, FORMAT, HEAD_LEN, HeadRead, Lease, LostKind, LostMark, Manifest, NEVER, OFFSET_MOST, Retired,
     Root, SLOT_AT, Segment, Slot, aligned, record_crc,
@@ -685,7 +685,7 @@ pub const CARRY_ROUNDS: u32 = 3;
 /// The tiers' floor `B`: tier 0 holds segments under `B * G` (4 MiB), tier `t >= 1` those of
 /// `[B * G^t, B * G^(t+1))`. Why 1 MiB: the small commits of an edit loop (a cleanup commit's
 /// records and roots) share tier 0 and are merged at most 4 MiB at a time (the amortisation's
-/// `B` a commit, [`Tiers`]); a smaller floor adds a
+/// `B` a comm
 ```
 
 ### Core Architecture Module: `crates/blaze-cas/src/plain/core/probe.rs`
@@ -1293,11 +1293,13 @@ impl<'m> RowsRoot<'m> {
 //! those no entry covers) is the member's listing row (engine_member_rows.rs), read by key; a
 //! member none of whose files is owed is not opened.
 //!
-//! THE RUNS: the bodies of one member cut into runs of at most [`RUN`], each run a task of one
-//! bstd scope; a run opens its own `Records` over the shared bytes (`Records` opens lazily
-//! through `RefCell`s: never shared between threads, view.rs), and every body of the run is
-//! checked over one `Tables` with its own recorder (task.rs). The stretch memoizes the IDs
-//! of distinct questions over those tables. A panic fails its body alone (rule 20).
+//! THE RUNS: entered bodies are scheduled as LPT (largest-first) work-stealing items across long-
+//! lived pool workers; each worker keeps its current member's stretch frame (`BODIES_FRAME`) and
+//! `Records` alive across consecutive stolen items of the same member group (`Records` opens lazily
+//! through `RefCell`s: never shared between threads, view.rs), resetting its per-body scratch frame
+//! (`BODY_SCRATCH`, trimmed to `SCRATCH_KEEP`) between bodies. The stretch memoizes the IDs of
+//! distinct questions over those tables. A panic fails its body alone (rule 20). Results are
+//! reassembled in exact original order before merging (rule 25).
 //!
 //! WHAT A BODY READS, as the engine keys its readers: the view records names, lang, head and
 //! impl-bucket cells. A crate's `ImplBucket` cell is read as read: the Heads stage defines it
@@ -1314,6 +1316,7 @@ impl<'m> RowsRoot<'m> {
 
 use core::convert::Infallible;
 use core::num::NonZeroU32;
+use core::sync::atomic::{AtomicUsize, Ordering};
 
 use blaze_drive::cells::Cell;
 use blaze_drive::key::ABSENT;
@@ -1324,14 +1327,14 @@ use blaze_id::ItemKey;
 use blaze_ids::{ContentId, Hasher};
 use blaze_ladder::front2::buckets::{ImplShelf, ImplShelfOpts, TableSet};
 use blaze_ladder::front2::heads::NeedsMet;
-use blaze_ladder::front2::project_records::{BodySource, Listing, index_outlined_by_chain, list_files_with};
+use blaze_ladder::front2::project_records::{BodySource, index_outlined_by_chain};
 use blaze_ladder::front2::source::NamesSource;
 use blaze_ladder::front2::tables::cost::{Cost, Gauge};
 use blaze_ladder::front2::heads::Want;
 use blaze_ladder::front2::tables::head::{CellFailure, ConstValues, FreezeError, NotTheirs, SeededHeads, SeededHeadsOpts, cell_id as head_cell_id};
 use blaze_ladder::front2::tables::recorder::{PlacedCell, Recorder, RecorderOpts, TableRead};
 use blaze_ladder::front2::tables::seeds::{HeadSeed, RequestSeedOpts, SeedError};
-use blaze_ladder::front2::tables::task::{BodyFrame, ReadIds, ReadKeyer, Said as Line, SaidWhat, TaskError, WorkBytes, check_body_item};
+use blaze_ladder::front2::tables::task::{BodyFrame, ReadIds, ReadKeyer, Said as Line, SaidWhat, StretchStore, StretchStoreOpts, TaskError, WorkBytes, check_body_item};
 use blaze_ladder::front2::tables::view::{Tables, TablesOpts};
 use blaze_own::{SharedAlloc, Vec};
 use blaze_scope::crate_env::EnvLent;
@@ -1341,6 +1344,7 @@ use bstd::clock::Clock;
 use bstd::cx::Cx;
 use bstd::fs::{Dir, ReadWrite};
 use bstd::mem::Frame;
+use bstd::sync::CachePadded;
 use bstd::task::Class;
 use std::alloc::Global;
 
@@ -1364,23 +1368,29 @@ use crate::work;
 /// Where the rule that refuses a body on this path is.
 const RULE: &str = "engine_bodies.rs";
 
-/// The most bodies one run checks: a run opens its own records once, and its frame holds every
-/// body's lowering until the run ends (a body's frame is the records' lifetime in `check_body`,
-/// so it cannot be reset per body yet: see the report's brief), so runs are short.
-const RUN: usize = 32;
+/// Threshold in predicted bytes above which a body is always scheduled as its own single-body
+/// work item in the dynamic LPT work-stealing queue (so no two medium/heavy bodies can ever
+/// serialize on one core).
+const SINGLE_BODY_BYTES: u64 = 1024;
 
-/// The most predicted cost one run checks, in bytes of its bodies' text (D167 (a): work at item
-/// grain, a batch sized by predicted cost and capped, never grouped by origin). A run of short
-/// entries ends at [`RUN`] entries or at this; an entry whose bodies are predicted past it (one
-/// `storable_nested_arrays!()` call: 704 bodies) is cut into slices of at most this, each its own
-/// run on its own worker, joined into the entry's one result after the join ([`join_slices`]);
-/// a body predicted past it alone is a slice alone. The predictor is each body's text length,
-/// known at plan time from the items record's rows with no text read ([`text_bytes`]); a cap by
-/// body COUNT (64) left one slice of 64 bodies at 4,693 ms, 73 ms a body against a mean of 12
-/// (profile score-c1725wave42). The cap in ms is this times the measured ms a byte, which the
-/// profile's `bodies cost:` line prints each run from the slices it ran (the fit is what states
-/// it; 48 KiB is chosen from no fit yet: UNSURE until that line is read).
-const SLICE_BYTES: u64 = 48 << 10;
+/// Maximum number of consecutive tiny bodies (`< SINGLE_BODY_BYTES`) of the same member group
+/// grouped into one tiny work-stealing batch, and the predicted byte cap on such a batch.
+const TINY_BATCH_MAX: usize = 4;
+const TINY_BATCH_BYTES: u64 = 1024;
+
+/// Bodies with predicted cost at or above this threshold are ordered by exact descending cost
+/// (strict LPT) in the work-stealing queue; smaller items are quantized into 512-byte tiers so
+/// same-group, same-file items stay contiguous for worker-local stretch and cache reuse.
+const LPT_EXACT_BYTES: u64 = 4 << 10;
+
+/// The most predicted cost one macro-expansion slice checks, in bytes of its bodies' text (D167
+/// (a): work at item grain, sized by predicted cost and capped, never grouped by origin). An entry
+/// of multiple macro-written bodies predicted past this (e.g. one `storable_nested_arrays!()`
+/// call: 704 bodies) is cut into slices of at most this, each its own work-stealing item joined
+/// back into the entry's one result after the phase ([`join_slices`]); a body predicted past it
+/// alone is a slice alone. Sized to 4 KiB so dense macro expansions scale across 18–128 cores
+/// without creating a tail straggler.
+const SLICE_BYTES: u64 = 4 << 10;
 
 /// A body's least predicted cost: what checking any body costs beside its text (its stretch's
 /// questions, its row), so a slice of many tiny bodies is still cut.
@@ -1433,20 +1443,7 @@ fn member_lens(items: &ItemsRecord<'_>, g: blaze_own::Alloc<'static>) -> Vec<(It
         }
         let Ok(Some(members)) = items.members(id.key) else { continue };
         for member in members.iter().flatten() {
-            lens.push((member.key, member.text.map_or(0, |span| span.len)));
-        }
-    }
-    lens.sort_unstable_by_key(|member| member.0);
-    lens
-}
-
-/// A run's frame: its records' decoded parts and its bodies' lowerings (reserved, not touched).
-const BODIES_FRAME: usize = 1 << 30;
-
-/// The domain of the out of a body no crate of the graph holds.
-const OWNERLESS_DOMAIN: &str = "blaze-cli engine bodies ownerless 1";
-
-/// The domain of the ve
+            lens.push((member.key, member.text.map_or(0, |sp
 ```
 
 ### Core Architecture Module: `crates/blaze-cli/src/engine_body_facts.rs`
@@ -1987,6 +1984,8 @@ pub(crate) fn typed_key(bytes: &[u8]) -> Key {
 pub(crate) enum TypedReadError {
     /// The command's store refused the get of `key` (its facts record or its typed record).
     Store { body: Name, key: Key, why: blaze_cas::plain::LentError },
+    /// The read-only store snapshot refused the get of `key` on a code worker.
+    Snapshot { body: Name, key: Key, why: blaze_cas::plain::SnapshotError },
     /// The body's run facts record, which names the typed record, did not read: what refused it.
     Facts { body: Name, what: &'static str },
     /// The facts name a typed record the store does not hold: a record lost, never a cue to
@@ -1998,16 +1997,9 @@ impl fmt::Display for TypedReadError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             TypedReadError::Store { body, key, why } => write!(f, "{body:?}: its record {key:?} could not be read: {why} (rule: engine_body_record.rs)"),
+            TypedReadError::Snapshot { body, key, why } => write!(f, "{body:?}: its record {key:?} could not be read from the store snapshot: {why} (rule: engine_body_record.rs)"),
             TypedReadError::Facts { body, what } => write!(f, "{body:?}: its run facts record, which names its typed record, could not be read: {what} (engine_body_facts.rs, engine_body_record.rs)"),
-            TypedReadError::Missing { body, key } => write!(f, "{body:?}: its run facts name the typed record {key:?}, which the store does not hold (rule 3: engine_body_record.rs)"),
-        }
-    }
-}
-
-impl core::error::Error for TypedReadError {}
-
-/// What the run's typed reader is made of besides the body ids: the parent hands it the ids at
-/// the
+            Typ
 ```
 
 
@@ -2037,1434 +2029,1668 @@ impl core::error::Error for TypedReadError {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `382168c3` (2026-11-24)
-**Commit Message**: fix(sota,lir,build): canonicalize non-RPO blocks before SOTA regalloc and preserve unsizable generic struct tail order (#2406)
+### Incident Patch 1: `1d870ac2` (2026-11-25)
+**Commit Message**: fix(blaze-shell): stop swallowing Cmd+H and native macOS shortcuts (#2505)
 
-1. Bug 1 (crypto_bigint::Uint::<4>::from_be_slice infinite loop):
-   - Add O(V+E) hot-first dominator-respecting RPO canonicalizer `coldsplit::reorder_blocks_rpo`
-     (zero-copy fast path when already dominator-ordered) and preserve dominator order in
-     `coldsplit::partition_cold_blocks`.
-   - Call `reorder_blocks_rpo` at the end of `run_sroa_thread_cleanup` (where `thread_jumps` can
-     fold loop entry into a higher-indexed body block, making `header > latch`) and at the entry
-     of `isel::emit_sota_a64_with_abi` (remapping IPRA `call_clobbers`) and `x86_64::emit_sota_x64`
-     so linear-interval RPO register allocation and back-edge analyses never misallocate across
-     inverted blocks.
-   - Add unit tests in `coldsplit.rs` and hardware execution regression tests in `sota/tests.rs`.
+Fixes `blaze-shell` swallowing `Cmd+H` (Hide), `Cmd+M` (Minimize),
+`Cmd+Ctrl+F` (Fullscreen), and leaking unhandled `Cmd+*` shortcuts into
+the composer/Yazi/PTY.
 
-2. Bug 2 (tempo-transaction-pool compound_policy_sub_policy_matches_eviction_check capacity overflow):
-   - In `blaze-build/src/layout.rs`, detect generic structs whose unsubstituted last field may
-     undergo structural `Unsize` coercion (`struct_tail_may_unsize`, 
+### Changes
+- Added `install_macos_menu` (`blaze-shell` App menu with Hide `Cmd+H`,
+Hide Others `Cmd+Opt+H`, Show All, Quit `Cmd+Q`; `Window` menu with
+Minimize `Cmd+M`, Zoom, Bring All to Front).
+- Handle `Cmd+H` (`app.hide(None)`), `Cmd+M`
+(`window.miniaturize(None)`), `Cmd+Ctrl+F`
+(`window.toggleFullScreen(None)`), and `Cmd+Q` before Command Palette /
+pane routing.
+- Forward any unhandled `Cmd+*` key events to `app.sendEvent(&ev)`
+instead of falling through into the composer, Yazi, or PTY.
+- Distinguish user-closed window from hidden/minimized
+(`!window.isVisible() && !app.isHidden() && !window.isMiniaturized()`)
+so `Cmd+H` / `Cmd+M` keep the shell alive, pause GPU draws while hidden,
+and repaint immediately on unhide.
 
-**File**: `crates/blaze-build/src/layout.rs` (modified, +75/-13)
+### Verification
+- `crates/blaze-shell`: `cargo +nightly-2026-10-27 build --locked
+--offline` and `cargo test` (15 passed, 0 failed).
+
+### Release Smoke Proof (exact clean tree
+`38e5ff377ea230ff007ba2c219a60a77e6b38227`, commit 
+
+**File**: `crates/blaze-shell/src/main.rs` (modified, +138/-6)
 ```diff
-@@ -853,6 +853,66 @@ enum Order {
-     Increasing,
- }
+@@ -80,11 +80,11 @@ mod macos_app {
+     use blaze_vt::input::key::{Key, OptionAsAlt, Platform};
+     use blaze_vt::terminal::{Effect, Opts as VtOpts, Terminal};
+     use objc2::rc::autoreleasepool;
+-    use objc2::{MainThreadMarker, MainThreadOnly};
++    use objc2::{MainThreadMarker, MainThreadOnly, sel};
+     use objc2_app_kit::{
+         NSApplication, NSApplicationActivationPolicy, NSBackingStoreType, NSCursor, NSEventMask,
+-        NSEventModifierFlags, NSEventType, NSPasteboard, NSPasteboardTypeString, NSWindow,
+-        NSWindowStyleMask, NSWindowTitleVisibility,
++        NSEventModifierFlags, NSEventType, NSMenu, NSMenuItem, NSPasteboard,
++        NSPasteboardTypeString, NSWindow, NSWindowStyleMask, NSWindowTitleVisibility,
+     };
+     use objc2_foundation::{NSDate, NSDefaultRunLoopMode, NSPoint, NSRect, NSSize, NSString};
+     use objc2_metal::MTLCreateSystemDefaultDevice;
+@@ -1761,6 +1761,96 @@ mod macos_app {
+         }
+     }
  
-+/// Whether `adt`'s last field (in its unsubstituted definition) can be unsized via a structural
-+/// `Unsize` coercion (`&S<SizedTail> -> &S<UnsizedTail>`, e.g. `PolymorphicIter<[MaybeUninit<T>; N]>`
-+/// -> `PolymorphicIter<[MaybeUninit<T>]>`, `ArcInner<T>`, `Mutex<T>`, `UnsafeCell<T>`).
-+///
-+/// Rust requires unsizing a struct to preserve the byte offsets of every field preceding the tail,
-+/// so a potentially-unsized tail field must stay last even when monomorphized with a sized,
-+/// higher-alignment type (such as `u128` or `[MaybeUninit<(u64, BlobParams)>; 2]`).
-+fn struct_tail_may_unsize<'a>(adt: &Adt<'a>, facts: &'a dyn LayoutFacts) -> bool {
-+    if adt.generics == 0 {
-+        return false;
-+    }
-+    let [variant] = adt.variants else { return false };
-+    let Some(last) = adt.fields.get(variant.fields.range()).and_then(|fs| fs.last()) else {
-+        return false;
-+    };
-+    ty_may_unsize(last.ty, adt.types, facts, 16)
-+}
++    /// Install standard macOS Application and Window menus so system shortcuts
++    /// (`Cmd+H` Hide, `Cmd+Opt+H` Hide Others, `Cmd+M` Minimize, `Cmd+Q` Quit,
++    /// `Cmd+`` ` window cycling) behave like a first-class native macOS app.
++    fn install_macos_menu(app: &NSApplication, mtm: MainThreadMarker) {
++        let menubar = NSMenu::new(mtm);
 +
-+fn ty_may_unsize<'a>(mut ty: PTy, mut tys: blaze_typeck::PTys<'a>, facts: &'a dyn LayoutFacts, mut budget: u8) -> bool {
-+    loop {
-+        if budget == 0 {
-+            return true;
++        // 1. Application menu ("blaze-shell").
++        let app_menu_item = NSMenuItem::new(mtm);
++        let app_menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), &NSString::from_str("blaze-shell"));
++        // SAFETY: standard AppKit responder selectors (`hide:`, `hideOtherApplications:`,
++        // `unhideAllApplications:`, `terminate:`) are valid Objective-C selectors on NSApplication.
++        unsafe {
++            let hide_item = NSMenuItem::initWithTitle_action_keyEquivalent(
++                NSMenuItem::alloc(mtm),
++                &NSString::from_str("Hide blaze-shell"),
++                Some(sel!(hide:)),
++                &NSString::from_str("h"),
++            );
++            app_menu.addItem(&hide_item);
++
++            let hide_others = NSMenuItem::initWithTitle_action_keyEquivalent(
++                NSMenuItem::alloc(mtm),
++                &NSString::from_str("Hide Others"),
++                Some(sel!(hideOtherApplications:)),
++                &NSString::from_str("h"),
++            );
++            hide_others.setKeyEquivalentModifierMask(
++                NSEventModifierFlags::Command | NSEventModifierFlags::Option,
++            );
++            app_menu.addItem(&hide_others);
++
++            let show_all = NSMenuItem::initWithTitle_action_keyEquivalent(
++                NSMenuItem::alloc(mtm),
++                &NSString::from_str("Show All"),
++                Some(sel!(unhideAllApplications:)),
++                &NSString::from_str(""),
++            );
++            app_menu.addItem(&show_all);
++
++            app_menu.addItem(&NSMenuItem::separatorItem(mtm));
++
++            let quit_item = NSMenuItem::initWithTitle_action_keyEquivalent(
++                NSMenuItem::alloc(mtm),
++                &NSString::from_str("Quit blaze-shell"),
++                Some(sel!(terminate:)),
++                &NSString::from_str("q"),
++            );
++            app_menu.addItem(&quit_item);
 +        }
-+        budget -= 1;
-+        let Ok(node) = tys.node(ty) else { return true };
-+        match node {
-+            PNode::Param(_)
-+            | PNode::Alias { .. }
-+            | PNode::Slice(_)
-+            | PNode::Str
-+            | PNode::Dynamic(_)
-+            | PNode::Foreign(_) => return true,
-+            PNode::Adt(inner_key, inner_args) => {
-+                let Some(inner) = facts.adt(inner_key) else { return true };
-+                if inner.kind != AdtKind::Struct {
-+                    return false;
-+                }
-+                let [v] = inner.variants else { return false };
-+                let Some(last) = inner.fields.get(v.fields.range()).and_then(|fs| fs.last()) else {
-+                    return false;
-+                };
-+                match inner.types.node(last.ty) {
-+                    Ok(PNode::Param(p)) => {
-+                        let Ok(args) = tys.list(inner_args) else { return true };
-+                        let Ok(pi) = usize::try_from(p) else { return true };
-+                        let Some(&arg) = args.get(pi) else { return true };
-+                        ty = arg;
-+                    }
-+                    Ok(_) => {
-+                        ty = last.ty;
-+                        tys = inner.types;
-+                    }
-+                    Err(_) => return true,
-+                }
-+            }
-+            _ => return false,
++        app_menu_item.setSubmenu(Some(&app_menu));
++        menubar.addItem(&app_menu_item);
++
++        // 2. Window menu ("Window").
++        let win_menu_item = NSMenuItem::new(mtm);
++        let win_menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), &NSString::from_str("Window"));
++        // SAFETY: standard AppKit NSWindow/NSApplication selectors.
++        unsafe {
++            let min_item = NSMenuItem::initWithTitle_action_keyEquivalent(
++                NSMenuItem::alloc(mtm),
++                &NSString::from_str("Minimize"),
++                Some(sel!(performMiniaturize:)),
++                &NSString::from_str("m"),
++            );
++            win_menu.addItem(&min_item);
++
++            let zoom_item = NSMenuItem::initWithTitle_action_keyEquivalent(
++                NSMenuItem::alloc(mtm),
++                &NSString::from_str("Zoom"),
++                Some(sel!(performZoom:)),
++                &NSString::from_str(""),
++            );
++            win_menu.addItem(&zoom_item);
++
++            win_menu.addItem(&NSMenuItem::separatorItem(mtm));
++
++            let front_item = NSMenuItem::initWithTitle_action_keyEquivalent(
++                NSMenuItem::alloc(mtm),
++                &NSString::from_str("Bring All to Front"),
++                Some(sel!(arrangeInFront:)),
++                &NSString::from_str(""),
++            );
++            win_menu.addItem(&front_item);
 +        }
++        win_menu_item.setSubmenu(Some(&win_menu));
++        menubar.addItem(&win_menu_item);
++
++        app.setMainMenu(Some(&menubar));
++        app.setWindowsMenu(Some(&win_menu));
++    }
++
+     pub fn run() {
+         let cli = parse_cli();
+ 
+@@ -1779,6 +1869,9 @@ mod macos_app {
+         } else {
+             NSApplicationActivationPolicy::Regu
+```
+
+---
+
+### Incident Patch 2: `a482ea84` (2026-11-25)
+**Commit Message**: Merge shell-1124: native macOS blaze-shell GUI and sans-IO blaze-sh/vim/ssh/sniff/preview crates (#2503)
+
+## Summary
+
+Brings the native macOS GPU terminal/shell GUI (`crates/blaze-shell`)
+and its pure `#![no_std]` sans-IO companion crates onto `main`:
+
+- **`crates/blaze-shell`** (standalone macOS Metal/AppKit/CoreText
+workspace, excluded from root workspace alongside `crates/harness`):
+- Metal 2D/UI renderer with Apple SF Pro + SF Mono dual-font type scale,
+font-relative Retina SVG icons (`svg_icons.rs`), steady prompt capsules,
+active hover-anchor highlight + bridge rail, and click-to-open rich
+table/file views.
+- Sans-IO BSP Tiling Window Manager (`tiling.rs`) with tabs, splits,
+zoom, divider drag resize, click-to-focus, and hover-scroll.
+- Scrollable Tab autocomplete, `Ctrl+R` history search, `Cmd+Shift+P`
+Command Palette, Yazi 3-column browser (`yazi.rs`), Zoxide frecency
+(`zoxide.rs`), Rust REPL cells (`rust_cell.rs`), and Agent Hub
+(`agent_hub.rs`).
+- **`crates/blaze-sh`**: sans-IO, `#![no_std]` structured shell language
+core (lexer, parser, persistent CoW state, evaluator, builtins, REPL
+protocol).
+- **`crates/blaze-vim`**: sans-IO, `#![no_std]` Vim modal editing engine
+with
+
+**File**: `Cargo.lock` (modified, +49/-0)
+```diff
+@@ -1665,6 +1665,18 @@ dependencies = [
+ name = "blaze-pins"
+ version = "0.0.0"
+ 
++[[package]]
++name = "blaze-preview"
++version = "0.0.0"
++dependencies = [
++ "blaze-data",
++ "blaze-json",
++ "blaze-own",
++ "blaze-sim",
++ "blaze-sniff",
++ "blaze-toml",
++]
++
+ [[package]]
+ name = "blaze-proc-macro"
+ version = "0.0.0"
+@@ -1999,6 +2011,19 @@ dependencies = [
+  "blaze-sim",
+ ]
+ 
++[[package]]
++name = "blaze-sh"
++version = "0.0.0"
++dependencies = [
++ "blaze-data",
++ "blaze-glob",
++ "blaze-json",
++ "blaze-own",
++ "blaze-sim",
++ "blaze-sniff",
++ "blaze-toml",
++]
++
+ [[package]]
+ name = "blaze-sha256"
+ version = "0.0.0"
+@@ -2036,6 +2061,14 @@ dependencies = [
+  "blaze-site",
+ ]
+ 
++[[package]]
++name = "blaze-sniff"
++version = "0.0.0"
++dependencies = [
++ "blaze-own",
++ "blaze-sim",
++]
++
+ [[package]]
+ name = "blaze-solve"
+ version = "0.0.0"
+@@ -2118,6 +2151,14 @@ dependencies = [
+  "zstd",
+ ]
+ 
++[[package]]
++name = "blaze-ssh"
++version = "0.0.0"
++dependencies = [
++ "blaze-own",
++ "blaze-sim",
++]
++
+ [[package]]
+ name = "blaze-stage"
+ version = "0.0.0"
+@@ -2418,6 +2459,14 @@ dependencies = [
+  "blaze-store-check",
+ ]
+ 
++[[package]]
++name = "blaze-vim"
++version = "0.0.0"
++dependencies = [
++ "blaze-own",
++ "blaze-sim",
++]
++
+ [[package]]
+ name = "blaze-vt"
+ version = "0.0.0"
+```
+
+**File**: `Cargo.toml` (modified, +11/-3)
+```diff
+@@ -21,6 +21,9 @@ exclude = [
+     # build steps on macOS. Its own workspace with its own lock; nothing depends on it and
+     # nothing selects it.
+     "crates/blaze-hvbox",
++    # Native macOS shell app (docs/v2/plan/design/sh.md): AppKit/Metal/CoreText through objc2;
++    # its own workspace with its own lock while blaze-sh and blaze-vt stay workspace members.
++    "crates/blaze-shell",
+     "demo",
+     "harness",
+     # The standard library's own workspace (docs/toolchain.md).
+@@ -520,15 +523,20 @@ blaze-data = { path = "crates/blaze-data" } # The one format-neutral value (CBOR
+ blaze-ecs = { path = "crates/blaze-ecs" } # Pure no_std, zero-unsafe, sans-IO relational ECS + Explorer API & WASM/WebGPU UI engine.
+ blaze-ecs-wasm = { path = "crates/blaze-ecs-wasm" } # Zero-import no_std wasm32 C-ABI cdylib over blaze-ecs::ui.
+ blaze-json = { path = "crates/blaze-json" }
++blaze-preview = { path = "crates/blaze-preview" } # Pure no_std, sans-IO syntax highlighting, Markdown, and structured file previews.
+ blaze-semver = { path = "crates/blaze-semver" }
++blaze-sh = { path = "crates/blaze-sh" } # bstd::sh: a sans-IO nushell-like structured shell core with O(1) CoW forkable state (docs/v2/plan/design/sh.md).
+ blaze-site = { path = "crates/blaze-site" } # Pure no_std, zero-unsafe, sans-IO Blaze website engine over blaze-ecs + blaze-ui + den Slug GPU text.
+ blaze-site-wasm = { path = "crates/blaze-site-wasm" } # Zero-import no_std wasm32 C-ABI cdylib over blaze-site + generated WebGPU Slug/SDF shaders.
++blaze-sniff = { path = "crates/blaze-sniff" } # Pure no_std, sans-IO file/directory content and metadata sniffer.
++blaze-ssh = { path = "crates/blaze-ssh" } # Pure no_std, sans-IO SSH config, known_hosts, and session protocol parser.
+ blaze-tab = { path = "crates/blaze-tab" } # Blaze's LLM-first tabular data format inspired by NUON (sparse schemas, lossless Value).
+ blaze-toml = { path = "crates/blaze-toml" }
+-blaze-vt = { path = "crates/blaze-vt" } # bstd::vt: a sans-IO terminal emulator core with ghostty's coverage (docs/v2/plan/design/vt.md).
+ blaze-ui = { path = "crates/blaze-ui" } # Pure no_std, zero-unsafe, sans-IO relational ECS UI library + Rust->WGSL/MSL WebGPU renderer.
+ blaze-ui-wasm = { path = "crates/blaze-ui-wasm" } # Zero-import no_std wasm32 C-ABI cdylib over blaze-ui + generated WebGPU shaders.
+ blaze-v2-proof = { path = "crates/blaze-v2-proof" }
++blaze-vim = { path = "crates/blaze-vim" } # Pure no_std, sans-IO Vim modal editing engine with pluggable text objects.
++blaze-vt = { path = "crates/blaze-vt" } # bstd::vt: a sans-IO terminal emulator core with ghostty's coverage (docs/v2/plan/design/vt.md).
+ # WASI preview 1 for wasm guests at both pointer widths.
+ blaze-wasi = { path = "crates/blaze-wasi" }
+ # blaze's own RFC 8878 Zstandard with raw-content dictionaries and XXH64: no_std, sans-IO, zero-unsafe, bounded.
+@@ -685,10 +693,10 @@ zip = { version = "9.1.3", default-features = false }
+ 
+ # astlog, ix's Datalog over tree-sitter trees (tools/astlog/UPSTREAM), and what only it uses. The
+ # grammars are the languages blaze lints: Rust, TOML and Python.
+-astlog-core = { path = "tools/astlog/core" }
+ ast-merge-langs = { path = "tools/astlog/langs" }
+-edit-applier = { path = "tools/astlog/edit-applier" }
++astlog-core = { path = "tools/astlog/core" }
+ astlog-engine = { path = "tools/astlog/engine" }
++edit-applier = { path = "tools/astlog/edit-applier" }
+ error-chain = { path = "tools/astlog/error-chain" }
+ similar = "3.2.1"
+ tree-sitter = "0.26.13"
+```
+
+**File**: `crates/blaze-cli/src/main.rs` (modified, +90/-1)
+```diff
+@@ -632,6 +632,87 @@ fn words<'o>(command: Command, out: &'o Out, err: &'o Out) -> &'o Out {
+ /// What `blaze build` is told: the two commands that do what it would.
+ const NO_BUILD: &str = "`blaze run` compiles what the program reaches and runs it; `blaze export` writes the program as a standalone executable";
+ 
++/// Help text for `blaze --help`, `blaze -h`, `blaze help [cmd]`, and bare `blaze`.
++const HELP_TEXT: &str = "\
++blaze — incremental Rust compiler, runner, tester, and exporter
++
++USAGE
++  blaze <command> [options] [dir]
++
++COMMANDS
++  check           Check and lint a workspace incrementally
++  run             Compile what is reached and run a binary
++  test            Run workspace tests incrementally
++  export          Export a standalone PGO-optimized native binary
++  ci              Run CI checks with structured reporting
++  inspect         Inspect lowered MIR/types for a file or function
++  why             Explain why a file or item was rechecked
++  explain         Explain a diagnostic or lint code
++  clean           Remove checkout state (and --store for home store)
++  gc              Compact store and evict stale records
++  peer            Serve crate records to LAN peers
++  toolchain       Print the pinned Rust toolchain
++  warm-toolchain  Pre-warm toolchain records into the store
++  version         Print blaze and toolchain versions
++  help            Show this help message
++
++COMMON OPTIONS
++  -p, --package <name>   Select package in workspace
++      --bin <name>       Select binary target
++  -o, --output <path>    Output path for `blaze export`
++      --view <mode>      Output view: person, agent, or json
++      --color <when>     Color output: auto, always, or never
++      --fix [sel...]     Apply automatic fixes (`blaze check`)
++      --workers <N>      Limit concurrent worker threads
++      --stats            Print telemetry summary at exit
++  -h, --help             Show help for blaze or a command
++  -V, --version          Print version information
++
++EXAMPLES
++  blaze check
++  blaze run -- --arg
++  blaze test
++  blaze export -p app -o ./app";
++
++fn command_help(sub: &str) -> Option<&'static str> {
++    match sub {
++        "check" | "engine-check" => Some(
++            "blaze check [dir] [options]\n\nCheck and lint a workspace incrementally.\n\nOPTIONS\n  --color auto|always|never   Colorize diagnostics\n  --view person|agent|json    Diagnostic output format\n  --fix [selector...]         Apply fixes (id, code, path, or all)\n  --each                      Report each body individually\n  --workers <N>               Maximum concurrent workers\n  --status-every <secs>       Emit periodic progress lines\n  --stats                     Print telemetry report at exit",
++        ),
++        "run" => Some(
++            "blaze run [dir] [options] [-- <program args>...]\n\nCompile only what is reached and execute a binary.\n\nOPTIONS\n  -p, --package <name>        Package to run\n      --bin <name>            Binary target to run\n      --grant <k=v>           Grant an environment/host capability\n      --open                  Open Explore viewer in browser\n      --workers <N>           Maximum concurrent workers\n      --stats                 Print telemetry report at exit",
++        ),
++        "test" => Some(
++            "blaze test [dir] [options] [-- <test args>...]\n\nRun workspace tests incrementally.\n\nOPTIONS\n  -p, --package <name>        Package to test\n      --workers <N>           Maximum concurrent workers\n      --stats                 Print telemetry report at exit",
++        ),
++        "export" => Some(
++            "blaze export [dir] [options]\n\nExport a standalone native executable (PGO-optimized by default).\n\nOPTIONS\n  -p, --package <name>        Package to export\n      --bin <name>            Binary target to export\n  -o, --output <path>         Destination executable path\n      --workers <N>           Maximum concurrent workers\n      --stats                 Print telemetry report at exit",
++        ),
++        "ci" => Some(
++            "blaze ci [dir] [options]\n\nRun workspace CI checks.\n\nOPTIONS\n  --format <fmt>              Output format\n  --todo <mode>               TODO handling policy\n  --workers <N>               Maximum concurrent workers",
++        ),
++        "inspect" => Some(
++            "blaze inspect <file.rs[::fn]> [options]\n\nInspect lowered types and expressions for a file or function.\n\nOPTIONS\n  --json                      Emit JSON output\n  --all-exprs                 Include all sub-expressions\n  --edition <ed>              Override Rust edition (2015..2024, blaze-2026.11)",
++        ),
++        "clean" => Some(
++            "blaze clean [dir] [--store]\n\nRemove checkout build state (and home store with --store).",
++        ),
++        "gc" => Some(
++            "blaze gc [dir] [--background]\n\nCompact store segments and evict stale entries.",
++        ),
++        "explain" => Some(
++            "blaze explain <code>\n\nE
+```
+
+**File**: `crates/blaze-git/src/lib.rs` (modified, +19/-0)
+```diff
+@@ -436,6 +436,23 @@ impl StatusCounts {
+     }
+ }
+ 
++/// Category of a changed file reported in [`PromptStatus::changed_samples`].
++#[derive(Clone, Copy, PartialEq, Eq, Debug)]
++pub enum ChangeKind {
++    Modified,
++    Untracked,
++    Deleted,
++    Staged,
++    Conflicted,
++}
++
++/// One bounded sample of an uncommitted file in the working tree or index.
++#[derive(PartialEq, Eq, Debug)]
++pub struct ChangedSample<'a> {
++    pub path: AString<'a>,
++    pub kind: ChangeKind,
++}
++
+ /// Complete Starship-class summary of a Git repository snapshot.
+ #[derive(PartialEq, Eq, Debug)]
+ pub struct PromptStatus<'a> {
+@@ -446,6 +463,8 @@ pub struct PromptStatus<'a> {
+     pub counts: StatusCounts,
+     pub worktree: WorktreeKind,
+     pub truncated: Truncated,
++    /// Up to 24 representative uncommitted file paths (modified, untracked, deleted, conflicted).
++    pub changed_samples: blaze_own::AVec<'a, ChangedSample<'a>>,
+ }
+ 
+ /// A typed refusal naming the git file, byte offset (when applicable), and rule violated.
+```
+
+**File**: `crates/blaze-git/src/machine.rs` (modified, +56/-8)
+```diff
+@@ -17,9 +17,9 @@ use blaze_memchr::memchr;
+ use blaze_own::{AString, AVec, Alloc, String, Vec, planted::Planted};
+ 
+ use crate::{
+-    AheadBehindMode, Detail, Divergence, ErrorKind, FileKind, FileStat, GitError, GitFile,
+-    GitStatusPlant, Head, PromptStatus, RepoState, ShortOid, StatusCounts, StatusOpts, TagMode,
+-    Truncated, UntrackedMode, Upstream, WorktreeKind,
++    AheadBehindMode, ChangeKind, ChangedSample, Detail, Divergence, ErrorKind, FileKind, FileStat,
++    GitError, GitFile, GitStatusPlant, Head, PromptStatus, RepoState, ShortOid, StatusCounts,
++    StatusOpts, TagMode, Truncated, UntrackedMode, Upstream, WorktreeKind,
+     commit_graph::{CommitGraph, parse_graph_chain},
+     ignore::IgnoreStack,
+     index::{IndexEntry, IndexView, OwnedIndex},
+@@ -30,6 +30,8 @@ use crate::{
+     },
+ };
+ 
++const MAX_CHANGED_SAMPLES: usize = 24;
++
+ /// Which capability directory a requested relative path belongs to.
+ #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+ pub enum PathScope {
+@@ -305,6 +307,7 @@ pub struct StatusMachine<'a, P: Planted<GitStatusPlant>> {
+ 
+     // Working-tree status tracking.
+     counts: StatusCounts,
++    changed_samples: AVec<'a, ChangedSample<'a>>,
+     truncated: Truncated,
+     ignores: IgnoreStack<'a>,
+ 
+@@ -403,6 +406,7 @@ impl<'a, P: Planted<GitStatusPlant>> StatusMachine<'a, P> {
+             graph_layers_raw: Vec::new_in(alloc),
+             graph_layer_oids: Vec::new_in(alloc),
+             counts: StatusCounts::default(),
++            changed_samples: Vec::new_in(alloc),
+             truncated: Truncated::default(),
+             ignores: IgnoreStack::new(opts.limits, alloc),
+             verified_entries: Vec::new_in(alloc),
+@@ -938,7 +942,8 @@ impl<'a, P: Planted<GitStatusPlant>> StatusMachine<'a, P> {
+                 let pending =
+                     core::mem::replace(&mut self.stat_pending_indices, Vec::new_in(self.alloc));
+                 for (idx, st) in pending.into_iter().zip(stats.iter()) {
+-                    self.check_tracked_stat(idx, &owned_idx.entries[idx], st.stat);
++                    let path_bytes = owned_idx.view().path_bytes(&owned_idx.entries[idx]);
++                    self.check_tracked_stat(idx, &owned_idx.entries[idx], path_bytes, st.stat);
+                 }
+                 self.index = Some(owned_idx);
+                 self.phase = Phase::HashFiles;
+@@ -961,14 +966,17 @@ impl<'a, P: Planted<GitStatusPlant>> StatusMachine<'a, P> {
+                     if self.opts.detail == Detail::Presence && self.counts.modified > 0 {
+                         break;
+                     }
++                    let entry = &owned_idx.entries[idx];
++                    let path_bytes = owned_idx.view().path_bytes(entry);
+                     let Some(bytes) = maybe_bytes.as_deref() else {
+                         self.counts.deleted = self.counts.deleted.saturating_add(1);
++                        self.record_sample_bytes(path_bytes, ChangeKind::Deleted);
+                         continue;
+                     };
+-                    let entry = &owned_idx.entries[idx];
+                     let blob_oid = hash_worktree_blob(bytes, autocrlf, self.alloc);
+                     if blob_oid != entry.oid {
+                         self.counts.modified = self.counts.modified.saturating_add(1);
++                        self.record_sample_bytes(path_bytes, ChangeKind::Modified);
+                     }
+                 }
+                 self.index = Some(owned_idx);
+@@ -991,13 +999,16 @@ impl<'a, P: Planted<GitStatusPlant>> StatusMachine<'a, P> {
+                     if self.opts.detail == Detail::Presence && self.counts.modified > 0 {
+                         break;
+                     }
++                    let entry = &owned_idx.entries[idx];
++                    let path_bytes = owned_idx.view().path_bytes(entry);
+                     let Some(target) = maybe_target.as_deref() else {
+                         self.counts.typechanged = self.counts.typechanged.saturating_add(1);
++                        self.record_sample_bytes(path_bytes, ChangeKind::Modified);
+                         continue;
+                     };
+-                    let entry = &owned_idx.entries[idx];
+                     if Oid::of(ObjectKind::Blob, target) != entry.oid {
+                         self.counts.modified = self.counts.modified.saturating_add(1);
++                        self.record_sample_bytes(path_bytes, ChangeKind::Modified);
+                     }
+                 }
+                 self.index = Some(owned_idx);
+@@ -1225,7 +1236,8 @@ impl<'a, P: Planted<GitStatusPlant>> StatusMachine<'a, P> {
+                         && !idx_entry.is_sparse_dir()
+                         && !idx_entry.is_gitlink()
+                     {
+-                        self.check_tracked_stat(idx_pos, idx_entry, entry.stat);
++                        let path_bytes = idx.path_bytes(idx_entry);
++                        self.check_tracked_stat(idx_pos, idx_entry, path_bytes, entry.stat);
+        
+```
+
+**File**: `crates/blaze-preview/Cargo.toml` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++[package]
++name = "blaze-preview"
++version = "0.0.0"
++edition = "2024"
++publish = false
++
++[lib]
++doctest = false
++
++[dependencies]
++blaze-own.workspace = true
++blaze-data.workspace = true
++blaze-json.workspace = true
++blaze-toml.workspace = true
++blaze-sniff.workspace = true
++
++[dev-dependencies]
++blaze-own = { workspace = true, features = ["testing"] }
++blaze-sim.workspace = true
++
++[lints]
++workspace = true
+```
+
+**File**: `crates/blaze-preview/src/highlight.rs` (added, +285/-0)
+```diff
+@@ -0,0 +1,285 @@
++//! Pure `#![no_std]` syntax tokenizer for `blaze-preview`: produces lightweight colored token
++//! spans for Rust, TypeScript/JS, Python, Go, C/C++, Shell, Nix, TOML, JSON, YAML, SQL, Lean,
++//! and Flecs with zero regexes and zero OS calls.
++
++use blaze_own::{AString, AVec, Alloc};
++
++/// Semantic syntax token class mapped to palette colors by any UI renderer.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum TokenKind {
++    Plain,
++    Keyword,
++    Function,
++    Type,
++    String,
++    Number,
++    Comment,
++    Attr,
++    Key,
++    Punct,
++}
++
++/// One highlighted slice on a single line of code.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub struct CodeSpan<'a> {
++    pub text: AString<'a>,
++    pub kind: TokenKind,
++}
++
++/// One syntax-highlighted source line.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub struct CodeLine<'a> {
++    pub line_no: u32,
++    pub spans: AVec<'a, CodeSpan<'a>>,
++}
++
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum LangStyle {
++    CStyle,
++    HashComment,
++    Sql,
++    Lean,
++}
++
++fn lang_style(lang: &str) -> LangStyle {
++    match lang {
++        "Python" | "Python script" | "Shell" | "Shell script" | "Nix" | "Nix flake" | "TOML"
++        | "YAML" | "Makefile" | "Justfile" | "Dockerfile" | "Clippy config" | "Rustfmt config"
++        | "Cargo manifest" | "Cargo lock" | "uv lock" | "Blaze lock" | "Python proj" | "Ruby"
++        | "Ruby script" | "Perl script" => LangStyle::HashComment,
++        "SQL" => LangStyle::Sql,
++        "Lean 4" => LangStyle::Lean,
++        _ => LangStyle::CStyle,
 +    }
 +}
 +
- /// A struct-like layout before it is a row.
- struct Uni {
-     call_ty: Option<PTy>,
-@@ -1507,7 +1567,7 @@ impl<A: Allocator + Clone> Layouts<A> {
-                 }
-             }
-             PNode::Tuple(_) | PNode::Record(..) | PNode::Closure { .. } => {
--                let u = self.univariant(parts, Order::Decreasing, ReprAttrs::RUST, 0, 0, cx.scratch)?;
-+                let u = self.univariant(parts, Order::Decreasing, ReprAttrs::RUST, 0, 0, false, cx.scratch)?;
-                 self.struct_row(t, u)
-             }
-             PNode::Union(_) => {
-@@ -1530,7 +1590,7 @@ impl<A: Allocator + Clone> Layouts<A> {
-                 }
-                 if let [only] = parts {
-                     let inner = *self.get(self.done(*only).ok_or(Refusal::Malformed("a union member not laid out"))?);
--                    let u = self.univariant(parts, Order::Decreasing, ReprAttrs::RUST, 0, 0, cx.scratch)?;
-+                    let u = self.univariant(parts, Order::Decreasing, ReprAttrs::RUST, 0, 0, false, cx.scratch)?;
-                     let mut row = self.struct_row(t, u);
-                     row.call_ty = inner.call_ty;
-                     row.variants = Variants::Single { index: 0 };
-@@ -1558,7 +1618,7 @@ impl<A: Allocator + Clone> Layouts<A> {
-                     Ok(None) => return Err(Refusal::Unsupported("a coroutine whose state the world did not answer")),
-                     Ok(Some(state)) => state,
-                 };
--                let u = self.univariant(parts, Order::Decreasing, ReprAttrs::RUST, 0, 0, cx.scratch)?;
-+                let u = self.univariant(parts, Order::Decreasing, ReprAttrs::RUST, 0, 0, false, cx.scratch)?;
-                 if u64::from(state.size) < u.size || state.align < u.align || u64::from(state.tag_offset) < u.size {
-                     return Err(Refusal::Malformed("a coroutine's state smaller than its upvars"));
-                 }
-@@ -1664,7 +1724,7 @@ impl<A: Allocator + Clone> Layouts<A> {
-     /// Fields `parts` (by declaration) placed in `order` from offset `start`, the alignment at
-     /// least `min_align`, with `attrs`' packing and alignment. A sized result's size is rounded
-     /// up to the alignment; an unsized one's is its tail's offset, unrounded.
--    fn univariant(&mut self, parts: &[PTy], order: Order, attrs: ReprAttrs, start: u64, min_align: u8, scratch: Alloc<'_>
-```
-
-**File**: `crates/blaze-build/src/layout/simd.rs` (modified, +1/-1)
-```diff
-@@ -122,7 +122,7 @@ impl<A: Allocator + Clone> Layouts<A> {
-         // field is never under-aligned by it (its alignment divides the vector's).
-         let vector_align = align.trailing_zeros() as u8;
-         let raised = ReprAttrs { packed: None, align: Some(attrs.align.map_or(vector_align, |a| a.max(vector_align))), ..attrs };
--        let mut u = self.univariant(fields, Order::Declaration, raised, 0, 0, cx.scratch)?;
-+        let mut u = self.univariant(fields, Order::Declaration, raised, 0, 0, false, cx.scratch)?;
-         // Without `repr(align)`, the struct's size is the rule's: the array rounded up to the
-         // vector alignment.
-         if attrs.align.is_none() && u.size != size {
-```
-
-**File**: `crates/blaze-build/src/layout/tests.rs` (modified, +44/-0)
-```diff
-@@ -1041,3 +1041,47 @@ fn record_and_union_layouts() {
-         assert_eq!(permits(check, ty, &mut ls, &mut cx).unwrap(), want, "{check:?} of union type {}", ty.0);
-     }
- }
-+
-+/// Regression test for structural `Unsize` prefix-offset preservation (`core::array::iter::PolymorphicIter`):
-+/// a generic struct whose last field may be unsized (`struct S<T: ?Sized> { alive: (u64, u64), data: T }`)
-+/// must keep its tail field last even when instantiated with a higher-alignment sized type (such as
-+/// `[u128; 2]`, align 16) so `&S<[u128; 2]>` and `&S<[u128]>` place `alive` at the exact same offset.
-+#[test]
-+fn unsizable_generic_tail_preserves_prefix_offsets_when_instantiated_with_high_align_sized_type() {
-+    let mut w = World::default();
-+    let mut g = G::new();
-+    let h = blaze_own::testing::heap();
-+    let mut ls = Layouts::new_in(h.alloc());
-+
-+    // `struct Poly<DATA: ?Sized> { start: u64, end: u64, data: DATA }`
-+    let poly = w.strukt(1, &[F::Leaf(U64), F::Leaf(U64), F::P(0)], ReprAttrs::RUST);
-+    // Nested wrapper: `struct Outer<T: ?Sized> { tag: u8, inner: Poly<T> }`
-+    let outer = w.strukt(1, &[F::Leaf(U8), F::AdtP(poly, 0)], ReprAttrs::RUST);
-+
-+    let u128_ty = g.n(PNode::Uint(UintTy::U128));
-+    let usize_ty = g.n(PNode::Uint(UintTy::Usize));
-+    let two = g.n(PNode::ConstValue { ty: usize_ty, bits: 2 });
-+    let arr_u128 = g.n(PNode::Array(u128_ty, two));
-+    let slice_u128 = g.n(PNode::Slice(u128_ty));
-+
-+    let poly_sized_ty = g.adt(poly, &[arr_u128]);
-+    let poly_unsized_ty = g.adt(poly, &[slice_u128]);
-+    let poly_sized = lay(&w, &mut g, &mut ls, poly_sized_ty).unwrap();
-+    let poly_unsized = lay(&w, &mut g, &mut ls, poly_unsized_ty).unwrap();
-+
-+    assert_eq!(ls.field_offset(poly_sized, 0), Some(0), "start stays at 0 in sized Poly<[u128; 2]>");
-+    assert_eq!(ls.field_offset(poly_sized, 1), Some(8), "end stays at 8 in sized Poly<[u128; 2]>");
-+    assert_eq!(ls.field_offset(poly_sized, 2), Some(16), "data stays last at 16 in sized Poly<[u128; 2]>");
-+    assert_eq!(ls.field_offset(poly_sized, 0), ls.field_offset(poly_unsized, 0));
-+    assert_eq!(ls.field_offset(poly_sized, 1), ls.field_offset(poly_unsized, 1));
-+    assert_eq!(ls.field_offset(poly_sized, 2), ls.field_offset(poly_unsized, 2));
-+
-+    let outer_sized_ty = g.adt(outer, &[arr_u128]);
-+    let outer_unsized_ty = g.adt(outer, &[slice_u128]);
-+    let outer_sized = lay(&w, &mut g, &mut ls, outer_sized_ty).unwrap();
-+    let outer_unsized = lay(&w, &mut g, &mut ls, outer_unsized_ty).unwrap();
-+    assert_eq!(ls.field_offset(outer_sized, 0), Some(0), "tag stays at 0 in sized Outer<[u128; 2]>");
-+    assert_eq!(ls.field_offset(outer_sized, 1), Some(16), "inner stays last at 16 in sized Outer<[u128; 2]>");
-+    assert_eq!(ls.field_offset(outer_sized, 0), ls.field_offset(outer_unsized, 0));
-+    assert_eq!(ls.field_offset(outer_sized, 1), ls.field_offset(outer_unsized, 1));
++fn is_keyword(word: &str, lang: &str) -> bool {
++    match lang {
++        "Rust" => matches!(
++            word,
++            "fn" | "let" | "mut" | "pub" | "struct" | "enum" | "impl" | "trait" | "for" | "in"
++                | "while" | "loop" | "if" | "else" | "match" | "return" | "use" | "mod" | "const"
++                | "static" | "type" | "where" | "as" | "ref" | "move" | "async" | "await"
++                | "unsafe" | "extern" | "crate" | "super" | "self" | "Self" | "true" | "false"
++                | "break" | "continue"
++        ),
++        "Python" | "Python script" => matches!(
++            word,
++            "def" | "class" | "import" | "from" | "as" | "if" | "elif" | "else" | "for" | "in"
++                | "while" | "return" | "yield" | "with" | "try" | "except" | "finally" | "raise"
++                | "pass" | "break" | "continue" | "and" | "or" | "not" | "is" | "None" | "True"
++                | "False" | "async" | "await" | "lambda"
++        ),
++        "TypeScript" | "TSX" | "JavaScript" | "JSX" | "JS script" | "Bun script" => matches!(
++            word,
++            "function" | "const" | "let" | "var" | "return" | "if" | "else" | "for" | "while"
++                | "switch" | "case" | "break" | "continue" | "import" | "export" | "from"
++                | "default" | "class" | "interface" | "type" | "enum" | "async" | "await" | "new"
++                | "try" | "catch" | "throw" | "true" | "false" | "null" | "undefined" | "as"
++        ),
++        "Go" => matches!(
++            word,
++            "func" | "package" | "import" | "var" | "const" | "type" | "struct" | "interface"
++                | "if" | "else" | "for" | "range" | "switch" | "case" | "return" | "go" | "defer"
++                | "select" | "chan" | "map" | "true" | "false" | "nil"
++        ),
++        "Shell" | "Shell script" => matches!(
++            word,
++            "if" | "then" | "else" | "elif" | "fi" | "for" | "in" | "do" | "done" | "while"
++                | "case" | "esac" | "function" | "local" | "export" | "return" | "exit" | "set"
++        ),
++        "Nix" | "Nix flake" => matches!(
++            word,
++            "let" | "in" | "with" | "inherit" | "if" | "then" | "else" | "rec" | "import"
++                | "true" | "false" | "null"
++        ),
++        "TOML" | "YAML" | "JSON" | "JSONL" | "Cargo manifest" | "Clippy config"
++        | "Rustfmt config" => matches!(word, "true" | "false" | "null"),
++        _ => matches!(
++            word,
++            "fn" | "def" | "func" | "let" | "const" | "var" | "if" | "else" | "for" | "while"
++                | "return" | "struct" | "enum" | "class" | "import" | "export" | "use" | "pub"
++                | "true" | "false" | "null" | "nil"
++        ),
++    }
 +}
++
++/// Tokenize up to `max_lines` of `src` into styled [`CodeLine`]s in `alloc`.
++pub fn highlight_code<'a>(
++    src: &str,
++    lang: &str,
++    max_lines: usize,
++    alloc: Alloc<'a>,
++) -> AVec<'a, CodeLine<'a>> {
++    let style = lang_style(lang);
++    let mut out = AVec::new_in(alloc);
++    for (idx, raw_line) in src.lines().take(max_lines).enumerate() {
++        let mut spans = AVec::new_in(alloc);
++        tokenize_line(raw_line, lang, style, &mut spans, alloc);
++        out.push(CodeLine { line_no: (idx + 1) as u32, spans });
++    }
++    out
++}
++
++fn push_span<'a>(spans: &mut AVec<'a, CodeSpan<'a>>, text: &str, kind: TokenKind, alloc: Alloc<'a>) {
++    
 ```
 
-**File**: `crates/blaze-emit/src/sota/isel.rs` (modified, +13/-0)
+**File**: `crates/blaze-preview/src/lib.rs` (added, +595/-0)
 ```diff
-@@ -2071,6 +2071,19 @@ pub(crate) fn emit_sota_a64_with_abi<'a>(
-     let os = if is_macos { crate::Os::MacOs } else { crate::Os::Linux };
-     check_subset(&view, has_lse, os)?;
- 
-+    // Canonicalize into dominator-respecting RPO order before fusion, loop-depth analysis, and
-+    // linear-interval register allocation (`regalloc` requires `def_block <= use_block` for all
-+    // reachable blocks and `target <= src` for all natural loop back-edges).
-+    let rpo_owned = blaze_lir::coldsplit::reorder_blocks_rpo(view, alloc).ok().flatten();
-+    let view = rpo_owned.as_ref().map_or(view, |r| r.func.view());
-+    let call_clobbers = |new_inst: usize| -> CallClobbers {
-+        let orig = rpo_owned
-+            .as_ref()
-+            .and_then(|r| r.old_inst_of_new.get(new_inst).copied())
-+            .unwrap_or(new_inst);
-+        call_clobbers(orig)
+@@ -0,0 +1,595 @@
++//! `blaze-preview`: `#![no_std]` `#![blaze::sans_io]` `#![forbid(unsafe_code)]` rich file
++//! preview engine powering `blaze-shell`'s `y` (Yazi) file manager and hover popovers.
++//!
++//! Turns raw file bytes + filename into the best structured visual representation:
++//! - **Tabular previews** for lockfiles (`Cargo.lock`, `uv.lock`, `blaze.lock`), CSV/TSV,
++//!   JSON arrays of objects, and TOML/JSON manifests (`Cargo.toml`, `package.json`, `flake.lock`),
++//! - **Rendered Markdown** (`README.md`, `AGENTS.md`, `*.md`) with headings, bullets, inline
++//!   code chips, bold/italic, and syntax-highlighted code fences,
++//! - **Syntax-highlighted source code** for Rust, TS/JS, Python, Go, C/C++, Nix, Shell, SQL, etc.,
++//! - **Structured binary metadata** (Mach-O/ELF arch, PNG/GIF dimensions, SQLite, Parquet, Zstd).
++
++#![no_std]
++#![feature(register_tool, custom_inner_attributes)]
++#![register_tool(blaze)]
++#![blaze::sans_io]
++#![forbid(unsafe_code)]
++
++pub mod highlight;
++pub mod markdown;
++
++use core::fmt::Write;
++
++use blaze_data::Value as DataValue;
++use blaze_own::{AString, AVec, Alloc};
++use blaze_sniff::{FileCategory, SniffResult, sniff_file};
++
++pub use crate::highlight::{CodeLine, CodeSpan, TokenKind, highlight_code};
++pub use crate::markdown::{MdBlock, MdSpan, MdStyle, parse_markdown};
++
++/// Limits guarding preview parsing & rendering against huge files (rule 18: bounded progress).
++#[derive(Clone, Copy, Debug)]
++pub struct PreviewLimits {
++    pub max_rows: usize,
++    pub max_cols: usize,
++    pub max_lines: usize,
++    pub max_cell_chars: usize,
++}
++
++impl PreviewLimits {
++    pub const SHIPPED: Self = Self {
++        max_rows: 48,
++        max_cols: 6,
++        max_lines: 64,
++        max_cell_chars: 64,
 +    };
++}
 +
-     let len = view.len();
-     let blocks = view.blocks();
-     let tail_calls = if preserve_all_cold {
-```
-
-**File**: `crates/blaze-emit/src/sota/mod.rs` (modified, +5/-1)
-```diff
-@@ -46,7 +46,7 @@ use blaze_lir::{
-     amac::{AmacOpts, interleave_amac_loops},
-     bce::eliminate_redundant_checks,
-     bce_hoist::{BceHoistOpts, hoist_loop_bounds_checks},
--    coldsplit::partition_cold_blocks,
-+    coldsplit::{partition_cold_blocks, reorder_blocks_rpo},
-     egraph::{RegBudget, sota_optimize_fixpoint},
-     gemm::{GemmOpts, optimize_gemm_loops},
-     ifconv::if_convert,
-@@ -216,6 +216,10 @@ fn run_sroa_thread_cleanup<'a>(
-     if let Ok(f) = coalesce_cfg(v, alloc) {
-         cur = Some(f);
-     }
-+    let v = cur.as_ref().map_or(input, |f| f.view());
-+    if let Ok(Some(rpo)) = reorder_blocks_rpo(v, alloc) {
-+        cur = Some(rpo.func);
-+    }
-     cur.filter(|f| verify(f.view()).is_ok())
- }
- 
-```
-
-**File**: `crates/blaze-emit/src/sota/tests.rs` (modified, +136/-0)
-```diff
-@@ -2326,4 +2326,140 @@ mod std_readiness_tests {
-         // SAFETY: `func` has signature `extern "C" fn(u64) -> u64`.
-         assert_eq!(unsafe { exec.as_fn::<extern "C" fn(u64) -> u64>() }(5), 45);
-     }
++/// Structured tabular preview (used for `uv.lock`, `Cargo.lock`, `blaze.lock`, CSV, JSON arrays).
++#[derive(Clone, Debug)]
++pub struct PreviewTable<'a> {
++    pub title: AString<'a>,
++    pub subtitle: AString<'a>,
++    pub headers: AVec<'a, AString<'a>>,
++    pub rows: AVec<'a, AVec<'a, AString<'a>>>,
++    pub total_rows: usize,
++}
 +
-+    /// Regression test for the `crypto_bigint::Uint::<4>::from_be_slice` infinite loop:
-+    /// when `thread_jumps` folds a loop entry directly into a higher-indexed body block,
-+    /// the resulting CFG is valid SSA but non-RPO (`header > latch`). Both the full SOTA
-+    /// pipeline and direct `emit_sota_a64` must canonicalize to dominator-first RPO before
-+    /// linear-interval register allocation so values defined in `header` and used in `latch`
-+    /// never get clobbered.
-+    #[cfg(all(target_arch = "aarch64", target_os = "macos"))]
-+    #[test]
-+    fn sota_non_rpo_uadd_overflow_loop_matches_evaluator_on_hardware() {
-+        let alloc = test_alloc();
-+        // 1. Original slot-based checked-add loop (`while j < 4 { buf = j; j += 1; }`).
-+        let func = {
-+            let mut b = Builder::<Alloc<'static>, Full>::new_in(64, alloc);
-+            let sig = b.sig(Conv::C, Variadic::No, &[], &[Param::of(Ty::I64)]);
-+            b.set_signature(sig);
-+            let [entry, header, body, trap_blk, cont, exit] =
-+                [(); 6].map(|_| b.create_block(BlockKind::Normal));
++/// Key-value section summary (used for `Cargo.toml`, `package.json`, `flake.lock`, binaries).
++#[derive(Clone, Debug)]
++pub struct PreviewKv<'a> {
++    pub title: AString<'a>,
++    pub subtitle: AString<'a>,
++    pub pairs: AVec<'a, (AString<'a>, AString<'a>)>,
++    /// Optional subordinate table (e.g. `[dependencies]` in `Cargo.toml` or inputs in `flake.lock`).
++    pub table: Option<PreviewTable<'a>>,
++}
 +
-+            b.begin(entry);
-+            let s_buf = b.slot(8, 3, SlotKind::Named);
-+            let s_j = b.slot(8, 3, SlotKind::Named);
-+            let p_buf = b.slot_addr(s_buf);
-+            let p_j = b.slot_addr(s_j);
-+            let zero = b.iconst(Ty::I64, 0);
-+            b.store(Flags::NONE, zero, p_buf, 0, MemAttrs::aligned(3));
-+            b.store(Flags::NONE, zero, p_j, 0, MemAttrs::aligned(3));
-+            b.jump((header, &[]));
++/// Rich structured preview body returned by [`build_preview`].
++#[derive(Clone, Debug)]
++pub enum PreviewBody<'a> {
++    Table(PreviewTable<'a>),
++    KeyValues(PreviewKv<'a>),
++    Markdown {
++        blocks: AVec<'a, MdBlock<'a>>,
++        truncated: bool,
++    },
++    Code {
++        lang: &'static str,
++        lines: AVec<'a, CodeLine<'a>>,
++        truncated: bool,
++    },
++    Summary {
++        pairs: AVec<'a, (AString<'a>, AString<'a>)>,
++    },
++}
 +
-+            b.begin(header);
-+            let j0 = b.load(Ty::I64, Flags::NONE, p_j, 0, MemAttrs::aligned(3));
-+            let four = b.iconst(Ty::I64, 4);
-+            let cond = b.icmp(IntCond::Ult, j0, four);
-+            b.br(Flags::NONE, cond, (body, &[]), (exit, &[]));
++/// Complete preview document combining `blaze-sniff` analysis + best display representation.
++#[derive(Clone, Debug)]
++pub struct PreviewDoc<'a> {
++    pub sniff: SniffResult,
++    pub file_size: u64,
++    pub body: PreviewBody<'a>,
++}
 +
-+            b.begin(body);
-+            let j1 = b.load(Ty::I64, Flags::NONE, p_j, 0, MemAttrs::aligned(3));
-+            b.store(Flags::NONE, j1, p_buf, 0, MemAttrs::aligned(3));
-+            let j2 = b.load(Ty::I64, Flags::NONE, p_j, 0, MemAttrs::aligned(3));
-+            let one = b.iconst(Ty::I64, 1);
-+            let pair = b.overflow(Op::UaddOverflow, j2, one);
-+            let nj = b.project(pair, 0);
-+            let ovf = b.project(pair, 1);
-+            b.br(Flags::NONE, ovf, (trap_blk, &[]), (cont, &[]));
++/// Build the richest structured preview for `(name, bytes, total_file_size)` in `alloc` (zero IO!).
++pub fn build_preview<'a>(
++    name: &str,
++    bytes: &[u8],
++    total_file_size: u64,
++    limits: PreviewLimits,
++    alloc: Alloc<'a>,
++) -> PreviewDoc<'a> {
++    let sniff = sniff_file(name, bytes);
 +
-+            b.begin(trap_blk);
-+            b.trap(1);
-+
-+            b.begin(cont);
-+            b.store(Flags::NONE, nj, p_j, 0, MemAttrs::aligned(3));
-+            b.jump((header, &[]));
-+
-+            b.begin(exit);
-+            let res = b.load(Ty::I64, Flags::NONE, p_buf, 0, MemAttrs::aligned(3));
-+            b.ret(&[res]);
-+            b.finish_checked().unwrap()
++    // 1. Binary formats: crisp structured summary card from `blaze-sniff`.
++    if sniff.is_binary {
++        let mut pairs = AVec::new_in(alloc);
++        let mut kind_s = AString::new_in(alloc);
++        let _ = sniff.format_label(&mut kind_s);
++        pairs.push((AString::from_str_in("format", alloc), kind_s));
++        if let Some((w, h)) = sniff.dims {
++            let mut ds = AString::new_in(alloc);
++            let _ = write!(ds, "{w} × {h} px");
++            pairs.push((AString::from_str_in("dimensions", alloc), ds));
++        }
++        let mut sz = AString::new_in(alloc);
++        let _ = write!(sz, "{total_file_size} bytes");
++        pairs.push((AString::from_str_in("size", alloc), sz));
++        return PreviewDoc {
++            sniff,
++            file_size: total_file_size,
++            body: PreviewBody::Summary { pairs },
 +        };
++    }
 +
-+        assert!(matches!(
-+            eval::run_in(func.view(), &[], 10_000, alloc).unwrap(),
-+            Outcome::Returned(ref v) if v.as_slice() == [Val::Int(3)]
++    let Ok(text) = core::str::from_utf8(bytes) else {
++        let mut pairs = AVec::new_in(alloc);
++        pairs.push((
++            AString::from_str_in("format", alloc),
++            AString::from_str_in("Non-UTF-8 binary", alloc),
 +        ));
-+        let pre = crate::sota::run_sroa_thread_cleanup(func.view(), alloc);
-+        let mid_in = pre.as_ref().map_or(func.view(), |f| f.view());
-+        let opt = blaze_lir::egraph::sota_optimize_fixpoint(
-+            mid_in,
-+            blaze_lir::egraph::RegBudget::AARCH64,
-+            3,
-+            |_| 1,
-+            alloc,
-+        )
-+        .unwrap();
-+        let late = crate::sota::run_sota_loop_and_late_passes(
-+            opt.func.view(),
-+            MAC_ARM64,
-+            blaze_lir::egraph::RegBudget::AARCH64,
-+            true,
-+            Some(blaze_lir::superopt::SuperoptOpts::apple_silicon()),
-+            alloc,
-+        );
-+        let emitted = crate::sota::isel::emit_sota_a64(
-+            late.view(),
-+            &NoNames,
-+            crate::sota::CallMode::GotSlot,
-+            MAC_ARM64.features,
-+            true,
-+            alloc,
-+        )
-+        .unwrap();
-+        let (exec, _) = load_exec(emitted);
-+        let f_ptr: extern "C" fn() -> u64 = unsafe { exec.as_fn() };
-+        assert_eq!(f_ptr(), 3);
++        return PreviewDoc {
++            sniff,
++            file_size: total_file_size,
++            body: PreviewBody::Summary { pairs },
++        };
++    };
 +
-+        // 2. Direct non-RPO SSA LIR (latch block 1 before dominating header block 2) emitted
-+        //    directly via `emit_sota_a64` without mid-end passes.
-+        let non_rpo_src = "\
-+func ptr64 sig s0 attrs [] features \"\"
-+type t0 = {i64, i1}
-+sig s0 = c () -> (i64)
-+block0 normal:
-+  v0 = iconst i64 0
-+  v1 = iconst i64 4
-+  v2 = iconst i64 1
-+  jump block2(v0)
-+block1 normal:
-+  v4 = icmp i1 ult, v8, v1
-+  br v4, block2(v8), block4()
-+block2 normal:
-+  v6 = param i64
-+  v7 = uadd_overflow t0 v6, v2
-+  v8 = project i64 v7, 0
-+  v9 = project i1 v7, 1
-+  br v9, block3(), block1()
-+block3 normal:
-+  trap 1
-+block4 normal:
-+  return (v6)
-+";
-+        let non_rpo = blaze_lir::parse::parse(non_rpo_src).expect("parses non-RPO LIR");
-+        assert!(
-+            bl
++    let truncated = (bytes.len() as u64) < total_file_size;
++
++    // 2. Rendered Markdown (`README.md`, `AGENTS.md`, `*.md`).
++    if sniff.label == "Markdown" 
 ```
 
-**File**: `crates/blaze-emit/src/sota/x86_64.rs` (modified, +4/-0)
+---
+
+### Incident Patch 3: `1a6b6d31` (2026-11-26)
+**Commit Message**: feat(html,preview,shell): sans-IO HTML5 parser & renderer integrated with Markdown and native GPU images (#2508)
+
+## Summary
+
+Adds a pure `#![no_std]` `#![blaze::sans_io]` `#![forbid(unsafe_code)]`
+HTML5 parser & visual block renderer (`crates/blaze-html`), ties it
+directly into `blaze-preview`'s Markdown engine (and standalone
+`.html`/`.htm` previews), fixes proportional SF Pro text measurement
+overlap, and adds native macOS ImageIO GPU image rendering (`webp`,
+`png`, `jpg`, `gif`) to `blaze-shell`.
+
+## Verification
+- `blaze-html`: 4/4 passed (including 120-case `blaze-sim` fuzzing), 0
+gate ratchet violations.
+- `blaze-preview`: 6/6 passed; `blaze-sh`: 4/4 passed; `blaze-shell`:
+15/15 passed.
+- Offscreen visual verification of `open README.md`: verified dark-mode
+Blaze fire WebP logo (`docs/brand/fire/header-dark.webp`), centered
+`<h3>` + `<code>` + `<br>` + `<a>` nav links, syntax-highlighted fences,
+and zero text overlap.
+
+## Release Smoke Proof (exact clean tree
+`d9986d334ed77441bb3fe787e1082d3baa796c80`, commit `358e5446e8`)
+
+```text
+blaze-smoke 2
+tree d9986d334ed77441bb3fe787e1082d3baa796c80
+binary 1b9511f8a3698c314f543d892ceaebafe35d3e626a718adaa4db451ad7d6c564
+host macos-aa
+
+**File**: `Cargo.lock` (modified, +9/-0)
 ```diff
-@@ -823,6 +823,10 @@ pub(crate) fn emit_sota_x64<'a>(
-     let has_avx512 = features & blaze_tier::Machine::AVX512 != 0;
-     check_x64_subset(&view, has_fma, has_avx2, has_avx512)?;
+@@ -1176,6 +1176,14 @@ dependencies = [
+  "blaze-swiss",
+ ]
  
-+    // Canonicalize into dominator-respecting RPO order before linear-interval register allocation.
-+    let rpo_owned = blaze_lir::coldsplit::reorder_blocks_rpo(view, alloc).ok().flatten();
-+    let view = rpo_owned.as_ref().map_or(view, |r| r.func.view());
++[[package]]
++name = "blaze-html"
++version = "0.0.0"
++dependencies = [
++ "blaze-own",
++ "blaze-sim",
++]
 +
-     let len = view.len();
-     let uses_sdot_ymm = has_avx2
-         && (0..len).any(|i| {
+ [[package]]
+ name = "blaze-http"
+ version = "0.0.0"
+@@ -1670,6 +1678,7 @@ name = "blaze-preview"
+ version = "0.0.0"
+ dependencies = [
+  "blaze-data",
++ "blaze-html",
+  "blaze-json",
+  "blaze-own",
+  "blaze-sim",
 ```
 
-**File**: `crates/blaze-lir/src/simplify/coldsplit.rs` (modified, +284/-3)
+**File**: `Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -42,6 +42,15 @@ pub struct ColdSplitOutput<A: Allocator> {
-     pub stats: ColdSplitStats,
- }
- 
-+/// Output of [`reorder_blocks_rpo`] when the input CFG was not already dominator-ordered.
-+#[derive(Debug)]
-+pub struct RpoOrderOutput<A: Allocator> {
-+    pub func: Func<A>,
-+    /// Maps each instruction index in `func` back to its original instruction index in the input
-+    /// view (useful for remapping per-callsite tables such as IPRA `call_clobbers`).
-+    pub old_inst_of_new: Vec<usize, A>,
+@@ -400,6 +400,8 @@ blaze-ed25519 = { path = "crates/blaze-ed25519" } # Ed25519 verification written
+ # The SwissTable group probe and `Index`, re-exported as `blaze_mem::swiss`.
+ blaze-swiss = { path = "crates/blaze-swiss" }
+ blaze-hash = { path = "crates/blaze-hash", features = ["shared"] }
++# Pure no_std, zero-unsafe, sans-IO HTML5 tokenizer, arena DOM, and document renderer.
++blaze-html = { path = "crates/blaze-html" }
+ # blaze's sans-IO HTTP/1.1 and HTTP/3 cores and their drivers on blaze-core's effects.
+ blaze-http = { path = "crates/blaze-http", default-features = false }
+ blaze-ids = { path = "crates/blaze-ids", features = ["serde"] }
+```
+
+**File**: `crates/blaze-html/Cargo.toml` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++[package]
++name = "blaze-html"
++description = "Pure no_std, zero-unsafe, sans-IO HTML5 tokenizer, arena DOM, and visual block renderer with dark/light <picture> resolution and Markdown interoperability"
++publish = false
++
++version.workspace = true
++authors.workspace = true
++edition.workspace = true
++license.workspace = true
++rust-version.workspace = true
++repository.workspace = true
++
++[lib]
++doctest = false
++
++[dependencies]
++blaze-own.workspace = true
++
++[dev-dependencies]
++blaze-own = { workspace = true, features = ["testing"] }
++blaze-sim.workspace = true
++
++[lints]
++workspace = true
+```
+
+**File**: `crates/blaze-html/src/dom.rs` (added, +733/-0)
+```diff
+@@ -0,0 +1,733 @@
++//! Flat arena-indexed HTML5 DOM tree (`Document<'a>`) with explicit bounds, void-element
++//! handling, implicit tag closing, attribute queries, alignment extraction, and dark/light
++//! `<picture>` source selection.
++
++use blaze_own::{AString, AVec, Alloc};
++
++use crate::entities::decode_entities;
++use crate::tokenizer::{Token, Tokenizer};
++
++/// Newtype index into [`Document::nodes`].
++#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
++pub struct NodeId(pub u32);
++
++impl NodeId {
++    pub const ROOT: Self = Self(0);
++
++    #[inline]
++    pub fn index(self) -> usize {
++        usize::try_from(self.0).unwrap_or(usize::MAX)
++    }
 +}
 +
- #[inline]
- fn to_idx(v: u32) -> usize {
-     usize::try_from(v).unwrap_or(usize::MAX)
-@@ -358,22 +367,29 @@ pub fn partition_cold_blocks<A: Allocator + Copy>(
- 
-     // Step 3: Build partitioned layout order: all hot blocks in original relative order
-     // (entry block `0` always first), followed by all cold blocks in original relative order.
-+    // If that order is not dominator-respecting (every reachable non-entry block must have at
-+    // least one reachable predecessor placed strictly earlier), fall back to hot-first DFS RPO
-+    // so downstream linear-interval register allocation and back-edge analyses remain sound.
-     let mut order: Vec<usize, A> = Vec::with_capacity_in(blocks, alloc);
--    let mut out_is_cold: Vec<bool, A> = Vec::with_capacity_in(blocks, alloc);
-     for b in 0..blocks {
-         if !at(&cold, b, false) {
-             order.push(b);
--            out_is_cold.push(false);
-         }
-     }
-     let mut cold_count = 0u32;
-     for b in 0..blocks {
-         if at(&cold, b, false) {
-             order.push(b);
--            out_is_cold.push(true);
-             cold_count += 1;
-         }
-     }
-+    if !is_order_dominator_valid(blocks, &succs, &order, alloc) {
-+        order = compute_hot_first_rpo(blocks, &succs, &cold, alloc);
-+    }
-+    let mut out_is_cold: Vec<bool, A> = Vec::with_capacity_in(blocks, alloc);
-+    for &old_b in order.iter() {
-+        out_is_cold.push(at(&cold, old_b, false));
-+    }
- 
-     let mut new_block = filled(blocks, NONE, &alloc);
-     let mut new_inst = filled(len, NONE, &alloc);
-@@ -446,6 +462,209 @@ pub fn partition_cold_blocks<A: Allocator + Copy>(
-     Ok(ColdSplitOutput { func, is_cold: out_is_cold, stats })
- }
- 
-+/// Checks whether `order` (a permutation of `0..blocks` with `order[0] == 0`) is dominator-ordered:
-+/// every reachable block `b != 0` has at least one reachable predecessor placed strictly earlier
-+/// in `order`, and every reachable block precedes any unreachable block.
-+///
-+/// Proof: if `u` strictly dominates reachable `v` with `pos[v] < pos[u]`, let `w` be the block
-+/// strictly dominated by `u` with minimum `pos[w]`; its reachable predecessor `p` with
-+/// `pos[p] < pos[w]` must also be dominated by `u` (and `p != u` since `pos[p] < pos[w] < pos[u]`),
-+/// contradicting minimality of `w`.
-+fn is_order_dominator_valid<A: Allocator + Copy>(
-+    blocks: usize,
-+    succs: &[Vec<u32, A>],
-+    order: &[usize],
-+    alloc: A,
-+) -> bool {
-+    if blocks <= 1 {
-+        return true;
-+    }
-+    if order.first().copied() != Some(0) || order.len() != blocks {
-+        return false;
-+    }
-+    let mut pos = filled(blocks, NONE, &alloc);
-+    for (p, &b) in order.iter().enumerate() {
-+        set_at(&mut pos, b, u32_of(p));
-+    }
-+    // Mark blocks reachable from entry block `0` via iterative DFS.
-+    let mut reachable = filled(blocks, false, &alloc);
-+    let mut stack: Vec<usize, A> = Vec::with_capacity_in(blocks, alloc);
-+    set_at(&mut reachable, 0, true);
-+    stack.push(0);
-+    while let Some(b) = stack.pop() {
-+        if let Some(sb) = succs.get(b) {
-+            for &s in sb.iter() {
-+                let si = to_idx(s);
-+                if !at(&reachable, si, true) {
-+                    set_at(&mut reachable, si, true);
-+                    stack.push(si);
-+                }
-+            }
++/// Color scheme for `<picture><source media="(prefers-color-scheme: ...)">` resolution.
++#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
++pub enum ColorScheme {
++    #[default]
++    Dark,
++    Light,
++}
++
++/// Horizontal text / media alignment extracted from `align="..."`, `<center>`, or inline CSS
++/// `style="text-align: ..."`.
++#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
++pub enum TextAlign {
++    #[default]
++    Left,
++    Center,
++    Right,
++}
++
++/// Hard bounds guaranteeing deterministic O(N) parsing with bounded memory (rule 18).
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub struct HtmlLimits {
++    pub max_nodes: usize,
++    pub max_depth: usize,
++    pub max_attrs_per_tag: usize,
++}
++
++impl HtmlLimits {
++    pub const SHIPPED: Self = Self {
++        max_nodes: 16_384,
++        max_depth: 128,
++        max_attrs_per_tag: 32,
++    };
++}
++
++/// Semantic HTML5 tag classification.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum Tag {
++    // Document & metadata (non-visual)
++    Html,
++    Head,
++    Title,
++    Meta,
++    Link,
++    Style,
++    Script,
++    Noscript,
++    Template,
++    // Block containers
++    Body,
++    Main,
++    Article,
++    Section,
++    Header,
++    Footer,
++    Nav,
++    Aside,
++    Div,
++    P,
++    Center,
++    Figure,
++    Figcaption,
++    Details,
++    Summary,
++    Blockquote,
++    Pre,
++    Hr,
++    Br,
++    // Headings
++    H1,
++    H2,
++    H3,
++    H4,
++    H5,
++    H6,
++    // Lists
++    Ul,
++    Ol,
++    Li,
++    Dl,
++    Dt,
++    Dd,
++    // Tables
++    Table,
++    Thead,
++    Tbody,
++    Tfoot,
++    Tr,
++    Th,
++    Td,
++    Caption,
++    // Media
++    Picture,
++    Source,
++    Img,
++    Svg,
++    // Inline
++    A,
++    Strong,
++    B,
++    Em,
++    I,
++    Code,
++    Kbd,
++    Samp,
++    Var,
++    S,
++    Del,
++    U,
++    Ins,
++    Mark,
++    Small,
++    Sub,
++    Sup,
++    Span,
++    Abbr,
++    Time,
++    Q,
++    // Void & other
++    Area,
++    Base,
++    Col,
++    Embed,
++    Input,
++    Param,
++    Track,
++    Wbr,
++    Unknown,
++}
++
++impl Tag {
++    /// Classify an HTML tag name (ASCII case-insensitive).
++    pub fn from_name(raw: &str) -> Self {
++        let mut buf = [0u8; 16];
++        let bytes = raw.as_bytes();
++        if bytes.len() > buf.len() {
++            return Self::Unknown;
 +        }
-+    }
-+    let mut has_earlier_pred = filled(blocks, false, &alloc);
-+    set_at(&mut has_earlier_pred, 0, true);
-+    for b in 0..blocks {
-+        if !at(&reachable, b, false) {
++        for (dst, &src) in buf.iter_mut().zip(bytes.iter()) {
++            *dst = src.to_ascii_lowercase();
++        }
++        let lower = buf
++            .get(..bytes.len())
++            .and_then(|s| core::str::from_utf8(s).ok())
++            .unwrap_or("");
++        match lower {
++            "html" => Self::Html,
++            "head" => Self::Head,
++            "title" => Self::Title,
++            "meta" => Self::Meta,
++            "link" => Self::Link,
++            "style" => Self::Style,
++            "script" => Self::Script,
++            "noscript" => Self::Noscript,
++            "template" => Self::Template,
++            "body" => Self::Body,
++            "main" => Self::Main,
++            "article" => Self::Article,
++            "section" => Self::Section,
++            "header" => Self::Header,
++            "footer" => Self::Footer,
++            "nav" => Self::Nav,
++            "aside" => Self::Aside,
++            "div" => Self::Div,
++            "p" => Self::P,
++            "center" => Self::Center,
++            "figure" => Self::Figure,
++            "figcaption" => Self::Figcaption,
++            "details" => Self::Details,
++            "summary" => Self::Summary,
++            "blockquote" => Self::Blockquote,
++            "pre" => Self::Pre,
++            "hr" => Self::Hr,
++            "br" => Self::Br,
++            "h1" => Self::H1,
++            "h2" => Self::H2,
++            "h3" => Self::H3,
++            "h4" => Self::H4,
++            "h5" => Self::H5,
++            "h6" => Self::H6,
++            "ul" => Self::Ul,
++            "ol" => Self::Ol,
++            "li" => Self::Li,
++            "dl" => Self::Dl,
++            "dt" => Self::Dt,
++            "dd" => Self::Dd,
++            "table" => Self::Table,
++            "thead" => Self::Thead,
++            "tbody" => Self::Tbody,
++            "tfoot" => Self::Tfoot,
++            "tr" => Self::Tr,
++            "th" => Self::Th,
++            "td" => Self::Td,
++            "caption" => Self::Caption,
++            "picture" =
+```
+
+**File**: `crates/blaze-html/src/entities.rs` (added, +169/-0)
+```diff
+@@ -0,0 +1,169 @@
++//! Pure `#![no_std]` HTML5 character reference decoder: named entities (`&amp;`, `&middot;`,
++//! `&mdash;`, `&nbsp;`, ...), decimal numeric references (`&#123;`), and hex numeric references
++//! (`&#x1F525;`).
++
++use blaze_own::{AString, Alloc};
++
++/// Decode all HTML character references in `src` into a new `AString<'a>` in `alloc`.
++pub fn decode_entities<'a>(src: &str, alloc: Alloc<'a>) -> AString<'a> {
++    let mut out = AString::with_capacity_in(src.len(), alloc);
++    decode_entities_into(src, &mut out);
++    out
++}
++
++/// Append `src` with HTML character references decoded into `out`.
++pub fn decode_entities_into(src: &str, out: &mut AString<'_>) {
++    let bytes = src.as_bytes();
++    let len = bytes.len();
++    let mut i = 0usize;
++
++    while i < len {
++        if bytes.get(i).copied() == Some(b'&')
++            && let Some((decoded, advance)) = try_decode_at(src, i)
++        {
++            out.push_str(decoded.as_str());
++            i = i.saturating_add(advance);
 +            continue;
 +        }
-+        let pb = at(&pos, b, NONE);
-+        if let Some(sb) = succs.get(b) {
-+            for &s in sb.iter() {
-+                let si = to_idx(s);
-+                if pb < at(&pos, si, 0) {
-+                    set_at(&mut has_earlier_pred, si, true);
-+                }
-+            }
++        if let Some(rest) = src.get(i..)
++            && let Some(ch) = rest.chars().next()
++        {
++            out.push(ch);
++            i = i.saturating_add(ch.len_utf8());
++        } else {
++            break;
 +        }
 +    }
-+    for b in 1..blocks {
-+        if at(&reachable, b, false) && !at(&has_earlier_pred, b, false) {
-+            return false;
-+        }
++}
++
++enum Decoded {
++    Static(&'static str),
++    Char([u8; 4], usize),
++}
++
++impl Decoded {
++    fn from_char(ch: char) -> Self {
++        let mut buf = [0u8; 4];
++        let n = ch.encode_utf8(&mut buf).len();
++        Self::Char(buf, n)
 +    }
-+    true
-+}
 +
-+/// Computes a deterministic, iterative hot-first Reverse Post-Order (RPO) over `0..blocks`.
-+///
-+/// Cold successors are explored first in post-order so they land last in RPO while strictly
-+/// preserving dominator-before-dominated ordering for all reachable blocks (and any unreachable
-+/// components appended at the tail).
-+fn compute_hot_first_rpo<A: Allocator + Copy>(
-+    blocks: usize,
-+    succs: &[Vec<u32, A>],
-+    is_cold: &[bool],
-+    allo
-```
-
----
-
-### Incident Patch 2: `66cb28b3` (2026-11-24)
-**Commit Message**: fix(emit): eliminate >8 MiB stack-frame overflow & 68s emit blowup on large functions (#2400)
-
-Root causes in blaze-emit:
-1. SOTA (sota/isel.rs) laid out all LIR stack slots disjointly without lifetime
-   coloring; functions with >32 KiB of raw temp slots (e.g. syn::ty::parsing::ambig_ty
-   with 39,880 B across 344 temp + 163 named slots) left max_spill_slots = 0,
-   triggering OutOfSpillSlots and falling back to the Reference tier.
-2. Reference (pass.rs) allocated 16 bytes per SSA instruction unconditionally
-   (600,259 * 16 = 9.6 MiB in ambig_ty), overflowing the 8 MiB macOS main stack
-   on the very first call and emitting 13.42 MiB of code.
-3. Functions >1 MiB also exceeded ARM64 +/-1 MiB imm19 conditional-branch / adr
-   reach in SOTA.
-4. Three O(B^2)/O(N^2) loops burned ~68 s emitting large syn/serde/clap functions:
-   sota/release_opts.rs::compute_block_order, per-Switch/Unreachable
-   blaze_lir::verify::sole_switch_default scans in isel.rs/pass.rs, and linear
-   scans over busy/call/back-edge tables in sota/regalloc.rs.
-
-Fixes:
-- Add pass/frame.rs providing:
-  * pack_slots: sound forward may-addressed LIR stack-slot lifetime coloring
-    shared by SOTA and Reference (proven
-
-**File**: `crates/blaze-emit/src/pass.rs` (modified, +49/-50)
-```diff
-@@ -23,6 +23,7 @@ pub(crate) mod atomic;
- mod bulk;
- mod float;
- mod float_width;
-+pub(crate) mod frame;
- mod int;
- pub(crate) mod probe;
- /// Branches and PC-relative references past a short field's reach: islands and long forms.
-@@ -132,11 +133,15 @@ struct Pass<'a, 'c, A: Allocator> {
-     data_index: Vec<u32, Global>,
-     /// The data rows `data_addr` reaches, in the order they are placed.
-     placed: Vec<u32, Global>,
-+    /// Per value, the offset from `sp` of its cell (`NONE` for `Ty::NONE` instructions).
-+    cell_at: blaze_own::AVec<'c, u32>,
-+    /// Total bytes occupied by all cells (past the last cell's end).
-+    cells_end: u64,
-     /// Per stack slot, its offset from `sp`.
--    slot_at: Vec<u32, Global>,
-+    slot_at: blaze_own::AVec<'c, u32>,
-     /// Per value, the offset from `sp` of the third word of a wide pair (lib.rs, "Pairs": an
-     /// `i128` and a narrow integer, 24 bytes, past its 16-byte cell); `NONE` for any other.
--    wide_pair_at: Vec<u32, Global>,
-+    wide_pair_at: blaze_own::AVec<'c, u32>,
-     /// Where the staging words of a block's arguments start, from `sp`.
-     staging_at: u32,
-     /// The most staging words an edge took.
-@@ -148,6 +153,8 @@ struct Pass<'a, 'c, A: Allocator> {
-     most_align: u64,
-     /// Where each landing block's `sp` restore starts (pass/stack.rs), patched with the frame.
-     sp_fixes: Vec<u32, Global>,
-+    /// Per block, its sole empty-arg `Op::Switch` default terminator (`NONE` otherwise).
-+    sole_switch_default: blaze_own::AVec<'c, u32>,
-     /// The block being lowered.
-     block: Block,
-     /// The short fields still to be placed in reach, and the islands' rows (pass/reach.rs).
-@@ -179,43 +186,17 @@ pub(crate) fn run<A: Allocator>(
-     check_sig(view, isa, view.sigs[view.head.sig as usize], sig.params, sig.rets)
-         .map_err(|why| EmitError::Signature { why })?;
- 
--    // The frame: a 16-byte cell per value, then the third word of each wide pair (in 16-byte
--    // steps, so every cell stays 16-aligned), then each slot at its alignment, then the
--    // staging words; `sp` aligned to the most any slot asks.
--    let cells = view.len() as u64 * 16;
--    let mut at = cells;
--    let mut wide_pair_at = Vec::with_capacity_in(view.len(), Global);
--    for value in 0..view.len() {
--        match wide::is_wide_pair(view, view.ty(Value(value as u32))) {
--            true => {
--                wide_pair_at.push(at as u32);
--                at += 16;
--                if at >= FRAME_LIMIT {
--                    return Err(EmitError::TooLarge { what: "the frame (16 MiB)" });
--                }
--            }
--            false => wide_pair_at.push(NONE),
--        }
--    }
--    let mut most_align: u64 = 16;
--    let mut slot_at = Vec::with_capacity_in(view.slots.len(), Global);
--    for slot in view.slots {
--        if slot.align > MOST_SLOT_ALIGN {
--            return Err(EmitError::TooLarge { what: "a stack slot's alignment (past 4 KiB)" });
--        }
--        let align = 1u64 << slot.align;
--        most_align = most_align.max(align);
--        at = at.next_multiple_of(align);
--        slot_at.push(at as u32);
--        at += u64::from(slot.size);
--        if at >= FRAME_LIMIT {
--            return Err(EmitError::TooLarge { what: "the frame (16 MiB)" });
--        }
--    }
--    let staging_at = at.next_multiple_of(8);
-+    // The frame: lifetime-colored value cells (8/16/32 bytes by size class; 0 bytes for `Ty::NONE`),
-+    // then lifetime-colored LIR stack slots at their alignment, then the staging words; `sp`
-+    // aligned to the most any slot asks (pass/frame.rs).
-+    let cells = frame::layout_cells(view, scratch)?;
-+    let slots = frame::pack_slots(view, cells.end, scratch)?;
-+    let staging_at = slots.end.next_multiple_of(8);
-     if staging_at >= FRAME_LIMIT {
-         return Err(EmitError::TooLarge { what: "the frame (16 MiB)" });
-     }
-+    let most_align = slots.most_align;
-+    let sole_switch_default = frame::sole_switch_defaults(view, scratch);
- 
-     let mut block_at = Vec::with_capacity_in(view.blocks(), Global);
-     block_at.resize(view.blocks(), NONE);
-@@ -241,14 +222,17 @@ pub(crate) fn run<A: Allocator>(
-         block_at,
-         ref_literal,
-         data_index,
-+        cell_at: cells.cell_at,
-+        cells_end: cells.end,
-         placed: Vec::new_in(Global),
--        slot_at,
--        wide_pair_at,
-+        slot_at: slots.slot_at,
-+        wide_pair_at: cells.wide_pair_at,
-         staging_at: staging_at as u32,
-         staging: 0,
-         record,
-         most_align,
-         sp_fixes: Vec::new_in(Global),
-+        sole_switch_default,
-         block: Block(0),
-         far: reach::Far::new(reach, view, scratch),
-     };
-@@ -619,21 +603,30 @@ impl<A: Allocator> Pass<'_, '_, A> {
-     /// nothing writes `x9`. Any other `unreachable` is `Unknown`, never a guess.
-     fn held_at_unreachable(&self, inst: usize) -> blaze_code::record::Held {
-         let first = self.view.block(self.block).start == inst;
-- 
-```
-
-**File**: `crates/blaze-emit/src/pass/asm.rs` (modified, +2/-2)
-```diff
-@@ -267,7 +267,7 @@ impl<A: Allocator> Pass<'_, '_, A> {
-             let Some(v) = p.input else { continue };
-             let ty = view.ty(v);
-             let bits = bits_of(self.width(ty), ty).map_err(|why| unsupported(inst, op, why))?;
--            let off = v.0 * 16;
-+            let off = self.cell_of(v.index());
-             match (p.bank, bits) {
-                 (Bank::X, Some(_)) => self.asm_word(true, p.reg, off, far),
-                 (Bank::X, None) => return Err(unsupported(inst, op, "an `i128` or `f128` `asm!` operand in a general register")),
-@@ -305,7 +305,7 @@ impl<A: Allocator> Pass<'_, '_, A> {
-         for p in placed.iter().flatten() {
-             let Some(member) = p.member else { continue };
-             let (ty, off) = match pair {
--                None => (result, inst as u32 * 16),
-+                None => (result, self.cell_of(inst)),
-                 Some(tys) => (tys[member as usize], self.value_word_at(inst, member)),
-             };
-             let bits = bits_of(self.width(ty), ty).map_err(|why| unsupported(inst, op, why))?;
-```
-
-**File**: `crates/blaze-emit/src/pass/atomic.rs` (modified, +1/-1)
-```diff
-@@ -129,7 +129,7 @@ impl<A: Allocator> Pass<'_, '_, A> {
-                 self.put(enc::cmp(X12, X10));
-                 self.put(enc::cset(X13, Cond::Eq));
-                 self.st(X12, inst);
--                self.st_sp(X13, inst as u32 * 16 + 8);
-+                self.st_sp(X13, self.cell_of(inst) + 8);
-             }
-         }
-         Ok(())
-```
-
-**File**: `crates/blaze-emit/src/pass/float_width.rs` (modified, +2/-2)
-```diff
-@@ -139,7 +139,7 @@ impl<A: Allocator> Pass<'_, '_, A> {
-                 self.put(enc::umov_h0(X9, v));
-                 self.st(X9, inst);
-             }
--            FloatWidth::Quad => self.q_cell(false, v, inst as u32 * 16),
-+            FloatWidth::Quad => self.q_cell(false, v, self.cell_of(inst)),
-         }
-     }
- 
-@@ -151,7 +151,7 @@ impl<A: Allocator> Pass<'_, '_, A> {
-                 self.ld(X9, value);
-                 self.put(enc::fmov_to_s(v, X9));
-             }
--            FloatWidth::Quad => self.q_cell(true, v, value.0 * 16),
-+            FloatWidth::Quad => self.q_cell(true, v, self.cell_of(value.index())),
-         }
-     }
- 
-```
-
-**File**: `crates/blaze-emit/src/pass/frame.rs` (added, +1046/-0)
-```diff
-@@ -0,0 +1,1046 @@
-+//! Frame layout for `pass.rs` (Reference tier) and shared LIR stack-slot lifetime coloring
-+//! (reused by `sota/isel.rs`, rule 30: one concept, one home).
-+//!
-+//! # Why this exists
-+//!
-+//! Without cell and slot coloring, a function with N LIR instructions and S stack slots gets a
-+//! frame of `16 * N + sum(slot.size)`: `syn::ty::parsing::ambig_ty` (~600k instructions, ~500
-+//! slots) produced a >9.2 MiB stack frame (overflowing macOS's 8 MiB main stack on its first
-+//! call) and 13.4 MiB of code because every cell past 32 KiB needed 3 instructions per access.
-+//!
-+//! # Two independent, strictly bounded, deterministic colorings
-+//!
-+//! 1. **SSA value cell coloring ([`layout_cells`])**:
-+//!    - Instructions with `Ty::NONE` get no cell (0 bytes).
-+//!    - Value-producing instructions get exact size/alignment classes: 8 bytes (8-aligned) for
-+//!      <=64-bit scalars, 16 bytes (16-aligned) for `i128`, `f128`, 2-word pairs, and `asm!`
-+//!      operands/results (which may use 16-byte `ldr q`/`str q`), and 32 bytes (16-aligned,
-+//!      holding the 3 words of a wide `{i128, iN}` pair).
-+//!    - Live intervals `[lo, hi]` (inclusive) are computed in O(N + E): block-local non-`Param`
-+//!      values keep exact `[v, last_use(v)]`; cross-block values and block parameters extend over
-+//!      every overlapping merged back-edge connected component (100% sound on arbitrary CFGs,
-+//!      including irreducible loops, switches, invokes, landing pads, and unreachable blocks).
-+//!    - Linear scan with counting-sort by `lo`, a binary min-heap of active intervals ordered by
-+//!      `hi`, and O(1) per-class free lists runs in O(N log K) where K is peak live values.
-+//!
-+//! 2. **LIR stack-slot lifetime coloring ([`pack_slots`])**:
-+//!    - Forward may-addressed dataflow over the CFG, matching LIR's `SlotLive`/`SlotDead`
-+//!      semantics (`blaze-lir/src/eval.rs`, `coroutine_overlap.rs`), and hardened against mid-end
-+//!      `SlotAddr` hoisting/GVN (`blaze-lir/src/simplify/egraph.rs`): a slot becomes live at
-+//!      `SlotLive` and at every non-address-arithmetic instruction that consumes a pointer
-+//!      derived from `SlotAddr(slot)` (`PtrAdd`/`Freeze`/`PtrWithAddr` propagate provenance), and
-+//!      becomes dead at `SlotDead(slot)` unless its pointer entered a block `Param` or `Select`.
-+//!    - Slots in disjoint `if/else` or `match` arms never conflict even without `SlotDead`, and
-+//!      sequential temporaries bounded by `SlotDead` share stack bytes.
-+//!    - Greedy placement in deterministic `(Reverse(size), Reverse(align), slot_idx)` order.
-+
-+use core::alloc::Allocator;
-+use core::cmp::Reverse;
-+
-+use blaze_lir::{
-+    Block, Op, Scalar, Ty, Value, View,
-+    func::NONE,
-+    op::{Layout, Word, walk},
-+};
-+use blaze_own::Vec;
-+
-+use super::{FRAME_LIMIT, MOST_SLOT_ALIGN, float_width::FloatWidth, wide};
-+use crate::EmitError;
-+
-+/// Maximum `blocks * words` bitset entries allocated during slot conflict analysis (32 MiB cap,
-+/// rule 18: bounded memory even on pathological inputs).
-+const MAX_SLOT_BITSET_WORDS: usize = 4_000_000;
-+
-+#[inline]
-+fn idx(n: u32) -> usize {
-+    usize::try_from(n).unwrap_or(usize::MAX)
-+}
-+
-+#[inline]
-+fn u32_of(n: usize) -> u32 {
-+    u32::try_from(n).unwrap_or(u32::MAX)
-+}
-+
-+#[inline]
-+fn u32_of_u64(n: u64) -> u32 {
-+    u32::try_from(n).unwrap_or(u32::MAX)
-+}
-+
-+#[inline]
-+fn get_u32(s: &[u32], i: usize) -> u32 {
-+    s.get(i).copied().unwrap_or(NONE)
-+}
-+
-+#[inline]
-+fn set_u32(s: &mut [u32], i: usize, v: u32) {
-+    if let Some(slot) = s.get_mut(i) {
-+        *slot = v;
-+    }
-+}
-+
-+#[inline]
-+fn filled<T: Copy, A: Allocator>(len: usize, val: T, alloc: A) -> Vec<T, A> {
-+    let mut v = Vec::with_capacity_in(len, alloc);
-+    for _ in 0..len {
-+        v.push(val);
-+    }
-+    v
-+}
-+
-+/// Cell size/alignment class for one LIR instruction in `pass.rs`.
-+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-+#[repr(u8)]
-+enum CellClass {
-+    /// `Ty::NONE`: no cell allocated.
-+    None = 0,
-+    /// Single 64-bit word (8 bytes, 8-aligned).
-+    W8 = 1,
-+    /// Two 64-bit words or 16-byte vector/quad (16 bytes, 16-aligned).
-+    W16 = 2,
-+    /// Three 64-bit words for a wide `{i128, iN}` pair (32-byte stride, 16-aligned).
-+    W24 = 3,
-+}
-+
-+/// Compact cell layout produced by [`layout_cells`] for `pass.rs`.
-+pub(crate) struct CellLayout<A: Allocator> {
-+    /// Per instruction, byte offset from `sp` of its cell (`NONE` for `Ty::NONE` instructions).
-+    pub(crate) cell_at: Vec<u32, A>,
-+    /// Per instruction, byte offset from `sp` of a wide pair's third word (`NONE` otherwise).
-+    pub(crate) wide_pair_at: Vec<u32, A>,
-+    /// Total bytes occupied by all cells (multiple of 8).
-+    pub(crate) end: u64,
-+}
-+
-+/// Compact LIR stack-slot layout produced by [`pack_slots`].
-+pub(crate) struct SlotLayout<A: Allocator> {
-+    /// Per stack slot `0..view.slots.len()`, byte offset from `sp`.
-+    pub(crate) slot_at: Vec<u32, A>,
-+    /// Hig
-```
-
-**File**: `crates/blaze-emit/src/pass/int.rs` (modified, +1/-1)
-```diff
-@@ -207,7 +207,7 @@ impl<A: Allocator> Pass<'_, '_, A> {
-         }
-         self.narrow(X11, width);
-         self.st(X11, inst);
--        self.st_sp(X12, inst as u32 * 16 + 8);
-+        self.st_sp(X12, self.cell_of(inst) + 8);
-         Ok(())
-     }
- 
-```
-
-**File**: `crates/blaze-emit/src/pass/stack.rs` (modified, +4/-3)
-```diff
-@@ -145,10 +145,11 @@ impl<A: Allocator> Pass<'_, '_, A> {
-         let from = 16 + slot.at;
-         let from = i32::try_from(from).map_err(|_| EmitError::TooLarge { what: "a stacked parameter's offset" })?;
-         if bits == 128 {
-+            let off = self.cell_of(inst);
-             self.mem(true, Size::X, X9, FP, from);
--            self.st_sp(X9, inst as u32 * 16);
-+            self.st_sp(X9, off);
-             self.mem(true, Size::X, X9, FP, from + 8);
--            self.st_sp(X9, inst as u32 * 16 + 8);
-+            self.st_sp(X9, off + 8);
-             return Ok(());
-         }
-         self.mem(true, size_of_bytes(slot.bytes), X9, FP, from);
-@@ -204,7 +205,7 @@ impl<A: Allocator> Pass<'_, '_, A> {
-                 self.st_sp_sized(Size::X, X9, at);
-                 continue;
-             }
--            let cell = arg.value.0 * 16 + area;
-+            let cell = self.cell_of(arg.value.index()) + area;
-             if bytes == 16 {
-                 self.ld_sp(X9, cell);
-                 self.st_sp_sized(Size::X, X9, at);
-```
-
-**File**: `crates/blaze-emit/src/pass/variadic.rs` (modified, +2/-2)
-```diff
-@@ -172,7 +172,7 @@ impl<A: Allocator> Pass<'_, '_, A> {
-         }
-         let base = named_end.next_multiple_of(8);
-         let area = (base + area_of(slots)).next_multiple_of(16);
--        if area >= super::stack::MOST_AREA || view.len() as u64 * 16 + u64::from(area) >= super::FRAME_LIMIT {
-+        if area >= super::stack::MOST_AREA || self.cells_end + u64::from(area) >= super::FRAME_LIMIT {
-             return Err(EmitError::TooLarge { what: "a call's stacked arguments (1 MiB, and every cell below 16 MiB while they are open)" });
-         }
-         // The registers, while every cell is still at its own offset.
-@@ -201,7 +201,7 @@ impl<A: Allocator> Pass<'_, '_, A> {
-                 // zero-extended to 64 bits (lib.rs, "Values"); the callee's `va_arg` of an `int`
-                 // reads the slot's low 4 bytes (little-endian), of a `long`, a pointer or a
-                 // `double` all 8.
--                self.ld_sp(X9, value.0 * 16 + area);
-+                self.ld_sp(X9, self.cell_of(value.index()) + area);
-                 self.st_sp_sized(Size::X, X9, base + offset);
-             }
-         }
-```
-
----
-
-### Incident Patch 3: `0ea4c294` (2026-11-24)
-**Commit Message**: fix(blaze-ladder): resolve txpool FutureWitness, ObjectTrait NeedConst, and lazy ImplsOf round cap (#2394)
-
-1. FutureWitness (stalled async auto-trait goals in check_body + witness state recipes):
-   - check_body_keyed now defers stalled async auto-trait goals (Stalls::Decide) when
-     count is None and decides them on each async block's exact witness interior via
-     borrows::witness_and_decide, matching ProjectWorld::check / check_borrows.
-     Non-Send futures still fail with E0277 diagnostics; clean checks clear done.stalled.
-   - coroutine_recipes::recipes_of now lowers via lower_async_witness + AsyncWitness::state_recipe
-     (matching exact_interior.rs) so region-lowering gaps do not block state recipe creation.
-
-2. ObjectTrait NeedConst (program::object_tables):
-   - object_tables now ensures Want::Head and Want::Members through ensure_trait_want,
-     evaluating Why::NeedConst via check::eval_len up to MOST_ADT_LENS (e.g. BlobStore::get_cells
-     const-sized array/alias types).
-
-3. Lazy instance resolution ImplsOf round cap (run/make_one.rs):
-   - Replaced the bare MOST_ROUNDS (256) retry cap in run_instance_loop, verify_rows, and
-     make_static with progress-gated As
-
-**File**: `crates/blaze-ladder/src/code_reads.rs` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ pub const TERM_NODES: usize = 1 << 16;
- pub const READS_CAP: usize = 1 << 20;
- 
- /// What a row asked (the module doc's list). The byte is the question's first.
--#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
-+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
- #[repr(u8)]
- pub enum ReadKind {
-     Adt = 1,
-```
-
-**File**: `crates/blaze-ladder/src/front2/body_reads.rs` (modified, +47/-2)
-```diff
-@@ -29,7 +29,7 @@ use blaze_typeck as tc;
- use blaze_typeck::{ItemKey, ReadList};
- 
- use super::body::Body;
--use super::check::{BodyScope, CheckFail, Records, check_rounds};
-+use super::check::{BodyScope, CheckFail, Records};
- use super::source::NamesSource;
- 
- const READS_DOMAIN: &str = "blaze-ladder checked body read list 1";
-@@ -425,7 +425,12 @@ pub(crate) fn check_body_keyed<'n, S: NamesSource<'n>>(
-     root_keys: Option<&mut std::vec::Vec<u64, Global>>,
- ) -> Result<tc::Checked<'static>, CheckFail> {
-     r.store.provisional_used.borrow_mut().clear();
--    let mut done = check_rounds(r, body, scope, count, asked, root_keys)?;
-+    // Defer auto-trait goals on async futures whose superset interior fails, then decide them on
-+    // each async block's exact witness interior (stalled_goals.rs, borrows.rs `witness_and_decide`),
-+    // matching `ProjectWorld::check` and `ProjectWorld::check_borrows`. `check_counted` has no
-+    // deferring entry and keeps `Stalls::Gap`.
-+    let stalls = if count.is_none() { super::stalled_goals::Stalls::Decide } else { super::stalled_goals::Stalls::Gap };
-+    let mut done = super::check::check_rounds_as(r, body, scope, count, asked, stalls, root_keys)?;
-     let scratch = r.store.tys.alloc();
-     let owner = body.typeck.owner;
-     let mut used_provisional = false;
-@@ -441,6 +446,46 @@ pub(crate) fn check_body_keyed<'n, S: NamesSource<'n>>(
-     }
-     // Its opaques' hidden types, for an auto trait asked by another body (front2 opaque_auto.rs).
-     super::opaque_auto::file(r, body, &done)?;
-+    if !done.stalled.is_empty() {
-+        let mut decision_reads: AVec<'_, super::reads::Read> = AVec::new_in(scratch);
-+        let at = body.typeck.expr_ranges.get(body.typeck.root.ix()).copied().unwrap_or(tc::Range { start: 0, end: 0 });
-+        match super::borrows::witness_and_decide(r, body, &done, &mut decision_reads, scratch) {
-+            super::stalled_goals::Decision::Nothing | super::stalled_goals::Decision::Proved => {
-+                done.stalled.clear();
-+            }
-+            super::stalled_goals::Decision::Findings(found) => {
-+                let diags = found
-+                    .into_iter()
-+                    .map(|d| (tc::DiagCode::Unsatisfied, tc::Range { start: d.start, end: d.end }, d.text.as_str().into()))
-+                    .collect();
-+                return Err(super::check::said(r, owner, diags, scratch));
-+            }
-+            super::stalled_goals::Decision::Gaps(gaps) => {
-+                return Err(CheckFail::Gap { owner, gaps });
-+            }
-+            super::stalled_goals::Decision::Refused(super::project::Refused::Check(fail)) => {
-+                return Err(fail);
-+            }
-+            super::stalled_goals::Decision::Refused(_) => {
-+                return Err(CheckFail::Check {
-+                    owner,
-+                    error: tc::CheckError::FutureWitness {
-+                        reason: "deciding the stalled auto-trait goals of an async body refused",
-+                        at,
-+                    },
-+                });
-+            }
-+            super::stalled_goals::Decision::Reads(_) => {
-+                return Err(CheckFail::Check {
-+                    owner,
-+                    error: tc::CheckError::FutureWitness {
-+                        reason: "deciding the stalled auto-trait goals of an async body failed to record its read list",
-+                        at,
-+                    },
-+                });
-+            }
-+        }
-+    }
-     let filed = done.file_out();
-     // A check that read a provisional impl header during constant evaluation does not file its
-     // read-list digest: once the impl's associated types finish, subsequent checks read the
-```
-
-**File**: `crates/blaze-ladder/src/front2/borrows.rs` (modified, +1/-1)
-```diff
-@@ -3000,7 +3000,7 @@ fn gap_words<'n, S: NamesSource<'n>>(r: &Records<'_, 'n, S>, callee: tc::ItemKey
- /// `FutureWitness` by `decide_stalled_goals`, never a pass (rule 3).
- pub(super) fn witness_and_decide<'n, 'a, S: NamesSource<'n>>(
-     r: &mut Records<'_, 'n, S>,
--    body: &Body<'n>,
-+    body: &Body<'_>,
-     done: &tc::Checked<'_>,
-     reads: &mut AVec<'a, Read>,
-     alloc: Alloc<'a>,
-```
-
-**File**: `crates/blaze-ladder/src/front2/check.rs` (modified, +1/-18)
-```diff
-@@ -210,23 +210,6 @@ pub fn check_body_metered<'n, S: NamesSource<'n>>(
-     super::body_reads::check_body_keyed(r, body, scope, Some((tally, clock)), None, Some(root_keys))
- }
- 
--/// The check loop itself: `body` checked round by round, leaving in `asked` what a check that
--/// did NOT end in a clean `Checked` asked of the world (front2 reads.rs: every body has a read
--/// list): the read list of a run that finished but is returned as a failure (diagnostics, or a
--/// gap answered as missing), and the questions of the last round that ended in a need. A clean
--/// check's list is still in its `Checked`: only [`check_body_asked`] and [`check_body_filed`]
--/// (front2 body_reads.rs) call this, and each files the list out before the `Checked` is kept.
--pub(crate) fn check_rounds<'n, S: NamesSource<'n>>(
--    r: &mut Records<'_, 'n, S>,
--    body: &Body<'_>,
--    scope: &BodyScope<'_>,
--    count: Option<(&mut tc::Tally, &dyn tc::Clock)>,
--    asked: Option<&mut super::reads::Asked<'_>>,
--    root_keys: Option<&mut Vec<u64, Global>>,
--) -> Result<tc::Checked<'static>, CheckFail> {
--    check_rounds_as(r, body, scope, count, asked, super::stalled_goals::Stalls::Gap, root_keys)
--}
--
- /// The E0412s and E0405s of `owner`'s OWN signature (its head's [`super::type_miss::HeadMiss`]es, in the
- /// store the head was made in or one filed from its record), as findings of its body's check:
- /// item-relative in the fn's text, as its body's own misses are. A caller's check never asks
-@@ -238,7 +221,7 @@ fn signature_misses<'r, 'n, S: NamesSource<'n>>(r: &'r Records<'_, 'n, S>, owner
- 
- /// The body `owner` finished with the findings `diags`: each filed where its tokens came from,
- /// before it leaves the task that made it (drive.md, ruled 20:57), in `alloc` (the store's).
--fn said<'n, S: NamesSource<'n>>(r: &Records<'_, 'n, S>, owner: ItemKey, diags: Vec<(tc::DiagCode, tc::Range, Box<str>), Global>, alloc: blaze_own::Alloc<'_>) -> CheckFail {
-+pub(super) fn said<'n, S: NamesSource<'n>>(r: &Records<'_, 'n, S>, owner: ItemKey, diags: Vec<(tc::DiagCode, tc::Range, Box<str>), Global>, alloc: blaze_own::Alloc<'_>) -> CheckFail {
-     let lib = r.keys.library_in(r.names, owner);
-     // A member of a trait or an impl has no library key (keys.rs `library_in`): it is placed by
-     // its container's, its text found in the container's (expansion_origin.rs
-```
-
-**File**: `crates/blaze-ladder/src/front2/coroutine_recipes.rs` (modified, +6/-3)
-```diff
-@@ -11,8 +11,8 @@
- use std::alloc::Global;
- use std::vec::Vec;
- 
--use blaze_flow_lower::state_recipe::{StateRecipe, state_recipe};
--use blaze_flow_lower::{Refusal, lower_async};
-+use blaze_flow_lower::state_recipe::StateRecipe;
-+use blaze_flow_lower::{Refusal, lower_async_witness};
- use blaze_own::Alloc;
- use blaze_typeck as tc;
- 
-@@ -49,7 +49,10 @@ pub fn recipes_of<'n, S: NamesSource<'n>>(
-     let tys = body.tys.view(&r.store.tys)?;
-     let view = body.typeck.view(tys);
-     for (ordinal, block) in blaze_build::coroutines_in(&view) {
--        let recipe = lower_async(&view, done, block, &nested, alloc).and_then(|lowered| state_recipe(&view, &lowered, Global));
-+        // The WITNESS lowering (`one_call::Erased`), matching `exact_interior.rs`: what the state
-+        // stores needs no region, so a region refusal of the borrow lowering never leaves an async
-+        // block without its state recipe.
-+        let recipe = lower_async_witness(&view, done, block, &nested, alloc).and_then(|w| w.state_recipe(&view, Global));
-         rows.push((owner, ordinal, recipe));
-     }
-     Ok(())
-```
-
-**File**: `crates/blaze-ladder/src/front2/program.rs` (modified, +103/-2)
-```diff
-@@ -547,6 +547,43 @@ fn dyn_principals<'v>(views: impl Iterator<Item = PTys<'v>>) -> Vec<ItemKey, Glo
- }
- 
- /// Each trait of `asked` not yet in `tables`, with every supertrait under it, made into
-+/// Why ensuring a trait's head or members for [`object_tables`] failed.
-+enum TraitWantError {
-+    Const { key: LibKey, error: super::consts::ConstFail },
-+    Head(super::heads::HeadError),
-+}
-+
-+impl core::fmt::Display for TraitWantError {
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++    fn as_str(&self) -> &str {
 +        match self {
-+            TraitWantError::Const { key, error } => write!(f, "the constant {key:x} its head names: {error:?}"),
-+            TraitWantError::Head(e) => write!(f, "{e:?}"),
-+        }
-+    }
-+}
-+
-+/// Ensures a trait head or member table (`Want::Head` or `Want::Members`), evaluating any
-+/// constants its signature types name (`Why::NeedConst`, e.g. array lengths or const generic
-+/// arguments in method signatures such as `BlobStore::get_cells`) up to [`MOST_ADT_LENS`] times.
-+fn ensure_trait_want<'n, S: super::source::NamesSource<'n>>(
-+    r: &mut Records<'_, 'n, S>,
-+    want: super::heads::Want,
-+) -> Result<(), TraitWantError> {
-+    let mut lens = 0;
-+    loop {
-+        match r.store.ensure(r.names, r.keys, want) {
-+            Err(super::heads::HeadError::Item(_, Why::NeedConst(c, _))) if lens < MOST_ADT_LENS => {
-+                lens += 1;
-+                if let Err(error) = super::check::eval_len(r, c) {
-+                    return Err(TraitWantError::Const { key: c, error });
-+                }
++            Self::Static(s) => s,
++            Self::Char(buf, n) => {
++                buf.get(..*n).and_then(|b| core::str::from_utf8(b).ok()).unwrap_or("")
 +            }
-+            Err(e) => return Err(TraitWantError::Head(e)),
-+            Ok(()) => return Ok(()),
 +        }
 +    }
 +}
 +
- /// `tables` (the whole program passes an empty map once; the lazy program its own map, per
- /// body, so a trait is made once per command).
- fn object_tables<'n, S: super::source::NamesSource<'n>>(
-@@ -568,8 +605,8 @@ fn object_tables<'n, S: super::source::NamesSource<'n>>(
-                 return Err(String::from("more traits under its objects than the most one program's objects reach"));
-             }
-             let lib = r.keys.library_in(r.names, k).ok_or_else(|| String::from("no library key"))?;
--            r.store.ensure(r.names, r.keys, super::heads::Want::Head(lib)).map_err(|e| format!("its head: {e:?}"))?;
--            r.store.ensure(r.names, r.keys, super::heads::Want::Members(lib)).map_err(|e| format!("its members: {e:?}"))?;
-+            ensure_trait_want(r, super::heads::Want::Head(lib)).map_err(|e| format!("its head: {e}"))?;
-+            ensure_trait_want(r, super::heads::Want::Members(lib)).map_err(|e| format!("its members: {e}"))?;
-             let head = r.store.maps.traits.get(&lib).ok_or_else(|| String::from("made, but no head filed under its key"))?;
-             let supers_written = r.store.maps.supers.get(&lib).ok_or_else(|| String::from("made, but no supertraits filed under its key"))?;
-             let view = r.store.tys.view();
-@@ -2324,3 +2361,67 @@ impl blaze_build::type_name::TypeNames for Front2Program<'_> {
-         super::type_name::variant_name(self.front.names, &self.front.keys, adt, variant, out)
-     }
- }
++fn try_decode_at(src: &str, start: usize) -> Option<(Decoded, usize)> {
++    let after_amp = src.get(start.checked_add(1)?..)?;
++    // Cap scan window to 32 bytes so malformed `&foo` never scans far.
++    let mut semi = None;
++    for (idx, b) in after_amp.bytes().take(32).enumerate() {
++        if b == b';' {
++            semi = Some(idx);
++            break;
++        }
++        if b == b'&' || b == b'<' || b.is_ascii_whitespace() {
++            break;
++        }
++    }
++    let semi_idx = semi?;
++    let body = after_amp.get(..semi_idx)?;
++    if body.is_empty() {
++        return None;
++    }
++    let advance = semi_idx.checked_add(2)?;
++
++    if let Some(num) = body.strip_prefix('#') {
++        let code = if let Some(hex) = num.strip_prefix('x').or_else(|| num.strip_prefix('X')) {
++            if hex.is_empty() || hex.len() > 8 {
++                return None;
++            }
++            u32::from_str_radix(hex, 16).ok()?
++        } else {
++            if num.is_empty() || num.len() > 10 {
++                return None;
++            }
++            num.parse::<u32>().ok()?
++        };
++        let ch = match code {
++            0 => '\u{FFFD}',
++            // Common Windows-1252 remappings defined by WHATWG HTML5 spec
++            0x80 => '€',
++            0x85 => '…',
++            0x91 => '‘',
++            0x92 => '’',
++            0x93 => '“',
++            0x94 => '”',
++            0x95 => '•',
++            0x96 => '–',
++            0x97 => '—',
++            0x99 => '™',
++            other => char::from_u32(other).unwrap_or('\u{FFFD}'),
++        };
++        return Some((Decoded::from_char(ch), advance));
++    }
++
++    let named = match body {
++        "amp" | "AMP" => "&",
++        "lt" | "LT" => "<",
++        "gt" | "GT" => ">",
++        "quot" | "QUOT" => "\"",
++        "apos" => "'",
++        "nbsp" => "\u{00A0}",
++        "ensp" => " ",
++        "emsp" => " ",
++        "thinsp" => " ",
++        "middot" | "centerdot" => "·",
++        "bull" | "bullet" => "•",
++        "mdash" => "—",
++        "ndash" => "–",
++        "hellip" => "…",
++        "copy" | "COPY" => "©",
++        "reg" | "REG" => "®",
++        "trade" => "™",
++        "times" => "×",
++        "divide" => "÷",
++        "plusmn" => "±",
++        "minus" => "−",
++        "rarr" => "→",
++        "larr" => "←",
++        "uarr" => "↑",
++        "darr" => "↓",
++        "harr" => "↔",
++        "rArr" => "⇒",
++        "lArr" => "⇐",
++        "lsquo" => "‘",
++        "rsquo" => "’",
++        "ldquo" => "“",
++        "rdquo" => "”",
++        "laquo" => "«",
++        "raquo" => "»",
++        "sect" => "§",
++        "para" => "¶",
++        "deg" => "°",
++        "check" | "checkmark" => "✓",
++        "cross" => "✗",
++        "star" | "starf" => "★",
++        "hearts" => "♥",
++        "spades" => "♠",
++        "clubs" => "♣",
++        "diams" => "♦",
++        "ne" => "≠",
++        "le" => "≤",
++        "ge" => "≥",
++        "infin" => "∞",
++        "approx" => "≈",
++        "micro" => "µ",
++        "euro" => "€",
++        "pound" => "£",
++        "yen" => "¥",
++        "cent" => "¢",
++        _ => return None,
++    };
++    Some((Decoded::Static(named), advance))
++}
+```
+
+**File**: `crates/blaze-html/src/lib.rs` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++//! `blaze-html`: `#![no_std]` `#![blaze::sans_io]` `#![forbid(unsafe_code)]` HTML5 tokenizer,
++//! flat arena-indexed DOM, and layout-ready visual document renderer.
++//!
++//! Designed for both standalone `.html` documents and embedded HTML inside Markdown (`README.md`,
++//! `<picture>` dark/light theme selection, `<p align="center">`, `<h3 align="center">`, `<code>`,
++//! `<kbd>`, `<br>`, `<a href="...">`, `<table>`, `<details>`, `<ul>`/`<ol>`, HTML comments &
++//! character entities). Every allocation goes through the caller's [`blaze_own::Alloc`], and every
++//! traversal uses an explicit worklist bounded by [`HtmlLimits`] (zero recursion, zero panics).
++
++#![no_std]
++#![feature(register_tool, custom_inner_attributes)]
++#![register_tool(blaze)]
++#![blaze::sans_io]
++#![forbid(unsafe_code)]
++
++pub mod dom;
++pub mod entities;
++pub mod render;
++pub mod tokenizer;
 +
 +#[cfg(test)]
-+mod object_const_tests {
-+    use super::lazy::LazyProgram;
-+    use crate::crates::{Inputs, UserCrate};
-+    use crate::front2::keys::checker_of;
-+    use crate::front2::stalled_goals::tests::fixture_toolchain;
-+    use crate::refusal::SourceFile;
-+    use crate::seam::FrontEnd;
++mod tests;
 +
-+    /// `object_tables` must evaluate const expressions inside trait member signatures (such as
-+    /// `BlobStore::get_cells` returning a fixed-size `[u8; BYTES_PER_CELL]` alias) instead of
-+    /// refusing with `NeedConst`.
-+    #[test]
-+    fn object_trait_evaluates_const_lengths_in_trait_members() {
-+        const SOURCE: &str = r#"
-+const BYTES: usize = 32;
-+type Cell = [u8; BYTES];
-+
-+pub trait BlobLike {
-+    fn get_cell(&self) -> Cell;
-+}
-+
-+struct Dummy;
-+impl BlobLike for Dummy {
-+    fn get_cell(&self) -> Cell {
-+        [0u8; BYTES]
-+    }
-+}
-+
-+fn read(store: &dyn BlobLike) -> usize {
-+    store.get_cell().len()
-+}
-+
-+fn main() {
-+    let d = Dummy;
-+    let _ = read(&d);
-+}
-+"#;
-+        let alloc = blaze_own::testing::heap().alloc();
-+        let tc = fixture_toolchain();
-+        let files = [("/obj_const/src/main.rs".to_owned(), SOURCE.to_owned())];
-+        let user = UserCrate {
-+            name: "obj_const", dir: "/obj_const/", root: "/obj_const/src/main.rs", files: &files,
-+            edition: edition::PackageEdition::of_manifest("2024").expect("Rust 2024"), panic: blaze_build::Panic::Unwind,
-+        };
-+        let frame = blaze_mem::Frame::new(blaze_mem::tag::Tag::Infer).expect("fixture frame");
-+        let erased = blaze_own::Erased::new(&frame);
-+        let inputs = Inputs::new(&user, &tc).expect("fixture crate");
-+        let crates = inputs.crates();
-+        let names = inputs.resolve(&crates, erased.bump()).expect("fixture names");
-+        let sources = [SourceFile 
++pub use crate::dom::{
++    Attr, ColorScheme, Document, HtmlLimits, Node, NodeId, NodeKind, PictureChoice, Tag,
++    TextAlign, parse_html,
++};
++pub use crate::entities::decode_entities;
++pub use crate::render::{
++    InlineStyle, RenderBlock, RenderSpan, RenderTable, render_document, render_html,
++};
++pub use crate::tokenizer::{RawAttr, Token, Tokenizer};
 ```
 
-**File**: `crates/blaze-ladder/src/front2/stalled_goals.rs` (modified, +83/-4)
+**File**: `crates/blaze-html/src/render.rs` (added, +931/-0)
 ```diff
-@@ -283,7 +283,7 @@ impl<'a> Decision<'a> {
- /// rows pushed into `reads` (the module doc).
- pub fn decide_stalled_goals<'n, 'a, S: NamesSource<'n>>(
-     r: &mut Records<'_, 'n, S>,
--    body: &Body<'n>,
-+    body: &Body<'_>,
-     done: &tc::Checked<'_>,
-     interiors: &AsyncInteriors<'a>,
-     reads: &mut AVec<'a, Read>,
-@@ -584,7 +584,7 @@ impl AsyncInteriors<'_> {
- }
- 
- #[cfg(test)]
--mod tests {
-+pub(crate) mod tests {
-     use blaze_own::AVec;
-     use blaze_typeck as tc;
- 
-@@ -593,6 +593,11 @@ mod tests {
-     use crate::front2::project::{BodyRef, ProjectWorld};
-     use crate::refusal::SourceFile;
- 
-+    pub(crate) fn fixture_toolchain() -> Toolchain {
-+        let home = std::env::var("HOME").expect("HOME");
-+        Toolchain::open(&mut DirShelf::new(format!("{home}/.blaze/v2/toolchain"))).expect("fixture toolchain")
-+    }
+@@ -0,0 +1,931 @@
++//! Sans-IO HTML-to-visual-blocks renderer: lowers a [`Document`] into layout-ready
++//! [`RenderBlock`]s using an explicit stack worklist (zero recursion, zero IO, bounded output).
 +
-     /// WHEN an async block's interior is exact: its witness was lowered (blaze-flow-lower
-     /// `lower_async_witness`) and kept ([`AsyncInteriors::keep`]), or the check's own record is
-     /// already complete (`CoroutineWitness::Complete`); another fn's future is exact only by
-@@ -620,8 +625,7 @@ fn local_send() {
- fn main() {}
- "#;
-         let alloc = blaze_own::testing::heap().alloc();
--        let home = std::env::var("HOME").expect("HOME");
--        let tc = Toolchain::open(&mut DirShelf::new(format!("{home}/.blaze/v2/toolchain"))).expect("fixture toolchain");
-+        let tc = fixture_toolchain();
-         let files = [("/refused/src/main.rs".to_owned(), SOURCE.to_owned())];
-         let user = UserCrate {
-             name: "refused", dir: "/refused/", root: "/refused/src/main.rs", files: &files,
-@@ -670,4 +674,79 @@ fn main() {}
-         let shown = format!("{:?}", verdict.refused);
-         assert!(shown.contains(PLANTED), "the refusal names the witness: {shown}");
-     }
++use blaze_own::{AString, AVec, Alloc};
 +
-+    /// `check_body` (`LazyProgram::check_one` — the `blaze run`/`blaze test` path) must decide
-+    /// stalled async `Send` goals on their exact witness interior rather than refusing with
-+    /// `INTERIOR_GAP`, while still rejecting a future that genuinely holds `!Send` across an
-+    /// `.await` with E0277.
-+    #[test]
-+    fn check_body_decides_stalled_async_send_and_rejects_rc_across_await() {
-+        use crate::front2::keys::checker_of;
-+        use crate::front2::program::lazy::LazyProgram;
-+        use crate::seam::FrontEnd;
++use crate::dom::{ColorScheme, Document, HtmlLimits, NodeId, NodeKind, Tag, TextAlign, parse_html};
 +
-+        const SEND_OK: &str = r#"
-+use std::future::Future;
-+use std::pin::Pin;
-+use std::rc::Rc;
-+
-+fn accept(_: Pin<Box<dyn Future<Output = ()> + Send>>) {}
-+
-+fn main() {
-+    let fut: Pin<Box<dyn Future<Output = ()> + Send>> = Box::pin(async move {
-+        let local = Rc::new(1u8);
-+        drop(local);
-+        async {}.await;
-+    });
-+    accept(fut);
++/// Composable inline text styling flags (supports nested `<b><i>`, `<a><code>`, `<kbd>`, etc.).
++#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
++pub struct InlineStyle {
++    pub bold: bool,
++    pub italic: bool,
++    pub code: bool,
++    pub kbd: bool,
++    pub strike: bool,
++    pub underline: bool,
++    pub mark: bool,
++    pub link: bool,
 +}
-+"#;
-+        const NOT_SEND: &str = r#"
-+use std::future::Future;
-+use std::pin::Pin;
-+use std::rc::Rc;
 +
-+fn accept(_: Pin<Box<dyn Future<Output = ()> + Send>>) {}
-+
-+fn main() {
-+    let fut: Pin<Box<dyn Future<Output = ()> + Send>> = Box::pin(async move {
-+        let local = Rc::new(1u8);
-+        async {}.await;
-+        drop(local);
-+    });
-+    accept(fut);
++/// One styled inline span inside a rendered HTML block.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub struct RenderSpan<'a> {
++    pub text: AString<'a>,
++    pub style: InlineStyle,
++    pub href: Option<AString<'a>>,
 +}
-+"#;
-+        let alloc = blaze_own::testing::heap().alloc();
-+        let tc = fixture_toolchain();
-+        let check_main = |name: &'static str, source: &'static str| {
-+            let dir = format!("/{name}/");
-+            let root = format!("/{name}/src/main.rs");
-+            let files = [(root.clone(), source.to_owned())];
-+            let user = UserCrate {
-+                name, dir: &dir, root: &root, files: &files,
-+                edition: edition::PackageEdition::of_manifest("2024").expect("Rust 2024"), panic: blaze_build::Panic::Unwind,
-+            };
-+            let frame = blaze_mem::Frame::new(blaze_mem::tag::Tag::Infer).expect("fixture frame");
-+            let erased = blaze_own::Erased::new(&frame);
-+            let inputs = Inputs::new(&user, &tc).expect("fixture crate");
-+            let crates = inputs.crates();
-+            let names = inputs.resolve(&crates, erased.bump()).expect("fixture names");
-+            let sources = [SourceFile { path: "src/main.rs", text: source }];
-+            let main_key = names
-+                .items(0)
-+                .find_map(|(item, _, _)| (names.item_text(item).and_then(|t| t.name) == Some("main")).then_some(checker_of(item)))
-+                .expect("fixture `main`");
-+            let mut lazy = LazyProgram::new(&names, &frame, &sources, Some(main_key), alloc).expect("lazy program");
-+            lazy.check_one(main_key).map(|_| ())
-+        };
 +
-+        check_main("stalled_ok", SEND_OK).expect("dropped-before-await Rc must check clean via LazyProgram::check_one");
-+        let err = check_main("stalled_err", NOT_SEND).expect_err("held-across-await Rc must be rejected by LazyProgram::check_one");
-+        let shown = format!("{err:?}");
-+        assert!(
-+            shown.contains("E0277") && shown.contains("Send"),
-+            "expected E0277 Send diagnostic 
++/// Structured HTML table ready for direct grid/column layout.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub struct RenderTable<'a> {
++    pub headers: AVec<'a, AVec<'a, RenderSpan<'a>>>,
++    pub alignments: AVec<'a, TextAlign>,
++    pub rows: AVec<'a, AVec<'a, AVec<'a, RenderSpan<'a>>>>,
++}
++
++/// One layout-ready visual block emitted by [`render_document`] / [`render_html`].
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub enum RenderBlock<'a> {
++    Heading {
++        level: u8,
++        align: TextAlign,
++        spans: AVec<'a, RenderSpan<'a>>,
++    },
++    Paragraph {
++        align: TextAlign,
++        spans: AVec<'a, RenderSpan<'a>>,
++    },
++    Image {
++        src: AString<'a>,
++        alt: AString<'a>,
++        width: Option<u32>,
++        height: Option<u32>,
++        align: TextAlign,
++    },
++    Bullet {
++        indent: u8,
++        marker: AString<'a>,
++        spans: AVec<'a, RenderSpan<'a>>,
++    },
++    Quote {
++        spans: AVec<'a, RenderSpan<'a>>,
++    },
++    CodeFence {
++        lang: AString<'a>,
++        code: AString<'a>,
++    },
++    Table(RenderTable<'a>),
++    Details {
++        summary: AVec<'a, RenderSpan<'a>>,
++        open: bool,
++    },
++    Rule,
++    Blank,
++}
++
++/// Parse HTML `src` and immediately lower it into up to `max_blocks` [`RenderBlock`]s.
++pub fn render_html<'a>(
++    src: &str,
++    scheme: ColorScheme,
++    limits: HtmlLimits,
++    max_blocks: usize,
++    alloc: Alloc<'a>,
++) -> AVec<'a, RenderBlock<'a>> {
++    let doc = parse_html(src, limits, alloc);
++    render_document(&doc, scheme, max_blocks, alloc)
++}
++
++#[derive(Clone, Copy)]
++enum ListKind {
++    Unordered,
++    Ordered(u32),
++}
++
++#[derive(Clone, Copy)]
++enum Frame {
++    Enter(NodeId),
++    Exit {
++        tag: Tag,
++        prev_align: TextAlign,
++        prev_style: InlineStyle,
++        had_href: bool,
++        pushed_list: bool,
++        entered_quote: bool,
++        entered_heading: bool,
++        entered_li: bool,
++        entered_p: bool,
++    },
++}
++
++/// Lower an already-parsed [`Document`] into layout-ready [`RenderBlock`]s via an explicit worklist.
++pub fn render_document<'a>(
++    doc: &Document<'a>,
++    scheme: ColorScheme,
++    max_blocks: usize,
++    alloc: Alloc<'a>,
++) -> AVec<'a, RenderBlock<'a>> {
++    let mut blocks: AVec<'a, RenderBlock<'a>> = AVec::new_in(alloc);
++    let mut cur_spans: AVec<'a, RenderSpan<'a>> = AVec::new_in(alloc);
++    let mut cur_align = TextAlign::Left;
++    let mut cur_style = InlineStyle::default();
++    let mut href_stack: AVec<'a, AString<'a>> = AVec::new_in(alloc);
++    let mut list_stack: AVec<'a, ListKind> = AVec::new_in(alloc);
++    let mut quote_depth: u8 = 0;
++    let mut active_heading: Option<u8> = None;
++    let mut pending_li_marker: Option<(u8, AString<'a>)> = None;
++
++    let mut work: AVec<'a, Frame> = AVec::new_in(alloc);
++    work.push(Frame::Enter(NodeId::ROOT));
++
++    while let Some(frame) = work.pop() {
++        if blocks.len() >= max_blocks {
++            break;
++        }
++        match frame {
++            Frame::Exit {
++                tag,
++                prev_align,
++                prev_style,
++                had_href,
++                pushed_list,
++                entered_quote,
++                entered_heading,
++                entered_li,
++                entered_p,
++            } => {
++                if entered_heading {
++                    if let Some(level) = active_heading.take() {
++                        flush_spans(
++                            &mut blocks,
++                            &mut cur_spans,
++                            FlushTarget::Heading(level, cur_align),
++                            max_blocks,
++                            alloc,
++                        );
++                    }
++                } else if entered_li {
++                    if let Some((indent, marker)) = pending_li_marker.take() {
++                        flush_spans(
++                            &mut blocks,
++                            &mut cur_spans,
++                            FlushTarget::Bullet(indent, mar
 ```
 
-**File**: `crates/blaze-ladder/src/run/make_one.rs` (modified, +104/-19)
+**File**: `crates/blaze-html/src/tests.rs` (added, +156/-0)
 ```diff
-@@ -979,12 +979,11 @@ fn run_instance_loop<'a, P: FrontEnd, T: Typing<P>>(
-     // projection paths passed). The same ask-again as the build's: the program makes what the
-     // worlds asked (`FrontEnd::make_asked`) and the constants are pulled again; bounded by the
-     // same count (rule 18), and nothing made is the `Missing` itself.
--    let mut pulled = 0u32;
-+    let mut pulled = AskProgress::new_in(alloc);
-     loop {
-         match pull_constants(program, state, build_i, build_instance) {
-             Ok(()) => break,
--            Err(e) if asks_again(&e) && pulled < crate::front2::check::MOST_ROUNDS => {
--                pulled += 1;
-+            Err(e) if asks_again(&e) && pulled.allow(&e) => {
-                 if !program.make_asked(build_i)? {
-                     return Err(e);
-                 }
-@@ -999,16 +998,15 @@ fn run_instance_loop<'a, P: FrontEnd, T: Typing<P>>(
-     // An instance-time question that met an answer no check made (`Missing`): the program
-     // makes what its worlds asked (`FrontEnd::make_asked`) and the instance is built again,
-     // as build_from's step is; bounded (rule 18), and nothing made is the `Missing` itself.
--    let mut asked = 0u32;
-+    let mut asked = AskProgress::new_in(alloc);
-     loop {
-         let MakerState { checked, tables, work, .. } = &mut *state;
-         let t = tables.take().ok_or_else(|| tables_gone(tabled))?;
-         let bodies = Bodies { checked: &checked[..], closures: t.closures, coroutines: t.coroutines, const_at: t.const_at, overflow: work.overflow, ub: work.ub, panic: work.panic, alloc: work.alloc };
-         let step = build_one(&*program, &bodies, work, build_i, build_instance, sink);
-         *tables = Some(Tables { closures: bodies.closures, coroutines: bodies.coroutines, const_at: bodies.const_at });
-         let step = match step {
--            Err(e) if asks_again(&e) && asked < crate::front2::check::MOST_ROUNDS => {
--                asked += 1;
-+            Err(e) if asks_again(&e) && asked.allow(&e) => {
-                 if program.make_asked(build_i)? {
-                     continue;
-                 }
-@@ -1049,8 +1047,7 @@ fn run_instance_loop<'a, P: FrontEnd, T: Typing<P>>(
-             // (`FrontEnd::object_table`) and the instance built again, so its bytes never
-             // depend on which body was checked before it (D194); bounded by the same count,
-             // and nothing made is the `NoTrait` itself.
--            Err(e) if let Some(t) = object_missing(&e) && asked < crate::front2::check::MOST_ROUNDS => {
--                asked += 1;
-+            Err(e) if let Some(t) = object_missing(&e) && asked.allow(&e) => {
-                 if program.object_table(t)? {
-                     continue;
-                 }
-@@ -1089,6 +1086,65 @@ fn run_instance_loop<'a, P: FrontEnd, T: Typing<P>>(
-     Ok(())
- }
- 
-+/// What an `asks_again` / `object_missing` retry round stopped on, for [`AskProgress`].
-+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
-+enum AskKey {
-+    Question(blaze_typeck::Question),
-+    Adt(ItemKey),
-+    Object(ItemKey),
-+    Row(ReadKind, ItemKey),
+@@ -0,0 +1,156 @@
++use blaze_own::testing::heap;
++
++use crate::{
++    ColorScheme, HtmlLimits, RenderBlock, TextAlign, decode_entities, parse_html, render_html,
++};
++
++#[test]
++fn decodes_named_and_numeric_entities() {
++    let h = heap();
++    let a = h.alloc();
++    assert_eq!(
++        decode_entities("Install &middot; Docs &amp; &lt;code&gt; &#x2192; &#65;", a).as_str(),
++        "Install · Docs & <code> → A"
++    );
 +}
 +
-+fn ask_key(e: &RunError) -> Option<AskKey> {
-+    match e {
-+        RunError::Build { error: BuildError::Select(blaze_typeck::ResolveError::Missing(q)), .. }
-+        | RunError::Resolve { error: blaze_typeck::ResolveError::Missing(q), .. } => Some(AskKey::Question(*q)),
-+        RunError::Build { error: BuildError::NoAdt { adt }, .. } | RunError::NoAdt { adt, .. } => Some(AskKey::Adt(*adt)),
-+        _ => object_missing(e).map(AskKey::Object),
++#[test]
++fn renders_readme_hero_picture_dark_and_light() {
++    let h = heap();
++    let a = h.alloc();
++    let html = r##"
++<p align="center">
++  <picture>
++    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/fire/header-dark.webp">
++    <img alt="blaze" src="docs/brand/fire/header-light.webp" width="344" height="184">
++  </picture>
++</p>
++<h3 align="center">Rebuild Rust in milliseconds.</h3>
++<p align="center">Type <code>blaze</code> wherever you'd type <code>cargo</code>.<br>Blazingly fast Rust, literally.</p>
++<p align="center">
++  <a href="#install">Install</a> ·
++  <a href="#try-it">Try it</a> ·
++  <a href="#learn-more">Docs</a>
++</p>
++"##;
++
++    let dark = render_html(html, ColorScheme::Dark, HtmlLimits::SHIPPED, 64, a);
++    assert!(matches!(
++        dark.first(),
++        Some(RenderBlock::Image { src, alt, width: Some(344), height: Some(184), align: TextAlign::Center })
++            if src.as_str() == "docs/brand/fire/header-dark.webp" && alt.as_str() == "blaze"
++    ));
++
++    let light = render_html(html, ColorScheme::Light, HtmlLimits::SHIPPED, 64, a);
++    assert!(matches!(
++        light.first(),
++        Some(RenderBlock::Image { src, .. }) if src.as_str() == "docs/brand/fire/header-light.webp"
++    ));
++
++    // Centered heading.
++    assert!(matches!(
++        dark.get(1),
++        Some(RenderBlock::Heading { level: 3, align: TextAlign::Center, spans })
++            if spans.first().is_some_and(|s| s.text.as_str() == "Rebuild Rust in milliseconds.")
++    ));
++
++    // `<br>` splits into two centered paragraphs, preserving `<code>` spans.
++    let Some(RenderBlock::Paragraph { align: TextAlign::Center, spans: line1 }) = dark.get(2) else {
++        panic!("expected first centered paragraph");
++    };
++    assert!(line1.iter().any(|s| s.style.code && s.text.as_str() == "blaze"));
++    assert!(line1.iter().any(|s| s.style.code && s.text.as_str() == "cargo"));
++
++    let Some(RenderBlock::Paragraph { align: TextAlign::Center, spans: line2 }) = dark.get(3) else {
++        panic!("expected second centered paragraph after <br>");
++    };
++    assert_eq!(line2.first().map(|s| s.text.as_str()), Some("Blazingly fast Rust, literally."));
++
++    // Centered link nav row preserves `href` and separators.
++    let Some(RenderBlock::Paragraph { align: TextAlign::Center, spans: nav }) = dark.get(4) else {
++        panic!("expected centered nav links paragraph");
++    };
++    assert!(nav.iter().any(|s| s.style.link && s.text.as_str() == "Install" && s.href.as_deref() == Some("#install")));
++    assert!(nav.iter().any(|s| s.style.link && s.text.as_str() == "Docs" && s.href.as_deref() == Some("#learn-more")));
++}
++
++#[test]
++fn parses_html_tables_lists_code_and_skips_scripts_styles() {
++    let h = heap();
++    let a = h.alloc();
++    let html = r#"<!DOCTYPE html>
++<html>
++<head><title>Ignored</title><style>body { color: red; }</style><script>alert(1 < 2)</script></head>
++<body>
++  <!-- hidden comment -->
++  <h1>Hello <em>World</em></h1>
++  <ul><li>One</li><li>Two <kbd>Cmd+H</kbd></li></ul>
++  <table>
++    <thead><tr><th>Crate</th><th align="right">Time</th></tr></thead>
++    <tbody><tr><td><code>blaze</code></td><td align="right"><strong>20 ms</strong></td></tr></tbody>
++  </table>
++  <pre><code class="language-rust">fn main() {}</code></pre>
++</body>
++</html>"#;
++
++    let blocks = render_html(html, ColorScheme::Dark, HtmlLimits::SHIPPED, 64, a);
++    assert!(matches!(blocks.first(), Some(RenderBlock::Heading { level: 1, .. })));
++    assert!(blocks.iter().any(|b| matches!(b, RenderBlock::Bullet { .. })));
++    assert!(blocks.iter().any(|b| matches!(b, RenderBlock::Table(t) if t.headers.len() == 2 && t.rows.len() == 1 && t.alignments.get(1) == Some(&TextAlign::Right))));
++    assert!(blocks.iter().any(|b| matches!(b, RenderBlock::CodeFence { lang, code } if lang.as_str() == "rust" && code.as_str() == "fn main() {}")));
++    // Ensure `<style>`, `<script>`, `<title>`, and `<!-- hidden comment -->` never leak into output.
++    for b in blocks.iter() {
++        if let RenderBlock::Paragraph { spans, .. } = b {
++            for sp in spans.iter() {
++                assert!(!sp.text.as_str().contains("alert"));
++                assert!(!sp.text.as_str().contains("color: red"));
++                assert!(!sp.text.as_str().contains("hidden comment"));
++            }
++        }
 +    }
 +}
 +
-+/// Consecutive rounds without a new distinct missing fact before stopping once past `MOST_ROUNDS`.
-+const MOST_ASK_STALLED: u32 = 64;
++#[test]
++fn sim_fuzz_never_panics_and_respects_bounds() {
++    use blaze_sim::{Config, check};
 +
-+/// Progress-gated round bound for instance-level `make_asked` / `object_table` retry loops
-+/// (rule 18, matching `front2/check.rs`'s `MOST_PROGRESS_ROUNDS`): cold lazy builds of large
-+/// bodies read from typed records can legitimately fill >`MOST_ROUNDS` distinct `ImplsOf` /
-+/// `Adt` / `ObjectTrait` records across retries, while a stuck loop repeating the same missing
-+/// fact still stops at `MOST_ROUNDS`.
-+struct AskProgress<'a> {
-+    rounds: u32,
-+    stalled: u32,
-+    seen: blaze_hash::HashSet<AskKey, Alloc<'a>>,
-+}
++    check(Config::cases(120), |t| {
++        let h = heap();
++        let a = h.alloc();
 +
-+impl<'a> AskProgress<'a> {
-+    fn new_in(alloc: Alloc<'a>) -> Self {
-+        Self { rounds: 0, stalled: 0, seen: blaze_hash::HashSet::new_in(alloc) }
-+    }
-+
-+    fn allow(&mut self, e: &RunError) -> bool {
-+        self.allow_key(ask_key(e))
-+    }
-+
-+    fn allow_key(&mut self, key: Option<AskKey>) -> bool {
-+        if self.rounds >= crate::front2::check::MOST_PROGRESS_ROUNDS {
-+            return false;
-+        }
-+        let fresh = key.is_some_and(|k| self.seen.insert(k));
-+        if fresh {
-+            self.stalled = 0;
-+        } else {
-+            self.stalled += 1;
-+        }
-+        if self.rounds >= crate::front2::check::MOST_ROUNDS && self.stalled >= MOST_ASK_STALLED {
-+            return false;
-+        }
-+        
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2418** (2026-11-24): fix(sota): prevent GprPairSpill self-slot collision (s0 == s1) and spilled mul_overflow scratch clobber (@andrewgazelka)
-- **PR #2417** (2026-11-24): fix(ladder,typeck,borrow): evaluate coroutine LAYOUT in consteval and fix OneRule/GenericSelf selection & reflexive projections (@andrewgazelka)
-- **PR #2416** (2026-11-24): blaze-ecs/ui/site: SwiftUI ECS primitives, Flecs 4.2 ecs_scene!, and 100% ECS-driven Rust GPU Slug OG card (@andrewgazelka)
-- **PR #2415** (2026-11-24): fix(ladder,typeck): resolve deferred method/path anon-const args and GAT const params on type params/Self (@andrewgazelka)
-- **PR #2414** (2026-11-24): perf(blaze-build): emit Op::Memcpy/Memmove for aggregate copies instead of recursive enum switch trees (@andrewgazelka)
-- **PR #2413** (2026-11-24): fix(blaze-site): polish inline SVG icons across WebGPU and ECS HTML projection (@andrewgazelka)
+- **PR #2511** (2026-11-26): perf(ladder): lay coroutine shapes only for non-coroutine callers and build single coroutine on demand (@andrewgazelka)
+- **PR #2510** (2026-11-26): fix(build): track visited PTys instead of initial ground.len() in pointee_tail (@andrewgazelka)
+- **PR #2508** (2026-11-26): feat(html,preview,shell): sans-IO HTML5 parser & renderer integrated with Markdown and native GPU images (@andrewgazelka)
+- **PR #2507** (2026-11-25): perf(ladder): stop Walk::Pointee ADT field blowup behind pointers in collect_coroutines (@andrewgazelka)
+- **PR #2506** (2026-11-25): perf: SOTA-v6 — BSF1 persisted StretchFront, zero-spawn cached blaze test + delta run_ids, O(changed) sparse lints, BER5 root magic + retired owed tasks, stable crate_cells digest, and DST-proven non-locking CAS GC (@andrewgazelka)
+- **PR #2505** (2026-11-25): fix(blaze-shell): stop swallowing Cmd+H and native macOS shortcuts (@andrewgazelka)
 
 ---
 
@@ -3484,58 +3710,52 @@ Fixes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sota,lir,build): canonicalize non-RPO blocks before SOTA regalloc and preserve u
+## X. blaze-shell): stop swallowing Cmd+H and native macOS shortcuts
 
 **RULE**:
-When implementing operations in `crates/blaze-build/src/layout.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in indexable-inc/blaze. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/blaze-shell/src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in indexable-inc/blaze. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `382168c3`: sota,lir,build): canonicalize non-RPO blocks before SOTA regalloc and preserve unsizable generic struct tail order. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d870ac2`: blaze-shell): stop swallowing Cmd+H and native macOS shortcuts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/blaze-build/src/layout.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/blaze-shell/src/main.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Whether `adt`'s last field (in its unsubstituted definition) can be unsized via a structural
-/// `Unsize` coercion (`&S<SizedTail> -> &S<UnsizedTail>`, e.g. `PolymorphicIter<[MaybeUninit<T>; N]>`
-/// -> `PolymorphicIter<[MaybeUninit<T>]>`, `ArcInner<T>`, `Mutex<T>`, `UnsafeCell<T>`).
-///
-/// Rust requires unsizing a struct to preserve the byte offsets of every field preceding the tail,
-/// so a potentially-unsized tail field must stay last even when monomorphized with a sized,
-/// higher-alignment type (such as `u128` or `[MaybeUninit<(u64, BlobParams)>; 2]`).
-fn struct_tail_may_unsize<'a>(adt: &Adt<'a>, facts: &'a dyn LayoutFacts) -> bool {
-    if adt.generics == 0 {
-        return false;
-    }
-    let [variant] = adt.variants else { return false };
-    let Some(last) = adt.fields.get(variant.fields.range()).and_then(|fs| fs.last()) else {
-        return false;
-    };
-    ty_may_unsize(last.ty, adt.types, facts, 16)
-}
+    use objc2::{MainThreadMarker, MainThreadOnly, sel};
+        NSEventModifierFlags, NSEventType, NSMenu, NSMenuItem, NSPasteboard,
+        NSPasteboardTypeString, NSWindow, NSWindowStyleMask, NSWindowTitleVisibility,
+    /// Install standard macOS Application and Window menus so system shortcuts
+    /// (`Cmd+H` Hide, `Cmd+Opt+H` Hide Others, `Cmd+M` Minimize, `Cmd+Q` Quit,
+    /// `Cmd+`` ` window cycling) behave like a first-class native macOS app.
+    fn install_macos_menu(app: &NSApplication, mtm: MainThreadMarker) {
+        let menubar = NSMenu::new(mtm);
 
-fn ty_may_unsize<'a>(mut ty: PTy, mut tys: blaze_typeck::PTys<'a>, facts: &'a dyn LayoutFacts, mut budget: u8) -> bool {
-    loop {
-        if budget == 0 {
-            return true;
-        }
-        budget -= 1;
-        let Ok(node) = tys.node(ty) else { return
+        // 1. Application menu ("blaze-shell").
+        let app_menu_item = NSMenuItem::new(mtm);
+        let app_menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), &NSString::from_str("blaze-shell"));
+        // SAFETY: standard AppKit responder selectors (`hide:`, `hideOtherApplications:`,
+        // `unhideAllApplications:`, `terminate:`) are valid Objective-C selectors on NSApplication.
+        unsafe {
+            let hide_item = NSMenuItem::initWithTitle_action_keyEquivalent(
+                NSMenuItem::alloc(mtm),
+                &NSString::from_str("Hide blaze-shell"),
+                Some(sel!(hide:)),
+             
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                let u = self.univariant(parts, Order::Decreasing, ReprAttrs::RUST, 0, 0, cx.scratch)?;
-                    let u = self.univariant(parts, Order::Decreasing, ReprAttrs::RUST, 0, 0, cx.scratch)?;
-                let u = self.univariant(parts, Order::Decreasing, ReprAttrs::RUST, 0, 0, cx.scratch)?;
-    fn univariant(&mut self, parts: &[PTy], order: Order, attrs: ReprAttrs, start: u64, min_align: u8, scratch: Alloc<'_>
+    use objc2::{MainThreadMarker, MainThreadOnly};
+        NSEventModifierFlags, NSEventType, NSPasteboard, NSPasteboardTypeString, NSWindow,
+        NSWindowStyleMask, NSWindowTitleVisibility,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `382168c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d870ac2` are properly handled with clean fallback behavior.
 
 
 ## Consequences
