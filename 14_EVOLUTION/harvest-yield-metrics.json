@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:41:52.402Z",
-  "total_cycles_completed": 12830,
-  "total_learnings_persisted": 12830,
-  "total_rules_promoted": 11662,
+  "last_updated": "2026-11-26T18:50:27.047Z",
+  "total_cycles_completed": 12832,
+  "total_learnings_persisted": 12832,
+  "total_rules_promoted": 11663,
   "history": [
-    {
-      "timestamp": "2026-11-26T08:57:24.537Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T08:57:29.195Z",
-      "repository": "rafsoh/dimeApp",
-      "learningId": "learn-github-rafsoh-dimeapp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T08:57:31.514Z",
       "repository": "flux-iac/tofu-controller",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T18:41:52.402Z",
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:50:13.600Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:50:27.047Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

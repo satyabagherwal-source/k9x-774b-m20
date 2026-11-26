@@ -13517,3 +13517,5 @@
 | `CYCLE-20261126-FLL6` | `2026-11-26T18:41:44.202Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10755` | Yes (`f72190d4...`) |
 | `CYCLE-20261126-FOW2` | `2026-11-26T18:41:48.482Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10756` | Yes (`1ae857f5...`) |
 | `CYCLE-20261126-FRWB` | `2026-11-26T18:41:52.379Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10757` | Yes (`203fd4c9...`) |
+| `CYCLE-20261126-QIML` | `2026-11-26T18:50:13.581Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`cb743ba6...`) |
+| `CYCLE-20261126-QT00` | `2026-11-26T18:50:27.024Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10758` | Yes (`0d9fa632...`) |

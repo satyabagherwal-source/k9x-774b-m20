@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-Q39F",
-    "timestamp": "2026-11-25T07:22:22.851Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-    "contentHash": "8af85aae58e070583b0128d64ad06d07ed85859efd6ab895a722a9c8ffc36c51",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-Q4SD",
-    "timestamp": "2026-11-25T07:22:24.829Z",
-    "repository": "alejandrobujan/tendedero",
-    "learningId": "learn-github-alejandrobujan-tendedero",
-    "contentHash": "00c613eeba3f7243cf2add417fae8c203e74d383c15931aa9197feede299fc6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-QEQ9",
     "timestamp": "2026-11-25T07:22:37.713Z",
     "repository": "etcd-io/etcd",
@@ -7490,6 +7460,36 @@
     "repository": "alibaba/zvec",
     "learningId": "learn-github-alibaba-zvec",
     "contentHash": "203fd4c9b04584c92f94c5e9598fa1b0f6bd65323a5647b945ad23454f54b8ac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QIML",
+    "timestamp": "2026-11-26T18:50:13.581Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "cb743ba61acea1c17e278cd8816f955e535792ea09829632b5d7f4f90eda3675",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QT00",
+    "timestamp": "2026-11-26T18:50:27.024Z",
+    "repository": "langchain4j/langchain4j",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "0d9fa632c99de93ef312ab6cd941002577f67f37fbedcb40e46d764dc6df4cc2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -13550,3 +13550,5 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `63a3d5ac` | Multi-dimensional audit evidence | 2026-11-26T18:41:44.207Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `72a7f415` | Multi-dimensional audit evidence | 2026-11-26T18:41:48.486Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `ee15ab0a` | Multi-dimensional audit evidence | 2026-11-26T18:41:52.383Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-26T18:50:13.586Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `50c1a5c5` | Multi-dimensional audit evidence | 2026-11-26T18:50:27.029Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T22:51:14.711Z",
+  "timestamp": "2026-11-26T18:50:31.223Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-langchain4j-langchain4j-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [langchain4j-langchain4j-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T22:51:14.711Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T18:50:31.223Z`  
 > **Learning ID**: `LEARN-EVO-langchain4j-langchain4j-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from langchain4j-langchain4j-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `212cbf3c`  
+> **Source Version**: `50c1a5c5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:51:06.457Z  
+> **Timestamp**: 2026-11-26T18:50:25.829Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:51:06.453Z  
+> **Harvest Timestamp**: 2026-11-26T18:50:25.824Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13440 stars
+- **Stars / Engagement**: 13447 stars
 
 ---
 
@@ -866,596 +866,171 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `212cbf3c` (2026-11-24)
-**Commit Message**: agentic: notify composed agent listeners in registration order, closing callbacks in reverse (#7250)
+### Incident Patch 1: `7c5e5ed2` (2026-11-26)
+**Commit Message**: fix(agentic): pass a parallel mapper item after a framework argument (#7280)
 
 ## Issue
-Closes #7249
+Closes #7279
 
 ## Change
-`ComposedAgentListener` kept its listeners in a `HashSet`, so they were
-notified in identity-hash-code order. That order could change from one
-run to the next, and it contradicted the tutorial ("notified in the
-order they were registered"). A listener that makes a context current
-for the others, like quarkus-flow's `FlowAgentContextListener` with the
-OpenTelemetry context, couldn't rely on which listeners saw that
-context.
+A parallel mapper passed each item to the first argument of its
+subagent, even when that argument is provided by the framework, like the
+`AgenticScope` or the `InvocationParameters`. A subagent declaring such
+an argument before the one receiving the item failed with
+`MissingArgumentException`.
 
-- **Registration order:** the listeners are kept in a `LinkedHashSet`,
-which keeps the de-duplication and the order `compose` and
-`composeWithInherited` give them (inherited listeners first).
-- **The listeners nest like interceptors:** the callbacks that close a
-scope notify them in reverse order. Those are `afterAgentInvocation`,
-`onAgentInvocationError`, `afterAgentToolExecution`,
-`beforeAgenticScopeDestroyed` and `onAgenticSystemSuspended`. The rest
-stay in registration order. So a listener that opens a context in
-`beforeAgentInvocation` and closes it in `afterAgentInvocation` gives
-every listener registered after it that cont
+`MapperAgentInvoker` now passes the item to the first argument whose
+name does not start with `@`, the prefix of the arguments the framework
+provides (`@AgenticScope`, `@MemoryId`, `@LoopCounter`,
+`@InvocationParameters`). A subagent whose first argument is not one of
+them behaves as before.
 
-**File**: `docs/docs/tutorials/agents.md` (modified, +1/-1)
-```diff
-@@ -1076,7 +1076,7 @@ public void onPlannerModelResponse(PlannerModelResponse response) {
- This method is invoked once for each model call, on the thread running the pattern, as soon as the model returns and before the pattern acts on its response, so it is also notified when the invocation of the pattern later fails. A [custom pattern](#custom-agentic-patterns) calling a model reports its responses in the same way.
- 
- `AgentListener`s have 2 important properties, they are:
--- **composable**, meaning that you can register multiple listeners to the same agent, by invoking the `listener` method more than once, and they will be notified in the order they were registered; 
-+- **composable**, meaning that you can register multiple listeners to the same agent, by invoking the `listener` method more than once. They nest like interceptors: `beforeAgentInvocation`, `beforeAgentToolExecution` and `afterAgenticScopeCreated`, as well as the events notified between them and their counterparts, are notified to the listeners in the order they were registered, while `afterAgentInvocation`, `onAgentInvocationError`, `afterAgentToolExecution`, `beforeAgenticScopeDestroyed` and `onAgenticSystemSuspended` are notified in the reverse order. So a listener that makes some context current when an agent starts and restores the previous one when it ends gives the listeners registered after it that context in both callbacks. The listeners inherited from a parent agent count as registered before the agent's own;
- - **optionally hierarchical**, meaning that by default they are only local to the agent where they are directly registered, but they can also be inherited by all its subagents, simply making its `inheritedBySubagents` method to return `true`. In that case a listener registered on a top level agent will also be notified of the invocations to all its subagents at any level and composed with all listeners that these subagents could have registered on their own.
- 
- ### Monitoring
-```
+`ParallelMapperFrameworkArgumentTest` covers an `AgenticScope` before
+the item, after the item, two framework arguments before the item, and a
+subagent with only an `AgenticScope`. The two cases with a framework
+argument first fail on `main` with the `MissingArgumentException` above,
+and all 4 pass with the fix.
 
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/observability/ComposedAgentListener.java` (modified, +60/-18)
-```diff
-@@ -4,19 +4,30 @@
- import dev.langchain4j.agentic.scope.AgenticScope;
- import java.util.ArrayList;
- import java.util.Collection;
--import java.util.HashSet;
-+import java.util.Iterator;
- import java.util.List;
--import java.util.Set;
-+import java.util.ListIterator;
- import java.util.function.Consumer;
- import java.util.function.Predicate;
-+import java.util.stream.Collectors;
- 
-+/**
-+ * Composes several {@link AgentListener}s into one, notifying them in a defined order: the callbacks that open a scope
-+ * ({@code beforeAgentInvocation}, {@code beforeAgentToolExecution}, {@code afterAgenticScopeCreated}) and the events
-+ * notified within it notify the listeners in the order they were registered, inherited listeners first, while the
-+ * callbacks that close a scope ({@code afterAgentInvocation}, {@code onAgentInvocationError},
-+ * {@code afterAgentToolExecution}, {@code beforeAgenticScopeDestroyed}, {@code onAgenticSystemSuspended}) notify them in
-+ * the reverse order. This way the listeners nest like interceptors: a listener that makes a context current in
-+ * {@code beforeAgentInvocation} and restores the previous one in {@code afterAgentInvocation} gives every listener
-+ * registered after it that same context in both callbacks.
-+ */
- @Internal
- public class ComposedAgentListener implements AgentListener {
- 
--    private final Set<AgentListener> listeners;
-+    private final List<AgentListener> listeners;
- 
-     private ComposedAgentListener(List<AgentListener> listeners) {
--        this.listeners = new HashSet<>(listeners);
-+        this.listeners = listeners.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
-     }
- 
-     public ComposedAgentListener(AgentListener... listeners) {
-@@ -40,9 +51,17 @@ private static List<AgentListener> collectListeners(AgentListener... listeners)
- 
-     public void addListener(AgentListener listener) {
-         if (listener instanceof ComposedAgentListener composed) {
--            this.listeners.addAll(composed.listeners);
-+            for (AgentListener composedListener : composed.listeners) {
-+                addIfAbsent(composedListener);
-+            }
-         } else {
--            this.listeners.add(listener);
-+            addIfAbsent(listener);
-+        }
-+    }
-+
-+    private void addIfAbsent(AgentListener listener) {
-+        if (!listeners.contains(listener)) {
-+            listeners.add(listener);
-         }
-     }
- 
-@@ -57,12 +76,12 @@ public void beforeAgentInvocation(final AgentRequest agentRequest) {
- 
-     @Override
-     public void afterAgentInvocation(final AgentResponse agentResponse) {
--        notifyEach(listener -> listener.afterAgentInvocation(agentResponse));
-+        notifyEachInReverse(listener -> listener.afterAgentInvocation(agentResponse));
-     }
- 
-     @Override
-     public void onAgentInvocationError(final AgentInvocationError agentInvocationError) {
--        notifyEach(listener -> listener.onAgentInvocationError(agentInvocationError));
-+        notifyEachInReverse(listener -> listener.onAgentInvocationError(agentInvocationError));
-     }
- 
-     @Override
-@@ -72,7 +91,7 @@ public void onAgentSkipped(final AgentSkipped agentSkipped) {
- 
-     @Override
-     public void afterAgentToolExecution(AfterAgentToolExecution afterAgentToolExecution) {
--        notifyEach(listener -> listener.afterAgentToolExecution(afterAgentToolExecution));
-+        notifyEachInReverse(listener -> listener.afterAgentToolExecution(afterAgentToolExecution));
-     }
- 
-     @Override
-@@ -97,24 +116,47 @@ public void afterAgenticScopeCreated(final AgenticScope agenticScope) {
- 
-     @Override
-     public void beforeAgenticScopeDestroyed(final AgenticScope agenticScope) {
--        notifyEach(listener -> listener.beforeAgenticScopeDestroyed(agenticScope));
-+        notifyEachInReverse(listener -> listener.beforeAgenticScopeDestroyed(agenticScope));
-     }
- 
-     @Override
-     public void onAgenticSystemSuspended(final AgenticScope agenticScope) {
--        notifyEach(listener -> listener.onAgenticSystemSuspended(agenticScope));
-+        notifyEachInReverse(listener -> listener.onAgenticSystemSuspended(agenticScope));
-+    }
-+
-+    private void notifyEach(Consumer<AgentListener> notification) {
-+        notifyEach(listeners.iterator(), notification);
-+    }
-+
-+    private void notifyEachInReverse(Consumer<AgentListener> notification) {
-+        notifyEach(reverseIterator(), notification);
-+    }
-+
-+    private Iterator<AgentListener> reverseIterator() {
-+        ListIterator<AgentListener> iterator = listeners.listIterator(listeners.size());
-+        return new Iterator<>() {
-+            @Override
-+            public boolean hasNext() {
-+                return iterator.hasPrevious();
-+            }
-+
-+            @Override
-+            public AgentListener next() {
-+                return iterator.previous();
-+            }
-+        };
-     }
- 
-     /**
--     * Notifies every composed listener, even when one of them throws: a failing listener must not keep th
-```
+Local verification: `langchain4j-agentic` unit tests 685/685 green;
+`spotless:check` and `revapi:check` green.
 
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/observability/ComposedAgentListenerTest.java` (modified, +228/-29)
-```diff
-@@ -4,18 +4,19 @@
- import static org.assertj.core.api.Assertions.assertThatCode;
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
- 
-+import dev.langchain4j.agentic.scope.AgenticScope;
- import java.util.ArrayList;
- import java.util.List;
- import java.util.Map;
- import org.junit.jupiter.api.Test;
- 
- class ComposedAgentListenerTest {
- 
--    // The composed listeners are kept in a HashSet, which iterates small hash codes in ascending order. Giving the
--    // failing listener the lower one makes it run first, so the tests below can't pass by the listener under test
--    // happening to run before it.
--    private static final int FIRST = 0;
--    private static final int SECOND = 1;
-+    // A HashSet iterates small hash codes in ascending order. Giving the listener registered first the higher one makes
-+    // a HashSet iterate the listeners against their registration order, so the ordering tests below fail if the
-+    // registration order is lost.
-+    private static final int HIGHER_HASH = 1;
-+    private static final int LOWER_HASH = 0;
- 
-     @Test
-     void compose_without_existing_listener_returns_the_new_one() {
-@@ -32,7 +33,7 @@ void compose_with_existing_listener_wraps_both() {
-         AgentListener composed = ComposedAgentListener.compose(first, second);
- 
-         assertThat(composed).isInstanceOf(ComposedAgentListener.class);
--        assertThat(((ComposedAgentListener) composed).listeners()).containsExactlyInAnyOrder(first, second);
-+        assertThat(((ComposedAgentListener) composed).listeners()).containsExactly(first, second);
-     }
- 
-     @Test
-@@ -43,7 +44,7 @@ void compose_with_existing_composed_listener_adds_to_it() {
-         AgentListener composed = ComposedAgentListener.compose(first, second);
- 
-         assertThat(ComposedAgentListener.compose(composed, third)).isSameAs(composed);
--        assertThat(((ComposedAgentListener) composed).listeners()).containsExactlyInAnyOrder(first, second, third);
-+        assertThat(((ComposedAgentListener) composed).listeners()).containsExactly(first, second, third);
-     }
- 
-     @Test
-@@ -96,22 +97,12 @@ void a_failing_listener_does_not_keep_the_others_from_being_notified_before_an_i
-                     public void beforeAgentInvocation(AgentRequest agentRequest) {
-                         throw failure;
-                     }
--
--                    @Override
--                    public int hashCode() {
--                        return FIRST;
--                    }
-                 },
-                 new AgentListener() {
-                     @Override
-                     public void beforeAgentInvocation(AgentRequest agentRequest) {
-                         requests.add(agentRequest);
-                     }
--
--                    @Override
--                    public int hashCode() {
--                        return SECOND;
--                    }
-                 });
-         AgentRequest request = new AgentRequest(null, null, Map.of());
- 
-@@ -123,27 +114,19 @@ public int hashCode() {
-     void a_failing_listener_does_not_keep_the_others_from_being_notified_of_an_error() {
-         List<AgentInvocationError> errors = new ArrayList<>();
-         IllegalStateException failure = new IllegalStateException("error listener failed");
-+        // Errors are notified in reverse registration order, so the failing listener is registered last to be notified
-+        // first
-         AgentListener composed = ComposedAgentListener.compose(
-                 new AgentListener() {
-                     @Override
-                     public void onAgentInvocationError(AgentInvocationError agentInvocationError) {
--                        throw failure;
--                    }
--
--                    @Override
--                    public int hashCode() {
--                        return FIRST;
-+                        errors.add(agentInvocationError);
-                     }
-                 },
-                 new AgentListener() {
-                     @Override
-                     public void onAgentInvocationError(AgentInvocationError agentInvocationError) {
--                        errors.add(agentInvocationError);
--                    }
--
--                    @Override
--                    public int hashCode() {
--                        return SECOND;
-+                        throw failure;
-                     }
-                 });
-         AgentInvocationError error =
-@@ -178,6 +161,222 @@ void nothing_is_thrown_when_no_listener_fails() {
-         assertThat(secondSkips).containsExactly(skip);
-     }
- 
-+    @Test
-+    void scope_opening_callbacks_and_events_notify_the_listeners_in_registration_order() {
-+        List<String> calls = new ArrayList<>();
-+        AgentListener composed = ComposedAgentListener.compose(
-+                callRecorder("first", calls, HIGHER_HASH), callRecorder("second", calls, LOWER_HASH));
-+
-+        composed.beforeAgentInvocation(new AgentRequest(null, null, Map.of()));
-+        composed.beforeAgentToolExecution(ne
-```
+## General checklist
+- [X] There are no breaking changes (API, behaviour
 
----
-
-### Incident Patch 2: `c3542cb0` (2026-11-24)
-**Commit Message**: Ollama ITs: stop test containers after each test class (#7276)
-
-The Ollama integration tests start their Ollama containers
-(Testcontainers) in static initializers and never stop them, so every
-container stays alive until the test JVM exits. A full run therefore
-piles them up: on a 31 GB machine, 11 containers were alive at once (5
-of them with llama3.1), about 26 GB of RAM went to loaded models, and
-the machine ran out of memory.
-
-This change stops each container when the test class that uses it
-finishes:
-- Abstract bases shared by several test classes
-(`AbstractOllama*Infrastructure`) now start a fresh container in
-`@BeforeAll` and stop it in `@AfterAll`. A static initializer runs only
-once for all subclasses, so it cannot be used together with a stop after
-each class.
-- Test classes with their own container still start it in their static
-initializer and now stop it in `@AfterAll`. `common/OllamaChatModelIT`
-and `common/OllamaStreamingChatModelIT` stop every container in their
-`CONTAINER_MAP`.
-- Test classes that used another class's container
-(`OllamaStreamingChatModelListenerIT`, `OllamaCustomMessageChatModelIT`,
-`common/OllamaAiServiceIT`, `common/OllamaStreamingAiServiceIT`) n
-
-**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaEmbeddingModelInfrastructure.java` (modified, +14/-1)
-```diff
-@@ -6,13 +6,19 @@
- import static dev.langchain4j.model.ollama.OllamaImage.OLLAMA_IMAGE;
- import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
- 
-+import org.junit.jupiter.api.AfterAll;
-+import org.junit.jupiter.api.BeforeAll;
-+
- class AbstractOllamaEmbeddingModelInfrastructure {
- 
-     private static final String MODEL_NAME = ALL_MINILM_MODEL;
- 
-     static LC4jOllamaContainer ollama;
- 
--    static {
-+    // Started before and stopped after each test class, so that a finished test class does not keep its
-+    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
-+    @BeforeAll
-+    static void startOllama() {
-         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
-             String localOllamaImage = localOllamaImage(MODEL_NAME);
-             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OLLAMA_IMAGE, localOllamaImage))
-@@ -21,4 +27,11 @@ class AbstractOllamaEmbeddingModelInfrastructure {
-             ollama.commitToImage(localOllamaImage);
-         }
-     }
-+
-+    @AfterAll
-+    static void stopOllama() {
-+        if (ollama != null) {
-+            ollama.stop();
-+        }
-+    }
- }
-```
-
-**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaLanguageModelInfrastructure.java` (modified, +14/-1)
-```diff
-@@ -4,6 +4,9 @@
- import static dev.langchain4j.model.ollama.OllamaImage.TINY_DOLPHIN_MODEL;
- import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
- 
-+import org.junit.jupiter.api.AfterAll;
-+import org.junit.jupiter.api.BeforeAll;
-+
- public class AbstractOllamaLanguageModelInfrastructure {
- 
-     public static final String OLLAMA_BASE_URL = System.getenv("OLLAMA_BASE_URL");
-@@ -12,7 +15,10 @@ public class AbstractOllamaLanguageModelInfrastructure {
- 
-     static LC4jOllamaContainer ollama;
- 
--    static {
-+    // Started before and stopped after each test class, so that a finished test class does not keep its
-+    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
-+    @BeforeAll
-+    static void startOllama() {
-         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
-             String localOllamaImage = localOllamaImage(MODEL_NAME);
-             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OllamaImage.OLLAMA_IMAGE, localOllamaImage))
-@@ -22,6 +28,13 @@ public class AbstractOllamaLanguageModelInfrastructure {
-         }
-     }
- 
-+    @AfterAll
-+    static void stopOllama() {
-+        if (ollama != null) {
-+            ollama.stop();
-+        }
-+    }
-+
-     public static String ollamaBaseUrl(LC4jOllamaContainer ollama) {
-         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
-             return ollama.getEndpoint();
-```
-
-**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaStructuredOutputLanguageModelInfrastructure.java` (modified, +14/-1)
-```diff
-@@ -6,18 +6,31 @@
- import static dev.langchain4j.model.ollama.OllamaImage.OLLAMA_IMAGE;
- import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
- 
-+import org.junit.jupiter.api.AfterAll;
-+import org.junit.jupiter.api.BeforeAll;
-+
- abstract class AbstractOllamaStructuredOutputLanguageModelInfrastructure {
- 
-     protected static final String MODEL_NAME = LLAMA_3_1;
- 
-     static LC4jOllamaContainer ollama;
- 
--    static {
-+    // Started before and stopped after each test class, so that a finished test class does not keep its
-+    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
-+    @BeforeAll
-+    static void startOllama() {
-         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
-             String localOllamaImage = localOllamaImage(MODEL_NAME);
-             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OLLAMA_IMAGE, localOllamaImage)).withModel(MODEL_NAME);
-             ollama.start();
-             ollama.commitToImage(localOllamaImage);
-         }
-     }
-+
-+    @AfterAll
-+    static void stopOllama() {
-+        if (ollama != null) {
-+            ollama.stop();
-+        }
-+    }
- }
-```
-
-**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaThinkingModelInfrastructure.java` (modified, +14/-1)
-```diff
-@@ -5,13 +5,19 @@
- import static dev.langchain4j.model.ollama.OllamaImage.QWEN3_06B;
- import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
- 
-+import org.junit.jupiter.api.AfterAll;
-+import org.junit.jupiter.api.BeforeAll;
-+
- class AbstractOllamaThinkingModelInfrastructure {
- 
-     protected static final String MODEL_NAME = QWEN3_06B;
- 
-     static LC4jOllamaContainer ollama;
- 
--    static {
-+    // Started before and stopped after each test class, so that a finished test class does not keep its
-+    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
-+    @BeforeAll
-+    static void startOllama() {
-         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
-             String localOllamaImage = localOllamaImage(MODEL_NAME);
-             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OllamaImage.OLLAMA_IMAGE, localOllamaImage))
-@@ -20,4 +26,11 @@ class AbstractOllamaThinkingModelInfrastructure {
-             ollama.commitToImage(localOllamaImage);
-         }
-     }
-+
-+    @AfterAll
-+    static void stopOllama() {
-+        if (ollama != null) {
-+            ollama.stop();
-+        }
-+    }
- }
-```
-
-**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaVisionModelInfrastructure.java` (modified, +14/-1)
-```diff
-@@ -5,13 +5,19 @@
- import static dev.langchain4j.model.ollama.OllamaImage.GEMMA_4;
- import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
- 
-+import org.junit.jupiter.api.AfterAll;
-+import org.junit.jupiter.api.BeforeAll;
-+
- class AbstractOllamaVisionModelInfrastructure {
- 
-     protected static final String MODEL_NAME = GEMMA_4;
- 
-     static LC4jOllamaContainer ollama;
- 
--    static {
-+    // Started before and stopped after each test class, so that a finished test class does not keep its
-+    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
-+    @BeforeAll
-+    static void startOllama() {
-         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
-             String localOllamaImage = localOllamaImage(MODEL_NAME);
-             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OllamaImage.OLLAMA_IMAGE, localOllamaImage))
-@@ -20,4 +26,11 @@ class AbstractOllamaVisionModelInfrastructure {
-             ollama.commitToImage(localOllamaImage);
-         }
-     }
-+
-+    @AfterAll
-+    static void stopOllama() {
-+        if (ollama != null) {
-+            ollama.stop();
-+        }
-+    }
- }
-```
-
-**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/OllamaChatModelListenerIT.java` (modified, +8/-0)
-```diff
-@@ -11,6 +11,7 @@
- import dev.langchain4j.model.chat.ChatModel;
- import dev.langchain4j.model.chat.common.AbstractChatModelListenerIT;
- import dev.langchain4j.model.chat.listener.ChatModelListener;
-+import org.junit.jupiter.api.AfterAll;
- 
- class OllamaChatModelListenerIT extends AbstractChatModelListenerIT {
- 
-@@ -27,6 +28,13 @@ class OllamaChatModelListenerIT extends AbstractChatModelListenerIT {
-         }
-     }
- 
-+    @AfterAll
-+    static void stopOllama() {
-+        if (ollama != null) {
-+            ollama.stop();
-+        }
-+    }
-+
-     @Override
-     protected ChatModel createModel(ChatModelListener listener) {
-         return OllamaChatModel.builder()
-```
-
-**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/OllamaCustomMessageChatModelIT.java` (modified, +11/-1)
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/MapperAgentInvoker.java` (modified, +14/-3)
 ```diff
 @@ -1,6 +1,7 @@
- package dev.langchain4j.model.ollama;
+ package dev.langchain4j.agentic.internal;
  
- import static dev.langchain4j.internal.Utils.isNullOrEmpty;
-+import static dev.langchain4j.model.ollama.AbstractOllamaLanguageModelInfrastructure.OLLAMA_BASE_URL;
- import static dev.langchain4j.model.ollama.AbstractOllamaLanguageModelInfrastructure.ollamaBaseUrl;
- import static dev.langchain4j.model.ollama.OllamaImage.GRANITE_3_GUARDIAN;
- import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
-@@ -16,11 +17,13 @@
- import dev.langchain4j.model.chat.response.ChatResponse;
- import java.util.List;
+ import dev.langchain4j.agentic.agent.MissingArgumentException;
++import dev.langchain4j.agentic.planner.AgentArgument;
+ import dev.langchain4j.agentic.scope.AgenticScope;
  import java.util.Map;
-+import org.junit.jupiter.api.AfterAll;
- import org.junit.jupiter.api.Test;
  
--class OllamaCustomMessageChatModelIT extends AbstractOllamaLanguageModelInfrastructure {
-+class OllamaCustomMessageChatModelIT {
- 
-     private static final String MODEL_NAME = GRANITE_3_GUARDIAN;
-+    private static LC4jOllamaContainer ollama;
- 
-     static {
-         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
-@@ -32,6 +35,13 @@ class OllamaCustomMessageChatModelIT extends AbstractOllamaLanguageModelInfrastr
-         }
+@@ -20,14 +21,24 @@ public class MapperAgentInvoker extends AbstractAgentInvoker {
+     public MapperAgentInvoker(AgentInvoker delegate, Object item, int instanceIndex, String outputKeyPrefix) {
+         super(delegate.method(), delegate);
+         this.item = item;
+-        this.injectionKey = delegate.arguments().isEmpty()
+-                ? null
+-                : delegate.arguments().get(0).name();
++        this.injectionKey = itemArgumentName(delegate);
+         this.instanceName = delegate.name() + "_" + instanceIndex;
+         this.instanceAgentId = delegate.agentId() + "_" + instanceIndex;
+         this.instanceOutputKey = outputKeyPrefix + "_" + instanceIndex;
      }
  
-+    @AfterAll
-+    static void stopOllama() {
-+        if (ollama != null) {
-+            ollama.stop();
-+        }
++    /**
++     * The item is passed to the first argument of the subagent that is not provided by the framework, like its
++     * {@link AgenticScope} or its memory id, whose names start with {@code @}, so that such an argument can come first.
++     */
++    private static String itemArgumentName(AgentInvoker delegate) {
++        return delegate.arguments().stream()
++                .map(AgentArgument::name)
++                .filter(name -> !name.startsWith("@"))
++                .findFirst()
++                .orElse(null);
 +    }
 +
-     ChatModel ollamaChatModel = OllamaChatModel.builder()
-             .baseUrl(ollamaBaseUrl(ollama))
-             .modelName(GRANITE_3_GUARDIAN)
+     @Override
+     public String name() {
+         return instanceName;
 ```
 
-**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/OllamaDecisionModelIT.java` (modified, +8/-0)
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/ParallelMapperFrameworkArgumentTest.java` (added, +82/-0)
 ```diff
-@@ -9,6 +9,7 @@
- import dev.langchain4j.model.decision.DecisionModel;
- import dev.langchain4j.model.decision.common.AbstractDecisionModelIT;
- import dev.langchain4j.model.decision.listener.DecisionModelListener;
-+import org.junit.jupiter.api.AfterAll;
- 
- class OllamaDecisionModelIT extends AbstractDecisionModelIT {
- 
-@@ -24,6 +25,13 @@ class OllamaDecisionModelIT extends AbstractDecisionModelIT {
-         }
-     }
- 
-+    @AfterAll
-+    static void stopOllama() {
-+        if (ollama != null) {
-+            ollama.stop();
+@@ -0,0 +1,82 @@
++package dev.langchain4j.agentic;
++
++import static org.assertj.core.api.Assertions.assertThat;
++
++import dev.langchain4j.agentic.scope.AgenticScope;
++import dev.langchain4j.invocation.InvocationParameters;
++import dev.langchain4j.service.V;
++import java.util.List;
++import org.junit.jupiter.api.Test;
++
++/**
++ * A parallel mapper passes each item to the first argument of its subagent that is not provided by the framework, so
++ * the subagent can declare an argument like its {@link AgenticScope} before the one receiving the item.
++ */
++class ParallelMapperFrameworkArgumentTest {
++
++    public static class ScopeFirstDoubler {
++
++        @Agent(description = "Doubles a number", outputKey = "doubled")
++        public int doubleIt(AgenticScope agenticScope, @V("number") int number) {
++            return number * 2;
 +        }
 +    }
 +
-     static OllamaDecisionModel.OllamaDecisionModelBuilder builder() {
-         return OllamaDecisionModel.builder().baseUrl(ollamaBaseUrl(ollama)).modelName(TEV1);
-     }
++    public static class ScopeLastDoubler {
++
++        @Agent(description = "Doubles a number", outputKey = "doubled")
++        public int doubleIt(@V("number") int number, AgenticScope agenticScope) {
++            return number * 2;
++        }
++    }
++
++    public static class ParametersAndScopeFirstDoubler {
++
++        @Agent(description = "Doubles a number", outputKey = "doubled")
++        public int doubleIt(
++                InvocationParameters invocationParameters, AgenticScope agenticScope, @V("number") int number) {
++            return number * 2;
++        }
++    }
++
++    public static class ScopeOnlyAgent {
++
++        @Agent(description = "Reads the number of the scope", outputKey = "read")
++        public int read(AgenticScope agenticScope) {
++            return (int) agenticScope.readState("number", 0);
++        }
++    }
++
++    public interface Mapper {
++
++        @Agent
++        List<Integer> mapAll(@V("numbers") List<Integer> numbers);
++    }
++
++    @Test
++    void item_is_passed_to_the_argument_after_the_agentic_scope() {
++        assertThat(mapper(new ScopeFirstDoubler()).mapAll(List.of(1, 2, 3))).containsExactly(2, 4, 6);
++    }
++
++    @Test
++    void item_is_passed_to_the_argument_before_the_agentic_scope() {
++        assertThat(mapper(new ScopeLastDoubler()).mapAll(List.of(1, 2, 3))).containsExactly(2, 4, 6);
++    }
++
++    @Test
++    void item_is_passed_to_the_argument_after_several_framework_arguments() {
++        assertThat(mapper(new ParametersAndScopeFirstDoubler()).mapAll(List.of(1, 2)))
++                .containsExactly(2, 4);
++    }
++
++    @Test
++    void subagent_with_only_framework_arguments_is_invoked_once_per_item() {
++        assertThat(mapper(new ScopeOnlyAgent()).mapAll(List.of(1, 2))).containsExactly(0, 0);
++    }
++
++    private static Mapper mapper(Object subagent) {
++        return AgenticServices.parallelMapperBuilder(Mapper.class)
++                .subAgents(subagent)
++                .build();
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7276** (2026-11-24): Ollama ITs: stop test containers after each test class (@dliubarskyi)
-- **PR #7274** (2026-11-24): Make -DskipTests skip integration tests again (@dliubarskyi)
-- **PR #7250** (2026-11-24): agentic: notify composed agent listeners in registration order, closing callbacks in reverse (@edeandrea)
-- **PR #7245** (2026-11-23): Avoid deep regex recursion on long inputs in the prompt injection guardrail and the Azure ACA sessions tool (@dliubarskyi)
-- **PR #7243** (2026-11-24): Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.5 (@renovate[bot])
-- **PR #7235** (2026-11-23): Update dependency org.apache.httpcomponents.core5:httpcore5 to v5.5 (@renovate[bot])
+- **PR #7310** (2026-11-26): OpenAI Official and Azure OpenAI streaming: create the StreamingHandle before subscribing (@dliubarskyi)
+- **PR #7309** (2026-11-26): Create class-based A2A and MCP client agents through the agent instance factory (@mariofusco)
+- **PR #7304** (2026-11-26): SQL content retriever ITs: check that no data changed, not that the result is empty (@dliubarskyi)
+- **PR #7300** (2026-11-26): Apache PDFBox document parser: a page with more characters than maxCharacters fails early (@dliubarskyi)
+- **PR #7299** (closed): [DO NOT MERGE] CI only: google-genai ITs for #6772 (@dliubarskyi)
+- **PR #7293** (2026-11-25): SQL and Hibernate content retrievers: no NPE when the model returns no text, fail loudly when it was cut off or filtered (@dliubarskyi)
 
 ---
 
@@ -1475,31 +1050,46 @@ and `common/OllamaStreamingChatModelIT` stop every container in their
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agentic: notify composed agent listeners in registration order, closing callback
+## X. agentic): pass a parallel mapper item after a framework argument
 
 **RULE**:
-When implementing operations in `docs/docs/tutorials/agents.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/MapperAgentInvoker.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `212cbf3c`: agentic: notify composed agent listeners in registration order, closing callbacks in reverse. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c5e5ed2`: agentic): pass a parallel mapper item after a framework argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/tutorials/agents.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/MapperAgentInvoker.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- **composable**, meaning that you can register multiple listeners to the same agent, by invoking the `listener` method more than once. They nest like interceptors: `beforeAgentInvocation`, `beforeAgentToolExecution` and `afterAgenticScopeCreated`, as well as the events notified between them and their counterparts, are notified to the listeners in the order they were registered, while `afterAgentInvocation`, `onAgentInvocationError`, `afterAgentToolExecution`, `beforeAgenticScopeDestroyed` and `onAgenticSystemSuspended` are notified in the reverse order. So a listener that makes some context current when an agent starts and restores the previous one when it ends gives the listeners registered after it that context in both callbacks. The listeners inherited from a parent agent count as registered before the agent's own;
+import dev.langchain4j.agentic.planner.AgentArgument;
+        this.injectionKey = itemArgumentName(delegate);
+    /**
+     * The item is passed to the first argument of the subagent that is not provided by the framework, like its
+     * {@link AgenticScope} or its memory id, whose names start with {@code @}, so that such an argument can come first.
+     */
+    private static String itemArgumentName(AgentInvoker delegate) {
+        return delegate.arguments().stream()
+                .map(AgentArgument::name)
+                .filter(name -> !name.startsWith("@"))
+                .findFirst()
+                .orElse(null);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-- **composable**, meaning that you can register multiple listeners to the same agent, by invoking the `listener` method more than once, and they will be notified in the order they were registered; 
+        this.injectionKey = delegate.arguments().isEmpty()
+                ? null
+                : delegate.arguments().get(0).name();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `212cbf3c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c5e5ed2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

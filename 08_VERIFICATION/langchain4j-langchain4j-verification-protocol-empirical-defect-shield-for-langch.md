@@ -4,22 +4,22 @@
 {
   "source_repository": "langchain4j/langchain4j",
   "source_url": "https://github.com/langchain4j/langchain4j",
-  "source_version": "f21a2468",
+  "source_version": "50c1a5c5",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T00:18:04.800Z",
+  "timestamp": "2026-11-26T18:50:27.275Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-langchain4j-langchain4j",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `f21a2468`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T00:18:04.800Z`  
+> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `50c1a5c5`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T18:50:27.275Z`  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `langchain4j/langchain4j` (Commit: `f21a2468`)
+- **Target Repository**: `langchain4j/langchain4j` (Commit: `50c1a5c5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T00:18:03.966Z  
+> **Harvest Timestamp**: 2026-11-26T18:50:25.824Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13445 stars
+- **Stars / Engagement**: 13447 stars
 
 ---
 
@@ -849,555 +849,171 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da04f7a1` (2026-11-25)
-**Commit Message**: feat(google-genai): combine built-in tools with function calling (#6772)
+### Incident Patch 1: `7c5e5ed2` (2026-11-26)
+**Commit Message**: fix(agentic): pass a parallel mapper item after a framework argument (#7280)
 
 ## Issue
-Closes #6771
+Closes #7279
 
 ## Change
+A parallel mapper passed each item to the first argument of its
+subagent, even when that argument is provided by the framework, like the
+`AgenticScope` or the `InvocationParameters`. A subagent declaring such
+an argument before the one receiving the item failed with
+`MissingArgumentException`.
 
-`GoogleGenAiChatModel` and `GoogleGenAiStreamingChatModel` can now use
-Google Search, Google Maps, URL context or code execution together with
-your own tools:
+`MapperAgentInvoker` now passes the item to the first argument whose
+name does not start with `@`, the prefix of the arguments the framework
+provides (`@AgenticScope`, `@MemoryId`, `@LoopCounter`,
+`@InvocationParameters`). A subagent whose first argument is not one of
+them behaves as before.
 
-```java
-ChatModel model = GoogleGenAiChatModel.builder()
-        .apiKey(System.getenv("GOOGLE_AI_GEMINI_API_KEY"))
-        .modelName("gemini-3.8-flash")
-        .enableGoogleSearch(true)
-        .build();
+`ParallelMapperFrameworkArgumentTest` covers an `AgenticScope` before
+the item, after the item, two framework arguments before the item, and a
+subagent with only an `AgenticScope`. The two cases with a framework
+argument first fail on `main` with the `MissingArgumentException` above,
+and all 4 pass with the fix.
 
-ChatResponse response = model.chat(ChatRequest.builder()
-        .messages(UserMessage.from("Which city hosts the next Summer Olympics, and what is its weather forecast?"))
-        .toolSpecifications(getWeatherForecast)
-        .build());
-```
+Local verification: `langchain4j-agentic` unit tests 685/685 green;
+`spotless:check` and `revapi:check` green.
 
-Until now the Gemini API rejected this request with `400
-INVALID_ARGUMENT. Please enable
-tool_config.include_server_side_tool_invocations to use Built-in tools
-with Function calling.`
+## General checklist
+- [X] There are no breaking changes (API, behaviour
 
-When a request has both your tools and a built-in tool, the tool config
-now sets `includeServerSideToolInvocations`. A request with only one
-kind is sent exactly as before, so nothing that works today changes. I
-did not add a builder option for the flag: without it the combination
-cannot work 
-
-**File**: `docs/docs/integrations/language-models/google-genai.md` (modified, +34/-1)
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/MapperAgentInvoker.java` (modified, +14/-3)
 ```diff
-@@ -26,6 +26,7 @@ https://github.com/googleapis/java-genai
- - [Request & Response Logging](#request--response-logging)
- - [Batch API](#batch-api)
- - [Tools](#tools)
-+    - [Combining your tools with built-in tools](#combining-your-tools-with-built-in-tools)
- - [Code Execution](#code-execution)
- - [JSON Schema / Structured Outputs](#json-schema--structured-outputs)
- - [Grounding Metadata](#grounding-metadata)
-@@ -376,6 +377,35 @@ WeatherAssistant weatherAssistant = AiServices.builder(WeatherAssistant.class)
- String response = weatherAssistant.chat("What is the weather forecast for Tokyo?");
- ```
+@@ -1,6 +1,7 @@
+ package dev.langchain4j.agentic.internal;
  
-+### Combining your tools with built-in tools
-+
-+Your tools can be used in the same request as Google Search, Google Maps, URL context and code execution:
-+the model can search the web or run code first, then call one of your tools with the result.
-+
-+```java
-+ChatModel gemini = GoogleGenAiChatModel.builder()
-+    .apiKey(System.getenv("GOOGLE_AI_GEMINI_API_KEY"))
-+    .modelName("gemini-3.8-flash")
-+    .enableGoogleSearch(true)
-+    .build();
-+
-+WeatherAssistant weatherAssistant = AiServices.builder(WeatherAssistant.class)
-+    .chatModel(gemini)
-+    .tools(weatherForecastService)
-+    .build();
-+
-+String response = weatherAssistant.chat("Which city hosts the next Summer Olympics, and what is its weather forecast?");
-+```
-+
-+- The Gemini API accepts this combination only from Gemini 3 models on, and lists it as a preview feature.
-+- On Vertex AI, `gemini-3.8-flash` and `gemini-3.1-flash-lite` accept Google Search or code execution together with your tools.
-+  Vertex AI does not return the `toolCall` and `toolResponse` parts of a search, so only the executed code is kept in the `AiMessage`.
-+- The searches, page reads and code runs that the API returns are kept in the `AiMessage` and sent with it in the next request,
-+  as the Gemini API requires. Without them, a model can run the search again or repeat the call to your tool,
-+  so keep the `AiMessage` in the chat memory as it was returned.
-+- They also count as input tokens in every later request of the conversation: from a few dozen tokens for a search
-+  on `gemini-3.8-flash` to several thousand for Google Maps results on `gemini-4-argon`.
-+
- ## Code Execution
+ import dev.langchain4j.agentic.agent.MissingArgumentException;
++import dev.langchain4j.agentic.planner.AgentArgument;
+ import dev.langchain4j.agentic.scope.AgenticScope;
+ import java.util.Map;
  
- With `enableCodeExecution(true)`, Gemini can write Python code, run it in a sandbox hosted by Google, and use the result in its answer.
-@@ -412,7 +442,10 @@ When the code fails or runs too long, the outcome (`OUTCOME_FAILED` or `OUTCOME_
- 
- - Charts the code draws, for example with matplotlib, are returned as images: see `response.aiMessage().images()`.
- - The code is Python, runs for at most 30 seconds, and can only use the libraries of the sandbox, such as numpy, pandas and matplotlib.
--- The current Gemini models reject a request that combines code execution with your own tools. The same applies to Google Search.
-+- The executed code and its output stay in the `AiMessage` (in its text with `includeCodeExecutionOutput(true)`, otherwise in its attributes)
-+  and are sent back to the model in the next requests of the conversation, so the model knows what it already ran.
-+  They count as input tokens in each of those requests.
-+- Code execution can be used together with your own tools, see [Combining your tools with built-in tools](#combining-your-tools-with-built-in-tools).
- 
- To read the code and its result as SDK objects, use the raw response:
- 
-```
-
-**File**: `langchain4j-google-genai/src/main/java/dev/langchain4j/model/google/genai/GoogleGenAiBatchChatModel.java` (modified, +2/-0)
-```diff
-@@ -223,6 +223,8 @@ private InlinedRequest createInlinedRequest(ChatRequest request) {
-                 googleSearchEnabled,
-                 googleMapsEnabled,
-                 urlContextEnabled,
-+                false,
-+                client.vertexAI(),
-                 allowedFunctionNames,
-                 vertexSearchDatastore,
-                 labels,
-```
-
-**File**: `langchain4j-google-genai/src/main/java/dev/langchain4j/model/google/genai/GoogleGenAiChatModel.java` (modified, +3/-1)
-```diff
-@@ -186,6 +186,7 @@ private GenerateContentConfig buildConfigAndLogRequest(ChatRequest chatRequest)
-                 googleMapsEnabled,
-                 urlContextEnabled,
-                 codeExecutionEnabled,
-+                client.vertexAI(),
-                 allowedFunctionNames,
-                 vertexSearchDatastore,
-                 labels,
-@@ -650,7 +651,8 @@ public Builder enableCodeExecution(boolean codeExecution) {
-          * Adds the code the model executed, and the output of that code, to the {@link AiMessage} text as Markdown code
-          * blocks. When the code fails, the outcome and the error output are added instead. Defaults to {@code false}:
-          * only the answer of the model is returned, and the code and its output can be read from
--         * {@link GoogleGenAiChatResponseMetadata#rawResponse()}.
-+         * {@link GoogleGenAiChatResponseMetadata#rawResponse()}. Either way, the code and its output are sent back to
-+         * the model with the {@link AiMessage} in the next requests of the conversation.
-          *
-          * @param includeCodeExecutionOutput whether to add the executed code and its output to the text
-          * @return {@code this}
-```
-
-**File**: `langchain4j-google-genai/src/main/java/dev/langchain4j/model/google/genai/GoogleGenAiConfigBuilder.java` (modified, +55/-4)
-```diff
-@@ -216,6 +216,52 @@ static GenerateContentConfig buildConfig(
-             List<String> responseModalities,
-             Boolean automaticContinuation,
-             Consumer<GenerateContentConfig.Builder> generateContentConfigCustomizer) {
-+        return buildConfig(
-+                parameters,
-+                systemInstruction,
-+                safetySettings,
-+                thinkingBudget,
-+                thinkingLevel,
-+                includeThoughts,
-+                seed,
-+                googleSearchEnabled,
-+                googleMapsEnabled,
-+                urlContextEnabled,
-+                codeExecutionEnabled,
-+                false,
-+                allowedFunctionNames,
-+                vertexSearchDatastore,
-+                labels,
-+                cachedContent,
-+                audioTranscriptionConfig,
-+                speechConfig,
-+                responseModalities,
-+                automaticContinuation,
-+                generateContentConfigCustomizer);
-+    }
-+
-+    static GenerateContentConfig buildConfig(
-+            ChatRequestParameters parameters,
-+            Content systemInstruction,
-+            List<SafetySetting> safetySettings,
-+            Integer thinkingBudget,
-+            String thinkingLevel,
-+            Boolean includeThoughts,
-+            Integer seed,
-+            boolean googleSearchEnabled,
-+            boolean googleMapsEnabled,
-+            boolean urlContextEnabled,
-+            boolean codeExecutionEnabled,
-+            boolean vertexAi,
-+            List<String> allowedFunctionNames,
-+            String vertexSearchDatastore,
-+            Map<String, String> labels,
-+            String cachedContent,
-+            AudioTranscriptionConfig audioTranscriptionConfig,
-+            SpeechConfig speechConfig,
-+            List<String> responseModalities,
-+            Boolean automaticContinuation,
-+            Consumer<GenerateContentConfig.Builder> generateContentConfigCustomizer) {
- 
-         GenerateContentConfig.Builder configBuilder = GenerateContentConfig.builder();
- 
-@@ -327,6 +373,7 @@ static GenerateContentConfig buildConfig(
-                 googleMapsEnabled,
-                 urlContextEnabled,
-                 codeExecutionEnabled,
-+                vertexAi,
-                 allowedFunctionNames,
-                 vertexSearchDatastore);
- 
-@@ -343,6 +390,7 @@ private static void buildTools(
-             boolean googleMapsEnabled,
-             boolean urlContextEnabled,
-             boolean codeExecutionEnabled,
-+            boolean vertexAi,
-             List<String> allowedFunctionNames,
-             String vertexSearchDatastore) {
- 
-@@ -410,9 +458,11 @@ private static void buildTools(
-                 funcConfig.allowedFunctionNames(allowedFunctionNames);
-             }
- 
--            configBuilder.toolConfig(ToolConfig.builder()
--                    .functionCallingConfig(funcConfig.build())
--                    .build());
-+            ToolConfig.Builder toolConfig = ToolConfig.builder().functionCallingConfig(funcConfig.build());
-+            if (!vertexAi && (googleSearchEnabled || googleMapsEnabled || urlContextEnabled || codeExecutionEnabled)) {
-+                toolConfig.includeServerSideToolInvocations(true);
-+            }
-+            configBuilder.toolConfig(toolConfig.build());
-         }
+@@ -20,14 +21,24 @@ public class MapperAgentInvoker extends AbstractAgentInvoker {
+     public MapperAgentInvoker(AgentInvoker delegate, Object item, int instanceIndex, String outputKeyPrefix) {
+         super(delegate.method(), delegate);
+         this.item = item;
+-        this.injectionKey = delegate.arguments().isEmpty()
+-                ? null
+-                : delegate.arguments().get(0).name();
++        this.injectionKey = itemArgumentName(delegate);
+         this.instanceName = delegate.name() + "_" + instanceIndex;
+         this.instanceAgentId = delegate.agentId() + "_" + instanceIndex;
+         this.instanceOutputKey = outputKeyPrefix + "_" + instanceIndex;
      }
  
-@@ -425,7 +475,8 @@ static GenerateContentConfig withMaskedHttpHeaders(GenerateContentConfig config)
-         Map<String, String> maskedHeaders = new LinkedHashMap<>();
-         headers.get().keySet().forEach(name -> maskedHeaders.put(name, "***"));
-         return config.toBuilder()
--                .httpOptions(httpOptions.get().toBuilder().headers(maskedHeaders).build())
-+                .httpOptions(
-+                        httpOptions.get().toBuilder().headers(maskedHeaders).build())
-                 .build();
-     }
- 
-```
-
-**File**: `langchain4j-google-genai/src/main/java/dev/langchain4j/model/google/genai/GoogleGenAiContentMapper.java` (modified, +29/-0)
-```diff
-@@ -122,6 +122,10 @@ class GoogleGenAiContentMapper {
-     private static final String THOUGHT_SIGNATURE_KEY =
-             "thought_signature"; // do not change, will break backward compatibility!
- 
-+    // Built-in tool calls and responses, executed code and its result, as JSON in the order they were received.
-+    static final String SERVER_SIDE_TOOL_PARTS_KEY =
-+            "server_side_tool_parts"; // do not change, will break backward compatibility!
-+
-     static Content toSystemInstruction(List<ChatMessage> messages) {
-         String systemInstructions = messages.stream()
-                 .filter(m -> m instanceof SystemMessage)
-@@ -218,6 +222,14 @@ static Content toContent(ChatMessage message, boolean sendThinking) {
-             if (sendThinking && !isNullOrEmpty(aiMsg.thinking())) {
-                 parts.add(Part.builder().text(aiMsg.thinking()).thought(true).build());
-             }
-+            List<?> serverSideToolParts = aiMsg.attribute(SERVER_SIDE_TOOL_PARTS_KEY, List.class);
-+            if (serverSideToolParts != null) {
-+                for (Object serverSideToolPart : serverSideToolParts) {
-+                    if (serverSideToolPart instanceof String jsonPart) {
-+                        parts.add(Part.fromJson(jsonPart));
-+                    }
-+                }
-+            }
-             if (aiMsg.text() != null) {
-                 Part.Builder textPartBuilder = Part.builder().text(aiMsg.text());
-                 if (sendThinking) {
-@@ -334,10 +346,15 @@ static ChatResponse toChatResponse(
-         Map<String, Object> attributes = new HashMap<>();
-         List<Image> generatedImages = new ArrayList<>();
-         List<Audio> generatedAudio = new ArrayList<>();
-+        List<String> serverSideToolParts = new ArrayList<>();
- 
-         if (content != null) {
-             List<Part> parts = content.parts().orElse(List.of());
-             for (Part part : parts) {
-+                if (isServerSideToolPart(part) && !(includeCodeExecutionOutput && isCodeExecutionPart(part))) {
-+                    serverSideToolParts.add(part.toJson());
-+                }
-+
-                 if (part.text().isPresent()) {
-                     if (part.thought().orElse(false)) {
-                         if (returnThinking) {
-@@ -385,6 +402,7 @@ static ChatResponse toChatResponse(
-             if (!parts.isEmpty()) {
-                 Part lastPart = parts.get(parts.size() - 1);
-                 if (lastPart.functionCall().isEmpty()
-+                        && !isServerSideToolPart(lastPart)
-                         && lastPart.thoughtSignature().isPresent()) {
-                     attributes.put(
-                             THOUGHT_SIGNATURE_KEY,
-@@ -399,6 +417,9 @@ static ChatResponse toChatResponse(
-             if (!generatedAudio.isEmpty()) {
-                 attributes.put(GENERATED_AUDIO_KEY, generatedAudio);
-             }
-+            if (!serverSideToolParts.isEmpty()) {
-+                attributes.put(SERVER_SIDE_TOOL_PARTS_KEY, serverSideToolParts);
-+            }
-         }
- 
-         String text = textBuilder.toString();
-@@ -439,6 +460,14 @@ static ChatResponse toChatResponse(
-         return ChatResponse.builder().aiMessage(aiMessage).metadata(metadata).build();
-     }
- 
-+    private static boolean isServerSideToolPart(Part part) {
-+        return part.toolCall().isPresent() || part.toolResponse().isPresent() || isCodeExecutionPart(part);
-+    }
-+
-+    private static boolean isCodeExecutionPart(Part part) {
-+        return part.executableCode().isPresent() || part.codeExecutionResult().isPresent();
-+    }
-+
-     /**
-      * Reads an image the model generated into the given part. Only image blobs are picked up, which is
-      * what {@code PartsAndContentsMapper} does in {@code langchain4j-google-ai-gemini}; any other inline
-```
-
-**File**: `langchain4j-google-genai/src/main/java/dev/langchain4j/model/google/genai/GoogleGenAiStreamingChatModel.java` (modified, +10/-5)
-```diff
-@@ -12,6 +12,7 @@
- import static dev.langchain4j.internal.Utils.getOrDefault;
- import static dev.langchain4j.model.chat.Capability.RESPONSE_FORMAT_JSON_SCHEMA;
- import static dev.langchain4j.model.google.genai.GoogleGenAiClientFactory.DEFAULT_TIMEOUT;
-+import static dev.langchain4j.model.google.genai.GoogleGenAiContentMapper.SERVER_SIDE_TOOL_PARTS_KEY;
- 
- import com.google.auth.oauth2.GoogleCredentials;
- import com.google.genai.Client;
-@@ -175,6 +176,7 @@ public void doChat(ChatRequest chatRequest, StreamingChatResponseHandler handler
-                 googleMapsEnabled,
-                 urlContextEnabled,
-                 codeExecutionEnabled,
-+                client.vertexAI(),
-                 allowedFunctionNames,
-                 vertexSearchDatastore,
-                 labels,
-@@ -371,13 +373,15 @@ public static Builder builder() {
-     }
- 
-     /**
--     * Copies the attributes of one chunk into the attributes accumulated so far. Generated images
--     * and audio segments are concatenated rather than replaced, because each chunk carries its own
--     * media parts and the last chunk would otherwise discard the ones before it.
-+     * Copies the attributes of one chunk into the attributes accumulated so far. Generated images,
-+     * audio segments and server-side tool parts are concatenated rather than replaced, because each
-+     * chunk carries its own parts and the last chunk would otherwise discard the ones before it.
-      */
-     private static void mergeAttributes(Map<String, Object> accumulated, Map<String, Object> partial) {
-         partial.forEach((key, value) -> {
--            if (GENERATED_IMAGES_KEY.equals(key) || GENERATED_AUDIO_KEY.equals(key)) {
-+            if (GENERATED_IMAGES_KEY.equals(key)
-+                    || GENERATED_AUDIO_KEY.equals(key)
-+                    || SERVER_SIDE_TOOL_PARTS_KEY.equals(key)) {
-                 accumulated.merge(key, value, GoogleGenAiStreamingChatModel::concatenate);
-             } else {
-                 accumulated.put(key, value);
-@@ -777,7 +781,8 @@ public Builder enableCodeExecution(boolean codeExecution) {
-         /**
-          * Adds the code the model executed, and the output of that code, to the {@link AiMessage} text as Markdown code
-          * blocks. When the code fails, the outcome and the error output are added instead. Defaults to {@code false}:
--         * only the answer of the model is returned.
-+         * only the answer of the model is returned. Either way, the code and its output are sent back to the model with
-+         * the {@link AiMessage} in the next requests of the conversation.
-          *
-          * @param includeCodeExecutionOutput whether to add the executed code and its output to the text
-          * @return {@code this}
-```
-
-**File**: `langchain4j-google-genai/src/test/java/dev/langchain4j/model/google/genai/GoogleGenAiBatchChatModelTest.java` (modified, +104/-0)
-```diff
-@@ -24,6 +24,8 @@
- import com.google.genai.types.JobState.Known;
- import com.google.genai.types.ListBatchJobsConfig;
- import com.google.genai.types.Part;
-+import com.google.genai.types.ToolCall;
-+import dev.langchain4j.agent.tool.ToolSpecification;
- import dev.langchain4j.data.message.AiMessage;
- import dev.langchain4j.data.message.UserMessage;
- import dev.langchain4j.model.batch.BatchPage;
-@@ -33,6 +35,7 @@
- import dev.langchain4j.model.chat.response.ChatResponse;
- import java.lang.reflect.Field;
- import java.util.List;
-+import java.util.Map;
- import java.util.Optional;
- import org.junit.jupiter.api.Test;
- import org.mockito.ArgumentCaptor;
-@@ -145,6 +148,107 @@ void should_wire_thinking_options_into_the_batch_request() throws Exception {
-         assertThat(aiParts.get(0).text()).hasValue("Six times seven.");
-     }
- 
-+    @Test
-+    void should_combine_google_search_with_function_calling_in_the_batch_request() throws Exception {
-+        Client client = mock(Client.class);
-+        Batches batchesService = mock(Batches.class);
-+        Field batchesField = Client.class.getDeclaredField("batches");
-+        batchesField.setAccessible(true);
-+        batchesField.set(client, batchesService);
-+
-+        BatchJob batchJob = mock(BatchJob.class);
-+        when(batchJob.name()).thenReturn(Optional.of("batches/1"));
-+        JobState jobState = mock(JobState.class);
-+        when(jobState.knownEnum()).thenReturn(Known.JOB_STATE_RUNNING);
-+        when(batchJob.state()).thenReturn(Optional.of(jobState));
-+        when(batchesService.create(any(String.class), any(BatchJobSource.class), any(CreateBatchJobConfig.class)))
-+                .thenReturn(batchJob);
-+
-+        GoogleGenAiBatchChatModel batchModel = GoogleGenAiBatchChatModel.builder()
-+                .client(client)
-+                .modelName("gemini-3.8-flash")
-+                .googleSearch(true)
-+                .build();
-+
-+        Part searchCall = Part.builder()
-+                .toolCall(ToolCall.builder()
-+                        .id("call-1")
-+                        .toolType("GOOGLE_SEARCH_WEB")
-+                        .args(Map.of("queries", List.of("Eiffel Tower completion year")))
-+                        .build())
-+                .thoughtSignature("search-call-signature".getBytes())
-+                .build();
-+        AiMessage previousAnswer = AiMessage.builder()
-+                .text("It was completed in 1889.")
-+                .attributes(Map.of("server_side_tool_parts", List.of(searchCall.toJson())))
-+                .build();
-+        ChatRequest request = ChatRequest.builder()
-+                .modelName("gemini-3.8-flash")
-+                .messages(
-+                        UserMessage.from("When was the Eiffel Tower completed?"),
-+                        previousAnswer,
-+                        UserMessage.from("Record it."))
-+                .toolSpecifications(
-+                        ToolSpecification.builder().name("record_fact").build())
-+                .build();
-+
-+        batchModel.submit(new BatchRequest<>(List.of(request)));
-+
-+        ArgumentCaptor<BatchJobSource> sourceCaptor = ArgumentCaptor.forClass(BatchJobSource.class);
-+        verify(batchesService).create(any(String.class), sourceCaptor.capture(), any(CreateBatchJobConfig.class));
-+
-+        InlinedRequest inlined =
-+                sourceCaptor.getValue().inlinedRequests().orElseThrow().get(0);
-+
-+        assertThat(inlined.config().orElseThrow().toolConfig().orElseThrow().includeServerSideToolInvocations())
-+                .hasValue(true);
-+        List<Part> aiParts = inlined.contents().orElseThrow().get(1).parts().orElseThrow();
-+        assertThat(aiParts.get(0).toJson()).isEqualTo(searchCall.toJson());
-+        assertThat(aiParts.get(1).text()).hasValue("It was completed in 1889.");
-+    }
-+
-+    @Test
-+    void should_not_include_server_side_tool_invocations_on_vertex_ai() throws Exception {
-+        Client client = mock(Client.class);
-+        when(client.vertexAI()).thenReturn(true);
-+        Batches batchesService = mock(Batches.class);
-+        Field batchesField = Client.class.getDeclaredField("batches");
-+        batchesField.setAccessible(true);
-+        batchesField.set(client, batchesService);
-+
-+        BatchJob batchJob = mock(BatchJob.class);
-+        when(batchJob.name()).thenReturn(Optional.of("batches/1"));
-+        JobState jobState = mock(JobState.class);
-+        when(jobState.knownEnum()).thenReturn(Known.JOB_STATE_RUNNING);
-+        when(batchJob.state()).thenReturn(Optional.of(jobState));
-+        when(batchesService.create(any(String.class), any(BatchJobSource.class), any(CreateBatchJobConfig.class)))
-+                .thenReturn(batchJob);
-+
-+        GoogleGenAiBatchChatModel batchModel = GoogleGenAiBatchChatModel.builder()
-+                .client(client)
-+                .modelName("gemini-3.8-flash")
-+                .googleSearch(true)
-+                .build();
-+
-+        ChatRequest request = ChatRequest.builder()
-+  
-```
-
-**File**: `langchain4j-google-genai/src/test/java/dev/langchain4j/model/google/genai/GoogleGenAiChatModelIT.java` (modified, +64/-0)
-```diff
-@@ -175,6 +175,70 @@ void should_run_code_with_code_execution_tool() {
-                 .containsPattern("Output:\\n```\\n[^`]*1267650600228229401496703205376");
-     }
- 
-+    @Test
-+    void should_combine_google_search_with_function_calling() {
-+        GoogleGenAiChatModel model = GoogleGenAiChatModel.builder()
-+                .apiKey(System.getenv("GOOGLE_AI_GEMINI_API_KEY"))
-+                .modelName("gemini-3.1-flash-lite")
-+                .enableGoogleSearch(true)
-+                .build();
-+
-+        callToolThenAnswer(
-+                model,
-+                "Use Google Search to find the year the Eiffel Tower was completed, "
-+                        + "then call record_fact with that year.");
-+    }
-+
-+    @Test
-+    void should_combine_code_execution_with_function_calling() {
-+        GoogleGenAiChatModel model = GoogleGenAiChatModel.builder()
-+                .apiKey(System.getenv("GOOGLE_AI_GEMINI_API_KEY"))
-+                .modelName("gemini-3.1-flash-lite")
-+                .enableCodeExecution(true)
-+                .build();
-+
-+        callToolThenAnswer(
-+                model,
-+                "Use Python code execution to compute the 20th Fibonacci number, "
-+                        + "then call record_fact with the result.");
-+    }
-+
-+    private static void callToolThenAnswer(ChatModel model, String prompt) {
-+        ToolSpecification recordFact = ToolSpecification.builder()
-+                .name("record_fact")
-+                .description("Records a fact the user asked for")
-+                .parameters(JsonObjectSchema.builder()
-+                        .addStringProperty("value")
-+                        .required("value")
-+                        .build())
-+                .build();
-+        UserMessage userMessage = UserMessage.from(prompt);
-+
-+        ChatResponse response1 = model.chat(ChatRequest.builder()
-+                .messages(List.of(userMessage))
-+                .toolSpecifications(List.of(recordFact))
-+                .build());
-+
-+        AiMessage aiMessage = response1.aiMessage();
-+        assertThat(aiMessage.toolExecutionRequests())
-+                .extracting(ToolExecutionRequest::name)
-+                .containsExactly("record_fact");
-+        assertThat(aiMessage.attributes()).containsKey("server_side_tool_parts");
-+
-+        ChatResponse response2 = model.chat(ChatRequest.builder()
-+                .messages(List.of(
-+                        userMessage,
-+                        aiMessage,
-+                        ToolExecutionResultMessage.from(
-+                                aiMessage.toolExecutionRequests().get(0), "recorded")))
-+                .toolSpecifications(List.of(recordFact))
-+                .build());
-+
-+        assertThat(response2.aiMessage().hasToolExecutionRequests()).isFalse();
-+        assertThat(response2.aiMessage().attributes()).doesNotContainKey("server_side_tool_parts");
-+        assertThat(response2.aiMessage().text()).isNotBlank();
++    /**
++     * The item is passed to the first argument of the subagent that is not provided by the framework, like its
++     * {@link AgenticScope} or its memory id, whose names start with {@code @}, so that such an argument can come first.
++     */
++    private static String itemArgumentName(AgentInvoker delegate) {
++        return delegate.arguments().stream()
++                .map(AgentArgument::name)
++                .filter(name -> !name.startsWith("@"))
++                .findFirst()
++                .orElse(null);
 +    }
 +
      @Override
-     protected Class<? extends TokenUsage> tokenUsageType(ChatModel model) {
-         return GoogleGenAiTokenUsage.class;
+     public String name() {
+         return instanceName;
+```
+
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/ParallelMapperFrameworkArgumentTest.java` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++package dev.langchain4j.agentic;
++
++import static org.assertj.core.api.Assertions.assertThat;
++
++import dev.langchain4j.agentic.scope.AgenticScope;
++import dev.langchain4j.invocation.InvocationParameters;
++import dev.langchain4j.service.V;
++import java.util.List;
++import org.junit.jupiter.api.Test;
++
++/**
++ * A parallel mapper passes each item to the first argument of its subagent that is not provided by the framework, so
++ * the subagent can declare an argument like its {@link AgenticScope} before the one receiving the item.
++ */
++class ParallelMapperFrameworkArgumentTest {
++
++    public static class ScopeFirstDoubler {
++
++        @Agent(description = "Doubles a number", outputKey = "doubled")
++        public int doubleIt(AgenticScope agenticScope, @V("number") int number) {
++            return number * 2;
++        }
++    }
++
++    public static class ScopeLastDoubler {
++
++        @Agent(description = "Doubles a number", outputKey = "doubled")
++        public int doubleIt(@V("number") int number, AgenticScope agenticScope) {
++            return number * 2;
++        }
++    }
++
++    public static class ParametersAndScopeFirstDoubler {
++
++        @Agent(description = "Doubles a number", outputKey = "doubled")
++        public int doubleIt(
++                InvocationParameters invocationParameters, AgenticScope agenticScope, @V("number") int number) {
++            return number * 2;
++        }
++    }
++
++    public static class ScopeOnlyAgent {
++
++        @Agent(description = "Reads the number of the scope", outputKey = "read")
++        public int read(AgenticScope agenticScope) {
++            return (int) agenticScope.readState("number", 0);
++        }
++    }
++
++    public interface Mapper {
++
++        @Agent
++        List<Integer> mapAll(@V("numbers") List<Integer> numbers);
++    }
++
++    @Test
++    void item_is_passed_to_the_argument_after_the_agentic_scope() {
++        assertThat(mapper(new ScopeFirstDoubler()).mapAll(List.of(1, 2, 3))).containsExactly(2, 4, 6);
++    }
++
++    @Test
++    void item_is_passed_to_the_argument_before_the_agentic_scope() {
++        assertThat(mapper(new ScopeLastDoubler()).mapAll(List.of(1, 2, 3))).containsExactly(2, 4, 6);
++    }
++
++    @Test
++    void item_is_passed_to_the_argument_after_several_framework_arguments() {
++        assertThat(mapper(new ParametersAndScopeFirstDoubler()).mapAll(List.of(1, 2)))
++                .containsExactly(2, 4);
++    }
++
++    @Test
++    void subagent_with_only_framework_arguments_is_invoked_once_per_item() {
++        assertThat(mapper(new ScopeOnlyAgent()).mapAll(List.of(1, 2))).containsExactly(0, 0);
++    }
++
++    private static Mapper mapper(Object subagent) {
++        return AgenticServices.parallelMapperBuilder(Mapper.class)
++                .subAgents(subagent)
++                .build();
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7310** (2026-11-26): OpenAI Official and Azure OpenAI streaming: create the StreamingHandle before subscribing (@dliubarskyi)
+- **PR #7309** (2026-11-26): Create class-based A2A and MCP client agents through the agent instance factory (@mariofusco)
+- **PR #7304** (2026-11-26): SQL content retriever ITs: check that no data changed, not that the result is empty (@dliubarskyi)
+- **PR #7300** (2026-11-26): Apache PDFBox document parser: a page with more characters than maxCharacters fails early (@dliubarskyi)
 - **PR #7299** (closed): [DO NOT MERGE] CI only: google-genai ITs for #6772 (@dliubarskyi)
 - **PR #7293** (2026-11-25): SQL and Hibernate content retrievers: no NPE when the model returns no text, fail loudly when it was cut off or filtered (@dliubarskyi)
-- **PR #7276** (2026-11-24): Ollama ITs: stop test containers after each test class (@dliubarskyi)
-- **PR #7274** (2026-11-24): Make -DskipTests skip integration tests again (@dliubarskyi)
-- **PR #7271** (2026-11-25): Limit the text extracted by the Apache Tika and PDFBox document parsers (@dliubarskyi)
-- **PR #7267** (2026-11-25): Pass media URLs to the provider instead of downloading them (@dliubarskyi)
 
 ---
 
@@ -1417,55 +1033,46 @@ cannot work
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. google-genai): combine built-in tools with function calling
+## X. agentic): pass a parallel mapper item after a framework argument
 
 **RULE**:
-When implementing operations in `docs/docs/integrations/language-models/google-genai.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/MapperAgentInvoker.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da04f7a1`: google-genai): combine built-in tools with function calling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c5e5ed2`: agentic): pass a parallel mapper item after a framework argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/integrations/language-models/google-genai.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/MapperAgentInvoker.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    - [Combining your tools with built-in tools](#combining-your-tools-with-built-in-tools)
-### Combining your tools with built-in tools
+import dev.langchain4j.agentic.planner.AgentArgument;
+        this.injectionKey = itemArgumentName(delegate);
+    /**
+     * The item is passed to the first argument of the subagent that is not provided by the framework, like its
+     * {@link AgenticScope} or its memory id, whose names start with {@code @}, so that such an argument can come first.
+     */
+    private static String itemArgumentName(AgentInvoker delegate) {
+        return delegate.arguments().stream()
+                .map(AgentArgument::name)
+                .filter(name -> !name.startsWith("@"))
+                .findFirst()
+                .orElse(null);
+    }
 
-Your tools can be used in the same request as Google Search, Google Maps, URL context and code execution:
-the model can search the web or run code first, then call one of your tools with the result.
-
-```java
-ChatModel gemini = GoogleGenAiChatModel.builder()
-    .apiKey(System.getenv("GOOGLE_AI_GEMINI_API_KEY"))
-    .modelName("gemini-3.8-flash")
-    .enableGoogleSearch(true)
-    .build();
-
-WeatherAssistant weatherAssistant = AiServices.builder(WeatherAssistant.class)
-    .chatModel(gemini)
-    .tools(weatherForecastService)
-    .build();
-
-String response = weatherAssistant.chat("Which city hosts the next Summer Olympics, and what is its weather forecast?");
-```
-
-- The Gemini API accepts this combination only from Gemini 3 models on, and lists it as a preview feature.
-- On Vertex AI, `gemini-3.8-flash` and `gemini-3.1-flash-lite` accept Google Search or code execution together with your tools.
-  Vertex AI does not return the `toolCall` and `toolResponse` parts of a search, so only the executed code is kept in the `AiMessage`.
-- The searches, page 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-- The current Gemini models reject a request that combines code execution with your own tools. The same applies to Google Search.
+        this.injectionKey = delegate.arguments().isEmpty()
+                ? null
+                : delegate.arguments().get(0).name();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da04f7a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c5e5ed2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

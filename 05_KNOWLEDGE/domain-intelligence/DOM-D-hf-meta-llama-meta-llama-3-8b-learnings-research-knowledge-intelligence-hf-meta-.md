@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T04:58:34.961Z",
+  "timestamp": "2026-11-26T18:50:30.688Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-meta-llama-meta-llama-3-8b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-meta-llama-meta-llama-3-8b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T04:58:34.961Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T18:50:30.688Z`  
 > **Learning ID**: `LEARN-EVO-hf-meta-llama-meta-llama-3-8b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-meta-llam`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T04:58:21.508Z  
+> **Timestamp**: 2026-11-26T18:50:12.989Z  
 > **Learning ID**: `learn-huggingface-meta-llama-meta-llama-3-8b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/meta-llama/Meta-Llama-3-8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T04:58:21.321Z  
+> **Harvest Timestamp**: 2026-11-26T18:50:12.886Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 96884 downloads | 6812 likes
+- **Stars / Engagement**: 103274 downloads | 6818 likes
 
 ---
 

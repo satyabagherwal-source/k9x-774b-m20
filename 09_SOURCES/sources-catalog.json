@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "b69014412928ec67921ab96978d8198e7427cfc86d20ca3085083000f6b296e9",
-    "lastHarvestedAt": "2026-11-23T04:58:22.002Z",
+    "contentHash": "cb743ba61acea1c17e278cd8816f955e535792ea09829632b5d7f4f90eda3675",
+    "lastHarvestedAt": "2026-11-26T18:50:13.586Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "f21a2468",
+    "sourceVersion": "50c1a5c5",
     "license": "Apache-2.0",
-    "contentHash": "cad71c926823f73e08fa8304cca1238561b63041b0a9cac6fc1b5d87affb637f",
-    "lastHarvestedAt": "2026-11-26T00:18:04.520Z",
+    "contentHash": "0d9fa632c99de93ef312ab6cd941002577f67f37fbedcb40e46d764dc6df4cc2",
+    "lastHarvestedAt": "2026-11-26T18:50:27.029Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {

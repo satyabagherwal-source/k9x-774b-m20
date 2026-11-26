@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T18:41:58.601Z",
+  "last_updated": "2026-11-26T18:50:32.650Z",
   "total_records": 2769,
   "domains": {
     "A": {
@@ -11230,8 +11230,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "f84d0682eabea3f71f25b713154ffea8d45e369c3449930327549cb481cfc290",
-      "created_at": "2026-11-26T00:18:04.999Z"
+      "content_hash": "9d9cd14137da07dd321b4c721e02898d725bb85bc7d64df74017b84e371a2aa2",
+      "created_at": "2026-11-26T18:50:27.478Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -12274,8 +12274,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-research-knowledge-intelligence-meta-llama-meta-ll.md",
       "repository": "meta-llama/Meta-Llama-3-8B",
-      "content_hash": "5ff14eebd9ce0aed08b1fa33420af64e0a3dec7ad1ee7028e8fcdbb6afb00d27",
-      "created_at": "2026-11-23T04:58:22.210Z"
+      "content_hash": "b91270933723e8dd02f2959f6c9d9156f20f7738b9a26f1cc64f0a89218c6568",
+      "created_at": "2026-11-26T18:50:13.836Z"
     },
     "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants",
@@ -12340,8 +12340,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-learnings-research-knowledge-intelligence-hf-meta-.md",
       "repository": "hf-meta-llama-meta-llama-3-8b-learnings",
-      "content_hash": "055bba5073c098e62d27b6ce9e7318315c31834c3bd36c9e565fdb5ffb9cf961",
-      "created_at": "2026-11-23T04:58:35.063Z"
+      "content_hash": "6b7402edcb3e03725438ff5afa604de3b2560bb41cfb2efb14d97070bc0ada9e",
+      "created_at": "2026-11-26T18:50:30.817Z"
     },
     "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants",
@@ -29311,8 +29311,8 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-learnings-technical-construction-intelligence-langchain4.md",
       "repository": "langchain4j-langchain4j-learnings",
-      "content_hash": "749f952cf69133ffb51d4c2ad5914f5d544f59ea3de1aac94ac6c2a632d39009",
-      "created_at": "2026-11-24T22:51:14.999Z"
+      "content_hash": "0435e7b2c9b75a5c6077b83e26caf87af1f5acd4a727e5d1b4d8b8132fec047b",
+      "created_at": "2026-11-26T18:50:31.582Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants",
@@ -46716,8 +46716,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "f8ce144225140033a973bb8b4fedef0ff596cb043832658d3f2a8d629a96f336",
-      "created_at": "2026-11-26T17:39:35.819Z"
+      "content_hash": "937c67a4f624206734441be8835a06363e5fcfd9a1dea8044d4f9e5069e74d0a",
+      "created_at": "2026-11-26T18:50:32.650Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

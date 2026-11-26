@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T18:41:52.406Z",
+  "last_updated": "2026-11-26T18:50:27.051Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1055,14 +1055,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "content_hash": "b69014412928ec67921ab96978d8198e7427cfc86d20ca3085083000f6b296e9",
-      "verified_at": "2026-11-23T04:58:22.010Z",
+      "content_hash": "cb743ba61acea1c17e278cd8816f955e535792ea09829632b5d7f4f90eda3675",
+      "verified_at": "2026-11-26T18:50:13.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T04:58:22.010Z"
+      "last_updated": "2026-11-26T18:50:13.602Z"
     },
     "hexgrad/Kokoro-82M": {
       "repository": "hexgrad/Kokoro-82M",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "cad71c926823f73e08fa8304cca1238561b63041b0a9cac6fc1b5d87affb637f",
-      "verified_at": "2026-11-26T00:18:04.556Z",
+      "content_hash": "0d9fa632c99de93ef312ab6cd941002577f67f37fbedcb40e46d764dc6df4cc2",
+      "verified_at": "2026-11-26T18:50:27.050Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T00:18:04.556Z"
+      "last_updated": "2026-11-26T18:50:27.050Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
