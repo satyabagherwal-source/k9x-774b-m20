@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md`  
 > **Source**: github ([https://github.com/EL4CTEO/fast-anything](https://github.com/EL4CTEO/fast-anything))  
-> **Source Version**: `1fdf12ef`  
+> **Source Version**: `d9b39f50`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T15:17:13.433Z  
+> **Timestamp**: 2026-11-26T23:11:34.800Z  
 > **Learning ID**: `learn-github-el4cteo-fast-anything`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/EL4CTEO/fast-anything](https://github.com/EL4CTEO/fast-anything))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:17:13.253Z  
+> **Harvest Timestamp**: 2026-11-26T23:11:34.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Don't rewrite it in Rust. Rewrite the 5% that's slow: profile Python, Node or Ruby apps, port the hot functions with your coding agent, prove they behave the same.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3498 stars
+- **Stars / Engagement**: 4219 stars
 
 ---
 
@@ -158,6 +158,8 @@ pub struct Verify {
     pub derived: usize,
     /// Of derived: edge cases (special numbers, non-ASCII text, empty and much bigger inputs).
     pub edges: usize,
+    /// Of total, not derived: recorded calls kept out of the crate folder (see backend::hold_out).
+    pub held_out: usize,
     pub passed: usize,
     pub failed: usize,
     pub failures: Vec<Failure>,
@@ -245,6 +247,12 @@ impl Verify {
     pub fn slower(&self) -> bool {
         self.micro.is_some_and(|m| m.speedup > 0.0 && m.speedup < 1.0)
     }
+
+    /// The original's own work per call is under one clock read, so per-call times are mostly the
+    /// clock and can't show Rust saving anything (only where clock_ns was measured).
+    pub fn too_cheap(&self) -> bool {
+        self.micro.is_some_and(|m| m.clock_ns > 0.0 && m.original_ns < 2.0 * m.clock_ns)
+    }
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -264,6 +272,9 @@ pub struct Micro {
     pub original_ns: f64,
     pub rust_ns: f64,
     pub speedup: f64,
+    /// What one clock read costs, where the original was timed with a read before and after each
+    /// call (C-bridge languages); 0 where whole passes were timed.
+    pub clock_ns: f64,
 }
 
 pub struct Ctx {
@@ -315,6 +326,17 @@ impl Ctx {
         self.root.join(port.crate_dir.replace('/', std::path::MAIN_SEPARATOR_STR))
     }
 
+    /// Recorded calls of the port kept out of its crate folder, so the agent writing it never sees them.
+    pub fn holdout(&self, port: &Port) -> PathBuf {
+        let name = Path::new(&port.crate_dir).file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
+        self.fast.join("holdout").join(format!("{name}.jsonl"))
+    }
+
+    /// How many recorded calls of the port are held out.
+    pub fn held_out(&self, port: &Port) -> usize {
+        util::count_lines(&self.holdout(port))
+    }
+
     pub fn base_dir(&self) -> PathBuf {
         self.root.join(if self.state.base.is_empty() { "." } else { &self.state.base })
     }
@@ -329,38 +351,7 @@ impl Ctx {
                 1 => Ok(ports.keys().next().cloned().unwrap_or_default()),
                 _ => bail!("which one? {}", names()),
             },
-            Some(id) if ports.contains_key(id) => Ok(id.to_string()),
-            Some(id) => {
-                let suffix = format!(".{id}");
-                let hits: Vec<&String> =
-                    ports.values().filter(|p| p.func == id || p.id.ends_with(&suffix)).map(|p| &p.id).collect();
-                match hits.as_slice() {
-                    [one] => Ok((*one).clone()),
-                    [] if ports.is_empty() => bail!("nothing ported yet: run  fast-anything port {id}"),
-                    [] => bail!("no port called {id} (have: {})", names()),
-                    _ => bail!("{id} is ambiguous: {}", names()),
-                }
-            }
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn slower_only_when_measured_below_one() {
-        let v =
-            |speedup| Verify { micro: Some(Micro { original_ns: 1.0, rust_ns: 1.0, speedup }), ..Verify::default() };
-        assert!(v(0.5).slower());
-        assert!(!v(1.4).slower());
-        assert!(!v(0.0).slower(), "no measurement isn't slower");
-        assert!(!Verify::default().slower());
-    }
-
-    #[test]
-    fn blocks_in_the_body_are_not_changes
+            Some
 ```
 
 ### Core Architecture Module: `src/util.rs`
@@ -405,6 +396,11 @@ pub fn forward_slashes(p: &Path) -> String {
 /// A name safe for Rust crates and Python modules.
 pub fn slug(id: &str) -> String {
     id.chars().map(|c| if c.is_ascii_alphanumeric() { c.to_ascii_lowercase() } else { '_' }).collect()
+}
+
+/// Non-blank lines in a file, 0 if it can't be read.
+pub fn count_lines(path: &Path) -> usize {
+    std::fs::read_to_string(path).map(|t| t.lines().filter(|l| !l.trim().is_empty()).count()).unwrap_or(0)
 }
 
 pub fn output(cmd: &mut Command, what: &str) -> Result<Output> {
@@ -534,6 +530,25 @@ pub fn thousands(n: u64) -> String {
     out
 }
 
+/// Year, month and day of a day counted from 1970-01-01 (proleptic Gregorian calendar).
+pub fn civil_date(days: i64) -> (i64, u32, u32) {
+    // years run March to February here, so the leap day comes last
+    let z = days + 719_468;
+    let (era, doe) = (z.div_euclid(146_097), z.rem_euclid(146_097));
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let (day, month) = (doy - (153 * mp + 2) / 5 + 1, if mp < 10 { mp + 3 } else { mp - 9 });
+    (yoe + era * 400 + i64::from(month <= 2), month as u32, day as u32)
+}
+
+/// Today's date in UTC, e.g. "2026-11-26"; None if the clock is before 1970.
+pub fn today() -> Option<String> {
+    let secs = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).ok()?.as_secs();
+    let (y, m, d) = civil_date((secs / 86_400) as i64);
+    Some(format!("{y:04}-{m:02}-{d:02}"))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -554,6 +569,20 @@ mod tests {
         assert_eq!(slug("text.utils.Lev-1"), "text_utils_lev_1");
         assert_eq!(nanos(350.0), "350ns");
         assert_eq!(secs(0.25), "250ms");
+    }
+
+    #[test]
+    fn days_since_1970_become_dates() {
+        assert_eq!(civil_date(0), (1970, 1, 1));
+        assert_eq!(civil_date(10_956), (1999, 12, 31));
+        assert_eq!(civil_date(11_016), (2000, 2, 29), "a leap day in a year divisible by 400");
+        assert_eq!(civil_date(19_782), (2024, 2, 29));
+        assert_eq!(civil_date(19_783), (2024, 3, 1));
+        assert_eq!(civil_date(20_783), (2026, 11, 26));
+        assert_eq!((civil_date(47_540), civil_date(47_541)), ((2100, 2, 28), (2100, 3, 1)), "2100 has no leap day");
+        assert_eq!(civil_date(-1), (1969, 12, 31));
+        let today = today().unwrap();
+        assert!(today.len() == 10 && today.starts_with("20"), "{today}");
     }
 }
 
@@ -1004,11 +1033,13 @@ fn pairs<T: PartialEq + Sync>(clean: &[Vec<T>], max: usize) -> Vec<(usize, usize
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #126** (2026-11-24): **ruby: port methods that take *rest or keyword arguments**
-  *Symptoms*: Fixes 125.  - `describe` accepts a named `*rest` (one array parameter, the new `Param.splat`), post arguments and keyword arguments (`kwonly`). Blocks, `**options`, `...`, and unnamed `*` or destructured arguments stay blocked. - The recorder and the shim bind each call with a lambda that has the method's own parameter list, made with `class_eval` in the method's module so defaults like `SCALE` resolve, and run with `instance_exec`. They pass the full list `[word, weights, scale]`, defaults included. - `FastAnything.invoke` spreads such a list back into a call through `Method#parameters` (rest spread, keywords by name); recording and verify call the original through it.  Test: `splat_and_keyword_arguments_are_bound_like_the_method_binds_them` (profile, record, and the shim's binder). I also ran the Ruby end-to-end CI step on my fork with `find_duplicates(*names, max_distance: MAX_DISTANCE)` in the example: scan, port, verify, enable, run, bench, disable, byte-for-byte check.
+- **Issue #162** (2026-11-26): **java, kotlin: pass NaN and infinity between the app and the port**
+  *Symptoms*: Fixes #161.  - `Json.java` (shared by the Java and Kotlin recorders and bridges): `enc` writes NaN and ±infinity as `{"$float": "NaN"}` / `"Infinity"` / `"-Infinity"` instead of throwing, and `parse` reads such an object back as a `Double`, so the bridge gets the port's NaN and infinite results. - `Rec.java`: NaN, ±infinity and -0.0 join the `double` and `float` edge cases; an edge equal to the recorded value is compared with `Double.compare`/`Float.compare`, so NaN and -0.0 are handled right. - `java.rs` and `kotlin.rs`: `floats: Some(native::FLOATS)`, so the port's glue reads and writes the tags.  New test `nan_and_infinity_travel_tagged` records a call with infinities (args and result tagged), checks that NaN and ±infinity show up as edge cases, and round-trips tagged values through `Json.parse`, `convert` and `enc`.  On my fork's CI the Java and Kotlin tests and the Ubuntu end-to-end jobs pass. The macOS and Windows jobs fail only on the two tests that fail on main, `c_values_reach_the_port_as_typed_and_come_back_exact` (#159, fixed by #160) and `py_launcher_scan_and_bench_work_with_version_selectors` (#157). 
 
-- **Issue #124** (2026-11-24): **kotlin: port functions with an expression body**
-  *Symptoms*: Fixes 123.  The recorder and the bridge now go right after the `=`, between inline markers:  ```kotlin fun f(x: Int): Int = /* // >>> fast-anything: id >>> */ if (Bridge.ON) (Bridge.call(arrayOf<Any?>(x)) as Int) else /* // <<< fast-anything: id <<< */ x * 2 ```  Kotlin's `else` takes the whole expression that follows, so the end of the expression doesn't have to be found, and `disable` takes the inline block out byte for byte. The staleness check (`state.rs`) skips inline blocks too, so `bench` doesn't call an enabled port stale.  For the I/O and determinism checks and the end line, the expression runs to a line break outside brackets, unless the line ends with an operator or the next one goes on with `.`, `?.`, `?:`, `&&`, `||`, `as` or `else`. One without a declared return type stays blocked.  Test: `expression_bodies_are_portable` (extent, blockers, patch and unpatch round trip, source still found). I also ran the Kotlin end-to-end CI step on my fork with `findDuplicates` in the example rewritten as a multi-line expression body: scan, port, verify (27/27), enable, run, bench and disable, then `git diff --exit-code`.
+- **Issue #161** (2026-11-26): **Java and Kotlin: calls with NaN or infinity are never recorded**
+  *Symptoms*: The Java recorder skips every call with NaN or infinity in its arguments or result (`Json.enc` throws `Unsupported("NaN or Infinity")`), so verify never checks a Java or Kotlin port on them, and the float edge cases leave them out. Kotlin uses the same recorder, bridge and JSON code.  Go, C# and PHP now send them tagged, `{"$float": "NaN"}` and the like, which the port's C entry point reads and writes when the flavor sets `floats` (#130, #132, #134), and #150 does C and C++. Java and Kotlin are the ones left. 
+  **Post-Mortem & Fix Analysis**:
+  > Fixed by #162 (merged), shipping in 0.8.9.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1025,182 +1056,170 @@ fn pairs<T: PartialEq + Sync>(clean: &[Vec<T>], max: usize) -> Vec<(usize, usize
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85be624c` (2026-11-24)
-**Commit Message**: ruby: fix shim call in the NaN test after #126
+### Incident Patch 1: `d9b39f50` (2026-11-26)
+**Commit Message**: tests: longer Java duration window off Linux; the clock check no longer compares against a noisy 25 ns call
 
-**File**: `src/ruby.rs` (modified, +1/-1)
+**File**: `src/cfamily.rs` (modified, +1/-1)
 ```diff
-@@ -470,7 +470,7 @@ mod tests {
-             line: 1,
-             sources: vec![],
-         };
--        fs::write(dir.join("shim.rb"), shim(&port, "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
-+        fs::write(dir.join("shim.rb"), shim(&port, &[], "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
-         let check = r#"
-             require_relative "recorder"
-             nan, inf = Float::NAN, Float::INFINITY
+@@ -2424,7 +2424,7 @@ mod tests {
+         // both sides timed per call: within 3x of the original (through JSON it was 22x slower)
+         let m = v.micro.expect("timed");
+         assert!(m.rust_ns > 0.0 && m.rust_ns < 3.0 * m.original_ns, "{m:?}");
+-        assert!(m.clock_ns > 0.0 && m.clock_ns < m.original_ns, "the clock is part of the original's time: {m:?}");
++        assert!(m.clock_ns > 0.0, "the clock was measured: {m:?}");
+     }
+ 
+     #[cfg(unix)]
+```
+
+**File**: `src/java.rs` (modified, +2/-2)
+```diff
+@@ -777,8 +777,8 @@ mod tests {
+         let ctx = Ctx::open(&dir).unwrap();
+         let started = Instant::now();
+         // the window starts with the JVM, and `java App.java` compiles the source inside it: that
+-        // takes longer on Windows
+-        let window = if cfg!(windows) { 8.0 } else { 3.0 };
++        // takes longer on Windows and on macOS runners
++        let window = if cfg!(target_os = "linux") { 3.0 } else { 8.0 };
+         let p = profile(&ctx, "java", &["App.java".into()], Some(window));
+         let took = started.elapsed().as_secs_f64();
+         let _ = fs::remove_dir_all(&dir);
 ```
 
 ---
 
-### Incident Patch 2: `9391af75` (2026-11-24)
-**Commit Message**: Merge #118: php functions in braced namespaces
+### Incident Patch 2: `a1ad32ce` (2026-11-26)
+**Commit Message**: tests: macOS clock resolution, fresh library path for rebuilt ports, CRLF output on Windows
 
-**File**: `src/php.rs` (modified, +64/-7)
+**File**: `src/cfamily.rs` (modified, +13/-3)
 ```diff
-@@ -7,7 +7,7 @@ use crate::native::{self, Flavor, Patches};
- use crate::python::DISABLE_ENV;
- use crate::state::{Ctx, Port, Verify};
- use crate::util::{self, combined, output, tail};
--use anyhow::{Context, Result, bail, ensure};
-+use anyhow::{Context, Result, ensure};
- use serde::Deserialize;
- use serde_json::Value;
- use std::collections::BTreeMap;
-@@ -150,7 +150,9 @@ fn run_php(
- ) -> Result<std::process::Output> {
-     let mut cmd = Command::new(php);
-     cmd.arg("-d")
--        .arg(format!("auto_prepend_file={}", prepend.display()))
-+        // quoted, as an ini value: a path can hold characters ini syntax reads as operators (~ in
-+        // Windows short names, like C:\Users\RUNNER~1)
-+        .arg(format!("auto_prepend_file=\"{}\"", prepend.display()))
-         .args(args)
-         .current_dir(&ctx.root)
-         .env(DISABLE_ENV, "1")
-@@ -324,17 +326,21 @@ pub fn enable(ctx: &Ctx, port: &Port) -> Result<()> {
-         "{} ends with ?>: remove the closing tag so code can follow it",
-         port.file
-     );
--    if text.contains("namespace ")
--        && text.lines().any(|l| l.trim_start().starts_with("namespace ") && l.trim_end().ends_with('{'))
--    {
--        bail!("{} uses braced namespaces, which fast-anything can't add code to yet", port.file);
--    }
-+    // with braced namespaces, no code may follow them outside a namespace block: the bridge goes in
-+    // a global one of its own, and the function names it from the root
-+    let braced = text.lines().any(|l| l.trim_start().starts_with("namespace ") && l.trim_end().ends_with('{'));
-     let class = bridge_class(port);
-     let from = file.parent().context("file has no folder")?;
-     let (_, lib) = port.lang.artifact(&port.ext);
-     let lib_rel = util::forward_slashes(&util::relative(from, &ctx.lib_dir().join(lib)));
-     let lib_lit = format!("'{}'", lib_rel.replace('\\', "\\\\").replace('\'', "\\'"));
-     let bridge = BRIDGE.replace("/*CLASS*/", &class).replace("/*ID*/", &port.id).replace("/*LIB*/", &lib_lit);
-+    // in the file's own line endings (a Windows checkout gives bridge.php CRLF), so disable finds
-+    // what it added
-+    let nl = if text.contains("\r\n") { "\r\n" } else { "\n" };
-+    let bridge = bridge.replace("\r\n", "\n").replace('\n', nl);
-+    let (bridge, class) =
-+        if braced { (format!("namespace {{{nl}{bridge}{nl}}}"), format!("\\{class}")) } else { (bridge, class) };
-     let prologue =
-         format!("if ({class}::$on ?? {class}::load()) return {class}::call({}, func_get_args());", name_const(hs));
-     let patched =
-@@ -355,6 +361,57 @@ pub fn disable(ctx: &Ctx, port: &Port) -> Result<()> {
- mod tests {
-     use super::*;
+@@ -2157,12 +2157,19 @@ mod tests {
+     /// verify's replay of a built port, in this process.
+     #[cfg(unix)]
+     fn replay(dir: &Path, id: &str) -> Verify {
++        replay_lib(dir, id, None)
++    }
++
++    /// The replay, loading the port from `lib` if given (a library loaded once stays mapped on macOS,
++    /// so a rebuilt port at the same path would be the old one).
++    #[cfg(unix)]
++    fn replay_lib(dir: &Path, id: &str, lib_path: Option<PathBuf>) -> Verify {
+         let ctx = Ctx::open(dir).unwrap();
+         let port = &ctx.state.ports[id];
+         let crate_dir = ctx.crate_dir(port);
+         let (_, lib) = port.lang.artifact(&port.ext);
+         let job = serde_json::json!({
+-            "lib": ctx.lib_dir().join(lib), "cases": crate_dir.join("recordings.jsonl"),
++            "lib": lib_path.unwrap_or_else(|| ctx.lib_dir().join(lib)), "cases": crate_dir.join("recordings.jsonl"),
+             "meta": crate_dir.join("recordings.meta.json"), "func": port.func, "out": crate_dir.join("verify.json"),
+         });
+         fs::write(crate_dir.join("job-verify.json"), job.to_string()).unwrap();
+@@ -2186,7 +2193,10 @@ mod tests {
+         fs::write(ctx.crate_dir(port).join("src").join("port.rs"), port_rs).unwrap();
+         let built = backend::build(&ctx, port).unwrap();
+         assert!(built.is_ok(), "{id}: {built:?}");
+-        replay(dir, id)
++        let (_, lib) = port.lang.artifact(&port.ext);
++        let fresh = ctx.lib_dir().join(format!("other-{}-{lib}", std::process::id()));
++        fs::copy(ctx.lib_dir().join(lib), &fresh).unwrap();
++        replay_lib(dir, id, Some(fresh))
+     }
  
-+    #[test]
-+    fn ports_functions_in_braced_namespaces() {
-+        if !Command::new("php").arg("-v").output().is_ok_and(|o| o.status.success()) {
-+            eprintln!("no php on PATH, skipping");
-+            return;
-+        }
-+        let dir = std::env::temp_dir().join(format!("fa-php-braced-test-{}", std::process::id()));
-+        fs::create_dir_all(&dir).unwrap();
-+        let app = "<?php\nnamespace Text {\n    function width(string $s): int\n    {\n        return strlen($s);\n    }\n}\n\nnamespace {\n    echo \\Text\\width('h\u{e9}llo'), \"\\n\";\n}\n";
-+        fs::write(dir.join("app.php"), app).unwrap();
-+        let mut ctx = Ctx::open(&dir).unwrap();
-+        let found = profile(&ctx, "php", &["app.php".into()]).unwrap();
-+        assert!(found.functions.iter().any(|f| f.name == "width" && f.blockers.is_empty()), "{:?}", found.functions);
-+        let hs = Hotspot {
-+            id: "Text.width".into(),
-+            file: "app.php".into(),
-+            line: 3,
-+            name: "width".into(),
-+            ..Hotspot::default()
-+        };
-+        ctx.state.hotspots.push(hs);
-+        let port = Port {
-+            id: "Text.width".into(),
-+            file: "app.php".into(),
-+            module: "Text".into(),
-+            func: "width".into(),
-+            ext: "fa_text_width".into(),
-+            crate_dir: ".fast/ports/Text.width".into(),
-+            recorded: 1,
-+            calls_seen: 1,
-+            verify: None,
-+            enabled: false,
-+            lang: backend::Lang::Php,
-+            owner: None,
-+            line: 3,
-+            sources: vec![],
-+        };
-+        enable(&ctx, &port).unwrap();
-+        // without the port's library, the bridge doesn't load and the PHP version runs
-+        let lint = Command::new("php").args(["-l", "app.php"]).current_dir(&dir).output().unwrap();
-+        let run = Command::new("php").arg("app.php").current_dir(&dir).output().unwrap();
-+        let enabled = fs::read_to_string(dir.join("app.php")).unwrap();
-+        disable(&ctx, &port).unwrap();
-+        let after = fs::read_to_string(dir.join("app.php")).unwrap();
-+        let _ = fs::remove_dir_all(&dir);
-+        assert!(lint.status.success(), "{}{enabled}", String::from_utf8_lossy(&lint.stdout));
-+        assert_eq!(String::from_utf8_lossy(&run.stdout)
+     /// {"$float": name}, how NaN and infinity are recorded.
+@@ -2337,7 +2347,7 @@ mod tests {
+         let _ = fs::remove_dir_all(&dir);
+         assert!(built.status.success(), "{}", String::from_utf8_lossy(&built.stderr));
+         assert_eq!(
+-            String::from_utf8_lossy(&ran.unwrap().stdout),
++            String::from_utf8_lossy(&ran.unwrap().stdout).replace("\r\n", "\n"),
+             "[[{\"$float\":\"NaN\"},-0.5,{\"$float\":\"-Infinity\"}],{\"k\":{\"$float\":\"Infinity\"}},[-0.0,1],[{\"$float\":\"Infinity\"},2.5]]\n\
+              1.5 1 inf -inf 1 | -inf | 1 2 | 0\n"
+         );
 ```
 
-**File**: `src/php/describe.php` (modified, +19/-3)
+**File**: `src/native.rs` (modified, +9/-8)
 ```diff
-@@ -41,14 +41,30 @@ function describe_file(string $path): array {
-     $out = [];
-     $classes = [];   // stack of [name, depth]
-     $depth = 0;
-+    $top = 0;        // the depth of top-level code: 1 inside a braced  namespace X { ... }
-+    $nsOpen = -1;    // the token that opens that namespace block
-     $funcs = [];
-     $statics = [];
-     $found = [];
-     for ($i = 0; $i < $n; $i++) {
-         $t = $tokens[$i];
--        if ($t === '{' || in_array(id($t), [T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES], true)) { $depth++; continue; }
--        if ($t === '}') { $depth--; if ($classes && end($classes)[1] === $depth) array_pop($classes); continue; }
-+        if ($t === '{' || in_array(id($t), [T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES], true)) {
-+            $depth++;
-+            if ($i === $nsOpen) $top = $depth;
-+            continue;
-+        }
-+        if ($t === '}') {
-+            $depth--;
-+            if ($depth < $top) $top = 0;
-+            if ($classes && end($classes)[1] === $depth) array_pop($classes);
-+            continue;
-+        }
-         $k = id($t);
-+        if ($k === T_NAMESPACE) {
-+            for ($m = $i + 1; $m < $n && $tokens[$m] !== ';' && $tokens[$m] !== '{'; $m++);
-+            if ($m < $n && $tokens[$m] === '{') $nsOpen = $m;
-+            continue;
-+        }
-         if (in_array($k, [T_CLASS, T_TRAIT, T_INTERFACE, T_ENUM], true)) {
-             $p = $prev($i);
-             if ($p >= 0 && (id($tokens[$p]) === T_DOUBLE_COLON || id($tokens[$p]) === T_NEW)) continue;
-@@ -64,7 +80,7 @@ function describe_file(string $path): array {
-         $name = $tokens[$j][1];
-         $class = null;
-         if ($classes && $depth === end($classes)[1] + 1) $class = end($classes)[0];
--        elseif ($depth !== 0) continue; // declared inside a function body
-+        elseif ($depth !== $top) continue; // declared inside a function body
-         // modifiers and the first token of the declaration
-         $start = $i;
-         $static = false;
+@@ -433,15 +433,16 @@ pub fn replay(job_path: &Path) -> Result<()> {
+     Ok(())
+ }
+ 
+-/// What one clock read costs here: the least of a thousand back-to-back reads. The recorders time
+-/// each call of the original with a read before and after it, so about this much of original_ns
+-/// is the clock.
++/// What one clock read costs here: the average of ten thousand back-to-back reads (a single read
++/// can come out as 0 on a coarse clock, as on macOS). The recorders time each call of the original
++/// with a read before and after it, so about this much of original_ns is the clock.
+ fn clock_ns() -> f64 {
+-    let read = || {
+-        let t = Instant::now();
+-        t.elapsed()
+-    };
+-    (0..1000).map(|_| read()).min().unwrap_or_default().as_secs_f64() * 1e9
++    const READS: u32 = 10_000;
++    let start = Instant::now();
++    for _ in 0..READS {
++        std::hint::black_box(Instant::now());
++    }
++    start.elapsed().as_secs_f64() * 1e9 / f64::from(READS)
+ }
+ 
+ /// Same value, give or take float rounding.
+```
+
+---
+
+### Incident Patch 3: `4c4ea0c5` (2026-11-26)
+**Commit Message**: tests: build the C test apps without FMA contraction
+
+clang fuses a * b + c into one FMA instruction by default on ARM, so on
+macOS the C original of the typed-values test rounds t += ys[i] * k
+differently from its Rust port, and one recorded call of lib.scale never
+matches: c_values_reach_the_port_as_typed_and_come_back_exact fails on
+every macOS run. The C rules in TASK.md already tell the agent about this;
+the tests now build with -ffp-contract=off, as those rules suggest.
+
+**File**: `src/cfamily.rs` (modified, +7/-2)
+```diff
+@@ -2097,6 +2097,11 @@ mod tests {
+         );
+     }
+ 
++    /// How the tests build C: without fusing `a * b + c` into one FMA instruction, which clang does
++    /// by default on ARM (macOS) and which rounds differently from the ports written here.
++    #[cfg(unix)]
++    const C_FLAGS: [&str; 2] = ["-O2", "-ffp-contract=off"];
++
+     /// A C project in a temp folder: scanned, each (id, port.rs) ported and built, then all enabled.
+     /// None without a C compiler or cargo.
+     #[cfg(unix)]
+@@ -2109,7 +2114,7 @@ mod tests {
+         for (name, text) in files {
+             fs::write(dir.join(name), text).unwrap();
+         }
+-        let command = [cc, "-O2"].into_iter().chain(files.iter().map(|f| f.0)).map(String::from).collect();
++        let command = [cc].into_iter().chain(C_FLAGS).chain(files.iter().map(|f| f.0)).map(String::from).collect();
+         crate::pipeline::scan(&dir, command, None).unwrap();
+         for (id, port_rs) in ports {
+             let out = crate::pipeline::port(&dir, Some(id), 200).unwrap();
+@@ -2127,7 +2132,7 @@ mod tests {
+     /// Builds the sources in dir and runs them; FAST_ANYTHING_DISABLE=1 with `disable`.
+     #[cfg(unix)]
+     fn run_c(dir: &Path, cc: &str, sources: &[&str], disable: bool) -> String {
+-        let built = Command::new(cc).arg("-O2").args(sources).args(["-o", "app"]).current_dir(dir).output().unwrap();
++        let built = Command::new(cc).args(C_FLAGS).args(sources).args(["-o", "app"]).current_dir(dir).output().unwrap();
+         assert!(built.status.success(), "{}", String::from_utf8_lossy(&built.stderr));
+         let mut cmd = Command::new(dir.join("app"));
+         if disable {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #126** (2026-11-24): ruby: port methods that take *rest or keyword arguments (@mohitmishra786)
-- **PR #124** (2026-11-24): kotlin: port functions with an expression body (@mohitmishra786)
-- **PR #122** (2026-11-24): C++: answer derived and edge cases in child processes (@mohitmishra786)
-- **PR #120** (2026-11-24): python: port @classmethods that don't use cls (@mohitmishra786)
-- **PR #118** (2026-11-24): php: port functions in braced namespaces (@mohitmishra786)
-- **PR #116** (2026-11-24): scan --duration for every language (@mohitmishra786)
+- **PR #162** (2026-11-26): java, kotlin: pass NaN and infinity between the app and the port (@mohitmishra786)
+- **PR #160** (2026-11-26): tests: build the C test apps without FMA contraction (@mohitmishra786)
+- **PR #157** (2026-11-26): python: enable port before bench in Windows py launcher test (@Plastic-time)
+- **PR #156** (2026-11-26): python: emit typed PyO3 defaults and unescape Python string literals (@Plastic-time)
+- **PR #155** (2026-11-26): python: ignore shadowed stdlib module names in portability checks (@Plastic-time)
+- **PR #154** (2026-11-26): python: sync package re-exports when installing the call recorder (@Plastic-time)
 
 ---
 
@@ -1220,28 +1239,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ruby: fix shim call in the NaN test after #126
+## X. tests: longer Java duration window off Linux; the clock check no longer compares
 
 **RULE**:
-When implementing operations in `src/ruby.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EL4CTEO/fast-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cfamily.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EL4CTEO/fast-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85be624c`: ruby: fix shim call in the NaN test after #126. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9b39f50`: tests: longer Java duration window off Linux; the clock check no longer compares against a noisy 25 ns call. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ruby.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cfamily.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        fs::write(dir.join("shim.rb"), shim(&port, &[], "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
+        assert!(m.clock_ns > 0.0, "the clock was measured: {m:?}");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        fs::write(dir.join("shim.rb"), shim(&port, "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
+        assert!(m.clock_ns > 0.0 && m.clock_ns < m.original_ns, "the clock is part of the original's time: {m:?}");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85be624c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9b39f50` are properly handled with clean fallback behavior.

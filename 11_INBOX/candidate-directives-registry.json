@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:00:08.701Z",
+  "last_updated": "2026-11-26T23:11:54.640Z",
   "directives": [
     {
       "id": "CD-001",
@@ -67532,6 +67532,59 @@
       "source_repo": "doobidoo-mcp-memory-service",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FCB9F4-docs-agents-add-repository-guidelines-an.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-2NTR",
+      "directive_title": "longer Java duration window off Linux; the clock check no longer compares",
+      "source_repo": "EL4CTEO/fast-anything",
+      "source_commit": "d9b39f50",
+      "staged_file": "11_INBOX/candidate-directives/CD-2NTR-longer-java-duration-window-off-linux-the-clock-check-no-longer-compares.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-31N3",
+      "directive_title": "fix[utils][smartling]: ENG-12316 stop sending Symbol slot content to Smartling t",
+      "source_repo": "builderio-builder-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-31N3-fix-utils-smartling-eng-12316-stop-sending-symbol-slot-content-to-smartling-t.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-2X01",
+      "directive_title": "Empirical Invariant Guard in commit.rs",
+      "source_repo": "SeekStorm/SeekStorm",
+      "source_commit": "71e34a45",
+      "staged_file": "11_INBOX/candidate-directives/CD-2X01-empirical-invariant-guard-in-commit-rs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-301D",
+      "directive_title": "tests: longer Java duration window off Linux; the clock check no longer compares",
+      "source_repo": "el4cteo-fast-anything-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-301D-tests-longer-java-duration-window-off-linux-the-clock-check-no-longer-compares.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-BE029F",
+      "directive_title": "fix[utils][smartling]: ENG-12316 stop sending Symbol slot content to Smartling t",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "builderio-builder",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BE029F-fix-utils-smartling-eng-12316-stop-sendi.md",
       "staged_date": "2026-11-26"
     }
   ]

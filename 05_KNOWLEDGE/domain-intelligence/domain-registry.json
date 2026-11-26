@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T23:00:08.910Z",
+  "last_updated": "2026-11-26T23:11:54.931Z",
   "total_records": 2787,
   "domains": {
     "A": {
@@ -14477,8 +14477,8 @@
       "title": "Architecture Intelligence: BuilderIO/builder Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-architecture-intelligence-builderio-builder-core-invariants.md",
       "repository": "BuilderIO/builder",
-      "content_hash": "e7a24d61d758a9bd5346d071a2786db93c8ebbf318ae08632b8b8810a9e3b4da",
-      "created_at": "2026-11-24T14:59:39.866Z"
+      "content_hash": "1b6afe58d5213edbb1c304c12d791664921473d782eae4ac09598570f1fea913",
+      "created_at": "2026-11-26T23:11:41.398Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants",
@@ -14546,8 +14546,8 @@
       "title": "Architecture Intelligence: builderio-builder-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-learnings-architecture-intelligence-builderio-builder-learning.md",
       "repository": "builderio-builder-learnings",
-      "content_hash": "657e06f10388817565e293f715123329bd0059e8cd552840c7bca47a78b46ea3",
-      "created_at": "2026-11-24T14:59:49.429Z"
+      "content_hash": "6bf86afd5070dc9f495c4654975a50fedad1fcc09a06a4c6eab1e7510b6d0e44",
+      "created_at": "2026-11-26T23:11:54.931Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
@@ -15240,8 +15240,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/all-mpnet-base-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-research-knowledge-intelligence-sente.md",
       "repository": "sentence-transformers/all-mpnet-base-v2",
-      "content_hash": "dce4b237afe1517704ace4f615688c00f38eb2ca8766b841ea8b33f63c7ce3c0",
-      "created_at": "2026-11-23T14:29:15.039Z"
+      "content_hash": "17d61de1e4d85be94e1dbaa8cbb834fa6cc2822f8e2fac96ba44ef60e9d6a070",
+      "created_at": "2026-11-26T23:11:34.969Z"
     },
     "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants",
@@ -15300,8 +15300,8 @@
       "title": "Research & Knowledge Intelligence: hf-sentence-transformers-all-mpnet-base-v2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-learnings-research-knowledge-intellig.md",
       "repository": "hf-sentence-transformers-all-mpnet-base-v2-learnings",
-      "content_hash": "eb53d5dda36edd74a91fac89ad9196495950bcc4bb71effd2b1bc4c00a0aede0",
-      "created_at": "2026-11-23T14:29:27.347Z"
+      "content_hash": "7990f76f627f3e0fb647459b525acafdc6d3ded8eae8ba0a39c5a76bbf1ac953",
+      "created_at": "2026-11-26T23:11:53.717Z"
     },
     "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants",
@@ -25957,8 +25957,8 @@
       "title": "Technical Construction Intelligence: SeekStorm/SeekStorm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-seekstorm-seekstorm-technical-construction-intelligence-seekstorm-seekstorm-core.md",
       "repository": "SeekStorm/SeekStorm",
-      "content_hash": "c01dc78cd1e423236400514817d95f3c22e509a1e8612224bbb783b61cb41d50",
-      "created_at": "2026-11-24T07:47:19.084Z"
+      "content_hash": "73dc0b1acb565f5e8358942e52600baf5a826c75e46c532ad5e71e852c8eeb7e",
+      "created_at": "2026-11-26T23:11:48.907Z"
     },
     "DOM-D-BFBE4A28": {
       "record_id": "DOM-D-BFBE4A28",
@@ -40860,8 +40860,8 @@
       "title": "Architecture Intelligence: EL4CTEO/fast-anything Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-architecture-intelligence-el4cteo-fast-anything-core-invar.md",
       "repository": "EL4CTEO/fast-anything",
-      "content_hash": "1149475d4b2874a8026a035fe5ef88f0615c978de55634a8dd0629c010339e73",
-      "created_at": "2026-11-24T15:17:14.989Z"
+      "content_hash": "2dbf22ceabbcc6394948f47afc622fa7069fde092a4a06ca35c95f331698ce43",
+      "created_at": "2026-11-26T23:11:37.023Z"
     },
     "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants",
@@ -40878,8 +40878,8 @@
       "title": "Architecture Intelligence: el4cteo-fast-anything-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-learnings-architecture-intelligence-el4cteo-fast-anything-.md",
       "repository": "el4cteo-fast-anything-learnings",
-      "content_hash": "211666e4898e093adc749a7ab652b9c1235cae5657cb11e1faa3f5dc0a946e8d",
-      "created_at": "2026-11-24T15:17:34.392Z"
+      "content_hash": "2c563aa78d3886876f81644a6edf270bc01733c02d46cb71b3f47555db3a6e04",
+      "created_at": "2026-11-26T23:11:52.843Z"
     },
     "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants",

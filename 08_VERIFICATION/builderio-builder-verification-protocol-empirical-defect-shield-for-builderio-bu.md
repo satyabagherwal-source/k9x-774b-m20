@@ -4,22 +4,22 @@
 {
   "source_repository": "BuilderIO/builder",
   "source_url": "https://github.com/BuilderIO/builder",
-  "source_version": "0b87ae3c",
+  "source_version": "0e20faf6",
   "license": "MIT",
-  "timestamp": "2026-11-24T14:59:39.676Z",
+  "timestamp": "2026-11-26T23:11:41.101Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-builderio-builder",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [BuilderIO/builder](https://github.com/BuilderIO/builder) (Revision: `0b87ae3c`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T14:59:39.676Z`  
+> **Provenance**: Harvested from [BuilderIO/builder](https://github.com/BuilderIO/builder) (Revision: `0e20faf6`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T23:11:41.101Z`  
 > **Learning ID**: `learn-github-builderio-builder`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `BuilderIO/builder` (Commit: `0b87ae3c`)
+- **Target Repository**: `BuilderIO/builder` (Commit: `0e20faf6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:59:38.370Z  
+> **Harvest Timestamp**: 2026-11-26T23:11:39.188Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Visual Development for React, Vue, Svelte, Qwik, and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8890 stars
+- **Stars / Engagement**: 8894 stars
 
 ---
 
@@ -616,418 +616,335 @@ export { builder } from './src/constants/builder';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4ce5a4f` (2026-11-23)
-**Commit Message**: fix[sdks][unflatten]: block prototype pollution from Studio user attribute query params (#4924)
+### Incident Patch 1: `a6270898` (2026-11-26)
+**Commit Message**: fix[utils][smartling]: ENG-12316 stop sending Symbol slot content to Smartling twice (#4956)
 
 ## Description
 
-Fixes #4824.
+Strings from blocks placed inside a Symbol slot show up twice in
+Smartling jobs.
 
-When the page URL contains `builder.preview=BUILDER_STUDIO`,
-`generateContentUrl` collects every `builder.userAttributes.*` query
-parameter and rebuilds the nested object with `unflatten()`
-(`packages/sdks/src/helpers/flatten.ts`). `unflatten()` walked each
-dot-separated key with no guard, so a single crafted link polluted
-`Object.prototype` in the visitor's tab:
+`getTranslateableFields` already reaches `slot` blocks while walking the
+page and extracts them under their own block ids. The Symbol branch then
+walks every `symbol.data` input again and only skips one named
+`children`. A slot with any other name, like `children1`, gets recorded
+a second time under `blocks.<symbolId>.symbolInput#<slot>….` Same text,
+two keys.
 
-```
-?builder.preview=BUILDER_STUDIO&builder.userAttributes.__proto__.polluted=1
-```
+**Fix:**
+The Symbol branch now also skips inputs that are slot content, meaning a
+list of blocks. Those blocks are still extracted once, under their own
+ids, the same way as blocks placed directly on the page. Regular Symbol
+inputs, including list inputs, are unchanged.
 
-`constructor.prototype.*` paths and inherited members
-(`toString.polluted`) had the same problem. Separately, a key nesting
-under an earlier primitive (`a=1&a.b=2`) threw a `TypeError` while
-building the content URL.
+`applyTranslation` is untouched, so jobs uploaded before this fix, which
+still carry both keys, apply as before.
 
-**Change:** `unflatten()` now delegates to the shared `set()` helper.
-#4878 already hardened that helper for block bindings: it rejects
-`__proto__`, refuses `constructor`/`prototype` as intermediate segments,
-only walks own properties, and replaces non-object parents. Unsafe paths
-are dropped and every other attribute is kept.
+**Link to JIRA ticket (if applicable):**
+https://builder-io.atlassian.net/browse/ENG-12316
 
-One behaviour difference: `set()` builds arrays for numeric segments, so
+**Screenshot/Clip**
+If relevant, add a screenshot or clip of the changes you made.
 
-
-**File**: `.changeset/quiet-owls-guard.md` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+---
-+'@builder.io/sdk-react-native': patch
-+'@builder.io/sdk-angular': patch
-+'@builder.io/sdk-react-nextjs': patch
-+'@builder.io/sdk-svelte': patch
-+'@builder.io/sdk-react': patch
-+'@builder.io/sdk-solid': patch
-+'@builder.io/sdk-qwik': patch
-+'@builder.io/sdk-vue': patch
-+---
-+
-+Fix: ignore `__proto__`, `constructor` and `prototype` paths in Studio `builder.userAttributes.*` query parameters so a crafted preview URL cannot pollute `Object.prototype`
-```
-
-**File**: `packages/sdks/src/functions/get-content/generate-content-url.test.ts` (modified, +33/-0)
-```diff
-@@ -378,4 +378,37 @@ describe('Generate Content URL', () => {
-       vi.unstubAllGlobals();
-     }
-   });
-+
-+  test.each([
-+    'builder.userAttributes.__proto__.polluted=yes',
-+    'builder.userAttributes.constructor.prototype.polluted=yes',
-+    'builder.userAttributes.toString.polluted=yes',
-+  ])('does not pollute prototypes from Studio query parameter %s', (param) => {
-+    vi.stubGlobal('window', {
-+      location: {
-+        search: `?builder.preview=BUILDER_STUDIO&${param}&builder.userAttributes.audience=members`,
-+        pathname: '/products',
-+        host: 'www.example.com',
-+      },
-+    });
-+    vi.stubGlobal('document', {});
-+
-+    try {
-+      const output = generateContentUrl({
-+        apiKey: testKey,
-+        model: testModel,
-+      });
-+
-+      expect(({} as any).polluted).toBeUndefined();
-+      expect((Object as any).polluted).toBeUndefined();
-+      expect((Object.prototype.toString as any).polluted).toBeUndefined();
-+      expect(
-+        JSON.parse(output.searchParams.get('userAttributes')!).audience
-+      ).toBe('members');
-+    } finally {
-+      delete (Object.prototype as any).polluted;
-+      delete (Object.prototype.toString as any).polluted;
-+      vi.unstubAllGlobals();
-+    }
-+  });
- });
-```
-
-**File**: `packages/sdks/src/helpers/flatten.test.ts` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+import { unflatten } from './flatten.js';
-+
-+describe('unflatten', () => {
-+  afterEach(() => {
-+    delete (Object.prototype as any).polluted;
-+    delete (Object.prototype.toString as any).polluted;
-+  });
-+
-+  test('rebuilds nested objects from dot-separated keys', () => {
-+    expect(unflatten({ 'foo.bar': 'baz', 'foo.qux': 1, top: true })).toEqual({
-+      foo: { bar: 'baz', qux: 1 },
-+      top: true,
-+    });
-+  });
-+
-+  test('keeps numeric segments as object keys', () => {
-+    expect(unflatten({ 'list.0': 'x', 'list.5': 'y' })).toEqual({
-+      list: { 0: 'x', 5: 'y' },
-+    });
-+  });
-+
-+  test.each([
-+    '__proto__.polluted',
-+    'foo.__proto__.polluted',
-+    'constructor.prototype.polluted',
-+    'foo.constructor.prototype.polluted',
-+    'foo.prototype.polluted',
-+  ])('does not pollute Object.prototype via %s', (key) => {
-+    expect(unflatten({ [key]: 'yes', safe: 'kept' })).toEqual({ safe: 'kept' });
-+    expect(({} as any).polluted).toBeUndefined();
-+    expect((Object as any).polluted).toBeUndefined();
-+  });
-+
-+  test('does not write onto inherited members', () => {
-+    const result = unflatten({ 'toString.polluted': 'yes' });
-+
-+    expect((Object.prototype.toString as any).polluted).toBeUndefined();
-+    expect(result.toString).toEqual({ polluted: 'yes' });
-+  });
-+
-+  test('replaces a primitive when a later key nests under it', () => {
-+    expect(unflatten({ foo: 'bar', 'foo.baz': 'qux' })).toEqual({
-+      foo: { baz: 'qux' },
-+    });
-+  });
-+});
-```
-
-**File**: `packages/sdks/src/helpers/flatten.ts` (modified, +11/-2)
-```diff
-@@ -52,6 +52,8 @@ export function flattenMongoQuery(
-   return _res;
- }
- 
-+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
-+
- /**
-  * Unflatten a flat object with dot-separated keys back into a nested object.
-  *
-@@ -61,14 +63,21 @@ export function unflatten(obj: any): any {
-   const result: any = {};
-   for (const key in obj) {
-     const parts = key.split('.');
-+    // keys come from URL query params: never let them reach the prototype chain
-+    if (parts.some((part) => UNSAFE_KEYS.has(part))) continue;
-     let current = result;
-     for (let i = 0; i < parts.length; i++) {
-       const part = parts[i];
-       if (i === parts.length - 1) {
-         current[part] = obj[key];
-       } else {
--        current[part] = current[part] || {};
--        current = current[part];
-+        // own, object-valued parents only: never walk into inherited members
-+        // (e.g. `toString`) or write onto a primitive
-+        const next = Object.prototype.hasOwnProperty.call(current, part)
-+          ? current[part]
-+          : undefined;
-+        current = current[part] =
-+          typeof next === 'object' && next !== null ? next : {};
-       }
-     }
-   }
-```
-
+<!-- CURSOR_SUMMARY -->
 ---
 
-### Incident Patch 2: `ee5f0c46` (2026-11-24)
-**Commit Message**: fix(react): preserve useId during personalization hydration (#4951)
+> [!NOTE]
+> **Medium Risk**
+> Changes what strings ar
 
-Co-authored-by: Sridhar Maskeri <[REDACTED_EMAIL]>
-
-**File**: `.changeset/forty-mirrors-scream.md` (added, +5/-0)
+**File**: `packages/utils/src/translation-helpers.test.ts` (modified, +231/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"@builder.io/react": patch
-+---
+@@ -2471,3 +2471,234 @@ describe('Symbol blocks without data', () => {
+     });
+   });
+ });
 +
-+Fix a hydration bug in Dynamic Containers that could break accessibility references by generating different `useId` values on the server and client.
++describe('Symbol slot content', () => {
++  const localized = (value: any) => ({ '@type': localizedType, Default: value });
++  const slotContent = (): BuilderContent => ({
++    data: {
++      blocks: [
++        {
++          '@type': '@builder.io/sdk:Element',
++          id: 'builder-container',
++          component: {
++            name: 'Symbol',
++            options: {
++              symbol: {
++                model: 'symbol',
++                entry: 'content-container',
++                data: {
++                  headline: localized('Section headline'),
++                  features: localized([{ label: localized('Fast payouts') }]),
++                  children1: [
++                    {
++                      '@type': '@builder.io/sdk:Element',
++                      id: 'builder-table',
++                      meta: { localizedTextInputs: ['title', 'rows'] },
++                      component: {
++                        name: 'ComparisonTable',
++                        options: {
++                          title: localized('Compare plans'),
++                          rows: localized([{ label: localized('Transaction fee') }]),
++                        },
++                      },
++                    },
++                    {
++                      '@type': '@builder.io/sdk:Element',
++                      id: 'builder-text',
++                      component: { name: 'Text', options: { text: localized('<p>Hello</p>') } },
++                    },
++                    {
++                      '@type': '@builder.io/sdk:Element',
++                      id: 'builder-nested',
++                      component: {
++                        name: 'Symbol',
++                        options: {
++                          symbol: {
++                            model: 'symbol',
++                            entry: 'nested',
++                            data: { heading: localized('Inner heading') },
++                          },
++                        },
++                      },
++                    },
++                  ],
++                },
++              },
++            },
++          },
++        },
++      ],
++    },
++  });
++
++  test('getTranslateableFields extracts slot blocks once, under their own block ids', () => {
++    expect(getTranslateableFields(slotContent(), 'en-US', '')).toEqual({
++      'blocks.builder-container.symbolInput#headline': {
++        value: 'Section headline',
++        instructions: '',
++      },
++      'blocks.builder-container.symbolInput#features[0].label': {
++        value: 'Fast payouts',
++        instructions: '',
++      },
++      'blocks.builder-table#title': { value: 'Compare plans', instructions: '' },
++      'blocks.builder-table#rows#0#label': { value: 'Transaction fee', instructions: '' },
++      'blocks.builder-text#text': { value: '<p>Hello</p>', instructions: '' },
++      'blocks.builder-nested.symbolInput#heading': { value: 'Inner heading', instructions: '' },
++    });
++  });
++
++  test('applyTranslation still applies a job uploaded with the duplicate slot keys', () => {
++    const result = applyTranslation(
++      slotContent(),
++      {
++        'blocks.builder-container.symbolInput#children1[0].component.options.title': {
++          value: 'Tarife vergleichen',
++        },
++        'blocks.builder-table#title': { value: 'Tarife vergleichen' },
++        'blocks.builder-text#text': { value: '<p>Hallo</p>' },
++        'blocks.builder-nested.symbolInput#heading': { value: 'Innere Überschrift' },
++      },
++      'de-DE',
++      'en-US'
++    );
++    const slot = (result.data as any).blocks[0].component.options.symbol.data.children1;
++
++    expect(slot[0].component.options.title['de-DE']).toBe('Tarife vergleichen');
++    expect(slot[1].component.options.text['de-DE']).toBe('<p>Hallo</p>');
++    expect(slot[2].component.options.symbol.data.heading['de-DE']).toBe('Innere Überschrift');
++  });
++
++  const slotWith = (blocks: any[]): BuilderContent => ({
++    data: {
++      blocks: [
++        {
++          '@type': '@builder.io/sdk:Element',
++          id: 'builder-container',
++          component: {
++            name: 'Symbol',
++            options: { symbol: { model: 'symbol', entry: 'content-container', data: { content: blocks } } },
++          },
++        },
++      ],
++    },
++  });
++
++  const cardWithoutMeta = () => ({
++    '@type': '@builder.io/sdk:Element',
++    id: 'builder-card',
++    component: {
++      name: 'Card',
++      options: { title: localized('Card title'), items: [{ caption: localized('Caption') }] },
++    },
++  });
++
++  test('getTranslateableFields keeps slot values that have no localized input metadata', () => {
++    expect(getTranslateableFields(slotWith([cardWithoutMeta()]), 'en-US', '')).toEqual({
++      'blocks.builder-container.symbolInput#content[0].component.options.title': {
++        value: 'Card title',
++        instructions: '',
++      },
++      'blocks.builder-conta
 ```
 
-**File**: `packages/react/src/blocks/PersonalizationContainer.test.tsx` (added, +176/-0)
+**File**: `packages/utils/src/translation-helpers.ts` (modified, +118/-2)
 ```diff
-@@ -0,0 +1,176 @@
-+import React, { useId, useState } from 'react';
-+import { renderToString } from 'react-dom/server';
-+import { JSDOM } from 'jsdom';
-+import { act, create } from 'react-test-renderer';
-+import { Builder, builder } from '@builder.io/sdk';
-+import { PersonalizationContainer } from './PersonalizationContainer';
-+
-+jest.mock('../components/builder-blocks.component', () => ({
-+  BuilderBlocks: ({ blocks }: any) => <>{blocks}</>,
-+}));
-+
-+function Probe({ branch }: { branch: string }) {
-+  const id = useId();
-+  const [open, setOpen] = useState(false);
+@@ -8,11 +8,21 @@ import get from 'lodash/get';
+ export const localizedType = '@builder.io/core:LocalizedValue';
+ const referenceType = '@builder.io/core:Reference';
+ const requestType = '@builder.io/core:Request';
++const elementType = '@builder.io/sdk:Element';
+ 
+ function isBuilderType(value: any, ...types: string[]) {
+   return !!value && typeof value === 'object' && types.includes(value['@type']);
+ }
+ 
++// A Symbol slot (`symbol.data.<slotName>`) holds a list of blocks.
++function isSlotContent(value: any) {
 +  return (
-+    <>
-+      <button
-+        data-branch={branch}
-+        aria-controls={id}
-+        aria-describedby={open ? id : undefined}
-+        onClick={() => setOpen(true)}
-+      >
-+        Open
-+      </button>
-+      <p id={id}>Answer</p>
-+    </>
++    Array.isArray(value) &&
++    value.length > 0 &&
++    value.every(item => isBuilderType(item, elementType))
 +  );
 +}
 +
-+['first', 'second', 'fallback'].forEach(selected =>
-+  test(`preserves useId when hydrating ${selected}`, async () => {
-+    builder.setUserAttributes({ locale: 'en-GB' });
-+    const fixture = (
-+      <PersonalizationContainer
-+        attributes={{}}
-+        builderBlock={{
-+          '@type': '@builder.io/sdk:Element',
-+          id: 'use-id-test',
-+          children: [<Probe key="fallback" branch="fallback" />] as any,
-+        }}
-+        builderState={{ state: { locale: 'en-GB' } }}
-+        previewingIndex={null}
-+        variants={
-+          ['first', 'second'].map(name => ({
-+            query: [
-+              { property: 'locale', operator: 'is', value: name === selected ? 'en-GB' : 'fr-FR' },
-+            ],
-+            blocks: [<Probe key={name} branch={name} />],
-+          })) as any
-+        }
-+      >
-+        {null}
-+      </PersonalizationContainer>
-+    );
-+    const html = renderToString(fixture);
-+    const dom = new JSDOM(`<div id="root">${html}</div>`, {
-+      url: 'http://localhost/',
-+      runScripts: 'dangerously',
-+    });
-+    const globals = global as any;
-+    const original = {
-+      window: globals.window,
-+      document: globals.document,
-+      CustomEvent: globals.CustomEvent,
-+      IntersectionObserver: globals.IntersectionObserver,
-+      IS_REACT_ACT_ENVIRONMENT: globals.IS_REACT_ACT_ENVIRONMENT,
-+    };
-+    const flags = { isServer: Builder.isServer, isBrowser: Builder.isBrowser };
-+    Object.assign(global, {
-+      window: dom.window,
-+      document: dom.window.document,
-+      CustomEvent: dom.window.CustomEvent,
-+      IS_REACT_ACT_ENVIRONMENT: true,
-+      IntersectionObserver: class {
-+        observe() {}
-+        disconnect() {}
-+      },
-+    });
-+    Builder.isServer = false;
-+    Builder.isBrowser = true;
-+    const { hydrateRoot } = require('react-dom/client');
-+    const { act } = require('react-dom/test-utils');
-+    const container = document.getElementById('root')!;
-+    let root: any;
-+    const errors = jest.spyOn(console, 'error');
-+    try {
-+      const serverButton = container.querySelector('button')!;
-+      expect(serverButton).toHaveAttribute('data-branch', selected);
-+      const serverId = serverButton.getAttribute('aria-controls')!;
-+      const serverTarget = document.getElementById(serverId);
-+      expect(serverTarget).not.toBeNull();
-+
-+      await act(async () => {
-+        root = hydrateRoot(container, fixture);
-+      });
-+      expect(container.querySelector('button')).toBe(serverButton);
-+      await act(async () => {
-+        serverButton.click();
-+      });
-+      expect(serverButton).toHaveAttribute('aria-describedby', serverId);
-+      expect(document.getElementById(serverId)).toBe(serverTarget);
-+      expect(errors).not.toHaveBeenCalled();
-+      // User attributes can change after hydration without leaving stale ID links.
-+      await act(async () => {
-+        builder.setUserAttributes({ locale: selected === 'fallback' ? 'fr-FR' : 'zz-ZZ' });
-+      });
-+      const switchedButton = container.querySelector('button')!;
-+      expect(switchedButton).toHaveAttribute(
-+        'data-branch',
-+        selected === 'fallback' ? 'first' : 'fallback'
-+      );
-+      await act(async () => {
-+        switchedButton.click();
-+      });
-+      expect(
-+        document.getElementById(switchedButton.getAttribute('aria-describedby')!)
-+      ).not.toBeNull();
-+      expect(errors).not.toHaveBeenCalled();
-+    } finally {
-+      if (root) await act(async () => root.unmount());
-+      Object.assign(Builder, flags);
-+      Object.assign(global, original);
-+      builder.setUserAttributes({ locale: undefined });
-+      errors.mockRestore();
-+      dom.window.close();
-+    }
-+  })
-+);
-+
-+[
-+  { previewingIndex: null, expected: 'fallback' },
-+  { previewingIndex: 1, expected: 'preview' },
-+  { previewingIndex: 2, expected: 'matched' },
-+].forEach(({ previewingIndex, expected }) => {
-+  test(`shows ${expected} in the editor with preview index ${previewingIndex}`, () => {
-+    const flags = { isServer: Builder.isServer, isEditing: Builder.isEditing };
-+    const { locale } = builder.getUserAttributes();
-+ 
-```
-
-**File**: `packages/react/src/blocks/PersonalizationContainer.tsx` (modified, +28/-19)
-```diff
-@@ -189,6 +189,9 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
-       variant.endDate
-     );
-   });
-+  const isEditingDefault =
-+    isHydrated && Builder.isEditing && typeof props.previewingIndex !== 'number';
-+  const activeVariant = isClient && !isEditingDefault ? filteredVariants[0] : undefined;
+ export type TranslateableFields = {
+   [key: string]: {
+     instructions?: string;
+@@ -128,6 +138,98 @@ function recordValue({
+   }
+ }
  
-   return (
-     <React.Fragment>
-@@ -215,26 +218,32 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
-             dataPath={`component.options.variants.${props.previewingIndex}.blocks`}
-             child
-           />
--        ) : // If editing the default or we're on the server and there are no matching variants show the default
--        (isHydrated && Builder.isEditing && typeof props.previewingIndex !== 'number') ||
--          !isClient ||
--          !filteredVariants.length ? (
--          <BuilderBlocks
--            blocks={props.builderBlock?.children}
--            parentElementId={props.builderBlock?.id}
--            dataPath="this.children"
--            child
--          />
-         ) : (
--          // Show the variant matching the current user attributes
--          <BuilderBlocks
--            blocks={filteredVariants[0]?.blocks}
--            parentElementId={props.builderBlock?.id}
--            dataPath={`component.options.variants.${props.variants?.indexOf(
--              filteredVariants[0]
--            )}.blocks`}
--            child
--          />
-+          <>
-+            {/* Match the server's variant, script, and default slots for React useId. */}
-+            {props.variants?.map((variant, index) =>
-+              variant === activeVariant ? (
-+                <React.Fragment key={index}>
-+                  <BuilderBlocks
-+                    blocks={variant.blocks}
-+                    parentElementId={props.builderBlock?.id}
-+                    dataPath={`component.options.variants.${index}.blocks`}
-+                    child
-+                  />
-+                </React.Fragment>
-+              ) : null
-+            )}
-+            {/* Reserve the server-only selection script's slot for useId. */}
-+            {null}
-+            {!activeVariant && (
-+              <BuilderBlocks
-+                blocks={props.builderBlock?.children}
-+                parentElementId={props.builderBlock?.id}
-+                dataPath="this.children"
-+                child
-+              />
-+            )}
-+          </>
-         )}
-       </div>
-       <script
++// Must mirror what the block traversal in getTranslateableFields extracts.
++function isCoveredByTraversal(block: any, optionPath: string) {
++  const name = block.component?.name;
++  const localizedTextInputs = block.meta?.localizedTextInputs;
++  const isLocalizedInput =
++    Array.isArray(localizedTextInputs) &&
++    localizedTextInputs.includes(optionPath) &&
++    get(block.component?.options || {}, `${optionPath}.@type`) === localizedType;
++  // The traversal extracts every Symbol input except `children`, which it skips.
++  const isSymbolChildrenPath = /^symbol(\.data(\.children(\..*)?)?)?$/.test(optionPath);
++  return (
++    isLocalizedInput ||
++    (optionPath === 'text' && (name === 'Text' || name === 'Core:Button')) ||
++    (name === 'Symbol' && /^symbol(\.|$)/.test(optionPath) && !isSymbolChildrenPath)
++  );
++}
++
++type SlotWalkArgs = {
++  results: TranslateableFields;
++  instructions: string;
++  sourceLocaleId: string;
++};
++
++// recordValue over slot content, minus what the traversal already extracts under block ids.
++// Keys match recordValue's, so applyTranslation's symbol branch still writes them back.
++function recordUncoveredSlotValues(
++  value: any,
++  path: string,
++  args: SlotWalkArgs,
++  owner?: { block: any; optionPath: string[] }
++) {
++  if (owner && isCoveredByTraversal(owner.block, owner.optionPath.join('.'))) {
++    return;
++  }
++  if (isBuilderType(value, requestType)) {
++    return;
++  }
++  if (isBuilderType(value, elementType)) {
++    if (value.meta?.excludeFromTranslation) {
++      return;
++    }
++    Object.entries(value).forEach(([key, v]) => {
++      if (key !== 'component' || !v || typeof v !== 'object') {
++        recordUncoveredSlotValues(v, `${path}.${key}`, args);
++        return;
++      }
++      Object.entries(v as Record<string, any>).forEach(([componentKey, componentValue]) => {
++        const componentPath = `${path}.component.${componentKey}`;
++        const isOptions =
++          componentKey === 'options' &&
++          !!componentValue &&
++          typeof componentValue === 'object' &&
++          !Array.isArray(componentValue);
++        if (!isOptions) {
++          recordUncoveredSlotValues(componentValue, componentPath, args);
++          return;
++        }
++        Object.entries(componentValue as Record<string, any>).forEach(([optionKey, optionValue]) =>
++          recordUncoveredSlotValues(optionValue, `${componentPath}.${optionKey}`, args, {
++            block: value,
++            optionPath: [optionKey],
++          })
++        );
++      });
++    });
++    return;
++  }
++  if (isBuilderType(value, localizedType)) {
++    recordValue({ ...args, value, path });
++    return;
++  }
++  if (Array.isArray(value)) {
++    value.forEach((item, index) =>
++      recordUncoveredSlotValues(
++        item,
++        `${path}[${index}]`,
++        args,
++        owner && { block: owner.block, optionPath: [...owner.optionPath, String(index)] }
++      )
++    );
++  } else if (value && typeof value === 'object') {
++    Object.entries(value).forEach(([key, v]) =>
++      recordUncoveredSlotValues(
++        v,
++        `${path}.${key}`,
++        args,
++        owner && { block: owner.block, optionPath: [...owner.optionPath, key] }
++      )
++    );
++  }
++}
++
+ function resolveTranslation({
+   data,
+   basePath,
+@@ -568,11 +670,25 @@ export function getTranslateableFields(
+                 return;
+               }
+ 
++              const path = `${basePath}#${symbolInputName}`;
++              const instructions = el.meta?.instructions || defaultInstructions;
++
++              // Slot blocks are reached by the traversal itself and extracted under their own
++              // block ids; only what it cannot see is recorded here, so nothing is sent twice.
++              if (isSlotContent(symbolInputValue)) {
++                recordUncoveredSlotValues(symbolInputValue, path, {
++                  results,
++                  instructions,
++                  sourceLocaleId,
++                });
++                return;
++              }
++
+               recordValue({
+                 results,
+                 value: symbolInputValue,
+-                path: `${basePath}#${symbolInputName}`,
+-                instructions: el.me
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4956** (2026-11-26): fix[utils][smartling]: ENG-12316 stop sending Symbol slot content to Smartling twice (@AishwaryaParab)
 - **PR #4955** (2026-11-24): 📦 Publish SDKs (@builder-io-integration[bot])
 - **PR #4951** (2026-11-24): fix(react): preserve useId during personalization hydration (@davilima6)
 - **PR #4950** (2026-11-23): 📦 Publish SDKs (@builder-io-integration[bot])
 - **PR #4949** (2026-11-19): fix(utils): add repository field for npm provenance publish (@lihuelg)
 - **PR #4948** (2026-11-19): 📦 Publish SDKs (@builder-io-integration[bot])
-- **PR #4946** (2026-11-19): fix[sdks][text]: ENG-13905 prevent duplicate text during ssr hydration (@floating-dynamo)
 
 ---
 
@@ -1047,32 +964,52 @@ Co-authored-by: Sridhar Maskeri <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix[sdks][unflatten]: block prototype pollution from Studio user attribute query
+## X. fix[utils][smartling]: ENG-12316 stop sending Symbol slot content to Smartling t
 
 **RULE**:
-When implementing operations in `.changeset/quiet-owls-guard.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/utils/src/translation-helpers.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4ce5a4f`: fix[sdks][unflatten]: block prototype pollution from Studio user attribute query params. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6270898`: fix[utils][smartling]: ENG-12316 stop sending Symbol slot content to Smartling twice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/quiet-owls-guard.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/utils/src/translation-helpers.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-'@builder.io/sdk-react-native': patch
-'@builder.io/sdk-angular': patch
-'@builder.io/sdk-react-nextjs': patch
-'@builder.io/sdk-svelte': patch
-'@builder.io/sdk-react': patch
-'@builder.io/sdk-solid': patch
-'@builder.io/sdk-qwik': patch
-'@builder.io/sdk-vue': patch
----
 
-Fix: ignore `__proto__`, `constructor` and `prototype` paths in Studio `builder.userAttributes.*` query parameters so a crafted preview URL cannot pollute `Object.prototype`
+describe('Symbol slot content', () => {
+  const localized = (value: any) => ({ '@type': localizedType, Default: value });
+  const slotContent = (): BuilderContent => ({
+    data: {
+      blocks: [
+        {
+          '@type': '@builder.io/sdk:Element',
+          id: 'builder-container',
+          component: {
+            name: 'Symbol',
+            options: {
+              symbol: {
+                model: 'symbol',
+                entry: 'content-container',
+                data: {
+                  headline: localized('Section headline'),
+                  features: localized([{ label: localized('Fast payouts') }]),
+                  children1: [
+                    {
+                      '@type': '@builder.io/sdk:Element',
+                      id: 'builder-table',
+                      meta: { localizedTextInputs: ['title', 'rows'] },
+                      component: {
+                        name: 'ComparisonTable',
+                        options: {
+                          title: localized('Compare plans'),
+                          rows: localized([{ label: localized('Transaction fee') }]),
+                        },
+                      },
+                    },
+       
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1082,7 +1019,7 @@ Fix: ignore `__proto__`, `constructor` and `prototype` paths in Studio `builder.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4ce5a4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6270898` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

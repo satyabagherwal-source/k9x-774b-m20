@@ -4,22 +4,22 @@
 {
   "source_repository": "SeekStorm/SeekStorm",
   "source_url": "https://github.com/SeekStorm/SeekStorm",
-  "source_version": "d7fb1b21",
+  "source_version": "71e34a45",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T02:56:14.304Z",
+  "timestamp": "2026-11-26T23:11:48.631Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-seekstorm-seekstorm",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm) (Revision: `d7fb1b21`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T02:56:14.304Z`  
+> **Provenance**: Harvested from [SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm) (Revision: `71e34a45`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T23:11:48.631Z`  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `SeekStorm/SeekStorm` (Commit: `d7fb1b21`)
+- **Target Repository**: `SeekStorm/SeekStorm` (Commit: `71e34a45`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:56:13.299Z  
+> **Harvest Timestamp**: 2026-11-26T23:11:46.740Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: SeekStorm: vector & lexical search - in-process library & multi-tenancy server, in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1939 stars
+- **Stars / Engagement**: 1941 stars
 
 ---
 
@@ -2246,51 +2246,351 @@ pub(crate) fn top_fragments_from_field(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7fb1b21` (2026-11-24)
-**Commit Message**: Update README.md
+### Incident Patch 1: `71e34a45` (2026-11-26)
+**Commit Message**: Merge pull request #89 from kitalia/fix/ram-incomplete-level-rollback
 
-**File**: `README.md` (modified, +2/-2)
+Fix panicking rollback of an incomplete level (RAM access type)
+
+**File**: `seekstorm/src/commit.rs` (modified, +5/-2)
 ```diff
-@@ -392,10 +392,10 @@ Vector search enables you to search not only for similar text, but for everythin
- ## Architecture - under the hood
+@@ -236,8 +236,9 @@ impl Shard {
+                     }
+                 }
+             } else {
++                // `> idx` also avoids the usize underflow for a segment with no blocks yet.
+                 for segment in self.segments_index.iter_mut() {
+-                    if idx == segment.byte_array_blocks.len() - 1 {
++                    if segment.byte_array_blocks.len() > idx {
+                         segment.byte_array_blocks.remove(idx);
+                     }
+                 }
+@@ -248,7 +249,9 @@ impl Shard {
+                             && block.block_id as usize == idx
+                         {
+                             item.1.posting_count -= block.posting_count as u32 + 1;
+-                            item.1.blocks.remove(idx);
++                            // `blocks` holds one entry per level where the term occurs;
++                            // the incomplete level is always its last entry.
++                            item.1.blocks.pop();
+                         }
+                     }
+                     self.segments_index[key0]
+```
+
+**File**: `seekstorm/src/index.rs` (modified, +8/-0)
+```diff
+@@ -3982,6 +3982,14 @@ pub(crate) async fn open_shard(
+                             shard.committed_doc_count = shard.indexed_doc_count;
+                             shard.is_last_level_incomplete =
+                                 !shard.committed_doc_count.is_multiple_of(ROARING_BLOCK_SIZE);
++                            // `block_id` is the docid block (`docid >> 16`) the next
++                            // document belongs to. `open_index` otherwise leaves the
++                            // `Shard::new` default of 0, so the first write after a
++                            // reopen commits the rolled-back level as block 0 instead of
++                            // the last (incomplete) level: the merged postings get
++                            // mislabeled and `update_list_max_impact_score`/`get_max_score`
++                            // reads an empty block for a segment without block-0 data.
++                            shard.block_id = shard.indexed_doc_count >> 16;
  
- * **A shard per processor core.** Search engines shard an index across servers. SeekStorm applies the same principle one level down, so a CPU works like a miniature data center. Shards are lock-free, a query fans out to all shards in parallel, and the aggregated top-k is re-scored with global document frequencies and average document length, so BM25 ranking stays consistent across shards. Measured on 5 million Wikipedia documents: roughly **4-6x faster indexing and 3x lower query latency** than a non-sharded index.
--* **Leveled index.** Documents accumulate in RAM. Every 64k documents per shard form a level that is committed to disk and becomes immutable. Lexical and vector indices use the same layout, which is why there are no segment merges.
-+* **Leveled index.** Documents accumulate in RAM. Every 64k documents per shard form a level that is committed to disk and becomes immutable. Lexical and vector indices use the same layout, which is why there are no segment merges. 
- * **N-gram indexing for phrase search.** Bigrams and trigrams of frequent terms are indexed directly, moving the intersection and the position check from query time to index time. Phrase queries improved by **2.18x in mean latency and 7.63x at p99.9**, with some individual queries up to three orders of magnitude faster, while BM25 scores stay almost identical.
- * **Lexical engine.** Document-at-a-time processing, SIMD-accelerated (AVX2 / NEON) roaring-bitmap intersection and union, galloping intersection, and a faster-than-Block-Max-WAND top-k union for early termination.
--* **Vector engine.** An IVF index per level and shard, clustered with K-Medoid (PAM) instead of K-Means: cluster centers are actual data points. `nprobe` controls the recall/latency trade-off. Field filters are applied during the ANN search, not afterwards.
-+* **Vector engine.** An IVF index per level and shard, clustered with K-Medoid (PAM) instead of K-Means: cluster centers are actual data points. `nprobe` controls the recall/latency trade-off. Field filters are applied during the ANN search, not afterwards. **No data drift** &amp; medoid retraining, **cluster cost stays linear** with index size, parallelizable indexing &amp; search. No massive number of medoids and vectors of a global ANN index in RAM.
- * **Plain on-disk layout.** API key → index → shard → level, with `index.bin`, `vector.bin`, `facet.bin` and a Zstandard-compressed `docstore.bin`. No external dependencies.
- 
- More in [ARCHITECTURE.md](ARCHITECTURE.md#architecture) and on the [architecture page](https://seekstorm.com/architecture).
+                             if shard.is_vector_indexing && !shard.vector_file_mmap.is_empty() {
+                                 shard.indexed_vector_count = 0;
+```
+
+**File**: `seekstorm/tests/rollback_incomplete_level.rs` (added, +329/-0)
+```diff
+@@ -0,0 +1,329 @@
++//! Regression test for the RAM-mode rollback of an incomplete index level.
++//!
++//! `ROARING_BLOCK_SIZE` is 65,536 and is not configurable, so the test pays for
++//! a real level boundary: 65,600 documents leave a 64-document incomplete
++//! second level, and every later write commit merges that level back into level
++//! 0 and rolls it back.
++//!
++//! Before the fix, the per-term part of that rollback in `commit_lexical_shard`
++//! called `item.1.blocks.remove(idx)`, although `blocks` holds one entry per
++//! level *where the term occurs* and not one entry per level id. For a term
++//! that first occurs in the incomplete level (`len == 1`) the call panicked
++//! with "removal index (is 1) should be < len (is 1)". The panic happened in
++//! the spawned commit task, so `commit` only reported the `JoinError`: the
++//! level index was left untouched while `byte_array_blocks` had already been
++//! truncated, and every later commit died with "index out of bounds: the len is
++//! 1 but the index is 1". The index stayed at the last full level while writes
++//! kept reporting success.
++//!
++//! The panics happen in spawned tasks, so the test installs a panic hook that
++//! records instead of printing and asserts that nothing was recorded.
++//!
++//! The same test covers the second defect it surfaced: `open_index` restores the
++//! committed document count but not `Shard::block_id`, which `Shard::new` leaves
++//! at 0. The first write after a reopen then commits the restored, incomplete
++//! level as block 0 and the merged postings are mislabeled, which is observable
++//! as a panic in `update_list_max_impact_score`/`get_max_score`.
++
++use seekstorm::prelude::*;
++use serde_json::Value;
++use std::sync::{Arc, Mutex};
++use std::time::{Duration, Instant};
++
++/// `ROARING_BLOCK_SIZE`, the number of documents per index level.
++const BOUNDARY: usize = 65_536;
++/// Two levels: one full and a 64-document incomplete one.
++const DOCUMENTS: usize = 65_600;
++/// Documents indexed between two commits.
++const PER_COMMIT: usize = 8;
++
++/// Minimal single-shard RAM configuration for the level-rollback regression.
++/// It is built by hand so that the environment cannot switch the test to the
++/// mmap path or to a different shard layout.
++fn index_config() -> IndexConfig {
++    IndexConfig {
++        id: 0,
++        name: "rollback_incomplete_level".into(),
++        lexical_similarity: LexicalSimilarity::Bm25f,
++        tokenizer: TokenizerType::UnicodeAlphanumeric,
++        stemmer: StemmerType::None,
++        stop_words: StopwordType::None,
++        frequent_words: FrequentwordType::None,
++        ngram_indexing: NgramSet::SingleTerm as u8,
++        document_compression: DocumentCompression::None,
++        access_type: AccessType::Ram,
++        spelling_correction: None,
++        query_completion: None,
++        clustering: Clustering::None,
++        inference: Inference::None,
++        segment_number_bits: 10,
++    }
++}
++
++fn schema() -> Vec<SchemaField> {
++    vec![
++        SchemaField::new("_id").store(true).index_lexical(false),
++        SchemaField::new("body").store(false).index_lexical(true),
++    ]
++}
++
++/// Every document carries `common`; documents past the level boundary also
++/// carry a unique `tail{id}` that exists only in the incomplete level - the
++/// term shape that tripped the 5.2.1 rollback.
++fn document(id: usize) -> Document {
++    let body = if id < BOUNDARY {
++        "common".to_string()
++    } else {
++        format!("common tail{id}")
++    };
++    let mut document = Document::default();
++    document.insert("_id".to_string(), Value::String(format!("doc{id}")));
++    document.insert("body".to_string(), Value::String(body));
++    document
++}
++
++/// Indexing is spawned on the index runtime and only bounded by a per-shard
++/// semaphore, so wait until every document reached the shard before committing.
++async fn wait_until_indexed(index: &IndexArc, expected: usize) {
++    let deadline = Instant::now() + Duration::from_secs(120);
++    loop {
++        let indexed = index.read().await.indexed_doc_count().await;
++        if indexed >= expected {
++            return;
++        }
++        assert!(
++            Instant::now() < deadline,
++            "indexing stalled at {indexed} of {expected} documents"
++        );
++        tokio::time::sleep(Duration::from_millis(5)).await;
++    }
++}
++
++async fn index_documents(index: &IndexArc, from: usize, to: usize) {
++    index
++        .index_documents((from..to).map(document).collect())
++        .await;
++    wait_until_indexed(index, to).await;
++}
++
++async fn committed_documents(index: &IndexArc) -> usize {
++    index.read().await.committed_doc_count().await
++}
++
++/// Exhaustive committed count: `length: 0` with `ResultType::Count` disables
++/// the top-k heap, so nothing is pruned.
++async fn committed_count(index: &IndexArc, query: &str) -> usize {
++    index
++        .search(SearchRequest {
++            query_string: query,
++            enable_empty_qu
 ```
 
 ---
 
-### Incident Patch 2: `bfb8b7b6` (2026-11-24)
-**Commit Message**: Update README.md
+### Incident Patch 2: `7a553815` (2026-11-26)
+**Commit Message**: Fix RAM-mode rollback of an incomplete index level
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `seekstorm/src/commit.rs` (modified, +5/-2)
 ```diff
-@@ -86,7 +86,7 @@ In [production](https://seekstorm.com) since 2020. Open source under the [Apache
- * **TurboQuant** (TQ) and affine **Scalar Quantization** (SQ).
- * **Chunking** that respects **sentence boundaries** and **Unicode segmentation** for multilingual text.
- * **K-Medoid clustering**: PAM (Partition Around Medoids) with actual data points as centers.
--* **Sharded and leveled IVF index**.
-+* **Sharded and leveled IVF index**: no data drift &amp; retraining, linear cluster cost, parallelizable.
- * **Approximate Nearest Neighbor Search** (ANNS) in a **Leveled IVF index**.
- * All **field filters** are directly active **during vector search**, not just as post-search filtering step.
- * SIMD (AVX2) acceleration for vector quantization and similarity calculation.
+@@ -236,8 +236,9 @@ impl Shard {
+                     }
+                 }
+             } else {
++                // `> idx` also avoids the usize underflow for a segment with no blocks yet.
+                 for segment in self.segments_index.iter_mut() {
+-                    if idx == segment.byte_array_blocks.len() - 1 {
++                    if segment.byte_array_blocks.len() > idx {
+                         segment.byte_array_blocks.remove(idx);
+                     }
+                 }
+@@ -248,7 +249,9 @@ impl Shard {
+                             && block.block_id as usize == idx
+                         {
+                             item.1.posting_count -= block.posting_count as u32 + 1;
+-                            item.1.blocks.remove(idx);
++                            // `blocks` holds one entry per level where the term occurs;
++                            // the incomplete level is always its last entry.
++                            item.1.blocks.pop();
+                         }
+                     }
+                     self.segments_index[key0]
+```
+
+**File**: `seekstorm/tests/rollback_incomplete_level.rs` (added, +256/-0)
+```diff
+@@ -0,0 +1,256 @@
++//! Regression test for the RAM-mode rollback of an incomplete index level.
++//!
++//! `ROARING_BLOCK_SIZE` is 65,536 and is not configurable, so the test pays for
++//! a real level boundary: 65,600 documents leave a 64-document incomplete
++//! second level, and every later write commit merges that level back into level
++//! 0 and rolls it back.
++//!
++//! Before the fix, the per-term part of that rollback in `commit_lexical_shard`
++//! called `item.1.blocks.remove(idx)`, although `blocks` holds one entry per
++//! level *where the term occurs* and not one entry per level id. For a term
++//! that first occurs in the incomplete level (`len == 1`) the call panicked
++//! with "removal index (is 1) should be < len (is 1)". The panic happened in
++//! the spawned commit task, so `commit` only reported the `JoinError`: the
++//! level index was left untouched while `byte_array_blocks` had already been
++//! truncated, and every later commit died with "index out of bounds: the len is
++//! 1 but the index is 1". The index stayed at the last full level while writes
++//! kept reporting success.
++//!
++//! The panics happen in spawned tasks, so the test installs a panic hook that
++//! records instead of printing and asserts that nothing was recorded.
++
++use seekstorm::prelude::*;
++use serde_json::Value;
++use std::sync::{Arc, Mutex};
++use std::time::{Duration, Instant};
++
++/// `ROARING_BLOCK_SIZE`, the number of documents per index level.
++const BOUNDARY: usize = 65_536;
++/// Two levels: one full and a 64-document incomplete one.
++const DOCUMENTS: usize = 65_600;
++/// Documents indexed between two commits.
++const PER_COMMIT: usize = 8;
++
++/// Minimal single-shard RAM configuration for the level-rollback regression.
++/// It is built by hand so that the environment cannot switch the test to the
++/// mmap path or to a different shard layout.
++fn index_config() -> IndexConfig {
++    IndexConfig {
++        id: 0,
++        name: "rollback_incomplete_level".into(),
++        lexical_similarity: LexicalSimilarity::Bm25f,
++        tokenizer: TokenizerType::UnicodeAlphanumeric,
++        stemmer: StemmerType::None,
++        stop_words: StopwordType::None,
++        frequent_words: FrequentwordType::None,
++        ngram_indexing: NgramSet::SingleTerm as u8,
++        document_compression: DocumentCompression::None,
++        access_type: AccessType::Ram,
++        spelling_correction: None,
++        query_completion: None,
++        clustering: Clustering::None,
++        inference: Inference::None,
++        segment_number_bits: 10,
++    }
++}
++
++fn schema() -> Vec<SchemaField> {
++    vec![
++        SchemaField::new("_id").store(true).index_lexical(false),
++        SchemaField::new("body").store(false).index_lexical(true),
++    ]
++}
++
++/// Every document carries `common`; documents past the level boundary also
++/// carry a unique `tail{id}` that exists only in the incomplete level - the
++/// term shape that tripped the 5.2.1 rollback.
++fn document(id: usize) -> Document {
++    let body = if id < BOUNDARY {
++        "common".to_string()
++    } else {
++        format!("common tail{id}")
++    };
++    let mut document = Document::default();
++    document.insert("_id".to_string(), Value::String(format!("doc{id}")));
++    document.insert("body".to_string(), Value::String(body));
++    document
++}
++
++/// Indexing is spawned on the index runtime and only bounded by a per-shard
++/// semaphore, so wait until every document reached the shard before committing.
++async fn wait_until_indexed(index: &IndexArc, expected: usize) {
++    let deadline = Instant::now() + Duration::from_secs(120);
++    loop {
++        let indexed = index.read().await.indexed_doc_count().await;
++        if indexed >= expected {
++            return;
++        }
++        assert!(
++            Instant::now() < deadline,
++            "indexing stalled at {indexed} of {expected} documents"
++        );
++        tokio::time::sleep(Duration::from_millis(5)).await;
++    }
++}
++
++async fn index_documents(index: &IndexArc, from: usize, to: usize) {
++    index
++        .index_documents((from..to).map(document).collect())
++        .await;
++    wait_until_indexed(index, to).await;
++}
++
++async fn committed_documents(index: &IndexArc) -> usize {
++    index.read().await.committed_doc_count().await
++}
++
++/// Exhaustive committed count: `length: 0` with `ResultType::Count` disables
++/// the top-k heap, so nothing is pruned.
++async fn committed_count(index: &IndexArc, query: &str) -> usize {
++    index
++        .search(SearchRequest {
++            query_string: query,
++            enable_empty_query: true,
++            length: 0,
++            result_type: ResultType::Count,
++            include_uncommitted: false,
++            ..SearchRequest::default()
++        })
++        .await
++        .count_total
++}
++
++/// A scratch index directory under the system temp dir, removed on drop.
++struct TempDir(std::path::PathBuf);
++
++impl TempDir {
++    fn new(name: &str) -> Self {
++        let unique 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #89** (2026-11-26): Fix panicking rollback of an incomplete level (RAM access type) (@kitalia)
 - **PR #87** (2026-09-12): union_docid_3 subset recursion and fixed cap may cause bug (@qkun-zh)
 - **PR #86** (2026-09-11): Fix the bug that there is no exemption for the heap that is not full (@qkun-zh)
 - **PR #85** (2026-09-11): Fix union_scan_32 overflows past 32 query terms (@qkun-zh)
 - **PR #84** (2026-09-11): Simplify union_count counting; drop seed sort (@qkun-zh)
 - **PR #83** (2026-09-08): Cut temp allocs in Shard::index_posting via SmallVec (@qkun-zh)
-- **PR #82** (2026-09-08): Write docstore pointer for empty docs (eliminate walk-back loop) (@qkun-zh)
 
 ---
 
@@ -2310,33 +2610,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update README.md
+## X. Empirical Invariant Guard in commit.rs
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `seekstorm/src/commit.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7fb1b21`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `71e34a45`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `seekstorm/src/commit.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-* **Leveled index.** Documents accumulate in RAM. Every 64k documents per shard form a level that is committed to disk and becomes immutable. Lexical and vector indices use the same layout, which is why there are no segment merges. 
-* **Vector engine.** An IVF index per level and shard, clustered with K-Medoid (PAM) instead of K-Means: cluster centers are actual data points. `nprobe` controls the recall/latency trade-off. Field filters are applied during the ANN search, not afterwards. **No data drift** &amp; medoid retraining, **cluster cost stays linear** with index size, parallelizable indexing &amp; search. No massive number of medoids and vectors of a global ANN index in RAM.
+                // `> idx` also avoids the usize underflow for a segment with no blocks yet.
+                    if segment.byte_array_blocks.len() > idx {
+                            // `blocks` holds one entry per level where the term occurs;
+                            // the incomplete level is always its last entry.
+                            item.1.blocks.pop();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-* **Leveled index.** Documents accumulate in RAM. Every 64k documents per shard form a level that is committed to disk and becomes immutable. Lexical and vector indices use the same layout, which is why there are no segment merges.
-* **Vector engine.** An IVF index per level and shard, clustered with K-Medoid (PAM) instead of K-Means: cluster centers are actual data points. `nprobe` controls the recall/latency trade-off. Field filters are applied during the ANN search, not afterwards.
+                    if idx == segment.byte_array_blocks.len() - 1 {
+                            item.1.blocks.remove(idx);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7fb1b21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `71e34a45` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

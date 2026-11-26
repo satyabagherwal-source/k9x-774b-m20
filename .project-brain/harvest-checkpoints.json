@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T23:00:02.649Z",
+  "last_updated": "2026-11-26T23:11:48.307Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1460,14 +1460,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "15f4b4ea8de989cc12d62f50d4027ed87cbc3a05d328a3e5ddb5050648433e24",
-      "verified_at": "2026-11-23T14:29:14.814Z",
+      "content_hash": "9a6f82ca70a6c978dd59cde9291fd55bad8cfd85b10e8940a9f4133f6d363700",
+      "verified_at": "2026-11-26T23:11:34.623Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T14:29:14.814Z"
+      "last_updated": "2026-11-26T23:11:34.623Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -5151,14 +5151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seekstorm-seekstorm",
-      "content_hash": "b68533ef62bd0c72753ecff297bfd2fa4eee969b101c735ce04516dec1f3ccf7",
-      "verified_at": "2026-11-25T02:56:14.080Z",
+      "content_hash": "0911e5de1ff9523495058647c3321cb041cd9ab909d3f0bcdfb54011948a2ca3",
+      "verified_at": "2026-11-26T23:11:48.306Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:56:14.080Z"
+      "last_updated": "2026-11-26T23:11:48.306Z"
     },
     "serafimcloud/21st": {
       "repository": "serafimcloud/21st",
@@ -6876,14 +6876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-builderio-builder",
-      "content_hash": "d7c7da30a2e9776e8e528997b8a1b32fc66447f34fa6e81846a06e9e779040b3",
-      "verified_at": "2026-11-24T14:59:39.466Z",
+      "content_hash": "8033e7264ab93c06f3b8d98247b98d7c5c2c73e4cf24fdc654437068ef64802c",
+      "verified_at": "2026-11-26T23:11:40.762Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:59:39.466Z"
+      "last_updated": "2026-11-26T23:11:40.762Z"
     },
     "gocrane/crane": {
       "repository": "gocrane/crane",
@@ -19971,14 +19971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-el4cteo-fast-anything",
-      "content_hash": "d26d749e17c63d43325332b90d5b2108d6ef765f75a0f57c1b7b033bb0b987c8",
-      "verified_at": "2026-11-24T15:17:14.591Z",
+      "content_hash": "61e82582957375dd13a5a476590ce96d71164bb38c59c719dad282c8b65ece46",
+      "verified_at": "2026-11-26T23:11:36.407Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:17:14.591Z"
+      "last_updated": "2026-11-26T23:11:36.408Z"
     },
     "daveebbelaar/bama": {
       "repository": "daveebbelaar/bama",

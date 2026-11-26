@@ -1105,8 +1105,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "15f4b4ea8de989cc12d62f50d4027ed87cbc3a05d328a3e5ddb5050648433e24",
-    "lastHarvestedAt": "2026-11-23T14:29:14.804Z",
+    "contentHash": "9a6f82ca70a6c978dd59cde9291fd55bad8cfd85b10e8940a9f4133f6d363700",
+    "lastHarvestedAt": "2026-11-26T23:11:34.602Z",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2"
   },
   "hf-baai-bge-reranker-v2-m3": {
@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "d7fb1b21",
+    "sourceVersion": "71e34a45",
     "license": "Apache-2.0",
-    "contentHash": "b68533ef62bd0c72753ecff297bfd2fa4eee969b101c735ce04516dec1f3ccf7",
-    "lastHarvestedAt": "2026-11-25T02:56:14.072Z",
+    "contentHash": "0911e5de1ff9523495058647c3321cb041cd9ab909d3f0bcdfb54011948a2ca3",
+    "lastHarvestedAt": "2026-11-26T23:11:48.279Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -4503,10 +4503,10 @@
     "repository": "BuilderIO/builder",
     "platform": "github",
     "sourceUrl": "https://github.com/BuilderIO/builder",
-    "sourceVersion": "0b87ae3c",
+    "sourceVersion": "0e20faf6",
     "license": "MIT",
-    "contentHash": "d7c7da30a2e9776e8e528997b8a1b32fc66447f34fa6e81846a06e9e779040b3",
-    "lastHarvestedAt": "2026-11-24T14:59:39.450Z",
+    "contentHash": "8033e7264ab93c06f3b8d98247b98d7c5c2c73e4cf24fdc654437068ef64802c",
+    "lastHarvestedAt": "2026-11-26T23:11:40.726Z",
     "learningId": "learn-github-builderio-builder"
   },
   "gocrane-crane": {
@@ -13233,10 +13233,10 @@
     "repository": "EL4CTEO/fast-anything",
     "platform": "github",
     "sourceUrl": "https://github.com/EL4CTEO/fast-anything",
-    "sourceVersion": "1fdf12ef",
+    "sourceVersion": "d9b39f50",
     "license": "MIT",
-    "contentHash": "d26d749e17c63d43325332b90d5b2108d6ef765f75a0f57c1b7b033bb0b987c8",
-    "lastHarvestedAt": "2026-11-24T15:17:14.574Z",
+    "contentHash": "61e82582957375dd13a5a476590ce96d71164bb38c59c719dad282c8b65ece46",
+    "lastHarvestedAt": "2026-11-26T23:11:36.380Z",
     "learningId": "learn-github-el4cteo-fast-anything"
   },
   "daveebbelaar-bama": {

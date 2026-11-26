@@ -13621,3 +13621,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-26T22:59:47.719Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `3dc49738` | Multi-dimensional audit evidence | 2026-11-26T22:59:57.322Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `91fdde93` | Multi-dimensional audit evidence | 2026-11-26T23:00:02.629Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-26T23:11:34.602Z |
+| `learn-github-el4cteo-fast-anything` | `https://github.com/EL4CTEO/fast-anything` | `d9b39f50` | Multi-dimensional audit evidence | 2026-11-26T23:11:36.380Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `0e20faf6` | Multi-dimensional audit evidence | 2026-11-26T23:11:40.726Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `71e34a45` | Multi-dimensional audit evidence | 2026-11-26T23:11:48.279Z |

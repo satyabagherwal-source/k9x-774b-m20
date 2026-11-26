@@ -13588,3 +13588,7 @@
 | `CYCLE-20261126-NGQR` | `2026-11-26T22:59:47.715Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`17dcd681...`) |
 | `CYCLE-20261126-NO5I` | `2026-11-26T22:59:57.318Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`ad834bff...`) |
 | `CYCLE-20261126-NS8W` | `2026-11-26T23:00:02.624Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10788` | Yes (`20c54337...`) |
+| `CYCLE-20261126-2M6D` | `2026-11-26T23:11:34.597Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`9a6f82ca...`) |
+| `CYCLE-20261126-2NJR` | `2026-11-26T23:11:36.375Z` | `EL4CTEO/fast-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10789` | Yes (`61e82582...`) |
+| `CYCLE-20261126-2QWH` | `2026-11-26T23:11:40.721Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10790` | Yes (`8033e726...`) |
+| `CYCLE-20261126-2WQA` | `2026-11-26T23:11:48.274Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10791` | Yes (`0911e5de...`) |

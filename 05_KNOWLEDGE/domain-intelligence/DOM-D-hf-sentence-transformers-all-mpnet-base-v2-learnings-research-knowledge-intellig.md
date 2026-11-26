@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T14:29:27.251Z",
+  "timestamp": "2026-11-26T23:11:53.572Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-sentence-transformers-all-mpnet-base-v2-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-sentence-transformers-all-mpnet-base-v2-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T14:29:27.251Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T23:11:53.572Z`  
 > **Learning ID**: `LEARN-EVO-hf-sentence-transformers-all-mpnet-base-v2-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-sentence-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T14:29:14.249Z  
+> **Timestamp**: 2026-11-26T23:11:33.844Z  
 > **Learning ID**: `learn-huggingface-sentence-transformers-all-mpnet-base-v2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sentence-transformers/all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:29:14.084Z  
+> **Harvest Timestamp**: 2026-11-26T23:11:33.737Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: sentence-similarity
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 19060019 downloads | 1412 likes
+- **Stars / Engagement**: 19087203 downloads | 1412 likes
 
 ---
 

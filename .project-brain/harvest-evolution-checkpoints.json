@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:00:09.461Z",
+  "last_updated": "2026-11-26T23:11:55.441Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T21:44:28.492Z",
@@ -2428,7 +2428,7 @@
       "staged_for_review": 0
     },
     "builderio-builder-learnings.md": {
-      "processed_at": "2026-11-24T14:59:48.913Z",
+      "processed_at": "2026-11-26T23:11:54.041Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2493,7 +2493,7 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-all-mpnet-base-v2-learnings.md": {
-      "processed_at": "2026-11-23T14:29:27.118Z",
+      "processed_at": "2026-11-26T23:11:53.392Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3748,7 +3748,7 @@
       "staged_for_review": 0
     },
     "el4cteo-fast-anything-learnings.md": {
-      "processed_at": "2026-11-24T15:17:33.960Z",
+      "processed_at": "2026-11-26T23:11:52.204Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4008,7 +4008,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4707,
+  "total_dossiers_evaluated": 4710,
   "total_canonical_promoted": 569,
-  "total_staged_for_review": 3533
+  "total_staged_for_review": 3535
 }

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-MPPC",
-    "timestamp": "2026-11-25T11:59:41.472Z",
-    "repository": "thinkingmachines/TML-d24-varloop-research",
-    "learningId": "learn-huggingface-thinkingmachines-tml-d24-varloop-research",
-    "contentHash": "1fab3abe4b34b941259aaef95459d2b171630206a0cc55207138341131725106",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-MRO6",
-    "timestamp": "2026-11-25T11:59:44.022Z",
-    "repository": "LiquidAI/LFM3-VL-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-    "contentHash": "e74378776e8b4db3a07115390c287c2011213003dc1e00ebd7333cd32c783101",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-MXEF",
-    "timestamp": "2026-11-25T11:59:51.447Z",
-    "repository": "jellyfin/Swiftfin",
-    "learningId": "learn-github-jellyfin-swiftfin",
-    "contentHash": "ec8be559662d1a264e67b067acb054890de1635aac3f189bae1c0cd019420cf4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-MZEL",
-    "timestamp": "2026-11-25T11:59:54.045Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "e2041a3c7a36e43da191ced2e386c01decd71a5cb1c6752502d5385b1307a6e2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-N1EU",
     "timestamp": "2026-11-25T11:59:56.646Z",
     "repository": "freenet/freenet-core",
@@ -7490,6 +7430,66 @@
     "repository": "doobidoo/mcp-memory-service",
     "learningId": "learn-github-doobidoo-mcp-memory-service",
     "contentHash": "20c54337607ccbc4738db08046bd402cb71880387ad26b3127924e543447fe27",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-2M6D",
+    "timestamp": "2026-11-26T23:11:34.597Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "9a6f82ca70a6c978dd59cde9291fd55bad8cfd85b10e8940a9f4133f6d363700",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-2NJR",
+    "timestamp": "2026-11-26T23:11:36.375Z",
+    "repository": "EL4CTEO/fast-anything",
+    "learningId": "learn-github-el4cteo-fast-anything",
+    "contentHash": "61e82582957375dd13a5a476590ce96d71164bb38c59c719dad282c8b65ece46",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-2QWH",
+    "timestamp": "2026-11-26T23:11:40.721Z",
+    "repository": "BuilderIO/builder",
+    "learningId": "learn-github-builderio-builder",
+    "contentHash": "8033e7264ab93c06f3b8d98247b98d7c5c2c73e4cf24fdc654437068ef64802c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-2WQA",
+    "timestamp": "2026-11-26T23:11:48.274Z",
+    "repository": "SeekStorm/SeekStorm",
+    "learningId": "learn-github-seekstorm-seekstorm",
+    "contentHash": "0911e5de1ff9523495058647c3321cb041cd9ab909d3f0bcdfb54011948a2ca3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

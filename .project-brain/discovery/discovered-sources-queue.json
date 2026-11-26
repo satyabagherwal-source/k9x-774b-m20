@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T23:00:08.423Z",
+  "updated_at": "2026-11-26T23:11:54.305Z",
   "stats": {
-    "total_discovered": 10091,
-    "approved_pending_harvest": 9568,
+    "total_discovered": 10092,
+    "approved_pending_harvest": 9569,
     "harvested_count": 0,
     "rejected_count": 523,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9571,
+      "COMMUNITY_AND_EXPERT": 9572,
       "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -218368,6 +218368,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
         "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-E298DD549DBE": {
+      "id": "SRC-E298DD549DBE",
+      "url": "https://builder-io.atlassian.net/browse/ENG-12316",
+      "title": "https://builder-io.atlassian.net/browse/ENG-12316",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T23:11:54.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/builderio-builder-learnings.md",
+        "fileName": "builderio-builder-learnings.md"
       }
     }
   }
