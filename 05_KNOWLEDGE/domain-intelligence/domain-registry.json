@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T19:37:28.643Z",
+  "last_updated": "2026-11-26T19:45:57.576Z",
   "total_records": 2772,
   "domains": {
     "A": {
@@ -8542,8 +8542,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "a6af30d02eab931f3d04416cbeb99cffa4c66f399617b2b3e6260b7665447ff4",
-      "created_at": "2026-11-26T19:16:50.047Z"
+      "content_hash": "50c133d4d78bbd03ac7107a889286b34d8dea4983a854a0852e12e67616e1a4a",
+      "created_at": "2026-11-26T19:45:56.450Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -13108,8 +13108,8 @@
       "title": "Research & Knowledge Intelligence: Tongyi-MAI/Z-Image-Turbo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tongyi-mai-z-image-turbo-research-knowledge-intelligence-tongyi-mai-z-image-t.md",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "content_hash": "794ef69c282305da0f30562aab0f0cd05ee96e96b434bea62ae2ead53e3a3f18",
-      "created_at": "2026-11-23T06:14:13.251Z"
+      "content_hash": "a74c8a0190019baac8426588a5848631ac333cf3fc15128e3fecfafa491986bb",
+      "created_at": "2026-11-26T19:45:43.561Z"
     },
     "DOM-D-38E3B6C2": {
       "record_id": "DOM-D-38E3B6C2",
@@ -13159,8 +13159,8 @@
       "title": "Research & Knowledge Intelligence: hf-tongyi-mai-z-image-turbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tongyi-mai-z-image-turbo-learnings-research-knowledge-intelligence-hf-tongyi-.md",
       "repository": "hf-tongyi-mai-z-image-turbo-learnings",
-      "content_hash": "8c4d0aed01b88d4a7d204e7e5cc8e22e15a3926629c4247111ecf216178a7c07",
-      "created_at": "2026-11-23T06:14:29.762Z"
+      "content_hash": "cf8d63b38e15481887c986a0bf59e3bd6d54c41ad5cee5ad577c532a3049fa61",
+      "created_at": "2026-11-26T19:45:55.555Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-2-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-2-5-core-invariants",
@@ -15563,8 +15563,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "eeb4748da47274d366352e926cafd1d3023557287eb007d65e83d4f03995d043",
-      "created_at": "2026-11-26T04:22:44.934Z"
+      "content_hash": "5d2a7021ee93d1ab740274aebfc3d561055c6b0b6d5de330ca6d620298bc2695",
+      "created_at": "2026-11-26T19:45:57.576Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",

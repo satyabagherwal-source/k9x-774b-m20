@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T19:37:26.495Z",
-    "lastVerified": "2026-11-26T19:37:26.495Z",
+    "lastChecked": "2026-11-26T19:45:55.157Z",
+    "lastVerified": "2026-11-26T19:45:55.157Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T19:07:46.262Z",
+    "lastChecked": "2026-11-26T19:45:55.148Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T19:07:46.262Z"
+    "lastVerified": "2026-11-26T19:45:55.148Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -478,8 +478,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T15:38:06.739Z",
-    "lastVerified": "2026-11-26T15:38:06.739Z",
+    "lastChecked": "2026-11-26T19:45:50.139Z",
+    "lastVerified": "2026-11-26T19:45:50.139Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2439,12 +2439,12 @@
     "revisionIdentifier": "f2c57796"
   },
   "paradedb-paradedb": {
-    "name": "paradedb/paradedb",
+    "name": "paradedb",
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T01:18:03.639Z",
-    "lastVerified": "2026-11-26T01:18:03.639Z",
+    "lastChecked": "2026-11-26T19:45:52.673Z",
+    "lastVerified": "2026-11-26T19:45:52.673Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
@@ -2453,7 +2453,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "da0ea446"
   },
   "sayanarijit-xplr": {
     "name": "xplr",
@@ -2678,9 +2679,9 @@
   "welldone-software-why-did-you-render": {
     "name": "why-did-you-render",
     "officialUrl": "https://github.com/welldone-software/why-did-you-render",
-    "lastChecked": "2026-11-24T11:44:22.127Z",
+    "lastChecked": "2026-11-26T19:45:45.255Z",
     "revisionIdentifier": "3ec3512d",
-    "lastVerified": "2026-11-24T11:44:22.127Z"
+    "lastVerified": "2026-11-26T19:45:45.255Z"
   },
   "goodrain-rainbond": {
     "name": "goodrain/rainbond",
@@ -3748,9 +3749,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-25T12:39:03.344Z",
+    "lastChecked": "2026-11-26T19:45:40.123Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-25T12:39:03.344Z"
+    "lastVerified": "2026-11-26T19:45:40.123Z"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -4693,12 +4694,12 @@
     "officialUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T06:14:12.123Z",
-    "lastVerified": "2026-11-23T06:14:12.123Z",
+    "lastChecked": "2026-11-26T19:45:42.655Z",
+    "lastVerified": "2026-11-26T19:45:42.655Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "ed34a30a206eb8363a28cdd5bd91c0b9b803b93c9d3ff38dadca44448a255e70",
+    "contentHash": "f8e6e397b50d53ff1c47ceebde042d831b5f6dddd8611ab850402e416bdfc84e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5569,12 +5570,12 @@
     "lastVerified": "2026-11-24T18:43:23.403Z"
   },
   "bridgecrewio-checkov": {
-    "name": "bridgecrewio/checkov",
+    "name": "checkov",
     "officialUrl": "https://github.com/bridgecrewio/checkov",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-26T02:09:42.291Z",
-    "lastVerified": "2026-11-26T02:09:42.291Z",
+    "lastChecked": "2026-11-26T19:45:47.665Z",
+    "lastVerified": "2026-11-26T19:45:47.665Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bridgecrewio-checkov",
@@ -5583,7 +5584,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a8ee1c49"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",

@@ -13567,3 +13567,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-26T19:37:07.053Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `c3d07784` | Multi-dimensional audit evidence | 2026-11-26T19:37:18.522Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `f1fb8936` | Multi-dimensional audit evidence | 2026-11-26T19:37:23.127Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-26T19:45:43.333Z |

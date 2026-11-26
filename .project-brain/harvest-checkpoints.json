@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T19:37:23.150Z",
+  "last_updated": "2026-11-26T19:45:43.348Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1160,14 +1160,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "content_hash": "ed34a30a206eb8363a28cdd5bd91c0b9b803b93c9d3ff38dadca44448a255e70",
-      "verified_at": "2026-11-23T06:14:12.927Z",
+      "content_hash": "f8e6e397b50d53ff1c47ceebde042d831b5f6dddd8611ab850402e416bdfc84e",
+      "verified_at": "2026-11-26T19:45:43.347Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T06:14:12.927Z"
+      "last_updated": "2026-11-26T19:45:43.347Z"
     },
     "meta-llama/Meta-Llama-3-8B-Instruct": {
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-J8FD",
-    "timestamp": "2026-11-25T08:13:02.185Z",
-    "repository": "KRAFTON/Raon-1-mini-preview",
-    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-    "contentHash": "5f5ea678a6238dab1be0b96c9e232c2fff9c77e2c768c07cfb6838db74b3f55a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-JMFF",
     "timestamp": "2026-11-25T08:13:20.331Z",
     "repository": "arangodb/arangodb",
@@ -7492,6 +7477,21 @@
     "contentHash": "d6129c26a8b5897893a854e9d465066929875dbc597ba6897a3b1fb9d378268d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-PVVL",
+    "timestamp": "2026-11-26T19:45:43.329Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "f8e6e397b50d53ff1c47ceebde042d831b5f6dddd8611ab850402e416bdfc84e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

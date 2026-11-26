@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T19:37:28.844Z",
+  "last_updated": "2026-11-26T19:45:57.758Z",
   "total_verified_learnings": 9133,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a6af30d02eab931f3d04416cbeb99cffa4c66f399617b2b3e6260b7665447ff4",
+      "content_hash": "50c133d4d78bbd03ac7107a889286b34d8dea4983a854a0852e12e67616e1a4a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:16:50.047Z"
+      "persisted_at": "2026-11-26T19:45:56.450Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1cb4636077f9b68ecfd15a2151380938c104988de29d8085e0ac066de8446696",
+      "content_hash": "e8184f477ca26b50510e09fa601b96d3374403fc965007096d4ab20c030404ff",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:16:50.250Z"
+      "persisted_at": "2026-11-26T19:45:56.632Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0aedb803457ab00fba72d147598b90a9caa955c03306606aa72b25a78a6c868e",
+      "content_hash": "040a71cdc53a250529617c480c303c4c4f45169cdec73be32b2346ca492fd9ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T19:16:50.418Z"
+      "persisted_at": "2026-11-26T19:45:56.785Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -222822,7 +222822,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "ed34a30a206eb8363a28cdd5bd91c0b9b803b93c9d3ff38dadca44448a255e70",
+      "content_hash": "f8e6e397b50d53ff1c47ceebde042d831b5f6dddd8611ab850402e416bdfc84e",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [],
@@ -222831,7 +222831,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T06:14:12.600Z",
+      "verified_at": "2026-11-26T19:45:43.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222848,9 +222848,9 @@
       "title": "Research & Knowledge Intelligence: Tongyi-MAI/Z-Image-Turbo Core Invariants",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "794ef69c282305da0f30562aab0f0cd05ee96e96b434bea62ae2ead53e3a3f18",
+      "content_hash": "a74c8a0190019baac8426588a5848631ac333cf3fc15128e3fecfafa491986bb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T06:14:13.251Z"
+      "persisted_at": "2026-11-26T19:45:43.561Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-tongyi-mai-z-image-turbo-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-tongyi-mai-z-image-turbo-learnings-core-invar",
@@ -222860,9 +222860,9 @@
       "title": "Research & Knowledge Intelligence: hf-tongyi-mai-z-image-turbo-learnings Core Invariants",
       "repository": "hf-tongyi-mai-z-image-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c4d0aed01b88d4a7d204e7e5cc8e22e15a3926629c4247111ecf216178a7c07",
+      "content_hash": "cf8d63b38e15481887c986a0bf59e3bd6d54c41ad5cee5ad577c532a3049fa61",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T06:14:29.762Z"
+      "persisted_at": "2026-11-26T19:45:55.555Z"
     },
     "learn-huggingface-meituan-longcat-longcat-2-5": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-2-5",
@@ -230061,9 +230061,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "eeb4748da47274d366352e926cafd1d3023557287eb007d65e83d4f03995d043",
+      "content_hash": "5d2a7021ee93d1ab740274aebfc3d561055c6b0b6d5de330ca6d620298bc2695",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:22:44.934Z"
+      "persisted_at": "2026-11-26T19:45:57.576Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230073,9 +230073,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "2316761721e11f9cbf70e25389e88ee39d2dbb7e76a2de1a98313dd2d101a8b0",
+      "content_hash": "dc1776dcd8cea7d07f790d2afc06ee4f0bd0525c7974370577398be9f524ab74",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:22:45.110Z"
+      "persisted_at": "2026-11-26T19:45:57.758Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -349599,13 +349599,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WLKQ-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q6OZ-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "238c3fa4f14f1eb5ae8dcfd18f2b977eb3d07d7dbe815e8051922fa4874491cf",
+      "content_hash": "e538212f8eaebd1094114630fe31184e75abd01b82160359289ddec7ac635eb7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T17:30:58.490Z"
+      "persisted_at": "2026-11-26T19:45:57.348Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -352415,13 +352415,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OQAW-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q5UU-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8f7499efa9078448858deee89d79abda550960ef02475a8a2526de93bd5dd51",
+      "content_hash": "d08007a11fa05a9670712863eda85f0916fef2d05381766119fc494efe2eef2b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:16:49.832Z"
+      "persisted_at": "2026-11-26T19:45:56.262Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",
