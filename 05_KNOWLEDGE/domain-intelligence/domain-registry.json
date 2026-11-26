@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T01:45:20.158Z",
+  "last_updated": "2026-11-26T01:53:43.750Z",
   "total_records": 2699,
   "domains": {
     "A": {
@@ -8682,8 +8682,8 @@
       "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
       "repository": "crossplane/crossplane",
-      "content_hash": "07f81b2eeb3fd099175f56e9b26e470a128daa74fcc001209a4b17ada6eaadd0",
-      "created_at": "2026-11-25T01:27:00.847Z"
+      "content_hash": "93aa278f514fc391e6c9410aeba6ad2a9a15bb8f663d7ece8b74df00cc1434d2",
+      "created_at": "2026-11-26T01:53:33.801Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
@@ -8760,8 +8760,8 @@
       "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-learnings-content-information-intelligence-crossplane-cros.md",
       "repository": "crossplane-crossplane-learnings",
-      "content_hash": "38a93da975622a89cb64290dc3b2ab5b84599b886bc90382d099913e5ddf430e",
-      "created_at": "2026-11-25T01:27:36.068Z"
+      "content_hash": "a4f42102cd32e93519265a53a98ad590d6a49878bc1bd8a20ae21a6d66815f8c",
+      "created_at": "2026-11-26T01:53:42.358Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
@@ -12126,8 +12126,8 @@
       "title": "Architecture Intelligence: crate/crate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-architecture-intelligence-crate-crate-core-invariants.md",
       "repository": "crate/crate",
-      "content_hash": "5ccba5a79fa590f56c724e86bbe66a44e4cb526df404f7912f92a0c8acf721c7",
-      "created_at": "2026-11-24T03:58:41.695Z"
+      "content_hash": "940df3c95314ea4112ba8c7a673124dfd5bb0eb6fab46fc8b5f7cfec7bba7534",
+      "created_at": "2026-11-26T01:53:38.319Z"
     },
     "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants",
@@ -29667,8 +29667,8 @@
       "title": "Research & Knowledge Intelligence: audio-cpp/audio.cpp-gguf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-audio-cpp-audio-cpp-gguf-research-knowledge-intelligence-audio-cpp-audio-cpp-.md",
       "repository": "audio-cpp/audio.cpp-gguf",
-      "content_hash": "d7fcfb85792cb1a2f4d948ce4c0ce27269cbf21adac9d0e964cd69fb78fe760b",
-      "created_at": "2026-11-22T05:04:28.460Z"
+      "content_hash": "ac5d7f34f471aba0d658f07d3b8466d58443e883a0d1dc41e280d7897d25f958",
+      "created_at": "2026-11-26T01:53:24.345Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-audio-cpp-audio-cpp-gguf-learnings-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-audio-cpp-audio-cpp-gguf-learnings-core-invar",
@@ -29676,8 +29676,8 @@
       "title": "Research & Knowledge Intelligence: hf-audio-cpp-audio.cpp-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-audio-cpp-audio-cpp-gguf-learnings-research-knowledge-intelligence-hf-audio-c.md",
       "repository": "hf-audio-cpp-audio.cpp-gguf-learnings",
-      "content_hash": "3bfac38c772534b2e92f0e841218bbd0c83ec4b82f84248690182d3e9c89c9d7",
-      "created_at": "2026-11-22T05:04:40.253Z"
+      "content_hash": "7cce26bb0e85f9c5d814fe3991d7e2002b95c9c674979c8a41550de485f03bb4",
+      "created_at": "2026-11-26T01:53:41.546Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-dev-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-dev-core-invariants",
@@ -32020,8 +32020,8 @@
       "title": "Technical Construction Intelligence: smallstep/cli Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-smallstep-cli-technical-construction-intelligence-smallstep-cli-core-invariants.md",
       "repository": "smallstep/cli",
-      "content_hash": "0e501eba9bd28c78345c3965461e1228f88721e0c035982fc09f7a95d5dd3dfc",
-      "created_at": "2026-11-23T20:30:44.364Z"
+      "content_hash": "4c0b0dacadc6636d10760cbe3277952dab8a869f9bdb7d7b2bacb6be528e8c8e",
+      "created_at": "2026-11-26T01:53:36.210Z"
     },
     "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants",
@@ -32029,8 +32029,8 @@
       "title": "Technical Construction Intelligence: smallstep-cli-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-smallstep-cli-learnings-technical-construction-intelligence-smallstep-cli-learni.md",
       "repository": "smallstep-cli-learnings",
-      "content_hash": "ecdb8baa9261b5a65b531d809afdc738cc5b121e76d4689ef7b6a367abd356a9",
-      "created_at": "2026-11-23T20:30:49.767Z"
+      "content_hash": "989089506ebe7fbb546c6d82e9c5c1539fa911af704508afe1369f2490d2fa32",
+      "created_at": "2026-11-26T01:53:43.750Z"
     },
     "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants",

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-audio-cpp`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T05:04:27.482Z  
+> **Timestamp**: 2026-11-26T01:53:23.571Z  
 > **Learning ID**: `learn-huggingface-audio-cpp-audio-cpp-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/audio-cpp/audio.cpp-gguf](https://huggingface.co/audio-cpp/audio.cpp-gguf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T05:04:27.351Z  
+> **Harvest Timestamp**: 2026-11-26T01:53:23.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9842687 downloads | 338 likes
+- **Stars / Engagement**: 10014231 downloads | 343 likes
 
 ---
 

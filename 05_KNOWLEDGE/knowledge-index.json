@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T01:45:20.317Z",
+  "last_updated": "2026-11-26T01:53:43.944Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25607,
+  "total_items": 25612,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112569,10 +112569,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
       "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
       "repository": "crossplane/crossplane",
-      "source_version": "facf2896",
-      "content_hash": "07f81b2eeb3fd099175f56e9b26e470a128daa74fcc001209a4b17ada6eaadd0",
+      "source_version": "af8beda6",
+      "content_hash": "93aa278f514fc391e6c9410aeba6ad2a9a15bb8f663d7ece8b74df00cc1434d2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T01:27:00.847Z"
+      "persisted_at": "2026-11-26T01:53:33.801Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane",
@@ -112581,10 +112581,10 @@
       "relative_path": "08_VERIFICATION/crossplane-crossplane-verification-protocol-empirical-defect-shield-for-crosspla.md",
       "title": "Verification Protocol: Empirical Defect Shield for crossplane/crossplane",
       "repository": "crossplane/crossplane",
-      "source_version": "2088737a",
-      "content_hash": "a55582066653af8061cc8c5f3235b3046b0a73193468e4e1f2942fd9c8f01647",
+      "source_version": "af8beda6",
+      "content_hash": "3a94bb5f8c57cfed0005a7c581100a4c488d8b1b5a16f3ded827f38bff110150",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T04:15:42.600Z"
+      "persisted_at": "2026-11-26T01:53:33.974Z"
     },
     "candidate_directive-handle-stop_sending-in-raw-quic-mode-8594": {
       "item_id": "candidate_directive-handle-stop_sending-in-raw-quic-mode-8594",
@@ -112690,9 +112690,9 @@
       "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
       "repository": "crossplane-crossplane-learnings",
       "source_version": "HEAD",
-      "content_hash": "38a93da975622a89cb64290dc3b2ab5b84599b886bc90382d099913e5ddf430e",
+      "content_hash": "a4f42102cd32e93519265a53a98ad590d6a49878bc1bd8a20ae21a6d66815f8c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T01:27:36.068Z"
+      "persisted_at": "2026-11-26T01:53:42.358Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane-learning",
@@ -112702,9 +112702,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crossplane-crossplane-learnings",
       "repository": "crossplane-crossplane-learnings",
       "source_version": "HEAD",
-      "content_hash": "a514021e4125258b5eb24c454292e5dbc9c3d15a4db6a104c04608daa9fa7043",
+      "content_hash": "1d6f566b45be1d86d318ee1f570471e45a6d802b630338d19da7b350549b3c99",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T04:20:40.402Z"
+      "persisted_at": "2026-11-26T01:53:42.542Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
@@ -219731,8 +219731,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "364278b1",
-      "content_hash": "1ec39489f42249c153e218b1c8f93e77295303415e0d19b591076fa8cd9d38be",
+      "source_version": "77a83f3b",
+      "content_hash": "38017b8e107eef76b2d31c874da7f1c8efe44694afec9f36791a12855be575d2",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -219770,6 +219770,11 @@
           "number": 10401,
           "title": "SHOW CREATE TABLE output for geo_point literals",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10583,
+          "title": "object type comparison of same size with null values",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219777,7 +219782,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:26:52.292Z",
+      "verified_at": "2026-11-26T01:53:37.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219819,10 +219824,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-architecture-intelligence-crate-crate-core-invariants.md",
       "title": "Architecture Intelligence: crate/crate Core Invariants",
       "repository": "crate/crate",
-      "source_version": "2799f146",
-      "content_hash": "5ccba5a79fa590f56c724e86bbe66a44e4cb526df404f7912f92a0c8acf721c7",
+      "source_version": "77a83f3b",
+      "content_hash": "940df3c95314ea4112ba8c7a673124dfd5bb0eb6fab46fc8b5f7cfec7bba7534",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T03:58:41.695Z"
+      "persisted_at": "2026-11-26T01:53:38.319Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate",
@@ -219831,10 +219836,10 @@
       "relative_path": "08_VERIFICATION/crate-crate-verification-protocol-empirical-defect-shield-for-crate-crate.md",
       "title": "Verification Protocol: Empirical Defect Shield for crate/crate",
       "repository": "crate/crate",
-      "source_version": "364278b1",
-      "content_hash": "763b5443af6207fc9a3fb7d28d76a95977cc2df40cc0c3abe5269d9921d575b7",
+      "source_version": "77a83f3b",
+      "content_hash": "abca31c7b4fe0151f2a3bd258812cf17b8855df479c54421ffc07c857d21364a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:26:53.409Z"
+      "persisted_at": "2026-11-26T01:53:38.497Z"
     },
     "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action": {
       "item_id": "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action",
@@ -220876,13 +220881,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6YE1-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FAFI-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "sharkdp-fd-learnings",
+      "repository": "smallstep-cli-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a64ce28a5702397975bfd0798296872d6e7f303d1b2f167c885dd9b033eafde",
+      "content_hash": "6d928d57b0d9ac59dd1536056d3620166368d36af1868bf4990fa301d3abda57",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T06:39:30.461Z"
+      "persisted_at": "2026-11-26T01:53:43.569Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -241385,14 +241390,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8545,
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "2e8648f1",
+      "source_url": "https://github.com/smallstep/cli",
+      "source_version": "40c1f2bb",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-25T06:39:13.759Z"
+      "verified_at": "2026-11-26T01:53:35.530Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -257520,8 +257525,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "2088737a",
-      "content_hash": "1e688fac61c0252da66c67396dbdedd12eda57fededb15674ff2f8cf238f7a32",
+      "source_version": "af8beda6",
+      "content_hash": "93029d21bce8e68e208b87be4c35007ac596f039d9492d12aacf57c581883029",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -257544,6 +257549,11 @@
           "number": 9726,
           "title": "Call out package runtime image validation in our security non-goals",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10582,
+          "title": "update module github.com/crossplane/crossplane/apis/v2 to v2.5.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -257551,7 +257561,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T04:15:41.879Z",
+      "verified_at": "2026-11-26T01:53:33.127Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -284477,7 +284487,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
       "source_version": "hf-audio-cpp-audio.cpp-gguf",
-      "content_hash": "ea4b785610ed95d818ef82800be44dedc263ac6ded6f10e9b5e2708f2abb104b",
+      "content_hash": "5488245aac775509a9818d73be8ee766e54ca453ed332497117ef7d5552e8262",
       "dossier_path": "07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md",
       "promoted_rules": [],
@@ -284486,7 +284496,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T05:04:27.823Z",
+      "verified_at": "2026-11-26T01:53:23.858Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -284503,9 +284513,9 @@
       "title": "Research & Knowledge Intelligence: audio-cpp/audio.cpp-gguf Core Invariants",
       "repository": "audio-cpp/audio.cpp-gguf",
       "source_version": "hf-audio-cpp-audio.cpp-gguf",
-      "content_hash": "d7fcfb85792cb1a2f4d948ce4c0ce27269cbf21adac9d0e964cd69fb78fe760b",
+      "content_hash": "ac5d7f34f471aba0d658f07d3b8466d58443e883a0d1dc41e280d7897d25f958",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T05:04:28.460Z"
+      "persisted_at": "2026-11-26T01:53:24.345Z"
     },
     "rule-9075": {
       "learning_id": "rule-9075",
@@ -284579,9 +284589,9 @@
       "title": "Research & Knowledge Intelligence: hf-audio-cpp-audio.cpp-gguf-learnings Core Invariants",
       "repository": "hf-audio-cpp-audio.cpp-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "3bfac38c772534b2e92f0e841218bbd0c83ec4b82f84248690182d3e9c89c9d7",
+      "content_hash": "7cce26bb0e85f9c5d814fe3991d7e2002b95c9c674979c8a41550de485f03bb4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T05:04:40.253Z"
+      "persisted_at": "2026-11-26T01:53:41.546Z"
     },
     "learn-huggingface-black-forest-labs-flux-1-dev": {
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
@@ -293751,11 +293761,16 @@
       "slug": "smallstep-cli",
       "platform": "github",
       "source_url": "https://github.com/smallstep/cli",
-      "source_version": "941a292b",
-      "content_hash": "2c55dd0b0ee93563ec8c6c2026d09af04440f3ab0748a81ea889b40bb28604ee",
+      "source_version": "40c1f2bb",
+      "content_hash": "c8630a36ed8a084512c4e348a9ad97b9a399fb2d805e8fd8d896050ab4fa3229",
       "dossier_path": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "promoted_rules": [
+        {
+          "number": 8545,
+          "title": "Empirical Invariant Guard in CHANGELOG.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8879,
           "title": "Empirical Invariant Guard in go.mod",
@@ -293772,7 +293787,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:30:43.666Z",
+      "verified_at": "2026-11-26T01:53:35.530Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -293788,10 +293803,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-smallstep-cli-technical-construction-intelligence-smallstep-cli-core-invariants.md",
       "title": "Technical Construction Intelligence: smallstep/cli Core Invariants",
       "repository": "smallstep/cli",
-      "source_version": "941a292b",
-      "content_hash": "0e501eba9bd28c78345c3965461e1228f88721e0c035982fc09f7a95d5dd3dfc",
+      "source_version": "40c1f2bb",
+      "content_hash": "4c0b0dacadc6636d10760cbe3277952dab8a869f9bdb7d7b2bacb6be528e8c8e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T20:30:44.364Z"
+      "persisted_at": "2026-11-26T01:53:36.210Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-smallstep-cli": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-smallstep-cli",
@@ -293800,10 +293815,10 @@
       "relative_path": "08_VERIFICATION/smallstep-cli-verification-protocol-empirical-defect-shield-for-smallstep-cli.md",
       "title": "Verification Protocol: Empirical Defect Shield for smallstep/cli",
       "repository": "smallstep/cli",
-      "source_version": "941a292b",
-      "content_hash": "e1d631a24f9bc93ba10e58946ca75ef72f45ac0b58351a7242fe3a1e705f7a11",
+      "source_version": "40c1f2bb",
+      "content_hash": "f6d765e0cc7cbe59fc0f6a3e4771496a5967b94c3a497c1399681e01ec432a17",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:30:44.550Z"
+      "persisted_at": "2026-11-26T01:53:36.386Z"
     },
     "rule-9246": {
       "learning_id": "rule-9246",
@@ -293839,9 +293854,9 @@
       "title": "Technical Construction Intelligence: smallstep-cli-learnings Core Invariants",
       "repository": "smallstep-cli-learnings",
       "source_version": "HEAD",
-      "content_hash": "ecdb8baa9261b5a65b531d809afdc738cc5b121e76d4689ef7b6a367abd356a9",
+      "content_hash": "989089506ebe7fbb546c6d82e9c5c1539fa911af704508afe1369f2490d2fa32",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T20:30:49.767Z"
+      "persisted_at": "2026-11-26T01:53:43.750Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-smallstep-cli-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-smallstep-cli-learnings",
@@ -293851,9 +293866,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for smallstep-cli-learnings",
       "repository": "smallstep-cli-learnings",
       "source_version": "HEAD",
-      "content_hash": "e31259802c030527c450e2ae825a17f85a317d17a322c283cc03594a7ea30c0b",
+      "content_hash": "6d38d3f6540d1bfec4316166581b28507b50634f45c1cfa0b76a3883c676d80f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:30:49.948Z"
+      "persisted_at": "2026-11-26T01:53:43.944Z"
     },
     "candidate_directive-map-network-and-auth-token-errors-to-callable-error-codes": {
       "item_id": "candidate_directive-map-network-and-auth-token-errors-to-callable-error-codes",
@@ -350580,6 +350595,70 @@
       "content_hash": "ae6a2abcc71b8efe2438717b53777ad30657b3aade0c1df5fae08fff56b0fd62",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T01:36:41.760Z"
+    },
+    "rule-10582": {
+      "learning_id": "rule-10582",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10582,
+      "title": "update module github.com/crossplane/crossplane/apis/v2 to v2.5.0",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "af8beda6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T01:53:33.127Z"
+    },
+    "candidate_directive-update-module-github-com-crossplane-crossplane-apis-v2-to-v2-5-0": {
+      "item_id": "candidate_directive-update-module-github-com-crossplane-crossplane-apis-v2-to-v2-5-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F2R6-update-module-github-com-crossplane-crossplane-apis-v2-to-v2-5-0.md",
+      "title": "update module github.com/crossplane/crossplane/apis/v2 to v2.5.0",
+      "repository": "crossplane/crossplane",
+      "source_version": "af8beda6",
+      "content_hash": "a26ff82ccd093ad838dd1b01a31dc5b22614193bf6249d332aa4730e55ad0ee3",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T01:53:33.619Z"
+    },
+    "rule-10583": {
+      "learning_id": "rule-10583",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10583,
+      "title": "object type comparison of same size with null values",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "77a83f3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T01:53:37.696Z"
+    },
+    "candidate_directive-object-type-comparison-of-same-size-with-null-values": {
+      "item_id": "candidate_directive-object-type-comparison-of-same-size-with-null-values",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F68T-object-type-comparison-of-same-size-with-null-values.md",
+      "title": "object type comparison of same size with null values",
+      "repository": "crate/crate",
+      "source_version": "77a83f3b",
+      "content_hash": "5de2b1646852436dc29fcb119d53b9c5a227a214c438802282b50a0207d8fa24",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T01:53:38.142Z"
+    },
+    "candidate_directive-deps-update-module-github-com-crossplane-crossplane-apis-v2-to-v2-5-0": {
+      "item_id": "candidate_directive-deps-update-module-github-com-crossplane-crossplane-apis-v2-to-v2-5-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F9CJ-deps-update-module-github-com-crossplane-crossplane-apis-v2-to-v2-5-0.md",
+      "title": "deps): update module github.com/crossplane/crossplane/apis/v2 to v2.5.0",
+      "repository": "crossplane-crossplane-learnings",
+      "source_version": "HEAD",
+      "content_hash": "82c8c2b0c1559680d90328e000d33bfa7bc589ece687deec55759acdac6609bf",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T01:53:42.163Z"
     }
   },
   "ai-builder-brain": {

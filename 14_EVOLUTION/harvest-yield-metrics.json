@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:45:06.085Z",
-  "total_cycles_completed": 12525,
-  "total_learnings_persisted": 12525,
-  "total_rules_promoted": 11471,
+  "last_updated": "2026-11-26T01:53:37.926Z",
+  "total_cycles_completed": 12529,
+  "total_learnings_persisted": 12529,
+  "total_rules_promoted": 11474,
   "history": [
-    {
-      "timestamp": "2026-11-25T07:04:37.920Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:04:42.273Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:12:55.834Z",
-      "repository": "Qwen/Qwen3-14B",
-      "learningId": "learn-huggingface-qwen-qwen3-14b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:12:58.019Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T07:13:06.106Z",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
@@ -1403,6 +1375,34 @@
       "repository": "Viggle/Viggle-Remake",
       "learningId": "learn-huggingface-viggle-viggle-remake",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:53:24.117Z",
+      "repository": "audio-cpp/audio.cpp-gguf",
+      "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:53:33.378Z",
+      "repository": "crossplane/crossplane",
+      "learningId": "learn-github-crossplane-crossplane",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:53:35.801Z",
+      "repository": "smallstep/cli",
+      "learningId": "learn-github-smallstep-cli",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:53:37.926Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

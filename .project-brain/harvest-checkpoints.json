@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T01:45:06.096Z",
+  "last_updated": "2026-11-26T01:53:37.929Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "1ec39489f42249c153e218b1c8f93e77295303415e0d19b591076fa8cd9d38be",
-      "verified_at": "2026-11-25T00:26:52.613Z",
+      "content_hash": "38017b8e107eef76b2d31c874da7f1c8efe44694afec9f36791a12855be575d2",
+      "verified_at": "2026-11-26T01:53:37.929Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:26:52.613Z"
+      "last_updated": "2026-11-26T01:53:37.929Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -3561,14 +3561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-smallstep-cli",
-      "content_hash": "2c55dd0b0ee93563ec8c6c2026d09af04440f3ab0748a81ea889b40bb28604ee",
-      "verified_at": "2026-11-23T20:30:43.929Z",
+      "content_hash": "c8630a36ed8a084512c4e348a9ad97b9a399fb2d805e8fd8d896050ab4fa3229",
+      "verified_at": "2026-11-26T01:53:35.804Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:30:43.929Z"
+      "last_updated": "2026-11-26T01:53:35.804Z"
     },
     "Ontos-AI/knowhere": {
       "repository": "Ontos-AI/knowhere",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "dd5fc6ff2143012d2f63bd10a341bce19512e7e9f1847c12838c0a16b2beddaf",
-      "verified_at": "2026-11-25T01:27:00.549Z",
+      "content_hash": "93029d21bce8e68e208b87be4c35007ac596f039d9492d12aacf57c581883029",
+      "verified_at": "2026-11-26T01:53:33.381Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:27:00.549Z"
+      "last_updated": "2026-11-26T01:53:33.381Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -18351,14 +18351,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-      "content_hash": "ea4b785610ed95d818ef82800be44dedc263ac6ded6f10e9b5e2708f2abb104b",
-      "verified_at": "2026-11-22T05:04:28.191Z",
+      "content_hash": "5488245aac775509a9818d73be8ee766e54ca453ed332497117ef7d5552e8262",
+      "verified_at": "2026-11-26T01:53:24.127Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T05:04:28.191Z"
+      "last_updated": "2026-11-26T01:53:24.127Z"
     },
     "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF": {
       "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",

@@ -4,24 +4,24 @@
 {
   "source_repository": "crate/crate",
   "source_url": "https://github.com/crate/crate",
-  "source_version": "2799f146",
+  "source_version": "77a83f3b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T03:58:41.510Z",
+  "timestamp": "2026-11-26T01:53:38.141Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-crate-crate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `2799f146`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T03:58:41.510Z`  
+> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `77a83f3b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T01:53:38.141Z`  
 > **Learning ID**: `learn-github-crate-crate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from crate/crate:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:58:40.129Z  
+> **Harvest Timestamp**: 2026-11-26T01:53:36.788Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4456 stars
+- **Stars / Engagement**: 4458 stars
 
 ---
 
@@ -548,11 +548,11 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20640** (2026-11-23): **Updating a nested object array with a JSON null raises `NullPointerException`**
-  *Symptoms*: ### CrateDB version  6.6.0-SNAPSHOT, commit `39117a4b9f23692cbb4085b873867c6de32b5322`.  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  INSERT accepts a nested object array containing a JSON-null element. Updating an existing row to an array of the same shape raises a NullPointerException, while the update without the null element succeeds.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS crate_json_nested_update_repro; CREATE TABLE crate_json_nested_update_repro (     id INTEGER PRIMARY KEY,     doc OBJECT AS (         groups ARRAY(OBJECT AS (             entries ARRAY(OBJECT AS (v INTEGER))         ))     ) ) WITH (number_of_replicas = 0); INSERT INTO crate_json_nested_update_repro VALUES     (1, '{"groups":[{"entries":[{"v":1}]}]}'),     (2, '{"groups":[{"entries":[{"v":2},null]}]}'); REFRESH TABLE crate_json_nested_update_repro; SELECT id, doc FROM crate_json_nested_update_repro ORDER BY id; UPDATE crate_json_nested_update_repro SET doc['groups'][1] = '{"entries":[{"v":3}]}'::OBJECT WHERE id = 1 RETURNING doc; UPDATE crate_json_nested_update_repro SET doc['groups'][1] = '{"entries":[{"v":4},null]}'::OBJECT WHERE id = 1 RETURNING doc; REFRESH TABLE crate_json_nested_update_repro; SELECT id, doc FROM crate_json_nested_update_repro ORDER BY id; ```  ### Actual Result  The initial insert stores the JSON null, and the update without null succeeds. The next update
+- **Issue #20665** (2026-11-25): **`OBJECT` equality with a JSON-null key is asymmetric**
+  *Symptoms*: ### CrateDB version  master commit `2799f146cc5ac3a1dc4aa378f9c2516edcc433e3`  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ### Problem description  Reversing the operands of OBJECT equality changes the result from TRUE to FALSE. These objects differ in both key and value, so both comparisons should be FALSE.  ### Steps to Reproduce  ```sql SELECT '{"a":null}'::OBJECT = '{"b":1}'::OBJECT AS left_to_right,        '{"b":1}'::OBJECT = '{"a":null}'::OBJECT AS right_to_left; ```    ### Actual Result   | left_to_right | right_to_left | | --- | --- | | `TRUE` | `FALSE` |    ### Expected Result   | left_to_right | right_to_left | | --- | --- | | `FALSE` | `FALSE` | 
 
-- **Issue #20639** (2026-11-23): **`OBJECT` equality filter includes rows with extra JSON keys**
-  *Symptoms*: ### CrateDB version  6.6.0-SNAPSHOT, commit `39117a4b9f23692cbb4085b873867c6de32b5322`.  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ### Problem description  The projected equality is FALSE for the object with an extra key. The same expression in WHERE incorrectly includes that row; adding IS TRUE returns only the matching row.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS crate_json_object_extra_key_repro; CREATE TABLE crate_json_object_extra_key_repro (     id INTEGER PRIMARY KEY,     doc OBJECT AS (a INTEGER, b INTEGER) ) WITH (number_of_replicas = 0); INSERT INTO crate_json_object_extra_key_repro VALUES     (1, '{"a":1}'),     (2, '{"a":1,"b":2}'); REFRESH TABLE crate_json_object_extra_key_repro;  SELECT id, doc = '{"a":1}'::OBJECT AS equal_to_target FROM crate_json_object_extra_key_repro ORDER BY id; SELECT id FROM crate_json_object_extra_key_repro WHERE doc = '{"a":1}'::OBJECT ORDER BY id; SELECT id FROM crate_json_object_extra_key_repro WHERE (doc = '{"a":1}'::OBJECT) IS TRUE ORDER BY id; ```  ### Actual Result  Projected equality:  | id | equal_to_target | | --- | --- | | 1 | `TRUE` | | 2 | `FALSE` |  Direct `WHERE` filter:  | id | | --- | | 1 | | 2 |   ### Expected Result  Only row 1 is equal to `{"a":1}`, as confirmed by projection and the `IS TRUE` filter:  | id | | --- | | 1 |  PostgreSQL 16.14 returns only row 1 for the corresponding `JSONB` e
+- **Issue #20654** (2026-11-25): **`IN (subquery)` filter on an `OBJECT(IGNORED)` child matches no rows**
+  *Symptoms*: ### CrateDB version  master commit `c728540efefb31b6cc0d889890547609f46e7ffb`  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  For an `OBJECT(IGNORED)` child, `o['v'] IN (SELECT o['v'] ...)` is `true` for row 1 in the projection, but the same predicate in `WHERE` returns no rows. `DELETE` with this predicate also deletes nothing.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS cj019; CREATE TABLE cj019 (id INTEGER, o OBJECT(IGNORED)); INSERT INTO cj019 VALUES (1, {v=1}), (2, {v=2}); REFRESH TABLE cj019; SELECT id, o['v'] IN (SELECT o['v'] FROM cj019 WHERE id = 1) AS matched FROM cj019 ORDER BY id; SELECT id FROM cj019 WHERE o['v'] IN (SELECT o['v'] FROM cj019 WHERE id = 1) ORDER BY id; ```   ### Actual Result  | Query | Result | | --- | --- | | Projected `matched` | id 1: `t`, id 2: `f` | | `WHERE` with the same predicate | 0 rows |  ### Expected Result  | Query | Result | | --- | --- | | Projected `matched` | id 1: `t`, id 2: `f` | | `WHERE` with the same predicate | id 1 | 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -569,237 +569,230 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3b6b9db` (2026-11-23)
-**Commit Message**: Fix NullPointerException updating object array with null element
+### Incident Patch 1: `efff336e` (2026-11-25)
+**Commit Message**: Fix object type comparison of same size with null values
 
-`UPDATE` with an `ARRAY(OBJECT)` value containing a null element failed
-in `ValueNormalizer`. Null elements are now kept, matching `INSERT`
-behaviour.
+The equals implementation treated a missing key in the second map as
+`null` value which could lead to a false positive match.
 
-Fixes #20640
+Closes https://github.com/crate/crate/issues/20665
 
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
+**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +4/-0)
 ```diff
-@@ -46,6 +46,11 @@ series.
+@@ -46,5 +46,9 @@ series.
  Fixes
  =====
  
-+- Fixed a ``NullPointerException`` that occurred when updating a column of
-+  type ``ARRAY(OBJECT)``, or an object containing one, with an array that
-+  contains a ``null`` element. The ``null`` element is now stored, matching the
-+  behaviour of ``INSERT``.
++- Fixed an issue where a comparison on object columns could lead to a wrong
++  result if the objects had the same amount of keys and some values were
++  ``null``.
 +
- - Fixed an issue where an ``<obj_column> = <obj_literal>`` expression could
-   match rows where the object column had additional properties not present in
-   the object literal.
+ - Fixed an issue that caused queries on sub-columns of ignored objects to match
+   no rows.
 ```
 
-**File**: `server/src/main/java/io/crate/analyze/expressions/ValueNormalizer.java` (modified, +4/-0)
+**File**: `server/src/main/java/io/crate/types/MapComparator.java` (modified, +4/-4)
 ```diff
-@@ -166,6 +166,10 @@ private static boolean isObjectArray(DataType<?> type) {
- 
-     private static void normalizeObjectArrayValue(List<Map<String, Object>> values, Reference arrayInfo, TableInfo tableInfo) {
-         for (Map<String, Object> value : values) {
-+            if (value == null) {
-+                // Keep null elements as they are, like INSERT does
-+                continue;
-+            }
-             // return value not used and replaced in value as arrayItem is a map that is mutated
-             normalizeObjectValue(value, arrayInfo, tableInfo);
+@@ -37,14 +37,14 @@ public static <K, V> int compareMaps(Map<K, V> m1, Map<K, V> m2) {
+             return sizeCompare;
          }
+         for (Map.Entry<K, V> entry : m1.entrySet()) {
++            K key = entry.getKey();
+             V thisValue = entry.getValue();
+-            V otherValue = m2.get(entry.getKey());
++            V otherValue = m2.get(key);
+             if (thisValue == null) {
+-                if (otherValue != null) {
+-                    return 1;
+-                } else {
++                if (otherValue == null && m2.containsKey(key)) {
+                     continue;
+                 }
++                return 1;
+             }
+             if (!thisValue.equals(otherValue)) {
+                 if (otherValue == null) {
 ```
 
-**File**: `server/src/test/java/io/crate/analyze/ValueNormalizerTest.java` (modified, +34/-2)
+**File**: `server/src/test/java/io/crate/types/MapComparatorTest.java` (modified, +10/-0)
 ```diff
-@@ -22,10 +22,11 @@
- package io.crate.analyze;
- 
- import static io.crate.testing.Asserts.assertThat;
--import static org.assertj.core.api.Assertions.assertThat;
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
- 
-+import java.util.Arrays;
- import java.util.HashMap;
-+import java.util.List;
- import java.util.Map;
- 
- import org.junit.Before;
-@@ -48,6 +49,7 @@
- import io.crate.metadata.doc.DocSchemaInfo;
- import io.crate.test.integration.CrateDummyClusterServiceUnitTest;
- import io.crate.testing.SQLExecutor;
-+import io.crate.types.ArrayType;
- import io.crate.types.DataTypes;
- 
- 
-@@ -83,7 +85,15 @@ public void prepare() throws Exception {
-                       " strict object(strict) as (" +
-                       "  inner_d double" +
-                       " )," +
--                      " ignored object(ignored)" +
-+                      " ignored object(ignored)," +
-+                      " obj_arr array(object as (" +
-+                      "  v int" +
-+                      " ))," +
-+                      " nested object as (" +
-+                      "  groups array(object as (" +
-+                      "   entries array(object as (v int))" +
-+                      "  ))" +
-+                      " )" +
-                       ") " +
-                       "clustered by (id)");
-         userTableInfo = e.resolveTableInfo("doc.test1");
-@@ -232,4 +242,26 @@ public void testNormalizeStringToNumberColumn() throws Exception {
-         Symbol literal = normalizeInputForReference(stringDoubleLiteral, objInfo);
-         assertThat(literal).isLiteral(298.444d, DataTypes.DOUBLE);
+@@ -142,4 +142,14 @@ public void testCompareMapsWithStringAndBytesRef() {
+         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(0);
+         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
      }
 +
 +    @Test
-+    public void test_normalize_object_array_keeps_null_elements() throws Exception {
-+        Reference objArr = userTableInfo.getReference(ColumnIdent.of("obj_arr"));
-+        List<Map<String, Object>> value = Arrays.asList(new HashMap<>(Map.of("v", 1)), null);
-+        Symbol normalized = normalizeInputForReference(
-+            Literal.of(new ArrayType<>(DataTypes.UNTYPED_OBJECT), value),
-+            objArr
-+        );
-+        assertThat(normalized).isLiteral(Arrays.asList(Map.of("v", 1), null));
-+    }
-+
-+    @Test
-+    public void test_normalize_nested_object_array_keeps_null_elements() throws Exception {
-+        Reference nested = userTableInfo.getReference(ColumnIdent.of("nested"));
-+        List<Map<String, Object>> entries = Arrays.asList(new HashMap<>(Map.of("v", 4)), null);
-+        Map<String, Object> group = new HashMap<>(Map.of("entries", entries));
-+        Map<String, Object> value = new HashMap<>(Map.of("groups", List.of(group)));
-+        Symbol normalized = normalizeInputForReference(Literal.of(value), nested);
-+        assertThat(normalized).isLiteral(
-+            Map.of("groups", List.of(Map.of("entries", Arrays.asList(Map.of("v", 4), null)))));
++    public void test_equals_on_map_with_same_size_and_null_entry_is_symmetric() throws Exception {
++        Map<String, Integer> map1 = MapBuilder.<String, Integer>newMapBuilder()
++            .put("x", null)
++            .map();
++        Map<String, Integer> map2 = Map.of("y", 1);
++        assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(1);
++        assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(-1);
 +    }
  }
 ```
 
 ---
 
-### Incident Patch 2: `a6ee235d` (2026-11-23)
-**Commit Message**: Fix NullPointerException building eq query on object literal with null
+### Incident Patch 2: `893b0b1e` (2026-11-25)
+**Commit Message**: Replace anonymous HashMap in MapComparatorTest with Map.of/MapBuilder
 
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +3/-0)
+**File**: `server/src/test/java/io/crate/types/MapComparatorTest.java` (modified, +54/-46)
 ```diff
-@@ -46,6 +46,9 @@ series.
- Fixes
- =====
- 
-+- Fixed a ``NullPointerException`` that could occur if comparing an object to a
-+  full literal containing a ``null`` value.
-+
- - Fixed an issue in the PostgreSQL wire protocol implementation that could cause
-   clients to not receive an error message if:
- 
-```
-
-**File**: `server/src/main/java/io/crate/expression/operator/EqOperator.java` (modified, +6/-2)
-```diff
-@@ -305,6 +305,10 @@ public static Query refEqObject(Function eq,
-         int preFilters = 0;
-         for (Map.Entry<String, Object> entry : value.entrySet()) {
-             String key = entry.getKey();
-+            Object innerValue = entry.getValue();
-+            if (innerValue == null) {
-+                continue;
-+            }
-             DataType<?> innerType = type.innerType(key);
-             if (innerType == UndefinedType.INSTANCE) {
-                 // could be a nested object or not part of meta data; skip pre-filtering
-@@ -316,9 +320,9 @@ public static Query refEqObject(Function eq,
-             Query innerQuery;
-             if (DataTypes.isArray(innerType)) {
-                 innerQuery = termsAndGenericFilter(
--                    eq, nestedStorageIdentifier, innerType, (Collection<?>) entry.getValue(), context, childRef.hasDocValues(), childRef.indexType(), termQueryOccur);
-+                    eq, nestedStorageIdentifier, innerType, (Collection<?>) innerValue, context, childRef.hasDocValues(), childRef.indexType(), termQueryOccur);
-             } else {
--                innerQuery = fromPrimitive(innerType, nestedStorageIdentifier, entry.getValue(), childRef.hasDocValues(), childRef.indexType());
-+                innerQuery = fromPrimitive(innerType, nestedStorageIdentifier, innerValue, childRef.hasDocValues(), childRef.indexType());
-                 // instead of adding a MUST_NOT clause for the negation, we negate the innerQuery to also match null values
-                 if (termQueryOccur == Occur.MUST_NOT) {
-                     innerQuery = Queries.not(innerQuery);
-```
-
-**File**: `server/src/test/java/io/crate/expression/operator/EqOperatorTest.java` (modified, +29/-0)
-```diff
-@@ -29,10 +29,12 @@
- import java.util.List;
- import java.util.Map;
- 
-+import org.apache.lucene.search.BooleanQuery;
- import org.apache.lucene.search.Query;
- import org.elasticsearch.Version;
+@@ -30,6 +30,8 @@
+ import org.elasticsearch.test.ESTestCase;
  import org.junit.Test;
  
 +import io.crate.common.collections.MapBuilder;
- import io.crate.expression.scalar.ScalarTestCase;
- import io.crate.expression.symbol.Literal;
- import io.crate.lucene.GenericFunctionQuery;
-@@ -176,6 +178,33 @@ public void test_terms_query_on_empty_object() throws Exception {
-         }
++
+ public class MapComparatorTest extends ESTestCase {
+ 
+     @Test
+@@ -41,71 +43,76 @@ public void testCompareNullMaps() {
+ 
+     @Test
+     public void testCompareMapsWithNullValues() {
+-        Map<String, Integer> map1 = new HashMap<>() {{
+-                put("str1", 1);
+-                put("str2", null);
+-                put("str3", 3);
+-            }};
+-        Map<String, Integer> map2 = new HashMap<>() {{
+-                put("str1", 1);
+-                put("str2", 2);
+-                put("str3", 3);
+-            }};
++        Map<String, Integer> map1 = MapBuilder.<String, Integer>newMapBuilder()
++            .put("str1", 1)
++            .put("str2", null)
++            .put("str3", 3)
++            .map();
++        Map<String, Integer> map2 = Map.of(
++            "str1", 1,
++            "str2", 2,
++            "str3", 3
++        );
+         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(1);
+         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(-1);
+ 
++        map2 = new HashMap<>(map2);
+         map2.put("str2", null);
+         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
+     }
+ 
+     @Test
+     public void testCompareMapsWithValuesOfTheSameClass() {
+-        Map<String, Integer> map1 = new HashMap<>() {{
+-                put("str1", 1);
+-                put("str2", 2);
+-                put("str3", 3);
+-            }};
+-        Map<String, Integer> map2 = new HashMap<>() {{
+-                put("str1", 1);
+-                put("str2", 2);
+-                put("str3", 3);
+-            }};
++        Map<String, Integer> map1 = Map.of(
++            "str1", 1,
++            "str2", 2,
++            "str3", 3
++        );
++        Map<String, Integer> map2 = Map.of(
++            "str1", 1,
++            "str2", 2,
++            "str3", 3
++        );
+         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(0);
+         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
+ 
++        map1 = new HashMap<>(map1);
+         map1.put("str2", 5);
+         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(1);
+         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(-1);
      }
  
 +    @Test
-+    public void test_obj_eq_obj_literal_with_null_value() throws Exception {
-+        QueryTester.Builder builder = new QueryTester.Builder(
-+            THREAD_POOL,
-+            clusterService,
-+            Version.CURRENT,
-+            "create table tbl (obj object(strict) as (x int, y int))");
-+        Map<String, Integer> map1 = Map.of("x", 10, "y", 20);
-+        Map<String, Integer> map2 = Map.of("x", 42, "y", 84);
-+        Map<String, Integer> map3 = MapBuilder.<String, Integer>newMapBuilder()
-+            .put("x", 10)
-+            .put("y", null)
-+            .map();
-+        Map<String, Integer> map4 = MapBuilder.<String, Integer>newMapBuilder()
-+            .put("x", 20)
-+            .put("y", null)
-+            .map();
-+        builder.indexValues("obj", map1, map2, map3, map4);
-+        try (QueryTester tester = builder.build()) {
-+            Query query = tester.toQuery("obj = {x=10, y=null}");
-+            assertThat(query)
-+                .isExactlyInstanceOf(BooleanQuery.class)
-+                .hasToString("+obj.x:[10 TO 10] #(obj = {\"x\"=10, \"y\"=NULL})");
-+            assertThat(tester.runQuery("obj", "obj = {x=10, y=null}")).containsExactly(map3);
-+        }
-+    }
-+
-     @Test
-     public void test_numeric_type_equals_number_types() {
-         assertEvaluate("numeric_4_2 = 1.111", false, Literal.of(new BigDecimal("1.11")));
-```
-
----
-
-### Incident Patch 3: `fe62b476` (2026-11-20)
-**Commit Message**: Fix spelling of 'accommodate' in alter-table docs
-
-**File**: `docs/sql/statements/alter-table.rst` (modified, +1/-1)
-```diff
-@@ -83,7 +83,7 @@ Clauses
+     public void testCompareMapsWithValuesOfDifferentClass() {
+-        Map<String, Number> map1 = new HashMap<>() {{
+-                put("str1", 1);
+-                put("str2", 2);
+-                put("str3", 3);
+-            }};
+-        Map<String, Number> map2 = new HashMap<>() {{
+-                put("str1", 1);
+-                put("str2", 2L);
+-                put("str3", 3);
+-            }};
++        Map<String, Number> map1 = Map.of(
++            "str1", 1,
++            "str2", 2,
++            "str3", 3
++        );
++        Map<String, Number> map2 = Map.of(
++            "str1", 1,
++            "str2", 2L,
++            "str3", 3
++        );
+         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(0);
+         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
  
-    Multiple files (in this directory) use the same standard text for
-    documenting the ``PARTITION`` clause. (Minor verb changes are made to
--   accomodate the specifics of the parent statement.)
-+   accommodate the specifics of the parent statement.)
++        map1 = new HashMap<>(map1);
+         map1.put("str2", 5.0);
+         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(1);
+         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(-1);
+     }
  
-    For consistency, if you make changes here, please be sure to make a
-    corresponding change to the other files.
++    @Test
+     public void testCompareMapsWithValuesOfDifferentClassNested() {
+-        Map<String, Object> map1 = new HashMap<>() {{
+-                put("str1", 1);
+-                put("str2", Map.of("str3", Short.valueOf("1234")));
+-            }};
+-        Map<String, Object> map2 = new HashMap<>() {{
+-                put("str1", 1);
+-                put("str2", Map.of("str3", Short.valueOf("1234")));
+-            }};
++        Map<String, Object> map1 = MapBuilder.<String, Object>newMapBuilder()
++            .put("str1", 1)
++            .put("str2", Map.of("str3", Short.valueOf("1234")))
++            .map();
++        Map<String, Object> map2 = Map.of(
++            "str1", 1,
++            "str2", Map.of("str3", Short.valueOf("1234"))
++        );
+         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(0);
+         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
+ 
+@@ -118,19 +125,20 @@ public void testCompareMapsWithValuesOfDifferentClassNested() {
+         assertThat(MapComparator.compareMaps(map2, map1)).isGreaterThan(1);
+     }
+ 
++    @Test
+     public void testCompareMapsWithStringAndBytesRef() {
+         /*
+          * this can happen when you compare an object with an object literal
+          * ... WHERE o = {"x" = 'foo'}
+          */
+-        Map<String, Object> map1 = new HashMap<>() {{
+-                put("str1", "a");
+-                put("str3", "3");
+-            }};
+-        Map<String, Object> map2 = new HashMap<>() {{
+-                put("str1", "a");
+-                put("str3", 3);
+-            }};
++        Map<String, Object> map1 = Map.of(
++ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20662** (2026-11-23): docs: fix spelling mistake in SQL statements documentation (backport #20634) (@mergify[bot])
-- **PR #20661** (2026-11-23): Fix NullPointerException updating object array with null element (backport #20658) (@mergify[bot])
-- **PR #20658** (2026-11-23): Fix NullPointerException updating object array with null element (@matriv)
-- **PR #20650** (2026-11-23): Fix object column equals obj literal matching despite missing properties (backport #20645) (@mergify[bot])
-- **PR #20649** (2026-11-23): Ensure that StreamBucket doesn't overwrite actual version used to serilalze bytes (backport #20601) (@mergify[bot])
-- **PR #20648** (2026-11-23): Ensure that StreamBucket doesn't overwrite actual version used to serilalze bytes (backport #20601) (@mergify[bot])
+- **PR #20689** (2026-11-25): Fix object type comparison of same size with null values (backport #20688) (@mergify[bot])
+- **PR #20688** (2026-11-25): Fix object type comparison of same size with null values (@mfussenegger)
+- **PR #20687** (2026-11-25): Use function query for ignored object column childs instead of match-no-docs (backport #20686) (@mergify[bot])
+- **PR #20686** (2026-11-25): Use function query for ignored object column childs instead of match-no-docs (@mfussenegger)
+- **PR #20681** (2026-11-25): Add 6.5.3 release notes (@jeeminso)
+- **PR #20679** (2026-11-24): Reflect 6.2.12, 6.3.8, 6.4.8 and 6.5.2 (@BaurzhanSakhariev)
 
 ---
 
@@ -819,24 +812,23 @@ Fixes #20640
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NullPointerException updating object array with null element
+## X. object type comparison of same size with null values
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.5.3.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3b6b9db`: NullPointerException updating object array with null element. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `efff336e`: object type comparison of same size with null values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.3.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Fixed a ``NullPointerException`` that occurred when updating a column of
-  type ``ARRAY(OBJECT)``, or an object containing one, with an array that
-  contains a ``null`` element. The ``null`` element is now stored, matching the
-  behaviour of ``INSERT``.
+- Fixed an issue where a comparison on object columns could lead to a wrong
+  result if the objects had the same amount of keys and some values were
+  ``null``.
 
 ```
 
@@ -847,7 +839,7 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3b6b9db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `efff336e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

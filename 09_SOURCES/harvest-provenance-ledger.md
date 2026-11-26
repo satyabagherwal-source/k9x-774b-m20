@@ -13229,3 +13229,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prunaai-p-h3-image` | `https://huggingface.co/PrunaAI/P-H3-Image` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-26T01:36:21.133Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `2842d7e4` | Multi-dimensional audit evidence | 2026-11-26T01:36:36.970Z |
 | `learn-huggingface-viggle-viggle-remake` | `https://huggingface.co/Viggle/Viggle-Remake` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-26T01:45:06.079Z |
+| `learn-huggingface-audio-cpp-audio-cpp-gguf` | `https://huggingface.co/audio-cpp/audio.cpp-gguf` | `hf-audio-c` | Multi-dimensional audit evidence | 2026-11-26T01:53:24.111Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `af8beda6` | Multi-dimensional audit evidence | 2026-11-26T01:53:33.365Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `40c1f2bb` | Multi-dimensional audit evidence | 2026-11-26T01:53:35.796Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `77a83f3b` | Multi-dimensional audit evidence | 2026-11-26T01:53:37.914Z |

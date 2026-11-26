@@ -4,22 +4,22 @@
 {
   "source_repository": "crossplane/crossplane",
   "source_url": "https://github.com/crossplane/crossplane",
-  "source_version": "2088737a",
+  "source_version": "af8beda6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T04:15:42.291Z",
+  "timestamp": "2026-11-26T01:53:33.618Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-crossplane-crossplane",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [crossplane/crossplane](https://github.com/crossplane/crossplane) (Revision: `2088737a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T04:15:42.291Z`  
+> **Provenance**: Harvested from [crossplane/crossplane](https://github.com/crossplane/crossplane) (Revision: `af8beda6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T01:53:33.618Z`  
 > **Learning ID**: `learn-github-crossplane-crossplane`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `crossplane/crossplane` (Commit: `2088737a`)
+- **Target Repository**: `crossplane/crossplane` (Commit: `af8beda6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T04:15:40.978Z  
+> **Harvest Timestamp**: 2026-11-26T01:53:32.215Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12261 stars
+- **Stars / Engagement**: 12268 stars
 
 ---
 
@@ -1536,88 +1536,29 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2e14e85e` (2026-11-19)
-**Commit Message**: security: Call out package runtime image validation in our security non-goals
+### Incident Patch 1: `0c3d020f` (2026-11-25)
+**Commit Message**: fix(deps): update module github.com/crossplane/crossplane/apis/v2 to v2.5.0
 
-Crossplane is not responsible for pulling and running container images for
-packages; it delegates this to the kubelet by creating a `Deployment` (or to an
-arbitrary external system when `--package-runtime=External` is used).
-
-Despite this, we repeatedly receive (and reject) security vulnerability reports
-regarding signature validation of runtime images. Since Crossplane does not pull
-these images, it is not responsible for verifying their contents, even when
-package signature verification is enabled.
-
-To try and discourage continued reporting of this non-issue, add an explicit
-note about it in the security self-assessment's non-goals section.
-
-Signed-off-by: Adam Wolfe Gordon <[REDACTED_EMAIL]>
-
-**File**: `security/self-assessment.md` (modified, +7/-2)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -195,7 +195,12 @@ Crossplane does not intend to exhaustively restrict the controller workloads
- that are run as extensions in the control plane. Users have the ability to
- configure the `Deployment` that manages the extension's pod (and therefore
- internal controllers), but the specific execution and runtime of the extension
--is not restricted further by Crossplane.
-+is not restricted further by Crossplane. In particular, Crossplane is not
-+responsible for pulling runtime container images for Crossplane packages and
-+therefore does not attempt to validate or restrict them. Users wishing to
-+restrict runtime images (for example, by verifying signatures to ensure
-+provenance) should use an admission controller such as the sigstore policy
-+controller or Kyverno.
- 
- ## Self-assessment Use
- 
-@@ -462,4 +467,4 @@ focusing on abstractions for developer self-service. However, Radius focuses
- more on an application layer model with a narrow scope of Recipes that do not
- appear to be user definable. Crossplane takes more of an infrastructure level
- focus and is very flexible, allowing the platform team to completely define
--their own custom abstractions and implementations.
-\ No newline at end of file
-+their own custom abstractions and implementations.
-```
-
----
-
-### Incident Patch 2: `2088737a` (2026-11-20)
-**Commit Message**: Merge pull request #8076 from jbw976/lifecycle-delete-claim-timeout
-
-test(e2e): give lifecycle DeleteClaim more time after a version switch
-
-**File**: `test/e2e/install_test.go` (modified, +6/-2)
-```diff
-@@ -176,7 +176,9 @@ func TestCrossplaneLifecycle(t *testing.T) {
- 				funcs.ResourcesHaveConditionWithin(3*time.Minute, manifests, "setup/provider.yaml", pkgv1.Healthy(), pkgv1.Active())).
- 			Assess("DeleteClaim", funcs.AllOf(
- 				funcs.DeleteResourcesWithPropagationPolicy(manifests, "claim.yaml", metav1.DeletePropagationForeground),
--				funcs.ResourcesDeletedWithin(30*time.Second, manifests, "claim.yaml"),
-+				// Switching Crossplane versions replaces the function pods. Crossplane's next function call can
-+				// block for up to 30s until gRPC re-resolves their DNS, which delays deleting the XR.
-+				funcs.ResourcesDeletedWithin(90*time.Second, manifests, "claim.yaml"),
- 
- 				// TODO(negz): We're seeing composed resources
- 				// sticking around after the claim is deleted,
-@@ -258,7 +260,9 @@ func TestCrossplaneLifecycle(t *testing.T) {
- 			Assess("ClaimIsStillAvailable", funcs.ResourcesHaveConditionWithin(3*time.Minute, manifests, "claim.yaml", xpv2.Available())).
- 			Assess("DeleteClaim", funcs.AllOf(
- 				funcs.DeleteResourcesWithPropagationPolicy(manifests, "claim.yaml", metav1.DeletePropagationForeground),
--				funcs.ResourcesDeletedWithin(30*time.Second, manifests, "claim.yaml"),
-+				// Switching Crossplane versions replaces the function pods. Crossplane's next function call can
-+				// block for up to 30s until gRPC re-resolves their DNS, which delays deleting the XR.
-+				funcs.ResourcesDeletedWithin(90*time.Second, manifests, "claim.yaml"),
- 
- 				// TODO(negz): We're seeing composed resources
- 				// sticking around after the claim is deleted,
+@@ -10,7 +10,7 @@ require (
+ 	github.com/Masterminds/semver/v3 v3.5.0
+ 	github.com/alecthomas/kong v1.17.0
+ 	github.com/crossplane/crossplane-runtime/v2 v2.6.0-rc.0
+-	github.com/crossplane/crossplane/apis/v2 v2.5.0-rc.0.0.20261029180807-76a72bee8a19
++	github.com/crossplane/crossplane/apis/v2 v2.5.0
+ 	github.com/google/go-cmp v0.7.0
+ 	github.com/google/go-containerregistry v0.22.1
+ 	github.com/robfig/cron/v3 v3.0.1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8079** (2026-11-20): [Backport release-2.5] test(e2e): give lifecycle DeleteClaim more time after a version switch (@github-actions[bot])
-- **PR #8078** (2026-11-20): [Backport release-2.4] test(e2e): give lifecycle DeleteClaim more time after a version switch (@github-actions[bot])
-- **PR #8077** (2026-11-20): [Backport release-2.3] test(e2e): give lifecycle DeleteClaim more time after a version switch (@github-actions[bot])
-- **PR #8076** (2026-11-20): test(e2e): give lifecycle DeleteClaim more time after a version switch (@jbw976)
-- **PR #8075** (2026-11-20): [Backport release-2.5] feat(operations): Add the status.appliedResourceCount field (@github-actions[bot])
-- **PR #8072** (2026-11-20): security: Call out package runtime image validation in our security non-goals (@adamwg)
+- **PR #8092** (2026-11-25): fix(deps): update module github.com/crossplane/crossplane/apis/v2 to v2.5.0 (main) (@crossplane-renovate[bot])
+- **PR #8091** (2026-11-25): chore(deps): update renovatebot/github-action action to v46.3.15 (main) (@crossplane-renovate[bot])
+- **PR #8090** (2026-11-25): chore(deps): update github/codeql-action digest to 915412f (main) (@crossplane-renovate[bot])
+- **PR #8089** (2026-11-25): chore(deps): update actions/create-github-app-token digest to f418cff (main) (@crossplane-renovate[bot])
+- **PR #8088** (2026-11-24): post v2.5.0 release follow-ups (@jbw976)
+- **PR #8086** (2026-11-24): chore(deps): bump crossplane-runtime to v2.4.4 (@jbw976)
 
 ---
 
@@ -1637,38 +1578,31 @@ test(e2e): give lifecycle DeleteClaim more time after a version switch
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security: Call out package runtime image validation in our security non-goals
+## X. deps): update module github.com/crossplane/crossplane/apis/v2 to v2.5.0
 
 **RULE**:
-When implementing operations in `security/self-assessment.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2e14e85e`: security: Call out package runtime image validation in our security non-goals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c3d020f`: deps): update module github.com/crossplane/crossplane/apis/v2 to v2.5.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `security/self-assessment.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-is not restricted further by Crossplane. In particular, Crossplane is not
-responsible for pulling runtime container images for Crossplane packages and
-therefore does not attempt to validate or restrict them. Users wishing to
-restrict runtime images (for example, by verifying signatures to ensure
-provenance) should use an admission controller such as the sigstore policy
-controller or Kyverno.
-their own custom abstractions and implementations.
+	github.com/crossplane/crossplane/apis/v2 v2.5.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-is not restricted further by Crossplane.
-their own custom abstractions and implementations.
+	github.com/crossplane/crossplane/apis/v2 v2.5.0-rc.0.0.20261029180807-76a72bee8a19
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2e14e85e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c3d020f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

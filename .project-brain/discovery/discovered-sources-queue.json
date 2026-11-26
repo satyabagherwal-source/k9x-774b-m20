@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T01:27:00.994Z",
+  "updated_at": "2026-11-26T01:53:43.320Z",
   "stats": {
-    "total_discovered": 9559,
-    "approved_pending_harvest": 9061,
+    "total_discovered": 9566,
+    "approved_pending_harvest": 9067,
     "harvested_count": 0,
-    "rejected_count": 498,
+    "rejected_count": 499,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9052,
+      "COMMUNITY_AND_EXPERT": 9057,
       "OFFICIAL_DOCUMENTATION": 282,
-      "STANDARDS_AND_SPECIFICATIONS": 153,
+      "STANDARDS_AND_SPECIFICATIONS": 155,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 54,
       "LEGAL_AND_REGULATORY": 2,
@@ -206839,6 +206839,153 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
         "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-E7BAE2ADB54C": {
+      "id": "SRC-E7BAE2ADB54C",
+      "url": "http://semver.org/spec/v2.0.0",
+      "title": "http://semver.org/spec/v2.0.0",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T01:53:42.911Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-F2A4FAB79D20": {
+      "id": "SRC-F2A4FAB79D20",
+      "url": "https://smallstep.com/docs/step-cli/reference/certificate/sign",
+      "title": "https://smallstep.com/docs/step-cli/reference/certificate/sign",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:53:42.989Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-E662BADFB223": {
+      "id": "SRC-E662BADFB223",
+      "url": "https://tools.ietf.org/html/rfc5280",
+      "title": "https://tools.ietf.org/html/rfc5280",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:53:43.049Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-F83085DDFC0D": {
+      "id": "SRC-F83085DDFC0D",
+      "url": "https://cabforum.org/baseline-requirements-documents",
+      "title": "https://cabforum.org/baseline-requirements-documents",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:53:43.111Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-4AC76933A866": {
+      "id": "SRC-4AC76933A866",
+      "url": "https://smallstep.com/docs/step-cli/reference/certificate/create",
+      "title": "https://smallstep.com/docs/step-cli/reference/certificate/create",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:53:43.169Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-EDD6D72F697D": {
+      "id": "SRC-EDD6D72F697D",
+      "url": "https://www.rfc-editor.org/rfc/rfc9964",
+      "title": "IETF RFC 9964",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:53:43.261Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-45B136325616": {
+      "id": "SRC-45B136325616",
+      "url": "https://www.rfc-editor.org/rfc/rfc7638",
+      "title": "IETF RFC 7638",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:53:43.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
       }
     }
   }

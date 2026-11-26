@@ -13196,3 +13196,7 @@
 | `CYCLE-20261126-SY2V` | `2026-11-26T01:36:21.127Z` | `PrunaAI/P-Image-OSS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | Yes (`2a47d2a3...`) |
 | `CYCLE-20261126-TAAT` | `2026-11-26T01:36:36.965Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10581` | Yes (`c7f4994f...`) |
 | `CYCLE-20261126-474Q` | `2026-11-26T01:45:06.074Z` | `Viggle/Viggle-Remake` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | Yes (`f5e2e489...`) |
+| `CYCLE-20261126-EVEY` | `2026-11-26T01:53:24.106Z` | `audio-cpp/audio.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md` | Yes (`5488245a...`) |
+| `CYCLE-20261126-F2K1` | `2026-11-26T01:53:33.361Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10582` | Yes (`93029d21...`) |
+| `CYCLE-20261126-F4FK` | `2026-11-26T01:53:35.792Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`c8630a36...`) |
+| `CYCLE-20261126-F62D` | `2026-11-26T01:53:37.909Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10583` | Yes (`38017b8e...`) |
