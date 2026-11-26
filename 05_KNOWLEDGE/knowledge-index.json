@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T22:39:36.948Z",
+  "last_updated": "2026-11-26T22:51:04.006Z",
   "total_verified_learnings": 9137,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26233,
+  "total_items": 26236,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6c443721ca8880ee0c8feed1ff582402fa61f7171fa26371c0efb0c9c364e0f",
+      "content_hash": "efc18811cbe897af6a55dcee874757cb152fc409568cd8cb7690e1353c8b7196",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T22:21:55.897Z"
+      "persisted_at": "2026-11-26T22:51:03.782Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b1f0bbd522daa2332dc8ff6c5d32d26ecc23b5b4f0a5c13da2618414ff7fe9b",
+      "content_hash": "6606a1a1f102fbf140c886d991fdf080d9d043988c38d9bdf94aa3bf0dadf108",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T22:21:56.082Z"
+      "persisted_at": "2026-11-26T22:51:04.006Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114945,10 +114945,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
       "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
       "repository": "actix/actix-web",
-      "source_version": "98f5b221",
-      "content_hash": "1ceea375d2e5e6c5d2f45c5355a93234711c83b394c1aacadc90598af70a1ffd",
+      "source_version": "91254d42",
+      "content_hash": "4cb2fb382355f2303faf88283e31f1452ebf85f92f669bdff708815daee5d463",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T15:29:58.688Z"
+      "persisted_at": "2026-11-26T22:50:52.933Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web",
@@ -114957,10 +114957,10 @@
       "relative_path": "08_VERIFICATION/actix-actix-web-verification-protocol-empirical-defect-shield-for-actix-actix-we.md",
       "title": "Verification Protocol: Empirical Defect Shield for actix/actix-web",
       "repository": "actix/actix-web",
-      "source_version": "98f5b221",
-      "content_hash": "fd54926163a0358552e25ab5c34c1cf9667cd5bf492a608f4e3831da687a3701",
+      "source_version": "91254d42",
+      "content_hash": "b3cba566bfe8b3bec3f445d8896e544f8272d2c026882007bac80b3d9271f2ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:29:58.881Z"
+      "persisted_at": "2026-11-26T22:50:53.233Z"
     },
     "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523": {
       "item_id": "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523",
@@ -115042,9 +115042,9 @@
       "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
       "repository": "actix-actix-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "b4c1f8f742e9d01c93e64a8dccd62a2a05ab228df2594c36a649abf506dbb6bd",
+      "content_hash": "10a7732029ab5e8345face871d3e09c495f170246c87b8d9bfd1c0df70c505af",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T15:30:17.720Z"
+      "persisted_at": "2026-11-26T22:51:02.138Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings",
@@ -115054,9 +115054,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for actix-actix-web-learnings",
       "repository": "actix-actix-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1cec4189d2b0df147ca1520bbae5e0cd55b53902793429c5bad2084fd9b0b30",
+      "content_hash": "ea9197f71e7efa9a56990dfd5d5b8d52b45ebcbc0e8c14d42b7ecf5d6de0d062",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:30:17.912Z"
+      "persisted_at": "2026-11-26T22:51:02.395Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
@@ -228897,7 +228897,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
       "source_version": "hf-naiveai-naive-n0.5-flash",
-      "content_hash": "d78bb07575733ab0329d61a32056cf899c3509aabac6437bcffce3464ae8d378",
+      "content_hash": "24c5e9b3a9d2771fc82432bc01dc8952e48ee00c726703a578220a3956d553c9",
       "dossier_path": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "promoted_rules": [
@@ -228922,7 +228922,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:12:38.373Z",
+      "verified_at": "2026-11-26T22:50:49.228Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252078,8 +252078,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "98f5b221",
-      "content_hash": "b2496198c9ec6f53367df8f72be2435b759b79b06a1e2c8cb578218c143aee7c",
+      "source_version": "91254d42",
+      "content_hash": "186f2247cc5eec3cca3110dbed012879892bf7bbefb0f071f4974c399630bdfe",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -252112,6 +252112,11 @@
           "number": 10549,
           "title": "build(deps): bump taiki-e/install-action from 2.90.4 to 2.90.8",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10787,
+          "title": "reject q=0 media ranges in Acceptable guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -252119,7 +252124,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T15:29:57.986Z",
+      "verified_at": "2026-11-26T22:50:52.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -297555,9 +297560,9 @@
       "title": "Research & Knowledge Intelligence: NaiveAI/Naive-N0.5-Flash Core Invariants",
       "repository": "NaiveAI/Naive-N0.5-Flash",
       "source_version": "hf-naiveai-naive-n0.5-flash",
-      "content_hash": "53a909950ce10a54631ac3a6e3a7a50e0f46bec1d0c8dc0c1d0329762a190d04",
+      "content_hash": "60684f7171bd6256e353ffba9b12e1be48007fbe585da6caa070226e90ca26bd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:12:38.821Z"
+      "persisted_at": "2026-11-26T22:50:49.835Z"
     },
     "rule-9306": {
       "learning_id": "rule-9306",
@@ -297631,9 +297636,9 @@
       "title": "Research & Knowledge Intelligence: hf-naiveai-naive-n0.5-flash-learnings Core Invariants",
       "repository": "hf-naiveai-naive-n0.5-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f55c1b8e54648442db18405e8ce099acc6e3307d8e158f430e3065e0c426364",
+      "content_hash": "0f99cc4c0a6d67a5333aa4e7990e00f8f137d24eef8e8ad9a159291cc8eedbf6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:12:59.712Z"
+      "persisted_at": "2026-11-26T22:51:02.901Z"
     },
     "candidate_directive-bump-the-web-ui-dependencies-group": {
       "item_id": "candidate_directive-bump-the-web-ui-dependencies-group",
@@ -340766,13 +340771,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ARNG-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-C8AN-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "52b16b0e103ca6fe4e74c0cf734c32d2b391fd034463b96933def3401a791e3c",
+      "content_hash": "fc42c6e75c40d3dba2352d7f72fce59853175b4dcaedaf4cddb07a0183a88d83",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T22:21:55.714Z"
+      "persisted_at": "2026-11-26T22:51:03.556Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -359779,6 +359784,44 @@
       "content_hash": "7a379ff49f62e8c2be4216d53f583ea67fc25aaf0ffdf318515f0bb763abc728",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T22:39:07.770Z"
+    },
+    "rule-10787": {
+      "learning_id": "rule-10787",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10787,
+      "title": "reject q=0 media ranges in Acceptable guard",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "91254d42",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T22:50:52.061Z"
+    },
+    "candidate_directive-reject-q-0-media-ranges-in-acceptable-guard": {
+      "item_id": "candidate_directive-reject-q-0-media-ranges-in-acceptable-guard",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BZXB-reject-q-0-media-ranges-in-acceptable-guard.md",
+      "title": "reject q=0 media ranges in Acceptable guard",
+      "repository": "actix/actix-web",
+      "source_version": "91254d42",
+      "content_hash": "13dd2a76e9687269f53bab0f3c4bc7676b0892986bb2e1536a8689a527783bc6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T22:50:52.704Z"
+    },
+    "candidate_directive-web-reject-q-0-media-ranges-in-acceptable-guard": {
+      "item_id": "candidate_directive-web-reject-q-0-media-ranges-in-acceptable-guard",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C70D-web-reject-q-0-media-ranges-in-acceptable-guard.md",
+      "title": "web): reject q=0 media ranges in Acceptable guard",
+      "repository": "actix-actix-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2729f0296aea115ecdffdcda0c45afa1a7bc441af82abd9fffe2e70d6d0b3891",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T22:51:01.886Z"
     }
   },
   "ai-builder-brain": {

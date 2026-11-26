@@ -13616,3 +13616,5 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `f710b6d8` | Multi-dimensional audit evidence | 2026-11-26T22:38:58.635Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `9531e591` | Multi-dimensional audit evidence | 2026-11-26T22:39:03.185Z |
 | `learn-dom-d-a715b2e4` | `project://projectdiscovery-nuclei` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | 2026-11-26T22:39:36.591Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-11-26T22:50:49.552Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `91254d42` | Multi-dimensional audit evidence | 2026-11-26T22:50:52.413Z |

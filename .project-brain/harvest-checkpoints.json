@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T22:39:03.229Z",
+  "last_updated": "2026-11-26T22:50:52.436Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1430,14 +1430,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "content_hash": "d78bb07575733ab0329d61a32056cf899c3509aabac6437bcffce3464ae8d378",
-      "verified_at": "2026-11-23T14:12:38.615Z",
+      "content_hash": "24c5e9b3a9d2771fc82432bc01dc8952e48ee00c726703a578220a3956d553c9",
+      "verified_at": "2026-11-26T22:50:49.568Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T14:12:38.615Z"
+      "last_updated": "2026-11-26T22:50:49.568Z"
     },
     "openai/clip-vit-base-patch32": {
       "repository": "openai/clip-vit-base-patch32",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "b2496198c9ec6f53367df8f72be2435b759b79b06a1e2c8cb578218c143aee7c",
-      "verified_at": "2026-11-25T15:29:58.248Z",
+      "content_hash": "186f2247cc5eec3cca3110dbed012879892bf7bbefb0f071f4974c399630bdfe",
+      "verified_at": "2026-11-26T22:50:52.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T15:29:58.248Z"
+      "last_updated": "2026-11-26T22:50:52.436Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",

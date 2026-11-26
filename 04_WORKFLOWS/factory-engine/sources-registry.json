@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T22:39:06.780Z",
-    "lastVerified": "2026-11-26T22:39:06.780Z",
+    "lastChecked": "2026-11-26T22:51:01.177Z",
+    "lastVerified": "2026-11-26T22:51:01.177Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T22:10:51.067Z",
-    "lastVerified": "2026-11-26T22:10:51.067Z",
+    "lastChecked": "2026-11-26T22:51:01.166Z",
+    "lastVerified": "2026-11-26T22:51:01.166Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2169,8 +2169,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T18:32:58.919Z",
-    "lastVerified": "2026-11-26T18:32:58.919Z",
+    "lastChecked": "2026-11-26T22:50:56.259Z",
+    "lastVerified": "2026-11-26T22:50:56.259Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -3701,9 +3701,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-11-26T04:05:07.190Z",
+    "lastChecked": "2026-11-26T22:50:58.592Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-11-26T04:05:07.190Z"
+    "lastVerified": "2026-11-26T22:50:58.592Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -3896,9 +3896,9 @@
   "ritz078-transform": {
     "name": "transform",
     "officialUrl": "https://github.com/ritz078/transform",
-    "lastChecked": "2026-11-24T14:41:45.230Z",
+    "lastChecked": "2026-11-26T22:50:51.129Z",
     "revisionIdentifier": "ff755793",
-    "lastVerified": "2026-11-24T14:41:45.230Z"
+    "lastVerified": "2026-11-26T22:50:51.129Z"
   },
   "dosco-graphjin": {
     "name": "dosco/deeporg",
@@ -4910,14 +4910,14 @@
     "officialUrl": "https://github.com/actix/actix-web",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T15:29:57.000Z",
-    "lastVerified": "2026-11-25T15:29:57.000Z",
+    "lastChecked": "2026-11-26T22:50:51.048Z",
+    "lastVerified": "2026-11-26T22:50:51.048Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-actix-actix-web",
-    "contentHash": "b2496198c9ec6f53367df8f72be2435b759b79b06a1e2c8cb578218c143aee7c",
+    "contentHash": "186f2247cc5eec3cca3110dbed012879892bf7bbefb0f071f4974c399630bdfe",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5859,12 +5859,12 @@
     "officialUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T14:12:37.974Z",
-    "lastVerified": "2026-11-23T14:12:37.974Z",
+    "lastChecked": "2026-11-26T22:50:48.688Z",
+    "lastVerified": "2026-11-26T22:50:48.688Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-    "contentHash": "d78bb07575733ab0329d61a32056cf899c3509aabac6437bcffce3464ae8d378",
+    "contentHash": "24c5e9b3a9d2771fc82432bc01dc8952e48ee00c726703a578220a3956d553c9",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6890,9 +6890,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-11-26T04:56:07.380Z",
+    "lastChecked": "2026-11-26T22:50:53.773Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-11-26T04:56:07.380Z"
+    "lastVerified": "2026-11-26T22:50:53.773Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",

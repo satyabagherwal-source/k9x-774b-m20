@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T22:39:03.226Z",
-  "total_cycles_completed": 12892,
-  "total_learnings_persisted": 12892,
-  "total_rules_promoted": 11693,
+  "last_updated": "2026-11-26T22:50:52.432Z",
+  "total_cycles_completed": 12894,
+  "total_learnings_persisted": 12894,
+  "total_rules_promoted": 11694,
   "history": [
-    {
-      "timestamp": "2026-11-26T12:20:15.530Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T12:28:55.261Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T12:28:57.898Z",
       "repository": "Folkbench/folkbench",
@@ -1403,6 +1389,20 @@
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:50:49.565Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:50:52.432Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

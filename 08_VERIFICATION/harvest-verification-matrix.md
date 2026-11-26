@@ -13583,3 +13583,5 @@
 | `CYCLE-20261126-WOXY` | `2026-11-26T22:38:58.630Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`146b86cf...`) |
 | `CYCLE-20261126-WSGC` | `2026-11-26T22:39:03.180Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`705cb1f4...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T22:39:36.591Z` | `projectdiscovery-nuclei` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A715B2E4` [Domain D] | Yes (`2324c0d8...`) |
+| `CYCLE-20261126-BXHO` | `2026-11-26T22:50:49.548Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`24c5e9b3...`) |
+| `CYCLE-20261126-BZP5` | `2026-11-26T22:50:52.409Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10787` | Yes (`186f2247...`) |

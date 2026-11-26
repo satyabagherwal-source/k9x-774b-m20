@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T22:39:36.948Z",
+  "last_updated": "2026-11-26T22:51:03.782Z",
   "total_records": 2787,
   "domains": {
     "A": {
@@ -9520,8 +9520,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f6c443721ca8880ee0c8feed1ff582402fa61f7171fa26371c0efb0c9c364e0f",
-      "created_at": "2026-11-26T22:21:55.897Z"
+      "content_hash": "efc18811cbe897af6a55dcee874757cb152fc409568cd8cb7690e1353c8b7196",
+      "created_at": "2026-11-26T22:51:03.782Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10303,8 +10303,8 @@
       "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
       "repository": "actix/actix-web",
-      "content_hash": "1ceea375d2e5e6c5d2f45c5355a93234711c83b394c1aacadc90598af70a1ffd",
-      "created_at": "2026-11-25T15:29:58.688Z"
+      "content_hash": "4cb2fb382355f2303faf88283e31f1452ebf85f92f669bdff708815daee5d463",
+      "created_at": "2026-11-26T22:50:52.933Z"
     },
     "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
@@ -10372,8 +10372,8 @@
       "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-learnings-technical-construction-intelligence-actix-actix-web-le.md",
       "repository": "actix-actix-web-learnings",
-      "content_hash": "b4c1f8f742e9d01c93e64a8dccd62a2a05ab228df2594c36a649abf506dbb6bd",
-      "created_at": "2026-11-25T15:30:17.720Z"
+      "content_hash": "10a7732029ab5e8345face871d3e09c495f170246c87b8d9bfd1c0df70c505af",
+      "created_at": "2026-11-26T22:51:02.138Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
@@ -33014,8 +33014,8 @@
       "title": "Research & Knowledge Intelligence: NaiveAI/Naive-N0.5-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-naiveai-naive-n0-5-flash-research-knowledge-intelligence-naiveai-naive-n0-5-f.md",
       "repository": "NaiveAI/Naive-N0.5-Flash",
-      "content_hash": "53a909950ce10a54631ac3a6e3a7a50e0f46bec1d0c8dc0c1d0329762a190d04",
-      "created_at": "2026-11-23T14:12:38.821Z"
+      "content_hash": "60684f7171bd6256e353ffba9b12e1be48007fbe585da6caa070226e90ca26bd",
+      "created_at": "2026-11-26T22:50:49.835Z"
     },
     "DOM-D-0BC48FAB": {
       "record_id": "DOM-D-0BC48FAB",
@@ -33065,8 +33065,8 @@
       "title": "Research & Knowledge Intelligence: hf-naiveai-naive-n0.5-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-naiveai-naive-n0-5-flash-learnings-research-knowledge-intelligence-hf-naiveai.md",
       "repository": "hf-naiveai-naive-n0.5-flash-learnings",
-      "content_hash": "9f55c1b8e54648442db18405e8ce099acc6e3307d8e158f430e3065e0c426364",
-      "created_at": "2026-11-23T14:12:59.712Z"
+      "content_hash": "0f99cc4c0a6d67a5333aa4e7990e00f8f137d24eef8e8ad9a159291cc8eedbf6",
+      "created_at": "2026-11-26T22:51:02.901Z"
     },
     "DOM-H-6F9CB66B": {
       "record_id": "DOM-H-6F9CB66B",

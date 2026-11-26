@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T15:30:17.387Z",
+  "timestamp": "2026-11-26T22:51:01.752Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-actix-actix-web-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [actix-actix-web-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T15:30:17.387Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T22:51:01.752Z`  
 > **Learning ID**: `LEARN-EVO-actix-actix-web-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from actix-actix-web-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `98f5b221`  
+> **Source Version**: `91254d42`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T15:29:57.006Z  
+> **Timestamp**: 2026-11-26T22:50:51.053Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:29:57.000Z  
+> **Harvest Timestamp**: 2026-11-26T22:50:51.048Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1417,11 +1417,11 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4465** (2026-11-25): **feat(files): expose directory entries for custom listing renderers**
-  *Symptoms*: ## PR Type  Feature  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [ ] (Team) Label with affected crates and semver status.  ## Overview  Custom renderers passed to `Files::files_listing_renderer` previously had to reimplement entry iteration, hidden-file filtering and href percent-encoding. This adds:  - `Directory::entries(&self, req: &HttpRequest) -> io::Result<Vec<DirectoryEntry>>`: visible entries (same rules as `is_visible`) in `read_dir` order. - `DirectoryEntry` (`#[non_exhaustive]`): `name`, `url` (percent-encoded, not HTML-escaped), `is_dir`, `metadata`.  The default renderer is rebuilt on `entries()`; its HTML output is unchanged (existing listing tests pass as-is). This is template-library agnostic: users plug in any templating inside their renderer. A doctest on `files_listing_renderer` shows usage.  `entries()` also gives #4238 (path_filter for listings) a single place to apply the filter.  Closes #3763 
+- **Issue #4471** (2026-11-26): **fix(web): reject q=0 media ranges in Acceptable guard**
+  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  `guard::Acceptable` returned `true` as soon as it found a media range in the `Accept` header that matched the target type. It did not look at the range's quality value. A range with `q=0` means "not acceptable" (RFC 9110 §12.4.2), so these requests passed the guard:  - `Accept: application/json;q=0` with `Acceptable::new(mime::APPLICATION_JSON)` - `Accept: application/*, application/json;q=0` with the same guard. The more specific `application/json;q=0` should override `application/*` (RFC 9110 §12.5.1).  With this change, the guard picks the most specific media range that matches the target: exact type, then `type/*`, then `*/*` (only when `match_star_star()` is enabled). The guard passes only when that range has a non-zero quality. The guard still ignores media type parameters, so when several ranges are equally specific it uses the highest quality among them. For example, `text/html;level=1;q=0, text/html` still passes `Acceptable::new(mime::TEXT_HTML)`.  Behaviour only changes when a matching range has `q=0`. A missing `Accept` header still fails, and `*/*` still only counts with `match_star_star()`.  ## How I tested  - Added `test_acceptable_zero_quality` in `actix-web/src/guard/accepta
 
-- **Issue #4461** (2026-11-25): **fix(http): reject repeated Content-Type request fields**
-  *Symptoms*: <!-- Thanks for considering contributing actix! --> <!-- Please fill out the following to get your PR reviewed quicker. -->  ## PR Type  <!-- What kind of change does this PR make? --> <!-- Bug Fix / Feature / Refactor / Code Style / Other -->  Bug Fix  ## PR Checklist  <!-- Check your PR fulfills the following items. --> <!-- For draft PRs check the boxes as you complete them. -->  - [x] Tests for the changes have been added / updated. - [ ] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  <!-- Describe the current and new behavior. --> <!-- Emphasize any breaking changes. -->  The HTTP/1 decoder previously passed repeated `Content-Type` fields through to the application. It now returns `400 Bad Request` for any request with more than one `Content-Type` field, including when the values match.  `Content-Type` is a singleton field. Senders must emit at most one field line, even when both values would be identical. Actix chooses `400` for repeated lines so handlers never have to choose which media type to trust. [RFC 9110 §5.3](https://www.rfc-editor.org/rfc/rfc9110.html#section-5.3) and [RFC 9110 §8.3](https://www.rfc-editor.org/rfc/rfc9110.html#section-8.3).  Tested with `cargo test --locked --offline -p actix-http --lib reject_multiple_request_content_types`.  <!-- If this PR fixes or closes an issue, reference it here. --> <!-- Closes
+- **Issue #4467** (2026-11-26): **perf(router): outline cold decoding path in Quoter::requote**
+  *Symptoms*: <!-- Thanks for considering contributing actix! --> <!-- Please fill out the following to get your PR reviewed quicker. -->  ## PR Type  Refactor  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [ ] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  `Quoter::requote` scans incoming URL path bytes for percent-encoded sequences and returns `None` when no decoding is required (the common case for normal paths). Previously, the heap-allocating decoding loop lived inline inside `Quoter::requote`. Under release LTO (`opt-level = 3`, `lto = true`), this inflated `Quoter::requote` to an 804-byte out-of-line function with a 128-byte stack frame that spilled 12 callee-saved registers (`x19`–`x30`) on every unquoted call.  This change splits the allocation and decoding loop into `#[cold] fn requote_slow`, and outlines lossy UTF-8 conversion in `Quoter::requote_str_lossy` into `#[cold] fn bytes_to_string_lossy`. Runtime semantics are unchanged.  ### Why `#[cold]` alone (without `#[inline(never)]`)  - **`#[inline(never)]` alone** regressed `quoter_unquoted` by **+10.2%** and `quoter_quoted` by **+3.2%**, because without `#[cold]` LLVM treats the slow-path call as a warm branch inside the hot scan loop. - **`#[cold]` alone** produces **zero ARM64 instruction diff** against `#[cold] #[inline(never)]` across all 1,101 lines of `
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1438,270 +1438,143 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc8f3c57` (2026-11-25)
-**Commit Message**: build(deps): bump taiki-e/install-action from 2.90.4 to 2.90.8 (#4452)
+### Incident Patch 1: `91254d42` (2026-11-26)
+**Commit Message**: fix(web): reject q=0 media ranges in Acceptable guard (#4471)
 
-Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.90.4 to 2.90.8.
-- [Release notes](https://github.com/taiki-e/install-action/releases)
-- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/taiki-e/install-action/compare/v2.90.4...v2.90.8)
+The Acceptable guard returned true for the first media range in the Accept header that matched the target type, ignoring its quality value. A range with q=0 means "not acceptable" (RFC 9110 §12.4.2), so a request with `Accept: application/json;q=0` passed `Acceptable::new(mime::APPLICATION_JSON)`.
 
----
-updated-dependencies:
-- dependency-name: taiki-e/install-action
-  dependency-version: 2.90.8
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+The most specific matching media range now decides the outcome, and the guard only passes when its quality value is non-zero.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/actions.lock` (modified, +8/-8)
+**File**: `actix-web/CHANGES.md` (modified, +1/-0)
 ```diff
-@@ -9,18 +9,18 @@ workflows:
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.90.4'
-+        - 'taiki-e/install-action@v2.90.8'
-         - 'useblacksmith/checkout@v1.8.3'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.90.4'
-+        - 'taiki-e/install-action@v2.90.8'
-         - 'useblacksmith/checkout@v1.8.3'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'actions/upload-code-coverage@v1.4.4'
--        - 'taiki-e/install-action@v2.90.4'
-+        - 'taiki-e/install-action@v2.90.8'
-         - 'useblacksmith/checkout@v1.8.3'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@v7.0.0'
-@@ -30,7 +30,7 @@ workflows:
-         - 'embarkstudios/cargo-deny-action@v2.1.3'
-         - 'giraffate/clippy-action@v1.0.1'
-         - 'taiki-e/cache-cargo-install-action@v3.0.8'
--        - 'taiki-e/install-action@v2.90.4'
-+        - 'taiki-e/install-action@v2.90.8'
-         - 'useblacksmith/checkout@v1.8.3'
-         - 'zizmorcore/zizmor-action@v0.8.1'
-     '.github/workflows/release.yml':
-@@ -41,7 +41,7 @@ workflows:
-         - 'release-plz/action@v0.5.148'
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
--        - 'taiki-e/install-action@v2.90.4'
-+        - 'taiki-e/install-action@v2.90.8'
-         - 'useblacksmith/checkout@v1.8.3'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@v2.0.1':
-@@ -142,9 +142,9 @@ dependencies:
-         commit: 'sha1-1919c4a95903d2c33e4a221102edca87309fc14b'
-         owner_id: 43724913
-         repo_id: 442947557
--    'taiki-e/install-action@v2.90.4':
--        ref: 'v2.90.4'
--        commit: 'sha1-4a76afe23f9e08d2d9550fb56e556444e8611d21'
-+    'taiki-e/install-action@v2.90.8':
-+        ref: 'v2.90.8'
-+        commit: 'sha1-fe3acb53a98b62c772db35de75ce0e4595e7ca8c'
-         owner_id: 43724913
-         repo_id: 442947557
-     'useblacksmith/checkout@v1.8.3':
-```
-
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
-```diff
-@@ -57,7 +57,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
+@@ -9,6 +9,7 @@
+ - Add `TestRequest::cookie_0_18()` for setting a cookie on a test request.
+ - Make `HttpResponse::del_cookie()` available with either cookie feature.
+ - Enable signed and private cookies for cookie (v0.18) when both `cookies-0_18` and `secure-cookies` are enabled.
++- Fix `guard::Acceptable` matching media ranges that the `Accept` header marks as not acceptable (`q=0`); the most specific matching media range now decides the outcome.
  
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.90.4
-+        uses: taiki-e/install-action@v2.90.8
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -97,7 +97,7 @@ jobs:
-           cache-key: feature-powerset-${{ matrix.partition }}
- 
-       - name: Install just, cargo-hack
--        uses: taiki-e/install-action@v2.90.4
-+        uses: taiki-e/install-action@v2.90.8
-         with:
-           tool: just,cargo-hack
+ ## 4.20.0
  
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+**File**: `actix-web/src/guard/acceptable.rs` (modified, +71/-7)
 ```diff
-@@ -72,7 +72,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
+@@ -1,11 +1,15 @@
+ use super::{Guard, GuardContext};
+-use crate::http::header::Accept;
++use crate::http::header::{Accept, Quality};
  
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.90.4
-+        uses: taiki-e/install-action@v2.90.8
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
+ /// A guard that verifies that an `Accept` header is present and it contains a compatible MIME type.
+ ///
+ /// An exception is that matching `*/*` must be explicitly enabled because most browsers send this
+ /// as part of their `Accept` header for almost every request.
+ ///
++/// The most specific media range that matches the target type decides the outcome. The guard fails
++/// when that range has a quality value of 0, so `Acceptable::new(mime::APPLICATION_JSON)` rejects
++/// `Accept: application/*, application/json;q=0`.
++///
+ /// # Examples
+ /// ```
+ /// use actix_web::{guard::Acceptable, web, HttpResponse};
+@@ -52,16 +56,25 @@ impl Guard for Acceptable {
+         let target_type = self.mime.type_();
+         let target_subtype = self.mime.subtype();
  
-@@ -107,7 +107,7 @@ jobs:
-           toolchain: nightly
+-        for mime in accept.0.into_iter().map(|q| q.item) {
+-            return match (mime.type_(), mime.subtype()) {
+-                (typ, subtype) if typ == target_type && subtype == target_subtype => true,
+-                (typ, mime::STAR) if typ == target_type => true,
+-                (mime::STAR, mime::STAR) if self.match_star_star => true,
++        // The most specific matching media range decides the outcome, so that, for example,
++        // `application/json;q=0` takes precedence over `application/*` (RFC 9110 §12.5.1).
++        let mut best_match = None;
++
++        for item in &accept.0 {
++            let specificity = match (item.item.type_(), item.item.subtype()) {
++                (typ, subtype) if typ == target_type && subtype == target_subtype => 2,
++                (typ, mime::STAR) if typ == target_type => 1,
++                (mime::STAR, mime::STAR) if self.match_star_star => 0,
+                 _ => continue,
+             };
++
++            // media type parameters are not compared, so among equally specific ranges the
++            // highest quality value is used
++            best_match = best_match.max(Some((specificity, item.quality)));
+         }
  
-       - name: Install just
--        uses: taiki-e/install-action@v2.90.4
-+        uses: taiki-e/install-action@v2.90.8
-         with:
-           tool: just
+-        false
++        // a quality value of 0 means "not acceptable" (RFC 9110 §12.4.2)
++        matches!(best_match, Some((_, quality)) if quality > Quality::ZERO)
+     }
  
-```
-
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ jobs:
-           components: llvm-tools
+     #[cfg(feature = "experimental-introspection")]
+@@ -107,6 +120,57 @@ mod tests {
+         assert!(Acceptable::new(mime::APPLICATION_JSON).check(&req.guard_ctx()));
+     }
  
-       - name: Install just, cargo-llvm-cov, cargo-nextest
--        uses: taiki-e/install-action@v2.90.4
-+        uses: taiki-e/install-action@v2.90.8
-         with:
-           tool: just,cargo-llvm-cov,cargo-nextest
- 
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +1/-1)
-```diff
-@@ -124,7 +124,7 @@ jobs:
-           toolchain: ${{ vars.RUST_VERSION_EXTERNAL_TYPES }}
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.90.4
-+        uses: taiki-e/install-action@v2.90.8
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-           toolchain: stable
- 
-       - name: Install cargo-semver-checks
--        uses: taiki-e/install-action@v2.90.4
-+        uses: taiki-e/install-action@v2.90.8
-         with:
-           tool: cargo-semver-checks
- 
-```
-
----
-
-### Incident Patch 2: `486e1dc4` (2026-11-25)
-**Commit Message**: build(deps): bump bytes from 1.12.1 to 1.12.2 (#4454)
-
-Bumps [bytes](https://github.com/tokio-rs/bytes) from 1.12.1 to 1.12.2.
-- [Release notes](https://github.com/tokio-rs/bytes/releases)
-- [Changelog](https://github.com/tokio-rs/bytes/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/tokio-rs/bytes/compare/v1.12.1...v1.12.2)
-
----
-updated-dependencies:
-- dependency-name: bytes
-  dependency-version: 1.12.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -769,9 +769,9 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
- 
- [[package]]
- name = "bytes"
--version = "1.12.1"
-+version = "1.12.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
-+checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
- 
- [[package]]
- name = "bytesize"
-```
-
----
-
-### Incident Patch 3: `6b32cb22` (2026-11-25)
-**Commit Message**: build(deps): bump regex from 1.13.1 to 1.13.2 (#4456)
-
-Bumps [regex](https://github.com/rust-lang/regex) from 1.13.1 to 1.13.2.
-- [Release notes](https://github.com/rust-lang/regex/releases)
-- [Changelog](https://github.com/rust-lang/regex/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/rust-lang/regex/compare/1.13.1...1.13.2)
-
----
-updated-dependencies:
-- dependency-name: regex
-  dependency-version: 1.13.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +6/-6)
-```diff
-@@ -2697,9 +2697,9 @@ dependencies = [
- 
- [[package]]
- name = "regex"
--version = "1.13.1"
-+version = "1.13.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
-+checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
- dependencies = [
-  "aho-corasick",
-  "memchr",
-@@ -2709,9 +2709,9 @@ dependencies = [
- 
- [[package]]
- name = "regex-automata"
--version = "0.4.18"
-+version = "0.4.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
-+checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
- dependencies = [
-  "aho-corasick",
-  "memchr",
-@@ -2726,9 +2726,9 @@ checksum = "cab834c73d247e67f4fae452806d17d3c7501756d98c8808d7c9c7aa7d18f973"
- 
- [[package]]
- name = "regex-syntax"
--version = "0.8.11"
-+version = "0.8.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
-+checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
- 
- [[package]]
- name = "resolv-conf"
++    #[test]
++    fn test_acceptable_zero_quality() {
++        let req = TestRequest::default()
++            .insert_header((header::ACCEPT, "application/json;q=0"))
++            .to_srv_request();
++        assert!(!Acceptable::new(mime::APPLICATION_JSON).check(&req.guard_ctx()));
++
++        let req = TestRequest::default()
++            .insert_header((header::ACCEPT, "application/*;q=0"))
++            .to_srv_request();
++        assert!(!Acceptable::new(mime::APPLICATION_JSON).check(&req.guard_ctx()));
++
++        let req = TestRequest::default()
++            .insert_header((header::ACCEPT, "*/*;q=0"))
++            .to_srv_request();
++        assert!(!Acceptable::new(mime::APPLICATION_JSON)
++            .match_star_star()
++            .check(&req.guard_ctx()));
++
++        // more specific range takes precedence, regardless of order
++        let req = TestRequest::default()
++            .insert_header((header::ACCEPT, "application/*, application/json;q=0"))
++            .to_srv_request();
++        assert!(!Acceptable::new(mime::APPLICATION_JSON).check(&req.guard_ctx()));
++
++        let req = TestRequest::default()
++            .insert_header((header::ACCEPT, "*/*, application/json;q=0"))
++            .to_srv_request();
++        assert!(!Acceptable::new(mime::APPLICATION_JSON)
++            .match_star_star()
++            .check(&req.guard_ctx()));
++
++        let req = TestRequest::default()
++            .insert_header((header::ACCEPT, "application/*;q=0, application/json;q=0.5"))
++            .to_srv_request();
++        assert!(Acceptable::new(mime::APPLICATION_JSON).check(&req.guard_ctx()));
++
++        let req = TestRequest::default()
++            .insert_header((header::ACCEPT, "*/*;q=0, application/*"))
++            .to_srv_request();
++        assert!(Acceptable::new(mime::APPLICATION_JSON)
++            .match_star_star()
++            .check(&req.guard_ctx()));
++
++        // parameters are not compared, so an equally specific non-zero range still passes
++        let req = TestRequest::default()
++            .insert_header((header::ACCEPT, "text/html;level=1;q=0, text/html"))
++            .to_srv_request();
++        assert!(Acceptable::new(mime::TEXT_HTML).check(&req.guard_ctx()));
++    }
++
+     #[test]
+     fn test_acceptable_star() {
+         let req = TestRequest::default()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4471** (2026-11-26): fix(web): reject q=0 media ranges in Acceptable guard (@andretorresdg)
+- **PR #4467** (2026-11-26): perf(router): outline cold decoding path in Quoter::requote (@robjtede)
 - **PR #4465** (closed): feat(files): expose directory entries for custom listing renderers (@RubenPari)
 - **PR #4461** (2026-11-25): fix(http): reject repeated Content-Type request fields (@robjtede)
 - **PR #4460** (2026-11-25): fix(http): reject an empty HTTP/1.1 authority (@robjtede)
 - **PR #4459** (2026-11-25): fix(http): reject URI component delimiters in Host (@robjtede)
-- **PR #4458** (2026-11-25): fix(http): reject fragments in HTTP/1 request targets (@robjtede)
-- **PR #4457** (2026-11-25): fix(http): reserve the asterisk request target for OPTIONS (@robjtede)
 
 ---
 
@@ -1721,45 +1594,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump taiki-e/install-action from 2.90.4 to 2.90.8
+## X. web): reject q=0 media ranges in Acceptable guard
 
 **RULE**:
-When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `actix-web/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cc8f3c57`: build(deps): bump taiki-e/install-action from 2.90.4 to 2.90.8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91254d42`: web): reject q=0 media ranges in Acceptable guard. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-web/CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        - 'taiki-e/install-action@v2.90.8'
-        - 'taiki-e/install-action@v2.90.8'
-        - 'taiki-e/install-action@v2.90.8'
-        - 'taiki-e/install-action@v2.90.8'
-        - 'taiki-e/install-action@v2.90.8'
-    'taiki-e/install-action@v2.90.8':
-        ref: 'v2.90.8'
-        commit: 'sha1-fe3acb53a98b62c772db35de75ce0e4595e7ca8c'
+- Fix `guard::Acceptable` matching media ranges that the `Accept` header marks as not acceptable (`q=0`); the most specific matching media range now decides the outcome.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        - 'taiki-e/install-action@v2.90.4'
-        - 'taiki-e/install-action@v2.90.4'
-        - 'taiki-e/install-action@v2.90.4'
-        - 'taiki-e/install-action@v2.90.4'
-        - 'taiki-e/install-action@v2.90.4'
-    'taiki-e/install-action@v2.90.4':
-        ref: 'v2.90.4'
-        commit: 'sha1-4a76afe23f9e08d2d9550fb56e556444e8611d21'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc8f3c57` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91254d42` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T22:39:07.770Z",
+  "last_updated": "2026-11-26T22:51:03.556Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56036,11 +56036,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-ARNG",
+      "id": "CD-C8AN",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ARNG-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-C8AN-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -67460,6 +67460,37 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-BZXB",
+      "directive_title": "reject q=0 media ranges in Acceptable guard",
+      "source_repo": "actix/actix-web",
+      "source_commit": "91254d42",
+      "staged_file": "11_INBOX/candidate-directives/CD-BZXB-reject-q-0-media-ranges-in-acceptable-guard.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-C70D",
+      "directive_title": "web): reject q=0 media ranges in Acceptable guard",
+      "source_repo": "actix-actix-web-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-C70D-web-reject-q-0-media-ranges-in-acceptable-guard.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-01EC36",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-01EC36-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
+      "staged_date": "2026-11-26"
     }
   ]
 }
