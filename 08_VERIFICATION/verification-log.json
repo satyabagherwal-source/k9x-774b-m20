@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-VYCP",
-    "timestamp": "2026-11-25T06:30:57.193Z",
-    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-    "contentHash": "641d2fec289cfcbdaf8d52710b76d0127e52b7934a32d94eb667c121ef4c8359",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-6K6M",
-    "timestamp": "2026-11-25T06:39:12.046Z",
-    "repository": "orcarouter/OrcaCyber-Nano-1.0",
-    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-    "contentHash": "5c1bb7f0da79757ae33edc583baa930dec7ca2a9dd77c5d66b550b731bf0268e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-6LOI",
-    "timestamp": "2026-11-25T06:39:13.986Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "39e8031962b630bb8ad244c6228a414d0383c550a117fef5bfb3c38b4945af3e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-6QTG",
     "timestamp": "2026-11-25T06:39:20.644Z",
     "repository": "TableProApp/TablePro",
@@ -7490,6 +7445,51 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "7232e67d2efeff29398925fd29af80f2c09249a43421eff07bd31f36bb7550c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-56FX",
+    "timestamp": "2026-11-26T18:05:38.397Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-google-t5-t5-small",
+    "contentHash": "6780c9dc725f185b0246967f0a698fefb7f0d01fc75c7788efbe6665d4bfb7a6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-5C1G",
+    "timestamp": "2026-11-26T18:05:45.652Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "be42e996f7d243edecaef16bc240d4357653186b2d50350fa84d7b83e809846b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-5HQM",
+    "timestamp": "2026-11-26T18:05:53.038Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "0e56fd040eadf3d5add95ec2faadb2e43eea790da9e8ae61301031d4e38a8d83",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:57:13.652Z",
+  "last_updated": "2026-11-26T18:06:01.732Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T17:39:35.096Z",
@@ -1213,7 +1213,7 @@
       "staged_for_review": 0
     },
     "t8y2-dbx-learnings.md": {
-      "processed_at": "2026-11-25T23:32:45.338Z",
+      "processed_at": "2026-11-26T18:06:00.692Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2173,7 +2173,7 @@
       "staged_for_review": 0
     },
     "pubkey-rxdb-learnings.md": {
-      "processed_at": "2026-11-24T09:00:01.384Z",
+      "processed_at": "2026-11-26T18:05:57.366Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2203,7 +2203,7 @@
       "staged_for_review": 0
     },
     "hf-google-t5-t5-small-learnings.md": {
-      "processed_at": "2026-11-23T03:47:07.554Z",
+      "processed_at": "2026-11-26T18:05:56.768Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3988,7 +3988,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4611,
+  "total_dossiers_evaluated": 4614,
   "total_canonical_promoted": 565,
-  "total_staged_for_review": 3472
+  "total_staged_for_review": 3474
 }

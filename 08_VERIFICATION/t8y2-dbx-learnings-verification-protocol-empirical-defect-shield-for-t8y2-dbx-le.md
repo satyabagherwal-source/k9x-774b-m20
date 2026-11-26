@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T23:32:45.588Z",
+  "timestamp": "2026-11-26T18:06:00.878Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-t8y2-dbx-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [t8y2-dbx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T23:32:45.588Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T18:06:00.878Z`  
 > **Learning ID**: `LEARN-EVO-t8y2-dbx-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `e6c06578`  
+> **Source Version**: `fba29442`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T23:32:37.666Z  
+> **Timestamp**: 2026-11-26T18:05:51.700Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:32:37.660Z  
+> **Harvest Timestamp**: 2026-11-26T18:05:51.694Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 31429 stars
+- **Stars / Engagement**: 31536 stars
 
 ---
 
@@ -2053,14 +2053,13 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15619** (2026-11-24): **[Bug] 标签页采用两行分组并按连接分组，页签开启多行平铺时，鼠标放到页签栏上总是会出现滚动条**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  SQL Server 2019  ### 问题描述 / Problem description  标签页采用两行分组并按连接分组，页签开启多行平铺时，鼠标放到页签栏上总是会出现滚动条 <img width="1680" height="129" alt="image" src="https://github.com/user-attachments/assets/a9e52e12-342b-4908-baca-0656fe743da3" />  ### 支持信息 / Support information  DBX 版本: v0.6.73 (0.6.73-beta.20261123.1) 运行环境: 桌面端 操作系统: Windows 10 (10.0.19045.6466) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 数据库类型: influxdb3/influxdb, mysql, oracle, postgres, sqlserver 本地驱动版本: sqlserver-legacy 0.1.70 AI 供应商: DeepSeek  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #15782** (2026-11-26): **[Bug] 全局搜索使用中文输入法时，按回车上屏会关闭搜索框**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  全局搜索输入框的键盘交互，与数据库类型和版本无关。  ### 问题描述 / Problem description  1. 打开全局搜索，确保列表中有高亮结果。 2. 切换到中文输入法，在搜索框里输入一串字母，例如 `users`，保留组字状态。 3. 按回车，让输入中的字母原样上屏。  **实际行为**  回车触发打开当前高亮结果，搜索框随即关闭。  **预期行为**  回车确认输入，搜索框保持打开，并根据上屏后的文字更新结果。松开后再按回车时，正常打开当前高亮结果。  ### 支持信息 / Support information  在 DBX 主线源码的全局搜索组件中，用输入法事件序列复现。原始反馈未提供安装版本、操作系统或输入法名称。  ### 优先级（是否紧急） / Priority  🟡 P2 普通 
 
-- **Issue #15596** (2026-11-24): **[Bug]**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  编辑表结构时，字段类型下拉一闪就消失了。  ### 问题描述 / Problem description  <img width="2460" height="1022" alt="image" src="https://github.com/user-attachments/assets/c67b73fe-7ed2-4d37-a218-dd03352f5260" />  ### 支持信息 / Support information  DBX Version: v0.6.73 (0.6.73-beta.20261123.1) Runtime: Desktop Operating System: macOS 26.7.3 Architecture: aarch64  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #15732** (2026-11-26): **[Compatibility] SQL Server 2005 不支持 OBJECT_SCHEMA_NAME 导致建表失败**
+  *Symptoms*: ### 来源 QQ 群反馈 · **反馈人**：大锅菜麦克风  ### 数据库类型和版本 SQL Server 2005  ### AI 摘要 在 SQL Server 2005 中使用 dbx v0.6.75 创建表时，报错：OBJECT_SCHEMA_NAME 不是可以识别的内置函数名称（错误码 195）。该函数在 SQL Server 2005 中不可用，导致建表操作失败，需要兼容处理。  ### 原始描述 v0.6.75dbx在SQLServer 2005中创建表 会报错 Token error: "OBJECT_SCHEMA_NAME' 不是可以识别的 内置函数名称。'on server xxx executing on line 1(code:195,state:10,class:15)
   **Post-Mortem & Fix Analysis**:
-  > 大佬快点修复，目前只能手搓 sql了
-  > /claim
+  > 编辑SQLserver连接，选择旧版驱动
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2077,178 +2076,704 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e6c06578` (2026-11-25)
-**Commit Message**: fix(grid): stop re-creating scroller ResizeObserver on every refresh
+### Incident Patch 1: `fba29442` (2026-11-26)
+**Commit Message**: fix(oracle): upgrade godror to prevent stale OCI call timeout leak
 
-Refs: #15660
-
-**File**: `apps/desktop/src/components/grid/DataGrid.vue` (modified, +17/-19)
+**File**: `.github/scripts/ci-workflow.test.mjs` (modified, +25/-0)
 ```diff
-@@ -3754,6 +3754,16 @@ function refreshGridScrollerMetrics() {
-   scheduleVisibleLargeValuePreviewHydration();
+@@ -197,6 +197,31 @@ test("Neo4j Windows x64 release and CI use the Windows-compatible build", () =>
+   assert.ok(compatibilitySteps.includes('build-windows-legacy.sh "$RUNNER_TEMP/dbx-agent-neo4j-windows-x64.exe"'));
+ });
+ 
++test("Oracle thin Go 1.20 build and OCI modfile split stay covered in release and CI", () => {
++  const release = readFileSync(new URL("../workflows/agents-release.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
++  const thin = job("build-oracle-native", release);
++  assert.match(thin, /go-version: "1\.20\.14"/);
++  assert.ok(thin.includes("cache-dependency-path: agents/drivers/oracle-go/go.sum"));
++
++  const oci = job("build-oracle-oci-native", release);
++  assert.ok(oci.includes("cache-dependency-path: agents/drivers/oracle-go/go.oci.sum"));
++  assert.ok(oci.includes("go test -mod=readonly -modfile=go.oci.mod -tags oci ./..."));
++  assert.ok(oci.includes("go build -mod=readonly -modfile=go.oci.mod -tags oci"));
++
++  const ci = job("agent-go");
++  const oracleSteps = ci.slice(ci.indexOf("- name: Setup Oracle Windows-compatible Go"));
++  assert.equal((oracleSteps.match(/if: matrix\.driver == 'oracle-go'/g) ?? []).length, 2);
++  assert.match(oracleSteps, /go-version: "1\.20\.14"/);
++  assert.ok(oracleSteps.includes("go test -mod=readonly ./..."));
++  assert.ok(oracleSteps.includes("grep -q ': go1\\.20\\.14$'"));
++
++  const thinMod = readFileSync(new URL("../../agents/drivers/oracle-go/go.mod", import.meta.url), "utf8").replaceAll("\r\n", "\n");
++  assert.match(thinMod, /^go 1\.20$/m);
++  assert.doesNotMatch(thinMod, /github\.com\/godror\/godror/);
++  const ociMod = readFileSync(new URL("../../agents/drivers/oracle-go/go.oci.mod", import.meta.url), "utf8").replaceAll("\r\n", "\n");
++  assert.match(ociMod, /github\.com\/godror\/godror/);
++});
++
+ test("shared Rust caches publish only complete builds outside the old cache namespace", () => {
+   for (const name of ["packages", "rust-fmt-clippy", "rust-test", "agent-rust", "agent-integration"]) {
+     const content = job(name);
+```
+
+**File**: `.github/workflows/agents-release.yml` (modified, +5/-6)
+```diff
+@@ -225,9 +225,9 @@ jobs:
+       - uses: actions/checkout@v7
+       - uses: actions/setup-go@v7
+         with:
+-          # godror 需要 Go >= 1.21；thin 的 Windows 7 兼容线仍由 build-oracle-native 用 Go 1.20 构建。
++          # godror 需要 Go >= 1.25；thin 的 Windows 7 兼容线使用 go.mod（Go 1.20），OCI 变体使用独立的 go.oci.mod。
+           go-version: "1.27.x"
+-          cache-dependency-path: agents/drivers/oracle-go/go.sum
++          cache-dependency-path: agents/drivers/oracle-go/go.oci.sum
+       - name: Prepare MinGW-w64 and the Oracle Instant Client
+         shell: bash
+         run: |
+@@ -283,16 +283,15 @@ jobs:
+       - name: Test Oracle agent with the OCI build tag
+         shell: bash
+         working-directory: agents/drivers/oracle-go
+-        run: go test -mod=mod -tags oci ./...
++        run: go test -mod=readonly -modfile=go.oci.mod -tags oci ./...
+       - name: Build Oracle OCI agent (Windows x64)
+         shell: bash
+         working-directory: agents/drivers/oracle-go
+         run: |
+           mkdir -p ../../../release-native
+           output="../../../release-native/dbx-agent-oracle-oci-windows-x64.exe"
+-          # go.mod 的 go 指令保持 1.20（thin 的 Windows 7 兼容线）；OCI 变体要求更高，
+-          # 因此允许就地更新 go.mod —— 只影响本任务的检出目录，不会被提交。
+-          go build -mod=mod -tags oci -trimpath -ldflags="-s -w" -o "$output" .
++          # OCI 变体使用独立的 go.oci.mod / go.oci.sum，避免将高版本 godror 引入 Go 1.20 的 thin 依赖图。
++          go build -mod=readonly -modfile=go.oci.mod -tags oci -trimpath -ldflags="-s -w" -o "$output" .
+           ls -lh ../../../release-native
+       - uses: actions/upload-artifact@v4
+         with:
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +16/-0)
+```diff
+@@ -1640,6 +1640,22 @@ jobs:
+       - name: Test Neo4j Windows-compatible build
+         if: matrix.driver == 'neo4j-go'
+         run: bash drivers/neo4j-go/build-windows-legacy.sh "$RUNNER_TEMP/dbx-agent-neo4j-windows-x64.exe"
++      - name: Setup Oracle Windows-compatible Go
++        if: matrix.driver == 'oracle-go'
++        uses: actions/setup-go@v7
++        with:
++          go-version: "1.20.14"
++          cache-dependency-path: agents/drivers/oracle-go/go.sum
++      - name: Test Oracle Windows-compatible thin build
++        if: matrix.driver == 'oracle-go'
++        run: |
++          cd drivers/oracle-go
++          export GOTOOLCHAIN=local
++          go test -mod=readonly ./...
++          output="$RUNNER_TEMP/dbx-agent-oracle-windows-x64.exe"
++          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -mod=readonly -trimpath -ldflags="-s -w" -o "$output" .
++          go version -m "$output" | tee "$RUNNER_TEMP/oracle-windows-x64-build-info.txt"
++          grep -q ': go1\.20\.14$' "$RUNNER_TEMP/oracle-windows-x64-build-info.txt"
+     strategy:
+       fail-fast: false
+       max-parallel: 4
+```
+
+**File**: `agents/drivers/oracle-go/README.md` (modified, +3/-3)
+```diff
+@@ -83,9 +83,9 @@ $env:GOOS="windows"; $env:GOARCH="amd64"
+ $env:CC="C:/mingw64/bin/gcc.exe"
+ $env:CGO_CFLAGS="-IC:/instantclient/sdk/include"
+ $env:CGO_LDFLAGS="-LC:/instantclient/sdk/lib/msvc"
+-# go.mod keeps `go 1.20` for the Windows 7-compatible thin build; the OCI
+-# variant needs Go >= 1.21 (godror), so -mod=mod updates go.mod in place.
+-go build -mod=mod -tags oci -trimpath -ldflags="-s -w" -o oracle-oci.exe .
++# go.mod keeps pure Go 1.20 thin dependencies for Windows 7; the OCI variant
++# uses its own go.oci.mod / go.oci.sum (Go >= 1.25 for godror).
++go build -mod=readonly -modfile=go.oci.mod -tags oci -trimpath -ldflags="-s -w" -o oracle-oci.exe .
+ ```
+ 
+ At runtime only `oci.dll` is needed, located through `PATH`.
+```
+
+**File**: `agents/drivers/oracle-go/dbms_output.go` (modified, +4/-4)
+```diff
+@@ -689,10 +689,10 @@ func (s *server) beginStatementTx(ctx context.Context) (*sql.Tx, error) {
+ type sqlConnDBMSOutputSession struct {
+ 	conn *sql.Conn
+ 	// oci selects the OCI (godror) driver, which binds sql.Out directly and sizes
+-	// an OUT string itself (32767 bytes, stmt.go:1422-1426 of godror v0.51.5, so
+-	// it already holds every line the server can produce). The built-in go-ora
+-	// driver needs its own Out type carrying the client-side buffer size the
+-	// payload is read back into.
++	// an OUT string itself (32767 bytes in godror's stmt.go, so it already holds
++	// every line the server can produce). The built-in go-ora driver needs its
++	// own Out type carrying the client-side buffer size the payload is read back
++	// into.
+ 	oci bool
+ 	// binding carries the register size shared by every connection of this
+ 	// server, so a server that rejects the largest one only pays for it once.
+```
+
+**File**: `agents/drivers/oracle-go/dbms_output_test.go` (modified, +64/-1)
+```diff
+@@ -356,6 +356,8 @@ type oracleDBMSOutputDriver struct {
+ 	// compileErrors are the ALL_ERRORS rows (OWNER, NAME, TYPE, LINE, POSITION, TEXT)
+ 	// served to the compilation-error readback that follows a CREATE.
+ 	compileErrors [][]driver.Value
++	resetContexts []context.Context
++	queryContexts []context.Context
  }
  
-+let scrollerMetricsRefreshFrame: number | null = null;
+ func openOracleDBMSOutputTestDB(t *testing.T) (*sql.DB, *oracleDBMSOutputDriver) {
+@@ -477,6 +479,7 @@ func (c *oracleDBMSOutputConn) ExecContext(ctx context.Context, query string, ar
+ 	if query == dbmsOutputDisableSQL {
+ 		c.driver.disableCount++
+ 		c.driver.events = append(c.driver.events, "disable")
++		c.driver.resetContexts = append(c.driver.resetContexts, ctx)
+ 		if c.driver.disableErr != nil {
+ 			return nil, c.driver.disableErr
+ 		}
+@@ -487,6 +490,7 @@ func (c *oracleDBMSOutputConn) ExecContext(ctx context.Context, query string, ar
+ 	if strings.Contains(query, "DBMS_OUTPUT.ENABLE") {
+ 		c.driver.enableCount++
+ 		c.driver.events = append(c.driver.events, "enable")
++		c.driver.resetContexts = append(c.driver.resetContexts, ctx)
+ 		if c.driver.enableErr != nil {
+ 			c.enabled = false
+ 			return nil, c.driver.enableErr
+@@ -559,7 +563,7 @@ func (c *oracleDBMSOutputConn) ExecContext(ctx context.Context, query string, ar
+ // QueryContext serves the SELECT a paged query starts. It is the same statement path as
+ // ExecContext: the scripted lines enter the session buffer, so a capture around the
+ // query reads exactly what the statement wrote before its first page.
+-func (c *oracleDBMSOutputConn) QueryContext(_ context.Context, query string, _ []driver.NamedValue) (driver.Rows, error) {
++func (c *oracleDBMSOutputConn) QueryContext(ctx context.Context, query string, _ []driver.NamedValue) (driver.Rows, error) {
+ 	c.driver.mu.Lock()
+ 	defer c.driver.mu.Unlock()
+ 	c.driver.statements = append(c.driver.statements, query)
+@@ -570,6 +574,7 @@ func (c *oracleDBMSOutputConn) QueryContext(_ context.Context, query string, _ [
+ 			values:  append([][]driver.Value(nil), c.driver.compileErrors...),
+ 		}, nil
+ 	}
++	c.driver.queryContexts = append(c.driver.queryContexts, ctx)
+ 	lines := c.driver.takeStatementLines()
+ 	if c.enabled {
+ 		c.buffer = append(c.buffer, lines...)
+@@ -1862,3 +1867,61 @@ func TestDBMSOutputBindFailureDetection(t *testing.T) {
+ 		t.Fatal("a nil error must not downgrade the register")
+ 	}
+ }
 +
-+function scheduleScrollerMetricsRefresh() {
-+  if (!gridScrollbarsRuntime.active || scrollerMetricsRefreshFrame !== null) return;
-+  scrollerMetricsRefreshFrame = requestAnimationFrame(() => {
-+    scrollerMetricsRefreshFrame = null;
-+    if (gridScrollbarsRuntime.active) refreshGridScrollerMetrics();
-+  });
++// Regression for issue #15520: ensureDBMSOutput resets DBMS_OUTPUT with a 2s
++// deadline context, while subsequent SELECTs (desktop 60s, paged 60s, MCP 0s)
++// run on the same pinned physical connection with a cancel-only context so open
++// cursors survive paging. The short reset context must stay scoped to the
++// DBMS_OUTPUT reset calls and never bleed into the query's own context.
++func TestDBMSOutputResetContextDoesNotBleedIntoSubsequentQueries(t *testing.T) {
++	db, drv := openOracleDBMSOutputTestDB(t)
++	s := newServer()
++	s.db = db
++	s.params = connectParams{DriverProfile: "oci"}
++
++	// Desktop executeQuery (60s timeout)
++	if _, err := s.executeQuery(queryOptions{SQL: "SELECT 1 FROM DUAL", TimeoutSecs: 60}); err != nil {
++		t.Fatalf("executeQuery (60s) failed: %v", err)
++	}
++	// MCP executeQuery (0 = unlimited)
++	if _, err := s.executeQuery(queryOptions{SQL: "SELECT 1 FROM DUAL", TimeoutSecs: 0}); err != nil {
++		t.Fatalf("executeQuery (0s) failed: %v", err)
++	}
++	// Desktop paged executeQueryPage (60s timeout)
++	page, err := s.executeQueryPage(queryOptions{SQL: "SELECT N FROM T", TimeoutSecs: 60}, 2)
++	if err != nil {
++		t.Fatalf("executeQueryPage (60s) failed: %v", err)
++	}
++	if page.SessionID != nil {
++		s.closeQuerySession(*page.SessionID)
++	}
++
++	drv.mu.Lock()
++	resetContexts := append([]context.Context(nil), drv.resetContexts...)
++	queryContexts := append([]context.Context(nil), drv.queryContexts...)
++	openCount := drv.openCount
++	drv.mu.Unlock()
++
++	if openCount != 1 {
++		t.Fatalf("opened %d physical connections, want 1", openCount)
++	}
++	if len(resetContexts) < 2 {
++		t.Fatalf("recorded %d DBMS_OUTPUT reset contexts, want at least 2 (DISABLE + ENABLE)", len(resetContexts))
++	}
++	for index, ctx := range resetContexts {
++		if _, ok := ctx.Deadline(); !ok {
++			t.Fatalf("reset context %d had no deadline, want the 2s reset timeout", index)
++		}
++		if !errors.Is(ctx.Err(), context.Canceled) {
++			t.Fatalf("reset context %d err = %v, want context.Canceled after reset returns", index, ctx.Err())
++		}
++	}
++	if len(queryContexts) != 3 {
++		t.Fatalf("recorded %d query contexts, want 3", len(queryContexts))
++	}
++	for index, ctx := range queryContexts {
++		if _, hasDeadline := ctx.Deadline(); hasDeadline {
++			t.Fatalf("query context %d unexpectedly inherited a deadline", index)
++		}
++	}
++}
+```
+
+**File**: `agents/drivers/oracle-go/go.mod` (modified, +1/-11)
+```diff
+@@ -2,17 +2,7 @@ module github.com/t8y2/dbx/agents/drivers/oracle-go
+ 
+ go 1.20
+ 
+-require github.com/sijms/go-ora/v2 v2.9.0
+-
+ require (
+-	github.com/godror/godror v0.51.5
++	github.com/sijms/go-ora/v2 v2.9.0
+ 	golang.org/x/text v0.22.0
+ )
+-
+-require (
+-	github.com/VictoriaMetrics/easyproto v0.1.4 // indirect
+-	github.com/go-logfmt/logfmt v0.6.0 // indirect
+-	github.com/godror/knownpb v0.3.0 // indirect
+-	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
+-	google.golang.org/protobuf v1.36.6 // indirect
+-)
+```
+
+**File**: `agents/drivers/oracle-go/go.oci.mod` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++module github.com/t8y2/dbx/agents/drivers/oracle-go
++
++go 1.25.0
++
++require (
++	github.com/godror/godror v0.52.1-0.20261120194600-bc8b643b56ac
++	github.com/sijms/go-ora/v2 v2.9.0
++	golang.org/x/text v0.22.0
++)
++
++require (
++	github.com/VictoriaMetrics/easyproto v0.1.4 // indirect
++	github.com/go-logfmt/logfmt v0.6.0 // indirect
++	github.com/godror/knownpb v0.3.0 // indirect
++	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
++	google.golang.org/protobuf v1.36.6 // indirect
++)
+```
+
+---
+
+### Incident Patch 2: `53061e38` (2026-11-26)
+**Commit Message**: fix(structure): preserve schema in Kingbase table structure changes
+
+**File**: `apps/desktop/src/components/structure/TableStructureEditor.kingbaseSchemaQualifier.spec.ts` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++// @vitest-environment happy-dom
++
++/**
++ * #15579 — Kingbase table structure changes lost their schema qualifier, so an
++ * ALTER could resolve to a same-named system table. The apply-side gate lives in
++ * `applyDdlGenerationPreferences`; the DDL tab runs through
++ * `formatStructureDdl` → `applyDdlDisplayPreferences` → the same
++ * `applyDdlDatabaseQualifier`, whose `includeDatabaseName === false` branch
++ * strips the schema again. The stripping/insertion semantics themselves are
++ * covered by `lib/__tests__/table/tableSelectSql` and
++ * `lib/sql/__tests__/ddlDisplay`; this pins both gates' wiring so the editable,
++ * executable DDL tab cannot regress to a bare table name.
++ */
++
++import { describe, expect, it } from "vitest";
++import editorSource from "./TableStructureEditor.vue?raw";
++
++function functionSource(name: string): string {
++  const start = editorSource.indexOf(`function ${name}(`);
++  const end = editorSource.indexOf("\n}\n", start);
++  expect(start).toBeGreaterThan(-1);
++  expect(end).toBeGreaterThan(start);
++  return editorSource.slice(start, end);
 +}
 +
- let columnLayoutRefreshFrame = 0;
- function scheduleColumnLayoutRefresh() {
-   if (columnLayoutRefreshFrame) return;
-@@ -6718,13 +6728,7 @@ const hasVisibleRows = computed(() => displayRowCount.value > 0);
- const hasActiveFilter = computed(() => (dataGridSearchMode.value === "filter" && !replaceOpen.value && !!deferredClientSearchText.value) || rowStatusFilter.value !== "all" || hasLocalColumnFilters.value || hasServerColumnFilters.value);
- const emptyTitle = computed(() => (hasActiveFilter.value ? t("grid.noFilteredRows") : t("grid.noRows")));
- const emptyDescription = computed(() => (hasActiveFilter.value ? t("grid.noFilteredRowsDescription") : t("grid.noRowsDescription")));
--watch(
--  () => [hasVisibleRows.value, props.result.columns.length] as const,
--  () => {
--    nextTick(refreshGridScrollerMetrics);
--  },
--  { immediate: true },
--);
-+watch([hasVisibleRows, () => props.result.columns.length], scheduleScrollerMetricsRefresh, { flush: "post", immediate: true });
- const isErrorResult = computed(() => isQueryExecutionErrorResult(props.result) && props.result.rows.length > 0);
- const errorMessage = computed(() => (isErrorResult.value ? String(props.result.rows[0]?.[0] ?? "") : ""));
- // --- Selection composable ---
-@@ -8960,16 +8964,9 @@ const { elapsedMs: resultViewUpdateMs, canvasDrawCompleted: completeResultCanvas
-   () => (useCanvasGridRows.value ? "canvas" : "dom"),
- );
- 
--watch(
--  () => [totalWidth.value, displayRowCount.value, useCanvasGridRows.value, props.result.columns.join("\u0000")],
--  () => {
--    nextTick(() => {
--      refreshGridScrollerMetrics();
--      observeGridHorizontalScrollbarScroller();
--    });
--  },
--  { flush: "post" },
--);
-+// Width reads can force a full WebKit layout. Coalesce result changes outside
-+// Vue's flush so the refresh cannot keep re-entering the same render cycle.
-+watch([totalWidth, displayRowCount, useCanvasGridRows, () => props.result.columns.join("\u0000")], scheduleScrollerMetricsRefresh, { flush: "post" });
- 
- function canvasScrollerElement(): HTMLElement | null {
-   const scroller = scrollerRef.value;
-@@ -9827,6 +9824,8 @@ function pauseCanvasGridWork() {
-   lastPresentedCanvasBackingKey = null;
-   stopCanvasResizeTracking();
-   gridScrollbarsRuntime.pause();
-+  if (scrollerMetricsRefreshFrame !== null) cancelAnimationFrame(scrollerMetricsRefreshFrame);
-+  scrollerMetricsRefreshFrame = null;
-   disconnectCellEditResizeObserver();
-   dataGridTopbarResizeObserver?.disconnect();
-   dataGridTopbarResizeObserver = null;
-@@ -9850,8 +9849,7 @@ function resumeCanvasGridWork() {
-     attachCanvasResizeObserver();
-     observeDataGridTopbarWidth();
-     observeTransposeViewport();
--    refreshGridScrollerMetrics();
--    observeGridHorizontalScrollbarScroller();
-+    scheduleScrollerMetricsRefresh();
-   });
- }
- 
-```
-
-**File**: `apps/desktop/src/composables/__tests__/useDataGridCanvasRuntime.spec.ts` (modified, +30/-0)
-```diff
-@@ -175,6 +175,36 @@ describe("data grid visual runtimes", () => {
-     expect(frames.callbacks.size).toBe(0);
-   });
- 
-+  it("keeps observing unchanged scroll targets across repeated result refreshes", () => {
-+    const frames = createFrameDriver();
-+    const resize = createObserver();
-+    const createResizeObserver = vi.fn(() => resize.observer);
-+    const child = {} as Element;
-+    const replacement = {} as Element;
-+    const scroller = { children: [child] };
-+    const runtime = useDataGridScrollbars({
-+      update: vi.fn(),
-+      getScroller: () => scroller as unknown as Element,
-+      applyHorizontalDrag: vi.fn(),
-+      applyVerticalDrag: vi.fn(),
-+      frameDriver: frames.driver,
-+      createResizeObserver,
-+    });
-+
-+    runtime.observeScroller();
-+    runtime.observeScroller();
-+    expect(createResizeObserver).toHaveBeenCalledOnce();
-+    expect(resize.disconnect).not.toHaveBeenCalled();
-+    expect(frames.callbacks.size).toBe(1);
-+
-+    scroller.children = [replacement];
-+    runtime.observeScroller();
-+    expect(createResizeObserver).toHaveBeenCalledTimes(2);
-+    expect(resize.disconnect).toHaveBeenCalledOnce();
-+    expect(resize.observe).toHaveBeenLastCalledWith(replacement);
-+    runtime.dispose();
++describe("table structure editor kingbase schema qualifier (#15579)", () => {
++  it("keeps the backend's schema qualifier when applying generated DDL", () => {
++    expect(functionSource("applyDdlGenerationPreferences")).toContain('databaseType.value === "kingbase" ? sql : applyDdlDatabaseQualifier(');
 +  });
 +
-   it("tears down pending canvas work when its Vue scope stops", () => {
-     const frames = createFrameDriver();
-     const resize = createObserver();
++  it("does not strip the schema from the DDL tab's display pipeline", () => {
++    const source = functionSource("formatStructureDdl");
++    expect(source).toContain('includeDatabaseName: databaseType.value === "kingbase" ? true : settingsStore.editorSettings.generateSqlIncludeDatabaseName');
++  });
++});
 ```
 
-**File**: `apps/desktop/src/composables/useDataGridScrollbars.ts` (modified, +10/-7)
+**File**: `apps/desktop/src/components/structure/TableStructureEditor.vue` (modified, +10/-4)
 ```diff
-@@ -39,6 +39,7 @@ export function useDataGridScrollbars(options: DataGridScrollbarsOptions): DataG
-   let pendingClientX = 0;
-   let pendingClientY = 0;
-   let resizeObserver: ResizeObserver | null = null;
-+  let observedElements: Element[] = [];
+@@ -397,7 +397,12 @@ function formatStructureDdl(ddl: string): Promise<string> {
+       databaseType: databaseType.value,
+       database: props.database,
+       catalog: props.catalog,
+-      includeDatabaseName: settingsStore.editorSettings.generateSqlIncludeDatabaseName,
++      // Kingbase can resolve an unqualified DDL target to a system table with
++      // the same name (#15579), so the editable DDL tab must keep the backend's
++      // schema qualifier. `ddlQualifiedPartCount` has no kingbase entry, so
++      // forcing the flag on only skips the stripping pass — no database segment
++      // is ever inserted.
++      includeDatabaseName: databaseType.value === "kingbase" ? true : settingsStore.editorSettings.generateSqlIncludeDatabaseName,
+       quoteIdentifiers: settingsStore.editorSettings.generateSqlQuoteIdentifiers,
+     },
+     settingsStore.editorSettings.sqlFormatter,
+@@ -555,9 +560,10 @@ function scheduleDdlEditorInit() {
+  * quoted names are uppercased before their quotes are removed.
+  */
+ function applyDdlGenerationPreferences(sql: string, dialect: SqlFormatDialect): string {
+-  const unqualified = applyDdlDatabaseQualifier(sql, dialect, databaseType.value, settingsStore.editorSettings.generateSqlIncludeDatabaseName, props.database, props.catalog);
+-  if (settingsStore.editorSettings.generateSqlQuoteIdentifiers) return unqualified;
+-  return formatGeneratedDdlIdentifierQuotes(unqualified, dialect, false, { preserveCaseSensitiveIdentifiers: tableStoresCaseSensitiveIdentifiers.value });
++  // Kingbase can resolve an unqualified DDL target to a system table with the same name.
++  const targetSql = databaseType.value === "kingbase" ? sql : applyDdlDatabaseQualifier(sql, dialect, databaseType.value, settingsStore.editorSettings.generateSqlIncludeDatabaseName, props.database, props.catalog);
++  if (settingsStore.editorSettings.generateSqlQuoteIdentifiers) return targetSql;
++  return formatGeneratedDdlIdentifierQuotes(targetSql, dialect, false, { preserveCaseSensitiveIdentifiers: tableStoresCaseSensitiveIdentifiers.value });
+ }
  
-   const cancelFrame = (frame: number | null) => {
-     if (frame !== null) options.frameDriver.cancel(frame);
-@@ -86,22 +87,24 @@ export function useDataGridScrollbars(options: DataGridScrollbarsOptions): DataG
-       options.applyVerticalDrag(pendingClientY);
-     },
-     observeScroller() {
--      resizeObserver?.disconnect();
--      resizeObserver = null;
-       if (!active || disposed) return;
-       const scroller = options.getScroller();
--      if (scroller) {
--        resizeObserver = createResizeObserver(runtime.scheduleUpdate);
--        resizeObserver?.observe(scroller);
--        // Child size changes can alter scrollWidth without resizing the scroller itself.
--        for (const child of Array.from(scroller.children)) resizeObserver?.observe(child);
-+      // Child size changes can alter scrollWidth without resizing the scroller itself.
-+      const elements = scroller ? [scroller, ...Array.from(scroller.children)] : [];
-+      const targetsChanged = elements.length !== observedElements.length || elements.some((element, index) => element !== observedElements[index]);
-+      if (targetsChanged) {
-+        resizeObserver?.disconnect();
-+        observedElements = elements;
-+        resizeObserver = elements.length > 0 ? createResizeObserver(runtime.scheduleUpdate) : null;
-+        for (const element of elements) resizeObserver?.observe(element);
-       }
-       runtime.scheduleUpdate();
-     },
-     pause() {
-       active = false;
-       resizeObserver?.disconnect();
-       resizeObserver = null;
-+      observedElements = [];
-       cancelFrame(updateFrame);
-       cancelFrame(horizontalFrame);
-       cancelFrame(verticalFrame);
+ type StructureDdlRequest = {
+```
+
+---
+
+### Incident Patch 3: `a787625e` (2026-11-26)
+**Commit Message**: fix(kingbase): render bit columns as bit strings
+
+**File**: `agents/drivers/kingbase-go/main.go` (modified, +128/-0)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"database/sql"
+ 	"database/sql/driver"
+ 	"encoding/base64"
++	"encoding/binary"
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
+@@ -1903,6 +1904,14 @@ func normalizeValue(value any, columnTypeName string) any {
+ 	case nil:
+ 		return nil
+ 	case []byte:
++		// bit / bit varying 是位串，数据库自带工具和 DBX 内置驱动都按 `0`/`1`/`10101010`
++		// 展示。gokb 在文本协议下给出 `'0'`/`'1'` 文本，但 MySQL 兼容模式以及部分集群版本
++		// 会把位字段当裸字节返回，落到通用分支就成了 `$binary`（网格里表现为 `0x00`/`0x01`）。
++		if isKingbaseBitType(columnTypeName) {
++			if bits, ok := decodeKingbaseBitString(typed, kingbaseBitTypeWidth(columnTypeName)); ok {
++				return bits
++			}
++		}
+ 		if isTextBytes(typed) {
+ 			return string(typed)
+ 		}
+@@ -1959,6 +1968,125 @@ func normalizedKingbaseColumnType(columnTypeName string) string {
+ 	return strings.ToUpper(strings.ReplaceAll(strings.TrimSpace(columnTypeName), " ", ""))
+ }
+ 
++// isKingbaseBitType matches the type names a bit column can carry: the driver's
++// own name (`DatabaseTypeName` -> bit / varbit) as well as the catalog spelling
++// (`bit(1)`, `bit varying(8)`).
++func isKingbaseBitType(columnTypeName string) bool {
++	normalized := normalizedKingbaseColumnType(columnTypeName)
++	if strings.HasSuffix(normalized, "[]") {
++		// 位串数组的元素由 gokb 解成文本数组，不走这里的字节解码。
++		return false
++	}
++	switch normalized {
++	case "BIT", "VARBIT", "BITVARYING":
++		return true
++	}
++	return strings.HasPrefix(normalized, "BIT(") || strings.HasPrefix(normalized, "VARBIT(") || strings.HasPrefix(normalized, "BITVARYING(")
++}
++
++// kingbaseBitTypeWidth reads the declared width out of `bit(n)` / `varbit(n)`;
++// 0 means the type name carries no width.
++func kingbaseBitTypeWidth(columnTypeName string) int {
++	normalized := normalizedKingbaseColumnType(columnTypeName)
++	open := strings.IndexByte(normalized, '(')
++	if open < 0 || !strings.HasSuffix(normalized, ")") {
++		return 0
++	}
++	width, err := strconv.Atoi(normalized[open+1 : len(normalized)-1])
++	if err != nil || width < 0 {
++		return 0
++	}
++	return width
++}
++
++// decodeKingbaseBitString turns a bit column payload into its bit-string text and
++// mirrors DbxJdbcPlugin#bitStringFromPayload so the native agent and the JDBC path
++// render the same value for the same column:
++//
++//   - PostgreSQL binary payload (int32 bit length + packed bits) is expanded from the
++//     most significant bit of the first byte;
++//   - `'0'`/`'1'` text is what the text protocol already delivers, keep it verbatim;
++//   - anything else is a raw bit field (MySQL-compatible bit(1) -> 0x00/0x01), expanded
++//     right-aligned over the declared width, or the significant width when the catalog
++//     reported none.
++//
++// ok=false means the payload cannot be a value of that width; callers keep the
++// generic `$binary` encoding instead of silently truncating data.
++func decodeKingbaseBitString(raw []byte, declaredWidth int) (string, bool) {
++	if len(raw) == 0 {
++		return "", true
++	}
++	if len(raw) >= 4 {
++		bitLen := int(int32(binary.BigEndian.Uint32(raw[:4])))
++		payload := raw[4:]
++		if bitLen >= 0 && len(payload) == (bitLen+7)/8 {
++			return expandKingbaseBitsMSB(payload, bitLen), true
++		}
++	}
++	// Mirror the JDBC rule (DbxJdbcPlugin#bitStringFromPayload): an ASCII '0'/'1'
++	// payload is text only when it matches the declared width; otherwise a raw
++	// MySQL-compat bit(n>1) value of 0x30/0x31 must expand LSB over the full width
++	// instead of rendering a single '0'/'1'.
++	if isKingbaseBitText(raw) && (declaredWidth <= 0 || len(raw) == declaredWidth) {
++		return string(raw), true
++	}
++	width := declaredWidth
++	if width <= 0 {
++		width = kingbaseSignificantBitWidth(raw)
++	}
++	if width > len(raw)*8 {
++		return "", false
++	}
++	return expandKingbaseBitsLSB(raw, width), true
++}
++
++// expandKingbaseBitsMSB reads the PostgreSQL binary bit layout: bit 0 is the most
++// significant bit of the first byte, trailing bits of the last byte are padding.
++func expandKingbaseBitsMSB(payload []byte, width int) string {
++	var bits strings.Builder
++	bits.Grow(width)
++	for index := 0; index < width; index++ {
++		bits.WriteByte('0' + ((payload[index/8] >> (7 - index%8)) & 1))
++	}
++	return bits.String()
++}
++
++// expandKingbaseBitsLSB reads a raw bit field the way MySQL stores it: bit 0 is the
++// least significant bit of the last byte (`0x01` for bit(1) is `1`, `0xaa` for
++// bit(8) is `10101010`).
++func expandKingbaseBitsLSB(payload []byte, width int) string {
++	var bits strings.Builder
++	bits.Grow(width)
++	for bit := width - 1; bit >= 0; bit-- {
++		bits.WriteByte('0' + ((payload[len(payload)-1-bit/8] >> (bit % 8)) & 1))
++	}
++	return bits.String()
++}
++
++func isKingbaseBitText(payload []byte) bool {
++	for _, char := range payload {
++		if char != '0' && char != '1' {
++			return false
++		}
++	}
++	return true
++}
++
++// kingbaseSignificantBitWidth is the shortest width that still represents the
++// payload (`0x00` -> 1, `0xaa` -> 8).
++func kingbaseSignificantBitWidth(payload []byte) int {
++	for index, char := range payload {
++		if char != 0 {
++			width := 
+```
+
+**File**: `agents/drivers/kingbase-go/main_test.go` (modified, +65/-0)
+```diff
+@@ -5177,6 +5177,71 @@ func TestNormalizeValueKingbaseTimeColumnKeepsTimeOfDay(t *testing.T) {
+ 	}
+ }
+ 
++// Kingbase/PostgreSQL 的 bit / bit varying 列按位串展示。原始字节载荷（MySQL 兼容模式的
++// bit(1) 返回 0x00/0x01，或 PostgreSQL 二进制的「int32 位长 + 位数据」）此前落到通用
++// $binary 分支，网格里显示成 0x00 / 0x01 而不是 0 / 1。
++func TestNormalizeValueDecodesBitColumnPayloads(t *testing.T) {
++	tests := []struct {
++		name       string
++		payload    []byte
++		columnType string
++		want       string
++	}{
++		{name: "text protocol bit(1) zero", payload: []byte("0"), columnType: "BIT", want: "0"},
++		{name: "text protocol bit(1) one", payload: []byte("1"), columnType: "BIT", want: "1"},
++		{name: "text protocol bit(8)", payload: []byte("10101010"), columnType: "bit(8)", want: "10101010"},
++		{name: "raw bit(1) zero", payload: []byte{0x00}, columnType: "bit(1)", want: "0"},
++		{name: "raw bit(1) one", payload: []byte{0x01}, columnType: "bit(1)", want: "1"},
++		{name: "raw bit(8)", payload: []byte{0xaa}, columnType: "bit(8)", want: "10101010"},
++		{name: "raw varbit uses declared width", payload: []byte{0x05}, columnType: "varbit(4)", want: "0101"},
++		{name: "binary bit(5)", payload: []byte{0, 0, 0, 5, 0xa8}, columnType: "bit(5)", want: "10101"},
++		{name: "binary bit(1) zero", payload: []byte{0, 0, 0, 1, 0x00}, columnType: "bit(1)", want: "0"},
++		{name: "binary bit(1) one is msb aligned", payload: []byte{0, 0, 0, 1, 0x80}, columnType: "bit(1)", want: "1"},
++		{name: "binary bit(8) one", payload: []byte{0, 0, 0, 8, 0x01}, columnType: "bit(8)", want: "00000001"},
++		{name: "raw bit field without declared width", payload: []byte{0x0a}, columnType: "bit", want: "1010"},
++		// Mirror of the JDBC width guard: a raw MySQL-compat bit(n>1) value of
++		// 0x30/0x31 is NOT single-char text — it must expand LSB over the full width.
++		{name: "raw bit(8) ascii-looking byte expands", payload: []byte{0x30}, columnType: "bit(8)", want: "00110000"},
++		{name: "raw bit(8) ascii-looking one expands", payload: []byte{0x31}, columnType: "bit(8)", want: "00110001"},
++	}
++
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			got := normalizeValue(test.payload, test.columnType)
++			gotStr, ok := got.(string)
++			if !ok {
++				t.Fatalf("expected bit string, got %#v", got)
++			}
++			if gotStr != test.want {
++				t.Fatalf("got %q, want %q", gotStr, test.want)
++			}
++		})
++	}
++}
++
++// 位宽超出载荷容量时不能静默截断，保持原来的 $binary 编码。
++func TestNormalizeValueKeepsBinaryForUndecodableBitPayload(t *testing.T) {
++	got := normalizeValue([]byte{0x00}, "bit(9)")
++	binary, ok := got.(map[string]string)
++	if !ok || binary["$binary"] != "AA==" {
++		t.Fatalf("expected $binary fallback, got %#v", got)
++	}
++}
++
++// 非位串列不能走位串解码：bytea / 文本列的原有行为必须保持不变。
++func TestNormalizeValueLeavesNonBitColumnsUntouched(t *testing.T) {
++	for _, columnType := range []string{"bytea", "BLOB", "text", "tinyint(1)", "bit(1)[]", ""} {
++		got := normalizeValue([]byte{0x00}, columnType)
++		binary, ok := got.(map[string]string)
++		if !ok || binary["$binary"] != "AA==" {
++			t.Fatalf("columnType=%q: expected untouched $binary payload, got %#v", columnType, got)
++		}
++	}
++	if got := normalizeValue([]byte("abc"), "text"); got != "abc" {
++		t.Fatalf("text column: got %#v, want abc", got)
++	}
++}
++
+ func TestCatalogColumnsPreservesJsonAndJsonbTypes(t *testing.T) {
+ 	state := &metadataDriverState{query: func(query string) (driver.Rows, error) {
+ 		if !strings.Contains(query, "WHEN t.typname = 'json' THEN 'json'") ||
+```
+
+**File**: `plugins/jdbc/src/main/java/app/dbx/jdbc/DbxJdbcPlugin.java` (modified, +29/-9)
+```diff
+@@ -6529,6 +6529,15 @@ private static Object readValue(
+             if (columnType == Types.BIT && bytes.length == 1 && (bytes[0] == 't' || bytes[0] == 'f')) {
+                 return bytes[0] == 't';
+             }
++            // 位串列即使没命中 BIT_STRING_JDBC_URL_PREFIXES（自定义/代理 URL、按驱动类推断的连接），
++            // 也不能落到 binaryToHex 变成 0x00/0x01；这里复用同一套位串解码。类型名缺失时保持
++            // 原来的 0x.. 展示：Types.BIT 在部分驱动上也用于数值列，没有位宽就无法安全展开。
++            if (isNamedBitStringColumn(meta, index)) {
++                Object bitValue = bitStringColumnValue(bytes, bitColumnPrecision(meta, index));
++                if (bitValue != BIT_COLUMN_UNSUPPORTED) {
++                    return bitValue;
++                }
++            }
+             return binaryToHex(bytes);
+         }
+         if (value instanceof Clob clob) {
+@@ -6687,17 +6696,21 @@ private static String quotePhoenixIdentifier(String identifier) {
+     private static final Object BIT_COLUMN_UNSUPPORTED = new Object();
+ 
+     private static boolean isBitStringColumn(ResultSetMetaData meta, int index, int columnType) {
+-        String typeName = columnTypeName(meta, index);
+-        String normalized = typeName.trim().toLowerCase(Locale.ROOT);
++        if (isNamedBitStringColumn(meta, index)) {
++            return true;
++        }
++        return columnType == Types.BIT;
++    }
++
++    /** 类型名（而不是 JDBC 类型码）明确是位串列。`bool`/`boolean` 列同样上报 Types.BIT，必须排除。 */
++    private static boolean isNamedBitStringColumn(ResultSetMetaData meta, int index) {
++        String normalized = columnTypeName(meta, index).trim().toLowerCase(Locale.ROOT);
+         if (normalized.equals("bool") || normalized.equals("boolean")) {
+             // 金仓/PostgreSQL 的布尔列走 Types.BIT 上报，它们继续保持布尔值。
+             return false;
+         }
+-        if (normalized.equals("bit") || normalized.equals("varbit") || normalized.startsWith("bit ")
+-            || normalized.startsWith("bit(") || normalized.startsWith("bit varying")) {
+-            return true;
+-        }
+-        return columnType == Types.BIT;
++        return normalized.equals("bit") || normalized.equals("varbit") || normalized.startsWith("bit ")
++            || normalized.startsWith("bit(") || normalized.startsWith("bit varying");
+     }
+ 
+     private static String columnTypeName(ResultSetMetaData meta, int index) {
+@@ -6720,7 +6733,15 @@ private static Object readBitStringColumnValue(ResultSet rs, ResultSetMetaData m
+             // wasNull() 区分 SQL NULL 与「驱动不支持按字节读取」。
+             return rs.wasNull() ? null : BIT_COLUMN_UNSUPPORTED;
+         }
+-        int precision = bitColumnPrecision(meta, index);
++        return bitStringColumnValue(payload, bitColumnPrecision(meta, index));
++    }
++
++    /**
++     * 位串列载荷的取值规则（readBitStringColumnValue 与 readValue 的通用 byte[] 分支共用）：
++     * 布尔位串保持布尔、数值型 tinyint(1) 保持数值、其余还原成位串文本；
++     * 位宽不可信时返回 BIT_COLUMN_UNSUPPORTED，由调用方保持原来的 `0x..` 展示。
++     */
++    private static Object bitStringColumnValue(byte[] payload, int precision) {
+         if (payload.length == 1 && precision <= 1 && (payload[0] == 't' || payload[0] == 'f')) {
+             // GaussDB/金仓的布尔位串按 't'/'f' 返回，保持布尔语义；位宽大于 1 的列是位字段而不是布尔。
+             return payload[0] == 't';
+@@ -6732,7 +6753,6 @@ private static Object readBitStringColumnValue(ResultSet rs, ResultSetMetaData m
+             return payload[0];
+         }
+         String bitString = bitStringFromPayload(payload, precision);
+-        // 位宽不可信时 bitStringFromPayload 返回 null（不是 SQL NULL），交给通用分支保持 `0x..` 展示。
+         return bitString == null ? BIT_COLUMN_UNSUPPORTED : bitString;
+     }
+ 
+```
+
+**File**: `plugins/jdbc/src/test/java/app/dbx/jdbc/DbxJdbcPluginTest.java` (modified, +16/-0)
+```diff
+@@ -1188,6 +1188,22 @@ void readValueRendersTextBitPayloadsAsBitStrings() throws Exception {
+         assertEquals("100000010", method.invoke(null, bytesResultSet(new byte[] { 0x01, 0x02 }), columnMeta(Types.BIT, "BIT", 0), 1, false, null, true));
+     }
+ 
++    @Test
++    void readValueDecodesBitColumnsWithoutBitStringDialects() throws Exception {
++        Method method = bitStringReadValue();
++
++        // 自定义/代理 JDBC URL 不会命中 BIT_STRING_JDBC_URL_PREFIXES。此时 bit 列仍必须按位串展示，
++        // 否则 getObject() 的裸字节会渲染成 0x00/0x01（金仓 MySQL 兼容模式的 bit(1) 就是这么报的）。
++        assertEquals("0", method.invoke(null, objectResultSet(new byte[] { 0x00 }), columnMeta(Types.BIT, "bit", 1), 1, false, null, false));
++        assertEquals("1", method.invoke(null, objectResultSet(new byte[] { 0x01 }), columnMeta(Types.BIT, "bit", 1), 1, false, null, false));
++        assertEquals("10101010", method.invoke(null, objectResultSet(new byte[] { (byte) 0xaa }), columnMeta(Types.BIT, "bit(8)", 8), 1, false, null, false));
++        assertEquals("0", method.invoke(null, objectResultSet(new byte[] { '0' }), columnMeta(Types.OTHER, "varbit", 1), 1, false, null, false));
++        // 位宽不可信时保持原来的 0x.. 展示，不静默截断。
++        assertEquals("0x0102", method.invoke(null, objectResultSet(new byte[] { 0x01, 0x02 }), columnMeta(Types.BIT, "bit(24)", 24), 1, false, null, false));
++        // 非位串列的裸字节不受影响。
++        assertEquals("0x00", method.invoke(null, objectResultSet(new byte[] { 0x00 }), columnMeta(Types.BINARY, "bytea", 1), 1, false, null, false));
++    }
++
+     @Test
+     void readValueRendersTinyInt1BitColumnsAsNumbers() throws Exception {
+         Method method = bitStringReadValue();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15636** (2026-11-24): fix(kingbase): build sequence DDL with concat() (@0xvectr)
-- **PR #15635** (2026-11-24): fix(tabs): hide horizontal strip scrollbar in wrapped and non-overflo… (@Acd-kk)
-- **PR #15613** (2026-11-24): fix(search): stabilize SQL file preview dialog height (@zipg)
-- **PR #15610** (2026-11-24): fix(structure): stop row click focus from dismissing column dropdowns (@Acd-kk)
-- **PR #15595** (2026-11-24): fix(structure): keep dropdowns open and thicken grid scrollbar hover (#15585) (@zipg)
-- **PR #15589** (2026-11-24): feat(editor): support selecting contents inside square brackets and c… (@Acd-kk)
+- **PR #15786** (2026-11-26): fix(i18n): bring Brazilian Portuguese locale back to parity with en.ts (@saskuati-dev)
+- **PR #15785** (2026-11-26): fix(editor): 不再把裸 END + 下一行 IF 误判为 END IF，修复 BEGIN…END 无折叠箭头/无配对高亮 (#15561) (@zipg)
+- **PR #15783** (2026-11-26): fix(search): 保留全局搜索输入法回车上屏 (@zipg)
+- **PR #15780** (2026-11-26): feat(connection): 支持按连接自定义环境水印 (@jiejie1133)
+- **PR #15777** (closed): feat(grid): add transposed Markdown (wide table) export for selected rows (@qinqoushui)
+- **PR #15776** (2026-11-26): perf(oracle): skip DBMS_OUTPUT and schema switches for DBX's own reads (@ZHAOGS0217)
 
 ---
 
@@ -2268,65 +2793,49 @@ Refs: #15660
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. grid): stop re-creating scroller ResizeObserver on every refresh
+## X. oracle): upgrade godror to prevent stale OCI call timeout leak
 
 **RULE**:
-When implementing operations in `apps/desktop/src/components/grid/DataGrid.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/ci-workflow.test.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e6c06578`: grid): stop re-creating scroller ResizeObserver on every refresh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fba29442`: oracle): upgrade godror to prevent stale OCI call timeout leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/grid/DataGrid.vue`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/ci-workflow.test.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-let scrollerMetricsRefreshFrame: number | null = null;
+test("Oracle thin Go 1.20 build and OCI modfile split stay covered in release and CI", () => {
+  const release = readFileSync(new URL("../workflows/agents-release.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
+  const thin = job("build-oracle-native", release);
+  assert.match(thin, /go-version: "1\.20\.14"/);
+  assert.ok(thin.includes("cache-dependency-path: agents/drivers/oracle-go/go.sum"));
 
-function scheduleScrollerMetricsRefresh() {
-  if (!gridScrollbarsRuntime.active || scrollerMetricsRefreshFrame !== null) return;
-  scrollerMetricsRefreshFrame = requestAnimationFrame(() => {
-    scrollerMetricsRefreshFrame = null;
-    if (gridScrollbarsRuntime.active) refreshGridScrollerMetrics();
-  });
-}
+  const oci = job("build-oracle-oci-native", release);
+  assert.ok(oci.includes("cache-dependency-path: agents/drivers/oracle-go/go.oci.sum"));
+  assert.ok(oci.includes("go test -mod=readonly -modfile=go.oci.mod -tags oci ./..."));
+  assert.ok(oci.includes("go build -mod=readonly -modfile=go.oci.mod -tags oci"));
 
-watch([hasVisibleRows, () => props.result.columns.length], scheduleScrollerMetricsRefresh, { flush: "post", immediate: true });
-// Width reads can force a full WebKit layout. Coalesce result changes outside
-// Vue's flush so the refresh cannot keep re-entering the same render cycle.
-watch([totalWidth, displayRowCount, useCanvasGridRows, () => props.result.columns.join("\u0000")], scheduleScrollerMetricsRefresh, { flush: "post" });
-  if (scrollerMetricsRefreshFrame !== null) cancelAnimationFrame(scrollerMetricsRefreshFrame);
-  scrollerMetricsRefreshFrame = null;
-    scheduleScrollerMetricsRefresh();
+  const ci = job("agent-go");
+  const oracleSteps = ci.slice(ci.indexOf("- name: Setup Oracle Windows-compatible Go"));
+  assert.equal((oracleSteps.match(/if: matrix\.driver == 'oracle-go'/g) ?? []).length, 2);
+  assert.match(oracleSteps, /go-version: "1\.20\.14"/);
+  assert.ok(oracleSteps.includes("go test -mod=readonly ./..."));
+  assert.ok(oracleSteps.includes("grep -q ': go1\\.20\\.14$'"));
+
+  const thinMod = readFileSync(new URL("../../agents/drivers/oracle-go/go.mo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-watch(
-  () => [hasVisibleRows.value, props.result.columns.length] as const,
-  () => {
-    nextTick(refreshGridScrollerMetrics);
-  },
-  { immediate: true },
-);
-watch(
-  () => [totalWidth.value, displayRowCount.value, useCanvasGridRows.value, props.result.columns.join("\u0000")],
-  () => {
-    nextTick(() => {
-      refreshGridScrollerMetrics();
-      observeGridHorizontalScrollbarScroller();
-    });
-  },
-  { flush: "post" },
-);
-    refreshGridScrollerMetrics();
-    observeGridHorizontalScrollbarScroller();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e6c06578` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fba29442` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

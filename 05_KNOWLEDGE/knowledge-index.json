@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T17:57:13.444Z",
+  "last_updated": "2026-11-26T18:06:01.456Z",
   "total_verified_learnings": 9131,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26091,
+  "total_items": 26097,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214621,8 +214621,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "e6c06578",
-      "content_hash": "c03e19965fbce72ce1355027179662f8ae05783be077b2d6d61de5c85c4b4a46",
+      "source_version": "fba29442",
+      "content_hash": "0e56fd040eadf3d5add95ec2faadb2e43eea790da9e8ae61301031d4e38a8d83",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214695,6 +214695,11 @@
           "number": 10560,
           "title": "stop re-creating scroller ResizeObserver on every refresh",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10747,
+          "title": "upgrade godror to prevent stale OCI call timeout leak",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214702,7 +214707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T23:32:38.556Z",
+      "verified_at": "2026-11-26T18:05:52.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214744,10 +214749,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "e6c06578",
-      "content_hash": "ea99a3494558dee40baed0641431c3a02554e9d44745beaabcee70d1d4db470f",
+      "source_version": "fba29442",
+      "content_hash": "0c9365d81067fe8df5d548cfa94063aa05f097d613fc6d3bca58b850bbcf9570",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T23:32:39.191Z"
+      "persisted_at": "2026-11-26T18:05:53.559Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214756,10 +214761,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "e6c06578",
-      "content_hash": "980659759d674bc68eaa1ef4cb5aefd166edab4b96d77ecc12110a7d1e65a25b",
+      "source_version": "fba29442",
+      "content_hash": "38bd4ff822ec16c4aee98cf1884dcd0f602494846a44263a4464652448d8b84c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:32:39.370Z"
+      "persisted_at": "2026-11-26T18:05:53.845Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -216625,8 +216630,8 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "cbac2d49",
-      "content_hash": "4d5337609cb13d3ee6907d2bd46ed4f5611e05d6ed8304a13a1d0b51edcdcd76",
+      "source_version": "20180caa",
+      "content_hash": "be42e996f7d243edecaef16bc240d4357653186b2d50350fa84d7b83e809846b",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
@@ -216654,6 +216659,11 @@
           "number": 10236,
           "title": "the cleanup and pipeline plugins failed when the leader-election plugin was not",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10746,
+          "title": "fix code examples that call the API with options that do not exist",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216661,7 +216671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T08:59:50.061Z",
+      "verified_at": "2026-11-26T18:05:45.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216703,10 +216713,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-technical-construction-intelligence-pubkey-rxdb-core-invariants.md",
       "title": "Technical Construction Intelligence: pubkey/rxdb Core Invariants",
       "repository": "pubkey/rxdb",
-      "source_version": "cbac2d49",
-      "content_hash": "b43e5d90ebbc5423762000deb7368762a8e426f622abbc3f9d8ca02e88d7288c",
+      "source_version": "20180caa",
+      "content_hash": "a86a4ad0a678854da99079948bd73429f9795b95cc38dc9540832799292e9d81",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T08:59:50.667Z"
+      "persisted_at": "2026-11-26T18:05:46.165Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb",
@@ -216715,10 +216725,10 @@
       "relative_path": "12_DECISIONS/ADR-pubkey-rxdb-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "cbac2d49",
-      "content_hash": "84c56cb9357173de40b13b90dfad5886c24c451901e2a221ef015b6dc05dcdf3",
+      "source_version": "20180caa",
+      "content_hash": "42007365596c2d11efa0fd079656aa04bce7a1e408f4daa90c5d0dfd1a79209f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T08:59:50.859Z"
+      "persisted_at": "2026-11-26T18:05:46.393Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb",
@@ -216727,10 +216737,10 @@
       "relative_path": "08_VERIFICATION/pubkey-rxdb-verification-protocol-empirical-defect-shield-for-pubkey-rxdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "cbac2d49",
-      "content_hash": "54880cfbf22e22d7943c750d2bfffb7d198468b12a6d811e60d598716f47cfe1",
+      "source_version": "20180caa",
+      "content_hash": "df652e627e0ecc876be132dea5572b34fd9690051e71cb762b5fc2c8732b3219",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:59:50.993Z"
+      "persisted_at": "2026-11-26T18:05:46.630Z"
     },
     "learn-github-k3s-io-k3s": {
       "learning_id": "learn-github-k3s-io-k3s",
@@ -216877,9 +216887,9 @@
       "title": "Technical Construction Intelligence: pubkey-rxdb-learnings Core Invariants",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "715f8b7cd687523449392310248a14f86d4f6459cb2662dea6375bef31b8369f",
+      "content_hash": "c4a39bebf134d913d6f6fbff49195f7c7b1b95700a6fc314df899c3e65ea84b0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T09:00:02.571Z"
+      "persisted_at": "2026-11-26T18:06:00.029Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb-learnings",
@@ -216889,9 +216899,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "aff05a30c8d2036f69ea03a6d1c27841eddcaa2b03ae7d88013aef2189145da0",
+      "content_hash": "2b69128aaa2caa673d763384531d7eaf20b4574754db67830ea9a9725e7185b4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T09:00:02.729Z"
+      "persisted_at": "2026-11-26T18:06:00.287Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings",
@@ -216901,9 +216911,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e204a46c69ce6954e436538bbc0e17cdc9c284f47ed5d319ebd8be03b96f78b3",
+      "content_hash": "6ac65ead61cbc24699cd00ca1b52de24a4aa6d99c6840fd0351c25dd1defeb7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T09:00:02.860Z"
+      "persisted_at": "2026-11-26T18:06:00.481Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
@@ -218154,7 +218164,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "6a6ed33e39d47a3826a849201443d33dd7771508397b9a0f1815d73bb4068754",
+      "content_hash": "6780c9dc725f185b0246967f0a698fefb7f0d01fc75c7788efbe6665d4bfb7a6",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [
@@ -218174,7 +218184,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T03:47:03.551Z",
+      "verified_at": "2026-11-26T18:05:38.105Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218191,9 +218201,9 @@
       "title": "Research & Knowledge Intelligence: google-t5/t5-small Core Invariants",
       "repository": "google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "7d48bbe35324132e18b4b06e5063ee1338559f18e47f90a222e4b57e809aab29",
+      "content_hash": "2fc469afbd023085c40fe8c974b58ba7ae3c467638147a2da73546c7d6361383",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T03:47:04.002Z"
+      "persisted_at": "2026-11-26T18:05:38.680Z"
     },
     "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants",
@@ -218227,9 +218237,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-t5-t5-small-learnings Core Invariants",
       "repository": "hf-google-t5-t5-small-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ebe9cb89309a89f3544d74c6ea8f3d2205d949dac63d76387d128f817a06380",
+      "content_hash": "33a5ca01425f8a1c0e9b2dbac8625de27286b10c3fdf8e1fe8638a9df6a48f4e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T03:47:07.776Z"
+      "persisted_at": "2026-11-26T18:05:57.070Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants",
@@ -247321,9 +247331,9 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "56d5fa6b2c8be02e327cd6ae24fb94a394654b24c0fa7fe77cad9ea59f1efeed",
+      "content_hash": "61bac226c3aaad3d9f9decd169d0b8c78eff0487496fae724e908a979a68b45e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T23:32:45.892Z"
+      "persisted_at": "2026-11-26T18:06:01.235Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings",
@@ -247333,9 +247343,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for t8y2-dbx-learnings",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae2cbcc3bd79864ee1e719544b3aabe8ee15e402a18712dada2ffa6e6db79971",
+      "content_hash": "3e9d72727c42fc1bbcea19a163aa7979ae27f50820cf28703582fc31bf02bf3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:32:46.068Z"
+      "persisted_at": "2026-11-26T18:06:01.456Z"
     },
     "learn-huggingface-tencent-hy-memory-30b-a3b": {
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
@@ -357690,6 +357700,82 @@
       "content_hash": "e9700db0152ed389366b948a7071d5b67961ef7b836ebef889ef06807738c834",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T17:57:12.971Z"
+    },
+    "rule-10746": {
+      "learning_id": "rule-10746",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10746,
+      "title": "fix code examples that call the API with options that do not exist",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "20180caa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T18:05:45.311Z"
+    },
+    "candidate_directive-fix-code-examples-that-call-the-api-with-options-that-do-not-exist": {
+      "item_id": "candidate_directive-fix-code-examples-that-call-the-api-with-options-that-do-not-exist",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5C9G-fix-code-examples-that-call-the-api-with-options-that-do-not-exist.md",
+      "title": "fix code examples that call the API with options that do not exist",
+      "repository": "pubkey/rxdb",
+      "source_version": "20180caa",
+      "content_hash": "938b11f8c472bcd0d5fbefe18cab96017120209a23f5825dc86569b45fe15b11",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T18:05:45.941Z"
+    },
+    "rule-10747": {
+      "learning_id": "rule-10747",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10747,
+      "title": "upgrade godror to prevent stale OCI call timeout leak",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "fba29442",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T18:05:52.682Z"
+    },
+    "candidate_directive-upgrade-godror-to-prevent-stale-oci-call-timeout-leak": {
+      "item_id": "candidate_directive-upgrade-godror-to-prevent-stale-oci-call-timeout-leak",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5HYR-upgrade-godror-to-prevent-stale-oci-call-timeout-leak.md",
+      "title": "upgrade godror to prevent stale OCI call timeout leak",
+      "repository": "t8y2/dbx",
+      "source_version": "fba29442",
+      "content_hash": "c189ef3388329731357a0f003e69725ab9f07caf067d3d466415fc4d19e5512f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T18:05:53.337Z"
+    },
+    "candidate_directive-docs-fix-code-examples-that-call-the-api-with-options-that-do-not-exist": {
+      "item_id": "candidate_directive-docs-fix-code-examples-that-call-the-api-with-options-that-do-not-exist",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5MXI-docs-fix-code-examples-that-call-the-api-with-options-that-do-not-exist.md",
+      "title": "Docs: fix code examples that call the API with options that do not exist",
+      "repository": "pubkey-rxdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9a02f72f979839ad9c68a3a748a9c47df06d9e96d4c05985ec9408d246c4dc4e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T18:05:59.766Z"
+    },
+    "candidate_directive-oracle-upgrade-godror-to-prevent-stale-oci-call-timeout-leak": {
+      "item_id": "candidate_directive-oracle-upgrade-godror-to-prevent-stale-oci-call-timeout-leak",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5NVZ-oracle-upgrade-godror-to-prevent-stale-oci-call-timeout-leak.md",
+      "title": "oracle): upgrade godror to prevent stale OCI call timeout leak",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "45aa4d019fc956eba23b81698cf35e179cc6cb45bc8f2df0fe64503dc7063e43",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T18:06:01.012Z"
     }
   },
   "ai-builder-brain": {

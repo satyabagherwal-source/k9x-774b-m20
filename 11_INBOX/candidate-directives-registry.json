@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:57:12.971Z",
+  "last_updated": "2026-11-26T18:06:01.012Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66368,6 +66368,50 @@
       "source_repo": "zama-ai-tfhe-rs-learnings",
       "source_commit": "HEAD",
       "staged_file": "11_INBOX/candidate-directives/CD-UCG5-gpu-ensure-correct-host-indexes-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5C9G",
+      "directive_title": "fix code examples that call the API with options that do not exist",
+      "source_repo": "pubkey/rxdb",
+      "source_commit": "20180caa",
+      "staged_file": "11_INBOX/candidate-directives/CD-5C9G-fix-code-examples-that-call-the-api-with-options-that-do-not-exist.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5HYR",
+      "directive_title": "upgrade godror to prevent stale OCI call timeout leak",
+      "source_repo": "t8y2/dbx",
+      "source_commit": "fba29442",
+      "staged_file": "11_INBOX/candidate-directives/CD-5HYR-upgrade-godror-to-prevent-stale-oci-call-timeout-leak.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5MXI",
+      "directive_title": "Docs: fix code examples that call the API with options that do not exist",
+      "source_repo": "pubkey-rxdb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5MXI-docs-fix-code-examples-that-call-the-api-with-options-that-do-not-exist.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5NVZ",
+      "directive_title": "oracle): upgrade godror to prevent stale OCI call timeout leak",
+      "source_repo": "t8y2-dbx-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5NVZ-oracle-upgrade-godror-to-prevent-stale-oci-call-timeout-leak.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",

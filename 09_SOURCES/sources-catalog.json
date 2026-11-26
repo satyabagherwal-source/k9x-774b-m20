@@ -755,8 +755,8 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "6a6ed33e39d47a3826a849201443d33dd7771508397b9a0f1815d73bb4068754",
-    "lastHarvestedAt": "2026-11-23T03:47:03.790Z",
+    "contentHash": "6780c9dc725f185b0246967f0a698fefb7f0d01fc75c7788efbe6665d4bfb7a6",
+    "lastHarvestedAt": "2026-11-26T18:05:38.401Z",
     "learningId": "learn-huggingface-google-t5-t5-small"
   },
   "hf-comfy-org-minimax-h3": {
@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "cbac2d49",
+    "sourceVersion": "20180caa",
     "license": "Apache-2.0",
-    "contentHash": "4d5337609cb13d3ee6907d2bd46ed4f5611e05d6ed8304a13a1d0b51edcdcd76",
-    "lastHarvestedAt": "2026-11-24T08:59:50.262Z",
+    "contentHash": "be42e996f7d243edecaef16bc240d4357653186b2d50350fa84d7b83e809846b",
+    "lastHarvestedAt": "2026-11-26T18:05:45.656Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "e6c06578",
+    "sourceVersion": "fba29442",
     "license": "Apache-2.0",
-    "contentHash": "c03e19965fbce72ce1355027179662f8ae05783be077b2d6d61de5c85c4b4a46",
-    "lastHarvestedAt": "2026-11-25T23:32:38.771Z",
+    "contentHash": "0e56fd040eadf3d5add95ec2faadb2e43eea790da9e8ae61301031d4e38a8d83",
+    "lastHarvestedAt": "2026-11-26T18:05:53.042Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

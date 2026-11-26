@@ -13500,3 +13500,6 @@
 | `CYCLE-20261126-TY6B` | `2026-11-26T17:56:54.467Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`5cfe03d3...`) |
 | `CYCLE-20261126-TZ55` | `2026-11-26T17:56:55.721Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10744` | Yes (`013dd4a4...`) |
 | `CYCLE-20261126-U7UE` | `2026-11-26T17:57:06.998Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10745` | Yes (`7232e67d...`) |
+| `CYCLE-20261126-56FX` | `2026-11-26T18:05:38.397Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`6780c9dc...`) |
+| `CYCLE-20261126-5C1G` | `2026-11-26T18:05:45.652Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10746` | Yes (`be42e996...`) |
+| `CYCLE-20261126-5HQM` | `2026-11-26T18:05:53.038Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10747` | Yes (`0e56fd04...`) |

@@ -13533,3 +13533,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-26T17:56:54.471Z |
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `cfd6745d` | Multi-dimensional audit evidence | 2026-11-26T17:56:55.725Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `b2358d26` | Multi-dimensional audit evidence | 2026-11-26T17:57:07.002Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-26T18:05:38.401Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `20180caa` | Multi-dimensional audit evidence | 2026-11-26T18:05:45.656Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `fba29442` | Multi-dimensional audit evidence | 2026-11-26T18:05:53.042Z |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:57:07.016Z",
-  "total_cycles_completed": 12813,
-  "total_learnings_persisted": 12813,
-  "total_rules_promoted": 11650,
+  "last_updated": "2026-11-26T18:05:53.062Z",
+  "total_cycles_completed": 12816,
+  "total_learnings_persisted": 12816,
+  "total_rules_promoted": 11652,
   "history": [
-    {
-      "timestamp": "2026-11-26T07:28:50.812Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T07:40:12.677Z",
-      "repository": "sensenova/SenseNova-Loop-9B",
-      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T07:48:27.104Z",
-      "repository": "nexu-io/openmotion",
-      "learningId": "learn-github-nexu-io-openmotion",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T07:48:30.152Z",
       "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T17:57:07.016Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:05:38.414Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-google-t5-t5-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:05:45.670Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:05:53.062Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

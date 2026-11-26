@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T17:57:13.224Z",
+  "last_updated": "2026-11-26T18:06:01.235Z",
   "total_records": 2767,
   "domains": {
     "A": {
@@ -10808,8 +10808,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "ea99a3494558dee40baed0641431c3a02554e9d44745beaabcee70d1d4db470f",
-      "created_at": "2026-11-25T23:32:39.191Z"
+      "content_hash": "0c9365d81067fe8df5d548cfa94063aa05f097d613fc6d3bca58b850bbcf9570",
+      "created_at": "2026-11-26T18:05:53.559Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -11357,8 +11357,8 @@
       "title": "Technical Construction Intelligence: pubkey/rxdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-technical-construction-intelligence-pubkey-rxdb-core-invariants.md",
       "repository": "pubkey/rxdb",
-      "content_hash": "b43e5d90ebbc5423762000deb7368762a8e426f622abbc3f9d8ca02e88d7288c",
-      "created_at": "2026-11-24T08:59:50.667Z"
+      "content_hash": "a86a4ad0a678854da99079948bd73429f9795b95cc38dc9540832799292e9d81",
+      "created_at": "2026-11-26T18:05:46.165Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants",
@@ -11468,8 +11468,8 @@
       "title": "Technical Construction Intelligence: pubkey-rxdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-learnings-technical-construction-intelligence-pubkey-rxdb-learnings-.md",
       "repository": "pubkey-rxdb-learnings",
-      "content_hash": "715f8b7cd687523449392310248a14f86d4f6459cb2662dea6375bef31b8369f",
-      "created_at": "2026-11-24T09:00:02.571Z"
+      "content_hash": "c4a39bebf134d913d6f6fbff49195f7c7b1b95700a6fc314df899c3e65ea84b0",
+      "created_at": "2026-11-26T18:06:00.029Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
@@ -11765,8 +11765,8 @@
       "title": "Research & Knowledge Intelligence: google-t5/t5-small Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-t5-t5-small-research-knowledge-intelligence-google-t5-t5-small-core-in.md",
       "repository": "google-t5/t5-small",
-      "content_hash": "7d48bbe35324132e18b4b06e5063ee1338559f18e47f90a222e4b57e809aab29",
-      "created_at": "2026-11-23T03:47:04.002Z"
+      "content_hash": "2fc469afbd023085c40fe8c974b58ba7ae3c467638147a2da73546c7d6361383",
+      "created_at": "2026-11-26T18:05:38.680Z"
     },
     "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants",
@@ -11825,8 +11825,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-t5-t5-small-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-t5-t5-small-learnings-research-knowledge-intelligence-hf-google-t5-t5-.md",
       "repository": "hf-google-t5-t5-small-learnings",
-      "content_hash": "8ebe9cb89309a89f3544d74c6ea8f3d2205d949dac63d76387d128f817a06380",
-      "created_at": "2026-11-23T03:47:07.776Z"
+      "content_hash": "33a5ca01425f8a1c0e9b2dbac8625de27286b10c3fdf8e1fe8638a9df6a48f4e",
+      "created_at": "2026-11-26T18:05:57.070Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants",
@@ -20854,8 +20854,8 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
       "repository": "t8y2-dbx-learnings",
-      "content_hash": "56d5fa6b2c8be02e327cd6ae24fb94a394654b24c0fa7fe77cad9ea59f1efeed",
-      "created_at": "2026-11-25T23:32:45.892Z"
+      "content_hash": "61bac226c3aaad3d9f9decd169d0b8c78eff0487496fae724e908a979a68b45e",
+      "created_at": "2026-11-26T18:06:01.235Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/google-t5/t5-small",
   "source_version": "hf-google-t5-t5-small",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T03:47:04.001Z",
+  "timestamp": "2026-11-26T18:05:38.679Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [google-t5/t5-small](https://huggingface.co/google-t5/t5-small) (Revision: `hf-google-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T03:47:04.001Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T18:05:38.679Z`  
 > **Learning ID**: `learn-huggingface-google-t5-t5-small`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google-t5/t5-small](https://huggingface.co/google-t5/t5-small))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T03:46:49.107Z  
+> **Harvest Timestamp**: 2026-11-26T18:05:37.578Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: translation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 17301149 downloads | 702 likes
+- **Stars / Engagement**: 16191870 downloads | 705 likes
 
 ---
 

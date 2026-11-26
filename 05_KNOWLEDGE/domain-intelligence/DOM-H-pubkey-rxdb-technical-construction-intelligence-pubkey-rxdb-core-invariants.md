@@ -4,24 +4,24 @@
 {
   "source_repository": "pubkey/rxdb",
   "source_url": "https://github.com/pubkey/rxdb",
-  "source_version": "cbac2d49",
+  "source_version": "20180caa",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T08:59:50.487Z",
+  "timestamp": "2026-11-26T18:05:45.940Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pubkey-rxdb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pubkey/rxdb](https://github.com/pubkey/rxdb) (Revision: `cbac2d49`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T08:59:50.487Z`  
+> **Provenance**: Harvested from [pubkey/rxdb](https://github.com/pubkey/rxdb) (Revision: `20180caa`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T18:05:45.940Z`  
 > **Learning ID**: `learn-github-pubkey-rxdb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pubkey/rxdb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T08:59:49.040Z  
+> **Harvest Timestamp**: 2026-11-26T18:05:44.311Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The local-first database that runs on every JS runtime and replicates with your existing backend - no vendor, no lock-in - https://rxdb.info/
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 23443 stars
+- **Stars / Engagement**: 23446 stars
 
 ---
 
@@ -879,7 +879,7 @@ export type RxStorageIpcRendererSettings = {
      */
     key: string;
     ipcRenderer: any;
-    mode: RxStorageRemoteSettings['mode'];
+    mode?: RxStorageRemoteSettings['mode'];
 };
 
 export type RxStorageIpcRenderer = RxStorageRemote;
@@ -892,7 +892,7 @@ export function getRxStorageIpcRenderer(
     ].join('|');
 
     const storage = getRxStorageRemote({
-        identifier: 'electron-ipc-renderer',
+        identifier: 'electron-ipc-renderer|' + settings.key,
         mode: settings.mode,
         messageChannelCreator() {
             const messages$ = new Subject<MessageFromRemote>();
@@ -930,11 +930,11 @@ export function getRxStorageIpcRenderer(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9830** (2026-11-24): **Update dependency eslint-plugin-jsdoc to v65.4.9**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [eslint-plugin-jsdoc](https://redirect.github.com/gajus/eslint-plugin-jsdoc) | [`65.4.8` → `65.4.9`](https://renovatebot.com/diffs/npm/eslint-plugin-jsdoc/65.4.8/65.4.9) | ![age](https://developer.mend.io/api/mc/badges/age/npm/eslint-plugin-jsdoc/65.4.9?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/eslint-plugin-jsdoc/65.4.8/65.4.9?slim=true) |  ---  ### Release Notes  <details> <summary>gajus/eslint-plugin-jsdoc (eslint-plugin-jsdoc)</summary>  ### [`v65.4.9`](https://redirect.github.com/gajus/eslint-plugin-jsdoc/releases/tag/v65.4.9)  [Compare Source](https://redirect.github.com/gajus/eslint-plugin-jsdoc/compare/v65.4.8...v65.4.9)  ##### Bug Fixes  - **`convert-to-jsdoc-comments`:** separate leading slashes from generated stars ([#&#8203;1848](https://redirect.github.com/gajus/eslint-plugin-jsdoc/issues/1848)) ([bc4f307](https://redirect.github.com/gajus/eslint-plugin-jsdoc/commit/bc4f307e8e6367d98e3b5a1c6352500e3cef5ed1))  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you 
+- **Issue #9865** (2026-11-26): **Update dependency bun to v1.4.5**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [bun](https://bun.com) ([source](https://redirect.github.com/oven-sh/bun)) | `1.4.4` → `1.4.5` | ![age](https://developer.mend.io/api/mc/badges/age/npm/bun/1.4.5?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/bun/1.4.4/1.4.5?slim=true) |  ---  ### Release Notes  <details> <summary>oven-sh/bun (bun)</summary>  ### [`v1.4.5`](https://redirect.github.com/oven-sh/bun/releases/tag/bun-v1.4.5): Bun v1.4.5  [Compare Source](https://redirect.github.com/oven-sh/bun/compare/bun-v1.4.4...bun-v1.4.5)  To install Bun v1.4.5  ```bash curl -fsSL https://bun.com/install | bash  # or you can use npm # npm install -g bun ```  Windows:  ```bash powershell -c "irm bun.com/install.ps1|iex" ```  To upgrade to Bun v1.4.5:  ```bash bun upgrade ```  ##### [Read Bun v1.4.5's release notes on Bun's blog](https://bun.com/blog/bun-v1.4.5)  ##### Thanks to 3 contributors!  - [@&#8203;dylan-conway](https://redirect.github.com/dylan-conway) - [@&#8203;Jarred-Sumner](https://redirect.github.com/Jarred-Sumner) - [@&#8203;robobun](https://redirect.github.com/robobun)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whe
 
-- **Issue #9824** (2026-11-23): **docs: split replication.md into concept, replicateRxCollection() and RxReplicationState pages**
-  *Symptoms*: ## This PR contains: - IMPROVED DOCS  ## Describe the problem you have without this PR `replication.md` was the longest page on the learning path, at about 3,300 words. About 70% of its sections scored as hard. It mixed the concept of the Sync Engine with the full API reference, so a reader who only wants to understand how sync works had to scroll past `awaitDocumentPushed()` and the lifecycle table.  The content is now split by topic. Nothing was removed, only moved:  | Page | What it covers | | --- | --- | | `replication.md` (slug `replication.html` unchanged) | Concept: design decisions, document level, transfer level (checkpoint iteration, event observation), data layout on the server, a short summary of conflict handling, a minimal `replicateRxCollection()` example, multi-tab, security, partial sync | | `replicate-rx-collection.md` (new) | Minimal example first, then all options with the `pull.stream$` example, custom `initialCheckpoint`, `toggleOnDocumentVisible`, TypeScript, pull-only, attachment replication, local-only metadata | | `rx-replication-state.md` (new) | Observables, `awaitInitialReplication()`, `awaitInSync()` (with the "do not block the app" warning), `awaitDocumentPushed()`, `reSync()`, `cancel()`, `pause()`, `remove()`, `isStopped()`, `isPaused()`, lifecycle table, error handling, FAQ | | `transactions-conflicts-revisions.md` | The replication conflict explanation and its two images moved into the existing "Replication conflicts" section |  **Why confli
+- **Issue #9860** (2026-11-25): **Docs: fix the RxServer examples that call startRxServer()**
+  *Symptoms*: ## This PR contains: - IMPROVED DOCS  ## Describe the problem you have without this PR Two RxServer code examples call `startRxServer()`, which does not exist. The function is `createRxServer()`, and it requires an `adapter`. Neither example compiles.  - **`rx-server.md`, "CORS":** calls `startRxServer()` without an `adapter`, and the comma after `cors: 'http://example.com'` is missing. - **`rx-server-scaling.md`, "Use an in-memory storage at the user facing level":**   - calls `startRxServer()` without an `adapter`   - has no import for it   - adds the collections to `myDatabase`, while the database variable is `myRxDatabase`  This PR uses `createRxServer()` with `RxServerAdapterExpress`, as in the "Starting a RxServer" example. It also adds the missing comma and the imports, and fixes the variable name.  ## Todos - [x] Documentation  ## Assisted by Claude Code  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_015P6w6gSU5X3tPquwWNPFbs
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,919 +951,666 @@ export function getRxStorageIpcRenderer(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b762853` (2026-11-23)
-**Commit Message**: FIX the cleanup and pipeline plugins failed when the leader-election plugin was not added (#9818)
+### Incident Patch 1: `b4149efd` (2026-11-24)
+**Commit Message**: Docs: fix code examples that call the API with options that do not exist (#9835)
 
-* FIX cleanup and pipeline plugin add the leader-election plugin by themselves
+* FIX docs examples that call the API with options that do not exist
 
-Both plugins call RxDatabase.waitForLeadership(), which only exists with
-the leader-election plugin. With only the cleanup plugin added, the
-automatic cleanup ended in an unhandled promise rejection and never ran.
-With only the pipeline plugin added, addPipeline() rejected and left a
-half-created pipeline that blocked all later reads on the destination.
+- react-native-database.md: useLiveRxQuery() takes { collection, query }
+  and returns `results`. The example passed an RxQuery and read `result`,
+  which threw on the first render because useRxCollection() returns null
+  there. The Supabase example used `supabaseClient` instead of `client`
+  and had no `tableName`, so the replication never started.
+- quickstart.md: replicateGraphQL() needs `url: { http }` and a
+  `queryBuilder` for push and pull, the example failed with
+  "push.queryBuilder is not a function". `secret` is not an option of
+  replicateWebRTC() and was ignored. The GraphQL and CouchDB examples
+  had no `replicationIdentifier`.
+- replication-websocket.md: add the required `replicationIdentifier`.
+- rx-storage-remote.md: the message channel needs a close() function,
+  without it database.close() rejects.
+- replication-firestore.md: a QueryDocumentSnapshot has no update(),
+  use updateDoc(doc.ref, ...).
+- replicate-rx-collection.md: pullStream$ was used before its
+  declaration, connectSocket() was never called and event
 
-Both plugins now add the leader-election plugin in their init(), like
-the replication plugins do in replicateRxCollection().
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMMKW
-
-* Add the pull request link to the changelog entry
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMMKW
-
----------
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `docs-src/docs/cleanup.md` (modified, +2/-0)
+**File**: `docs-src/docs/articles/alternatives/aws-amplify-datastore-alternative.md` (modified, +3/-3)
 ```diff
-@@ -30,6 +30,8 @@ import { RxDBCleanupPlugin } from 'rxdb/plugins/cleanup';
- addRxPlugin(RxDBCleanupPlugin);
+@@ -152,8 +152,8 @@ const replicationState = await replicateRxCollection({
+ // Monitor everything
+ replicationState.active$.subscribe(active => console.log('Syncing:', active));
+ replicationState.error$.subscribe(err => console.error('Sync error:', err));
+-replicationState.sent$.subscribe(docs => console.log('Pushed:', docs.length));
+-replicationState.received$.subscribe(docs => console.log('Pulled:', docs.length));
++replicationState.sent$.subscribe(doc => console.log('Pushed:', doc));
++replicationState.received$.subscribe(doc => console.log('Pulled:', doc));
  ```
  
-+The cleanup plugin adds the [leader election plugin](./leader-election.md) by itself because with the default `waitForLeadership: true` the cleanup only runs on the leading instance. You do not have to add it on your own.
-+
- ## Create a database with cleanup options
+ Nothing is hidden. If sync is failing, you see exactly why.
+@@ -228,6 +228,7 @@ import { replicateGraphQL } from 'rxdb/plugins/replication-graphql';
  
- You can set a specific cleanup policy when a [RxDatabase](./rx-database.md) is created. For most use cases, the defaults should be ok.
+ const replicationState = await replicateGraphQL({
+     collection: db.todos,
++    replicationIdentifier: 'todos-appsync',
+     url: {
+         http:
+             'https://your-appsync-endpoint.appsync-api.us-east-1.amazonaws.com' +
+@@ -344,7 +345,6 @@ const todoSchema = {
+     },
+     crdt: { field: 'crdts' }
+ };
+-};
+ ```
+ 
+ With CRDTs, two users editing the same todo while offline will have their changes merged field-by-field when they reconnect, rather than one edit overwriting the other.
 ```
 
-**File**: `docs-src/docs/rx-pipeline.md` (modified, +19/-1)
+**File**: `docs-src/docs/articles/tanstack-db/tanstack-db-graphql.md` (modified, +1/-0)
 ```diff
-@@ -41,6 +41,18 @@ const result = await myDestinationCollection.find().exec();
+@@ -231,6 +231,7 @@ import { replicateGraphQL } from 'rxdb/plugins/replication-graphql';
  
+ const replicationState = replicateGraphQL({
+     collection: db.todos,
++    replicationIdentifier: 'todos-graphql-example-com',
+     // urls to the GraphQL endpoints
+     url: {
+         http: 'https://example.com/graphql',
+```
+
+**File**: `docs-src/docs/fulltext-search.md` (modified, +1/-1)
+```diff
+@@ -85,7 +85,7 @@ const flexSearch = await addFulltextSearch({
+      * Amount of documents to index at once.
+      * See https://rxdb.info/rx-pipeline.html
+      */
+-    batchSize: number;
++    batchSize: 10,
+     /**
+      * (Optional)
+      * lazy: Initialize the in memory fulltext index at the first search query.
+```
+
+**File**: `docs-src/docs/quickstart.md` (modified, +7/-4)
+```diff
+@@ -343,14 +343,17 @@ replicateRxCollection({
  
+ #### GraphQL
  
-+## Installation
++The `queryBuilder` functions create the GraphQL queries for your endpoint. The [GraphQL replication](./replication-graphql.md) page shows how to write them.
 +
-+To use `addPipeline()`, you have to add the `pipeline` plugin.
-+
-+```ts
-+import { addRxPlugin } from 'rxdb';
-+import { RxDBPipelinePlugin } from 'rxdb/plugins/pipeline';
-+addRxPlugin(RxDBPipelinePlugin);
-+```
-+
-+The pipeline plugin adds the [leader election plugin](./leader-election.md) by itself because a pipeline waits for the leadership before it starts. You do not have to add it on your own.
-+
- ## Creating a RxPipeline
+ ```ts
+ import { replicateGraphQL } from 'rxdb/plugins/replication-graphql';
  
- Pipelines are created on top of a source [RxCollection](./rx-collection.md) and have another `RxCollection` as destination. An identifier is used to identify the state of the pipeline so that different pipelines have a different processing checkpoint state. A plain JavaScript function `handler` is used to process the data of the source collection writes.
-@@ -60,7 +72,13 @@ const pipeline = await mySourceCollection.addPipeline({
-                 category: doc.category
-             });
-         }
--    }
-+    },
-+    /**
-+     * If true, the pipeline only starts
-+     * when the current instance is the leader.
-+     * (optional) [default=true]
-+     */
-+    waitForLeadership: true
+ replicateGraphQL({
+     collection: myDatabase.todos,
+-    url: 'https://example.com/graphql',
+-    push: { batchSize: 50 },
+-    pull: { batchSize: 50 }
++    replicationIdentifier: 'my-graphql-replication',
++    url: { http: 'https://example.com/graphql' },
++    push: { queryBuilder: pushQueryBuilder, batchSize: 50 },
++    pull: { queryBuilder: pullQueryBuilder, batchSize: 50 }
  });
  ```
  
-```
-
-**File**: `orga/changelog/fix-cleanup-pipeline-add-leader-election.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+    "$schema": "./schema.json",
-+    "text": "FIX the cleanup plugin and the pipeline plugin called `RxDatabase.waitForLeadership()` without adding the leader-election plugin. With only the cleanup plugin added, the automatic cleanup never ran and ended in an unhandled promise rejection. With only the pipeline plugin added, `addPipeline()` rejected and later queries on the destination collection never resolved. Both plugins now add the leader-election plugin by themselves, like the replication plugins do",
-+    "links": [
-+        {
-+            "url": "https://github.com/pubkey/rxdb/pull/9818",
-+            "linkText": "#9818"
-+        }
-+    ],
-+    "priority": 5
-+}
-```
-
-**File**: `src/plugins/cleanup/index.ts` (modified, +10/-0)
-```diff
-@@ -5,10 +5,20 @@ import type {
- import { DEFAULT_CLEANUP_POLICY } from './cleanup-helper.ts';
- import { startCleanupForRxState } from './cleanup-state.ts';
- import { cleanupRxCollection, startCleanupForRxCollection } from './cleanup.ts';
-+import { addRxPlugin } from '../../plugin.ts';
-+import { RxDBLeaderElectionPlugin } from '../leader-election/index.ts';
+@@ -368,7 +371,6 @@ replicateWebRTC({
+     collection: myDatabase.todos,
+     connectionHandlerCreator: getConnectionHandlerSimplePeer({}),
+     topic: '', // <- set any app-specific room id here.
+-    secret: 'mysecret',
+     pull: {},
+     push: {}
+ })
+@@ -383,6 +385,7 @@ import { replicateCouchDB } from 'rxdb/plugins/replication-couchdb';
  
- export const RxDBCleanupPlugin: RxPlugin = {
-     name: 'cleanup',
-     rxdb: true,
-+    /**
-+     * With cleanupPolicy.waitForLeadership, the automatic cleanup
-+     * calls RxDatabase.waitForLeadership() which only exists
-+     * with the leader-election plugin.
-+     */
-+    init() {
-+        addRxPlugin(RxDBLeaderElectionPlugin);
-+    },
-     prototypes: {
-         RxCollection: (proto: any) => {
-             proto.cleanup = async function (this: RxCollection, minimumDeletedTime?: number): Promise<boolean> {
+ replicateCouchDB({
+     collection: myDatabase.todos,
++    replicationIdentifier: 'my-couchdb-replication',
+     url: 'http://example.com/todos/',
+     push: {},
+     pull: {}
 ```
 
-**File**: `src/plugins/pipeline/index.ts` (modified, +10/-0)
+**File**: `docs-src/docs/react-native-database.md` (modified, +20/-20)
 ```diff
-@@ -2,6 +2,8 @@ import type {
-     RxPlugin
- } from '../../types/index.d.ts';
- import { addPipeline } from './rx-pipeline.ts';
-+import { addRxPlugin } from '../../plugin.ts';
-+import { RxDBLeaderElectionPlugin } from '../leader-election/index.ts';
+@@ -120,28 +120,27 @@ export default function App() {
+ ```
  
- export type * from './types.ts';
- export * from './flagged-functions.ts';
-@@ -10,6 +12,14 @@ export * from './rx-pipeline.ts';
- export const RxDBPipelinePlugin: RxPlugin = {
-     name: 'pipeline',
-     rxdb: true,
-+    /**
-+     * With options.waitForLeadership, addPipeline()
-+     * calls RxDatabase.waitForLeadership() which only exists
-+     * with the leader-election plugin.
-+     */
-+    init() {
-+        addRxPlugin(RxDBLeaderElectionPlugin);
-+    },
-     prototypes: {
-         RxCollection(proto: any) {
-             proto.addPipeline = addPipeline;
-```
-
-**File**: `test/unit/cleanup-only.node.ts` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+/**
-+ * Uses the cleanup plugin without adding any other plugin,
-+ * like it is shown in the docs of the cleanup plugin.
-+ * This is run in a separate node-process via plugin.test.ts
-+ * because the other tests add the leader-election plugin.
-+ */
-+
-+import assert from 'assert';
-+import { waitUntil } from 'async-test-util';
-+
-+/**
-+ * exit with non-zero on unhandledRejection
-+ */
-+process.on('unhandledRejection', function (err) {
-+    console.log('cleanup-only.node.ts: unhandledRejection');
-+    console.error(err);
-+    process.exit(1);
-+});
-+
-+import {
-+    createRxDatabase,
-+    randomToken,
-+    addRxPlugin
-+} from '../../plugins/core/index.mjs';
-+import {
-+    getRxStorageMemory
-+} from '../../plugins/storage-memory/index.mjs';
-+import { RxDBCleanupPlugin } from '../../plugins/cleanup/index.mjs';
-+import type {
-+    RxJsonSchema,
-+} from '../../plugins/core/index.mjs';
-+addRxPlugin(RxDBCleanupPlugin);
-+
-+const schema: RxJsonSchema<{ id: string; name: string; }> = {
-+    version: 0,
-+    primaryKey: 'id',
-+    type: 'object',
-+    properties: {
-+        id: {
-+            type: 'string',
-+            maxLength: 100
-+        },
-+        name: {
-+            type: 'string'
-+        }
-+    },
-+    required: ['id', 'name']
-+};
-+
-+const run = async function () {
-+    /**
-+     * multiInstance and cleanupPolicy.waitForLeadership
-+     * are not set so that their defaults are used.
-+     */
-+    const db = await createRxDatabase({
-+        name: randomToken(10),
-+        storage: getRxStorageMemory(),
-+        cleanupPolicy: {
-+            minimumCollectionAge: 0,
-+            minimumDeletedTime: 0,
-+            runEach: 10
-+        }
-+    });
-+    await db.addCollections({
-+        todos: {
-+            schema
-+        }
-+    });
-+    const collection = db.todos;
-+
-+    await collection.insert({ id: 'todo1', name: 'Learn RxDB' });
-+    const doc = await collection.insert({ id: 'todo2', name: 'Buy groceries' });
-+    await doc.remove();
-+
-+    /**
-+     * The automatic cleanup must purge the deleted document.
-+     * No timeout is set here, plugin.test.ts stops
-+     * the process when it runs for too long.
-+     */
-+    await waitUntil(async () => {
-+        const docsInStorage = await collection.storageInstance.findDocumentsById(
-+            ['todo1', 'todo2'],
-+            true
-+        );
-+        assert.ok(docsInStorage.find(d => d.id === 'todo1'));
-+        return !docsInStorage.find(d => d.id === 'todo2');
-+    });
-+
-+    await db.close();
-+};
-+
-+run();
-```
-
-**File**: `test/unit/pipeline-only.node.ts` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+/**
-+ * Uses the pipeline plugin without adding any other plugin.
-+ * This is run in a separate node-process via plugin.test.ts
-+ * because the other tests add the leader-election plugin.
-+ */
-+
-+import assert from 'assert';
-+
-+/**
-+ * exit with non-zero on unhandledRejection
-+ */
-+process.on('unhandledRejection', function (err) {
-+    console.log('pipeline-only.node.ts: unhandledRejection');
-+    console.error(err);
-+    process.exit(1);
-+});
-+
-+import {
-+    createRxDatabase,
-+    randomToken,
-+    addRxPlugin
-+} from '../../plugins/core/index.mjs';
-+import {
-+    getRxStorageMemory
-+} from '../../plugins/storage-memory/index.mjs';
-+import { RxDBPipelinePlugin } from '../../plugins/pipeline/index.mjs';
-+import type {
-+    RxJsonSchema,
-+} from '../../plugins/core/index.mjs';
-+addRxPlugin(RxDBPipelinePlugin);
-+
-+const schema: RxJsonSchema<{ id: string; name: string; }> = {
-+    version: 0,
-+    primaryKey: 'id',
-+    type: 'object',
-+    properties: {
-+        id: {
-+            type: 'string',
-+            maxLength: 100
-+        },
-+        name: {
-+            type: 'string'
-+        }
-+    },
-+    required: ['id', 'name']
-+};
-+
-+const run = async function () {
-+    const db = await createRxDatabase({
-+        name: randomToken(10),
-+        storage: getRxStorageMemory()
-+    });
-+    await db.addCollections({
-+        todos: {
-+            schema
-+        },
-+        todonames: {
-+            schema
-+        }
-+    });
-+
-+    /**
-+     * options.waitForLeadership is not set
-+     * so that its default is used.
-+     */
-+    const pipeline = await db.todos.addPipeline({
-+        identifier: 'todo-names',
-+        destination: db.todonames,
-+        handler: async (docs) => {
-+            for (const doc of docs) {
-+                await db.todonames.upsert({
-+                    id: doc.primary,
-+                    name: doc.name
-+                });
-+            }
-+        }
-+    });
-+
-+    await db.todos.insert({ id: 'todo1', name: 'Learn RxDB' });
-+    await pipeline.awaitIdle();
-+    const processed = await db.todonames.findOne('todo1').exec(true);
-+    assert.strictEqual(processed.name, 'Learn RxDB');
-+
-+    await db.close();
-+};
-+
-+run();
-```
-
-**File**: `test/unit/plugin.test.ts` (modified, +49/-33)
-```diff
-@@ -47,43 +47,59 @@ describe('plugin.test.js', () => {
-             await addRxPlugin(RxDBDevModePlugin);
-         });
-     });
-+    /**
-+     * Runs a transpiled file of the unit test folder in a separate
-+     * node-process and throws when it fails or writes to stderr.
-+     */
-+    async function runInOwnProcess(fileName: string) {
-+        const execFileAsync = promisify(execFile);
-+        let stderr: string;
-+        try {
-+            /**
-+             * Run the mocha entrypoint with the current node binary
-+             * instead of relying on the `mocha` shim being in the PATH,
-+             * this also works on windows.
-+             */
-+            const result = await execFileAsync(
-+                process.execPath,
-+                [
-+                    getRootPath() + 'node_modules/mocha/bin/mocha.js',
-+                    getRootPath() + 'test_tmp/unit/' + fileName
-+                ],
-+                {
-+                    maxBuffer: 1024 * 1024 * 64,
-+                    // stop a process that hangs, before the test times out
-+                    timeout: 30 * 1000
-+                }
-+            );
-+            stderr = result.stderr;
-+        } catch (err: any) {
-+            console.error('errrrr');
-+            console.dir(err.stdout);
-+            throw new Error(`could not run ${fileName}.
-+                # Error: ${err}
-+                # Output: ${err.stdout}
-+                # ErrOut: ${err.stderr}
-+                `, { cause: err });
-+        }
-+
-+        if (stderr.length > 0) {
-+            throw new Error('got stderr: ' + stderr);
-+        }
-+    }
-     describe('full.node.ts', () => {
-         it('full.node.ts should run without errors', async () => {
--            if (!isNode)
--                return;
+ ### 2. Observe Data
+-Use the `useRxQuery` hook (or `useLiveRxQuery` shortcut) to fetch data. The component will **automatically re-render** whenever the data in the database changes. You do not have to manage subscriptions or event listeners manually.
++Use the `useLiveRxQuery` hook to fetch data. The component will **automatically re-render** whenever the data in the database changes. You do not have to manage subscriptions or event listeners manually.
+ 
+ ```tsx
+-import { useRxCollection, useLiveRxQuery } from 'rxdb/plugins/react';
 -
--            const execFileAsync = promisify(execFile);
--            let stderr: string;
--            try {
--                /**
--                 * Run the mocha entrypoint with the current node binary
--                 * instead of relying on the `mocha` shim being in the PATH,
--                 * this also works on windows.
--                 */
--                const result = await execFileAsync(
--                    process.execPath,
--                    [
--                        getRootPath() + 'node_modules/mocha/bin/mocha.js',
--                        getRootPath() + 'test_tmp/unit/full.node.js'
--                    ],
--                    { maxBuffer: 1024 * 1024 * 64 }
--                );
--                stderr = result.stderr;
--            } catch (err: any) {
--                console.error('errrrr');
--                console.dir(err.stdout);
--                throw new Error(`could not run full.node.js.
--                    # Error: ${err}
--                    # Output: ${err.stdout}
--                    # ErrOut: ${err.stderr}
--                    `, { cause: err });
--            }
--
--            if (stderr.length > 0) {
--                throw new Error('got stderr: ' + stderr);
--            }
-+            await runInOwnProcess('full.node.js');
-         });
-     });
-+    describe('plugins that wait for the leadership', () => {
-+        it('the automatic cleanup should run when only the cleanup plugin was added', async () => {
-+            await runInOwnProcess('cleanup-only.node.js');
-+        }).timeout(40 * 1000);
-+        it('addPipeline() should work when only the pipeline plugin was added', async () => {
-+            await runInOwnProcess('pipeline-only.node.js');
-+        }).timeout(40 * 1000);
-+    });
-     describe('hooks', () => {
-         it('createRxDatabase', async () => {
-             const createRxDatabase = (args: any) => {
+-function TaskList() {
+-  const collection = useRxCollection('tasks');
+-  
+-  // This hook automatically updates 'tasks' whenever the query result changes
+-  const { result: tasks } = useLiveRxQuery(
+-    collection.find({
+-        selector: {
+-            done: { $eq: false }
+-        },
+-        sort: [{ createdAt: 'asc' }]
+-    })
+-  );
++import type { MangoQuery } from 'rxdb';
++import { useLiveRxQuery } from 'rxdb/plugins/react';
++
++const query: MangoQuery = {
++  selector: {
++    done: { $eq: false }
++  },
++  sort: [{ dueAt: 'asc' }]
++};
++
++function TodoList() {
++  // This hook automatically updates 'todos' whenever the query result changes
++  const { results: todos } = useLiveRxQuery({ collection: 'todos', query });
+ 
+   return (
+     <FlatList
+-      data={tasks}
+-      renderItem={({ item }) => <Text>{item.title}</Text>}
++      data={todos}
++      renderItem={({ item }) => <Text>{item.name}</Text>}
+       keyExtractor={item => item.id}
+     />
+   );
+@@ -165,7 +164,7 @@ const db = await createRxDatabase({
+ });
+ 
+ // ... in your component
+-const signals = collection.find().$$; // Returns a Signal<Doc[]>
++const signals = db.todos.find().$$; // Returns a Signal<Doc[]>
+ ```
+ 
+ Using signals allows you to update only the specific text node that changed, keeping your UI running at 60fps even with massive data flux.
+@@ -193,8 +192,9 @@ import { replicateSupabase } from 'rxdb/plugins/replication-supabase';
+ 
+ const replicationState = replicateSupabase({
+     replicationIdentifier: 'my-sync',
+-    collection: db.tasks,
+-    supabaseClient: supabase,
++    collection: db.todos,
++    client: supabase,
++    tableName: 'todos',
+     pull: {},
+     push: {},
+ });
 ```
 
----
-
-### Incident Patch 2: `41a45034` (2026-11-23)
-**Commit Message**: FIX RxState cleanup of all databases blocked after a database was closed during its cleanup (#9791)
-
-* FIX RxState cleanup of all databases blocked after a database was closed during its cleanup
-
-All RxState cleanups of the JavaScript process run in one shared promise
-queue. When a database was closed or removed while the cleanup of its
-RxState was running, a query of that cleanup could be sent to the already
-closed storage instance. On the remote RxStorage such a call never
-settles, so the queue was blocked and the RxState cleanup of all other
-databases never ran again.
-
-The queue step now ends when the collection of the state gets closed.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMMKW
-
-* Create the closed promise of the RxState cleanup once per collection
-
-Each cleanup run subscribed to closed$ of the collection again. The
-subscription of a run that finished stayed until the collection was
-closed. Now one promise per collection is created and reused.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMMKW
-
-* Subscribe to closed$ only f
-
-**File**: `orga/changelog/fix-rxstate-cleanup-queue-blocked-by-closed-database.json` (added, +11/-0)
+**File**: `docs-src/docs/replicate-rx-collection.md` (modified, +13/-5)
 ```diff
-@@ -0,0 +1,11 @@
-+{
-+    "$schema": "./schema.json",
-+    "text": "FIX the automatic cleanup of an RxState never ran again for all other databases of the JavaScript process when a database was closed or removed while the cleanup of its RxState was running. This happened on the remote RxStorage, where a call on a closed storage instance never settles.",
-+    "links": [
-+        {
-+            "url": "https://github.com/pubkey/rxdb/pull/9791",
-+            "linkText": "#9791"
-+        }
-+    ],
-+    "priority": 5
-+}
-```
-
-**File**: `src/plugins/cleanup/cleanup-state.ts` (modified, +21/-7)
-```diff
-@@ -3,7 +3,7 @@ import { PROMISE_RESOLVE_TRUE } from '../../plugins/utils/index.ts';
- import { REPLICATION_STATE_BY_COLLECTION } from '../replication/index.ts';
- import { DEFAULT_CLEANUP_POLICY, awaitReplicationInSyncOrCanceled } from './cleanup-helper.ts';
- import { initialCleanupWait } from './cleanup.ts';
--import { firstValueFrom } from 'rxjs';
-+import { Subscription, firstValueFrom } from 'rxjs';
+@@ -57,6 +57,15 @@ import { replicateRxCollection } from 'rxdb/plugins/replication';
+ import {
+     lastOfArray
+ } from 'rxdb';
++import type { RxReplicationPullStreamItem } from 'rxdb';
++import { Subject } from 'rxjs';
++
++/**
++ * The pull stream for realtime replication.
++ * It is filled by the websocket below.
++ */
++const pullStream$ = new Subject<RxReplicationPullStreamItem<any, any>>();
++
+ const replicationState = await replicateRxCollection({
+     collection: myDatabase.todos,
+     /**
+@@ -247,20 +256,19 @@ const replicationState = await replicateRxCollection({
  
- let RXSTATE_CLEANUP_QUEUE: Promise<any> = PROMISE_RESOLVE_TRUE;
  
-@@ -68,16 +68,30 @@ export async function cleanupRxState(
-                 if (rxCollection.closed) {
-                     return true;
-                 }
--                return state._cleanup().catch(err => {
--                    /**
--                     * The collection can be closed while the cleanup is running.
--                     * Then the cleanup run ends without an error.
--                     */
-+                /**
-+                 * The collection can be closed while the cleanup is running.
-+                 * Then the cleanup run ends without an error.
-+                 * A step of the cleanup that runs on the closed collection
-+                 * might never settle, and this queue is shared by all
-+                 * databases, so it must not wait for that step.
-+                 */
-+                const closedSub = new Subscription();
-+                const closedPromise = new Promise<boolean>(res => {
-+                    closedSub.add(rxCollection.closed$.subscribe(() => res(true)));
-+                });
-+                try {
-+                    return await Promise.race([
-+                        state._cleanup(),
-+                        closedPromise
-+                    ]);
-+                } catch (err) {
-                     if (rxCollection.closed) {
-                         return true;
-                     }
-                     throw err;
--                });
-+                } finally {
-+                    closedSub.unsubscribe();
-+                }
-             });
-         isDone = await RXSTATE_CLEANUP_QUEUE;
-     }
-```
-
-**File**: `test/unit/rx-state.test.ts` (modified, +81/-0)
-```diff
-@@ -543,6 +543,87 @@ addRxPlugin(RxDBJsonDumpPlugin);
- 
-                 await database.remove();
-             });
-+            it('should run the automatic cleanup after another database was removed while its cleanup was running', async () => {
-+                type CounterState = {
-+                    [key: string]: number;
-+                };
-+                const storage = useSchemaValidator ? wrappedValidateAjvStorage({
-+                    storage: config.storage.getStorage()
-+                }) : config.storage.getStorage();
-+                const openState = async () => {
-+                    const database = await createRxDatabase({
-+                        name: randomToken(10),
-+                        storage,
-+                        cleanupPolicy: {
-+                            awaitReplicationsInSync: false,
-+                            minimumCollectionAge: 0,
-+                            minimumDeletedTime: 0,
-+                            runEach: 0,
-+                            waitForLeadership: false
-+                        }
-+                    });
-+                    return database.addState<CounterState>();
-+                };
-+
-+                /**
-+                 * Which step of the cleanup is running when the database
-+                 * gets removed depends on the timing, so this is done several times.
-+                 * Slow storages get fewer rounds to stay inside of the test timeout.
-+                 */
-+                const maxRounds = 10;
-+                const roundsStartTime = Date.now();
-+                for (let round = 0; round < maxRounds && Date.now() - roundsStartTime < 3000; round++) {
-+                    const state = await openState();
-+                    const database = state.collection.database;
-+                    let counter = 0;
-+                    const writeNext = () => {
-+                        const value = counter++;
-+                        return state.set('k' + value, () => value);
-+                    };
-+
-+                    /**
-+                     * The cleanup starts when the database is idle after a write,
-+                     * and it only merges the state when there are more than 5 writes.
-+                     * The idle calls are resolved in the order of their requests,
-+                     * so the cleanup starts right after this one.
-+                     */
-+                    const idlePromise = database.requestIdlePromise();
-+                    for (let i = 0; i < 6; i++) {
-+                        await writeNext();
-+                    }
-+                    await idlePromise;
-+                    // the next idle call is resolved three timeouts after the previous one
-+                    await wait(0);
-+                    await wait(0);
-+                    await wait(0);
-+
-+                    /**
-+                     * Now the cleanup reads the state documents from the storage.
-+                     * While writes arrive, that read is repeated for some time,
-+                     * so the cleanup is still running when the database gets removed.
-+                     * All writes of the app are awaited before.
-+                     */
-+                    const startTime = Date.now();
-+                    while (Date.now() - startTime < 30) {
-+                        await writeNext();
-+                    }
-+                    await database.remove();
-+                }
-+
-+                // the cleanup of a database that is created afterwards must still run
-+                const lastState = await openState();
-+                const writes = 10;
-+                for (let i = 0; i < writes; i++) {
-+                    await lastState.set('k' + i, () => i);
-+                }
-+                await waitUntil(async () => {
-+                    const docs = await lastState.collection.find().exec();
-+                    return docs.length <= 5;
-+                });
-+                assert.strictEqual(Object.keys(lastState.get()).length, writes);
-+
-+                await lastState.collection.database.remove();
-+            });
-         });
-         describe('multiInstance', () => {
-             if (
-```
-
----
-
-### Incident Patch 3: `dcfd7517` (2026-11-23)
-**Commit Message**: FIX the in-memory state of an RxState did not follow the storage after a replicated change (#9816)
-
-* ADD failing tests for RxState replication when both sides write before the sync
-
-The tests 'should not lose a write when both sides have written before the sync'
-and 'should have the same state in memory as after a reload when both sides have
-written before the sync' fail. No fix is included, the design has to be decided first.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMMKW
-
-* FIX in-memory state of an RxState did not follow the storage after a replicated change
-
-When a replication of the collection of an RxState overwrote or deleted
-operations documents, the in-memory state kept the operations that are no
-longer stored. The state is now built again from the storage when an UPDATE
-or DELETE event arrives, inside of the write queue.
-
-The dropped write of one device on a conflict and the lost state after a
-cleanup on one side are not changed, they are noted in orga/before-next-major.md.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMM
-
-**File**: `orga/before-next-major.md` (modified, +17/-0)
-```diff
-@@ -679,6 +679,23 @@ An implementation with tests is in the closed pull request [#9561](https://githu
- 
- Related closed pull requests that contain parts of this change: [#9603](https://github.com/pubkey/rxdb/pull/9603) (the digest that a wrapped storage changed is set on the write rows of the caller, so that the encryption and the attachments-compression storage work in both wrapping orders) and [#9556](https://github.com/pubkey/rxdb/pull/9556) (the `length` of the write data is used for the stored attachment).
- 
-+## RxState: writes of two devices must not get the same operations document id
-+
-+An RxState stores each write as an operations document with a counter as id (`00000000000000`, `00000000000001`, ...). Instances that share one storage get a conflict error on the same id and retry with the next one. Two devices that replicate `myState.collection` do not share a storage, so when both write before they sync, both create a document with the same id. The replication handles that as a conflict, the default conflict handler keeps the master state, and the fork document is overwritten.
-+
-+- With `await stateA.set('a', () => 1)` on one device and `await stateB.set('b', () => 2)` on the other one, both states are `{ b: 2 }` after the sync. The write of one device is dropped.
-+- When one device runs the cleanup while the other one wrote without a connection, and the device that ran the cleanup is the fork side of the replication, the merged document of the cleanup loses the conflict, but the deletions of the older operations documents are replicated. Both devices then only have the one write of the other device and the whole earlier state is lost. When the device that ran the cleanup is the master, its merged document wins and only the write of the other device is dropped.
-+
-+The in-memory state is built again from the storage after such a replicated change, so `get()` and the observables show the stored state. The writes are still lost.
-+
-+Todo:
-+- Give the operations documents ids that are unique per device, for example the counter plus the instance id, so that two devices never write the same document. The order of the operations, `nextRxStateId()`, the `_lastMergedId` comparisons, and the cleanup have to work with these ids.
-+- Alternative: a conflict handler for the collection of the RxState that keeps the operations of both sides in the resolved document. It has to define the order of a full-state operation (`k: ''`, written by the cleanup and by `set('')`) against the operations of the other side, otherwise the document of the cleanup still drops the other write.
-+- The cleanup must not delete operations documents before its merged document is accepted by the other side.
-+- Breaking: the stored format of the operations documents changes, so existing states have to be migrated. With the conflict handler, apps that replicate a state today get another result for a conflict.
-+
-+There is no implementation yet. The pull request that rebuilds the in-memory state and has tests for both scenarios is [#9816](https://github.com/pubkey/rxdb/pull/9816).
-+
- ## Database `exportJSON()` must not contain the internal RxState collection
- 
- `RxDatabase.exportJSON()` contains the internal `rx-state-*` collection of an RxState. `importJSON()` of that dump into a database without the state throws `JD1`.
-```
-
-**File**: `orga/changelog/fix-rxstate-in-memory-state-after-replicated-change.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+    "$schema": "./schema.json",
-+    "text": "FIX the in-memory state of an `RxState` did not follow the storage when a replication of `myState.collection` overwrote or deleted operations documents, or inserted one with an id that was merged already, so `get()` and the observables returned another state than after a reload. The state is now built again from the storage after such a change. Added testcases for the replication of an `RxState`",
-+    "links": [
-+        {
-+            "url": "https://github.com/pubkey/rxdb/pull/9816",
-+            "linkText": "#9816"
-+        }
-+    ],
-+    "priority": 5
-+}
-```
-
-**File**: `src/plugins/state/rx-state.ts` (modified, +67/-11)
-```diff
-@@ -84,6 +84,12 @@ export class RxStateBase<T, Reactivity = unknown> {
-      * All operations documents with a lower id are merged too.
+ /**
+- * Creating the pull stream for realtime replication.
++ * Filling the pull stream for realtime replication.
+  * Here we use a websocket but any other way of
+  * sending data to the client can be used,
+  * like long polling or server-sent events.
+  */
+-const pullStream$ = new Subject<RxReplicationPullStreamItem<any, any>>();
+ let firstOpen = true;
+ function connectSocket() {
+     const socket = new WebSocket('wss://example.com/api/sync/stream');
+     /**
+      * When the backend sends a new batch of documents+checkpoint,
+      * emit it into the stream$.
+      * 
+-     * event.data must look like this
++     * The parsed event.data must look like this
+      * {
+      *     documents: [
+      *        {
+@@ -275,7 +283,7 @@ function connectSocket() {
+      *     }
+      * }
       */
-     public _lastMergedId = '';
-+    /**
-+     * Ids of the operations documents that were merged from the storage
-+     * before their INSERT event has arrived. A rebuild of the state replaces
-+     * the content with the ids it has read above the previous _lastMergedId.
-+     */
-+    public _mergedAhead = new Set<string>();
+-    socket.onmessage = event => pullStream$.next(event.data);
++    socket.onmessage = event => pullStream$.next(JSON.parse(event.data));
+     /**
+      * Automatically reconnect the socket on close and error.
+      */
+@@ -297,7 +305,7 @@ function connectSocket() {
+         }
+     }
+ }
+-
++connectSocket();
+ ```
  
-     constructor(
-         public readonly prefix: string,
-@@ -102,22 +108,28 @@ export class RxStateBase<T, Reactivity = unknown> {
-             this._ownEmits$,
-             this.collection.eventBulks$.pipe(
-                 /**
--                 * Filter out event bulks that do not contain
--                 * relevant events for this instance.
--                 * Only INSERT events from OTHER instances need
--                 * to be processed. Own-instance INSERTs are
--                 * already handled via _ownEmits$, and DELETE
--                 * events (e.g. from cleanup) do not change state.
-+                 * Only INSERT events from OTHER instances are merged
-+                 * into the state. Own-instance INSERTs are
-+                 * already handled via _ownEmits$.
-+                 * A replication can also overwrite, delete, or insert documents
-+                 * with an id that is already merged. The state cannot be corrected
-+                 * from these events, so it is built again from the storage.
-+                 * An INSERT of a document that was merged from the storage before is skipped.
-                  */
-                 filter((eventBulk: RxChangeEventBulk<RxStateDocument>) => {
-                     if (!this._initDone) {
-                         this._eventDuringInit = true;
-                         return false;
-                     }
--                    return eventBulk.events.some(event =>
--                        event.operation === 'INSERT' &&
--                        event.documentData.sId !== this._instanceId
--                    );
-+                    const events = eventBulk.events;
-+                    const fromOther = events.filter(event => event.documentData.sId !== this._instanceId);
-+                    const hasNonInsert = events.some(event => event.operation !== 'INSERT');
-+                    const unknown = fromOther.filter(event => event.documentData.id <= this._lastMergedId &&
-+                        !this._mergedAhead.delete(event.documentData.id));
-+                    if (hasNonInsert || unknown.length > 0) {
-+                        this._rebuildState();
-+                    }
-+                    return !hasNonInsert && fromOther.length > 0;
-                 }),
-                 tap((eventBulk: RxChangeEventBulk<RxStateDocument>) => {
-                     const events = eventBulk.events;
-@@ -140,7 +152,10 @@ export class RxStateBase<T, Reactivity = unknown> {
-                              * now would apply the operations in the wrong order.
-                              */
-                             this._mergeMissingOperations()
--                                .then(() => this._ownEmits$.next(this._state))
-+                                .then(() => {
-+                                    this._mergedAhead.delete(event.documentData.id);
-+                                    this._ownEmits$.next(this._state);
-+                                })
-                                 .catch(() => { });
-                         }
-                     }
-@@ -278,6 +293,12 @@ export class RxStateBase<T, Reactivity = unknown> {
-                             sId: this._instanceId,
-                             ops
-                         });
-+                        /**
-+                         * A merge that ran during the insert can have read
-+                         * the own document from the storage. Own events
-+                         * never remove it from the set.
-+                         */
-+                        this._mergedAhead.delete(nextId);
-                         /**
-                          * When a newer operation was merged during the insert,
-                          * the state already contains this write
-@@ -307,6 +328,7 @@ export class RxStateBase<T, Reactivity = unknown> {
-                     const documentInDb = writeError.documentInDb;
-                     if (this._lastMergedId < documentInDb.id) {
-                         this._lastMergedId = documentInDb.id;
-+                        this._mergedAhead.add(documentInDb.id);
-                         this.mergeOperationsIntoState(documentInDb.ops);
-                         this._ownEmits$.next(this._state);
-                     }
-@@ -335,11 +357,45 @@ export class RxStateBase<T, Reactivity = unknown> {
-             const doc = docs[index];
-             if (doc.id > this._lastMergedId) {
-                 this._lastMergedId = doc.id;
-+                this._mergedAhead.add(doc.id);
-                 this.mergeOpe
+ The two modes `Checkpoint iteration` and `Event observation` that are mentioned in the comments are explained on the [Sync Engine](./replication.md#the-sync-engine-on-the-transfer-level) page.
 ```
 
-**File**: `test/unit/rx-state.test.ts` (modified, +266/-1)
+**File**: `docs-src/docs/replication-firestore.md` (modified, +4/-2)
 ```diff
-@@ -17,8 +17,13 @@ import {
- } from '../../plugins/core/index.mjs';
- import {
-     isDeno,
--    isFastMode
-+    isFastMode,
-+    getPullHandler,
-+    getPullStream,
-+    getPushHandler,
-+    ensureReplicationHasNoErrors
- } from '../../plugins/test-utils/index.mjs';
-+import { replicateRxCollection } from '../../plugins/replication/index.mjs';
- import {
-     nextRxStateId,
-     RxDBStatePlugin
-@@ -954,6 +959,266 @@ addRxPlugin(RxDBJsonDumpPlugin);
-                 await freshState.collection.database.remove();
-             });
-         });
-+        describe('replication', () => {
-+            if (!config.storage.hasReplication) {
-+                return;
-+            }
-+            type CounterState = {
-+                [key: string]: number;
-+            };
-+            function syncWith<StateType>(
-+                state: RxState<StateType, any>,
-+                remoteState: RxState<StateType, any>,
-+                pushBatchSize?: number
-+            ) {
-+                const replicationState = replicateRxCollection({
-+                    collection: state.collection,
-+                    replicationIdentifier: 'rx-state-replication-test',
-+                    live: true,
-+                    pull: {
-+                        handler: getPullHandler(remoteState.collection),
-+                        stream$: getPullStream(remoteState.collection)
-+                    },
-+                    push: {
-+                        handler: getPushHandler(remoteState.collection),
-+                        batchSize: pushBatchSize
-+                    }
-+                });
-+                ensureReplicationHasNoErrors(replicationState);
-+                return replicationState;
-+            }
-+            /**
-+             * Waits until the value is as expected. On a timeout
-+             * the assertion shows the difference.
-+             */
-+            async function awaitEqual(getValue: () => any, expected: any) {
-+                await waitUntil(() => deepEqual(getValue(), expected), 5000).catch(() => { });
-+                assert.deepStrictEqual(getValue(), expected);
-+            }
-+            async function openCounterState(name: string, cleanupPolicy?: Partial<RxCleanupPolicy>) {
-+                const database = await createRxDatabase({
-+                    name,
-+                    storage: useSchemaValidator ? wrappedValidateAjvStorage({
-+                        storage: config.storage.getStorage()
-+                    }) : config.storage.getStorage(),
-+                    cleanupPolicy
-+                });
-+                return database.addState<CounterState>();
-+            }
-+            const CLEANUP_POLICY: Partial<RxCleanupPolicy> = {
-+                awaitReplicationsInSync: false,
-+                minimumCollectionAge: 0,
-+                runEach: 1000 * 60 * 60,
-+                waitForLeadership: false
-+            };
-+            it('should sync a write that was done after the last sync', async () => {
-+                const stateA = await getState();
-+                const stateB = await getState();
-+                await stateA.set('a', () => 1);
+@@ -119,11 +119,12 @@ import {
+     getDocs,
+     query,
+     where,
+-    serverTimestamp
++    serverTimestamp,
++    updateDoc
+ } from 'firebase/firestore';
+ const allDocsResult = await getDocs(query(firestoreCollection));
+ allDocsResult.forEach(doc => {
+-    doc.update({
++    updateDoc(doc.ref, {
+         _deleted: false,
+         serverTimestamp: serverTimestamp()
+     })
+@@ -139,6 +140,7 @@ You might need to replicate only a subset of your collection, either to or from
+ ```ts
+ const replicationState = replicateFirestore(
+     {
++        replicationIdentifier: `https://firestore.googleapis.com/${projectId}`,
+         collection: myRxCollection,
+         firestore: {
+             projectId,
+```
+
+**File**: `docs-src/docs/replication-graphql.md` (modified, +3/-0)
+```diff
+@@ -179,6 +179,7 @@ import { replicateGraphQL } from 'rxdb/plugins/replication-graphql';
+ const replicationState = replicateGraphQL(
+     {
+         collection: myRxCollection,
++        replicationIdentifier: 'my-graphql-replication',
+         // urls to the GraphQL endpoints
+         url: {
+             http: 'http://example.com/graphql'
+@@ -254,6 +255,7 @@ With the queryBuilder, you can then setup the push-replication.
+ const replicationState = replicateGraphQL(
+     {
+         collection: myRxCollection,
++        replicationIdentifier: 'my-graphql-replication',
+         // urls to the GraphQL endpoints
+         url: {
+             http: 'http://example.com/graphql'
+@@ -323,6 +325,7 @@ With the `pullStreamQueryBuilder` you can then start a realtime replication.
+ const replicationState = replicateGraphQL(
+     {
+         collection: myRxCollection,
++        replicationIdentifier: 'my-graphql-replication',
+         // urls to the GraphQL endpoints
+         url: {
+             http: 'http://example.com/graphql',
+```
+
+---
+
+### Incident Patch 2: `b3fc33f4` (2026-11-25)
+**Commit Message**: FIX replication plugins close their change stream on pause() and open a new one on start() (#9842)
+
+* fix: replication plugins opened another change stream on start() after pause()
+
+start() is also the way to resume a replication after pause(). The Google
+Drive, Microsoft OneDrive, Appwrite, Firestore, MongoDB, NATS, and Supabase
+replication open their change stream inside of their start() wrapper on each
+call and never close the one of the earlier call. The cancel() wrapper that is
+set there only knows the newest stream. After pause() and start() each server
+change was handled once per start() call, and cancel() left the older streams
+open. For Google Drive and OneDrive the old SignalingState kept polling the
+signaling folder after cancel().
+
+The stream is now opened once per replication state and stays open while
+paused, the same as in the GraphQL replication (#9497). A start() on a
+canceled replication state no longer opens a stream before it rejects.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMMKW
+
+* fix: leave the NATS replication out of the start() after pause() fix
+
+With the flag set before the awai
+
+**File**: `docs-src/docs/replication-couchdb.md` (modified, +5/-1)
+```diff
+@@ -107,7 +107,11 @@ Lets say for authentication you need to add a [bearer token](https://swagger.io/
+ 
+ const myCustomFetch = (url, options) => {
+ 
+-    // flat clone the given options to not mutate the input
++    /**
++     * Flat clone the given options to not mutate the input.
++     * Keep the 'signal' of the options. RxDB uses it to abort
++     * the long polling request on pause() and cancel().
++     */
+     const optionsWithAuth = Object.assign({}, options);
+     // ensure the headers property exists
+     if(!optionsWithAuth.headers) {
+```
+
+**File**: `docs-src/docs/replication-google-drive.md` (modified, +2/-0)
+```diff
+@@ -88,6 +88,8 @@ To achieve real-time updates, this plugin uses **WebRTC** to signal changes betw
+ 2.  Other devices detect these files, read the WebRTC connection data, and establish a direct P2P connection with each other.
+ 3.  When a device makes a write, it sends a "RESYNC" signal via WebRTC to all connected peers to notify them about the change.
+ 
++The signaling and the WebRTC connections are closed on [`pause()`](./rx-replication-state.md#pause) and on `cancel()`. When `start()` is called after a pause, the device announces itself again and builds new connections to the other devices.
 +
-+                const replicationState = syncWith(stateA, stateB);
-+                await replicationState.awaitInSync();
-+                await waitUntil(() => stateB.get('a') === 1);
+ ### Polyfill for Node.js
+ 
+ WebRTC is native in browsers but requires a polyfill in Node.js. Use `createSimplePeerWrtc()` to wrap the polyfill for compatibility with `simple-peer`:
+```
+
+**File**: `docs-src/docs/replication-graphql.md` (modified, +1/-1)
+```diff
+@@ -319,7 +319,7 @@ const pullStreamQueryBuilder = (headers) => {
+ };
+ ```
+ 
+-With the `pullStreamQueryBuilder` you can then start a realtime replication.
++With the `pullStreamQueryBuilder` you can then start a realtime replication. The websocket subscription of the pull stream is closed when you call [`pause()`](./rx-replication-state.md#pause) or `cancel()`, and `start()` after a pause opens a new one.
+ 
+ ```js
+ const replicationState = replicateGraphQL(
+```
+
+**File**: `docs-src/docs/replication-http.md` (modified, +39/-0)
+```diff
+@@ -334,6 +334,45 @@ const replicationState = await replicateRxCollection({
+ });
+ ```
+ 
++### Close the pullStream$ connection on pause
 +
-+                await stateB.set('b', () => 2);
-+                await waitUntil(() => stateA.get('b') === 2);
-+                await replicationState.awaitInSync();
++A [paused](./rx-replication-state.md#pause) replication does not need the events of the `pull.stream$`. But the replication does not know the connection that is behind your observable, so the `EventSource` stays open when you call `pause()` or `cancel()`. Close the connection at the place where you pause or cancel the replication, and open a new one before you call `start()` again.
 +
-+                assert.deepStrictEqual(stateA.get(), { a: 1, b: 2 });
-+                assert.deepStrictEqual(stateB.get(), { a: 1, b: 2 });
++```ts
++// > client.ts
++function openEventSource() {
++    const eventSource = new EventSource(
++        'http://localhost/pullStream',
++        { withCredentials: true }
++    );
++    eventSource.onmessage = event => {
++        const eventData = JSON.parse(event.data);
++        myPullStream$.next({
++            documents: eventData.documents,
++            checkpoint: eventData.checkpoint
++        });
++    };
++    eventSource.onopen = () => myPullStream$.next('RESYNC');
++    eventSource.onerror = () => myPullStream$.next('RESYNC');
++    return eventSource;
++}
++let eventSource = openEventSource();
 +
-+                await stateA.collection.database.close();
-+                await stateB.collection.database.close();
-+            });
-+            /**
-+             * Waits until the operations document of stateB
-+             * has replaced the one of stateA in the storage.
-+             */
-+            async function awaitConflictResolved(state: RxState<TestState, ReactivityType>) {
-+                await waitUntil(async () => {
-+                    const docs = await state.collection.find().exec();
-+                    return docs.length === 1 && docs[0].ops[0].k === 'b';
-+                });
-+            }
-+            it('should have the same state in memory as after a reload when both sides have written before the sync', async () => {
-+                if (!config.storage.hasPersistence) {
-+                    return;
-+                }
-+                const databaseName = randomToken(10);
-+                const stateA = await getState(databaseName);
-+                const stateB = await getState();
-+                await stateA.set('a', () => 1);
-+                await stateB.set('b', () => 2);
++// pause: close the connection, then pause the replication
++eventSource.close();
++await replicationState.pause();
 +
-+                const replicationState = syncWith(stateA, stateB);
-+                await awaitConflictResolved(stateA);
-+                await replicationState.awaitInSync();
-+                await awaitEqual(() => stateA.get(), { b: 2 });
++// resume: open a new connection, then start the replication again
++eventSource = openEventSource();
++await replicationState.start();
 +
-+        
++// cancel: close the connection, it is no longer needed
++eventSource.close();
++await replicationState.cancel();
++```
++
++When a replication is started after a pause, it runs one resync cycle by itself, which fetches the changes that happened on the server during the pause with the [checkpoint iteration](./replication.md#checkpoint-iteration). But the new connection is not open at that moment. A write that happens on the server after the pull of that resync cycle and before the connection is open is in neither of them, and the next event of the stream moves the checkpoint past it. Therefore the example emits the `RESYNC` flag in `onopen`, each time a connection is open, also after an automatic reconnect.
++
+ </Steps>
+ 
+ 
+```
+
+**File**: `docs-src/docs/replication-microsoft-onedrive.md` (modified, +2/-0)
+```diff
+@@ -85,6 +85,8 @@ To achieve real-time updates, this plugin uses **WebRTC** to signal changes betw
+ 2.  Other devices detect these files, read the WebRTC connection data, and establish a direct P2P connection with each other.
+ 3.  When a device makes a write, it sends a "RESYNC" signal via WebRTC to all connected peers to notify them about the change.
+ 
++The signaling and the WebRTC connections are closed on [`pause()`](./rx-replication-state.md#pause) and on `cancel()`. When `start()` is called after a pause, the device announces itself again and builds new connections to the other devices.
++
+ ### Polyfill for Node.js
+ 
+ WebRTC is native in browsers but requires a polyfill in Node.js. Use `createSimplePeerWrtc()` to wrap the polyfill for compatibility with `simple-peer`:
+```
+
+**File**: `docs-src/docs/rx-replication-state.md` (modified, +4/-0)
+```diff
+@@ -205,6 +205,10 @@ await myRxReplicationState.pause();
+ await myRxReplicationState.start(); // restart
+ ```
+ 
++Changes that happen on the server during the pause are not lost. The resync cycle that `start()` runs after a pause fetches them with the [checkpoint iteration](./replication.md#checkpoint-iteration).
++
++With `replicateRxCollection()` RxDB does not know which connection is behind your `pull.stream$`, so it cannot close it. You have to [close and open the connection of your own pull stream](./replication-http.md#close-the-pullstream-connection-on-pause) next to your `pause()` and `start()` calls.
++
+ 
+ ## remove()
+ 
+```
+
+**File**: `orga/before-next-major.md` (modified, +3/-3)
+```diff
+@@ -574,13 +574,13 @@ An implementation with tests is in the closed pull request [#9576](https://githu
+ 
+ ## CouchDB replication: long polling when `live` is not set
+ 
+-The CouchDB replication does not start the long polling of the changes feed when the `live` option is not set, although `live` defaults to `true`. Also `pause()` does not stop the long polling, and `start()` after `pause()` starts additional parallel long polling requests.
++The CouchDB replication does not start the long polling of the changes feed when the `live` option is not set, although `live` defaults to `true`.
+ 
+ Todo:
+-- Run the long polling when `live` is omitted, stop it on `pause()`, and run one loop per replication state.
++- Run the long polling when `live` is omitted.
+ - Breaking: replications that omit `live` start to send `_changes?feed=longpoll` requests.
+ 
+-An implementation with tests is in the closed pull request [#9542](https://github.com/pubkey/rxdb/pull/9542).
++An implementation with tests is in the closed pull request [#9542](https://github.com/pubkey/rxdb/pull/9542). Its other part, to stop the long polling on `pause()` and to run one loop per replication state, is done in [#9842](https://github.com/pubkey/rxdb/pull/9842).
+ 
+ ## Replication: retry with `retryTime: 0` and a growing default retry time
+ 
+```
+
+**File**: `orga/changelog/fix-replication-plugins-start-after-pause-duplicate-stream.json` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++{
++    "$schema": "./schema.json",
++    "text": "FIX the GraphQL, CouchDB, Google Drive, Microsoft OneDrive, Appwrite, Firestore, MongoDB, NATS, and Supabase replication now close their change stream on `pause()` and open a new one on `start()`. Before, the stream stayed open while the replication was paused. In all of them except GraphQL and Supabase, each `start()` after `pause()` also opened one more stream or long polling loop next to the open one. In the Supabase replication `start()` after `pause()` rejected",
++    "links": [
++        {
++            "url": "https://github.com/pubkey/rxdb/pull/9842",
++            "linkText": "#9842"
++        }
++    ],
++    "priority": 5
++}
+```
+
+---
+
+### Incident Patch 3: `d8ab5eb2` (2026-11-25)
+**Commit Message**: FIX documents with a primary key like "constructor" or "__proto__" broke the replication and the schema migration (#9849)
+
+* fix: replicate and migrate documents whose primary key is the name of an Object.prototype member
+
+The replication protocol kept its per-document data in plain objects that
+are keyed by the document id. For an id like `constructor`, `toString`,
+`hasOwnProperty` or `valueOf`, a read of an id that was not written
+returned the inherited member of Object.prototype, so the upstream and
+downstream used a function as assumed master state and threw
+`Cannot read properties of undefined (reading 'isResolvedConflict')`.
+For the id `__proto__` the assignment set the prototype of the map and
+added no entry, so the document was skipped without an error.
+
+Because the schema migration runs on the replication protocol, it failed
+with DM4 for these ids and dropped a document with the id `__proto__`.
+
+These maps are now created without a prototype, so that they only
+contain the document ids that were written to them. The same is done in
+the push of the Firestore, Google Drive and Microsoft OneDrive
+replication, which used the same kind of map.
+
+Co-Authored-By: Claude Fable 5.2 <
+
+**File**: `orga/changelog/fix-document-id-object-prototype-names.json` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++{
++    "$schema": "./schema.json",
++    "text": "FIX documents whose primary key is the name of an `Object.prototype` member (`constructor`, `toString`, `hasOwnProperty`, `valueOf`, `__proto__`) are now replicated and migrated like any other document. Before, the replication never pushed or pulled such a document and emitted `TypeError: Cannot read properties of undefined (reading 'isResolvedConflict')` on `error$`, a schema migration failed with `DM4`, and a document with the primary key `__proto__` was skipped by the replication and lost in a schema migration without an error. The push of the Firestore, Google Drive, and Microsoft OneDrive replication had the same problem",
++    "links": [
++        {
++            "url": "https://github.com/pubkey/rxdb/pull/9849",
++            "linkText": "#9849"
++        }
++    ],
++    "priority": 6
++}
+```
+
+**File**: `src/plugins/replication-firestore/index.ts` (modified, +2/-2)
+```diff
+@@ -232,7 +232,7 @@ export function replicateFirestore<RxDocType>(
+                     rows = await asyncFilter(rows, (row) => pushFilter(row.newDocumentState));
+                 }
+ 
+-                const writeRowsById: ById<RxReplicationWriteToMasterRow<RxDocType>> = {};
++                const writeRowsById: ById<RxReplicationWriteToMasterRow<RxDocType>> = Object.create(null);
+                 const docIds: string[] = rows.map(row => {
+                     const docId = (row.newDocumentState as any)[primaryPath];
+                     writeRowsById[docId] = row;
+@@ -278,7 +278,7 @@ export function replicateFirestore<RxDocType>(
+ 
+                     const docsInDbResult = await getContentByIds<RxDocType>(docIds, getQuery);
+ 
+-                    const docsInDbById: ById<RxDocType> = {};
++                    const docsInDbById: ById<RxDocType> = Object.create(null);
+                     docsInDbResult.forEach(row => {
+                         const docDataInDb = stripServerTimestampField(serverTimestampField, row.data());
+                         const docId = row.id;
+```
+
+**File**: `src/plugins/replication-google-drive/document-handling.ts` (modified, +1/-1)
+```diff
+@@ -119,7 +119,7 @@ export async function updateDocumentFiles<DocType>(
+     concurrency = 5
+ ) {
+     const queue = docs.slice(0);
+-    const results: Record<string, { id: string }> = {};
++    const results: Record<string, { id: string }> = Object.create(null);
+ 
+     async function worker() {
+         while (queue.length) {
+```
+
+**File**: `src/plugins/replication-google-drive/upstream.ts` (modified, +1/-1)
+```diff
+@@ -217,7 +217,7 @@ export async function processWalFile<RxDocType>(
+         init,
+         docIds as string[]
+     );
+-    const fileMetaByDocId: Record<string, { fileId: string; etag: string }> = {};
++    const fileMetaByDocId: Record<string, { fileId: string; etag: string }> = Object.create(null);
+ 
+     /**
+      * The Google Drive v3 list API no longer supports "etag" as a field selector,
+```
+
+**File**: `src/plugins/replication-microsoft-onedrive/document-handling.ts` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ export async function updateDocumentFiles<DocType>(
+ ) {
+     const baseUrl = getDriveBaseUrl(oneDriveState);
+     const queue = docs.slice(0);
+-    const results: Record<string, { id: string }> = {};
++    const results: Record<string, { id: string }> = Object.create(null);
+ 
+     async function worker() {
+         let doc = queue.shift();
+```
+
+**File**: `src/plugins/replication-microsoft-onedrive/upstream.ts` (modified, +1/-1)
+```diff
+@@ -220,7 +220,7 @@ export async function processWalFile<RxDocType>(
+         init,
+         docIds as string[]
+     );
+-    const fileIdByDocId: Record<string, string> = {};
++    const fileIdByDocId: Record<string, string> = Object.create(null);
+ 
+     docFiles.files.forEach(file => {
+         const docId = docIdFromFileName(file.name) as any;
+```
+
+**File**: `src/replication-protocol/downstream.ts` (modified, +4/-4)
+```diff
+@@ -275,7 +275,7 @@ export async function startReplicationDownstream<RxDocType, CheckpointType = any
+         checkpoint?: CheckpointType;
+         docs: ById<WithDeleted<RxDocType>>;
+     } = {
+-        docs: {}
++        docs: Object.create(null)
+     };
+ 
+     function persistFromMaster(
+@@ -300,7 +300,7 @@ export async function startReplicationDownstream<RxDocType, CheckpointType = any
+          */
+         persistenceQueue = persistenceQueue.then(() => {
+             const downDocsById: ById<WithDeletedAndAttachments<RxDocType>> = nonPersistedFromMaster.docs;
+-            nonPersistedFromMaster.docs = {};
++            nonPersistedFromMaster.docs = Object.create(null);
+             const useCheckpoint = nonPersistedFromMaster.checkpoint;
+             const docIds = Object.keys(downDocsById);
+ 
+@@ -312,8 +312,8 @@ export async function startReplicationDownstream<RxDocType, CheckpointType = any
+             }
+ 
+             const writeRowsToFork: BulkWriteRow<RxDocType>[] = [];
+-            const writeRowsToForkById: ById<BulkWriteRow<RxDocType>> = {};
+-            const writeRowsToMeta: BulkWriteRowById<RxStorageReplicationMeta<RxDocType, CheckpointType>> = {};
++            const writeRowsToForkById: ById<BulkWriteRow<RxDocType>> = Object.create(null);
++            const writeRowsToMeta: BulkWriteRowById<RxStorageReplicationMeta<RxDocType, CheckpointType>> = Object.create(null);
+             const useMetaWriteRows: BulkWriteRow<RxStorageReplicationMeta<RxDocType, CheckpointType>>[] = [];
+ 
+             return Promise.all([
+```
+
+**File**: `src/replication-protocol/index.ts` (modified, +1/-1)
+```diff
+@@ -260,7 +260,7 @@ export function rxStorageInstanceToReplicationHandler<RxDocType, MasterCheckpoin
+         async masterWrite(
+             rows
+         ) {
+-            const rowById: ById<RxReplicationWriteToMasterRow<RxDocType>> = {};
++            const rowById: ById<RxReplicationWriteToMasterRow<RxDocType>> = Object.create(null);
+             rows.forEach(row => {
+                 const docId: string = (row.newDocumentState as any)[primaryPath];
+                 rowById[docId] = row;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9830** (2026-11-24): Update dependency eslint-plugin-jsdoc to v65.4.9 (@renovate[bot])
-- **PR #9824** (2026-11-23): docs: split replication.md into concept, replicateRxCollection() and RxReplicationState pages (@pubkey)
-- **PR #9823** (2026-11-23): docs: start every Core Entities page with a minimal example (@pubkey)
-- **PR #9822** (2026-11-23): ADD createRxDatabase() setting resetCollectionOnSchemaChange (dev-mode only) (@pubkey)
-- **PR #9821** (2026-11-23): docs: separate the Mango query syntax from the query builder (@pubkey)
-- **PR #9820** (2026-11-23): Exclude AGENTS.md and CLAUDE.md from the npm package (@pubkey)
+- **PR #9865** (2026-11-26): Update dependency bun to v1.4.5 (@renovate[bot])
+- **PR #9860** (2026-11-25): Docs: fix the RxServer examples that call startRxServer() (@pubkey)
+- **PR #9857** (2026-11-25): docs: add learning curve rules for writing docs pages to CLAUDE.md and AGENTS.md (@pubkey)
+- **PR #9856** (2026-11-25): FIX dev-mode stored a document although its primary key was rejected with DOC20 to DOC23 (@pubkey)
+- **PR #9855** (2026-11-26): Update dependency js-base64 to v3.9.7 (@renovate[bot])
+- **PR #9854** (closed): docs: add CLA DB foundation architecture, upstream, roadmap, and cont… (@AngelCLA)
 
 ---
 
@@ -1883,32 +1630,35 @@ Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMM
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. the cleanup and pipeline plugins failed when the leader-election plugin was not 
+## X. Docs: fix code examples that call the API with options that do not exist
 
 **RULE**:
-When implementing operations in `docs-src/docs/cleanup.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs-src/docs/articles/alternatives/aws-amplify-datastore-alternative.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b762853`: the cleanup and pipeline plugins failed when the leader-election plugin was not added. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b4149efd`: Docs: fix code examples that call the API with options that do not exist. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs-src/docs/cleanup.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs-src/docs/articles/alternatives/aws-amplify-datastore-alternative.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-The cleanup plugin adds the [leader election plugin](./leader-election.md) by itself because with the default `waitForLeadership: true` the cleanup only runs on the leading instance. You do not have to add it on your own.
-
+replicationState.sent$.subscribe(doc => console.log('Pushed:', doc));
+replicationState.received$.subscribe(doc => console.log('Pulled:', doc));
+    replicationIdentifier: 'todos-appsync',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+replicationState.sent$.subscribe(docs => console.log('Pushed:', docs.length));
+replicationState.received$.subscribe(docs => console.log('Pulled:', docs.length));
+};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b762853` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b4149efd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
