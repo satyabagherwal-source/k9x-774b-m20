@@ -4,22 +4,22 @@
 {
   "source_repository": "okteto/okteto",
   "source_url": "https://github.com/okteto/okteto",
-  "source_version": "ea8eb1a4",
+  "source_version": "c0803f04",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T14:32:27.264Z",
+  "timestamp": "2026-11-26T14:44:39.386Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-okteto-okteto",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `ea8eb1a4`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T14:32:27.264Z`  
+> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `c0803f04`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T14:44:39.386Z`  
 > **Learning ID**: `learn-github-okteto-okteto`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `okteto/okteto` (Commit: `ea8eb1a4`)
+- **Target Repository**: `okteto/okteto` (Commit: `c0803f04`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:32:25.827Z  
+> **Harvest Timestamp**: 2026-11-26T14:44:37.828Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1513,346 +1513,198 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea8eb1a4` (2026-11-25)
-**Commit Message**: PROD-561: Select the test containers to run with profiles in okteto test (#5289)
+### Incident Patch 1: `c0803f04` (2026-11-25)
+**Commit Message**: feat: add okteto git-credential and set it up in remote runs (ENG-23) (#5267)
 
-* feat(test): run the test containers of a group with --group
+* feat(log): mask GitHub tokens in deploy logs
 
-Test containers can define a list of groups in the Okteto Manifest, and
-'okteto test --group <name>' runs the test containers that belong to it.
-
-- The flag can be set more than once, and it can be combined with test
-  container names: all the selected test containers run once
-- The test containers they depend on run too, even if they are not in
-  the group
-- Running 'okteto test' without names or groups still runs all of them
-- An unknown group fails, listing the groups defined in the manifest
-- '--group' cannot be combined with a command override ('--' or --command)
-- Group names cannot be empty or start or end with spaces
+Git credential helpers hand GitHub tokens to commands without Okteto
+knowing their value, so mask them by pattern wherever masking is on,
+after the exact masked values, so a secret that holds a token is still
+masked whole.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Nacho Fuertes <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
 
-* feat(test): select test containers with Docker Compose-style profiles
+* feat: add okteto git-credential, a Git credential helper for GitHub
 
-Replace the test container groups with profiles that behave like the
-Docker Compose ones:
+Hidden "okteto git-credential get|store|erase|install". "get" asks the
+Okteto API's gitCredentials query for a read-only token for the
+repository in Git's request, with OKTETO_TOKEN and the CLI's stateless
+client, and writes one stderr line with the API's reason when there is
+none. "install --global|--system" writes the helper for
+https://github.com, replacing other github.com helpers at that scope.
 
-- 'okteto test' runs the test containers without profiles, and
-  '--profile' adds the ones with that profile
-- naming a test container runs it whatever its p
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
 
-**File**: `cmd/context/create_test.go` (modified, +16/-0)
+* feat(remote): install the Git credential helper in remote runs
+
+Run "okteto git-credential install --system" in the generated
+Dockerfile next to "registrytoken install". A fa
+
+**File**: `cmd/deploy/deploy.go` (modified, +5/-0)
 ```diff
-@@ -931,6 +931,22 @@ func Test_loadDotEnv(t *testing.T) {
- 				},
- 			},
- 		},
-+		{
-+			name: "empty local vars are not overridden",
-+			mockEnv: func(t *testing.T) {
-+				t.Setenv("VAR5", "")
-+			},
-+			mockfs: func() afero.Fs {
-+				fs := afero.NewMemMapFs()
-+				_ = afero.WriteFile(fs, ".env", []byte("VAR5=.env"), 0644)
-+				return fs
-+			},
-+			expected: expected{
-+				vars: map[string]string{
-+					"VAR5": "",
-+				},
-+			},
-+		},
- 	}
- 
- 	for _, tt := range tests {
-```
-
-**File**: `cmd/context/use_test.go` (modified, +11/-0)
-```diff
-@@ -19,6 +19,7 @@ import (
- 
- 	"github.com/okteto/okteto/pkg/env"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- )
- 
- func Test_setSecrets(t *testing.T) {
-@@ -63,3 +64,13 @@ func Test_setSecrets(t *testing.T) {
- 		})
- 	}
- }
-+
-+func Test_exportPlatformVariablesToEnvKeepsEmptyLocalVar(t *testing.T) {
-+	t.Setenv("key", "")
-+
-+	exportPlatformVariablesToEnv([]env.Var{{Name: "key", Value: "value"}})
-+
-+	value, exists := os.LookupEnv("key")
-+	require.True(t, exists)
-+	require.Empty(t, value)
-+}
-```
-
-**File**: `cmd/test/cmd.go` (modified, +67/-1)
-```diff
-@@ -20,6 +20,7 @@ import (
- 	"os"
- 	"os/signal"
- 	"path"
-+	"strings"
- 	"time"
- 
- 	buildv2 "github.com/okteto/okteto/cmd/build/v2"
-@@ -64,11 +65,15 @@ type Options struct {
- 	Variables        []string
- 	// Commands are the values of the --command flag, which replace the commands of the selected test container
- 	Commands []string
-+	// Profiles are the values of the --profile flag, which enable the test containers that have any of them
-+	Profiles []string
- 	Timeout  time.Duration
- 	Deploy   bool
- 	NoCache  bool
- 	// override is the command override resolved from the '--' arguments or the --command flag
- 	override commandOverride
-+	// enabledProfiles are the profiles resolved from the --profile flag or the OKTETO_PROFILES environment variable
-+	enabledProfiles []string
- }
- 
- type builder interface {
-@@ -87,9 +92,12 @@ func Test(ctx context.Context, ioCtrl *io.Controller, k8sLogger *io.K8sLogger, a
- 		Use:                   "test [testName...] [flags] [-- COMMAND [args...]]",
- 		DisableFlagsInUseLine: true,
- 		Short:                 "Run tests using Remote Execution",
--		Example: `# Run the test containers defined in the Okteto Manifest
-+		Example: `# Run the test containers without profiles defined in the Okteto Manifest
- okteto test
- 
-+# Run the test containers without profiles and the ones with the 'pre-commit' profile
-+okteto test --profile pre-commit
-+
- # Run the 'unit' test container replacing its commands with a single one
- okteto test unit -- go test ./pkg/api -run TestLogin
- 
-@@ -101,10 +109,27 @@ okteto test unit --command "go mod download" --command "go test ./pkg/api -run T
- 				return err
- 			}
- 
-+			// The profiles are checked before connecting to the cluster with the environment of the process.
-+			// They are resolved again once the context loads the .env file and the Okteto Variables
-+			profiles, err := resolveProfiles(options.Profiles, os.Getenv(constants.OktetoProfilesEnvVar))
-+			if err != nil {
-+				return err
-+			}
-+
-+			// The profiles are checked before the override, so using both reports the conflict
-+			// instead of the missing test container name required by the override
-+			overrideRequested := cmd.ArgsLenAtDash() >= 0 || len(options.Commands) > 0
-+			if err := profiles.checkCommandOverride(overrideRequested); err != nil {
-+				return err
-+			}
-+
- 			testContainers, override, err := parseTestArgs(args, cmd.ArgsLenAtDash(), options.Commands)
- 			if err != nil {
- 				return err
- 			}
-+			if err := profiles.checkTestNames(testContainers); err != nil {
-+				return err
-+			}
- 			options.override = override
- 
- 			stop := make(chan os.Signal, 1)
-@@ -117,6 +142,7 @@ okteto test unit --command "go mod download" --command "go test ./pkg/api -run T
- 				metadata.Err = err
- 				metadata.Duration = time.Since(startTime)
- 				metadata.CommandOverride = override.isSet()
-+				metadata.ProfileSelected = len(options.enabledProfiles) > 0
- 				at.TrackTest(metadata)
- 				exit <- err
- 			}()
-@@ -140,6 +166,7 @@ okteto test unit --command "go mod download" --command "go test ./pkg/api -run T
- 	cmd.Flags().StringVarP(&options.K8sContext, "context", "c", "", "overwrite the current Okteto Context")
- 	cmd.Flags().StringArrayVarP(&options.Variables, "var", "v", []string{}, "set a variable to be injected in the test commands (can be set more than once)")
- 	cmd.Flags().StringArrayVar(&options.Commands, "command", []string{}, "replace the commands of the test container, which must be the only one named (can be set more than once, run in order)")
-+	cmd.Flags().StringArrayVar(&options.Profiles, "profile", []string{}, "enable a profile to run its test containers along with the ones without profiles (can be set more than once). The OKTETO_PROFILES environment variable overrides it")
- 	cmd.Flags().DurationVarP(&options.Timeout, "timeout", "t", getDefaultTimeout(), "the duration to wait for the Test Container to run. Any value should contain a corresponding time unit e.g. 1s, 2m, 3h")
- 	cmd.Flags().StringVar(&options.Name, "name", "", "the name of the Development Environment")
- 	cmd.Flags().BoolVar(&options.Deploy, "deploy", false, "Force execution of the commands in the 'deploy' section")
-@@ -164,6 +191,11 @@ func doRun(ctx context.Context, servicesToTest []string, options *Options, ioCtr
- 		return analytics.TestMetadata{}, oktetoErrors.ErrContextIsNotOktetoCluster
- 	}
- 
-+	// The context loads the .env file and the Okteto Variables into the environment, so they can set OKTETO_PROFILES
-+	if err := resolveEnabledProfiles(servicesToTest, options, ioCtrl); err != nil {
-+		return analytics.TestMetadata{}, err
-+	}
-+
- 	create, err := utils.ShouldCreateNamespace(ctx, okteto.GetContext().Namespace)
- 	if err != nil {
- 		return analytics.TestMetadata{}, err
-@@ -231,6 +263,13 @@ func doRun(ctx context.Context, servicesToTest []string, options *Options, ioCtr
- 		return analytics.TestMetadata{}, err
- 	}
- 
-+	// The test containers to run are shown when they are selected by profile, as some of them may not run
-+	showSelection := len
-```
-
-**File**: `cmd/test/cmd_test.go` (modified, +215/-0)
-```diff
-@@ -20,6 +20,7 @@ import (
- 
- 	buildv2 "github.com/okteto/okteto/cmd/build/v2"
- 	"github.com/okteto/okteto/pkg/build"
-+	"github.com/okteto/okteto/pkg/constants"
- 	"github.com/okteto/okteto/pkg/log/io"
- 	"github.com/okteto/okteto/pkg/model"
+@@ -53,6 +53,7 @@ import (
+ 	modelutils "github.com/okteto/okteto/pkg/model/utils"
+ 	"github.com/okteto/okteto/pkg/okteto"
+ 	oktetoPath "github.com/okteto/okteto/pkg/path"
++	"github.com/okteto/okteto/pkg/remote"
+ 	"github.com/okteto/okteto/pkg/repository"
  	"github.com/okteto/okteto/pkg/types"
-@@ -30,6 +31,7 @@ import (
- // TestCommandRejectsInvalidOverride checks that the cobra command passes the arguments after '--'
- // and the --command flag to parseTestArgs. These errors are returned before connecting to any cluster
- func TestCommandRejectsInvalidOverride(t *testing.T) {
-+	t.Setenv(constants.OktetoProfilesEnvVar, "")
- 	tests := []struct {
- 		name        string
- 		args        []string
-@@ -81,6 +83,219 @@ func TestCommandRejectsInvalidOverride(t *testing.T) {
- 	}
+ 	"github.com/okteto/okteto/pkg/validator"
+@@ -104,6 +105,9 @@ type Options struct {
+ 	// catalogSecretVariablesToForward are the catalog secret variables remote-run gets the values of. They are empty
+ 	// when the deploy commands need none
+ 	catalogSecretVariablesToForward catalog.SecretVariables
++	// GitCredentialsEndpoint is the URL the Git credential helper gets the credentials from that Okteto sets on its
++	// installer. It is read from the env before any variable is loaded
++	GitCredentialsEndpoint string
  }
  
-+// TestCommandRejectsInvalidProfile checks that the cobra command validates the --profile flag.
-+// These errors are returned before connecting to any cluster
-+func TestCommandRejectsInvalidProfile(t *testing.T) {
-+	t.Setenv(constants.OktetoProfilesEnvVar, "")
-+	tests := []struct {
-+		name        string
-+		args        []string
-+		expectedErr error
-+	}{
-+		{
-+			name:        "empty profile flag",
-+			args:        []string{"--profile", ""},
-+			expectedErr: errEmptyProfileFlag,
-+		},
-+		{
-+			name:        "blank profile flag",
-+			args:        []string{"--profile", " "},
-+			expectedErr: errEmptyProfileFlag,
-+		},
-+		{
-+			name:        "profile flag with test names",
-+			args:        []string{"unit", "lint", "--profile", "pre-commit"},
-+			expectedErr: errProfileWithTestNames,
-+		},
-+		{
-+			name:        "profile flag with dash override",
-+			args:        []string{"unit", "--profile", "pre-commit", "--", "go", "test"},
-+			expectedErr: errProfileWithCommandOverride,
-+		},
-+		{
-+			name:        "profile flag with command flag",
-+			args:        []string{"unit", "--profile", "pre-commit", "--command", "go test ./..."},
-+			expectedErr: errProfileWithCommandOverride,
-+		},
-+		{
-+			name:        "profile flag with dash override and no test name",
-+			args:        []string{"--profile", "pre-commit", "--", "go", "test"},
-+			expectedErr: errProfileWithCommandOverride,
-+		},
-+		{
-+			name:        "profile flag with command flag and no test name",
-+			args:        []string{"--profile", "pre-commit", "--command", "go test ./..."},
-+			expectedErr: errProfileWithCommandOverride,
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			cmd := Test(context.Background(), io.NewIOController(), nil, nil, nil)
-+			cmd.SilenceErrors = true
-+			cmd.SilenceUsage = true
-+			cmd.SetArgs(tt.args)
-+
-+			err := cmd.Execute()
-+
-+			require.ErrorIs(t, err, tt.expectedErr)
-+		})
-+	}
-+}
-+
-+// TestCommandRejectsProfilesFromEnvWithTestNames checks that the profiles of the OKTETO_PROFILES
-+// environment variable cannot be combined with test container names, even when the --profile flag is
-+// not used. The variable overrides the flag, so an empty flag value is not validated
-+func TestCommandRejectsProfilesFromEnvWithTestNames(t *testing.T) {
-+	t.Setenv(constants.OktetoProfilesEnvVar, "ci")
-+	tests := []struct {
-+		name        string
-+		args        []string
-+		expectedErr string
-+	}{
-+		{
-+			name:        "test names",
-+			args:        []string{"unit"},
-+			expectedErr: "'OKTETO_PROFILES' cannot be used when naming the test containers to run",
-+		},
-+		{
-+			name:        "test names and an empty profile flag",
-+			args:        []string{"unit", "--profile", ""},
-+			expectedErr: "'OKTETO_PROFILES' cannot be used when naming the test containers to run",
-+		},
-+		{
-+			name:        "dash override",
-+			args:        []string{"unit", "--", "go", "test"},
-+			expectedErr: "'OKTETO_PROFILES' cannot be used when overriding the commands of a test container",
-+		},
-+		{
-+			name:        "command flag",
-+			args:        []string{"unit", "--command", "go test ./..."},
-+			expectedErr: "'OKTETO_PROFILES' cannot be used when overriding the commands of a test container",
-+		},
-+		{
-+			name:        "dash override and no test name",
-+			args:        []string{"--", "go", "test"},
-+			expectedErr: "'OKTETO_PROFILES' cannot be used when overriding the commands of a test container",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			cmd := Test(context.Background(), io.NewIOController(), nil, nil, nil)
-+			cmd.SilenceErrors = true
-+			cmd.SilenceUsage = true
-+			cmd.SetArgs(tt.args)
-+
-+			err := cmd.Execute()
-+
-+			require.EqualError(t, err, tt.expectedErr)
-+		})
-+	}
-+}
-+
-+// TestResolveEnabledProfiles checks the profiles resolved once the context loads the .env file and
-+// the Okteto Variables into the environment, which can set OKTETO_PROFILES
-+func TestResolveEnabledProfiles(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		envValue     string
-+		flagProfiles []string
-+		expected     []string
-+	}{
-+		{
-+			name: "no profiles",
-+		},
-+		{
-+			name:         "profiles from the flag",
-+			flagProfiles: []string{"pre-commit"},
-+			expec
+ type builderInterface interface {
+@@ -223,6 +227,7 @@ $ okteto deploy --no-build=true`,
+ 				return fmt.Errorf("'dependencies' is only supported in contexts that have Okteto installed")
+ 			}
+ 
++			options.GitCredentialsEndpoint = remote.GitCredentialsEndpointFromEnv()
+ 			if err := readCatalogSecretVariablesAndSetVariables(options, os.Setenv); err != nil {
+ 				return err
+ 			}
 ```
 
-**File**: `cmd/test/selection.go` (added, +220/-0)
+**File**: `cmd/deploy/remote.go` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,220 @@
+@@ -157,6 +157,7 @@ func (rd *remoteDeployer) Deploy(ctx context.Context, deployOptions *Options) er
+ 		UseOktetoDeployIgnoreFile:   true,
+ 		ContextAbsolutePathOverride: ctxPath,
+ 		Secrets:                     deployOptions.catalogSecretVariablesToForward.RemoteRunSecrets(),
++		GitCredentialsEndpoint:      deployOptions.GitCredentialsEndpoint,
+ 	}
+ 	for k, v := range deployable.GetGatewayEnvironment() {
+ 		runParams.OktetoCommandSpecificEnvVars[k] = v
+```
+
+**File**: `cmd/deploy/remote_test.go` (modified, +29/-0)
+```diff
+@@ -561,3 +561,32 @@ func TestDeployRemoteForwardsTheCatalogSecretVariablesToRemoteRun(t *testing.T)
+ 	require.Equal(t, expected, params.CommandFlags)
+ 	require.Equal(t, []remote.FileSecret{{ID: catalog.SecretVariablesTokenSecretID, Path: "/run/secrets/catalog-secret-variables/token"}}, params.Secrets)
+ }
++
++func TestDeployRemoteForwardsTheGitCredentialsEndpointToRemoteRun(t *testing.T) {
++	manifest := &model.Manifest{
++		Deploy: &model.DeployInfo{
++			Commands: []model.DeployCommand{{Name: "command 1", Command: "test-command"}},
++		},
++	}
++	var params *remote.Params
++	runner := &fakeRemoteRunner{}
++	runner.On("Run", mock.Anything, mock.Anything).Run(func(args mock.Arguments) {
++		params = args.Get(1).(*remote.Params)
++	}).Return(nil)
++	rd := &remoteDeployer{
++		runner:               runner,
++		workdirCtrl:          fakefs.NewFakeWorkingDirectoryCtrl("/path/to/manifest"),
++		getBuildEnvVars:      func() map[string]string { return nil },
++		getDependencyEnvVars: func(environGetter) map[string]string { return nil },
++	}
++	opts := &Options{
++		Name:                   "test",
++		Manifest:               manifest,
++		GitCredentialsEndpoint: "https://okteto-internal-api.okteto.example:8443/internal/git/credentials",
++	}
++
++	err := rd.Deploy(context.Background(), opts)
++
++	require.NoError(t, err)
++	require.Equal(t, "https://okteto-internal-api.okteto.example:8443/internal/git/credentials", params.GitCredentialsEndpoint)
++}
+```
+
+**File**: `cmd/destroy/destroy.go` (modified, +5/-0)
+```diff
+@@ -47,6 +47,7 @@ import (
+ 	"github.com/okteto/okteto/pkg/model"
+ 	"github.com/okteto/okteto/pkg/okteto"
+ 	oktetoPath "github.com/okteto/okteto/pkg/path"
++	"github.com/okteto/okteto/pkg/remote"
+ 	"github.com/okteto/okteto/pkg/types"
+ 	"github.com/okteto/okteto/pkg/validator"
+ 	"github.com/spf13/afero"
+@@ -110,6 +111,9 @@ type Options struct {
+ 	// catalogSecretVariablesToForward are the catalog secret variables remote-run gets the values of. They are empty
+ 	// when the destroy commands need none
+ 	catalogSecretVariablesToForward catalog.SecretVariables
++	// GitCredentialsEndpoint is the URL the Git credential helper gets the credentials from that Okteto sets on its
++	// installer. It is read from the env before any variable is loaded
++	GitCredentialsEndpoint string
+ }
+ 
+ type destroyInterface interface {
+@@ -162,6 +166,7 @@ If you need to destroy external resources (like s3 buckets or other Cloud resour
+ 		Args: utils.NoArgsAccepted("https://okteto.com/docs/reference/okteto-cli/#destroy"),
+ 		RunE: func(cmd *cobra.Command, args []string) error {
+ 			readCatalogSecretVariables(options)
++			options.GitCredentialsEndpoint = remote.GitCredentialsEndpointFromEnv()
+ 
+ 			options.RunInRemoteSet = cmd.Flags().Changed("remote")
+ 
+```
+
+**File**: `cmd/destroy/remote.go` (modified, +1/-0)
+```diff
+@@ -151,6 +151,7 @@ func (rd *remoteDestroyCommand) Destroy(ctx context.Context, opts *Options) erro
+ 		UseOktetoDeployIgnoreFile:   true,
+ 		ContextAbsolutePathOverride: ctxPath,
+ 		Secrets:                     opts.catalogSecretVariablesToForward.RemoteRunSecrets(),
++		GitCredentialsEndpoint:      opts.GitCredentialsEndpoint,
+ 	}
+ 	for k, v := range deployable.GetGatewayEnvironment() {
+ 		runParams.OktetoCommandSpecificEnvVars[k] = v
+```
+
+**File**: `cmd/destroy/remote_test.go` (modified, +27/-0)
+```diff
+@@ -355,6 +355,33 @@ func TestDestroyRemoteForwardsTheCatalogSecretVariablesToRemoteRun(t *testing.T)
+ 	require.Equal(t, []remote.FileSecret{{ID: catalog.SecretVariablesTokenSecretID, Path: "/run/secrets/catalog-secret-variables/token"}}, params.Secrets)
+ }
+ 
++func TestDestroyRemoteForwardsTheGitCredentialsEndpointToRemoteRun(t *testing.T) {
++	manifest := &model.Manifest{
++		Destroy: &model.DestroyInfo{
++			Commands: []model.DeployCommand{{Name: "command 1", Command: "test-command"}},
++		},
++	}
++	var params *remote.Params
++	runner := &fakeRemoteRunner{}
++	runner.On("Run", mock.Anything, mock.Anything).Run(func(args mock.Arguments) {
++		params = args.Get(1).(*remote.Params)
++	}).Return(nil)
++	rd := &remoteDestroyCommand{
++		runner:      runner,
++		workdirCtrl: fakefs.NewFakeWorkingDirectoryCtrl("/path/to/manifest"),
++	}
++	opts := &Options{
++		Name:                   "test",
++		Manifest:               manifest,
++		GitCredentialsEndpoint: "https://okteto-internal-api.okteto.example:8443/internal/git/credentials",
++	}
++
++	err := rd.Destroy(context.Background(), opts)
++
++	require.NoError(t, err)
++	require.Equal(t, "https://okteto-internal-api.okteto.example:8443/internal/git/credentials", params.GitCredentialsEndpoint)
++}
++
+ func TestDestroyRemoteWithError(t *testing.T) {
+ 	workdirCtrl := fakefs.NewFakeWorkingDirectoryCtrl("/path/to/manifest")
+ 	manifest := &model.Manifest{
+```
+
+**File**: `cmd/gitcredential/client.go` (added, +157/-0)
+```diff
+@@ -0,0 +1,157 @@
 +// Copyright 2026 The Okteto Authors
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
@@ -1866,118 +1718,146 @@ Docker Compose ones:
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package test
++package gitcredential
 +
 +import (
++	"context"
++	"crypto/x509"
++	"encoding/json"
 +	"errors"
 +	"fmt"
-+	"slices"
-+	"strings"
++	"io"
++	"net/http"
++	"net/url"
++	"os"
++	"time"
 +
 +	"github.com/okteto/okteto/pkg/constants"
-+	oktetoErrors "github.com/okteto/okteto/pkg/errors"
 +	"github.com/okteto/okteto/pkg/model"
++	"github.com/okteto/okteto/pkg/okteto"
 +)
 +
 +const (
-+	profileFlagSource = "'--profile'"
-+	profileEnvSource  = "'" + constants.OktetoProfilesEnvVar + "'"
++	hostQueryParam       = "host"
++	repositoryQueryParam = "repository"
 +
-+	profileFlagHint = `Name the profile of the test containers to run, for example:
-+    okteto test --profile pre-commit`
-+
-+	profileWithTestNamesHint = `Run the test containers either by name or by profile, for example:
-+    okteto test unit lint
-+    okteto test --profile pre-commit`
-+
-+	profileEnvConflictHint = `OKTETO_PROFILES can be set in your shell, the .env file or as an Okteto Variable.
-+    Set it to an empty value to run test containers by name or replace their commands, for example:
-+    OKTETO_PROFILES= okteto test unit`
-+
-+	noProfilesDefinedHint = `None of the test containers in your Okteto Manifest has a profile.
-+    For more information, check the documentation: https://www.okteto.com/docs/reference/okteto-manifest/#test`
-+
-+	dependencyProfilesHint = `A test container can only depend on test containers without profiles or with an enabled profile.
-+    Enable one of the profiles of the dependency too, or update the profiles in your Okteto Manifest`
++	// maxResponseSize caps what the helper reads from the endpoint, whose answer is a few short fields
++	maxResponseSize = 64 << 10
 +)
 +
 +var (
-+	errEmptyProfileFlag             = errors.New("'--profile' cannot be empty")
-+	errProfileWithCommandOverride   = errors.New("cannot be used when overriding the commands of a test container")
-+	errProfileWithTestNames         = errors.New("cannot be used when naming the test containers to run")
-+	errProfileNotFound              = errors.New("no test container has the profile")
-+	errNoTestsWithoutProfiles       = errors.New("all the test containers have profiles, so none runs without enabling a profile")
-+	errDependencyProfilesNotEnabled = errors.New("none of its profiles is enabled")
++	// errEndpointNotSet means the helper runs outside an Okteto installer and its remote runs,
++	// where there are no credentials to give
++	errEndpointNotSet = fmt.Errorf("%s is not set", constants.OktetoGitCredentialsEndpointEnvVar)
++	errTokenNotSet    = fmt.Errorf("%s is not set", model.OktetoTokenEnvVar)
 +)
 +
-+// profileSelection holds the enabled profiles and the option that sets them
-+type profileSelection struct {
-+	profiles []string
-+	// source is the option that sets the profiles: the --profile flag or the OKTETO_PROFILES environment variable
-+	source string
++// gitCredentials are the credentials Okteto gives for a Git repository.
++// Without credentials, Password is empty and Reason says why
++type gitCredentials struct {
++	// ExpiresAt is zero when the expiry is unknown
++	ExpiresAt time.Time
++	Username  string
++	Password  string
++	// Reason is a sentence for the user, set when there are no credentials
++	Reason string
 +}
 +
-+// resolveProfiles returns the enabled profiles. The OKTETO_PROFILES environment variable, a
-+// comma-separated list of profiles, overrides the values of the --profile flag. The variable is
-+// ignored when it has no profiles, so an empty value doesn't override the flag
-+func resolveProfiles(flagProfiles []string, envValue string) (profileSelection, error) {
-+	if envProfiles := parseProfilesEnv(envValue); len(envProfiles) > 0 {
-+		return profileSelection{profiles: envProfiles, source: profileEnvSource}, nil
++// credentialsResponse is the body of the endpoint's 200 answer: the credentials, or only the reason
++type credentialsResponse struct {
++	Username  string `json:"username"`
++	Password  string `json:"password"`
++	ExpiresAt string `json:"expiresAt"`
++	Reason    string `json:"reason"`
++}
++
++// endpointClient asks the endpoint that Okteto sets in its installer and remote runs for the credentials
++type endpointClient struct {
++	httpClient *http.Client
++	endpoint   *url.URL
++	token      string
++}
++
++// newGetterFromEnv returns the client for the endpoint in OKTETO_GIT_CREDENTIALS_ENDPOINT, the
++// internal IP of the Okteto API in OKTETO_INTERNAL_API_IP and the token in OKTETO_TOKEN. The
++// endpoint only answers inside the cluster, so it doesn't load an Okteto context.
++func newGetterFromEnv() (credentialsGetter, error) {
++	return newGetter(
++		os.Getenv(constants.OktetoGitCredentialsEndpointEnvVar),
++		os.Getenv(constants.OktetoInternalAPIIPEnvVar),
++		os.Getenv(model.OktetoTokenEnvVar),
++	)
++}
++
++// newGetter only sends the token over https to internalAPIIP, never to the address public DNS gives
++// for the endpoint's hostname, which is the ingress, where any user can serve it. certs are trusted
++// on top of the system pool
++func newGetter(endpoint, internalAPIIP, token string, certs ...*x509.Certificate) (credentialsGetter, error) {
++	if endpoint == "" {
++		return nil, errEndpointNotSet
++	}
++	httpClient, err := okteto.NewInternalAPIHTTPClient(endpoint, internalAPIIP, certs...)
++	if errors.Is(err, okteto.ErrInvalidInternalAPIIP) {
++		return nil, fmt.Errorf("%w (%s)", err, constants.OktetoInternalAPIIPEnvVar)
++	}
++	if err != nil {
++		return nil, err
++	}
++	u, err := url.Parse(endpoint)
++	if err != nil {
++		return nil, err
++	}
++	if token == "" {
++		return nil, errTokenNotSet
++	}
++	return &endpointClient{
++		httpClient: httpClient,
++		endpoint:   u,
++		token:      token,
++	}, nil
++}
++
++// GetGitCredentials returns the credentials Okteto gives for a repository ("owner/repo") of a Git host.
++// Without credentials, the endpoint explains why in Reason.
++func (c *endpointClient) GetGitCredentials(ctx context.Context, host, repository string) (gitCredentials, error) {
++	u := *c.endpoint
++	query := u.Query()
++	query.Set(hostQueryParam, host)
++	query.Set(repositoryQueryParam, repository)
++	u.RawQuery = query.Encode()
++
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
++	if err != nil {
++		return gitCredentials{}, err
++	}
++	req.Header.Set("Authorization", "Bearer "+c.token)
++
++	resp, err := c.httpClient.Do(req)
++	if err != nil {
++		return gitCredentials{}, fmt.Errorf("could not reach the Okteto API: %w", err)
++	}
++	defer func() {
++		_ = resp.Body.Close()
++	}()
++
++	// The endpoint answers its errors without a body
++	if resp.StatusCode != http.StatusOK {
++		return gitCredentials{}, fmt.Errorf("the Okteto API answered %s", resp.Status)
 +	}
 +
-+	for _, profile := range flagProfiles {
-+		if strings.TrimSpace(profile) == "" {
-+			return profileSelection{}, oktetoErrors.UserError{
-+				E:    errEmptyProfileFlag,
-+				Hint: profileFlagHint,
-+			}
-+		}
++	var body credentialsResponse
++	if err := json.NewDecoder(io.LimitReader(resp.Body, maxResponseSize)).Decode(&body); err != nil {
++		return gitCredentials{}, errors.New("could not read the answer of the Okteto API")
 +	}
-+	return profileSelection{profiles: flagProfiles, source: profileFlagSource}, nil
-+}
 +
-+// parseProfilesEnv splits the value of the OKTETO_PROFILES environment variable into profiles,
-+// trimming the spaces around them and ignoring the empty ones
-+func parseProfilesEnv(value string) []string {
-+	profiles := make([]string, 0)
-+	for _, profile := range strings.Split(value, ",") {
-+		if profile = strings.TrimSpace(profile); profile != "" {
-+			profiles = append(profiles, profile)
-+		}
-+	}
-+	return profiles
-+}
-+
-+func (s profileSelection) isSet() bool {
-+	return len(s.profiles) > 0
-+}
-+
-+func (s profileSelection) fromEnv() bool {
-+	return s.source == profileEnvSource
-+}
-+
-+// checkCommandOverride returns an error when profiles are enabled and the commands of a test
-+// container are replaced ('--' or --command), as that applies to exactly one named test container
-+func (s profileSelection) checkCommandOverride(overrideRequested bool) error {
-+	if !s.isSet() || !overrideRequested {
-+		return nil
-+	}
-+	err := fmt.Errorf("%s %w", s.source, errProfileWithCommandOverride)
-+	if s.fromEnv() {
-+		return oktetoErrors.UserError{E: err, Hint: profileEnvConflictHint}
-+	}
-+	return newCommandOverrideError(err)
-+}
-+
-+// checkTestNames returns an error when profiles are enabled and test containers are named,
-+// as the test containers to run are selected either by name or by profile
-+func (s profileSelection) checkTestNames(names []string) error {
-+	if !s.isSet() || len
++	creds := gitCredentials{
++		Username: body.Username,
++		Passwo
 ```
 
-**File**: `cmd/test/selection_test.go` (added, +498/-0)
+**File**: `cmd/gitcredential/client_test.go` (added, +325/-0)
 ```diff
-@@ -0,0 +1,498 @@
+@@ -0,0 +1,325 @@
 +// Copyright 2026 The Okteto Authors
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
@@ -1991,362 +1871,151 @@ Docker Compose ones:
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package test
++package gitcredential
 +
 +import (
-+	"slices"
++	"context"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"strings"
 +	"testing"
++	"time"
 +
-+	"github.com/okteto/okteto/pkg/dag"
-+	oktetoErrors "github.com/okteto/okteto/pkg/errors"
++	"github.com/okteto/okteto/pkg/constants"
 +	"github.com/okteto/okteto/pkg/model"
++	"github.com/okteto/okteto/pkg/okteto"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func newProfiledTests() model.ManifestTests {
-+	return model.ManifestTests{
-+		"unit":        &model.Test{Profiles: []string{"pre-commit"}},
-+		"lint":        &model.Test{Profiles: []string{"pre-commit", "release"}},
-+		"e2e":         &model.Test{Profiles: []string{"long-running"}, DependsOn: []string{"seed"}},
-+		"integration": &model.Test{Profiles: []string{"long-running"}},
-+		"seed":        &model.Test{},
-+		"vet":         &model.Test{},
-+	}
++const (
++	credentialsResponseBody = `{"username":"x-access-token","password":"token","expiresAt":"2099-01-01T00:00:00Z"}`
++
++	internalAPIEndpoint = "https://okteto-internal-api.example.com:8443/internal/git/credentials"
++	internalAPIIP       = "10.20.30.40"
++
++	// fakeEndpointIP is the IP httptest's TLS servers listen on
++	fakeEndpointIP = "127.0.0.1"
++)
++
++// receivedRequest is what the fake endpoint got
++type receivedRequest struct {
++	method        string
++	path          string
++	host          string
++	repository    string
++	authorization string
 +}
 +
-+func TestResolveProfiles(t *testing.T) {
++// fakeEndpoint answers every request with status and body, and records the last request in received
++func fakeEndpoint(t *testing.T, status int, body string, received *receivedRequest) *httptest.Server {
++	t.Helper()
++	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		*received = receivedRequest{
++			method:        r.Method,
++			path:          r.URL.Path,
++			host:          r.URL.Query().Get(hostQueryParam),
++			repository:    r.URL.Query().Get(repositoryQueryParam),
++			authorization: r.Header.Get("Authorization"),
++		}
++		w.WriteHeader(status)
++		_, _ = w.Write([]byte(body))
++	}))
++	t.Cleanup(server.Close)
++	return server
++}
++
++// fakeEndpointURL is the endpoint of the fake server on example.com, a hostname its certificate is
++// valid for. The helper connects to fakeEndpointIP instead of resolving it
++func fakeEndpointURL(t *testing.T, server *httptest.Server) string {
++	t.Helper()
++	return "https://example.com:" + mustParseURL(t, server.URL).Port() + "/internal/git/credentials"
++}
++
++func mustParseURL(t *testing.T, raw string) *url.URL {
++	t.Helper()
++	u, err := url.Parse(raw)
++	require.NoError(t, err)
++	return u
++}
++
++func setEndpointEnv(t *testing.T, endpoint, ip, token string) {
++	t.Helper()
++	t.Setenv(constants.OktetoGitCredentialsEndpointEnvVar, endpoint)
++	t.Setenv(constants.OktetoInternalAPIIPEnvVar, ip)
++	t.Setenv(model.OktetoTokenEnvVar, token)
++}
++
++func TestNewGetterFromEnv(t *testing.T) {
 +	tests := []struct {
-+		name            string
-+		flagProfiles    []string
-+		envValue        string
-+		expected        []string
-+		expectedSource  string
-+		expectedSet     bool
-+		expectedFromEnv bool
++		expectedErr error
++		name        string
++		endpoint    string
++		ip          string
++		token       string
 +	}{
 +		{
-+			name:           "no profiles",
-+			expected:       nil,
-+			expectedSource: profileFlagSource,
++			name:        "no endpoint",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: errEndpointNotSet,
 +		},
 +		{
-+			name:           "profiles from the flag",
-+			flagProfiles:   []string{"pre-commit", "release"},
-+			expected:       []string{"pre-commit", "release"},
-+			expectedSource: profileFlagSource,
-+			expectedSet:    true,
++			name:        "http endpoint",
++			endpoint:    "http://okteto-internal-api.example.com:8080/internal/git/credentials",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIEndpoint,
 +		},
 +		{
-+			name:            "profiles from the environment variable",
-+			envValue:        "pre-commit,release",
-+			expected:        []string{"pre-commit", "release"},
-+			expectedSource:  profileEnvSource,
-+			expectedSet:     true,
-+			expectedFromEnv: true,
++			name:        "endpoint without a scheme",
++			endpoint:    "okteto-internal-api.example.com:8443/internal/git/credentials",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIEndpoint,
 +		},
 +		{
-+			name:            "the environment variable overrides the flag",
-+			flagProfiles:    []string{"pre-commit"},
-+			envValue:        "release",
-+			expected:        []string{"release"},
-+			expectedSource:  profileEnvSource,
-+			expectedSet:     true,
-+			expectedFromEnv: true,
++			name:        "endpoint with another scheme",
++			endpoint:    "ftp://okteto-internal-api.example.com/internal/git/credentials",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIEndpoint,
 +		},
 +		{
-+			name:            "the environment variable overrides an empty flag value",
-+			flagProfiles:    []string{""},
-+			envValue:        "release",
-+			expected:        []string{"release"},
-+			expectedSource:  profileEnvSource,
-+			expectedSet:     true,
-+			expectedFromEnv: true,
++			name:        "endpoint that isn't a URL",
++			endpoint:    "https://okteto-internal-api.example.com:port/internal",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIEndpoint,
 +		},
 +		{
-+			name:            "spaces and empty values of the environment variable are ignored",
-+			envValue:        " pre-commit , ,release,",
-+			expected:        []string{"pre-commit", "release"},
-+			expectedSource:  profileEnvSource,
-+			expectedSet:     true,
-+			expectedFromEnv: true,
++			name:        "no internal IP of the API",
++			endpoint:    internalAPIEndpoint,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIIP,
 +		},
 +		{
-+			name:           "an environment variable without profiles doesn't override the flag",
-+			flagProfiles:   []string{"pre-commit"},
-+			envValue:       " , ",
-+			expected:       []string{"pre-commit"},
-+			expectedSource: profileFlagSource,
-+			expectedSet:    true,
++			name:        "internal IP of the API that is a hostname",
++			endpoint:    internalAPIEndpoint,
++			ip:          "okteto-internal-api.example.com",
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIIP,
++		},
++		{
++			name:        "no token",
++			endpoint:    internalAPIEndpoint,
++			ip:          internalAPIIP,
++			expectedErr: errTokenNotSet,
 +		},
 +	}
 +
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			selection, err := resolveProfiles(tt.flagProfiles, tt.envValue)
++			setEndpointEnv(t, tt.endpoint, tt.ip, tt.token)
 +
-+			require.NoError(t, err)
-+			require.Equal(t, tt.expected, selection.profiles)
-+			require.Equal(t, tt.expectedSource, selection.source)
-+			require.Equal(t, tt.expectedFromEnv, selection.fromEnv())
-+			require.Equal(t, tt.expectedSet, selection.isSet())
-+		})
-+	}
-+}
++			_, err := newGetterFromEnv()
 +
-+func TestResolveProfilesRejectsEmptyFlag(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		flagProfiles []string
-+	}{
-+		{
-+			name:         "empty profile",
-+			flagProfiles: []string{"pre-commit", ""},
-+		},
-+		{
-+			name:         "blank profile",
-+			flagProfiles: []string{" "},
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			_, err := resolveProfiles(tt.flagProfiles, "")
-+
-+			require.ErrorIs(t, err, errEmptyProfileFlag)
-+			var userErr oktetoErrors.UserError
-+			require.ErrorAs(t, err, &userErr)
-+			require.Equal(t, profileFlagHint, userErr.Hint)
-+		})
-+	}
-+}
-+
-+func TestProfileSelectionWithoutConflicts(t *testing.T) {
-+	tests := []struct {
-+		name              string
-+		selection         profileSelection
-+		names             []string
-+		overrideRequested bool
-+	}{
-+		{
-+			name:              "test names and command override without profiles",
-+			selection:         profileSelection{source: profileFlagSource},
-+			names:             []string{"unit"},
-+			overrideRequested: true,
-+		},
-+		{
-+			name:      "profiles without test names or command override",
-+			selection: profileSelection{profiles: []string{"pre-commit"}, source: profileEnvSource},
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+	
-```
-
-**File**: `integration/commands/test.go` (modified, +16/-1)
-```diff
-@@ -19,6 +19,8 @@ import (
- 	"os"
- 	"os/exec"
- 	"path/filepath"
-+	"slices"
-+	"strings"
- 
- 	"github.com/okteto/okteto/pkg/constants"
- 	"github.com/okteto/okteto/pkg/model"
-@@ -38,6 +40,10 @@ type TestOptions struct {
- 	Commands []string
- 	// CommandArgs are passed after '--', replacing the commands of the test container
- 	CommandArgs []string
-+	// Profiles are passed as --profile flags, enabling the test containers that have them
-+	Profiles []string
-+	// ProfilesEnv is the value of the OKTETO_PROFILES environment variable, which overrides the --profile flags
-+	ProfilesEnv string
- 	NoCache     bool
- }
- 
-@@ -63,7 +69,10 @@ func getTestCmd(oktetoPath string, testOptions *TestOptions) *exec.Cmd {
- 	if testOptions.NoCache {
- 		cmd.Args = append(cmd.Args, "--no-cache")
- 	}
--	cmd.Env = os.Environ()
-+	// OKTETO_PROFILES is only set from ProfilesEnv, so the one of the host doesn't change the test containers to run
-+	cmd.Env = slices.DeleteFunc(os.Environ(), func(env string) bool {
-+		return strings.HasPrefix(env, constants.OktetoProfilesEnvVar+"=")
-+	})
- 	if v := os.Getenv(model.OktetoURLEnvVar); v != "" {
- 		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", model.OktetoURLEnvVar, v))
- 	}
-@@ -89,6 +98,12 @@ func getTestCmd(oktetoPath string, testOptions *TestOptions) *exec.Cmd {
- 	for _, command := range testOptions.Commands {
- 		cmd.Args = append(cmd.Args, "--command", command)
- 	}
-+	for _, profile := range testOptions.Profiles {
-+		cmd.Args = append(cmd.Args, "--profile", profile)
-+	}
-+	if testOptions.ProfilesEnv != "" {
-+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", constants.OktetoProfilesEnvVar, testOptions.ProfilesEnv))
-+	}
- 	// '--' must be the last argument, as everything after it is the command to run
- 	if len(testOptions.CommandArgs) > 0 {
- 		cmd.Args = append(cmd.Args, "--")
-```
-
-**File**: `integration/test/profile_test.go` (added, +234/-0)
-```diff
-@@ -0,0 +1,234 @@
-+//go:build integration
-+// +build integration
-+
-+// Copyright 2026 The Okteto Authors
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package test
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+
-+	"github.com/okteto/okteto/integration"
-+	"github.com/okteto/okteto/integration/commands"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+const oktetoManifestWithProfiledTests = `
-+test:
-+  seed:
-+    context: .
-+    image: alpine
-+    commands:
-+      - echo "SEED-FROM-MANIFEST"
-+  unit:
-+    context: .
-+    image: alpine
-+    profiles: [pre-commit]
-+    commands:
-+      - echo "UNIT-FROM-MANIFEST"
-+  lint:
-+    context: .
-+    image: alpine
-+    profiles: [pre-commit, release]
-+    commands:
-+      - echo "LINT-FROM-MANIFEST"
-+  e2e:
-+    context: .
-+    image: alpine
-+    profiles: [long-running]
-+    depends_on:
-+      - seed
-+    commands:
-+      - echo "E2E-FROM-MANIFEST"
-+`
-+
-+// TestOktetoTestRunsTestsWithoutProfiles validates that okteto test only runs the test containers
-+// without profiles
-+func TestOktetoTestRunsTestsWithoutProfiles(t *testing.T) {
-+	integration.SkipIfNotOktetoCluster(t)
-+	t.Parallel()
-+	oktetoPath, err := integration.GetOktetoPath()
-+	require.NoError(t, err)
-+
-+	dir := t.TempDir()
-+	testNamespace, namespaceOpts := createTestNamespace(t, oktetoPath, dir, oktetoManifestWithProfiledTests)
-+
-+	out, err := commands.RunOktetoTestAndGetOutput(oktetoPath, &commands.TestOptions{
-+		Workdir:    dir,
-+		Namespace:  testNamespace,
-+		OktetoHome: dir,
-+		Token:      token,
-+		LogOutput:  "plain",
-+		NoCache:    true,
-+	})
-+	require.NoError(t, err)
-+
-+	require.Contains(t, out, "Test containers to run: seed")
-+	require.Contains(t, out, "SEED-FROM-MANIFEST")
-+	require.NotContains(t, out, "UNIT-FROM-MANIFEST")
-+	require.NotContains(t, out, "LINT-FROM-MANIFEST")
-+	require.NotContains(t, out, "E2E-FROM-MANIFEST")
-+
-+	require.ElementsMatch(t, []string{"seed"}, getInsightsTestNames(t, dir, testNamespace))
-+
-+	require.NoError(t, commands.RunOktetoDeleteNamespace(oktetoPath, namespaceOpts))
-+}
-+
-+// TestOktetoTestRunsProfile validates that --profile runs the test containers of the profile along
-+// with the ones without profiles
-+func TestOktetoTestRunsProfile(t *testing.T) {
-+	integration.SkipIfNotOktetoCluster(t)
-+	t.Parallel()
-+	oktetoPath, err := integration.GetOktetoPath()
-+	require.NoError(t, err)
-+
-+	dir := t.TempDir()
-+	testNamespace, namespaceOpts := createTestNamespace(t, oktetoPath, dir, oktetoManifestWithProfiledTests)
-+
-+	out, err := commands.RunOktetoTestAndGetOutput(oktetoPath, &commands.TestOptions{
-+		Workdir:    dir,
-+		Namespace:  testNamespace,
-+		OktetoHome: dir,
-+		Token:      token,
-+		LogOutput:  "plain",
-+		NoCache:    true,
-+		Profiles:   []string{"pre-commit"},
-+	})
-+	require.NoError(t, err)
-+
-+	require.Contains(t, out, "Test containers to run: lint, seed, unit")
-+	require.Contains(t, out, "LINT-FROM-MANIFEST")
-+	require.Contains(t, out, "SEED-FROM-MANIFEST")
-+	require.Contains(t, out, "UNIT-FROM-MANIFEST")
-+	require.NotContains(t, out, "E2E-FROM-MANIFEST")
-+
-+	require.ElementsMatch(t, []string{"lint", "seed", "unit"}, getInsightsTestNames(t, dir, testNamespace))
-+
-+	require.NoError(t, commands.RunOktetoDeleteNamespace(oktetoPath, namespaceOpts))
-+}
-+
-+// TestOktetoTestProfilesFromEnvOverrideFlag validates that the OKTETO_PROFILES environment variable
-+// overrides the --profile flag, and that the test containers of a profile run after their dependencies
-+func TestOktetoTestProfilesFromEnvOverrideFlag(t *testing.T) {
-+	integration.SkipIfNotOktetoCluster(t)
-+	t.Parallel()
-+	oktetoPath, err := integration.GetOktetoPath()
-+	require.NoError(t, err)
-+
-+	dir := t.TempDir()
-+	testNamespace, namespaceOpts := createTestNamespace(t, oktetoPath, dir, oktetoManifestWithProfiledTests)
-+
-+	out, err := commands.RunOktetoTestAndGetOutput(oktetoPath, &commands.TestOptions{
-+		Workdir:     dir,
-+		Namespace:   testNamespace,
-+		OktetoHome:  dir,
-+		Token:       token,
-+		LogOutput:   "plain",
-+		NoCache:     true,
-+		Profiles:    []string{"pre-commit"},
-+		ProfilesEnv: "long-running",
-+	})
-+	require.NoError(t, err)
-+
-+	require.Contains(t, out, "Using the profiles from OKTETO_PROFILES: long-running")
-+	require.Contains(t, out, "Test containers to run: seed, e2e")
-+	seed := strings.Index(out, "SEED-FROM-MANIFEST")
-+	require.NotEqual(t, -1, seed)
-+	require.Greater(t, strings.Index(out, "E2E-FROM-MANIFEST"), seed)
-+	require.NotContains(t, out, "UNIT-FROM-MANIFEST"
++			requi
 ```
 
 #### Recent Merged Pull Requests:
@@ -2375,36 +2044,25 @@ Docker Compose ones:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. PROD-561: Select the test containers to run with profiles in okteto test
+## X. add okteto git-credential and set it up in remote runs (ENG-23)
 
 **RULE**:
-When implementing operations in `cmd/context/create_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/deploy/deploy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea8eb1a4`: PROD-561: Select the test containers to run with profiles in okteto test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0803f04`: add okteto git-credential and set it up in remote runs (ENG-23). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/context/create_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/deploy/deploy.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		{
-			name: "empty local vars are not overridden",
-			mockEnv: func(t *testing.T) {
-				t.Setenv("VAR5", "")
-			},
-			mockfs: func() afero.Fs {
-				fs := afero.NewMemMapFs()
-				_ = afero.WriteFile(fs, ".env", []byte("VAR5=.env"), 0644)
-				return fs
-			},
-			expected: expected{
-				vars: map[string]string{
-					"VAR5": "",
-				},
-			},
-		},
+	"github.com/okteto/okteto/pkg/remote"
+	// GitCredentialsEndpoint is the URL the Git credential helper gets the credentials from that Okteto sets on its
+	// installer. It is read from the env before any variable is loaded
+	GitCredentialsEndpoint string
+			options.GitCredentialsEndpoint = remote.GitCredentialsEndpointFromEnv()
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2414,7 +2072,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea8eb1a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0803f04` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

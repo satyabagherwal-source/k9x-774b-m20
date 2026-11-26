@@ -13427,3 +13427,6 @@
 | `CYCLE-20261126-KL0R` | `2026-11-26T14:33:40.203Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`3f9306a1...`) |
 | `CYCLE-20261126-KNXV` | `2026-11-26T14:33:43.987Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10704` | Yes (`fa4cf232...`) |
 | `CYCLE-20261126-KRV5` | `2026-11-26T14:33:49.073Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10705` | Yes (`4a6c6b85...`) |
+| `CYCLE-20261126-YHI5` | `2026-11-26T14:44:28.829Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`4f380e66...`) |
+| `CYCLE-20261126-YPFR` | `2026-11-26T14:44:39.112Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10706` | Yes (`c5b901a9...`) |
+| `CYCLE-20261126-YRNR` | `2026-11-26T14:44:41.991Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`5527c92c...`) |

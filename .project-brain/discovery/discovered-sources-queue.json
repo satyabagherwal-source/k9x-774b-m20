@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T14:22:57.166Z",
+  "updated_at": "2026-11-26T14:44:47.922Z",
   "stats": {
-    "total_discovered": 9811,
-    "approved_pending_harvest": 9310,
+    "total_discovered": 9816,
+    "approved_pending_harvest": 9314,
     "harvested_count": 0,
-    "rejected_count": 501,
+    "rejected_count": 502,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9296,
+      "COMMUNITY_AND_EXPERT": 9301,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -212362,6 +212362,109 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
         "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-9DABC8BA5D6C": {
+      "id": "SRC-9DABC8BA5D6C",
+      "url": "https://okteto-internal-api.okteto.example:8443/internal/git/credentials",
+      "title": "https://okteto-internal-api.okteto.example:8443/internal/git/credentials",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:44:46.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-A2B278890F9A": {
+      "id": "SRC-A2B278890F9A",
+      "url": "https://okteto-internal-api.example.com:8443/internal/git/credentials",
+      "title": "https://okteto-internal-api.example.com:8443/internal/git/credentials",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:44:46.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-1F2E221173F6": {
+      "id": "SRC-1F2E221173F6",
+      "url": "http://okteto-internal-api.example.com:8080/internal/git/credentials",
+      "title": "http://okteto-internal-api.example.com:8080/internal/git/credentials",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T14:44:46.729Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-272B6AE343DC": {
+      "id": "SRC-272B6AE343DC",
+      "url": "https://okteto-internal-api.example.com:port/internal",
+      "title": "https://okteto-internal-api.example.com:port/internal",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:44:46.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-31DC8CAD8909": {
+      "id": "SRC-31DC8CAD8909",
+      "url": "https://claude.ai/code/session_01UYfmmPC75jc5MDqNeR2fHC",
+      "title": "https://claude.ai/code/session_01UYfmmPC75jc5MDqNeR2fHC",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T14:44:47.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }

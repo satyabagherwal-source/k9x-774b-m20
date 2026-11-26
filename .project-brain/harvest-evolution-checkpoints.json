@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T14:33:56.010Z",
+  "last_updated": "2026-11-26T14:44:48.874Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -148,7 +148,7 @@
       "staged_for_review": 0
     },
     "aleo-labs-protocol-snarkos-learnings.md": {
-      "processed_at": "2026-11-26T05:05:27.198Z",
+      "processed_at": "2026-11-26T14:44:47.631Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -738,9 +738,9 @@
       "staged_for_review": 0
     },
     "okteto-okteto-learnings.md": {
-      "processed_at": "2026-11-25T14:33:01.864Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-26T14:44:46.194Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "arangodb-arangodb-learnings.md": {
       "processed_at": "2026-11-26T10:09:02.041Z",
@@ -3378,7 +3378,7 @@
       "staged_for_review": 0
     },
     "hf-deepseek-ai-deepseek-v4.1-flash-learnings.md": {
-      "processed_at": "2026-11-22T21:49:13.360Z",
+      "processed_at": "2026-11-26T14:44:45.733Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3978,7 +3978,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4548,
+  "total_dossiers_evaluated": 4551,
   "total_canonical_promoted": 562,
-  "total_staged_for_review": 3429
+  "total_staged_for_review": 3431
 }

@@ -13460,3 +13460,6 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `c3fe1436` | Multi-dimensional audit evidence | 2026-11-26T14:33:40.209Z |
 | `learn-github-jithin-sabu-purge-app` | `https://github.com/jithin-sabu/purge-app` | `1a3e8d35` | Multi-dimensional audit evidence | 2026-11-26T14:33:43.992Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `ce0c9eba` | Multi-dimensional audit evidence | 2026-11-26T14:33:49.079Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-26T14:44:28.834Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `c0803f04` | Multi-dimensional audit evidence | 2026-11-26T14:44:39.117Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `f2c57796` | Multi-dimensional audit evidence | 2026-11-26T14:44:41.996Z |

@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T14:33:52.751Z",
-    "lastVerified": "2026-11-26T14:33:52.751Z",
+    "lastChecked": "2026-11-26T14:44:45.566Z",
+    "lastVerified": "2026-11-26T14:44:45.566Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -289,9 +289,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T14:04:12.461Z",
+    "lastChecked": "2026-11-26T14:44:40.628Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T14:04:12.461Z"
+    "lastVerified": "2026-11-26T14:44:40.628Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1370,12 +1370,12 @@
     "lastVerified": "2026-11-25T23:24:09.270Z"
   },
   "sharkdp-fd": {
-    "name": "sharkdp/fd",
+    "name": "fd",
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T06:39:13.194Z",
-    "lastVerified": "2026-11-25T06:39:13.194Z",
+    "lastChecked": "2026-11-26T14:44:25.348Z",
+    "lastVerified": "2026-11-26T14:44:25.348Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
@@ -1384,7 +1384,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2e8648f1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
     "name": "Contrastive-LM/CLM-v0.1-8B",
@@ -2404,22 +2405,21 @@
     "revisionIdentifier": "8a61b67f"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T10:08:21.280Z",
-    "lastVerified": "2026-11-26T10:08:21.280Z",
+    "lastChecked": "2026-11-26T14:44:41.135Z",
+    "lastVerified": "2026-11-26T14:44:41.135Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "a82a171ca1e60dd6a2f2e3854227849d5410f15965ffe21f54403c09ea8ea33c",
+    "contentHash": "5527c92c32c24896e10268d88ace457014665aef42881a4a067d52f26db32a0f",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ecf5907c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -2779,12 +2779,12 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T21:48:52.714Z",
-    "lastVerified": "2026-11-22T21:48:52.714Z",
+    "lastChecked": "2026-11-26T14:44:28.042Z",
+    "lastVerified": "2026-11-26T14:44:28.042Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "bf3d2640ecf5256794b1d0f622e0d42697c3adfbb702b39650098987098e821b",
+    "contentHash": "4f380e66b1f7345cf40dd579dc24e4ea7ac08c365a24f57c3e2e6752dcc6f075",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3570,12 +3570,12 @@
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T14:32:25.827Z",
-    "lastVerified": "2026-11-25T14:32:25.827Z",
+    "lastChecked": "2026-11-26T14:44:37.828Z",
+    "lastVerified": "2026-11-26T14:44:37.828Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
-    "contentHash": "6afae6b4961df3890fdbf687e462e77366de967ef155f5ca144726688490a235",
+    "contentHash": "c5b901a9ba23c2d9c09796c35de3d6b2de685be444f3428aa098f86a530bc0d4",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -7639,8 +7639,8 @@
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T13:31:47.767Z",
-    "lastVerified": "2026-11-25T13:31:47.767Z",
+    "lastChecked": "2026-11-26T14:44:37.839Z",
+    "lastVerified": "2026-11-26T14:44:37.839Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
@@ -12738,9 +12738,9 @@
   "chocoford-excalidrawz": {
     "name": "ExcalidrawZ",
     "officialUrl": "https://github.com/chocoford/ExcalidrawZ",
-    "lastChecked": "2026-11-24T04:28:46.783Z",
+    "lastChecked": "2026-11-26T14:44:30.458Z",
     "revisionIdentifier": "19216eb2",
-    "lastVerified": "2026-11-24T04:28:46.783Z"
+    "lastVerified": "2026-11-26T14:44:30.458Z"
   },
   "hf-autogluon-chronos-2": {
     "name": "autogluon/chronos-2",

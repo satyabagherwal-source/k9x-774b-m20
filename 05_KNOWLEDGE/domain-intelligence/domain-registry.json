@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T14:33:55.481Z",
+  "last_updated": "2026-11-26T14:44:48.401Z",
   "total_records": 2754,
   "domains": {
     "A": {
@@ -8858,10 +8858,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "3b6b1f59832bfb953ff8b0a712c81ded5810ec6035460d40f1f861a23e60ceeb",
-      "created_at": "2026-11-26T12:29:09.693Z"
+      "content_hash": "23409ae79a34fe6f4c982717e4b696135f7e1dd35d889ac7680e1f564581b659",
+      "created_at": "2026-11-26T14:44:42.522Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9694,8 +9694,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-research-knowledge-intelligence-deepseek-ai-d.md",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "content_hash": "9084419478d7f1eceef0df9b7d22413142f2a223d38e01214c27e4a210fe3d30",
-      "created_at": "2026-11-22T21:48:53.604Z"
+      "content_hash": "0fa37137dceed99840401eee58a83834d1bf9cc56236c56019c3ed68d5b7956d",
+      "created_at": "2026-11-26T14:44:29.073Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants",
@@ -9763,8 +9763,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-deepseek-ai-deepseek-v4.1-flash-learnings",
-      "content_hash": "1e6dc47d72ccb05aaeb7fd8322a24312dfe67260880f74bf6639c872ec8b93f1",
-      "created_at": "2026-11-22T21:49:13.582Z"
+      "content_hash": "3422b3f8e3c2c37329963240742725aac02ddf152d750653c5504cd0da8d91d4",
+      "created_at": "2026-11-26T14:44:45.971Z"
     },
     "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
@@ -15815,8 +15815,8 @@
       "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
       "repository": "okteto/okteto",
-      "content_hash": "a29cb6a90f1269150abfe67ba1f59f008a1d58ed1583ffb90b7334fa4e4c75ce",
-      "created_at": "2026-11-24T20:12:54.212Z"
+      "content_hash": "6b9b3fc9bc1f71fd40ff1af1093fd9bdaa4b44a18319dda452cb5f0e27f357a1",
+      "created_at": "2026-11-26T14:44:39.638Z"
     },
     "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants",
@@ -15902,8 +15902,8 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-learnings-content-information-intelligence-okteto-okteto-learnings.md",
       "repository": "okteto-okteto-learnings",
-      "content_hash": "93102b6b2d644abe5b2238ef522f5b91957af2c66ee3343d7cfba4d889c7c284",
-      "created_at": "2026-11-24T20:13:00.011Z"
+      "content_hash": "4b53ff923b4c44886be84298cc406550eb9469f66b9dc36e650e859e07f6533a",
+      "created_at": "2026-11-26T14:44:47.282Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants",
@@ -24276,8 +24276,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "da2b2d5c7fb370a4cd9089c95ab482045f308b61300f3b64b6f0d92a7f135f72",
-      "created_at": "2026-11-26T05:05:28.117Z"
+      "content_hash": "a483622e5a77e20d9961bc69ae705603757f611f60219605375e3a475a95e95d",
+      "created_at": "2026-11-26T14:44:48.401Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",

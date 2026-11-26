@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T14:33:55.755Z",
+  "last_updated": "2026-11-26T14:44:48.733Z",
   "total_verified_learnings": 9129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25977,
+  "total_items": 25979,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "f2c57796",
-      "content_hash": "3b6b1f59832bfb953ff8b0a712c81ded5810ec6035460d40f1f861a23e60ceeb",
+      "content_hash": "23409ae79a34fe6f4c982717e4b696135f7e1dd35d889ac7680e1f564581b659",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T12:29:09.693Z"
+      "persisted_at": "2026-11-26T14:44:42.522Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "f2c57796",
-      "content_hash": "d7d1bac5c81e9ae03624a6606b4b5c9dcd7c8f5d577b48feeecf68302812004e",
+      "content_hash": "b77e5cdc59c00ddb920b0ff56e41c179fe950b09bd968f5a48e9948da4fdf8e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:29:10.029Z"
+      "persisted_at": "2026-11-26T14:44:42.879Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114070,9 +114070,9 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash Core Invariants",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "9084419478d7f1eceef0df9b7d22413142f2a223d38e01214c27e4a210fe3d30",
+      "content_hash": "0fa37137dceed99840401eee58a83834d1bf9cc56236c56019c3ed68d5b7956d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T21:48:53.604Z"
+      "persisted_at": "2026-11-26T14:44:29.073Z"
     },
     "candidate_directive-ios-js-timers-when-the-system-clock-changes": {
       "item_id": "candidate_directive-ios-js-timers-when-the-system-clock-changes",
@@ -114142,9 +114142,9 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-learnings Core Invariants",
       "repository": "hf-deepseek-ai-deepseek-v4.1-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e6dc47d72ccb05aaeb7fd8322a24312dfe67260880f74bf6639c872ec8b93f1",
+      "content_hash": "3422b3f8e3c2c37329963240742725aac02ddf152d750653c5504cd0da8d91d4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T21:49:13.582Z"
+      "persisted_at": "2026-11-26T14:44:45.971Z"
     },
     "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
@@ -216208,13 +216208,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "f2c57796",
-      "content_hash": "a07c33fe08d7799ce692a7834d45a2312c7c455c0d32f9e283be00a95ab96790",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "5527c92c32c24896e10268d88ace457014665aef42881a4a067d52f26db32a0f",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216342,7 +216342,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T12:29:09.029Z",
+      "verified_at": "2026-11-26T14:44:41.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230745,8 +230745,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "ea8eb1a4",
-      "content_hash": "6afae6b4961df3890fdbf687e462e77366de967ef155f5ca144726688490a235",
+      "source_version": "c0803f04",
+      "content_hash": "c5b901a9ba23c2d9c09796c35de3d6b2de685be444f3428aa098f86a530bc0d4",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -230789,6 +230789,11 @@
           "number": 10541,
           "title": "Select the test containers to run with profiles in okteto test",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10706,
+          "title": "add okteto git-credential and set it up in remote runs (ENG-23)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230796,7 +230801,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T14:32:26.779Z",
+      "verified_at": "2026-11-26T14:44:38.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230838,10 +230843,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
       "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
       "repository": "okteto/okteto",
-      "source_version": "18603d50",
-      "content_hash": "a29cb6a90f1269150abfe67ba1f59f008a1d58ed1583ffb90b7334fa4e4c75ce",
+      "source_version": "c0803f04",
+      "content_hash": "6b9b3fc9bc1f71fd40ff1af1093fd9bdaa4b44a18319dda452cb5f0e27f357a1",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T20:12:54.212Z"
+      "persisted_at": "2026-11-26T14:44:39.638Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto",
@@ -230850,10 +230855,10 @@
       "relative_path": "08_VERIFICATION/okteto-okteto-verification-protocol-empirical-defect-shield-for-okteto-okteto.md",
       "title": "Verification Protocol: Empirical Defect Shield for okteto/okteto",
       "repository": "okteto/okteto",
-      "source_version": "ea8eb1a4",
-      "content_hash": "05c5e9a3fcd83232f6a13d7dacd9322cf99749a1873a22766aaf5de9ee73aad1",
+      "source_version": "c0803f04",
+      "content_hash": "181a1a271eeceb77bf573282b1ddafab6dd2844455af044563b6534ca0fd6e3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:32:27.640Z"
+      "persisted_at": "2026-11-26T14:44:39.842Z"
     },
     "learn-github-slatedb-slatedb": {
       "learning_id": "learn-github-slatedb-slatedb",
@@ -231405,9 +231410,9 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "93102b6b2d644abe5b2238ef522f5b91957af2c66ee3343d7cfba4d889c7c284",
+      "content_hash": "4b53ff923b4c44886be84298cc406550eb9469f66b9dc36e650e859e07f6533a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T20:13:00.011Z"
+      "persisted_at": "2026-11-26T14:44:47.282Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings",
@@ -231417,9 +231422,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for okteto-okteto-learnings",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "98a9a4ca2cbf93554fd7f3d12b83d58753058cf4b654c25ef10a10e9eb13e780",
+      "content_hash": "0b3da282c579fb4cbc2574f633963056ba614c31adacba47d34096e34fc6ebd6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:33:03.024Z"
+      "persisted_at": "2026-11-26T14:44:47.465Z"
     },
     "learn-huggingface-nomic-ai-nomic-embed-text-v1-5": {
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
@@ -259177,9 +259182,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "da2b2d5c7fb370a4cd9089c95ab482045f308b61300f3b64b6f0d92a7f135f72",
+      "content_hash": "a483622e5a77e20d9961bc69ae705603757f611f60219605375e3a475a95e95d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T05:05:28.117Z"
+      "persisted_at": "2026-11-26T14:44:48.401Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -259189,9 +259194,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "6938aea4772825ec1ccd3bdab8394becb940c4afe621ff13b9499f3ed8412d6a",
+      "content_hash": "773165eaeb9059932ecb3e4d580bad7b727dd2ca7e0adf80b9946c791c610879",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T05:05:28.308Z"
+      "persisted_at": "2026-11-26T14:44:48.733Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -267934,38 +267939,38 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8826,
       "title": "Empirical Invariant Guard in ci.yml",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "f2c57796",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-26T12:29:09.029Z"
+      "verified_at": "2026-11-26T14:44:41.749Z"
     },
     "candidate_directive-empirical-invariant-guard-in-ci-yml": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-ci-yml",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4GL9-empirical-invariant-guard-in-ci-yml.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YWF4-empirical-invariant-guard-in-ci-yml.md",
       "title": "Empirical Invariant Guard in ci.yml",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "f2c57796",
-      "content_hash": "e01784c86d60e130865efbad7eb459835928f7a3e016f15b75259395cefaa8bc",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "07536a0f1df8e958c8e4426c5aafc7f947da2931618fbdf9cb3ac96b1e509af4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T12:29:09.505Z"
+      "persisted_at": "2026-11-26T14:44:48.163Z"
     },
     "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "f2c57796",
-      "content_hash": "85d50bc3ac5dc87818697e92f75a3f011b67873e23c5897a47b28cf3cd3803f9",
+      "content_hash": "cc7efa3d4da63ff7fa2dc4223b60ca65560186a6e4cd9d57e49b487bcdb4f3e0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T12:29:09.874Z"
+      "persisted_at": "2026-11-26T14:44:42.720Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -272834,9 +272839,9 @@
       "title": "Agent Contract: aleo-labs-protocol-snarkos-learnings Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab9a8df60588f30ea055f24f812e18bc91b88dd883a03d6a59f6d5389604eb0d",
+      "content_hash": "349c5b8b2954f14cecb7239aa3778820a2ebe057e7b3ec4950ca52e99288d870",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T22:58:21.851Z"
+      "persisted_at": "2026-11-26T14:44:48.588Z"
     },
     "learn-github-cypress-io-cypress": {
       "learning_id": "learn-github-cypress-io-cypress",
@@ -288444,7 +288449,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "bf3d2640ecf5256794b1d0f622e0d42697c3adfbb702b39650098987098e821b",
+      "content_hash": "4f380e66b1f7345cf40dd579dc24e4ea7ac08c365a24f57c3e2e6752dcc6f075",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [],
@@ -288453,7 +288458,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T21:48:53.155Z",
+      "verified_at": "2026-11-26T14:44:28.544Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -356011,6 +356016,32 @@
       "content_hash": "b38a35d97b2a2c5b54a097535a94e24e78b8de96bdf82c270df87e3bed3debee",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T14:33:49.428Z"
+    },
+    "rule-10706": {
+      "learning_id": "rule-10706",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10706,
+      "title": "add okteto git-credential and set it up in remote runs (ENG-23)",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "c0803f04",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T14:44:38.850Z"
+    },
+    "candidate_directive-add-okteto-git-credential-and-set-it-up-in-remote-runs-eng-23": {
+      "item_id": "candidate_directive-add-okteto-git-credential-and-set-it-up-in-remote-runs-eng-23",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YVK3-add-okteto-git-credential-and-set-it-up-in-remote-runs-eng-23.md",
+      "title": "add okteto git-credential and set it up in remote runs (ENG-23)",
+      "repository": "okteto-okteto-learnings",
+      "source_version": "HEAD",
+      "content_hash": "58bb63249d9b87506e051da682b9a51ca0bc8889225127be1b7e12a200932c1a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T14:44:47.043Z"
     }
   },
   "ai-builder-brain": {

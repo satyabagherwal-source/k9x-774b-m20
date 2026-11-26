@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "bf3d2640ecf5256794b1d0f622e0d42697c3adfbb702b39650098987098e821b",
-    "lastHarvestedAt": "2026-11-22T21:48:53.401Z",
+    "contentHash": "4f380e66b1f7345cf40dd579dc24e4ea7ac08c365a24f57c3e2e6752dcc6f075",
+    "lastHarvestedAt": "2026-11-26T14:44:28.834Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "ecf5907c",
+    "sourceVersion": "f2c57796",
     "license": "Apache-2.0",
-    "contentHash": "a82a171ca1e60dd6a2f2e3854227849d5410f15965ffe21f54403c09ea8ea33c",
-    "lastHarvestedAt": "2026-11-26T05:05:21.721Z",
+    "contentHash": "5527c92c32c24896e10268d88ace457014665aef42881a4a067d52f26db32a0f",
+    "lastHarvestedAt": "2026-11-26T14:44:41.996Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "ea8eb1a4",
+    "sourceVersion": "c0803f04",
     "license": "Apache-2.0",
-    "contentHash": "6afae6b4961df3890fdbf687e462e77366de967ef155f5ca144726688490a235",
-    "lastHarvestedAt": "2026-11-25T14:32:27.012Z",
+    "contentHash": "c5b901a9ba23c2d9c09796c35de3d6b2de685be444f3428aa098f86a530bc0d4",
+    "lastHarvestedAt": "2026-11-26T14:44:39.117Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {

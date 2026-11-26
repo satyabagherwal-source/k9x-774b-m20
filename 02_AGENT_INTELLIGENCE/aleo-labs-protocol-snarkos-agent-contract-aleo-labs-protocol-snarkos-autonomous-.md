@@ -4,17 +4,17 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "82e8fb92",
+  "source_version": "f2c57796",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T22:58:16.815Z",
+  "timestamp": "2026-11-26T14:44:42.248Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `82e8fb92`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T22:58:16.815Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `f2c57796`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T14:44:42.248Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T22:58:15.189Z  
+> **Harvest Timestamp**: 2026-11-26T14:44:41.135Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1260,7 +1260,6 @@ pub const CURRENT_PROPOSAL_CACHE_FILE: &str = "current-proposal-cache";
 pub const REQUIRED_CONSENSUS_UPGRADE_FILE: &str = "required-consensus-upgrade";
 
 /// The filename used to persist the hotswapped dev committee's starting round.
-#[cfg(feature = "dev-network")]
 pub const DEV_COMMITTEE_STATE_FILE: &str = "dev-committee-state";
 
 /// The filename of the JWT secret for a given address.
@@ -1333,7 +1332,6 @@ impl NodeDataDir {
     }
 
     /// The location used to persist the hotswapped dev committee's starting round.
-    #[cfg(feature = "dev-network")]
     pub fn dev_committee_state_path(&self) -> PathBuf {
         self.path.join(DEV_COMMITTEE_STATE_FILE)
     }
@@ -1866,11 +1864,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4715** (2026-11-20): **Release a connecting peer however its handshake ends**
-  *Symptoms*: ## Motivation  Under 50% or 70% packet loss, the chain halts. It does not recover after the loss stops: the validators' gateway connections never re-form.  The cause is a handshake that times out. The TCP layer runs each handshake under a 10 s timeout (`Handshake::TIMEOUT_MS`), and enforces it by dropping the handshake future. The handshake marks the peer as connecting in the peer pool, and returns it to the candidates only after the handshake returns. A dropped future never gets there, and nothing else clears the entry. From then on:  - `connect()` to the peer fails with `AlreadyConnecting`. The heartbeats skip that error without a log, so the node never dials the peer again. - Every inbound handshake from the peer fails the same way.  One stuck entry on either side breaks the pair for good. Under heavy loss, many handshakes take longer than 10 s, so many pairs get stuck. The router and the bootstrap client have the same pattern.  This PR makes `add_connecting_peer` return a `ConnectingPeerGuard`. Dropping the guard returns the peer to the candidates, unless the handshake has upgraded it to connected. This covers the timeout, every early error return, and task abort. The gateway, the router and the bootstrap client hold the guard until they upgrade the peer. The rollback after the handshake goes away, and so does the out-parameter that carried the listening address to it.  The router and the bootstrap client recorded the listening address before `add_connecting_peer`. A hand
+- **Issue #4778** (2026-11-24): **Build no block from a subdag with committed certificates**
+  *Symptoms*: ## Motivation  A testnet validator forked after a clean restart on v4.13.0. Its block held the certificates of two blocks.  - The canonical block had 30 certificates. - The validator's block at the same height had 61: the 31 certificates of the previous block, then the same 30. - The leader certificate, the timestamp, and the previous hash were the same. Only the subdag root was different.  The cause is a race between the BFT and block sync.  1. The BFT orders a subdag in [`order_dag_with_dfs`](https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/bft/src/bft.rs#L862). It excludes a certificate only if the DAG or the ledger has it as committed. 2. Consensus takes the ledger update lock later, in [`try_advance_to_next_block`](https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/consensus/src/lib.rs#L647). 3. Block sync takes the same lock. If sync adds a block between steps 1 and 2, the subdag still holds the certificates of that block. 4. The ledger then builds a block on the new tip. The block commits those certificates again. No check rejects it.  This PR adds the missing check. [`prepare_advance_to_next_quorum_block`](https://github.com/aleo-labs-protocol/snarkOS/blob/079c813cffabf8abba5241c394fa23892b3e11b1/node/bft/ledger-service/src/ledger.rs#L102-L126) now returns an error if a certificate of the subdag is already in the ledger. The BFT does not commit the subdag to the DAG after an 
 
-- **Issue #4713** (2026-11-19): **Fix the storage-service test imports for the memory feature alone**
-  *Symptoms*: ## Motivation  The shared storage-service tests in `node/bft/storage-service/src/tests.rs` do not compile with the `memory` feature alone:  ``` cargo test -p snarkos-node-bft-storage-service --features memory error[E0433]: cannot find type `Bytes` in this scope   --> node/bft/storage-service/src/tests.rs:51:44 ```  `sample_transmission` uses `Bytes` for every service. The `use bytes::Bytes;` import is behind `#[cfg(feature = "persistent")]`. So the import is missing when only `memory` is on. The `test` feature turns on `memory` only, so `--features test` also fails.  CI does not see the error. The node job tests the crate with `memory` and `persistent` together. In workspace builds, `snarkos-node-consensus` turns on `persistent` and `snarkos-node-bft` turns on `memory`, so feature unification turns on both.  This PR fixes the imports in `tests.rs`:  - It removes the `cfg` from `use bytes::Bytes;`. `bytes` is a dev-dependency of the crate, so it is always available to the tests. - It puts `StorageMode` behind `#[cfg(feature = "persistent")]`. Only the persistent service uses it. With `memory` alone, the import is unused, and `clippy -D warnings` fails.  ## Test Plan  `cargo clippy -p snarkos-node-bft-storage-service --all-targets -- -D warnings` passes with each of these feature sets: `memory`, `persistent`, `memory,persistent` and `test`. Before this change, the tests do not compile with `memory` or `test`.  `cargo nextest run -p snarkos-node-bft-storage-service` passes with 
+- **Issue #4775** (2026-11-24): **Drop failed block requests above every advertised peer height**
+  *Symptoms*: ## Motivation  This PR fixes the pre-existing issue from the [review of #4755](https://github.com/aleo-labs-protocol/snarkOS/pull/4755#discussion_r4672382702).  A failed block request left the queue only when it was re-issued or when the ledger passed its height. When the only peer ahead disconnected, its requests stayed queued. A synced client then ran the request pass on every wake-up, because the "Nothing to sync" early return needs an empty queue.  Commit 1: "Drop failed block requests above every advertised peer height".  - [`prepare_block_requests`](https://github.com/aleo-labs-protocol/snarkOS/blob/160f24c21/node/sync/src/block_sync.rs#L1260-L1269) now drops the failed requests above the greatest height any peer advertises. Without peers, it drops all of them. - New locators bring those heights back as new requests: the new-request path starts at the first height above the ledger that is not requested. - A failed request stays queued when a peer advertises its height but does not serve it (a `NotYet` cap or a pruning floor). - The requests of a removed peer are not dropped as such. Other peers that advertise those heights still get them.  Commit 2: "Request a gap below buffered block responses past the total request cap". It fixes the [stall that Veria found](https://github.com/aleo-labs-protocol/snarkOS/pull/4775#discussion_r4675343288) in commit 1.  - New requests stop when the buffer holds 1000 entries. Only the failed-request path passed that cap. Commit 1 can drop
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1887,942 +1885,235 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `700066e0` (2026-11-22)
-**Commit Message**: Merge branch 'staging' into fix/4587-bound-transmission-latency-tracker
+### Incident Patch 1: `f2c57796` (2026-11-26)
+**Commit Message**: Merge pull request #4803 from aleo-labs-protocol/ci/remove-ci-ok
 
-Resolve the conflict in node/consensus/src/lib.rs: keep this branch's
-staged block construction and use the dev-network feature name from staging.
-Use metrics:: in record_stale, since staging drops the direct metrics
-dependency in favor of snarkVM's re-export.
-
-**File**: `.cargo/config.toml` (modified, +21/-0)
+**File**: `.github/workflows/ci.yml` (modified, +1/-31)
 ```diff
-@@ -5,3 +5,24 @@ rustflags = [
-     # you explicitly set target-cpu yourself when building.
-     "-C", "target-cpu=skylake"
- ]
-+
-+# `cargo locktick-<command>` runs a cargo command with `--cfg locktick`, which swaps every lock
-+# in `snarkos_utilities::locks` for its `locktick` counterpart, for example
-+# `cargo locktick-build --release`. The `--config` adds to the `rustflags` above rather than
-+# replacing them.
-+#
-+# Hazard: cargo drops a `--config` placed before an external subcommand such as `clippy`,
-+# `nextest` or `hack`, so each alias puts it after its subcommand.
-+#
-+# Hazard: a `RUSTFLAGS` environment variable replaces every `rustflags` setting, this one
-+# included. To combine `--cfg locktick` with a `RUSTFLAGS` build, such as the one the
-+# `tokio_console` feature needs, put `--cfg locktick` in `RUSTFLAGS` itself.
-+#
-+# Hazard: because the aliases set target rustflags, cargo ignores `[build] rustflags` and
-+# `CARGO_BUILD_RUSTFLAGS` under them on every platform, as it already does on x86-64 Linux because
-+# of the table above. Pass extra flags in `CARGO_TARGET_<TRIPLE>_RUSTFLAGS` instead, which cargo
-+# adds to the aliases' flags.
-+[alias]
-+locktick-build = ["build", "--config", "target.'cfg(all())'.rustflags=['--cfg','locktick']"]
-+locktick-check = ["check", "--config", "target.'cfg(all())'.rustflags=['--cfg','locktick']"]
-+locktick-clippy = ["clippy", "--config", "target.'cfg(all())'.rustflags=['--cfg','locktick']"]
-```
-
-**File**: `.ci/test_db_backup.sh` (modified, +9/-8)
-```diff
-@@ -19,7 +19,7 @@ tmp_dir="${TMPDIR:-/tmp}"
- checkpoint_height=3
- rollback_height=10
- num_checkpoints=0
--remaining_checkpoints=2
-+remaining_checkpoints=1
+@@ -598,41 +598,11 @@ jobs:
+         with: { tool: cargo-hack@0.6.46 }
+       - run: cargo hack clippy --workspace --each-feature --exclude-features cuda --locked -- -D warnings
  
- # Create log directory
- init_log_dir
-@@ -124,9 +124,10 @@ function create_checkpoints() {
- wait_for_nodes "$total_validators" 0 "$network_name"
- 
- # Check heights periodically with a timeout
--total_wait=0
-+start=$(now)
-+next_report=10
- checkpoint_created=false
--while (( total_wait < 600 )); do  # 10 minutes max
-+while (( $(elapsed_since "$start") < 600 )); do  # 10 minutes max
-   # Apply short-circuiting
-   if [[ $checkpoint_created = true ]] || check_heights  0 "$total_validators" "$checkpoint_height" "$network_name"; then
-     if [[ $checkpoint_created = false ]]; then
-@@ -166,8 +167,6 @@ while (( total_wait < 600 )); do  # 10 minutes max
-           snarkos clean "--network=$network_id" "--dev=$validator_index" --keep-node-data \
-               "--ledger-storage=$(checkpoint_dir "$suffix")"
-         fi
--       # Wait until the cleanup concludes
--        sleep 1
- 
-         # Restart using the checkpoint
-         suffix="${validator_index}_$((num_checkpoints-1))"
-@@ -223,9 +222,11 @@ while (( total_wait < 600 )); do  # 10 minutes max
-   fi
- 
-   # Continue waiting
--  sleep 3
--  total_wait=$((total_wait + 3))
--  log "Waited $total_wait seconds so far..."
-+  sleep 1
-+  if (( $(elapsed_since "$start") >= next_report )); then
-+    log "Waited $(elapsed_since "$start") seconds so far..."
-+    next_report=$((next_report + 10))
-+  fi
- done
- 
- # The main loop has expired by now
-```
-
-**File**: `.ci/test_devnet.sh` (modified, +4/-2)
-```diff
-@@ -25,7 +25,9 @@ MAX_CLIENT_LOG_SIZE_BYTES=$((1 * 1024 * 1024))
- : "${total_validators:=4}"
- : "${total_clients:=4}" # need at least 4 clients, so each validator has at least one client connected to it.
- : "${network_id:=0}"
--: "${min_height:=60}" # To likely go past the 100 round garbage collection limit.
-+# Garbage collection removes certificates 100 rounds below the latest leader round, and block h
-+# has a leader round of at least 2h, so every validator has garbage collected by height 51.
-+: "${min_height:=55}"
- 
- tx_file="${TMPDIR:-/tmp}/transfer_public_tx.txt"
- 
-@@ -130,7 +132,7 @@ if ! wait_for_stable_consensus_version 0 "$network_name"; then
- fi
- 
- # Broadcast a transfer_public built from a static query.
--# The state root is the fixed dev genesis root (Field::one()), which a test_network
-+# The state root is the fixed dev genesis root (Field::one()), which a dev-network
- # node stores at height 0. The height is the chain height after the consensus
- # version has stabilized, so proving uses that same consensus version.
- # Devnet consensus passes ConsensusVersion::V10 before the version stabilizes.
-```
-
-**File**: `.ci/test_full_upgrade.sh` (modified, +118/-62)
-```diff
-@@ -4,7 +4,7 @@
- # Backwards-compatibility upgrade test:
- #
- # 1. Download latest snarkOS release source from GitHub.
--# 2. Build it via `cargo install --locked --path . --features test_network`
-+# 2. Build it via `cargo install --locked --path . --features dev-network`
- #    into a separate prefix (SNARKOS_RELEASE_DIR).
- # 3. Query latest_consensus_version for latest release and PR binaries from the REST API of a single node of each.
- # 4. Compute CONSENSUS_VERSION_HEIGHTS for latest release and PR.
-@@ -13,6 +13,8 @@
- #    After upgrading the first validator, restart the last validator on the release binary and check
- #    that it dials the upgraded validator. After upgrading the first client, do the same for the
- #    last client.
-+# 7. If the PR binary has a newer consensus version, wait until the network passes its activation
-+#    height, which lies after every upgrade, and check that every node runs it.
- ####################################################
- 
- set -eo pipefail  # error on any command failure
-@@ -34,12 +36,20 @@ MAX_VALIDATOR_LOG_SIZE_BYTES=$((8 * 1024 * 1024))
- MAX_CLIENT_LOG_SIZE_BYTES=$((1 * 1024 * 1024))
- 
- 
--# How long to wait between upgrades (seconds); used for block-height window
-+# How long a restarted node may take to rejoin the network (seconds).
- WAIT_BETWEEN_UPGRADES="${WAIT_BETWEEN_UPGRADES:-60}"
- 
- # How long an upgraded node may take to serve its REST API again (seconds).
- MAX_RESTART_WAIT="${MAX_RESTART_WAIT:-300}"
- 
-+# A validator stops REQUIRED_UPGRADE_SAFETY_MARGIN blocks before a newer consensus version that
-+# validators holding the availability threshold of stake schedule and it does not. With four
-+# validators, that is two of them.
-+REQUIRED_UPGRADE_SAFETY_MARGIN=100
-+
-+# A devnet makes about one block every 2 s.
-+SECONDS_PER_BLOCK=2
-+
- # Load shared helpers (is_integer, get_network_name, wait_for_nodes, stop_nodes, ...)
- # shellcheck source=SCRIPTDIR/utils.sh
- . ./.ci/utils.sh
-@@ -151,10 +161,10 @@ function stop_node() {
-   fi
- }
- 
--# Build heights string: for L, we want exactly L entries: 0,5,10,...,5*(L-1)
-+# Build heights string: for L, we want exactly L entries: 0,5,6,...,L+3, the shape of snarkVM's
-+# TEST_CONSENSUS_VERSION_HEIGHTS.
- function build_consensus_heights() {
-   local lcv="$1"
--  local step=5
- 
-   if ! is_integer "$lcv" || (( lcv <= 0 )); then
-     echo ""
-@@ -164,7 +174,7 @@ function build_consensus_heights() {
-   local heights=""
-   local i=0
-   while (( i < lcv )); do
--    local h=$(( i * step ))
-+    local h=$(( i == 0 ? 0 : i + 4 ))
-     if [ -z "$heights" ]; then
-       heights="$h"
-     else
-@@ -177,10 +187,10 @@ function build_consensus_heights() {
- }
- 
- # Build heights string for PR when its latest_consensus_version differs from release:
--# same as build_consensus_heights, but last step is +100 instead of +5.
-+# same as build_consensus_heights, but the last version activates gap blocks after the previous one.
- function build_consensus_heights_with_big_last() {
-   local lcv="$1"
--  local step=5
-+  local gap="$2"
- 
-   if ! is_integer "$lcv" || (( lcv <= 0)) ; then
-     echo ""
-@@ -196,9 +206,9 @@ function build_consensus_heights_with_big_last() {
-   local heights=""
-   local i=0
- 
--  # Up to the penultimate entry with step 5
-+  # Up to the penultimate entry
-   while (( i < (lcv - 1) )); do
--    local h=$(( i * step ))
-+    local h=$(( i == 0 ? 0 : i + 4 ))
-     if [ -z "$heights" ]; then
-       heights="$h"
-     else
-@@ -208,8 +218,8 @@ function build_consensus_heights_with_big_last() {
-   done
- 
-   # Previous value is for i = lcv - 2
--  local prev=$(( (lcv - 2) * step ))
--  local last=$(( prev + 100 ))
-+  local prev=$(( lcv == 2 ? 0 : lcv + 2 ))
-+  local last=$(( prev + gap ))
-   heights="$heights,$last"
- 
-   echo "$heights"
-@@ -220,14 +230,15 @@ function ci_cargo_install_snarkos() {
-   CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16 \
-   CARGO_PROFILE_RELEASE_OPT_LEVEL=2 \
-   CARGO_PROFILE_RELEASE_DEBUG=0 \
--    cargo install --locked --path . --features test_network "$@"
-+    cargo install --locked --path . --features dev-network "$@"
- }
- 
- # Query the latest consensus versions of the release + PR binaries, then compute heights.
- function derive_consensus_env_from_version() {
-   local lcv_release=""
-   local lcv_current=""
-   local schedule=""
-+  local new_version_height=""
- 
-   if ! schedule=$(query_default_consensus_version "$SNARKOS_CURRENT_BIN" current); then
-     log "ERROR: Could not determine consensus version from current binary"
-@@ -244,18 +255,25 @@ function derive_consensus_env_from_version() {
-   log "Computed latest_consensus_version (release) = $lcv_release"
-   log "Computed latest_consensus_version (current) = $lcv_current"
- 
--  # Simplification: step is always 5, and |lcv_current - lcv_release| <= 1.
-+  # Simplification: |lcv_current - lcv_release| <= 1.
-   local heights_release
-   local heights_current
- 
-   heights_release="$(build_consensus_heights "$lcv_release")"
- 
-   if [ "$lcv_current" = "$lcv_release" ]; then
--    # Same 
-```
-
-**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
-```diff
-@@ -289,7 +289,24 @@ fi
- 
- log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
- 
--if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
-+# Once two validators run the new version, they hold at least a third of the stake, so the
-+# release validators shut down. Before that, the last node rejects the blocks of its outdated
-+# peers.
-+upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
-+outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
-+# The release binary leaves a task running when it shuts down this way.
-+surplus_tasks="There are [0-9]+ surplus live tasks"
-+expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
-+
-+# Only the release validators may log the surplus task error.
-+for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
-+  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
-+    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
-+    exit 1
-+  fi
-+done
-+
-+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "" "$expected_errors"; then
-   exit 0
- else
-   exit 1
-```
-
-**File**: `.ci/test_upgrade_required.sh` (modified, +4/-4)
-```diff
-@@ -35,8 +35,8 @@ init_log_dir
- 
- trap stop_nodes EXIT
- 
--# The heights of V1..V21 match the test defaults; only V22 differs.
--base_heights="0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
-+# The heights of V1..V22 match the test defaults; only V23 differs.
-+base_heights="0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25"
- upgraded_heights="$base_heights,$activation_height"
- outdated_heights="$base_heights,4294967295"
- 
-@@ -49,8 +49,8 @@ upgraded_port=3030
- outdated_port=$((3030+outdated_validator))
- outdated_metrics_port=9000
- record_file=".node-data-$network_id-$outdated_validator/required-consensus-upgrade"
--# The activation height and ConsensusVersion::V22, in the little-endian encoding of the record.
--expected_record="$(printf '%08x' "$activation_height" | sed -E 's/(..)(..)(..)(..)/\4\3\2\1/')1600"
-+# The activation height and ConsensusVersion::V23, in the little-endian encoding of the record.
-+expected_record="$(printf '%08x' "$activation_height" | sed -E 's/(..)(..)(..)(..)/\4\3\2\1/')1700"
- 
- # Starts validator $1 with the consensus version heights $2, logging to $3.
- function start_validator() {
-```
-
-**File**: `.ci/utils.sh` (modified, +77/-35)
-```diff
-@@ -390,6 +390,8 @@ function check_logs() {
-   local max_client_log_size_bytes=${5:-}
-   # Optional Unix epoch timestamp; only log lines at or after this time are checked.
-   local since_epoch=${6:-}
-+  # Optional extended regex; ERROR lines that match it are expected and do not fail the check.
-+  local expected_errors=${7:-}
- 
-   if [ -n "$since_epoch" ]; then
-     log "Only checking log lines at or after $(epoch_to_iso "$since_epoch")"
-@@ -416,10 +418,14 @@ function check_logs() {
- 
-     validator_log_content=$(log_lines_since "$validator_log" "$since_epoch")
- 
--    if echo "$validator_log_content" | grep -q "ERROR"; then
-+    validator_errors=$(echo "$validator_log_content" | grep "ERROR" || true)
-+    if [ -n "$expected_errors" ] && [ -n "$validator_errors" ]; then
-+      validator_errors=$(echo "$validator_errors" | grep -vE "$expected_errors" || true)
-+    fi
-+    if [ -n "$validator_errors" ]; then
-       log "❌ Test failed! Validator #${validator_index} logs contain errors."
-       # Print the errors to the console.
--      echo "$validator_log_content" | grep "ERROR"
-+      echo "$validator_errors"
-       return 1
-     fi
-   done
-@@ -442,10 +448,14 @@ function check_logs() {
- 
-     client_log_content=$(log_lines_since "$client_log" "$since_epoch")
- 
--    if echo "$client_log_content" | grep -q "ERROR"; then
-+    client_errors=$(echo "$client_log_content" | grep "ERROR" || true)
-+    if [ -n "$expected_errors" ] && [ -n "$client_errors" ]; then
-+      client_errors=$(echo "$client_errors" | grep -vE "$expected_errors" || true)
-+    fi
-+    if [ -n "$client_errors" ]; then
-       log "❌ Test failed! Client #${client_index} logs contain errors."
-       # Print the errors to the console.
--      echo "$client_log_content" | grep "ERROR"
-+      echo "$client_errors"
-       return 1
-     fi
-   done
-@@ -512,12 +522,13 @@ function wait_for_peers() {
- }
- 
- # Succeeds if the node with the given index has the specified number of BFT connections (or greater)
-+# within max_wait seconds (default 300).
- function wait_for_bft_connections() {
-   local node_index=$1
-   local min_peers=$2
-   local network_name=$3
-+  local max_wait=${4:-300}
- 
--  local max_wait=300
-   local poll_interval=1
-   local port=$((3030 + node_index))
- 
-@@ -539,7 +550,7 @@ function wait_for_bft_connections() {
-     sleep "$poll_interval"
-   done
- 
--  log "❌ BFT connections did not reach $min_peers within 5 minutes."
-+  log "❌ BFT connections did not reach $min_peers within ${max_wait}s."
-   return 1
- }
- 
-@@ -632,16 +643,25 @@ function wait_for_heights() {
-   : "${max_wait:=300}"
-   : "${poll_interval:=5}"
- 
--  local start
--  start=$(now) 
--  
-+  local start elapsed
-+  start=$(now)
-+  # `check_heights` logs progress only for an elapsed time that is a positive multiple of 60.
-+  local logged_minutes=0
-+  local report
-+
-   while (( $(elapsed_since "$start") < max_wait )); do
--    if check_heights "$start_index" "$end_index" "$min_height" "$network_name" "$elapsed"; then
-+    elapsed=$(elapsed_since "$start")
-+    report=0
-+    if (( elapsed / 60 > logged_minutes )); then
-+      logged_minutes=$((elapsed / 60))
-+      report=$((logged_minutes * 60))
-+    fi
-+    if check_heights "$start_index" "$end_index" "$min_height" "$network_name" "$report"; then
-       return 0
-     fi
- 
-     # Continue waiting
--    sleep 5
-+    sleep "$poll_interval"
-   done
-   return 1
- }
-@@ -659,40 +679,62 @@ function print_client_logs() {
- }
- 
- 
--# Function checking that the first node reached the latest (unchanging) consensus version.
-+# Blocks until the node with the given index reaches the activation height of the last version in
-+# the consensus version schedule it serves, and checks that it runs that version there.
- function wait_for_stable_consensus_version() {
-   local node_index=$1
-   local network_name=$2
--  
--  local last_seen_consensus_version=0
--  local last_seen_height=0
- 
--  # Check consensus versions periodically with a timeout
--  log "ℹ️ Waiting for consensus version to stabilize..."
--  local start
-+  local max_wait=300
-+  local port=$((3030 + node_index))
-+  # Versions that are not scheduled have a height of `u32::MAX`, and are never reached.
-+  local filter='[.consensus_heights[] | select(. != 4294967295)] | "\(length) \(last)"'
-+
-+  local schedule="" final_version final_height height consensus_version
-+  local start next_report=10
-   start=$(now)
--  
--  while (( $(elapsed_since "$start") < 300 )); do  # 5 minutes max
--    consensus_version=$(get_consensus_version "$node_index" "$network_name" || echo "0")
--    height=$(get_block_height "$node_index" "$network_name" || echo "0")
+-  # The one job to require on protected branches. A skipped job counts as passed
+-  # for a required check, so every job must succeed here, except one skipped
+-  # where it is not meant to run: `schedule-due` off the schedule,
+-  # `each-feature` on a pull request, the merge jobs on a pull request into
+-  # any branch but a release branch, and `devnet-release` outside a release.
+-  # A scheduled run that is not due has no verdict.
+-  ci-ok:
+-    if: >-
+-      always() &&
+-      (github.event_name != 'schedule' || needs.schedule-due.outputs.due == 'true')
+-    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature]
+-    runs-on: ubuntu-latest
+-    steps:
+-      - env:
+-          NEEDS: ${{ toJSON(needs) }}
+-          EVENT: ${{ github.event_name }}
+-          RELEASE: >-
+-            ${{ github.event_name == 'workflow_dispatch' ||
+-            startsWith(github.ref, 'refs/heads/release/') ||
+-            startsWith(github.base_ref, 'release/') }}
+-        run: |
+-          jq -e --arg event "$EVENT" --argjson release "$RELEASE" '
+-            (if $event == "schedule" then ["devnet-release"]
+-            elif $event != "pull_request" then ["schedule-due"]
+-            elif $release then ["schedule-due", "each-feature"]
+-            else ["schedule-due", "each-feature", "devnet-merge", "devnet-release", "windows"] end) as $skippable
+-            | to_entries
+-            | map(select(.value.result != "success" and (.value.result != "skipped" or (.key | IN($skippable[]) | not))))
+-            | if length == 0 then true else (map("\(.key): \(.value.result)") | join(", ") | halt_error) end' <<< "$NEEDS"
 -
--    # If the consensus version is greater than the last seen, we update it.
--    if (( consensus_version > last_seen_consensus_version )); then
--      log "✅ Consensus version updated to $consensus_version"
--    # If the consensus version is the same whereas the block height is different and at least 10, we can assume that the consensus version is stable
--    elif (( (height !=
+   # Posts to Slack when staging's scheduled run turns red, and once when it is
+   # green again. `checked` is false for a run that was not due.
+   notify:
+     if: always() && github.event_name == 'schedule' && github.repository == 'aleo-labs-protocol/snarkOS'
+-    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature, ci-ok]
++    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature]
+     runs-on: ubuntu-latest
+     timeout-minutes: 10
+     permissions: { actions: read }
 ```
 
-**File**: `.config/nextest.toml` (modified, +9/-1)
+**File**: `BRANCHING_AND_RELEASING.md` (modified, +1/-1)
 ```diff
-@@ -2,8 +2,16 @@
- fail-fast = false
- slow-timeout = { period = "60s", terminate-after = 5 }
- status-level = "fail"
--# Many tests bind sockets and start nodes, so two run at a time.
-+# The hosted runners have 4 vCPUs. The fleet `test` job overrides this with
-+# NEXTEST_TEST_THREADS; see CI.md.
- test-threads = 2
+@@ -36,7 +36,7 @@ This replaces `git checkout mainnet` and `git pull`. The script asks GitHub for
  
- [profile.ci.junit]
- path = "junit.xml"
-+
-+# gateway_start asserts that the gateway binds 127.0.0.1:5000+dev exactly. Other
-+# tests bind ports in that range, and take another port if one is taken, so this
-+# test runs alone.
-+[[profile.default.overrides]]
-+filter = 'package(snarkos-node-bft) and test(=gateway::prop_tests::gateway_start)'
-+threads-required = "num-test-threads"
+ ## CI
+ 
+-Pull requests that target a `release/**` branch, and pushes to a `release/**` branch, run the merge and release jobs in addition to the normal CI, and `ci-ok` fails if one is skipped. See [CI.md](CI.md).
++Pull requests that target a `release/**` branch, and pushes to a `release/**` branch, run the merge and release jobs in addition to the normal CI. See [CI.md](CI.md).
+ 
+ ## Release process
+ 
+```
+
+**File**: `CI.md` (modified, +3/-9)
+```diff
+@@ -21,7 +21,7 @@ Jobs run in one of two places:
+ 
+ | Event | Runs |
+ |---|---|
+-| Pull request into `staging` | `fmt`, `deny`, `shellcheck`, `source-checks`, `machete`, `lint`, `lint-locktick`, `test`, `build-snarkos`, `devnet`, `ci-ok` |
++| Pull request into `staging` | `fmt`, `deny`, `shellcheck`, `source-checks`, `machete`, `lint`, `lint-locktick`, `test`, `build-snarkos`, `devnet` |
+ | Schedule, on `staging`, every six hours at 47 minutes past | the above, plus `devnet-merge`, `windows`, `each-feature` |
+ | Pull request into `release/**` | the first row, plus `devnet-merge`, `windows`, `devnet-release` |
+ | Push to `release/**`, or manual dispatch | the first row, plus `devnet-merge`, `windows`, `each-feature`, `devnet-release` |
+@@ -36,7 +36,7 @@ head of `staging` is due a check:
+ 
+ - The head is not due if an earlier scheduled run on it gave a verdict: the
+   run passed or failed, and its `fmt` job ran. Every other job in the run is
+-  then skipped, and so is `ci-ok`. The job's summary names that run.
++  then skipped. The job's summary names that run.
+ - A cancelled run, a run that was not due, and a run where `schedule-due`
+   failed give no verdict. A head with only such runs is due.
+ - A failed head is not checked again on the next tick. To retry it, re-run
+@@ -98,18 +98,12 @@ jobs run on every event.
+ | `machete` | hosted | all | | `cargo machete` |
+ | `windows` | hosted (Windows) | merge | | `cargo check --examples --benches --tests` in `account`, `cli`, `display`, `node` |
+ | `each-feature` | `cpu` | merge, no pull request | 120 | `cargo hack clippy --each-feature` over the workspace, without `cuda` |
+-| `ci-ok` | hosted | all | | fails unless every job succeeded; a job may be skipped where it is not meant to run |
+ | `notify` | hosted | schedule | 10 | posts to Slack when the scheduled run turns red or green |
+ 
+ A job with no timeout gets the GitHub default of six hours. Only hosted jobs
+ have none, and a hosted job holds no fleet box.
+ 
+-Protected branches require `ci-ok` alone. GitHub counts a skipped job as
+-passed for a required check, so `ci-ok` checks each job's result itself.
+-
+-A pull request that changes only Markdown files starts no run, so it gets no
+-`ci-ok` check. Where a branch rule requires `ci-ok`,
+-such a pull request cannot merge until a workflow reports that check for it.
++A pull request that changes only Markdown files starts no run.
+ 
+ ## Test groups
+ 
 ```
 
 ---
 
-### Incident Patch 2: `82e8fb92` (2026-11-22)
-**Commit Message**: Merge pull request #4730 from mvanhorn/fix/4587-bound-transmission-latency-tracker
+### Incident Patch 2: `4f21882f` (2026-11-26)
+**Commit Message**: Remove the ci-ok job
 
-**File**: `Cargo.lock` (modified, +0/-1)
-```diff
-@@ -5572,7 +5572,6 @@ dependencies = [
-  "rayon",
-  "snarkos-utilities",
-  "snarkvm",
-- "time",
-  "tokio",
-  "tracing",
- ]
-```
+ci-ok aggregated the CI jobs into one check for a branch rule to
+require. No branch rule or ruleset requires a status check, on staging or
+on the release branches, and no workflow reads ci-ok. CI.md said that
+protected branches require it.
 
-**File**: `node/consensus/src/lib.rs` (modified, +114/-80)
-```diff
-@@ -73,9 +73,6 @@ use tokio::{
-     task::JoinHandle,
- };
- 
--#[cfg(feature = "metrics")]
--use std::collections::HashMap;
--
- /// The capacity of the queue reserved for deployments.
- /// Note: This is an inbound queue capacity, not a Narwhal-enforced capacity.
- const CAPACITY_FOR_DEPLOYMENTS: usize = 1 << 10;
-@@ -114,7 +111,7 @@ pub struct Consensus<N: Network> {
-     /// The recently-seen unconfirmed transactions.
-     seen_transactions: Arc<Mutex<LruCache<N::TransactionID, ()>>>,
-     #[cfg(feature = "metrics")]
--    transmissions_tracker: Arc<Mutex<HashMap<TransmissionID<N>, i64>>>,
-+    transmissions_tracker: Arc<Mutex<metrics::TransmissionTracker<N>>>,
-     /// The spawned handles.
-     handles: Arc<Mutex<Vec<JoinHandle<()>>>>,
-     /// The ping logic.
-@@ -179,7 +176,14 @@ impl<N: Network> Consensus<N> {
-             seen_solutions: Arc::new(Mutex::new(LruCache::new(NonZeroUsize::new(1 << 16).unwrap()))),
-             seen_transactions: Arc::new(Mutex::new(LruCache::new(NonZeroUsize::new(1 << 16).unwrap()))),
-             #[cfg(feature = "metrics")]
--            transmissions_tracker: Default::default(),
-+            // Cover the inbound queues plus transmissions already handed to the BFT: up to
-+            // `MAX_TRANSMISSIONS_TOLERANCE` in the workers, and as many again in certificates awaiting commit.
-+            transmissions_tracker: Arc::new(Mutex::new(metrics::TransmissionTracker::new(
-+                CAPACITY_FOR_DEPLOYMENTS
-+                    + CAPACITY_FOR_EXECUTIONS
-+                    + CAPACITY_FOR_SOLUTIONS
-+                    + 2 * Primary::<N>::MAX_TRANSMISSIONS_TOLERANCE,
-+            ))),
-             handles: Default::default(),
-             ping: ping.clone(),
-             block_commit_notify: Arc::new(Notify::new()),
-@@ -322,14 +326,20 @@ impl<N: Network> Consensus<N> {
-                 bail!("Solution '{}' exists in the ledger (skipping)", fmt_id(solution_id));
-             }
-             // Add the solution to the memory pool.
--            if self.solutions_queue.lock().put(solution_id, solution).is_some() {
-+            // Note: `push` returns the old entry for a duplicate, or the least recently used entry it evicted.
-+            let pushed = self.solutions_queue.lock().push(solution_id, solution);
-+            if matches!(pushed, Some((id, _)) if id == solution_id) {
-                 bail!("Solution '{}' exists in the memory pool", fmt_id(solution_id));
-             }
-             #[cfg(feature = "metrics")]
-             {
-                 metrics::increment_counter(metrics::consensus::UNCONFIRMED_SOLUTIONS);
--                let timestamp = snarkos_node_bft::helpers::now();
--                self.transmissions_tracker.lock().insert(TransmissionID::Solution(solution_id, checksum), timestamp);
-+                // An evicted solution can no longer reach a block from this node, so stop tracking it.
-+                if let Some((evicted_id, _)) = pushed {
-+                    let evicted = metrics::TrackedId::Solution(evicted_id);
-+                    metrics::untrack_transmissions(&self.transmissions_tracker, [evicted]);
-+                }
-+                metrics::track_transmission(&self.transmissions_tracker, metrics::TrackedId::Solution(solution_id));
-             }
-             trace!("Received unconfirmed solution '{}' in the queue", fmt_id(solution_id));
-         }
-@@ -430,19 +440,24 @@ impl<N: Network> Consensus<N> {
-             let insertion = self.transactions_queue.write().insert(transaction_id, transaction, priority_fee);
-             #[cfg(feature = "metrics")]
-             metrics::record_mempool_transaction(kind, match insertion {
--                Ok(QueueInsertion::Inserted | QueueInsertion::InsertedWithEviction) => "accepted",
-+                Ok(QueueInsertion::Inserted | QueueInsertion::InsertedWithEviction(_)) => "accepted",
-                 Ok(QueueInsertion::Duplicate) => "already_queued",
-                 // The queue returns an error only when it is full.
-                 Err(_) => "rejected_pool_full",
-             });
-             // A duplicate was counted and tracked when its first copy was queued.
-             #[cfg(feature = "metrics")]
--            if matches!(insertion, Ok(QueueInsertion::Inserted | QueueInsertion::InsertedWithEviction)) {
-+            if matches!(insertion, Ok(QueueInsertion::Inserted | QueueInsertion::InsertedWithEviction(_))) {
-                 metrics::increment_counter(metrics::consensus::UNCONFIRMED_TRANSACTIONS);
--                let timestamp = snarkos_node_bft::helpers::now();
--                self.transmissions_tracker
--                    .lock()
--                    .insert(TransmissionID::Transaction(transaction_id, checksum), timestamp);
-+                // An evicted transaction can no longer reach a block from this node, so stop tracking it.
-+                if let Ok(QueueInsertion::InsertedWithEviction(evicted_id)) = insertion {
-+                    let evicted = metrics::TrackedId::Transaction(evicted_id);
-
-```
-
-**File**: `node/consensus/src/transactions_queue.rs` (modified, +16/-16)
-```diff
-@@ -27,11 +27,11 @@ use crate::{CAPACITY_FOR_DEPLOYMENTS, CAPACITY_FOR_EXECUTIONS};
- 
- /// The result of a successful insertion into the transactions queue.
- #[derive(Clone, Copy, Debug, PartialEq, Eq)]
--pub enum QueueInsertion {
-+pub enum QueueInsertion<ID> {
-     /// The transaction was added to the queue.
-     Inserted,
--    /// The transaction was added to the queue, and a lower-priority transaction was evicted.
--    InsertedWithEviction,
-+    /// The transaction was added to the queue, and the lower-priority transaction with this ID was evicted.
-+    InsertedWithEviction(ID),
-     /// The transaction was already in the queue; nothing changed.
-     Duplicate,
- }
-@@ -60,7 +60,7 @@ impl<N: Network> TransactionsQueue<N> {
-         transaction_id: N::TransactionID,
-         transaction: Transaction<N>,
-         priority_fee: U64<N>,
--    ) -> Result<QueueInsertion> {
-+    ) -> Result<QueueInsertion<N::TransactionID>> {
-         let is_execute = transaction.is_execute();
-         let result = if is_execute {
-             self.executions.insert(transaction_id, transaction, priority_fee)
-@@ -70,7 +70,7 @@ impl<N: Network> TransactionsQueue<N> {
- 
-         #[cfg(feature = "metrics")]
-         {
--            if let Ok(QueueInsertion::InsertedWithEviction) = result {
-+            if let Ok(QueueInsertion::InsertedWithEviction(_)) = result {
-                 let kind = if is_execute { "execute" } else { "deploy" };
-                 metrics::increment_counter_1(metrics::consensus::MEMPOOL_EVICTED, "kind", kind);
-             }
-@@ -135,7 +135,7 @@ impl<N: Network> TransactionsQueueInner<N> {
-         transaction_id: N::TransactionID,
-         transaction: Transaction<N>,
-         priority_fee: U64<N>,
--    ) -> Result<QueueInsertion> {
-+    ) -> Result<QueueInsertion<N::TransactionID>> {
-         // Duplicates are a no-op: they must not evict anything or refresh recency.
-         // Note: the transaction ID is the root of the transaction tree, which includes a leaf for the fee
-         // transition. A transaction with the same ID therefore always has the same priority fee, and a
-@@ -172,14 +172,14 @@ impl<N: Network> TransactionsQueueInner<N> {
-                 );
- 
-                 // Remove an entry from the low-priority queue to make room for the high-priority transaction.
--                let evicted = self.fifo_queue.pop_lru().is_some();
--                if evicted {
-+                let evicted = self.fifo_queue.pop_lru().map(|(evicted_id, _)| evicted_id);
-+                if evicted.is_some() {
-                     #[cfg(feature = "metrics")]
-                     metrics::increment_counter(metrics::consensus::DROPPED_TRANSACTIONS);
-                 }
- 
-                 self.priority_queue.insert(transaction_id, transaction, priority_fee);
--                if evicted { QueueInsertion::InsertedWithEviction } else { QueueInsertion::Inserted }
-+                evicted.map_or(QueueInsertion::Inserted, QueueInsertion::InsertedWithEviction)
-             }
-             // Invariant: if the queue is at capacity but the priority queue is
-             // equal to the capacity, the low-priority queue must be empty.
-@@ -189,8 +189,8 @@ impl<N: Network> TransactionsQueueInner<N> {
-                     "The low-priority queue must be empty when the priority queue is full"
-                 );
- 
--                self.priority_queue.compare_insert(transaction_id, transaction, priority_fee)?;
--                QueueInsertion::InsertedWithEviction
-+                let evicted = self.priority_queue.compare_insert(transaction_id, transaction, priority_fee)?;
-+                evicted.map_or(QueueInsertion::Inserted, QueueInsertion::InsertedWithEviction)
-             }
-         };
- 
-@@ -240,10 +240,10 @@ impl<N: Network> PriorityQueue<N> {
-         transaction_id: N::TransactionID,
-         transaction: Transaction<N>,
-         fee: U64<N>,
--    ) -> Result<()> {
-+    ) -> Result<Option<N::TransactionID>> {
-         // Make sure the collection isn't empty.
-         if self.transaction_ids.is_empty() {
--            return Ok(());
-+            return Ok(None);
-         }
- 
-         // If the lowest fee in the collection is higher than the new fee, reject the new transaction.
-@@ -267,7 +267,7 @@ impl<N: Network> PriorityQueue<N> {
-         metrics::increment_counter(metrics::consensus::DROPPED_TRANSACTIONS);
- 
-         self.insert(transaction_id, transaction, fee);
--        Ok(())
-+        Ok(Some(id))
-     }
- 
-     fn pop(&mut self) -> Option<(N::TransactionID, Transaction<N>)> {
-@@ -520,9 +520,9 @@ mod tests {
-         // A full queue rejects a zero-fee transaction.
-         assert!(insert(2, 0).is_err());
-         // A priority transaction evicts the zero-fee transaction.
--        assert_eq!(insert(3, 200).unwrap(), QueueInsertion::InsertedWithEviction);
-+        assert_eq!(insert(3, 200).unwrap(), QueueInsertion::InsertedWithEviction(executions[0].0));
-         // A full priority queue evicts its lowest fee for a fee at least as hi
-```
-
-**File**: `node/metrics/Cargo.toml` (modified, +0/-3)
-```diff
-@@ -35,9 +35,6 @@ workspace = true
- workspace = true
- features = [ "console", "ledger", "metrics" ]
- 
--[dependencies.time]
--workspace = true
--
- [dependencies.tokio]
- workspace = true
- features = [ "rt" ]
-```
-
-**File**: `node/metrics/src/lib.rs` (modified, +188/-63)
-```diff
-@@ -26,20 +26,18 @@ use rayon::prelude::*;
- 
- use snarkos_utilities::locks::parking_lot::Mutex;
- use snarkvm::{
--    ledger::narwhal::TransmissionID,
-+    ledger::puzzle::SolutionID,
-     prelude::{Block, Network, Transaction, cfg_iter},
- };
- use std::{
--    collections::HashMap,
-+    collections::{BTreeMap, HashMap},
-     net::SocketAddr,
-     sync::{
--        Arc,
-         OnceLock,
-         atomic::{AtomicUsize, Ordering},
-     },
-     time::Instant,
- };
--use time::OffsetDateTime;
- use tokio::task::JoinHandle;
- 
- /// The handle to the task running the metrics exporter.
-@@ -164,68 +162,129 @@ pub fn update_block_metrics<N: Network>(block: &Block<N>) {
-     gauge(consensus::VERSION, N::CONSENSUS_VERSION(block.height()).map_or(0.0, |version| version as u16 as f64));
- }
- 
--pub fn add_transmission_latency_metric<N: Network>(
--    transmissions_tracker: &Arc<Mutex<HashMap<TransmissionID<N>, i64>>>,
--    block: &Block<N>,
--) {
--    // The age at which we consider a transmission "stale".
--    const AGE_THRESHOLD_SECONDS: i32 = 30 * 60; // 30 minutes
--
--    // Retrieve all solution IDs (including aborted).
--    let solution_ids: std::collections::HashSet<_> =
--        block.solutions().solution_ids().chain(block.aborted_solution_ids()).collect();
--
--    // Retrieve all transaction IDs (including aborted).
--    let transaction_ids: std::collections::HashSet<_> =
--        block.transaction_ids().chain(block.aborted_transaction_ids()).collect();
--
--    let mut transmissions_tracker = transmissions_tracker.lock();
--    let ts_now = OffsetDateTime::now_utc().unix_timestamp();
--
--    // Determine which keys to remove.
--    // Note: this is intentionally serial, as it is done while holding the lock above. A parallel
--    // iterator that blocks on a lock can occupy every worker of the rayon thread pool, which in
--    // turn prevents the lock holder's own parallel iterator from ever being scheduled.
--    let keys_to_remove = transmissions_tracker
--        .iter()
--        .flat_map(|(transmission_id, timestamp)| {
--            let elapsed_time = std::time::Duration::from_secs((ts_now - *timestamp) as u64);
--            let transmission_type = match transmission_id {
--                TransmissionID::Solution(solution_id, _) if solution_ids.contains(solution_id) => Some("solution"),
--                TransmissionID::Transaction(transaction_id, _) if transaction_ids.contains(transaction_id) => {
--                    Some("transaction")
--                }
--                // Either a ratification, or the transmission was not included in the block
--                _ => None,
--            };
--
--            if let Some(transmission_type_string) = transmission_type {
--                histogram_label(
--                    consensus::TRANSMISSION_LATENCY,
--                    "transmission_type",
--                    transmission_type_string.to_owned(),
--                    elapsed_time.as_secs_f64(),
--                );
--                Some(*transmission_id)
--            } else if elapsed_time.as_secs() > AGE_THRESHOLD_SECONDS as u64 {
--                // A transmission included in this block is confirmed, so record its latency even if it
--                // predates the staleness threshold — confirmation takes precedence over staleness.
--                match transmission_id {
--                    TransmissionID::Solution(..) => increment_counter(consensus::STALE_UNCONFIRMED_SOLUTIONS),
--                    TransmissionID::Transaction(..) => increment_counter(consensus::STALE_UNCONFIRMED_TRANSACTIONS),
--                    TransmissionID::Ratification => {}
--                }
--                Some(*transmission_id)
--            } else {
--                None
-+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
-+pub enum TrackedId<N: Network> {
-+    Solution(SolutionID<N>),
-+    Transaction(N::TransactionID),
-+}
-+
-+pub struct TransmissionTracker<N: Network> {
-+    capacity: usize,
-+    sequence: u64,
-+    entries: HashMap<TrackedId<N>, (Instant, u64)>,
-+    expiry: BTreeMap<(Instant, u64), TrackedId<N>>,
-+}
-+
-+const EXPIRY_BUDGET: usize = 32;
-+const MAX_AGE: std::time::Duration = std::time::Duration::from_secs(30 * 60);
-+
-+impl<N: Network> TransmissionTracker<N> {
-+    pub fn new(capacity: usize) -> Self {
-+        Self { capacity, sequence: 0, entries: HashMap::new(), expiry: BTreeMap::new() }
-+    }
-+
-+    fn remove(&mut self, id: TrackedId<N>) -> Option<Instant> {
-+        let key = self.entries.remove(&id)?;
-+        self.expiry.remove(&key);
-+        Some(key.0)
-+    }
-+
-+    fn retire(&mut self, now: Instant) -> [u64; 2] {
-+        let mut counts = [0; 2];
-+        for _ in 0..EXPIRY_BUDGET {
-+            let Some((&(start, _), &id)) = self.expiry.first_key_value() else { break };
-+            let expired = now.duration_since(start) > MAX_AGE;
-+            if self.entries.len() <= self.capacity && !expired {
-+                break;
-+            }
-+            self.remove(id);
-+            // Only age evictions count as stale; capa
-```
-
----
-
-### Incident Patch 3: `d6e4eb37` (2026-11-22)
-**Commit Message**: Build the release with its own devnet feature, and tighten the dev-network notes
-
-- `ci_cargo_install_snarkos` reads the release's manifest and builds it with `test_network` when it has that feature, else `dev-network`. Releases up to 4.13.1 have no `dev-network`.
-- test_full_upgrade.sh drops its copy of that function and uses the one in utils.sh.
-- The dev-network comment says which peers the gateway check can miss, and that the developer commands make no genesis check.
-- The root comment points to cli/Cargo.toml and lists the checks `snarkos-node/dev-network` skips.
-- ci.yml: rewrap the test-groups comment.
+snarkVM removed its ci-ok in aleo-labs-protocol/snarkVM#3959.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmPXSvKzcRZq21tmn9R
+Claude-Session: https://claude.ai/code/session_01UYfmmPC75jc5MDqNeR2fHC
 
-**File**: `.ci/test_full_upgrade.sh` (modified, +1/-9)
+**File**: `.github/workflows/ci.yml` (modified, +1/-31)
 ```diff
-@@ -4,7 +4,7 @@
- # Backwards-compatibility upgrade test:
- #
- # 1. Download latest snarkOS release source from GitHub.
--# 2. Build it via `cargo install --locked --path . --features dev-network`
-+# 2. Build it with its devnet feature via `ci_cargo_install_snarkos`
- #    into a separate prefix (SNARKOS_RELEASE_DIR).
- # 3. Query latest_consensus_version for latest release and PR binaries from the REST API of a single node of each.
- # 4. Compute CONSENSUS_VERSION_HEIGHTS for latest release and PR.
-@@ -225,14 +225,6 @@ function build_consensus_heights_with_big_last() {
-   echo "$heights"
- }
+@@ -598,41 +598,11 @@ jobs:
+         with: { tool: cargo-hack@0.6.46 }
+       - run: cargo hack clippy --workspace --each-feature --exclude-features cuda --locked -- -D warnings
  
--function ci_cargo_install_snarkos() {
--  CARGO_PROFILE_RELEASE_LTO=off \
--  CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16 \
--  CARGO_PROFILE_RELEASE_OPT_LEVEL=2 \
--  CARGO_PROFILE_RELEASE_DEBUG=0 \
--    cargo install --locked --path . --features dev-network "$@"
--}
+-  # The one job to require on protected branches. A skipped job counts as passed
+-  # for a required check, so every job must succeed here, except one skipped
+-  # where it is not meant to run: `schedule-due` off the schedule,
+-  # `each-feature` on a pull request, the merge jobs on a pull request into
+-  # any branch but a release branch, and `devnet-release` outside a release.
+-  # A scheduled run that is not due has no verdict.
+-  ci-ok:
+-    if: >-
+-      always() &&
+-      (github.event_name != 'schedule' || needs.schedule-due.outputs.due == 'true')
+-    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature]
+-    runs-on: ubuntu-latest
+-    steps:
+-      - env:
+-          NEEDS: ${{ toJSON(needs) }}
+-          EVENT: ${{ github.event_name }}
+-          RELEASE: >-
+-            ${{ github.event_name == 'workflow_dispatch' ||
+-            startsWith(github.ref, 'refs/heads/release/') ||
+-            startsWith(github.base_ref, 'release/') }}
+-        run: |
+-          jq -e --arg event "$EVENT" --argjson release "$RELEASE" '
+-            (if $event == "schedule" then ["devnet-release"]
+-            elif $event != "pull_request" then ["schedule-due"]
+-            elif $release then ["schedule-due", "each-feature"]
+-            else ["schedule-due", "each-feature", "devnet-merge", "devnet-release", "windows"] end) as $skippable
+-            | to_entries
+-            | map(select(.value.result != "success" and (.value.result != "skipped" or (.key | IN($skippable[]) | not))))
+-            | if length == 0 then true else (map("\(.key): \(.value.result)") | join(", ") | halt_error) end' <<< "$NEEDS"
 -
- # Query the latest consensus versions of the release + PR binaries, then compute heights.
- function derive_consensus_env_from_version() {
-   local lcv_release=""
+   # Posts to Slack when staging's scheduled run turns red, and once when it is
+   # green again. `checked` is false for a run that was not due.
+   notify:
+     if: always() && github.event_name == 'schedule' && github.repository == 'aleo-labs-protocol/snarkOS'
+-    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature, ci-ok]
++    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature]
+     runs-on: ubuntu-latest
+     timeout-minutes: 10
+     permissions: { actions: read }
 ```
 
-**File**: `.ci/utils.sh` (modified, +4/-1)
+**File**: `BRANCHING_AND_RELEASING.md` (modified, +1/-1)
 ```diff
-@@ -821,11 +821,14 @@ SNARKOS_RELEASE_VERSION_FILE="${SNARKOS_RELEASE_VERSION_FILE:-$SNARKOS_RELEASE_D
+@@ -36,7 +36,7 @@ This replaces `git checkout mainnet` and `git pull`. The script asks GitHub for
  
- # Build snarkos with optimized settings for CI (faster builds).
- function ci_cargo_install_snarkos() {
-+  # Releases up to 4.13.1 call `dev-network` `test_network`, and staging shares their version number.
-+  local feature=dev-network
-+  grep -q '^test_network = ' Cargo.toml && feature=test_network
-   CARGO_PROFILE_RELEASE_LTO=off \
-   CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16 \
-   CARGO_PROFILE_RELEASE_OPT_LEVEL=2 \
-   CARGO_PROFILE_RELEASE_DEBUG=0 \
--    cargo install --locked --path . --features dev-network "$@"
-+    cargo install --locked --path . --features "$feature" "$@"
- }
+ ## CI
  
- # Download and build the latest snarkOS release from GitHub.
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +3/-3)
-```diff
-@@ -226,9 +226,9 @@ jobs:
-   # crates enable features on their dependencies that change what those
-   # dependencies do: `snarkos-node-router/test-helpers` and
-   # `snarkos-node-network/test-helpers` skip checks, and `rocks` and `metrics`
--  # select other code paths. Crates share a line only where that unification enables
--  # none of these on any crate. Other helper features, such as `mock` and the
--  # other crates' `test-helpers`, can still be unified.
-+  # select other code paths. Crates share a line only where that unification
-+  # enables none of these on any crate. Other helper features, such as `mock`
-+  # and the other crates' `test-helpers`, can still be unified.
-   #
-   # Cheap entries run on free hosted runners and do not wait for the fleet.
-   test-hosted:
-```
-
-**File**: `Cargo.toml` (modified, +2/-4)
-```diff
-@@ -287,10 +287,8 @@ cuda = [
-   "snarkos-node-router/cuda",
-   "snarkos-node-sync/cuda"
- ]
--# Lowers network parameters (consensus heights, genesis targets) and enables the dev committee and the
--# dev genesis state root, for local test and development networks. Never enable it to join a public
--# network, including testnet: such a build rejects the shipped genesis block at startup, as its genesis
--# targets differ, and the router and gateway handshakes reject peers with another genesis.
-+# See `cli/Cargo.toml`. `snarkos-node/dev-network` also skips the BFT's previous-certificate count check,
-+# and, under a dev committee, the next-block check and the quorum wait before a proposal.
- dev-network = [ "snarkos-cli/dev-network", "snarkos-node/dev-network" ]
- tokio_console = [ "snarkos-cli/tokio_console" ]
+-Pull requests that target a `release/**` branch, and pushes to a `release/**` branch, run the merge and release jobs in addition to the normal CI, and `ci-ok` fails if one is skipped. See [CI.md](CI.md).
++Pull requests that target a `release/**` branch, and pushes to a `release/**` branch, run the merge and release jobs in addition to the normal CI. See [CI.md](CI.md).
+ 
+ ## Release process
  
 ```
 
-**File**: `README.md` (modified, +2/-1)
+**File**: `CI.md` (modified, +3/-9)
 ```diff
-@@ -625,7 +625,8 @@ cargo run --release -- clean --dev <NODE_ID>
-   Builds a node for a local development network: it lowers the genesis coinbase and proof targets and
-   the consensus version heights, enables the dev committee and the dev genesis state root, and allows
-   the `--dev` flag. Never enable it to join a public network, including testnet. Such a build rejects
--  the shipped genesis block at startup, and peers with another genesis reject its handshakes.
-+  the shipped genesis block at startup, and peers with another genesis reject its handshakes. The
-+  `snarkos developer` commands make no such check.
+@@ -21,7 +21,7 @@ Jobs run in one of two places:
  
- ### Lock instrumentation
+ | Event | Runs |
+ |---|---|
+-| Pull request into `staging` | `fmt`, `deny`, `shellcheck`, `source-checks`, `machete`, `lint`, `lint-locktick`, `test`, `build-snarkos`, `devnet`, `ci-ok` |
++| Pull request into `staging` | `fmt`, `deny`, `shellcheck`, `source-checks`, `machete`, `lint`, `lint-locktick`, `test`, `build-snarkos`, `devnet` |
+ | Schedule, on `staging`, every six hours at 47 minutes past | the above, plus `devnet-merge`, `windows`, `each-feature` |
+ | Pull request into `release/**` | the first row, plus `devnet-merge`, `windows`, `devnet-release` |
+ | Push to `release/**`, or manual dispatch | the first row, plus `devnet-merge`, `windows`, `each-feature`, `devnet-release` |
+@@ -36,7 +36,7 @@ head of `staging` is due a check:
  
-```
-
-**File**: `cli/Cargo.toml` (modified, +5/-2)
-```diff
-@@ -28,8 +28,11 @@ cuda = [
- ]
- # Lowers network parameters (consensus heights, genesis targets) and enables the dev committee and the
- # dev genesis state root, for local test and development networks. Never enable it to join a public
--# network, including testnet: such a build rejects the shipped genesis block at startup, as its genesis
--# targets differ, and the router and gateway handshakes reject peers with another genesis.
-+# network, including testnet. Such a build rejects the shipped genesis block at startup, as its genesis
-+# targets differ. The router handshake rejects a peer with another genesis header, and the gateway one
-+# that sends another genesis hash; peers at event versions 10 and 11 may send none. `snarkos developer`
-+# commands sent to a public endpoint pass no genesis check and use the lowered consensus heights.
-+# The dev committee and `--dev-on-prod` will get their own feature, as this one rejects a production genesis.
- dev-network = [ "snarkvm/dev-network", "snarkvm/dev-committee", "snarkvm/dev_genesis_state_root" ]
- tokio_console = [ "dep:console-subscriber", "tokio/tracing" ]
+ - The head is not due if an earlier scheduled run on it gave a verdict: the
+   run passed or failed, and its `fmt` job ran. Every other job in the run is
+-  then skipped, and so is `ci-ok`. The job's summary names that run.
++  then skipped. The job's summary names that run.
+ - A cancelled run, a run that was not due, and a run where `schedule-due`
+   failed give no verdict. A head with only such runs is due.
+ - A failed head is not checked again on the next tick. To retry it, re-run
+@@ -98,18 +98,12 @@ jobs run on every event.
+ | `machete` | hosted | all | | `cargo machete` |
+ | `windows` | hosted (Windows) | merge | | `cargo check --examples --benches --tests` in `account`, `cli`, `display`, `node` |
+ | `each-feature` | `cpu` | merge, no pull request | 120 | `cargo hack clippy --each-feature` over the workspace, without `cuda` |
+-| `ci-ok` | hosted | all | | fails unless every job succeeded; a job may be skipped where it is not meant to run |
+ | `notify` | hosted | schedule | 10 | posts to Slack when the scheduled run turns red or green |
+ 
+ A job with no timeout gets the GitHub default of six hours. Only hosted jobs
+ have none, and a hosted job holds no fleet box.
+ 
+-Protected branches require `ci-ok` alone. GitHub counts a skipped job as
+-passed for a required check, so `ci-ok` checks each job's result itself.
+-
+-A pull request that changes only Markdown files starts no run, so it gets no
+-`ci-ok` check. Where a branch rule requires `ci-ok`,
+-such a pull request cannot merge until a workflow reports that check for it.
++A pull request that changes only Markdown files starts no run.
+ 
+ ## Test groups
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4759** (2026-11-22): Drop stale snarkVM feature references, document dev-network, and build the release with its own feature (@cbeck88)
-- **PR #4758** (2026-11-22): Bump snarkVM to a33f170b2 and rename test_network to dev-network (@cbeck88)
-- **PR #4757** (2026-11-22): Take the metrics crate from snarkVM's re-export (@cbeck88)
-- **PR #4756** (2026-11-22): CI: test node, rest and ledger-distribution from one build (@cbeck88)
-- **PR #4754** (2026-11-21): Check staging on a 6-hourly schedule instead of on every push (@cbeck88)
-- **PR #4753** (2026-11-21): Bump snarkVM to aleo-labs-protocol/snarkVM@1757a9b84 (@cbeck88)
+- **PR #4803** (2026-11-26): Remove the ci-ok job (@cbeck88)
+- **PR #4792** (2026-11-25): Default the Gauntlet load and release tests to a V23 stockpile (@cbeck88)
+- **PR #4791** (2026-11-25): Build tests at opt-level 1 (@cbeck88)
+- **PR #4786** (2026-11-25): ci: offer a 21-validator network in the Gauntlet forms (@cbeck88)
+- **PR #4785** (2026-11-25): Return VM halts in the developer commands as command errors (@cbeck88)
+- **PR #4783** (2026-11-25): [Release] Prepare snarkOS 5.0.0 for testnet (@snarkworld)
 
 ---
 
@@ -2842,50 +2133,53 @@ Claude-Session: https://claude.ai/code/session_01UYfmmPXSvKzcRZq21tmn9R
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge branch 'staging' into fix/4587-bound-transmission-latency-tracker
+## X. Empirical Invariant Guard in ci.yml
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `700066e0`: Merge branch 'staging' into fix/4587-bound-transmission-latency-tracker. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f2c57796`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-# `cargo locktick-<command>` runs a cargo command with `--cfg locktick`, which swaps every lock
-# in `snarkos_utilities::locks` for its `locktick` counterpart, for example
-# `cargo locktick-build --release`. The `--config` adds to the `rustflags` above rather than
-# replacing them.
-#
-# Hazard: cargo drops a `--config` placed before an external subcommand such as `clippy`,
-# `nextest` or `hack`, so each alias puts it after its subcommand.
-#
-# Hazard: a `RUSTFLAGS` environment variable replaces every `rustflags` setting, this one
-# included. To combine `--cfg locktick` with a `RUSTFLAGS` build, such as the one the
-# `tokio_console` feature needs, put `--cfg locktick` in `RUSTFLAGS` itself.
-#
-# Hazard: because the aliases set target rustflags, cargo ignores `[build] rustflags` and
-# `CARGO_BUILD_RUSTFLAGS` under them on every platform, as it already does on x86-64 Linux because
-# of the table above. Pass extra flags in `CARGO_TARGET_<TRIPLE>_RUSTFLAGS` instead, which cargo
-# adds to the aliases' flags.
-[alias]
-locktick-build = ["build", "--config", "target.'cfg(all())'.rustflags=['--cfg','locktick']"]
-locktick-check = ["check", "--config", "target.'cfg(all())'.rustflags=['--cfg','loc
+    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  # The one job to require on protected branches. A skipped job counts as passed
+  # for a required check, so every job must succeed here, except one skipped
+  # where it is not meant to run: `schedule-due` off the schedule,
+  # `each-feature` on a pull request, the merge jobs on a pull request into
+  # any branch but a release branch, and `devnet-release` outside a release.
+  # A scheduled run that is not due has no verdict.
+  ci-ok:
+    if: >-
+      always() &&
+      (github.event_name != 'schedule' || needs.schedule-due.outputs.due == 'true')
+    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature]
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          NEEDS: ${{ toJSON(needs) }}
+          EVENT: ${{ github.event_name }}
+          RELEASE: >-
+            ${{ github.event_name == 'workflow_dispatch' ||
+            startsWith(github.ref, 'refs/heads/release/') ||
+            startsWith(github.base_ref, 'release/') }}
+        run: |
+          jq -e --arg event "$EVENT" --argjson release "$RELEASE" '
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `700066e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f2c57796` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

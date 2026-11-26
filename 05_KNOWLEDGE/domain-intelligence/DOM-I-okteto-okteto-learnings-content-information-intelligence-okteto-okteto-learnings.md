@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T20:12:59.716Z",
+  "timestamp": "2026-11-26T14:44:46.907Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-okteto-okteto-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [okteto-okteto-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T20:12:59.716Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T14:44:46.907Z`  
 > **Learning ID**: `LEARN-EVO-okteto-okteto-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from okteto-okteto-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
-> **Source Version**: `18603d50`  
+> **Source Version**: `c0803f04`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T20:12:52.704Z  
+> **Timestamp**: 2026-11-26T14:44:37.834Z  
 > **Learning ID**: `learn-github-okteto-okteto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T20:12:52.699Z  
+> **Harvest Timestamp**: 2026-11-26T14:44:37.828Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Develop your applications directly in your Kubernetes Cluster
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3558 stars
+- **Stars / Engagement**: 3559 stars
 
 ---
 
@@ -1530,504 +1530,199 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18603d50` (2026-11-24)
-**Commit Message**: fix(up)!: require 'image' when 'autocreate' is enabled (#5282)
+### Incident Patch 1: `c0803f04` (2026-11-25)
+**Commit Message**: feat: add okteto git-credential and set it up in remote runs (ENG-23) (#5267)
 
-* fix(up)!: require 'image' when 'autocreate' is enabled
+* feat(log): mask GitHub tokens in deploy logs
 
-'okteto up' with 'autocreate: true' and no 'image' used to deploy
-okteto/dev:latest. It now fails asking the user to set 'image', so we
-never pull an image the user didn't configure.
-
-Also remove dead code: the per-language default images from
-okteto/devenv in pkg/linguist, and the leftovers of 'okteto init'
-(Manifest.WriteToFile and its helpers/constants).
+Git credential helpers hand GitHub tokens to commands without Okteto
+knowing their value, so mask them by pattern wherever masking is on,
+after the exact masked values, so a secret that holds a token is still
+masked whole.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Pablo Chico de Guzman <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
 
-* docs: remove references to the deleted samples folder
+* feat: add okteto git-credential, a Git credential helper for GitHub
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Signed-off-by: Pablo Chico de Guzman <[REDACTED_EMAIL]>
+Hidden "okteto git-credential get|store|erase|install". "get" asks the
+Okteto API's gitCredentials query for a read-only token for the
+repository in Git's request, with OKTETO_TOKEN and the CLI's stateless
+client, and writes one stderr line with the API's reason when there is
+none. "install --global|--system" writes the helper for
+https://github.com, replacing other github.com helpers at that scope.
 
-* fix(up): infer the image of an autocreate dev from the build with the same name
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
 
-The check that requires 'image' when 'autocreate' is enabled ran before the
-image was inferred from the 'build' entry with the same name. That inference
-only happened in ExpandEnvVars, which 'okteto up' reaches when its deploy step
-builds or checks images. A second 'okteto up', a manifest with no 'deploy'
-section, or a non-Okteto context failed even though t
+* feat(remote): install the Git credential helper in remote runs
 
-**File**: `.claude/skills/upgrade-go-version/SKILL.md` (modified, +1/-2)
+Run "okteto git-credential install --system" in the generated
+Dockerfile next to "registrytoken install". A fa
+
+**File**: `cmd/deploy/deploy.go` (modified, +5/-0)
 ```diff
-@@ -30,11 +30,10 @@ toolchain version:
- 
- **Do NOT touch** these — they are not the build toolchain:
- 
--- `okteto/golang:1` floating tags (`okteto.yml` `dev`, `samples/`, `pkg/linguist/dev.go`)
-+- `okteto/golang:1` floating tags (`okteto.yml` `dev`)
- - `okteto/golang:1.22` / `golang:1.20` strings inside `pkg/schema` tests (`schema_test.go`,
-   `test_test.go`) and `integration/validate/manifests/` (e.g. `valid-movies.yml`) — they assert
-   manifest parsing
--- `samples/golang/go.mod`
- 
- ## WORKFLOW
- 
-```
-
-**File**: `cmd/up/build_test.go` (modified, +29/-0)
-```diff
-@@ -152,6 +152,35 @@ func TestUpBuilder_Build(t *testing.T) {
- 	}
+@@ -53,6 +53,7 @@ import (
+ 	modelutils "github.com/okteto/okteto/pkg/model/utils"
+ 	"github.com/okteto/okteto/pkg/okteto"
+ 	oktetoPath "github.com/okteto/okteto/pkg/path"
++	"github.com/okteto/okteto/pkg/remote"
+ 	"github.com/okteto/okteto/pkg/repository"
+ 	"github.com/okteto/okteto/pkg/types"
+ 	"github.com/okteto/okteto/pkg/validator"
+@@ -104,6 +105,9 @@ type Options struct {
+ 	// catalogSecretVariablesToForward are the catalog secret variables remote-run gets the values of. They are empty
+ 	// when the deploy commands need none
+ 	catalogSecretVariablesToForward catalog.SecretVariables
++	// GitCredentialsEndpoint is the URL the Git credential helper gets the credentials from that Okteto sets on its
++	// installer. It is read from the env before any variable is loaded
++	GitCredentialsEndpoint string
  }
  
-+// regexBuilder resolves the build service with the real builder, so the tests cover the syntax of the inferred image
-+type regexBuilder struct {
-+	*fakeBuilder
-+}
-+
-+func (regexBuilder) GetSvcToBuildFromRegex(manifest *model.Manifest, imgFinder model.ImageFromManifest) (string, error) {
-+	return (&buildv2.OktetoBuilder{}).GetSvcToBuildFromRegex(manifest, imgFinder)
-+}
-+
-+func TestUpBuilder_BuildsSameNameBuildForAutocreateWithoutImage(t *testing.T) {
-+	dev := &model.Dev{Name: "my-api", Autocreate: true}
-+	manifest := &model.Manifest{
-+		Build: build.ManifestBuild{
-+			"my-api": {Context: "."},
-+		},
-+		Dev: map[string]*model.Dev{
-+			"my-api": dev,
-+		},
-+	}
-+	builder := &fakeBuilder{services: []string{"my-api"}}
-+	ub := newUpBuilder(manifest, "my-api", regexBuilder{builder}, &fakeRegistry{}, analytics.NewUpMetricsMetadata())
-+
-+	require.NoError(t, resolveAutocreateImage(manifest, "my-api"))
-+	require.NoError(t, ub.build(context.Background()))
-+
-+	require.NotNil(t, builder.usedBuildOptions)
-+	require.Equal(t, []string{"my-api"}, builder.usedBuildOptions.CommandArgs)
-+}
-+
- func TestGetBuildServiceFromImage(t *testing.T) {
- 	tests := []struct {
- 		name        string
-```
-
-**File**: `cmd/up/up.go` (modified, +20/-0)
-```diff
-@@ -298,6 +298,10 @@ okteto up api -- echo this is a test
- 				return fmt.Errorf("error in 'dev' section of your manifest: %w", err)
+ type builderInterface interface {
+@@ -223,6 +227,7 @@ $ okteto deploy --no-build=true`,
+ 				return fmt.Errorf("'dependencies' is only supported in contexts that have Okteto installed")
  			}
  
-+			if err := resolveAutocreateImage(oktetoManifest, argsparserResult.DevName); err != nil {
-+				return err
-+			}
-+
- 			up.Dev = dev
- 
- 			// only if the context is an okteto one, we should verify if the namespace has to be woken up
-@@ -390,6 +394,22 @@ okteto up api -- echo this is a test
- 	return cmd
- }
- 
-+// resolveAutocreateImage makes sure an 'autocreate' development container has an image.
-+// If it doesn't define one, it uses the image of the 'build' entry with the same manifest key, which the upBuilder
-+// resolves, and builds if needed, later on. Otherwise it returns an error:
-+// Okteto never deploys a default image the user hasn't explicitly configured.
-+func resolveAutocreateImage(manifest *model.Manifest, devName string) error {
-+	manifest.InferAutocreateImageFromBuild(devName)
-+	dev, ok := manifest.Dev[devName]
-+	if !ok || !dev.Autocreate || dev.Image != "" {
-+		return nil
-+	}
-+	return oktetoErrors.UserError{
-+		E:    fmt.Errorf("'image' is required for development container '%s' when 'autocreate' is enabled", dev.Name),
-+		Hint: "Set the 'image' field of your development container in your Okteto manifest, or define a 'build' entry with the same name as the development container.\n    More information is available here: https://www.okteto.com/docs/reference/okteto-manifest/#image-string-optional",
-+	}
-+}
-+
- func loadManifestOverrides(dev *model.Dev, upOptions *Options) error {
- 	if upOptions.Remote > 0 {
- 		dev.RemotePort = upOptions.Remote
++			options.GitCredentialsEndpoint = remote.GitCredentialsEndpointFromEnv()
+ 			if err := readCatalogSecretVariablesAndSetVariables(options, os.Setenv); err != nil {
+ 				return err
+ 			}
 ```
 
-**File**: `cmd/up/up_test.go` (modified, +66/-0)
+**File**: `cmd/deploy/remote.go` (modified, +1/-0)
 ```diff
-@@ -21,6 +21,7 @@ import (
- 
- 	"github.com/okteto/okteto/internal/test"
- 	"github.com/okteto/okteto/internal/test/client"
-+	"github.com/okteto/okteto/pkg/build"
- 	buildCmd "github.com/okteto/okteto/pkg/cmd/build"
- 	"github.com/okteto/okteto/pkg/constants"
- 	"github.com/okteto/okteto/pkg/env"
-@@ -651,3 +652,68 @@ func (fb *fakeBuilder) GetSvcToBuildFromRegex(_ *model.Manifest, _ model.ImageFr
- func (*fakeBuilder) GetConnector() buildCmd.BuildkitConnector {
- 	return nil
+@@ -157,6 +157,7 @@ func (rd *remoteDeployer) Deploy(ctx context.Context, deployOptions *Options) er
+ 		UseOktetoDeployIgnoreFile:   true,
+ 		ContextAbsolutePathOverride: ctxPath,
+ 		Secrets:                     deployOptions.catalogSecretVariablesToForward.RemoteRunSecrets(),
++		GitCredentialsEndpoint:      deployOptions.GitCredentialsEndpoint,
+ 	}
+ 	for k, v := range deployable.GetGatewayEnvironment() {
+ 		runParams.OktetoCommandSpecificEnvVars[k] = v
+```
+
+**File**: `cmd/deploy/remote_test.go` (modified, +29/-0)
+```diff
+@@ -561,3 +561,32 @@ func TestDeployRemoteForwardsTheCatalogSecretVariablesToRemoteRun(t *testing.T)
+ 	require.Equal(t, expected, params.CommandFlags)
+ 	require.Equal(t, []remote.FileSecret{{ID: catalog.SecretVariablesTokenSecretID, Path: "/run/secrets/catalog-secret-variables/token"}}, params.Secrets)
  }
 +
-+func TestResolveAutocreateImageFailsWithoutImageAndSameNameBuild(t *testing.T) {
-+	dev := &model.Dev{Name: "api", Autocreate: true}
++func TestDeployRemoteForwardsTheGitCredentialsEndpointToRemoteRun(t *testing.T) {
 +	manifest := &model.Manifest{
-+		Build: build.ManifestBuild{
-+			"other": {Context: "."},
++		Deploy: &model.DeployInfo{
++			Commands: []model.DeployCommand{{Name: "command 1", Command: "test-command"}},
 +		},
-+		Dev: model.ManifestDevs{"api": dev},
++	}
++	var params *remote.Params
++	runner := &fakeRemoteRunner{}
++	runner.On("Run", mock.Anything, mock.Anything).Run(func(args mock.Arguments) {
++		params = args.Get(1).(*remote.Params)
++	}).Return(nil)
++	rd := &remoteDeployer{
++		runner:               runner,
++		workdirCtrl:          fakefs.NewFakeWorkingDirectoryCtrl("/path/to/manifest"),
++		getBuildEnvVars:      func() map[string]string { return nil },
++		getDependencyEnvVars: func(environGetter) map[string]string { return nil },
++	}
++	opts := &Options{
++		Name:                   "test",
++		Manifest:               manifest,
++		GitCredentialsEndpoint: "https://okteto-internal-api.okteto.example:8443/internal/git/credentials",
 +	}
 +
-+	err := resolveAutocreateImage(manifest, "api")
++	err := rd.Deploy(context.Background(), opts)
 +
-+	var userErr oktetoErrors.UserError
-+	require.ErrorAs(t, err, &userErr)
-+	require.Contains(t, userErr.E.Error(), "'image' is required for development container 'api'")
-+	require.Contains(t, userErr.Hint, "define a 'build' entry with the same name as the development container")
-+	require.Contains(t, userErr.Hint, "https://www.okteto.com/docs/reference/okteto-manifest/#image-string-optional")
-+	require.Empty(t, dev.Image)
-+}
-+
-+func TestResolveAutocreateImageUsesSameNameBuild(t *testing.T) {
-+	dev := &model.Dev{Name: "my-api", Autocreate: true}
-+	manifest := &model.Manifest{
-+		Build: build.ManifestBuild{
-+			"my-api": {Context: "."},
-+		},
-+		Dev: model.ManifestDevs{"my-api": dev},
-+	}
-+
-+	require.NoError(t, resolveAutocreateImage(manifest, "my-api"))
-+	require.Equal(t, "${OKTETO_BUILD_MY_API_IMAGE}", dev.Image)
-+}
-+
-+func TestResolveAutocreateImageKeepsExplicitImage(t *testing.T) {
-+	dev := &model.Dev{Name: "api", Autocreate: true, Image: "python:alpine"}
-+	manifest := &model.Manifest{
-+		Dev: model.ManifestDevs{"api": dev},
-+	}
-+
-+	require.NoError(t, resolveAutocreateImage(manifest, "api"))
-+	require.Equal(t, "python:alpine", dev.Image)
-+}
-+
-+func TestResolveAutocreateImageSucceedsWithoutAutocreate(t *testing.T) {
-+	dev := &model.Dev{Name: "api"}
-+	manifest := &model.Manifest{
-+		Dev: model.ManifestDevs{"api": dev},
-+	}
-+
-+	require.NoError(t, resolveAutocreateImage(manifest, "api"))
-+	require.Empty(t, dev.Image)
-+}
-+
-+func TestResolveAutocreateImageUsesManifestKeyWhenDevNameDiffers(t *testing.T) {
-+	dev := &model.Dev{Name: "backend", Autocreate: true}
-+	manifest := &model.Manifest{
-+		Build: build.ManifestBuild{
-+			"api": {Context: "."},
-+		},
-+		Dev: model.ManifestDevs{"api": dev},
-+	}
-+
-+	require.NoError(t, resolveAutocreateImage(manifest, "api"))
-+	require.Equal(t, "${OKTETO_BUILD_API_IMAGE}", dev.Image)
++	require.NoError(t, err)
++	require.Equal(t, "https://okteto-internal-api.okteto.example:8443/internal/git/credentials", params.GitCredentialsEndpoint)
 +}
 ```
 
-**File**: `pkg/k8s/deployments/crud.go` (modified, +1/-5)
+**File**: `cmd/destroy/destroy.go` (modified, +5/-0)
 ```diff
-@@ -40,10 +40,6 @@ type patchAnnotations struct {
+@@ -47,6 +47,7 @@ import (
+ 	"github.com/okteto/okteto/pkg/model"
+ 	"github.com/okteto/okteto/pkg/okteto"
+ 	oktetoPath "github.com/okteto/okteto/pkg/path"
++	"github.com/okteto/okteto/pkg/remote"
+ 	"github.com/okteto/okteto/pkg/types"
+ 	"github.com/okteto/okteto/pkg/validator"
+ 	"github.com/spf13/afero"
+@@ -110,6 +111,9 @@ type Options struct {
+ 	// catalogSecretVariablesToForward are the catalog secret variables remote-run gets the values of. They are empty
+ 	// when the destroy commands need none
+ 	catalogSecretVariablesToForward catalog.SecretVariables
++	// GitCredentialsEndpoint is the URL the Git credential helper gets the credentials from that Okteto sets on its
++	// installer. It is read from the env before any variable is loaded
++	GitCredentialsEndpoint string
+ }
  
- // Sandbox returns a base deployment for a dev
- func Sandbox(dev *model.Dev, namespace string) *appsv1.Deployment {
--	image := dev.Image
--	if image == "" {
--		image = model.DefaultImage
--	}
- 	return &appsv1.Deployment{
- 		ObjectMeta: metav1.ObjectMeta{
- 			Name:      dev.Name,
-@@ -79,7 +75,7 @@ func Sandbox(dev *model.Dev, namespace string) *appsv1.Deployment {
- 					Containers: []apiv1.Container{
- 						{
- 							Name:            "dev",
--							Image:           image,
-+							Image:           dev.Image,
- 							ImagePullPolicy: apiv1.PullAlways,
- 						},
- 					},
-```
-
-**File**: `pkg/k8s/statefulsets/crud.go` (modified, +1/-5)
-```diff
-@@ -39,10 +39,6 @@ type patchAnnotations struct {
+ type destroyInterface interface {
+@@ -162,6 +166,7 @@ If you need to destroy external resources (like s3 buckets or other Cloud resour
+ 		Args: utils.NoArgsAccepted("https://okteto.com/docs/reference/okteto-cli/#destroy"),
+ 		RunE: func(cmd *cobra.Command, args []string) error {
+ 			readCatalogSecretVariables(options)
++			options.GitCredentialsEndpoint = remote.GitCredentialsEndpointFromEnv()
  
- // Sandbox returns a default statefulset for a given dev
- func Sandbox(dev *model.Dev, namespace string) *appsv1.StatefulSet {
--	image := dev.Image
--	if image == "" {
--		image = model.DefaultImage
--	}
- 	return &appsv1.StatefulSet{
- 		ObjectMeta: metav1.ObjectMeta{
- 			Name:        dev.Name,
-@@ -74,7 +70,7 @@ func Sandbox(dev *model.Dev, namespace string) *appsv1.StatefulSet {
- 					Containers: []apiv1.Container{
- 						{
- 							Name:            "dev",
--							Image:           image,
-+							Image:           dev.Image,
- 							ImagePullPolicy: apiv1.PullAlways,
- 						},
- 					},
+ 			options.RunInRemoteSet = cmd.Flags().Changed("remote")
+ 
 ```
 
-**File**: `pkg/linguist/dev.go` (removed, +0/-330)
+**File**: `cmd/destroy/remote.go` (modified, +1/-0)
 ```diff
-@@ -1,330 +0,0 @@
--// Copyright 2023 The Okteto Authors
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--// http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package linguist
--
--import (
--	"sort"
--	"strings"
--
--	"github.com/okteto/okteto/pkg/env"
--	"github.com/okteto/okteto/pkg/model"
--	"github.com/okteto/okteto/pkg/model/forward"
--	apiv1 "k8s.io/api/core/v1"
--)
--
--type languageDefault struct {
--	securityContext *model.SecurityContext
--	image           string
--	path            string
--	command         []string
--	environment     []env.Var
--	volumes         []model.Volume
--	forward         []forward.Forward
--	reverse         []model.Reverse
--	remote          int
--}
--
--const (
--	Javascript = "javascript"
--	golang     = "go"
--	Python     = "python"
--	Gradle     = "gradle"
--	Maven      = "maven"
--	Java       = "java"
--	Ruby       = "ruby"
--	Csharp     = "csharp"
--	Php        = "php"
--	Rust       = "rust"
--
--	// Unrecognized is the option returned when the linguist couldn't detect a language
--	Unrecognized = "other"
--)
--
--var (
--	languageDefaults map[string]languageDefault
--	forwardDefaults  map[string][]forward.Forward
--)
--
--func init() {
--	languageDefaults = make(map[string]languageDefault)
--	forwardDefaults = make(map[string][]forward.Forward)
--	languageDefaults[Javascript] = languageDefault{
--		image:   "okteto/node:14",
--		path:    "/usr/src/app",
--		command: []string{"bash"}, forward: []forward.Forward{
--			{
--				Local:  9229,
--				Remote: 9229,
--			},
--		},
--	}
--	forwardDefaults[Javascript] = []forward.Forward{
--		{
--			Local:  3000,
--			Remote: 3000,
--		},
--	}
--
--	languageDefaults[golang] = languageDefault{
--		image:   "okteto/golang:1",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		securityContext: &model.SecurityContext{
--			Capabilities: &model.Capabilities{
--				Add: []apiv1.Capability{"SYS_PTRACE"},
--			},
--		},
--		forward: []forward.Forward{
--			{
--				Local:  2345,
--				Remote: 2345,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/go/pkg/",
--			},
--			{
--				RemotePath: "/root/.cache/go-build/",
--			},
--		},
--	}
--	forwardDefaults[golang] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Rust] = languageDefault{
--		image:   "okteto/rust:1",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/usr/local/cargo/registry",
--			},
--			{
--				RemotePath: "/home/root/app/target",
--			},
--		},
--	}
--	forwardDefaults[Rust] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Python] = languageDefault{
--		image:   "okteto/python:3",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		reverse: []model.Reverse{
--			{
--				Local:  9000,
--				Remote: 9000,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/root/.cache/pip",
--			},
--		},
--	}
--	forwardDefaults[Python] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Gradle] = languageDefault{
--		image:   "okteto/gradle:6.5",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		forward: []forward.Forward{
--			{
--				Local:  5005,
--				Remote: 5005,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/home/gradle/.gradle",
--			},
--		},
--	}
--	forwardDefaults[Gradle] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Maven] = languageDefault{
--		image:   "okteto/maven:3",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		forward: []forward.Forward{
--			{
--				Local:  5005,
--				Remote: 5005,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/root/.m2",
--			},
--		},
--	}
--	forwardDefaults[Maven] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Ruby] = languageDefault{
--		image:   "okteto/ruby:2",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		forward: []forward.Forward{
--			{
--				Local:  1234,
--				Remote: 1234,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/usr/local/bundle/cache",
--			},
--		},
--	}
--	forwardDefaults[Ruby] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Csharp] = languageDefault{
--		image:   "okteto/dotnetcore:3",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		environment: []env.Var{
--			{
--				Name:  "ASPNETCORE_ENVIRONMENT",
--				Value: "Development",
--			},
--			{
--				Name:  "VSTEST_HOST_DEBUG",
--				Value: "0",
--			},
--			{
--				Name:  "
+@@ -151,6 +151,7 @@ func (rd *remoteDestroyCommand) Destroy(ctx context.Context, opts *Options) erro
+ 		UseOktetoDeployIgnoreFile:   true,
+ 		ContextAbsolutePathOverride: ctxPath,
+ 		Secrets:                     opts.catalogSecretVariablesToForward.RemoteRunSecrets(),
++		GitCredentialsEndpoint:      opts.GitCredentialsEndpoint,
+ 	}
+ 	for k, v := range deployable.GetGatewayEnvironment() {
+ 		runParams.OktetoCommandSpecificEnvVars[k] = v
 ```
 
-**File**: `pkg/linguist/languages.go` (added, +69/-0)
+**File**: `cmd/destroy/remote_test.go` (modified, +27/-0)
 ```diff
-@@ -0,0 +1,69 @@
-+// Copyright 2023 The Okteto Authors
+@@ -355,6 +355,33 @@ func TestDestroyRemoteForwardsTheCatalogSecretVariablesToRemoteRun(t *testing.T)
+ 	require.Equal(t, []remote.FileSecret{{ID: catalog.SecretVariablesTokenSecretID, Path: "/run/secrets/catalog-secret-variables/token"}}, params.Secrets)
+ }
+ 
++func TestDestroyRemoteForwardsTheGitCredentialsEndpointToRemoteRun(t *testing.T) {
++	manifest := &model.Manifest{
++		Destroy: &model.DestroyInfo{
++			Commands: []model.DeployCommand{{Name: "command 1", Command: "test-command"}},
++		},
++	}
++	var params *remote.Params
++	runner := &fakeRemoteRunner{}
++	runner.On("Run", mock.Anything, mock.Anything).Run(func(args mock.Arguments) {
++		params = args.Get(1).(*remote.Params)
++	}).Return(nil)
++	rd := &remoteDestroyCommand{
++		runner:      runner,
++		workdirCtrl: fakefs.NewFakeWorkingDirectoryCtrl("/path/to/manifest"),
++	}
++	opts := &Options{
++		Name:                   "test",
++		Manifest:               manifest,
++		GitCredentialsEndpoint: "https://okteto-internal-api.okteto.example:8443/internal/git/credentials",
++	}
++
++	err := rd.Destroy(context.Background(), opts)
++
++	require.NoError(t, err)
++	require.Equal(t, "https://okteto-internal-api.okteto.example:8443/internal/git/credentials", params.GitCredentialsEndpoint)
++}
++
+ func TestDestroyRemoteWithError(t *testing.T) {
+ 	workdirCtrl := fakefs.NewFakeWorkingDirectoryCtrl("/path/to/manifest")
+ 	manifest := &model.Manifest{
+```
+
+**File**: `cmd/gitcredential/client.go` (added, +157/-0)
+```diff
+@@ -0,0 +1,157 @@
++// Copyright 2026 The Okteto Authors
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
@@ -2040,71 +1735,313 @@ section, or a non-Okteto context failed even though t
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package linguist
++package gitcredential
 +
 +import (
-+	"strings"
++	"context"
++	"crypto/x509"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"io"
++	"net/http"
++	"net/url"
++	"os"
++	"time"
++
++	"github.com/okteto/okteto/pkg/constants"
++	"github.com/okteto/okteto/pkg/model"
++	"github.com/okteto/okteto/pkg/okteto"
 +)
 +
 +const (
-+	Javascript = "javascript"
-+	golang     = "go"
-+	Python     = "python"
-+	Gradle     = "gradle"
-+	Maven      = "maven"
-+	Java       = "java"
-+	Ruby       = "ruby"
-+	Csharp     = "csharp"
-+	Php        = "php"
-+	Rust       = "rust"
++	hostQueryParam       = "host"
++	repositoryQueryParam = "repository"
 +
-+	// Unrecognized is the option returned when the linguist couldn't detect a language
-+	Unrecognized = "other"
++	// maxResponseSize caps what the helper reads from the endpoint, whose answer is a few short fields
++	maxResponseSize = 64 << 10
 +)
 +
-+// GetSupportedLanguages returns a list of supported languages, sorted alphabetically and with Unrecognized at the end
-+func GetSupportedLanguages() []string {
-+	return []string{Csharp, golang, Gradle, Javascript, Maven, Php, Python, Ruby, Rust, Unrecognized}
++var (
++	// errEndpointNotSet means the helper runs outside an Okteto installer and its remote runs,
++	// where there are no credentials to give
++	errEndpointNotSet = fmt.Errorf("%s is not set", constants.OktetoGitCredentialsEndpointEnvVar)
++	errTokenNotSet    = fmt.Errorf("%s is not set", model.OktetoTokenEnvVar)
++)
++
++// gitCredentials are the credentials Okteto gives for a Git repository.
++// Without credentials, Password is empty and Reason says why
++type gitCredentials struct {
++	// ExpiresAt is zero when the expiry is unknown
++	ExpiresAt time.Time
++	Username  string
++	Password  string
++	// Reason is a sentence for the user, set when there are no credentials
++	Reason string
 +}
 +
-+func NormalizeLanguage(language string) string {
-+	lower := strings.ToLower(language)
-+	switch lower {
-+	case "typescript", "javascript", "jsx", "node", "tsx":
-+		return Javascript
-+	case "python":
-+		return Python
-+	case "java":
-+		return Gradle
-+	case "gradle":
-+		return Gradle
-+	case "maven":
-+		return Maven
-+	case "ruby":
-+		return Ruby
-+	case "go", "golang":
-+		return golang
-+	case "c#":
-+		return Csharp
-+	case "csharp":
-+		return Csharp
-+	case "php":
-+		return Php
-+	case "rust":
-+		return Rust
-+	default:
-+		return Unrecognized
-+	}
++// credentialsResponse is the body of the endpoint's 200 answer: the credentials, or only the reason
++type credentialsResponse struct {
++	Username  string `json:"username"`
++	Password  string `json:"password"`
++	ExpiresAt string `json:"expiresAt"`
++	Reason    string `json:"reason"`
 +}
++
++// endpointClient asks the endpoint that Okteto sets in its installer and remote runs for the credentials
++type endpointClient struct {
++	httpClient *http.Client
++	endpoint   *url.URL
++	token      string
++}
++
++// newGetterFromEnv returns the client for the endpoint in OKTETO_GIT_CREDENTIALS_ENDPOINT, the
++// internal IP of the Okteto API in OKTETO_INTERNAL_API_IP and the token in OKTETO_TOKEN. The
++// endpoint only answers inside the cluster, so it doesn't load an Okteto context.
++func newGetterFromEnv() (credentialsGetter, error) {
++	return newGetter(
++		os.Getenv(constants.OktetoGitCredentialsEndpointEnvVar),
++		os.Getenv(constants.OktetoInternalAPIIPEnvVar),
++		os.Getenv(model.OktetoTokenEnvVar),
++	)
++}
++
++// newGetter only sends the token over https to internalAPIIP, never to the address public DNS gives
++// for the endpoint's hostname, which is the ingress, where any user can serve it. certs are trusted
++// on top of the system pool
++func newGetter(endpoint, internalAPIIP, token string, certs ...*x509.Certificate) (credentialsGetter, error) {
++	if endpoint == "" {
++		return nil, errEndpointNotSet
++	}
++	httpClient, err := okteto.NewInternalAPIHTTPClient(endpoint, internalAPIIP, certs...)
++	if errors.Is(err, okteto.ErrInvalidInternalAPIIP) {
++		return nil, fmt.Errorf("%w (%s)", err, constants.OktetoInternalAPIIPEnvVar)
++	}
++	if err != nil {
++		return nil, err
++	}
++	u, err := url.Parse(endpoint)
++	if err != nil {
++		return nil, err
++	}
++	if token == "" {
++		return nil, errTokenNotSet
++	}
++	return &endpointClient{
++		httpClient: httpClient,
++		endpoint:   u,
++		token:      token,
++	}, nil
++}
++
++// GetGitCredentials returns the credentials Okteto gives for a repository ("owner/repo") of a Git host.
++// Without credentials, the endpoint explains why in Reason.
++func (c *endpointClient) GetGitCredentials(ctx context.Context, host, repository string) (gitCredentials, error) {
++	u := *c.endpoint
++	query := u.Query()
++	query.Set(hostQueryParam, host)
++	query.Set(repositoryQueryParam, repository)
++	u.RawQuery = query.Encode()
++
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
++	if err != nil {
++		return gitCredentials{}, err
++	}
++	req.Header.Set("Authorization", "Bearer "+c.token)
++
++	resp, err := c.httpClient.Do(req)
++	if err != nil {
++		return gitCredentials{}, fmt.Errorf("could not reach the Okteto API: %w", err)
++	}
++	defer func() {
++		_ = resp.Body.Close()
++	}()
++
++	// The endpoint answers its errors without a body
++	if resp.StatusCode != http.StatusOK {
++		return gitCredentials{}, fmt.Errorf("the Okteto API answered %s", resp.Status)
++	}
++
++	var body credentialsResponse
++	if err := json.NewDecoder(io.LimitReader(resp.Body, maxResponseSize)).Decode(&body); err != nil {
++		return gitCredentials{}, errors.New("could not read the answer of the Okteto API")
++	}
++
++	creds := gitCredentials{
++		Username: body.Username,
++		Passwo
+```
+
+**File**: `cmd/gitcredential/client_test.go` (added, +325/-0)
+```diff
+@@ -0,0 +1,325 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package gitcredential
++
++import (
++	"context"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/okteto/okteto/pkg/constants"
++	"github.com/okteto/okteto/pkg/model"
++	"github.com/okteto/okteto/pkg/okteto"
++	"github.com/stretchr/testify/require"
++)
++
++const (
++	credentialsResponseBody = `{"username":"x-access-token","password":"token","expiresAt":"2099-01-01T00:00:00Z"}`
++
++	internalAPIEndpoint = "https://okteto-internal-api.example.com:8443/internal/git/credentials"
++	internalAPIIP       = "10.20.30.40"
++
++	// fakeEndpointIP is the IP httptest's TLS servers listen on
++	fakeEndpointIP = "127.0.0.1"
++)
++
++// receivedRequest is what the fake endpoint got
++type receivedRequest struct {
++	method        string
++	path          string
++	host          string
++	repository    string
++	authorization string
++}
++
++// fakeEndpoint answers every request with status and body, and records the last request in received
++func fakeEndpoint(t *testing.T, status int, body string, received *receivedRequest) *httptest.Server {
++	t.Helper()
++	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		*received = receivedRequest{
++			method:        r.Method,
++			path:          r.URL.Path,
++			host:          r.URL.Query().Get(hostQueryParam),
++			repository:    r.URL.Query().Get(repositoryQueryParam),
++			authorization: r.Header.Get("Authorization"),
++		}
++		w.WriteHeader(status)
++		_, _ = w.Write([]byte(body))
++	}))
++	t.Cleanup(server.Close)
++	return server
++}
++
++// fakeEndpointURL is the endpoint of the fake server on example.com, a hostname its certificate is
++// valid for. The helper connects to fakeEndpointIP instead of resolving it
++func fakeEndpointURL(t *testing.T, server *httptest.Server) string {
++	t.Helper()
++	return "https://example.com:" + mustParseURL(t, server.URL).Port() + "/internal/git/credentials"
++}
++
++func mustParseURL(t *testing.T, raw string) *url.URL {
++	t.Helper()
++	u, err := url.Parse(raw)
++	require.NoError(t, err)
++	return u
++}
++
++func setEndpointEnv(t *testing.T, endpoint, ip, token string) {
++	t.Helper()
++	t.Setenv(constants.OktetoGitCredentialsEndpointEnvVar, endpoint)
++	t.Setenv(constants.OktetoInternalAPIIPEnvVar, ip)
++	t.Setenv(model.OktetoTokenEnvVar, token)
++}
++
++func TestNewGetterFromEnv(t *testing.T) {
++	tests := []struct {
++		expectedErr error
++		name        string
++		endpoint    string
++		ip          string
++		token       string
++	}{
++		{
++			name:        "no endpoint",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: errEndpointNotSet,
++		},
++		{
++			name:        "http endpoint",
++			endpoint:    "http://okteto-internal-api.example.com:8080/internal/git/credentials",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIEndpoint,
++		},
++		{
++			name:        "endpoint without a scheme",
++			endpoint:    "okteto-internal-api.example.com:8443/internal/git/credentials",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIEndpoint,
++		},
++		{
++			name:        "endpoint with another scheme",
++			endpoint:    "ftp://okteto-internal-api.example.com/internal/git/credentials",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIEndpoint,
++		},
++		{
++			name:        "endpoint that isn't a URL",
++			endpoint:    "https://okteto-internal-api.example.com:port/internal",
++			ip:          internalAPIIP,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIEndpoint,
++		},
++		{
++			name:        "no internal IP of the API",
++			endpoint:    internalAPIEndpoint,
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIIP,
++		},
++		{
++			name:        "internal IP of the API that is a hostname",
++			endpoint:    internalAPIEndpoint,
++			ip:          "okteto-internal-api.example.com",
++			token:       "okteto-token",
++			expectedErr: okteto.ErrInvalidInternalAPIIP,
++		},
++		{
++			name:        "no token",
++			endpoint:    internalAPIEndpoint,
++			ip:          internalAPIIP,
++			expectedErr: errTokenNotSet,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			setEndpointEnv(t, tt.endpoint, tt.ip, tt.token)
++
++			_, err := newGetterFromEnv()
++
++			requi
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5289** (2026-11-25): PROD-561: Select the test containers to run with profiles in okteto test (@ifbyol)
 - **PR #5286** (2026-11-23): docs: update the links to the docs and use the short anchors of the Okteto Manifest reference (@pchico83)
 - **PR #5285** (2026-11-23): chore(deps): Update k8s.io/utils digest to ca04ba5 (@oktetobot)
 - **PR #5284** (closed): docs: point the CLI messages and the README to the current docs pages (@pchico83)
 - **PR #5282** (2026-11-24): fix(up)!: require 'image' when 'autocreate' is enabled (@pchico83)
 - **PR #5281** (2026-11-20): Upgrade buildkit dependency to v0.35.1-okteto1 (@devin-ai-integration[bot])
-- **PR #5280** (closed): chore(deps): Update module sigs.k8s.io/kustomize/kyaml to v0.21.3 (@oktetobot)
 
 ---
 
@@ -2124,32 +2061,35 @@ section, or a non-Okteto context failed even though t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. up)!: require 'image' when 'autocreate' is enabled
+## X. add okteto git-credential and set it up in remote runs (ENG-23)
 
 **RULE**:
-When implementing operations in `.claude/skills/upgrade-go-version/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/deploy/deploy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18603d50`: up)!: require 'image' when 'autocreate' is enabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0803f04`: add okteto git-credential and set it up in remote runs (ENG-23). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/upgrade-go-version/SKILL.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/deploy/deploy.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- `okteto/golang:1` floating tags (`okteto.yml` `dev`)
+	"github.com/okteto/okteto/pkg/remote"
+	// GitCredentialsEndpoint is the URL the Git credential helper gets the credentials from that Okteto sets on its
+	// installer. It is read from the env before any variable is loaded
+	GitCredentialsEndpoint string
+			options.GitCredentialsEndpoint = remote.GitCredentialsEndpointFromEnv()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- `okteto/golang:1` floating tags (`okteto.yml` `dev`, `samples/`, `pkg/linguist/dev.go`)
-- `samples/golang/go.mod`
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18603d50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0803f04` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

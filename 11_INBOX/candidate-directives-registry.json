@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T14:33:55.202Z",
+  "last_updated": "2026-11-26T14:44:48.163Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3601,13 +3601,13 @@
       "learning_id": "learn-github-nucleoidai-nucleoid"
     },
     {
-      "id": "CD-4GL9",
+      "id": "CD-YWF4",
       "directive_title": "Empirical Invariant Guard in ci.yml",
-      "source_repo": "aleo-labs-protocol/snarkOS",
-      "source_commit": "f2c57796",
-      "staged_file": "11_INBOX/candidate-directives/CD-4GL9-empirical-invariant-guard-in-ci-yml.md",
-      "status": "STAGED_FOR_REVIEW",
-      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "source_repo": "aleo-labs-protocol-snarkos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YWF4-empirical-invariant-guard-in-ci-yml.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "D"
     },
@@ -65479,6 +65479,35 @@
       "source_repo": "jithin-sabu-purge-app",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-87EA80-guide-every-trip-to-system-settings-with.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-YVK3",
+      "directive_title": "add okteto git-credential and set it up in remote runs (ENG-23)",
+      "source_repo": "okteto-okteto-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YVK3-add-okteto-git-credential-and-set-it-up-in-remote-runs-eng-23.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-7F26D1",
+      "directive_title": "add okteto git-credential and set it up in remote runs (ENG-23)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "okteto-okteto",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7F26D1-add-okteto-git-credential-and-set-it-up-.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-CA96B1",
+      "directive_title": "Empirical Invariant Guard in ci.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CA96B1-empirical-invariant-guard-in-ci-yml.md",
       "staged_date": "2026-11-26"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T14:33:49.108Z",
+  "last_updated": "2026-11-26T14:44:42.016Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -635,14 +635,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "content_hash": "bf3d2640ecf5256794b1d0f622e0d42697c3adfbb702b39650098987098e821b",
-      "verified_at": "2026-11-22T21:48:53.408Z",
+      "content_hash": "4f380e66b1f7345cf40dd579dc24e4ea7ac08c365a24f57c3e2e6752dcc6f075",
+      "verified_at": "2026-11-26T14:44:28.849Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:48:53.408Z"
+      "last_updated": "2026-11-26T14:44:28.849Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "a07c33fe08d7799ce692a7834d45a2312c7c455c0d32f9e283be00a95ab96790",
-      "verified_at": "2026-11-26T12:29:09.280Z",
+      "content_hash": "5527c92c32c24896e10268d88ace457014665aef42881a4a067d52f26db32a0f",
+      "verified_at": "2026-11-26T14:44:42.016Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T12:29:09.280Z"
+      "last_updated": "2026-11-26T14:44:42.016Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "6afae6b4961df3890fdbf687e462e77366de967ef155f5ca144726688490a235",
-      "verified_at": "2026-11-25T14:32:27.026Z",
+      "content_hash": "c5b901a9ba23c2d9c09796c35de3d6b2de685be444f3428aa098f86a530bc0d4",
+      "verified_at": "2026-11-26T14:44:39.139Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T14:32:27.026Z"
+      "last_updated": "2026-11-26T14:44:39.139Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
