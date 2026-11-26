@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T10:19:29.847Z",
-  "total_cycles_completed": 12654,
-  "total_learnings_persisted": 12654,
-  "total_rules_promoted": 11545,
+  "last_updated": "2026-11-26T10:30:54.080Z",
+  "total_cycles_completed": 12656,
+  "total_learnings_persisted": 12656,
+  "total_rules_promoted": 11546,
   "history": [
-    {
-      "timestamp": "2026-11-25T15:07:21.013Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T15:15:48.412Z",
-      "repository": "xiaomi-research/Xiaomi-OCR-0",
-      "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T15:21:27.847Z",
       "repository": "sensenova/SenseNova-Loop-9B-Preview",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T10:19:29.847Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:30:51.227Z",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:30:54.080Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

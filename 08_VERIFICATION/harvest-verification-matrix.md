@@ -13335,3 +13335,5 @@
 | `CYCLE-20261126-HKAK` | `2026-11-26T10:19:22.748Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10646` | Yes (`668b0ede...`) |
 | `CYCLE-20261126-HMAE` | `2026-11-26T10:19:25.334Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10647` | Yes (`50e519a2...`) |
 | `CYCLE-20261126-HPRA` | `2026-11-26T10:19:29.830Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10648` | Yes (`8c5e26a4...`) |
+| `CYCLE-20261126-WBIF` | `2026-11-26T10:30:51.207Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`8141eae3...`) |
+| `CYCLE-20261126-WDPN` | `2026-11-26T10:30:54.059Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10649` | Yes (`37cf85b8...`) |

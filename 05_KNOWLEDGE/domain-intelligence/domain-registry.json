@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T10:19:35.793Z",
+  "last_updated": "2026-11-26T10:31:05.518Z",
   "total_records": 2733,
   "domains": {
     "A": {
@@ -9466,8 +9466,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "2c9443e9f1a08a4be98063a391d85a7fde2482e55ab68bfb597d4c5fc73a5627",
-      "created_at": "2026-11-26T07:40:25.387Z"
+      "content_hash": "7619893b81068ea6f0a046c7f8cd549d2b7bec068e72b5de1a19ca6862837805",
+      "created_at": "2026-11-26T10:31:05.518Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17711,8 +17711,8 @@
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "repository": "apache/arrow",
-      "content_hash": "30936ba74ed0f489be0070c8e2d9230aed12bc7c250533f669dc4ac55284d81a",
-      "created_at": "2026-11-25T03:05:09.802Z"
+      "content_hash": "421c7a2a6463a4704e82f5af0730aa7dfd2f3d8dcc410b95b03b5b2d4aa379ab",
+      "created_at": "2026-11-26T10:30:54.682Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants",
@@ -17729,8 +17729,8 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-learnings-content-information-intelligence-apache-arrow-learnings-c.md",
       "repository": "apache-arrow-learnings",
-      "content_hash": "0ebb97459e2aff361cedaf7f375fb3739c29ed03358ce8858793cdaa08904e91",
-      "created_at": "2026-11-25T03:05:20.304Z"
+      "content_hash": "dcfb5292b04cddc82925c6955229dde0e15a173332984d74f57182c82e2cec65",
+      "created_at": "2026-11-26T10:31:03.613Z"
     },
     "DOM-D-A21D48E1": {
       "record_id": "DOM-D-A21D48E1",
@@ -29719,8 +29719,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-dev Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-dev-research-knowledge-intelligence-black-forest-lab.md",
       "repository": "black-forest-labs/FLUX.1-dev",
-      "content_hash": "72b2e7d3861fa3c3413bd492de231d950bdb7b2bd6947d7145c0189543fc0da1",
-      "created_at": "2026-11-22T17:35:15.073Z"
+      "content_hash": "e2507c74e0e8ff086aa86d4f8a0a093484f90a0d6058b0c4fcb4abc95468bd79",
+      "created_at": "2026-11-26T10:30:51.540Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i",
@@ -29728,8 +29728,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-dev-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-dev-learnings-research-knowledge-intelligence-hf-bla.md",
       "repository": "hf-black-forest-labs-flux.1-dev-learnings",
-      "content_hash": "b979c8caecfbd517d1b71b3231a7f65ebafea1ac405494a59f02c005890a32bf",
-      "created_at": "2026-11-22T17:35:38.023Z"
+      "content_hash": "ee0bd4662a717c6b1b76b9a34ba24c3ed9c72326a6b44e1d0a9cb152a53314a2",
+      "created_at": "2026-11-26T10:31:04.477Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants",

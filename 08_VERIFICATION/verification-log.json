@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-HZ3K",
-    "timestamp": "2026-11-24T19:36:13.808Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "54a3e8e3dd0bb782576c0bcb6b3ae82e15031252918a1fb283f3b88155d63b6a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-T1LC",
-    "timestamp": "2026-11-24T19:44:50.256Z",
-    "repository": "callstack/agent-device",
-    "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "467091c4e33392215177e47c72e6bea562b3338e27de505b7fdb0dcc75fab2ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-T2HN",
     "timestamp": "2026-11-24T19:44:51.419Z",
     "repository": "aio-libs/aiohttp",
@@ -7490,6 +7460,36 @@
     "repository": "trinodb/trino",
     "learningId": "learn-github-trinodb-trino",
     "contentHash": "8c5e26a4fb7dffaa521a4758bd8a3fa0707837265914bea292b6bb89109e285b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WBIF",
+    "timestamp": "2026-11-26T10:30:51.207Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "8141eae3c27c518a213b87bb0e0cf687e8f59f9346791effd95f3f5deed0e33f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WDPN",
+    "timestamp": "2026-11-26T10:30:54.059Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "37cf85b82bd0c44a2ade9cfb87f32da1f028bd181d6eb0023cc3f98cf7f09174",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T10:19:35.996Z",
+  "last_updated": "2026-11-26T10:31:05.800Z",
   "total_verified_learnings": 9126,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25816,
+  "total_items": 25819,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c9443e9f1a08a4be98063a391d85a7fde2482e55ab68bfb597d4c5fc73a5627",
+      "content_hash": "7619893b81068ea6f0a046c7f8cd549d2b7bec068e72b5de1a19ca6862837805",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T07:40:25.387Z"
+      "persisted_at": "2026-11-26T10:31:05.518Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a5d76d81fa7cee58903269bd1ebad1784c0d8f39adadc599d61e9efd822e05c",
+      "content_hash": "bdaa2f4f11a516179c22665d7e623ec56da5c112a0b77e714e7ac97668fca0be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T07:40:25.590Z"
+      "persisted_at": "2026-11-26T10:31:05.800Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -236841,8 +236841,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "fcd7046f",
-      "content_hash": "7f7e42eb1028cd403cbba7d2342620d45f108849f3349a66539672159df5c8ee",
+      "source_version": "dd456e00",
+      "content_hash": "37cf85b82bd0c44a2ade9cfb87f32da1f028bd181d6eb0023cc3f98cf7f09174",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -236885,6 +236885,11 @@
           "number": 10440,
           "title": "[CI] Use newer CMake for macOS wheels that meets minimum requirements",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10649,
+          "title": "[Python] Fix dlpack related deprecation warnings",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236892,7 +236897,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T03:05:08.983Z",
+      "verified_at": "2026-11-26T10:30:53.740Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236934,10 +236939,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "repository": "apache/arrow",
-      "source_version": "fcd7046f",
-      "content_hash": "30936ba74ed0f489be0070c8e2d9230aed12bc7c250533f669dc4ac55284d81a",
+      "source_version": "dd456e00",
+      "content_hash": "421c7a2a6463a4704e82f5af0730aa7dfd2f3d8dcc410b95b03b5b2d4aa379ab",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T03:05:09.802Z"
+      "persisted_at": "2026-11-26T10:30:54.682Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow",
@@ -236946,10 +236951,10 @@
       "relative_path": "08_VERIFICATION/apache-arrow-verification-protocol-empirical-defect-shield-for-apache-arrow.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/arrow",
       "repository": "apache/arrow",
-      "source_version": "fcd7046f",
-      "content_hash": "054787237c6b7e95524c50b9910c0208200a559a9d842042555d87ed960a3e72",
+      "source_version": "dd456e00",
+      "content_hash": "8ede076fecdb3966b9ca6510c1944b572c69e14cbcca65fe87dbf1072e80721f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:05:10.028Z"
+      "persisted_at": "2026-11-26T10:30:54.970Z"
     },
     "learn-github-greptimeteam-greptimedb": {
       "learning_id": "learn-github-greptimeteam-greptimedb",
@@ -237089,9 +237094,9 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ebb97459e2aff361cedaf7f375fb3739c29ed03358ce8858793cdaa08904e91",
+      "content_hash": "dcfb5292b04cddc82925c6955229dde0e15a173332984d74f57182c82e2cec65",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T03:05:20.304Z"
+      "persisted_at": "2026-11-26T10:31:03.613Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings",
@@ -237101,9 +237106,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-arrow-learnings",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d88cd1e4cbb12bd459b4b6b93cc19e7293f4bafeb57f76892e290f6c1721bd2",
+      "content_hash": "65cac3ae2ff8595aeb74191f730d97b5a1052431ba2058800ca4db067313d556",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:05:20.539Z"
+      "persisted_at": "2026-11-26T10:31:03.895Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-",
@@ -284879,7 +284884,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "63c4c2bca01029b0db41fc70066fe24367a8eb0e101c6befd72efbed8d2df0ef",
+      "content_hash": "8141eae3c27c518a213b87bb0e0cf687e8f59f9346791effd95f3f5deed0e33f",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [],
@@ -284888,7 +284893,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T17:35:14.594Z",
+      "verified_at": "2026-11-26T10:30:50.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -284905,9 +284910,9 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-dev Core Invariants",
       "repository": "black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "72b2e7d3861fa3c3413bd492de231d950bdb7b2bd6947d7145c0189543fc0da1",
+      "content_hash": "e2507c74e0e8ff086aa86d4f8a0a093484f90a0d6058b0c4fcb4abc95468bd79",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T17:35:15.073Z"
+      "persisted_at": "2026-11-26T10:30:51.540Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i",
@@ -284917,9 +284922,9 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-dev-learnings Core Invariants",
       "repository": "hf-black-forest-labs-flux.1-dev-learnings",
       "source_version": "HEAD",
-      "content_hash": "b979c8caecfbd517d1b71b3231a7f65ebafea1ac405494a59f02c005890a32bf",
+      "content_hash": "ee0bd4662a717c6b1b76b9a34ba24c3ed9c72326a6b44e1d0a9cb152a53314a2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T17:35:38.023Z"
+      "persisted_at": "2026-11-26T10:31:04.477Z"
     },
     "learn-huggingface-deepseek-ai-deepseek-r1": {
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
@@ -340111,13 +340116,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-T52K-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WMC4-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbef4e89001798c85664798cf86dad2093c81d6811074948a470f50c5ad6a540",
+      "content_hash": "f52544a7c6e83e941b8ff28952de09cede2231f94a9cb6b75b17296145975a99",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T07:40:25.199Z"
+      "persisted_at": "2026-11-26T10:31:05.242Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -353632,6 +353637,44 @@
       "content_hash": "15c2326e778cb73183fcafd27efdc3067af13aff2db408517070dfd52e8364da",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T10:19:35.996Z"
+    },
+    "rule-10649": {
+      "learning_id": "rule-10649",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10649,
+      "title": "[Python] Fix dlpack related deprecation warnings",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "dd456e00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T10:30:53.740Z"
+    },
+    "candidate_directive-python-fix-dlpack-related-deprecation-warnings": {
+      "item_id": "candidate_directive-python-fix-dlpack-related-deprecation-warnings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WDZ2-python-fix-dlpack-related-deprecation-warnings.md",
+      "title": "[Python] Fix dlpack related deprecation warnings",
+      "repository": "apache/arrow",
+      "source_version": "dd456e00",
+      "content_hash": "2b2aa5974392746ec0a7b192fe084ce7b3612ce38b6dfd3e1b02475199e6cd04",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T10:30:54.400Z"
+    },
+    "candidate_directive-gh-51481-python-fix-dlpack-related-deprecation-warnings": {
+      "item_id": "candidate_directive-gh-51481-python-fix-dlpack-related-deprecation-warnings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WKVD-gh-51481-python-fix-dlpack-related-deprecation-warnings.md",
+      "title": "GH-51481: [Python] Fix dlpack related deprecation warnings",
+      "repository": "apache-arrow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "28465cfe908de5df8b03f830c748019e11ac82c1e3c6dd05a7ac281cefe930c3",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T10:31:03.338Z"
     }
   },
   "ai-builder-brain": {

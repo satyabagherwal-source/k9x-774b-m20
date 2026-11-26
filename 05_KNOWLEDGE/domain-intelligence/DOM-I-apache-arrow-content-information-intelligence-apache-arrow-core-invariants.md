@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/arrow",
   "source_url": "https://github.com/apache/arrow",
-  "source_version": "fcd7046f",
+  "source_version": "dd456e00",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T03:05:09.571Z",
+  "timestamp": "2026-11-26T10:30:54.399Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-arrow",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `fcd7046f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T03:05:09.571Z`  
+> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `dd456e00`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T10:30:54.399Z`  
 > **Learning ID**: `learn-github-apache-arrow`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 57%
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/arrow:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T03:05:07.781Z  
+> **Harvest Timestamp**: 2026-11-26T10:30:52.570Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17340 stars
+- **Stars / Engagement**: 17350 stars
 
 ---
 
@@ -1427,65 +1427,116 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d9a573d` (2026-11-24)
-**Commit Message**: GH-55737: [CI] Use newer CMake for macOS wheels that meets minimum requirements (#55739)
+### Incident Patch 1: `88e51545` (2026-11-25)
+**Commit Message**: GH-51481: [Python] Fix dlpack related deprecation warnings (#54690)
 
 ### Rationale for this change
-
-Boost-devel seems to fail with CMake 4.5.0 which is the one installed on the GitHub runner. Bump minimum one manually installed to a newer one so it meets cmake_minimum_required.
+Deprecation warnings on our CI.
 
 ### What changes are included in this PR?
-
-Bump installed CMake for OSX wheels.
+Added filterwarning marks and updated two tests.
 
 ### Are these changes tested?
-
-Via archery
+Yes.
 
 ### Are there any user-facing changes?
-
-No
+No.
 
 ### Was AI used for this PR?
 
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
-
 **PR code and description written by:**
 
-- [x] Human
-- [x] AI
+- [X] Human
+- [ ] AI
 
 **Reviewed before submission by:**
 
-- [x] Human
+- [X] Human
 - [ ] AI
 - [ ] Not reviewed
 
-* GitHub Issue: #55737
+* GitHub Issue: #51481
 
-Authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
-Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
+Lead-authored-by: AlenkaF <[REDACTED_EMAIL]>
+Co-authored-by: Alenka Frim <[REDACTED_EMAIL]>
+Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
+Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
 
-**File**: `dev/tasks/python-wheels/github.osx.yml` (modified, +5/-4)
+**File**: `python/pyarrow/tests/test_dlpack.py` (modified, +20/-5)
 ```diff
-@@ -57,12 +57,13 @@ jobs:
-         run: |
-           brew list
+@@ -268,6 +268,8 @@ def immutable_tensor():
  
--      # CMake 3.29.1 that is pre-installed on the macOS image has a problem.
--      # See also: https://github.com/microsoft/vcpkg/issues/37968
--      - name: Install CMake 3.29.0
-+      # vcpkg uses the first CMake on PATH that meets its minimum version.
-+      # Pin it so Homebrew's CMake (4.5.0 fails to configure boost-locale 1.92)
-+      # isn't picked up. See GH-55737.
-+      - name: Install CMake 4.4.5
-         shell: bash
-         run: |
--          arrow/ci/scripts/install_cmake.sh 3.29.0 ${PWD}/local
-+          arrow/ci/scripts/install_cmake.sh 4.4.5 ${PWD}/local
-           echo "${PWD}/local/bin" >> $GITHUB_PATH
+ @check_bytes_allocated
+ @pytest.mark.parametrize('max_version', [None, (0, 8)])
++# Filter deprecation warning, already asserted in test_dlpack_legacy_capsule
++@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
+ def test_dlpack_legacy_capsule_immutable_tensor(max_version):
+     tensor = immutable_tensor()
+     with pytest.raises(NotImplementedError,
+@@ -306,6 +308,7 @@ def test_dlpack_versioned_capsule(obj, max_version, copy):
+ @requires_numpy_version("2.1.0")
+ @check_bytes_allocated
+ @pytest.mark.parametrize('obj', dlpack_objects())
++@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
+ def test_dlpack_versioned_roundtrip(obj):
+     expected = np.from_dlpack(DLPackForwarder(obj, max_version=None))
+     for copy in [None, False, True]:
+@@ -331,30 +334,42 @@ def test_dlpack_copy_is_writeable():
+     assert arr.to_pylist() == [1, 2, 3]
  
-       - name: Retrieve VCPKG version from arrow/.env
+ 
++def from_dlpack_numpy_compat(obj):
++    if Version(np.__version__) < Version("2.1.0"):
++        max_version_numpy = None
++    else:
++        max_version_numpy = (1, 0)
++    return np.from_dlpack(DLPackForwarder(obj, max_version=max_version_numpy))
++
++
++@pytest.mark.filterwarnings(
++    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
+ def test_dlpack_not_supported():
+     arr = pa.array([1, None, 3])
+     with pytest.raises(TypeError, match="Can only use DLPack "
+                        "on arrays with no nulls."):
+-        np.from_dlpack(arr)
++        from_dlpack_numpy_compat(arr)
+ 
+     arr = pa.array(
+         [[0, 1], [3, 4]],
+         type=pa.list_(pa.int32())
+     )
+     with pytest.raises(TypeError, match="DataType is not compatible with DLPack spec"):
+-        np.from_dlpack(arr)
++        from_dlpack_numpy_compat(arr)
+ 
+     arr = pa.array([])
+     with pytest.raises(TypeError, match="DataType is not compatible with DLPack spec"):
+-        np.from_dlpack(arr)
++        from_dlpack_numpy_compat(arr)
+ 
+     # DLPack doesn't support bit-packed boolean values
+     arr = pa.array([True, False, True])
+     with pytest.raises(TypeError, match="Bit-packed boolean data type "
+                        "not supported by DLPack."):
+-        np.from_dlpack(arr)
++        from_dlpack_numpy_compat(arr)
+ 
+ 
++@pytest.mark.filterwarnings(
++    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
+ def test_dlpack_cuda_not_supported():
+     cuda = pytest.importorskip("pyarrow.cuda", exc_type=ImportError)
+ 
+@@ -369,7 +384,7 @@ def test_dlpack_cuda_not_supported():
+     # CudaBuffers not yet supported
+     with pytest.raises(NotImplementedError, match="DLPack support is implemented "
+                        "only for buffers on CPU device."):
+-        np.from_dlpack(carr)
++        from_dlpack_numpy_compat(carr)
+ 
+     with pytest.raises(NotImplementedError, match="DLPack support is implemented "
+                        "only for buffers on CPU device."):
 ```
 
 #### Recent Merged Pull Requests:
@@ -1514,38 +1565,54 @@ Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55737: [CI] Use newer CMake for macOS wheels that meets minimum requirements
+## X. GH-51481: [Python] Fix dlpack related deprecation warnings
 
 **RULE**:
-When implementing operations in `dev/tasks/python-wheels/github.osx.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/pyarrow/tests/test_dlpack.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4d9a573d`: GH-55737: [CI] Use newer CMake for macOS wheels that meets minimum requirements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `88e51545`: GH-51481: [Python] Fix dlpack related deprecation warnings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/tasks/python-wheels/github.osx.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/tests/test_dlpack.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-      # vcpkg uses the first CMake on PATH that meets its minimum version.
-      # Pin it so Homebrew's CMake (4.5.0 fails to configure boost-locale 1.92)
-      # isn't picked up. See GH-55737.
-      - name: Install CMake 4.4.5
-          arrow/ci/scripts/install_cmake.sh 4.4.5 ${PWD}/local
+# Filter deprecation warning, already asserted in test_dlpack_legacy_capsule
+@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
+@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
+def from_dlpack_numpy_compat(obj):
+    if Version(np.__version__) < Version("2.1.0"):
+        max_version_numpy = None
+    else:
+        max_version_numpy = (1, 0)
+    return np.from_dlpack(DLPackForwarder(obj, max_version=max_version_numpy))
+
+
+@pytest.mark.filterwarnings(
+    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
+        from_dlpack_numpy_compat(arr)
+        from_dlpack_numpy_compat(arr)
+        from_dlpack_numpy_compat(arr)
+        from_dlpack_numpy_compat(arr)
+@pytest.mark.filterwarnings(
+    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
+        from_dlpack_numpy_compat(carr)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-      # CMake 3.29.1 that is pre-installed on the macOS image has a problem.
-      # See also: https://github.com/microsoft/vcpkg/issues/37968
-      - name: Install CMake 3.29.0
-          arrow/ci/scripts/install_cmake.sh 3.29.0 ${PWD}/local
+        np.from_dlpack(arr)
+        np.from_dlpack(arr)
+        np.from_dlpack(arr)
+        np.from_dlpack(arr)
+        np.from_dlpack(carr)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d9a573d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `88e51545` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

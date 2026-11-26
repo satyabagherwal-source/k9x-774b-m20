@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T10:19:36.169Z",
+  "last_updated": "2026-11-26T10:31:06.028Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -123,7 +123,7 @@
       "staged_for_review": 1
     },
     "apache-arrow-learnings.md": {
-      "processed_at": "2026-11-25T03:05:19.217Z",
+      "processed_at": "2026-11-26T10:31:02.696Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-26T07:40:24.868Z",
+      "processed_at": "2026-11-26T10:31:04.785Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1773,7 +1773,7 @@
       "staged_for_review": 0
     },
     "hf-black-forest-labs-flux.1-dev-learnings.md": {
-      "processed_at": "2026-11-22T17:35:37.770Z",
+      "processed_at": "2026-11-26T10:31:04.161Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3963,7 +3963,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4473,
+  "total_dossiers_evaluated": 4476,
   "total_canonical_promoted": 559,
-  "total_staged_for_review": 3382
+  "total_staged_for_review": 3384
 }

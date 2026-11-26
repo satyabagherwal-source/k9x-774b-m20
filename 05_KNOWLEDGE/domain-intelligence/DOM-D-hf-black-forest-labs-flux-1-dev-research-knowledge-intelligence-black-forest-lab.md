@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
   "source_version": "hf-black-forest-labs-flux.1-dev",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T17:35:15.072Z",
+  "timestamp": "2026-11-26T10:30:51.539Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [black-forest-labs/FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) (Revision: `hf-black-f`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T17:35:15.072Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T10:30:51.539Z`  
 > **Learning ID**: `learn-huggingface-black-forest-labs-flux-1-dev`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/black-forest-labs/FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T17:35:14.094Z  
+> **Harvest Timestamp**: 2026-11-26T10:30:50.335Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 407340 downloads | 16301 likes
+- **Stars / Engagement**: 408829 downloads | 16352 likes
 
 ---
 

@@ -215,8 +215,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "63c4c2bca01029b0db41fc70066fe24367a8eb0e101c6befd72efbed8d2df0ef",
-    "lastHarvestedAt": "2026-11-22T17:35:14.833Z",
+    "contentHash": "8141eae3c27c518a213b87bb0e0cf687e8f59f9346791effd95f3f5deed0e33f",
+    "lastHarvestedAt": "2026-11-26T10:30:51.212Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev"
   },
   "hf-francisring-prism": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "fcd7046f",
+    "sourceVersion": "dd456e00",
     "license": "Apache-2.0",
-    "contentHash": "7f7e42eb1028cd403cbba7d2342620d45f108849f3349a66539672159df5c8ee",
-    "lastHarvestedAt": "2026-11-25T03:05:09.250Z",
+    "contentHash": "37cf85b82bd0c44a2ade9cfb87f32da1f028bd181d6eb0023cc3f98cf7f09174",
+    "lastHarvestedAt": "2026-11-26T10:30:54.064Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {

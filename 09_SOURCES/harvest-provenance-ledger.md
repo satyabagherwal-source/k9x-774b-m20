@@ -13368,3 +13368,5 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `12a5e8c5` | Multi-dimensional audit evidence | 2026-11-26T10:19:22.753Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `e55d90ce` | Multi-dimensional audit evidence | 2026-11-26T10:19:25.340Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `c4f407dc` | Multi-dimensional audit evidence | 2026-11-26T10:19:29.834Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-26T10:30:51.212Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `dd456e00` | Multi-dimensional audit evidence | 2026-11-26T10:30:54.064Z |
