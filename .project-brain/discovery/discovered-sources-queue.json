@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T15:38:42.100Z",
+  "updated_at": "2026-11-26T16:00:18.989Z",
   "stats": {
-    "total_discovered": 9842,
-    "approved_pending_harvest": 9332,
+    "total_discovered": 9843,
+    "approved_pending_harvest": 9333,
     "harvested_count": 0,
     "rejected_count": 510,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9327,
+      "COMMUNITY_AND_EXPERT": 9328,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -212981,6 +212981,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md",
         "fileName": "hf-llamaindex-ocria-1-learnings.md"
+      }
+    },
+    "SRC-8D086D15FFDF": {
+      "id": "SRC-8D086D15FFDF",
+      "url": "https://github.com/FalkorDB/FalkorDB/actions/runs/45408826372",
+      "title": "https://github.com/FalkorDB/FalkorDB/actions/runs/45408826372",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:00:18.989Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
       }
     }
   }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-X0VD",
-    "timestamp": "2026-11-25T02:47:50.185Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "e129aabb37fb828d5625416eb3f0c33da2b708354da4c1fca590280583a8cfb2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-7L2R",
-    "timestamp": "2026-11-25T02:56:02.931Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "878bde50aa600eb533e55dad63dfe126a52aa9ecb76bfc02aa435dc125a77af0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-7RKO",
-    "timestamp": "2026-11-25T02:56:11.352Z",
-    "repository": "Checkmarx/kics",
-    "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "7f1e17f730b84f9fc4bf0301a1e50a5a3bc2d7d24ab5145445abf0a01e221737",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-7TO4",
     "timestamp": "2026-11-25T02:56:14.068Z",
     "repository": "SeekStorm/SeekStorm",
@@ -7490,6 +7445,51 @@
     "repository": "meilisearch/meilisearch",
     "learningId": "learn-github-meilisearch-meilisearch",
     "contentHash": "d4d77b305010dc6ee153d3538c6caf48265dc3bbb1b5a4ca3dee028b4791a579",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-NPAZ",
+    "timestamp": "2026-11-26T16:00:04.571Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "f0f302d50445461f20cdfc23815520e12a5a341e123b216f78fb51fa32e8e45a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-NSPG",
+    "timestamp": "2026-11-26T16:00:08.980Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "1e5ae53caba1ec5855aa9f03a7ed303d33599a090d8191584b188006523d72e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-NX52",
+    "timestamp": "2026-11-26T16:00:14.726Z",
+    "repository": "appwrite/appwrite",
+    "learningId": "learn-github-appwrite-appwrite",
+    "contentHash": "4632466ee123c5dd45f8969167c3705f169165b32ea6fae2e27d968e4e8c110a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

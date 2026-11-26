@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T15:50:29.831Z",
-  "total_records": 2760,
+  "last_updated": "2026-11-26T16:00:21.504Z",
+  "total_records": 2762,
   "domains": {
     "A": {
       "total": 23,
@@ -2554,7 +2554,7 @@
       ]
     },
     "J": {
-      "total": 54,
+      "total": 56,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2609,7 +2609,9 @@
         "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants",
         "domain_intelligence-search-distribution-intelligence-startrail-org-leann-core-invariants",
         "domain_intelligence-search-distribution-intelligence-startrail-org-leann-learnings-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-learnings-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-learnings-core-invariants"
       ]
     },
     "K": {
@@ -10423,8 +10425,8 @@
       "title": "Research & Knowledge Intelligence: PSRben/VisionHOPE Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-research-knowledge-intelligence-psrben-visionhope-core-inva.md",
       "repository": "PSRben/VisionHOPE",
-      "content_hash": "e61100abef8ae0c853afd976b344ac29072a5fc898ee5c2ae7b33d3d56e45901",
-      "created_at": "2026-11-22T22:58:05.398Z"
+      "content_hash": "552da59aab3d33ccb09393ff944fe6180f1301b0d840febfda159e5bbeb9adf7",
+      "created_at": "2026-11-26T16:00:04.907Z"
     },
     "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
@@ -10483,8 +10485,8 @@
       "title": "Research & Knowledge Intelligence: hf-psrben-visionhope-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-learnings-research-knowledge-intelligence-hf-psrben-visionh.md",
       "repository": "hf-psrben-visionhope-learnings",
-      "content_hash": "89b91b3b837dac9098650e0e53f70a130ea39496f69b4d88363e6939f7decba0",
-      "created_at": "2026-11-22T22:58:20.695Z"
+      "content_hash": "2e33a20daecfefb19a3e1a6dfb18715593c87a9364144644de0808e55ecbb1e5",
+      "created_at": "2026-11-26T16:00:20.450Z"
     },
     "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants",
@@ -19584,8 +19586,8 @@
       "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
       "repository": "FalkorDB/FalkorDB",
-      "content_hash": "395c342b2af225ab9db198eacf0b4d47c7f1813993c8537325790c00362b45f8",
-      "created_at": "2026-11-24T06:11:12.589Z"
+      "content_hash": "fcdd05cca40f27b3ae160260e81a0fecf1b167f6be0679feeabdde9a9ed7c1fd",
+      "created_at": "2026-11-26T16:00:09.597Z"
     },
     "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants",
@@ -19602,8 +19604,8 @@
       "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-learnings-technical-construction-intelligence-falkordb-falkord.md",
       "repository": "falkordb-falkordb-learnings",
-      "content_hash": "111722f6fb988bc7cdf849d05329f9628a7d41018db63dfc2a7c034b98e8fc58",
-      "created_at": "2026-11-24T06:11:28.762Z"
+      "content_hash": "f4fe4892a1ace424b269897a74e9dcc249598099481a983dad0f128397afb086",
+      "created_at": "2026-11-26T16:00:19.616Z"
     },
     "DOM-D-04368044": {
       "record_id": "DOM-D-04368044",
@@ -46613,6 +46615,24 @@
       "repository": "hf-llamaindex-ocria-1-learnings",
       "content_hash": "893b7b2c6a6d5dfa6f787874642dd48b24217a425e5800c4bfee3e44e977b52b",
       "created_at": "2026-11-26T15:38:42.452Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: appwrite/appwrite Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-appwrite-appwrite-search-distribution-intelligence-appwrite-appwrite-core-invari.md",
+      "repository": "appwrite/appwrite",
+      "content_hash": "a06f3f64436dfd26458d2b55466f10be0e71d4c7fe0ec816eb6959d2575d50e1",
+      "created_at": "2026-11-26T16:00:15.346Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: appwrite-appwrite-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-appwrite-appwrite-learnings-search-distribution-intelligence-appwrite-appwrite-l.md",
+      "repository": "appwrite-appwrite-learnings",
+      "content_hash": "f7d1bd34cd01d1b6a2a6796cb40651f7f62801f3db36d93ebfc92b9cd710ca4d",
+      "created_at": "2026-11-26T16:00:21.504Z"
     }
   }
 }

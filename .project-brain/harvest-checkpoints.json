@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T15:50:22.496Z",
+  "last_updated": "2026-11-26T16:00:14.759Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -740,14 +740,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-psrben-visionhope",
-      "content_hash": "9e1bbf74f5599547eeae00041206f36adef0ec5eef5a8fa93bbd0d3d29363d23",
-      "verified_at": "2026-11-22T22:58:05.123Z",
+      "content_hash": "f0f302d50445461f20cdfc23815520e12a5a341e123b216f78fb51fa32e8e45a",
+      "verified_at": "2026-11-26T16:00:04.595Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T22:58:05.123Z"
+      "last_updated": "2026-11-26T16:00:04.595Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "f299778a2d4bd164b3239c1a865d45f7e2c387d8513667256b93882b58275e20",
-      "verified_at": "2026-11-25T07:39:19.353Z",
+      "content_hash": "1e5ae53caba1ec5855aa9f03a7ed303d33599a090d8191584b188006523d72e1",
+      "verified_at": "2026-11-26T16:00:09.011Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T07:39:19.353Z"
+      "last_updated": "2026-11-26T16:00:09.011Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -15501,14 +15501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-appwrite-appwrite",
-      "content_hash": "a989f35227924bc647695028d97b480c3b7fc23716c9033974351989feb2b8c1",
-      "verified_at": "2026-11-24T06:11:17.535Z",
+      "content_hash": "4632466ee123c5dd45f8969167c3705f169165b32ea6fae2e27d968e4e8c110a",
+      "verified_at": "2026-11-26T16:00:14.758Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:11:17.535Z"
+      "last_updated": "2026-11-26T16:00:14.758Z"
     },
     "expo/expo": {
       "repository": "expo/expo",

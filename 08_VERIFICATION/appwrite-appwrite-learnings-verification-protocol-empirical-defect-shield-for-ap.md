@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T11:16:52.130Z",
+  "timestamp": "2026-11-26T16:00:21.071Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-appwrite-appwrite-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [appwrite-appwrite-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T11:16:52.130Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:00:21.071Z`  
 > **Learning ID**: `LEARN-EVO-appwrite-appwrite-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `a6d643a9`  
+> **Source Version**: `4ba94d47`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T11:11:35.341Z  
+> **Timestamp**: 2026-11-26T16:00:13.252Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T11:11:35.243Z  
+> **Harvest Timestamp**: 2026-11-26T16:00:13.245Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 58466 stars
+- **Stars / Engagement**: 58658 stars
 
 ---
 
@@ -2111,306 +2111,741 @@ export function isSubscriptionFailedInvoiceWithError(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a091eb4` (2026-11-20)
-**Commit Message**: fix(jobs): append a deployment's pending log callbacks in one write
+### Incident Patch 1: `4ba94d47` (2026-11-26)
+**Commit Message**: fix(console): make project search one request and debounce it
 
-Every log callback took the per-deployment lock on its own and rewrote the
-whole buildLogs attribute, so a build streaming output queued callbacks on
-the lock faster than it drained. Those left waiting past LOCK_TIMEOUT threw
-Contention and went back to the queue, landing their lines out of order.
+Searching for any word that looked like a project ID first fetched it as a
+project. When that failed, the lookup fell back to listing every organization
+and checking each one in turn, before the real search ran. Search now adds an
+exact `$id` match to the list query instead, so one request covers names,
+labels and pasted IDs.
 
-Log callbacks now leave their lines in a per-process buffer and queue on a
-per-deployment gate, so one coroutine per process contends for the lock and
-appends every pending callback's lines in a single write. The others pass
-the gate and return without touching the lock once their lines are in.
-Dedupe markers for every event in the batch are saved in the same
-transaction, so a redelivery of an applied callback is still skipped.
+The header project switcher, org overview and command center scoped searches
+now wait 300 ms after typing stops instead of querying on every keystroke.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01F3M7ttqmi3HYfSr5f9kLt8
-Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
 
-**File**: `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php` (modified, +153/-18)
+**File**: `apps/console/src/components/global/shared/CommandCenter.tsx` (modified, +14/-11)
 ```diff
-@@ -25,12 +25,14 @@
- use OpenRuntimes\Orchestrator\Callback\JobLog;
- use OpenRuntimes\Orchestrator\Enum\CallbackEvent;
- use OpenRuntimes\Orchestrator\Enum\ErrorCode;
-+use Swoole\Coroutine\Channel;
- use Utopia\Bus\Bus;
- use Utopia\Cache\Cache;
- use Utopia\Database\Database;
- use Utopia\Database\DateTime;
- use Utopia\Database\Document;
- use Utopia\Database\Query;
-+use Utopia\Lock\Exception\Contention;
- use Utopia\Platform\Action;
- use Utopia\Psr7\Stream;
- use Utopia\Queue\Message;
-@@ -48,7 +50,10 @@
-  * Callbacks arrive concurrently and out of order (one log line each), so
-  * processing for a deployment is serialized under a per-deployment lock — that
-  * keeps its buildLogs a clean, monotonic append while letting different
-- * deployments build in parallel. Callbacks are at-least-once, so events are
-+ * deployments build in parallel. Log callbacks waiting in one process for the
-+ * same deployment are appended together by whichever of them takes the lock,
-+ * so a burst of build output costs one write per process rather than one per
-+ * line batch. Callbacks are at-least-once, so events are
-  * de-duplicated inside the lock. Logs and their dedupe marker are written before
-  * the log transaction commits; state callbacks are marked after application.
-  *
-@@ -88,6 +93,25 @@ class Jobs extends Action
-         'Download failed with status 404' => 'The repository, branch or commit could not be found. Check that it still exists.',
-     ];
+@@ -112,6 +112,7 @@ import { isConsoleDocsPreviewPath } from '@/lib/docs/docs-preview-context'
+ import { docsHrefToRoute } from '@/lib/docs/docs-href'
+ import { getDocsPageUrlFromSlug } from '@/lib/marketing/urls'
+ import { openInNewWindow } from '@/lib/utils/context-menu'
++import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue'
+ import type {
+   CommandCenterContext,
+   CreateResourceType,
+@@ -699,6 +700,8 @@ export function CommandCenter({
+   const hasSearch = search.trim().length > 0
+   const hasScope = searchScope !== null
+   const shouldFetch = hasSearch || hasScope
++  // Scoped lists hit the API, so they search once typing pauses.
++  const debouncedSearch = useDebouncedValue(search, 300)
  
-+    /**
-+     * Log callbacks of this process not yet appended, keyed by deployment lock,
-+     * in arrival order. The action instance is shared by every coroutine of the
-+     * worker, so the one holding the lock appends the others' lines with its own.
-+     *
-+     * @var array<string, array<int, array{id: string, chunk: string}>>
-+     */
-+    private array $logs = [];
-+
-+    private int $entries = 0;
-+
-+    /**
-+     * One coroutine per deployment per process contends for the lock; the rest
-+     * wait here, usually to find their lines already appended.
-+     *
-+     * @var array<string, Channel>
-+     */
-+    private array $gates = [];
-+
-     private static function userMessage(Document $deployment, JobArtifact $artifact): ?string
-     {
-         $code = $artifact->error?->code;
-@@ -161,6 +185,11 @@ public function action(
-         }
+   const { projects: orgProjects, isLoading: orgProjectsLoading } =
+     useProjectsForTeam(
+@@ -707,7 +710,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'projects' ? search : undefined,
++      shouldFetch && searchScope === 'projects' ? debouncedSearch : undefined,
+     )
  
-         $callback = CallbackEvent::tryFrom($event->event);
-+        if ($callback === CallbackEvent::Log) {
-+            $this->log($event, $project, $dbForProject, $dbForPlatform, $queueForRealtime, $vcsFactory, $cache, $locks, $platform, $deploymentId);
+   const { databases: projectDatabases, isLoading: databasesLoading } =
+@@ -720,7 +723,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'databases' ? search : undefined,
++      shouldFetch && searchScope === 'databases' ? debouncedSearch : undefined,
+     )
+ 
+   const { users: projectUsers, isLoading: usersLoading } = useProjectUsers(
+@@ -729,7 +732,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'users' ? search : undefined,
++    shouldFetch && searchScope === 'users' ? debouncedSearch : undefined,
+   )
+ 
+   const { teams: projectTeams, isLoading: teamsLoading } = useProjectTeams(
+@@ -738,7 +741,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'teams' ? search : undefined,
++    shouldFetch && searchScope === 'teams' ? debouncedSearch : undefined,
+   )
+ 
+   const { buckets: projectBuckets, isLoading: bucketsLoading } =
+@@ -748,7 +751,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'buckets' ? search : undefined,
++      shouldFetch && searchScope === 'buckets' ? debouncedSearch : undefined,
+     )
+ 
+   const { functions: projectFunctions, isLoading: functionsLoading } =
+@@ -761,7 +764,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'functions' ? search : undefined,
++      shouldFetch && searchScope === 'functions' ? debouncedSearch : undefined,
+     )
+ 
+   const { sites: projectSites, isLoading: sitesLoading } = useProjectSites(
+@@ -770,7 +773,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'sites' ? search : undefined,
++    shouldFetch && searchScope === 'sites' ? debouncedSearch : undefined,
+   )
+ 
+   const { messages: projectMessages, isLoading: messagesLoading } =
+@@ -780,7 +783,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'messages' ? search : undefined,
++      shouldFetch && searchScope === 'messages' ? debouncedSearch : undefined,
+     )
+ 
+   const { topics: projectTopics, isLoading: topicsLoading } = useProjectTopics(
+@@ -789,7 +792,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'topics' ? search : undefined,
++    shouldFetch && searchScope === 'topics' ? debouncedSearch : undefined,
+   )
+ 
+   const { providers: projectProviders, isLoading: providersLoading } =
+@@ -802,7 +805,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'providers' ? search : undefined,
++      shouldFetch && searchScope === 'providers' ? debouncedSearch : undefined,
+     )
+ 
+   const { videos: projectVideos, isLoading: videosLoading } = useProjectVideos(
+@@ -811,7 +814,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'videos' ? search : undefined,
++    shouldFetch && searchScope === 'videos' ? debouncedSearch : undefined,
+   )
+ 
+   const searchableResourceKinds = useMemo(() => {
+```
+
+**File**: `apps/console/src/components/pages/organizations/$orgId/overview/View.tsx` (modified, +10/-7)
+```diff
+@@ -262,6 +262,7 @@ import { useServiceListViewMode } from '@/hooks/use-service-list-view-mode'
+ import { ServiceListViewToggle } from '@/components/pages/projects/$projectId/shared/ServiceListViewToggle'
+ import { useT } from '@/lib/i18n/translate'
+ import { useIsZeroAccount } from '@/hooks/use-zero-account'
++import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue'
+ 
+ /** Organization routes the overview navigates between; keeps `navigate` and `Link` typed. */
+ type OrgRoutePath =
+@@ -1405,7 +1406,9 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+   const updateTeamPrefsMutation = useUpdateConsoleTeamPrefs(orgTeamId)
+ 
+   /** While searching, list API must include pinned rows if they match; pinned section is hidden in the UI. */
+-  const projectsSearchActive = Boolean(searchQuery.trim())
++  // Search the API once typing pauses, not on every keystroke.
++  const debouncedSearchQuery = useDebouncedValue(searchQuery.trim(), 300)
++  const projectsSearchActive = Boolean(debouncedSearchQuery)
+   const listExcludePinnedIds = projectsSearchActive ? undefined : pinnedIds
+ 
+   const { data: pinnedProjectsData } = useQuery({
+@@ -1432,7 +1435,7 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+       orgTeamId,
+       requestedPage - 1,
+       urlProjectsLimit,
+-      searchQuery,
++      debouncedSearchQuery,
+       listExcludePinnedIds,
+       restrictToProjectIds,
+     ),
+@@ -1445,7 +1448,7 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+         orgTeamId,
+         displayedPage - 1,
+         urlProjectsLimit,
+-        searchQuery,
++        debouncedSearchQuery,
+         listExcludePinnedIds,
+         restrictToProjectIds,
+       ),
+@@ -1476,7 +1479,7 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+   useEffect(() => {
+     setRequestedPage(1)
+     setDisplayedPage(1)
+-  }, [searchQuery])
++  }, [debouncedSearchQuery])
+ 
+   useEffect(() => {
+     setPinnedDragOverIndex(null)
+@@ -2167,8 +2170,8 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+               nextOrgId,
+               page,
+               urlProjectsLimit,
+-              searchQuery,
+-              searchQuery.trim() ? undefined : nextPinnedIds,
++              debouncedSearchQuery,
++              debouncedSearchQuery ? undefined : nextPinnedIds,
+               nextProjectScope,
+             ),
+           ),
+@@ -2214,7 +2217,7 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+       features.orgRoles,
+       queryClient,
+       requestedPage,
+-      searchQuery,
++      debouncedSearchQuery,
+       urlProjectsLimit,
+     ],
+   )
+```
+
+**File**: `apps/console/src/components/pages/projects/$projectId/shared/ProjectSelector.tsx` (modified, +5/-2)
+```diff
+@@ -63,6 +63,7 @@ import { openCreateOrganizationFlow } from '@/lib/open-create-organization-flow'
+ import { useT } from '@/lib/i18n/translate'
+ import { useIsZeroAccount } from '@/hooks/use-zero-account'
+ import { ClaimToUnlock } from '@/components/global/shared/ClaimToUnlock'
++import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue'
+ import {
+   INITIAL_LOADER_SHELL_GATE,
+   resetInitialLoaderShellGate,
+@@ -408,7 +409,9 @@ export function ProjectSelector({
+       placeholderData: keepPreviousData,
+     })
+ 
+-  const projectSearchActive = Boolean(projectSearch.trim())
++  // Search the API once typing pauses, not on every keystroke.
++  const debouncedProjectSearch = useDebouncedValue(projectSearch.trim(), 300)
++  const projectSearchActive = Boolean(debouncedProjectSearch)
+   const listExcludePinnedIds = projectSearchActive ? undefined : pinnedIds
+ 
+   const { data: switcherProjectScopeData } = useQuery(
+@@ -426,7 +429,7 @@ export function ProjectSelector({
+   } = useProjectsForTeamInfinite(
+     resolvedTeam?.$id,
+     projectsPageSize,
+-    projectSearch,
++    debouncedProjectSearch,
+     listExcludePinnedIds,
+     switcherProjectScope,
+   )
+```
+
+**File**: `apps/console/src/lib/react-query/hooks/projects.ts` (modified, +6/-32)
+```diff
+@@ -156,14 +156,18 @@ function getProjectStatusQueries(): string[] {
+ }
+ 
+ /**
+- * Legacy console project list search: fulltext on the `search` attribute OR
+- * substring match on `labels` (e.g. finding a project by ID used as a label).
++ * Project list search: fulltext on the `search` attribute OR substring match on
++ * `labels`, plus an exact `$id` match when the term could be a project ID, so a
++ * pasted ID resolves in the same request.
+  * Prefer this over the list endpoint's `search` param, which does not mirror that OR.
+  */
+ function projectListSearchOrQuery(trimmedSearch: string): string {
+   return Query.or([
+     Query.search('search', trimmedSearch),
+     Query.contains('labels', trimmedSearch),
++    ...(isProbableConsoleProjectId(trimmedSearch)
++      ? [Query.equal('$id', trimmedSearch)]
++      : []),
+   ])
+ }
+ 
+@@ -172,12 +176,6 @@ function isProbableConsoleProjectId(value: string): boolean {
+   return /^[a-z0-9][a-z0-9-]{0,35}$/i.test(value)
+ }
+ 
+-function projectMatchesActiveListStatus(project: Models.Project): boolean {
+-  if (!getActiveProfileFeatures().billing) return true
+-  const status = project.status
+-  return status == null || status !== 'archived'
+-}
+-
+ // ============================================================================
+ // QUERY FUNCTIONS
+ // ============================================================================
+@@ -246,7 +244,6 @@ export async function fetchActiveProjects(
+   if (isRestricted && allowedIds.length === 0) {
+     return { projects: [], total: 0 }
+   }
+-  const allowedIdSet = new Set(allowedIds)
+   const restrictQueries = isRestricted
+     ? [
+         allowedIds.length === 1
+@@ -284,29 +281,6 @@ export async function fetchActiveProjects(
+       ? excludeProjectIds
+       : []
+ 
+-  // `projects.list` only documents filters on name/teamId/labels/search - not `$id`.
+-  // Pasting a project ID never hits fulltext/labels, so resolve ID-shaped terms via get.
+-  if (trimmedSearch && isProbableConsoleProjectId(trimmedSearch)) {
+-    try {
+-      const direct = await fetchProjectById(trimmedSearch)
+-      if (
+-        !excludeIds.includes(direct.$id) &&
+-        direct.teamId === teamId &&
+-        // Pasting an id must not reveal a project outside the member's scope.
+-        (!isRestricted || allowedIdSet.has(direct.$id)) &&
+-        projectMatchesActiveListStatus(direct) &&
+-        !(hideEnvironments && direct.parentId)
+-      ) {
+-        return {
+-          projects: page === 0 ? [direct] : [],
+-          total: 1,
+-        }
+-      }
+-    } catch {
+-      // Not found, wrong console, or no access - fall through to list search.
+-    }
+-  }
+-
+   const queries =
+     excludeIds.length > 0
+       ? [
+```
+
+---
+
+### Incident Patch 2: `ae32cb0b` (2026-11-26)
+**Commit Message**: fix(console): give every full-size chart the shared grid
+
+The project overview's requests and storage charts, the logs and activity
+volume charts, Analytics installs and the usage chart drew no grid while
+every other chart draws a dashed horizontal one. Sparklines stay without.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/console/AGENTS.md` (modified, +1/-0)
+```diff
+@@ -505,6 +505,7 @@ Checklist (in this order):
+ - **Date tooltips**: Always include when showing dates for timezone clarity
+ - **Wizard headers are title-only**: Never pass a description, subtitle, or helper line to `WizardLayout`. The header is the title (and close/back). Put explanation in the page body, on a field, or omit it.
+ - **Theme colors in code**: Tokens such as `--border` and `--muted` are complete oklch colors. Use `var(--border)` in SVG props and inline styles, and `color-mix(in oklab, var(--muted) 30%, transparent)` for transparency (`color-mix(in_oklab,var(--primary)_35%,transparent)` inside Tailwind arbitrary values). Never wrap a token in `hsl()`: `hsl(var(--border))` computes to no color, so the grid line, border or fill disappears.
++- **Chart grids**: Every chart in a card or panel draws `<CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />`, so all charts read the same. Only sparklines (stat tiles, resource cards, list rows) skip it.
+ 
+ ### Date and time (Appwrite datetimes)
+ 
+```
+
+**File**: `apps/console/src/components/global/shared/RuntimeLogsVolumeChart.tsx` (modified, +12/-1)
+```diff
+@@ -1,6 +1,12 @@
+ import { useMemo } from 'react'
+ import type { DateRange } from 'react-day-picker'
+-import { Bar, BarChart, ResponsiveContainer, Tooltip } from 'recharts'
++import {
++  Bar,
++  BarChart,
++  CartesianGrid,
++  ResponsiveContainer,
++  Tooltip,
++} from 'recharts'
+ import { ZoomOut } from 'lucide-react'
+ import {
+   SeriesChartXAxis,
+@@ -135,6 +141,11 @@ export function RuntimeLogsVolumeChart({
+               className={surfaceClassName}
+               {...chartProps}
+             >
++              <CartesianGrid
++                strokeDasharray="3 3"
++                stroke="var(--border)"
++                vertical={false}
++              />
+               <SeriesChartXAxis pointCount={data.length} labels={labels} />
+               <UsageChartYAxis
+                 tickFormatter={yTickFormatter}
+```
+
+**File**: `apps/console/src/components/pages/projects/$projectId/activity/_components/ActivityLogVolumeChart.tsx` (modified, +6/-0)
+```diff
+@@ -15,6 +15,7 @@ import { ChevronDown } from 'lucide-react'
+ import {
+   Bar,
+   BarChart,
++  CartesianGrid,
+   Cell,
+   Customized,
+   ResponsiveContainer,
+@@ -716,6 +717,11 @@ export function ActivityLogVolumeChart({
+                     setTooltipPointer(null)
+                   }}
+                 >
++                  <CartesianGrid
++                    strokeDasharray="3 3"
++                    stroke="var(--border)"
++                    vertical={false}
++                  />
+                   <SeriesChartXAxis
+                     pointCount={chartData.length}
+                     dataKey="label"
+```
+
+**File**: `apps/console/src/components/pages/projects/$projectId/analytics/_components/InstallsPanel.tsx` (modified, +6/-0)
+```diff
+@@ -4,6 +4,7 @@ import { Query } from '@appwrite.io/console'
+ import {
+   Area,
+   AreaChart,
++  CartesianGrid,
+   ResponsiveContainer,
+   Tooltip,
+   XAxis,
+@@ -228,6 +229,11 @@ export function InstallsPanel({
+                       data={data}
+                       margin={{ top: 4, right: 4, bottom: 0, left: 4 }}
+                     >
++                      <CartesianGrid
++                        strokeDasharray="3 3"
++                        stroke="var(--border)"
++                        vertical={false}
++                      />
+                       <defs>
+                         <linearGradient
+                           id={gradientId}
+```
+
+**File**: `apps/console/src/components/pages/projects/$projectId/overview/OverviewStorageChart.tsx` (modified, +12/-1)
+```diff
+@@ -1,7 +1,13 @@
+ 'use client'
+ 
+ import { memo, useMemo, type ReactNode } from 'react'
+-import { Area, AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
++import {
++  Area,
++  AreaChart,
++  CartesianGrid,
++  ResponsiveContainer,
++  Tooltip,
++} from 'recharts'
+ import { useParams } from '@tanstack/react-router'
+ import { useT } from '@/lib/i18n/translate'
+ import { cn } from '@/lib/utils'
+@@ -297,6 +303,11 @@ export const OverviewStorageChart = memo(function OverviewStorageChart({
+                   minHeight={OVERVIEW_CHART_HEIGHT}
+                 >
+                   <AreaChart data={activeChartData} margin={USAGE_CHART_MARGIN}>
++                    <CartesianGrid
++                      strokeDasharray="3 3"
++                      stroke="var(--border)"
++                      vertical={false}
++                    />
+                     <defs>
+                       {showChartSkeleton ? (
+                         <linearGradient
+```
+
+**File**: `apps/console/src/components/pages/projects/$projectId/overview/RequestsChart.tsx` (modified, +12/-1)
+```diff
+@@ -1,5 +1,11 @@
+ import { memo, useMemo, type ReactNode } from 'react'
+-import { Area, AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
++import {
++  Area,
++  AreaChart,
++  CartesianGrid,
++  ResponsiveContainer,
++  Tooltip,
++} from 'recharts'
+ import { useParams } from '@tanstack/react-router'
+ import { useT } from '@/lib/i18n/translate'
+ import { cn } from '@/lib/utils'
+@@ -435,6 +441,11 @@ export const RequestsChart = memo(function RequestsChart({
+                   minHeight={OVERVIEW_CHART_HEIGHT}
+                 >
+                   <AreaChart data={activeChartData} margin={USAGE_CHART_MARGIN}>
++                    <CartesianGrid
++                      strokeDasharray="3 3"
++                      stroke="var(--border)"
++                      vertical={false}
++                    />
+                     <defs>
+                       {isSkeleton ? (
+                         <linearGradient
+```
+
+**File**: `apps/console/src/components/pages/projects/$projectId/usage/Chart.tsx` (modified, +6/-0)
+```diff
+@@ -11,6 +11,7 @@ import { FORCE_LTR_CLASS } from '@/lib/layout/force-ltr'
+ import {
+   Area,
+   AreaChart,
++  CartesianGrid,
+   ResponsiveContainer,
+   Tooltip,
+ } from 'recharts'
+@@ -61,6 +62,11 @@ export function UsageChart({ className }: UsageChartProps) {
+               data={usageData}
+               margin={USAGE_CHART_MARGIN}
+             >
++              <CartesianGrid
++                strokeDasharray="3 3"
++                stroke="var(--border)"
++                vertical={false}
++              />
+               <defs>
+                 <linearGradient
+                   id="requestsGradient"
+```
+
+---
+
+### Incident Patch 3: `3286a7ed` (2026-11-26)
+**Commit Message**: Merge pull request #16146 from appwrite/fix-videos-playback
+
+fix(videos): playback without project, odd profiles, thumbnail cache headers, DASH captions
+
+**File**: `app/views/videos/dash.phtml` (modified, +2/-2)
+```diff
+@@ -35,9 +35,9 @@ echo '<?xml version="1.0" encoding="utf-8"?>'; ?>
+     </AdaptationSet>
+     <?php endforeach; ?>
+      <?php foreach ($this->getParam('captions', []) as $caption):?>
+-         <AdaptationSet id="<?php if (isset($caption['id'])): echo $this->print($caption['id'], self::FILTER_ESCAPE);  endif;?>"  lang="<?php if (isset($caption['name'])): echo $this->print($caption['name'], self::FILTER_ESCAPE);  endif;?>" mimeType="text/vtt">
++         <AdaptationSet id="<?php echo $this->print((string) (int) ($caption['adaptationId'] ?? 0), self::FILTER_ESCAPE);?>" lang="<?php if (isset($caption['name'])): echo $this->print($caption['name'], self::FILTER_ESCAPE);  endif;?>" mimeType="text/vtt">
+              <Role schemeIdUri="urn:mpeg:dash:role:2011" value="subtitle" />
+-             <Representation>
++             <Representation id="<?php if (isset($caption['id'])): echo $this->print($caption['id'], self::FILTER_ESCAPE); endif;?>" bandwidth="256">
+                 <BaseURL><?php if (isset($caption['baseUrl'])): echo $this->print($caption['baseUrl'], self::FILTER_ESCAPE); endif;?></BaseURL>
+             </Representation>
+         </AdaptationSet>
+```
+
+**File**: `src/Appwrite/Platform/Modules/Project/Http/Project/Videos/Profiles/Create.php` (modified, +10/-2)
+```diff
+@@ -61,8 +61,8 @@ public function __construct()
+             ->param('name', '', new Text(128), 'Video profile name.')
+             ->param('videoBitRate', null, new Range(self::MIN_VIDEO_BITRATE, self::MAX_VIDEO_BITRATE), 'Target video bitrate in kilobits per second.')
+             ->param('audioBitRate', null, new Range(self::MIN_AUDIO_BITRATE, self::MAX_AUDIO_BITRATE), 'Target audio bitrate in kilobits per second.')
+-            ->param('width', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video width in pixels.')
+-            ->param('height', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video height in pixels.')
++            ->param('width', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video width in pixels. Must be an even number.')
++            ->param('height', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video height in pixels. Must be an even number.')
+             ->param('codec', self::CODEC_H264, new WhiteList(self::enabledCodecs(), true), 'Video encode codec. Only codecs enabled on this instance are accepted. Defaults to `h264`.', true, enum: new Enum(name: 'VideoCodec'))
+             ->inject('response')
+             ->inject('dbForProject')
+@@ -85,6 +85,14 @@ public function action(
+         Authorization $authorization,
+         Event $queueForEvents
+     ): void {
++        // Renditions are encoded with 4:2:0 chroma, which needs even dimensions;
++        // an odd profile would fail every encode that uses it.
++        foreach (['width' => $width, 'height' => $height] as $param => $value) {
++            if ($value % 2 !== 0) {
++                throw new Exception(Exception::GENERAL_ARGUMENT_INVALID, 'Invalid `' . $param . '` param: Value must be an even number.');
++            }
++        }
++
+         $codec = self::normalizeCodec($codec);
+         $this->assertCodecEnabled($codec);
+ 
+```
+
+**File**: `src/Appwrite/Platform/Modules/Project/Http/Project/Videos/Profiles/Update.php` (modified, +10/-2)
+```diff
+@@ -60,8 +60,8 @@ public function __construct()
+             ->param('name', '', new Text(128), 'Video profile name.')
+             ->param('videoBitRate', null, new Range(self::MIN_VIDEO_BITRATE, self::MAX_VIDEO_BITRATE), 'Target video bitrate in kilobits per second.')
+             ->param('audioBitRate', null, new Range(self::MIN_AUDIO_BITRATE, self::MAX_AUDIO_BITRATE), 'Target audio bitrate in kilobits per second.')
+-            ->param('width', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video width in pixels.')
+-            ->param('height', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video height in pixels.')
++            ->param('width', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video width in pixels. Must be an even number.')
++            ->param('height', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video height in pixels. Must be an even number.')
+             ->inject('response')
+             ->inject('dbForProject')
+             ->inject('project')
+@@ -83,6 +83,14 @@ public function action(
+         Authorization $authorization,
+         Event $queueForEvents
+     ): void {
++        // Renditions are encoded with 4:2:0 chroma, which needs even dimensions;
++        // an odd profile would fail every encode that uses it.
++        foreach (['width' => $width, 'height' => $height] as $param => $value) {
++            if ($value % 2 !== 0) {
++                throw new Exception(Exception::GENERAL_ARGUMENT_INVALID, 'Invalid `' . $param . '` param: Value must be an even number.');
++            }
++        }
++
+         $profile = $authorization->skip(fn () => $dbForProject->getDocument('videosProfiles', $profileId));
+ 
+         if ($profile->isEmpty()) {
+```
+
+**File**: `src/Appwrite/Platform/Modules/Videos/Http/Init.php` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++<?php
++
++namespace Appwrite\Platform\Modules\Videos\Http;
++
++use Appwrite\Extend\Exception;
++use Utopia\Database\Document;
++use Utopia\Http\Route;
++use Utopia\Platform\Action;
++
++class Init extends Action
++{
++    public static function getName(): string
++    {
++        return 'init';
++    }
++
++    public function __construct()
++    {
++        $this
++            ->setType(Action::TYPE_INIT)
++            ->groups(['videos'])
++            ->inject('route')
++            ->inject('project')
++            ->callback($this->action(...));
++    }
++
++    /**
++     * A request without a project resolves to the console, whose database has
++     * no videos collections. Refuse it here instead of failing the lookup.
++     */
++    public function action(Route $route, Document $project): void
++    {
++        if ($project->getId() !== 'console') {
 +            return;
 +        }
 +
-         $outputAvailable = null;
-         if ($callback === CallbackEvent::Complete && $deviceForBuilds->getType() !== DeviceType::Local) {
-             $deployment = $dbForProject->getDocument('deployments', $deploymentId);
-@@ -197,7 +226,6 @@ public function action(
-             }
- 
-             $deployment = match ($callback) {
--                CallbackEvent::Log => $this->onLog($dbForProject, $dbForPlatform, $project, $deployment, JobLog::fromArray($event->data), $vcsFactory, $platform, $cache, $event->id),
-                 CallbackEvent::Artifact => $this->onArtifact($dbForProject, $dbForPlatform, $project, $deployment, $artifact, $usage, $publisherForUsage, $publisherForScreenshots, $deviceForBuilds, $deviceForFunctions, $deviceForSites, $vcsFactory, $cache, $platform, $plan, $bus),
-                 CallbackEvent::Exit => $this->onExit($dbForProject, $dbForPlatform, $project, $deployment, JobExit::fromArray($event->data), $usage, $publisherForUsage, $publisherForScreenshots, $deviceForBuilds, $vcsFactory, $cache, $platform, $plan, $bus),
-                 CallbackEvent::Complete => $this->onComplete($dbForProject, $dbForPlatform, $project, $deployment, $usage, $publisherForUsage, $publisherForScreenshots, $deviceForBuilds, $deviceForFunctions, $deviceForSites, $vcsFactory, $cache, $platform, $plan, $bus),
-@@ -222,14 +250,7 @@ public function action(
-             }
- 
-             // Console realtime on every callback (log stream + status).
--            $queueForRealtime
--                ->setSubscribers(['console'])
--                ->setProject($project)
--                ->setEvent(self::event($deployment))
--                ->setParam(self::resourceParam($deployment), $deployment->getAttribute('resourceId'))
--                ->setParam('deploymentId', $deploymentId)
--                ->setPayload($deployment->getArrayCopy())
--                ->trigger();
-+            $this->broadcast($queueForRealtime, $project, $deployment, $deploymentId);
- 
-             // On a real terminal outcome (not a concurrently-canceled build),
-             // notify webhooks + event-triggered functions of the deployment
-@@ -252,7 +273,7 @@ public function action(
-                 $failure = new PermanentFailure("Build artifact '{$artifact->artifactId}' failed: " . ($artifact->error->message ?? 'no error reported'), 500);
-             }
- 
--            if ($event->id !==
++        $path = $route->getPath();
++
++        // Codecs are instance configuration, not project data.
++        if ($path === '/v1/videos/codecs') {
++            return;
++        }
++
++        if (\str_contains($path, ':videoId')) {
++            throw new Exception(Exception::VIDEO_NOT_FOUND);
++        }
++
++        throw new Exception(Exception::GENERAL_ACCESS_FORBIDDEN);
++    }
++}
 ```
 
----
-
-### Incident Patch 2: `4782543e` (2026-11-20)
-**Commit Message**: fix(query): parse nested query children sent as strings
-
-A nested (and/or/...) query's children reached the recursive parseQuery()
-as-is, so a child sent as a query string raised a TypeError rather than
-a query exception. utopia-php/database's Query decodes such children
-before calling the parent, so its validators accept them; subclasses
-that use the base parser directly (Utopia\Audit\Query, UsageQuery) then
-crash on the same input. Cloud's Activities events list is one: its
-param validator accepts the query, and the action's audit parse throws
-a TypeError, which returns a 500.
-
-The base now parses a string child through parse(), like database, and
-refuses any other non-array child with a query exception.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/query/src/Query.php` (modified, +13/-0)
+**File**: `src/Appwrite/Platform/Modules/Videos/Http/Videos/Outputs/Manifest/Base.php` (modified, +6/-1)
 ```diff
-@@ -281,6 +281,19 @@ public static function parseQuery(array $query, bool $allowRaw = false): static
- 
-         if ($methodEnum->isNested()) {
-             foreach ($values as $index => $value) {
-+                // A hand-built client may send a child as a query string instead of an
-+                // object; utopia-php/database's Query already accepts that, so parse it
-+                // the same way. Anything else is a client error, not a TypeError.
-+                if (\is_string($value)) {
-+                    $values[$index] = static::parse($value, $allowRaw);
-+
-+                    continue;
-+                }
-+
-+                if (! \is_array($value)) {
-+                    throw new QueryException('Invalid nested query. Must be an array or string, got '.\gettype($value));
-+                }
-+
-                 /** @var array<string, mixed> $value */
-                 $values[$index] = static::parseQuery($value, $allowRaw);
-             }
-```
-
-**File**: `packages/query/tests/API/ParseTest.php` (modified, +54/-0)
-```diff
-@@ -91,6 +91,60 @@ public function testParseNestedLogicalQuery(): void
-         $this->assertSame('John', $query->getValues()[0]->getValue());
-     }
- 
-+    public function testParseNestedLogicalQueryWithStringChildren(): void
-+    {
-+        $json = (string) json_encode([
-+            'method' => 'and',
-+            'values' => [
-+                (string) json_encode(['method' => 'equal', 'attribute' => 'name', 'values' => ['John']]),
-+                ['method' => 'greaterThan', 'attribute' => 'age', 'values' => [18]],
-+                (string) json_encode(['method' => 'or', 'values' => [
-+                    (string) json_encode(['method' => 'equal', 'attribute' => 'city', 'values' => ['Paris']]),
-+                ]]),
-+            ],
-+        ]);
-+
-+        $query = Query::parse($json);
-+        $children = $query->getValues();
-+
-+        $this->assertSame(Method::And, $query->getMethod());
-+        $this->assertCount(3, $children);
-+        $this->assertInstanceOf(Query::class, $children[0]);
-+        $this->assertSame('John', $children[0]->getValue());
-+        $this->assertInstanceOf(Query::class, $children[1]);
-+        $this->assertSame(Method::GreaterThan, $children[1]->getMethod());
-+        $this->assertInstanceOf(Query::class, $children[2]);
-+        $this->assertSame(Method::Or, $children[2]->getMethod());
-+        $grandchild = $children[2]->getValues()[0];
-+        $this->assertInstanceOf(Query::class, $grandchild);
-+        $this->assertSame('Paris', $grandchild->getValue());
-+    }
-+
-+    public function testParseNestedStringChildThatIsNotJson(): void
-+    {
-+        $this->expectException(Exception::class);
-+        $this->expectExceptionMessageMatches('/^Invalid query: /');
-+
-+        Query::parse((string) json_encode(['method' => 'or', 'values' => ['not json']]));
-+    }
-+
-+    public function testParseNestedChildOfWrongType(): void
-+    {
-+        $this->expectException(Exception::class);
-+        $this->expectExceptionMessage('Invalid nested query. Must be an array or string, got integer');
-+
-+        Query::parse((string) json_encode(['method' => 'or', 'values' => [42]]));
-+    }
-+
-+    public function testParseNestedStringChildStillRefusesRaw(): void
-+    {
-+        $this->expectException(ValidationException::class);
-+
-+        Query::parse((string) json_encode(['method' => 'or', 'values' => [
-+            (string) json_encode(['method' => 'raw', 'attribute' => '1 = 1', 'values' => []]),
-+        ]]));
-+    }
-+
-     public function testParseQueries(): void
-     {
-         $queries = Query::parseQueries([
-```
-
----
-
-### Incident Patch 3: `0c935843` (2026-11-20)
-**Commit Message**: fix(jobs): take back a log batch's dedupe markers when its write fails
-
-The markers live in Redis, outside the database transaction. When a later
-marker save or the commit failed, the append rolled back but the markers
-already written stayed, so those callbacks were skipped on redelivery and
-their lines lost. Purge the markers the batch wrote before rethrowing.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01F3M7ttqmi3HYfSr5f9kLt8
-Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
-
-**File**: `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php` (modified, +27/-14)
-```diff
-@@ -417,22 +417,35 @@ protected function onLog(Database $dbForProject, Database $dbForPlatform, Docume
-             }
+@@ -427,10 +427,15 @@ protected function sendDashMaster(
+             throw new Exception(Exception::VIDEO_RENDITION_NOT_FOUND);
          }
  
--        $deployment = $dbForProject->withTransaction(function () use ($dbForProject, $project, $deployment, $update, $cache, $events): Document {
--            if ($update !== []) {
--                $dbForProject->updateDocuments('deployments', new Document($update), [
--                    Query::equal('$id', [$deployment->getId()]),
--                    Query::notEqual('status', 'canceled'),
--                ]);
--                $deployment = $dbForProject->getDocument('deployments', $deployment->getId());
--            }
--            // A refused marker rolls back the append. Realtime runs after commit.
--            foreach ($events as $id) {
--                if ($cache->save('jobs-event-' . $project->getSequence() . '-' . $id, true) === false) {
--                    throw new \RuntimeException('Failed to record build log callback.');
-+        $marked = [];
-+        try {
-+            $deployment = $dbForProject->withTransaction(function () use ($dbForProject, $project, $deployment, $update, $cache, $events, &$marked): Document {
-+                $marked = [];
-+                if ($update !== []) {
-+                    $dbForProject->updateDocuments('deployments', new Document($update), [
-+                        Query::equal('$id', [$deployment->getId()]),
-+                        Query::notEqual('status', 'canceled'),
-+                    ]);
-+                    $deployment = $dbForProject->getDocument('deployments', $deployment->getId());
-                 }
-+                // A refused marker rolls back the append. Realtime runs after commit.
-+                foreach ($events as $id) {
-+                    $marker = 'jobs-event-' . $project->getSequence() . '-' . $id;
-+                    if ($cache->save($marker, true) === false) {
-+                        throw new \RuntimeException('Failed to record build log callback.');
-+                    }
-+                    $marked[] = $marker;
-+                }
-+                return $deployment;
-+            });
-+        } catch (\Throwable $error) {
-+            // The markers are outside the transaction. Take back the ones this
-+            // batch wrote, or the rolled-back lines would be skipped on redelivery.
-+            foreach ($marked as $marker) {
-+                $cache->purge($marker);
-             }
--            return $deployment;
--        });
-+            throw $error;
-+        }
++        $adaptations = Dash::group($entries);
++        // AdaptationSet@id is an unsignedInt unique within the Period, so caption
++        // sets continue after the media sets.
++        $adaptationId = \count($adaptations);
+         $captionEntries = [];
  
-         if (($update['status'] ?? '') === 'building' && $deployment->getAttribute('status') === 'building') {
-             GitAction::report('processing', $deployment, $project, $dbForProject, $dbForPlatform, $vcsFactory, $platform);
+         foreach ($captions as $caption) {
+             $captionEntries[] = [
++                'adaptationId' => $adaptationId++,
+                 'id' => $caption->getId(),
+                 'name' => $caption->getAttribute('code', ''),
+                 'baseUrl' => $this->withProject($baseUri . '/captions/' . $caption->getId() . '/manifest', $project, $video),
+@@ -439,7 +444,7 @@ protected function sendDashMaster(
+ 
+         $manifest = $this->renderView('dash', [
+             'mpd' => $mpd,
+-            'renditions' => Dash::group($entries),
++            'renditions' => $adaptations,
+             'captions' => $captionEntries,
+         ]);
+ 
+```
+
+**File**: `src/Appwrite/Platform/Modules/Videos/Http/Videos/Thumbnails/Get.php` (modified, +6/-2)
+```diff
+@@ -152,10 +152,14 @@ public function action(
+             throw new Exception(Exception::STORAGE_FILE_TYPE_UNSUPPORTED, $e->getMessage(), previous: $e);
+         }
+ 
++        // The response-cache miss hook already set no-store headers; replace them so
++        // the client sees one Cache-Control, the same one a cache hit sends.
+         $response
++            ->removeHeader('Cache-Control')
++            ->removeHeader('Pragma')
++            ->removeHeader('Expires')
+             ->setContentType($outputs[$output])
+-            ->addHeader('Expires', \date('D, d M Y H:i:s', \time() + (60 * 60 * 24 * 30)) . ' GMT') // 30 days
+-            ->addHeader('Cache-Control', 'private, max-age=2592000')
++            ->addHeader('Cache-Control', 'private, max-age=15552000') // 180 days
+             ->addHeader('Vary', 'Accept')
+             ->addHeader('X-Peak', \memory_get_peak_usage())
+             ->file($source);
+```
+
+**File**: `src/Appwrite/Platform/Modules/Videos/Services/Http.php` (modified, +3/-0)
+```diff
+@@ -2,6 +2,7 @@
+ 
+ namespace Appwrite\Platform\Modules\Videos\Services;
+ 
++use Appwrite\Platform\Modules\Videos\Http\Init;
+ use Appwrite\Platform\Modules\Videos\Http\Videos\Captions\Create as CreateCaption;
+ use Appwrite\Platform\Modules\Videos\Http\Videos\Captions\Delete as DeleteCaption;
+ use Appwrite\Platform\Modules\Videos\Http\Videos\Captions\Update as UpdateCaption;
+@@ -35,6 +36,8 @@ public function __construct()
+     {
+         $this->type = Service::TYPE_HTTP;
+ 
++        $this->addAction(Init::getName(), new Init());
++
+         // Videos
+         $this->addAction(CreateVideo::getName(), new CreateVideo());
+         $this->addAction(GetVideo::getName(), new GetVideo());
+```
+
+**File**: `src/Appwrite/Platform/Modules/Videos/Workers/Videos.php` (modified, +10/-1)
+```diff
+@@ -1347,7 +1347,16 @@ private function subripToWebvtt(string $srtPath, string $vttPath): void
+             if (\str_starts_with($detail, $srtPath)) {
+                 $detail = \ltrim(\substr($detail, \strlen($srtPath)));
+             }
+-            throw new AppwriteException(AppwriteException::VIDEO_CAPTION_NOT_VALID, 'Caption ' . $detail, previous: $th);
++            // Files without a .srt or .vtt extension land here too, so name both
++            // accepted formats rather than the library's "not a proper .srt file".
++            if (\str_starts_with($detail, 'is not a proper .srt file')) {
++                $detail = \ltrim(\substr($detail, \strlen('is not a proper .srt file')), ' .');
++            }
++            $message = 'Caption is not a valid SubRip (.srt) or WebVTT (.vtt) file';
++            if ($detail !== '') {
++                $message .= ': ' . \trim($detail, '() ');
++            }
++            throw new AppwriteException(AppwriteException::VIDEO_CAPTION_NOT_VALID, $message, previous: $th);
+         }
+         $webvtt->build();
+         $webvtt->save($vttPath);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15891** (2026-11-21): fix(certificates): hide CDN provider errors from domain logs (@HarshMN2345)
-- **PR #15890** (2026-11-21): fix(console): redirect to the console temporarily, so browsers do not cache it (@HarshMN2345)
-- **PR #15886** (2026-11-20): fix(query): parse nested query children sent as strings (@ChiragAgg5k)
-- **PR #15884** (closed): fix(compression): accept whitespace around an Accept-Encoding weight (@dajiaohuang)
-- **PR #15881** (2026-11-20): fix(jobs): append a deployment's pending log callbacks in one write (@TorstenDittmann)
-- **PR #15880** (2026-11-20): feat(console): make the Origin Git provider generally available (@Meldiron)
+- **PR #16158** (2026-11-26): feat(installer): respect DO_NOT_TRACK for the install report (@ChiragAgg5k)
+- **PR #16157** (2026-11-26): fix(console): drop the newest-installation guess from the reuse picker (@HarshMN2345)
+- **PR #16155** (2026-11-26): fix(console): GitHub reuse picker lists organizations only, and opens from Add installation (@HarshMN2345)
+- **PR #16154** (closed): fix(console): link live domain notifications to the domain (@HarshMN2345)
+- **PR #16153** (2026-11-26): fix(videos): filter listVideoProfiles by codec through queries (@ChiragAgg5k)
+- **PR #16152** (2026-11-26): docs(sdks): list the latest server and console SDK releases (@ChiragAgg5k)
 
 ---
 
@@ -2430,68 +2865,54 @@ Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. jobs): append a deployment's pending log callbacks in one write
+## X. console): make project search one request and debounce it
 
 **RULE**:
-When implementing operations in `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/console/src/components/global/shared/CommandCenter.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a091eb4`: jobs): append a deployment's pending log callbacks in one write. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ba94d47`: console): make project search one request and debounce it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/components/global/shared/CommandCenter.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-use Swoole\Coroutine\Channel;
-use Utopia\Lock\Exception\Contention;
- * deployments build in parallel. Log callbacks waiting in one process for the
- * same deployment are appended together by whichever of them takes the lock,
- * so a burst of build output costs one write per process rather than one per
- * line batch. Callbacks are at-least-once, so events are
-    /**
-     * Log callbacks of this process not yet appended, keyed by deployment lock,
-     * in arrival order. The action instance is shared by every coroutine of the
-     * worker, so the one holding the lock appends the others' lines with its own.
-     *
-     * @var array<string, array<int, array{id: string, chunk: string}>>
-     */
-    private array $logs = [];
-
-    private int $entries = 0;
-
-    /**
-     * One coroutine per deployment per process contends for the lock; the rest
-     * wait here, usually to find their lines already appended.
-     *
-     * @var array<string, Channel>
-     */
-    private array $gates = [];
-
-        if ($callback === CallbackEvent::Log) {
-            $this->log($event, $project, $dbForProject, $dbForPlatform, $queueForRealtime, $vcsFactory, $cache, $locks, $platform, $deploymentId);
-        
+import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue'
+  // Scoped lists hit the API, so they search once typing pauses.
+  const debouncedSearch = useDebouncedValue(search, 300)
+      shouldFetch && searchScope === 'projects' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'databases' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'users' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'teams' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'buckets' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'functions' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'sites' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'messages' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'topics' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'providers' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'videos' ? debouncedSearch : undefined,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
- * deployments build in parallel. Callbacks are at-least-once, so events are
-                CallbackEvent::Log => $this->onLog($dbForProject, $dbForPlatform, $project, $deployment, JobLog::fromArray($event->data), $vcsFactory, $platform, $cache, $event->id),
-            $queueForRealtime
-                ->setSubscribers(['console'])
-                ->setProject($project)
-                ->setEvent(self::event($deployment))
-                ->setParam(self::resourceParam($deployment), $deployment->getAttribute('resourceId'))
-                ->setParam('deploymentId', $deploymentId)
-                ->setPayload($deployment->getArrayCopy())
-                ->trigger();
-            if ($event->id !==
+      shouldFetch && searchScope === 'projects' ? search : undefined,
+      shouldFetch && searchScope === 'databases' ? search : undefined,
+    shouldFetch && searchScope === 'users' ? search : undefined,
+    shouldFetch && searchScope === 'teams' ? search : undefined,
+      shouldFetch && searchScope === 'buckets' ? search : undefined,
+      shouldFetch && searchScope === 'functions' ? search : undefined,
+    shouldFetch && searchScope === 'sites' ? search : undefined,
+      shouldFetch && searchScope === 'messages' ? search : undefined,
+    shouldFetch && searchScope === 'topics' ? search : undefined,
+      shouldFetch && searchScope === 'providers' ? search : undefined,
+    shouldFetch && searchScope === 'videos' ? search : undefined,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a091eb4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ba94d47` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

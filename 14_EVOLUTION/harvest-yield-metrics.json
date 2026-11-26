@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T15:50:22.485Z",
-  "total_cycles_completed": 12765,
-  "total_learnings_persisted": 12765,
-  "total_rules_promoted": 11618,
+  "last_updated": "2026-11-26T16:00:14.747Z",
+  "total_cycles_completed": 12768,
+  "total_learnings_persisted": 12768,
+  "total_rules_promoted": 11620,
   "history": [
-    {
-      "timestamp": "2026-11-26T04:39:07.773Z",
-      "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
-      "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T04:39:17.783Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T04:47:41.932Z",
-      "repository": "Edge0/Edge0-145B-NVFP4",
-      "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T04:47:43.773Z",
       "repository": "medialab/xan",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T15:50:22.485Z",
       "repository": "meilisearch/meilisearch",
       "learningId": "learn-github-meilisearch-meilisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:00:04.591Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-psrben-visionhope",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:00:09.001Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:00:14.747Z",
+      "repository": "appwrite/appwrite",
+      "learningId": "learn-github-appwrite-appwrite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -595,8 +595,8 @@
     "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceVersion": "hf-psrben-visionhope",
     "license": "Open-Source",
-    "contentHash": "9e1bbf74f5599547eeae00041206f36adef0ec5eef5a8fa93bbd0d3d29363d23",
-    "lastHarvestedAt": "2026-11-22T22:58:05.111Z",
+    "contentHash": "f0f302d50445461f20cdfc23815520e12a5a341e123b216f78fb51fa32e8e45a",
+    "lastHarvestedAt": "2026-11-26T16:00:04.576Z",
     "learningId": "learn-huggingface-psrben-visionhope"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "ef6fd025",
+    "sourceVersion": "2720220a",
     "license": "NOASSERTION",
-    "contentHash": "f299778a2d4bd164b3239c1a865d45f7e2c387d8513667256b93882b58275e20",
-    "lastHarvestedAt": "2026-11-25T07:39:19.337Z",
+    "contentHash": "1e5ae53caba1ec5855aa9f03a7ed303d33599a090d8191584b188006523d72e1",
+    "lastHarvestedAt": "2026-11-26T16:00:08.985Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "1426a10d",
+    "sourceVersion": "4ba94d47",
     "license": "BSD-3-Clause",
-    "contentHash": "a989f35227924bc647695028d97b480c3b7fc23716c9033974351989feb2b8c1",
-    "lastHarvestedAt": "2026-11-24T06:11:17.515Z",
+    "contentHash": "4632466ee123c5dd45f8969167c3705f169165b32ea6fae2e27d968e4e8c110a",
+    "lastHarvestedAt": "2026-11-26T16:00:14.732Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T15:50:30.411Z",
+  "last_updated": "2026-11-26T16:00:22.020Z",
   "total_verified_learnings": 9130,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26009,
+  "total_items": 26017,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114513,10 +114513,10 @@
       "relative_path": "08_VERIFICATION/appwrite-appwrite-verification-protocol-empirical-defect-shield-for-appwrite-app.md",
       "title": "Verification Protocol: Empirical Defect Shield for appwrite/appwrite",
       "repository": "appwrite/appwrite",
-      "source_version": "a6d643a9",
-      "content_hash": "a384d40df4bab02d7859292d69d0d891cb434a6f23251aec668acd92499c8ddf",
+      "source_version": "4ba94d47",
+      "content_hash": "a09737447be714766a56d90fb4294bf92550f891cebcbb4571929e08696e8806",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:11:37.003Z"
+      "persisted_at": "2026-11-26T16:00:15.900Z"
     },
     "candidate_directive-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411": {
       "item_id": "candidate_directive-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411",
@@ -114586,9 +114586,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for appwrite-appwrite-learnings",
       "repository": "appwrite-appwrite-learnings",
       "source_version": "HEAD",
-      "content_hash": "09c9cb1643ded6cb248fb5aff5d86e19edd13281338f9314a4eb528e59bc9c0d",
+      "content_hash": "3f42965965d25aecc9799b276d63164bf34246accf032551ec33795c0bf4c09a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:16:52.705Z"
+      "persisted_at": "2026-11-26T16:00:22.020Z"
     },
     "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants",
@@ -212351,7 +212351,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "9e1bbf74f5599547eeae00041206f36adef0ec5eef5a8fa93bbd0d3d29363d23",
+      "content_hash": "f0f302d50445461f20cdfc23815520e12a5a341e123b216f78fb51fa32e8e45a",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [],
@@ -212360,7 +212360,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T22:58:04.832Z",
+      "verified_at": "2026-11-26T16:00:04.231Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212377,9 +212377,9 @@
       "title": "Research & Knowledge Intelligence: PSRben/VisionHOPE Core Invariants",
       "repository": "PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "e61100abef8ae0c853afd976b344ac29072a5fc898ee5c2ae7b33d3d56e45901",
+      "content_hash": "552da59aab3d33ccb09393ff944fe6180f1301b0d840febfda159e5bbeb9adf7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:58:05.398Z"
+      "persisted_at": "2026-11-26T16:00:04.907Z"
     },
     "learn-github-argoproj-argo-workflows": {
       "learning_id": "learn-github-argoproj-argo-workflows",
@@ -212517,9 +212517,9 @@
       "title": "Research & Knowledge Intelligence: hf-psrben-visionhope-learnings Core Invariants",
       "repository": "hf-psrben-visionhope-learnings",
       "source_version": "HEAD",
-      "content_hash": "89b91b3b837dac9098650e0e53f70a130ea39496f69b4d88363e6939f7decba0",
+      "content_hash": "2e33a20daecfefb19a3e1a6dfb18715593c87a9364144644de0808e55ecbb1e5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:58:20.695Z"
+      "persisted_at": "2026-11-26T16:00:20.450Z"
     },
     "candidate_directive-controller-fail-containerset-nodes-of-a-pod-rejected-by-kubelet": {
       "item_id": "candidate_directive-controller-fail-containerset-nodes-of-a-pod-rejected-by-kubelet",
@@ -243620,8 +243620,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "ef6fd025",
-      "content_hash": "f299778a2d4bd164b3239c1a865d45f7e2c387d8513667256b93882b58275e20",
+      "source_version": "2720220a",
+      "content_hash": "1e5ae53caba1ec5855aa9f03a7ed303d33599a090d8191584b188006523d72e1",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -243664,6 +243664,11 @@
           "number": 10482,
           "title": "print the FalkorDB logo when the module loads",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10717,
+          "title": "pr_impact.py no longer blames a fn for attributes above the next one",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243671,7 +243676,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T07:39:19.115Z",
+      "verified_at": "2026-11-26T16:00:08.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243713,10 +243718,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
       "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "4c108894",
-      "content_hash": "395c342b2af225ab9db198eacf0b4d47c7f1813993c8537325790c00362b45f8",
+      "source_version": "2720220a",
+      "content_hash": "fcdd05cca40f27b3ae160260e81a0fecf1b167f6be0679feeabdde9a9ed7c1fd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:11:12.589Z"
+      "persisted_at": "2026-11-26T16:00:09.597Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb",
@@ -243725,10 +243730,10 @@
       "relative_path": "08_VERIFICATION/falkordb-falkordb-verification-protocol-empirical-defect-shield-for-falkordb-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for FalkorDB/FalkorDB",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "ef6fd025",
-      "content_hash": "29a51272fdbfcfe6f35888bd507cb406c044ca21b8fd4f27c70b22fa0d1c77a6",
+      "source_version": "2720220a",
+      "content_hash": "5ff56a6bd867f179bbed8cd4b713a5dfa36bf823824b36c46d500a257c3b1632",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:39:19.945Z"
+      "persisted_at": "2026-11-26T16:00:09.897Z"
     },
     "learn-github-tencent-tds-kuiklyui": {
       "learning_id": "learn-github-tencent-tds-kuiklyui",
@@ -243834,9 +243839,9 @@
       "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "111722f6fb988bc7cdf849d05329f9628a7d41018db63dfc2a7c034b98e8fc58",
+      "content_hash": "f4fe4892a1ace424b269897a74e9dcc249598099481a983dad0f128397afb086",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:11:28.762Z"
+      "persisted_at": "2026-11-26T16:00:19.616Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb-learnings",
@@ -243846,9 +243851,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for falkordb-falkordb-learnings",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a96dede60a4182ef21da7082499552c087337c4cf02a7c24e57dc5a4fc182ad",
+      "content_hash": "86bb383d6361a9cc742d83bbd45665af0a578d19278532ffb0456a76b2998fcf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:39:37.281Z"
+      "persisted_at": "2026-11-26T16:00:19.888Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari",
@@ -274270,8 +274275,8 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "1426a10d",
-      "content_hash": "a989f35227924bc647695028d97b480c3b7fc23716c9033974351989feb2b8c1",
+      "source_version": "4ba94d47",
+      "content_hash": "4632466ee123c5dd45f8969167c3705f169165b32ea6fae2e27d968e4e8c110a",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
@@ -274289,6 +274294,11 @@
           "number": 9767,
           "title": "append a deployment's pending log callbacks in one write",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10718,
+          "title": "make project search one request and debounce it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -274296,7 +274306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:11:17.201Z",
+      "verified_at": "2026-11-26T16:00:14.408Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -317652,10 +317662,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/appwrite-appwrite-agent-contract-appwrite-appwrite-autonomous-specialist-persona.md",
       "title": "Agent Contract: appwrite/appwrite Autonomous Specialist Persona",
       "repository": "appwrite/appwrite",
-      "source_version": "1426a10d",
-      "content_hash": "96121a4ac8ec6b6d511aa047b3d9e3b0ef1b8c29e00e0d82b8af2896c9ca0062",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:11:18.227Z"
+      "source_version": "4ba94d47",
+      "content_hash": "c120778a52db16ebb90ea00f49eccb4291fe54723a64e71e5b629587b44ddcbb",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T16:00:15.657Z"
     },
     "rule-9768": {
       "learning_id": "rule-9768",
@@ -317741,9 +317751,9 @@
       "title": "Agent Contract: appwrite-appwrite-learnings Autonomous Specialist Persona",
       "repository": "appwrite-appwrite-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b2b154ce834b148c728d920058a9cf7b21d8813249495bed3e2f3e8e5916751",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:12:12.290Z"
+      "content_hash": "474e9e91668650ff21c1f4f0d2c3b2193a49d31c85858d4ea4e15f68a1ca1b5d",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T16:00:21.769Z"
     },
     "rule-9770": {
       "learning_id": "rule-9770",
@@ -356487,6 +356497,106 @@
       "content_hash": "be2c08d72bff0d537cad619a24cab754ab63e00de001426dd78e054f69836cd0",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T15:50:27.885Z"
+    },
+    "rule-10717": {
+      "learning_id": "rule-10717",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10717,
+      "title": "pr_impact.py no longer blames a fn for attributes above the next one",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "2720220a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:00:08.661Z"
+    },
+    "candidate_directive-pr_impact-py-no-longer-blames-a-fn-for-attributes-above-the-next-one": {
+      "item_id": "candidate_directive-pr_impact-py-no-longer-blames-a-fn-for-attributes-above-the-next-one",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NSZ0-pr_impact-py-no-longer-blames-a-fn-for-attributes-above-the-next-one.md",
+      "title": "pr_impact.py no longer blames a fn for attributes above the next one",
+      "repository": "FalkorDB/FalkorDB",
+      "source_version": "2720220a",
+      "content_hash": "8ec305a0965641a200ca925d968942c05d1fdfe336a3a04417877c0b55f5b17b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T16:00:09.330Z"
+    },
+    "rule-10718": {
+      "learning_id": "rule-10718",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10718,
+      "title": "make project search one request and debounce it",
+      "source_url": "https://github.com/appwrite/appwrite",
+      "source_version": "4ba94d47",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:00:14.408Z"
+    },
+    "candidate_directive-make-project-search-one-request-and-debounce-it": {
+      "item_id": "candidate_directive-make-project-search-one-request-and-debounce-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NXEN-make-project-search-one-request-and-debounce-it.md",
+      "title": "make project search one request and debounce it",
+      "repository": "appwrite/appwrite",
+      "source_version": "4ba94d47",
+      "content_hash": "f833d8a282988b8c0791d82b70ecfe49bdc5110716d6d1c34b0b3b3a173f479f",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T16:00:15.078Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-appwrite-appwrite-search-distribution-intelligence-appwrite-appwrite-core-invari.md",
+      "title": "Search & Distribution Intelligence: appwrite/appwrite Core Invariants",
+      "repository": "appwrite/appwrite",
+      "source_version": "4ba94d47",
+      "content_hash": "a06f3f64436dfd26458d2b55466f10be0e71d4c7fe0ec816eb6959d2575d50e1",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T16:00:15.346Z"
+    },
+    "candidate_directive-proofs-pr_impact-py-no-longer-blames-a-fn-for-attributes-above-the-next-one": {
+      "item_id": "candidate_directive-proofs-pr_impact-py-no-longer-blames-a-fn-for-attributes-above-the-next-one",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O0P8-proofs-pr_impact-py-no-longer-blames-a-fn-for-attributes-above-the-next-one.md",
+      "title": "proofs): pr_impact.py no longer blames a fn for attributes above the next one",
+      "repository": "falkordb-falkordb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8063c5ae59d02a80cab4a6e3d1220e8b251ab6f5d4f1a43b5de2a6043c1c3d58",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T16:00:19.347Z"
+    },
+    "candidate_directive-console-make-project-search-one-request-and-debounce-it": {
+      "item_id": "candidate_directive-console-make-project-search-one-request-and-debounce-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O25P-console-make-project-search-one-request-and-debounce-it.md",
+      "title": "console): make project search one request and debounce it",
+      "repository": "appwrite-appwrite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "737d76b75a724861d4edfb436f3ad4fe8f079783fc8b2556f9111d4ea0c3200a",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T16:00:21.236Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-learnings-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-appwrite-appwrite-learnings-search-distribution-intelligence-appwrite-appwrite-l.md",
+      "title": "Search & Distribution Intelligence: appwrite-appwrite-learnings Core Invariants",
+      "repository": "appwrite-appwrite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7d1bd34cd01d1b6a2a6796cb40651f7f62801f3db36d93ebfc92b9cd710ca4d",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T16:00:21.504Z"
     }
   },
   "ai-builder-brain": {

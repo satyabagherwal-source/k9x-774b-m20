@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T06:12:11.792Z",
+  "timestamp": "2026-11-26T16:00:21.071Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-appwrite-appwrite-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [appwrite-appwrite-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T06:12:11.792Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:00:21.071Z`  
 > **Learning ID**: `LEARN-EVO-appwrite-appwrite-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `1426a10d`  
+> **Source Version**: `4ba94d47`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T06:11:16.747Z  
+> **Timestamp**: 2026-11-26T16:00:13.252Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:11:16.740Z  
+> **Harvest Timestamp**: 2026-11-26T16:00:13.245Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 58551 stars
+- **Stars / Engagement**: 58658 stars
 
 ---
 
@@ -2112,1299 +2112,741 @@ export function isSubscriptionFailedInvoiceWithError(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32af507c` (2026-11-24)
-**Commit Message**: fix(console): resize dedicated TablesDB databases through the product API
+### Incident Patch 1: `4ba94d47` (2026-11-26)
+**Commit Message**: fix(console): make project search one request and debounce it
 
-Changing the specification of a TablesDB database that already runs on
-dedicated compute always failed with 400 database_not_serverless.
+Searching for any word that looked like a project ID first fetched it as a
+project. When that failed, the lookup fell back to listing every organization
+and checking each one in turn, before the real search ran. Search now adds an
+exact `$id` match to the list query instead, so one request covers names,
+labels and pasted IDs.
 
-The console decided "already dedicated" by reading GET /v1/mysql/{id}.
-Cloud keeps product databases off the raw engine API, so that route is a
-404 for every TablesDB database (and the id-filtered mysql list is
-empty). The lookup therefore always answered "serverless" and the console
-posted a serverless-to-dedicated migration, which cloud rightly rejects
-for a database that is already dedicated.
+The header project switcher, org overview and command center scoped searches
+now wait 300 ms after typing stops instead of querying on every keystroke.
 
-Read the specification from tablesDB.get instead: cloud sources it from
-the dedicated backing, so a non-serverless value means the database is
-dedicated and the change is a tablesDB.update resize. A failed lookup now
-surfaces instead of being read as "serverless".
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-createTablesDatabaseMigration also fell back to mysql.createMigration on
-a 404. That engine route hides product databases the same way, so the
-fallback could only replace the real error with a second 404; it is gone.
-
-The unused currentSpecification parameter is dropped, which removes its
-entry from the type baseline.
-
-
-
-**File**: `apps/console/src/components/pages/projects/$projectId/databases/settings/DatabaseSpecificationCard.tsx` (modified, +0/-1)
+**File**: `apps/console/src/components/global/shared/CommandCenter.tsx` (modified, +14/-11)
 ```diff
-@@ -122,7 +122,6 @@ export function DatabaseSpecificationCard({
-         databaseId,
-         dbKind,
-         specification,
--        database.specification,
-         database.name,
-       ),
-     onSuccess: async (result) => {
+@@ -112,6 +112,7 @@ import { isConsoleDocsPreviewPath } from '@/lib/docs/docs-preview-context'
+ import { docsHrefToRoute } from '@/lib/docs/docs-href'
+ import { getDocsPageUrlFromSlug } from '@/lib/marketing/urls'
+ import { openInNewWindow } from '@/lib/utils/context-menu'
++import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue'
+ import type {
+   CommandCenterContext,
+   CreateResourceType,
+@@ -699,6 +700,8 @@ export function CommandCenter({
+   const hasSearch = search.trim().length > 0
+   const hasScope = searchScope !== null
+   const shouldFetch = hasSearch || hasScope
++  // Scoped lists hit the API, so they search once typing pauses.
++  const debouncedSearch = useDebouncedValue(search, 300)
+ 
+   const { projects: orgProjects, isLoading: orgProjectsLoading } =
+     useProjectsForTeam(
+@@ -707,7 +710,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'projects' ? search : undefined,
++      shouldFetch && searchScope === 'projects' ? debouncedSearch : undefined,
+     )
+ 
+   const { databases: projectDatabases, isLoading: databasesLoading } =
+@@ -720,7 +723,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'databases' ? search : undefined,
++      shouldFetch && searchScope === 'databases' ? debouncedSearch : undefined,
+     )
+ 
+   const { users: projectUsers, isLoading: usersLoading } = useProjectUsers(
+@@ -729,7 +732,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'users' ? search : undefined,
++    shouldFetch && searchScope === 'users' ? debouncedSearch : undefined,
+   )
+ 
+   const { teams: projectTeams, isLoading: teamsLoading } = useProjectTeams(
+@@ -738,7 +741,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'teams' ? search : undefined,
++    shouldFetch && searchScope === 'teams' ? debouncedSearch : undefined,
+   )
+ 
+   const { buckets: projectBuckets, isLoading: bucketsLoading } =
+@@ -748,7 +751,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'buckets' ? search : undefined,
++      shouldFetch && searchScope === 'buckets' ? debouncedSearch : undefined,
+     )
+ 
+   const { functions: projectFunctions, isLoading: functionsLoading } =
+@@ -761,7 +764,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'functions' ? search : undefined,
++      shouldFetch && searchScope === 'functions' ? debouncedSearch : undefined,
+     )
+ 
+   const { sites: projectSites, isLoading: sitesLoading } = useProjectSites(
+@@ -770,7 +773,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'sites' ? search : undefined,
++    shouldFetch && searchScope === 'sites' ? debouncedSearch : undefined,
+   )
+ 
+   const { messages: projectMessages, isLoading: messagesLoading } =
+@@ -780,7 +783,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'messages' ? search : undefined,
++      shouldFetch && searchScope === 'messages' ? debouncedSearch : undefined,
+     )
+ 
+   const { topics: projectTopics, isLoading: topicsLoading } = useProjectTopics(
+@@ -789,7 +792,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'topics' ? search : undefined,
++    shouldFetch && searchScope === 'topics' ? debouncedSearch : undefined,
+   )
+ 
+   const { providers: projectProviders, isLoading: providersLoading } =
+@@ -802,7 +805,7 @@ export function CommandCenter({
+         : null,
+       0,
+       100,
+-      shouldFetch && searchScope === 'providers' ? search : undefined,
++      shouldFetch && searchScope === 'providers' ? debouncedSearch : undefined,
+     )
+ 
+   const { videos: projectVideos, isLoading: videosLoading } = useProjectVideos(
+@@ -811,7 +814,7 @@ export function CommandCenter({
+       : null,
+     0,
+     100,
+-    shouldFetch && searchScope === 'videos' ? search : undefined,
++    shouldFetch && searchScope === 'videos' ? debouncedSearch : undefined,
+   )
+ 
+   const searchableResourceKinds = useMemo(() => {
 ```
 
-**File**: `apps/console/src/lib/react-query/hooks/databases.ts` (modified, +31/-74)
+**File**: `apps/console/src/components/pages/organizations/$orgId/overview/View.tsx` (modified, +10/-7)
 ```diff
-@@ -72,12 +72,8 @@ import {
-   hasTablesDatabaseMigrationCutover,
-   parseTablesDatabaseMigrationIdFromError,
- } from '@/lib/databases/tables-database-migration'
--import {
--  isAppwriteHttpStatus,
--  isHttpNotFoundError,
--} from '@/lib/utils/error-formatting'
-+import { isHttpNotFoundError } from '@/lib/utils/error-formatting'
- import { translate } from '@/lib/i18n/translate'
--import { readDatabaseSpecification } from '@/lib/databases/database-compute'
- import { waitForDatabaseRealtimeEvent } from '@/lib/realtime/wait-for-database-realtime'
- import { normalizeDedicatedRealtimeEngine } from '@/lib/realtime/dedicated-database-cache'
- import { buildPostgresListSchemasSql } from '@/lib/postgres-sql'
-@@ -1593,12 +1589,6 @@ export async function updateProjectDatabase(
-   return await projectSdk.tablesDB.update(payload)
+@@ -262,6 +262,7 @@ import { useServiceListViewMode } from '@/hooks/use-service-list-view-mode'
+ import { ServiceListViewToggle } from '@/components/pages/projects/$projectId/shared/ServiceListViewToggle'
+ import { useT } from '@/lib/i18n/translate'
+ import { useIsZeroAccount } from '@/hooks/use-zero-account'
++import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue'
+ 
+ /** Organization routes the overview navigates between; keeps `navigate` and `Link` typed. */
+ type OrgRoutePath =
+@@ -1405,7 +1406,9 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+   const updateTeamPrefsMutation = useUpdateConsoleTeamPrefs(orgTeamId)
+ 
+   /** While searching, list API must include pinned rows if they match; pinned section is hidden in the UI. */
+-  const projectsSearchActive = Boolean(searchQuery.trim())
++  // Search the API once typing pauses, not on every keystroke.
++  const debouncedSearchQuery = useDebouncedValue(searchQuery.trim(), 300)
++  const projectsSearchActive = Boolean(debouncedSearchQuery)
+   const listExcludePinnedIds = projectsSearchActive ? undefined : pinnedIds
+ 
+   const { data: pinnedProjectsData } = useQuery({
+@@ -1432,7 +1435,7 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+       orgTeamId,
+       requestedPage - 1,
+       urlProjectsLimit,
+-      searchQuery,
++      debouncedSearchQuery,
+       listExcludePinnedIds,
+       restrictToProjectIds,
+     ),
+@@ -1445,7 +1448,7 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+         orgTeamId,
+         displayedPage - 1,
+         urlProjectsLimit,
+-        searchQuery,
++        debouncedSearchQuery,
+         listExcludePinnedIds,
+         restrictToProjectIds,
+       ),
+@@ -1476,7 +1479,7 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+   useEffect(() => {
+     setRequestedPage(1)
+     setDisplayedPage(1)
+-  }, [searchQuery])
++  }, [debouncedSearchQuery])
+ 
+   useEffect(() => {
+     setPinnedDragOverIndex(null)
+@@ -2167,8 +2170,8 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+               nextOrgId,
+               page,
+               urlProjectsLimit,
+-              searchQuery,
+-              searchQuery.trim() ? undefined : nextPinnedIds,
++              debouncedSearchQuery,
++              debouncedSearchQuery ? undefined : nextPinnedIds,
+               nextProjectScope,
+             ),
+           ),
+@@ -2214,7 +2217,7 @@ export function OrgOverview({ tab: tabProp, children }: OrgOverviewProps) {
+       features.orgRoles,
+       queryClient,
+       requestedPage,
+-      searchQuery,
++      debouncedSearchQuery,
+       urlProjectsLimit,
+     ],
+   )
+```
+
+**File**: `apps/console/src/components/pages/projects/$projectId/shared/ProjectSelector.tsx` (modified, +5/-2)
+```diff
+@@ -63,6 +63,7 @@ import { openCreateOrganizationFlow } from '@/lib/open-create-organization-flow'
+ import { useT } from '@/lib/i18n/translate'
+ import { useIsZeroAccount } from '@/hooks/use-zero-account'
+ import { ClaimToUnlock } from '@/components/global/shared/ClaimToUnlock'
++import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue'
+ import {
+   INITIAL_LOADER_SHELL_GATE,
+   resetInitialLoaderShellGate,
+@@ -408,7 +409,9 @@ export function ProjectSelector({
+       placeholderData: keepPreviousData,
+     })
+ 
+-  const projectSearchActive = Boolean(projectSearch.trim())
++  // Search the API once typing pauses, not on every keystroke.
++  const debouncedProjectSearch = useDebouncedValue(projectSearch.trim(), 300)
++  const projectSearchActive = Boolean(debouncedProjectSearch)
+   const listExcludePinnedIds = projectSearchActive ? undefined : pinnedIds
+ 
+   const { data: switcherProjectScopeData } = useQuery(
+@@ -426,7 +429,7 @@ export function ProjectSelector({
+   } = useProjectsForTeamInfinite(
+     resolvedTeam?.$id,
+     projectsPageSize,
+-    projectSearch,
++    debouncedProjectSearch,
+     listExcludePinnedIds,
+     switcherProjectScope,
+   )
+```
+
+**File**: `apps/console/src/lib/react-query/hooks/projects.ts` (modified, +6/-32)
+```diff
+@@ -156,14 +156,18 @@ function getProjectStatusQueries(): string[] {
  }
  
--/**
-- * Migrate a serverless TablesDB database onto a dedicated specification.
-- * Only valid while the database is still serverless (`database_not_serverless`
-- * if already dedicated). Dedicated tier changes use
-- * `updateTablesDatabaseSpecification` instead.
-- */
- export async function deleteTablesDatabaseMigration(
-   projectId: string,
-   databaseId: string,
-@@ -1646,6 +1636,12 @@ async function startTablesDatabaseProductMigration(
-   })
+ /**
+- * Legacy console project list search: fulltext on the `search` attribute OR
+- * substring match on `labels` (e.g. finding a project by ID used as a label).
++ * Project list search: fulltext on the `search` attribute OR substring match on
++ * `labels`, plus an exact `$id` match when the term could be a project ID, so a
++ * pasted ID resolves in the same request.
+  * Prefer this over the list endpoint's `search` param, which does not mirror that OR.
+  */
+ function projectListSearchOrQuery(trimmedSearch: string): string {
+   return Query.or([
+     Query.search('search', trimmedSearch),
+     Query.contains('labels', trimmedSearch),
++    ...(isProbableConsoleProjectId(trimmedSearch)
++      ? [Query.equal('$id', trimmedSearch)]
++      : []),
+   ])
  }
  
-+/**
-+ * Migrate a serverless TablesDB database onto a dedicated specification.
-+ * Only valid while the database is still serverless (`database_not_serverless`
-+ * if already dedicated). Dedicated tier changes use
-+ * `updateProductDatabaseSpecification` instead.
-+ */
- export async function createTablesDatabaseMigration(
-   projectId: string,
-   databaseId: string,
-@@ -1662,77 +1658,39 @@ export async function createTablesDatabaseMigration(
+@@ -172,12 +176,6 @@ function isProbableConsoleProjectId(value: string): boolean {
+   return /^[a-z0-9][a-z0-9-]{0,35}$/i.test(value)
+ }
  
-   await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+-function projectMatchesActiveListStatus(project: Models.Project): boolean {
+-  if (!getActiveProfileFeatures().billing) return true
+-  const status = project.status
+-  return status == null || status !== 'archived'
+-}
+-
+ // ============================================================================
+ // QUERY FUNCTIONS
+ // ============================================================================
+@@ -246,7 +244,6 @@ export async function fetchActiveProjects(
+   if (isRestricted && allowedIds.length === 0) {
+     return { projects: [], total: 0 }
+   }
+-  const allowedIdSet = new Set(allowedIds)
+   const restrictQueries = isRestricted
+     ? [
+         allowedIds.length === 1
+@@ -284,29 +281,6 @@ export async function fetchActiveProjects(
+       ? excludeProjectIds
+       : []
  
--  const runProductMigration = async () => {
+-  // `projects.list` only documents filters on name/teamId/labels/search - not `$id`.
+-  // Pasting a project ID never hits fulltext/labels, so resolve ID-shaped terms via get.
+-  if (trimmedSearch && isProbableConsoleProjectId(trimmedSearch)) {
 -    try {
--      return await startTablesDatabaseProductMigration(
--        projectSdk,
--        databaseId,
--        trimmed,
--      )
--    } catch (tablesMigrationError) {
--      const message =
--        tablesMigrationError instanceof Error
--          ? tablesMigrationError.message
--          : String(tablesMigrationError ?? '')
--      const alreadyExists =
--        message.toLowerCase().includes('migration record already exists') ||
--        message.toLowerCase().includes('already exists for this database')
--      if (alreadyExists) {
--        const migrationId =
--          parseTablesDatabaseMigrationIdFromError(tablesMigrationError)
--        if (migrationId) {
--          await deleteTablesDatabaseMigration(
--            projectId,
--            databaseId,
--            migrationId,
--          )
--        } else {
--          await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+-      const direct = await fetchProjectById(trimmedSearch)
+-      if (
+-        !excludeIds.includes(direct.$id) &&
+-        direct.teamId === teamId &&
+-        // Pasting an id must not reveal a project outside the member's scope.
+-        (!isRestricted || allowedIdSet.has(direct.$id)) &&
+-        projectMatchesActiveListStatus(direct) &&
+-        !(hideEnvironments && direct.parentId)
+-      ) {
+-        return {
+-          projects: page === 0 ? [direct] : [],
+-          total: 1,
 -        }
--        return startTablesDatabaseProductMigration(
--          projectSdk,
--          databaseId,
--          trimmed,
--        )
 -      }
--      throw tablesMigrationError
+-    } catch {
+-      // Not found, wrong console, or no access - fall through to list search.
 -    }
 -  }
 -
-   try {
--    return await runProductMigration()
--  } catch (tablesMigrationError) {
--    const routeMissing =
--      isAppwriteHttpStatus(tablesMigrationError, 404) ||
--      isHttpNotFoundError(tablesMigrationError)
--    if (!routeMissing) {
--      throw tablesMigrationError
-+    return await startTablesDatabaseProductMigration(
-+      projectSdk,
-+      databaseId,
-+      trimmed,
-+    )
-+  } catch (error) {
-+    const message = (
-+      error instanceof Error ? error.message : String(error ?? '')
-+    ).toLowerCase()
-+    const alreadyExists =
-+      message.includes('migration record already exists') ||
-+      message.includes('already exists for this database')
-+    if (!alreadyExists) throw error
-+
-+    const migrationId = parseTablesDatabaseMigrationIdFromError(error)
-+    if (migrationId) {
-+      await deleteTablesDatabaseMigration(projectId, databaseId, migrationId)
-+    } else {
-+      await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
-     }
-+    return startTablesDatabaseProductMigration(projectSdk, databaseId, trimmed)
-   }
--
--  // Cloud may expose shared→dedicated for TablesDB-backed compute on the MySQL
--  // engine migration route before (or instead of) tablesDB /migrations.
--  return projectSdk.mysql.createMigration({
--    databaseId,
--    targetType: 'dedicated',
--    specification: trimmed,
--  })
- }
- 
--/** True when TablesDB already runs on dedicated MySQL compute (not shared/serverless). */
-+/** True when TablesDB itself reports a dedicated specification (not shared/serverless). */
- async function isTablesDatabaseOnDedicatedCompute(
-   projectId: string,
-   databaseId: string,
- ): Promise<boolean> {
--  const engineDb = await fetchDedicatedDatabaseById(projectId, databaseId, {
--    type: 'engine',
--    engine: 'mysql',
--  })
--  if (!engineDb?.$id) return false
--  const spec = readDatabaseSpecification(engineDb.specification)
--  if (!spec || isServerlessDatabaseSpecId(spec)) return false
--  const status = coerceTrimmedString(engineDb.status).toLowerCase()
--  return status 
-```
-
-**File**: `apps/console/tests/unit/tablesdb-specification-change.test.ts` (added, +158/-0)
-```diff
-@@ -0,0 +1,158 @@
-+import { afterAll, describe, expect, mock, test } from 'bun:test'
-+import { AppwriteException } from '@appwrite.io/console'
-+import * as actualSdk from '@/lib/appwrite/sdk'
-+import { updateProductDatabaseSpecification } from '@/lib/react-query/hooks/databases'
-+
-+const PROJECT_ID = 'proj0000000000000000001'
-+const DATABASE_ID = 'db000000000000000000001'
-+const TARGET_SPECIFICATION = 's-2vcpu-4gb'
-+
-+type Call = { service: string; method: string; params: unknown }
-+
-+/**
-+ * Cloud keeps product databases off the raw engine API: `GET /v1/mysql/{id}`
-+ * is a 404 for every TablesDB database, dedicated or not. Whether a TablesDB
-+ * database already runs on dedicated compute can only be read from TablesDB.
-+ */
-+describe('updateProductDatabaseSpecification', () => {
-+  // Copy the real module now: the namespace import is live and points at the mock once it is set.
-+  const realSdk = { ...actualSdk }
-+
-+  afterAll(() => {
-+    mock.module('@/lib/appwrite/sdk', () => realSdk)
-+  })
-+
-+  function mockSdk(options: {
-+    specification?: string
-+    createMigration?: () => Promise<unknown>
-+  }) {
-+    const calls: Call[] = []
-+    const record =
-+      <T>(service: string, method: string, result: () => T | Promise<T>) =>
-+      async (params: unknown) => {
-+        calls.push({ service, method, params })
-+        return result()
-+      }
-+    const engineNotFound = () => {
-+      throw new AppwriteException(
-+        'Database not found',
-+        404,
-+        'dedicated_database_not_found',
-+      )
-+    }
-+
-+    mock.module('@/lib/appwrite/sdk', () => ({
-+      ...actualSdk,
-+      sdk: {
-+        forProject: () => ({
-+          tablesDB: {
-+            get: record('tablesDB', 'get', () => ({
-+              $id: DATABASE_ID,
-+              name: 'Orders',
-+              ...(options.specification === undefined
-+                ? {}
-+                : { specification: options.specification }),
-+            })),
-+            update: record('tablesDB', 'update', () => ({
-+              $id: DATABASE_ID,
-+              specification: TARGET_SPECIFICATION,
-+            })),
-+            listMigrations: record('tablesDB', 'listMigrations', () => ({
-+              migrations: [],
-+              total: 0,
-+            })),
-+            createMigration: record(
-+              'tablesDB',
-+              'createMigration',
-+              options.createMigration ??
-+                (() => ({ $id: 'migration1', phase: 'pending' })),
-+            ),
-+          },
-+          mysql: {
-+            get: record('mysql', 'get', engineNotFound),
-+            list: record('mysql', 'list', () => ({ databases: [], total: 0 })),
-+            createMigration: record('mysql', 'createMigration', engineNotFound),
-+          },
-+        }),
-+      },
-+    }))
-+
-+    return calls
-+  }
-+
-+  function methodsOn(calls: Call[], service: string): string[] {
-+    return calls
-+      .filter((call) => call.service === service)
-+      .map((call) => call.method)
-+  }
-+
-+  test('resizes a dedicated TablesDB database through tablesDB.update', async () => {
-+    const calls = mockSdk({ specification: 's-1vcpu-1gb' })
-+
-+    await updateProductDatabaseSpecification(
-+      PROJECT_ID,
-+      DATABASE_ID,
-+      'tablesdb',
-+      TARGET_SPECIFICATION,
-+    )
-+
-+    expect(methodsOn(calls, 'tablesDB')).toEqual(['get', 'update'])
-+    expect(calls.at(-1)?.params).toEqual({
-+      databaseId: DATABASE_ID,
-+      specification: TARGET_SPECIFICATION,
-+    })
-+    expect(methodsOn(calls, 'mysql')).toEqual([])
-+  })
-+
-+  test.each([['shared'], ['serverless'], [undefined]])(
-+    'migrates a serverless TablesDB database (specification %p)',
-+    async (specification) => {
-+      const calls = mockSdk({ specification })
-+
-+      await updateProductDatabaseSpecification(
-+        PROJECT_ID,
-+        DATABASE_ID,
-+        'tablesdb',
-+        TARGET_SPECIFICATION,
-+      )
-+
-+      expect(methodsOn(calls, 'tablesDB')).toEqual([
-+        'get',
-+        'listMigrations',
-+        'createMigration',
-+      ])
-+      expect(calls.at(-1)?.params).toEqual({
-+        databaseId: DATABASE_ID,
-+        specification: TARGET_SPECIFICATION,
-+        autoCutover: true,
-+      })
-+      expect(methodsOn(calls, 'mysql')).toEqual([])
-+    },
-+  )
-+
-+  test('surfaces a migration 404 instead of retrying on the mysql engine', async () => {
-+    const calls = mockSdk({
-+      specification: 'shared',
-+      createMigration: () => {
-+        throw new AppwriteException(
-+          'Database not found',
-+          404,
-+          'database_not_found',
-+        )
-+      },
-+    })
-+
-+    const attempt = updateProductDatabaseSpecification(
-+      PROJECT_ID,
-+      DATABASE_ID,
-+      'tablesdb',
-+      TARGET_SPECIFICATION,
-+    )
-+
-+    await expect(attempt).rejects.toMatchObject({
-+      code: 404,
-+      type: 'database_not_found',
-+    })
-+    expect(methodsOn(calls, 'mysql')).toEqual([])
-+  })
-+})
-```
-
-**File**: `apps/console/types-baseline.json` (modified, +0/-1)
-```diff
-@@ -1145,7 +1145,6 @@
-     "TS2339: Property 'pricing' does not exist on type 'DedicatedDatabaseSpecificationList'.": 1,
-     "TS2339: Property 'status' does not exist on type 'Database & { enabled: boolean; createdAt: string; updatedAt: string; hasBackupPolicy: boolean; backupPolicy: Record<string, unknown> | null; backupPolicyCount: number; databaseType: DatabaseType; }'.": 2,
-     "TS2724: '\"node_modules/@appwrite.io/console/types/models\".Models' has no exported member named 'DedicatedDatabaseSpecificationPricing'. Did you mean 'DedicatedDatabaseSpecification'?": 1,
--    "TS6133: 'currentSpecification' is declared but its value is never read.": 1,
-     "TS6133: 'useEffect' is declared but its value is never read.": 1
-   },
-   "src/lib/react-query/hooks/functions.ts": {
+   const queries =
+     excludeIds.length > 0
+       ? [
 ```
 
 ---
 
-### Incident Patch 2: `458b4a59` (2026-11-23)
-**Commit Message**: revert(extension): the Rust side of #15328
+### Incident Patch 2: `ae32cb0b` (2026-11-26)
+**Commit Message**: fix(console): give every full-size chart the shared grid
 
-The commit before this takes #15328 (per-dialect string literals and a
-declared LIKE escape) back out of the PHP package, so this pull request
-changes no PHP behaviour. With utopia-php/database 10.2.3 the package's
-SQLite builder and the library's own each appended ESCAPE, and SQLite
-refused the statement; that happened with the extension off.
+The project overview's requests and storage charts, the logs and activity
+volume charts, Analytics installs and the usage chart drew no grid while
+every other chart draws a dashed horizontal one. Sparklines stay without.
 
-The Rust port had been written to match #15328, so it follows:
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-- Reverts 589edcebd8: the tokenizers, parser, serializers and schemas
-  read and write string literals as main's PHP does. StringLiteral is
-  gone, and the shared filter module stays as it was.
-- The builders escape LIKE with a backslash and declare no escape,
-  setJsonRemove is main's JSON_REMOVE, toRawSql quotes through each
-  dialect's quoteString, and toAst/fromAst carry no escape clause.
-- compileLikePredicate(), likeEscape() and createTokenizer() are not
-  methods of main's builders, so they and their steps go: 74 remain.
-- MySQL, MariaDB and ClickHouse use the base AST serializer, as main's
-  createAstSerializer() does.
-
-Both corpora match main's package: 15,797 builder cases and 55,481
-query lines. utopia-php/database's suite f
-
-**File**: `crates/extension/README.md` (modified, +7/-28)
+**File**: `apps/console/AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -550,28 +550,6 @@ written as `a = b = c`, which reads back as `(a = b) = c`. `packages/query/src/A
- is now the fixed version, with two tests in `tests/AST/SerializerTest.php` that fail on the old
- one.
+@@ -505,6 +505,7 @@ Checklist (in this order):
+ - **Date tooltips**: Always include when showing dates for timezone clarity
+ - **Wizard headers are title-only**: Never pass a description, subtitle, or helper line to `WizardLayout`. The header is the title (and close/back). Put explanation in the page body, on a field, or omit it.
+ - **Theme colors in code**: Tokens such as `--border` and `--muted` are complete oklch colors. Use `var(--border)` in SVG props and inline styles, and `color-mix(in oklab, var(--muted) 30%, transparent)` for transparency (`color-mix(in_oklab,var(--primary)_35%,transparent)` inside Tailwind arbitrary values). Never wrap a token in `hsl()`: `hsl(var(--border))` computes to no color, so the grid line, border or fill disappears.
++- **Chart grids**: Every chart in a card or panel draws `<CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />`, so all charts read the same. Only sparklines (stat tiles, resource cards, list rows) skip it.
  
--### String literals
--
--`Utopia\Query\StringLiteral` is a PHP enum and stays one. The tokenizers, the parser, the
--serializers and the schemas each take a case of it (or their dialect's default), and the crate has
--the same four rules as `utopia_query::StringLiteral`: `quote()` for what the serializers and the
--DDL write, `unquote()` for what the parser reads. A backslash escapes or not, PostgreSQL's
--`E'...'` is its own token, a NUL or a backslash after a byte of 0x80 or above is refused where
--the dialect refuses it, and `LIKE` keeps its `ESCAPE` clause through `Binary::$escape`.
--
--The parser reads escapes in bytes, as PHP does. The extension hands it text with a character
--for each byte, so it asks the crate's parser for `widened()` text: `E'\u00e9'` is then the two
--bytes of `é`, each its own character, and comes back out as those two bytes.
--
--The corpus runs 1,903 cases of this on both: 29 literals through six tokenizers and the parser
--under each of the four rules, 18 strings through six serializers under each rule and through the
--DDL of five dialects, `LIKE ... ESCAPE` read and written, and statements with input after them.
--One known difference: the rules given to a tokenizer, a serializer or a schema are a protected
--property `$literal` in PHP, which a subclass can read. The extension keeps them in Rust.
--
--The crate's builders do not have these rules yet. They are not in the extension, so nothing
--here reaches them, and they are to be brought level when the builders move.
--
- ### The schemas
+ ### Date and time (Appwrite datetimes)
  
- `Schema` and `Schema\SQL` (both abstract), the dialects `Schema\MySQL`, `PostgreSQL`, `SQLite`,
-@@ -656,13 +634,13 @@ compares each public one, and the interfaces each builder implements.
- What a subclass can rely on:
- 
- - A protected method it overrides is the one the build calls, in the order PHP calls them: `build()`,
--  the `compile*()` methods, the clause hooks, the validators and every other helper, 77 in all,
-+  the `compile*()` methods, the clause hooks, the validators and every other helper, 74 in all,
-   `quote()` and `getBindingValues()` among them.
-   `parent::compileFilter()` runs the native one. An override is handed the package's own objects: a
-   `Query`, a `Case\Expression`, a `Statement`, a `ParsedQuery`, and `$parts` by reference. Nothing
-   is converted for a method no subclass overrides.
--- `createTokenizer()` and `createAstSerializer()` are among them: `toAst()` reads a CTE with the
--  tokenizer a subclass returns, and `fromAst()` writes what stays raw SQL with its serializer.
-+- `createAstSerializer()` is among them: `fromAst()` writes what stays raw SQL with the serializer
-+  a subclass returns.
- - `bindings`, `pendingQueries` and `resolvedAttributeCache` are protected properties it reads,
-   assigns and changes in place (`$this->pendingQueries[] = $query`), as the package's own traits do.
-   PHP is handed a copy the builder holds, and the next native call reads it back.
-@@ -695,11 +673,12 @@ Known differences:
- - `resolvedAttributeCache` has no order.
- - The classes declare a constructor and no `__clone()`. PHP's declare the reverse.
- 
--Four things check them. `tests/query-builders.php` is a corpus like the others: 15,827 cases, the
--same on PHP and on the extension. The package's own 5,828 tests pass on the native builders, but for
-+Four things check them. `tests/query-builders.php` is a corpus like the others: 15,797 cases, the
-+same on PHP and on the extension. The package's own 5,628 tests pass on the native builders, but for
- two that read the PHP class's source and private state and are skipped there. utopia-php/database
- 10.2.3 subclasses four of the builders, overrides 23 of their methods and serializes queries for its
--cache keys. Its 13,217 unit tests give the same result on the native builders as on PHP.
-+cache keys. Its 13,217 unit tests fail the same nine on main's PHP package, on this one and on the
-+native builders: the nine need a database server.
- `tests/query-coroutines.php` builds 720 statements in Swoole coroutines whose overrides and
- callbacks sleep in the middle of a build, so builds interleave on one thread. Each builder carries
- the PHP object that owns it for that reason: kept per thread, 476 of the 720 lost their overrides.
 ```
 
-**File**: `crates/extension/src/query/ast.rs` (modified, +25/-42)
+**File**: `apps/console/src/components/global/shared/RuntimeLogsVolumeChart.tsx` (modified, +12/-1)
 ```diff
-@@ -28,10 +28,10 @@ use ext_php_rs::types::{ZendHashTable, ZendObject, ZendStr, Zval};
- use ext_php_rs::zend::{ClassEntry, ExecutorGlobals, ce};
- use utopia_query::ast;
- use utopia_query::tokenizer::{Token, TokenType};
--use utopia_query::{NullsPosition, OrderDirection, StringLiteral, Value};
-+use utopia_query::{NullsPosition, OrderDirection, Value};
- 
-+use super::exception;
- use super::tokenizer::{case, class};
--use super::{Rules, exception};
- use crate::emails::{construct, string};
- use crate::string::PhpString;
- 
-@@ -168,7 +168,7 @@ const NODES: [(Node, &str, &[&str]); 25] = [
-     (Node::WindowDefinition, "Definition\\Window", &["name", "specification"]),
-     (Node::Aliased, "Expression\\Aliased", &["expression", "alias"]),
-     (Node::Between, "Expression\\Between", &["expression", "low", "high", "negated"]),
--    (Node::Binary, "Expression\\Binary", &["left", "operator", "right", "escape"]),
-+    (Node::Binary, "Expression\\Binary", &["left", "operator", "right"]),
-     (Node::CaseWhen, "Expression\\CaseWhen", &["condition", "result"]),
-     (Node::Cast, "Expression\\Cast", &["expression", "type"]),
-     (Node::Conditional, "Expression\\Conditional", &["operand", "whens", "else"]),
-@@ -466,7 +466,6 @@ impl Reader<'_> {
-                 left: self.boxed(slot(node, 0, "left")?)?,
-                 operator: text(slot(node, 1, "operator")?, "operator")?,
-                 right: self.boxed(slot(node, 2, "right")?)?,
--                escape: self.maybe(slot(node, 3, "escape")?)?.map(Box::new),
-             }
-             .into(),
-             Some(Node::CaseWhen) => self.when(value)?.into(),
-@@ -739,12 +738,7 @@ impl Builder<'_> {
-             ),
-             ast::Expression::Binary(binary) => self.make(
-                 Node::Binary,
--                [
--                    self.expression(&binary.left),
--                    words(&binary.operator),
--                    self.expression(&binary.right),
--                    self.maybe(binary.escape.as_deref()),
--                ],
-+                [self.expression(&binary.left), words(&binary.operator), self.expression(&binary.right)],
-             ),
-             ast::Expression::CaseWhen(when) => self.when(when),
-             ast::Expression::Cast(cast) => {
-@@ -924,13 +918,12 @@ fn tokens<'a>(classes: &Classes, table: &'a ZendHashTable) -> PhpResult<(Vec<Tok
- #[php_class]
- #[php(name = "Utopia\\Query\\AST\\Parser")]
- #[derive(Clone)]
--pub struct Parser(StringLiteral);
-+pub struct Parser;
- 
- #[php_impl]
- impl Parser {
--    #[php(defaults(literal = "Rules(StringLiteral::Backslash)"))]
--    pub fn __construct(literal: Rules) -> Self {
--        Self(literal.0)
-+    pub fn __construct() -> Self {
-+        Self
-     }
- 
-     pub fn parse(&self, tokens: &ZendHashTable) -> PhpResult<Zval> {
-@@ -941,11 +934,7 @@ impl Parser {
-         }
-         // The statement is dropped where it was made: on the stack with room for it.
-         roomy(levels, INLINE_PARSE_LEVELS, || {
--            ast::Parser::new()
--                .with_literal(self.0)
--                .widened()
--                .parse(&read)
--                .map(|select| Builder(&classes).select(&select))
-+            ast::Parser::new().parse(&read).map(|select| Builder(&classes).select(&select))
-         })
-         .map_err(|error| failed(&error))
-     }
-@@ -1004,11 +993,6 @@ pub(super) fn expression_node(expression: &ast::Expression) -> PhpResult<Zval> {
-     Ok(Builder(&classes).expression(expression))
- }
- 
--/// A `Statement\Select` PHP's own parser returned, as the crate's.
--pub(super) fn read_select(select: &Zval) -> PhpResult<ast::Select> {
--    read(&Statement(select))
--}
--
- /// The package's `Statement\Select` as the crate's, for a builder's `fromAst()`.
- pub(super) fn read(statement: &Statement<'_>) -> PhpResult<ast::Select> {
-     let classes = classes()?;
-@@ -1020,21 +1004,20 @@ pub(super) fn read(statement: &Statement<'_>) -> PhpResult<ast::Select> {
- /// The methods every serializer class declares: a parent's method reads its own Rust type,
- /// so each class has its own.
- macro_rules! serializer_methods {
--    ($class:ident, $serializer:expr, $rules:literal) => {
-+    ($class:ident, $serializer:expr) => {
-         #[php_impl]
-         impl $class {
--            #[php(defaults(literal = $rules))]
--            pub fn __construct(literal: Rules) -> Self {
--                Self(literal.0)
-+            pub fn __construct() -> Self {
-+                Self
-             }
- 
-             pub fn serialize(&self, stmt: Statement<'_>) -> PhpResult<Zval> {
--                written($serializer.with_literal(self.0), stmt.0, true)
-+                written($serializer, stmt.0, true)
-             }
- 
-             #[php(name = "serializeExpression")]
-             pub fn serialize_expression(&self, expression: Expression<'_>) -> PhpResult<Zval> {
--                written($serializer.with_literal(self.0), expression.0, false)
-+                written($serializer, expression.0, false)
-             }
- 
-             
+@@ -1,6 +1,12 @@
+ import { useMemo } from 'react'
+ import type { DateRange } from 'react-day-picker'
+-import { Bar, BarChart, ResponsiveContainer, Tooltip } from 'recharts'
++import {
++  Bar,
++  BarChart,
++  CartesianGrid,
++  ResponsiveContainer,
++  Tooltip,
++} from 'recharts'
+ import { ZoomOut } from 'lucide-react'
+ import {
+   SeriesChartXAxis,
+@@ -135,6 +141,11 @@ export function RuntimeLogsVolumeChart({
+               className={surfaceClassName}
+               {...chartProps}
+             >
++              <CartesianGrid
++                strokeDasharray="3 3"
++                stroke="var(--border)"
++                vertical={false}
++              />
+               <SeriesChartXAxis pointCount={data.length} labels={labels} />
+               <UsageChartYAxis
+                 tickFormatter={yTickFormatter}
 ```
 
-**File**: `crates/extension/src/query/builder.rs` (modified, +2/-65)
+**File**: `apps/console/src/components/pages/projects/$projectId/activity/_components/ActivityLogVolumeChart.tsx` (modified, +6/-0)
 ```diff
-@@ -140,33 +140,19 @@ pub trait Text: Dialect {
-         Ok(None)
-     }
- 
--    /// The class `createTokenizer()` makes: the dialect's own, or the standard one.
--    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\Tokenizer";
--
-     /// The class `createAstSerializer()` makes.
-     const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer";
- }
- 
--impl Text for MySqlDialect {
--    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\MySQL";
--    const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\MySQL";
--}
--impl Text for MariaDbDialect {
--    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\MariaDB";
--    const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\MariaDB";
--}
-+impl Text for MySqlDialect {}
-+impl Text for MariaDbDialect {}
- impl Text for PostgreSqlDialect {
--    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\PostgreSQL";
-     const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\PostgreSQL";
- }
- impl Text for SqliteDialect {
--    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\SQLite";
-     const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\SQLite";
- }
- impl Text for ClickHouseDialect {
--    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\ClickHouse";
--    const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\ClickHouse";
--
-     fn formatted(builder: &mut Builder<Self>) -> Result<Option<FormattedInsertStatement>, Error> {
-         builder.formatted_insert()
-     }
-@@ -779,12 +765,6 @@ impl<D: Dialect + Text> State<D> {
-                 }
-             });
-         }
--        // `createTokenizer()` takes nothing: the SQL is for the tokenizer it returns.
--        if step == Step::CreateTokenizer {
--            let [Arg::Str(sql)] = arguments else { return None };
--            let tokenizer = invoke(object, function, &mut [])?;
--            return self.tokenized(&tokenizer, sql).ok().map(|read| Ret::Select(Box::new(read)));
--        }
-         let returned = invoke(object, function, &mut zvals)?;
-         let strings = |list: &Zval| -> Vec<String> {
-             let items = list.dereference().array().into_iter().flat_map(ZendHashTable::values);
-@@ -849,22 +829,6 @@ impl<D: Dialect + Text> State<D> {
-         Ok(())
-     }
- 
--    /// `$sql` read as PHP reads a CTE: the tokenizer's tokens, filtered, through the package's parser
--    /// with the dialect's string rules.
--    fn tokenized(&self, tokenizer: &Zval, sql: &str) -> PhpResult<utopia_query::ast::Select> {
--        let tokenizer = tokenizer.object().ok_or_else(pending)?;
--        let tokens =
--            tokenizer.try_call_method("tokenize", vec![&string(&bytes(D::JSON, sql))]).map_err(|_| pending())?;
--        let filter =
--            ZendCallable::try_from_name("Utopia\\Query\\Tokenizer\\Tokenizer::filter").map_err(PhpException::from)?;
--        let tokens = filter.try_call(vec![&tokens]).map_err(|_| pending())?;
--        let rules = utopia_query::StringLiteral::CASES.iter().find(|(rules, _)| *rules == D::LITERAL);
--        let rules = enum_case("Utopia\\Query\\StringLiteral", rules.map_or("Backslash", |found| found.1))?;
--        let parser = construct(class("Utopia\\Query\\AST\\Parser")?, &mut [rules])?;
--        let select = parser.try_call_method("parse", vec![&tokens]).map_err(|_| pending())?;
--        super::ast::read_select(&select)
--    }
--
-     /// The crate's `CASE` as the package's `Case\Expression`, built through its own methods.
-     fn case_object(&self, case: &CaseExpression) -> PhpResult<Zval> {
-         let made = construct(class(CASE)?, &mut [])?;
-@@ -4511,28 +4475,6 @@ macro_rules! builder_class {
-                 self_.0.step(Step::CompileGroupByTimeBucket, &[Arg::Str(&attribute), Arg::Str(&interval)])
-             }
- 
--            #[php(name = "compileLikePredicate", vis = "protected", defaults(not = "Bool(false)"))]
--            pub fn compile_like_predicate(
--                self_: &mut ZendClassObject<$class>,
--                attribute: PhpString<'_>,
--                not: Bool,
--            ) -> PhpResult<Bytes> {
--                let object = std::ptr::from_mut(&mut self_.std);
--                self_.0.running(object);
--                let attribute = self_.0.text(attribute.bytes());
--                let not = not.0;
--                self_.0.step(Step::CompileLikePredicate, &[Arg::Str(&attribute), Arg::Bool(not)])
--            }
--
--            #[php(name = "likeEscape", vis = "protected")]
--            pub fn like_escape(
--                self_: &mut ZendClassObject<$class>,
--            ) -> PhpResult<Bytes> {
--                let object = std::ptr::from_mut(&mut self_.std);
--                self_.0.running(object);
--                self_.0.step(Step::LikeEscape, &[])
--            }
--
-             #[php(name = "compileComparison", vis = "protected", optional = column)]
-             pub fn compile_comparison(
-                 self_: &mut ZendClassObject<$class>,
-@@ -4942,11 +4884,6 @@
+@@ -15,6 +15,7 @@ import { ChevronDown } from 'lucide-react'
+ import {
+   Bar,
+   BarChart,
++  CartesianGrid,
+   Cell,
+   Customized,
+   ResponsiveContainer,
+@@ -716,6 +717,11 @@ export function ActivityLogVolumeChart({
+                     setTooltipPointer(null)
+                   }}
+                 >
++                  <CartesianGrid
++                    strokeDasharray="3 3"
++                    stroke="var(--border)"
++                    vertical={false}
++                  />
+                   <SeriesChartXAxis
+                     pointCount={chartData.length}
+                     dataKey="label"
 ```
 
-**File**: `crates/extension/src/query/features.rs` (modified, +0/-1)
+**File**: `apps/console/src/components/pages/projects/$projectId/analytics/_components/InstallsPanel.tsx` (modified, +6/-0)
 ```diff
-@@ -383,7 +383,6 @@ const TYPES: &[(&str, usize, Declared)] = &[
-     ("multiply", 2, INT_OR_FLOAT),
-     ("unsetFields", 1, Declared::Types(engine::MAY_BE_STRING)),
-     ("createAstSerializer", 0, Declared::Class("Utopia\\Query\\AST\\Serializer", 0)),
--    ("createTokenizer", 0, Declared::Class("Utopia\\Query\\Tokenizer\\Tokenizer", 0)),
-     ("compileInsertBody", 0, Declared::Types(engine::MAY_BE_ARRAY)),
-     ("compileAssignments", 0, Declared::Types(engine::MAY_BE_ARRAY)),
-     ("validateAndGetColumns", 0, Declared::Types(engine::MAY_BE_ARRAY)),
+@@ -4,6 +4,7 @@ import { Query } from '@appwrite.io/console'
+ import {
+   Area,
+   AreaChart,
++  CartesianGrid,
+   ResponsiveContainer,
+   Tooltip,
+   XAxis,
+@@ -228,6 +229,11 @@ export function InstallsPanel({
+                       data={data}
+                       margin={{ top: 4, right: 4, bottom: 0, left: 4 }}
+                     >
++                      <CartesianGrid
++                        strokeDasharray="3 3"
++                        stroke="var(--border)"
++                        vertical={false}
++                      />
+                       <defs>
+                         <linearGradient
+                           id={gradientId}
 ```
 
-**File**: `crates/extension/src/query/mod.rs` (modified, +1/-27)
+**File**: `apps/console/src/components/pages/projects/$projectId/overview/OverviewStorageChart.tsx` (modified, +12/-1)
 ```diff
-@@ -10,12 +10,9 @@ pub mod schema;
- pub mod tokenizer;
- pub mod value;
+@@ -1,7 +1,13 @@
+ 'use client'
  
--use ext_php_rs::convert::{FromZval, IntoZval, StubLiteral};
-+use ext_php_rs::convert::IntoZval;
- use ext_php_rs::exception::PhpException;
--use ext_php_rs::flags::DataType;
--use ext_php_rs::types::Zval;
- use ext_php_rs::zend::{ClassEntry, ce};
--use utopia_query::StringLiteral;
- 
- use crate::emails::{construct, string};
- 
-@@ -30,26 +27,3 @@ pub fn exception(error: &utopia_query::Error) -> PhpException {
-         Err(failed) => failed,
-     }
- }
--
--/// A `Utopia\Query\StringLiteral` argument: the enum is the package's own PHP, and a case
--/// object keeps its name in its first slot.
--pub struct Rules(pub StringLiteral);
--
--impl<'a> FromZval<'a> for Rules {
--    const TYPE: DataType = DataType::object("Utopia\\Query\\StringLiteral");
--
--    fn from_zval(zval: &'a Zval) -> Option<Self> {
--        let object = zval.object().filter(|object| {
--            ClassEntry::try_find("Utopia\\Query\\StringLiteral").is_some_and(|class| object.instance_of(class))
--        })?;
--        let name = ast::slots(object).first()?.str()?;
--        StringLiteral::CASES.iter().find(|(_, case)| *case == name).map(|(rules, _)| Rules(*rules))
--    }
--}
--
--impl StubLiteral for Rules {
--    fn stub_literal(&self) -> String {
--        let name = StringLiteral::CASES.iter().find(|(rules, _)| *rules == self.0).map_or("Backslash", |found| found.1);
--        format!("\\Utopia\\Query\\StringLiteral::{name}")
--    }
--}
+ import { memo, useMemo, type ReactNode } from 'react'
+-import { Area, AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
++import {
++  Area,
++  AreaChart,
++  CartesianGrid,
++  ResponsiveContainer,
++  Tooltip,
++} from 'recharts'
+ import { useParams } from '@tanstack/react-router'
+ import { useT } from '@/lib/i18n/translate'
+ import { cn } from '@/lib/utils'
+@@ -297,6 +303,11 @@ export const OverviewStorageChart = memo(function OverviewStorageChart({
+                   minHeight={OVERVIEW_CHART_HEIGHT}
+                 >
+                   <AreaChart data={activeChartData} margin={USAGE_CHART_MARGIN}>
++                    <CartesianGrid
++                      strokeDasharray="3 3"
++                      stroke="var(--border)"
++                      vertical={false}
++                    />
+                     <defs>
+                       {showChartSkeleton ? (
+                         <linearGradient
 ```
 
-**File**: `crates/extension/src/query/schema.rs` (modified, +10/-16)
+**File**: `apps/console/src/components/pages/projects/$projectId/overview/RequestsChart.tsx` (modified, +12/-1)
 ```diff
-@@ -1399,25 +1399,19 @@ schema_methods!(
- 
-         #[php(name = "createCollation", defaults(deterministic = "Bool(true)"))]
-         pub fn create_collation(&self, name: PhpString<'_>, options: Arr<'_>, deterministic: Bool) -> PhpResult<Zval> {
--            let name = inward(false, name.bytes())?;
--            let compile = |pairs: &[(String, String)]| {
--                let pairs: Vec<_> = pairs.iter().map(|(name, option)| (name.as_str(), option.as_str())).collect();
--                PostgreSql::new().create_collation(&name, &pairs, deterministic.0)
--            };
-             let mut pairs = Vec::new();
-             for (name, option) in options.table().into_iter().flat_map(ZendHashTable::iter) {
--                let name = key(false, &name)?;
--                match scalar(false, option, "options") {
--                    Ok(option) => pairs.push((name, option)),
--                    // PHP refuses a key before it reads the value under it, and an earlier
--                    // option before a later one.
--                    Err(wrong) => {
--                        pairs.push((name, String::new()));
--                        return Err(compile(&pairs).err().map_or(wrong, |error| thrown(false, &error)));
--                    }
--                }
-+                // PHP writes these into a string: nothing for `null`, `Array` for an array.
-+                let option = match option {
-+                    option if option.is_null() => String::new(),
-+                    option if option.is_array() => "Array".to_owned(),
-+                    option => scalar(false, option, "options")?,
-+                };
-+                pairs.push((key(false, &name)?, option));
-             }
--            statement::<PostgreSql>(&self.0, compile(&pairs), None)
-+            let pairs: Vec<_> = pairs.iter().map(|(name, option)| (name.as_str(), option.as_str())).collect();
-+            let name = inward(false, name.bytes())?;
-+            statement::<PostgreSql>(&self.0, PostgreSql::new().create_collation(&name, &pairs, deterministic.0), None)
-         }
- 
-         #[php(name = "alterColumnType", defaults(using = "\"\""))]
+@@ -1,5 +1,11 @@
+ import { memo, useMemo, type ReactNode } from 'react'
+-import { Area, AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
++import {
++  Area,
++  AreaChart,
++  CartesianGrid,
++  ResponsiveContainer,
++  Tooltip,
++} from 'recharts'
+ import { useParams } from '@tanstack/react-router'
+ import { useT } from '@/lib/i18n/translate'
+ import { cn } from '@/lib/utils'
+@@ -435,6 +441,11 @@ export const RequestsChart = memo(function RequestsChart({
+                   minHeight={OVERVIEW_CHART_HEIGHT}
+                 >
+                   <AreaChart data={activeChartData} margin={USAGE_CHART_MARGIN}>
++                    <CartesianGrid
++                      strokeDasharray="3 3"
++                      stroke="var(--border)"
++                      vertical={false}
++                    />
+                     <defs>
+                       {isSkeleton ? (
+                         <linearGradient
 ```
 
-**File**: `crates/extension/src/query/tokenizer.rs` (modified, +21/-19)
+**File**: `apps/console/src/components/pages/projects/$projectId/usage/Chart.tsx` (modified, +6/-0)
 ```diff
-@@ -7,10 +7,9 @@ use ext_php_rs::exception::PhpException;
- use ext_php_rs::prelude::*;
- use ext_php_rs::types::{ZendHashTable, ZendObject, ZendStr, Zval};
- use ext_php_rs::zend::{ClassEntry, ce};
--use utopia_query::StringLiteral;
- use utopia_query::tokenizer::{TokenType, Tokenizer as Dialect};
- 
--use super::{Rules, exception};
-+use super::exception;
- use crate::emails::{construct, string};
- use crate::string::PhpString;
- 
-@@ -76,16 +75,15 @@ fn filter(tokens: &ZendHashTable) -> PhpResult<Vec<Zval>> {
- /// The methods every tokenizer class declares: a parent's method reads its own Rust type,
- /// so each class has its own.
- macro_rules! tokenizer_methods {
--    ($class:ident, $dialect:expr, $rules:literal, $quote:literal) => {
-+    ($class:ident, $dialect:expr, $quote:literal) => {
-         #[php_impl]
-         impl $class {
--            #[php(defaults(literal = $rules))]
--            pub fn __construct(literal: Rules) -> Self {
--                Self(literal.0)
-+            pub fn __construct() -> Self {
-+                Self
-             }
- 
-             pub fn tokenize(&self, sql: PhpString<'_>) -> PhpResult<Vec<Zval>> {
--                tokenize($dialect.with_literal(self.0), sql.bytes())
-+                tokenize($dialect, sql.bytes())
-             }
- 
-             pub fn filter(tokens: &ZendHashTable) -> PhpResult<Vec<Zval>> {
-@@ -100,48 +98,52 @@ macro_rules! tokenizer_methods {
-     };
- }
- 
-+/// `Utopia\Query\Tokenizer\Tokenizer`: the standard tokenizer.
-+///
-+/// No class here derives `Default`: with it, ext-php-rs 0.16.5 makes `new` of a PHP subclass
-+/// an object of the Rust class.
- #[php_class]
- #[php(name = "Utopia\\Query\\Tokenizer\\Tokenizer")]
- #[derive(Clone)]
--pub struct Tokenizer(StringLiteral);
--tokenizer_methods!(Tokenizer, Dialect::new(), "Rules(StringLiteral::Backslash)", "`");
-+pub struct Tokenizer;
-+tokenizer_methods!(Tokenizer, Dialect::new(), "`");
- 
- /// `Utopia\Query\Tokenizer\MySQL`: also reads `#` line comments.
- #[php_class]
- #[php(name = "Utopia\\Query\\Tokenizer\\MySQL")]
- #[php(extends(Tokenizer))]
- #[derive(Clone)]
--pub struct MySql(StringLiteral);
--tokenizer_methods!(MySql, Dialect::mysql(), "Rules(StringLiteral::Backslash)", "`");
-+pub struct MySql;
-+tokenizer_methods!(MySql, Dialect::mysql(), "`");
- 
- /// `Utopia\Query\Tokenizer\MariaDB`: as MySQL.
- #[php_class]
- #[php(name = "Utopia\\Query\\Tokenizer\\MariaDB")]
- #[php(extends(MySql))]
- #[derive(Clone)]
--pub struct MariaDb(StringLiteral);
--tokenizer_methods!(MariaDb, Dialect::mariadb(), "Rules(StringLiteral::Backslash)", "`");
-+pub struct MariaDb;
-+tokenizer_methods!(MariaDb, Dialect::mariadb(), "`");
- 
- /// `Utopia\Query\Tokenizer\PostgreSQL`: double-quoted identifiers and multi-character operators.
- #[php_class]
- #[php(name = "Utopia\\Query\\Tokenizer\\PostgreSQL")]
- #[php(extends(Tokenizer))]
- #[derive(Clone)]
--pub struct PostgreSql(StringLiteral);
--tokenizer_methods!(PostgreSql, Dialect::postgresql(), "Rules(StringLiteral::Extended)", "\"");
-+pub struct PostgreSql;
-+tokenizer_methods!(PostgreSql, Dialect::postgresql(), "\"");
- 
- /// `Utopia\Query\Tokenizer\SQLite`: double-quoted identifiers.
- #[php_class]
- #[php(name = "Utopia\\Query\\Tokenizer\\SQLite")]
- #[php(extends(Tokenizer))]
- #[derive(Clone)]
--pub struct Sqlite(StringLiteral);
--tokenizer_methods!(Sqlite, Dialect::sqlite(), "Rules(StringLiteral::Standard)", "`");
-+pub struct Sqlite;
-+tokenizer_methods!(Sqlite, Dialect::sqlite(), "\"");
- 
- /// `Utopia\Query\Tokenizer\ClickHouse`: as the standard tokenizer.
- #[php_class]
- #[php(name = "Utopia\\Query\\Tokenizer\\ClickHouse")]
- #[php(extends(Tokenizer))]
- #[derive(Clone)]
--pub struct ClickHouse(StringLiteral);
--tokenizer_methods!(ClickHouse, Dialect::clickhouse(), "Rules(StringLiteral::BackslashUtf8)", "`");
-+pub struct ClickHouse;
-+tokenizer_methods!(ClickHouse, Dialect::clickhouse(), "`");
-```
-
-**File**: `crates/extension/tests/query.php` (modified, +0/-100)
-```diff
-@@ -2174,98 +2174,6 @@ public function build(): Utopia\Query\Builder\Statement
- }
- emit('view of a hollow statement', outcome(fn () => (new Utopia\Query\Schema\MySQL())->createView('v', new HollowBuilder())));
- 
--// --- String literals -----------------------------------------------------------------------
--
--// Each dialect writes and reads a string literal by its own rules, and takes another's when given one.
--$rules = Utopia\Query\StringLiteral::cases();
--$texts = [
--    '', 'plain', "it's", 'back\\slash', '\\', 'a\\', "nul\0byte", "é\\", "\xff\\", "\xe9\\x", "a\\\xff", "\x80", 'tab\\tnl\\n',
--    "\\'", "''", '%_\\%\\_', '日本\\語', "line\nbreak",
--];
--$literals = [
--    "''", "'a'", "'it''s'", "'a\\'b'", "'a\\\\b'", "'\\n\\t\\r\\b\\0\\Z\\a\\f\\v\\%\\_\\q'", "'\\x41\\x4\\xg\\xff'", "'\\101\\7\\400\\8'",
--    "'\\u00e9\\u12\\U0001F600\\U0000d800\\uD800'", "'\\U00110000'", "E'a\\nb'", "e'\\x41'", "E'\\u00e9'", "E'\\0'", "E'\\101'", "E''", "E'it''s'",
--    "'\xff'", "'\xff\\n'", "E'\xe9\\xe9\\u00e9'", "'a\\", "'a'b'", "'", "E'", "E'\\'", "'nul\0'", "'\\0'", 'E', "'a' 'b'",
--];
--foreach ($rules as $rule) {
--    $classes = [Tokenizer\Tokenizer::class, Tokenizer\MySQL::class, Tokenizer\MariaDB::class, Tokenizer\PostgreSQL::class, Tokenizer\SQLite::class, Tokenizer\ClickHouse::class];
--    foreach ($classes as $class) {
--        $read = [];
--        foreach ($literals as $literal) {
--            $read[] = outcome(fn () => (new $class($rule))->tokenize('SELECT ' . $literal . ' # c' . "\n" . ', `a`, "b" -- d'));
--        }
--        emit('literal tokens ' . $rule->name . ' ' . $class, $read);
--    }
--    $parsed = [];
--    foreach ($literals as $literal) {
--        foreach ([Tokenizer\Tokenizer::class, Tokenizer\PostgreSQL::class] as $class) {
--            $parsed[] = outcome(fn () => (new AST\Parser($rule))->parse(Tokenizer\Tokenizer::filter((new $class($rule))->tokenize('SELECT ' . $literal))));
--        }
--    }
--    emit('literal parsed ' . $rule->name, $parsed);
--    $written = [];
--    foreach ([AST\Serializer::class, AST\Serializer\MySQL::class, AST\Serializer\MariaDB::class, AST\Serializer\PostgreSQL::class, AST\Serializer\SQLite::class, AST\Serializer\ClickHouse::class] as $class) {
--        foreach ($texts as $text) {
--            $written[] = outcome(fn () => (new $class($rule))->serializeExpression(new AST\Literal($text)));
--        }
--    }
--    emit('literal written ' . $rule->name, $written);
--}
--// The defaults of each class, and a literal read back from what was written.
--$defaults = [];
--foreach ([[Tokenizer\Tokenizer::class, AST\Serializer::class], [Tokenizer\MySQL::class, AST\Serializer\MySQL::class], [Tokenizer\PostgreSQL::class, AST\Serializer\PostgreSQL::class], [Tokenizer\SQLite::class, AST\Serializer\SQLite::class], [Tokenizer\ClickHouse::class, AST\Serializer\ClickHouse::class]] as [$tokenizer, $serializer]) {
--    foreach ($texts as $text) {
--        $defaults[] = outcome(fn () => (new $serializer())->serializeExpression(new AST\Literal($text)));
--        $defaults[] = outcome(fn () => (new $tokenizer())->tokenize("SELECT 'a\\'b', E'c\\'d', e'f'"));
--    }
--}
--emit('literal defaults', $defaults);
--
--// LIKE keeps its ESCAPE clause, and nothing may follow a statement but one semicolon.
--$likes = [];
--foreach ([
--    "SELECT a LIKE 'x!%' ESCAPE '!'", "SELECT a NOT LIKE b ESCAPE c", "SELECT a ILIKE 'x' escape '\\\\' AND b", "SELECT a NOT ILIKE 'x' ESCAPE '!' OR b LIKE 'y'",
--    "SELECT a LIKE 'x' ESCAPE", "SELECT a LIKE 'x' ESCAPE '!' ESCAPE '?'", 'SELECT escape FROM t', 'SELECT a = b ESCAPE c', 'SELECT 1;', 'SELECT 1;;', 'SELECT 1; SELECT 2',
--    'SELECT 1 2', 'SELECT 1 FROM t )', 'SELECT a FROM t WHERE x LIKE y ESCAPE z ORDER BY a;',
--] as $sql) {
--    foreach ([[new Tokenizer\Tokenizer(), new AST\Parser(), new AST\Serializer()], [new Tokenizer\PostgreSQL(), new AST\Parser(Utopia\Query\StringLiteral::Extended), new AST\Serializer\PostgreSQL()]] as [$tokenizer, $reader, $writer]) {
--        $likes[] = outcome(fn () => $reader->parse(Tokenizer\Tokenizer::filter($tokenizer->tokenize($sql))));
--        $likes[] = outcome(fn () => $writer->serialize($reader->parse(Tokenizer\Tokenizer::filter($tokenizer->tokenize($sql)))));
--    }
--}
--$likes[] = outcome(fn () => (new AST\Serializer())->serializeExpression(new AST\Expression\Binary(new AST\Reference\Column('a'), 'LIKE', new AST\Literal('x'), new AST\Expression\Binary(new AST\Literal('!'), 'OR', new AST\Literal('?')))));
--emit('like escape and trailing input', $likes);
--
--// DDL inlines its strings through the same rules.
--$inlined = [];
--foreach ($schemas as $dialect => $schema) {
--    foreach ($texts as $text) {
--        $inlined[] = outcome(function () use ($schema, $text) {
--            $table = $schema->table('t');
--            $table->string('a')->default($text)->comment($text);
--            $table->enum('e', [$text, 'b']);
--
--            return $table->create();
--        });
--        if ($schema instanceof Schema\Feature\TableComments) {
--
+@@ -11,6 +11,7 @@ import { FORCE_LTR_CLASS } from '@/lib/layout/force-ltr'
+ import {
+   Area,
+   AreaChart,
++  CartesianGrid,
+   ResponsiveContainer,
+   Tooltip,
+ } from 'recharts'
+@@ -61,6 +62,11 @@ export function UsageChart({ className }: UsageChartProps) {
+               data={usageData}
+               margin={USAGE_CHART_MARGIN}
+             >
++              <CartesianGrid
++                strokeDasharray="3 3"
++                stroke="var(--border)"
++                vertical={false}
++              />
+               <defs>
+                 <linearGradient
+                   id="requestsGradient"
 ```
 
 ---
 
-### Incident Patch 3: `1d2e2b65` (2026-11-24)
-**Commit Message**: Merge pull request #15981 from appwrite/fix-tablesdb-dedicated-spec-change-fbb4bc
+### Incident Patch 3: `3286a7ed` (2026-11-26)
+**Commit Message**: Merge pull request #16146 from appwrite/fix-videos-playback
 
-fix(console): resize dedicated TablesDB databases through the product API
+fix(videos): playback without project, odd profiles, thumbnail cache headers, DASH captions
 
-**File**: `apps/console/src/components/pages/projects/$projectId/databases/settings/DatabaseSpecificationCard.tsx` (modified, +0/-1)
+**File**: `app/views/videos/dash.phtml` (modified, +2/-2)
 ```diff
-@@ -122,7 +122,6 @@ export function DatabaseSpecificationCard({
-         databaseId,
-         dbKind,
-         specification,
--        database.specification,
-         database.name,
-       ),
-     onSuccess: async (result) => {
+@@ -35,9 +35,9 @@ echo '<?xml version="1.0" encoding="utf-8"?>'; ?>
+     </AdaptationSet>
+     <?php endforeach; ?>
+      <?php foreach ($this->getParam('captions', []) as $caption):?>
+-         <AdaptationSet id="<?php if (isset($caption['id'])): echo $this->print($caption['id'], self::FILTER_ESCAPE);  endif;?>"  lang="<?php if (isset($caption['name'])): echo $this->print($caption['name'], self::FILTER_ESCAPE);  endif;?>" mimeType="text/vtt">
++         <AdaptationSet id="<?php echo $this->print((string) (int) ($caption['adaptationId'] ?? 0), self::FILTER_ESCAPE);?>" lang="<?php if (isset($caption['name'])): echo $this->print($caption['name'], self::FILTER_ESCAPE);  endif;?>" mimeType="text/vtt">
+              <Role schemeIdUri="urn:mpeg:dash:role:2011" value="subtitle" />
+-             <Representation>
++             <Representation id="<?php if (isset($caption['id'])): echo $this->print($caption['id'], self::FILTER_ESCAPE); endif;?>" bandwidth="256">
+                 <BaseURL><?php if (isset($caption['baseUrl'])): echo $this->print($caption['baseUrl'], self::FILTER_ESCAPE); endif;?></BaseURL>
+             </Representation>
+         </AdaptationSet>
 ```
 
-**File**: `apps/console/src/lib/react-query/hooks/databases.ts` (modified, +31/-74)
+**File**: `src/Appwrite/Platform/Modules/Project/Http/Project/Videos/Profiles/Create.php` (modified, +10/-2)
 ```diff
-@@ -72,12 +72,8 @@ import {
-   hasTablesDatabaseMigrationCutover,
-   parseTablesDatabaseMigrationIdFromError,
- } from '@/lib/databases/tables-database-migration'
--import {
--  isAppwriteHttpStatus,
--  isHttpNotFoundError,
--} from '@/lib/utils/error-formatting'
-+import { isHttpNotFoundError } from '@/lib/utils/error-formatting'
- import { translate } from '@/lib/i18n/translate'
--import { readDatabaseSpecification } from '@/lib/databases/database-compute'
- import { waitForDatabaseRealtimeEvent } from '@/lib/realtime/wait-for-database-realtime'
- import { normalizeDedicatedRealtimeEngine } from '@/lib/realtime/dedicated-database-cache'
- import { buildPostgresListSchemasSql } from '@/lib/postgres-sql'
-@@ -1593,12 +1589,6 @@ export async function updateProjectDatabase(
-   return await projectSdk.tablesDB.update(payload)
- }
- 
--/**
-- * Migrate a serverless TablesDB database onto a dedicated specification.
-- * Only valid while the database is still serverless (`database_not_serverless`
-- * if already dedicated). Dedicated tier changes use
-- * `updateTablesDatabaseSpecification` instead.
-- */
- export async function deleteTablesDatabaseMigration(
-   projectId: string,
-   databaseId: string,
-@@ -1646,6 +1636,12 @@ async function startTablesDatabaseProductMigration(
-   })
- }
- 
-+/**
-+ * Migrate a serverless TablesDB database onto a dedicated specification.
-+ * Only valid while the database is still serverless (`database_not_serverless`
-+ * if already dedicated). Dedicated tier changes use
-+ * `updateProductDatabaseSpecification` instead.
-+ */
- export async function createTablesDatabaseMigration(
-   projectId: string,
-   databaseId: string,
-@@ -1662,77 +1658,39 @@ export async function createTablesDatabaseMigration(
- 
-   await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
- 
--  const runProductMigration = async () => {
--    try {
--      return await startTablesDatabaseProductMigration(
--        projectSdk,
--        databaseId,
--        trimmed,
--      )
--    } catch (tablesMigrationError) {
--      const message =
--        tablesMigrationError instanceof Error
--          ? tablesMigrationError.message
--          : String(tablesMigrationError ?? '')
--      const alreadyExists =
--        message.toLowerCase().includes('migration record already exists') ||
--        message.toLowerCase().includes('already exists for this database')
--      if (alreadyExists) {
--        const migrationId =
--          parseTablesDatabaseMigrationIdFromError(tablesMigrationError)
--        if (migrationId) {
--          await deleteTablesDatabaseMigration(
--            projectId,
--            databaseId,
--            migrationId,
--          )
--        } else {
--          await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
--        }
--        return startTablesDatabaseProductMigration(
--          projectSdk,
--          databaseId,
--          trimmed,
--        )
--      }
--      throw tablesMigrationError
--    }
--  }
--
-   try {
--    return await runProductMigration()
--  } catch (tablesMigrationError) {
--    const routeMissing =
--      isAppwriteHttpStatus(tablesMigrationError, 404) ||
--      isHttpNotFoundError(tablesMigrationError)
--    if (!routeMissing) {
--      throw tablesMigrationError
-+    return await startTablesDatabaseProductMigration(
-+      projectSdk,
-+      databaseId,
-+      trimmed,
-+    )
-+  } catch (error) {
-+    const message = (
-+      error instanceof Error ? error.message : String(error ?? '')
-+    ).toLowerCase()
-+    const alreadyExists =
-+      message.includes('migration record already exists') ||
-+      message.includes('already exists for this database')
-+    if (!alreadyExists) throw error
+@@ -61,8 +61,8 @@ public function __construct()
+             ->param('name', '', new Text(128), 'Video profile name.')
+             ->param('videoBitRate', null, new Range(self::MIN_VIDEO_BITRATE, self::MAX_VIDEO_BITRATE), 'Target video bitrate in kilobits per second.')
+             ->param('audioBitRate', null, new Range(self::MIN_AUDIO_BITRATE, self::MAX_AUDIO_BITRATE), 'Target audio bitrate in kilobits per second.')
+-            ->param('width', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video width in pixels.')
+-            ->param('height', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video height in pixels.')
++            ->param('width', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video width in pixels. Must be an even number.')
++            ->param('height', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video height in pixels. Must be an even number.')
+             ->param('codec', self::CODEC_H264, new WhiteList(self::enabledCodecs(), true), 'Video encode codec. Only codecs enabled on this instance are accepted. Defaults to `h264`.', true, enum: new Enum(name: 'VideoCodec'))
+             ->inject('response')
+             ->inject('dbForProject')
+@@ -85,6 +85,14 @@ public function action(
+         Authorization $authorization,
+         Event $queueForEvents
+     ): void {
++        // Renditions are encoded with 4:2:0 chroma, which needs even dimensions;
++        // an odd profile would fail every encode that uses it.
++        foreach (['width' => $width, 'height' => $height] as $param => $value) {
++            if ($value % 2 !== 0) {
++                throw new Exception(Exception::GENERAL_ARGUMENT_INVALID, 'Invalid `' . $param . '` param: Value must be an even number.');
++            }
++        }
 +
-+    const migrationId = parseTablesDatabaseMigrationIdFromError(error)
-+    if (migrationId) {
-+      await deleteTablesDatabaseMigration(projectId, databaseId, migrationId)
-+    } else {
-+      await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
-     }
-+    return startTablesDatabaseProductMigration(projectSdk, databaseId, trimmed)
-   }
--
--  // Cloud may expose shared→dedicated for TablesDB-backed compute on the MySQL
--  // engine migration route before (or instead of) tablesDB /migrations.
--  return projectSdk.mysql.createMigration({
--    databaseId,
--    targetType: 'dedicated',
--    specification: trimmed,
--  })
- }
+         $codec = self::normalizeCodec($codec);
+         $this->assertCodecEnabled($codec);
  
--/** True when TablesDB already runs on dedicated MySQL compute (not shared/serverless). */
-+/** True when TablesDB itself reports a dedicated specification (not shared/serverless). */
- async function isTablesDatabaseOnDedicatedCompute(
-   projectId: string,
-   databaseId: string,
- ): Promise<boolean> {
--  const engineDb = await fetchDedicatedDatabaseById(projectId, databaseId, {
--    type: 'engine',
--    engine: 'mysql',
--  })
--  if (!engineDb?.$id) return false
--  const spec = readDatabaseSpecification(engineDb.specification)
--  if (!spec || isServerlessDatabaseSpecId(spec)) return false
--  const status = coerceTrimmedString(engineDb.status).toLowerCase()
--  return status 
 ```
 
-**File**: `apps/console/tests/unit/tablesdb-specification-change.test.ts` (added, +158/-0)
+**File**: `src/Appwrite/Platform/Modules/Project/Http/Project/Videos/Profiles/Update.php` (modified, +10/-2)
 ```diff
-@@ -0,0 +1,158 @@
-+import { afterAll, describe, expect, mock, test } from 'bun:test'
-+import { AppwriteException } from '@appwrite.io/console'
-+import * as actualSdk from '@/lib/appwrite/sdk'
-+import { updateProductDatabaseSpecification } from '@/lib/react-query/hooks/databases'
+@@ -60,8 +60,8 @@ public function __construct()
+             ->param('name', '', new Text(128), 'Video profile name.')
+             ->param('videoBitRate', null, new Range(self::MIN_VIDEO_BITRATE, self::MAX_VIDEO_BITRATE), 'Target video bitrate in kilobits per second.')
+             ->param('audioBitRate', null, new Range(self::MIN_AUDIO_BITRATE, self::MAX_AUDIO_BITRATE), 'Target audio bitrate in kilobits per second.')
+-            ->param('width', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video width in pixels.')
+-            ->param('height', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video height in pixels.')
++            ->param('width', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video width in pixels. Must be an even number.')
++            ->param('height', null, new Range(self::MIN_DIMENSION, self::MAX_DIMENSION), 'Target video height in pixels. Must be an even number.')
+             ->inject('response')
+             ->inject('dbForProject')
+             ->inject('project')
+@@ -83,6 +83,14 @@ public function action(
+         Authorization $authorization,
+         Event $queueForEvents
+     ): void {
++        // Renditions are encoded with 4:2:0 chroma, which needs even dimensions;
++        // an odd profile would fail every encode that uses it.
++        foreach (['width' => $width, 'height' => $height] as $param => $value) {
++            if ($value % 2 !== 0) {
++                throw new Exception(Exception::GENERAL_ARGUMENT_INVALID, 'Invalid `' . $param . '` param: Value must be an even number.');
++            }
++        }
 +
-+const PROJECT_ID = 'proj0000000000000000001'
-+const DATABASE_ID = 'db000000000000000000001'
-+const TARGET_SPECIFICATION = 's-2vcpu-4gb'
+         $profile = $authorization->skip(fn () => $dbForProject->getDocument('videosProfiles', $profileId));
+ 
+         if ($profile->isEmpty()) {
+```
+
+**File**: `src/Appwrite/Platform/Modules/Videos/Http/Init.php` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++<?php
 +
-+type Call = { service: string; method: string; params: unknown }
++namespace Appwrite\Platform\Modules\Videos\Http;
 +
-+/**
-+ * Cloud keeps product databases off the raw engine API: `GET /v1/mysql/{id}`
-+ * is a 404 for every TablesDB database, dedicated or not. Whether a TablesDB
-+ * database already runs on dedicated compute can only be read from TablesDB.
-+ */
-+describe('updateProductDatabaseSpecification', () => {
-+  // Copy the real module now: the namespace import is live and points at the mock once it is set.
-+  const realSdk = { ...actualSdk }
++use Appwrite\Extend\Exception;
++use Utopia\Database\Document;
++use Utopia\Http\Route;
++use Utopia\Platform\Action;
 +
-+  afterAll(() => {
-+    mock.module('@/lib/appwrite/sdk', () => realSdk)
-+  })
-+
-+  function mockSdk(options: {
-+    specification?: string
-+    createMigration?: () => Promise<unknown>
-+  }) {
-+    const calls: Call[] = []
-+    const record =
-+      <T>(service: string, method: string, result: () => T | Promise<T>) =>
-+      async (params: unknown) => {
-+        calls.push({ service, method, params })
-+        return result()
-+      }
-+    const engineNotFound = () => {
-+      throw new AppwriteException(
-+        'Database not found',
-+        404,
-+        'dedicated_database_not_found',
-+      )
++class Init extends Action
++{
++    public static function getName(): string
++    {
++        return 'init';
 +    }
 +
-+    mock.module('@/lib/appwrite/sdk', () => ({
-+      ...actualSdk,
-+      sdk: {
-+        forProject: () => ({
-+          tablesDB: {
-+            get: record('tablesDB', 'get', () => ({
-+              $id: DATABASE_ID,
-+              name: 'Orders',
-+              ...(options.specification === undefined
-+                ? {}
-+                : { specification: options.specification }),
-+            })),
-+            update: record('tablesDB', 'update', () => ({
-+              $id: DATABASE_ID,
-+              specification: TARGET_SPECIFICATION,
-+            })),
-+            listMigrations: record('tablesDB', 'listMigrations', () => ({
-+              migrations: [],
-+              total: 0,
-+            })),
-+            createMigration: record(
-+              'tablesDB',
-+              'createMigration',
-+              options.createMigration ??
-+                (() => ({ $id: 'migration1', phase: 'pending' })),
-+            ),
-+          },
-+          mysql: {
-+            get: record('mysql', 'get', engineNotFound),
-+            list: record('mysql', 'list', () => ({ databases: [], total: 0 })),
-+            createMigration: record('mysql', 'createMigration', engineNotFound),
-+          },
-+        }),
-+      },
-+    }))
++    public function __construct()
++    {
++        $this
++            ->setType(Action::TYPE_INIT)
++            ->groups(['videos'])
++            ->inject('route')
++            ->inject('project')
++            ->callback($this->action(...));
++    }
 +
-+    return calls
-+  }
++    /**
++     * A request without a project resolves to the console, whose database has
++     * no videos collections. Refuse it here instead of failing the lookup.
++     */
++    public function action(Route $route, Document $project): void
++    {
++        if ($project->getId() !== 'console') {
++            return;
++        }
 +
-+  function methodsOn(calls: Call[], service: string): string[] {
-+    return calls
-+      .filter((call) => call.service === service)
-+      .map((call) => call.method)
-+  }
++        $path = $route->getPath();
 +
-+  test('resizes a dedicated TablesDB database through tablesDB.update', async () => {
-+    const calls = mockSdk({ specification: 's-1vcpu-1gb' })
++        // Codecs are instance configuration, not project data.
++        if ($path === '/v1/videos/codecs') {
++            return;
++        }
 +
-+    await updateProductDatabaseSpecification(
-+      PROJECT_ID,
-+      DATABASE_ID,
-+      'tablesdb',
-+      TARGET_SPECIFICATION,
-+    )
++        if (\str_contains($path, ':videoId')) {
++            throw new Exception(Exception::VIDEO_NOT_FOUND);
++        }
 +
-+    expect(methodsOn(calls, 'tablesDB')).toEqual(['get', 'update'])
-+    expect(calls.at(-1)?.params).toEqual({
-+      databaseId: DATABASE_ID,
-+      specification: TARGET_SPECIFICATION,
-+    })
-+    expect(methodsOn(calls, 'mysql')).toEqual([])
-+  })
-+
-+  test.each([['shared'], ['serverless'], [undefined]])(
-+    'migrates a serverless TablesDB database (specification %p)',
-+    async (specification) => {
-+      const calls = mockSdk({ specification })
-+
-+      await updateProductDatabaseSpecification(
-+        PROJECT_ID,
-+        DATABASE_ID,
-+        'tablesdb',
-+        TARGET_SPECIFICATION,
-+      )
-+
-+      expect(methodsOn(calls, 'tablesDB')).toEqual([
-+        'get',
-+        'listMigrations',
-+        'createMigration',
-+      ])
-+      expect(calls.at(-1)?.params).toEqual({
-+        databaseId: DATABASE_ID,
-+        specification: TARGET_SPECIFICATION,
-+        autoCutover: true,
-+      })
-+      expect(methodsOn(calls, 'mysql')).toEqual([])
-+    },
-+  )
-+
-+  test('surfaces a migration 404 instead of retrying on the mysql engine', async () => {
-+    const calls = mockSdk({
-+      specification: 'shared',
-+      createMigration: () => {
-+        throw new AppwriteException(
-+          'Database not found',
-+          404,
-+          'database_not_found',
-+        )
-+      },
-+    })
-+
-+    const attempt = updateProductDatabaseSpecification(
-+      PROJECT_ID,
-+      DATABASE_ID,
-+      'tablesdb',
-+      TARGET_SPECIFICATION,
-+    )
-+
-+    await expect(attempt).rejects.toMatchObject({
-+      code: 404,
-+      type: 'database_not_found',
-+    })
-+    expect(methodsOn(calls, 'mysql')).toEqual([])
-+  })
-+})
++        throw new Exception(Exception::GENERAL_ACCESS_FORBIDDEN);
++    }
++}
 ```
 
-**File**: `apps/console/types-baseline.json` (modified, +0/-1)
+**File**: `src/Appwrite/Platform/Modules/Videos/Http/Videos/Outputs/Manifest/Base.php` (modified, +6/-1)
 ```diff
-@@ -1145,7 +1145,6 @@
-     "TS2339: Property 'pricing' does not exist on type 'DedicatedDatabaseSpecificationList'.": 1,
-     "TS2339: Property 'status' does not exist on type 'Database & { enabled: boolean; createdAt: string; updatedAt: string; hasBackupPolicy: boolean; backupPolicy: Record<string, unknown> | null; backupPolicyCount: number; databaseType: DatabaseType; }'.": 2,
-     "TS2724: '\"node_modules/@appwrite.io/console/types/models\".Models' has no exported member named 'DedicatedDatabaseSpecificationPricing'. Did you mean 'DedicatedDatabaseSpecification'?": 1,
--    "TS6133: 'currentSpecification' is declared but its value is never read.": 1,
-     "TS6133: 'useEffect' is declared but its value is never read.": 1
-   },
-   "src/lib/react-query/hooks/functions.ts": {
+@@ -427,10 +427,15 @@ protected function sendDashMaster(
+             throw new Exception(Exception::VIDEO_RENDITION_NOT_FOUND);
+         }
+ 
++        $adaptations = Dash::group($entries);
++        // AdaptationSet@id is an unsignedInt unique within the Period, so caption
++        // sets continue after the media sets.
++        $adaptationId = \count($adaptations);
+         $captionEntries = [];
+ 
+         foreach ($captions as $caption) {
+             $captionEntries[] = [
++                'adaptationId' => $adaptationId++,
+                 'id' => $caption->getId(),
+                 'name' => $caption->getAttribute('code', ''),
+                 'baseUrl' => $this->withProject($baseUri . '/captions/' . $caption->getId() . '/manifest', $project, $video),
+@@ -439,7 +444,7 @@ protected function sendDashMaster(
+ 
+         $manifest = $this->renderView('dash', [
+             'mpd' => $mpd,
+-            'renditions' => Dash::group($entries),
++            'renditions' => $adaptations,
+             'captions' => $captionEntries,
+         ]);
+ 
+```
+
+**File**: `src/Appwrite/Platform/Modules/Videos/Http/Videos/Thumbnails/Get.php` (modified, +6/-2)
+```diff
+@@ -152,10 +152,14 @@ public function action(
+             throw new Exception(Exception::STORAGE_FILE_TYPE_UNSUPPORTED, $e->getMessage(), previous: $e);
+         }
+ 
++        // The response-cache miss hook already set no-store headers; replace them so
++        // the client sees one Cache-Control, the same one a cache hit sends.
+         $response
++            ->removeHeader('Cache-Control')
++            ->removeHeader('Pragma')
++            ->removeHeader('Expires')
+             ->setContentType($outputs[$output])
+-            ->addHeader('Expires', \date('D, d M Y H:i:s', \time() + (60 * 60 * 24 * 30)) . ' GMT') // 30 days
+-            ->addHeader('Cache-Control', 'private, max-age=2592000')
++            ->addHeader('Cache-Control', 'private, max-age=15552000') // 180 days
+             ->addHeader('Vary', 'Accept')
+             ->addHeader('X-Peak', \memory_get_peak_usage())
+             ->file($source);
+```
+
+**File**: `src/Appwrite/Platform/Modules/Videos/Services/Http.php` (modified, +3/-0)
+```diff
+@@ -2,6 +2,7 @@
+ 
+ namespace Appwrite\Platform\Modules\Videos\Services;
+ 
++use Appwrite\Platform\Modules\Videos\Http\Init;
+ use Appwrite\Platform\Modules\Videos\Http\Videos\Captions\Create as CreateCaption;
+ use Appwrite\Platform\Modules\Videos\Http\Videos\Captions\Delete as DeleteCaption;
+ use Appwrite\Platform\Modules\Videos\Http\Videos\Captions\Update as UpdateCaption;
+@@ -35,6 +36,8 @@ public function __construct()
+     {
+         $this->type = Service::TYPE_HTTP;
+ 
++        $this->addAction(Init::getName(), new Init());
++
+         // Videos
+         $this->addAction(CreateVideo::getName(), new CreateVideo());
+         $this->addAction(GetVideo::getName(), new GetVideo());
+```
+
+**File**: `src/Appwrite/Platform/Modules/Videos/Workers/Videos.php` (modified, +10/-1)
+```diff
+@@ -1347,7 +1347,16 @@ private function subripToWebvtt(string $srtPath, string $vttPath): void
+             if (\str_starts_with($detail, $srtPath)) {
+                 $detail = \ltrim(\substr($detail, \strlen($srtPath)));
+             }
+-            throw new AppwriteException(AppwriteException::VIDEO_CAPTION_NOT_VALID, 'Caption ' . $detail, previous: $th);
++            // Files without a .srt or .vtt extension land here too, so name both
++            // accepted formats rather than the library's "not a proper .srt file".
++            if (\str_starts_with($detail, 'is not a proper .srt file')) {
++                $detail = \ltrim(\substr($detail, \strlen('is not a proper .srt file')), ' .');
++            }
++            $message = 'Caption is not a valid SubRip (.srt) or WebVTT (.vtt) file';
++            if ($detail !== '') {
++                $message .= ': ' . \trim($detail, '() ');
++            }
++            throw new AppwriteException(AppwriteException::VIDEO_CAPTION_NOT_VALID, $message, previous: $th);
+         }
+         $webvtt->build();
+         $webvtt->save($vttPath);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15982** (2026-11-24): test(console): load react dom before any test registers a window (@abnegate)
-- **PR #15981** (2026-11-24): fix(console): resize dedicated TablesDB databases through the product API (@abnegate)
-- **PR #15979** (2026-11-24): chore(docker): update appwrite/base to 2.5.2, pin composer and drop its CA install (@loks0n)
-- **PR #15976** (2026-11-23): ci(benchmark): pull the base commit's image instead of rebuilding it (@ChiragAgg5k)
-- **PR #15975** (2026-11-23): test(storage): request preview sizes until two land on the filesystem (@ChiragAgg5k)
-- **PR #15973** (closed): ci: select E2E suites from a change under crates/ (@loks0n)
+- **PR #16158** (2026-11-26): feat(installer): respect DO_NOT_TRACK for the install report (@ChiragAgg5k)
+- **PR #16157** (2026-11-26): fix(console): drop the newest-installation guess from the reuse picker (@HarshMN2345)
+- **PR #16155** (2026-11-26): fix(console): GitHub reuse picker lists organizations only, and opens from Add installation (@HarshMN2345)
+- **PR #16154** (closed): fix(console): link live domain notifications to the domain (@HarshMN2345)
+- **PR #16153** (2026-11-26): fix(videos): filter listVideoProfiles by codec through queries (@ChiragAgg5k)
+- **PR #16152** (2026-11-26): docs(sdks): list the latest server and console SDK releases (@ChiragAgg5k)
 
 ---
 
@@ -3418,6 +2860,60 @@ fix(console): resize dedicated TablesDB databases through the product API
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. console): make project search one request and debounce it
+
+**RULE**:
+When implementing operations in `apps/console/src/components/global/shared/CommandCenter.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4ba94d47`: console): make project search one request and debounce it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/components/global/shared/CommandCenter.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue'
+  // Scoped lists hit the API, so they search once typing pauses.
+  const debouncedSearch = useDebouncedValue(search, 300)
+      shouldFetch && searchScope === 'projects' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'databases' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'users' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'teams' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'buckets' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'functions' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'sites' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'messages' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'topics' ? debouncedSearch : undefined,
+      shouldFetch && searchScope === 'providers' ? debouncedSearch : undefined,
+    shouldFetch && searchScope === 'videos' ? debouncedSearch : undefined,
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+      shouldFetch && searchScope === 'projects' ? search : undefined,
+      shouldFetch && searchScope === 'databases' ? search : undefined,
+    shouldFetch && searchScope === 'users' ? search : undefined,
+    shouldFetch && searchScope === 'teams' ? search : undefined,
+      shouldFetch && searchScope === 'buckets' ? search : undefined,
+      shouldFetch && searchScope === 'functions' ? search : undefined,
+    shouldFetch && searchScope === 'sites' ? search : undefined,
+      shouldFetch && searchScope === 'messages' ? search : undefined,
+    shouldFetch && searchScope === 'topics' ? search : undefined,
+      shouldFetch && searchScope === 'providers' ? search : undefined,
+    shouldFetch && searchScope === 'videos' ? search : undefined,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4ba94d47` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

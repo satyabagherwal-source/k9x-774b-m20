@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T22:58:20.568Z",
+  "timestamp": "2026-11-26T16:00:20.308Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-psrben-visionhope-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-psrben-visionhope-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T22:58:20.568Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:00:20.308Z`  
 > **Learning ID**: `LEARN-EVO-hf-psrben-visionhope-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-psrben-vi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T22:58:04.493Z  
+> **Timestamp**: 2026-11-26T16:00:03.833Z  
 > **Learning ID**: `learn-huggingface-psrben-visionhope`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/PSRben/VisionHOPE](https://huggingface.co/PSRben/VisionHOPE))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T22:58:04.375Z  
+> **Harvest Timestamp**: 2026-11-26T16:00:03.695Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 76 downloads | 217 likes
+- **Stars / Engagement**: 75 downloads | 217 likes
 
 ---
 
