@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-58TV",
-    "timestamp": "2026-11-24T11:30:26.419Z",
-    "repository": "skyzh/mini-lsm",
-    "learningId": "learn-github-skyzh-mini-lsm",
-    "contentHash": "8d17bff46710da1cf47f5701a93588e236891c2e022282ef6ae713fab8980458",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-N4DI",
-    "timestamp": "2026-11-24T11:44:20.454Z",
-    "repository": "thejagstudio/tessera-small",
-    "learningId": "learn-huggingface-thejagstudio-tessera-small",
-    "contentHash": "a1688932d09c284902c58d99c17e9640aa258ba1837a056c63f0ca28727302a2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-NEH9",
     "timestamp": "2026-11-24T11:44:33.549Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7490,6 +7460,36 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "38017b8e107eef76b2d31c874da7f1c8efe44694afec9f36791a12855be575d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-OTSY",
+    "timestamp": "2026-11-26T02:01:08.578Z",
+    "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+    "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+    "contentHash": "67847b4856ed316856f5ee0c55994882b2fd821d971bda2ec9be7d4aa88d9589",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-P17J",
+    "timestamp": "2026-11-26T02:01:18.175Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "064399020fcba39e2e108f82339dc114c118c30082bfe071c4ca4623ce90bfe7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

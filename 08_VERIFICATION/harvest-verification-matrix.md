@@ -13200,3 +13200,5 @@
 | `CYCLE-20261126-F2K1` | `2026-11-26T01:53:33.361Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10582` | Yes (`93029d21...`) |
 | `CYCLE-20261126-F4FK` | `2026-11-26T01:53:35.792Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`c8630a36...`) |
 | `CYCLE-20261126-F62D` | `2026-11-26T01:53:37.909Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10583` | Yes (`38017b8e...`) |
+| `CYCLE-20261126-OTSY` | `2026-11-26T02:01:08.578Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md` | Yes (`67847b48...`) |
+| `CYCLE-20261126-P17J` | `2026-11-26T02:01:18.175Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10584` | Yes (`06439902...`) |

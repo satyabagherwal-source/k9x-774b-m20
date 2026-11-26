@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "9bed2e12",
+    "sourceVersion": "a010f98f",
     "license": "Apache-2.0",
-    "contentHash": "ab3671ed76678412d743aceeb06a459c93d56812b948a4e5913e9711b35d302f",
-    "lastHarvestedAt": "2026-11-25T01:36:06.639Z",
+    "contentHash": "064399020fcba39e2e108f82339dc114c118c30082bfe071c4ca4623ce90bfe7",
+    "lastHarvestedAt": "2026-11-26T02:01:18.179Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -12205,8 +12205,8 @@
     "sourceUrl": "https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
     "sourceVersion": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf",
     "license": "Open-Source",
-    "contentHash": "d64740fe0096f3b7f74fc65e7f8951115d38e33b817e6106f1ae1723bf62eb41",
-    "lastHarvestedAt": "2026-11-22T05:12:30.121Z",
+    "contentHash": "67847b4856ed316856f5ee0c55994882b2fd821d971bda2ec9be7d4aa88d9589",
+    "lastHarvestedAt": "2026-11-26T02:01:08.582Z",
     "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf"
   },
   "hf-scantist-glm-5.3-slim-gguf": {

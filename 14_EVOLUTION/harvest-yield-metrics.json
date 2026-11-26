@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:53:37.926Z",
-  "total_cycles_completed": 12529,
-  "total_learnings_persisted": 12529,
-  "total_rules_promoted": 11474,
+  "last_updated": "2026-11-26T02:01:18.183Z",
+  "total_cycles_completed": 12531,
+  "total_learnings_persisted": 12531,
+  "total_rules_promoted": 11475,
   "history": [
-    {
-      "timestamp": "2026-11-25T07:13:06.106Z",
-      "repository": "kubernetes-sigs/aws-load-balancer-controller",
-      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:22:22.862Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T07:22:24.839Z",
       "repository": "alejandrobujan/tendedero",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T01:53:37.926Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:01:08.593Z",
+      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:01:18.183Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

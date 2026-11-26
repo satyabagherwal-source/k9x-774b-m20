@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T01:36:12.556Z",
+  "timestamp": "2026-11-26T02:01:22.105Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-meshery-meshery-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meshery-meshery-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T01:36:12.556Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T02:01:22.105Z`  
 > **Learning ID**: `LEARN-EVO-meshery-meshery-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `9bed2e12`  
+> **Source Version**: `a010f98f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T01:36:05.480Z  
+> **Timestamp**: 2026-11-26T02:01:17.288Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T01:36:05.475Z  
+> **Harvest Timestamp**: 2026-11-26T02:01:17.284Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12315 stars
+- **Stars / Engagement**: 12336 stars
 
 ---
 
@@ -829,11 +829,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24286** (2026-11-24): **[Docs] Fix DCO sign-off links to removed CONTRIBUTING.md sections**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes #24285  `CONTRIBUTING.md` was shortened in June 2025, and five links in four files still point to sections it no longer has. #22745 fixed the same problem in `welcome-first-time-contributors.yml`. This finishes the rest.  | File | Link | Before | After | |---|---|---|---| | `.github/PULL_REQUEST_TEMPLATE.md` | "Signed commits" | `CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin` | `docs.meshery.io/project/contributing#general-contribution-flow` | | `.github/config.yml` | first PR welcome comment | same dead anchor | same new target | | `.github/label-commenter-config.yml` | `issue/dco` comment (issue and PR) | same dead anchor | same new target | | `docs/.../contributing-docs/docs.md` | "Documentation Contribution Flow" | `CONTRIBUTING.md#documentation-contribution-flow` | `ref` to the contributing index, `#general-contribution-flow` |  How I checked it:  - The `general-contribution-flow` anchor exists on the live page, and the sign-off instructions sit directly under it. - Both YAML files still parse. - The docs link uses the same `ref "project/contributing/_index.md"` form as `contributing-adapters.md`. I did not run the Hugo build locally, so the docs preview on this PR is the check for that line. - No other `CONTRIBUTING.md#` links are left under `.github/` or `docs/content/`. The archived `docs/static/v0.8` and `v0.9` snapshots still have them and I left those alone.  **Also changed: the s
+- **Issue #24367** (2026-11-25): **fix(ui): sync changeTrackCB ref, support functional updaters, and guard callbacks in useStateCB**
+  *Symptoms*: **Notes for Reviewers**  This PR fixes #24366  - Hardens `useStateCB` in `ui/utils/hooks/useStateCB.ts`:   - Syncs `changeTrackCBRef.current` when `changeTrackCB` changes across rerenders so `changeTrackCB` never captures stale closures.   - Initializes `stateRef` from the resolved initial `state` (supporting lazy initializers) and resolves functional updaters (`setState((prev) => ...)`) against `stateRef.current` so `getStateRefValue()` and sequential updates always reflect the true state.   - Validates `typeof ... === 'function'` before invoking `callbackRef.current` / `changeTrackCBRef.current`, clears `callbackRef.current` prior to invocation, stabilizes `setState` and `getStateRefValue` via `React.useCallback`, and adds TypeScript types using `NoInfer<T>` to avoid narrowing primitive state literals. - Expands `ui/utils/hooks/__tests__/useStateCB.test.ts` from 7 to 11 unit tests covering updated `changeTrackCB` closures, lazy initializers, sequential functional updaters, non-callable callbacks, and stable function identities (`npx vitest run`: 14/14 passed across `useStateCB.test.ts` and `PatternServiceFormCore.test.tsx`; 0 ESLint errors/warnings; 0 strict TypeScript errors; Prettier LF formatted).  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  Updates from [git push no-mistakes](https://github.com/kunchenguid/no-mistakes) <!-- no-mistakes-pipelin
 
-- **Issue #24285** (2026-11-24): **[Docs] DCO sign-off links still point to removed CONTRIBUTING.md sections**
-  *Symptoms*: ### Current State  `CONTRIBUTING.md` was shortened in June 2025 and no longer has the "Signing-off on commits" or "Documentation Contribution Flow" sections. #22745 fixed the link in `welcome-first-time-contributors.yml`, but four other files still link to those anchors, so the link opens the top of a four-line file:  - `.github/PULL_REQUEST_TEMPLATE.md` ("Signed commits") - `.github/config.yml` (the first pull request welcome comment) - `.github/label-commenter-config.yml` (the `issue/dco` comment, for both issues and pull requests) - `docs/content/en/project/contributing/contributing-docs/docs.md` ("Documentation Contribution Flow")  The `issue/dco` one matters most. It is the comment a contributor gets when a commit is missing its sign-off, and its "see these instructions" link has no instructions behind it.  ### Desired State  All five links go to the General Contribution Flow section of the contributing guide (https://docs.meshery.io/project/contributing#general-contribution-flow), which is where the sign-off instructions live now.  I have a fix ready and will open a pull request.  ---  ### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://meshery.io/community#handbook) - 📚 [Instructions for contributing to documentation](https://docs.meshery.io/project/contributing/contributing-docs)    - Meshery documentation [site](https://docs.meshery.io/) and [source](https://github.com/meshery/meshery/tree/master/docs) - 🙋🏾🙋🏼 Questions: 
+- **Issue #24366** (2026-11-25): **[UI] Fix stale changeTrackCB ref, functional updaters, and callback guards in useStateCB**
+  *Symptoms*: #### Current Behavior In `ui/utils/hooks/useStateCB.ts`: 1. `changeTrackCBRef` is initialized once on mount and never updated across rerenders, causing subsequent state changes to invoke a stale closure. 2. Functional state updaters (`setState((prev) => ...)`) store the updater function itself in `stateRef.current` instead of the resolved state value, breaking `getStateRefValue()` and sequential updates. 3. Lazy initializer functions (`useStateCB(() => init)`) initialize `stateRef.current` with the initializer function rather than the computed initial state. 4. Non-callable values passed as `changeTrackCB` or the per-call `callback` throw `TypeError: ... is not a function`, `callbackRef.current` is not cleared after firing, and `setState`/`getStateRefValue` recreate new function references on every render.  #### Desired Behavior `useStateCB` should: 1. Keep `changeTrackCBRef.current` synced with `changeTrackCB` via `useEffect`. 2. Resolve functional updaters against `stateRef.current` before updating `stateRef.current` and React state, and initialize `stateRef` from the resolved `state`. 3. Safely validate `typeof ... === 'function'` before invoking `pendingCallback` or `changeTrackCBRef.current`, clear `callbackRef.current` before firing, and stabilize `setState` and `getStateRefValue` with `React.useCallback`.  #### Environment - Component: Meshery UI (`ui/utils/hooks/useStateCB.ts`) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -850,727 +850,562 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `319818a6` (2026-11-24)
-**Commit Message**: fix(server): handle context refresh errors and harden DiscoverAction field sync
+### Incident Patch 1: `68bfaf06` (2026-11-25)
+**Commit Message**: Merge pull request #24367 from madhavzanwar/fix/ui-use-state-cb-guards
 
-- Capture refreshErr from inst.UpdateContext in k8sconfig_handler, mark context
-  with ctx.ImportError, record error in metadata, and skip transition event on failure.
-- In DiscoverAction, sync only KubernetesServerID and Version to machinectx.K8sContext
-  under setupLock rather than replacing the whole struct.
-- Assign provider on test state machines and protect mock persistedEvents with mutex.
-- Add TestRefreshK8sContext_ReturnsErrorOnInvalidCredentials test.
+fix(ui): sync changeTrackCB ref, support functional updaters, and guard callbacks in useStateCB
 
-Signed-off-by: Nishant JS <[REDACTED_EMAIL]>
-
-**File**: `server/handlers/k8sconfig_handler.go` (modified, +16/-1)
+**File**: `ui/utils/hooks/__tests__/useStateCB.test.ts` (modified, +79/-0)
 ```diff
-@@ -381,18 +381,21 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
- 			// Refresh its stored context so credential updates are applied and,
- 			// if the machine previously failed initial startup with a nil Context,
- 			// its Context is properly initialized.
-+			var refreshErr error
- 			if inst != nil {
- 				inst.UpdateContext(func(oldCtx interface{}) interface{} {
- 					if oldCtx == nil {
- 						assigned, _, aerr := kubernetes.AssignInitialCtx(req.Context(), machineCtx, log)
- 						if aerr != nil {
-+							refreshErr = aerr
- 							log.Error(aerr)
- 							return oldCtx
- 						}
- 						return assigned
- 					}
- 					if stored, ok := oldCtx.(*kubernetes.MachineCtx); ok && stored != nil {
- 						if _, rerr := stored.RefreshK8sContext(*ctx, models.NewServerEvent(req.Context()), log); rerr != nil {
-+							refreshErr = rerr
- 							log.Error(rerr)
- 						}
- 						return stored
-@@ -406,7 +409,19 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
- 			// on a cache hit, one whose Context was never assigned. The connection
- 			// has still been persisted in the discovered state; just skip the
- 			// event. See mhelpers.HasMachineContext.
--			if mhelpers.HasMachineContext(inst) {
-+			//
-+			// If refreshing the stored context failed (e.g. invalid rotation credentials),
-+			// capture the error on the context metadata and skip the event so we do not
-+			// probe or report success against the stale credentials.
-+			if refreshErr != nil {
-+				ctx.ImportError = fmt.Sprintf("Failed to refresh Kubernetes context \"%s\": %v", ctx.Name, refreshErr)
-+				metadata["error"] = refreshErr
-+				if status == connections.DISCOVERED && len(saveK8sContextResponse.RegisteredContexts) > 0 {
-+					saveK8sContextResponse.RegisteredContexts[len(saveK8sContextResponse.RegisteredContexts)-1].ImportError = ctx.ImportError
-+				} else if status == connections.CONNECTED && len(saveK8sContextResponse.ConnectedContexts) > 0 {
-+					saveK8sContextResponse.ConnectedContexts[len(saveK8sContextResponse.ConnectedContexts)-1].ImportError = ctx.ImportError
-+				}
-+			} else if mhelpers.HasMachineContext(inst) {
- 				// Import returns before the transition finishes, so keep its values
- 				// without tying discovery to the request's cancellation.
- 				transitionCtx, cancel := backgroundDiscoveryContext(req.Context())
+@@ -87,4 +87,83 @@ describe('useStateCB', () => {
+     expect(changeTrack).toHaveBeenCalledTimes(3);
+     expect(changeTrack.mock.calls.map((c) => c[0])).toEqual([1, 2, 3]);
+   });
++
++  it('always invokes the latest changeTrackCB after rerenders', () => {
++    const firstTrack = vi.fn();
++    const secondTrack = vi.fn();
++    const { result, rerender } = renderHook(({ cb }) => useStateCB(0, cb), {
++      initialProps: { cb: firstTrack },
++    });
++
++    rerender({ cb: secondTrack });
++
++    act(() => {
++      result.current[1](10);
++    });
++
++    expect(firstTrack).not.toHaveBeenCalled();
++    expect(secondTrack).toHaveBeenCalledTimes(1);
++    expect(secondTrack).toHaveBeenCalledWith(10);
++  });
++
++  it('supports lazy initializer functions and keeps getStateRefValue accurate', () => {
++    const init = vi.fn(() => 99);
++    const { result } = renderHook(() => useStateCB(init));
++
++    expect(init).toHaveBeenCalledTimes(1);
++    expect(result.current[0]).toBe(99);
++    expect(result.current[2]()).toBe(99);
++  });
++
++  it('supports functional state updaters and keeps stateRef in sync across sequential updates', () => {
++    const changeTrack = vi.fn();
++    const after = vi.fn();
++    const { result } = renderHook(() => useStateCB(0, changeTrack));
++
++    act(() => {
++      result.current[1]((prev) => prev + 1);
++      result.current[1]((prev) => prev + 2, after);
++      expect(result.current[2]()).toBe(3);
++    });
++
++    expect(result.current[0]).toBe(3);
++    expect(result.current[2]()).toBe(3);
++    expect(after).toHaveBeenCalledTimes(1);
++    expect(after).toHaveBeenCalledWith(3);
++    expect(changeTrack).toHaveBeenCalledTimes(1);
++    expect(changeTrack).toHaveBeenCalledWith(3);
++  });
++
++  it('ignores non-callable callbacks and preserves setState and getter identities', () => {
++    const invalidTrack = 'not-a-function' as unknown as (value: number) => void;
++    const { result, rerender } = renderHook(() => useStateCB(0, invalidTrack));
++    const [, initialSetState, initialGetRef] = result.current;
++
++    expect(() => {
++      act(() => {
++        initialSetState(5, 'invalid' as unknown as (value: number) => void);
++      });
++    }).not.toThrow();
++
++    rerender();
++    expect(result.current[0]).toBe(5);
++    expect(result.current[1]).toBe(initialSetState);
++    expect(result.current[2]).toBe(initialGetRef);
++  });
++
++  it('preserves function-valued state when resolved from an updater', () => {
++    const initialFn = () => 1;
++    const nextFn = () => 2;
++    const after = vi.fn();
++    const { result } = renderHook(() => useStateCB<() => number>(() => initialFn));
++
++    act(() => {
++      result.current[1](() => nextFn, after);
++    });
++
++    expect(result.current[0]).toBe(nextFn);
++    expect(result.current[0]()).toBe(2);
++    expect(result.current[2]()).toBe(nextFn);
++    expect(after).toHaveBeenCalledWith(nextFn);
++  });
+ });
 ```
 
-**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +27/-9)
+**File**: `ui/utils/hooks/useStateCB.ts` (modified, +48/-16)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	"os/exec"
- 	"path/filepath"
- 	"strings"
-+	"sync"
- 	"testing"
+@@ -1,29 +1,61 @@
+ import React from 'react';
  
- 	"github.com/gofrs/uuid"
-@@ -736,7 +737,8 @@ func TestRetainSelectedContextMetadata(t *testing.T) {
- }
- 
- type mockReimportProvider struct {
--	*models.DefaultLocalProvider
-+	models.Provider
-+	sync.Mutex
- 	persistedEvents []events.Event
- 	connectionID    core.Uuid
- }
-@@ -745,7 +747,21 @@ func (m *mockReimportProvider) SaveK8sContext(token string, k8sContext models.K8
- 	return connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, nil
- }
- 
-+func (m *mockReimportProvider) GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error) {
-+	return &connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, 0, nil
-+}
-+
-+func (m *mockReimportProvider) UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
-+	return &connections.Connection{ID: m.connectionID, Status: connectionStatus}, 0, nil
-+}
-+
-+func (m *mockReimportProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
-+	return true, &connections.Connection{ID: m.connectionID, Status: newStatus}, nil
-+}
-+
- func (m *mockReimportProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
-+	m.Lock()
-+	defer m.Unlock()
- 	m.persistedEvents = append(m.persistedEvents, event)
- 	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
- }
-@@ -781,10 +797,15 @@ users:
- 		}
- 		h.ConnectionToStateMachineInstanceTracker = tracker
- 
-+		provider := &mockReimportProvider{
-+			connectionID: connID,
-+		}
-+
- 		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
- 		if err != nil {
- 			t.Fatalf("failed to create state machine: %v", err)
- 		}
-+		inst.Provider = provider
- 		storedCtx := &kubernetes.MachineCtx{
- 			K8sContext: models.K8sContext{
- 				Name:   "old-name",
-@@ -794,10 +815,6 @@ users:
- 		inst.Context = storedCtx
- 		tracker.Add(connID, inst)
- 
--		provider := &mockReimportProvider{
--			connectionID: connID,
--		}
+-function useStateCB(initState, changeTrackCB) {
+-  const [state, _setState] = React.useState(initState);
+-  const stateRef = React.useRef(initState);
 -
- 		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
- 		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
- 		rec := httptest.NewRecorder()
-@@ -825,17 +842,18 @@ users:
- 		}
- 		h.ConnectionToStateMachineInstanceTracker = tracker
- 
-+		provider := &mockReimportProvider{
-+			connectionID: connID,
-+		}
+-  const callbackRef = React.useRef();
+-  const changeTrackCBRef = React.useRef(changeTrackCB);
++type StateCallback<T> = (state: T) => void;
++type SetStateAction<T> = T | ((prevState: T) => T);
++type UseStateCBReturn<T> = [
++  T,
++  (nextState: SetStateAction<T>, callback?: StateCallback<T>) => void,
++  () => T,
++];
 +
- 		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
- 		if err != nil {
- 			t.Fatalf("failed to create state machine: %v", err)
- 		}
-+		inst.Provider = provider
- 		inst.Context = nil
- 		tracker.Add(connID, inst)
++function useStateCB<T>(
++  initState: T | (() => T),
++  changeTrackCB?: StateCallback<NoInfer<T>>,
++): UseStateCBReturn<T> {
++  const [state, _setState] = React.useState<T>(initState);
++  const stateRef = React.useRef<T>(state);
++
++  const callbackRef = React.useRef<StateCallback<T> | undefined>(undefined);
++  const changeTrackCBRef = React.useRef<StateCallback<T> | undefined>(changeTrackCB);
+   const isFirstCBCall = React.useRef(true);
  
--		provider := &mockReimportProvider{
--			connectionID: connID,
--		}
--
- 		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
- 		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
- 		rec := httptest.NewRecorder()
-```
-
-**File**: `server/machines/kubernetes/discover.go` (modified, +4/-4)
-```diff
-@@ -94,11 +94,11 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
- 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
- 	}
+   React.useEffect(() => {
+-    if (isFirstCBCall.current) isFirstCBCall.current = false;
+-    else {
+-      callbackRef.current?.(state);
+-      changeTrackCBRef.current?.(state);
++    changeTrackCBRef.current = changeTrackCB;
++  }, [changeTrackCB]);
++
++  React.useEffect(() => {
++    if (isFirstCBCall.current) {
++      isFirstCBCall.current = false;
++      return;
++    }
++
++    const pendingCallback = callbackRef.current;
++    callbackRef.current = undefined;
++    if (typeof pendingCallback === 'function') {
++      pendingCallback(state);
++    }
++
++    if (typeof changeTrackCBRef.current === 'function') {
++      changeTrackCBRef.current(state);
+     }
+   }, [state]);
  
--	// Update the machine context with the resolved server ID and version under
--	// setupLock so downstream states and external readers (e.g. K8sContextSnapshot)
--	// observe the populated fields rather than the unpopulated stack copy.
-+	// Update only the enriched server ID and version under setupLock, preserving
-+	// any concurrent updates to other fields on the stored context.
- 	machinectx.setupLock.Lock()
--	machinectx.K8sContext = k8sContext
-+	machinectx.K8sContext.KubernetesServerID = k8sContext.KubernetesServerID
-+	machinectx.K8sContext.Version = k8sContext.Version
- 	machinectx.setupLock.Unlock()
+-  const setState = (state, callback) => {
+-    callbackRef.current = callback;
++  const setState = React.useCallback(
++    (nextState: SetStateAction<T>, callback?: StateCallback<T>) => {
++      callbackRef.current = callback;
++
++      const resolvedState =
++        typeof nextState === 'function'
++          ? (nextState as (prevState: T) => T)(stateRef.current)
++          : nextState;
  
- 	// machinectx.log.Debug("exiting execute func from discovered state", connection)
-```
-
-**File**: `server/machines/kubernetes/discover_test.go` (modified, +29/-0)
-```diff
-@@ -12,6 +12,7 @@ import (
- 	"github.com/meshery/meshery/server/models"
- 	"github.com/meshery/meshery/server/models/connections"
- 	"github.com/meshery/meshkit/logger"
-+	"github.com/meshery/meshkit/models/events"
- 	mkkube "github.com/meshery/meshkit/utils/kubernetes"
- 	"github.com/meshery/schemas/models/core"
- 	k8sclient "k8s.io/client-go/kubernetes"
-@@ -132,3 +133,31 @@ func TestRefreshK8sContext_SynchronizesMissingServerID(t *testing.T) {
- 		t.Fatalf("expected KubernetesServerID to be %s, got %v", existingID, m.K8sContext.KubernetesServerID)
- 	}
+-    stateRef.current = state;
+-    _setState(state);
+-  };
++      stateRef.current = resolvedState;
++      _setState(() => resolvedState);
++    },
++    [],
++  );
+ 
+-  const getStateRefValue = () => stateRef.current;
++  const getStateRefValue = React.useCallback(() => stateRef.current, []);
+ 
+   return [state, setState, getStateRefValue];
  }
-+
-+func TestRefreshK8sContext_ReturnsErrorOnInvalidCredentials(t *testing.T) {
-+	log, err := logger.New("test", logger.Options{})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	m := &MachineCtx{
-+		K8sContext: models.K8sContext{
-+			Name:   "cluster-1",
-+			Server: "https://k8s.example.com:6443",
-+		},
-+		log: log,
-+	}
-+
-+	badCtx := models.K8sContext{
-+		Name:   "cluster-1",
-+		Server: "https://k8s-new.example.com:6443",
-+	}
-+
-+	changed, err := m.RefreshK8sContext(badCtx, events.NewEvent(), log)
-+	if err == nil {
-+		t.Fatalf("expected error on invalid credentials, got nil")
-+	}
-+	if changed {
-+		t.Fatalf("expected changed=false on error, got true")
-+	}
-+}
-```
-
-**File**: `server/machines/kubernetes/helpers.go` (modified, +1/-1)
-```diff
-@@ -94,7 +94,7 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
- // logger: the stored machine context's own log may be nil on machines built
- // outside the normal init path, and a failed build logs through it.
- func (m *MachineCtx) RefreshK8sContext(newCtx models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (bool, error) {
--	if m.clientset != nil && k8sContextCredentialsEqual(m.K8sContext, newCtx) {
-+	if k8sContextCredentialsEqual(m.K8sContext, newCtx) {
- 		if m.K8sContext.KubernetesServerID == nil && newCtx.KubernetesServerID != nil {
- 			m.setupLock.Lock()
- 			m.K8sContext.KubernetesServerID = newCtx.KubernetesServerID
 ```
 
 ---
 
-### Incident Patch 2: `1d289655` (2026-11-24)
-**Commit Message**: Merge pull request #24253 from Sarthak-Pandey/fix-24249-order-by-sanitization
+### Incident Patch 2: `d18b18d7` (2026-11-25)
+**Commit Message**: fix(ui): sync changeTrackCB ref, support functional updaters, and guard callbacks in useStateCB
 
-[Server] Add security edge cases and remove redundant tests for SanitizeOrderInput
+Signed-off-by: madhavzanwar <[REDACTED_EMAIL]>
 
-**File**: `server/models/sql-utils_test.go` (modified, +44/-29)
+**File**: `ui/utils/hooks/__tests__/useStateCB.test.ts` (modified, +63/-0)
 ```diff
-@@ -22,12 +22,6 @@ func TestSanitizeOrderInput(t *testing.T) {
- 			columns:  validColumns,
- 			expected: "created_at desc",
- 		},
--		{
--			name:     "camelCase ascending",
--			order:    "updatedAt asc",
--			columns:  validColumns,
--			expected: "updated_at asc",
--		},
- 		{
- 			name:     "legacy snake_case input still accepted",
- 			order:    "created_at desc",
-@@ -52,30 +46,12 @@ func TestSanitizeOrderInput(t *testing.T) {
- 			columns:  validColumns,
- 			expected: "created_at asc",
- 		},
--		{
--			name:     "acronym run stays intact when folding",
--			order:    "userID desc",
--			columns:  []string{"user_id"},
--			expected: "user_id desc",
--		},
--		{
--			name:     "performance profile lastRun folds to its aliased column",
--			order:    "lastRun desc",
--			columns:  []string{"updated_at", "created_at", "name", "last_run"},
--			expected: "last_run desc",
--		},
- 		{
- 			name:     "column outside the whitelist is ignored",
- 			order:    "password desc",
- 			columns:  validColumns,
- 			expected: "",
- 		},
--		{
--			name:     "camelCase column outside the whitelist is ignored",
--			order:    "secretToken desc",
--			columns:  validColumns,
--			expected: "",
--		},
- 		{
- 			name:     "more than two words is rejected",
- 			order:    "created_at desc; DROP TABLE users",
-@@ -100,6 +76,48 @@ func TestSanitizeOrderInput(t *testing.T) {
- 			columns:  validColumns,
- 			expected: "",
- 		},
-+		{
-+			name:     "extra spaces",
-+			order:    "createdAt   desc",
-+			columns:  validColumns,
-+			expected: "",
-+		},
-+		{
-+			name:     "tab separator",
-+			order:    "createdAt\tdesc",
-+			columns:  validColumns,
-+			expected: "",
-+		},
-+		{
-+			name:     "uppercase column",
-+			order:    "CREATED_AT desc",
-+			columns:  validColumns,
-+			expected: "",
-+		},
-+		{
-+			name:     "SQL comment in column",
-+			order:    "created_at-- desc",
-+			columns:  validColumns,
-+			expected: "",
-+		},
-+		{
-+			name:     "quoted column",
-+			order:    "'name' desc",
-+			columns:  validColumns,
-+			expected: "",
-+		},
-+		{
-+			name:     "empty columns slice",
-+			order:    "createdAt desc",
-+			columns:  []string{},
-+			expected: "",
-+		},
-+		{
-+			name:     "nil columns slice",
-+			order:    "createdAt desc",
-+			columns:  nil,
-+			expected: "",
-+		},
- 	}
+@@ -87,4 +87,67 @@ describe('useStateCB', () => {
+     expect(changeTrack).toHaveBeenCalledTimes(3);
+     expect(changeTrack.mock.calls.map((c) => c[0])).toEqual([1, 2, 3]);
+   });
++
++  it('always invokes the latest changeTrackCB after rerenders', () => {
++    const firstTrack = vi.fn();
++    const secondTrack = vi.fn();
++    const { result, rerender } = renderHook(({ cb }) => useStateCB(0, cb), {
++      initialProps: { cb: firstTrack },
++    });
++
++    rerender({ cb: secondTrack });
++
++    act(() => {
++      result.current[1](10);
++    });
++
++    expect(firstTrack).not.toHaveBeenCalled();
++    expect(secondTrack).toHaveBeenCalledTimes(1);
++    expect(secondTrack).toHaveBeenCalledWith(10);
++  });
++
++  it('supports lazy initializer functions and keeps getStateRefValue accurate', () => {
++    const init = vi.fn(() => 99);
++    const { result } = renderHook(() => useStateCB(init));
++
++    expect(init).toHaveBeenCalledTimes(1);
++    expect(result.current[0]).toBe(99);
++    expect(result.current[2]()).toBe(99);
++  });
++
++  it('supports functional state updaters and keeps stateRef in sync across sequential updates', () => {
++    const changeTrack = vi.fn();
++    const after = vi.fn();
++    const { result } = renderHook(() => useStateCB(0, changeTrack));
++
++    act(() => {
++      result.current[1]((prev) => prev + 1);
++      result.current[1]((prev) => prev + 2, after);
++      expect(result.current[2]()).toBe(3);
++    });
++
++    expect(result.current[0]).toBe(3);
++    expect(result.current[2]()).toBe(3);
++    expect(after).toHaveBeenCalledTimes(1);
++    expect(after).toHaveBeenCalledWith(3);
++    expect(changeTrack).toHaveBeenCalledTimes(1);
++    expect(changeTrack).toHaveBeenCalledWith(3);
++  });
++
++  it('ignores non-callable callbacks and preserves setState and getter identities', () => {
++    const invalidTrack = 'not-a-function' as unknown as (value: number) => void;
++    const { result, rerender } = renderHook(() => useStateCB(0, invalidTrack));
++    const [, initialSetState, initialGetRef] = result.current;
++
++    expect(() => {
++      act(() => {
++        initialSetState(5, 'invalid' as unknown as (value: number) => void);
++      });
++    }).not.toThrow();
++
++    rerender();
++    expect(result.current[0]).toBe(5);
++    expect(result.current[1]).toBe(initialSetState);
++    expect(result.current[2]).toBe(initialGetRef);
++  });
+ });
+```
+
+**File**: `ui/utils/hooks/useStateCB.ts` (modified, +48/-16)
+```diff
+@@ -1,29 +1,61 @@
+ import React from 'react';
  
- 	for _, tt := range tests {
-@@ -117,12 +135,9 @@ func TestToSnakeCase(t *testing.T) {
- 		expected string
- 	}{
- 		{"createdAt", "created_at"},
--		{"updatedAt", "updated_at"},
--		{"subType", "sub_type"},
--		{"lastRun", "last_run"},
--		{"name", "name"},
--		{"created_at", "created_at"},
- 		{"userID", "user_id"},
-+		{"created_at", "created_at"},
-+		{"name", "name"},
- 		{"", ""},
- 	}
+-function useStateCB(initState, changeTrackCB) {
+-  const [state, _setState] = React.useState(initState);
+-  const stateRef = React.useRef(initState);
+-
+-  const callbackRef = React.useRef();
+-  const changeTrackCBRef = React.useRef(changeTrackCB);
++type StateCallback<T> = (state: T) => void;
++type SetStateAction<T> = T | ((prevState: T) => T);
++type UseStateCBReturn<T> = [
++  T,
++  (nextState: SetStateAction<T>, callback?: StateCallback<T>) => void,
++  () => T,
++];
++
++function useStateCB<T>(
++  initState: T | (() => T),
++  changeTrackCB?: StateCallback<NoInfer<T>>,
++): UseStateCBReturn<T> {
++  const [state, _setState] = React.useState<T>(initState);
++  const stateRef = React.useRef<T>(state);
++
++  const callbackRef = React.useRef<StateCallback<T> | undefined>(undefined);
++  const changeTrackCBRef = React.useRef<StateCallback<T> | undefined>(changeTrackCB);
+   const isFirstCBCall = React.useRef(true);
  
+   React.useEffect(() => {
+-    if (isFirstCBCall.current) isFirstCBCall.current = false;
+-    else {
+-      callbackRef.current?.(state);
+-      changeTrackCBRef.current?.(state);
++    changeTrackCBRef.current = changeTrackCB;
++  }, [changeTrackCB]);
++
++  React.useEffect(() => {
++    if (isFirstCBCall.current) {
++      isFirstCBCall.current = false;
++      return;
++    }
++
++    const pendingCallback = callbackRef.current;
++    callbackRef.current = undefined;
++    if (typeof pendingCallback === 'function') {
++      pendingCallback(state);
++    }
++
++    if (typeof changeTrackCBRef.current === 'function') {
++      changeTrackCBRef.current(state);
+     }
+   }, [state]);
+ 
+-  const setState = (state, callback) => {
+-    callbackRef.current = callback;
++  const setState = React.useCallback(
++    (nextState: SetStateAction<T>, callback?: StateCallback<T>) => {
++      callbackRef.current = callback;
++
++      const resolvedState =
++        typeof nextState === 'function'
++          ? (nextState as (prevState: T) => T)(stateRef.current)
++          : nextState;
+ 
+-    stateRef.current = state;
+-    _setState(state);
+-  };
++      stateRef.current = resolvedState;
++      _setState(resolvedState);
++    },
++    [],
++  );
+ 
+-  const getStateRefValue = () => stateRef.current;
++  const getStateRefValue = React.useCallback(() => stateRef.current, []);
+ 
+   return [state, setState, getStateRefValue];
+ }
 ```
 
 ---
 
-### Incident Patch 3: `94233af3` (2026-11-24)
-**Commit Message**: [server] Fix stack-copy value drop of KubernetesServerID in DiscoverAction and stale FSM context on kubeconfig re-import
+### Incident Patch 3: `c27e9d73` (2026-11-25)
+**Commit Message**: Merge pull request #24326 from jashwanth176/fix/share-modal-visibility
 
-In DiscoverAction.Execute, k8sContext := machinectx.K8sContext creates a stack value copy of the machine context. AssignServerID and AssignVersion mutate this local copy and persist it to the database, but the resolved fields were never assigned back to machinectx.K8sContext. Consequently, subsequent state machine actions (such as RegisterAction and ConnectAction) as well as snapshot readers (K8sContextSnapshot) continued observing a nil KubernetesServerID.
+[UI] Send the design when the Share dialog changes its visibility
 
-Additionally, in K8SConfigHandler, when a kubeconfig is re-imported for an existing cluster connection, InitializeMachineWithContext returned the cached state machine instance from smInstanceTracker and dropped the incoming machineCtx. If the cluster had credentials rotated or was previously unreachable at initial startup (leaving inst.Context nil), the state machine retained stale credentials or remained permanently frozen with a nil Context.
-
-This commit:
-1. Syncs the resolved k8sContext back to machinectx.K8sContext under setupLock upon successful discovery.
-2. Enhances RefreshK8sContext to back-fill miss
-
-**File**: `server/handlers/k8sconfig_handler.go` (modified, +25/-0)
+**File**: `ui/components/workspaces/ShareWorkspaceModal.test.tsx` (added, +129/-0)
 ```diff
-@@ -376,6 +376,31 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
- 				log.Error(err)
- 			}
- 
-+			// When the instance was already present in the tracker (cache hit),
-+			// InitializeMachineWithContext returns it as-is and drops machineCtx.
-+			// Refresh its stored context so credential updates are applied and,
-+			// if the machine previously failed initial startup with a nil Context,
-+			// its Context is properly initialized.
-+			if inst != nil {
-+				inst.UpdateContext(func(oldCtx interface{}) interface{} {
-+					if oldCtx == nil {
-+						assigned, _, aerr := kubernetes.AssignInitialCtx(req.Context(), machineCtx, log)
-+						if aerr != nil {
-+							log.Error(aerr)
-+							return oldCtx
-+						}
-+						return assigned
-+					}
-+					if stored, ok := oldCtx.(*kubernetes.MachineCtx); ok && stored != nil {
-+						if _, rerr := stored.RefreshK8sContext(*ctx, models.NewServerEvent(req.Context()), log); rerr != nil {
-+							log.Error(rerr)
-+						}
-+						return stored
-+					}
-+					return oldCtx
-+				})
-+			}
+@@ -0,0 +1,129 @@
++import React from 'react';
++import { render } from '@testing-library/react';
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++import ShareWorkspaceModal from './ShareWorkspaceModal';
 +
- 			// An unreachable context cannot build a client set, so the state
- 			// machine fails to initialize - either returning a nil instance, or,
- 			// on a cache hit, one whose Context was never assigned. The connection
++const updatePatterns = vi.fn();
++const updateView = vi.fn();
++let shareModalProps: any;
++
++// The visibility helpers in ./SpacesSwitcher/hooks are deliberately not mocked: the
++// test follows the modal's handler down to the argument the mutation receives.
++vi.mock('@sistent/sistent', () => ({
++  ShareModal: (props: any) => {
++    shareModalProps = props;
++    return null;
++  },
++  DesignIcon: () => null,
++  ViewIcon: () => null,
++  PROMPT_VARIANTS: { DANGER: 'danger' },
++  useTheme: () => ({}),
++}));
++
++vi.mock('@/rtk-query/design', () => ({
++  useUpdatePatternFileMutation: () => [updatePatterns],
++  useDeletePatternFileMutation: () => [vi.fn()],
++}));
++
++vi.mock('@/rtk-query/view', () => ({
++  useUpdateViewVisibilityMutation: () => [updateView],
++  useDeleteViewMutation: () => [vi.fn()],
++}));
++
++vi.mock('@/rtk-query/resource', () => ({
++  useCreateAndRevokeResourceAccessRecordMutation: () => [vi.fn()],
++  useGetAccessActorsInfoOfResourceQuery: () => ({ data: { users: [] }, isSuccess: true }),
++}));
++
++vi.mock('@/rtk-query/user', () => ({
++  useGetAllUsersQuery: vi.fn(),
++  useGetLoggedInUserQuery: () => ({ data: { id: 'user-1' } }),
++  useGetUserProfileSummaryByIdQuery: () => ({ data: { id: 'user-1' }, isSuccess: true }),
++}));
++
++vi.mock('@/utils/hooks/useNotification', () => ({
++  useNotification: () => ({ notify: vi.fn() }),
++}));
++
++vi.mock('@/constants/endpoints', () => ({ MESHERY_CLOUD_PROD: 'https://cloud.example.com' }));
++
++vi.mock('@/utils/Enum', () => ({
++  APP_MODE: { DESIGN: 'design', OPERATOR: 'operator' },
++  RESOURCE_TYPE: { DESIGN: 'design', VIEW: 'view', CATALOG: 'catalog' },
++}));
++
++vi.mock('@/utils/utils', () => ({
++  isInOperatorMode: () => false,
++  JsonParse: (value: string) => JSON.parse(value),
++}));
++
++vi.mock('lib/event-types', () => ({ EVENT_TYPES: {} }));
++
++vi.mock('css/icons.styles', () => ({ iconMedium: {} }));
++
++vi.mock('@/store/slices/mesheryUi', () => ({ updateProgress: vi.fn() }));
++
++vi.mock('@/utils/fileDownloader', () => ({ default: vi.fn(), downloadFileFromContent: vi.fn() }));
++
++const design = {
++  id: 'p-1',
++  name: 'my design',
++  userId: 'user-1',
++  catalogData: { type: 'deployment' },
++  patternFile: JSON.stringify({ name: 'my design' }),
++};
++
++describe('ShareWorkspaceModal visibility updates', () => {
++  beforeEach(() => {
++    updatePatterns.mockReset().mockResolvedValue({});
++    updateView.mockReset().mockResolvedValue({});
++    shareModalProps = undefined;
++  });
++
++  it('sends the design and its new visibility as updateBody, the key the mutation posts', async () => {
++    render(<ShareWorkspaceModal resource={design} type="design" handleClose={vi.fn()} />);
++
++    await shareModalProps.handleUpdateVisibility('public');
++
++    expect(updatePatterns).toHaveBeenCalledWith({
++      updateBody: {
++        id: 'p-1',
++        name: 'my design',
++        catalogData: { type: 'deployment' },
++        designFile: { name: 'my design' },
++        visibility: 'public',
++      },
++    });
++    expect(updateView).not.toHaveBeenCalled();
++  });
++
++  it('sends a view visibility change through the view mutation', async () => {
++    render(<ShareWorkspaceModal resource={{ id: 'v-1' }} type="view" handleClose={vi.fn()} />);
++
++    await shareModalProps.handleUpdateVisibility('private');
++
++    expect(updateView).toHaveBeenCalledWith({ id: 'v-1', body: { visibility: 'private' } });
++    expect(updatePatterns).not.toHaveBeenCalled();
++  });
++
++  it('uses the first resource when given a list', async () => {
++    render(<ShareWorkspaceModal resource={[design]} type="design" handleClose={vi.fn()} />);
++
++    await shareModalProps.handleUpdateVisibility('private');
++
++    expect(updatePatterns.mock.calls[0][0].updateBody).toMatchObject({
++      id: 'p-1',
++      visibility: 'private',
++    });
++  });
++
++  it('returns an error and calls no mutation when the list is empty', async () => {
++    render(<ShareWorkspaceModal resource={[]} type="design" handleClose={vi.fn()} />);
++
++    await expect(shareModalProps.handleUpdateVisibility('public')).resolves.toEqual({
++      error: 'No resource selected',
++    });
++    expect(updatePatterns).not.toHaveBeenCalled();
++    expect(updateView).not.toHaveBeenCalled();
++  });
++});
 ```
 
-**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +124/-0)
+**File**: `ui/components/workspaces/ShareWorkspaceModal.tsx` (modified, +19/-32)
 ```diff
-@@ -17,7 +17,10 @@ import (
+@@ -21,8 +21,11 @@ import {
+ } from '@/rtk-query/user';
+ import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
+ import { useNotification } from '@/utils/hooks/useNotification';
+-import { getShareableResourceRoute } from './SpacesSwitcher/hooks';
+-import { JsonParse } from '@/utils/utils';
++import {
++  getShareableResourceRoute,
++  handleUpdatePatternVisibility,
++  handleUpdateViewVisibility,
++} from './SpacesSwitcher/hooks';
+ import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+ import { RESOURCE_TYPE } from '@/utils/Enum';
  
- 	"github.com/gofrs/uuid"
- 	"github.com/meshery/meshery/server/helpers"
-+	"github.com/meshery/meshery/server/machines"
-+	"github.com/meshery/meshery/server/machines/kubernetes"
- 	"github.com/meshery/meshery/server/models"
-+	"github.com/meshery/meshery/server/models/connections"
- 	meshkiterrors "github.com/meshery/meshkit/errors"
- 	"github.com/meshery/meshkit/models/events"
- 	"github.com/meshery/schemas/models/core"
-@@ -731,3 +734,124 @@ func TestRetainSelectedContextMetadata(t *testing.T) {
- 		}
- 	})
- }
-+
-+type mockReimportProvider struct {
-+	*models.DefaultLocalProvider
-+	persistedEvents []events.Event
-+	connectionID    core.Uuid
-+}
-+
-+func (m *mockReimportProvider) SaveK8sContext(token string, k8sContext models.K8sContext, metadata map[string]any) (connections.Connection, error) {
-+	return connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, nil
-+}
-+
-+func (m *mockReimportProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
-+	m.persistedEvents = append(m.persistedEvents, event)
-+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
-+}
-+
-+func TestK8SConfigHandler_ReimportRefreshesCachedStateMachineContext(t *testing.T) {
-+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
-+	connUUID := uuid.Must(uuid.NewV4())
-+	connID := core.Uuid(connUUID)
-+
-+	kubeconfig := []byte(`apiVersion: v1
-+kind: Config
-+current-context: reimported
-+clusters:
-+- cluster:
-+    server: https://127.0.0.1:6443
-+  name: reimported
-+contexts:
-+- context:
-+    cluster: reimported
-+    user: reimported-user
-+  name: reimported
-+users:
-+- name: reimported-user
-+  user:
-+    token: token-reimported
-+`)
-+
-+	t.Run("refreshes credentials on cache hit with existing context", func(t *testing.T) {
-+		h := newTestHandler(t, map[string]models.Provider{}, "")
-+		h.config.K8scontextChannel = &models.K8scontextChan{}
-+		tracker := &machines.ConnectionToStateMachineInstanceTracker{
-+			ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
-+		}
-+		h.ConnectionToStateMachineInstanceTracker = tracker
-+
-+		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
-+		if err != nil {
-+			t.Fatalf("failed to create state machine: %v", err)
-+		}
-+		storedCtx := &kubernetes.MachineCtx{
-+			K8sContext: models.K8sContext{
-+				Name:   "old-name",
-+				Server: "https://old-server:6443",
-+			},
-+		}
-+		inst.Context = storedCtx
-+		tracker.Add(connID, inst)
-+
-+		provider := &mockReimportProvider{
-+			connectionID: connID,
-+		}
-+
-+		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
-+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
-+		rec := httptest.NewRecorder()
-+
-+		h.K8SConfigHandler(rec, req, nil, authUser, provider)
-+		if rec.Code != http.StatusOK {
-+			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
-+		}
-+
-+		ctxObj := inst.GetContext()
-+		updatedCtx, ok := ctxObj.(*kubernetes.MachineCtx)
-+		if !ok || updatedCtx == nil {
-+			t.Fatalf("expected *kubernetes.MachineCtx, got %#v", ctxObj)
-+		}
-+		if updatedCtx.K8sContext.Server != "https://127.0.0.1:6443" {
-+			t.Fatalf("expected server https://127.0.0.1:6443, got %s", updatedCtx.K8sContext.Server)
-+		}
-+	})
-+
-+	t.Run("initializes context on cache hit when initial startup left Context nil", func(t *testing.T) {
-+		h := newTestHandler(t, map[string]models.Provider{}, "")
-+		h.config.K8scontextChannel = &models.K8scontextChan{}
-+		tracker := &machines.ConnectionToStateMachineInstanceTracker{
-+			ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
-+		}
-+		h.ConnectionToStateMachineInstanceTracker = tracker
-+
-+		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
-+		if err != nil {
-+			t.Fatalf("failed to create state machine: %v", err)
-+		}
-+		inst.Context = nil
-+		tracker.Add(connID, inst)
-+
-+		provider := &mockReimportProvider{
-+			connectionID: connID,
-+		}
-+
-+		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
-+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
-+		rec := httptest.NewRecorder()
-+
-+		h.K8SConfigHandler(rec, req, nil, authUser, provider)
-+		if rec.Code != http.StatusOK {
-+			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
-+		}
-+
-+		ctxObj := inst.GetContext()
-+		initializedCtx, ok := ctxObj.(*kubernetes.MachineCtx)
-+		if !ok || initializedCtx == nil {
-+			t.Fatalf("expected initialized *kubernetes.MachineCtx, got %#v", ctxObj)
-+		}
-+		if initializedCtx.K8sContext.Server != "https://127.0.0.1:6443" {
-+			t.Fatalf("expected server https://127.0.0.1:6443, got %s", initializedCtx.K8sContext.Server)
-+		}
-+	})
-+}
-```
-
-**File**: `server/machines/kubernetes/discover.go` (modified, +7/-0)
-```diff
-@@ -94,6 +94,13 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
- 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
- 	}
+@@ -81,39 +84,23 @@ export const ShareWorkspaceModal_: FC<ShareWorkspaceModalInternalProps> = ({
+     firstSelectedResource?.name,
+   );
  
-+	// Update the machine context with the resolved server ID and version under
-+	// setupLock so downstream states and external readers (e.g. K8sContextSnapshot)
-+	// observe the populated fields rather than the unpopulated stack copy.
-+	machinectx.setupLock.Lock()
-+	machinectx.K8sContext = k8sContext
-+	machinectx.setupLock.Unlock()
-+
- 	// machinectx.log.Debug("exiting execute func from discovered state", connection)
- 
- 	return machines.Register, nil, nil
-```
-
-**File**: `server/machines/kubernetes/discover_test.go` (added, +134/-0)
-```diff
-@@ -0,0 +1,134 @@
-+package kubernetes
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/gofrs/uuid"
-+	"github.com/meshery/meshery/server/machines"
-+	"github.com/meshery/meshery/server/models"
-+	"github.com/meshery/meshery/server/models/connections"
-+	"github.com/meshery/meshkit/logger"
-+	mkkube "github.com/meshery/meshkit/utils/kubernetes"
-+	"github.com/meshery/schemas/models/core"
-+	k8sclient "k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/rest"
-+)
-+
-+type mockProviderForDiscoverTest struct {
-+	models.Provider
-+	savedContext models.K8sContext
-+}
-+
-+func (m *mockProviderForDiscoverTest) SaveK8sContext(token string, k8sContext models.K8sContext, metadata map[string]any) (connections.Connection, error) {
-+	m.savedContext = k8sContext
-+	return connections.Connection{ID: core.Uuid(uuid.Must(uuid.NewV4()))}, nil
-+}
-+
-+func TestDiscoverAction_PropagatesServerIDAndVersionToMachineCtx(t *testing.T) {
-+	clusterUID := "30e099e0-ef31-477a-9f2d-754ee9b1d41a"
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+		if r.URL.Path == "/api/v1/namespaces/kube-system" {
-+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
-+				"metadata": map[string]string{"uid": clusterUID},
-+			})
-+			return
-+		}
-+		if r.URL.Path == "/version" {
-+			_ = json.NewEncoder(w).Encode(map[string]string{
-+				"major": "1",
-+				"minor": "30",
-+				"gitVersion": "v1.30.0",
-+			})
-+			return
-+		}
-+		http.NotFound(w, r)
-+	}))
-+	defer server.Close()
-+
-+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: server.URL})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	log, err := logger.New("test", logger.Options{})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	mockProv := &mockProviderForDiscoverTest{}
-+	machineCtx := &MachineCtx{
-+		K8sContext: models.K8sContext{
-+			Name:   "test-ctx",
-+			Server: server.URL,
-+		},
-+		clientset: &mkkube.Client{KubeClient: clientset},
-+		log:       log,
-+	}
-+
-+	ctx := context.WithValue(context.Background(), models.ProviderCtxKey, mockProv)
-+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
-+
-+	da := &DiscoverAction{}
-+	nextEvent, _, err := da.Execute(ctx, machineCtx, nil)
-+	if err != nil {
-+		t.Fatalf("unexpected DiscoverAction error: %v", err)
-+	}
-+	if nextEvent != machines.Register {
-+		t.Fatalf("expected next event %v, got %v", machines.Register, nextEvent)
-+	}
-+
-+	// Verify that machineCtx.K8sContext has been updated in memory
-+	if machineCtx.K8sContext.KubernetesServerID == nil {
-+		t.Fatalf("expected machineCtx.K8sContext.KubernetesServerID to be populated, but it was nil")
-+	}
-+	if machineCtx.K8sContext.KubernetesServerID.String() != clusterUID {
-+		t.Fatalf("expected KubernetesServerID %s, got %s", clusterUID, machineCtx.K8sContext.KubernetesServerID.String())
-+	}
-+	if machineCtx.K8sContext.Version != "v1.30.0" {
-+		t.Fatalf("expected Version v1.30.0, got %s", machineCtx.K8sContext.Version)
-+	}
-+
-+	// Verify K8sContextSnapshot also reflects the updated server ID
-+	snap := machineCtx.K8sContextSnapshot()
-+	if snap.KubernetesServerID == nil || snap.KubernetesServerID.String() != clusterUID {
-+		t.Fatalf("expected K8sContextSnapshot().KubernetesServerID to be %s, got %v", clusterUID, snap.KubernetesServerID)
-+	}
-+}
-+
-+func TestRefreshK8sContext_SynchronizesMissingServerID(t *testing.T) {
-+	log, err := logger.New("test", logger.Options{})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	existingID := core.Uuid(uuid.Must(uuid.NewV4()))
-+	m := &MachineCtx{
-+		K8sContext: models.K8sContext{
-+			Name:   "cluster-1",
-+			Server: "https://k8s.example.com:6443",
-+		},
-+		clientset: &mkkube.Client{},
-+		log:       log,
-+	}
-+
-+	newCtx := models.K8sContext{
-+		Name:               "cluster-1",
-+		Server:             "https://k8s.example.com:6443",
-+		KubernetesServerID: &existingID,
-+	}
-+
-+	changed, err := m.RefreshK8sContext(newCtx, nil, log)
-+	if err != nil {
-+		t.Fatalf("unexpected RefreshK8sContext error: %v", err)
-+	}
-+	if !changed {
-+		t.Fatalf("expected changed to be true when populating missing server ID")
-+	}
-+	if m.K8sContext.KubernetesServerID == nil || *m.K8sContext.KubernetesServerID != existingID {
-+		t.Fatalf("expected KubernetesServerID to be %s, got %v", existingID, m.K8sContext.KubernetesServerID)
-+	}
-+}
-```
-
-**File**: `server/machines/kubernetes/helpers.go` (modified, +7/-1)
-```diff
-@@ -94,7 +94,13 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
- // logger: the stored machine context's own log may be nil on machines built
- // outside the normal init path, and a failed build logs through it.
- func (m *MachineCtx) RefreshK8sContext(newCtx models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (bool, error) {
--	if k8sContextCredentialsEqual(m.K8sContext, newCtx) {
-+	if m.clientset != nil && k8sContextCredentialsEqual(m.K8sContext, newCtx) {
-+		if m.K8sContext.KubernetesServerID == nil && newCtx.KubernetesServerID != nil {
-+			m.setupLock.Lock()
-+			m.K8sContext.KubernetesServerID = newCtx.KubernetesServerID
-+			m.setupLock.Unlock()
-+			return true, nil
-+		}
- 		return false, nil
- 	}
- 	handler, err := GenerateClientSetAction(&newCtx, eventBuilder, log)
+-  const handleUpdatePatternVisibility = async (value: string) => {
+-    const res = await updatePatterns({
+-      body: {
+-        id: firstSelectedResource?.id,
+-        name: firstSelectedResource?.name,
+-        catalogData: firstSelectedResource?.catalogData,
+-        designFile: JsonParse(firstSelectedResource?.patternFile),
+-        visibility: value,
+-      },
+-    });
+-    return {
+-      error: res?.error?.error,
+-    };
+-  };
+-
+-  const handleUpdateViewVisibilityCall = async (value: string) => {
+-    const res = await updateView({
+-      id: firstSelectedResource?.id,
+-      body: {
+-        visibility: value,
+-      },
+-    });
+-    return {
+-      error: res.error?.error,
+-    };
+-  };
+-
+-  const handleUpdateVisibility = (updatedVisibility: string) => {
++  const handleUpdateVisibility = (value: string) => {
++    if (!firstSelectedResource) {
++      return Promise.resolve({ error: 'No resource selected' });
++    }
+     if (dataName === RESOURCE_TYPE.DESIGN) {
+-      return handleUpdatePatternVisibility(updatedVisibility);
++      return handleUpdatePatternVisibility({
++        value,
++        updatePatterns,
++        selectedResource: firstSelectedResource,
++      });
+     }
+     if (dataName === RESOURCE_TYPE.VIEW) {
+-      return handleUpdateViewVisibilityCall(updatedVisibility);
++      return handleUpdateViewVisibility({
++        value,
++        updateView,
++        selectedResource: firstSelectedResource,
++      });
+     }
+     return Promise.resolve({ error: undefined });
+   };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24286** (2026-11-24): [Docs] Fix DCO sign-off links to removed CONTRIBUTING.md sections (@jashwanth176)
-- **PR #24280** (2026-11-24): [mesheryctl] Guard Kubernetes version parsing against slice bounds panic and nil dereference (@mystic-fae)
-- **PR #24278** (2026-11-24): [server] Fix stack-copy value drop of KubernetesServerID in DiscoverAction and stale FSM context on kubeconfig re-import (@nishant-devv)
-- **PR #24275** (2026-11-24): docs: add OCI registry push and pull examples (@shreyaagrawal788-dotcom)
-- **PR #24272** (2026-11-24): [Server] Bound concurrent visitor execution in parallel process planner (@Sarthak-Pandey)
-- **PR #24271** (2026-11-24): [mesheryctl] Enforce exact argument validation in system start (@err0rgod)
+- **PR #24367** (2026-11-25): fix(ui): sync changeTrackCB ref, support functional updaters, and guard callbacks in useStateCB (@madhavzanwar)
+- **PR #24365** (2026-11-25): [Server] Require matching cluster CA trust in trusted-context exemption (@subhwastaken)
+- **PR #24348** (2026-11-25): [UI] Guard CAN permission helper against non-string and empty actions or subjects (@mrdeyroy)
+- **PR #24343** (2026-11-25): fix(ui): guard useTimeout against invalid delays, non-callable callbacks, and non-array deps (@madhavzanwar)
+- **PR #24335** (2026-11-25): [Server] Parse POLICY_EVAL_TIMEOUT as a Go duration, not nanoseconds (@SandstromPL)
+- **PR #24334** (closed): fix: send contexts=all on design and adapter commands (@Ankitavasudev)
 
 ---
 
@@ -1590,46 +1425,67 @@ This commit:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): handle context refresh errors and harden DiscoverAction field sync
+## X. Empirical Invariant Guard in useStateCB.test.ts
 
 **RULE**:
-When implementing operations in `server/handlers/k8sconfig_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/utils/hooks/__tests__/useStateCB.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `319818a6`: server): handle context refresh errors and harden DiscoverAction field sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68bfaf06`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/handlers/k8sconfig_handler.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/utils/hooks/__tests__/useStateCB.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			var refreshErr error
-							refreshErr = aerr
-							refreshErr = rerr
-			//
-			// If refreshing the stored context failed (e.g. invalid rotation credentials),
-			// capture the error on the context metadata and skip the event so we do not
-			// probe or report success against the stale credentials.
-			if refreshErr != nil {
-				ctx.ImportError = fmt.Sprintf("Failed to refresh Kubernetes context \"%s\": %v", ctx.Name, refreshErr)
-				metadata["error"] = refreshErr
-				if status == connections.DISCOVERED && len(saveK8sContextResponse.RegisteredContexts) > 0 {
-					saveK8sContextResponse.RegisteredContexts[len(saveK8sContextResponse.RegisteredContexts)-1].ImportError = ctx.ImportError
-				} else if status == connections.CONNECTED && len(saveK8sContextResponse.ConnectedContexts) > 0 {
-					saveK8sContextResponse.ConnectedContexts[len(saveK8sContextResponse.ConnectedContexts)-1].ImportError = ctx.ImportError
-				}
-			} else if mhelpers.HasMachineContext(inst) {
+
+  it('always invokes the latest changeTrackCB after rerenders', () => {
+    const firstTrack = vi.fn();
+    const secondTrack = vi.fn();
+    const { result, rerender } = renderHook(({ cb }) => useStateCB(0, cb), {
+      initialProps: { cb: firstTrack },
+    });
+
+    rerender({ cb: secondTrack });
+
+    act(() => {
+      result.current[1](10);
+    });
+
+    expect(firstTrack).not.toHaveBeenCalled();
+    expect(secondTrack).toHaveBeenCalledTimes(1);
+    expect(secondTrack).toHaveBeenCalledWith(10);
+  });
+
+  it('supports lazy initializer functions and keeps getStateRefValue accurate', () => {
+    const init = vi.fn(() => 99);
+    const { result } = renderHook(() => useStateCB(init));
+
+    expect(init).toHaveBeenCalledTimes(1);
+    expect(result.current[0]).toBe(99);
+    expect(result.current[2]()).toBe(99);
+  });
+
+  it('supports functional state updaters and keeps stateRef in sync across sequential updates', () => {
+    const changeTrack = vi.fn();
+    const after = vi.fn();
+    const { result } = renderHook(() => useStateCB(0, changeTrack));
+
+    act(() => {
+      result.current[1]((prev) => prev + 1);
+      result.current[1]((prev) => prev + 2, after);
+      expect(result.current[2](
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			if mhelpers.HasMachineContext(inst) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `319818a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68bfaf06` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

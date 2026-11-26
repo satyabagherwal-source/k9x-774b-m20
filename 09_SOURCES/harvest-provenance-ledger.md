@@ -13233,3 +13233,5 @@ Every entry in this ledger must capture:
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `af8beda6` | Multi-dimensional audit evidence | 2026-11-26T01:53:33.365Z |
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `40c1f2bb` | Multi-dimensional audit evidence | 2026-11-26T01:53:35.796Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `77a83f3b` | Multi-dimensional audit evidence | 2026-11-26T01:53:37.914Z |
+| `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-26T02:01:08.582Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `a010f98f` | Multi-dimensional audit evidence | 2026-11-26T02:01:18.179Z |

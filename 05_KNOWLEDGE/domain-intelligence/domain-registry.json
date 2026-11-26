@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T01:53:43.750Z",
+  "last_updated": "2026-11-26T02:01:23.084Z",
   "total_records": 2699,
   "domains": {
     "A": {
@@ -9432,8 +9432,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a9734ee93997f015cd449d47e5df41ef824fdc7ec38470b9c87481468c2e387a",
-      "created_at": "2026-11-26T00:26:35.192Z"
+      "content_hash": "232b487c78424c2ab9bf5b9cf6ed79631e96472eb86e627c315f3a5919100efe",
+      "created_at": "2026-11-26T02:01:23.084Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -27641,8 +27641,8 @@
       "title": "Architecture Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-architecture-intelligence-meshery-meshery-core-invariants.md",
       "repository": "meshery/meshery",
-      "content_hash": "b95af3458e83c621d232cfbe1e3d5ec2f9f1c2bffee4887e345cd6e938c195eb",
-      "created_at": "2026-11-25T01:36:07.074Z"
+      "content_hash": "72f53f8258b1436110128dec826971fb745199bfba95544a24d148486cda6611",
+      "created_at": "2026-11-26T02:01:18.533Z"
     },
     "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -27668,8 +27668,8 @@
       "title": "Architecture Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-learnings-architecture-intelligence-meshery-meshery-learnings-co.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "635bb679dd740697f0a9fb94b57e8d78f4abda73403321632928e67c73bb0765",
-      "created_at": "2026-11-25T01:36:12.870Z"
+      "content_hash": "9558f48b2dc8f7eb141cd6fd216efd358e7326d908c26eb6c951c67383253a2a",
+      "created_at": "2026-11-26T02:01:22.356Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",
@@ -39638,8 +39638,8 @@
       "title": "Research & Knowledge Intelligence: mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf-research-k.md",
       "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
-      "content_hash": "93be238974f573964d5e702ecd212e34091ea5c90b301f6fb28a0e57b85452c2",
-      "created_at": "2026-11-22T05:12:30.353Z"
+      "content_hash": "ca3c5f5353d5c8c0b1cee0b5d172f706d29e4fbdc94694a1c08ddc7a5400c5aa",
+      "created_at": "2026-11-26T02:01:08.795Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen",
@@ -39647,8 +39647,8 @@
       "title": "Research & Knowledge Intelligence: hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf-learnings-.md",
       "repository": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings",
-      "content_hash": "ca742b1ba99989e0afff6cffaaf729e5d06485f4a79c4beecaf1c306cda3c630",
-      "created_at": "2026-11-22T05:12:42.224Z"
+      "content_hash": "1d2acbcd9ff67af3caa9135329d2f09dc29208b03dd3e0ade352986359823625",
+      "created_at": "2026-11-26T02:01:21.692Z"
     },
     "DOM-H-1273A85F": {
       "record_id": "DOM-H-1273A85F",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:53:43.569Z",
+  "last_updated": "2026-11-26T02:01:22.940Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56034,11 +56034,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-B81Q",
+      "id": "CD-P4VR",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-B81Q-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-P4VR-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -62671,6 +62671,44 @@
       "source_repo": "smallstep-cli",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-61EC3E-empirical-invariant-guard-in-changelog-m.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-P4BI",
+      "directive_title": "Empirical Invariant Guard in useStateCB.test.ts",
+      "source_repo": "meshery-meshery-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P4BI-empirical-invariant-guard-in-usestatecb-test-ts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-DCE66B",
+      "directive_title": "Forensic Learning Record (Deep Inspection): mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DCE66B-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-A6B23B",
+      "directive_title": "Empirical Invariant Guard in useStateCB.test.ts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meshery-meshery",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A6B23B-empirical-invariant-guard-in-usestatecb-.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-BC49ED",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BC49ED-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-26"
     }
   ]
