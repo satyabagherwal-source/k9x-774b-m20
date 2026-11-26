@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T01:08:18.611Z",
+  "updated_at": "2026-11-26T01:18:09.307Z",
   "stats": {
-    "total_discovered": 9553,
-    "approved_pending_harvest": 9056,
+    "total_discovered": 9557,
+    "approved_pending_harvest": 9060,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9047,
-      "OFFICIAL_DOCUMENTATION": 281,
+      "COMMUNITY_AND_EXPERT": 9050,
+      "OFFICIAL_DOCUMENTATION": 282,
       "STANDARDS_AND_SPECIFICATIONS": 153,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 54,
@@ -206714,6 +206714,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-2339780AAF12": {
+      "id": "SRC-2339780AAF12",
+      "url": "https://github.com/cloudwego/volo",
+      "title": "https://github.com/cloudwego/volo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:18:07.961Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
+        "fileName": "cloudwego-volo-learnings.md"
+      }
+    },
+    "SRC-064F9C177237": {
+      "id": "SRC-064F9C177237",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-WebSocket-Protocol",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-WebSocket-Protocol",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:18:08.064Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
+        "fileName": "cloudwego-volo-learnings.md"
+      }
+    },
+    "SRC-409B0C4176CA": {
+      "id": "SRC-409B0C4176CA",
+      "url": "https://github.com/cloudwego/volo/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/cloudwego/volo/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:18:08.115Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
+        "fileName": "cloudwego-volo-learnings.md"
+      }
+    },
+    "SRC-2DCEF7022622": {
+      "id": "SRC-2DCEF7022622",
+      "url": "https://github.com/saltstack/salt/blob/4b652eb666045ccff231c49065f47f74b91ee4ab/salt/modules/cmdmod.py",
+      "title": "https://github.com/saltstack/salt/blob/4b652eb666045ccff231c49065f47f74b91ee4ab/salt/modules/cmdmod.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:18:09.307Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
       }
     }
   }

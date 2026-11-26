@@ -13218,3 +13218,7 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `110572fb` | Multi-dimensional audit evidence | 2026-11-26T01:08:08.049Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `9c02ea4e` | Multi-dimensional audit evidence | 2026-11-26T01:08:10.299Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `649d33fa` | Multi-dimensional audit evidence | 2026-11-26T01:08:12.886Z |
+| `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-26T01:17:49.408Z |
+| `learn-github-cloudwego-volo` | `https://github.com/cloudwego/volo` | `ac6adcc6` | Multi-dimensional audit evidence | 2026-11-26T01:17:52.068Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `6a78a55d` | Multi-dimensional audit evidence | 2026-11-26T01:17:59.539Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `da0ea446` | Multi-dimensional audit evidence | 2026-11-26T01:18:04.598Z |

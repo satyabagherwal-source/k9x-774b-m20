@@ -18,12 +18,12 @@
     "revisionIdentifier": "62103794"
   },
   "gravitl-netmaker": {
-    "name": "gravitl/netmaker",
+    "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T14:23:56.839Z",
-    "lastVerified": "2026-11-25T14:23:56.839Z",
+    "lastChecked": "2026-11-26T01:17:56.216Z",
+    "lastVerified": "2026-11-26T01:17:56.216Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -32,7 +32,8 @@
     "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "325c998a"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -92,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T01:08:16.207Z",
-    "lastVerified": "2026-11-26T01:08:16.207Z",
+    "lastChecked": "2026-11-26T01:18:07.810Z",
+    "lastVerified": "2026-11-26T01:18:07.810Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -287,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T00:34:56.844Z",
+    "lastChecked": "2026-11-26T01:18:01.181Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T00:34:56.844Z"
+    "lastVerified": "2026-11-26T01:18:01.181Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2424,14 +2425,14 @@
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T23:51:02.086Z",
-    "lastVerified": "2026-11-24T23:51:02.086Z",
+    "lastChecked": "2026-11-26T01:18:03.639Z",
+    "lastVerified": "2026-11-26T01:18:03.639Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
+    "contentHash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5157,22 +5158,21 @@
     "lastVerified": "2026-11-24T17:51:52.641Z"
   },
   "saltstack-salt": {
-    "name": "salt",
+    "name": "saltstack/salt",
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-25T00:51:59.491Z",
-    "lastVerified": "2026-11-25T00:51:59.491Z",
+    "lastChecked": "2026-11-26T01:17:58.592Z",
+    "lastVerified": "2026-11-26T01:17:58.592Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
-    "contentHash": "5ec8cbd6ed5d19ff30b5f7d9466a8895d8c4a7f4caad6611bca9dedbf1eb3df8",
+    "contentHash": "8867786e5b2aecdb30b36af542501511878f1b5dc5a6ab1fd87141968586d595",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "55df51a7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gluesql-gluesql": {
     "name": "gluesql/gluesql",
@@ -5826,11 +5826,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cloudwego-volo": {
-    "name": "volo",
+    "name": "cloudwego/volo",
     "officialUrl": "https://github.com/cloudwego/volo",
-    "lastChecked": "2026-11-24T17:51:47.706Z",
-    "revisionIdentifier": "35e91302",
-    "lastVerified": "2026-11-24T17:51:47.706Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-26T01:17:51.041Z",
+    "lastVerified": "2026-11-26T01:17:51.041Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-cloudwego-volo",
+    "contentHash": "c4d351d0d2aeda188349b4e0241c61def0f83c13ce5631e29d0e753d242cf749",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openai-clip-vit-base-patch32": {
     "name": "openai/clip-vit-base-patch32",
@@ -10734,9 +10744,9 @@
   "oblador-hush": {
     "name": "hush",
     "officialUrl": "https://github.com/oblador/hush",
-    "lastChecked": "2026-11-23T15:37:15.646Z",
+    "lastChecked": "2026-11-26T01:17:51.194Z",
     "revisionIdentifier": "2e96f4f7",
-    "lastVerified": "2026-11-23T15:37:15.646Z"
+    "lastVerified": "2026-11-26T01:17:51.194Z"
   },
   "scrapy-plugins-scrapy-splash": {
     "name": "scrapy-splash",
@@ -14080,12 +14090,12 @@
     "officialUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T04:04:51.910Z",
-    "lastVerified": "2026-11-22T04:04:51.910Z",
+    "lastChecked": "2026-11-26T01:17:48.761Z",
+    "lastVerified": "2026-11-26T01:17:48.761Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
-    "contentHash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
+    "contentHash": "f13892b6056d4785534968202ae7a9d82eb612b02b6f4e2a97d40124ac24c49d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T01:08:12.903Z",
+  "last_updated": "2026-11-26T01:18:04.614Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "5ec8cbd6ed5d19ff30b5f7d9466a8895d8c4a7f4caad6611bca9dedbf1eb3df8",
-      "verified_at": "2026-11-24T06:11:19.310Z",
+      "content_hash": "8867786e5b2aecdb30b36af542501511878f1b5dc5a6ab1fd87141968586d595",
+      "verified_at": "2026-11-26T01:17:59.554Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:11:19.310Z"
+      "last_updated": "2026-11-26T01:17:59.554Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",
@@ -8886,14 +8886,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cloudwego-volo",
-      "content_hash": "46d10f58ac22bc05117bf17948e1f2adced6d50b29ca54a8eb78e51d7b49d3b8",
-      "verified_at": "2026-11-05T09:57:40.859Z",
+      "content_hash": "c4d351d0d2aeda188349b4e0241c61def0f83c13ce5631e29d0e753d242cf749",
+      "verified_at": "2026-11-26T01:17:52.083Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T09:57:40.859Z"
+      "last_updated": "2026-11-26T01:17:52.083Z"
     },
     "itinance/react-native-fs": {
       "repository": "itinance/react-native-fs",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
-      "verified_at": "2026-11-24T23:51:03.490Z",
+      "content_hash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
+      "verified_at": "2026-11-26T01:18:04.613Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:51:03.490Z"
+      "last_updated": "2026-11-26T01:18:04.613Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -18231,14 +18231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
-      "content_hash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
-      "verified_at": "2026-11-22T04:04:52.807Z",
+      "content_hash": "f13892b6056d4785534968202ae7a9d82eb612b02b6f4e2a97d40124ac24c49d",
+      "verified_at": "2026-11-26T01:17:49.415Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T04:04:52.807Z"
+      "last_updated": "2026-11-26T01:17:49.415Z"
     },
     "PrunaAI/P-H3-Image": {
       "repository": "PrunaAI/P-H3-Image",

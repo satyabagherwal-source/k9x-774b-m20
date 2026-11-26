@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-FFNT",
-    "timestamp": "2026-11-24T09:18:23.753Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "a477ef1f0e7d2164f9245d33ea9e9ac09e7b98375de0a908224bcd5a680c43e3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-FSUQ",
-    "timestamp": "2026-11-24T09:18:40.850Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-8X6U",
-    "timestamp": "2026-11-24T09:41:19.494Z",
-    "repository": "streetwriters/notesnook",
-    "learningId": "learn-github-streetwriters-notesnook",
-    "contentHash": "a72d32878b7a96a456bf067775eee45e554e14c25bc2b1328ab3b05101b3424a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-AF1I",
-    "timestamp": "2026-11-24T09:42:29.286Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "b5d82a1cc09467908a1c32ea3da12fd83a6ab82accf15d16a9c09d92a6e3aab5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-TABA",
     "timestamp": "2026-11-24T09:57:09.622Z",
     "repository": "ClementTsang/bottom",
@@ -7490,6 +7430,66 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "5efd158283b15407d8b9809c26345fb4f7d6b8f74211d5e63654123574192538",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-549P",
+    "timestamp": "2026-11-26T01:17:49.405Z",
+    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+    "contentHash": "f13892b6056d4785534968202ae7a9d82eb612b02b6f4e2a97d40124ac24c49d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-56BK",
+    "timestamp": "2026-11-26T01:17:52.064Z",
+    "repository": "cloudwego/volo",
+    "learningId": "learn-github-cloudwego-volo",
+    "contentHash": "c4d351d0d2aeda188349b4e0241c61def0f83c13ce5631e29d0e753d242cf749",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-5C34",
+    "timestamp": "2026-11-26T01:17:59.536Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "8867786e5b2aecdb30b36af542501511878f1b5dc5a6ab1fd87141968586d595",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-5FZN",
+    "timestamp": "2026-11-26T01:18:04.595Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

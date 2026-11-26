@@ -13185,3 +13185,7 @@
 | `CYCLE-20261126-SNOS` | `2026-11-26T01:08:08.044Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10575` | Yes (`e082e0bb...`) |
 | `CYCLE-20261126-SPFA` | `2026-11-26T01:08:10.294Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9414` | Yes (`1966eebd...`) |
 | `CYCLE-20261126-SRF5` | `2026-11-26T01:08:12.881Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10576` | Yes (`5efd1582...`) |
+| `CYCLE-20261126-549P` | `2026-11-26T01:17:49.405Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md` | Yes (`f13892b6...`) |
+| `CYCLE-20261126-56BK` | `2026-11-26T01:17:52.064Z` | `cloudwego/volo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10577` | Yes (`c4d351d0...`) |
+| `CYCLE-20261126-5C34` | `2026-11-26T01:17:59.536Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10578` | Yes (`8867786e...`) |
+| `CYCLE-20261126-5FZN` | `2026-11-26T01:18:04.595Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10579` | Yes (`fdd75c3e...`) |

@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "55df51a7",
+    "sourceVersion": "6a78a55d",
     "license": "Apache-2.0",
-    "contentHash": "5ec8cbd6ed5d19ff30b5f7d9466a8895d8c4a7f4caad6611bca9dedbf1eb3df8",
-    "lastHarvestedAt": "2026-11-24T06:11:19.282Z",
+    "contentHash": "8867786e5b2aecdb30b36af542501511878f1b5dc5a6ab1fd87141968586d595",
+    "lastHarvestedAt": "2026-11-26T01:17:59.539Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -5843,10 +5843,10 @@
     "repository": "cloudwego/volo",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudwego/volo",
-    "sourceVersion": "35e91302",
+    "sourceVersion": "ac6adcc6",
     "license": "Apache-2.0",
-    "contentHash": "46d10f58ac22bc05117bf17948e1f2adced6d50b29ca54a8eb78e51d7b49d3b8",
-    "lastHarvestedAt": "2026-11-05T09:57:40.845Z",
+    "contentHash": "c4d351d0d2aeda188349b4e0241c61def0f83c13ce5631e29d0e753d242cf749",
+    "lastHarvestedAt": "2026-11-26T01:17:52.068Z",
     "learningId": "learn-github-cloudwego-volo"
   },
   "itinance-react-native-fs": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "3db63451",
+    "sourceVersion": "da0ea446",
     "license": "AGPL-3.0",
-    "contentHash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
-    "lastHarvestedAt": "2026-11-24T23:51:03.471Z",
+    "contentHash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
+    "lastHarvestedAt": "2026-11-26T01:18:04.598Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -12115,8 +12115,8 @@
     "sourceUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
     "sourceVersion": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
     "license": "Open-Source",
-    "contentHash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
-    "lastHarvestedAt": "2026-11-22T04:04:52.798Z",
+    "contentHash": "f13892b6056d4785534968202ae7a9d82eb612b02b6f4e2a97d40124ac24c49d",
+    "lastHarvestedAt": "2026-11-26T01:17:49.408Z",
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic"
   },
   "hf-prunaai-p-h3-image": {

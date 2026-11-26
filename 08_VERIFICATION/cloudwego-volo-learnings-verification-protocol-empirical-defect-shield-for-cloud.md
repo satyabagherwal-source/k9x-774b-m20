@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:30.433Z",
+  "timestamp": "2026-11-26T01:18:08.260Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-cloudwego-volo-learnings",
+  "learning_id": "LEARN-EVO-cloudwego-volo-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cloudwego-volo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:30.433Z`  
-> **Learning ID**: `LEARN-REEXTRACT-cloudwego-volo-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-26T01:18:08.260Z`  
+> **Learning ID**: `LEARN-EVO-cloudwego-volo-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cloudwego-volo-learnings.md`  
 > **Source**: github ([https://github.com/cloudwego/volo](https://github.com/cloudwego/volo))  
-> **Source Version**: `35e91302`  
+> **Source Version**: `ac6adcc6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T09:57:40.321Z  
+> **Timestamp**: 2026-11-26T01:17:51.046Z  
 > **Learning ID**: `learn-github-cloudwego-volo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cloudwego-volo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cloudwego/volo](https://github.com/cloudwego/volo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T09:57:40.126Z  
+> **Harvest Timestamp**: 2026-11-26T01:17:51.041Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Rust RPC framework with high-performance and strong-extensibility for building micro-services.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2635 stars
+- **Stars / Engagement**: 2641 stars
 
 ---
 
@@ -1771,11 +1771,11 @@ impl<F> WebSocketUpgrade<F> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #683** (2026-11-25): **fix(volo-build): honor the locked IDL revision on rollback**
+  *Symptoms*: ## Motivation  `volo-build` reuses one checkout per IDL repository. Generating at lock A leaves a marker named after A. After switching to B in the same `OUT_DIR`, that marker still exists. Changing only the lock back to A then generates B's types again.  ## Solution  Resolve the requested commit in the cached checkout and compare it with `HEAD`. If the commit is available locally, switch to it when needed. Fetch it on a cache miss. Passing `--` to `git reset` also allows rollback in existing checkouts that contain a file named after the commit.  ## Tests  The regression test generates Thrift types from two local Git commits. It checks that changing only the lock produces `RecordA → RecordB → RecordA` in one output directory. It also switches revisions with the upstream unavailable and a legacy marker present.  - `cargo +nightly test --locked -p volo-build` passed all 19 tests. - `cargo +nightly fmt --all -- --check` passed. - `cargo +nightly clippy --locked -p volo-build --lib --test git_lock -- -D warnings` passed.  The additional `--all-targets` Clippy check reports the existing `items_after_test_module` lint in `volo-build/src/config_builder.rs` on both `main` and this branch.
+
 - **Issue #680** (2026-11-05): **feat: shmipc v5**
   *Symptoms*: <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Bug fixes and new features should include tests.  Contributors guide: https://github.com/cloudwego/volo/blob/main/CONTRIBUTING.md -->  ## Motivation Upgrade shmipc to use the latest version. <!-- Explain the context and why you're making that change. What is the problem you're trying to solve? If a new feature is being added, describe the intended use case that feature fulfills. -->  ## Solution  <!-- Summarize the solution and provide any necessary context needed to understand the code change. --> 
-
-- **Issue #678** (2026-10-29): **fix(volo-build): fully qualify prelude names in generated code**
-  *Symptoms*: <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Bug fixes and new features should include tests.  Contributors guide: https://github.com/cloudwego/volo/blob/main/CONTRIBUTING.md -->  ## Motivation pilota turns an IDL type into a Rust item with the UpperCamelCase form of its name, in the module generated for that IDL. A thrift or proto enum SOME becomes pub struct Some(i32); / pub enum Some, and likewise for NONE, OK, ERR and a struct Default. Inside that module such an item shadows the prelude, so generated code that writes a bare Some(..), None, Ok(..), Err(..) or Default::default() resolves to the user's type and the crate fails to compile:  pilota-build 0.13.12 fixed this in its own output while volo-build's templates still write bare names. <!-- Explain the context and why you're making that change. What is the problem you're trying to solve? If a new feature is being added, describe the intended use case that feature fulfills. -->  ## Solution Spell every prelude name out in full in the templates (`::std::option::Option::{Some, None}`, `::std::default::Default::default()`), the convention the templates already follow for `::std::result::Result`. <!-- Summarize the solution and provide any necessary context needed to understand the code change. --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1792,149 +1792,184 @@ impl<F> WebSocketUpgrade<F> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `35e91302` (2026-11-05)
-**Commit Message**: feat: shmipc v5 (#680)
+### Incident Patch 1: `ac6adcc6` (2026-11-25)
+**Commit Message**: fix(volo-build): honor the locked IDL revision on rollback (#683)
 
-**File**: `Cargo.lock` (modified, +13/-12)
+**File**: `volo-build/src/util.rs` (modified, +39/-13)
 ```diff
-@@ -458,7 +458,7 @@ version = "3.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "fde0e0ec90c9dfb3b4b1a0891a7dcd0e2bffde2f7efed5fe7c9bb00e5bfb915e"
- dependencies = [
-- "windows-sys 0.48.0",
-+ "windows-sys 0.59.0",
- ]
+@@ -8,6 +8,7 @@ use std::{
+ };
  
- [[package]]
-@@ -670,7 +670,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
+ use anyhow::{Context, bail};
++use itertools::Itertools;
+ use mockall_double::double;
+ use pilota_build::{Symbol, middle::context::Mode};
+ use serde::de::Error;
+@@ -96,9 +97,7 @@ pub fn download_files_from_git(task: Task) -> anyhow::Result<()> {
+ pub fn download_repo(repo: &Repo, target_dir: impl AsRef<Path>) -> anyhow::Result<PathBuf> {
+     let dir = target_dir.as_ref().join(get_git_path(repo.url.as_str())?);
  
- [[package]]
-@@ -758,7 +758,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+-    // check if the repo is already downloaded
+-    let lock_path = dir.join(repo.lock.as_str());
+-    if dir.exists() && lock_path.exists() {
++    if checkout_cached_revision(&dir, &repo.lock)? {
+         return Ok(dir);
+     }
  
- [[package]]
-@@ -1574,7 +1574,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
- dependencies = [
-  "hermit-abi",
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+@@ -110,13 +109,39 @@ pub fn download_repo(repo: &Repo, target_dir: impl AsRef<Path>) -> anyhow::Resul
+     );
+     download_files_from_git(task).with_context(|| format!("download repo {}", repo.url))?;
  
- [[package]]
-@@ -2003,7 +2003,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
+-    // write lock file
+-    File::create(lock_path.clone())
+-        .with_context(|| format!("couldn't write to lock file: {:?}", lock_path.display()))?;
+-
+     Ok(dir)
+ }
  
- [[package]]
-@@ -2651,7 +2651,7 @@ dependencies = [
-  "once_cell",
-  "socket2 0.5.10",
-  "tracing",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.52.0",
- ]
++fn checkout_cached_revision(dir: &Path, revision: &str) -> anyhow::Result<bool> {
++    if !dir.join(".git").exists() {
++        return Ok(false);
++    }
++
++    // A shared checkout can contain several locked commits. Only HEAD is checked out.
++    let output = Command::new("git")
++        .current_dir(dir)
++        .args([
++            "rev-parse",
++            "--revs-only",
++            "HEAD",
++            &format!("{revision}^{{commit}}"),
++            "--",
++        ])
++        .output()?;
++    if !output.status.success() {
++        return Ok(false);
++    }
++    let revisions = std::str::from_utf8(&output.stdout)?;
++    let (head, locked) = revisions
++        .lines()
++        .collect_tuple()
++        .context("expected HEAD and locked commit")?;
++    if head != locked {
++        git_reset(dir, locked)?;
++    }
++    Ok(true)
++}
++
+ fn run_command(command: &mut Command) -> anyhow::Result<()> {
+     command.status().map_err(anyhow::Error::from).and_then(|s| {
+         if s.success() {
+@@ -147,15 +172,16 @@ pub fn git_archive(repo: &str, revision: &str, dir: &Path) -> anyhow::Result<()>
+             .current_dir(dir),
+     )?;
  
- [[package]]
-@@ -3003,7 +3003,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys 0.11.0",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
++    git_reset(dir, revision)
++}
++
++fn git_reset(dir: &Path, revision: &str) -> anyhow::Result<()> {
++    // Older caches can contain a marker file named after the revision.
+     run_command(
+         Command::new("git")
+-            .arg("reset")
+-            .arg("--hard")
+-            .arg(revision)
++            .args(["reset", "--hard", revision, "--"])
+             .current_dir(dir),
+-    )?;
+-
+-    Ok(())
++    )
+ }
  
- [[package]]
-@@ -3168,7 +3168,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "5b55fb86dfd3a2f5f76ea78310a88f96c4ea21a3031f8d212443d56123fd0521"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -3282,10 +3282,11 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
- 
- [[package]]
- name = "shmipc"
--version = "0.2.1"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e46b66b2fbc3ed49e95bd15d9ff81017cabe482b0ef9de4591df0e9bb2430a53"
-+checksum = "7cf889bbcc9165384e08f8524632edfd03c796c7ec4a6a05a704d06b6db600fd"
- dependencies = [
-+ "ahash",
-  "anyhow",
-  "arc-swap",
-  "bytes",
-@@ -3529,7 +3530,7 @@ dependencies = [
-  "getrandom 0.3.4",
-  "once_cell",
-  "rustix 1.1.3",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -4164,7 +4165,7 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
- 
- [[package]]
- name = "volo"
--version = "0.12.4"
-+version = "0.12.5"
- dependencies = [
-  "arc-swap",
-  "async-broadcast",
+ pub fn get_git_path(git: &str) -> anyhow::Result<PathBuf> {
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `volo-build/tests/git_lock.rs` (added, +73/-0)
 ```diff
-@@ -141,7 +141,7 @@ tokio-native-tls = "0.3"
- tungstenite = "0.28"
- tokio-tungstenite = "0.28"
- 
--shmipc = "0.2.1"
-+shmipc = "0.3"
- 
- [profile.release]
- opt-level = 3
-```
-
-**File**: `volo/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "volo"
--version = "0.12.4"
-+version = "0.12.5"
- edition.workspace = true
- homepage.workspace = true
- repository.workspace = true
+@@ -0,0 +1,73 @@
++use std::fs;
++
++use git2::{Oid, Repository, Signature};
++use tempfile::tempdir;
++use volo_build::{ConfigBuilder, util::get_git_path};
++
++fn commit_idl(repo: &Repository, record: &str) -> Result<Oid, git2::Error> {
++    let idl = format!("namespace rs example\nstruct {record} {{ 1: required string value }}\n");
++    let mut tree = repo.treebuilder(None)?;
++    tree.insert("record.thrift", repo.blob(idl.as_bytes())?, 0o100644)?;
++    let tree = repo.find_tree(tree.write()?)?;
++    let author = Signature::now("Test", "test@example.com")?;
++    let reference = format!("refs/heads/{record}");
++    repo.commit(Some(&reference), &author, &author, record, &tree, &[])
++}
++
++#[test]
++fn codegen_follows_git_lock_on_rollback() -> anyhow::Result<()> {
++    let dir = tempdir()?;
++    let config = dir.path().join("lust.yml");
++    let out = dir.path().join("out");
++    let upstream = out.join("idl/records.git");
++    let url = upstream.to_str().unwrap();
++    let repo = Repository::init_bare(&upstream)?;
++    let a = commit_idl(&repo, "RecordA")?;
++    let b = commit_idl(&repo, "RecordB")?;
++    repo.set_head("refs/heads/RecordB")?;
++    drop(repo);
++
++    let check = |lock: Oid, expected: &str| -> anyhow::Result<()> {
++        fs::write(
++            &config,
++            format!(
++                "\
++entries:
++  records:
++    filename: generated.rs
++    protocol: thrift
++    touch_all: true
++    repos:
++      records:
++        url: {url}
++        ref: HEAD
++        lock: {lock}
++    services:
++      - idl:
++          source: git
++          repo: records
++          path: record.thrift
++"
++            ),
++        )?;
++        ConfigBuilder::new(config.clone()).out_dir(&out).write()?;
++
++        let generated = fs::read_to_string(out.join("generated.rs"))?;
++        let records: Vec<_> = ["RecordA", "RecordB"]
++            .into_iter()
++            .filter(|name| generated.contains(name))
++            .collect();
++        assert_eq!(records, [expected], "lock {lock}");
++        Ok(())
++    };
++
++    check(a, "RecordA")?;
++    check(b, "RecordB")?;
++    check(a, "RecordA")?;
++
++    // An older cache can have a marker for B while A is checked out.
++    let checkout = out.join("idl/records").join(get_git_path(url)?);
++    fs::write(checkout.join(b.to_string()), [])?;
++    fs::rename(&upstream, dir.path().join("offline.git"))?;
++    check(b, "RecordB")
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #683** (2026-11-25): fix(volo-build): honor the locked IDL revision on rollback (@shenyj3)
 - **PR #680** (2026-11-05): feat: shmipc v5 (@Joshuahoky)
 - **PR #678** (2026-10-29): fix(volo-build): fully qualify prelude names in generated code (@Joshuahoky)
 - **PR #677** (2026-10-27): fix(volo-thrift): count biz-error headers in TTHeader encode_size (@Joshuahoky)
 - **PR #676** (closed): fix(volo-thrift): count biz-error headers in TTHeader encode_size (@Joshuahoky)
 - **PR #675** (2026-10-16): feat(volo-http): track matched route patterns (@Joshuahoky)
-- **PR #674** (2026-09-28): fix(volo-thrift): create spans before constructing futures (@shenyj3)
 
 ---
 
@@ -1954,54 +1989,81 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. shmipc v5 (#680)
+## X. volo-build): honor the locked IDL revision on rollback
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudwego/volo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `volo-build/src/util.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudwego/volo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `35e91302`: shmipc v5 (#680). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac6adcc6`: volo-build): honor the locked IDL revision on rollback. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `volo-build/src/util.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.59.0",
- "windows-sys 0.59.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.59.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
-version = "0.3.0"
-checksum = "7cf889bbcc9165384e08f8524632edfd03c796c7ec4a6a05a704d06b6db600fd"
- "ahash",
- "windows-sys 0.52.0",
-version = "0.12.5"
+use itertools::Itertools;
+    if checkout_cached_revision(&dir, &repo.lock)? {
+fn checkout_cached_revision(dir: &Path, revision: &str) -> anyhow::Result<bool> {
+    if !dir.join(".git").exists() {
+        return Ok(false);
+    }
+
+    // A shared checkout can contain several locked commits. Only HEAD is checked out.
+    let output = Command::new("git")
+        .current_dir(dir)
+        .args([
+            "rev-parse",
+            "--revs-only",
+            "HEAD",
+            &format!("{revision}^{{commit}}"),
+            "--",
+        ])
+        .output()?;
+    if !output.status.success() {
+        return Ok(false);
+    }
+    let revisions = std::str::from_utf8(&output.stdout)?;
+    let (head, locked) = revisions
+        .lines()
+        .collect_tuple()
+        .context("expected HEAD and locked commit")?;
+    if head != locked {
+        git_reset(dir, locked)?;
+    }
+    Ok(true)
+}
+
+    git_reset(dir, revision)
+}
+
+fn git_reset(dir: &Path, revision: &str) -> anyhow::Result<()> {
+    // Older caches can contain a marker file named after the revision.
+            .args(["reset", "--hard", revision, "--"])
+    )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.48.0",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.60.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "0.2.1"
-checksum = "e46b66b2fbc3ed49e95bd15d9ff81017cabe482b0ef9de4591df0e9bb2430a53"
- "windows-sys 0.61.2",
-version = "0.12.4"
+// Induced defect failure mode:
+    // check if the repo is already downloaded
+    let lock_path = dir.join(repo.lock.as_str());
+    if dir.exists() && lock_path.exists() {
+    // write lock file
+    File::create(lock_path.clone())
+        .with_context(|| format!("couldn't write to lock file: {:?}", lock_path.display()))?;
+
+            .arg("reset")
+            .arg("--hard")
+            .arg(revision)
+    )?;
+
+    Ok(())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `35e91302` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac6adcc6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

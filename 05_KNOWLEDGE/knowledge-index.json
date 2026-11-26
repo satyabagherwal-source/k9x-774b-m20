@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T01:08:19.253Z",
-  "total_verified_learnings": 9121,
+  "last_updated": "2026-11-26T01:18:09.847Z",
+  "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25587,
+  "total_items": 25599,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218350,8 +218350,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "3db63451",
-      "content_hash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
+      "source_version": "da0ea446",
+      "content_hash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -218404,6 +218404,11 @@
           "number": 10390,
           "title": "Synchronize resource cleanup on abort",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10579,
+          "title": "write full-precision rows once during index builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218411,7 +218416,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:51:03.204Z",
+      "verified_at": "2026-11-26T01:18:04.408Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218465,10 +218470,10 @@
       "relative_path": "08_VERIFICATION/paradedb-paradedb-verification-protocol-empirical-defect-shield-for-paradedb-par.md",
       "title": "Verification Protocol: Empirical Defect Shield for paradedb/paradedb",
       "repository": "paradedb/paradedb",
-      "source_version": "3db63451",
-      "content_hash": "42eb3dd277dd63ad3159ec0ed88942855acfbe243d874ea89ad2c8eb21120f11",
+      "source_version": "da0ea446",
+      "content_hash": "419599719ae9405b72f6972295d684427796882ca1c5a0ac106aeff35cb884a0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:51:04.257Z"
+      "persisted_at": "2026-11-26T01:18:05.127Z"
     },
     "learn-huggingface-amazon-chronos-2": {
       "learning_id": "learn-huggingface-amazon-chronos-2",
@@ -249303,10 +249308,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "repository": "paradedb/paradedb",
-      "source_version": "32ba4b5c",
-      "content_hash": "04676d01421970c142f4e28c9407c312731689bd9b2f5468b8204d968c5c592d",
+      "source_version": "da0ea446",
+      "content_hash": "aba2e2597b4288e70000f27a2cfbc1634a318988aa7d4532eec0e93199d8675b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T03:22:43.462Z"
+      "persisted_at": "2026-11-26T01:18:04.972Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i",
@@ -256977,8 +256982,8 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "55df51a7",
-      "content_hash": "5ec8cbd6ed5d19ff30b5f7d9466a8895d8c4a7f4caad6611bca9dedbf1eb3df8",
+      "source_version": "6a78a55d",
+      "content_hash": "8867786e5b2aecdb30b36af542501511878f1b5dc5a6ab1fd87141968586d595",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
@@ -257001,6 +257006,11 @@
           "number": 10214,
           "title": "kernelpkg.latest_available regex for Debian Bullseye / Ubuntu Noble",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10578,
+          "title": "Apply Dependabot ignore caps to security updates as well",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -257008,7 +257018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:11:18.992Z",
+      "verified_at": "2026-11-26T01:17:59.341Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257024,10 +257034,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-architecture-intelligence-saltstack-salt-core-invariants.md",
       "title": "Architecture Intelligence: saltstack/salt Core Invariants",
       "repository": "saltstack/salt",
-      "source_version": "55df51a7",
-      "content_hash": "cef1873d4dea2f21b3b71d44867b7487876a51a517c9820db85d2a35d8a53824",
+      "source_version": "6a78a55d",
+      "content_hash": "fc6cec54ee88f052eaed9e6421749f233a19ac8e60da7ca5f839096fb3faf482",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T06:11:19.975Z"
+      "persisted_at": "2026-11-26T01:17:59.993Z"
     },
     "rule-8693": {
       "learning_id": "rule-8693",
@@ -257123,9 +257133,9 @@
       "title": "Architecture Intelligence: saltstack-salt-learnings Core Invariants",
       "repository": "saltstack-salt-learnings",
       "source_version": "HEAD",
-      "content_hash": "9569865df6145b9ae523c2cd5faea8245a68a3947164d5bc590cdf116bda0904",
+      "content_hash": "51be2d7c925df47cf66fffd0867a3d3c0dfb99a16fefa2437070aa41c7c417c9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T06:12:13.558Z"
+      "persisted_at": "2026-11-26T01:18:09.688Z"
     },
     "candidate_directive-document-extended-dates-and-decimal-precision-for-hibernate-and-liquibase": {
       "item_id": "candidate_directive-document-extended-dates-and-decimal-precision-for-hibernate-and-liquibase",
@@ -267088,7 +267098,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
       "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
-      "content_hash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
+      "content_hash": "f13892b6056d4785534968202ae7a9d82eb612b02b6f4e2a97d40124ac24c49d",
       "dossier_path": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
       "promoted_rules": [],
@@ -267097,7 +267107,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T04:04:52.566Z",
+      "verified_at": "2026-11-26T01:17:49.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267114,9 +267124,9 @@
       "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic Core Invariants",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
       "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
-      "content_hash": "54263d8ec1bc401dfc8a4fe7a6264aa58e8b76aab0c9e916deeece0d4674eff6",
+      "content_hash": "41b5ec249e40009ed13779b2c41751391259552586baac9a741aa455bee800fe",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T04:04:53.008Z"
+      "persisted_at": "2026-11-26T01:17:49.614Z"
     },
     "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants",
@@ -267138,9 +267148,9 @@
       "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings Core Invariants",
       "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings",
       "source_version": "HEAD",
-      "content_hash": "e2b0b81ba611f9f5993914b7694533187302e62f81fe54a1e0e417a8adc4808e",
+      "content_hash": "531d4e8e0386f6cb3959aeb8d8176e77d30e7ecb2f5e3a0807eea979d385da77",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T04:05:10.924Z"
+      "persisted_at": "2026-11-26T01:18:09.054Z"
     },
     "candidate_directive-cmd-add-grpc-max-conn-age-grace": {
       "item_id": "candidate_directive-cmd-add-grpc-max-conn-age-grace",
@@ -304838,10 +304848,10 @@
       "relative_path": "08_VERIFICATION/saltstack-salt-verification-protocol-empirical-defect-shield-for-saltstack-salt.md",
       "title": "Verification Protocol: Empirical Defect Shield for saltstack/salt",
       "repository": "saltstack/salt",
-      "source_version": "55df51a7",
-      "content_hash": "e5b0eac72b47d350ee8a6e553d304de5747d6e947e0dc34033aa919c2aa1f3ea",
+      "source_version": "6a78a55d",
+      "content_hash": "86c2944d03e1efbc0cb23683bcdc416d7238f606b25e9b60095205e044ccc664",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:11:20.441Z"
+      "persisted_at": "2026-11-26T01:18:00.179Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-saltstack-salt-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-saltstack-salt-learnings",
@@ -304851,9 +304861,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for saltstack-salt-learnings",
       "repository": "saltstack-salt-learnings",
       "source_version": "HEAD",
-      "content_hash": "daf6f5c298eac42c05f256d062a729f1d38eadf2d472d55d26cd0daa07c488e3",
+      "content_hash": "f965c9390d43d13e7ee19760418212a7586b3f90462dd409648b42c656a1b7ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:12:14.074Z"
+      "persisted_at": "2026-11-26T01:18:09.847Z"
     },
     "rule-9499": {
       "learning_id": "rule-9499",
@@ -350289,6 +350299,177 @@
       "content_hash": "4e321a9a094d8116f17062bbc83a74afa0d4921f2a4af6668a8f41059cf0573b",
       "domain_letter": "I",
       "persisted_at": "2026-11-26T01:08:13.319Z"
+    },
+    "learn-github-cloudwego-volo": {
+      "learning_id": "learn-github-cloudwego-volo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cloudwego/volo",
+      "repository": "cloudwego/volo",
+      "slug": "cloudwego-volo",
+      "platform": "github",
+      "source_url": "https://github.com/cloudwego/volo",
+      "source_version": "ac6adcc6",
+      "content_hash": "c4d351d0d2aeda188349b4e0241c61def0f83c13ce5631e29d0e753d242cf749",
+      "dossier_path": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10577,
+          "title": "honor the locked IDL revision on rollback",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-26T01:17:51.816Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10577": {
+      "learning_id": "rule-10577",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10577,
+      "title": "honor the locked IDL revision on rollback",
+      "source_url": "https://github.com/cloudwego/volo",
+      "source_version": "ac6adcc6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T01:17:51.816Z"
+    },
+    "candidate_directive-honor-the-locked-idl-revision-on-rollback": {
+      "item_id": "candidate_directive-honor-the-locked-idl-revision-on-rollback",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-56I2-honor-the-locked-idl-revision-on-rollback.md",
+      "title": "honor the locked IDL revision on rollback",
+      "repository": "cloudwego/volo",
+      "source_version": "ac6adcc6",
+      "content_hash": "cb91019d0ef73a8efd573dc8e849ed3e6d36456fb3f9754bc17a95364a25906b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:17:52.299Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cloudwego-volo-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-cloudwego-volo-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cloudwego-volo-technical-construction-intelligence-cloudwego-volo-core-invariant.md",
+      "title": "Technical Construction Intelligence: cloudwego/volo Core Invariants",
+      "repository": "cloudwego/volo",
+      "source_version": "ac6adcc6",
+      "content_hash": "97a644928d2e6ba57b052851c7895126b2aefccf8c6d662b89764138dd6bcaff",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:17:52.453Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cloudwego-volo": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cloudwego-volo",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cloudwego-volo-verification-protocol-empirical-defect-shield-for-cloudwego-volo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cloudwego/volo",
+      "repository": "cloudwego/volo",
+      "source_version": "ac6adcc6",
+      "content_hash": "0e0795fe612624a736429d1c27f1cca31c241d9df1045091196c97acec397086",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T01:17:52.609Z"
+    },
+    "rule-10578": {
+      "learning_id": "rule-10578",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10578,
+      "title": "Apply Dependabot ignore caps to security updates as well",
+      "source_url": "https://github.com/saltstack/salt",
+      "source_version": "6a78a55d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T01:17:59.341Z"
+    },
+    "candidate_directive-apply-dependabot-ignore-caps-to-security-updates-as-well": {
+      "item_id": "candidate_directive-apply-dependabot-ignore-caps-to-security-updates-as-well",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5JSR-apply-dependabot-ignore-caps-to-security-updates-as-well.md",
+      "title": "Apply Dependabot ignore caps to security updates as well",
+      "repository": "saltstack-salt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dc5117f04cb726a20e832f6d2df8bff319600eab168a3c0036d6c4dc874561b5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T01:18:09.536Z"
+    },
+    "rule-10579": {
+      "learning_id": "rule-10579",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10579,
+      "title": "write full-precision rows once during index builds",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "da0ea446",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T01:18:04.408Z"
+    },
+    "candidate_directive-write-full-precision-rows-once-during-index-builds": {
+      "item_id": "candidate_directive-write-full-precision-rows-once-during-index-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5G5V-write-full-precision-rows-once-during-index-builds.md",
+      "title": "write full-precision rows once during index builds",
+      "repository": "paradedb/paradedb",
+      "source_version": "da0ea446",
+      "content_hash": "f30fdeffea8c28b6e630b023f5885889c700f93fe9e4417d575466f53d2385e9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T01:18:04.825Z"
+    },
+    "candidate_directive-volo-build-honor-the-locked-idl-revision-on-rollback": {
+      "item_id": "candidate_directive-volo-build-honor-the-locked-idl-revision-on-rollback",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5IWL-volo-build-honor-the-locked-idl-revision-on-rollback.md",
+      "title": "volo-build): honor the locked IDL revision on rollback",
+      "repository": "cloudwego-volo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "96c90ef137daf334f5a50f80374ff0f1a5911176371644c91b43eff93979280b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:18:08.374Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cloudwego-volo-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-cloudwego-volo-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cloudwego-volo-learnings-technical-construction-intelligence-cloudwego-volo-lear.md",
+      "title": "Technical Construction Intelligence: cloudwego-volo-learnings Core Invariants",
+      "repository": "cloudwego-volo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5ede124d058bce5b5f34fa4f8d23c678894f984a681458cfcdc1ac28317b7c74",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:18:08.532Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cloudwego-volo-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cloudwego-volo-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cloudwego-volo-learnings-verification-protocol-empirical-defect-shield-for-cloud.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cloudwego-volo-learnings",
+      "repository": "cloudwego-volo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ad82c50500fda0aaf535dcb7f388921253f7b8fcc4e382a02ca3ad838e995cf1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T01:18:08.702Z"
     }
   },
   "ai-builder-brain": {

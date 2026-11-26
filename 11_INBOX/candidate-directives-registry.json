@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:08:18.875Z",
+  "last_updated": "2026-11-26T01:18:09.536Z",
   "directives": [
     {
       "id": "CD-001",
@@ -62478,6 +62478,68 @@
       "source_repo": "aleo-labs-protocol-snarkos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-14F797-empirical-invariant-guard-in-cargo-toml.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-56I2",
+      "directive_title": "honor the locked IDL revision on rollback",
+      "source_repo": "cloudwego/volo",
+      "source_commit": "ac6adcc6",
+      "staged_file": "11_INBOX/candidate-directives/CD-56I2-honor-the-locked-idl-revision-on-rollback.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5JSR",
+      "directive_title": "Apply Dependabot ignore caps to security updates as well",
+      "source_repo": "saltstack-salt-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5JSR-apply-dependabot-ignore-caps-to-security-updates-as-well.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-5G5V",
+      "directive_title": "write full-precision rows once during index builds",
+      "source_repo": "paradedb/paradedb",
+      "source_commit": "da0ea446",
+      "staged_file": "11_INBOX/candidate-directives/CD-5G5V-write-full-precision-rows-once-during-index-builds.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-5IWL",
+      "directive_title": "volo-build): honor the locked IDL revision on rollback",
+      "source_repo": "cloudwego-volo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5IWL-volo-build-honor-the-locked-idl-revision-on-rollback.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-27A327",
+      "directive_title": "Forensic Learning Record (Deep Inspection): xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-27A327-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-EBA0D0",
+      "directive_title": "Apply Dependabot ignore caps to security updates as well",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "saltstack-salt",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EBA0D0-apply-dependabot-ignore-caps-to-security.md",
       "staged_date": "2026-11-26"
     }
   ]

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-xtools-at`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T04:04:52.305Z  
+> **Timestamp**: 2026-11-26T01:17:48.949Z  
 > **Learning ID**: `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic](https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T04:04:51.910Z  
+> **Harvest Timestamp**: 2026-11-26T01:17:48.761Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 42676 downloads | 6613 likes
+- **Stars / Engagement**: 46680 downloads | 6673 likes
 
 ---
 

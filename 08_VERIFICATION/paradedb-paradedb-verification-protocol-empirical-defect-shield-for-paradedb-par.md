@@ -4,22 +4,22 @@
 {
   "source_repository": "paradedb/paradedb",
   "source_url": "https://github.com/paradedb/paradedb",
-  "source_version": "3db63451",
+  "source_version": "da0ea446",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-24T23:51:03.797Z",
+  "timestamp": "2026-11-26T01:18:04.824Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-paradedb-paradedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `3db63451`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-24T23:51:03.797Z`  
+> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `da0ea446`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-26T01:18:04.824Z`  
 > **Learning ID**: `learn-github-paradedb-paradedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `paradedb/paradedb` (Commit: `3db63451`)
+- **Target Repository**: `paradedb/paradedb` (Commit: `da0ea446`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:51:02.086Z  
+> **Harvest Timestamp**: 2026-11-26T01:18:03.639Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9563 stars
+- **Stars / Engagement**: 9568 stars
 
 ---
 
@@ -2329,1332 +2329,1674 @@ impl SolvePostgresExpressions for DataFusionAggState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3db63451` (2026-11-24)
-**Commit Message**: fix: Synchronize resource cleanup on abort (#7609)
+### Incident Patch 1: `f84516c5` (2026-11-25)
+**Commit Message**: perf(vector): write full-precision rows once during index builds (#7632)
 
-## Ticket(s) Closed
+## Summary
+Pins: https://github.com/paradedb/tantivy/pull/447
 
-- Closes #7594 
+A partitioned build wrote every full-precision vector to temporary files
+and then again into the index. This writes it once, into the partition's
+final segment.
 
-## What
+- Applies when the index has one quantized vector field, the default
+sort, and the partition reaches `vector_clustering_threshold`. Every
+other build is unchanged.
+- The index relation's file writer can make its written part readable
+before it is terminated, which the IVF build uses to train and assign
+from the rows it already wrote.
+- Temp files per build process drop by `4 x dim` bytes per row of the
+partition.
+- No read of the unfinished file overlaps a write to it; the storage
+writer refuses one.
+- Those reads use a bulk-read buffer strategy.
 
-Synchronizes `PgTokioRuntime` worker shutdown, MPP DSM unmap, and
-`ResourceOwner`-backed destructors across abnormal transaction,
-subtransaction, cursor, and process abort paths.
+## Performance
+Cohere 10M, 1024-d cosine, 8 segments, replication 2, in a container
+capped at 8 CPUs and 6 GB. Base is one build; this PR is one build.
 
-## Why
+| | base | this PR |
+|---|---:|---:|
+| CREATE INDEX wall | 636 s | 553 s |
+| peak temp files, total | 38.33 GiB | 1.98 GiB |
+| peak temp files, one backend | 9.48 GiB | 1.16 GiB |
+| temp bytes w
 
-On abnormal abort, PostgreSQL unmaps DSM segments (`AtEOXact_Parallel`,
-`AtEOSubXact_Parallel`) and releases `ResourceOwner`-managed resources
-before `MemoryContextDelete` drops scan states:
-
-- `tokio-rt-worker` threads could stay in-flight in `DsmAsyncStream`
-across `dsm_detach`'s `munmap` (`SIGSEGV`) or outlive buffer pins and
-`PGSharedMemoryDetach`.
-- Deferred `MemoryContextDelete` drops (e.g., an outer cursor failing
-inside a `SAVEPOINT` and later dropped at `CLOSE` or `COMMIT` while
-`IsTransactionState()` is `true`) could double-release already-freed
-relations, locks, buffers, or slots.
-
-## How
-
-- Replaced `dsm_detached` with `DsmLease` (`RwLock<bool>`) so
-`on_dsm_detach` waits for in-flight ring/header accesses before
-`munmap`.
-- Tracked live runtimes per backend, installed per-PID lifecycle
-callbacks (`before_shmem_exit`, `XactCallback`, `SubXactCallback`,
-`ResourceReleaseCallback`), and wired
-
-**File**: `.github/scripts/check_impl_drop.py` (modified, +89/-7)
+**File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -1,13 +1,19 @@
- #!/usr/bin/env python3
- """
- Fail on any `impl Drop` or `DropGuard` in pgrx-linking crates that does not say why it skips
--`impl_safe_drop!`.
-+`impl_safe_drop!`, or any direct `IsTransactionState()` call inside `impl_safe_drop!` that does
-+not say why it skips `ResourceOwnerStamp`.
- 
- A `Drop` that calls into Postgres has to skip its body while a panic unwinds or the backend
- exits (#6479), which is what `impl_safe_drop!` in common/src/postgres/utils.rs does. A bare
- `impl Drop` or `DropGuard::new` needs a comment directly above it that opts out in so many
--words: "We intentionally do NOT use `impl_safe_drop!` here because ...". Every workspace crate
--that depends on `pgrx` is scanned.
-+words: "We intentionally do NOT use `impl_safe_drop!` here because ...".
-+
-+Inside `impl_safe_drop!`, checking `IsTransactionState()` alone is not enough when a scan state
-+lives in a `MemoryContext` whose `ResourceOwner` has already been released (#7609); wrappers
-+should gate cleanup with `ResourceOwnerStamp` from common/src/postgres/resowner.rs, or opt out
-+directly above the call with "We intentionally call `IsTransactionState()` here because ...".
-+Every workspace crate that depends on `pgrx` is scanned.
- """
- 
- import json
-@@ -24,8 +30,15 @@
-     re.MULTILINE,
- )
- DROP_GUARD = re.compile(r"\bDropGuard::new\b|\bDropGuard\s+as\b")
-+SAFE_DROP_START = re.compile(r"^[ \t]*(?:[A-Za-z0-9_]+::)*impl_safe_drop!\s*\(")
-+IS_TX_STATE = re.compile(r"\bIsTransactionState\s*\(")
-+STRING_LITERAL = re.compile(r'"(?:\\.|[^"\\])*"')
- # A comment that only names the macro, like a TODO, is not an opt out.
- OVERRIDE = re.compile(r"\bnot\s+us(?:e|ing)\W+impl_safe_drop\b", re.IGNORECASE)
-+TX_STATE_OVERRIDE = re.compile(
-+    r"\bnot\s+us(?:e|ing)\W+ResourceOwnerStamp\b|\bintentionally\b.*\bIsTransactionState\b",
-+    re.IGNORECASE,
-+)
- 
- # Shapes the matcher must get right, with the findings each should produce.
- SELF_TEST = [
-@@ -60,9 +73,55 @@
-         ),
-         1,
-     ),
-+    (
-+        "crate::impl_safe_drop!(Foo, |self| {\n    if unsafe { IsTransactionState() } {}\n});",
-+        1,
-+    ),
-+    (
-+        (
-+            "crate::impl_safe_drop!([T] Foo<T>, |self| {\n"
-+            "    // TODO: switch to ResourceOwnerStamp.\n"
-+            "    if unsafe { pg_sys::IsTransactionState() } {}\n"
-+            "});"
-+        ),
-+        1,
-+    ),
-+    (
-+        (
-+            "crate::impl_safe_drop!(Foo, |self| {\n"
-+            "    // We intentionally call `IsTransactionState()` here because fallback.\n"
-+            "    if unsafe { IsTransactionState() } {}\n"
-+            "});"
-+        ),
-+        0,
-+    ),
-+    (
-+        (
-+            "impl_safe_drop!(Foo, |self| {\n"
-+            "    // We intentionally do not use `ResourceOwnerStamp` here because ...\n"
-+            "    if unsafe { IsTransactionState() } {}\n"
-+            "});"
-+        ),
-+        0,
-+    ),
-+    (
-+        (
-+            "impl_safe_drop!(Foo, |self| {\n"
-+            "    // IsTransactionState() in a comment is fine.\n"
-+            '    let _s = "IsTransactionState()";\n'
-+            "});\n"
-+            "fn outside() { unsafe { IsTransactionState() }; }"
-+        ),
-+        0,
-+    ),
+@@ -5184,7 +5184,7 @@ dependencies = [
+ [[package]]
+ name = "ownedbytes"
+ version = "0.9.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
+  "stable_deref_trait",
+ ]
+@@ -7407,7 +7407,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
+ [[package]]
+ name = "tantivy"
+ version = "0.27.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
+  "aho-corasick",
+  "arc-swap",
+@@ -7466,15 +7466,15 @@ dependencies = [
+ [[package]]
+ name = "tantivy-bitpacker"
+ version = "0.10.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
+  "bitpacking",
  ]
  
- 
-+def _code_only(line):
-+    """Strip string literals and `//` comments so paren counting and regexes see code only."""
-+    return STRING_LITERAL.sub('""', line).split("//", 1)[0]
-+
-+
- def _preceding_comment_block(lines, idx):
-     """Return the `//` comment block directly above the statement at `idx`."""
-     stmt = idx
-@@ -80,14 +139,15 @@ def _preceding_comment_block(lines, idx):
- 
- 
- def find_bare_drops(text):
--    """Return (line, header) for every unexcused `impl Drop` or `DropGuard`."""
-+    """Return (line, header) for unexcused `impl Drop`, `DropGuard`, or `IsTransactionState()`."""
-     findings = [
-         (text.count("\n", 0, m.start(2)) + 1, " ".join(m.group(2).split()))
-         for m in BARE_DROP.finditer(text)
-         # `$ty` is the macro's own expansion.
-         if not m.group(3).startswith("$") and not OVERRIDE.search(m.group(1))
-     ]
-     lines = text.splitlines()
-+    safe_drop_paren_depth = 0
-     for idx, line in enumerate(lines):
-         stripped = line.strip()
-         if stripped.startswith("//"):
-@@ -96,6 +156,25 @@ def find_bare_drops(text):
-             _preceding_comment_block(lines, idx)
-         ):
-             findings.append((idx + 1, stripped))
-+
-+        code = _code_only(line)
-+        if safe_drop_paren_depth == 0:
-+            m = SAFE_DROP_START.match(code)
-+            if m:
-+                rest = code[m.end() - 1 :]
-+                safe_drop_paren_depth = rest.count("(") - rest.count(")")
-+                if IS_TX_STATE.search(rest) and not TX_STATE_OVERRIDE.search(
-+                    _preceding_comment_block(lines, idx)
-+                ):
-+                    findings.append((idx + 1, stripped))
-+        else:
-+            if IS_TX_STATE.search(code) and not TX_STATE_OVERRIDE.search(
-+       
-```
-
-**File**: `basescan/src/postgres/customscan/basescan/exec_methods/fast_fields/columnar.rs` (modified, +5/-4)
-```diff
-@@ -427,10 +427,10 @@ impl ExecMethod for ColumnarExecState {
-         // Create Postgres-integrated Tokio runtime on first use (same pattern as JoinScan)
-         // to drive DataFusion's async streams while servicing main-thread Postgres FFI.
-         if self.runtime.is_none() {
--            self.runtime = Some(
--                PgTokioRuntime::new()
--                    .expect("Failed to create tokio runtime for DataFusion stream execution"),
--            );
-+            let runtime = PgTokioRuntime::new()
-+                .expect("Failed to create tokio runtime for DataFusion stream execution");
-+            state.register_runtime_for_dsm_detach(&runtime);
-+            self.runtime = Some(runtime);
-         }
- 
-         loop {
-@@ -567,6 +567,7 @@ impl ExecMethod for ColumnarExecState {
-         self.current_record_batch = None;
-         self.current_batch_row_idx = 0;
-         self.runtime = None;
-+        state.clear_runtime_for_dsm_detach();
- 
-         // Reset inner FastFieldExecState
-         self.inner.reset(state);
-```
-
-**File**: `basescan/src/postgres/customscan/basescan/exec_methods/top_k.rs` (modified, +5/-4)
-```diff
-@@ -440,10 +440,10 @@ impl ExecMethod for TopKScanExecState {
-         }
- 
-         if self.runtime.is_none() {
--            self.runtime = Some(
--                PgTokioRuntime::new()
--                    .expect("Failed to create tokio runtime for DataFusion stream execution"),
--            );
-+            let runtime = PgTokioRuntime::new()
-+                .expect("Failed to create tokio runtime for DataFusion stream execution");
-+            state.register_runtime_for_dsm_detach(&runtime);
-+            self.runtime = Some(runtime);
-         }
- 
-         loop {
-@@ -534,6 +534,7 @@ impl ExecMethod for TopKScanExecState {
-         self.current_record_batch = None;
-         self.current_batch_row_idx = 0;
-         self.runtime = None;
-+        state.clear_runtime_for_dsm_detach();
-         self.found = 0;
- 
-         // Get window aggregates from state if available
-```
-
-**File**: `basescan/src/postgres/customscan/basescan/parallel.rs` (modified, +32/-12)
-```diff
-@@ -19,8 +19,10 @@
- //! Parallel-aware BaseScan: DSM attach hooks and the process-local handle to
- //! shared work assignment / telemetry IPC.
- 
-+use std::cell::RefCell;
- use std::os::raw::c_void;
- use std::ptr::NonNull;
-+use std::rc::Rc;
- use std::sync::Arc;
- 
- use crate::index::reader::io_stats::Trace;
-@@ -29,6 +31,7 @@ use crate::postgres::customscan::basescan::BaseScan;
- use crate::postgres::customscan::basescan::telemetry::ScanTelemetry;
- use crate::postgres::customscan::builders::custom_state::CustomScanStateWrapper;
- use crate::postgres::customscan::dsm::ParallelQueryCapable;
-+use crate::postgres::customscan::mpp::interrupt::PgTokioRuntimeShutdownHandle;
- 
- use pgrx::pg_sys::{self, Size, dsa_area, shm_toc};
- 
-@@ -98,16 +101,33 @@ impl ParallelScanHandle {
-     }
- }
- 
-+struct BaseScanDsmDetach {
-+    parallel: ParallelScanHandle,
-+    trace: Option<Trace>,
-+    runtime_shutdown: Rc<RefCell<Option<PgTokioRuntimeShutdownHandle>>>,
-+}
-+
- // LIMIT can shut down the leader scan before its workers; collect after Gather joins them.
-+// On abnormal transaction/subtransaction abort (`!IsTransactionState()`), `AtEOXact_Parallel` /
-+// `AtEOSubXact_Parallel` detaches `Gather`'s DSM segment before `AtSubAbort_Portals` and
-+// `XactCallback` / `SubXactCallback` run, so shut down this specific `BaseScan`'s `PgTokioRuntime`
-+// directly via its handle before the segment unmaps while leaving unrelated runtimes intact.
- #[pgrx::pg_guard]
--unsafe extern "C-unwind" fn collect_buffer_hits_on_detach(
-+unsafe extern "C-unwind" fn on_basescan_dsm_detach(
-     _seg: *mut pg_sys::dsm_segment,
-     arg: pg_sys::Datum,
- ) {
--    let (parallel, trace) =
--        *unsafe { Box::from_raw(arg.cast_mut_ptr::<(ParallelScanHandle, Trace)>()) };
-+    let BaseScanDsmDetach {
-+        parallel,
-+        trace,
-+        runtime_shutdown,
-+    } = *unsafe { Box::from_raw(arg.cast_mut_ptr::<BaseScanDsmDetach>()) };
-     if unsafe { pg_sys::IsTransactionState() } {
--        parallel.finalize_buffer_hits(&trace);
-+        if let Some(trace) = trace {
-+            parallel.finalize_buffer_hits(&trace);
-+        }
-+    } else if let Some(handle) = runtime_shutdown.borrow_mut().take() {
-+        handle.shutdown_workers();
-     }
- }
- 
-@@ -151,16 +171,16 @@ impl ParallelQueryCapable for BaseScan {
-                 .attach_parallel(pscan_state, ParallelRole::Leader);
-             leader_publish_query(state, &mut *pscan_state, area);
- 
--            if !(*pcxt).seg.is_null()
--                && let Some(trace) = state.custom_state().io_trace.clone()
--            {
--                let callback = Box::new((
--                    ParallelScanHandle::new(pscan_state, ParallelRole::Leader),
--                    trace,
--                ));
-+            if !(*pcxt).seg.is_null() {
-+                let runtime_shutdown = state.custom_state_mut().alloc_dsm_runtime_shutdown_slot();
-+                let callback = Box::new(BaseScanDsmDetach {
-+                    parallel: ParallelScanHandle::new(pscan_state, ParallelRole::Leader),
-+                    trace: state.custom_state().io_trace.clone(),
-+                    runtime_shutdown,
-+                });
-                 pg_sys::on_dsm_detach(
-                     (*pcxt).seg,
--                    Some(collect_buffer_hits_on_detach),
-+                    Some(on_basescan_dsm_detach),
-                     pg_sys::Datum::from(Box::into_raw(callback)),
-                 );
-             }
-```
-
-**File**: `basescan/src/postgres/customscan/basescan/scan_state.rs` (modified, +27/-1)
-```diff
-@@ -16,8 +16,9 @@
- // along with this program. If not, see <http://www.gnu.org/licenses/>.
- #![allow(unsafe_op_in_unsafe_fn)]
- 
--use std::cell::{OnceCell, UnsafeCell};
-+use std::cell::{OnceCell, RefCell, UnsafeCell};
- use std::collections::BTreeMap;
-+use std::rc::Rc;
- use std::sync::Arc;
- 
- use crate::api::{FieldName, HashMap, OrderByFeature, OrderByInfo, Varno};
-@@ -33,6 +34,7 @@ use crate::postgres::customscan::basescan::projections::window_agg::WindowAggreg
- use crate::postgres::customscan::basescan::telemetry::ScanTelemetry;
- use crate::postgres::customscan::bitmap_intersection::BitmapExec;
- use crate::postgres::customscan::builders::custom_path::ExecMethodType;
-+use crate::postgres::customscan::mpp::interrupt::{PgTokioRuntime, PgTokioRuntimeShutdownHandle};
- use crate::postgres::customscan::projections::{PlaceholderColumn, PlaceholderProjection};
- use crate::postgres::customscan::qual_inspect::Qual;
- use crate::postgres::customscan::solve_expr::SolvePostgresExpressions;
-@@ -66,6 +68,10 @@ pub struct BaseScanState {
-     pub telemetry: ScanTelemetry,
-     /// Set when this scan is parallel-aware (DSM attached).
-     pub parallel: Option<ParallelScanHandle>,
-+    /// Shared slot populated with this scan's [`PgTokioRuntimeShutdownHandle`] while an async exec
-+    /// method (`TopKScanExecState` or `ColumnarExecState`) holds a `PgTokioRuntime` under a `Gather`
-+    /// DSM segment, so `on_basescan_dsm_detach` shuts down only this scan's runtime on abort.
-+    dsm_runtime_shutdown: Option<Rc<RefCell<Option<PgTokioRuntimeShutdownHandle>>>>,
-     /// Workers wait for the leader to publish this plan when they first need it.
-     pub vector_routing_plan: Option<Arc<SharedVectorRouting>>,
-     pub vector_routing_pending: bool,
-@@ -176,6 +182,26 @@ impl CustomScanState for BaseScanState {
- }
- 
- impl BaseScanState {
-+    pub(super) fn alloc_dsm_runtime_shutdown_slot(
-+        &mut self,
-+    ) -> Rc<RefCell<Option<PgTokioRuntimeShutdownHandle>>> {
-+        let slot = Rc::new(RefCell::new(None));
-+        self.dsm_runtime_shutdown = Some(Rc::clone(&slot));
-+        slot
-+    }
-+
-+    pub(super) fn register_runtime_for_dsm_detach(&self, runtime: &PgTokioRuntime) {
-+        if let Some(slot) = &self.dsm_runtime_shutdown {
-+            *slot.borrow_mut() = Some(runtime.shutdown_handle());
-+        }
-+    }
-+
-+    pub(super) fn clear_runtime_for_dsm_detach(&self) {
-+        if let Some(slot) = &self.dsm_runtime_shutdown {
-+            *slot.borrow_mut() = None;
-+        }
-+    }
-+
-     pub fn open_relations(&mut self, lockmode: pg_sys::LOCKMODE) {
-         self.lockmode = lockmode;
-         if self.heaprel.is_none() {
-```
-
-**File**: `common/src/parallel_worker/builder.rs` (modified, +18/-8)
-```diff
-@@ -170,6 +170,7 @@ impl ParallelProcessBuilder {
-     }
- }
- 
-+#[must_use = "must be launched before parallel mode ends"]
- pub struct ParallelProcessLauncher {
-     pcxt: NonNull<pg_sys::ParallelContext>,
-     state_manager: ParallelStateManager,
-@@ -179,6 +180,17 @@ pub struct ParallelProcessLauncher {
- }
- 
- impl ParallelProcessLauncher {
-+    /// Detaches all receiver message queues while the backing DSM segment is still mapped, then
-+    /// destroys the parallel context and exits parallel mode.
-+    unsafe fn destroy(self) {
-+        let pcxt = self.pcxt.as_ptr();
-+        for mq in self.mq_handles {
-+            mq.detach();
-+        }
-+        pg_sys::DestroyParallelContext(pcxt);
-+        pg_sys::ExitParallelMode();
-+    }
-+
-     /// Read-only access to the mapped state between `build()` and `launch()`. The DSM is mapped in
-     /// the leader once `InitializeParallelDSM` runs (inside `build`), so the leader can initialize a
-     /// shared region in place here, before workers spawn and attach to it.
-@@ -208,10 +220,9 @@ impl ParallelProcessLauncher {
-                 return Some(ParallelProcessAttach { launcher: self });
-             }
- 
--            // Detach queues while their shared memory is still mapped.
--            drop(self);
--            pg_sys::DestroyParallelContext(pcxt);
--            pg_sys::ExitParallelMode();
-+            // Detach queues while their shared memory is still mapped, then tear down the
-+            // parallel context and exit parallel mode.
-+            self.destroy();
-             None
-         }
-     }
-@@ -228,6 +239,7 @@ enum WorkerQueueState {
-     Accumulated,
- }
- 
-+#[must_use = "must call wait_for_attach() before parallel mode ends"]
- #[repr(transparent)]
- pub struct ParallelProcessAttach {
-     launcher: ParallelProcessLauncher,
-@@ -245,6 +257,7 @@ impl ParallelProcessAttach {
-     }
- }
- 
-+#[must_use = "must call wait_for_finish() or exhaust the iterator to detach queues and exit parallel mode"]
- pub struct ParallelProcessFinish {
-     launcher: ParallelProcessLauncher,
-     worker_states: Vec<WorkerQueueState>,
-@@ -385,10 +398,7 @@ impl ParallelProcessFinish {
-             pg_sys::WaitForParallelWorkersToFinish(pcxt);
-             self.accumulate_all_workers();
- 
--            drop(self.launcher);
--
--            pg_sys::DestroyParallelContext(pcxt);
--            pg_sys::ExitParallelMode();
-+            self.launcher.destroy();
- 
-             messages
-         }
-```
-
-**File**: `common/src/parallel_worker/mod.rs` (modified, +43/-22)
-```diff
-@@ -57,22 +57,28 @@ enum TocKeys {
-     WalUsage = 0xE000_0000_0000_000A,
- }
- 
--pub struct WorkerStatsGuard {
-+/// Flushes parallel worker buffer/WAL instrumentation into DSM via `InstrEndParallelQuery`.
-+///
-+/// Intentionally does NOT implement `Drop`: [`run_parallel_worker`] invokes [`Self::finish`]
-+/// explicitly on normal worker completion while the backing DSM segment is guaranteed mapped.
-+pub(crate) struct WorkerStatsGuard {
-     buf_usage: *mut pg_sys::BufferUsage,
-     wal_usage: *mut pg_sys::WalUsage,
-     worker_idx: usize,
- }
- 
--crate::impl_safe_drop!(WorkerStatsGuard, |self| {
--    if !self.buf_usage.is_null() && !self.wal_usage.is_null() {
--        unsafe {
--            pg_sys::InstrEndParallelQuery(
--                self.buf_usage.add(self.worker_idx),
--                self.wal_usage.add(self.worker_idx),
--            );
-+impl WorkerStatsGuard {
-+    pub(crate) unsafe fn finish(self) {
-+        if !self.buf_usage.is_null() && !self.wal_usage.is_null() {
-+            unsafe {
-+                pg_sys::InstrEndParallelQuery(
-+                    self.buf_usage.add(self.worker_idx),
-+                    self.wal_usage.add(self.worker_idx),
-+                );
-+            }
-         }
-     }
--});
-+}
- 
- impl From<TocKeys> for u64 {
-     fn from(key: TocKeys) -> Self {
-@@ -574,16 +580,16 @@ macro_rules! launch_parallel_process {
-                 seg: *mut pgrx::pg_sys::dsm_segment,
-                 toc: *mut pgrx::pg_sys::shm_toc,
-             ) {
--                let (state_manager, mq_sender) =
--                    $crate::parallel_worker::generic_parallel_worker_entry_point(
--                        seg,
--                        toc,
--                        $mq_size as usize,
--                    );
--
--                $crate::parallel_worker::finish_parallel_worker(
--                    <$parallel_worker_type>::new_parallel_worker(state_manager)
--                        .run(&mq_sender, unsafe { pgrx::pg_sys::ParallelWorkerNumber }),
-+                $crate::parallel_worker::run_parallel_worker(
-+                    seg,
-+                    toc,
-+                    $mq_size as usize,
-+                    |state_manager, mq_sender| {
-+                        $crate::parallel_worker::finish_parallel_worker(
-+                            <$parallel_worker_type>::new_parallel_worker(state_manager)
-+                                .run(mq_sender, unsafe { pgrx::pg_sys::ParallelWorkerNumber }),
-+                        );
-+                    },
-                 );
-             }
-         }
-@@ -605,12 +611,26 @@ macro_rules! launch_parallel_process {
-     }};
- }
- 
-+/// Scoped entry point for PostgreSQL parallel workers launched via `ParallelProcessBuilder`.
-+///
-+/// Attaches `ParallelStateManager`, `WorkerStatsGuard`, and `MessageQueueSender` for the duration
-+/// of `f`, then flushes worker buffer/WAL stats and detaches the completion queue on normal
-+/// return while `seg` is guaranteed mapped. On `ereport(ERROR)` / panic unwind, `finish()` is
-+/// skipped and PostgreSQL's own `shm_mq_detach_callback` detaches the queue before `seg` is
-+/// unmapped.
-+///
-+/// # Safety
-+/// Must be called directly from a PostgreSQL parallel worker entry point with the `seg` and
-+/// `toc` pointers supplied by `ParallelWorkerMain`, which remain mapped for the entire callback.
- #[doc(hidden)]
--pub unsafe fn generic_parallel_worker_entry_point(
-+pub unsafe fn run_parallel_worker<F>(
-     seg: *mut pg_sys::dsm_segment,
-     toc: *mut pg_sys::shm_toc,
-     mq_size: usize,
--) -> (ParallelStateManager, MessageQueueSender) {
-+    f: F,
-+) where
-+    F: FnOnce(ParallelStateManager, &MessageQueueSender),
-+{
-     unsafe {
-         pg_sys::InstrStartParallelQuery();
-     }
-@@ -644,7 +664,8 @@ pub unsafe fn generic_parallel_worker_entry_point(
- 
-     let state_manager = ParallelStateManager::new(toc, seg);
-     let mq_sender = MessageQueueSender::new(seg, mq, stats);
--    (state_manager, mq_sender)
-+    f(state_manager, &mq_sender);
-+    mq_sender.finish();
- }
- 
- #[inline(always)]
-```
-
-**File**: `common/src/parallel_worker/mqueue.rs` (modified, +40/-14)
-```diff
-@@ -20,18 +20,20 @@ use std::error::Error;
- use std::fmt::{Display, Formatter};
- use std::ptr::NonNull;
- 
-+/// Owns a PostgreSQL `shm_mq_handle` attached to a parallel DSM segment.
-+///
-+/// Intentionally does NOT implement `Drop`: on normal completion, the owning lifecycle step
-+/// (`ParallelProcessLauncher::destroy` on the leader, or `MessageQueueSender::finish` via
-+/// `run_parallel_worker` on a worker) calls [`Self::detach`] while the backing DSM segment is
-+/// guaranteed mapped. On any abnormal `ereport(ERROR)` / panic unwind / subtransaction abort,
-+/// PostgreSQL's own `shm_mq_detach_callback` (registered by `shm_mq_attach`) detaches the queue
-+/// before unmapping the DSM; calling `shm_mq_detach` later from a `MemoryContextCallback` / `Drop`
-+/// after `AtEOSubXact_Parallel` would dereference unmapped shared memory (even when
-+/// `IsInParallelMode()` is still `true` due to an enclosing outer `Gather`).
- struct MessageQueueHandle {
-     handle: NonNull<pg_sys::shm_mq_handle>,
- }
- 
--crate::impl_safe_drop!(MessageQueueHandle, |self| {
--    unsafe {
--        if pg_sys::IsInParallelMode() {
--            pg_sys::shm_mq_detach(self.handle.as_ptr());
--        }
--    }
--});
--
- impl MessageQueueHandle {
-     unsafe fn attach_sender(seg: *mut pg_sys::dsm_segment, mq: *mut pg_sys::shm_mq) -> Self {
-         unsafe {
-@@ -59,6 +61,17 @@ impl MessageQueueHandle {
-     fn as_ptr(&self) -> *mut pg_sys::shm_mq_handle {
-         self.handle.as_ptr()
-     }
-+
-+    /// Explicitly detaches this handle while its backing DSM segment is still mapped.
-+    ///
-+    /// # Safety
-+    /// The DSM segment passed to `attach_sender` / `attach_receiver` must still be attached in
-+    /// the current backend.
-+    unsafe fn detach(self) {
-+        unsafe {
-+            pg_sys::shm_mq_detach(self.handle.as_ptr());
-+        }
-+    }
- }
- 
- #[derive(Debug, Copy, Clone)]
-@@ -91,28 +104,37 @@ impl From<pg_sys::shm_mq_result::Type> for MessageQueueSendError {
- }
- 
- pub struct MessageQueueSender {
--    // Declared before `handle` so Rust's field drop order runs `WorkerStatsGuard::drop`
--    // (`InstrEndParallelQuery`) before `MessageQueueHandle::drop` detaches the `shm_mq` and
--    // unblocks `ParallelProcessFinish::recv()` on the leader.
--    _stats: Option<crate::parallel_worker::WorkerStatsGuard>,
-+    stats: Option<crate::parallel_worker::WorkerStatsGuard>,
-     handle: MessageQueueHandle,
- }
- 
- impl MessageQueueSender {
--    #[doc(hidden)]
-     pub(crate) unsafe fn new(
-         seg: *mut pg_sys::dsm_segment,
-         mq: *mut pg_sys::shm_mq,
-         stats: Option<crate::parallel_worker::WorkerStatsGuard>,
-     ) -> Self {
-         unsafe {
-             Self {
--                _stats: stats,
-+                stats,
-                 handle: MessageQueueHandle::attach_sender(seg, mq),
-             }
-         }
-     }
- 
-+    /// Flushes parallel worker buffer/WAL stats (`InstrEndParallelQuery`) into DSM and then
-+    /// detaches the completion queue so `ParallelProcessFinish::recv()` on the leader unblocks
-+    /// only after stats are written.
-+    ///
-+    /// # Safety
-+    /// Must be called on normal worker completion while the backing DSM segment is still mapped.
-+    pub(crate) unsafe fn finish(self) {
-+        if let Some(stats) = self.stats {
-+            unsafe { stats.finish() };
-+        }
-+        unsafe { self.handle.detach() };
-+    }
-+
-     pub fn send<B: AsRef<[u8]>>(&self, msg: B) -> Result<(), MessageQueueSendError> {
-         unsafe {
-             let msg = msg.as_ref();
-@@ -198,6 +220,10 @@ impl MessageQueueReceiver {
-         }
-     }
- 
-+    pub(crate) unsafe fn detach(self) {
-+        unsafe { self.handle.detach() };
-+    }
-+
-     pub fn recv(&self) -> Result<Vec<u8>, MessageQueueRecvError> {
-         unsafe {
-             let mut len = 0usize;
-```
-
----
-
-### Incident Patch 2: `5566f155` (2026-11-24)
-**Commit Message**: ci: speed up vector and parallel build unit tests (#7561)
-
-## What
-
-Reduce the work done by the slow parallel-build and vector unit tests
-while retaining their behavioral assertions.
-
-## Why
-
-Recent CI runs spend several minutes in these tests. Most of the cost
-comes from repeated index builds, exhaustive checks over oversized
-fixtures, and constructing high-dimensional quantization settings for
-metadata tests.
-
-## How
-
-- Replace the 24-case parallel-build Cartesian product with a property
-test configured for eight generated cases over the same memory,
-worker-count, leader-participation, and segment-target settings. Keep
-the 35,000-row fixture and existing segment/document-count assertions,
-with shrinking enabled for failing configurations.
-- Reduce the vector-partition fixture from 4,000 to 256 ordinary rows,
-retaining the null and zero vectors, all three metrics, serial/parallel
-builds, implicit/explicit partitioning, and reindex checks. Lower the
-fixture's clustering threshold and explicitly assert IVF storage.
-- Reuse a 128-row, 128-dimensional metadata fixture across the four
-existing consumers, keeping both quantization layers `[1,4]`. Update the
-independent stored/configured
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -4047,6 +4047,7 @@ dependencies = [
-  "pgrx",
-  "pgrx-tests",
-  "postcard",
-+ "proptest 1.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
-  "rand 0.10.3",
+ [[package]]
+ name = "tantivy-columnar"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
+  "downcast-rs",
+  "fastdivide",
+@@ -7489,7 +7489,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-common"
+ version = "0.11.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
+  "async-trait",
+  "byteorder",
+@@ -7522,7 +7522,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-quant"
+ version = "0.1.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
+  "rand_chacha 0.3.1",
+  "rand_core 0.6.4",
+@@ -7531,7 +7531,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-query-grammar"
+ version = "0.26.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
+  "fnv",
+  "nom 7.1.3",
+@@ -7543,7 +7543,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-sstable"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
+  "futures-util",
+  "itertools 0.14.0",
+@@ -7556,7 +7556,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-stacker"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
+  "fixedbitset",
+  "murmurhash32",
+@@ -7593,7 +7593,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-tokenizer-api"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
++source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+ dependencies = [
   "serde",
-  "serde_json",
+ ]
 ```
 
-**File**: `index_write/Cargo.toml` (modified, +3/-1)
+**File**: `index_read/src/index/directory/mvcc.rs` (modified, +177/-13)
 ```diff
-@@ -13,7 +13,7 @@ pg15 = ["pgrx/pg15", "index_read/pg15"]
- pg16 = ["pgrx/pg16", "index_read/pg16"]
- pg17 = ["pgrx/pg17", "index_read/pg17"]
- pg18 = ["pgrx/pg18", "index_read/pg18"]
--pg_test = ["index_read/pg_test"]
-+pg_test = ["dep:proptest", "index_read/pg_test"]
+@@ -20,7 +20,7 @@ use super::utils::{load_metas, save_new_metas, save_schema, save_settings};
+ use crate::api::{HashMap, HashSet};
+ use crate::index::reader::io_stats::Trace;
+ use crate::index::reader::segment_component::SegmentComponentReader;
+-use crate::index::writer::segment_component::SegmentComponentWriter;
++use crate::index::writer::segment_component::{SegmentComponentWriter, SharedCheckpoint};
+ use crate::postgres::buffile::{self, TempFileOwner};
+ use crate::postgres::customscan::mpp::run_on_main_thread;
+ use crate::postgres::heap::{ExpressionState, HeapFetchState};
+@@ -54,7 +54,7 @@ use tantivy::directory::error::{
+     DeleteError, LockError, OpenDirectoryError, OpenReadError, OpenWriteError,
+ };
+ use tantivy::directory::{
+-    DirectoryLock, DirectoryPanicHandler, FileHandle, InnerWritePtr, Lock, RamDirectory,
++    DirectoryLock, DirectoryPanicHandler, FileHandle, FileSlice, InnerWritePtr, Lock, RamDirectory,
+     TempFilePtr, WatchCallback, WatchHandle,
+ };
+ use tantivy::index::{SegmentId, SegmentMetaInventory};
+@@ -369,7 +369,14 @@ fn retired_snapshot_conflict_horizon(
+     latest
+ }
  
- # Keep this crate focused on Tantivy index building, merging, and vacuum/cleanup. Do NOT add
- # `datafusion` or `arrow-*` here so `index_write` compiles in parallel with `scan` and `planner`.
-@@ -25,6 +25,7 @@ bytemuck.workspace = true
- log.workspace = true
- pgrx.workspace = true
- postcard.workspace = true
-+proptest = { workspace = true, optional = true }
- rand.workspace = true
- serde.workspace = true
- serde_json.workspace = true
-@@ -45,3 +46,4 @@ index_read = { path = "../index_read", default-features = false, features = [
-   "pg_test",
- ] }
- pgrx-tests.workspace = true
-+proptest.workspace = true
+-type AtomicFileEntry = (FileEntry, Arc<AtomicUsize>);
++/// A component this directory opened for writing: where it starts, its length as it grows, and
++/// its checkpoint once the writer made one.
++#[derive(Debug)]
++struct NewFile {
++    entry: FileEntry,
++    total_bytes: Arc<AtomicUsize>,
++    checkpoint: SharedCheckpoint,
++}
+ /// Tantivy Directory trait implementation over block storage
+ /// This Directory implementation respects Postgres MVCC visibility rules
+ /// and should back all Tantivy Indexes used in insert and scan operations
+@@ -387,7 +394,7 @@ pub struct MVCCDirectory {
+     // cloned, we don't lose all the work we did originally creating the FileHandler impls.  And
+     // it's cloned a lot!
+     readers: Arc<Mutex<HashMap<PathBuf, Arc<dyn FileHandle>>>>,
+-    new_files: Arc<Mutex<HashMap<PathBuf, AtomicFileEntry>>>,
++    new_files: Arc<Mutex<HashMap<PathBuf, NewFile>>>,
+ 
+     // a lazily loaded [`IndexMeta`], which is only created once per MVCCDirectory instance
+     // we cannot tolerate tantivy calling `load_metas()` multiple times and giving it a different
+@@ -685,12 +692,10 @@ impl Directory for MVCCDirectory {
+                 Entry::Vacant(vacant) => match self.file_entry(path) {
+                     Ok(file_handle) => Ok(vacant.insert(file_handle).clone()),
+                     Err(err) => {
+-                        let file_entry = if let Some((file_entry, total_bytes)) =
+-                            self.new_files.lock().get(path)
+-                        {
++                        let file_entry = if let Some(file) = self.new_files.lock().get(path) {
+                             FileEntry {
+-                                starting_block: file_entry.starting_block,
+-                                total_bytes: total_bytes.load(Ordering::Relaxed),
++                                starting_block: file.entry.starting_block,
++                                total_bytes: file.total_bytes.load(Ordering::Relaxed),
+                             }
+                         } else if let TantivyError::OpenDirectoryError(
+                             OpenDirectoryError::DoesNotExist(missing),
+@@ -724,6 +729,56 @@ impl Directory for MVCCDirectory {
+             };
+         reader
+     }
++    /// The reader resolves blocks through the checkpoint the writer shared, and is not cached: a
++    /// read of `path` after its writer terminates opens the finished component.
++    ///
++    /// No read overlaps a write. The writer refuses a write while the reader is open, and no
++    /// reader opens once bytes follow the checkpoint: the writer buffers, so those bytes could
++    /// reach the prefix's last page under it.
++    fn open_unfinished(&self, path: &Path, len: usize) -> Result<FileSlice, OpenReadError> {
++        let refused = |reason: String| {
++            OpenReadError::wrap_io_error(
++                io::Error::new(io::ErrorKind::InvalidInput, reason),
++                path.to_path_buf(),
++            )
++        };
++        let (starting_block, blocks) = {
++            let new_files = self.new_files.lock();
++            let file = new_files
++                .get(path)
++                .ok_or_else(|| refused("file is not open for writing".to_string()))?;
++            let checkpoint = file
++                .checkpoint
++                .get()
++                .ok_or_else(|| refused("file is not checkpointed".to_string()))?;
++            if len > checkpoint.len {
++                return Err(refused(format!(
++                    "{len} bytes requested of a file checkpointed at {} bytes",
++                    checkpoint.len
++                )));
++            }
++            if file.total_bytes.load(Ordering::Relaxed) != checkpoint.len {
++                return Err(refused("file was written after its checkpoint".to_string()));
++            }
++            (file.entry.starting_block, checkpoint.blocks.clone()
 ```
 
-**File**: `index_write/src/postgres/build_parallel.rs` (modified, +61/-83)
+**File**: `index_read/src/index/reader/segment_component.rs` (modified, +16/-0)
 ```diff
-@@ -1694,9 +1694,12 @@ pub mod plan {
- #[pgrx::pg_schema]
- mod tests {
-     use pgrx::prelude::*;
-+    use proptest::{prelude::*, sample::select};
-+
-+    const PARALLEL_BUILD_ROWS: i64 = 35_000;
+@@ -22,6 +22,7 @@ use crate::postgres::storage::block::{FileEntry, LinkedList, bm25_max_free_space
  
-     fn setup_parallel_build_large_table() {
--        Spi::run(
-+        Spi::run(&format!(
-             r#"
-             DROP TABLE IF EXISTS parallel_build_large;
-             CREATE TABLE parallel_build_large (
-@@ -1705,9 +1708,9 @@ mod tests {
-             );
-             INSERT INTO parallel_build_large (name)
-             SELECT 'lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
--            FROM generate_series(1, 35000);
-+            FROM generate_series(1, {PARALLEL_BUILD_ROWS});
-             "#,
--        )
-+        ))
-         .expect("failed to setup parallel_build_large table");
+ use crate::postgres::storage::LinkedBytesList;
+ use anyhow::Result;
++use pgrx::pg_sys;
+ use std::io::Error;
+ use std::ops::Range;
+ use tantivy::HasLen;
+@@ -67,6 +68,21 @@ impl SegmentComponentReader {
+         Self { block_list, entry }
      }
  
-@@ -1823,7 +1826,7 @@ mod tests {
-         assert_eq!(
-             Spi::get_one::<i64>("SELECT count(*) FROM parallel_build_large WHERE name ||| 'lorem'")
-                 .unwrap(),
--            Some(35000)
-+            Some(PARALLEL_BUILD_ROWS)
-         );
++    /// Opens the first `entry.total_bytes` bytes of a component that is still being written and
++    /// whose writer was checkpointed at that length or more; `blocks` are the checkpoint's.
++    pub unsafe fn new_unfinished(
++        indexrel: &PgSearchRelation,
++        entry: FileEntry,
++        blocks: std::sync::Arc<Vec<pg_sys::BlockNumber>>,
++        io_stats: Option<io_stats::ComponentStats>,
++    ) -> Self {
++        let mut block_list =
++            LinkedBytesList::open_unfinished(indexrel, entry.starting_block, blocks);
++        block_list.bman_mut().set_io_stats(io_stats);
++
++        Self { block_list, entry }
++    }
++
+     fn read_bytes_raw(&self, range: Range<usize>) -> Result<OwnedBytes, Error> {
+         unsafe {
+             let end = range.end.min(self.len());
+```
+
+**File**: `index_read/src/index/writer/index.rs` (modified, +244/-9)
+```diff
+@@ -24,12 +24,15 @@ use std::sync::Arc;
+ use tantivy::index::SegmentId;
+ use tantivy::indexer::merger::IndexMerger;
+ use tantivy::indexer::{AddOperation, IndexWriterOptions, SegmentWriter};
+-use tantivy::schema::Field;
++use tantivy::schema::{Field, Value};
++use tantivy::vector::VectorRowsWriter;
+ use tantivy::{
+-    Directory, Index, IndexMeta, IndexWriter, Opstamp, Segment, SegmentMeta, TantivyDocument,
++    Directory, DocId, Index, IndexMeta, IndexSortByField, IndexWriter, Opstamp, Order, Segment,
++    SegmentMeta, TantivyDocument,
+     directory::{ManagedDirectory, RamDirectory, TerminatingWrite},
+ };
+ 
++use crate::api::CTID_FIELD_NAME;
+ use crate::index::ctid_map;
+ use crate::index::directory::build::BuildDirectory;
+ use crate::index::mvcc::{MVCCDirectory, MvccSatisfies};
+@@ -38,6 +41,7 @@ use crate::index::setup_tokenizers;
+ use crate::index::stats::{self, LogicalBoundsByField, StatsWriter, VectorPartition};
+ use crate::postgres::rel::PgSearchRelation;
+ use crate::postgres::storage::block::{STATS_EXT, SegmentMetaEntry};
++use crate::postgres::utils::format_u64_ctid;
+ use crate::schema::SearchIndexSchema;
+ use pgrx::pg_sys::panic::ErrorReport;
+ use pgrx::{IntoDatum, PgLogLevel, PgSqlErrorCode, direct_function_call, function_name};
+@@ -169,18 +173,39 @@ impl DiskSpaceGuard {
+     /// Error out if the remaining segments are projected not to fit within the tablespace's
+     /// available space.
+     fn check(&self) -> Result<()> {
+-        self.check_available(self.indexrel.available_disk_bytes(), "index's tablespace")
++        self.check_written(0)
++    }
++
++    /// [`Self::check`] when `written_bytes` of the output being written are on the tablespace
++    /// already and so are not required of its available space.
++    fn check_written(&self, written_bytes: u64) -> Result<()> {
++        self.check_required(
++            self.indexrel.available_disk_bytes(),
++            "index's tablespace",
++            written_bytes,
++        )
      }
  
-@@ -1897,91 +1900,66 @@ mod tests {
-         ).unwrap();
-     }
- 
--    /// Tests parallel index building with various configurations.
--    ///
--    /// This test creates 35,000 rows and tests different configuration
--    /// combinations of maintenance_work_mem, workers, leader participation,
--    /// and target segment count.
-     #[pg_test]
-     fn test_parallel_build_large_configurations() {
--        setup_parallel_build_large_table();
-+        const CONFIGURATION_CASES: u32 = 8;
-+        const LARGE_SEGMENT_TARGET: i64 = 32;
-+        const MIN_LARGE_SEGMENTS: i64 = LARGE_SEGMENT_TARGET * 3 / 4;
-+        const MAX_LARGE_SEGMENTS: i64 = LARGE_SEGMENT_TARGET + 1;
- 
-+        setup_parallel_build_large_table();
-         Spi::run("SET max_parallel_workers = 8;").unwrap();
- 
--        let maintenance_work_mem = ["2GB", "128MB"];
--        let maintenance_workers = [6, 2];
--        let leader_participation = [true, false];
--        let target_segments = [4, 7, 32];
--
--        for mwm in &maintenance_work_mem {
--            for mw in &maintenance_workers {
--                for lp in &leader_participation {
--                    for ts in &target_segments {
--                        // Set configuration
--                        Spi::run(&format!("SET max_parallel_maintenance_workers = {};", mw))
--                            .unwrap();
--                        Spi::run(&format!("SET parallel_leader_participation = {};", lp)).unwrap();
--                        Spi::run(&format!("SET maintenance_work_mem = '{}';", mwm)).unwrap();
--
--                        // Create index
--                        Spi::run(&format!(
--                            "CREATE INDEX parallel_build_large_idx ON parallel_build_large USING paradedb (id, name) WITH (target_segment_count = {});",
--                            ts
--                        ))
--                        .unwrap_or_else(|e| {
--                            panic!(
--                                "CREATE INDEX failed with workers={}, leader={}, mem={}, segments={}: {:?}",
--                                mw, lp, mwm, ts, e
--                            )
--                        });
--
--                        // Verify segment count
--                        let count: i64 = Spi::get_one(
--                            "SELECT COUNT(*)::bigint FROM paradedb.index_info('parallel_build_large_idx');",
--                        )
--                        .unwrap()
--                        .unwrap();
--
--                        if *ts == 4 {
--                            assert_eq!(
--                                count, 4,
--                                "Expected 4 segments with workers={}, leader={}, mem={}, segments={}, got {}",
--                                mw, lp, mwm, ts, count
--                            );
--                        } else if *ts == 7 {
--                            assert_eq!(count, 7, "prime target: {count} segments");
--                        } else if *ts == 32 {
--                            // The parallel heap scan hands out blocks on demand, so a participant
--                            // short on CPU scans fewer rows and flushes fewer segments than its
--                            // quota, while its peers merge back down to theirs. Skew only ever
--                            // pulls the total below the target. The floor tolerates about a
--                            // quarter of the rows moving between participants.
--                            let expected = 24..=33;
--                            assert!(
--
-```
-
-**File**: `index_write/src/postgres/build_partitioning.rs` (modified, +20/-7)
-```diff
-@@ -947,16 +947,23 @@ mod tests {
- 
-     #[pg_test]
-     fn vector_partitions_group_neighbors_and_keep_nulls() {
--        Spi::run(
-+        const PARTITIONS: usize = 2;
-+        const ROWS_PER_PARTITION: usize = VECTOR_MIN_SAMPLES_PER_PARTITION * 2;
-+        const SOURCE_ROWS: usize = PARTITIONS * ROWS_PER_PARTITION;
-+        const TOTAL_ROWS: i64 = SOURCE_ROWS as i64 + 2;
-+        const CLUSTERING_THRESHOLD: usize = ROWS_PER_PARTITION / 2;
+     fn check_available(&self, available_bytes: Option<u64>, location: &str) -> Result<()> {
++        self.check_required(available_bytes, location, 0)
++    }
 +
-+        Spi::run(&format!(
-             r#"
-             CREATE EXTENSION IF NOT EXISTS vector;
-+            SET paradedb.vector_clustering_threshold = {CLUSTERING_THRESHOLD};
-             CREATE TABLE vector_partition_src (id BIGINT, region INTEGER, emb vector(2));
-             INSERT INTO vector_partition_src
-             SELECT i, i % 2, ARRAY[CASE WHEN i % 2 = 0 THEN -10 ELSE 10 END, (i % 7) * 0.01]::vector
--            FROM generate_series(1, 4000) i;
--            INSERT INTO vector_partition_src VALUES (4001, NULL, NULL), (4002, NULL, '[0,0]');
-+            FROM generate_series(1, {SOURCE_ROWS}) i;
-+            INSERT INTO vector_partition_src VALUES ({SOURCE_ROWS} + 1, NULL, NULL), ({TOTAL_ROWS}, NULL, '[0,0]');
-         "#,
--        )
-+        ))
-         .unwrap();
-         for workers in [0, 2] {
-             Spi::run("SET parallel_leader_participation = false").unwrap();
-@@ -970,7 +977,7 @@ mod tests {
-                         r#"
-                     CREATE INDEX vector_partition_idx ON vector_partition_src
-                     USING paradedb (id, region, emb {metric})
--                    WITH (target_segment_count = 2{partition_option});
-+                    WITH (target_segment_count = {PARTITIONS}{partition_option});
-                 "#
-                     ))
-                     .unwrap();
-@@ -983,14 +990,20 @@ mod tests {
-                                 "SELECT count(*) FROM paradedb.index_info('vector_partition_idx')"
-                             )
-                             .unwrap(),
--                            Some(2)
-+                            Some(PARTITIONS as i64)
-                         );
-                         assert_eq!(
-                             Spi::get_one::<i64>(
-                                 "SELECT count(*) FROM vector_partition_src WHERE id @@@ pdb.all()"
-                             )
-                             .unwrap(),
--                            Some(4002)
-+                            Some(TOTAL_ROWS)
-+                        );
-+                        assert_eq!(
-+                            Spi::get_one::<bool>(
-+                                "SELECT bool_and(vector_format = 'ivf') FROM paradedb.vector_info('vector_partition_idx', 'emb')"
-+                            ).unwrap(),
-+                            Some(true)
-                         );
-                         let (_, indexrel) =
-                             open_rels("vector_partition_src", "vector_partition_idx");
-```
-
-**File**: `index_write/src/postgres/merge.rs` (modified, +13/-5)
-```diff
-@@ -1091,9 +1091,14 @@ mod tests {
-             .filter(|entry| !entry.is_deleted())
-             .map(|entry| entry.segment_id())
-             .collect::<Vec<_>>();
--        Spi::run(
--            "INSERT INTO metadata_vectors SELECT g, ARRAY(SELECT ((g+i)%17+1)::real FROM generate_series(1,1024) i)::vector FROM generate_series(2049,4096) g",
--        ).unwrap();
-+        let total_rows = VECTOR_METADATA_ROWS * 2;
-+        let first_inserted_row = VECTOR_METADATA_ROWS + 1;
-+        Spi::run(&format!(
-+            "INSERT INTO metadata_vectors SELECT g, ARRAY(SELECT ((g+i)%17+1)::real
-+             FROM generate_series(1,{VECTOR_METADATA_DIMENSIONS}) i)::vector
-+             FROM generate_series({first_inserted_row},{total_rows}) g",
-+        ))
-+        .unwrap();
-         let current = unsafe { MetaPage::open(&indexrel).segment_metas().list(None) };
-         assert!(old.iter().all(|id| {
-             current
-@@ -1102,15 +1107,18 @@ mod tests {
-         }));
-         assert!(WARNED_VECTOR_INDEXES.with(|warned| warned.borrow().contains(&oid)));
-         // A repeated write keeps the same backend warning state while skipping the unsupported segment.
--        Spi::run("UPDATE metadata_vectors SET vec = vec WHERE id = 4096").unwrap();
-+        Spi::run(&format!(
-+            "UPDATE metadata_vectors SET vec = vec WHERE id = {total_rows}"
-+        ))
-+        .unwrap();
-         assert!(WARNED_VECTOR_INDEXES.with(|warned| warned.borrow().contains(&oid)));
-         expect_reindex(&vector_query());
-         drop(indexrel);
-         Spi::run("REINDEX INDEX metadata_vectors_idx").unwrap();
-         Spi::run(&vector_query()).unwrap();
-         assert_eq!(
-             Spi::get_one::<i64>("SELECT count(*) FROM metadata_vectors").unwrap(),
--            Some(4096)
-+            Some(total_rows)
-         );
-     }
++    fn check_required(
++        &self,
++        available_bytes: Option<u64>,
++        location: &str,
++        written_bytes: u64,
++    ) -> Result<()> {
+         let Some(segment_bytes) = self.segment_bytes else {
+             // no sample yet: we can't estimate segment size until one has been written
+             return Ok(());
+         };
  
-```
-
-**File**: `nix/pg_search.nix` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ buildPgrxExtension (finalAttrs: {
-   # If maintainers forget to do so, Nix will throw an error message that begins
-   # like this and then provides the correct new hash:
-   # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-yXrVmriGzaRvDXBFp8X+Vp2o4jTLflzlidTCvLSjEiI=";
-+  cargoHash = "sha256-/a7Ya0Vgm4xMOK+J6mgl+s0pxFIVB/1em/OvIhbNj8E=";
+         // Leave headroom for the output currently being written.
+         let projected_segments = (self.remaining_segments as u64).saturating_add(1);
+-        let required = segment_bytes.saturating_mul(projected_segments);
++        let required = segment_bytes
++            .saturating_mul(projected_segments)
++            .saturating_sub(written_bytes);
  
-   inherit postgresql;
-   # The Nix builder also passes cargoPgrxFlags to `stop`, which does not accept
-```
-
-**File**: `pg_search/src/api/vector.rs` (modified, +10/-7)
-```diff
-@@ -1239,21 +1239,24 @@ mod tests {
-     // Stored segment layers are independent of the field build target.
-     #[pg_test]
-     fn vector_metadata_is_independent_of_build_target() {
-+        const SINGLE_LAYER_BYTES_PER_ROW: i64 = 32;
-+        const STORED_LAYERS_BYTES_PER_ROW: i64 = 108;
+         let Some(available_bytes) = available_bytes else {
+             return Ok(());
+@@ -239,6 +264,77 @@ struct BuildSegments {
+     index: Index,
+     disk_guard: Option<DiskSpaceGuard>,
+     sampled_docs: Option<u32>,
++    /// Bytes streamed into the index relation for the documents of the sampled staged segment.
++    sampled_streamed_bytes: u64,
++    /// Set while the partition being written streams its vector rows.
++    streamed: Option<StreamedPartition>,
++}
 +
-         let indexrel = vector_metadata_fixture();
-         set_single_layer_target(&indexrel);
-         assert_eq!(
--            Spi::get_one::<bool>(
--                "SELECT layers=ARRAY[1] AND bytes_per_row=144 AND settings_version=3
-+            Spi::get_one::<bool>(&format!(
-+                "SELECT layers=ARRAY[1] AND bytes_per_row={SINGLE_LAYER_BYTES_PER_ROW} AND settings_version=3
-             FROM paradedb.vector_config('metadata_vectors_idx','vec')"
--            )
-+            ))
-             .unwrap(),
-             Some(true)
-         );
-         assert_eq!(
--            Spi::get_one::<bool>(
--                "SELECT bool_and(layers=ARRAY[1,4] AND bytes_per_row=668)
-+            Spi::get_one::<bool>(&format!(
-+                "SELECT bool_and(layers=ARRAY[1,4] AND bytes_per_row={STORED_LAYERS_BYTES_PER_ROW})
-             FROM paradedb.vector_info('metadata_vectors_idx','vec')"
--            )
-+            ))
-             .unwrap(),
-             Some(true)
-         );
-@@ -1290,7 +1293,7 @@ mod tests {
-             assert_eq!(
-                 Spi::get_one::<i64>("SELECT count(*) FROM metadata_vectors WHERE id @@@ pdb.all()")
-                     .unwrap(),
--                Some(2048)
-+                Some(VECTOR_METADATA_ROWS)
-             );
-             Spi::run("SELECT * FROM paradedb.vector_config('metadata_vectors_idx','vec')").unwrap();
-             if version != 5 {
-```
-
-**File**: `storage/src/lib.rs` (modified, +18/-6)
-```diff
-@@ -28,14 +28,26 @@ pub mod api {
-         use crate::postgres::storage::metadata::MetaPage;
-         use pgrx::prelude::*;
- 
-+        const VECTOR_METADATA_CLUSTERING_THRESHOLD: i64 = 64;
-+        pub const VECTOR_METADATA_ROWS: i64 = VECTOR_METADATA_CLUSTERING_THRESHOLD * 2;
-+        pub const VECTOR_METADATA_DIMENSIONS: usize = 128;
++/// A partition whose full-precision vector rows go straight into its final segment: the staged
++/// segments hold every other field, and the partition's merge finishes the segment the rows
++/// opened.
++struct StreamedPartition {
++    field: Field,
++    /// The partition's final segment and its rows, created at the first document.
++    target: Option<(Segment, VectorRowsWriter)>,
++    /// The next document's id in the final segment: documents are numbered as they are inserted.
++    next_doc: DocId,
++    /// The ctid of the last document inserted.
++    last_ctid: Option<u64>,
++}
 +
-         pub fn vector_metadata_fixture() -> PgSearchRelation {
--            Spi::run("CREATE EXTENSION IF NOT EXISTS vector;
--                SET paradedb.vector_clustering_threshold = 64;
--                CREATE TABLE metadata_vectors(id int PRIMARY KEY, vec vector(1024));
-+            Spi::run(&format!("CREATE EXTENSION IF NOT EXISTS vector;
-+                SET paradedb.vector_clustering_threshold = {VECTOR_METADATA_CLUSTERING_THRESHOLD};
-+                CREATE TABLE metadata_vectors(id int PRIMARY KEY, vec vector({VECTOR_METADATA_DIMENSIONS}));
-                 INSERT INTO metadata_vectors SELECT g, ARRAY(SELECT ((g+i)%17+1)::real
--                    FROM generate_series(1,1024) i)::vector FROM generate_series(1,2048) g;
-+                    FROM generate_series(1,{VECTOR_METADATA_DIMENSIONS}) i)::vector FROM generate_series(1,{VECTOR_METADATA_ROWS}) g;
-                 CREATE INDEX metadata_vectors_idx ON metadata_vectors USING paradedb(id, vec vector_l2_ops)
--                    WITH (quantization='[1,4]', target_segment_count=1);").unwrap();
-+                    WITH (quantization='[1,4]', target_segment_count=1);")).unwrap();
-+            assert_eq!(
-+                Spi::get_one::<bool>(
-+                    "SELECT bool_and(vector_format = 'ivf' AND layers = ARRAY[1,4])
-+                     FROM paradedb.vector_info('metadata_vectors_idx', 'vec')"
-+                )
-+                .unwrap(),
-+                Some(true)
++impl StreamedPartition {
++    /// Moves the vector of `document`, the row at `ctid`, into the final segment as the row of
++    /// the next document, and returns the document for the staged segment, without the vector.
++    ///
++    /// Ctids ascend: the final segment orders its documents by ctid, and the rows are numbered
++    /// in insertion order.
++    fn take_row(
++        &mut self,
++        index: &Index,
++        document: TantivyDocument,
++        ctid: u64,
++    ) -> Result<TantivyDocument> {
++        if let Some(last) = self.last_ctid.filter(|&last| ctid <= last) {
++            anyhow::bail!(
++                "internal error: a partition that streams its vector rows received ctid {} \
++                 after ctid {}",
++                format_u64_ctid(ctid),
++                format_u64_ctid(last)
 +            );
-             PgSearchRelation::open(
-                 Spi::get_one::<pg_sys::Oid>("SELECT 'metadata_vectors_idx'::regclass::oid")
-                     .unwrap()
-@@ -60,7 +72,7 @@ pub mod api {
++        }
++        self.last_ctid = Some(ctid);
++        let doc = self.next_doc;
++        self.next_doc += 1;
++        if self.target.is_none() {
++            let target = index.new_segment();
++            let rows = VectorRowsWriter::create(&target, self
+```
+
+**File**: `index_read/src/index/writer/segment_component.rs` (modified, +74/-1)
+```diff
+@@ -22,11 +22,23 @@ use crate::postgres::storage::{LinkedBytesList, LinkedBytesListWriter};
+ use pgrx::pg_sys;
+ use std::io::{BufWriter, Result, Write};
+ use std::path::{Path, PathBuf};
+-use std::sync::Arc;
+ use std::sync::atomic::{AtomicUsize, Ordering};
++use std::sync::{Arc, OnceLock};
+ use tantivy::directory::{AntiCallToken, TerminatingWrite};
+ use tantivy::index::SegmentComponent;
+ 
++/// The part of a component that its writer's checkpoint made readable: its length, and the data
++/// blocks that hold it, in file order.
++#[derive(Debug)]
++pub struct CheckpointedPrefix {
++    pub len: usize,
++    /// Cloned into every reader of the prefix, and nowhere else: the writer counts the clones.
++    pub blocks: Arc<Vec<pg_sys::BlockNumber>>,
++}
++
++/// A component's checkpoint, set at most once and shared between its writer and its directory.
++pub type SharedCheckpoint = Arc<OnceLock<CheckpointedPrefix>>;
++
+ pub struct SegmentComponentWriter {
+     inner: Option<InnerSegmentComponentWriter>,
+     path: PathBuf,
+@@ -72,6 +84,16 @@ impl SegmentComponentWriter {
+             Arc::new(AtomicUsize::new(0))
+         }
+     }
++
++    /// The slot [`TerminatingWrite::checkpoint`] fills. It stays empty for a component that is
++    /// never checkpointed, and for one whose bytes are not stored.
++    pub fn checkpointed(&self) -> SharedCheckpoint {
++        if let Some(inner) = self.inner.as_ref() {
++            inner.checkpoint.clone()
++        } else {
++            Default::default()
++        }
++    }
+ }
+ 
+ impl Write for SegmentComponentWriter {
+@@ -112,12 +134,23 @@ impl TerminatingWrite for SegmentComponentWriter {
+             Ok(())
+         }
+     }
++
++    fn checkpoint(&mut self) -> Result<()> {
++        match self.inner.as_mut() {
++            Some(inner) => inner.checkpoint(),
++            None => Err(std::io::Error::new(
++                std::io::ErrorKind::Unsupported,
++                format!("{:?} stores no bytes to checkpoint", self.path),
++            )),
++        }
++    }
+ }
+ 
+ struct InnerSegmentComponentWriter {
+     header_blockno: pg_sys::BlockNumber,
+     total_bytes: Arc<AtomicUsize>,
+     buffer: Option<PanicSafeBufWriter<LinkedBytesListWriter>>,
++    checkpoint: SharedCheckpoint,
+ }
+ 
+ /// Wrapper around [`BufWriter`] that skips flush-on-drop while unwinding.
+@@ -139,6 +172,10 @@ impl<W: Write> PanicSafeBufWriter<W> {
+     fn into_inner(mut self) -> Result<W> {
+         Ok(self.inner.take().unwrap().into_inner()?)
+     }
++
++    fn get_ref(&self) -> &W {
++        self.inner.as_ref().unwrap().get_ref()
++    }
+ }
+ 
+ impl<W: Write> Write for PanicSafeBufWriter<W> {
+@@ -171,6 +208,40 @@ impl InnerSegmentComponentWriter {
+             header_blockno: segment_component.header_blockno,
+             total_bytes: Default::default(),
+             buffer: Some(PanicSafeBufWriter::new(segment_component.writer())),
++            checkpoint: Default::default(),
++        }
++    }
++
++    /// Flushes the buffered bytes to their pages and publishes the blocks written so far. The
++    /// block list is shared from this writer, 4 bytes per data page: no page is written for it,
++    /// and the block map of the finished component is the one `terminate` writes.
++    fn checkpoint(&mut self) -> Result<()> {
++        let buffer = self.buffer.as_mut().unwrap();
++        buffer.flush()?;
++        let prefix = CheckpointedPrefix {
++            len: self.total_bytes.load(Ordering::Relaxed),
++            blocks: Arc::new(buffer.get_ref().blocks()),
++        };
++        self.checkpoint.set(prefix).map_err(|_| {
++            std::io::Error::new(
++                std::io::ErrorKind::InvalidInput,
++                "segment component is already checkpointed",
++            )
++        })
++    }
++
++    /// Errors while a reader of the checkpointed prefix is open. Such a reader holds pages
++    /// pinned on the promise that they do not change, and a write appends to the last of them.
++    ///
++    /// Every reader holds a clone of the checkpoint's block list, so a count above the
++    /// checkpoint's own means one is open.
++    fn refuse_under_reader(&self) -> Result<()> {
++        match self.checkpoint.get() {
++            Some(prefix) if Arc::strong_count(&prefix.blocks) > 1 => Err(std::io::Error::new(
++                std::io::ErrorKind::ResourceBusy,
++                "segment component is written while a reader of its checkpointed prefix is open",
++            )),
++            _ => Ok(()),
+         }
+     }
+ 
+@@ -187,7 +258,9 @@ impl InnerSegmentComponentWriter {
+ }
+ 
+ impl Write for InnerSegmentComponentWriter {
++    /// A write refused under a reader buffers no byte and touches no page.
+     fn write(&mut self, data: &[u8]) -> Result<usize> {
++        self.refuse_under_reader()?;
+         let many = self.buffer.as_mut().unwrap().write(data)?;
+         self.total_bytes.fetch_add(data.len(), Ordering::Relaxed);
+         Ok(many)
+```
+
+**File**: `index_write/src/postgres/build_parallel.rs` (modified, +153/-5)
+```diff
+@@ -629,13 +629,13 @@ impl PartitionSpillFiles {
+     }
+ 
+     /// Collect `partition`'s ctids from every participant into an `int8` tuplesort on `budget`
+-    /// bytes, or `None` when no participant saw a row of the partition. A packed ctid is 48
+-    /// bits, so it orders the same as an `int8`.
++    /// bytes, with their count, or `None` when no participant saw a row of the partition. A
++    /// packed ctid is 48 bits, so it orders the same as an `int8`.
+     unsafe fn gather(
+         &mut self,
+         partition: usize,
+         budget: usize,
+-    ) -> anyhow::Result<Option<Int8Sorter>> {
++    ) -> anyhow::Result<Option<(Int8Sorter, usize)>> {
+         let readers = self.readers(partition);
+         if readers.is_empty() {
+             return Ok(None);
+@@ -652,7 +652,7 @@ impl PartitionSpillFiles {
+             pg_sys::BufFileClose(file);
+         }
+         sorter.performsort();
+-        Ok(Some(sorter))
++        Ok(Some((sorter, total_bytes / CTID_RECORD_LEN)))
+     }
+ }
+ 
+@@ -1147,12 +1147,18 @@ impl<'a> WorkerBuildState<'a> {
+         );
+         for partition in first_partition..first_partition + owned_partitions {
+             check_for_interrupts();
+-            let Some(mut sorter) = (unsafe { files.gather(partition, self.gather_budget)? }) else {
++            let Some((mut sorter, ctids)) =
++                (unsafe { files.gather(partition, self.gather_budget)? })
++            else {
+                 continue;
+             };
+             if self.writer.is_none() {
+                 self.open_partition_writer()?;
+             }
++            self.writer
++                .as_mut()
++                .expect("drain_partitioned: writer should be set")
++                .begin_partition(ctids);
+             // Every segment of the partition carries its box, so a reader can prune on it without
+             // opening the segment.
+             self.writer
+@@ -2115,6 +2121,148 @@ mod tests {
+         );
+     }
+ 
++    /// A partition that reaches the clustering threshold writes its full-precision rows into the
++    /// index relation, not into temporary files: the build fits a `temp_file_limit` below the
++    /// table's vector bytes, which a build that stages its rows exceeds, clusters every segment,
++    /// and returns the rows the staged build returns.
++    #[pg_test]
++    fn test_vector_build_streams_rows_past_temp_file_limit() {
++        // 30,000 rows of 64 f32 are 7.68MB of vector bytes, 3.84MB in each of the two
++        // partitions a build process holds one at a time.
++        Spi::run(
++            r#"
++            CREATE EXTENSION IF NOT EXISTS vector;
++            SET maintenance_work_mem = '64MB';
++            SET max_parallel_maintenance_workers = 0;
++            SET max_parallel_workers_per_gather = 0;
++            SET paradedb.vector_clustering_threshold = 1;
++            SET paradedb.vector_adaptive_probing = off;
++            SET paradedb.vector_cluster_max_probe = 100000;
++            CREATE TABLE streamed_build (id BIGINT, emb vector(64));
++            INSERT INTO streamed_build
++            SELECT i, CASE WHEN i % 97 = 0 THEN NULL ELSE (
++                SELECT array_agg(
++                    sin(i * (d + 1) * 0.37)::real + CASE WHEN d = i % 64 THEN 3 ELSE 0 END
++                    ORDER BY d)
++                FROM generate_series(0, 63) d)::vector END
++            FROM generate_series(1, 30000) i;
++            "#,
++        )
++        .unwrap();
++        let create = |options: &str| {
++            format!(
++                "CREATE INDEX streamed_build_idx ON streamed_build USING paradedb \
++                 (id, emb vector_cosine_ops) WITH (target_segment_count = 2{options})"
++            )
++        };
++        let query_vector =
++            Spi::get_one::<String>("SELECT emb::text FROM streamed_build WHERE id = 12345")
++                .unwrap()
++                .unwrap();
++        let nearest = || {
++            Spi::get_one::<Vec<i64>>(&format!(
++                "SELECT array_agg(id) FROM (SELECT id FROM streamed_build \
++                 WHERE id @@@ paradedb.all() ORDER BY emb <=> '{query_vector}' LIMIT 10) q"
++            ))
++            .unwrap()
++            .unwrap()
++        };
++
++        Spi::run("SET temp_file_limit = '2MB'").unwrap();
++        Spi::run(&create("")).unwrap();
++        assert_eq!(
++            Spi::get_one::<bool>(
++                "SELECT count(*) = 2 AND bool_and(vector_format = 'ivf') AND bool_and(quantized)
++                 AND sum(vector_num_vectors) = 30000 - 309
++                 FROM paradedb.vector_info('streamed_build_idx', 'emb')"
++            )
++            .unwrap(),
++            Some(true)
++        );
++        let streamed = nearest();
++        assert_eq!(streamed.len(), 10);
++        assert_eq!(streamed[0], 12345);
++
++        // Without a sort the build stages its rows and exceeds the limit.
++        Spi::run("DROP INDEX streamed_build_idx").unwrap();
++        Spi::run(&format!(
++            "DO $$
++             BEGIN
++               
+```
+
+**File**: `storage/src/postgres/storage/blocklist.rs` (modified, +20/-6)
+```diff
+@@ -160,7 +160,7 @@ pub mod builder {
+             }
          }
  
-         pub fn vector_query() -> String {
--            let query = vec!["1"; 1024].join(",");
-+            let query = vec!["1"; VECTOR_METADATA_DIMENSIONS].join(",");
-             format!(
-                 "SELECT id FROM metadata_vectors WHERE id @@@ pdb.all() ORDER BY vec <-> '[{query}]'::vector LIMIT 5"
-             )
+-        pub fn into_bytes(self) -> Vec<u8> {
++        pub fn to_bytes(&self) -> Vec<u8> {
+             let tag = self.tag();
+             match self {
+                 ChunkStyle::Sorted1x {
+@@ -193,13 +193,13 @@ pub mod builder {
+                     initial,
+                     bytes,
+                 } => std::iter::once(tag as u8)
+-                    .chain(std::iter::once(num_bits))
++                    .chain(std::iter::once(*num_bits))
+                     .chain(initial.to_le_bytes())
+-                    .chain(bytes)
++                    .chain(bytes.iter().copied())
+                     .collect(),
+                 ChunkStyle::Uncompressed(values) => std::iter::once(tag as u8)
+                     .chain((values.len() as u8).to_le_bytes())
+-                    .chain(values.into_iter().flat_map(|bn| bn.to_le_bytes()))
++                    .chain(values.iter().flat_map(|bn| bn.to_le_bytes()))
+                     .collect(),
+             }
+         }
+@@ -255,6 +255,20 @@ pub mod builder {
+             self.queue.push(block_number);
+         }
+ 
++        /// Every block number pushed so far, in push order, in a vector of exactly that length.
++        pub fn blocks(&self) -> Vec<pg_sys::BlockNumber> {
++            let encoded: Vec<Vec<u8>> = self.chunks.iter().map(ChunkStyle::to_bytes).collect();
++            let chunked: usize = encoded.iter().map(|bytes| chunk_size(bytes).0).sum();
++            let mut blocks = Vec::with_capacity(chunked + self.queue.len());
++            for bytes in &encoded {
++                let start = blocks.len();
++                blocks.resize(start + chunk_size(bytes).0, 0);
++                super::reader::decode_chunk(bytes, &mut blocks[start..]);
++            }
++            blocks.extend_from_slice(&self.queue);
++            blocks
++        }
++
+         /// Finalizes bitpacked chunks and writes mapping pages, returning `(first_map_block, directory, overflow_block)`.
+         pub fn finish(
+             &mut self,
+@@ -305,7 +319,7 @@ pub mod builder {
+                 if page.can_fit(chunk.byte_len()) {
+                     // this chunk fits on this page, so write it there
+                     // TODO:  can probably write directly to the slice rather than going through a Vec<u8>
+-                    let bytes = chunk.into_bytes();
++                    let bytes = chunk.to_bytes();
+                     page.append_bytes(&bytes);
+                     ordinal = ordinal
+                         .checked_add(chunk_size(&bytes).0 as u32)
+@@ -604,7 +618,7 @@ pub mod reader {
+         }
+     }
+ 
+-    fn decode_chunk(slice: &[u8], blocks: &mut [pg_sys::BlockNumber]) -> usize {
++    pub(super) fn decode_chunk(slice: &[u8], blocks: &mut [pg_sys::BlockNumber]) -> usize {
+         let (expected_count, expected_len) = chunk_size(slice);
+         assert_eq!(blocks.len(), expected_count);
+         let mut offset = 0;
+```
+
+**File**: `storage/src/postgres/storage/buffer.rs` (modified, +5/-0)
+```diff
+@@ -988,6 +988,11 @@ impl BufferManager {
+         self.rbufacc.io_stats = stats;
+     }
+ 
++    /// Makes this manager's reads of existing blocks go through the backend's bulk-read strategy.
++    pub fn set_bulk_read(&mut self) {
++        self.rbufacc.bulk_read = true;
++    }
++
+     pub fn new(rel: &PgSearchRelation) -> Self {
+         Self {
+             rbufacc: RelationBufferAccess::open(rel),
 ```
 
 ---
 
-### Incident Patch 3: `5a0e9f3b` (2026-11-24)
-**Commit Message**: build: make DST optional for the extension (#7659)
+### Incident Patch 2: `0d044826` (2026-11-25)
+**Commit Message**: build: vendor Nix dependencies from Cargo.lock (#7661)
 
 ## What
 
-Make `dst` optional for the extension build. The `pg_search/dst` feature
-still enables the Antithesis SDK and coverage shim. Normal builds use
-local debug assertions and keep observations type-checked in release
-builds.
+Vendor the extension's Rust dependencies from `Cargo.lock`. Nix uses
+registry checksums and fetches Git sources at the locked commits. This
+removes the aggregate `cargoHash`, release-time regeneration, and per-PR
+fixup pushes.
 
-Schemabot and Stressgres are already outside the extension build. The
-separate integration test harness still uses the DST crate directly.
+Pin OpenCC/Jieba to `7ef74d151bec0` from the fork's main branch so the
+standard Git fetch can find it. Give the DST Proptest fork its own Cargo
+vendor source so it can coexist with the registry crate at the same
+version. Populate the versioned Lindera dictionary cache used by 6.2.
+
+The read-only workflow runs a full PostgreSQL 18 Nix build for Nix
+packaging changes and manual dispatches.
 
 ## Tests
 
-- `cargo check --offline --locked -p pg_search`
-- `cargo fmt --all -- --check` and `git diff --check`
-- Verified Cargo's default build graph excludes DST, Schemabot,
-Stressgres, and Antithesis. The extension's `dst` feature still resolves
-DST and Antithesis.
-- The instrumented compile on macOS stops in the SDK's Linux-specific
-`.init_array` section. Instrumented Linux validation is pending.
+- 107 tokenizer tests passed using the updated lockfile.
+- 30 release-script tests passed.
+- Workflow YAML parsing and whitespace checks passed.
+- [PG18 Linux Nix
+build](https://github.com/paradedb/paradedb/actions/runs/45478786909)
 
----------
-
-Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-4)
+**File**: `.github/actions/test-pg_search-upgrade/action.yml` (modified, +1/-1)
 ```diff
-@@ -1483,6 +1483,7 @@ dependencies = [
-  "bytemuck",
-  "chrono",
-  "decimal-bytes",
-+ "dst",
-  "futures",
-  "libc",
-  "once_cell",
-@@ -4015,7 +4016,6 @@ dependencies = [
-  "bytemuck",
-  "common",
-  "decimal-bytes",
-- "dst",
-  "parking_lot 0.13.0",
-  "pgrx",
-  "pgrx-tests",
-@@ -4041,7 +4041,7 @@ version = "0.27.0"
+@@ -155,7 +155,7 @@ runs:
+       shell: bash
+       run: |
+         SYNTHETIC_VERSION="999.0.0"
+-        ./scripts/release.sh set-version "$SYNTHETIC_VERSION" --skip-nix
++        ./scripts/release.sh set-version "$SYNTHETIC_VERSION"
+         # Extend the actual chain tip, including a release commit whose tag is missing.
+         PREV_VERSION=$(./scripts/release.sh latest-sql-version)
+         cargo pgrx migrate assemble "$SYNTHETIC_VERSION" --package pg_search \
+```
+
+**File**: `.github/scripts/apply_release_patch.py` (modified, +0/-1)
+```diff
+@@ -8,7 +8,6 @@
+ RELEASE_FILES = {
+     "Cargo.toml",
+     "Cargo.lock",
+-    "nix/pg_search.nix",
+     "docs/docs.json",
+     "docs/operate/deploy/upgrading.mdx",
+     "docs/operate/deploy/self-hosted/extension.mdx",
+```
+
+**File**: `.github/scripts/release.py` (modified, +3/-15)
+```diff
+@@ -677,8 +677,8 @@ def assemble_changelog_files(
+ # ==============================================================================
+ 
+ 
+-def set_cargo_version(repo_root, version, skip_nix=False, if_newer=False):
+-    """Update workspace package version in Cargo.toml, sync Cargo.lock, and update Nix hash."""
++def set_cargo_version(repo_root, version, if_newer=False):
++    """Update the workspace package version and sync Cargo.lock."""
+     cargo_toml = repo_root / "Cargo.toml"
+     if not cargo_toml.exists():
+         print(f"❌ Error: {cargo_toml} not found", file=sys.stderr)
+@@ -724,12 +724,6 @@ def set_cargo_version(repo_root, version, skip_nix=False, if_newer=False):
+     print("Syncing Cargo.lock via cargo update --workspace...")
+     subprocess.run(["cargo", "update", "--workspace"], cwd=repo_root, check=True)
+ 
+-    if not skip_nix:
+-        nix_script = repo_root / "scripts" / "update-nix-cargo-hash.sh"
+-        if nix_script.exists():
+-            print("Updating Nix cargo hash...")
+-            subprocess.run(["bash", str(nix_script), "18"], cwd=repo_root, check=True)
+-
+     return True
+ 
+ 
+@@ -912,7 +906,6 @@ def handle_set_version_command(args, repo_root):
+     set_cargo_version(
+         repo_root,
+         target_version,
+-        skip_nix=args.skip_nix,
+         if_newer=args.if_newer,
+     )
+ 
+@@ -1244,14 +1237,9 @@ def build_parser():
+ 
+     set_ver_parser = subparsers.add_parser(
+         "set-version",
+-        help="Update version in Cargo.toml, Cargo.lock, and nix/pg_search.nix",
++        help="Update version in Cargo.toml and Cargo.lock",
+     )
+     add_common_args(set_ver_parser)
+-    set_ver_parser.add_argument(
+-        "--skip-nix",
+-        action="store_true",
+-        help="Skip updating Nix cargo hash",
+-    )
+     set_ver_parser.add_argument(
+         "--if-newer",
+         action="store_true",
+```
+
+**File**: `.github/scripts/test_apply_release_patch.py` (modified, +1/-3)
+```diff
+@@ -106,7 +106,6 @@ def test_beta_migration_retains_rc_suffix_and_unreleased_fragments(self):
+     def test_main_sync_patch_with_version_bump_and_changelog_round_trip(self):
+         """Main sync patches with version bumps, docs, and fragment cleanup apply cleanly."""
+         self.write("Cargo.lock", 'name = "pg_search"\nversion = "0.26.0"\n')
+-        self.write("nix/pg_search.nix", 'cargoHash = "sha256-old";\n')
+         self.write("docs/docs.json", '{"version": "v0.26.8"}\n')
+         self.write("docs/project/changelog/0.26.8.mdx", '---\ntitle: "0.26.8"\n---\n')
+         self.write("docs/project/changelog/unreleased/123.bugfix.mdx", "Fix\n")
+@@ -115,7 +114,6 @@ def test_main_sync_patch_with_version_bump_and_changelog_round_trip(self):
+ 
+         self.write("Cargo.toml", 'version = "0.27.0"\n')
+         self.write("Cargo.lock", 'name = "pg_search"\nversion = "0.27.0"\n')
+-        self.write("nix/pg_search.nix", 'cargoHash = "sha256-new";\n')
+         self.write("docs/docs.json", '{"version": "v0.27.0"}\n')
+         self.write(
+             "docs/project/changelog/0.26.8.mdx",
+@@ -130,7 +128,7 @@ def test_main_sync_patch_with_version_bump_and_changelog_round_trip(self):
+         apply_patch(self.repo, self.patch, "0.27.0")
+         self.assertEqual((self.repo / "Cargo.toml").read_text(), 'version = "0.27.0"\n')
+         self.assertEqual(
+-            (self.repo / "nix/pg_search.nix").read_text(), 'cargoHash = "sha256-new";\n'
++            (self.repo / "Cargo.lock").read_text(), 'name = "pg_search"\nversion = "0.27.0"\n'
+         )
+         self.assertTrue(
+             (self.repo / "pg_search/sql/pg_search--0.26.8--0.27.0.sql").is_file()
+```
+
+**File**: `.github/workflows/publish-github-release.yml` (modified, +5/-13)
+```diff
+@@ -120,10 +120,6 @@ jobs:
+           cache: false
+           rustflags: ""
+ 
+-      - name: Install Determinate Nix
+-        if: github.repository == 'paradedb/paradedb'
+-        uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
+-
+       - name: Determine if Release Should be Marked as Latest
+         id: release_latest
+         env:
+@@ -160,7 +156,7 @@ jobs:
+           fi
+           ./scripts/release.sh all "$RELEASE_VERSION" "${FLAGS[@]}"
+ 
+-      - name: Update Cargo Version, Lockfile, and Nix Hash
++      - name: Update Cargo Version and Lockfile
+         if: github.repository == 'paradedb/paradedb'
+         env:
+           INPUTS_VERSION: ${{ github.event.inputs.version }}
+@@ -470,7 +466,7 @@ jobs:
+       - name: Record Cargo Tree Fingerprint
+         id: cargo_fingerprint
+         run: |
+-          FINGERPRINT=$(git rev-parse HEAD:Cargo.toml HEAD:Cargo.lock HEAD:nix/pg_search.nix | tr '\n' ' ')
++          FINGERPRINT=$(git rev-parse HEAD:Cargo.toml HEAD:Cargo.lock | tr '\n' ' ')
+           echo "fingerprint=${FINGERPRINT% }" >> "$GITHUB_OUTPUT"
+ 
+       - name: Install Rust
+@@ -480,10 +476,6 @@ jobs:
+           cache: false
+           rustflags: ""
+ 
+-      - name: Install Determinate Nix
+-        if: needs.prepare-release.outputs.is_latest == 'true'
+-        uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
+-
+       - name: Stage Release Artifacts on Main
+         env:
+           RELEASE_VERSION: ${{ github.event.inputs.version }}
+@@ -549,7 +541,7 @@ jobs:
+             ./scripts/release.sh changelog "${CLEAN_VERSION}" --register-only --no-is-latest
+           fi
+ 
+-      - name: Update Cargo Version, Lockfile, and Nix Hash on Main
++      - name: Update Cargo Version and Lockfile on Main
+         if: needs.prepare-release.outputs.is_latest == 'true'
+         env:
+           RELEASE_VERSION: ${{ github.event.inputs.version }}
+@@ -596,10 +588,10 @@ jobs:
+         env:
+           EXPECTED_FINGERPRINT: ${{ needs.prepare-main-sync.outputs.cargo_tree_fingerprint }}
+         run: |
+-          CURRENT_FINGERPRINT=$(git rev-parse HEAD:Cargo.toml HEAD:Cargo.lock HEAD:nix/pg_search.nix | tr '\n' ' ')
++          CURRENT_FINGERPRINT=$(git rev-parse HEAD:Cargo.toml HEAD:Cargo.lock | tr '\n' ' ')
+           CURRENT_FINGERPRINT="${CURRENT_FINGERPRINT% }"
+           if [[ "$CURRENT_FINGERPRINT" != "$EXPECTED_FINGERPRINT" ]]; then
+-            echo "::error::Cargo.toml, Cargo.lock, or nix/pg_search.nix changed on main while preparing the sync patch. Re-sync main with the updated Nix cargoHash."
++            echo "::error::Cargo.toml or Cargo.lock changed on main while preparing the sync patch. Prepare a new sync patch."
+             exit 1
+           fi
+ 
+```
+
+**File**: `.github/workflows/test-pg_search-nix.yml` (modified, +8/-81)
+```diff
+@@ -1,7 +1,4 @@
+-# workflows/test-pg_search-nix.yml
+-#
+-# Test pg_search (Nix)
+-# Check the Nix Cargo dependency hash.
++# Build the Nix package for packaging changes. Its Rust dependencies come from Cargo.lock.
+ 
+ name: Test pg_search (Nix)
+ 
+@@ -11,103 +8,33 @@ on:
+     paths:
+       - ".github/workflows/test-pg_search-nix.yml"
+       - "nix/**"
+-      - "tokenizers/Cargo.toml"
+-      - "Cargo.lock"
+-      - "Cargo.toml"
+       - "flake.lock"
+       - "flake.nix"
+       - "rust-toolchain.toml"
+   workflow_dispatch:
+ 
+ concurrency:
+-  group: test-pg_search-nix-${{ github.head_ref || github.ref }}
++  group: test-pg_search-nix-${{ github.ref }}
+   cancel-in-progress: true
+ 
+ permissions:
+-  contents: write
++  contents: read
+ 
+ jobs:
+-  nix-cargo-hash-check:
+-    name: Verify Nix Cargo Hash
++  nix-build:
++    name: Build pg_search with Nix
+     runs-on: ubuntu-latest
+     env:
+       PG_MAJOR_VERSION: "18"
+ 
+     steps:
+-      - name: Generate GitHub App Token
+-        id: app-token
+-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
+-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.2.0; Keep the exact pin because actionlint 1.7.12 has stale @v3 metadata that rejects client-id
+-        with:
+-          client-id: ${{ vars.PARADEDB_GITHUB_APP_CLIENT_ID }}
+-          private-key: ${{ secrets.PARADEDB_GITHUB_APP_PRIVATE_KEY }}
+-
+       - name: Checkout Git Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+         with:
+-          # Check out the PR head's repo and ref so this works for fork PRs too;
+-          # the branch only exists on the fork, not on the base repo. For
+-          # same-repo PRs and workflow_dispatch this resolves to the base repo,
+-          # which keeps the auto-push-a-fix path (below) targeting origin.
+-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+-          token: ${{ steps.app-token.outputs.token || github.token }}
++          persist-credentials: false
+ 
+       - name: Install Determinate Nix
+         uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
+ 
+-      # Build only cargo deps to surface cargoHash mismatches quickly, without
+-      # compiling pg_search for every Postgres variant. If the hash is stale,
+-      # compute the correct one and push a fix commit to the PR branch.
+-      # The commit uses a GitHub App token so GitHub signs it and fires a
+-      # synchronize event, which re-triggers all CI workflows on the new HEAD.
+-      # Pushes made with the default GITHUB_TOKEN do not fire events.
+-      - name: Verify Nix Cargo Hash
+-        id: cargo-hash
+-        run: |
+-          if ! nix build --no-link ".#pg_search-pg${{ env.PG_MAJOR_VERSION }}.cargoDeps" 2>/dev/null; then
+-            echo "cargoHash mismatch detected, computing correct hash..."
+-            chmod +x scripts/update-nix-cargo-hash.sh
+-            scripts/update-nix-cargo-hash.sh "${{ env.PG_MAJOR_VERSION }}"
+-
+-            if [ "${{ github.event.pull_request.head.repo.fork }}" = "true" ]; then
+-              echo "::error::cargoHash is outdated and this PR is from a fork, so CI cannot push a fix. Please run the following locally and push the result:"
+-              echo ""
+-              echo "  scripts/update-nix-cargo-hash.sh ${{ env.PG_MAJOR_VERSION }}"
+-              echo "  git add nix/pg_search.nix"
+-              echo "  git commit -m \"fix: update nix cargoHash for changed Cargo.lock\""
+-              echo "  git push"
+-              echo ""
+-              echo "Computed nix/pg_search.nix diff:"
+-              git --no-pager diff nix/pg_search.nix
+-              exit 1
+-            fi
+-
+-            if git diff --quiet -- nix/pg_search.nix; then
+-              echo "::error::cargoHash build failed, but the update script did not change nix/pg_search.nix."
+-              exit 1
+-            fi
+-
+-            git add nix/pg_search.nix
+-            echo "needs_fix=true" >> "$GITHUB_OUTPUT"
+-          else
+-            echo "cargoHash is correct"
+-          fi
+-
+-      - name: Commit Nix Cargo Hash
+-        if: steps.cargo-hash.outputs.needs_fix == 'true'
+-        uses: ./.github/actions/commit-with-paradedb-github-app
+-        with:
+-          github-token: ${{ steps.app-token.outputs.token }}
+-          message: "fix: update nix cargoHash for changed Cargo.lock"
+-
+-      - name: Push Nix Cargo Hash
+-        if: steps.cargo-hash.outputs.needs_fix == 'true'
+-        env:
+-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+-          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
+-        run: |
+-          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/git/refs/heads/${TARGET_BRANCH}" \
+-            -f sha="$(git rev-parse HEAD)" -F force=false
+-          echo "::error::cargoHash was outdat
+```
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -5108,8 +5108,8 @@ checksum = "269bca4c2591a28585d6bf10d9ed0332b7d76900a1b02bec41bdc3a2cdcda107"
+ 
+ [[package]]
+ name = "opencc-jieba-rs"
+-version = "0.9.0"
+-source = "git+https://github.com/paradedb/opencc-jieba-rs?branch=main#edfe347cfba463385337893feb4f5e2ff7309c83"
++version = "0.9.1"
++source = "git+https://github.com/paradedb/opencc-jieba-rs?rev=7ef74d151bec02e12ac29fe5076ffa925216ba6e#7ef74d151bec02e12ac29fe5076ffa925216ba6e"
  dependencies = [
-  "anyhow",
-  "bytemuck",
-- "dst",
-+ "common",
-  "index_read",
-  "log",
-  "pgrx",
-@@ -5336,7 +5336,6 @@ dependencies = [
-  "anyhow",
-  "basescan",
-  "common",
-- "dst",
-  "env_logger",
-  "half 2.7.1",
-  "index_read",
-@@ -7202,7 +7201,6 @@ dependencies = [
-  "bitpacking",
-  "bytemuck",
-  "common",
-- "dst",
-  "parking_lot 0.13.0",
-  "pgrx",
-  "pgrx-tests",
+  "bytecount",
+  "rayon",
 ```
 
-**File**: `common/Cargo.toml` (modified, +2/-0)
+**File**: `flake.nix` (modified, +12/-12)
 ```diff
-@@ -14,6 +14,7 @@ pg16 = ["pgrx/pg16"]
- pg17 = ["pgrx/pg17"]
- pg18 = ["pgrx/pg18"]
- pg_test = ["dep:proptest"]
-+dst = ["dep:dst", "dst/enabled"]
- 
- # Keep this crate's dependency list minimal: every workspace crate depends on `common`, so
- # heavy dependencies added here serialize the entire build graph. In particular, do NOT add
-@@ -26,6 +27,7 @@ arrow-schema.workspace = true
- bytemuck.workspace = true
- chrono.workspace = true
- decimal-bytes.workspace = true
-+dst = { path = "../dst", optional = true }
- futures.workspace = true
- libc.workspace = true
- once_cell.workspace = true
+@@ -158,18 +158,18 @@
+           rustPlatform = final.pgrxRustPlatform;
+         };
+         rustToolchain =
+-          with inputs.fenix.packages.${prev.stdenv.hostPlatform.system};
+-          combine (
+-            # Use stable Rust plus pinned versions of the rest of the toolchain
+-            with stable;
+-            [
+-              clippy
+-              rustc
+-              cargo
+-              rustfmt
+-              rust-src
+-              rust-analyzer
+-            ]
++          let
++            toolchain = (lib.importTOML ./rust-toolchain.toml).toolchain;
++            fenix = inputs.fenix.packages.${prev.stdenv.hostPlatform.system};
++            rust = fenix.fromToolchainName {
++              name = toolchain.channel;
++              # Fenix needs the Rust distribution manifest hash for pure evaluation.
++              # Update it when the channel in rust-toolchain.toml changes.
++              sha256 = "sha256-MFHoWVcPZKjFrLnQnodCXbUsfZcofGfo9tV9fTTvklg=";
++            };
++          in
++          fenix.combine (
++            map (component: rust.${component}) ([ "rustc" "cargo" "rust-src" ] ++ toolchain.components)
+           );
+       };
+     };
 ```
 
-**File**: `common/src/dst.rs` (added, +60/-0)
+---
+
+### Incident Patch 3: `6b65319e` (2026-11-25)
+**Commit Message**: test: migrate SQL regressions to V2 syntax (#7631)
+
+## What
+
+- Migrate V1 SQL regression queries and index definitions to V2.
+- Use bare `pdb.all()` when the test does not read scores, and preserve
+existing V2 builder coverage.
+- Keep compatibility fixtures and internal executor and upgrade-safety
+checks while their paths remain supported.
+
+## Remaining V1 usage
+
+- The `deprecated_*`, `datetime_fields_deprecated`,
+`keyword_defaults_fast`, `minimum_should_match`, and `stopwords`
+fixtures cover legacy API behavior.
+- `score_anti_join` keeps DisMax scoring and its tie-breaker.
+`recursive_estimates` keeps optional scoring alongside V2 conjunction,
+disjunction, negation, and TermSet estimates.
+- `issue_7166` keeps the typed legacy JSON range regression while #7662
+tracks the equivalent typed V2 query.
+- `citext`, `parse`, `sequential_scan`, `sequential_scan_subquery`, and
+`sequential_scan_unplanned` retain the legacy SQL needed to exercise
+their original paths.
+
+## Result changes
+
+- `ascii_folding_filter` now returns token arrays such as `{cafe}`. The
+previous output included a separate token-position column.
+- A `citext` exact-token query now succeeds and returns zero rows. The
+previou
+
+**File**: `pg_search/tests/pg_regress/expected/agg-score.out` (modified, +37/-37)
 ```diff
-@@ -0,0 +1,60 @@
-+// Copyright (c) 2023-2026 ParadeDB, Inc.
-+//
-+// This file is part of ParadeDB - Postgres for Search and Analytics
-+//
-+// This program is free software: you can redistribute it and/or modify
-+// it under the terms of the GNU Affero General Public License as published by
-+// the Free Software Foundation, either version 3 of the License, or
-+// (at your option) any later version.
-+//
-+// This program is distributed in the hope that it will be useful
-+// but WITHOUT ANY WARRANTY; without even the implied warranty of
-+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+// GNU Affero General Public License for more details.
-+//
-+// You should have received a copy of the GNU Affero General Public License
-+// along with this program. If not, see <http://www.gnu.org/licenses/>.
-+
-+//! Local extension assertions when the DST SDK is disabled.
-+
-+pub use crate::dst_observe as observe;
-+pub use crate::{
-+    dst_assert_always as assert_always, dst_assert_always as assert_always_or_unreachable,
-+    dst_assert_unreachable as assert_unreachable,
-+};
-+
-+/// Run a read-only observation in debug builds. Release builds still type-check the closure.
-+#[inline]
-+#[doc(hidden)]
-+pub fn run_observation<F: Fn()>(check: F) {
-+    if cfg!(debug_assertions) {
-+        check();
-+    }
-+}
-+
-+#[doc(hidden)]
-+#[macro_export]
-+macro_rules! dst_observe {
-+    ($check:expr $(,)?) => {
-+        $crate::dst::run_observation($check)
-+    };
-+}
-+
-+#[doc(hidden)]
-+#[macro_export]
-+macro_rules! dst_assert_always {
-+    ($condition:expr, $message:literal) => {
-+        ::core::debug_assert!($condition, "{}", $message)
-+    };
-+    ($condition:expr, $message:literal, $details:expr) => {
-+        ::core::debug_assert!($condition, "{}: {}", $message, $details)
-+    };
-+}
-+
-+#[doc(hidden)]
-+#[macro_export]
-+macro_rules! dst_assert_unreachable {
-+    ($message:literal $(, $details:expr)?) => {
-+        $crate::dst_assert_always!(false, $message $(, $details)?)
-+    };
-+}
+@@ -1,4 +1,4 @@
+--- Test aggregating paradedb.score with parallel custom scan
++-- Test aggregating pdb.score with parallel custom scan
+ -- This tests the fix for: "Aggregating paradedb.score when there's a parallel custom scan can produce empty scores"
+ -- The fix uses PlaceHolderVar to ensure scores are passed through Gather nodes in parallel plans.
+ CREATE EXTENSION IF NOT EXISTS pg_search;
+@@ -20,19 +20,19 @@ SET parallel_setup_cost = 0;
+ SET min_parallel_table_scan_size = 0;
+ -- Test case 1: Basic max(score) - should work with parallel execution
+ EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
+-SELECT max(paradedb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
++SELECT max(pdb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
+ WARNING:  Aggregate Scan not used: argument to aggregate function is neither a direct column reference nor a COALESCE expression. To disable this warning: SET paradedb.planner_warnings = 'off' (table: mock_items)
+                                                                                                        QUERY PLAN                                                                                                       
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Finalize Aggregate
+-   Output: max((paradedb.score(id)))
++   Output: max((pdb.score(id)))
+    ->  Gather
+-         Output: (PARTIAL max((paradedb.score(id))))
++         Output: (PARTIAL max((pdb.score(id))))
+          Workers Planned: 1
+          ->  Partial Aggregate
+-               Output: PARTIAL max((paradedb.score(id)))
++               Output: PARTIAL max((pdb.score(id)))
+                ->  Parallel Custom Scan (ParadeDB Base Scan) on public.mock_items
+-                     Output: paradedb.score(id), paradedb.score(id)
++                     Output: pdb.score(id), pdb.score(id)
+                      Table: mock_items
+                      Index: search_idx
+                      Worker Selection: Row-capped
+@@ -41,7 +41,7 @@ WARNING:  Aggregate Scan not used: argument to aggregate function is neither a d
+                      Tantivy Query: {"with_index":{"query":{"match":{"field":"description","value":"keyboard","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
+ (15 rows)
+ 
+-SELECT max(paradedb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
++SELECT max(pdb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
+ WARNING:  Aggregate Scan not used: argument to aggregate function is neither a direct column reference nor a COALESCE expression. To disable this warning: SET paradedb.planner_warnings = 'off' (table: mock_items)
+      max     
+ -------------
+@@ -50,19 +50,19 @@ WARNING:  Aggregate Scan not used: argument to aggregate function is neither a d
+ 
+ -- Test case 2: min(score) - should work with parallel execution
+ EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
+-SELECT min(paradedb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
++SELECT min(pdb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
+ WARNING:  Aggregate Scan not used: argument to aggregate function is neither a direct column reference nor a COALESCE expression. To disable this warning: SET paradedb.planner_warnings = 'off' (table: mock_items)
+                                                                                                        QUERY PLAN                                                                                                       
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Finalize Aggregate
+-   Output: min((paradedb.score(id)))
++   Output: min((pdb.score(id)))
+    ->  Gather
+-         Output: (PARTIAL min((paradedb.score(id))))
++         Output: (PARTIAL min((pdb.score(id))))
+          Workers Planned: 1
+          ->  Partial Aggregate
+-               Output: PARTIAL min((paradedb.score(id)))
++               Output: PARTIAL min((pdb.score(id)))
+                ->  Parallel Custom Scan (ParadeDB Base Scan) on public.mock_items
+-                     Output: paradedb.score(id), paradedb.score(id)
++                     Output: pdb.score(id), pdb.score(id)
+                      Table: mock_items
+                      Index: search_idx
+                      Worker Selection: Row-capped
+@@ -71,7 +71,7 @@ WARNING:  Aggregate Scan not used: argument to aggregate function is neither a d
+                      Tantivy Query: {"with_index":{"query":{"match":{"field":"description","value":"keyboard","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
+ (15 rows)
+ 
+-SELECT min(paradedb.score(id)) FROM mock_items WHERE descriptio
 ```
 
-**File**: `common/src/lib.rs` (modified, +4/-0)
+**File**: `pg_search/tests/pg_regress/expected/aggregate.out` (modified, +10/-12)
 ```diff
-@@ -18,6 +18,10 @@
- pub use pgrx::pgrx_sql_entity_graph;
+@@ -535,20 +535,20 @@ INSERT INTO products (description, rating, category, price, in_stock) VALUES
+ EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
+ SELECT COUNT(*), AVG(price), MIN(rating), MAX(rating)
+ FROM products
+-WHERE id @@@ paradedb.all();
++WHERE id @@@ pdb.all();
+                                                                                        QUERY PLAN                                                                                        
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Aggregate Scan) on public.products
+    Output: pdb.agg_fn('COUNT(*)'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text)
+    Index: products_idx
+-   Tantivy Query: {"with_index":{"query":"all"}}
++   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
+      Applies to Aggregates: COUNT(*), AVG(price), MIN(rating), MAX(rating)
+      Aggregate Definition: {"0":{"filter":"*"},"1":{"avg":{"field":"price","missing":null}},"2":{"min":{"field":"rating","missing":null}},"3":{"max":{"field":"rating","missing":null}}}
+ (6 rows)
  
- pub mod api;
-+#[cfg(not(feature = "dst"))]
-+pub mod dst;
-+#[cfg(feature = "dst")]
-+pub use ::dst;
- pub mod gucs;
- pub mod index;
- pub mod parallel_worker;
+ SELECT COUNT(*), AVG(price), MIN(rating), MAX(rating)
+ FROM products
+-WHERE id @@@ paradedb.all();
++WHERE id @@@ pdb.all();
+  count |  avg   | min | max 
+ -------+--------+-----+-----
+      9 | 413.74 |   3 |   5
+@@ -557,20 +557,20 @@ WHERE id @@@ paradedb.all();
+ EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
+ SELECT COUNT(*), AVG(COALESCE(price, 0)), MIN(COALESCE(rating, 0)), MAX(COALESCE(rating, 0))
+ FROM products
+-WHERE id @@@ paradedb.all();
++WHERE id @@@ pdb.all();
+                                                                                       QUERY PLAN                                                                                      
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Aggregate Scan) on public.products
+    Output: pdb.agg_fn('COUNT(*)'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text)
+    Index: products_idx
+-   Tantivy Query: {"with_index":{"query":"all"}}
++   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
+      Applies to Aggregates: COUNT(*), AVG(price), MIN(rating), MAX(rating)
+      Aggregate Definition: {"0":{"filter":"*"},"1":{"avg":{"field":"price","missing":0.0}},"2":{"min":{"field":"rating","missing":0.0}},"3":{"max":{"field":"rating","missing":0.0}}}
+ (6 rows)
+ 
+ SELECT COUNT(*), AVG(COALESCE(price, 0)), MIN(COALESCE(rating, 0)), MAX(COALESCE(rating, 0))
+ FROM products
+-WHERE id @@@ paradedb.all();
++WHERE id @@@ pdb.all();
+  count |        avg        | min | max 
+ -------+-------------------+-----+-----
+      9 | 367.7688888888889 |   0 |   5
+@@ -586,20 +586,20 @@ FROM products;
+ EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
+ SELECT COUNT(*), AVG(COALESCE(price, 1)), MIN(COALESCE(rating, 1)), MAX(COALESCE(rating, 1))
+ FROM products
+-WHERE id @@@ paradedb.all();
++WHERE id @@@ pdb.all();
+                                                                                       QUERY PLAN                                                                                      
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Aggregate Scan) on public.products
+    Output: pdb.agg_fn('COUNT(*)'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text)
+    Index: products_idx
+-   Tantivy Query: {"with_index":{"query":"all"}}
++   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
+      Applies to Aggregates: COUNT(*), AVG(price), MIN(rating), MAX(rating)
+      Aggregate Definition: {"0":{"filter":"*"},"1":{"avg":{"field":"price","missing":1.0}},"2":{"min":{"field":"rating","missing":1.0}},"3":{"max":{"field":"rating","missing":1.0}}}
+ (6 rows)
+ 
+ SELECT COUNT(*), AVG(COALESCE(price, 1)), MIN(COALESCE(rating, 1)), MAX(COALESCE(rating, 1))
+ FROM products
+-WHERE id @@@ paradedb.all();
++WHERE id @@@ pdb.all();
+  count |  avg   | min | max 
+ -------+--------+-----+-----
+      9 | 367.88 |   1 |   5
+@@ -626,9 +626,7 @@ INSERT INTO count_array_test VALUES
+     (5, '{NULL,3}', '{NULL,red}'),
+     (6, '{{1,2},{3,4}}', '{{red,blue},{green,red}}');
+ CREATE INDEX count_array_test_idx ON count_array_test
+-USING paradedb (id, ints, words) WITH (
+-    text_fields = '{"words": {"fast": true, "tokenizer": {"type": "raw"}}}'
+-);
++USING paradedb (id, ints, (words::pdb.literal_normalized('columnar=true')));
+ ANALYZE count_array_test;
+ SET max_parallel_workers_per_gather = 0;
+ RESET paradedb.max_term_agg_buckets;
 ```
 
-**File**: `docker/Dockerfile.proptests` (modified, +5/-5)
+**File**: `pg_search/tests/pg_regress/expected/aggregate_dependent_column.out` (modified, +102/-102)
 ```diff
-@@ -3,7 +3,7 @@
- # - Minimum 2 CPU cores for compilation
- #
- # This image pre-builds the `qgen` property test binary and bundles it with
--# Antithesis singleton driver scripts. The binary is invoked in a loop against
-+# DST singleton driver scripts. The binary is invoked in a loop against
- # the in-cluster ParadeDB primary by the driver script (see
- # tests/antithesis/singleton_driver_property-tests.sh).
+@@ -42,23 +42,23 @@ Test 1: two keys, and no key decides the other: each pair of values is a group
+ EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
+ SELECT price, kind, COUNT(*)
+ FROM dependent_col_items
+-WHERE id @@@ paradedb.all()
++WHERE id @@@ pdb.all()
+ GROUP BY price, kind
+ ORDER BY price, kind;
+                                                                                                             QUERY PLAN                                                                                                             
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Aggregate Scan) on public.dependent_col_items
+    Output: price, kind, pdb.agg_fn('COUNT(*)'::text)
+    Index: dependent_col_items_idx
+-   Tantivy Query: {"with_index":{"query":"all"}}
++   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
+      Applies to Aggregates: COUNT(*)
+      Group By: price, kind
+      Aggregate Definition: {"grouped":{"aggs":{"grouped":{"terms":{"field":"kind","order":{"_key":"asc"},"segment_size":65000,"size":65000}}},"terms":{"field":"price","order":{"_key":"asc"},"segment_size":65000,"size":65000}}}
+ (7 rows)
  
-@@ -14,7 +14,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ SELECT price, kind, COUNT(*)
+ FROM dependent_col_items
+-WHERE id @@@ paradedb.all()
++WHERE id @@@ pdb.all()
+ GROUP BY price, kind
+ ORDER BY price, kind;
+  price | kind | count 
+@@ -89,11 +89,11 @@ ORDER BY price, kind;
+ EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
+ SELECT region, kind, COUNT(*)
+ FROM dependent_col_items
+-WHERE region = 2 AND id @@@ paradedb.all()
++WHERE region = 2 AND id @@@ pdb.all()
+ GROUP BY region, kind
+ ORDER BY kind;
+-                                                                                                QUERY PLAN                                                                                                
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++                                                                                                        QUERY PLAN                                                                                                         
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Sort
+    Output: region, kind, (count(*))
+    Sort Key: dependent_col_items.kind
+@@ -107,12 +107,12 @@ ORDER BY kind;
+            : AggregateExec: mode=Single, gby=[kind@1 as kind], aggr=[count(1) as agg_0, first_value(dependent_col_items_0.region) ORDER BY [dependent_col_items_0.ctid_0 ASC NULLS LAST] as row_1]
+            :   ProjectionExec: expr=[ctid@0 as ctid_0, kind@1 as kind, region@2 as region]
+            :     CooperativeExec
+-           :       PgSearchScan: table=dependent_col_items, segments=1, eager=[kind], visibility=eager, query={"boolean":{"must":[{"with_index":{"query":"all"}},{"term":{"field":"region","value":2}}]}}
++           :       PgSearchScan: table=dependent_col_items, segments=1, eager=[kind], visibility=eager, query={"boolean":{"must":[{"with_index":{"query":{"all":{"field":"id"}}}},{"term":{"field":"region","value":2}}]}}
+ (14 rows)
  
- # Install build and runtime dependencies. `jq` is used during build to extract
- # the test binary path from cargo's JSON output; `curl` is needed by the
--# antithesis-instrumentation build script, which `--features dst` pulls in.
-+# DST coverage shim build script, which `--features dst` pulls in.
- RUN apt-get update && apt-get install -y --no-install-recommends \
-     build-essential \
-     lld \
-@@ -39,7 +39,7 @@ WORKDIR /home/app
- # is built).
- COPY --chown=app:app . .
- 
--# Configure Antithesis test singletons.
-+# Configure DST test singletons.
- RUN mkdir -p /opt/antithesis/test/v1/quickstart
- COPY tests/antithesis/ /opt/antithesis/test/v1/quickstart/
- RUN chmod +x /opt/antithesis/test/v1/quickstart/*.sh
-@@ -50,7 +50,7 @@ ENV RUST_LOG=info
- ENV PGCLIENTENCODING=UTF8
- 
- # Prefetch deps and build the qgen test binary while we have Internet. This
--# Docker image will run in an air-gapped environment in Antithesis, so the
-+# Docker image will run in an air-gapped DST environment, so the
- # binary must already exist on disk. The `--message-format=json` output lets
- # us pick out the unhashed test executable path and copy it to a stable
- # location.
-@@ -62,7 +62,7 @@ RUN cargo fetch --locked --manifest-path /home/app/Cargo.toml && \
-     QGEN_BIN=$(jq -r 'select(.profile.test == true and .target.name == "qgen") | .executable' /tmp/build.json | tail -n 1) && \
-     test -x "$QGEN_BIN" && \
-     cp "$QGEN_BIN" /home/app/qgen && \
--    /home/app/qgen --exact antithesis_sdk_initializes && \
-+    /home/app/qgen --exact dst_sdk_initializes && \
-     rm /tmp/build.json
- 
- CMD ["sleep", "infinity"]
+ SELECT region, kind, COUNT(*)
+ FROM dependent_col_items
+-WHERE region = 2 AND id @@@ paradedb.all()
++WHERE region = 2 AND id @@@ pdb.all()
+ GROUP BY region, kind
+ ORDER BY kind;
+  region | kind | count 
+@@ -128,12 +128,12 @@ Test 2: the column is in the GROUP BY, and PostgreSQL drops it from the keys
+ EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
+ SELECT id, kind, COUNT(*)
+ FROM dependent_col_items
+-WHERE id @@@ paradedb.all()
++WHERE id @@@ pdb.all()
+ GROUP BY id, kind
+ ORDER BY id, kind
+ LIMIT 6;
+-                                                                            QUERY PLAN                                                                            
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
++                                                                                    QUERY PLAN                                                                                     
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Limit
+    Output: id, kind, (count(*))
+    ->  Custom Scan (ParadeDB Aggregate Scan)
+@@ -147,12 +147,12 @@ LIMIT 6;
+            :   SortExec: TopK(fetch=6), expr=[id@0 ASC NULLS LAST], preserve_partitioning=[false]
+            :     AggregateExec: mode=Single, gby=[id@0 as id], aggr=[count(1) as agg_0, p
 ```
 
-**File**: `docker/Dockerfile.source` (modified, +1/-1)
+**File**: `pg_search/tests/pg_regress/expected/aggregate_edgecases.out` (modified, +24/-24)
 ```diff
-@@ -34,7 +34,7 @@ WORKDIR /build
- COPY . .
- # Scope SanitizerCoverage to the explicit target so host build scripts and
- # cargo-pgrx stay uninstrumented. Keep the release path identical for benchmarks.
--# DST runs currently use Antithesis instrumentation and require linux/amd64.
-+# The instrumented DST build requires linux/amd64.
- ARG DST=false
- RUN /bin/bash <<'BUILD'
- set -euo pipefail
+@@ -30,7 +30,7 @@ SET parallel_tuple_cost = 0;
+ EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
+ SELECT pdb.agg('{"terms": {"field": "data", "size": 50000}}'::jsonb) OVER ()
+ FROM large_agg_test
+-WHERE id @@@ paradedb.all()
++WHERE id @@@ pdb.all()
+ ORDER BY id
+ LIMIT 1;
+                                                                                                                                QUERY PLAN                                                                                                                               
+@@ -50,12 +50,12 @@ LIMIT 1;
+                   TopK Order By: id asc
+                   TopK Limit: 1
+                Full Index Scan: true
+-               Tantivy Query: {"with_index":{"query":"all"}}
++               Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
+ (16 rows)
+ 
+ SELECT pdb.agg('{"terms": {"field": "data", "size": 50000}}'::jsonb) OVER ()
+ FROM large_agg_test
+-WHERE id @@@ paradedb.all()
++WHERE id @@@ pdb.all()
+ ORDER BY id
+ LIMIT 1;
+ ERROR:  Aggregate result is too large: 1800010 vs 1048576. Consider increasing the 'paradedb.max_window_aggregate_response_bytes' GUC.
+@@ -80,56 +80,56 @@ DELETE FROM delete_agg_test WHERE id > 1;
+ -- Test as aggregate function
+ -- Should return 1
+ EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
+-SELECT COUNT(*) FROM delete_agg_test WHERE id @@@ paradedb.all();
+-                           QUERY PLAN                            
+------------------------------------------------------------------
++SELECT COUNT(*) FROM delete_agg_test WHERE id @@@ pdb.all();
++                            QUERY PLAN                            
++------------------------------------------------------------------
+  Custom Scan (ParadeDB Aggregate Scan) on public.delete_agg_test
+    Output: pdb.agg_fn('COUNT(*)'::text)
+    Index: delete_agg_test_idx
+-   Tantivy Query: {"with_index":{"query":"all"}}
++   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
+      Applies to Aggregates: COUNT(*)
+      Aggregate Definition: {"0":{"filter":"*"}}
+ (6 rows)
+ 
+-SELECT COUNT(*) FROM delete_agg_test WHERE id @@@ paradedb.all();
++SELECT COUNT(*) FROM delete_agg_test WHERE id @@@ pdb.all();
+  count 
+ -------
+      1
+ (1 row)
+ 
+ -- Should return {"value": 1.0}
+ EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
+-SELECT pdb.agg('{"value_count": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ paradedb.all();
++SELECT pdb.agg('{"value_count": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ pdb.all();
+                                   QUERY PLAN                                   
+ -------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Aggregate Scan) on public.delete_agg_test
+    Output: pdb.agg_fn('pdb.agg'::text)
+    Index: delete_agg_test_idx
+-   Tantivy Query: {"with_index":{"query":"all"}}
++   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
+      Applies to Aggregates: CUSTOM_AGG({"value_count":{"field":"id"}})
+      Aggregate Definition: {"0":{"value_count":{"field":"id","missing":null}}}
+ (6 rows)
+ 
+-SELECT pdb.agg('{"value_count": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ paradedb.all();
++SELECT pdb.agg('{"value_count": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ pdb.all();
+       agg       
+ ----------------
+  {"value": 1.0}
+ (1 row)
+ 
+ -- Should return count: 1
+ EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
+-SELECT pdb.agg('{"stats": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ paradedb.all();
++SELECT pdb.agg('{"stats": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ pdb.all();
+                                QUERY PLAN                                
+ -------------------------------------------------------------------------
+  Custom Scan (ParadeDB Aggregate Scan) on public.delete_agg_test
+    Output: pdb.agg_fn('pdb.agg'::text)
+    Index: delete_agg_test_idx
+-   Tantivy Query: {"with_index":{"query":"all"}}
++   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
+      Applies to Aggregates: CUSTOM_AGG({"stats":{"field":"id"}})
+      Aggregate Definition: {"0":{"stats":{"field":"id","missing":null}}}
+ (6 rows)
+ 
+-SELECT pdb.agg('{"stats": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ paradedb.all();
++SELECT pdb.agg('{"stats": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ pdb.all();
+                              agg                              
+ --------------------------------------------------------------
+  {"avg": 1.0, "max": 1.0, "min": 1.0, "sum": 1.0, "count": 1}
+@@ -142,7 +142,7 @@ SELECT
+     COUNT(*) OVER (),
+     pdb.agg('{"value_count": {"field": "id"}}'::jsonb) OVER ()
+ FROM delete_agg_test
+-WHERE id @@@ paradedb.all()
++WHERE id @@@ pdb.all()
+ ORDER BY id
+ LIMIT 1;
+                                                                                                                                                                   
 ```
 
-**File**: `docker/Dockerfile.stressgres` (modified, +3/-3)
+**File**: `pg_search/tests/pg_regress/expected/aggregate_having_moved_to_where.out` (modified, +54/-54)
 ```diff
-@@ -54,7 +54,7 @@ RUN cargo fetch --manifest-path /home/app/Cargo.toml && \
- FROM debian:trixie-slim AS runtime
+@@ -23,7 +23,7 @@ Test 1: HAVING on a GROUP BY key
+ EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
+ SELECT account_id, kind, COUNT(*)
+ FROM having_items
+-WHERE id @@@ paradedb.all()
++WHERE id @@@ pdb.all()
+ GROUP BY account_id, kind
+ HAVING account_id > 1
+ ORDER BY account_id, kind;
+@@ -32,15 +32,15 @@ ORDER BY account_id, kind;
+  Custom Scan (ParadeDB Aggregate Scan) on public.having_items
+    Output: account_id, kind, pdb.agg_fn('COUNT(*)'::text)
+    Index: having_items_idx
+-   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"range":{"field":"account_id","lower_bound":{"excluded":1},"upper_bound":null}}]}}
++   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":{"all":{"field":"id"}}}},{"range":{"field":"account_id","lower_bound":{"excluded":1},"upper_bound":null}}]}}
+      Applies to Aggregates: COUNT(*)
+      Group By: account_id, kind
+      Aggregate Definition: {"grouped":{"aggs":{"grouped":{"terms":{"field":"kind","order":{"_key":"asc"},"segment_size":65000,"size":65000}}},"terms":{"field":"account_id","order":{"_key":"asc"},"segment_size":65000,"size":65000}}}
+ (7 rows)
  
- # Upgrade the runtime packages so a rebuild picks up all available Debian
--# security fixes. psql is used by the Antithesis setup/verification scripts;
-+# security fixes. psql is used by the DST setup and verification scripts;
- # util-linux provides flock for the recovery-liveness script.
- # Graph generation is disabled in this image, avoiding Fontconfig and its
- # transitive font/XML dependencies. Normal source builds retain graph support.
-@@ -71,8 +71,8 @@ RUN useradd --create-home --shell /bin/bash app
- 
- WORKDIR /home/app
- 
--# Preserve the paths used by the public Docker examples and Antithesis while copying only runtime
--# inputs. The unstripped binary under /symbols lets Antithesis symbolize instrumented crashes.
-+# Preserve the paths used by the public Docker examples and DST runner while copying only runtime
-+# inputs. The unstripped binary under /symbols lets the DST runner symbolize instrumented crashes.
- COPY --chown=app:app --from=builder /tmp/stressgres /symbols/stressgres
- # Copy the native client without postgresql-client-common and its unused Perl runtime. Because the
- # Debian package database is not copied with it, package-based scanners may not inventory psql.
+ SELECT account_id, kind, COUNT(*)
+ FROM having_items
+-WHERE id @@@ paradedb.all()
++WHERE id @@@ pdb.all()
+ GROUP BY account_id, kind
+ HAVING account_id > 1
+ ORDER BY account_id, kind;
+@@ -63,7 +63,7 @@ SELECT *
+ FROM (
+     SELECT account_id, kind, COUNT(*) AS n
+     FROM having_items
+-    WHERE id @@@ paradedb.all()
++    WHERE id @@@ pdb.all()
+     GROUP BY account_id, kind
+ ) AS grouped
+ WHERE account_id > 1
+@@ -73,7 +73,7 @@ ORDER BY account_id, kind;
+  Custom Scan (ParadeDB Aggregate Scan) on public.having_items
+    Output: having_items.account_id, having_items.kind, pdb.agg_fn('COUNT(*)'::text)
+    Index: having_items_idx
+-   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"range":{"field":"account_id","lower_bound":{"excluded":1},"upper_bound":null}}]}}
++   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":{"all":{"field":"id"}}}},{"range":{"field":"account_id","lower_bound":{"excluded":1},"upper_bound":null}}]}}
+      Applies to Aggregates: COUNT(*)
+      Group By: account_id, kind
+      Aggregate Definition: {"grouped":{"aggs":{"grouped":{"terms":{"field":"kind","segment_size":65000,"size":65000}}},"terms":{"field":"account_id","segment_size":65000,"size":65000}}}
+@@ -83,7 +83,7 @@ SELECT *
+ FROM (
+     SELECT account_id, kind, COUNT(*) AS n
+     FROM having_items
+-    WHERE id @@@ paradedb.all()
++    WHERE id @@@ pdb.all()
+     GROUP BY account_id, kind
+ ) AS grouped
+ WHERE account_id > 1
+@@ -106,7 +106,7 @@ EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
+ WITH grouped AS (
+     SELECT account_id, kind, COUNT(*) AS n
+     FROM having_items
+-    WHERE id @@@ paradedb.all()
++    WHERE id @@@ pdb.all()
+     GROUP BY account_id, kind
+ )
+ SELECT * FROM grouped WHERE kind >= 'c' ORDER BY account_id, kind;
+@@ -115,7 +115,7 @@ SELECT * FROM grouped WHERE kind >= 'c' ORDER BY account_id, kind;
+  Custom Scan (ParadeDB Aggregate Scan) on public.having_items
+    Output: having_items.account_id, having_items.kind, pdb.agg_fn('COUNT(*)'::text)
+    Index: having_items_idx
+-   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"range":{"field":"kind","lower_bound":{"included":"c"},"upper_bound":null}}]}}
++   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":{"all":{"field":"id"}}}},{"range":{"field":"kind","lower_bound":{"included":"c"},"upper_bound":null}}]}}
+      Applies to Aggregates: COUNT(*)
+      Group By: account_id, kind
+      Aggregate Definition: {"grouped":{"aggs":{"grouped":{"terms":{"field":"kind","segment_size":65000,"size":65000}}},"terms":{"field":"account_id","segment_size":65000,"size":65000}}}
+@@ -124,7 +124,7 @@ SELECT * FROM grouped WHERE kind >= 'c' ORDER BY account_id, kind;
+ WITH grouped AS (
+     SELECT account_id, kind, COUNT(*) AS n
+     FROM having_items
+-    WHERE id @@@ paradedb.all()
++    WHERE id @@@ pdb.all()
+     GROUP BY account_id, kind
+ )
+ SELECT * FROM grouped WHERE kind >= 'c' ORDER BY account_id, kind;
+@@ -143,13 +143,13 @@ Test 4: a HAVING condition on an aggregate stays in HAVING -> declined
+ EXPLAIN (COSTS OFF, TIMING OFF)
+ SELECT account_id, COUNT(*)
+ FROM having_items
+-WHERE id @@@ paradedb.all()
++WHERE id @@@ pdb.all()
+ GROUP BY account_id
+ HAVING COUNT(*) > 10
+ ORDER BY account_id;
+ WARNING:  Aggregate Scan not used: HAVING clause is not supported (see https://github.com/paradedb/paradedb/issues/4206). To disable this warning: SET paradedb.planner_warnings = 'off' (table: having_items)
+-                          QUERY PLAN                          
+---------------------------------------------------------------
++                                  QUERY PLAN                                  
++------------------------------------------------------------------------------
+  Sort
+    Sort Key: account_id
+    ->  HashAggregate
+@@ -162,12 +162,12 @@ WARNING:  Aggregate Scan not used: HAVING clause is not supported (see https://g
+      
 ```
 
-**File**: `docker/README.md` (modified, +1/-1)
+**File**: `pg_search/tests/pg_regress/expected/aggregate_join.out` (modified, +6/-6)
 ```diff
-@@ -38,7 +38,7 @@ postgresql:
- 
- ## Manifests
- 
--`manifests/cnpg.yaml` is the CloudNativePG operator, rendered from the upstream Helm chart with default values and bundled into the Antithesis config images. To upgrade the operator, re-render it with the chart version whose `appVersion` is the CNPG release you want ([chart index](https://github.com/cloudnative-pg/charts)):
-+`manifests/cnpg.yaml` is the CloudNativePG operator, rendered from the upstream Helm chart with default values and bundled into the DST config images. To upgrade the operator, re-render it with the chart version whose `appVersion` is the CNPG release you want ([chart index](https://github.com/cloudnative-pg/charts)):
- 
- ```bash
- helm repo add cnpg https://cloudnative-pg.github.io/charts
+@@ -1705,10 +1705,10 @@ EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
+ SELECT i.metadata->>'category' AS category, COUNT(*), SUM(o.qty)
+ FROM agg_json_items i
+ JOIN agg_json_orders o ON i.id = o.item_id
+-WHERE i.id @@@ paradedb.all()
++WHERE i.id @@@ pdb.all()
+ GROUP BY i.metadata->>'category';
+-                                                            QUERY PLAN                                                             
+------------------------------------------------------------------------------------------------------------------------------------
++                                                                    QUERY PLAN                                                                     
++---------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Aggregate Scan)
+    Output: ((i.metadata ->> 'category'::text)), (count(*)), (sum(o.qty))
+    Backend: DataFusion
+@@ -1719,7 +1719,7 @@ GROUP BY i.metadata->>'category';
+      : AggregateExec: mode=Single, gby=[metadata.category@0 as metadata.category], aggr=[count(1) as agg_0, sum(o_1.qty) as agg_1]
+      :   HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, item_id@1)], projection=[metadata.category@0, qty@2]
+      :     CooperativeExec
+-     :       PgSearchScan: table=i, segments=1, eager=[metadata.category], visibility=eager, query={"with_index":{"query":"all"}}
++     :       PgSearchScan: table=i, segments=1, eager=[metadata.category], visibility=eager, query={"with_index":{"query":{"all":{"field":"id"}}}}
+      :     CooperativeExec
+      :       PgSearchScan: table=o, segments=1, dynamic_filters=1, visibility=eager, query="all"
+ (13 rows)
+@@ -1728,7 +1728,7 @@ GROUP BY i.metadata->>'category';
+ SELECT i.metadata->>'category' AS category, COUNT(*), SUM(o.qty)
+ FROM agg_json_items i
+ JOIN agg_json_orders o ON i.id = o.item_id
+-WHERE i.id @@@ paradedb.all()
++WHERE i.id @@@ pdb.all()
+ GROUP BY i.metadata->>'category'
+ ORDER BY category;
+   category   | count | sum 
+@@ -1742,7 +1742,7 @@ SET paradedb.enable_aggregate_custom_scan TO off;
+ SELECT i.metadata->>'category' AS category, COUNT(*), SUM(o.qty)
+ FROM agg_json_items i
+ JOIN agg_json_orders o ON i.id = o.item_id
+-WHERE i.id @@@ paradedb.all()
++WHERE i.id @@@ pdb.all()
+ GROUP BY i.metadata->>'category'
+ ORDER BY category;
+   category   | count | sum 
+```
+
+**File**: `pg_search/tests/pg_regress/expected/aggregate_join_multicolumn_topk.out` (modified, +2/-2)
+```diff
+@@ -14,9 +14,9 @@ CREATE TABLE multicolumn_topk_work_items (
+     abstract_text TEXT NOT NULL
+ );
+ CREATE INDEX multicolumn_topk_researchers_idx ON multicolumn_topk_researchers
+-USING bm25 (researcher_id, bio);
++USING paradedb (researcher_id, bio);
+ CREATE INDEX multicolumn_topk_work_items_idx ON multicolumn_topk_work_items
+-USING bm25 (
++USING paradedb (
+     work_id,
+     researcher_id,
+     (category::pdb.literal),
+```
+
+**File**: `pg_search/tests/pg_regress/expected/aggregate_limit_under_distinct.out` (modified, +3/-3)
+```diff
+@@ -13,9 +13,9 @@ CREATE TABLE limit_under_distinct_work_items (
+     abstract_text TEXT NOT NULL
+ );
+ CREATE INDEX limit_under_distinct_researchers_idx ON limit_under_distinct_researchers
+-USING bm25 (researcher_id, bio);
++USING paradedb (researcher_id, bio);
+ CREATE INDEX limit_under_distinct_work_items_idx ON limit_under_distinct_work_items
+-USING bm25 (work_id, researcher_id, item_date, abstract_text);
++USING paradedb (work_id, researcher_id, item_date, abstract_text);
+ -- Researchers 1 and 2 share the same MAX(item_date).
+ INSERT INTO limit_under_distinct_researchers (researcher_id, bio) VALUES
+     (1, 'cancer immunology'),
+@@ -38,7 +38,7 @@ INSERT INTO limit_under_distinct_items
+ SELECT row_number() OVER (), 'cat_' || lpad(k::text, 2, '0')
+ FROM generate_series(0, 49) k, generate_series(1, 10 * (k / 10 + 1)) n;
+ CREATE INDEX limit_under_distinct_items_idx ON limit_under_distinct_items
+-USING bm25 (id, (cat::pdb.literal));
++USING paradedb (id, (cat::pdb.literal));
+ ANALYZE limit_under_distinct_researchers;
+ ANALYZE limit_under_distinct_work_items;
+ ANALYZE limit_under_distinct_items;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7667** (2026-11-24): fix: Synchronize resource cleanup on abort (@paradedb-github-bot[bot])
-- **PR #7666** (2026-11-24): perf: Add support for pushing dynamic hash expression filters into Tantivy (@paradedb-github-bot[bot])
-- **PR #7663** (2026-11-24): ci: use a SQL smoke test after extension upgrades (@paradedb-github-bot[bot])
-- **PR #7660** (2026-11-24): ci: use a SQL smoke test after extension upgrades (@philippemnoel)
-- **PR #7659** (2026-11-24): build: make DST optional for the extension (@philippemnoel)
-- **PR #7658** (2026-11-24): fix: report vector index build training phases (@paradedb-github-bot[bot])
+- **PR #7680** (2026-11-25): perf(vector): write full-precision rows once during index builds (@paradedb-github-bot[bot])
+- **PR #7679** (closed): docs: Guide Neon users through logical replication (@philippemnoel)
+- **PR #7678** (2026-11-25): chore: Upgrade Antithesis CloudNativePG to 1.31.0-rc1 (@philippemnoel)
+- **PR #7672** (2026-11-25): feat: remove the deprecated pdb.term_set aggregate (@philippemnoel)
+- **PR #7671** (2026-11-25): chore: remove obsolete Stressgres wrappers and fast-field setting (@philippemnoel)
+- **PR #7670** (2026-11-25): chore: Generate Dockerfiles for v0.27.1 (@paradedb-github-bot[bot])
 
 ---
 
@@ -3674,57 +4016,49 @@ Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@use
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Synchronize resource cleanup on abort
+## X. vector): write full-precision rows once during index builds
 
 **RULE**:
-When implementing operations in `.github/scripts/check_impl_drop.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3db63451`: Synchronize resource cleanup on abort. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f84516c5`: vector): write full-precision rows once during index builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/check_impl_drop.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`impl_safe_drop!`, or any direct `IsTransactionState()` call inside `impl_safe_drop!` that does
-not say why it skips `ResourceOwnerStamp`.
-words: "We intentionally do NOT use `impl_safe_drop!` here because ...".
-
-Inside `impl_safe_drop!`, checking `IsTransactionState()` alone is not enough when a scan state
-lives in a `MemoryContext` whose `ResourceOwner` has already been released (#7609); wrappers
-should gate cleanup with `ResourceOwnerStamp` from common/src/postgres/resowner.rs, or opt out
-directly above the call with "We intentionally call `IsTransactionState()` here because ...".
-Every workspace crate that depends on `pgrx` is scanned.
-SAFE_DROP_START = re.compile(r"^[ \t]*(?:[A-Za-z0-9_]+::)*impl_safe_drop!\s*\(")
-IS_TX_STATE = re.compile(r"\bIsTransactionState\s*\(")
-STRING_LITERAL = re.compile(r'"(?:\\.|[^"\\])*"')
-TX_STATE_OVERRIDE = re.compile(
-    r"\bnot\s+us(?:e|ing)\W+ResourceOwnerStamp\b|\bintentionally\b.*\bIsTransactionState\b",
-    re.IGNORECASE,
-)
-    (
-        "crate::impl_safe_drop!(Foo, |self| {\n    if unsafe { IsTransactionState() } {}\n});",
-        1,
-    ),
-    (
-        (
-            "crate::impl_safe_drop!([T] Foo<T>, |self| {\n"
-            "    // TODO
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-`impl_safe_drop!`.
-words: "We intentionally do NOT use `impl_safe_drop!` here because ...". Every workspace crate
-that depends on `pgrx` is scanned.
-    """Return (line, header) for every unexcused `impl Drop` or `DropGuard`."""
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3db63451` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f84516c5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

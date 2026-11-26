@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:08:12.892Z",
-  "total_cycles_completed": 12515,
-  "total_learnings_persisted": 12515,
-  "total_rules_promoted": 11466,
+  "last_updated": "2026-11-26T01:18:04.603Z",
+  "total_cycles_completed": 12519,
+  "total_learnings_persisted": 12519,
+  "total_rules_promoted": 11469,
   "history": [
-    {
-      "timestamp": "2026-11-25T06:39:13.996Z",
-      "repository": "sharkdp/fd",
-      "learningId": "learn-github-sharkdp-fd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T06:39:20.653Z",
-      "repository": "TableProApp/TablePro",
-      "learningId": "learn-github-tableproapp-tablepro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T06:39:22.207Z",
-      "repository": "stakater/Reloader",
-      "learningId": "learn-github-stakater-reloader",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T06:39:26.706Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T06:47:39.893Z",
       "repository": "RecursiveSI/flint",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T01:08:12.892Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:17:49.412Z",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:17:52.073Z",
+      "repository": "cloudwego/volo",
+      "learningId": "learn-github-cloudwego-volo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:17:59.544Z",
+      "repository": "saltstack/salt",
+      "learningId": "learn-github-saltstack-salt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:18:04.603Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

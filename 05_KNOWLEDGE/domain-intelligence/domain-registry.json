@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T01:08:19.059Z",
-  "total_records": 2694,
+  "last_updated": "2026-11-26T01:18:09.688Z",
+  "total_records": 2696,
   "domains": {
     "A": {
       "total": 22,
@@ -1689,7 +1689,7 @@
       ]
     },
     "H": {
-      "total": 640,
+      "total": 642,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2330,7 +2330,9 @@
         "DOM-H-2010FB8D",
         "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
         "domain_intelligence-technical-construction-intelligence-withcoral-coral-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-withcoral-coral-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-withcoral-coral-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-cloudwego-volo-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-cloudwego-volo-learnings-core-invariants"
       ]
     },
     "I": {
@@ -21510,8 +21512,8 @@
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "04676d01421970c142f4e28c9407c312731689bd9b2f5468b8204d968c5c592d",
-      "created_at": "2026-11-24T03:22:43.462Z"
+      "content_hash": "aba2e2597b4288e70000f27a2cfbc1634a318988aa7d4532eec0e93199d8675b",
+      "created_at": "2026-11-26T01:18:04.972Z"
     },
     "DOM-D-53AB726C": {
       "record_id": "DOM-D-53AB726C",
@@ -23769,8 +23771,8 @@
       "title": "Architecture Intelligence: saltstack/salt Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-architecture-intelligence-saltstack-salt-core-invariants.md",
       "repository": "saltstack/salt",
-      "content_hash": "cef1873d4dea2f21b3b71d44867b7487876a51a517c9820db85d2a35d8a53824",
-      "created_at": "2026-11-24T06:11:19.975Z"
+      "content_hash": "fc6cec54ee88f052eaed9e6421749f233a19ac8e60da7ca5f839096fb3faf482",
+      "created_at": "2026-11-26T01:17:59.993Z"
     },
     "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
@@ -23838,8 +23840,8 @@
       "title": "Architecture Intelligence: saltstack-salt-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-learnings-architecture-intelligence-saltstack-salt-learnings-core.md",
       "repository": "saltstack-salt-learnings",
-      "content_hash": "9569865df6145b9ae523c2cd5faea8245a68a3947164d5bc590cdf116bda0904",
-      "created_at": "2026-11-24T06:12:13.558Z"
+      "content_hash": "51be2d7c925df47cf66fffd0867a3d3c0dfb99a16fefa2437070aa41c7c417c9",
+      "created_at": "2026-11-26T01:18:09.688Z"
     },
     "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants",
@@ -25615,8 +25617,8 @@
       "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-research-knowledge-in.md",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
-      "content_hash": "54263d8ec1bc401dfc8a4fe7a6264aa58e8b76aab0c9e916deeece0d4674eff6",
-      "created_at": "2026-11-22T04:04:53.008Z"
+      "content_hash": "41b5ec249e40009ed13779b2c41751391259552586baac9a741aa455bee800fe",
+      "created_at": "2026-11-26T01:17:49.614Z"
     },
     "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants",
@@ -25633,8 +25635,8 @@
       "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-learnings-research-kn.md",
       "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings",
-      "content_hash": "e2b0b81ba611f9f5993914b7694533187302e62f81fe54a1e0e417a8adc4808e",
-      "created_at": "2026-11-22T04:05:10.924Z"
+      "content_hash": "531d4e8e0386f6cb3959aeb8d8176e77d30e7ecb2f5e3a0807eea979d385da77",
+      "created_at": "2026-11-26T01:18:09.054Z"
     },
     "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants",
@@ -45425,6 +45427,24 @@
       "repository": "databendlabs/databend",
       "content_hash": "4e321a9a094d8116f17062bbc83a74afa0d4921f2a4af6668a8f41059cf0573b",
       "created_at": "2026-11-26T01:08:13.319Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cloudwego-volo-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-cloudwego-volo-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: cloudwego/volo Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cloudwego-volo-technical-construction-intelligence-cloudwego-volo-core-invariant.md",
+      "repository": "cloudwego/volo",
+      "content_hash": "97a644928d2e6ba57b052851c7895126b2aefccf8c6d662b89764138dd6bcaff",
+      "created_at": "2026-11-26T01:17:52.453Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cloudwego-volo-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-cloudwego-volo-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: cloudwego-volo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cloudwego-volo-learnings-technical-construction-intelligence-cloudwego-volo-lear.md",
+      "repository": "cloudwego-volo-learnings",
+      "content_hash": "5ede124d058bce5b5f34fa4f8d23c678894f984a681458cfcdc1ac28317b7c74",
+      "created_at": "2026-11-26T01:18:08.532Z"
     }
   }
 }
