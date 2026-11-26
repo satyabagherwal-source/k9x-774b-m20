@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T20:14:15.957Z",
+  "last_updated": "2026-11-26T20:23:12.698Z",
   "total_verified_learnings": 9134,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26169,
+  "total_items": 26173,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219876,8 +219876,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "77a83f3b",
-      "content_hash": "38017b8e107eef76b2d31c874da7f1c8efe44694afec9f36791a12855be575d2",
+      "source_version": "92486c78",
+      "content_hash": "7cc86e05095d74a0ae3772ef03ddc6d47b0d44de117fe093a5be107560e6993d",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -219920,6 +219920,11 @@
           "number": 10583,
           "title": "object type comparison of same size with null values",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10771,
+          "title": "ClassCastException on object array subscript through view",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219927,7 +219932,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T01:53:37.696Z",
+      "verified_at": "2026-11-26T20:23:05.558Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219969,10 +219974,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-architecture-intelligence-crate-crate-core-invariants.md",
       "title": "Architecture Intelligence: crate/crate Core Invariants",
       "repository": "crate/crate",
-      "source_version": "77a83f3b",
-      "content_hash": "940df3c95314ea4112ba8c7a673124dfd5bb0eb6fab46fc8b5f7cfec7bba7534",
+      "source_version": "92486c78",
+      "content_hash": "64e1faee2aaeee179d4ebb3a1e0e03bd641c7d5a7b029371ab80f13c5b216eb4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T01:53:38.319Z"
+      "persisted_at": "2026-11-26T20:23:06.333Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate",
@@ -219981,10 +219986,10 @@
       "relative_path": "08_VERIFICATION/crate-crate-verification-protocol-empirical-defect-shield-for-crate-crate.md",
       "title": "Verification Protocol: Empirical Defect Shield for crate/crate",
       "repository": "crate/crate",
-      "source_version": "77a83f3b",
-      "content_hash": "abca31c7b4fe0151f2a3bd258812cf17b8855df479c54421ffc07c857d21364a",
+      "source_version": "92486c78",
+      "content_hash": "4e30b6aed6abdc3566b28d8f728f8885d0e1c9094c832c61fb4839f3dd663487",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T01:53:38.497Z"
+      "persisted_at": "2026-11-26T20:23:06.584Z"
     },
     "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action": {
       "item_id": "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action",
@@ -223998,7 +224003,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-20b",
       "source_version": "hf-openai-gpt-oss-20b",
-      "content_hash": "66e6128f465c3ac56cc324736996c446f7fc8066be4988d1192373a72a1b5e7e",
+      "content_hash": "afb529aec08857d58f3b34f0d86584daf1a999d1e3179e8e7a7c817804540fa9",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "promoted_rules": [
@@ -224023,7 +224028,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T06:53:51.563Z",
+      "verified_at": "2026-11-26T20:22:50.589Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250131,8 +250136,8 @@
       "slug": "vi-websocat",
       "platform": "github",
       "source_url": "https://github.com/vi/websocat",
-      "source_version": "097582e3",
-      "content_hash": "f3d51d8316b610635589ac5c59198df4d91bb43e22d36f3e82e181826211ca22",
+      "source_version": "c8d91850",
+      "content_hash": "8e4472c6dffc37316d98d8a121d2f8288c5afa8314a9b02477710c6a10108407",
       "dossier_path": "07_PROJECT_LEARNING/vi-websocat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vi-websocat-learnings.md",
       "promoted_rules": [
@@ -250140,6 +250145,11 @@
           "number": 8012,
           "title": "Empirical Invariant Guard in Cargo.lock",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10770,
+          "title": "Empirical Invariant Guard in line_peer.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -250147,7 +250157,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T12:31:18.554Z",
+      "verified_at": "2026-11-26T20:22:52.675Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250163,10 +250173,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vi-websocat-architecture-intelligence-vi-websocat-core-invariants.md",
       "title": "Architecture Intelligence: vi/websocat Core Invariants",
       "repository": "vi/websocat",
-      "source_version": "097582e3",
-      "content_hash": "0c7d97f933d237b2477d2f7a15eb08dd9ece4b8b48e604300a5ef89c95ce670c",
+      "source_version": "c8d91850",
+      "content_hash": "2fc4696afbfe18a507c67e80ac8f93d8a54bdb5acecd4454644c4a9128fd4b5c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T12:31:19.100Z"
+      "persisted_at": "2026-11-26T20:22:53.515Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vi-websocat": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vi-websocat",
@@ -250175,10 +250185,10 @@
       "relative_path": "08_VERIFICATION/vi-websocat-verification-protocol-empirical-defect-shield-for-vi-websocat.md",
       "title": "Verification Protocol: Empirical Defect Shield for vi/websocat",
       "repository": "vi/websocat",
-      "source_version": "097582e3",
-      "content_hash": "38b0b15e723b3f6f2630d070eb0ccb4cc29c0cf462179b5b62015251f742a77a",
+      "source_version": "c8d91850",
+      "content_hash": "c84055a223d4bde24729d0741594380225e381a091149857d41b719a8de655f5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T12:31:19.245Z"
+      "persisted_at": "2026-11-26T20:22:53.734Z"
     },
     "learn-huggingface-sensenova-sensenova-loop-9b-preview": {
       "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
@@ -250227,9 +250237,9 @@
       "title": "Architecture Intelligence: vi-websocat-learnings Core Invariants",
       "repository": "vi-websocat-learnings",
       "source_version": "HEAD",
-      "content_hash": "4ee747b25d1ab0cc5acc598a0a0e5107e680e64359794ca3898da12ebda6a562",
+      "content_hash": "8048c8227976822af98109f9ec35d0ce155406489c1de2b74fbaf316782ee13b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T12:36:23.098Z"
+      "persisted_at": "2026-11-26T20:23:10.221Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vi-websocat-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vi-websocat-learnings",
@@ -250239,9 +250249,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vi-websocat-learnings",
       "repository": "vi-websocat-learnings",
       "source_version": "HEAD",
-      "content_hash": "907cb09b4f4857bb874c339b05ca4e400d2dea3c0dca81a91cf313a7a44d6a59",
+      "content_hash": "fd0efdd8432200ff7e40487ccdfb1eab20cf286e8c61b96ea3daf780951fb6bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T12:36:23.237Z"
+      "persisted_at": "2026-11-26T20:23:10.485Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-preview-learnings": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-preview-learnings",
@@ -294585,9 +294595,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crate-crate-learnings",
       "repository": "crate-crate-learnings",
       "source_version": "HEAD",
-      "content_hash": "eced7c32c06fe237e899dd4f37f0d51d52b46145ac3995deff32f2236c3f46b0",
+      "content_hash": "eee48c42eac65cb857bd27e8654d6cbccf1f64940d0712f85a3cbf29a333f667",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:58:47.579Z"
+      "persisted_at": "2026-11-26T20:23:12.698Z"
     },
     "rule-9245": {
       "learning_id": "rule-9245",
@@ -296707,9 +296717,9 @@
       "title": "Research & Knowledge Intelligence: openai/gpt-oss-20b Core Invariants",
       "repository": "openai/gpt-oss-20b",
       "source_version": "hf-openai-gpt-oss-20b",
-      "content_hash": "11f6bdca8334a885ee0cd992ddcee8b31b4300870a38bd9480154764bec93e51",
+      "content_hash": "a3e37713ad7fed8a9705f532560b7eee126cd45f8964d19a94a297e8304de097",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T06:53:51.992Z"
+      "persisted_at": "2026-11-26T20:22:51.219Z"
     },
     "rule-9283": {
       "learning_id": "rule-9283",
@@ -296745,9 +296755,9 @@
       "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-20b-learnings Core Invariants",
       "repository": "hf-openai-gpt-oss-20b-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0afde95297efdd50a5e7b8e3ed3f05919de924e11c613d17e54f3ee1eb68f83",
+      "content_hash": "7913c4bfde76b08a101028feacc7cfbccc3ebb4528b450561568738720978885",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T06:54:03.626Z"
+      "persisted_at": "2026-11-26T20:23:10.966Z"
     },
     "rule-9284": {
       "learning_id": "rule-9284",
@@ -302713,9 +302723,9 @@
       "title": "Architecture Intelligence: crate-crate-learnings Core Invariants",
       "repository": "crate-crate-learnings",
       "source_version": "HEAD",
-      "content_hash": "93ad59df86d52b58ada0977a0f6b3bef4e92a9946ec1bcd9f97ca358361d0c86",
+      "content_hash": "304290c4e9ab8f4110384ee069a95d454d0f09257c74dc92c32b272a9e20ae70",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T03:58:47.396Z"
+      "persisted_at": "2026-11-26T20:23:12.476Z"
     },
     "rule-9429": {
       "learning_id": "rule-9429",
@@ -358846,6 +358856,58 @@
       "content_hash": "24cce25640fe375f64f7e6dd5455b78a443282de9ecfc584697f927bb5f237f9",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T20:14:14.496Z"
+    },
+    "rule-10770": {
+      "learning_id": "rule-10770",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10770,
+      "title": "Empirical Invariant Guard in line_peer.rs",
+      "source_url": "https://github.com/vi/websocat",
+      "source_version": "c8d91850",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T20:22:52.675Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-line_peer-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-line_peer-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-21E8-empirical-invariant-guard-in-line_peer-rs.md",
+      "title": "Empirical Invariant Guard in line_peer.rs",
+      "repository": "vi-websocat-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d4f14c590405a055f6e6241dbf55239750827b5783b9b949a79e4a0510902480",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T20:23:09.974Z"
+    },
+    "rule-10771": {
+      "learning_id": "rule-10771",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10771,
+      "title": "ClassCastException on object array subscript through view",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "92486c78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T20:23:05.558Z"
+    },
+    "candidate_directive-classcastexception-on-object-array-subscript-through-view": {
+      "item_id": "candidate_directive-classcastexception-on-object-array-subscript-through-view",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-235N-classcastexception-on-object-array-subscript-through-view.md",
+      "title": "ClassCastException on object array subscript through view",
+      "repository": "crate-crate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "392ea027f01610ddf89a237e3848b6b8c2c1a4671bc26510a83a11b8b83cef1b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T20:23:12.252Z"
     }
   },
   "ai-builder-brain": {

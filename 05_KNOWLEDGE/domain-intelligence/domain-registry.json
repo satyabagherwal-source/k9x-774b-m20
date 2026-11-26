@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T20:14:15.661Z",
+  "last_updated": "2026-11-26T20:23:12.476Z",
   "total_records": 2774,
   "domains": {
     "A": {
@@ -12201,8 +12201,8 @@
       "title": "Architecture Intelligence: crate/crate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-architecture-intelligence-crate-crate-core-invariants.md",
       "repository": "crate/crate",
-      "content_hash": "940df3c95314ea4112ba8c7a673124dfd5bb0eb6fab46fc8b5f7cfec7bba7534",
-      "created_at": "2026-11-26T01:53:38.319Z"
+      "content_hash": "64e1faee2aaeee179d4ebb3a1e0e03bd641c7d5a7b029371ab80f13c5b216eb4",
+      "created_at": "2026-11-26T20:23:06.333Z"
     },
     "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants",
@@ -21770,8 +21770,8 @@
       "title": "Architecture Intelligence: vi/websocat Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vi-websocat-architecture-intelligence-vi-websocat-core-invariants.md",
       "repository": "vi/websocat",
-      "content_hash": "0c7d97f933d237b2477d2f7a15eb08dd9ece4b8b48e604300a5ef89c95ce670c",
-      "created_at": "2026-11-15T12:31:19.100Z"
+      "content_hash": "2fc4696afbfe18a507c67e80ac8f93d8a54bdb5acecd4454644c4a9128fd4b5c",
+      "created_at": "2026-11-26T20:22:53.515Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-preview-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-preview-core-invaria",
@@ -21788,8 +21788,8 @@
       "title": "Architecture Intelligence: vi-websocat-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vi-websocat-learnings-architecture-intelligence-vi-websocat-learnings-core-invar.md",
       "repository": "vi-websocat-learnings",
-      "content_hash": "4ee747b25d1ab0cc5acc598a0a0e5107e680e64359794ca3898da12ebda6a562",
-      "created_at": "2026-11-15T12:36:23.098Z"
+      "content_hash": "8048c8227976822af98109f9ec35d0ce155406489c1de2b74fbaf316782ee13b",
+      "created_at": "2026-11-26T20:23:10.221Z"
     },
     "DOM-D-20A9ABE9": {
       "record_id": "DOM-D-20A9ABE9",
@@ -32788,8 +32788,8 @@
       "title": "Research & Knowledge Intelligence: openai/gpt-oss-20b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-20b-research-knowledge-intelligence-openai-gpt-oss-20b-core-in.md",
       "repository": "openai/gpt-oss-20b",
-      "content_hash": "11f6bdca8334a885ee0cd992ddcee8b31b4300870a38bd9480154764bec93e51",
-      "created_at": "2026-11-23T06:53:51.992Z"
+      "content_hash": "a3e37713ad7fed8a9705f532560b7eee126cd45f8964d19a94a297e8304de097",
+      "created_at": "2026-11-26T20:22:51.219Z"
     },
     "DOM-D-AE671E2B": {
       "record_id": "DOM-D-AE671E2B",
@@ -32839,8 +32839,8 @@
       "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-20b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-20b-learnings-research-knowledge-intelligence-hf-openai-gpt-os.md",
       "repository": "hf-openai-gpt-oss-20b-learnings",
-      "content_hash": "b0afde95297efdd50a5e7b8e3ed3f05919de924e11c613d17e54f3ee1eb68f83",
-      "created_at": "2026-11-23T06:54:03.626Z"
+      "content_hash": "7913c4bfde76b08a101028feacc7cfbccc3ebb4528b450561568738720978885",
+      "created_at": "2026-11-26T20:23:10.966Z"
     },
     "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants",
@@ -34546,8 +34546,8 @@
       "title": "Architecture Intelligence: crate-crate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-learnings-architecture-intelligence-crate-crate-learnings-core-invar.md",
       "repository": "crate-crate-learnings",
-      "content_hash": "93ad59df86d52b58ada0977a0f6b3bef4e92a9946ec1bcd9f97ca358361d0c86",
-      "created_at": "2026-11-24T03:58:47.396Z"
+      "content_hash": "304290c4e9ab8f4110384ee069a95d454d0f09257c74dc92c32b272a9e20ae70",
+      "created_at": "2026-11-26T20:23:12.476Z"
     },
     "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants",

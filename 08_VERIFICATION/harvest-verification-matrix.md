@@ -13544,3 +13544,6 @@
 | `CYCLE-20261126-E4RF` | `2026-11-26T20:04:34.587Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10768` | Yes (`3b839d98...`) |
 | `CYCLE-20261126-Q4MA` | `2026-11-26T20:13:54.274Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`0dbd8e1e...`) |
 | `CYCLE-20261126-QFAA` | `2026-11-26T20:14:08.098Z` | `CaviraOSS/LongMemory` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10769` | Yes (`a6deabfa...`) |
+| `CYCLE-20261126-1MPL` | `2026-11-26T20:22:50.937Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`afb529ae...`) |
+| `CYCLE-20261126-1OAY` | `2026-11-26T20:22:53.002Z` | `vi/websocat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10770` | Yes (`8e4472c6...`) |
+| `CYCLE-20261126-1Y72` | `2026-11-26T20:23:05.822Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10771` | Yes (`7cc86e05...`) |

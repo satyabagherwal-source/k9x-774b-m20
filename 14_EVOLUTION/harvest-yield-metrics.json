@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:14:08.126Z",
-  "total_cycles_completed": 12856,
-  "total_learnings_persisted": 12856,
-  "total_rules_promoted": 11676,
+  "last_updated": "2026-11-26T20:23:05.845Z",
+  "total_cycles_completed": 12859,
+  "total_learnings_persisted": 12859,
+  "total_rules_promoted": 11678,
   "history": [
-    {
-      "timestamp": "2026-11-26T10:40:51.257Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T10:40:55.434Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T10:40:58.065Z",
-      "repository": "signerlabs/Klee",
-      "learningId": "learn-github-signerlabs-klee",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T10:41:01.157Z",
       "repository": "loft-sh/vcluster",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T20:14:08.126Z",
       "repository": "CaviraOSS/LongMemory",
       "learningId": "learn-github-caviraoss-longmemory",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:22:50.954Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:22:53.026Z",
+      "repository": "vi/websocat",
+      "learningId": "learn-github-vi-websocat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:23:05.845Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

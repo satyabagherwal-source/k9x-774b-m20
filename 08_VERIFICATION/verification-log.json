@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-2KRS",
-    "timestamp": "2026-11-25T08:56:04.264Z",
-    "repository": "HuggingFaceBio/Carbon-X",
-    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-    "contentHash": "4b01d1f0205442f13cbb3b00fff18e1143ddcd00ebd15846a7ed2861faf70194",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-2T2U",
-    "timestamp": "2026-11-25T08:56:15.030Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "be1627b5d3bd3ae1a8828ef5bbf5a6e51f3a1fcb2522ec63b28de64869411dd6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-HRWB",
-    "timestamp": "2026-11-25T09:07:53.339Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "d4a54f15ce1efb51a31a1b6955a7c17a738f66c46340af616dd5c2495362b117",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-HYBF",
     "timestamp": "2026-11-25T09:08:01.659Z",
     "repository": "Nanbeige/Nanbeige4.3-33B",
@@ -7490,6 +7445,51 @@
     "repository": "CaviraOSS/LongMemory",
     "learningId": "learn-github-caviraoss-longmemory",
     "contentHash": "a6deabfa311465b5fe8467915160c60dfd1ff3a5d5fb0f7bfb635a95959a9487",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1MPL",
+    "timestamp": "2026-11-26T20:22:50.937Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "afb529aec08857d58f3b34f0d86584daf1a999d1e3179e8e7a7c817804540fa9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1OAY",
+    "timestamp": "2026-11-26T20:22:53.002Z",
+    "repository": "vi/websocat",
+    "learningId": "learn-github-vi-websocat",
+    "contentHash": "8e4472c6dffc37316d98d8a121d2f8288c5afa8314a9b02477710c6a10108407",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1Y72",
+    "timestamp": "2026-11-26T20:23:05.822Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "7cc86e05095d74a0ae3772ef03ddc6d47b0d44de117fe093a5be107560e6993d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

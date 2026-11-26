@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T20:14:13.549Z",
+  "updated_at": "2026-11-26T20:23:11.966Z",
   "stats": {
-    "total_discovered": 10019,
-    "approved_pending_harvest": 9497,
+    "total_discovered": 10025,
+    "approved_pending_harvest": 9503,
     "harvested_count": 0,
     "rejected_count": 522,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9502,
+      "COMMUNITY_AND_EXPERT": 9508,
       "OFFICIAL_DOCUMENTATION": 286,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -216791,6 +216791,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
         "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-DC1E31F022E9": {
+      "id": "SRC-DC1E31F022E9",
+      "url": "https://github.com/crate/crate/pull/20692",
+      "title": "https://github.com/crate/crate/pull/20692",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:23:11.367Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-38C2832422F5": {
+      "id": "SRC-38C2832422F5",
+      "url": "https://github.com/crate/crate/pull/20694",
+      "title": "https://github.com/crate/crate/pull/20694",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:23:11.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-E7C20CA05FB6": {
+      "id": "SRC-E7C20CA05FB6",
+      "url": "https://github.com/crate/crate/issues/20702",
+      "title": "https://github.com/crate/crate/issues/20702",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:23:11.514Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-4B808149CC0E": {
+      "id": "SRC-4B808149CC0E",
+      "url": "https://github.com/hanke580",
+      "title": "https://github.com/hanke580",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:23:11.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-892A6A474566": {
+      "id": "SRC-892A6A474566",
+      "url": "https://github.com/matriv",
+      "title": "https://github.com/matriv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:23:11.895Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-94CF2452238B": {
+      "id": "SRC-94CF2452238B",
+      "url": "https://github.com/crate/crate/issues/20652",
+      "title": "https://github.com/crate/crate/issues/20652",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:23:11.966Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
       }
     }
   }

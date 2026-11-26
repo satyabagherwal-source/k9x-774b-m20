@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T03:58:47.095Z",
+  "timestamp": "2026-11-26T20:23:12.116Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-crate-crate-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [crate-crate-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T03:58:47.095Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T20:23:12.116Z`  
 > **Learning ID**: `LEARN-EVO-crate-crate-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `2799f146`  
+> **Source Version**: `92486c78`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T03:58:40.133Z  
+> **Timestamp**: 2026-11-26T20:23:04.595Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:58:40.129Z  
+> **Harvest Timestamp**: 2026-11-26T20:23:04.590Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4456 stars
+- **Stars / Engagement**: 4459 stars
 
 ---
 
@@ -559,11 +559,14 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20640** (2026-11-23): **Updating a nested object array with a JSON null raises `NullPointerException`**
-  *Symptoms*: ### CrateDB version  6.6.0-SNAPSHOT, commit `39117a4b9f23692cbb4085b873867c6de32b5322`.  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  INSERT accepts a nested object array containing a JSON-null element. Updating an existing row to an array of the same shape raises a NullPointerException, while the update without the null element succeeds.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS crate_json_nested_update_repro; CREATE TABLE crate_json_nested_update_repro (     id INTEGER PRIMARY KEY,     doc OBJECT AS (         groups ARRAY(OBJECT AS (             entries ARRAY(OBJECT AS (v INTEGER))         ))     ) ) WITH (number_of_replicas = 0); INSERT INTO crate_json_nested_update_repro VALUES     (1, '{"groups":[{"entries":[{"v":1}]}]}'),     (2, '{"groups":[{"entries":[{"v":2},null]}]}'); REFRESH TABLE crate_json_nested_update_repro; SELECT id, doc FROM crate_json_nested_update_repro ORDER BY id; UPDATE crate_json_nested_update_repro SET doc['groups'][1] = '{"entries":[{"v":3}]}'::OBJECT WHERE id = 1 RETURNING doc; UPDATE crate_json_nested_update_repro SET doc['groups'][1] = '{"entries":[{"v":4},null]}'::OBJECT WHERE id = 1 RETURNING doc; REFRESH TABLE crate_json_nested_update_repro; SELECT id, doc FROM crate_json_nested_update_repro ORDER BY id; ```  ### Actual Result  The initial insert stores the JSON null, and the update without null succeeds. The next update
+- **Issue #20683** (2026-11-26): **generate_series(3, 4294967295) returns no rows, and generate_series(4294967294, 3) never ends**
+  *Symptoms*: ### CrateDB version  6.5.2 (also the nightly 6.6.0 of 2026-11-25, build 364278b19f, the current master)  ### CrateDB setup information   ``` Number of nodes: 1 (Docker image crate/crate:6.5.2, started with -Cdiscovery.type=single-node) CRATE_HEAP_SIZE: 2g CRATE_JAVA_OPTS: not set  crate.yml contents: the default of the image ```  Queries sent over the HTTP endpoint (`/_sql`).  ### Problem description and reproduction steps   `generate_series(start, stop)` goes wrong when the series would have more than 2147483647 values. Some such series return no rows: `generate_series(3, 4294967295)`, `generate_series(3, 2147483650)` and `generate_series(-2147483646, 3)`, while `generate_series(3, 4294967301)` works. And some series whose start is above the stop, which should be empty like `generate_series(4, 3)`, instead count upwards from the start without end: `generate_series(4294967294, 3)` and `generate_series(2147483653, 3)`.  Used in the select list, such an endless series is not stopped by `statement_timeout`: with a time limit of 5 seconds, set in the same session (`SHOW statement_timeout` returns `5s`), the statement below was still running on the server (in `sys.jobs`) 100 seconds after it started. `KILL ALL` stopped it, after 20 to 30 seconds. The same series in `FROM` is stopped by the time limit after 5 seconds.  ```sql SELECT * FROM generate_series(3, 4294967295) LIMIT 3; SELECT * FROM generate_series(3, 2147483650) LIMIT 3; SELECT * FROM generate_series(3, 4294967301) LIMIT
+  **Post-Mortem & Fix Analysis**:
+  > @hanke580 Thank you for reporting this issue! It has multiple parts, so I'll address each separately.  The part of it where `generate_series` doesn't return any rows or becomes endless will be fixed in https://github.com/crate/crate/pull/20692. The fix for `generate_series` not being stopped by `KILL` is in https://github.com/crate/crate/pull/20694. Both will land in 6.5.3.  As for the statement timeout issue, I've opened a separate item for it: https://github.com/crate/crate/issues/20702. With that, I think it's fine to close this one?  cc @matriv 
+  > > [@hanke580](https://github.com/hanke580) Thank you for reporting this issue! It has multiple parts, so I'll address each separately. >  > The part of it where `generate_series` doesn't return any rows or becomes endless will be fixed in [#20692](https://github.com/crate/crate/pull/20692). The fix for `generate_series` not being stopped by `KILL` is in [#20694](https://github.com/crate/crate/pull/20694). Both will land in 6.5.3. >  > As for the statement timeout issue, I've opened a separate item for it: [#20702](https://github.com/crate/crate/issues/20702). With that, I think it's fine to close this one? >  > cc [@matriv](https://github.com/matriv)  Yep, let's close it since the remaining issue is tracked on that one, thx!
 
-- **Issue #20639** (2026-11-23): **`OBJECT` equality filter includes rows with extra JSON keys**
-  *Symptoms*: ### CrateDB version  6.6.0-SNAPSHOT, commit `39117a4b9f23692cbb4085b873867c6de32b5322`.  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ### Problem description  The projected equality is FALSE for the object with an extra key. The same expression in WHERE incorrectly includes that row; adding IS TRUE returns only the matching row.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS crate_json_object_extra_key_repro; CREATE TABLE crate_json_object_extra_key_repro (     id INTEGER PRIMARY KEY,     doc OBJECT AS (a INTEGER, b INTEGER) ) WITH (number_of_replicas = 0); INSERT INTO crate_json_object_extra_key_repro VALUES     (1, '{"a":1}'),     (2, '{"a":1,"b":2}'); REFRESH TABLE crate_json_object_extra_key_repro;  SELECT id, doc = '{"a":1}'::OBJECT AS equal_to_target FROM crate_json_object_extra_key_repro ORDER BY id; SELECT id FROM crate_json_object_extra_key_repro WHERE doc = '{"a":1}'::OBJECT ORDER BY id; SELECT id FROM crate_json_object_extra_key_repro WHERE (doc = '{"a":1}'::OBJECT) IS TRUE ORDER BY id; ```  ### Actual Result  Projected equality:  | id | equal_to_target | | --- | --- | | 1 | `TRUE` | | 2 | `FALSE` |  Direct `WHERE` filter:  | id | | --- | | 1 | | 2 |   ### Expected Result  Only row 1 is equal to `{"a":1}`, as confirmed by projection and the `IS TRUE` filter:  | id | | --- | | 1 |  PostgreSQL 16.14 returns only row 1 for the corresponding `JSONB` e
+- **Issue #20665** (2026-11-25): **`OBJECT` equality with a JSON-null key is asymmetric**
+  *Symptoms*: ### CrateDB version  master commit `2799f146cc5ac3a1dc4aa378f9c2516edcc433e3`  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ### Problem description  Reversing the operands of OBJECT equality changes the result from TRUE to FALSE. These objects differ in both key and value, so both comparisons should be FALSE.  ### Steps to Reproduce  ```sql SELECT '{"a":null}'::OBJECT = '{"b":1}'::OBJECT AS left_to_right,        '{"b":1}'::OBJECT = '{"a":null}'::OBJECT AS right_to_left; ```    ### Actual Result   | left_to_right | right_to_left | | --- | --- | | `TRUE` | `FALSE` |    ### Expected Result   | left_to_right | right_to_left | | --- | --- | | `FALSE` | `FALSE` | 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -580,237 +583,344 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3b6b9db` (2026-11-23)
-**Commit Message**: Fix NullPointerException updating object array with null element
+### Incident Patch 1: `4529d4d5` (2026-11-23)
+**Commit Message**: Fix ClassCastException on object array subscript through view
 
-`UPDATE` with an `ARRAY(OBJECT)` value containing a null element failed
-in `ValueNormalizer`. Null elements are now kept, matching `INSERT`
-behaviour.
+A subscript on an ARRAY(OBJECT) column selected from a view or a
+subquery was planned with subscript_obj, which only works on objects.
+Use an array subscript instead.
 
-Fixes #20640
+Fixes #20652
 
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
+**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +10/-0)
 ```diff
-@@ -46,6 +46,11 @@ series.
+@@ -46,6 +46,16 @@ series.
  Fixes
  =====
  
-+- Fixed a ``NullPointerException`` that occurred when updating a column of
-+  type ``ARRAY(OBJECT)``, or an object containing one, with an array that
-+  contains a ``null`` element. The ``null`` element is now stored, matching the
-+  behaviour of ``INSERT``.
++- Fixed a ``ClassCastException`` error which was thrown when using a subscript
++  on a column of type ``ARRAY(OBJECT)``, including nested arrays of objects,
++  selected from a view or a subquery, e.g.::
 +
- - Fixed an issue where an ``<obj_column> = <obj_literal>`` expression could
-   match rows where the object column had additional properties not present in
-   the object literal.
++      SELECT items['x'] FROM v
++
++  or::
++
++      SELECT items['arr']['z'] FROM v``
++
+ - Fixed an issue where a comparison on object columns could lead to a wrong
+   result if the objects had the same amount of keys and some values were
+   ``null``.
 ```
 
-**File**: `server/src/main/java/io/crate/analyze/expressions/ValueNormalizer.java` (modified, +4/-0)
+**File**: `server/src/main/java/io/crate/execution/dsl/projection/builder/InputColumns.java` (modified, +2/-12)
 ```diff
-@@ -166,6 +166,10 @@ private static boolean isObjectArray(DataType<?> type) {
+@@ -21,7 +21,6 @@
  
-     private static void normalizeObjectArrayValue(List<Map<String, Object>> values, Reference arrayInfo, TableInfo tableInfo) {
-         for (Map<String, Object> value : values) {
-+            if (value == null) {
-+                // Keep null elements as they are, like INSERT does
-+                continue;
-+            }
-             // return value not used and replaced in value as arrayItem is a map that is mutated
-             normalizeObjectValue(value, arrayInfo, tableInfo);
+ package io.crate.execution.dsl.projection.builder;
+ 
+-import static io.crate.common.collections.Lists.mapTail;
+ import static io.crate.expression.symbol.Symbols.lookupValueByColumn;
+ 
+ import java.util.ArrayList;
+@@ -33,7 +32,7 @@
+ 
+ import org.jspecify.annotations.Nullable;
+ 
+-import io.crate.expression.scalar.SubscriptObjectFunction;
++import io.crate.expression.scalar.SubscriptFunctions;
+ import io.crate.expression.symbol.Aggregation;
+ import io.crate.expression.symbol.AliasSymbol;
+ import io.crate.expression.symbol.FetchMarker;
+@@ -309,16 +308,7 @@ private static Symbol tryCreateSubscriptOnRoot(RelationName relationName, Symbol
+             return symbol;
          }
+ 
+-        DataType<?> returnType = symbol.valueType();
+-        List<String> path = column.path();
+-
+-        List<Symbol> arguments = mapTail(rootIC, path, Literal::of);
+-
+-        return new Function(
+-            SubscriptObjectFunction.SIGNATURE,
+-            arguments,
+-            returnType
+-        );
++        return SubscriptFunctions.tryCreateSubscript(rootIC, column.path());
+     }
+ 
+     @Override
 ```
 
-**File**: `server/src/test/java/io/crate/analyze/ValueNormalizerTest.java` (modified, +34/-2)
+**File**: `server/src/main/java/io/crate/expression/scalar/SubscriptFunctions.java` (modified, +1/-1)
 ```diff
-@@ -22,10 +22,11 @@
- package io.crate.analyze;
+@@ -100,7 +100,7 @@ public static Function tryCreateSubscript(Symbol baseSymbol, List<String> path)
+                 Function subscript = new Function(
+                     SubscriptFunction.SIGNATURE_ARRAY_OF_OBJECTS,
+                     List.of(baseSymbol, Literal.of(child)),
+-                    new ArrayType<>(returnType)
++                    ArrayType.makeArray(returnType, ArrayType.dimensions(baseType))
+                 );
  
+                 for (int i = 1; i < path.size(); i++) {
+```
+
+**File**: `server/src/test/java/io/crate/integrationtests/SubSelectIntegrationTest.java` (modified, +7/-8)
+```diff
+@@ -26,7 +26,6 @@
+ import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
  import static io.crate.testing.Asserts.assertThat;
+ import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+-import static org.assertj.core.api.Assertions.assertThat;
+ 
+ import java.util.Arrays;
+ import java.util.Collections;
+@@ -183,7 +182,7 @@ public void testNestedGroupByAggregation() throws Exception {
+                 "  select min(age) as minAge from characters group by gender) as ch " +
+                 "group by minAge");
+         List<Object[]> rows = Arrays.asList(response.rows());
+-        Collections.sort(rows, OrderingByPosition.arrayOrdering(DataTypes.INTEGER, 0, true, true));
++        rows.sort(OrderingByPosition.arrayOrdering(DataTypes.INTEGER, 0, true, true));
+         assertThat(rows).containsExactly(
+             new Object[] { 1L },
+             new Object[] { 1L }
+@@ -742,15 +741,15 @@ public void testWhereSubsSelectAsClusteredByValue() {
+ 
+     @Test
+     public void testSubscriptOnSubSelect() {
+-        execute("create table t1 (a object, c object)");
+-        execute("insert into t1 (a, c) values ({ b = 1 }, { d = { e = 2 }})");
++        execute("create table t1 (a object, c object, items array(object as (x int)))");
++        execute("insert into t1 (a, c, items) values ({ b = 1 }, { d = { e = 2 }}, [{ x = 3 }])");
+         execute("refresh table t1");
+-        execute("select a['b'], c['d']['e'] from t1");
++        execute("select a['b'], c['d']['e'], items['x'] from t1");
+         assertThat(response).hasRows(
+-            "1| 2");
+-        execute("select a['b'], c['d']['e'] from (select * from t1) t2");
++            "1| 2| [3]");
++        execute("select a['b'], c['d']['e'], items['x'] from (select * from t1) t2");
+         assertThat(response).hasRows(
+-            "1| 2");
++            "1| 2| [3]");
+     }
+ 
+     @Test
+```
+
+**File**: `server/src/test/java/io/crate/integrationtests/ViewsITest.java` (modified, +33/-6)
+```diff
+@@ -26,7 +26,6 @@
+ import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
+ import static io.crate.testing.Asserts.assertThat;
+ import static io.netty.handler.codec.http.HttpResponseStatus.CONFLICT;
 -import static org.assertj.core.api.Assertions.assertThat;
  import static org.assertj.core.api.Assertions.assertThatThrownBy;
  
-+import java.util.Arrays;
- import java.util.HashMap;
-+import java.util.List;
- import java.util.Map;
+ import java.util.Locale;
+@@ -45,6 +44,7 @@
+ import io.crate.protocols.postgres.PGErrorStatus;
+ import io.crate.sql.tree.BitString;
+ import io.crate.testing.Asserts;
++import io.crate.testing.UseJdbc;
+ import io.netty.handler.codec.http.HttpResponseStatus;
  
- import org.junit.Before;
-@@ -48,6 +49,7 @@
- import io.crate.metadata.doc.DocSchemaInfo;
- import io.crate.test.integration.CrateDummyClusterServiceUnitTest;
- import io.crate.testing.SQLExecutor;
-+import io.crate.types.ArrayType;
- import io.crate.types.DataTypes;
+ public class ViewsITest extends IntegTestCase {
+@@ -234,14 +234,41 @@ public void testDropViewDoesNotFailIfViewIsMissingAndIfExistsIsUsed() {
+     }
  
+     @Test
++    @UseJdbc(0) // compares column types; pg reports nested arrays as json
+     public void testSubscriptOnViews() {
+-        execute("create table t1 (a object as (b integer), c object as (d object as (e integer))) ");
+-        execute("insert into t1 (a, c) values ({ b = 1 }, { d = { e = 2 }})");
+-        execute("refresh table t1");
++        execute("create table t1 (" +
++                "a object as (b integer), " +
++                "c object as (d object as (e integer)), " +
++                "items array(object as (x integer, o object as (y integer))), " +
++                "ign object(ignored) as (declared integer), " +
++                "dyn object(dynamic), " +
++                "nested array(object as (arr array(object as (z integer)))))");
+         execute("create view v1 as select * from t1");
++        // dyn['added'] is created by dynamic mapping after the view exists
++        execute("insert into t1 (a, c, items, ign, dyn, nested) values (" +
++                "{ b = 1 }, { d = { e = 2 }}, [{ x = 3, o = { y = 4 }}], " +
++                "{ declared = 5, undeclared = 'foo' }, { added = 6 }, [{ arr = [{ z = 7 }] }])");
++        execute("refresh table t1");
++
+         // must not throw an exception, subscript must be resolved
+-        execute("select a['b'], c['d']['e'] from v1");
+-        assertThat(response).hasRows("1| 2");
++        // https://github.com/crate/crate/issues/20652: also on an array of objects
++        String stmt = "select a['b'], c['d']['e'], items['x'], items['o']['y'], " +
++                      "ign['declared'], ign['undeclared'], dyn['added'], nested['arr']['z'] from ";
++        execute(stmt + "t1");
++        var expectedTypes = response.columnTypes();
++        var expectedRows = response.rows();
++
++        execute(stmt + "v1");
++        assertThat(response).hasRows("1| 2| [3]| [4]| 5| foo| 6| [[7]]");
++        assertThat(response.columnTypes()).isEqualTo(expectedTypes);
++        assertThat(response.rows()).isEqualTo(expectedRows);
++
++        execute(stmt + "(select * from t1) t");
++        assertThat(response.columnTypes()).isEqualTo(expectedTypes);
++        assertThat(response.rows()).isEqualTo(expectedRows);
++
++        execute("select pg_typeof(dyn['added']) from v1");
++        assertThat(response).hasRows("bigint");
+     }
  
-@@ -83,7 +85,15 @@ public void prepare() throws Exception {
-                       " strict object(strict) as (" +
-                       "  inner_d double" +
-                       " )," +
--                      " ignored object(ignored)" +
-+                      " ignored object(ignored)," +
-+                      " obj_arr array(object as (" +
-+                      "  v int" +
-+                      " ))," +
-+                      " nested object as (" +
-+                      "  groups array(object as (" +
-+                      "   entries array(object as (v int))" +
-+                      "  ))" +
-+                      " )" +
-                       ") " +
-                       "clustered by (id)");
-         userTableInfo = e.resolveTableInfo("doc.test1");
-@@ -232,4 +242,26 @@ public void testNormalizeStringToNumberColumn() throws Exception {
-         Symbol literal = normalizeInputForReference(stringDoubleLiteral, objInfo);
-         assertThat(literal).isLiteral(298.444d, DataTypes.DOUBLE);
+     @Test
+```
+
+---
+
+### Incident Patch 2: `d1ccbb51` (2026-11-26)
+**Commit Message**: Reword and merge rel notes for genseries fix.
+
+**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +3/-5)
+```diff
+@@ -63,8 +63,6 @@ Fixes
+   call.
+ 
+ - Fixed an issue that caused ``generate_series`` to return no rows, or to never
+-  finish, if the series had more than 2147483647 values or if the step value
+-  pointed away from the stop value.
+-
+-- Fixed an issue that caused ``generate_series`` to become endless if the stop
+-  value is the maximum value for the given type.
++  finish, if the series had more than ``2147483647`` values or if the step value
++  pointed away from the stop value, or if the stop value is the maximum value
++  for the given type.
+```
+
+---
+
+### Incident Patch 3: `844201ee` (2026-11-25)
+**Commit Message**: Fix generate_series not stopping if the stop value is integer's or long's max value
+
+**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +3/-0)
+```diff
+@@ -65,3 +65,6 @@ Fixes
+ - Fixed an issue that caused ``generate_series`` to return no rows, or to never
+   finish, if the series had more than 2147483647 values or if the step value
+   pointed away from the stop value.
++
++- Fixed an issue that caused ``generate_series`` to become endless if the stop
++  value is the maximum value for the given type.
+```
+
+**File**: `server/src/main/java/io/crate/expression/tablefunctions/GenerateSeries.java` (modified, +20/-3)
+```diff
+@@ -30,6 +30,7 @@
+ 
+ import org.elasticsearch.common.settings.Settings;
+ import org.joda.time.Period;
++import org.jspecify.annotations.Nullable;
+ 
+ import io.crate.data.Input;
+ import io.crate.data.Row;
+@@ -81,7 +82,7 @@ public static void register(Functions.Builder builder, Settings settings) {
+                 signature,
+                 boundSignature,
+                 1L,
+-                Long::sum,
++                GenerateSeries::sum,
+                 Long::compare,
+                 new RowType(List.of(boundSignature.argTypes().get(0)), fieldNames))
+         );
+@@ -96,7 +97,7 @@ public static void register(Functions.Builder builder, Settings settings) {
+                 signature,
+                 boundSignature,
+                 1,
+-                Integer::sum,
++                GenerateSeries::sum,
+                 Integer::compare,
+                 new RowType(List.of(boundSignature.argTypes().get(0)), fieldNames))
+         );
+@@ -114,7 +115,7 @@ public static void register(Functions.Builder builder, Settings settings) {
+                 signature,
+                 boundSignature,
+                 1L,
+-                Long::sum,
++                GenerateSeries::sum,
+                 Long::compare,
+                 new RowType(List.of(boundSignature.argTypes().get(0)), fieldNames))
+         );
+@@ -167,6 +168,22 @@ public static void register(Functions.Builder builder, Settings settings) {
+         }
+     }
+ 
++    private static @Nullable Long sum(long x, long y) {
++        try {
++            return Math.addExact(x, y);
++        } catch (ArithmeticException e) {
++            return null;
++        }
++    }
++
++    private static @Nullable Integer sum(int x, int y) {
++        try {
++            return Math.addExact(x, y);
++        } catch (ArithmeticException e) {
++            return null;
++        }
++    }
++
+     private final T defaultStep;
+     private final BinaryOperator<T> plus;
+     private final Comparator<T> comparator;
+```
+
+**File**: `server/src/main/java/io/crate/expression/tablefunctions/RangeIterable.java` (modified, +3/-0)
+```diff
+@@ -64,6 +64,9 @@ public Iterator<Row> iterator() {
+         return new Iterator<>() {
+             @Override
+             public boolean hasNext() {
++                if (value == null) {
++                    return false;
++                }
+                 int cmp = comparator.compare(value, endInclusive);
+                 return reversed ? cmp >= 0 : cmp <= 0;
+             }
+```
+
+**File**: `server/src/test/java/io/crate/expression/tablefunctions/GenerateSeriesTest.java` (modified, +17/-0)
+```diff
+@@ -222,4 +222,21 @@ public void test_generate_series_with_milliseconds_interval() {
+                 """
+         );
      }
 +
 +    @Test
-+    public void test_normalize_object_array_keeps_null_elements() throws Exception {
-+        Reference objArr = userTableInfo.getReference(ColumnIdent.of("obj_arr"));
-+        List<Map<String, Object>> value = Arrays.asList(new HashMap<>(Map.of("v", 1)), null);
-+        Symbol normalized = normalizeInputForReference(
-+            Literal.of(new ArrayType<>(DataTypes.UNTYPED_OBJECT), value),
-+            objArr
-+        );
-+        assertThat(normalized).isLiteral(Arrays.asList(Map.of("v", 1), null));
-+    }
++    public void test_generate_series_stops_at_max_value() {
++        Iterable<Row> rows = execute("generate_series(9223372036854775805, 9223372036854775807)");
++        assertThat(StreamSupport.stream(rows.spliterator(), false)
++            .limit(4)
++            .map(row -> row.get(0))
++            .toList()
++        ).containsExactly(9223372036854775805L, 9223372036854775806L, 9223372036854775807L);
 +
-+    @Test
-+    public void test_normalize_nested_object_array_keeps_null_elements() throws Exception {
-+        Reference nested = userTableInfo.getReference(ColumnIdent.of("nested"));
-+        List<Map<String, Object>> entries = Arrays.asList(new HashMap<>(Map.of("v", 4)), null);
-+        Map<String, Object> group = new HashMap<>(Map.of("entries", entries));
-+        Map<String, Object> value = new HashMap<>(Map.of("groups", List.of(group)));
-+        Symbol normalized = normalizeInputForReference(Literal.of(value), nested);
-+        assertThat(normalized).isLiteral(
-+            Map.of("groups", List.of(Map.of("entries", Arrays.asList(Map.of("v", 4), null)))));
++        rows = execute("generate_series(2147483645, 2147483647)");
++        assertThat(StreamSupport.stream(rows.spliterator(), false)
++            .limit(4)
++            .map(row -> row.get(0))
++            .toList()
++        ).containsExactly(2147483645, 2147483646, 2147483647);
 +    }
  }
 ```
 
----
-
-### Incident Patch 2: `a6ee235d` (2026-11-23)
-**Commit Message**: Fix NullPointerException building eq query on object literal with null
-
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +3/-0)
-```diff
-@@ -46,6 +46,9 @@ series.
- Fixes
- =====
- 
-+- Fixed a ``NullPointerException`` that could occur if comparing an object to a
-+  full literal containing a ``null`` value.
-+
- - Fixed an issue in the PostgreSQL wire protocol implementation that could cause
-   clients to not receive an error message if:
- 
-```
-
-**File**: `server/src/main/java/io/crate/expression/operator/EqOperator.java` (modified, +6/-2)
-```diff
-@@ -305,6 +305,10 @@ public static Query refEqObject(Function eq,
-         int preFilters = 0;
-         for (Map.Entry<String, Object> entry : value.entrySet()) {
-             String key = entry.getKey();
-+            Object innerValue = entry.getValue();
-+            if (innerValue == null) {
-+                continue;
-+            }
-             DataType<?> innerType = type.innerType(key);
-             if (innerType == UndefinedType.INSTANCE) {
-                 // could be a nested object or not part of meta data; skip pre-filtering
-@@ -316,9 +320,9 @@ public static Query refEqObject(Function eq,
-             Query innerQuery;
-             if (DataTypes.isArray(innerType)) {
-                 innerQuery = termsAndGenericFilter(
--                    eq, nestedStorageIdentifier, innerType, (Collection<?>) entry.getValue(), context, childRef.hasDocValues(), childRef.indexType(), termQueryOccur);
-+                    eq, nestedStorageIdentifier, innerType, (Collection<?>) innerValue, context, childRef.hasDocValues(), childRef.indexType(), termQueryOccur);
-             } else {
--                innerQuery = fromPrimitive(innerType, nestedStorageIdentifier, entry.getValue(), childRef.hasDocValues(), childRef.indexType());
-+                innerQuery = fromPrimitive(innerType, nestedStorageIdentifier, innerValue, childRef.hasDocValues(), childRef.indexType());
-                 // instead of adding a MUST_NOT clause for the negation, we negate the innerQuery to also match null values
-                 if (termQueryOccur == Occur.MUST_NOT) {
-                     innerQuery = Queries.not(innerQuery);
-```
-
-**File**: `server/src/test/java/io/crate/expression/operator/EqOperatorTest.java` (modified, +29/-0)
-```diff
-@@ -29,10 +29,12 @@
- import java.util.List;
- import java.util.Map;
- 
-+import org.apache.lucene.search.BooleanQuery;
- import org.apache.lucene.search.Query;
- import org.elasticsearch.Version;
- import org.junit.Test;
- 
-+import io.crate.common.collections.MapBuilder;
- import io.crate.expression.scalar.ScalarTestCase;
- import io.crate.expression.symbol.Literal;
- import io.crate.lucene.GenericFunctionQuery;
-@@ -176,6 +178,33 @@ public void test_terms_query_on_empty_object() throws Exception {
-         }
-     }
- 
-+    @Test
-+    public void test_obj_eq_obj_literal_with_null_value() throws Exception {
-+        QueryTester.Builder builder = new QueryTester.Builder(
-+            THREAD_POOL,
-+            clusterService,
-+            Version.CURRENT,
-+            "create table tbl (obj object(strict) as (x int, y int))");
-+        Map<String, Integer> map1 = Map.of("x", 10, "y", 20);
-+        Map<String, Integer> map2 = Map.of("x", 42, "y", 84);
-+        Map<String, Integer> map3 = MapBuilder.<String, Integer>newMapBuilder()
-+            .put("x", 10)
-+            .put("y", null)
-+            .map();
-+        Map<String, Integer> map4 = MapBuilder.<String, Integer>newMapBuilder()
-+            .put("x", 20)
-+            .put("y", null)
-+            .map();
-+        builder.indexValues("obj", map1, map2, map3, map4);
-+        try (QueryTester tester = builder.build()) {
-+            Query query = tester.toQuery("obj = {x=10, y=null}");
-+            assertThat(query)
-+                .isExactlyInstanceOf(BooleanQuery.class)
-+                .hasToString("+obj.x:[10 TO 10] #(obj = {\"x\"=10, \"y\"=NULL})");
-+            assertThat(tester.runQuery("obj", "obj = {x=10, y=null}")).containsExactly(map3);
-+        }
-+    }
-+
-     @Test
-     public void test_numeric_type_equals_number_types() {
-         assertEvaluate("numeric_4_2 = 1.111", false, Literal.of(new BigDecimal("1.11")));
-```
-
----
-
-### Incident Patch 3: `fe62b476` (2026-11-20)
-**Commit Message**: Fix spelling of 'accommodate' in alter-table docs
-
-**File**: `docs/sql/statements/alter-table.rst` (modified, +1/-1)
-```diff
-@@ -83,7 +83,7 @@ Clauses
- 
-    Multiple files (in this directory) use the same standard text for
-    documenting the ``PARTITION`` clause. (Minor verb changes are made to
--   accomodate the specifics of the parent statement.)
-+   accommodate the specifics of the parent statement.)
- 
-    For consistency, if you make changes here, please be sure to make a
-    corresponding change to the other files.
-```
-
 #### Recent Merged Pull Requests:
-- **PR #20662** (2026-11-23): docs: fix spelling mistake in SQL statements documentation (backport #20634) (@mergify[bot])
-- **PR #20661** (2026-11-23): Fix NullPointerException updating object array with null element (backport #20658) (@mergify[bot])
-- **PR #20658** (2026-11-23): Fix NullPointerException updating object array with null element (@matriv)
-- **PR #20650** (2026-11-23): Fix object column equals obj literal matching despite missing properties (backport #20645) (@mergify[bot])
-- **PR #20649** (2026-11-23): Ensure that StreamBucket doesn't overwrite actual version used to serilalze bytes (backport #20601) (@mergify[bot])
-- **PR #20648** (2026-11-23): Ensure that StreamBucket doesn't overwrite actual version used to serilalze bytes (backport #20601) (@mergify[bot])
+- **PR #20707** (2026-11-26): Fix ClassCastException on object array subscript through view (backport #20663) (@mergify[bot])
+- **PR #20706** (2026-11-26): Prevent DROP SCHEMA CASCADE from deleting subscribed tables (backport #20680) (@mergify[bot])
+- **PR #20705** (2026-11-26): Reword and merge rel notes for genseries fix. (backport #20704) (@mergify[bot])
+- **PR #20704** (2026-11-26): Reword and merge rel notes for genseries fix. (@matriv)
+- **PR #20703** (2026-11-26): Fix generate_series not stopping if the stop value is integer's or long's max value (backport #20695) (@mergify[bot])
+- **PR #20701** (2026-11-26): Fix generate_series if there are more than Integer.MAX_VALUE rows or if the step value points away from the stop value (backport #20692) (@mergify[bot])
 
 ---
 
@@ -830,24 +940,29 @@ Fixes #20640
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NullPointerException updating object array with null element
+## X. ClassCastException on object array subscript through view
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.5.3.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3b6b9db`: NullPointerException updating object array with null element. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4529d4d5`: ClassCastException on object array subscript through view. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.3.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Fixed a ``NullPointerException`` that occurred when updating a column of
-  type ``ARRAY(OBJECT)``, or an object containing one, with an array that
-  contains a ``null`` element. The ``null`` element is now stored, matching the
-  behaviour of ``INSERT``.
+- Fixed a ``ClassCastException`` error which was thrown when using a subscript
+  on a column of type ``ARRAY(OBJECT)``, including nested arrays of objects,
+  selected from a view or a subquery, e.g.::
+
+      SELECT items['x'] FROM v
+
+  or::
+
+      SELECT items['arr']['z'] FROM v``
 
 ```
 
@@ -858,7 +973,7 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3b6b9db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4529d4d5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

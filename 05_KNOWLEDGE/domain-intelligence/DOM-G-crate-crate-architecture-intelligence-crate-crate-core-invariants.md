@@ -4,24 +4,24 @@
 {
   "source_repository": "crate/crate",
   "source_url": "https://github.com/crate/crate",
-  "source_version": "77a83f3b",
+  "source_version": "92486c78",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T01:53:38.141Z",
+  "timestamp": "2026-11-26T20:23:06.110Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-crate-crate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `77a83f3b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T01:53:38.141Z`  
+> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `92486c78`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T20:23:06.110Z`  
 > **Learning ID**: `learn-github-crate-crate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from crate/crate:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T01:53:36.788Z  
+> **Harvest Timestamp**: 2026-11-26T20:23:04.590Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4458 stars
+- **Stars / Engagement**: 4459 stars
 
 ---
 
@@ -548,11 +548,14 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20683** (2026-11-26): **generate_series(3, 4294967295) returns no rows, and generate_series(4294967294, 3) never ends**
+  *Symptoms*: ### CrateDB version  6.5.2 (also the nightly 6.6.0 of 2026-11-25, build 364278b19f, the current master)  ### CrateDB setup information   ``` Number of nodes: 1 (Docker image crate/crate:6.5.2, started with -Cdiscovery.type=single-node) CRATE_HEAP_SIZE: 2g CRATE_JAVA_OPTS: not set  crate.yml contents: the default of the image ```  Queries sent over the HTTP endpoint (`/_sql`).  ### Problem description and reproduction steps   `generate_series(start, stop)` goes wrong when the series would have more than 2147483647 values. Some such series return no rows: `generate_series(3, 4294967295)`, `generate_series(3, 2147483650)` and `generate_series(-2147483646, 3)`, while `generate_series(3, 4294967301)` works. And some series whose start is above the stop, which should be empty like `generate_series(4, 3)`, instead count upwards from the start without end: `generate_series(4294967294, 3)` and `generate_series(2147483653, 3)`.  Used in the select list, such an endless series is not stopped by `statement_timeout`: with a time limit of 5 seconds, set in the same session (`SHOW statement_timeout` returns `5s`), the statement below was still running on the server (in `sys.jobs`) 100 seconds after it started. `KILL ALL` stopped it, after 20 to 30 seconds. The same series in `FROM` is stopped by the time limit after 5 seconds.  ```sql SELECT * FROM generate_series(3, 4294967295) LIMIT 3; SELECT * FROM generate_series(3, 2147483650) LIMIT 3; SELECT * FROM generate_series(3, 4294967301) LIMIT
+  **Post-Mortem & Fix Analysis**:
+  > @hanke580 Thank you for reporting this issue! It has multiple parts, so I'll address each separately.  The part of it where `generate_series` doesn't return any rows or becomes endless will be fixed in https://github.com/crate/crate/pull/20692. The fix for `generate_series` not being stopped by `KILL` is in https://github.com/crate/crate/pull/20694. Both will land in 6.5.3.  As for the statement timeout issue, I've opened a separate item for it: https://github.com/crate/crate/issues/20702. With that, I think it's fine to close this one?  cc @matriv 
+  > > [@hanke580](https://github.com/hanke580) Thank you for reporting this issue! It has multiple parts, so I'll address each separately. >  > The part of it where `generate_series` doesn't return any rows or becomes endless will be fixed in [#20692](https://github.com/crate/crate/pull/20692). The fix for `generate_series` not being stopped by `KILL` is in [#20694](https://github.com/crate/crate/pull/20694). Both will land in 6.5.3. >  > As for the statement timeout issue, I've opened a separate item for it: [#20702](https://github.com/crate/crate/issues/20702). With that, I think it's fine to close this one? >  > cc [@matriv](https://github.com/matriv)  Yep, let's close it since the remaining issue is tracked on that one, thx!
+
 - **Issue #20665** (2026-11-25): **`OBJECT` equality with a JSON-null key is asymmetric**
   *Symptoms*: ### CrateDB version  master commit `2799f146cc5ac3a1dc4aa378f9c2516edcc433e3`  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ### Problem description  Reversing the operands of OBJECT equality changes the result from TRUE to FALSE. These objects differ in both key and value, so both comparisons should be FALSE.  ### Steps to Reproduce  ```sql SELECT '{"a":null}'::OBJECT = '{"b":1}'::OBJECT AS left_to_right,        '{"b":1}'::OBJECT = '{"a":null}'::OBJECT AS right_to_left; ```    ### Actual Result   | left_to_right | right_to_left | | --- | --- | | `TRUE` | `FALSE` |    ### Expected Result   | left_to_right | right_to_left | | --- | --- | | `FALSE` | `FALSE` | 
-
-- **Issue #20654** (2026-11-25): **`IN (subquery)` filter on an `OBJECT(IGNORED)` child matches no rows**
-  *Symptoms*: ### CrateDB version  master commit `c728540efefb31b6cc0d889890547609f46e7ffb`  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  For an `OBJECT(IGNORED)` child, `o['v'] IN (SELECT o['v'] ...)` is `true` for row 1 in the projection, but the same predicate in `WHERE` returns no rows. `DELETE` with this predicate also deletes nothing.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS cj019; CREATE TABLE cj019 (id INTEGER, o OBJECT(IGNORED)); INSERT INTO cj019 VALUES (1, {v=1}), (2, {v=2}); REFRESH TABLE cj019; SELECT id, o['v'] IN (SELECT o['v'] FROM cj019 WHERE id = 1) AS matched FROM cj019 ORDER BY id; SELECT id FROM cj019 WHERE o['v'] IN (SELECT o['v'] FROM cj019 WHERE id = 1) ORDER BY id; ```   ### Actual Result  | Query | Result | | --- | --- | | Projected `matched` | id 1: `t`, id 2: `f` | | `WHERE` with the same predicate | 0 rows |  ### Expected Result  | Query | Result | | --- | --- | | Projected `matched` | id 1: `t`, id 2: `f` | | `WHERE` with the same predicate | id 1 | 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -569,230 +572,344 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `efff336e` (2026-11-25)
-**Commit Message**: Fix object type comparison of same size with null values
+### Incident Patch 1: `4529d4d5` (2026-11-23)
+**Commit Message**: Fix ClassCastException on object array subscript through view
 
-The equals implementation treated a missing key in the second map as
-`null` value which could lead to a false positive match.
+A subscript on an ARRAY(OBJECT) column selected from a view or a
+subquery was planned with subscript_obj, which only works on objects.
+Use an array subscript instead.
 
-Closes https://github.com/crate/crate/issues/20665
+Fixes #20652
 
-**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +4/-0)
+**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +10/-0)
 ```diff
-@@ -46,5 +46,9 @@ series.
+@@ -46,6 +46,16 @@ series.
  Fixes
  =====
  
-+- Fixed an issue where a comparison on object columns could lead to a wrong
-+  result if the objects had the same amount of keys and some values were
-+  ``null``.
++- Fixed a ``ClassCastException`` error which was thrown when using a subscript
++  on a column of type ``ARRAY(OBJECT)``, including nested arrays of objects,
++  selected from a view or a subquery, e.g.::
 +
- - Fixed an issue that caused queries on sub-columns of ignored objects to match
-   no rows.
++      SELECT items['x'] FROM v
++
++  or::
++
++      SELECT items['arr']['z'] FROM v``
++
+ - Fixed an issue where a comparison on object columns could lead to a wrong
+   result if the objects had the same amount of keys and some values were
+   ``null``.
 ```
 
-**File**: `server/src/main/java/io/crate/types/MapComparator.java` (modified, +4/-4)
+**File**: `server/src/main/java/io/crate/execution/dsl/projection/builder/InputColumns.java` (modified, +2/-12)
 ```diff
-@@ -37,14 +37,14 @@ public static <K, V> int compareMaps(Map<K, V> m1, Map<K, V> m2) {
-             return sizeCompare;
+@@ -21,7 +21,6 @@
+ 
+ package io.crate.execution.dsl.projection.builder;
+ 
+-import static io.crate.common.collections.Lists.mapTail;
+ import static io.crate.expression.symbol.Symbols.lookupValueByColumn;
+ 
+ import java.util.ArrayList;
+@@ -33,7 +32,7 @@
+ 
+ import org.jspecify.annotations.Nullable;
+ 
+-import io.crate.expression.scalar.SubscriptObjectFunction;
++import io.crate.expression.scalar.SubscriptFunctions;
+ import io.crate.expression.symbol.Aggregation;
+ import io.crate.expression.symbol.AliasSymbol;
+ import io.crate.expression.symbol.FetchMarker;
+@@ -309,16 +308,7 @@ private static Symbol tryCreateSubscriptOnRoot(RelationName relationName, Symbol
+             return symbol;
          }
-         for (Map.Entry<K, V> entry : m1.entrySet()) {
-+            K key = entry.getKey();
-             V thisValue = entry.getValue();
--            V otherValue = m2.get(entry.getKey());
-+            V otherValue = m2.get(key);
-             if (thisValue == null) {
--                if (otherValue != null) {
--                    return 1;
--                } else {
-+                if (otherValue == null && m2.containsKey(key)) {
-                     continue;
-                 }
-+                return 1;
-             }
-             if (!thisValue.equals(otherValue)) {
-                 if (otherValue == null) {
+ 
+-        DataType<?> returnType = symbol.valueType();
+-        List<String> path = column.path();
+-
+-        List<Symbol> arguments = mapTail(rootIC, path, Literal::of);
+-
+-        return new Function(
+-            SubscriptObjectFunction.SIGNATURE,
+-            arguments,
+-            returnType
+-        );
++        return SubscriptFunctions.tryCreateSubscript(rootIC, column.path());
+     }
+ 
+     @Override
 ```
 
-**File**: `server/src/test/java/io/crate/types/MapComparatorTest.java` (modified, +10/-0)
+**File**: `server/src/main/java/io/crate/expression/scalar/SubscriptFunctions.java` (modified, +1/-1)
 ```diff
-@@ -142,4 +142,14 @@ public void testCompareMapsWithStringAndBytesRef() {
-         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(0);
-         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
+@@ -100,7 +100,7 @@ public static Function tryCreateSubscript(Symbol baseSymbol, List<String> path)
+                 Function subscript = new Function(
+                     SubscriptFunction.SIGNATURE_ARRAY_OF_OBJECTS,
+                     List.of(baseSymbol, Literal.of(child)),
+-                    new ArrayType<>(returnType)
++                    ArrayType.makeArray(returnType, ArrayType.dimensions(baseType))
+                 );
+ 
+                 for (int i = 1; i < path.size(); i++) {
+```
+
+**File**: `server/src/test/java/io/crate/integrationtests/SubSelectIntegrationTest.java` (modified, +7/-8)
+```diff
+@@ -26,7 +26,6 @@
+ import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
+ import static io.crate.testing.Asserts.assertThat;
+ import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+-import static org.assertj.core.api.Assertions.assertThat;
+ 
+ import java.util.Arrays;
+ import java.util.Collections;
+@@ -183,7 +182,7 @@ public void testNestedGroupByAggregation() throws Exception {
+                 "  select min(age) as minAge from characters group by gender) as ch " +
+                 "group by minAge");
+         List<Object[]> rows = Arrays.asList(response.rows());
+-        Collections.sort(rows, OrderingByPosition.arrayOrdering(DataTypes.INTEGER, 0, true, true));
++        rows.sort(OrderingByPosition.arrayOrdering(DataTypes.INTEGER, 0, true, true));
+         assertThat(rows).containsExactly(
+             new Object[] { 1L },
+             new Object[] { 1L }
+@@ -742,15 +741,15 @@ public void testWhereSubsSelectAsClusteredByValue() {
+ 
+     @Test
+     public void testSubscriptOnSubSelect() {
+-        execute("create table t1 (a object, c object)");
+-        execute("insert into t1 (a, c) values ({ b = 1 }, { d = { e = 2 }})");
++        execute("create table t1 (a object, c object, items array(object as (x int)))");
++        execute("insert into t1 (a, c, items) values ({ b = 1 }, { d = { e = 2 }}, [{ x = 3 }])");
+         execute("refresh table t1");
+-        execute("select a['b'], c['d']['e'] from t1");
++        execute("select a['b'], c['d']['e'], items['x'] from t1");
+         assertThat(response).hasRows(
+-            "1| 2");
+-        execute("select a['b'], c['d']['e'] from (select * from t1) t2");
++            "1| 2| [3]");
++        execute("select a['b'], c['d']['e'], items['x'] from (select * from t1) t2");
+         assertThat(response).hasRows(
+-            "1| 2");
++            "1| 2| [3]");
      }
+ 
+     @Test
+```
+
+**File**: `server/src/test/java/io/crate/integrationtests/ViewsITest.java` (modified, +33/-6)
+```diff
+@@ -26,7 +26,6 @@
+ import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
+ import static io.crate.testing.Asserts.assertThat;
+ import static io.netty.handler.codec.http.HttpResponseStatus.CONFLICT;
+-import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+ import java.util.Locale;
+@@ -45,6 +44,7 @@
+ import io.crate.protocols.postgres.PGErrorStatus;
+ import io.crate.sql.tree.BitString;
+ import io.crate.testing.Asserts;
++import io.crate.testing.UseJdbc;
+ import io.netty.handler.codec.http.HttpResponseStatus;
+ 
+ public class ViewsITest extends IntegTestCase {
+@@ -234,14 +234,41 @@ public void testDropViewDoesNotFailIfViewIsMissingAndIfExistsIsUsed() {
+     }
+ 
+     @Test
++    @UseJdbc(0) // compares column types; pg reports nested arrays as json
+     public void testSubscriptOnViews() {
+-        execute("create table t1 (a object as (b integer), c object as (d object as (e integer))) ");
+-        execute("insert into t1 (a, c) values ({ b = 1 }, { d = { e = 2 }})");
+-        execute("refresh table t1");
++        execute("create table t1 (" +
++                "a object as (b integer), " +
++                "c object as (d object as (e integer)), " +
++                "items array(object as (x integer, o object as (y integer))), " +
++                "ign object(ignored) as (declared integer), " +
++                "dyn object(dynamic), " +
++                "nested array(object as (arr array(object as (z integer)))))");
+         execute("create view v1 as select * from t1");
++        // dyn['added'] is created by dynamic mapping after the view exists
++        execute("insert into t1 (a, c, items, ign, dyn, nested) values (" +
++                "{ b = 1 }, { d = { e = 2 }}, [{ x = 3, o = { y = 4 }}], " +
++                "{ declared = 5, undeclared = 'foo' }, { added = 6 }, [{ arr = [{ z = 7 }] }])");
++        execute("refresh table t1");
 +
-+    @Test
-+    public void test_equals_on_map_with_same_size_and_null_entry_is_symmetric() throws Exception {
-+        Map<String, Integer> map1 = MapBuilder.<String, Integer>newMapBuilder()
-+            .put("x", null)
-+            .map();
-+        Map<String, Integer> map2 = Map.of("y", 1);
-+        assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(1);
-+        assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(-1);
-+    }
- }
+         // must not throw an exception, subscript must be resolved
+-        execute("select a['b'], c['d']['e'] from v1");
+-        assertThat(response).hasRows("1| 2");
++        // https://github.com/crate/crate/issues/20652: also on an array of objects
++        String stmt = "select a['b'], c['d']['e'], items['x'], items['o']['y'], " +
++                      "ign['declared'], ign['undeclared'], dyn['added'], nested['arr']['z'] from ";
++        execute(stmt + "t1");
++        var expectedTypes = response.columnTypes();
++        var expectedRows = response.rows();
++
++        execute(stmt + "v1");
++        assertThat(response).hasRows("1| 2| [3]| [4]| 5| foo| 6| [[7]]");
++        assertThat(response.columnTypes()).isEqualTo(expectedTypes);
++        assertThat(response.rows()).isEqualTo(expectedRows);
++
++        execute(stmt + "(select * from t1) t");
++        assertThat(response.columnTypes()).isEqualTo(expectedTypes);
++        assertThat(response.rows()).isEqualTo(expectedRows);
++
++        execute("select pg_typeof(dyn['added']) from v1");
++        assertThat(response).hasRows("bigint");
+     }
+ 
+     @Test
 ```
 
 ---
 
-### Incident Patch 2: `893b0b1e` (2026-11-25)
-**Commit Message**: Replace anonymous HashMap in MapComparatorTest with Map.of/MapBuilder
+### Incident Patch 2: `d1ccbb51` (2026-11-26)
+**Commit Message**: Reword and merge rel notes for genseries fix.
 
-**File**: `server/src/test/java/io/crate/types/MapComparatorTest.java` (modified, +54/-46)
+**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +3/-5)
 ```diff
-@@ -30,6 +30,8 @@
- import org.elasticsearch.test.ESTestCase;
- import org.junit.Test;
+@@ -63,8 +63,6 @@ Fixes
+   call.
  
-+import io.crate.common.collections.MapBuilder;
+ - Fixed an issue that caused ``generate_series`` to return no rows, or to never
+-  finish, if the series had more than 2147483647 values or if the step value
+-  pointed away from the stop value.
+-
+-- Fixed an issue that caused ``generate_series`` to become endless if the stop
+-  value is the maximum value for the given type.
++  finish, if the series had more than ``2147483647`` values or if the step value
++  pointed away from the stop value, or if the stop value is the maximum value
++  for the given type.
+```
+
+---
+
+### Incident Patch 3: `844201ee` (2026-11-25)
+**Commit Message**: Fix generate_series not stopping if the stop value is integer's or long's max value
+
+**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +3/-0)
+```diff
+@@ -65,3 +65,6 @@ Fixes
+ - Fixed an issue that caused ``generate_series`` to return no rows, or to never
+   finish, if the series had more than 2147483647 values or if the step value
+   pointed away from the stop value.
 +
- public class MapComparatorTest extends ESTestCase {
++- Fixed an issue that caused ``generate_series`` to become endless if the stop
++  value is the maximum value for the given type.
+```
+
+**File**: `server/src/main/java/io/crate/expression/tablefunctions/GenerateSeries.java` (modified, +20/-3)
+```diff
+@@ -30,6 +30,7 @@
  
-     @Test
-@@ -41,71 +43,76 @@ public void testCompareNullMaps() {
+ import org.elasticsearch.common.settings.Settings;
+ import org.joda.time.Period;
++import org.jspecify.annotations.Nullable;
  
-     @Test
-     public void testCompareMapsWithNullValues() {
--        Map<String, Integer> map1 = new HashMap<>() {{
--                put("str1", 1);
--                put("str2", null);
--                put("str3", 3);
--            }};
--        Map<String, Integer> map2 = new HashMap<>() {{
--                put("str1", 1);
--                put("str2", 2);
--                put("str3", 3);
--            }};
-+        Map<String, Integer> map1 = MapBuilder.<String, Integer>newMapBuilder()
-+            .put("str1", 1)
-+            .put("str2", null)
-+            .put("str3", 3)
-+            .map();
-+        Map<String, Integer> map2 = Map.of(
-+            "str1", 1,
-+            "str2", 2,
-+            "str3", 3
-+        );
-         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(1);
-         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(-1);
- 
-+        map2 = new HashMap<>(map2);
-         map2.put("str2", null);
-         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
+ import io.crate.data.Input;
+ import io.crate.data.Row;
+@@ -81,7 +82,7 @@ public static void register(Functions.Builder builder, Settings settings) {
+                 signature,
+                 boundSignature,
+                 1L,
+-                Long::sum,
++                GenerateSeries::sum,
+                 Long::compare,
+                 new RowType(List.of(boundSignature.argTypes().get(0)), fieldNames))
+         );
+@@ -96,7 +97,7 @@ public static void register(Functions.Builder builder, Settings settings) {
+                 signature,
+                 boundSignature,
+                 1,
+-                Integer::sum,
++                GenerateSeries::sum,
+                 Integer::compare,
+                 new RowType(List.of(boundSignature.argTypes().get(0)), fieldNames))
+         );
+@@ -114,7 +115,7 @@ public static void register(Functions.Builder builder, Settings settings) {
+                 signature,
+                 boundSignature,
+                 1L,
+-                Long::sum,
++                GenerateSeries::sum,
+                 Long::compare,
+                 new RowType(List.of(boundSignature.argTypes().get(0)), fieldNames))
+         );
+@@ -167,6 +168,22 @@ public static void register(Functions.Builder builder, Settings settings) {
+         }
      }
  
-     @Test
-     public void testCompareMapsWithValuesOfTheSameClass() {
--        Map<String, Integer> map1 = new HashMap<>() {{
--                put("str1", 1);
--                put("str2", 2);
--                put("str3", 3);
--            }};
--        Map<String, Integer> map2 = new HashMap<>() {{
--                put("str1", 1);
--                put("str2", 2);
--                put("str3", 3);
--            }};
-+        Map<String, Integer> map1 = Map.of(
-+            "str1", 1,
-+            "str2", 2,
-+            "str3", 3
-+        );
-+        Map<String, Integer> map2 = Map.of(
-+            "str1", 1,
-+            "str2", 2,
-+            "str3", 3
-+        );
-         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(0);
-         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
- 
-+        map1 = new HashMap<>(map1);
-         map1.put("str2", 5);
-         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(1);
-         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(-1);
++    private static @Nullable Long sum(long x, long y) {
++        try {
++            return Math.addExact(x, y);
++        } catch (ArithmeticException e) {
++            return null;
++        }
++    }
++
++    private static @Nullable Integer sum(int x, int y) {
++        try {
++            return Math.addExact(x, y);
++        } catch (ArithmeticException e) {
++            return null;
++        }
++    }
++
+     private final T defaultStep;
+     private final BinaryOperator<T> plus;
+     private final Comparator<T> comparator;
+```
+
+**File**: `server/src/main/java/io/crate/expression/tablefunctions/RangeIterable.java` (modified, +3/-0)
+```diff
+@@ -64,6 +64,9 @@ public Iterator<Row> iterator() {
+         return new Iterator<>() {
+             @Override
+             public boolean hasNext() {
++                if (value == null) {
++                    return false;
++                }
+                 int cmp = comparator.compare(value, endInclusive);
+                 return reversed ? cmp >= 0 : cmp <= 0;
+             }
+```
+
+**File**: `server/src/test/java/io/crate/expression/tablefunctions/GenerateSeriesTest.java` (modified, +17/-0)
+```diff
+@@ -222,4 +222,21 @@ public void test_generate_series_with_milliseconds_interval() {
+                 """
+         );
      }
- 
++
 +    @Test
-     public void testCompareMapsWithValuesOfDifferentClass() {
--        Map<String, Number> map1 = new HashMap<>() {{
--                put("str1", 1);
--                put("str2", 2);
--                put("str3", 3);
--            }};
--        Map<String, Number> map2 = new HashMap<>() {{
--                put("str1", 1);
--                put("str2", 2L);
--                put("str3", 3);
--            }};
-+        Map<String, Number> map1 = Map.of(
-+            "str1", 1,
-+            "str2", 2,
-+            "str3", 3
-+        );
-+        Map<String, Number> map2 = Map.of(
-+            "str1", 1,
-+            "str2", 2L,
-+            "str3", 3
-+        );
-         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(0);
-         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
- 
-+        map1 = new HashMap<>(map1);
-         map1.put("str2", 5.0);
-         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(1);
-         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(-1);
-     }
- 
-+    @Test
-     public void testCompareMapsWithValuesOfDifferentClassNested() {
--        Map<String, Object> map1 = new HashMap<>() {{
--                put("str1", 1);
--                put("str2", Map.of("str3", Short.valueOf("1234")));
--            }};
--        Map<String, Object> map2 = new HashMap<>() {{
--                put("str1", 1);
--                put("str2", Map.of("str3", Short.valueOf("1234")));
--            }};
-+        Map<String, Object> map1 = MapBuilder.<String, Object>newMapBuilder()
-+            .put("str1", 1)
-+            .put("str2", Map.of("str3", Short.valueOf("1234")))
-+            .map();
-+        Map<String, Object> map2 = Map.of(
-+            "str1", 1,
-+            "str2", Map.of("str3", Short.valueOf("1234"))
-+        );
-         assertThat(MapComparator.compareMaps(map1, map2)).isEqualTo(0);
-         assertThat(MapComparator.compareMaps(map2, map1)).isEqualTo(0);
- 
-@@ -118,19 +125,20 @@ public void testCompareMapsWithValuesOfDifferentClassNested() {
-         assertThat(MapComparator.compareMaps(map2, map1)).isGreaterThan(1);
-     }
- 
-+    @Test
-     public void testCompareMapsWithStringAndBytesRef() {
-         /*
-          * this can happen when you compare an object with an object literal
-          * ... WHERE o = {"x" = 'foo'}
-          */
--        Map<String, Object> map1 = new HashMap<>() {{
--                put("str1", "a");
--                put("str3", "3");
--            }};
--        Map<String, Object> map2 = new HashMap<>() {{
--                put("str1", "a");
--                put("str3", 3);
--            }};
-+        Map<String, Object> map1 = Map.of(
-+ 
++    public void test_generate_series_stops_at_max_value() {
++        Iterable<Row> rows = execute("generate_series(9223372036854775805, 9223372036854775807)");
++        assertThat(StreamSupport.stream(rows.spliterator(), false)
++            .limit(4)
++            .map(row -> row.get(0))
++            .toList()
++        ).containsExactly(9223372036854775805L, 9223372036854775806L, 9223372036854775807L);
++
++        rows = execute("generate_series(2147483645, 2147483647)");
++        assertThat(StreamSupport.stream(rows.spliterator(), false)
++            .limit(4)
++            .map(row -> row.get(0))
++            .toList()
++        ).containsExactly(2147483645, 2147483646, 2147483647);
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20689** (2026-11-25): Fix object type comparison of same size with null values (backport #20688) (@mergify[bot])
-- **PR #20688** (2026-11-25): Fix object type comparison of same size with null values (@mfussenegger)
-- **PR #20687** (2026-11-25): Use function query for ignored object column childs instead of match-no-docs (backport #20686) (@mergify[bot])
-- **PR #20686** (2026-11-25): Use function query for ignored object column childs instead of match-no-docs (@mfussenegger)
-- **PR #20681** (2026-11-25): Add 6.5.3 release notes (@jeeminso)
-- **PR #20679** (2026-11-24): Reflect 6.2.12, 6.3.8, 6.4.8 and 6.5.2 (@BaurzhanSakhariev)
+- **PR #20707** (2026-11-26): Fix ClassCastException on object array subscript through view (backport #20663) (@mergify[bot])
+- **PR #20706** (2026-11-26): Prevent DROP SCHEMA CASCADE from deleting subscribed tables (backport #20680) (@mergify[bot])
+- **PR #20705** (2026-11-26): Reword and merge rel notes for genseries fix. (backport #20704) (@mergify[bot])
+- **PR #20704** (2026-11-26): Reword and merge rel notes for genseries fix. (@matriv)
+- **PR #20703** (2026-11-26): Fix generate_series not stopping if the stop value is integer's or long's max value (backport #20695) (@mergify[bot])
+- **PR #20701** (2026-11-26): Fix generate_series if there are more than Integer.MAX_VALUE rows or if the step value points away from the stop value (backport #20692) (@mergify[bot])
 
 ---
 
@@ -812,13 +929,13 @@ Closes https://github.com/crate/crate/issues/20665
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. object type comparison of same size with null values
+## X. ClassCastException on object array subscript through view
 
 **RULE**:
 When implementing operations in `docs/appendices/release-notes/6.5.3.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `efff336e`: object type comparison of same size with null values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4529d4d5`: ClassCastException on object array subscript through view. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.3.rst`.
@@ -826,9 +943,15 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Fixed an issue where a comparison on object columns could lead to a wrong
-  result if the objects had the same amount of keys and some values were
-  ``null``.
+- Fixed a ``ClassCastException`` error which was thrown when using a subscript
+  on a column of type ``ARRAY(OBJECT)``, including nested arrays of objects,
+  selected from a view or a subquery, e.g.::
+
+      SELECT items['x'] FROM v
+
+  or::
+
+      SELECT items['arr']['z'] FROM v``
 
 ```
 
@@ -839,7 +962,7 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `efff336e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4529d4d5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

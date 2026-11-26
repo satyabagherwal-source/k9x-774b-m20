@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T20:14:11.792Z",
-    "lastVerified": "2026-11-26T20:14:11.792Z",
+    "lastChecked": "2026-11-26T20:23:09.312Z",
+    "lastVerified": "2026-11-26T20:23:09.312Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -287,9 +287,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T19:45:55.148Z",
+    "lastChecked": "2026-11-26T20:23:02.465Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T19:45:55.148Z"
+    "lastVerified": "2026-11-26T20:23:02.465Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -849,9 +849,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-26T16:21:16.445Z",
+    "lastChecked": "2026-11-26T20:22:57.449Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-26T16:21:16.445Z"
+    "lastVerified": "2026-11-26T20:22:57.449Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -2715,14 +2715,14 @@
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-26T01:53:36.788Z",
-    "lastVerified": "2026-11-26T01:53:36.788Z",
+    "lastChecked": "2026-11-26T20:23:04.590Z",
+    "lastVerified": "2026-11-26T20:23:04.590Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
-    "contentHash": "38017b8e107eef76b2d31c874da7f1c8efe44694afec9f36791a12855be575d2",
+    "contentHash": "7cc86e05095d74a0ae3772ef03ddc6d47b0d44de117fe093a5be107560e6993d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2961,9 +2961,9 @@
   "nozbe-watermelondb": {
     "name": "WatermelonDB",
     "officialUrl": "https://github.com/Nozbe/WatermelonDB",
-    "lastChecked": "2026-11-24T12:36:19.977Z",
+    "lastChecked": "2026-11-26T20:22:52.617Z",
     "revisionIdentifier": "5c463222",
-    "lastVerified": "2026-11-24T12:36:19.977Z"
+    "lastVerified": "2026-11-26T20:22:52.617Z"
   },
   "kgateway-dev-kgateway": {
     "name": "kgateway",
@@ -4032,11 +4032,21 @@
     "revisionIdentifier": "9f03e7de"
   },
   "vi-websocat": {
-    "name": "websocat",
+    "name": "vi/websocat",
     "officialUrl": "https://github.com/vi/websocat",
-    "lastChecked": "2026-11-25T13:20:21.807Z",
-    "revisionIdentifier": "097582e3",
-    "lastVerified": "2026-11-25T13:20:21.807Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-26T20:22:51.649Z",
+    "lastVerified": "2026-11-26T20:22:51.649Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-vi-websocat",
+    "contentHash": "8e4472c6dffc37316d98d8a121d2f8288c5afa8314a9b02477710c6a10108407",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-google-t5-t5-small": {
     "name": "google-t5/t5-small",
@@ -4948,12 +4958,12 @@
     "officialUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T06:53:51.112Z",
-    "lastVerified": "2026-11-23T06:53:51.112Z",
+    "lastChecked": "2026-11-26T20:22:50.087Z",
+    "lastVerified": "2026-11-26T20:22:50.087Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "66e6128f465c3ac56cc324736996c446f7fc8066be4988d1192373a72a1b5e7e",
+    "contentHash": "afb529aec08857d58f3b34f0d86584daf1a999d1e3179e8e7a7c817804540fa9",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5836,9 +5846,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-11-26T02:46:42.792Z",
+    "lastChecked": "2026-11-26T20:22:55.126Z",
     "revisionIdentifier": "dcd065d9",
-    "lastVerified": "2026-11-26T02:46:42.792Z"
+    "lastVerified": "2026-11-26T20:22:55.126Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",

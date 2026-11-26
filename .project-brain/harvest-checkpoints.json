@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T20:14:08.131Z",
+  "last_updated": "2026-11-26T20:23:05.849Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1250,14 +1250,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
-      "content_hash": "66e6128f465c3ac56cc324736996c446f7fc8066be4988d1192373a72a1b5e7e",
-      "verified_at": "2026-11-23T06:53:51.797Z",
+      "content_hash": "afb529aec08857d58f3b34f0d86584daf1a999d1e3179e8e7a7c817804540fa9",
+      "verified_at": "2026-11-26T20:22:50.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T06:53:51.797Z"
+      "last_updated": "2026-11-26T20:22:50.957Z"
     },
     "meta-llama/Llama-2-7b-chat-hf": {
       "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "38017b8e107eef76b2d31c874da7f1c8efe44694afec9f36791a12855be575d2",
-      "verified_at": "2026-11-26T01:53:37.929Z",
+      "content_hash": "7cc86e05095d74a0ae3772ef03ddc6d47b0d44de117fe093a5be107560e6993d",
+      "verified_at": "2026-11-26T20:23:05.848Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T01:53:37.929Z"
+      "last_updated": "2026-11-26T20:23:05.848Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -6711,14 +6711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vi-websocat",
-      "content_hash": "f3d51d8316b610635589ac5c59198df4d91bb43e22d36f3e82e181826211ca22",
-      "verified_at": "2026-11-15T12:31:18.755Z",
+      "content_hash": "8e4472c6dffc37316d98d8a121d2f8288c5afa8314a9b02477710c6a10108407",
+      "verified_at": "2026-11-26T20:22:53.029Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T12:31:18.755Z"
+      "last_updated": "2026-11-26T20:22:53.029Z"
     },
     "keybase/client": {
       "repository": "keybase/client",

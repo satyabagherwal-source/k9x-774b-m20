@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:14:15.392Z",
+  "last_updated": "2026-11-26T20:23:12.252Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66957,6 +66957,46 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AB0000-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-21E8",
+      "directive_title": "Empirical Invariant Guard in line_peer.rs",
+      "source_repo": "vi-websocat-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-21E8-empirical-invariant-guard-in-line_peer-rs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-235N",
+      "directive_title": "ClassCastException on object array subscript through view",
+      "source_repo": "crate-crate-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-235N-classcastexception-on-object-array-subscript-through-view.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-CB9F0D",
+      "directive_title": "Empirical Invariant Guard in line_peer.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vi-websocat",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB9F0D-empirical-invariant-guard-in-line-peer-r.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-9CE53B",
+      "directive_title": "ClassCastException on object array subscript through view",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crate-crate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9CE53B-classcastexception-on-object-array-subsc.md",
       "staged_date": "2026-11-26"
     }
   ]

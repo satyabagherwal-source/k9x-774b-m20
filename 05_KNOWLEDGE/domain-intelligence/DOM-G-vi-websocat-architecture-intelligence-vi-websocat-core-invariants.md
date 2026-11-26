@@ -4,23 +4,23 @@
 {
   "source_repository": "vi/websocat",
   "source_url": "https://github.com/vi/websocat",
-  "source_version": "097582e3",
+  "source_version": "c8d91850",
   "license": "MIT",
-  "timestamp": "2026-11-15T12:31:18.960Z",
+  "timestamp": "2026-11-26T20:22:53.287Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vi-websocat",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [vi/websocat](https://github.com/vi/websocat) (Revision: `097582e3`).  
-> **License**: MIT | **Timestamp**: `2026-11-15T12:31:18.960Z`  
+> **Provenance**: Harvested from [vi/websocat](https://github.com/vi/websocat) (Revision: `c8d91850`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T20:22:53.287Z`  
 > **Learning ID**: `learn-github-vi-websocat`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence)
 - **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vi-websocat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vi/websocat](https://github.com/vi/websocat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T12:31:17.915Z  
+> **Harvest Timestamp**: 2026-11-26T20:22:51.649Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Command-line client for WebSockets, like netcat (or curl) for ws:// with advanced socat-like functions
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 8757 stars
+- **Stars / Engagement**: 8761 stars
 
 ---
 
@@ -2037,14 +2037,14 @@ impl AsyncRead for JsonRpcWrapper {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #321** (2026-11-26): **Fix line2msg: sending the stripped line terminator as an extra message**
+  *Symptoms*: `line2msg:` sends the line terminator as its own extra message when it should strip it. This hits `-0` / `--null-terminated` (always strips `\0`) and `--linemode-strip-newlines`.  ### Repro  ``` $ websocat -b -u ws-l:127.0.0.1:1234 lengthprefixed:writefile:/tmp/out.dat & $ printf 'ab\0cd\0' | websocat -0 ws://127.0.0.1:1234/ $ xxd /tmp/out.dat 00000000: 0000 0002 6162 0000 0001 0000 0000 0263  ....ab.........c 00000010: 6400 0000 0100                           d..... ```  The server gets 4 messages: `ab`, `\0`, `cd`, `\0`. Expected 2: `ab`, `cd`.  Same with `printf 'ab\ncd\n' | websocat --linemode-strip-newlines ws://...`: you get `ab`, `\n`, `cd`, `\n`. It only works when one read holds exactly one line (the fast path in `read()`). With several lines in one read, or a line split over two reads, it breaks.  ### Cause  `Line2PacketWrapper::deliver_the_line` in `src/line_peer.rs` (around line 181) trims the terminator first by checking `buf[n - 1]`. Then it copies `queue[0..n]` into `buf` and drains only `n` bytes from the queue. Two problems:  - `buf` still holds the old data from the last inner read, not this line, so the check is often wrong. - When it does trim, `n` is now one short, so the terminator stays in the queue and is sent later as a one-byte message.  ### Fix  Copy and drain the whole line first, then trim the terminator from the copy in `buf`. The too-long-line path is unchanged.  One note: an empty line in strip mode now gives a zero-length read (EOF), same as t
+
 - **Issue #319** (2026-11-14): **Fix root package version in Cargo.lock**
   *Symptoms*: Cargo.toml declares websocat 1.14.2, but the root package entry in Cargo.lock still declares 1.14.1. This makes locked Cargo operations require a lockfile update, blocking the Homebrew 1.14.2 update in https://github.com/Homebrew/homebrew-core/pull/324983.  Update only the root package version to match Cargo.toml; dependency versions and checksums are unchanged.  Validation: `cargo fetch --locked --target aarch64-apple-darwin` succeeds with the existing Homebrew Rust toolchain.
   **Post-Mortem & Fix Analysis**:
   > Shall I re-tag `v1.14.2` or does Homebrew rely on `master` ref?
   > > Shall I re-tag `v1.14.2` or does Homebrew rely on `master` ref?  with the patch, homebrew would be fine, I think it is better to cut a new release if you want (to roll forward :) )
-
-- **Issue #317** (2026-11-13): **Don't write WebSocket close reason (and other control payloads) to the output stream**
-  *Symptoms*: Fixes #316  Websocat4 wrote the payload of a received Close frame (status code bytes + reason) to stdout as if it were message data. With `websocat1 ... --close-status-code 1234 --close-reason qwerty` on the other side, `websocat4 ws://...` printed `qqq` and then `\x04\xd2qwerty`.  The decoder hands the Close payload upstream with the `Eof` flag, which is right: `lengthprefixed` with `--lengthprefixed-include-control` encodes control packets with their payload (`wslprc1` covers that). The problem is the two packet-to-stream sinks, `write_stream_chunks` and `line_chunks`, which wrote any packet's bytes. The same path also leaked ping payloads when `--inhibit-pongs=0` passes pings upstream, and payloads of received pongs.  Change: both sinks now skip the payload of control packets (`is_control()`: Eof / Ping / Pong). An Eof packet still flushes and shuts down the writer, as before. This matches the `Defragmenter`, which already ignores control packets.  ### Tests  New ioless tests `wsclosereason1..4` (binary and text mode; close with a reason; inhibited ping + pong around a data frame). All 4 fail on `websocat4` with the mock reporting an unexpected write, and pass with the change. Full `cargo test`: 105 ioless tests pass.  Also checked by hand against a small raw WebSocket server that sends `qqq\n` and then Close(1234, "qwerty"): before, stdout got `qqq \n\x04\xd2qwerty` (text) / `qqq\n\x04\xd2qwerty` (`-b`); after, only `qqq \n` / `qqq\n`.  Side note, not changed here: with `
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2061,53 +2061,133 @@ impl AsyncRead for JsonRpcWrapper {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `097582e3` (2026-11-14)
-**Commit Message**: Merge pull request #319 from chenrui333/fix-lockfile-package-version
+### Incident Patch 1: `c8d91850` (2026-11-26)
+**Commit Message**: Merge pull request #321 from bardrop-oss/fix-line2msg-trim-newline
 
-Fix root package version in Cargo.lock
+Fix line2msg: sending the stripped line terminator as an extra message
 
-**File**: `Cargo.lock` (modified, +1/-1)
+**File**: `src/line_peer.rs` (modified, +81/-5)
 ```diff
-@@ -1878,7 +1878,7 @@ checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
- 
- [[package]]
- name = "websocat"
--version = "1.14.1"
-+version = "1.14.2"
- dependencies = [
-  "anymap",
-  "argon2",
-```
-
----
-
-### Incident Patch 2: `dbeaa845` (2026-11-14)
-**Commit Message**: Fix root package version in Cargo.lock
-
-Match the websocat package version to Cargo.toml so locked dependency fetches do not require updating the lockfile.
-
-Signed-off-by: Rui Chen <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -1878,7 +1878,7 @@ checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
- 
- [[package]]
- name = "websocat"
--version = "1.14.1"
-+version = "1.14.2"
- dependencies = [
-  "anymap",
-  "argon2",
+@@ -168,7 +168,8 @@ struct Line2PacketWrapper {
+ impl Line2PacketWrapper {
+     #[allow(clippy::collapsible_if)]
+     fn deliver_the_line(&mut self, buf: &mut [u8], mut n: usize) -> Option<usize> {
+-        if n > buf.len() {
++        let too_long = n > buf.len();
++        if too_long {
+             if self.drop_too_long_lines {
+                 error!("Dropping too long line of {} bytes because of buffer (-B option) is only {} bytes", n, buf.len());
+                 drop(self.queue.drain(0..n));
+@@ -177,7 +178,14 @@ impl Line2PacketWrapper {
+                 warn!("Splitting too long line of {} bytes because of buffer (-B option) is only {} bytes", n, buf.len());
+                 n = buf.len();
+             }
+-        } else {
++        }
++
++        // Take the whole line (including its terminator) out of the queue,
++        // then trim the terminator from the copy in `buf`.
++        buf[0..n].copy_from_slice(&self.queue[0..n]);
++        drop(self.queue.drain(0..n));
++
++        if !too_long {
+             if !self.retain_newlines && !self.null_terminated {
+                 if n > 0 && (buf[n - 1] == b'\n') {
+                     n -= 1
+@@ -192,9 +200,6 @@ impl Line2PacketWrapper {
+                 }
+             }
+         }
+-
+-        buf[0..n].copy_from_slice(&self.queue[0..n]);
+-        drop(self.queue.drain(0..n));
+         Some(n)
+     }
+ }
+@@ -282,3 +287,74 @@ impl Read for Line2PacketWrapper {
+     }
+ }
+ impl AsyncRead for Line2PacketWrapper {}
++
++#[cfg(test)]
++mod tests {
++    use super::Line2PacketWrapper;
++    use std::collections::VecDeque;
++    use std::io::Read;
++
++    /// Returns one prepared chunk per `read` call, then EOF.
++    struct Chunks(VecDeque<&'static [u8]>);
++    impl Read for Chunks {
++        fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
++            match self.0.pop_front() {
++                Some(c) => {
++                    buf[..c.len()].copy_from_slice(c);
++                    Ok(c.len())
++                }
++                None => Ok(0),
++            }
++        }
++    }
++    impl tokio_io::AsyncRead for Chunks {}
++
++    fn messages(
++        chunks: &[&'static [u8]],
++        retain_newlines: bool,
++        null_terminated: bool,
++    ) -> Vec<Vec<u8>> {
++        let mut w = Line2PacketWrapper {
++            inner: Box::new(Chunks(chunks.iter().cloned().collect())),
++            queue: vec![],
++            retain_newlines,
++            allow_incomplete_lines: true,
++            drop_too_long_lines: false,
++            eof: false,
++            null_terminated,
++        };
++        let mut buf = [0u8; 64];
++        let mut ret = vec![];
++        loop {
++            let n = w.read(&mut buf).unwrap();
++            if n == 0 {
++                break;
++            }
++            ret.push(buf[..n].to_vec());
++        }
++        ret
++    }
++
++    #[test]
++    fn line2msg_strip_newlines() {
++        let expected = vec![b"ab".to_vec(), b"cd".to_vec()];
++        assert_eq!(messages(&[b"ab\ncd\n"], false, false), expected);
++        assert_eq!(messages(&[b"ab\r\ncd\r\n"], false, false), expected);
++        assert_eq!(messages(&[b"ab", b"\ncd\n"], false, false), expected);
++        assert_eq!(messages(&[b"ab\r", b"\ncd\n"], false, false), expected);
++    }
++
++    #[test]
++    fn line2msg_null_terminated() {
++        let expected = vec![b"ab".to_vec(), b"cd".to_vec()];
++        assert_eq!(messages(&[b"ab\0cd\0"], true, true), expected);
++        assert_eq!(messages(&[b"ab", b"\0cd\0"], true, true), expected);
++    }
++
++    #[test]
++    fn line2msg_retain_newlines() {
++        let expected = vec![b"ab\n".to_vec(), b"cd\n".to_vec()];
++        assert_eq!(messages(&[b"ab\ncd\n"], true, false), expected);
++        assert_eq!(messages(&[b"ab", b"\ncd\n"], true, false), expected);
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #321** (2026-11-26): Fix line2msg: sending the stripped line terminator as an extra message (@bardrop)
 - **PR #319** (2026-11-14): Fix root package version in Cargo.lock (@chenrui333)
+- **PR #318** (2026-11-18): Finish an unfinished packet write before sending EOF with -E (@bardrop)
 - **PR #317** (2026-11-13): Don't write WebSocket close reason (and other control payloads) to the output stream (@bardrop)
 - **PR #315** (2026-11-12): Don't auto-enable async stdio for character devices on Mac (@StevenLi-phoenix)
 - **PR #314** (2026-11-12): Fix l-ws-abstract: alias and ws-l: misuse in help examples (@StevenLi-phoenix)
-- **PR #310** (2026-07-22): Handle canceled pinger in ws_peer.rs (@zobo)
-- **PR #309** (closed): Add writefile_ts:, readfile_ts:, and readfile_ts_loop: specifiers (@eriang)
 
 ---
 
@@ -2127,31 +2207,74 @@ Signed-off-by: Rui Chen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Empirical Invariant Guard in line_peer.rs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vi/websocat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/line_peer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vi/websocat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `097582e3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8d91850`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/line_peer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.14.2"
+        let too_long = n > buf.len();
+        if too_long {
+        }
+
+        // Take the whole line (including its terminator) out of the queue,
+        // then trim the terminator from the copy in `buf`.
+        buf[0..n].copy_from_slice(&self.queue[0..n]);
+        drop(self.queue.drain(0..n));
+
+        if !too_long {
+
+#[cfg(test)]
+mod tests {
+    use super::Line2PacketWrapper;
+    use std::collections::VecDeque;
+    use std::io::Read;
+
+    /// Returns one prepared chunk per `read` call, then EOF.
+    struct Chunks(VecDeque<&'static [u8]>);
+    impl Read for Chunks {
+        fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+            match self.0.pop_front() {
+                Some(c) => {
+                    buf[..c.len()].copy_from_slice(c);
+                    Ok(c.len())
+                }
+                None => Ok(0),
+            }
+        }
+    }
+    impl tokio_io::AsyncRead for Chunks {}
+
+    fn messages(
+        chunks: &[&'static [u8]],
+        retain_newlines: bool,
+        null_terminated: bool,
+    ) -> Vec<Vec<u8>> {
+        let mut w = Line2PacketWrapper {
+            inner: Box::new(Chunks(chunks.iter().cloned().collect())),
+            queue: vec![]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.14.1"
+        if n > buf.len() {
+        } else {
+
+        buf[0..n].copy_from_slice(&self.queue[0..n]);
+        drop(self.queue.drain(0..n));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `097582e3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8d91850` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

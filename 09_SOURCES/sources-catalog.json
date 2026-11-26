@@ -955,8 +955,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceVersion": "hf-openai-gpt-oss-20b",
     "license": "Open-Source",
-    "contentHash": "66e6128f465c3ac56cc324736996c446f7fc8066be4988d1192373a72a1b5e7e",
-    "lastHarvestedAt": "2026-11-23T06:53:51.789Z",
+    "contentHash": "afb529aec08857d58f3b34f0d86584daf1a999d1e3179e8e7a7c817804540fa9",
+    "lastHarvestedAt": "2026-11-26T20:22:50.941Z",
     "learningId": "learn-huggingface-openai-gpt-oss-20b"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "77a83f3b",
+    "sourceVersion": "92486c78",
     "license": "Apache-2.0",
-    "contentHash": "38017b8e107eef76b2d31c874da7f1c8efe44694afec9f36791a12855be575d2",
-    "lastHarvestedAt": "2026-11-26T01:53:37.914Z",
+    "contentHash": "7cc86e05095d74a0ae3772ef03ddc6d47b0d44de117fe093a5be107560e6993d",
+    "lastHarvestedAt": "2026-11-26T20:23:05.826Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -4393,10 +4393,10 @@
     "repository": "vi/websocat",
     "platform": "github",
     "sourceUrl": "https://github.com/vi/websocat",
-    "sourceVersion": "097582e3",
+    "sourceVersion": "c8d91850",
     "license": "MIT",
-    "contentHash": "f3d51d8316b610635589ac5c59198df4d91bb43e22d36f3e82e181826211ca22",
-    "lastHarvestedAt": "2026-11-15T12:31:18.742Z",
+    "contentHash": "8e4472c6dffc37316d98d8a121d2f8288c5afa8314a9b02477710c6a10108407",
+    "lastHarvestedAt": "2026-11-26T20:22:53.006Z",
     "learningId": "learn-github-vi-websocat"
   },
   "keybase-client": {

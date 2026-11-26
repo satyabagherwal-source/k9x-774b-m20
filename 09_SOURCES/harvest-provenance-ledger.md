@@ -13577,3 +13577,6 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `ec2ea636` | Multi-dimensional audit evidence | 2026-11-26T20:04:34.592Z |
 | `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-26T20:13:54.280Z |
 | `learn-github-caviraoss-longmemory` | `https://github.com/CaviraOSS/LongMemory` | `9d1deee0` | Multi-dimensional audit evidence | 2026-11-26T20:14:08.103Z |
+| `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-26T20:22:50.941Z |
+| `learn-github-vi-websocat` | `https://github.com/vi/websocat` | `c8d91850` | Multi-dimensional audit evidence | 2026-11-26T20:22:53.006Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `92486c78` | Multi-dimensional audit evidence | 2026-11-26T20:23:05.826Z |
