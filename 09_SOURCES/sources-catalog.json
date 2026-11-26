@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "00510513",
+    "sourceVersion": "9c02ea4e",
     "license": "Apache-2.0",
-    "contentHash": "b07f392d10de6c794cb41c678b3aaf409a3abbade1421d171529fa2a836d9fbb",
-    "lastHarvestedAt": "2026-11-25T14:14:35.672Z",
+    "contentHash": "1966eebdae366d8ce9cbeb3a7700e51ee5efcf6e61c98abb4f73edc1eee2b088",
+    "lastHarvestedAt": "2026-11-26T01:08:10.299Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "783a0060",
+    "sourceVersion": "110572fb",
     "license": "Apache-2.0",
-    "contentHash": "63617bf11d82077a69e47c28a776684c0243e9396925880f65e52b1a3268ab3b",
-    "lastHarvestedAt": "2026-11-25T00:43:35.806Z",
+    "contentHash": "e082e0bb3a865701ee015d58e2683c4b31d3f980c9b547eb1cbea97edf3c8623",
+    "lastHarvestedAt": "2026-11-26T01:08:08.049Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "28ed7681",
+    "sourceVersion": "649d33fa",
     "license": "Apache-2.0",
-    "contentHash": "ccce81f3b10454ae92a25230109e5a9f84c657893d7cc29b3fd96d5992264aeb",
-    "lastHarvestedAt": "2026-11-24T23:41:54.476Z",
+    "contentHash": "5efd158283b15407d8b9809c26345fb4f7d6b8f74211d5e63654123574192538",
+    "lastHarvestedAt": "2026-11-26T01:08:12.886Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -12085,8 +12085,8 @@
     "sourceUrl": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
     "sourceVersion": "hf-baidu-ernie-5.5-flash-base",
     "license": "Open-Source",
-    "contentHash": "eb5085b738b0bb9de5ade32e96f66b98baa71b36f84bf37fee59069a55794911",
-    "lastHarvestedAt": "2026-11-22T03:54:05.405Z",
+    "contentHash": "62139ab7da6e3248cbe69f867e0855b00675bd5d36d2207bf6db2523d696a5f9",
+    "lastHarvestedAt": "2026-11-26T01:07:57.442Z",
     "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base"
   },
   "github-squad": {

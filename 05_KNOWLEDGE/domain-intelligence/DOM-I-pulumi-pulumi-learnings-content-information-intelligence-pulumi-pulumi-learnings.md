@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T00:43:49.859Z",
+  "timestamp": "2026-11-26T01:08:17.596Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pulumi-pulumi-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pulumi-pulumi-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T00:43:49.859Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T01:08:17.596Z`  
 > **Learning ID**: `LEARN-EVO-pulumi-pulumi-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pulumi-pulumi-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `783a0060`  
+> **Source Version**: `110572fb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T00:43:34.707Z  
+> **Timestamp**: 2026-11-26T01:08:06.881Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:43:34.702Z  
+> **Harvest Timestamp**: 2026-11-26T01:08:06.876Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25937 stars
+- **Stars / Engagement**: 25941 stars
 
 ---
 
@@ -975,6 +975,11 @@ const currentAPIVersion = 9
 // request to the Pulumi service. See `currentAPIVersion`.
 var acceptAPIVersionHeader = fmt.Sprintf("application/vnd.pulumi+%d", currentAPIVersion)
 
+// AcceptAPIVersion returns the API version value added to the `Accept` header of every request.
+func AcceptAPIVersion() string {
+	return acceptAPIVersionHeader
+}
+
 // userAgentCommand and userAgentAIAgent are written once in the cobra root's
 // PersistentPreRunE before any HTTP-issuing goroutine is spawned, then read
 // from any goroutine making an API request. The single-writer-before-readers
@@ -1141,10 +1146,7 @@ func (t *refreshableAPIAccessToken) Get(_ context.Context) (string, error) {
 func (t *refreshableAPIAccessToken) Refresh(ctx context.Context, prevAccessToken string) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	// If another caller already refreshed while we were queued for the lock, the in-memory
-	// access token has advanced past the one we sent — bail without burning another grant.
-	if t.accessToken != prevAccessToken {
-		retur
+	// If another caller already refreshed while we were queued
 ```
 
 ### Core Architecture Module: `pkg/backend/httpstate/client/api_endpoints.go`
@@ -1715,11 +1717,15 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25820** (2026-11-24): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml>) has failed. See the list of failures below:  * [2026-11-22T06:06:21.000Z](<https://github.com/pulumi/pulumi/actions/runs/44989567319>) * [2026-11-23T06:26:38.000Z](<https://github.com/pulumi/pulumi/actions/runs/45118062811>)   * [2026-11-24T06:07:04.000Z](<https://github.com/pulumi/pulumi/actions/runs/45333577515>)
+- **Issue #25862** (2026-11-25): **Workflow failure: On Push at publish frozen release**
+  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-11-25T10:43:52.000Z](https://github.com/pulumi/pulumi/actions/runs/45594551858)   - ❌ [publish frozen release](https://github.com/pulumi/pulumi/actions/runs/45594551858/job/139145807357): Test templates (failure)
+  **Post-Mortem & Fix Analysis**:
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-25T11:31:02.000Z](https://github.com/pulumi/pulumi/actions/runs/45602927418)
 
-- **Issue #25778** (2026-11-20): **Since #25448, every `pulumi preview` serializes and encrypts its in-memory snapshot on each step**
-  *Symptoms*: Since #25448 (first in v3.274.0), the HTTP backend wires a `SnapshotManager` with a `DiscardPersister` into every preview, not only `pulumi import --preview-only`. `SnapshotManager.saveSnapshot` serializes the whole deployment on every step (`Deployment()` → `SerializeDeploymentWithMetadata`) before handing it to the persister, which then throws it away. Serializing encrypts secret values with the stack's secrets manager, which for the service secrets manager means calls to the stack's encrypt API.  Two effects:  - **Previews need `stack:encrypt`.** A token whose role can read, export and decrypt a stack but not encrypt (a reasonable role for previewing production) now fails `pulumi preview` on any stack holding secrets:    ```   error: pre-step event returned an error: failed to serialize snapshot: [403] You do not have permission to perform this operation.   error: writing snapshot: failed to serialize snapshot: [403] You do not have permission to perform this operation.   ```    The message reads as a state write, which a preview isn't supposed to do. We hit it upgrading from v3.270.0 to v3.277.0. - **Extra work per step.** Serializing the full snapshot on every step makes a preview's serialization work grow with resources × steps, all of it discarded. The base snapshot's secrets manager is reused, so unchanged secrets aren't re-encrypted, but changed or new ones are.  **Repro:** on a Pulumi Cloud org with custom roles, give a token a role with `stack:read`, `stack:export`
+- **Issue #25861** (2026-11-25): **Workflow failure: On Push at publish frozen release**
+  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-11-25T10:38:21.000Z](https://github.com/pulumi/pulumi/actions/runs/45594551858)   - ❌ [publish frozen release](https://github.com/pulumi/pulumi/actions/runs/45594551858/job/139145030233): Test templates (failure)
+  **Post-Mortem & Fix Analysis**:
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-25T10:40:20.000Z](https://github.com/pulumi/pulumi/actions/runs/45595596613)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1736,236 +1742,274 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7bb3ec3` (2026-11-24)
-**Commit Message**: Remove RPC responses from debug logs (#25834)
+### Incident Patch 1: `110572fb` (2026-11-25)
+**Commit Message**: Offer the Neo debug link as a product hint (#25836)
 
-The Node.js SDK logged the full response of every Invoke, Call,
-ReadResource, getResource, RegisterResource and RegisterResourceOutputs
-RPC at debug level. 
+Moves the "[Pulumi Neo] Would you like help with these diagnostics?"
+block out of the diagnostics and into the product hints from this stack.
 
-Those responses carry secret values in plaintext,
-so secrets ended up in `--debug` output, glog files, `--json` event
-streams and automatic logs, where `pulumi logs share` cannot redact
-them.
+- `display.Options.ShowLinkToNeo` is replaced by an `OfferNeoLink`
+callback. `up` and `preview` set it to the hints manager's
+`OfferNeoDebug`, and the httpstate backend removes it when the org has
+no Neo, `PULUMI_SUPPRESS_NEO_LINK` is set, the permalink is suppressed,
+or `--neo` already shows the link.
+- The `neo-debug` hint keeps the `?explainFailure` link and the `pulumi
+neo --debug-update`/`--debug-preview` command. It is cloud-only, shown
+to new users, and shown at most once every 7 days.
+- The link after a `--neo` summary is unchanged.
 
-This change logs only the RPC label and any error. Response contents are
-no longer logged.
+Before:
 
-Before: Invoke RPC finished: tok=...; err: null, resp: token,,,<secret>
-After: Invoke RPC finished: tok=...; err: null
+```
+$ pulumi preview
+...
+Diagnostics:
+  pulumi:pulumi:Stack (proj-dev):
+    error: resource or variable named "doesNotExist" could not be found
 
-Added a regression test that checks secret values from resource and
-invoke responses never appear in debug logs.
+    [Pulumi Neo] Would you like help with these diagnostics?
+    https://app.pulumi.com/acme/proj/dev/previews/941c7021-…?explainFailure
+    Or run `pulumi neo --debug-preview` for an interactive agent in your terminal.
 
-Side Note: I went with dropping the response entirely rather than
-redacting secrets from it, since that's safe even if a provider doesn't
-mark a sensitive value as secret. Happy to switch to redaction, or put
-the response behind the `excessiveDebugOutput` flag, if you'd prefer to
-keep response contents in debug logs.
-
-Fixes #25744
-
-Co-authored-by: Chinagolum Adigwe <[REDACTED_EMAIL]>
-
-**File**: `changelog/pending/20261123--sdk-nodejs--debug-log-secrets.yaml` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+component: sdk/nodejs
-+kind: fix
-+body: Stop including RPC response values in debug log messages, which could contain secret values in plaintext
-+time: 2026-11-23T17:30:00.000000000+02:00
+Resources:
+    1 errored
 ```
 
-**File**: `sdk/nodejs/runtime/invoke.ts` (modified, +2/-2)
+After:
+
+```
+$ pulumi preview
+...
+Diagnostics:
+  pul
+
+**File**: `changelog/pending/20261123--cli--neo-debug-hint.yaml` (added, +5/-0)
 ```diff
-@@ -293,7 +293,7 @@ async function invokeAsync(
-         const resp: any = await debuggablePromise(
-             new Promise((innerResolve, innerReject) =>
-                 monitor.invoke(req, (err: grpc.ServiceError, innerResponse: any) => {
--                    log.debug(`Invoke RPC finished: tok=${tok}; err: ${err}, resp: ${innerResponse}`);
-+                    log.debug(`Invoke RPC finished: tok=${tok}; err: ${err}`);
-                     if (err) {
-                         // If the monitor is unavailable, it is in the process of shutting down or has already
-                         // shut down. Don't emit an error and don't do any more RPCs, just exit.
-@@ -529,7 +529,7 @@ function callAsync<T>(
-                         monitor.call(
-                             req,
-                             (err: grpc.ServiceError | null, innerResponse: providerproto.CallResponse) => {
--                                log.debug(`Call RPC finished: tok=${tok}; err: ${err}, resp: ${innerResponse}`);
-+                                log.debug(`Call RPC finished: tok=${tok}; err: ${err}`);
-                                 if (err) {
-                                     // If the monitor is unavailable, it is in the process of shutting down or has already
-                                     // shut down. Don't emit an error and don't do any more RPCs, just exit.
+@@ -0,0 +1,5 @@
++component: cli
++kind: improvement
++body: Show the suggestion to debug failures with Neo as a product hint
++custom:
++  PR: "25836"
 ```
 
-**File**: `sdk/nodejs/runtime/resource.ts` (modified, +6/-20)
+**File**: `pkg/backend/display/ai_test.go` (modified, +4/-6)
 ```diff
-@@ -225,9 +225,7 @@ export function getResource(
-                                             rpcError: grpc.ServiceError | null,
-                                             innerResponse: resproto.ResourceInvokeResponse | undefined,
-                                         ) => {
--                                            log.debug(
--                                                `getResource Invoke RPC finished: err: ${rpcError}, resp: ${innerResponse}`,
--                                            );
-+                                            log.debug(`getResource Invoke RPC finished: err: ${rpcError}`);
-                                             if (rpcError) {
-                                                 if (
-                                                     rpcError.code === grpc.status.UNAVAILABLE ||
-@@ -386,9 +384,7 @@ export function readResource(
-                                             rpcError: grpc.ServiceError | null,
-                                             innerResponse: resproto.ReadResourceResponse | undefined,
-                                         ) => {
--                                            log.debug(
--                                                `ReadResource RPC finished: ${label}; err: ${rpcError}, resp: ${innerResponse}`,
--                                            );
-+                                            log.debug(`ReadResource RPC finished: ${label}; err: ${rpcError}`);
-                                             if (rpcError) {
-                                                 if (
-                                                     rpcError.code === grpc.status.UNAVAILABLE ||
-@@ -875,15 +871,11 @@ export function registerResource(
-                                                 }
+@@ -31,9 +31,8 @@ func TestRenderCopilotErrorSummary(t *testing.T) {
+ 	summary := "This is a test summary"
+ 	buf := new(bytes.Buffer)
+ 	opts := Options{
+-		Stdout:        buf,
+-		Color:         colors.Never,
+-		ShowLinkToNeo: true,
++		Stdout: buf,
++		Color:  colors.Never,
+ 	}
  
-                                                 // Node lets us hack the message as long as we do it before accessing the `stack` property.
--                                                log.debug(
--                                                    `RegisterResource RPC finished: ${label}; err: ${rpcErr}, resp: ${innerResponse}`,
--                                                );
-+                                                log.debug(`RegisterResource RPC finished: ${label}; err: ${rpcErr}`);
-                                                 preallocError.message = `failed to register new resource ${name} [${t}]: ${rpcErr.message}`;
-                                                 reject(preallocError);
-                                             } else {
--                                                log.debug(
--                                                    `RegisterResource RPC finished: ${label}; err: ${rpcErr}, resp: ${innerResponse}`,
--                                                );
-+                                                log.debug(`RegisterResource RPC finished: ${label}; err: ${rpcErr}`);
-                                                 resolve(innerResponse);
-                                             }
-                                         },
-@@ -1473,10 +1465,7 @@ export function registerResourceOutputs(res: Resource, outputs: Inputs | Promise
-                             monitor.registerResourceOutputs(
-                                 req,
-                                 (err: grpc.ServiceError | null, innerResponse: gempty.Empty | undefined) => {
--                                    log.debug(
--                                        `RegisterResourceOutputs RPC finished: urn=${urn}; ` +
--                                            `err: ${err}, resp: ${innerResponse}`,
--                                    );
-+                                    log.debug(`RegisterResourceOutputs RPC finished: urn=${urn}; ` + `err: ${err}`);
-                                     if (err) {
-                                         // If the monitor is unavailable, it is in the process of shutting down or has already
-                                         // shut down. Don't emit an error and don't do any more RPCs, just exit.
-@@ -1490,10 +1479,7 @@ export function registerResourceOutputs(res: Resource, outputs: Inputs | Promise
+ 	// isPreview=false, so the suggestion targets a failed update.
+@@ -58,9 +57,8 @@ func TestRenderCopilotErrorSummaryPreview(t *testing.T) {
+ 	// For a failed preview the suggestion targets --debug-preview instead of --debug-update.
+ 	buf := new(bytes.Buffer)
+ 	opts := Options{
+-		Stdout:        buf,
+-		Color:         colors.Never,
+-		ShowLinkToNeo: true,
++		Stdout: buf,
++		Color:  colors.Never,
+ 	}
  
-                                         reject(err);
-                                     } else {
--                                        log.debug(
--                                            `RegisterResourceOutputs RPC finished: urn=${urn}; ` +
--                                                `err: ${err}, resp: ${innerResponse}`,
--                                        );
-+                                        log.debug(`RegisterResourceOutputs RPC finished: urn=${urn}; ` + `err: ${err}`);
-                                         resolve();
-                                     }
-                                 },
+ 	RenderNeoErrorSummary(&NeoErrorSummaryMetadata{
 ```
 
-**File**: `sdk/nodejs/tests/runtime/debugLogSecrets.spec.ts` (added, +76/-0)
+**File**: `pkg/backend/display/options.go` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,76 @@
-+// Copyright 2026, Pulumi Corporation.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+import * as assert from "assert";
-+import { CustomResource, Output, runtime } from "../..";
-+
-+// eslint-disable-next-line @typescript-eslint/no-var-requires
-+const logModule = require("../../log");
-+
-+const secretValue = "s3cr3t-value-that-must-not-be-logged";
-+
-+class TestResource extends CustomResource {
-+    public readonly password!: Output<string>;
-+
-+    constructor(name: string) {
-+        super("test:index:resource", name, { password: undefined });
-+    }
+@@ -66,7 +66,8 @@ type Options struct {
+ 	ShowDiff bool // true to print the full diff after the preview and the update, and omit the "details" prompt choice.
+ 
+ 	// Neo options
+-	ShowLinkToNeo       bool // true to display a 'explainFailure' link to Neo.
++	// OfferNeoLink, if non-nil, is called with a link and a terminal command to debug the diagnostics with Neo.
++	OfferNeoLink        func(link, debugCommand string)
+ 	ShowNeoFeatures     bool // true to display Neo features like summaries and explanations.
+ 	StartNeoTaskOnError bool // true to start a Neo task when an error occurs.
+ 	// Neo options that are ignored if ShowCopilotFeatures is false.
+```
+
+**File**: `pkg/backend/display/progress.go` (modified, +3/-12)
+```diff
+@@ -845,18 +845,9 @@ func (display *ProgressDisplay) printDiagnostics() {
+ 		}
+ 	}
+ 
+-	// Print a link to Neo to explain warnings or errors.
+-	// "ShowNeoFeatures" renders the link if it is enabled so don't render it here.
+-	showNeoLink := display.opts.ShowLinkToNeo && !display.opts.ShowNeoFeatures
+-	// Check for SuppressPermalink ensures we don't print the link for DIY backends
+-	if wroteWarningOrError && !display.opts.SuppressPermalink && showNeoLink {
+-		display.println("    " +
+-			colors.SpecCreateReplacement + "[Pulumi Neo]" + colors.Reset + " Would you like help with these diagnostics?")
+-		display.println("    " +
+-			colors.Underline + colors.Blue + ExplainFailureLink(display.permalink) + colors.Reset)
+-		display.println("    " + "Or run `" + neoDebugCommand(display.isPreview) +
+-			"` for an interactive agent in your terminal.")
+-		display.println("")
++	// Offer a link to Neo to explain warnings or errors.
++	if wroteWarningOrError && display.opts.OfferNeoLink != nil {
++		display.opts.OfferNeoLink(ExplainFailureLink(display.permalink), neoDebugCommand(display.isPreview))
+ 	}
+ }
+ 
+```
+
+**File**: `pkg/backend/display/progress_test.go` (modified, +6/-7)
+```diff
+@@ -47,7 +47,6 @@ func defaultOpts() Options {
+ 		ShowSameResources:    true,
+ 		ShowReads:            true,
+ 		DeterministicOutput:  true,
+-		ShowLinkToNeo:        false,
+ 		RenderOnDirty:        true,
+ 	}
+ }
+@@ -89,7 +88,8 @@ func TestProgressEventsNeoDiagnosticLink(t *testing.T) {
+ 			opts := defaultOpts()
+ 			opts.Color = colors.Never
+ 			opts.Stdout, opts.Stderr = &stdout, &stderr
+-			opts.ShowLinkToNeo = true
++			var links [][2]string
++			opts.OfferNeoLink = func(link, debugCommand string) { links = append(links, [2]string{link, debugCommand}) }
+ 			opts.Debug = true
+ 			events := sliceToBufferedChan([]engine.Event{event, engine.NewCancelEvent()})
+ 			done := make(chan bool)
+@@ -98,13 +98,12 @@ func TestProgressEventsNeoDiagnosticLink(t *testing.T) {
+ 			<-done
+ 
+ 			if tt.wantLink {
+-				assert.Contains(t, stdout.String(), "link?explainFailure")
+-				assert.Contains(t, stdout.String(), "pulumi neo --debug-update")
++				assert.Equal(t, [][2]string{{"link?explainFailure", "pulumi neo --debug-update"}}, links)
+ 			} else {
+-				assert.NotContains(t, stdout.String(), "[Pulumi Neo]")
+-				assert.NotContains(t, stdout.String(), "explainFailure")
+-				assert.NotContains(t, stdout.String(), "pulumi neo --debug-update")
++				assert.Empty(t, links)
+ 			}
++			// The link is offered as a hint rather than printed with the diagnostics.
++			assert.NotContains(t, stdout.String(), "explainFailure")
+ 			if !tt.ephemeral {
+ 				assert.Contains(t, stdout.String(), "State migration applied (state entries: 2 before, 2 after).")
+ 			}
+```
+
+**File**: `pkg/backend/httpstate/backend.go` (modified, +13/-13)
+```diff
+@@ -1830,6 +1830,12 @@ func (b *cloudBackend) summarizeErrorWithNeo(
+ 	}, nil
+ }
+ 
++// offersNeoLink reports whether an update may offer a link to debug its diagnostics with Neo: the org must have Neo,
++// the user mustn't have suppressed the link or the permalink, and Neo's summary mustn't already show the link.
++func offersNeoLink(isNeoEnabled bool, opts display.Options) bool {
++	return isNeoEnabled && !env.SuppressNeoLink.Value() && !opts.SuppressPermalink && !opts.ShowNeoFeatures
 +}
 +
-+describe("debug logging", () => {
-+    let messages: string[];
-+    let originalDebug: any;
-+
-+    beforeEach(async () => {
-+        runtime._reset();
-+        messages = [];
-+        originalDebug = logModule.debug;
-+        logModule.debug = (msg: string) => {
-+            messages.push(msg);
-+            return Promise.resolve();
-+        };
-+
-+        await runtime.setMocks({
-+            call: () => ({ token: secretValue }),
-+            newResource: (args) => ({
-+                id: `${args.name}_id`,
-+                state: { password: secretValue },
-+            }),
-+        });
-+    });
-+
-+    afterEach(() => {
-+        logModule.debug = originalDebug;
-+    });
-+
-+    it("does not log RegisterResource responses", async () => {
-+        const res = new TestResource("res");
-+        assert.strictEqual(await res.password.promise(), secretValue);
-+
-+        assert.ok(messages.some((m) => m.startsWith("RegisterResource RPC finished")));
-+        for (const m of messages) {
-+            assert.ok(!m.includes(secretValue), `debug message leaked a resource output: ${m}`);
-+        }
-+    });
-+
-+    it("does not log Invoke responses", async () => {
-+        const result = await runtime.invoke("test:index:getToken", {});
-+        assert.strictEqual(result.token, secretValue);
-+
-+        assert.ok(messages.some((m) => m.startsWith("Invoke RPC finished")));
-+        for (const m of messages) {
-+            assert.ok(!m.includes(secretValue), `debug message leaked an invoke result: ${m}`);
-+        }
-+    });
-+});
+ // createNeoTaskOnError creates a Neo agent task to help debug errors that occurred during an operation.
+ func (b *cloudBackend) createNeoTaskOnError(
+ 	ctx context.Context, pulumiOutput string, stackRef backend.StackReference, opts display.Options,
+@@ -1983,25 +1989,19 @@ func (b *cloudBackend) createAndStartUpdate(
+ 	if err != nil {
+ 		userName = "unknown"
+ 	}
+-	// Check if the user's org (stack's owner) has Neo enabled. If not, we don't show the link to Neo.
++	// Check if the user's org (stack's owner) has Neo enabled. If not, we don't show Neo features.
+ 	isNeoEnabled := isNeoIntegrationEnabled
+ 	b.neoEnabledForCurrentProject = &isNeoEnabled
+ 	neoEnabledValueString := "is"
+-	continuationString := ""
+-	if isNeoEnabled {
+-		if env.SuppressNeoLink.Value() {
+-			// Neo is enabled in user's org, but the environment variable to suppress the link to Neo is set.
+-			op.Opts.Display.ShowLinkToNeo = false
+-			continuationString = " but the environment variable PULUMI_SUPPRESS_NEO_LINK" +
+-				" suppresses the link to Neo in diagnostics"
+-		}
+-	} else {
+-		op.Opts.Display.ShowLinkToNeo = false
++	if !isNeoEnabled {
+ 		op.Opts.Display.ShowNeoFeatures = false
+ 		neoEnabledValueString = "is not"
+ 	}
+-	logging.V(7).Infof("Neo in org '%s' %s enabled for user '%s'%s",
+-		stackID.Owner, neoEnabledValueString, userName, continuationString)
++	if !offersNeoLink(isNeoEnabled, op.Opts.Display) {
++		op.Opts.Display.OfferNeoLink = nil
++	}
++	logging.V(7).Infof("Neo in org '%s' %s enabled for user '%s'",
++		stackID.Owner, neoEnabledValueString, userName)
+ 
+ 	return update, updateMetadata{
+ 		version:        version,
 ```
 
-**File**: `sdk/nodejs/tsconfig.json` (modified, +1/-0)
+**File**: `pkg/backend/httpstate/backend_test.go` (modified, +22/-0)
 ```diff
-@@ -103,6 +103,7 @@
-         "tests/util.ts",
-         "tests/runtime/asyncIterableUtil.spec.ts",
-         "tests/runtime/codePaths.spec.ts",
-+        "tests/runtime/debugLogSecrets.spec.ts",
-         "tests/runtime/dependsOn.spec.ts",
-         "tests/runtime/featureSupport.spec.ts",
-         "tests/runtime/findWorkspaceRoot.spec.ts",
+@@ -2375,3 +2375,25 @@ func TestGetSnapshotStackOutputs(t *testing.T) {
+ 		assert.Equal(t, "readingUpdateID="+updateID, gotQuery)
+ 	})
+ }
++
++func TestOffersNeoLink(t *testing.T) {
++	tests := []struct {
++		name         string
++		isNeoEnabled bool
++		opts         display.Options
++		suppress     string
++		want         bool
++	}{
++		{name: "Neo enabled", isNeoEnabled: true, want: true},
++		{name: "Neo not enabled"},
++		{name: "suppressed by env", isNeoEnabled: true, suppress: "true"},
++		{name: "no permalink", isNeoEnabled: true, opts: display.Options{SuppressPermalink: true}},
++		{name: "Neo summary shows the link", isNeoEnabled: true, opts: display.Options{ShowNeoFeatures: true}},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Setenv("PULUMI_SUPPRESS_NEO_LINK", tt.suppress)
++			assert.Equal(t, tt.want, offersNeoLink(tt.isNeoEnabled, tt.opts))
++		})
++	}
++}
+```
+
+**File**: `pkg/cmd/pulumi/hints/catalog.go` (modified, +14/-0)
+```diff
+@@ -46,3 +46,17 @@ func ESCCredentials(message string) Hint {
+ 		HideFromNewUsers: true,
+ 	}
+ }
++
++// NeoDebug suggests debugging a preview's or update's diagnostics with Pulumi Neo, at link or by running debugCommand.
++func NeoDebug(link, debugCommand string) Hint {
++	return Hint{
++		ID:       "neo-debug",
++		Cooldown: 7 * 24 * time.Hour,
++		Message: "Pulumi Neo can help with these diagnostics: " + link + "\n" +
++			"Or run `" + debugCommand + "` for an interactive agent in your terminal.",
++		CloudOnly: true,
++	}
++}
++
++// OfferNeoDebug offers the NeoDebug hint. Commands set it as the display's OfferNeoLink.
++func (m *Manager) OfferNeoDebug(link, debugCommand string) { m.Offer(NeoDebug(link, debugCommand)) }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25866** (2026-11-25): Changelog for v3.278.0 (@pulumi-bot)
+- **PR #25857** (2026-11-25): Freeze v3.278.0 (@pulumi-bot)
+- **PR #25854** (2026-11-25): Show the real Accept header in pulumi api --verbose and --dry-run (@SudeepGowda55)
 - **PR #25850** (2026-11-24): Update registry methods to use property.Map (@Frassle)
 - **PR #25841** (2026-11-24): Keep unexported struct fields when resolving outputs in the Go SDK (@andretorresdg)
 - **PR #25839** (2026-11-24): Lint against arguments in `Use` for constrictor commands (@i-am-tom)
-- **PR #25835** (2026-11-24): redact base64 encoded secrets correctly (@tgummerer)
-- **PR #25834** (2026-11-24): Remove RPC responses from debug logs (@Chinagolum)
-- **PR #25833** (2026-11-24): run mypy warmup from tmpdir (@tgummerer)
 
 ---
 
@@ -1985,24 +2029,25 @@ Co-authored-by: Chinagolum Adigwe <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove RPC responses from debug logs
+## X. Offer the Neo debug link as a product hint
 
 **RULE**:
-When implementing operations in `changelog/pending/20261123--sdk-nodejs--debug-log-secrets.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/20261123--cli--neo-debug-hint.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7bb3ec3`: Remove RPC responses from debug logs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `110572fb`: Offer the Neo debug link as a product hint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261123--sdk-nodejs--debug-log-secrets.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261123--cli--neo-debug-hint.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: sdk/nodejs
-kind: fix
-body: Stop including RPC response values in debug log messages, which could contain secret values in plaintext
-time: 2026-11-23T17:30:00.000000000+02:00
+component: cli
+kind: improvement
+body: Show the suggestion to debug failures with Neo as a product hint
+custom:
+  PR: "25836"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2012,7 +2057,7 @@ time: 2026-11-23T17:30:00.000000000+02:00
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7bb3ec3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `110572fb` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

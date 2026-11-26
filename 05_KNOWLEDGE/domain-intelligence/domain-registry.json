@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T00:59:37.506Z",
-  "total_records": 2693,
+  "last_updated": "2026-11-26T01:08:19.059Z",
+  "total_records": 2694,
   "domains": {
     "A": {
       "total": 22,
@@ -2334,7 +2334,7 @@
       ]
     },
     "I": {
-      "total": 157,
+      "total": 158,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2492,7 +2492,8 @@
         "domain_intelligence-content-information-intelligence-googleworkspace-cli-core-invariants",
         "domain_intelligence-content-information-intelligence-googleworkspace-cli-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-core-invariants",
-        "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria"
+        "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria",
+        "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants"
       ]
     },
     "J": {
@@ -8797,10 +8798,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "75fac71f38cfd1b666eef41da0b69f247ae8e10a9803457d77cfa7a206b79a47",
-      "created_at": "2026-11-25T16:06:08.121Z"
+      "content_hash": "4b7375aaaa42ad421eb94341a6e91b4fd27d0a6993e7ba3ae9d93431e91105ce",
+      "created_at": "2026-11-26T01:08:10.744Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -18100,8 +18101,8 @@
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "repository": "pulumi/pulumi",
-      "content_hash": "e65fad7d55ac9d3eb311371cfade9b6a100469f55fa359d3c2cc8e850af3e7ce",
-      "created_at": "2026-11-25T00:43:36.218Z"
+      "content_hash": "2be967b95ce98bd63862175938ae8798ad1cdd1a1c578ac793358d515cdae16c",
+      "created_at": "2026-11-26T01:08:08.488Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
@@ -18169,8 +18170,8 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-learnings-content-information-intelligence-pulumi-pulumi-learnings.md",
       "repository": "pulumi-pulumi-learnings",
-      "content_hash": "17183df952d72b0f4cfeb31638ebd63566f78d23132cba45c68bfd2e8892ca8e",
-      "created_at": "2026-11-25T00:43:50.175Z"
+      "content_hash": "7fcdb9fb781146f3482bc797c60d97ed8b24d22cf87430bc42743f87a717f749",
+      "created_at": "2026-11-26T01:08:17.931Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -23943,8 +23944,8 @@
       "title": "Research & Knowledge Intelligence: baidu/ERNIE-5.5-Flash-Base Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-base-research-knowledge-intelligence-baidu-ernie-5-5-fl.md",
       "repository": "baidu/ERNIE-5.5-Flash-Base",
-      "content_hash": "d7cf7b056991453e60806ea75aafafaf65a15e2604252e52baa71b6c6ce8946c",
-      "created_at": "2026-11-22T03:54:05.608Z"
+      "content_hash": "ef7402ac68ed0eaf271b56aba4b193ab922c94b07880bce88033b10742cd05d6",
+      "created_at": "2026-11-26T01:07:57.680Z"
     },
     "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-core-invariants",
@@ -23961,8 +23962,8 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-ernie-5.5-flash-base-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-base-learnings-research-knowledge-intelligence-hf-baidu.md",
       "repository": "hf-baidu-ernie-5.5-flash-base-learnings",
-      "content_hash": "0879ef2094d85271f8658ee830fa1add5e636866dc072f95a883250d1d28d969",
-      "created_at": "2026-11-22T03:54:17.209Z"
+      "content_hash": "be62d1dcd7be384522bb5e81062af60f7d4303a3e19d9e8e267db57fb2b4d143",
+      "created_at": "2026-11-26T01:08:16.589Z"
     },
     "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -24215,8 +24216,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "e08b83b305fa7f864c50cd39e73a261fcc257ef0325032b02614cc7ac878d294",
-      "created_at": "2026-11-25T14:15:17.240Z"
+      "content_hash": "3c0aa1ffdbe8bd40ea815857ecc367ff8b10657f285944c19f551063e60d2346",
+      "created_at": "2026-11-26T01:08:19.059Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -45415,6 +45416,15 @@
       "repository": "kianuni-erosion-cn-learnings",
       "content_hash": "b9a5195d365eb4bf274f92b1247fd6884c676942cf836cd257e585ea6bacbd80",
       "created_at": "2026-11-26T00:00:05.521Z"
+    },
+    "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: databendlabs/databend Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-databendlabs-databend-content-information-intelligence-databendlabs-databend-cor.md",
+      "repository": "databendlabs/databend",
+      "content_hash": "4e321a9a094d8116f17062bbc83a74afa0d4921f2a4af6668a8f41059cf0573b",
+      "created_at": "2026-11-26T01:08:13.319Z"
     }
   }
 }

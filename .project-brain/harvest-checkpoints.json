@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T00:59:24.718Z",
+  "last_updated": "2026-11-26T01:08:12.903Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "3e9b1684e01844c60a4af1bc3acec38df1d7c37d138b5715f33a16370d9597ab",
-      "verified_at": "2026-11-25T16:06:07.726Z",
+      "content_hash": "1966eebdae366d8ce9cbeb3a7700e51ee5efcf6e61c98abb4f73edc1eee2b088",
+      "verified_at": "2026-11-26T01:08:10.313Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T16:06:07.726Z"
+      "last_updated": "2026-11-26T01:08:10.313Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "63617bf11d82077a69e47c28a776684c0243e9396925880f65e52b1a3268ab3b",
-      "verified_at": "2026-11-25T00:43:35.821Z",
+      "content_hash": "e082e0bb3a865701ee015d58e2683c4b31d3f980c9b547eb1cbea97edf3c8623",
+      "verified_at": "2026-11-26T01:08:08.066Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:43:35.821Z"
+      "last_updated": "2026-11-26T01:08:08.066Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "ccce81f3b10454ae92a25230109e5a9f84c657893d7cc29b3fd96d5992264aeb",
-      "verified_at": "2026-11-24T23:41:54.490Z",
+      "content_hash": "5efd158283b15407d8b9809c26345fb4f7d6b8f74211d5e63654123574192538",
+      "verified_at": "2026-11-26T01:08:12.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:41:54.490Z"
+      "last_updated": "2026-11-26T01:08:12.902Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",
@@ -18186,14 +18186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-ernie-5-5-flash-base",
-      "content_hash": "eb5085b738b0bb9de5ade32e96f66b98baa71b36f84bf37fee59069a55794911",
-      "verified_at": "2026-11-22T03:54:05.414Z",
+      "content_hash": "62139ab7da6e3248cbe69f867e0855b00675bd5d36d2207bf6db2523d696a5f9",
+      "verified_at": "2026-11-26T01:07:57.456Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:54:05.414Z"
+      "last_updated": "2026-11-26T01:07:57.456Z"
     },
     "github/squad": {
       "repository": "github/squad",

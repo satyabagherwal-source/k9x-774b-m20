@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T00:59:37.694Z",
+  "last_updated": "2026-11-26T01:08:19.253Z",
   "total_verified_learnings": 9121,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25582,
+  "total_items": 25587,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "cbd9ab2c",
-      "content_hash": "75fac71f38cfd1b666eef41da0b69f247ae8e10a9803457d77cfa7a206b79a47",
+      "source_version": "9c02ea4e",
+      "content_hash": "4b7375aaaa42ad421eb94341a6e91b4fd27d0a6993e7ba3ae9d93431e91105ce",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T16:06:08.121Z"
+      "persisted_at": "2026-11-26T01:08:10.744Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "cbd9ab2c",
-      "content_hash": "440b0276bcfdc9e624673473da018761b35106b8391a014e08663502a914332d",
+      "source_version": "9c02ea4e",
+      "content_hash": "3d540be25bbbcabc6d1eb832b31892c8f7074a3e834f3d245bd85d614d091a3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T16:06:08.290Z"
+      "persisted_at": "2026-11-26T01:08:10.928Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -216173,13 +216173,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "cbd9ab2c",
-      "content_hash": "3e9b1684e01844c60a4af1bc3acec38df1d7c37d138b5715f33a16370d9597ab",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "9c02ea4e",
+      "content_hash": "1966eebdae366d8ce9cbeb3a7700e51ee5efcf6e61c98abb4f73edc1eee2b088",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216307,7 +216307,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T16:06:07.498Z",
+      "verified_at": "2026-11-26T01:08:10.059Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217940,8 +217940,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "28ed7681",
-      "content_hash": "ccce81f3b10454ae92a25230109e5a9f84c657893d7cc29b3fd96d5992264aeb",
+      "source_version": "649d33fa",
+      "content_hash": "5efd158283b15407d8b9809c26345fb4f7d6b8f74211d5e63654123574192538",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -217994,6 +217994,11 @@
           "number": 10388,
           "title": "decode oversized Fuse blocks in max_block_size batches",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10576,
+          "title": "build the Parquet read schema once per block reader",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218001,7 +218006,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:41:54.271Z",
+      "verified_at": "2026-11-26T01:08:12.655Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218055,10 +218060,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "28ed7681",
-      "content_hash": "18e9a1052f33dbecb652f3ba2ed8fc464a42f9ea2f11d46cfb75982619695cd2",
+      "source_version": "649d33fa",
+      "content_hash": "b5356c7f3cd25cdf1863cbb17118d7d339fd16d861b7282542dd35c068d23bf9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:41:55.049Z"
+      "persisted_at": "2026-11-26T01:08:13.525Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -238317,8 +238322,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "783a0060",
-      "content_hash": "63617bf11d82077a69e47c28a776684c0243e9396925880f65e52b1a3268ab3b",
+      "source_version": "110572fb",
+      "content_hash": "e082e0bb3a865701ee015d58e2683c4b31d3f980c9b547eb1cbea97edf3c8623",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -238361,6 +238366,11 @@
           "number": 10406,
           "title": "Remove RPC responses from debug logs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10575,
+          "title": "Offer the Neo debug link as a product hint",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238368,7 +238378,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:43:35.602Z",
+      "verified_at": "2026-11-26T01:08:07.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238410,10 +238420,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "repository": "pulumi/pulumi",
-      "source_version": "783a0060",
-      "content_hash": "e65fad7d55ac9d3eb311371cfade9b6a100469f55fa359d3c2cc8e850af3e7ce",
+      "source_version": "110572fb",
+      "content_hash": "2be967b95ce98bd63862175938ae8798ad1cdd1a1c578ac793358d515cdae16c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T00:43:36.218Z"
+      "persisted_at": "2026-11-26T01:08:08.488Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi",
@@ -238422,10 +238432,10 @@
       "relative_path": "08_VERIFICATION/pulumi-pulumi-verification-protocol-empirical-defect-shield-for-pulumi-pulumi.md",
       "title": "Verification Protocol: Empirical Defect Shield for pulumi/pulumi",
       "repository": "pulumi/pulumi",
-      "source_version": "783a0060",
-      "content_hash": "d9b92561dfa0186acc3322fea0a907d1e4b7d1f25526d0565f14f655d63b8716",
+      "source_version": "110572fb",
+      "content_hash": "5866b5a9c722e2fdc1a528947eb95e88fe4dabe87ecee906a5e6891dab5c4af2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:43:36.414Z"
+      "persisted_at": "2026-11-26T01:08:08.683Z"
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -238575,9 +238585,9 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "17183df952d72b0f4cfeb31638ebd63566f78d23132cba45c68bfd2e8892ca8e",
+      "content_hash": "7fcdb9fb781146f3482bc797c60d97ed8b24d22cf87430bc42743f87a717f749",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T00:43:50.175Z"
+      "persisted_at": "2026-11-26T01:08:17.931Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings",
@@ -238587,9 +238597,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pulumi-pulumi-learnings",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0e73b25c7cbbe4c920cd556877ae2fc1e0948931a6c178c14d0eac79527494d",
+      "content_hash": "f99e9f5ff91a45881092b3c8803f05bbd2ea4e3fd89a221502904a25c23cc4da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:43:50.348Z"
+      "persisted_at": "2026-11-26T01:08:18.121Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -257587,7 +257597,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
       "source_version": "hf-baidu-ernie-5.5-flash-base",
-      "content_hash": "eb5085b738b0bb9de5ade32e96f66b98baa71b36f84bf37fee59069a55794911",
+      "content_hash": "62139ab7da6e3248cbe69f867e0855b00675bd5d36d2207bf6db2523d696a5f9",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md",
       "promoted_rules": [],
@@ -257596,7 +257606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T03:54:05.175Z",
+      "verified_at": "2026-11-26T01:07:57.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257613,9 +257623,9 @@
       "title": "Research & Knowledge Intelligence: baidu/ERNIE-5.5-Flash-Base Core Invariants",
       "repository": "baidu/ERNIE-5.5-Flash-Base",
       "source_version": "hf-baidu-ernie-5.5-flash-base",
-      "content_hash": "d7cf7b056991453e60806ea75aafafaf65a15e2604252e52baa71b6c6ce8946c",
+      "content_hash": "ef7402ac68ed0eaf271b56aba4b193ab922c94b07880bce88033b10742cd05d6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T03:54:05.608Z"
+      "persisted_at": "2026-11-26T01:07:57.680Z"
     },
     "rule-8699": {
       "learning_id": "rule-8699",
@@ -257689,9 +257699,9 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-ernie-5.5-flash-base-learnings Core Invariants",
       "repository": "hf-baidu-ernie-5.5-flash-base-learnings",
       "source_version": "HEAD",
-      "content_hash": "0879ef2094d85271f8658ee830fa1add5e636866dc072f95a883250d1d28d969",
+      "content_hash": "be62d1dcd7be384522bb5e81062af60f7d4303a3e19d9e8e267db57fb2b4d143",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T03:54:17.209Z"
+      "persisted_at": "2026-11-26T01:08:16.589Z"
     },
     "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -258721,9 +258731,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "e08b83b305fa7f864c50cd39e73a261fcc257ef0325032b02614cc7ac878d294",
+      "content_hash": "3c0aa1ffdbe8bd40ea815857ecc367ff8b10657f285944c19f551063e60d2346",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:15:17.240Z"
+      "persisted_at": "2026-11-26T01:08:19.059Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -258733,9 +258743,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e3e7a4db6b6807fbfe1b0361a8062075611c43b9c0a27d08c554a116b73069d",
+      "content_hash": "f29cf413cf6810e337ea435e593f0b1dd79eeda55558fd08ed1b52b89ff4275b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:15:17.514Z"
+      "persisted_at": "2026-11-26T01:08:19.253Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -301276,26 +301286,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9414,
       "title": "Empirical Invariant Guard in Cargo.toml",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "cbd9ab2c",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "9c02ea4e",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-25T16:06:07.498Z"
+      "verified_at": "2026-11-26T01:08:10.059Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-toml": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-toml",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FTAL-empirical-invariant-guard-in-cargo-toml.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-SW1J-empirical-invariant-guard-in-cargo-toml.md",
       "title": "Empirical Invariant Guard in Cargo.toml",
-      "repository": "provablehq-snarkos-learnings",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "35deb21c5e18c1500fe18d2452a1a059a6be665570edb59249d4669120a995a1",
+      "content_hash": "292c076d15e58409ed1d93fb108636914e606dad5b672a0ebbb54d7f31ed6eb8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T16:06:16.079Z"
+      "persisted_at": "2026-11-26T01:08:18.875Z"
     },
     "rule-9415": {
       "learning_id": "rule-9415",
@@ -350215,6 +350225,70 @@
       "content_hash": "82146ad8097e483296e7b13cb347e842bd83d0fc86dfcb7c5d11a4520ef8b16d",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T00:59:35.924Z"
+    },
+    "rule-10575": {
+      "learning_id": "rule-10575",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10575,
+      "title": "Offer the Neo debug link as a product hint",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "110572fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T01:08:07.817Z"
+    },
+    "candidate_directive-offer-the-neo-debug-link-as-a-product-hint": {
+      "item_id": "candidate_directive-offer-the-neo-debug-link-as-a-product-hint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SV61-offer-the-neo-debug-link-as-a-product-hint.md",
+      "title": "Offer the Neo debug link as a product hint",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "68e2d2bc7fae212fcdd321f418894e0cb6d91b22fea551d163658548c7c38ab5",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-26T01:08:17.741Z"
+    },
+    "rule-10576": {
+      "learning_id": "rule-10576",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10576,
+      "title": "build the Parquet read schema once per block reader",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "649d33fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T01:08:12.655Z"
+    },
+    "candidate_directive-build-the-parquet-read-schema-once-per-block-reader": {
+      "item_id": "candidate_directive-build-the-parquet-read-schema-once-per-block-reader",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SRM6-build-the-parquet-read-schema-once-per-block-reader.md",
+      "title": "build the Parquet read schema once per block reader",
+      "repository": "databendlabs/databend",
+      "source_version": "649d33fa",
+      "content_hash": "3e2109b694c90a4725609d221c071f265ad440605276c619386a310141c49bcb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T01:08:13.138Z"
+    },
+    "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-databendlabs-databend-content-information-intelligence-databendlabs-databend-cor.md",
+      "title": "Content & Information Intelligence: databendlabs/databend Core Invariants",
+      "repository": "databendlabs/databend",
+      "source_version": "649d33fa",
+      "content_hash": "4e321a9a094d8116f17062bbc83a74afa0d4921f2a4af6668a8f41059cf0573b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T01:08:13.319Z"
     }
   },
   "ai-builder-brain": {

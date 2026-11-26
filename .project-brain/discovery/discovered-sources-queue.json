@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T00:46:47.319Z",
+  "updated_at": "2026-11-26T01:08:18.611Z",
   "stats": {
-    "total_discovered": 9546,
-    "approved_pending_harvest": 9049,
+    "total_discovered": 9553,
+    "approved_pending_harvest": 9056,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9040,
+      "COMMUNITY_AND_EXPERT": 9047,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 153,
       "ENGINEERING_BLOGS": 7,
@@ -206560,6 +206560,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
         "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-B8E10674C51B": {
+      "id": "SRC-B8E10674C51B",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/45594551858",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/45594551858",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:08:17.106Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-393682FD1532": {
+      "id": "SRC-393682FD1532",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/45594551858/job/139145807357",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/45594551858/job/139145807357",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:08:17.181Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-F67E48275836": {
+      "id": "SRC-F67E48275836",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/45602927418",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/45602927418",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:08:17.246Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-7C88BEAAAA75": {
+      "id": "SRC-7C88BEAAAA75",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/45594551858/job/139145030233",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/45594551858/job/139145030233",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:08:17.308Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-55A6942C3F9F": {
+      "id": "SRC-55A6942C3F9F",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/45595596613",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/45595596613",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:08:17.378Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-1132CA77D73C": {
+      "id": "SRC-1132CA77D73C",
+      "url": "https://app.pulumi.com/acme/proj/dev/previews/941c7021-%E2%80%A6?explainFailure=",
+      "title": "https://app.pulumi.com/acme/proj/dev/previews/941c7021-%E2%80%A6?explainFailure=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:08:17.448Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-B695F879620A": {
+      "id": "SRC-B695F879620A",
+      "url": "https://claude.ai/code/session_01UYfmmNPAJoCY7J1GRtuy7h",
+      "title": "https://claude.ai/code/session_01UYfmmNPAJoCY7J1GRtuy7h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:08:18.611Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }

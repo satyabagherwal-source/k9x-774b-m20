@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:59:37.323Z",
+  "last_updated": "2026-11-26T01:08:18.875Z",
   "directives": [
     {
       "id": "CD-001",
@@ -33670,14 +33670,14 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-FTAL",
+      "id": "CD-SW1J",
       "directive_title": "Empirical Invariant Guard in Cargo.toml",
-      "source_repo": "provablehq-snarkos-learnings",
+      "source_repo": "aleo-labs-protocol-snarkos-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-FTAL-empirical-invariant-guard-in-cargo-toml.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-SW1J-empirical-invariant-guard-in-cargo-toml.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-25",
+      "date_staged": "2026-11-26",
       "domain_letter": "D"
     },
     {
@@ -62438,6 +62438,46 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DD24F4-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-SV61",
+      "directive_title": "Offer the Neo debug link as a product hint",
+      "source_repo": "pulumi-pulumi-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SV61-offer-the-neo-debug-link-as-a-product-hint.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-SRM6",
+      "directive_title": "build the Parquet read schema once per block reader",
+      "source_repo": "databendlabs/databend",
+      "source_commit": "649d33fa",
+      "staged_file": "11_INBOX/candidate-directives/CD-SRM6-build-the-parquet-read-schema-once-per-block-reader.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-C2FBA0",
+      "directive_title": "Offer the Neo debug link as a product hint",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pulumi-pulumi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C2FBA0-offer-the-neo-debug-link-as-a-product-hi.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-14F797",
+      "directive_title": "Empirical Invariant Guard in Cargo.toml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-14F797-empirical-invariant-guard-in-cargo-toml.md",
       "staged_date": "2026-11-26"
     }
   ]

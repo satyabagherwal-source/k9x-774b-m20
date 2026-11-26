@@ -4,22 +4,22 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "00510513",
+  "source_version": "9c02ea4e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T14:14:35.992Z",
+  "timestamp": "2026-11-26T01:08:10.557Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `00510513`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T14:14:35.992Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `9c02ea4e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T01:08:10.557Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `00510513`)
+- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `9c02ea4e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:14:34.208Z  
+> **Harvest Timestamp**: 2026-11-26T01:08:09.466Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1884,81 +1884,234 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00510513` (2026-11-25)
-**Commit Message**: Merge pull request #4786 from aleo-labs-protocol/ci/gauntlet-21-validators
+### Incident Patch 1: `9c02ea4e` (2026-11-25)
+**Commit Message**: Merge pull request #4791 from aleo-labs-protocol/build/test-profile-o1
 
-**File**: `.github/workflows/load-test.yml` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +2/-1)
 ```diff
-@@ -16,7 +16,7 @@ on:
-       validators:
-         description: "Network size, in validators"
-         type: choice
--        options: ["5", "10", "16"]
-+        options: ["5", "10", "16", "21"]
-         default: "5"
-       stockpile:
-         description: "Stockpile to replay. Its network is the devnet's."
-```
-
-**File**: `.github/workflows/stress-test.yml` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ on:
-       validators:
-         description: "Network size, in validators"
-         type: choice
--        options: ["5", "10", "16"]
-+        options: ["5", "10", "16", "21"]
-         default: "5"
-       network:
-         description: "snarkOS network"
+@@ -353,7 +353,8 @@ lto = "thin"
+ debug = "line-tables-only"
+ 
+ [profile.test]
+-opt-level = 2
++# At 0 the snarkVM code in the tests runs 4-8x slower.
++opt-level = 1
+ 
+ [package.metadata.cargo-machete]
+ ignored = [
 ```
 
 ---
 
-### Incident Patch 2: `72e8d4ad` (2026-11-25)
-**Commit Message**: ci: offer a 21-validator network in the Gauntlet forms
+### Incident Patch 2: `e80cfae4` (2026-11-25)
+**Commit Message**: Build tests at opt-level 1
 
-The stress-test and load-test forms list the network sizes the test host
-accepts. The host now also takes 21 validators on testnet, the largest size
-that fits its compute quota. A mainnet devnet stays at 16 or fewer: the host
-rejects 21 there.
+O1 cuts test build time by about a fifth and costs the tests a few percent.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmLsBVTnk9b7LXtFhwJ
+Claude-Session: https://claude.ai/code/session_01UYfmmNPAJoCY7J1GRtuy7h
 
-**File**: `.github/workflows/load-test.yml` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +2/-1)
 ```diff
-@@ -16,7 +16,7 @@ on:
-       validators:
-         description: "Network size, in validators"
-         type: choice
--        options: ["5", "10", "16"]
-+        options: ["5", "10", "16", "21"]
-         default: "5"
-       stockpile:
-         description: "Stockpile to replay. Its network is the devnet's."
+@@ -353,7 +353,8 @@ lto = "thin"
+ debug = "line-tables-only"
+ 
+ [profile.test]
+-opt-level = 2
++# At 0 the snarkVM code in the tests runs 4-8x slower.
++opt-level = 1
+ 
+ [package.metadata.cargo-machete]
+ ignored = [
 ```
 
-**File**: `.github/workflows/stress-test.yml` (modified, +1/-1)
+---
+
+### Incident Patch 3: `cbd9ab2c` (2026-11-25)
+**Commit Message**: Merge pull request #4785 from aleo-labs-protocol/fix/catch-vm-halts-in-cli
+
+**File**: `cli/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -28,7 +28,7 @@ on:
-       validators:
-         description: "Network size, in validators"
-         type: choice
--        options: ["5", "10", "16"]
-+        options: ["5", "10", "16", "21"]
-         default: "5"
-       network:
-         description: "snarkOS network"
+@@ -118,7 +118,7 @@ workspace = true
+ 
+ [dependencies.snarkvm]
+ workspace = true
+-features = [ "parameters", "circuit", "package", "rocks" ]
++features = [ "parameters", "circuit", "package", "rocks", "utilities" ]
+ 
+ [dependencies.sys-info]
+ version = "0.9"
+```
+
+**File**: `cli/src/commands/developer/deploy.rs` (modified, +6/-6)
+```diff
+@@ -142,8 +142,8 @@ impl Deploy {
+         let process = package.get_process()?;
+ 
+         // Generate the deployment
+-        let mut deployment =
+-            package.deploy::<A>(&process, None).with_context(|| "Failed to generate the deployment")?;
++        let mut deployment = Developer::catch_halt(|| package.deploy::<A>(&process, None))
++            .with_context(|| "Failed to generate the deployment")?;
+ 
+         // Get the consensus version.
+         let consensus_version =
+@@ -179,7 +179,7 @@ impl Deploy {
+             let vm = VM::from(store).with_context(|| "Failed to initialize the virtual machine")?;
+ 
+             // Prepare the fees.
+-            let fee = match &self.record {
++            let fee = Developer::catch_halt(|| match &self.record {
+                 Some(record) => {
+                     let fee_record =
+                         Developer::parse_record(&private_key, record).with_context(|| "Failed to parse record")?;
+@@ -192,7 +192,7 @@ impl Deploy {
+                         rng,
+                     )?;
+                     vm.execute_fee_authorization(fee_authorization, Some(&query), rng)
+-                        .with_context(|| "Failed to execute fee authorization")?
++                        .with_context(|| "Failed to execute fee authorization")
+                 }
+                 None => {
+                     let fee_authorization = vm.authorize_fee_public(
+@@ -203,9 +203,9 @@ impl Deploy {
+                         rng,
+                     )?;
+                     vm.execute_fee_authorization(fee_authorization, Some(&query), rng)
+-                        .with_context(|| "Failed to execute fee authorization")?
++                        .with_context(|| "Failed to execute fee authorization")
+                 }
+-            };
++            })?;
+             // Construct the owner.
+             let owner = ProgramOwner::new(&private_key, deployment_id, rng)
+                 .with_context(|| "Failed to construct program owner")?;
+```
+
+**File**: `cli/src/commands/developer/execute.rs` (modified, +11/-9)
+```diff
+@@ -171,15 +171,17 @@ impl Execute {
+             };
+ 
+             // Create a new transaction.
+-            vm.execute(
+-                &private_key,
+-                (program_id, function),
+-                inputs.iter(),
+-                fee_record,
+-                self.priority_fee,
+-                Some(&query),
+-                rng,
+-            )
++            Developer::catch_halt(|| {
++                vm.execute(
++                    &private_key,
++                    (program_id, function),
++                    inputs.iter(),
++                    fee_record,
++                    self.priority_fee,
++                    Some(&query),
++                    rng,
++                )
++            })
+             .with_context(|| "VM failed to execute transaction locally")?
+         };
+ 
+```
+
+**File**: `cli/src/commands/developer/mod.rs` (modified, +32/-0)
+```diff
+@@ -37,6 +37,7 @@ use snarkvm::{
+     ledger::store::helpers::memory::BlockMemory,
+     package::Package,
+     prelude::{query::Query, *},
++    utilities::{VmHalt, try_vm_runtime},
+ };
+ 
+ use anyhow::{Context, Result, anyhow, bail, ensure};
+@@ -200,6 +201,17 @@ impl Developer {
+         }
+     }
+ 
++    /// Runs `operation`, which can halt the VM, and returns a halt as an error. Any other panic keeps unwinding.
++    fn catch_halt<T, E: Into<anyhow::Error>>(operation: impl FnOnce() -> std::result::Result<T, E>) -> Result<T> {
++        match try_vm_runtime(operation) {
++            Ok(result) => result.map_err(Into::into),
++            Err(payload) => match payload.downcast::<VmHalt>() {
++                Ok(halt) => bail!("The program halted: {halt}"),
++                Err(payload) => std::panic::resume_unwind(payload),
++            },
++        }
++    }
++
+     /// Parses an endpoint URL or a JSON static query.
+     ///
+     /// Endpoint URLs are normalized before `Query::from_str`.
+@@ -649,4 +661,24 @@ mod tests {
+         assert_eq!(endpoint, format!("{base_uri_str}/{}/transaction/broadcast", CurrentNetwork::SHORT_NAME));
+         assert_eq!(api_version, ApiVersion::V2);
+     }
++
++    #[test]
++    fn test_catch_halt_returns_the_result() {
++        assert_eq!(Developer::catch_halt(|| Ok::<_, anyhow::Error>(7)).expect("The operation succeeds"), 7);
++        assert_eq!(Developer::catch_halt(|| -> Result<()> { bail!("an error") }).unwrap_err().to_string(), "an error");
++    }
++
++    #[test]
++    fn test_catch_halt_returns_a_halt_as_an_error() {
++        let error = Developer::catch_halt(|| Ok::<_, anyhow::Error>(Field::<CurrentNetwork>::one() / Field::zero()))
++            .expect_err("A division by zero halts");
++        assert!(error.to_string().starts_with("The program halted: Field division by zero"), "{error}");
++    }
++
++    #[test]
++    fn test_catch_halt_resumes_other_panics() {
++        let payload = std::panic::catch_unwind(|| Developer::catch_halt(|| -> Result<()> { panic!("a bug") }))
++            .expect_err("A panic that is not a halt keeps unwinding");
++        assert_eq!(payload.downcast_ref::<&str>(), Some(&"a bug"));
++    }
+ }
+```
+
+**File**: `cli/src/commands/developer/transfer_private.rs` (modified, +11/-9)
+```diff
+@@ -132,15 +132,17 @@ impl TransferPrivate {
+             ];
+ 
+             // Create a new transaction.
+-            vm.execute(
+-                &private_key,
+-                ("credits.aleo", "transfer_private"),
+-                inputs.iter(),
+-                Some(fee_record),
+-                priority_fee,
+-                Some(&query),
+-                rng,
+-            )?
++            Developer::catch_halt(|| {
++                vm.execute(
++                    &private_key,
++                    ("credits.aleo", "transfer_private"),
++                    inputs.iter(),
++                    Some(fee_record),
++                    priority_fee,
++                    Some(&query),
++                    rng,
++                )
++            })?
+         };
+         let locator = Locator::<N>::from_str("credits.aleo/transfer_private")?;
+         println!("✅ Created private transfer of {} microcredits to {}\n", &self.amount, recipient);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4792** (2026-11-25): Default the Gauntlet load and release tests to a V23 stockpile (@cbeck88)
+- **PR #4791** (2026-11-25): Build tests at opt-level 1 (@cbeck88)
 - **PR #4786** (2026-11-25): ci: offer a 21-validator network in the Gauntlet forms (@cbeck88)
+- **PR #4785** (2026-11-25): Return VM halts in the developer commands as command errors (@cbeck88)
+- **PR #4783** (2026-11-25): [Release] Prepare snarkOS 5.0.0 for testnet (@snarkworld)
 - **PR #4782** (2026-11-24): Bump snarkVM to aleo-labs-protocol/snarkVM@4606f61d8 (@aleo-labs-merge-bot[bot])
-- **PR #4779** (2026-11-24): Bump snarkVM to aleo-labs-protocol/snarkVM@c91682f16 (@aleo-labs-merge-bot[bot])
-- **PR #4778** (2026-11-24): Build no block from a subdag with committed certificates (@cbeck88)
-- **PR #4777** (2026-11-24): Check advisories only on scheduled and release CI runs (@cbeck88)
-- **PR #4775** (2026-11-24): Drop failed block requests above every advertised peer height (@cbeck88)
 
 ---
 
@@ -1978,31 +2131,32 @@ Claude-Session: https://claude.ai/code/session_01UYfmmLsBVTnk9b7LXtFhwJ
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in load-test.yml
+## X. Empirical Invariant Guard in Cargo.toml
 
 **RULE**:
-When implementing operations in `.github/workflows/load-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00510513`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9c02ea4e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/load-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        options: ["5", "10", "16", "21"]
+# At 0 the snarkVM code in the tests runs 4-8x slower.
+opt-level = 1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        options: ["5", "10", "16"]
+opt-level = 2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00510513` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9c02ea4e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

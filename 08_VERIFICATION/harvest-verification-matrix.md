@@ -13181,3 +13181,7 @@
 | `CYCLE-20261126-13E4` | `2026-11-26T00:46:42.028Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10573` | Yes (`2f3def12...`) |
 | `CYCLE-20261126-HEZY` | `2026-11-26T00:59:23.566Z` | `unsloth/Qwen3.8-Flash-Next-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | Yes (`d6635611...`) |
 | `CYCLE-20261126-HFVC` | `2026-11-26T00:59:24.696Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10574` | Yes (`6a8e8193...`) |
+| `CYCLE-20261126-SFI5` | `2026-11-26T01:07:57.437Z` | `baidu/ERNIE-5.5-Flash-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md` | Yes (`62139ab7...`) |
+| `CYCLE-20261126-SNOS` | `2026-11-26T01:08:08.044Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10575` | Yes (`e082e0bb...`) |
+| `CYCLE-20261126-SPFA` | `2026-11-26T01:08:10.294Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9414` | Yes (`1966eebd...`) |
+| `CYCLE-20261126-SRF5` | `2026-11-26T01:08:12.881Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10576` | Yes (`5efd1582...`) |
