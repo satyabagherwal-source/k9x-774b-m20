@@ -13381,3 +13381,6 @@ Every entry in this ledger must capture:
 | `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `685c517e` | Multi-dimensional audit evidence | 2026-11-26T10:50:37.503Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `9ced8eeb` | Multi-dimensional audit evidence | 2026-11-26T10:50:40.159Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `95ccbc34` | Multi-dimensional audit evidence | 2026-11-26T10:50:45.317Z |
+| `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-26T11:03:38.849Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `007a518f` | Multi-dimensional audit evidence | 2026-11-26T11:03:50.935Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `d0e4075f` | Multi-dimensional audit evidence | 2026-11-26T11:03:51.285Z |

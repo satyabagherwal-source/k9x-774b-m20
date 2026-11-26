@@ -285,8 +285,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "584a00c2e588eb4d0a2724ba8f770f4b392dd4b031c7f3eb6ce4c627b328f698",
-    "lastHarvestedAt": "2026-11-22T18:00:17.620Z",
+    "contentHash": "e9796a17c89773293efcb18f9230e26c1578b6b93571c0a66b3b345491675716",
+    "lastHarvestedAt": "2026-11-26T11:03:38.849Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "875f5143",
+    "sourceVersion": "007a518f",
     "license": "Apache-2.0",
-    "contentHash": "09ed8f36177c8ffd29c7b2879f5a9c66df85d0397aeab739a7d3bd1bdce39057",
-    "lastHarvestedAt": "2026-11-25T10:45:37.799Z",
+    "contentHash": "5e80004cf5878cbee5c1f19896bcbd1925329f46a959f749bdb82a1659663e54",
+    "lastHarvestedAt": "2026-11-26T11:03:50.935Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "ca29be61",
+    "sourceVersion": "d0e4075f",
     "license": "MIT",
-    "contentHash": "5f9651873dbda919deec43c8e79c6314543aec63df6ff562919bc9cd71759eac",
-    "lastHarvestedAt": "2026-11-24T00:40:05.678Z",
+    "contentHash": "381414aa49d4c9aa188b2c33c3057e31b854175bfc9ab3f90b3684bc11cf7a1d",
+    "lastHarvestedAt": "2026-11-26T11:03:51.285Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {

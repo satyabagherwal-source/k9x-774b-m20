@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T00:40:51.155Z",
+  "timestamp": "2026-11-26T11:03:56.276Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-wcandillon-react-native-skia-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [wcandillon-react-native-skia-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T00:40:51.155Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T11:03:56.276Z`  
 > **Learning ID**: `LEARN-EVO-wcandillon-react-native-skia-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from wcandillon-react-native-skia-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia))  
-> **Source Version**: `ca29be61`  
+> **Source Version**: `d0e4075f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T00:40:05.156Z  
+> **Timestamp**: 2026-11-26T11:03:49.624Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:40:05.149Z  
+> **Harvest Timestamp**: 2026-11-26T11:03:49.617Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8788 stars
+- **Stars / Engagement**: 8794 stars
 
 ---
 
@@ -1048,20 +1048,6 @@ inline AdapterDescription describeAdapter(const wgpu::Adapter &adapter) {
   return result;
 }
 
-// Dawn's own SwiftShader test (gpu_info::IsGoogleSwiftshader): Google's
-// vendor ID with SwiftShader's device ID. The Android emulator exposes the
-// host's SwiftShader through gfxstream, which keeps the IDs and the name, so
-// either identifies it.
-inline bool isSwiftShader(const wgpu::Adapter &adapter) {
-  wgpu::AdapterInfo info;
-  adapter.GetInfo(&info);
-  constexpr uint32_t kVendorIDGoogle = 0x1AE0;
-  constexpr uint32_t kDeviceIDSwiftShader = 0xC0DE;
-  return (info.vendorID == kVendorIDGoogle &&
-          info.deviceID == kDeviceIDSwiftShader) ||
-         toString(info.device).find("SwiftShader") != std::string::npos;
-}
-
 // Dawn's own Imagination test (gpu_info::IsImgTec): the PCI vendor ID of
 // Imagination Technologies, whose PowerVR GPUs ship in the Pixel 10 and 11.
 inline bool isImagination(const wgpu::Adapter &adapter) {
@@ -1159,7 +1145,21 @@ getMatchedAdapter(dawn::native::Instance *instance) {
 
 // Where requestDevice() reports what becomes of the device. A loss after
 // creation (a driver reset, the GPU out of memory, a device-level error)
-// goes to onLost with Dawn's reason and message, on whichever 
+// goes to onLost with Dawn's reason and message, on whichever thread Dawn
+// detects it: possibly inside a call on the device itself, on the calling
+// thread. A creation failure leaves Dawn's message in creationFailure, for
+// the caller of requestDevice(): that callback runs inside CreateDevice, on
+// the calling thread. The listener must outlive the device.
+struct DeviceLostListener {
+  std::function<void(wgpu::DeviceLostReason reason, const std::string &message)>
+      onLost;
+  std::string creationFailure;
+};
+
+// The name WebGPU gives a loss reason (GPUDeviceLostReason, lower case).
+inline const char *deviceLostReasonName(wgpu::DeviceLostReason reason) {
+  switch (reason) {
+  case wg
 ```
 
 ### Core Architecture Module: `packages/skia/cpp/rnskia/RNSkWindowState.h`
@@ -1697,11 +1697,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4467** (2026-11-17): **Android: a `SurfaceView` canvas shows its hole black until its first frame**
-  *Symptoms*: ### Description  My app met this while its opaque canvases were `SurfaceView`s; it now renders every canvas into a `TextureView`, so it no longer does. Another user reported the same in [a comment on #3713](https://github.com/wcandillon/react-native-skia/issues/3713#issuecomment-5831378034), and #4191 is the closed fix.  A `<Canvas android={{ backingView: "SurfaceView" }}>` shows its hole black when it mounts, for a frame or two on a fast device and longer while its first recording is produced, until its first frame lands. The window opens the hole once the `SurfaceView` reports its draw finished, and `SkiaSurfaceView` implements `SurfaceHolder.Callback` rather than `Callback2`, so the report goes out as soon as `surfaceChanged` returns, before anything is presented into the surface. Before Android 12 a change of `android.opaque`, which replaces the surface, can show it black for a frame too.  `GLSurfaceView` holds `surfaceRedrawNeededAsync`'s `finishDrawing` until its renderer has drawn its next frame, and Flutter's `SurfaceView` until its first frame is displayed, keeping the view transparent until then before Android 8 ([GLSurfaceView](https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/opengl/java/android/opengl/GLSurfaceView.java#550), [Flutter](https://github.com/flutter/flutter/blob/189a5db70ba4f7a652e3349e922ab38a3bca023e/engine/src/flutter/shell/platform/android/io/flutter/embedding/android/SurfaceHolderCallbackCompat.java#L141-L16
+- **Issue #4539** (2026-11-25): **iOS App Store Connect rejects build with ITMS-91063: invalid ".rnskia-skia.signature" and ".rnskia-dawn.signature"**
+  *Symptoms*: ### Description  I submitted my iOS app to App Store review and it was rejected during processing with an **"Invalid Binary"** status. This happened in a production build, so it blocks my release. I did not change any signing setup; the only recent change was adding react-native-skia (v3, prebuilt Skia/Dawn binaries).  Apple's email says: ITMS-91063: Invalid signature - Your app includes the **“.rnskia-skia.signature”** code signature file, which appears to be in an invalid format. If a new app includes a commonly used third-party SDK, or an app update adds a new commonly used third-party SDK, the SDK must include a valid signature file. For details about verifying the code signature for a third-party SDK, visit: https://developer.apple.com/documentation/xcode/verifying-the-origin-of-your-xcframeworks.  ITMS-91063: Invalid signature - Your app includes the **“.rnskia-dawn.signature”** code signature file, which appears to be in an invalid format. If a new app includes a commonly used third-party SDK, or an app update adds a new commonly used third-party SDK, the SDK must include a valid signature file. For details about verifying the code signature for a third-party SDK, visit: https://developer.apple.com/documentation/xcode/verifying-the-origin-of-your-xcframeworks.   ### React Native Skia Version  3.12.0  ### React Native Version  0.88.1  ### Using New Architecture  - [x] Enabled  ### Steps to Reproduce  NA  ### Snack, Code Example, Screenshot, or Link to Repository  NA  ##
 
-- **Issue #4462** (2026-11-13): **Android 8: timed waits on `steady_clock`, the render pool's idle task among them, follow the wall clock**
-  *Symptoms*: ### Description  On Android 8.0 and 8.1 (API 26 and 27, within the library's minimum SDK), `std::condition_variable::wait_until` against a `steady_clock` deadline follows the wall clock. libc++ waits on `CLOCK_MONOTONIC` only when built for API 30 or later ([`__config#L845-L846`](https://github.com/llvm/llvm-project/blob/llvmorg-20.1.0/libcxx/include/__config#L845-L846)); below that it hands `pthread_cond_timedwait` a `CLOCK_REALTIME` deadline, which bionic converts to `CLOCK_MONOTONIC` only from Android 9 ([`bionic_futex.cpp` in pie-release](https://android.googlesource.com/platform/bionic/+/refs/heads/pie-release/libc/bionic/bionic_futex.cpp#42)). A wall-clock change during such a wait, a network time sync or the user setting the clock, moves its end by the change. The library waits this way for the render pool's idle task ([`RNSkThreadPool.h#L213`](https://github.com/wcandillon/react-native-skia/blob/914fae19683edbce527bbafd0bea6d649660df0a/packages/skia/cpp/rnskia/RNSkThreadPool.h#L213)), the image reaper ([`RNImageProvider.h#L487`](https://github.com/wcandillon/react-native-skia/blob/914fae19683edbce527bbafd0bea6d649660df0a/packages/skia/cpp/rnskia/RNImageProvider.h#L487)), `waitForIdle` before the pipeline warmup compiles ([`RNSkGpuActivity.h#L62`](https://github.com/wcandillon/react-native-skia/blob/914fae19683edbce527bbafd0bea6d649660df0a/packages/skia/cpp/rnskia/RNSkGpuActivity.h#L62)) and the pipeline cache's write delay ([`RNSkPipelineWarmup.h#L259`](https://github
+- **Issue #4519** (2026-11-24): **Android: wrapper C++ compile takes about 1.4 min per ABI on 2.15.5 (5+ min for four ABIs) Expo SDK 58 - This is a build-time regression, not a runtime bug.**
+  *Symptoms*: ### Description  I hit this myself after upgrading my Expo app from SDK 57 to SDK 58. My Android release builds on EAS went from about 24 minutes to 41-45 minutes, which is over the 45-minute limit of the free plan, so builds started getting cancelled.  I went through the Gradle logs to see where the time went. Most of the increase is in React Native's own app compile step, but react-native-skia is the slowest single library: the :react-native-skia:buildCMakeRelWithDebInfo tasks take about 5 minutes in total across the four ABIs. On @shopify/react-native-skia 2.11.0 with React Native 0.86 the same tasks did not stand out at all (under a minute in total, though that build had a warm ccache, so the comparison is not exact).  I understand the Skia engine itself is prebuilt and it is the wrapper that gets compiled. I expected that part to stay small. Is this compile time expected on 2.15.x, and is there any plan to ship the wrapper prebuilt for Android, or a recommended way to reduce it other than building fewer ABIs?  Earlier, on 2.14.0, the same step was running the EAS worker out of memory with four ABIs; 2.15.5 fixed that for me.  ### React Native Skia Version  2.15.5  ### React Native Version  0.88.1  ### Using New Architecture  - [x] Enabled  ### Steps to Reproduce  1. Expo SDK 58 app (expo 58.0.26), react-native 0.88.1, react-native-skia 2.15.5,    react-native-reanimated 4.7.1, react-native-worklets 0.13.0. 2. Build an Android release for all four ABIs on EAS Build (defau
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1718,862 +1718,498 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb5dc61f` (2026-11-23)
-**Commit Message**: chore(🕸️): build Skia Graphite for wasm (#4509)
+### Incident Patch 1: `13bdf30c` (2026-11-25)
+**Commit Message**: fix(🍏): don't name build stamps .signature (ITMS-91063) (#4540)
 
-* chore(🕸️): Skia Graphite wasm archives and skia-wasm smoke test
+* fix(🍏): don't name build stamps .signature (ITMS-91063)
 
-Adds a WebAssembly target to the regular Skia build and a package that
-consumes it.
+Xcode collects *.signature files from build products into the archive,
+so App Store Connect validated our incremental-build stamps as XCFramework
+code signatures and rejected the upload. Use a .stamp extension and remove
+stamps left behind by previous builds.
 
-- `yarn build-skia wasm` builds Skia Graphite (Dawn backend, no Ganesh) with
-  Skia's pinned Emscripten into static archives, with the Skia headers, an
-  emdawnwebgpu package generated from the pinned Dawn, and a metadata.json
-  recording the Emscripten version, flags and defines a consumer must match.
-- Three Skia patches: the Graphite Dawn backend ported to emdawnwebgpu, a GN
-  argument to depend on the emdawnwebgpu package instead of building Dawn,
-  and optional pthreads for the wasm toolchain.
-- `yarn package-skia-wasm` zips the result as skia-graphite-wasm.zip and
-  prints the entry to pin.
-- packages/skia-wasm (private) links every archive into one module and draws
-  a tile with each (shapes, runtime effect, image, SVG, Skottie, Paragraph)
-  on the browser's WebGPU device, checked in headless Chromium through
-  Playwright. It uses a local build when there is one and otherwise the
-  archive pinned in its binaries.json, verified by SHA-256.
+Fixes #4539
 
-* chore(🕸️): move the wasm smoke te
+* test(🍏): guard against *.signature files in Apple build products
 
-**File**: `packages/skia/CONTRIBUTING.md` (modified, +6/-0)
+A unit test runs the assembly and staging steps of the Xcode phase and
+fails if they leave a *.signature file behind, and the iOS CI job checks
+the real build products after xcodebuild.
+
+* ci(🍏): skip react-native-webgpu's stamp until it ships the fix
+
+The example installs a react-native-webgpu release that still writes
+.rnwgpu-dawn.signature; wcandillon/react-native-webgpu#655 fixes it.
+
+**File**: `.github/workflows/ci.yml` (modified, +16/-0)
 ```diff
-@@ -58,6 +58,12 @@ Both builders accept `android` to build all ABIs. For one architecture, use a Sk
+@@ -597,6 +597,22 @@ jobs:
+               exit 1
+             }
  
- Skia writes `.a` libraries to `libs/android/<abi>`. Dawn writes `libwebgpu_dawn.so` to `libs/dawn/android/<abi>`. Local Android libraries take precedence over downloaded binaries.
- 
-+#### WebAssembly (experimental)
-+
-+`yarn build-skia wasm` builds Skia Graphite for the browser's WebGPU with the Emscripten release Skia pins (installed in the Skia checkout on first use). There is no Dawn build: the browser implements WebGPU, and the WebGPU headers and JavaScript glue are generated from the pinned Dawn checkout.
-+
-+Skia writes `.a` libraries to `libs/wasm/lib`, next to the headers (`skia/`), the WebGPU package (`emdawnwebgpu/`) and `metadata.json`, which records the Emscripten version, flags and defines a consumer has to match. These archives are not a module: the [skia-wasm](https://github.com/wcandillon/skia-wasm) repository links them into one. `yarn package-skia-wasm` zips them. The Build and release Skia wasm workflow (`.github/workflows/build-skia-wasm.yml`) does both and publishes the archive as the GitHub release `skia-wasm-<version>`, which skia-wasm pins.
-+
- #### Apple
- 
- Both Apple builders accept SDK groups (`iphoneos`, `iphonesimulator`, `maccatalyst`, `appletvos`, `appletvsimulator`, `macos`) and individual targets such as `iphonesimulator-arm64` or `iphonesimulator-x86_64`. A group builds its configured architectures and produces lipo'd universal libraries when it has multiple architectures; a single target keeps only that architecture. Single-architecture SDKs copy their libraries directly.
-```
-
-**File**: `packages/skia/eslint.config.mjs` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ import wcandillon from "eslint-config-react-native-wcandillon";
- 
- export default [
-   {
--    ignores: ["lib/**", "dist/**", "android/build/**", "node_modules/**", "*.config.js", "jest.config.js", "*.mjs"]
-+    ignores: ["lib/**", "libs/**", "dist/**", "android/build/**", "node_modules/**", "*.config.js", "jest.config.js", "*.mjs"]
-   },
-   ...wcandillon,
-   {
-```
-
-**File**: `packages/skia/package.json` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@
-     "build-skia": "tsx ./scripts/build-skia.ts",
-     "build-dawn": "tsx ./scripts/build-dawn.ts",
-     "package-binaries": "tsx ./scripts/package-binaries.ts",
-+    "package-skia-wasm": "tsx ./scripts/package-skia-wasm.ts",
-     "prepare-dawn-headers": "tsx ./scripts/prepare-dawn-headers.ts",
-     "copy-skia-headers": "tsx ./scripts/copy-skia-headers.ts",
-     "clang-format": "yarn clang-format-ios && yarn clang-format-android && yarn clang-format-common",
-```
-
-**File**: `packages/skia/scripts/apple-configuration.ts` (modified, +5/-2)
-```diff
-@@ -86,7 +86,10 @@ export const selectBuildTargets = (specs: string[], targets: string[]) => {
-   const selected = new Set<string>();
-   for (const spec of specs) {
-     // Only catalogued groups expand; partial names must not select other SDKs.
--    const isGroup = spec === "android" || appleSDKs.includes(spec as AppleSDK);
-+    const isGroup =
-+      spec === "android" ||
-+      spec === "wasm" ||
-+      appleSDKs.includes(spec as AppleSDK);
-     let matches: string[] = [];
-     if (targets.includes(spec)) {
-       matches = [spec];
-@@ -97,7 +100,7 @@ export const selectBuildTargets = (specs: string[], targets: string[]) => {
-       throw new Error(
-         `Unknown target '${spec}'. Valid targets: ${targets.join(
-           ", "
--        )}; groups: android, ${appleSDKs.join(", ")}`
-+        )}; groups: android, wasm, ${appleSDKs.join(", ")}`
-       );
-     }
-     matches.forEach((target) => selected.add(target));
-```
-
-**File**: `packages/skia/scripts/build-skia.ts` (modified, +61/-7)
-```diff
-@@ -21,9 +21,16 @@ import {
-   PackageRoot,
-   ProjectRoot,
-   SkiaSrc,
-+  WasmLibs,
- } from "./skia-configuration";
- import { applyDawnPatches } from "./dawn-configuration";
--import { $, runAsync } from "./utils";
-+import {
-+  activateEmsdk,
-+  buildEmdawnwebgpuPackage,
-+  wasmArchiveSource,
-+  writeWasmMetadata,
-+} from "./wasm-configuration";
-+import { $, fileOps, runAsync } from "./utils";
- 
- /**
-  * Locate GN intermediates, separately from distributable libraries under libs/.
-@@ -109,17 +116,27 @@ export const buildPlatform = async (
-   // We need to include the path to our custom python2 -> python3 mapping script
-   // to make sure we can run all scripts that uses #!/usr/bin/env python as shebang
-   // https://groups.google.com/g/skia-discuss/c/BYyB-TwA8ow
-+  // wasm builds its archives by name: the default target would also compile
-+  // the Dawn and Tint that the emdawnwebgpu package replaces.
-+  const ninjaTargets =
-+    platform === "wasm"
-+      ? configurations.wasm.outputNames
-+          .map((library) => ` ${path.basename(wasmArchiveSource(library))}`)
-+          .join("")
-+      : "";
-   const command = `PATH=${process.cwd()}/../bin:$PATH ninja -C ${getOutDir(
-     platform,
-     targetName
--  )}`;
-+  )}${ninjaTargets}`;
-   // Apple CPU names overlap across SDKs; identify both in compiler output.
--  const label =
--    platform === "android"
--      ? `🤖 ${targetName}`
--      : `🍏 ${platform}-${targetName}`;
-+  let label = `🍏 ${platform}-${targetName}`;
-+  if (platform === "android") {
-+    label = `🤖 ${targetName}`;
-+  } else if (platform === "wasm") {
-+    label = `🕸️ ${targetName}`;
-+  }
-   await runAsync(command, label);
--  if (platform !== "android") {
-+  if (platform !== "android" && platform !== "wasm") {
-     // Fail this target before staging or compiling the next architecture.
-     for (const library of configurations[platform].outputNames) {
-       validateAppleArchive(
-@@ -195,12 +212,15 @@ export const copyLib = (
-  *   yarn build-skia iphonesimulator              # lipo'd universal simulator libraries
-  *   yarn build-skia iphonesimulator-arm64        # one simulator architecture
-  *   yarn build-skia iphoneos iphonesimulator     # multiple SDK groups
-+ *   yarn build-skia wasm                         # Graphite on WebGPU, for the web
-  *
-  * Apple static libraries are staged under libs/apple/<sdk>-<arch>/
-  * (e.g. libs/apple/iphonesimulator-arm64/), then assembled under libs/apple/<sdk>/
-  * (e.g. libs/apple/iphonesimulator/). Staging directories are removed on successful
-  * SDK assembly; GN intermediates remain. Android uses libs/android/<abi>/
-  * (e.g. libs/android/arm64-v8a/). package-binaries assembles npm XCFrameworks.
-+ * wasm uses libs/wasm/ with its own headers and emdawnwebgpu package next to
-+ * the archives; see wasm-configuration.ts.
-  *
-  * See apple-configuration.ts for SDK groups/architectures and
-  * skia-configuration.ts (skiaTargets) for the full target list.
-@@ -254,6 +274,17 @@ export const copyLib = (
-     $(`rm -rf ${PackageRoot}/${configurations.android.outputRoot}`);
-   }
- 
-+  // GN compiles Graphite against the emdawnwebgpu headers, so the package
-+  // comes first; it needs Emscripten for the struct layouts.
-+  const hasWasm = selectedTargets.some(
-+    (name) => skiaTargets[name].platform === "wasm"
-+  );
-+  if (hasWasm) {
-+    fileOps.rm(WasmLibs);
-+    activateEmsdk();
-+    buildEmdawnwebgpuPackage();
-+  }
-+
-   for (const name of selectedTargets) {
-     const { platform, architecture } = skiaTargets[name];
-     const configuration = configurations[platform];
-@@ -272,6 +303,15 @@ export const copyLib = (
-         configurations.android.targets[architecture].output,
-         configuration.outputNames
-       );
-+    } else if (platform === "wasm") {
-+      const destination = skiaTargetOutputDir(name);
-+      fs.mkdirSync(destination, { recursive: true });
-+      for (const library of configuration.outputNames) {
-+        fs.copyFileSync(
-+          wasmArchiveSource(library),
-+          path.join(destination, library)
-+        );
-+      }
-     } else {
-       // Stage each SDK/architecture separately before combining its libraries.
-       const destination = skiaTargetOutputDir(name);
-@@ -293,6 +333,20 @@ export const copyLib = (
-     selectedTargets
-   );
-   await copyHeaders();
-+  if (hasWasm) {
-+    // The asset carries its headers: a consumer of the published archives has
-+    // no Skia checkout to copy them from.
-+    fileOps.cp(
-+      path.join(PackageRoot, "cpp", "skia"),
-+      path.join(WasmLibs, "skia")
-+    );
-+    fs.copyFileSync(
-+      path.join(SkiaSrc, "LICENSE"),
-+      path.join(WasmLibs, "LICENSE")
-+    );
-+    writeWasmMetadata();
-+    console.log(`✅ wasm libraries in ${WasmLibs}`);
-+  }
- })().catch((error) => {
-   console.error(`❌ ${error.message}`);
-   exit(1);
-```
-
-**File**: `packages/skia/scripts/package-skia-wasm.ts` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+/**
-+ * Archives the output of `yarn build-skia wasm` (libs/wasm) as
-+ * skia-graphite-wasm.zip and prints its checksum.
-+ *
-+ * The archive is not part of the binaries release: the build-skia-wasm.yml
-+ * workflow publishes it as the GitHub release skia-wasm-<version>. The skia-wasm
-+ * repository (https://github.com/wcandillon/skia-wasm) pins it, with the
-+ * printed entry, in its binaries.json and downloads it from there.
-+ *
-+ * Usage:
-+ *   yarn package-skia-wasm [--output=<dir>]     (default: build/wasm)
-+ */
-+import { execFileSync } from "child_process";
-+import crypto from "crypto";
-+import fs from "fs";
-+import path from "path";
-+
-+import { PackageRoot, WasmLibs } from "./skia-configuration";
-+
-+const AssetName = "skia-graphite-wasm.zip";
-+// The layout wasm-configuration.ts documents, at the root of the archive.
-+const Entries = ["lib", "skia", "emdawnwebgpu", "metadata.json", "LICENSE"];
-+
-+const output =
-+  process.argv
-+    .slice(2)
-+    .find((arg) => arg.startsWith("--output="))
-+    ?.slice("--output=".length) ?? path.join(PackageRoot, "build", "wasm");
-+
-+for (const entry of Entries) {
-+  if (!fs.existsSync(path.join(WasmLibs, entry))) {
-+    console.error(
-+      `❌ ${path.join(WasmLibs, entry)} is missing: run \`yarn build-skia wasm\` first.`
-+    );
-+    process.exit(1);
-+  }
-+}
-+
-+const archive = path.resolve(output, AssetName);
-+fs.mkdirSync(path.dirname(archive), { recursive: true });
-+// zip adds to an archive that exists already.
-+fs.rmSync(archive, { force: true });
-+execFileSync(
-+  "zip",
-+  // -X: no uid/gid nor extended timestamps; -y: a symlink stays a symlink.
-+  ["-q", "-r", "-X", "-y", archive, ...Entries, "-x", "*.DS_Store"],
-+  { cwd: WasmLibs, stdio: "inherit" }
-+);
-+
-+const sha256 = crypto
-+  .createHash("sha256")
-+  .update(fs.readFileSync(archive))
-+  .digest("hex");
-+const { size } = fs.statSync(archive);
-+
-+console.log(`✅ ${archive} (${(size / (1 << 20)).toFixed(1)} MB)`);
-+console.log("");
-+console.log(
-+  "Once uploaded, pin it in binaries.json of the skia-wasm repository:"
-+);
-+console.log(
-+  JSON.stringify(
-+    { [AssetName]: { url: "<where it was uploaded>", sha256, size } },
-+    null,
-+    2
-+  )
-+);
-```
-
-**File**: `packages/skia/scripts/skia-configuration.ts` (modified, +60/-9)
-```diff
-@@ -19,6 +19,12 @@ export const SkiaPatches = path.join(__dirname, "skia-patches");
- /** Applies the Skia patches, skipping those already in the pinned checkout. */
- export const applySkiaPatches = () => applyPatches(SkiaSrc, SkiaPatches);
- 
-+// The wasm build output, which is also the layout of the release asset:
-+// lib/ (archives), skia/ (headers), emdawnwebgpu/ and metadata.json.
-+export const WasmLibs = path.join(PackageRoot, "libs", "wasm");
-+// Stands in for Dawn on wasm: see skia-patches/wasm-emdawnwebgpu-dependency.patch.
-+export const EmdawnwebgpuDir = path.join(WasmLibs, "emdawnwebgpu");
-+
- const NdkDir = process.env.ANDROID_NDK ?? "";
- 
- /** Minimum Android API used by both Skia's GN and Dawn's CMake builds. */
-@@ -95,9 +101,9 @@ export const commonArgs = [
-   ["skia_use_partition_alloc", false],
- ];
- 
--// Build groups identify Android or one Apple SDK, independently of library format.
--// GN keeps its own CPU/platform spellings.
--export type PlatformName = "android" | AppleSDK;
-+// Build groups identify Android, wasm or one Apple SDK, independently of library
-+// format. GN keeps its own CPU/platform spellings.
-+export type PlatformName = "android" | "wasm" | AppleSDK;
- 
- type Arg = (string | boolean | number)[];
- export type Target = {
-@@ -185,10 +191,23 @@ const apple = (sdk: AppleSDK): Platform => {
-   };
- };
- 
--export const configurations: { android: Platform<AndroidTarget> } & Record<
--  AppleSDK,
--  Platform
--> = {
-+// The module libraries a wasm consumer links, in addition to libskia.a. GN
-+// names them lib<name>.wasm.a; they are staged without the infix.
-+export const wasmOutputNames = [
-+  "libskia.a",
-+  "libskshaper.a",
-+  "libsvg.a",
-+  "libskottie.a",
-+  "libsksg.a",
-+  "libskresources.a",
-+  "libjsonreader.a",
-+  ...ParagraphApple,
-+];
-+
-+export const configurations: {
-+  android: Platform<AndroidTarget>;
-+  wasm: Platform;
-+} & Record<AppleSDK, Platform> = {
-   android: {
-     targets: {
-       arm: {
-@@ -241,6 +260,35 @@ export const configurations: { android: Platform<AndroidTarget> } & Record<
-       ...ParagraphOutputsAndroid,
-     ],
-   },
-+  // Graphite on the browser's WebGPU. Built with Emscripten from the emsdk
-+  // Skia pins; see wasm-configuration.ts for the toolchain and for what a
-+  // consumer of these archives has to match.
-+  wasm: {
-+    targets: {
-+      wasm32: {
-+        platform: "wasm",
-+        cpu: "wasm",
-+      },
-+    },
-+    args: [
-+      // Graphite only. The WebGL (Ganesh) backend would be a separate build.
-+      ["skia_enable_ganesh", false],
-+      ["skia_use_webgl", false],
-+      // The browser implements WebGPU: Dawn is neither built nor linked.
-+      ["skia_emdawnwebgpu_dir", `"${EmdawnwebgpuDir}"`],
-+      // A module with threads needs a shared memory, which browsers only give
-+      // to cross-origin isolated pages.
-+      ["skia_wasm_enable_pthreads", false],
-+      // No system fonts on the web: FreeType with fonts supplied as data.
-+      ["skia_use_freetype", true],
-+      ["skia_use_system_freetype2", false],
-+      ["skia_enable_fontmgr_custom_directory", false],
-+      // Same text stack as the Apple targets: no ICU data to ship.
-+      ...ParagraphArgsApple,
-+    ],
-+    outputRoot: "libs/wasm",
-+    outputNames: wasmOutputNames,
-+  },
-   ...(Object.fromEntries(appleSDKs.map((sdk) => [sdk, apple(sdk)])) as Record<
-     AppleSDK,
-     Platform
-@@ -259,12 +307,15 @@ export const skiaTargets = Object.fromEntries(
- 
- /** GN intermediates are separate from the SDK libraries uploaded by CI. */
- export const skiaBuildDir = (platform: PlatformName, architecture: string) =>
--  platform === "android"
--    ? path.join(OutFolder, "android", architecture)
-+  platform === "android" || platform === "wasm"
-+    ? path.join(OutFolder, platform, architecture)
-     : path.join(OutFolder, "apple", `${platform}-${architecture}`);
- 
- export const skiaTargetOutputDir = (name: string) => {
-   const { platform, architecture } = skiaTargets[name];
-+  if (platform === "wasm") {
-+    return path.join(WasmLibs, "lib");
-+  }
-   return platform === "android"
-     ? path.join(
-         PackageRoot,
-```
-
-**File**: `packages/skia/scripts/skia-patches/graphite-emdawnwebgpu.patch` (added, +359/-0)
-```diff
-@@ -0,0 +1,359 @@
-+[graphite] Build the Dawn backend for wasm against emdawnwebgpu
-+
-+The __EMSCRIPTEN__ branches were written for Emscripten's built-in WebGPU
-+bindings (-sUSE_WEBGPU), which Emscripten no longer maintains: they still use
-+its callback signatures and old names, while the shared code already needs
-+enums those headers do not have. Neither header set compiles.
-+
-+Target emdawnwebgpu, Dawn's Emscripten bindings generated from the same
-+dawn.json as the native headers: use the current names everywhere, pass a
-+wgpu::CallbackMode to the callbacks, and keep signaling completion through
-+DawnAsyncWait because a wgpu::Future can only be waited on with Asyncify or
-+JSPI. A context without a tick function cannot wait for a shader module's
-+compilation info, so it skips that check instead of reading the result before
-+the callback ran.
-+
-+Dawn native takes the same code paths as before.
-+
-+Not sent upstream yet.
-+
-+---
-+diff --git a/src/gpu/graphite/dawn/DawnBuffer.cpp b/src/gpu/graphite/dawn/DawnBuffer.cpp
-+--- a/src/gpu/graphite/dawn/DawnBuffer.cpp
-++++ b/src/gpu/graphite/dawn/DawnBuffer.cpp
-+@@ -15,51 +15,6 @@
-+ 
-+ namespace skgpu::graphite {
-+ namespace {
-+-#if defined(__EMSCRIPTEN__)
-+-bool is_map_succeeded(WGPUBufferMapAsyncStatus status) {
-+-    return status == WGPUBufferMapAsyncStatus_Success;
-+-}
-+-
-+-[[maybe_unused]]
-+-void log_map_error(WGPUBufferMapAsyncStatus status, const char*) {
-+-    const char* statusStr;
-+-    SkLogPriority priority = SkLogPriority::kError;
-+-    switch (status) {
-+-        case WGPUBufferMapAsyncStatus_ValidationError:
-+-            statusStr = "ValidationError";
-+-            break;
-+-        case WGPUBufferMapAsyncStatus_Unknown:
-+-            statusStr = "Unknown";
-+-            break;
-+-        case WGPUBufferMapAsyncStatus_DeviceLost:
-+-            statusStr = "DeviceLost";
-+-            break;
-+-        case WGPUBufferMapAsyncStatus_DestroyedBeforeCallback:
-+-            statusStr = "DestroyedBeforeCallback";
-+-            priority = SkLogPriority::kDebug;
-+-            break;
-+-        case WGPUBufferMapAsyncStatus_UnmappedBeforeCallback:
-+-            statusStr = "UnmappedBeforeCallback";
-+-            priority = SkLogPriority::kDebug;
-+-            break;
-+-        case WGPUBufferMapAsyncStatus_MappingAlreadyPending:
-+-            statusStr = "MappingAlreadyPending";
-+-            break;
-+-        case WGPUBufferMapAsyncStatus_OffsetOutOfRange:
-+-            statusStr = "OffsetOutOfRange";
-+-            break;
-+-        case WGPUBufferMapAsyncStatus_SizeOutOfRange:
-+-            statusStr = "SizeOutOfRange";
-+-            break;
-+-        default:
-+-            statusStr = "<other>";
-+-            break;
-+-    }
-+-    SKIA_LOG(priority, "Buffer async map failed with status %s.", statusStr);
-+-}
-+-
-+-#else
-+-
-+ bool is_map_succeeded(wgpu::MapAsyncStatus status) {
-+     return status == wgpu::MapAsyncStatus::Success;
-+ }
-+@@ -86,7 +41,6 @@ void log_map_error(wgpu::MapAsyncStatus status, wgpu::StringView message) {
-+               static_cast<int>(message.length),
-+               message.data);
-+ }
-+-#endif  // defined(__EMSCRIPTEN__)
-+ }  // namespace
-+ 
-+ sk_sp<DawnBuffer> DawnBuffer::Make(const DawnSharedContext* sharedContext,
-+@@ -241,17 +195,6 @@ void DawnBuffer::onAsyncMap(GpuFinishedProc proc, GpuFinishedContext ctx) {
-+     bool isWrite = fBuffer.GetUsage() & wgpu::BufferUsage::MapWrite;
-+     auto buffer = sk_ref_sp(this);
-+ 
-+-#if defined(__EMSCRIPTEN__)
-+-    fBuffer.MapAsync(
-+-            isWrite ? wgpu::MapMode::Write : wgpu::MapMode::Read,
-+-            0,
-+-            fBuffer.GetSize(),
-+-            [](WGPUBufferMapAsyncStatus s, void* userData) {
-+-                sk_sp<DawnBuffer> buffer(static_cast<DawnBuffer*>(userData));
-+-                buffer->mapCallback(s, /*message=*/nullptr);
-+-            },
-+-            buffer.release());
-+-#else
-+     // Map with AllowSpontaneous so that if Dawn can trigger the callback immediately
-+     // if possible,
-+     fBuffer.MapAsync(
-+@@ -262,7 +205,6 @@ void DawnBuffer::onAsyncMap(GpuFinishedProc proc, GpuFinishedContext ctx) {
-+             [buffer](wgpu::MapAsyncStatus s, wgpu::StringView m) {
-+                 buffer->mapCallback(s, m);
-+             });
-+-#endif
-+ }
-+ 
-+ void DawnBuffer::onMap() {
-+diff --git a/src/gpu/graphite/dawn/DawnCaps.cpp b/src/gpu/graphite/dawn/DawnCaps.cpp
-+--- a/src/gpu/graphite/dawn/DawnCaps.cpp
-++++ b/src/gpu/graphite/dawn/DawnCaps.cpp
-+@@ -295,10 +295,9 @@ void DawnCaps::initCaps(const DawnBackendContext& backendContext, const ContextO
-+ #endif // defined(__EMSCRIPTEN__)
-+ 
-+ #if defined(__EMSCRIPTEN__)
-+-    wgpu::SupportedLimits supportedLimits;
-+-    [[maybe_unused]] wgpu::Status status = backendContext.fDevice.GetLimits(&supportedLimits);
-++    wgpu::Limits limits;
-++    [[maybe_unused]] wgpu::Status status = backendContext.fDevice.GetLimits(&limits);
-+     SkASSERT(status == wgpu::Status::Success);
-+-    wgpu::Limits& limits = supportedLimits.limits;
-+ #else
-```
-
----
-
-### Incident Patch 2: `ca29be61` (2026-11-23)
-**Commit Message**: fix(🤖): load a remote source over one connection and close it (#4513)
-
-Co-authored-by: Tayyeb Aslam <[REDACTED_EMAIL]>
-Co-authored-by: William Candillon <[REDACTED_EMAIL]>
-
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/PlatformContext.java` (modified, +2/-22)
-```diff
-@@ -13,16 +13,11 @@
- import com.facebook.react.bridge.ReactContext;
- import com.facebook.react.common.LifecycleState;
- 
--import java.io.BufferedInputStream;
--import java.io.ByteArrayOutputStream;
- import java.io.File;
- import java.io.IOException;
--import java.io.InputStream;
- import java.net.MalformedURLException;
- import java.net.URI;
- import java.net.URISyntaxException;
--import java.net.URL;
--import java.net.URLConnection;
- 
- public class PlatformContext implements LifecycleEventListener {
-     @DoNotStrip
-@@ -106,16 +101,6 @@ private static synchronized void listenForMainThreadTasks() {
-         sMainThreadWakeup = wakeup;
-     }
- 
--    private byte[] getStreamAsBytes(InputStream is) throws IOException {
--        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
--        int nRead;
--        byte[] data = new byte[4 * 0x400];
--        while ((nRead = is.read(data, 0, data.length)) != -1) {
--            buffer.write(data, 0, nRead);
--        }
--        return buffer.toByteArray();
--    }
--
-     @DoNotStrip
-     public byte[] getJniStreamFromSource(String sourceUri) throws IOException {
-         // First try loading the input as a resource directly
-@@ -128,7 +113,7 @@ public byte[] getJniStreamFromSource(String sourceUri) throws IOException {
- 
-         if (resourceId != 0) {
-             // We can just return the input stream directly
--            return getStreamAsBytes(mContext.getResources().openRawResource(resourceId));
-+            return SourceBytes.read(mContext.getResources().openRawResource(resourceId));
-         }
- 
-         // We should try to open a connection and return a stream to download this
-@@ -144,12 +129,7 @@ public byte[] getJniStreamFromSource(String sourceUri) throws IOException {
- 
-             // TODO: Base64??
- 
--            URL url = uri.toURL();
--            URLConnection connection = url.openConnection();
--            connection.connect();
--
--            BufferedInputStream b = new BufferedInputStream(url.openStream(), 8192);
--            return getStreamAsBytes(b);
-+            return SourceBytes.fromUrl(uri.toURL());
- 
-         } catch (URISyntaxException e) {
-             e.printStackTrace();
-```
-
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/SourceBytes.java` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+package com.reactnative.skia;
-+
-+import java.io.BufferedInputStream;
-+import java.io.ByteArrayOutputStream;
-+import java.io.IOException;
-+import java.io.InputStream;
-+import java.net.URL;
-+import java.net.URLConnection;
-+
-+/** Reads the bytes of an image, font or data source. */
-+final class SourceBytes {
-+    private SourceBytes() {
-+    }
-+
-+    static byte[] read(InputStream is) throws IOException {
-+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-+        int nRead;
-+        byte[] data = new byte[4 * 0x400];
-+        while ((nRead = is.read(data, 0, data.length)) != -1) {
-+            buffer.write(data, 0, nRead);
-+        }
-+        return buffer.toByteArray();
-+    }
-+
-+    // One request per load: the body is read from the connection that was
-+    // opened, and that connection's stream is closed once it is read.
-+    static byte[] fromUrl(URL url) throws IOException {
-+        URLConnection connection = url.openConnection();
-+        try (InputStream is = new BufferedInputStream(connection.getInputStream(), 8192)) {
-+            return read(is);
-+        }
-+    }
-+}
-```
-
-**File**: `packages/skia/android/src/test/java/com/reactnative/skia/SourceBytesTest.java` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+package com.reactnative.skia;
-+
-+import static org.junit.Assert.assertArrayEquals;
-+import static org.junit.Assert.assertEquals;
-+
-+import java.io.ByteArrayInputStream;
-+import java.io.IOException;
-+import java.io.InputStream;
-+import java.io.OutputStream;
-+import java.net.InetAddress;
-+import java.net.ServerSocket;
-+import java.net.Socket;
-+import java.net.URL;
-+import java.nio.charset.StandardCharsets;
-+import java.util.Arrays;
-+import java.util.concurrent.atomic.AtomicInteger;
-+
-+import org.junit.Test;
-+
-+public class SourceBytesTest {
-+    @Test
-+    public void aStreamIsReadToTheEnd() throws IOException {
-+        byte[] bytes = new byte[10000];
-+        Arrays.fill(bytes, (byte) 7);
-+        assertArrayEquals(bytes, SourceBytes.read(new ByteArrayInputStream(bytes)));
-+    }
-+
-+    @Test
-+    public void aUrlIsLoadedOverOneConnection() throws Exception {
-+        byte[] body = "not really a png".getBytes(StandardCharsets.US_ASCII);
-+        AtomicInteger connections = new AtomicInteger();
-+        try (ServerSocket server = new ServerSocket(0, 50, InetAddress.getLoopbackAddress())) {
-+            Thread acceptor = new Thread(() -> {
-+                while (!server.isClosed()) {
-+                    try {
-+                        Socket socket = server.accept();
-+                        connections.incrementAndGet();
-+                        Thread handler = new Thread(() -> respond(socket, body));
-+                        handler.setDaemon(true);
-+                        handler.start();
-+                    } catch (IOException e) {
-+                        return;
-+                    }
-+                }
-+            });
-+            acceptor.setDaemon(true);
-+            acceptor.start();
-+
-+            URL url = new URL("http://127.0.0.1:" + server.getLocalPort() + "/cat.png");
-+            assertArrayEquals(body, SourceBytes.fromUrl(url));
-+            assertEquals(1, connections.get());
-+        }
-+    }
-+
-+    private static void respond(Socket socket, byte[] body) {
-+        try (Socket s = socket) {
-+            InputStream in = s.getInputStream();
-+            int matched = 0;
-+            int c;
-+            while (matched < 4 && (c = in.read()) != -1) {
-+                matched = (c == "\r\n\r\n".charAt(matched)) ? matched + 1 : (c == '\r' ? 1 : 0);
-+            }
-+            if (matched < 4) {
-+                return;
-+            }
-+            OutputStream out = s.getOutputStream();
-+            out.write(("HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: " + body.length
-+                    + "\r\nConnection: close\r\n\r\n").getBytes(StandardCharsets.US_ASCII));
-+            out.write(body);
-+            out.flush();
-+        } catch (IOException e) {
-+            // the client went away
-+        }
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `f59ee717` (2026-11-23)
-**Commit Message**: chore(🐙): add workflow to build and release Skia wasm (#4515)
-
-This workflow builds and releases Skia Graphite for WebGPU, packaging it as a zip file. It includes options for dry runs and custom Skia branches.
-
-**File**: `.github/workflows/build-skia-wasm.yml‎` (added, +253/-0)
-```diff
-@@ -0,0 +1,253 @@
-+name: Build and release Skia wasm
-+# Builds Skia Graphite for the browser's WebGPU (`yarn build-skia wasm`) and
-+# archives it as skia-graphite-wasm.zip (`yarn package-skia-wasm`): the
-+# archives, the Skia headers, the emdawnwebgpu package and metadata.json.
-+# The archive is the asset of the GitHub release skia-wasm-<version>, which
-+# the skia-wasm repository (https://github.com/wcandillon/skia-wasm) pins in
-+# its binaries.json and downloads from. A dry run (the default) uploads the
-+# archive as a workflow artifact instead of releasing it.
-+#
-+# Separate from build-binaries.yml: the wasm archives are not part of the npm
-+# packages and are released on their own schedule.
-+#
-+# The version is the Skia branch the submodule commit is on, as in
-+# build-binaries.yml (m154, or m154_8037_58 for a release branch), plus the
-+# re-spin letter for another build of the same branch.
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      skia_branch:
-+        description: 'Skia branch to build (e.g. chrome/m154). Leave empty to build the checked-in submodule commit.'
-+        required: false
-+        default: ''
-+      respin:
-+        description: 'Re-spin letter for another build of the same Skia branch: "a" releases skia-wasm-m154a. Leave empty for skia-wasm-m154.'
-+        required: false
-+        default: ''
-+      dry_run:
-+        description: 'Dry run: build and package, upload the archive as a workflow artifact, skip the GitHub release'
-+        required: false
-+        type: boolean
-+        default: true
-+
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.ref }}
-+  cancel-in-progress: true
-+
-+jobs:
-+  prepare:
-+    runs-on: ubuntu-latest
-+    outputs:
-+      version: ${{ steps.version.outputs.version }}
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5.0.0
-+        with:
-+          submodules: recursive
-+          fetch-depth: 0
-+
-+      - name: Checkout custom Skia branch
-+        if: ${{ inputs.skia_branch != '' }}
-+        working-directory: externals/skia
++      # Xcode collects *.signature files from build products into the archive,
++      # and App Store Connect rejects any that is not an XCFramework code
++      # signature (ITMS-91063, #4539). No build phase may leave one there.
++      # The react-native-webgpu release the example installs still writes
++      # .rnwgpu-dawn.signature (fixed in wcandillon/react-native-webgpu#655):
++      # drop the exclusion once the example is on a release with that fix.
++      - name: Check build products for *.signature files
 +        run: |
-+          git fetch origin "$SKIA_BRANCH"
-+          git checkout FETCH_HEAD
-+          echo "Skia commit: $(git rev-parse HEAD)"
-+        env:
-+          SKIA_BRANCH: ${{ inputs.skia_branch }}
-+
-+      # The same derivation as the prepare job of build-binaries.yml.
-+      - name: Determine the version
-+        id: version
-+        run: |
-+          set -eo pipefail
-+          if [ -n "$INPUT_SKIA_BRANCH" ]; then
-+            branch="$INPUT_SKIA_BRANCH"
-+          else
-+            branch=$(git -C externals/skia branch --show-current || true)
-+            if [ -z "$branch" ]; then
-+              branch=$(git -C externals/skia describe --all --exact-match 2>/dev/null || true)
-+            fi
-+            if [ -z "$branch" ]; then
-+              branch=$(git -C externals/skia branch -r --contains HEAD --list 'origin/chrome/m*' | sed 's/^[* ]*//' | sort | head -n 1)
-+            fi
-+          fi
-+          branch=${branch#remotes/origin/chrome/}
-+          branch=${branch#origin/chrome/}
-+          branch=${branch#chrome/}
-+          if [ -z "$branch" ]; then
-+            echo "::error::Could not determine the Skia branch of externals/skia"
++          signatures=$(find "$DERIVED_DATA/Build/Products" -name '*.signature' \
++            -not -path '*/ReactNativeWebGPUBinaries/*')
++          if [ -n "$signatures" ]; then
++            echo "::error::Build products contain *.signature files, which App Store Connect rejects (ITMS-91063):"
++            echo "$signatures"
 +            exit 1
 +          fi
-+          version="${branch//\//-}${RESPIN}"
-+          echo "Skia $branch → skia-wasm-$version"
-+          echo "version=$version" >> "$GITHUB_OUTPUT"
-+        env:
-+          INPUT_SKIA_BRANCH: ${{ inputs.skia_branch }}
-+          RESPIN: ${{ inputs.respin }}
 +
-+      # skia-wasm pins the archive by checksum, so a published release is
-+      # never replaced: fail before the build rather than after it. A dry run
-+      # only warns: it is how a released version is rebuilt for inspection.
-+      - name: Check the release does not exist
-+        run: |
-+          state=$(gh release view "skia-wasm-$VERSION" --json isDraft --jq .isDraft 2>/dev/null || echo missing)
-+          if [ "$state" = "false" ]; then
-+            if [ "$DRY_RUN" != "true" ]; then
-+              echo "::error::skia-wasm-$VERSION is already released. Set a re-spin letter to release another build."
-+              exit 1
-+            fi
-+            echo "::warning::skia-wasm-$VERSION is already released; this dry run rebuilds it."
-+          fi
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          GH_REPO: ${{ github.repository }}
-+          VERSION: ${{ steps.version.outputs.version }}
-+          DRY_RUN: ${{ inputs.dry_run }}
+       # React Native's prebuilt core, which the example installs since 0.88, is
+       # compiled with Metro on 8081: an RCT_METRO_PORT build setting no longer
+       # reaches it.
+```
+
+**File**: `packages/skia/scripts/__tests__/prepare-apple-binaries.spec.ts` (added, +93/-0)
+```diff
+@@ -0,0 +1,93 @@
++import { execFileSync } from "child_process";
++import fs from "fs";
++import os from "os";
++import path from "path";
 +
-+  # The wasm build has only been run on macOS so far, so it runs on the
-+  # self-hosted Mac like the Apple targets of build-binaries.yml: free, and
-+  # faster than the hosted runners. The standard macos-latest runner, free
-+  # for this public repository too, is the fallback if the machine is
-+  # unavailable.
-+  build:
-+    needs: prepare
-+    runs-on: [self-hosted, macOS]
-+    timeout-minutes: 120
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@3d3c42e
++const script = path.join(__dirname, "..", "prepare-apple-binaries.sh");
++
++// Every file below `directory`, relative to it.
++const walk = (directory: string): string[] =>
++  fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
++    const file = path.join(directory, entry.name);
++    return entry.isDirectory()
++      ? walk(file).map((child) => path.join(entry.name, child))
++      : [entry.name];
++  });
++
++// Runs the assembly and linker staging steps of the Xcode phase against a
++// local archive. The macOS-only ditto and plutil are stubbed so the test also
++// runs on Linux.
++const prepare = (root: string) =>
++  execFileSync(
++    "/bin/bash",
++    [
++      "-c",
++      `set -Eeuo pipefail
++source "$1"
++ditto() { mkdir -p "$2"; cp -R "$1"/. "$2"; }
++json_strings() { echo arm64; }
++WORK_DIR="$2/work"; mkdir -p "$WORK_DIR"; TEMP_PATHS=()
++SDK=iphoneos VERSION=0.0.0 SOURCE_SIGNATURE=source MODULE=skia
++MODULE_LIBRARIES=(libskia.a) META_IDENTIFIER=ios-arm64 META_ARCHS=arm64
++SOURCE_DIRECTORY="$2/source" CONTAINERS="$2/assembly" OUTPUT="$2/output"
++assemble_module
++CONTAINER_ROOT="$CONTAINERS/$MODULE"
++stage_module`,
++      "prepare",
++      script,
++      root,
++    ],
++    { stdio: "pipe" }
++  );
++
++// Xcode collects *.signature files from build products into the archive, and
++// App Store Connect rejects any that is not an XCFramework code signature
++// (ITMS-91063, #4539). Build bookkeeping must never use that extension.
++describe("prepare-apple-binaries.sh", () => {
++  let root: string;
++
++  beforeEach(() => {
++    root = fs.mkdtempSync(path.join(os.tmpdir(), "rnskia-prepare-"));
++    fs.mkdirSync(path.join(root, "source"));
++    fs.writeFileSync(path.join(root, "source", "libskia.a"), "archive");
++    fs.writeFileSync(
++      path.join(root, "source", "metadata.json"),
++      '{"architectures":["arm64"]}'
++    );
++  });
++
++  afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
++
++  const signatures = () =>
++    ["output", "assembly"].flatMap((directory) =>
++      walk(path.join(root, directory))
++        .filter((file) => file.endsWith(".signature"))
++        .map((file) => path.join(directory, file))
++    );
++
++  it("stages the library without writing *.signature files", () => {
++    prepare(root);
++    expect(
++      fs.readFileSync(path.join(root, "output", "librnskia_skia.a"), "utf8")
++    ).toBe("archive");
++    expect(signatures()).toEqual([]);
++    // An incremental build reuses the stamps and still writes none.
++    prepare(root);
++    expect(signatures()).toEqual([]);
++  });
++
++  it("removes the *.signature stamps of earlier releases", () => {
++    // Archive build folders persist, so 3.12 stamps would still be uploaded.
++    fs.mkdirSync(path.join(root, "output"));
++    fs.writeFileSync(path.join(root, "output", ".rnskia-skia.signature"), "");
++    fs.mkdirSync(path.join(root, "assembly", "skia", ".slices"), {
++      recursive: true,
++    });
++    fs.writeFileSync(
++      path.join(root, "assembly", "skia", ".slices", "iphoneos.signature"),
++      ""
++    );
++    prepare(root);
++    expect(signatures()).toEqual([]);
++  });
++});
+```
+
+**File**: `packages/skia/scripts/prepare-apple-binaries.sh` (modified, +9/-3)
+```diff
+@@ -212,7 +212,7 @@ copy_library() {
+ # The caller holds the assembly lock across both assembly and linker staging.
+ assemble_module() {
+   local root="$CONTAINERS/$MODULE" library existing=true temporary previous='' old_archs platform variant ignored deployment
+-  local signature_file="$CONTAINERS/$MODULE/.slices/$SDK.signature"
++  local signature_file="$CONTAINERS/$MODULE/.slices/$SDK.stamp"
+   CONTAINER_ROOT="$root"
+   for library in "${MODULE_LIBRARIES[@]}"; do
+     if [[ ! -f "$root/${library%.a}.xcframework/$META_IDENTIFIER/$library" || ! -f "$root/${library%.a}.xcframework/Info.plist" ]]; then existing=false; fi
+@@ -228,6 +228,7 @@ assemble_module() {
+     previous="$platform-$(printf '%s\n' "$old_archs" | LC_ALL=C sort | paste -sd _ -)${variant:+-$variant}"
+   fi
+   mkdir -p "$temporary/.slices"
++  rm -f "$temporary/.slices/$SDK.signature"
+   cp "$SOURCE_DIRECTORY/metadata.json" "$temporary/.slices/$SDK.json"
+   for library in "${MODULE_LIBRARIES[@]}"; do
+     local container="$temporary/${library%.a}.xcframework"
+@@ -236,7 +237,7 @@ assemble_module() {
+     copy_library "$SOURCE_DIRECTORY/$library" "$container/$META_IDENTIFIER/$library"
+     write_xcframework_plist "$container" "$library" "$temporary/.slices"
+   done
+-  printf '%s\n' "$SOURCE_SIGNATURE" > "$temporary/.slices/$SDK.signature"
++  printf '%s\n' "$SOURCE_SIGNATURE" > "$temporary/.slices/$SDK.stamp"
+   replace_directory "$temporary" "$root"
+   note "Prepared $SDK XCFramework slices ($(printf '%s' "$META_ARCHS" | tr '\n' ' '))"
+ }
+@@ -248,10 +249,15 @@ assemble_module() {
+ # rather than dynamic frameworks copied into the app's Frameworks directory.
+ # Build-product stamps include SDK/version/source identity, avoiding equal-size
+ # archives from another platform and unnecessary copies on incremental builds.
++# Stamps must never use the .signature extension: Xcode collects *.signature
++# files from build products into the archive, and App Store Connect rejects
++# them as invalid XCFramework code signatures (ITMS-91063).
+ stage_module() {
+-  local library destination temporary stamp="$OUTPUT/.rnskia-$MODULE.signature"
++  local library destination temporary stamp="$OUTPUT/.rnskia-$MODULE.stamp"
+   local signature="$SDK:$VERSION:$SOURCE_SIGNATURE" name
+   mkdir -p "$OUTPUT"
++  # Archive build folders persist across runs; drop stamps from older releases.
++  rm -f "$OUTPUT/.rnskia-$MODULE.signature"
+   for library in "${MODULE_LIBRARIES[@]}"; do
+     name="${library#lib}"
+     destination="$OUTPUT/librnskia_$name"
+```
+
+---
+
+### Incident Patch 2: `d0e4075f` (2026-11-26)
+**Commit Message**: fix(🔤): accept a TypefaceFontProvider wherever a FontMgr is expected (#4541)
+
+Skia.SVG.MakeFromString and MakeFromData document useFonts() as their
+font manager, and SkTypefaceFontProvider extends SkFontMgr in the types,
+on the web and in Skia itself. On iOS and Android, JsiSkFontMgr::fromValue
+only accepted a JsiSkFontMgr, so passing a provider threw "Expected FontMgr
+but got different type".
+
+fromValue now also unwraps a JsiSkTypefaceFontProvider; anything else still
+goes through the strict check.
+
+**File**: `packages/skia/cpp/api/JsiSkFontMgr.h` (modified, +6/-0)
+```diff
+@@ -10,6 +10,7 @@
+ #include "JsiSkFontStyle.h"
+ #include "JsiSkNativeObjects.h"
+ #include "JsiSkTypeface.h"
++#include "JsiSkTypefaceFontProvider.h"
+ #include "utils/RNSkLog.h"
+ #include <jsi/jsi.h>
+ 
+@@ -71,6 +72,11 @@ class JsiSkFontMgr
+ 
+   static sk_sp<SkFontMgr> fromValue(jsi::Runtime &runtime,
+                                     const jsi::Value &obj) {
++    // A TypefaceFontProvider (what useFonts returns) is an SkFontMgr too.
++    if (auto provider =
++            tryGetJsiObject<JsiSkTypefaceFontProvider>(runtime, obj)) {
++      return provider->getObject();
++    }
+     return objectFromValue(runtime, obj);
+   }
+ 
+```
+
+**File**: `packages/skia/src/renderer/__tests__/e2e/SVG.spec.tsx` (modified, +92/-1)
+```diff
+@@ -3,7 +3,9 @@ import fs from "fs";
+ import React from "react";
+ 
+ import { checkImage, docPath, itRunsE2eOnly } from "../../../__tests__/setup";
+-import { importSkia, surface } from "../setup";
++import { importSkia, resolveFile, surface } from "../setup";
++import { AlphaType, ColorType } from "../../../skia/types";
++import type { SkFontMgr } from "../../../skia/types";
+ import {
+   Blur,
+   ColorMatrix,
+@@ -40,6 +42,14 @@ const tiger = new SVGAsset(
+   800
+ );
+ 
++const RobotoRegular = Array.from(
++  resolveFile("skia/__tests__/assets/Roboto-Regular.ttf")
++);
++
++const robotoText = `<svg viewBox='0 0 64 32' width="64" height="32" xmlns='http://www.w3.org/2000/svg'>
++<text x="2" y="26" font-family="Roboto" font-size="24" fill="black">Hi</text>
++</svg>`;
++
+ const svgWithoutSize = new SVGAsset(
+   `<svg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
+ <circle cx='10' cy='10' r='10' fill='#00FFFF'/>
+@@ -209,4 +219,85 @@ describe("Displays SVGs", () => {
+     );
+     await checkImage(image, docPath("svg.png"));
+   });
++
++  itRunsE2eOnly(
++    "should accept a TypefaceFontProvider as the font manager",
++    async () => {
++      const result = await surface.eval(
++        (Skia, ctx) => {
++          const roboto = Skia.Typeface.MakeFromData(
++            Skia.Data.fromBytes(new Uint8Array(ctx.RobotoRegular))
++          )!;
++          const provider = Skia.TypefaceFontProvider.Make();
++          provider.registerFont(roboto, "Roboto");
++          const fromString = Skia.SVG.MakeFromString(ctx.svg, provider)!;
++          const fromData = Skia.SVG.MakeFromData(
++            Skia.Data.fromBytes(new Uint8Array(ctx.svgBytes)),
++            provider
++          )!;
++          const fromSystem = Skia.SVG.MakeFromString(
++            ctx.svg,
++            Skia.FontMgr.System()
++          );
++          const offscreen = Skia.Surface.MakeOffscreen(64, 32)!;
++          const canvas = offscreen.getCanvas();
++          canvas.drawColor(Skia.Color("white"));
++          canvas.drawSvg(fromString);
++          return canvas
++            .readPixels(0, 0, {
++              width: 64,
++              height: 32,
++              colorType: ctx.colorType,
++              alphaType: ctx.alphaType,
++            })
++            .then((pixels) => {
++              let inked = 0;
++              for (let i = 0; i < pixels!.length; i += 4) {
++                if (pixels![i] < 128) {
++                  inked++;
++                }
++              }
++              return {
++                fromString: [fromString.width(), fromString.height()],
++                fromData: [fromData.width(), fromData.height()],
++                fromSystem: fromSystem !== null,
++                inked,
++              };
++            });
++        },
++        {
++          RobotoRegular,
++          svg: robotoText,
++          svgBytes: Array.from(Buffer.from(robotoText)),
++          colorType: ColorType.RGBA_8888,
++          alphaType: AlphaType.Unpremul,
++        }
++      );
++      expect(result.fromString).toEqual([64, 32]);
++      expect(result.fromData).toEqual([64, 32]);
++      expect(result.fromSystem).toBe(true);
++      expect(result.inked).toBeGreaterThan(0);
++    }
++  );
++
++  itRunsE2eOnly(
++    "should reject a font manager of a different type",
++    async () => {
++      const message = await surface.eval(
++        (Skia, ctx) => {
++          try {
++            Skia.SVG.MakeFromString(
++              ctx.svg,
++              Skia.Paint() as unknown as SkFontMgr
++            );
++            return "did not throw";
++          } catch (e) {
++            return (e as Error).message;
++          }
++        },
++        { svg: robotoText }
++      );
++      expect(message).toContain("Expected FontMgr but got different type");
++    }
++  );
+ });
+```
+
+---
+
+### Incident Patch 3: `af44efce` (2026-11-25)
+**Commit Message**: fix(🐛): log lost surface recordings and keep outputImage without a snapshot (#4531)
+
+submitRecording() now logs a recording Graphite could not snap or submit
+(only a rejected insert was logged), and its result accounts for the
+submit. makeImageSnapshot() no longer replaces the content of outputImage
+when no snapshot could be made.
+
+**File**: `packages/skia/cpp/api/JsiSkSurface.h` (modified, +3/-1)
+```diff
+@@ -125,7 +125,9 @@ class JsiSkSurface
+     if (auto *recorder = surface->recorder()) {
+       DawnContext::getInstance().submitRecording(recorder);
+     }
+-    if (count > 1 && arguments[1].isObject()) {
++    // Without a snapshot (e.g. bounds outside of the surface), outputImage
++    // keeps its previous content and the image returned is a null one.
++    if (image != nullptr && count > 1 && arguments[1].isObject()) {
+       auto jsiImage = getJsiObject<JsiSkImage>(runtime, arguments[1]);
+       jsiImage->setObject(image);
+       return jsi::Value(runtime, arguments[1]);
+```
+
+**File**: `packages/skia/cpp/rnskia/RNDawnContext.h` (modified, +14/-6)
+```diff
+@@ -457,7 +457,8 @@ class DawnContext {
+    generation()) is dropped: nothing can run it, and the device in use would
+    refuse its resources. Called on the recorder's thread. Returns whether
+    the recording runs: false when there was nothing to run, when it was
+-   dropped, or when Graphite rejected it (which is logged).
++   dropped, or when Graphite could not snap, insert or submit it (which is
++   logged).
+    */
+   bool submitRecording(
+       skgpu::graphite::Recorder *recorder,
+@@ -469,15 +470,17 @@ class DawnContext {
+     // the warmup stays behind (see RNSkGpuActivity), as is the run.
+     RNSkGpuActivity::Scope activity;
+     auto recording = recorder->snap();
+-    if (recording == nullptr) {
+-      return false;
+-    }
+     std::lock_guard<std::mutex> lock(_mutex);
+     auto *current = _current.load(std::memory_order_acquire);
+     if (generationOf(recorder) != current->id ||
+         current->lost.load(std::memory_order_acquire)) {
+       return false;
+     }
++    // After the check above: a snap failing for a lost device is a drop.
++    if (recording == nullptr) {
++      RNSkLogger::logToConsole("Graphite could not snap a recording");
++      return false;
++    }
+     skgpu::graphite::InsertRecordingInfo info;
+     info.fRecording = recording.get();
+     auto status = current->context->insertRecording(info);
+@@ -490,8 +493,13 @@ class DawnContext {
+               static_cast<skgpu::graphite::InsertStatus::V>(status)),
+           status.message().c_str());
+     }
+-    current->context->submit(syncToCpu);
+-    return inserted;
++    // Submitted either way, for the work other recordings inserted.
++    const bool submitted = current->context->submit(syncToCpu);
++    // Unless the device was lost meanwhile: its work is dropped, as above.
++    if (!submitted && !current->lost.load(std::memory_order_acquire)) {
++      RNSkLogger::logToConsole("Graphite could not submit a recording");
++    }
++    return inserted && submitted;
+   }
+ 
+   /**
+```
+
+**File**: `packages/skia/src/renderer/__tests__/e2e/Surfaces.spec.tsx` (modified, +21/-0)
+```diff
+@@ -69,4 +69,25 @@ describe("Surfaces", () => {
+     expect(result.draw).toContain("surface was disposed");
+     expect(result.getCanvas).toContain("disposed object");
+   });
++
++  ["GPU", "raster"].forEach((kind) => {
++    it(`makeImageSnapshot() keeps outputImage without a snapshot (${kind})`, async () => {
++      const result = await surface.eval(
++        (Skia, ctx) => {
++          const sf = ctx.gpu
++            ? Skia.Surface.MakeOffscreen(16, 16)!
++            : Skia.Surface.MakeRaster(16, 16)!;
++          sf.getCanvas().drawColor(Skia.Color("cyan"));
++          sf.flush();
++          const output = Skia.Image.MakeNull();
++          sf.makeImageSnapshot(undefined, output);
++          // Outside of the surface: there is no snapshot to make.
++          sf.makeImageSnapshot(Skia.XYWHRect(100, 100, 5, 5), output);
++          return [output.width(), output.height()];
++        },
++        { gpu: kind === "GPU" }
++      );
++      expect(result).toEqual([16, 16]);
++    });
++  });
+ });
+```
+
+**File**: `packages/skia/src/skia/types/Surface/Surface.ts` (modified, +3/-0)
+```diff
+@@ -19,6 +19,9 @@ export interface SkSurface extends SkJSIInstance<"Surface"> {
+ 
+       @param bounds A rectangle specifying the subset of the surface that
+    is of interest.
++      @param outputImage An image to update in place instead of returning a
++   new one. It keeps its previous content when the snapshot cannot be
++   created (e.g. `bounds` is outside of the surface).
+       @return  Image initialized with Surface contents
+ 
+       example: https://fiddle.skia.org/c/@Surface_makeImageSnapshot
+```
+
+**File**: `packages/skia/src/skia/web/JsiSkSurface.ts` (modified, +4/-1)
+```diff
+@@ -72,7 +72,10 @@ export class JsiSkSurface
+         ? Array.from(JsiSkRect.fromValue(this.CanvasKit, bounds))
+         : undefined
+     );
+-    if (outputImage) {
++    // Typed as non-nullable, but null when Skia cannot make the snapshot
++    // (e.g. bounds outside of the surface): outputImage then keeps its
++    // previous content.
++    if (outputImage && image) {
+       outputImage.ref = image;
+     }
+     return new JsiSkImage(this.CanvasKit, image);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4516** (2026-11-23): chore(🐙): remove bogus char (@wcandillon)
-- **PR #4515** (2026-11-23): chore(🐙): add workflow to build and release Skia wasm (@wcandillon)
-- **PR #4514** (closed): chore(📚): export a Skottie animation to a video with createVideoWriter (@andreialecu)
-- **PR #4513** (2026-11-23): fix(🤖): load a remote source over one connection and close it (@Tayyeb-max)
-- **PR #4512** (2026-11-23): chore(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.284 (@dependabot[bot])
-- **PR #4511** (2026-11-23): chore(deps): bump actions/setup-java from 6.2.0 to 6.3.0 (@dependabot[bot])
+- **PR #4542** (2026-11-26): fix(🔤): accept a TypefaceFontProvider wherever a FontMgr is expected (2.x backport of #4541) (@filipemsilv4)
+- **PR #4541** (2026-11-26): fix(🔤): accept a TypefaceFontProvider wherever a FontMgr is expected (@filipemsilv4)
+- **PR #4540** (2026-11-25): fix(🍏): don't name build stamps .signature (ITMS-91063) (@wcandillon)
+- **PR #4532** (2026-11-25): feat(🎞️): add Surface.flushAsync() (@wcandillon)
+- **PR #4531** (2026-11-25): fix(🐛): log lost surface recordings and keep outputImage without a snapshot (@wcandillon)
+- **PR #4530** (2026-11-25): Remove npm package generation, keep only release assets (@wcandillon)
 
 ---
 
@@ -2593,25 +2229,35 @@ This workflow builds and releases Skia Graphite for WebGPU, packaging it as a zi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🕸️): build Skia Graphite for wasm
+## X. 🍏): don't name build stamps .signature (ITMS-91063)
 
 **RULE**:
-When implementing operations in `packages/skia/CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb5dc61f`: 🕸️): build Skia Graphite for wasm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `13bdf30c`: 🍏): don't name build stamps .signature (ITMS-91063). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/CONTRIBUTING.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-#### WebAssembly (experimental)
-
-`yarn build-skia wasm` builds Skia Graphite for the browser's WebGPU with the Emscripten release Skia pins (installed in the Skia checkout on first use). There is no Dawn build: the browser implements WebGPU, and the WebGPU headers and JavaScript glue are generated from the pinned Dawn checkout.
-
-Skia writes `.a` libraries to `libs/wasm/lib`, next to the headers (`skia/`), the WebGPU package (`emdawnwebgpu/`) and `metadata.json`, which records the Emscripten version, flags and defines a consumer has to match. These archives are not a module: the [skia-wasm](https://github.com/wcandillon/skia-wasm) repository links them into one. `yarn package-skia-wasm` zips them. The Build and release Skia wasm workflow (`.github/workflows/build-skia-wasm.yml`) does both and publishes the archive as the GitHub release `skia-wasm-<version>`, which skia-wasm pins.
+      # Xcode collects *.signature files from build products into the archive,
+      # and App Store Connect rejects any that is not an XCFramework code
+      # signature (ITMS-91063, #4539). No build phase may leave one there.
+      # The react-native-webgpu release the example installs still writes
+      # .rnwgpu-dawn.signature (fixed in wcandillon/react-native-webgpu#655):
+      # drop the exclusion once the example is on a release with that fix.
+      - name: Check build products for *.signature files
+        run: |
+          signatures=$(find "$DERIVED_DATA/Build/Products" -name '*.signature' \
+            -not -path '*/ReactNativeWebGPUBinaries/*')
+          if [ -n "$signatures" ]; then
+            echo "::error::Build products contain *.signature files, which App Store Connect rejects (ITMS-91063):"
+            echo "$signatures"
+            exit 1
+          fi
 
 ```
 
@@ -2622,7 +2268,7 @@ Skia writes `.a` libraries to `libs/wasm/lib`, next to the headers (`skia/`), th
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb5dc61f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `13bdf30c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

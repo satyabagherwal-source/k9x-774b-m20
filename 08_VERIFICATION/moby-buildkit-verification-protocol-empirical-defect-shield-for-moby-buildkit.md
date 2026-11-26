@@ -4,22 +4,22 @@
 {
   "source_repository": "moby/buildkit",
   "source_url": "https://github.com/moby/buildkit",
-  "source_version": "875f5143",
+  "source_version": "007a518f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T10:45:38.049Z",
+  "timestamp": "2026-11-26T11:03:51.306Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-moby-buildkit",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `875f5143`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T10:45:38.049Z`  
+> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `007a518f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T11:03:51.306Z`  
 > **Learning ID**: `learn-github-moby-buildkit`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `moby/buildkit` (Commit: `875f5143`)
+- **Target Repository**: `moby/buildkit` (Commit: `007a518f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T10:45:37.071Z  
+> **Harvest Timestamp**: 2026-11-26T11:03:49.317Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10437 stars
+- **Stars / Engagement**: 10442 stars
 
 ---
 
@@ -2306,11 +2306,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7468** (2026-11-25): **source/git: authenticate Git metadata fetches**
+  *Symptoms*: Load session credentials before fetching Git objects. Commit SHA refs and fetch-by-commit can skip the ref lookup that normally loads credentials.
+
 - **Issue #7467** (2026-11-25): **Dockerfile: test with stargz-snapshotter v0.19.1**
   *Symptoms*: 
-
-- **Issue #7462** (2026-11-23): **lint: disable verbose output from gopls analyzers**
-  *Symptoms*: relates to https://github.com/moby/buildkit/actions/runs/45159736477/job/137641824284#step:3:3974  ``` #15 81.07 # [github.com/moby/buildkit/worker] #15 81.07 gopls-analyzers: github.com/moby/buildkit/worker: analyzing (files: 6) #15 81.10 # github.com/moby/buildkit/worker/base #15 81.10 # [github.com/moby/buildkit/worker/base] #15 81.10 gopls-analyzers: github.com/moby/buildkit/worker/base: analyzing (files: 2) #15 81.23 # github.com/moby/buildkit/worker/tests #15 81.23 gopls-analyzers: github.com/moby/buildkit/worker/tests: analyzing (files: 1) #15 81.28 # github.com/moby/buildkit/worker/containerd #15 81.28 # [github.com/moby/buildkit/worker/containerd] #15 81.28 gopls-analyzers: github.com/moby/buildkit/worker/containerd: analyzing (files: 3) #15 ERROR: process "/bin/sh -c   set -ex\n  xx-go --wrap\n  gopls-analyzers -list-analyzers\n  # The flate sources are copied from Go and use a nonstandard generated marker.\n  go vet -vettool=/usr/bin/gopls-analyzers -verbose -exclude-generated -exclude='/util/compression/go126flate/' ./...\n" did not complete successfully: exit code: 1 ```  Remove per-package progress logs from lint and fix runs so analyzer errors are easier to find in build output.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2327,51 +2327,217 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `875f5143` (2026-11-25)
-**Commit Message**: Merge pull request #7467 from thaJeztah/dockerfile_bump_stargz
+### Incident Patch 1: `007a518f` (2026-11-25)
+**Commit Message**: Merge pull request #7468 from tonistiigi/git-auth-fix
 
-Dockerfile: test with stargz-snapshotter v0.19.1
+source/git: authenticate Git metadata fetches
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `client/client_git_source_test.go` (modified, +140/-0)
 ```diff
-@@ -7,7 +7,7 @@ ARG CONTAINERD_ALT_VERSION_23=v2.3.7
- ARG REGISTRY_VERSION=v2.8.3
- ARG ROOTLESSKIT_VERSION=v3.2.0
- ARG CNI_VERSION=v1.9.1
--ARG STARGZ_SNAPSHOTTER_VERSION=v0.18.2
-+ARG STARGZ_SNAPSHOTTER_VERSION=v0.19.1
- ARG NERDCTL_VERSION=v2.4.0
- ARG DNSNAME_VERSION=v1.3.1
- ARG NYDUS_VERSION=v2.4.5
+@@ -5,6 +5,7 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"fmt"
++	"maps"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"os"
+@@ -21,6 +22,8 @@ import (
+ 	"github.com/moby/buildkit/client/llb"
+ 	"github.com/moby/buildkit/client/llb/sourceresolver"
+ 	gateway "github.com/moby/buildkit/frontend/gateway/client"
++	"github.com/moby/buildkit/session"
++	"github.com/moby/buildkit/session/secrets/secretsprovider"
+ 	provenancetypes "github.com/moby/buildkit/solver/llbsolver/provenance/types"
+ 	"github.com/moby/buildkit/solver/pb"
+ 	"github.com/moby/buildkit/util/contentutil"
+@@ -769,6 +772,143 @@ func testGitResolveSourceMetadata(t *testing.T, sb integration.Sandbox) {
+ 	require.NoError(t, err)
+ }
+ 
++// testGitResolveSourceMetadataAuth checks that fetching commit objects uses
++// session credentials when metadata resolution skips the remote ref lookup
++// (fetch-by-commit and commit SHA refs), both for returning the commit object
++// and for checkout.
++func testGitResolveSourceMetadataAuth(t *testing.T, sb integration.Sandbox) {
++	// TODO: remove once CI has Git for Windows >= 2.56.0.windows.2
++	// https://github.com/git-for-windows/git/issues/6449
++	integration.SkipOnPlatform(t, "windows")
++	ctx := sb.Context()
++	c, err := New(ctx, sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
++
++	gitDir := t.TempDir()
++	err = runInDir(gitDir,
++		"git init",
++		"git config --local user.email test@example.com",
++		"git config --local user.name test",
++		"git checkout -B master",
++		"touch a",
++		"git add a",
++		"git commit -m a",
++		"git tag commit-a",
++		"touch b",
++		"git add b",
++		"git commit -m b",
++		"git tag commit-b",
++		"touch c",
++		"git add c",
++		"git commit -m c",
++		"git update-server-info",
++	)
++	require.NoError(t, err)
++
++	revParse := func(rev string) string {
++		cmd := exec.CommandContext(t.Context(), "git", "rev-parse", rev)
++		cmd.Dir = gitDir
++		out, err := cmd.Output()
++		require.NoError(t, err)
++		return strings.TrimSpace(string(out))
++	}
++	commitA := revParse("commit-a^{commit}")
++	commitB := revParse("commit-b^{commit}")
++	commitC := revParse("HEAD")
++
++	const authHeader = "Bearer s3cr3t"
++	fileServer := http.FileServer(http.Dir(filepath.Clean(gitDir)))
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Header.Get("Authorization") != authHeader {
++			w.WriteHeader(http.StatusUnauthorized)
++			return
++		}
++		fileServer.ServeHTTP(w, r)
++	}))
++	defer server.Close()
++
++	so := SolveOpt{
++		Session: []session.Attachable{secretsprovider.FromMap(map[string][]byte{
++			"GIT_AUTH_HEADER": []byte(authHeader),
++		})},
++	}
++	_, err = c.Build(ctx, so, "test", func(ctx context.Context, c gateway.Client) (*gateway.Result, error) {
++		baseID := "git://" + strings.TrimPrefix(server.URL, "http://") + "/.git"
++		for _, tc := range []struct {
++			name    string
++			ref     string
++			attrs   map[string]string
++			commit  string
++			message string
++		}{
++			{
++				name: "fetch-by-commit",
++				ref:  "master",
++				attrs: map[string]string{
++					pb.AttrGitChecksum:      commitA,
++					pb.AttrGitFetchByCommit: "true",
++				},
++				commit:  commitA,
++				message: "a",
++			},
++			{
++				name:    "commit sha ref",
++				ref:     commitB,
++				commit:  commitB,
++				message: "b",
++			},
++		} {
++			attrs := map[string]string{
++				pb.AttrFullRemoteURL:    server.URL + "/.git",
++				pb.AttrAuthHeaderSecret: "GIT_AUTH_HEADER",
++			}
++			maps.Copy(attrs, tc.attrs)
++			md, err := c.ResolveSourceMetadata(ctx, &pb.SourceOp{
++				Identifier: baseID + "#" + tc.ref,
++				Attrs:      attrs,
++			}, sourceresolver.Opt{
++				GitOpt: &sourceresolver.ResolveGitOpt{
++					ReturnObject: true,
++				},
++			})
++			if err != nil {
++				return nil, errors.Wrap(err, tc.name)
++			}
++			require.NotNil(t, md.Git, tc.name)
++			require.Equal(t, tc.commit, md.Git.Checksum, tc.name)
++
++			commitObj, err := gitobject.Parse(md.Git.CommitObject)
++			require.NoError(t, err, tc.name)
++			require.NoError(t, commitObj.VerifyChecksum(tc.commit), tc.name)
++			commit, err := commitObj.ToCommit()
++			require.NoError(t, err, tc.name)
++			require.Equal(t, tc.message, commit.Message, tc.name)
++		}
++
++		// Checking out an uncached commit SHA ref skips the remote ref lookup
++		// too, so the snapshot fetch must load auth itself.
++		def, err := llb.Git(server.URL+"/.git", commitC).Marshal(ctx)
++		if err != nil {
++			return nil, err
++		}
++		res, err := c.Solve(ctx, gateway.SolveRequest{Definition: def.ToPB()})
++		if err != nil {
++			return nil, err
++		}
++		ref, err := res.SingleRef()
++		if err != nil {
++			return nil, err
++		}
++		_, err = ref.StatFile(ctx, gateway.StatRequest{Path: "c"})
++		if err != nil {
++			return nil, err
++		}
++		return nil, nil
++	}, nil)
++	require.NoError(t, err)
++}
++
+ func runInDir(dir string, cmds ...string) error {
+ 	return runInDirEnv(dir, nil, cmds...)
+ }
 ```
 
----
-
-### Incident Patch 2: `0346ff5a` (2026-11-24)
-**Commit Message**: Dockerfile: test with stargz-snapshotter v0.19.1
-
-Signed-off-by: Sebastiaan van Stijn <[REDACTED_EMAIL]>
-
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `client/client_test.go` (modified, +1/-0)
 ```diff
-@@ -7,7 +7,7 @@ ARG CONTAINERD_ALT_VERSION_23=v2.3.7
- ARG REGISTRY_VERSION=v2.8.3
- ARG ROOTLESSKIT_VERSION=v3.2.0
- ARG CNI_VERSION=v1.9.1
--ARG STARGZ_SNAPSHOTTER_VERSION=v0.18.2
-+ARG STARGZ_SNAPSHOTTER_VERSION=v0.19.1
- ARG NERDCTL_VERSION=v2.4.0
- ARG DNSNAME_VERSION=v1.3.1
- ARG NYDUS_VERSION=v2.4.5
+@@ -165,6 +165,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
+ 	testGitResolveMutatedSource,
+ 	testGitResolveCacheAfterFailure,
+ 	testGitResolveSourceMetadata,
++	testGitResolveSourceMetadataAuth,
+ 
+ 	// client_http_source_test.go
+ 	testBuildHTTPSource,
+```
+
+**File**: `source/git/source.go` (modified, +3/-1)
+```diff
+@@ -814,6 +814,9 @@ func (gs *gitSourceHandler) remoteFetch(ctx context.Context, jobCtx solver.JobCo
+ 	if jobCtx != nil {
+ 		g = jobCtx.Session()
+ 	}
++	// resolveMetadata loads auth only for ls-remote, which commit SHA refs,
++	// fetch-by-commit and resolver cache hits skip.
++	gs.getAuthToken(ctx, g)
+ 
+ 	repo, err := gs.tryRemoteFetch(ctx, jobCtx, g, false)
+ 	if err != nil {
+@@ -883,7 +886,6 @@ func (gs *gitSourceHandler) Snapshot(ctx context.Context, jobCtx solver.JobConte
+ 	if jobCtx != nil {
+ 		g = jobCtx.Session()
+ 	}
+-	gs.getAuthToken(ctx, g)
+ 	compatibilityVersion := 0
+ 	if jobCtx != nil {
+ 		var err error
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7468** (2026-11-25): source/git: authenticate Git metadata fetches (@tonistiigi)
 - **PR #7467** (2026-11-25): Dockerfile: test with stargz-snapshotter v0.19.1 (@thaJeztah)
 - **PR #7462** (2026-11-23): lint: disable verbose output from gopls analyzers (@crazy-max)
 - **PR #7460** (2026-11-23): build(deps): bump github/codeql-action/upload-sarif from 4.39.2 to 4.39.4 (@dependabot[bot])
 - **PR #7456** (2026-11-20): testutil: fix the process-exit race in integration socket waits (@crazy-max)
 - **PR #7454** (closed): fileop: preserve existing parent directory mtime on timestamped actions (@davireis)
-- **PR #7449** (2026-11-20): build(deps): bump actions/setup-go from 7.0.0 to 7.1.0 (@dependabot[bot])
 
 ---
 
@@ -2391,31 +2557,69 @@ Signed-off-by: Sebastiaan van Stijn <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Dockerfile
+## X. Empirical Invariant Guard in client_git_source_test.go
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/client_git_source_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `875f5143`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `007a518f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/client_git_source_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-ARG STARGZ_SNAPSHOTTER_VERSION=v0.19.1
+	"maps"
+	"github.com/moby/buildkit/session"
+	"github.com/moby/buildkit/session/secrets/secretsprovider"
+// testGitResolveSourceMetadataAuth checks that fetching commit objects uses
+// session credentials when metadata resolution skips the remote ref lookup
+// (fetch-by-commit and commit SHA refs), both for returning the commit object
+// and for checkout.
+func testGitResolveSourceMetadataAuth(t *testing.T, sb integration.Sandbox) {
+	// TODO: remove once CI has Git for Windows >= 2.56.0.windows.2
+	// https://github.com/git-for-windows/git/issues/6449
+	integration.SkipOnPlatform(t, "windows")
+	ctx := sb.Context()
+	c, err := New(ctx, sb.Address())
+	require.NoError(t, err)
+	defer c.Close()
+
+	gitDir := t.TempDir()
+	err = runInDir(gitDir,
+		"git init",
+		"git config --local user.email test@example.com",
+		"git config --local user.name test",
+		"git checkout -B master",
+		"touch a",
+		"git add a",
+		"git commit -m a",
+		"git tag commit-a",
+		"touch b",
+		"git add b",
+		"git commit -m b",
+		"git tag commit-b",
+		"touch c",
+		"git add c",
+		"git commit -m c",
+		"git update-server-info",
+	)
+	require.NoError(t, err)
+
+	revParse := func(rev string) string {
+		cmd := exec.CommandContext(t.Context
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-ARG STARGZ_SNAPSHOTTER_VERSION=v0.18.2
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `875f5143` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `007a518f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

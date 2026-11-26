@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-F25S",
-    "timestamp": "2026-11-24T20:29:57.040Z",
-    "repository": "dragonflyoss/dragonfly",
-    "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "a7d67cd7b0e0d3008bcb170ae516df7640c2b45a17c57ea04981ff6d14e1b93a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-F86W",
-    "timestamp": "2026-11-24T20:30:04.856Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f1543edcc7bfa8bb5efb034ade28c9b1c2bd96039ebb5e8ace6518ab010e25d9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-Q6YF",
-    "timestamp": "2026-11-24T20:38:36.471Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "9f66763509172d13ca34d17c861eaa43a9b872ae0e3292153eb10dcf74e843cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-QAM7",
     "timestamp": "2026-11-24T20:38:41.215Z",
     "repository": "weaviate/weaviate",
@@ -7490,6 +7445,51 @@
     "repository": "StarRocks/starrocks",
     "learningId": "learn-github-starrocks-starrocks",
     "contentHash": "66b3dc0b35d9d73d729c19e45995ee83fa4541e95e80644fdade25f440d50d66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-2HQZ",
+    "timestamp": "2026-11-26T11:03:38.843Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "e9796a17c89773293efcb18f9230e26c1578b6b93571c0a66b3b345491675716",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-2R2P",
+    "timestamp": "2026-11-26T11:03:50.929Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "5e80004cf5878cbee5c1f19896bcbd1925329f46a959f749bdb82a1659663e54",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-2RCG",
+    "timestamp": "2026-11-26T11:03:51.280Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "381414aa49d4c9aa188b2c33c3057e31b854175bfc9ab3f90b3684bc11cf7a1d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T10:50:45.328Z",
-  "total_cycles_completed": 12666,
-  "total_learnings_persisted": 12666,
-  "total_rules_promoted": 11553,
+  "last_updated": "2026-11-26T11:03:51.302Z",
+  "total_cycles_completed": 12669,
+  "total_learnings_persisted": 12669,
+  "total_rules_promoted": 11555,
   "history": [
-    {
-      "timestamp": "2026-11-25T15:57:35.405Z",
-      "repository": "JuulLabs/kable",
-      "learningId": "learn-github-juullabs-kable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T16:05:55.570Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T16:05:57.184Z",
-      "repository": "transact-rs/sqlx",
-      "learningId": "learn-github-transact-rs-sqlx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T16:06:07.717Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T10:50:45.328Z",
       "repository": "StarRocks/starrocks",
       "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:03:38.865Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:03:50.953Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:03:51.302Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

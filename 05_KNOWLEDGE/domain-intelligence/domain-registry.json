@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T10:50:50.627Z",
+  "last_updated": "2026-11-26T11:03:58.032Z",
   "total_records": 2736,
   "domains": {
     "A": {
@@ -13581,8 +13581,8 @@
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "repository": "moby/buildkit",
-      "content_hash": "b03ada91e942b5ca365c8ed5a806992f8700866eb7dbd3d59e602ea75877c944",
-      "created_at": "2026-11-25T10:45:38.225Z"
+      "content_hash": "f104f6d3b9df113138d6bc52d8cab5635fbb0882aaf1584e3d301b69e8ccf96c",
+      "created_at": "2026-11-26T11:03:51.597Z"
     },
     "DOM-D-F2B017DF": {
       "record_id": "DOM-D-F2B017DF",
@@ -13641,8 +13641,8 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-learnings-architecture-intelligence-moby-buildkit-learnings-core-i.md",
       "repository": "moby-buildkit-learnings",
-      "content_hash": "8d953403f0684b88e331f793bef276896d6940d5c995b4d13e967a3ee3dec32d",
-      "created_at": "2026-11-25T10:45:42.113Z"
+      "content_hash": "12e922e0c69cd42f7846eae7bd530919145e4ab2fa44cfdef0d455283a78fa82",
+      "created_at": "2026-11-26T11:03:58.032Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -14652,10 +14652,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "ebfdc1db0f327c3b0a91348f053104af19bee66c7bb255ea94aca0ae81dd9ba5",
-      "created_at": "2026-11-24T15:27:12.666Z"
+      "content_hash": "0b7bd87ae8057053814cfe02b5d561b4a48c42aacc5e231027536d54b0085148",
+      "created_at": "2026-11-26T11:03:51.946Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -26289,8 +26289,8 @@
       "title": "Technical Construction Intelligence: wcandillon-react-native-skia-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-learnings-technical-construction-intelligence-wcand.md",
       "repository": "wcandillon-react-native-skia-learnings",
-      "content_hash": "509c9eb1d77d9fcd6e0e96986539b51526a7895abca11ef771ccf990a4a3314e",
-      "created_at": "2026-11-24T00:40:51.523Z"
+      "content_hash": "abda363d87f3220dd80829b447fec3ca9f093485ac47486ea177b97695aa1ca6",
+      "created_at": "2026-11-26T11:03:56.722Z"
     },
     "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants": {
       "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants",
@@ -31646,8 +31646,8 @@
       "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-xl-base-1.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-xl-base-1-0-research-knowledge-intelligence-stab.md",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "content_hash": "49642a08d2914f2a3136ce15444ff1ca07d9a8b5765ae47d3834069d154fa3a0",
-      "created_at": "2026-11-22T18:00:17.799Z"
+      "content_hash": "06be1bb4efacbc73f8fb2f2d827842cdc86cd04c379c20a373dfa2acb3134c04",
+      "created_at": "2026-11-26T11:03:39.168Z"
     },
     "domain_intelligence-architecture-intelligence-mattermost-mattermost-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mattermost-mattermost-core-invariants",
@@ -31673,8 +31673,8 @@
       "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-xl-base-1.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-xl-base-1-0-learnings-research-knowledge-intelli.md",
       "repository": "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings",
-      "content_hash": "44cc4b8b696e3671d6e988b6f939471025b7a0f0ab68396dea49ac83b1e86c40",
-      "created_at": "2026-11-22T18:00:33.044Z"
+      "content_hash": "7a90766669cd3ee2e251efc9716d27551a61a069b3b6495f485b400ae3b25fb2",
+      "created_at": "2026-11-26T11:03:55.545Z"
     },
     "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants",

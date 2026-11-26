@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T10:50:50.207Z",
+  "updated_at": "2026-11-26T11:03:57.408Z",
   "stats": {
-    "total_discovered": 9733,
-    "approved_pending_harvest": 9233,
+    "total_discovered": 9736,
+    "approved_pending_harvest": 9236,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9220,
+      "COMMUNITY_AND_EXPERT": 9223,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210653,6 +210653,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
         "fileName": "sweetpad-dev-sweetpad-learnings.md"
+      }
+    },
+    "SRC-E1325FD0E643": {
+      "id": "SRC-E1325FD0E643",
+      "url": "https://developer.apple.com/documentation/xcode/verifying-the-origin-of-your-xcframeworks",
+      "title": "https://developer.apple.com/documentation/xcode/verifying-the-origin-of-your-xcframeworks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:03:55.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+        "fileName": "wcandillon-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-5E227F50FC00": {
+      "id": "SRC-5E227F50FC00",
+      "url": "https://fiddle.skia.org/c/@Surface_makeImageSnapshot",
+      "title": "https://fiddle.skia.org/c/@Surface_makeImageSnapshot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:03:56.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+        "fileName": "wcandillon-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-29324E7045F1": {
+      "id": "SRC-29324E7045F1",
+      "url": "https://github.com/git-for-windows/git/issues/6449",
+      "title": "https://github.com/git-for-windows/git/issues/6449",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T11:03:57.408Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
       }
     }
   }

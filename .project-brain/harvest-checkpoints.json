@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T10:50:45.336Z",
+  "last_updated": "2026-11-26T11:03:51.318Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -320,14 +320,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "content_hash": "584a00c2e588eb4d0a2724ba8f770f4b392dd4b031c7f3eb6ce4c627b328f698",
-      "verified_at": "2026-11-22T18:00:17.627Z",
+      "content_hash": "e9796a17c89773293efcb18f9230e26c1578b6b93571c0a66b3b345491675716",
+      "verified_at": "2026-11-26T11:03:38.869Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:00:17.627Z"
+      "last_updated": "2026-11-26T11:03:38.869Z"
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "09ed8f36177c8ffd29c7b2879f5a9c66df85d0397aeab739a7d3bd1bdce39057",
-      "verified_at": "2026-11-25T10:45:37.816Z",
+      "content_hash": "5e80004cf5878cbee5c1f19896bcbd1925329f46a959f749bdb82a1659663e54",
+      "verified_at": "2026-11-26T11:03:50.965Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T10:45:37.816Z"
+      "last_updated": "2026-11-26T11:03:50.965Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "7222ba912e2da70d60962bbe127a4cb103c6d8ec0339ec25090137d91f4fb9a6",
-      "verified_at": "2026-11-24T15:27:12.073Z",
+      "content_hash": "381414aa49d4c9aa188b2c33c3057e31b854175bfc9ab3f90b3684bc11cf7a1d",
+      "verified_at": "2026-11-26T11:03:51.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:27:12.073Z"
+      "last_updated": "2026-11-26T11:03:51.317Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",

@@ -13348,3 +13348,6 @@
 | `CYCLE-20261126-LQUZ` | `2026-11-26T10:50:37.499Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10654` | Yes (`312bc5e0...`) |
 | `CYCLE-20261126-LSWR` | `2026-11-26T10:50:40.155Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10655` | Yes (`8689fe0f...`) |
 | `CYCLE-20261126-LWW1` | `2026-11-26T10:50:45.313Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10656` | Yes (`66b3dc0b...`) |
+| `CYCLE-20261126-2HQZ` | `2026-11-26T11:03:38.843Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`e9796a17...`) |
+| `CYCLE-20261126-2R2P` | `2026-11-26T11:03:50.929Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10657` | Yes (`5e80004c...`) |
+| `CYCLE-20261126-2RCG` | `2026-11-26T11:03:51.280Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10658` | Yes (`381414aa...`) |
