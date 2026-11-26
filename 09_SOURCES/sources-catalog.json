@@ -1045,8 +1045,8 @@
     "sourceUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceVersion": "hf-fermionresearch-phonon-2",
     "license": "Open-Source",
-    "contentHash": "630ff7a61817fa39f351dde20fdced35e57f4fe947f7ef7c3a911e7d9f5ca6c1",
-    "lastHarvestedAt": "2026-11-23T09:29:47.246Z",
+    "contentHash": "bf624b86d15c271111bb0620b18fe9cfd20bbb6c366d2f37e1be41845d059f6b",
+    "lastHarvestedAt": "2026-11-26T21:52:40.488Z",
     "learningId": "learn-huggingface-fermionresearch-phonon-2"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "ff2624ee",
+    "sourceVersion": "e03ef4b2",
     "license": "NOASSERTION",
-    "contentHash": "8ff98ff241c8033d4b3a9fc55f13e414efd5b699fcb864bcb7f037edba413d0d",
-    "lastHarvestedAt": "2026-11-26T03:13:13.191Z",
+    "contentHash": "204457053aa7735b562143d076e5d72adf9b0a0af82d05cf77c9e1b45c82798c",
+    "lastHarvestedAt": "2026-11-26T21:52:54.698Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "fceae497",
+    "sourceVersion": "24f28e0f",
     "license": "Apache-2.0",
-    "contentHash": "f23cd9bb58f88998c6337f89a6580d5feb8a98bc696dc7e2f3fccad7b7f26234",
-    "lastHarvestedAt": "2026-11-25T14:41:43.658Z",
+    "contentHash": "3484557a7fadf415f7c3f0d8ffdb0281602a2d9bb6169235f8b0716c33f61cf6",
+    "lastHarvestedAt": "2026-11-26T21:52:42.629Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {

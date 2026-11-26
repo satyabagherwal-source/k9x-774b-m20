@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T21:44:29.150Z",
-  "total_records": 2782,
+  "last_updated": "2026-11-26T21:53:00.605Z",
+  "total_records": 2784,
   "domains": {
     "A": {
       "total": 23,
@@ -2572,7 +2572,7 @@
       ]
     },
     "J": {
-      "total": 56,
+      "total": 58,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2629,7 +2629,9 @@
         "domain_intelligence-search-distribution-intelligence-startrail-org-leann-learnings-core-invariants",
         "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-learnings-core-invariants",
         "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-learnings-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-learnings-core-invariants"
       ]
     },
     "K": {
@@ -14559,8 +14561,8 @@
       "title": "Research & Knowledge Intelligence: FermionResearch/Phonon-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fermionresearch-phonon-2-research-knowledge-intelligence-fermionresearch-phon.md",
       "repository": "FermionResearch/Phonon-2",
-      "content_hash": "21a681872f7c29066686563fa8249e7bc19606a412c48bf7216ada5a9e58e95b",
-      "created_at": "2026-11-23T09:29:47.524Z"
+      "content_hash": "d09593e6b7c23a1a7bc02544eabb7468146b6952e39e4b68e375524823619021",
+      "created_at": "2026-11-26T21:52:40.721Z"
     },
     "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-core-inv",
@@ -14628,8 +14630,8 @@
       "title": "Research & Knowledge Intelligence: hf-fermionresearch-phonon-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fermionresearch-phonon-2-learnings-research-knowledge-intelligence-hf-fermion.md",
       "repository": "hf-fermionresearch-phonon-2-learnings",
-      "content_hash": "8e692ee9e297b2cdb9321174ebab080e8324c73d400363f450bfe208b9455dc8",
-      "created_at": "2026-11-23T09:29:52.800Z"
+      "content_hash": "c83910522f1182bcd44e604762648853a6cd86ab0e23c862c05cd86dd993a84f",
+      "created_at": "2026-11-26T21:52:59.633Z"
     },
     "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning": {
       "record_id": "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning",
@@ -34765,8 +34767,8 @@
       "title": "Architecture Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lioensky-vcptoolbox-architecture-intelligence-lioensky-vcptoolbox-core-invariant.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "fda1998493b214b1c63b656f8b3bf378847c11db7369b07ebba59405bac6f986",
-      "created_at": "2026-11-19T21:24:11.661Z"
+      "content_hash": "825f406ac560698f92ebc17c22518e58d5eb3ec824147330fbd19fb2e5401290",
+      "created_at": "2026-11-26T21:52:55.172Z"
     },
     "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants",
@@ -34783,8 +34785,8 @@
       "title": "Architecture Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lioensky-vcptoolbox-learnings-architecture-intelligence-lioensky-vcptoolbox-lear.md",
       "repository": "lioensky-vcptoolbox-learnings",
-      "content_hash": "60beb697546a8f0eec80dc7f2e84f247281b22ef123b352e8c4039c0ef4618f7",
-      "created_at": "2026-11-19T21:24:16.833Z"
+      "content_hash": "e4e90cf2760440d153195fe94982bcd67a5e37aadfc1b06a9482982e97188273",
+      "created_at": "2026-11-26T21:53:00.605Z"
     },
     "domain_intelligence-human-need-intelligence-koderover-zadig-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-koderover-zadig-core-invariants",
@@ -46965,6 +46967,24 @@
       "repository": "arxhr007-aliens_eye-learnings",
       "content_hash": "7a9a713a1926b41497c229793b1c82842ec21f65abd09c0f8b320f6b54ebcf56",
       "created_at": "2026-11-26T21:17:47.721Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: pimalaya/himalaya Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-pimalaya-himalaya-search-distribution-intelligence-pimalaya-himalaya-core-invari.md",
+      "repository": "pimalaya/himalaya",
+      "content_hash": "77a58673f13849228603619cf6ceb53959abdf526eb46af90814748f67a7504e",
+      "created_at": "2026-11-26T21:52:43.084Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: pimalaya-himalaya-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-pimalaya-himalaya-learnings-search-distribution-intelligence-pimalaya-himalaya-l.md",
+      "repository": "pimalaya-himalaya-learnings",
+      "content_hash": "6d5884e3d8112636579ef9efbf402b14d0e6f368f89d4f8fd139f550c5a8bb73",
+      "created_at": "2026-11-26T21:52:59.020Z"
     }
   }
 }

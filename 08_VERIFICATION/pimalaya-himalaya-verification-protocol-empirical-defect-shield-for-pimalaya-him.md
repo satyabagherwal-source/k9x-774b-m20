@@ -4,22 +4,22 @@
 {
   "source_repository": "pimalaya/himalaya",
   "source_url": "https://github.com/pimalaya/himalaya",
-  "source_version": "fceae497",
+  "source_version": "24f28e0f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T14:41:43.905Z",
+  "timestamp": "2026-11-26T21:52:42.883Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pimalaya-himalaya",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pimalaya/himalaya](https://github.com/pimalaya/himalaya) (Revision: `fceae497`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T14:41:43.905Z`  
+> **Provenance**: Harvested from [pimalaya/himalaya](https://github.com/pimalaya/himalaya) (Revision: `24f28e0f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T21:52:42.883Z`  
 > **Learning ID**: `learn-github-pimalaya-himalaya`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `pimalaya/himalaya` (Commit: `fceae497`)
+- **Target Repository**: `pimalaya/himalaya` (Commit: `24f28e0f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:41:42.472Z  
+> **Harvest Timestamp**: 2026-11-26T21:52:41.396Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7707 stars
+- **Stars / Engagement**: 7717 stars
 
 ---
 
@@ -1693,357 +1693,915 @@ impl Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `869fe31f` (2026-11-25)
-**Commit Message**: docs: align the readme, changelog and guides on ortie's for v3
+### Incident Patch 1: `91f04312` (2026-11-26)
+**Commit Message**: docs: fold the v3 pre-tag fixes into the spec, changelog and guide
 
-**File**: `CONTRIBUTING.md` (modified, +4/-4)
+**File**: `CHANGELOG.md` (modified, +11/-6)
 ```diff
-@@ -1,13 +1,13 @@
- # Contributing guide
+@@ -93,6 +93,9 @@ The wizard, the m2dir backend and the display options are gone, an unknown confi
  
--Thank you for investing your time in contributing to Himalaya CLI.
-+Thank you for investing your time in contributing to Himalaya.
+ - Added `message parse [EML]`, printing the `message read` view of a raw message from a file or stdin with no account, `--part` and `--section` writing one part.
+ - Added `--stdout` to `attachment download`, writing one part's decoded bytes to stdout, or `{id, mime, filename, size, data}` with `data` in base64 under `--json`.
++
++  It takes exactly one part id, no id or several being refused `usage-invalid`, exit 2, before connecting.
++
+ - Added `contentId` to `attachment list --json`.
+ - Added `--all` (`-A`) to `message reply`, replying to everyone but the account's own address ([#779]).
+ - Added the source's attachments to `message forward`, `--no-attachments` leaving them out ([#780]).
+@@ -108,7 +111,7 @@ The wizard, the m2dir backend and the display options are gone, an unknown confi
  
- Whether you are a human or an AI agent, read these in order before touching the code:
+   The command fails when the server does not announce `DSN`.
  
- 1. the [Pimalaya README](https://github.com/pimalaya) for what the project is and how its repositories stack;
--2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide (Nix environment, build and check commands, dependency overrides, commit style), which chains to the shared architecture and guidelines;
--3. the inline header documentation in src/lib.rs: it is the architecture document of this crate, covering the backends and plumbing, the three command families, and the shared versus protocol-specific surface;
--4. the cairn/ folder, which follows [Cairn](https://github.com/pimalaya/cairn) (spec/ is current truth, changes/ holds in-flight proposals, log/ is the dated history, landed changes moving to changes/archive/), activated by AGENTS.md; `sh cairn/verify.sh` checks its structure.
-+2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide, which chains to the shared architecture and guidelines;
-+3. the inline header documentation, starting with src/lib.rs: it is the architecture document of this crate;
-+4. the cairn/ folder, which follows [Cairn](https://github.com/pimalaya/cairn): spec/ is current truth, changes/ holds in-flight proposals (landed ones move to changes/archive/), and log/ is the dated history; `sh cairn/verify.sh` checks the structure.
+-- Added `from`, `date` and `flags` to each `imap thread` entry.
++- Added `from`, `date` and `flags` to each `imap thread` entry, the flags as the server spells them, as `imap fetch` prints them.
+ - Added the IMAP mailbox roles a plain `LIST` marks with a special-use attribute (RFC 6154), shown by `mailbox list` and taken by `-m`.
  
- Everything below documents only what differs from the Pimalaya standards.
+   A `mailbox.alias.<role>` still wins.
+@@ -128,8 +131,8 @@ The wizard, the m2dir backend and the display options are gone, an unknown confi
+   `--sort`, `--threads` and `--page-token` shape the answer; each hit carries its envelope, mailboxes and a snippet, and `coverage` says what the index could not see.
  
+ - Added `pimdir count`, counting the account's mail a query matches, with its coverage.
+-- Added `pimdir thread`, listing the thread of a message from the search index, oldest first.
+-- Added `pimdir tag`, queueing a flag change on every message a query matches, `--dry-run` queueing nothing.
++- Added `pimdir thread`, listing the thread of a message from the search index, oldest first, a member the store cannot read under `errors` (exit 3).
++- Added `pimdir tag`, queueing a flag change on every message a query matches, `--dry-run` queueing nothing, a placement whose flags were never read printing `flags` `null`.
+ - Added `pimdir flag list|add|set|remove`, reading and staging any flag of a pimdir message by its raw spelling, keywords included ([#790]).
+ - Added `pimdir mailbox list`, listing each mailbox with its `total` and `unread` counts and the `coverage` the sync engine last listed it within.
+ - Added `pimdir mailbox create`, `rename` and `delete`, queueing the change for the sync engine to apply on the server.
+@@ -243,8 +246,10 @@ The wizard, the m2dir backend and the display options are gone, an unknown confi
+ - Changed the write confirmations on a pimdir account to say the write is queued (*Message queued for sending*), the sync engine applying it later.
+ - **BREAKING**: Changed `envelope search` to read the pimdir SEARCH query language (§8), as `pimdir search`, Calendula and Cardamum do: `from:alice date:2026-11-02.. is:unread "weekly sync"`.
+ 
+-  `order by` is now `--sort newest-first|oldest-first|title|sender|relevance`, Maildir and mbox match whole words, and a `~`, `/` or `{` form is reserved (`search-invalid`). A clause the backend cannot search fails `search-unsupported`; MIGRATION.md maps every v2 clause.
++  `order by` is now `--sort newest-first|oldest-first|title|sender|relevance`, Maildir and mbox match whole words, and a `~`, `/` or `{` form is reserved (`search-invalid`). A clause the backend cannot search fails `search-unsupported`: a prefix (`repo*`) on Gmail, an instant or an amount back from now (`date:2d`) on Microsoft Graph, which compares days. MIGRATION.md maps every v2 clause.
+ 
++- **BREAKING**: Changed `jmap email read --json` to print `{emails, errors}`, each email as the server sent it, an id not found an `errors` entry coded `message-not-found` (exit 3).
++- **BREAKING**: Changed `sieve deactivate --json` to print `{id}`, the script active before, `null` when none was.
+ - **BREAKING**: Changed `flag add|set|remove` and `message copy|move|delete` given ids the mailbox does not hold to print each as a `message-not-found` entry and exit 3, the others acted on ([#777]).
+ - **BREAKING**: Changed a send whose follow-up failed to print its receipt and exit 3: a copy refused after the send and a reply's `answered` flag are item errors of the receipt.
+ - **BREAKING**: Changed a JMAP, Gmail or Microsoft Graph `message read`, and the source read of `message reply|forward` and `attachment list|download`, to fail `message-not-found` when the mailbox given does not hold the message.
+@@ -471,7 +476,7 @@ The wizard, the m2dir backend and the display options are gone, an unknown confi
+ - Fixed the JMAP set and method errors dropping the type, description and arguments the server sent.
+ - Fixed setting the JMAP vacation response on Fastmail failing after the update was applied.
+ - Fixed a JMAP mailbox name matchi
 ```
 
-**File**: `MIGRATION.md` (modified, +112/-411)
+**File**: `MIGRATION.md` (modified, +4/-2)
 ```diff
-@@ -2,116 +2,94 @@
+@@ -59,6 +59,8 @@ v3 makes Himalaya a low-level CLI: plain text for a human to glance at, `--json`
+ - **`gmail labels get` and `msgraph mail-folders get` take one id** and print the object: run one per id, `.labels[0]` or `.folders[0]` becoming `.`.
+ - **`sieve check|put` print `warnings` as a list**, `[]` when none, instead of a string or `null`.
+ - **`jmap email parse` prints `bodies` as `[{blobId, body}]`**, instead of a list of strings.
++- **`jmap email read --json` prints `{emails, errors}`**, each email as the server sent it: read the bodies from `.emails[].bodyValues`. An id the server does not find is an `errors` entry coded `message-not-found`, exit 3, where v2 only logged it.
++- **`sieve deactivate --json` prints `{id}`**, the script that was active, `null` when none was.
  
- ## From v2 to v3
+ ### Exit codes and error codes
  
--v3 makes Himalaya a low-level CLI: plain text for a human to glance at, JSON for scripts and frontends. Daily mail is a frontend's job: see the interfaces listed in README.md. v3 drops the configuration wizard and the m2dir backend, takes one configuration path per `-c` and prints plain text, with no table nor colour. A v2 configuration loads as it is, unless it sets a key v3 does not know (a colour, table or glyph key, `envelope.list.datetime-relative`, a himalaya-tui key outside a `[tui]` table, an `m2dir` block, a v1 `backend` or `folder` table) or marks several accounts default.
--
--What a script or a frontend reads off `--json` and the text output changes, and a few commands that used to report a success they did not achieve now fail. The CHANGELOG lists every change; these are the ones to act on.
--
--### Configuration and first run
--
--- **The wizard is gone.** Bare `himalaya` prints the help, `himalaya configure` (alias `wizard`) and its `himalaya-configure` schema no longer exist, and no command offers to create a configuration. Write it from config.sample.toml, which releases and packages ship as share/doc/himalaya/config.sample.toml: run at a terminal without a configuration, Himalaya prints the commands copying it in place. Drop the `wizard` cargo feature from a build's `--features`.
--- **`-c` takes one path per flag.** A value is no longer split on `:`, so a Windows path stays whole. Repeat the flag to merge several files: `-c public.toml -c private.toml`.
--- **`HIMALAYA_CONFIG` is no longer read.** Pass `-c "$HIMALAYA_CONFIG"` for one path, and one `-c` per path for what was a `:`-separated list.
--- **Every default path is read, as layers.** $XDG_CONFIG_HOME/himalaya/config.toml, $HOME/.config/himalaya/config.toml and $HOME/.himalayarc are each deep-merged on top of the ones before, where v2 read the first one found. An rc file left beside a config.toml now overrides it: delete the one you do not use.
--- **Several `default = true` accounts are refused**, naming them, where v2 picked one at random. Keep it on one account across the merged files: an rc file moving the default sets `default = false` on the account the other file marks.
--- **`-a default` names an account called `default`**, where v2 took the account marked default. Leave `-a` out to take that one.
--- **Colour, table and glyph keys are gone.** Remove the `*-color` keys of `envelope.list.table`, `mailbox.list.table`, `attachment.list.table` and `account.list.table`, `table.preset` and `table.arrangement`, and the `envelope.list.table.*-char` glyphs. The `table`, `attachment` and top-level `account` blocks and the `envelope.list.table` block fail the configuration as unknown keys, whatever they hold (``unknown field `table` ``, naming its line), and so does a v1 `folder` table: move `folder.alias` to `mailbox.alias` (see [Mailbox aliases](#mailbox-aliases)); the `mailbox` colour keys fail it as unknown keys too. The envelope lists mark a message's state with fixed characters, `*` unread, `R` answered, `!` flagged and `@` attachment.
--- **An unknown key fails the configuration**, at the top level and in an account as in every other table, naming the key and its line: a typo no longer passes silently. Fix or delete it. The rest of a v1 `[message]` table (`read`, `write`, `send.backend`) is refused too.
--- **himalaya-tui's keys go under `[tui]`.** A file shared with himalaya-tui moves its `keybinds`, `contact-command`, `contact-complete-key` and `theme` under a top-level `[tui]` table, and an account's `contact-command` under `[accounts.<name>.tui]`, once himalaya-tui reads them there; Himalaya loads the `tui` tables whatever they hold and reads none of it:
--
--  ```toml
--  [tui]
--  contact-command = "khard email --parsable %s"
--
--  [accounts.work.tui]
--  contact-command = ["abook", "--mutt-query", "%s"]
--  ```
--- **`envelope.list.datetime-relative` is gone**, refused as an unknown key: remove it. Dates print as `envelope.list.datetime-fmt` and `datetime-local-tz` configure them.
--- **Dates default to `%F %R` in the local timezone**, where v2 printed `%F %R%:z` at the offset a message was sent with. Set `envelope.list.datetime-fmt = "%F %R%:z"` and `envelope.list.datetime-local-tz = false` to keep the v2 dates.
--- **`http` and `https` hosts are ASCII.** A JMAP `server` or an HTTP proxy `url` with an internationalised host is refused: write the host in Punycode (`https://xn--bcher-kva.example` for `bücher.example`). IMAP, SMTP and ManageSieve servers are unchanged.
--- **m2dir is gone.** The `m2dir` backend, its `himalaya m2dir` commands, the `m2dir` cargo feature and `-b m2dir` no longer exist: io-m2dir left the Pimalaya family, pimdir superseding it. An `m2dir` block fails the configuration as an unknown key (``unknown field `m2dir` ``), as does the v1 `backend` table, where a development build of v3 loaded both, ignored: delete them. Move the account to a Maildir (`maildir.root`, filled by a sync to
+@@ -114,8 +116,8 @@ v3 makes Himalaya a low-level CLI: plain text for a human to glance at, `--json`
+ | `order by from` | `--sort sender` |
+ | `order by to`, a descending subject or sender | none |
+ 
+-- **A relative amount is an instant** (`date:2d` is the last 48 hours), which Microsoft Graph refuses with `search-unsupported`, its search comparing days: write a day there, `date:2026-11-24..`.
+-- **Text matches whole words** on Maildir, mbox and pimdir, where v2 matched a substring: `subject:repo*` finds `report`.
++- **A relative amount is an instant** (`date:2d` is the last 48 hours, `date:1w` the last 7 days). Microsoft Graph compares days alone, so it refuses `date:2d` and `date:1w` with `search-unsupported` where v2 served `after 2 days ago`: write the day there, `date:2026-11-24..`.
++- **Text matches whole words** on Maildir, mbox and pimdir, where v2 matched a substring: `subject:repo*` finds `report`, and so it does on Microsoft Graph. Gmail has no prefix search and refuses `repo*` with `search-unsupported`; IMAP and JMAP send its stem `repo`, matched as the server matches text.
+ - **The capability options take the predicate names**: `envelope.search.message-id` is `envelope.search.mid`, `envelope.search.sort.date` is `sort.newest-first` and `sort.oldest-first`.
+ - **`pimdir search --sort date|name` is `--sort newest-first|title`**.
+ - **A word starting with `~`, a word of two characters or more starting with `/` and a value starting with `{` are refused** (`reserved-form`): quote them to search the characters, `"~draft"`.
 ```
 
-**File**: `README.md` (modified, +53/-4)
+**File**: `cairn/changes/a-prefix-or-phrase-is-never-dropped/tasks.md` (removed, +0/-12)
 ```diff
-@@ -47,8 +47,6 @@ $ himalaya envelope search --json --sort newest-first from:alice date:2026-11-02
- }
- ```
- 
--Himalaya manages your mail from the command line: every command prints JSON for scripts, frontends and agents, or plain text for a person.
+@@ -1,12 +0,0 @@
+----
+-cairn: tasks
+-change: a-prefix-or-phrase-is-never-dropped
+----
 -
- ## Table of contents
- 
- - [Features](#features)
-@@ -61,6 +59,7 @@ Himalaya manages your mail from the command line: every command prints JSON for
-   - [Posteo](#posteo)
-   - [iCloud Mail](#icloud-mail)
- - [Usage](#usage)
-+- [Alternatives](#alternatives)
- - [AI policy](https://github.com/pimalaya/.github/blob/master/AI_POLICY.md)
- - [License](#license)
- - [Social](#social)
-@@ -80,10 +79,54 @@ Himalaya manages your mail from the command line: every command prints JSON for
- 
- ## Installation
- 
-+<details>
-+  <summary>Debian, Ubuntu</summary>
-+
-+  Himalaya is not in the official repositories yet, but the signed APT repository of [pkg.pimalaya.org](https://pkg.pimalaya.org) ships the latest release with its man pages and shell completions. Add the repository once:
-+
-+  ```sh
-+  sudo install -d -m 0755 /etc/apt/keyrings
-+  curl -fsSL https://pkg.pimalaya.org/pimalaya.asc | sudo tee /etc/apt/keyrings/pimalaya.asc >/dev/null
-+  sudo tee /etc/apt/sources.list.d/pimalaya.sources >/dev/null <<EOF
-+  Types: deb
-+  URIs: https://pkg.pimalaya.org/apt
-+  Suites: stable
-+  Components: main
-+  Signed-By: /etc/apt/keyrings/pimalaya.asc
-+  EOF
-+  sudo apt update
-+  ```
-+
-+  Then install Himalaya:
-+
-+  ```sh
-+  sudo apt install himalaya
-+  ```
-+</details>
-+
-+<details>
-+  <summary>Fedora, RHEL, Rocky Linux, AlmaLinux</summary>
-+
-+  Himalaya is not in the official repositories yet, but the signed DNF repository of [pkg.pimalaya.org](https://pkg.pimalaya.org) ships the latest release with its man pages and shell completions:
-+
-+  ```sh
-+  sudo curl -fsSL -o /etc/yum.repos.d/pimalaya.repo https://pkg.pimalaya.org/pimalaya.repo
-+  sudo dnf install himalaya
-+  ```
-+</details>
-+
-+<details>
-+  <summary>Homebrew (macOS, Linux)</summary>
-+
-+  ```sh
-+  brew install himalaya
-+  ```
-+</details>
-+
- <details>
-   <summary>Pre-built binary</summary>
- 
--  Himalaya can be installed with the installer:
-+  For other systems, Himalaya can be installed with the installer:
- 
-   *As root:*
- 
-@@ -97,7 +140,7 @@ Himalaya manages your mail from the command line: every command prints JSON for
-   curl -sSL https://raw.githubusercontent.com/pimalaya/himalaya/master/install.sh | PREFIX=~/.local sh
-   ```
- 
--  These commands install the latest binary from the GitHub [releases](https://github.com/pimalaya/himalaya/releases) section. For a build of `master`, check out the [releases](https://github.com/pimalaya/himalaya/actions/workflows/releases.yml) GitHub workflow and look for the *Artifacts* section.
-+  These commands install the latest [release](https://github.com/pimalaya/himalaya/releases), built with the default cargo features. For a build of `master`, check out the [releases](https://github.com/pimalaya/himalaya/actions/workflows/releases.yml) GitHub workflow and look for the *Artifacts* section.
- </details>
- 
- <details>
-@@ -300,6 +343,12 @@ himalaya imap raw 'a1 NAMESPACE'
- himalaya mcp --allow-write
- ```
- 
-+## Alternatives
-+
-+- [NeoMutt](https://neomutt.org/): a terminal mail client, driven from its own interface rather than scripted
-+- [aerc](https://aerc-mail.org/): a terminal mail client for IMAP, JMAP, Maildir and notmuch
-+- [mblaze](https://github.com/leahneukirchen/mblaze): Unix utilities over a Maildir, local mail only
-+
- ## License
- 
- This project is licensed under either of:
+-# Tasks
+-
+-- [ ] Owner: fix before the 3.0.0 tag, or ship and fix in 3.0.1.
+-- [ ] src/unified/email/search/query.rs: `prefix` and `phrase` on the text leaves of the lowered tree.
+-- [ ] Translations: src/msgraph/search.rs (phrase quoted whole, prefix as `word*`), the Gmail `q` (prefix refused `search-unsupported`), IMAP and JMAP (phrase as one string, prefix answered by substring).
+-- [ ] Tests failing first: `subject:repo*` and `subject:"report weekly"` through the Gmail and Graph translators.
+-- [ ] Spec search.md (*Per-backend translation*, the text capability details), CHANGELOG `[3.0.0]` Fixed, log entry; re-run the search rows of gmail.md and msgraph.md.
 ```
 
-**File**: `SECURITY.md` (modified, +4/-4)
+**File**: `cairn/changes/archive/a-prefix-or-phrase-is-never-dropped/delta.md` (added, +29/-0)
 ```diff
-@@ -5,10 +5,10 @@
- | Version | Supported      |
- | ------- | -------------- |
- | 3.x.x   | :green_circle: |
--| 2.x.x   | :red_circle:   |
--| 1.x.x   | :red_circle:   |
--| 0.x.x   | :red_circle:   |
-+| < 3.0   | :red_circle:   |
- 
- ## Reporting a Vulnerability
- 
--https://github.com/pimalaya/himalaya/issues
-+Please report security issues privately by opening a confidential issue at <https://github.com/pimalaya/himalaya/issues> or by sending an email to <pimalaya.org@posteo.net>.
-+
-+You can expect an acknowledgment within a few working days. Once the vulnerability is confirmed, a patch release will be cut and credited disclosure coordinated with you before the fix is announced publicly.
-```
-
-**File**: `cairn/log/2026-11-25-docs-aligned-for-the-major.md` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,29 @@
 +---
-+cairn: log
-+change: docs-aligned-for-the-major
-+landed: 2026-11-25
++cairn: delta
++change: a-prefix-or-phrase-is-never-dropped
 +---
 +
-+# Aligned the docs on Ortie's for 3.0.0
++# Delta
 +
-+## What landed
++## MODIFIED Requirements
 +
-+- README.md: Ortie's shape (header, its existing tested JSON block, unchanged, Features, install from pkg.pimalaya.org, Homebrew, installer, Cargo, Nix and sources, configuration template, provider recipes, numbered first run, Alternatives); tests/docs.rs checks the Features budget and the section order.
-+- CHANGELOG.md: the Unreleased section rewritten to changelog-001 and changelog-002, a lead paragraph for 3.0.0, one item per bullet, short bodies, churn folded into the final state.
-+- SECURITY.md: Ortie's text, 3.x supported.
-+- CONTRIBUTING.md: Ortie's reading order; sections restating the org guide removed, overlong paragraphs split.
-+- MIGRATION.md: tightened on ortie's (457 to 178 lines), every action kept, stale facts corrected against `--help`.
-+- Capabilities moved: none (documentation only).
++### Requirement: Per-backend translation (search)
++The lowered tree SHALL carry on each text and address leaf whether its text is a prefix (a trailing `*`) or a phrase (quoted), and no translation SHALL answer either as a plain word. IMAP and JMAP SHALL send a prefix as its stem and a phrase as one string, the server matching them as it matches text (owner ruling of 2026-11-26 on the open point). Gmail SHALL quote a phrase whole and refuse a prefix with `search-unsupported` before any request, Gmail having no prefix search. Graph SHALL send a phrase as one quoted KQL string and a prefix as its stem quoted with a trailing `*` (`subject:\"repo*\"`).
++
++#### Scenario: A prefix on Gmail
++- WHEN `himalaya --json envelope search subject:repo*` runs on a Gmail account
++- THEN it exits 1 coded `search-unsupported` before any request, the message quoting `subject:repo*`
++
++#### Scenario: A prefix and a phrase on Graph
++- GIVEN a Graph mailbox holding `weekly report` and `beta weekly report`
++- WHEN `envelope search subject:repo*` runs, then `envelope search 'subject:"report weekly"'`
++- THEN the first lists both messages, and the second neither
++
++### Requirement: What a backend searches is declared (search)
++The text fields SHALL say how a backend matches a prefix and a phrase: the matcher and Graph serve both (`full`), Gmail refuses a prefix (`partial`), IMAP and JMAP send a prefix as its stem and a phrase as one string (`partial`).
++
++### Requirement: A field a backend does not answer is refused with a code (search)
++Gmail SHALL refuse a prefix, beside `is:answered` and the keywords but `$Important` and `$Junk`.
++
++### Requirement: The query's fields are listed on -h (search)
++The command's long help SHALL say how each backend matches text, a prefix and a phrase.
 ```
 
-**File**: `tests/docs.rs` (modified, +1/-0)
+**File**: `cairn/changes/archive/a-prefix-or-phrase-is-never-dropped/proposal.md` (renamed, +2/-2)
 ```diff
-@@ -226,6 +226,7 @@ fn the_readme_sections_follow_the_cli_order() {
-             "Installation",
-             "Configuration",
-             "Usage",
-+            "Alternatives",
-             "License",
-             "Social",
-             "Sponsoring",
+@@ -1,7 +1,7 @@
+ ---
+ cairn: change
+ id: a-prefix-or-phrase-is-never-dropped
+-status: active
++status: landed
+ created: 2026-11-26
+ ---
+ 
+@@ -19,4 +19,4 @@ Found by the v3 provider reports of 2026-11-26 (cairn/spec/testing/gmail.md H1,
+ 
+ ## Open
+ 
+-- Whether IMAP and JMAP should refuse a prefix rather than answer it by substring (they already over-match plain words the same way).
++- Whether IMAP and JMAP should refuse a prefix rather than answer it by substring (they already over-match plain words the same way). Ruled 2026-11-26 by the owner: answered by substring.
+```
+
+**File**: `cairn/changes/archive/a-prefix-or-phrase-is-never-dropped/tasks.md` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++---
++cairn: tasks
++change: a-prefix-or-phrase-is-never-dropped
++---
++
++# Tasks
++
++- [x] Owner: fix before the 3.0.0 tag, or ship and fix in 3.0.1. (2026-11-26: before the tag; IMAP and JMAP answer a prefix by substring, the open point)
++- [x] src/unified/email/search/query.rs: `prefix` and `phrase` on the text leaves of the lowered tree (`SearchEmailsFilterText`, src/unified/email/search/filter/query.rs).
++- [x] Translations: src/msgraph/search.rs (phrase quoted whole, prefix as `\"word*\"`), the Gmail `q` (prefix refused `search-unsupported`), IMAP and JMAP (phrase as one string, prefix answered by substring).
++- [x] Tests failing first: `subject:repo*` and `subject:"report weekly"` through the Gmail and Graph translators, and the lowering.
++- [x] Spec search.md (*Per-backend translation*, the text capability details), CHANGELOG `[3.0.0]`, log entry; re-run the search rows of gmail.md and msgraph.md (2026-11-26, the release build, and imap-smtp-fastmail.md P3).
+```
+
+**File**: `cairn/changes/the-schema-review-remainder/proposal.md` (modified, +2/-0)
+```diff
+@@ -54,6 +54,8 @@ A last pass over the 220 schemas the 3.0.0 release build writes (`json-schema --
+ - **R4, `pimdir thread` has no `errors`.** One unreadable member fails the command (src/pimdir/index.rs:308), where `pimdir search --threads` lists it under `errors`. Recommendation: add `errors`, exit 3.
+ - **R5, `imap thread` flags.** Its entries print `[{raw, iana}]` where `imap fetch` and `imap store` print wire strings. Recommendation: accept the richer shape, or align on strings now.
+ 
++Landed 2026-11-26 as recommended (owner ruling of 2026-11-26, all five before the tag): R1 prints `{emails, errors}` from the raw `Email/get`; R2 `flags` `array|null`; R3 `{id}` of the script active before; R4 `errors` on `pimdir thread`, exit 3; R5 wire strings. See cairn/log/2026-11-26-the-schema-review-remainder.md.
++
+ ### Not breaking, after the tag
+ 
+ - **R6, descriptions missing** on `imap flag` (`flags`, `permanentFlags`), `imap search|sort` (`ids`, `uidMode`), `imap thread` (`threads`), the `event` key of the `imap raw` and `sieve raw` events, and the root alternatives of `attachment download`, `message parse` and `himalaya-error`'s `ReportCode`; no test checks keys and alternatives, src/json_schema.rs only refusing doc links.
+```
+
+**File**: `cairn/changes/the-schema-review-remainder/tasks.md` (modified, +1/-1)
+```diff
+@@ -10,5 +10,5 @@ change: the-schema-review-remainder
+ - [x] Adopt the io-imap release handing the raw reply as bytes, then land HIM-18's base64 shape in `imap raw`, its schema, spec, CHANGELOG and MIGRATION, before the bump (2026-11-19: io-imap 0.12, an `undecoded` event `{base64}`, the-releases-of-2026-11-19)
+ - [ ] After v3: B5 `ids` on `message copy|move`
+ - [ ] After v3: B6 once io-smtp returns the final reply; C2 once pimalaya-cli sets the rule; C6 once io-imap spells a response code (cross-repo; io-imap 0.12 `ImapStatusError::code_bytes` spells it since 2026-11-19, C6 left after v3)
+-- [ ] Owner, before the tag: R1 to R5 of the review of 2026-11-26 (breaking), each fixed now or accepted for v3.
++- [x] Owner, before the tag: R1 to R5 of the review of 2026-11-26 (breaking), each fixed now or accepted for v3. (2026-11-26: the owner ruled all five fixed before the tag, each as recommended; landed, log 2026-11-26-the-schema-review-remainder)
+ - [ ] After v3: R6 to R10 (not breaking), with a test that every key and every alternative carries a description.
 ```
 
 ---
 
-### Incident Patch 2: `6f12217c` (2026-11-25)
-**Commit Message**: build: prepare v3.0.0
+### Incident Patch 2: `24f28e0f` (2026-11-26)
+**Commit Message**: build: release v3.0.0
 
-**File**: `CHANGELOG.md` (modified, +6/-3)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ## [Unreleased]
  
--Himalaya 3 is a low-level CLI: plain text for humans, `--json` for scripts and frontends. The wizard, the m2dir backend and the table and colour options are gone, and an unknown configuration key fails the load. Every `--json` key is camelCase, a write prints what it acted on, a failure carries a stable `code` and a partial outcome exits 3. `envelope search` reads the pimdir query language, and `repl` and `mcp` serve the unified API over kept connections, the latter to AI agents.
-+## [3.0.0] - 2026-11-25
+-## [3.0.0] - 2026-11-25
++## [3.0.0] - 2026-11-26
  
--MIGRATION.md lists what to act on when upgrading from 2.x.
-+Himalaya 3 is a low-level CLI over a unified mail API: the same commands on every backend, the protocol-specific ones beside them, plain text for a glance and `--json` for scripts, frontends and AI agents. Daily-mail comfort (tables, colours, relative dates, rich composition) moves to frontends such as himalaya-tui and to mml, and the offline side to the pimdir store Neverest syncs, which Himalaya reads and queues its writes into.
-+
-+The wizard, the m2dir backend and the display options are gone, an unknown configuration key fails the load, and every failure carries a stable `code`. MIGRATION.md lists what to act on when upgrading from 2.x.
+ Himalaya 3 is a low-level CLI over a unified mail API: the same commands on every backend, the protocol-specific ones beside them, plain text for a glance and `--json` for scripts, frontends and AI agents. Daily-mail comfort (tables, colours, relative dates, rich composition) moves to frontends such as himalaya-tui and to mml, and the offline side to the pimdir store Neverest syncs, which Himalaya reads and queues its writes into.
  
- ### Added
- 
-@@ -1898,7 +1900,8 @@ Few major concepts changed:
- [core#1]: https://github.com/pimalaya/core/issues/1
- [core#10]: https://github.com/pimalaya/core/issues/10
- 
--[unreleased]: https://github.com/pimalaya/himalaya/compare/v2.2.1...HEAD
-+[unreleased]: https://github.com/pimalaya/himalaya/compare/v3.0.0...HEAD
-+[3.0.0]: https://github.com/pimalaya/himalaya/compare/v2.2.1...v3.0.0
- [2.2.1]: https://github.com/pimalaya/himalaya/compare/v2.1.0...v2.2.1
- [2.2.0]: https://github.com/pimalaya/himalaya/compare/v2.1.0...v2.2.0
- [2.1.0]: https://github.com/pimalaya/himalaya/compare/v2.0.0...v2.1.0
 ```
 
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -769,7 +769,7 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
- 
- [[package]]
- name = "himalaya"
--version = "2.2.1"
-+version = "3.0.0"
- dependencies = [
-  "anyhow",
-  "ariadne",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `cairn/changes/archive/v3-release/proposal.md` (renamed, +1/-1)
 ```diff
 @@ -1,7 +1,7 @@
- [package]
- name = "himalaya"
- description = "CLI to manage emails"
--version = "2.2.1"
-+version = "3.0.0"
- authors = ["Clément DOUIN (soywod) <pimalaya.org@posteo.net>"]
- rust-version = "1.89"
- edition = "2024"
+ ---
+ cairn: change
+ id: v3-release
+-status: active
++status: landed
+ created: 2026-11-02
+ ---
+ 
 ```
 
-**File**: `default.nix` (modified, +1/-1)
+**File**: `cairn/changes/archive/v3-release/tasks.md` (renamed, +4/-4)
 ```diff
-@@ -16,7 +16,7 @@ in
- pimalaya.mkDefault (
-   {
-     src = ./.;
--    version = "2.2.1";
-+    version = "3.0.0";
-     mkPackage = (
-       {
-         lib,
+@@ -14,7 +14,7 @@ change: v3-release
+ - [x] ~~Publish ical-rs~~ Dropped: no longer a dependency, its patch gone with pimdir-follows-storage-draft-09 (2026-11-06).
+ - [x] Raise the requirements to the published versions (io-gmail 0.6 with them, for one io-http), remove `[patch.crates-io]`, confirm a clean crates.io build: clippy over the 15 feature sets, the whole suite and the build without SMTP pass
+ - [x] ~~Tighten deny.toml once no git source remains~~ Dropped: the owner keeps `allow-org.github = ["pimalaya"]`, git pins being common across the family (2026-11-11).
+-- [ ] Owner validation of the whole family, then Ortie and Himalaya released together with pimalaya-cli and pimalaya-config 0.4
++- [x] Owner validation of the whole family, then Ortie and Himalaya released together with pimalaya-cli and pimalaya-config 0.4 Validated by the owner on 2026-11-26 (Ortie 3.0.0 out since 2026-11-21).
+ 
+ ## Release
+ 
+@@ -24,6 +24,6 @@ change: v3-release
+ - [x] Adopt the io-imap release handing raw bytes and land HIM-18 (the-schema-review-remainder), ruled before v3 on 2026-11-19 (2026-11-19: io-imap 0.12, the-releases-of-2026-11-19)
+ - [x] Bump the version to 3.0.0 (the schema `$id`s follow, `v3`): 6f12217c; every `$id` reads `v3`, pinned by tests/json_schema.rs `every_schema_id_names_the_v3_contract` (2026-11-26).
+ - [x] Finalise the CHANGELOG `[Unreleased]` section into `[3.0.0]`, its breaking entries marked: `[3.0.0]` written by 869fe31f and 944ba0ad; checked 2026-11-26 against `git log v2.2.1..HEAD` (churn inside the major folded into the final state, as 869fe31f chose), `source-empty` added, a stray blank line removed; MIGRATION.md reread against the pimdir v1 move and the `--help` of the release build, nothing stale found. Its date stays for the lead to set.
+-- [ ] Run the manual provider reports under cairn/spec/testing against the release build, on the Google, Microsoft and Fastmail test accounts only
+-- [ ] Tag and publish
+-- [ ] Log entry; status `landed`
++- [x] Run the manual provider reports under cairn/spec/testing against the release build, on the Google, Microsoft and Fastmail test accounts only Run on 2026-11-26 (c3cdf686), the search fixes rechecked live after (91f04312).
++- [x] Tag and publish: v3.0.0 on the release commit, published by the tag workflow once CI is green (2026-11-26).
++- [x] Log entry; status `landed`: cairn/log/2026-11-26-v3-release.md.
 ```
 
-**File**: `package.nix` (modified, +1/-1)
+**File**: `cairn/log/2026-11-26-v3-release.md` (added, +11/-0)
 ```diff
-@@ -47,7 +47,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
-   inherit buildNoDefaultFeatures buildFeatures;
- 
-   pname = "himalaya";
--  version = "2.2.1";
-+  version = "3.0.0";
-   cargoHash = "";
- 
-   src = fetchFromGitHub {
+@@ -0,0 +1,11 @@
++---
++cairn: log
++change: v3-release
++landed: 2026-11-26
++---
++
++# Himalaya 3.0.0
++
++The v3 release is cut: the version 3.0.0 with every JSON Schema `$id` naming `v3`, CHANGELOG.md's `[3.0.0]` section dated 2026-11-26, MIGRATION.md's v2 to v3 guide, the manual provider reports run on the release build on the Google, Microsoft and Fastmail test accounts (2026-11-26), and the owner's validation of the family. The tag `v3.0.0` goes on this commit once CI is green; its workflow publishes the crate and the binaries.
++
++No capability moves: this entry closes the change cairn/changes/archive/v3-release.
 ```
 
 ---
 
-### Incident Patch 3: `e27bdc48` (2026-11-24)
-**Commit Message**: build: move to io-pimdir 0.20.4 and io-msgraph 0.11.1
+### Incident Patch 3: `9dd0ef1f` (2026-11-26)
+**Commit Message**: fix(search)!: keep a prefix and a phrase on every backend
 
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `src/gmail/search.rs` (modified, +55/-20)
 ```diff
-@@ -1065,9 +1065,9 @@ dependencies = [
+@@ -4,9 +4,9 @@
+ //! syntax, the same one the Gmail search box speaks.
+ //!
+ //! The filter half becomes one `q` string, negations expanded through De
+-//! Morgan so a `-` only prefixes a leaf, the shape Gmail matches reliably.
+-//! `flag answered` (replies are not searchable) and the keywords are refused
+-//! with `search-unsupported` rather than return wrong hits.
++//! Morgan so a `-` only prefixes a leaf. `flag answered`, the keywords and
++//! a prefix, which Gmail cannot search, are refused with
++//! `search-unsupported` rather than return wrong hits.
+ //!
+ //! A date clause is sent as Unix seconds bounding the UTC day, Gmail
+ //! reading a bare date as midnight in PST. It compares them with the
+@@ -25,7 +25,10 @@ use chrono::{Duration, NaiveDate, NaiveTime};
  
- [[package]]
- name = "io-msgraph"
--version = "0.11.0"
-+version = "0.11.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "86a37b9a68d8d65069fe85dda21ec6d3d478504efbb110022150acabe615fdeb"
-+checksum = "2969ed68c121c86ca07ef9ffbe7df384ef2ac4e7ec06f95b888eef2de4662e05"
- dependencies = [
-  "anyhow",
-  "base64-codec",
-@@ -1104,9 +1104,9 @@ dependencies = [
+ use crate::unified::email::{
+     flag::{Flag, IanaFlag},
+-    search::{error::unsupported, filter::query::SearchEmailsFilterQuery},
++    search::{
++        error::unsupported,
++        filter::query::{SearchEmailsFilterQuery, SearchEmailsFilterText},
++    },
+ };
  
- [[package]]
- name = "io-pimdir"
--version = "0.20.3"
-+version = "0.20.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "43974465e955c16543c9619a9a40725a839c0a5b386fbbfc360e9ebdf8ed84b2"
-+checksum = "59c1df840ffb7b5c3a775df87df36d15f5cd65d7fad23c66594a9e005652b0f5"
- dependencies = [
-  "blake3",
-  "encoding_rs",
+ /// Translates the filter half of a unified query into a Gmail `q` value.
+@@ -51,21 +54,21 @@ pub(super) fn filter_to_q(filter: &SearchEmailsFilterQuery) -> Result<String> {
+         SearchEmailsFilterQuery::BeforeInstant(instant) => {
+             Ok(format!("before:{}", instant.timestamp()))
+         }
+-        SearchEmailsFilterQuery::From(pattern) => Ok(format!("from:{}", value_q(filter, pattern)?)),
+-        SearchEmailsFilterQuery::To(pattern) => Ok(format!("to:{}", value_q(filter, pattern)?)),
+-        SearchEmailsFilterQuery::Cc(pattern) => Ok(format!("cc:{}", value_q(filter, pattern)?)),
+-        SearchEmailsFilterQuery::Bcc(pattern) => Ok(format!("bcc:{}", value_q(filter, pattern)?)),
++        SearchEmailsFilterQuery::From(pattern) => Ok(format!("from:{}", text_q(filter, pattern)?)),
++        SearchEmailsFilterQuery::To(pattern) => Ok(format!("to:{}", text_q(filter, pattern)?)),
++        SearchEmailsFilterQuery::Cc(pattern) => Ok(format!("cc:{}", text_q(filter, pattern)?)),
++        SearchEmailsFilterQuery::Bcc(pattern) => Ok(format!("bcc:{}", text_q(filter, pattern)?)),
+         SearchEmailsFilterQuery::Address(pattern) => {
+-            let value = value_q(filter, pattern)?;
++            let value = text_q(filter, pattern)?;
+             Ok(format!(
+                 "{{from:{value} to:{value} cc:{value} bcc:{value}}}"
+             ))
+         }
+         SearchEmailsFilterQuery::Subject(pattern) => {
+-            Ok(format!("subject:{}", value_q(filter, pattern)?))
++            Ok(format!("subject:{}", text_q(filter, pattern)?))
+         }
+         SearchEmailsFilterQuery::Body(pattern) | SearchEmailsFilterQuery::Text(pattern) => {
+-            value_q(filter, pattern)
++            text_q(filter, pattern)
+         }
+         SearchEmailsFilterQuery::Flag(flag) => flag_q(filter, flag),
+         SearchEmailsFilterQuery::Attachment => Ok(String::from("has:attachment")),
+@@ -98,23 +101,21 @@ fn not_to_q(filter: &SearchEmailsFilterQuery) -> Result<String> {
+         SearchEmailsFilterQuery::BeforeInstant(instant) => {
+             Ok(format!("-before:{}", instant.timestamp()))
+         }
+-        SearchEmailsFilterQuery::From(pattern) => {
+-            Ok(format!("-from:{}", value_q(filter, pattern)?))
+-        }
+-        SearchEmailsFilterQuery::To(pattern) => Ok(format!("-to:{}", value_q(filter, pattern)?)),
+-        SearchEmailsFilterQuery::Cc(pattern) => Ok(format!("-cc:{}", value_q(filter, pattern)?)),
+-        SearchEmailsFilterQuery::Bcc(pattern) => Ok(format!("-bcc:{}", value_q(filter, pattern)?)),
++        SearchEmailsFilterQuery::From(pattern) => Ok(format!("-from:{}", text_q(filter, pattern)?)),
++        SearchEmailsFilterQuery::To(pattern) => Ok(format!("-to:{}", text_q(filter, pattern)?)),
++        SearchEmailsFilterQuery::Cc(pattern) => Ok(format!("-cc:{}", text_q(filter, pattern)?)),
++        SearchEmailsFilterQuery::Bcc(pattern) => Ok(format!("-bcc:{}", text_q(filter, pattern)?)),
+         SearchEmailsFilterQuery::Address(pattern) => {
+-            let value = value_q(filter, pattern)?;
++            let value = text_q(filter, pattern)?;
+             Ok(format!(
+                 "-from:{value} -to:{value} -cc:{value} -bcc:{value}"
+             ))
+         }
+         SearchEmailsFilterQuery::Subject(pattern) => {
+-            Ok(format!("-subject:{}", value_q(filter, pattern)?))
++            Ok(format!("-subject:{}", text_q(filter, pattern)?))
+         }
+         SearchEmailsFilterQuery::Body(pattern) | SearchEmailsFilterQuery::Text(pattern) => {
+-            Ok(format!("-{}", value_q(filter, pattern)?))
++            Ok(format!("-{}", text_q(filter, pattern)?))
+         }
+         SearchEmailsFilterQuery::Flag(flag) => Ok(format!("-{}", flag_q(filter, flag)?)),
+         SearchEmailsFilterQuery::Attachment => Ok(String::from("-has:attachment")),
+@@ -154,6 +155,19 @@ fn group(q: &str) -> String {
+     }
+ }
+ 
++/// Renders the text of `clause` as a Gmail query value, 
 ```
 
-**File**: `Cargo.toml` (modified, +3/-3)
+**File**: `src/imap/backend.rs` (modified, +20/-8)
 ```diff
-@@ -38,7 +38,7 @@ pimalaya-cli = { version = "0.8.1", default-features = false, features = ["build
+@@ -1444,7 +1444,7 @@ fn convert_filter_with(
+         Q::BeforeInstant(instant) => {
+             SearchKey::SentBefore(imap_date(InstantBand::of(instant).end)?)
+         }
+-        Q::Address(pattern) => return address_key(pattern, negated),
++        Q::Address(pattern) => return address_key(&pattern.text, negated),
  
- [dev-dependencies]
- io-oauth = { version = "0.8", default-features = false, features = ["std", "jwt-bearer", "rustls-ring"] }
--io-pimdir = { version = "0.20.3", default-features = false, features = ["indexer", "search"] }
-+io-pimdir = { version = "0.20.4", default-features = false, features = ["indexer", "search"] }
- rusqlite = { version = "0.43", default-features = false, features = ["bundled"] }
- tempfile = { version = "3", default-features = false }
- toml = { version = "1.1", default-features = false, features = ["parse", "serde"] }
-@@ -59,8 +59,8 @@ io-jmap = { version = "0.11.1", default-features = false, optional = true }
- io-maildir = { version = "0.5", default-features = false, optional = true }
- io-managesieve = { version = "0.6", default-features = false, optional = true }
- io-mbox = { version = "0.2", default-features = false, optional = true }
--io-msgraph = { version = "0.11.0", default-features = false, optional = true }
--io-pimdir = { version = "0.20.3", default-features = false }
-+io-msgraph = { version = "0.11.1", default-features = false, optional = true }
-+io-pimdir = { version = "0.20.4", default-features = false }
- io-sasl = { version = "0.3", default-features = false, features = ["scram"] }
- io-smtp = { version = "0.10", default-features = false, optional = true }
- jiff = { version = "1", default-features = false, features = ["std", "tz-system", "tzdb-bundle-always"] }
+         Q::Date(date) => SearchKey::SentOn(imap_date(*date)?),
+ 
+@@ -1455,13 +1455,13 @@ fn convert_filter_with(
+ 
+         Q::BeforeDate(date) => SearchKey::SentBefore(imap_date(*date)?),
+ 
+-        Q::From(pattern) => SearchKey::From(astring(pattern)?),
+-        Q::To(pattern) => SearchKey::To(astring(pattern)?),
+-        Q::Cc(pattern) => SearchKey::Cc(astring(pattern)?),
+-        Q::Bcc(pattern) => SearchKey::Bcc(astring(pattern)?),
+-        Q::Subject(pattern) => SearchKey::Subject(astring(pattern)?),
+-        Q::Body(pattern) => SearchKey::Body(astring(pattern)?),
+-        Q::Text(pattern) => SearchKey::Text(astring(pattern)?),
++        Q::From(pattern) => SearchKey::From(astring(&pattern.text)?),
++        Q::To(pattern) => SearchKey::To(astring(&pattern.text)?),
++        Q::Cc(pattern) => SearchKey::Cc(astring(&pattern.text)?),
++        Q::Bcc(pattern) => SearchKey::Bcc(astring(&pattern.text)?),
++        Q::Subject(pattern) => SearchKey::Subject(astring(&pattern.text)?),
++        Q::Body(pattern) => SearchKey::Body(astring(&pattern.text)?),
++        Q::Text(pattern) => SearchKey::Text(astring(&pattern.text)?),
+         Q::MessageId(id) => message_id_key(id)?,
+         Q::Attachment => {
+             return Err(unsupported(
+@@ -1784,6 +1784,18 @@ mod tests {
+         );
+     }
+ 
++    /// IMAP matches a substring: a prefix is sent as its stem, a phrase as
++    /// one string.
++    #[test]
++    fn a_prefix_is_its_stem_and_a_phrase_one_string() {
++        assert_eq!(search_line("subject:repo*"), "A UID SEARCH SUBJECT repo");
++        assert_eq!(search_line("quart*"), "A UID SEARCH TEXT quart");
++        assert_eq!(
++            search_line("subject:\"report weekly\""),
++            "A UID SEARCH SUBJECT \"report weekly\"",
++        );
++    }
++
+     #[test]
+     fn a_message_id_is_a_header_key_rechecked_on_the_root_chain() {
+         assert_eq!(
+```
+
+**File**: `src/jmap/backend.rs` (modified, +30/-11)
+```diff
+@@ -1207,49 +1207,49 @@ fn convert_filter(
+         Q::Not(inner) => JmapFilter::not(vec![convert_filter(inner, None)]),
+ 
+         Q::Text(text) => condition(JmapEmailFilter {
+-            text: Some(text.clone()),
++            text: Some(text.text.clone()),
+             ..Default::default()
+         }),
+         Q::From(pattern) => condition(JmapEmailFilter {
+-            from: Some(pattern.clone()),
++            from: Some(pattern.text.clone()),
+             ..Default::default()
+         }),
+         Q::To(pattern) => condition(JmapEmailFilter {
+-            to: Some(pattern.clone()),
++            to: Some(pattern.text.clone()),
+             ..Default::default()
+         }),
+         Q::Cc(pattern) => condition(JmapEmailFilter {
+-            cc: Some(pattern.clone()),
++            cc: Some(pattern.text.clone()),
+             ..Default::default()
+         }),
+         Q::Bcc(pattern) => condition(JmapEmailFilter {
+-            bcc: Some(pattern.clone()),
++            bcc: Some(pattern.text.clone()),
+             ..Default::default()
+         }),
+         Q::Address(pattern) => JmapFilter::or(vec![
+             condition(JmapEmailFilter {
+-                from: Some(pattern.clone()),
++                from: Some(pattern.text.clone()),
+                 ..Default::default()
+             }),
+             condition(JmapEmailFilter {
+-                to: Some(pattern.clone()),
++                to: Some(pattern.text.clone()),
+                 ..Default::default()
+             }),
+             condition(JmapEmailFilter {
+-                cc: Some(pattern.clone()),
++                cc: Some(pattern.text.clone()),
+                 ..Default::default()
+             }),
+             condition(JmapEmailFilter {
+-                bcc: Some(pattern.clone()),
++                bcc: Some(pattern.text.clone()),
+                 ..Default::default()
+             }),
+         ]),
+         Q::Subject(pattern) => condition(JmapEmailFilter {
+-            subject: Some(pattern.clone()),
++            subject: Some(pattern.text.clone()),
+             ..Default::default()
+         }),
+         Q::Body(pattern) => condition(JmapEmailFilter {
+-            body: Some(pattern.clone()),
++            body: Some(pattern.text.clone()),
+             ..Default::default()
+         }),
+         Q::Flag(flag) => condition(JmapEmailFilter {
+@@ -1450,6 +1450,25 @@ mod tests {
+         post_match(envelope, &converted.post_filters)
+     }
+ 
++    /// JMAP matches text as the server defines it: a prefix is sent as its
++    /// stem, a phrase as one string.
++    #[test]
++    fn a_prefix_is_its_stem_and_a_phrase_one_string() {
++        let subject = |query: &str| {
++            let query: SearchEmailsQuery = query.parse().unwrap();
++            match convert_filter(query.filter.as_ref().unwrap(), None) {
++                JmapFilter::Condition(condition) => condition.subject,
++                other => panic!("{other:?}"),
++            }
++        };
++
++        assert_eq!(subject("subject:repo*").as_deref(), Some("repo"));
++        assert_eq!(
++            subject("subject:\"report weekly\"").as_deref(),
++            Some("report weekly")
++        );
++    }
++
+     #[test]
+     fn a_negated_date_clause_is_not_rechecked_as_a_positive_one() {
+         let december = sent_on("2025-12-01T10:00:00+00:00");
+```
+
+**File**: `src/msgraph/search.rs` (modified, +56/-11)
+```diff
+@@ -10,7 +10,13 @@
+ use anyhow::Result;
+ use chrono::NaiveDate;
+ 
+-use crate::unified::email::search::{error::unsupported, filter::query::SearchEmailsFilterQuery};
++use crate::unified::{
++    capability::GRAPH_DAYS,
++    email::search::{
++        error::unsupported,
++        filter::query::{SearchEmailsFilterQuery, SearchEmailsFilterText},
++    },
++};
+ 
+ /// Translates the filter half of a unified query into the quoted `$search`
+ /// value Graph takes.
+@@ -44,10 +50,7 @@ fn filter_to_kql(filter: &SearchEmailsFilterQuery) -> Result<String> {
+         SearchEmailsFilterQuery::AfterDate(date) => format!("sent>{}", date_kql(*date)),
+         SearchEmailsFilterQuery::BeforeDate(date) => format!("sent<{}", date_kql(*date)),
+         SearchEmailsFilterQuery::AfterInstant(_) | SearchEmailsFilterQuery::BeforeInstant(_) => {
+-            return Err(unsupported(
+-                filter,
+-                "Microsoft Graph search compares days alone; give a day, or `today`",
+-            ));
++            return Err(unsupported(filter, GRAPH_DAYS));
+         }
+         SearchEmailsFilterQuery::From(pattern) => format!("from:{}", value_kql(pattern)),
+         SearchEmailsFilterQuery::To(pattern) => format!("to:{}", value_kql(pattern)),
+@@ -75,12 +78,25 @@ fn filter_to_kql(filter: &SearchEmailsFilterQuery) -> Result<String> {
+     })
+ }
+ 
+-/// Renders a pattern as KQL, each word an escaped quoted phrase so KQL
+-/// syntax (`OR`, `x:y`, `alpha*`) matches as a word; a `"` is dropped.
+-fn value_kql(pattern: &str) -> String {
+-    let words: Vec<String> = pattern
++/// Renders a text as KQL, a `"` dropped.
++///
++/// A phrase is one quoted string, a prefix quoted with its `*`, and any
++/// other word an escaped quoted phrase, so KQL syntax (`OR`, `x:y`,
++/// `alpha*`) matches as a word.
++fn value_kql(text: &SearchEmailsFilterText) -> String {
++    let quote = |word: &str, star: &str| format!("\\\"{}{star}\\\"", word.replace('"', ""));
++
++    if text.phrase {
++        return quote(&text.text, "");
++    }
++    if text.prefix {
++        return quote(&text.text, "*");
++    }
++
++    let words: Vec<String> = text
++        .text
+         .split_whitespace()
+-        .map(|word| format!("\\\"{}\\\"", word.replace('"', "")))
++        .map(|word| quote(word, ""))
+         .collect();
+ 
+     match words.as_slice() {
+@@ -97,7 +113,10 @@ fn date_kql(date: NaiveDate) -> String {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+-    use crate::unified::email::flag::{Flag, IanaFlag};
++    use crate::unified::email::{
++        flag::{Flag, IanaFlag},
++        search::query::SearchEmailsQuery,
++    };
+ 
+     #[test]
+     fn a_lone_message_id_is_a_filter_and_refused_in_a_search() {
+@@ -118,12 +137,19 @@ mod tests {
+ 
+     /// KQL compares days alone: an instant is refused, coded
+     /// `search-unsupported`, nothing searched.
++    ///
++    /// The words are the capability check's for `date.instant`.
+     #[test]
+     fn an_instant_is_refused() {
+         let at = chrono::DateTime::parse_from_rfc3339("2026-11-14T10:00:00Z").unwrap();
+         let err = filter_to_search(&SearchEmailsFilterQuery::AfterInstant(at)).unwrap_err();
+         let code = pimalaya_cli::error::code_of::<crate::error::ErrorCode>(&err);
+         assert_eq!(code, Some(crate::error::ErrorCode::SearchUnsupported));
++        assert_eq!(
++            err.to_string(),
++            "Cannot search `date:2026-11-14T10:00:00+00:00..`: Microsoft Graph search \
++             compares days alone; give a day (`date:2026-11-24..`) or `today`"
++        );
+     }
+ 
+     #[test]
+@@ -187,6 +213,25 @@ mod tests {
+         assert_eq!(kql("say \"hi\""), r#"from:(\"say\" \"hi\")"#);
+     }
+ 
++    /// A prefix reaches KQL with its `*`, a phrase as one quoted string,
++    /// so neither is answered as other words.
++    #[test]
++    fn a_prefix_and_a_phrase_keep_their_meaning() {
++        let kql = |query: &str| {
++            let query: SearchEmailsQuery = query.parse().unwrap();
++            filter_to_kql(&query.filter.unwrap()).unwrap()
++        };
++
++        assert_eq!(kql("subject:repo*"), r#"subject:\"repo*\""#);
++        assert_eq!(kql("quart*"), r#"\"quart*\""#);
++        assert_eq!(kql("from:ali*"), r#"from:\"ali*\""#);
++        assert_eq!(
++            kql("subject:\"report weekly\""),
++            r#"subject:\"report weekly\""#
++        );
++        assert_eq!(kql("\"a OR b\""), r#"\"a OR b\""#);
++    }
++
+     #[test]
+     fn a_flag_clause_is_refused_by_name() {
+         let filter = SearchEmailsFilterQuery::Flag(Flag::from_iana(IanaFlag::Seen));
+```
+
+**File**: `src/unified/capability.rs` (modified, +22/-11)
+```diff
+@@ -772,10 +772,15 @@ const JMAP_DATE: &str = "under `or` or `not`, compared with the received date ra
+ 
+ /// Where a server matching substrings differs from the words pimdir SEARCH
+ /// matches (§8.5).
+-const SUBSTRING: &str = "a substring as the server matches it, where the query matches whole words; RFC 3501 asks for a case-insensitive substring, some servers (Cyrus, Fastmail) match whole words";
++const SUBSTRING: &str = "a substring as the server matches it, where the query matches whole words, a prefix sent as its stem and a phrase as one string; RFC 3501 asks for a case-insensitive substring, some servers (Cyrus, Fastmail) match whole words, so a prefix finds only the whole word there and a phrase its words in any order";
+ 
+ /// Where JMAP's text conditions differ.
+-const JMAP_TEXT: &str = "text as the server defines `text` and the header conditions (RFC 8621 section 4.4.1), often a substring";
++const JMAP_TEXT: &str = "text as the server defines `text` and the header conditions (RFC 8621 section 4.4.1), often a substring, a prefix sent as its stem and a phrase as one string";
++
++/// Why Graph answers no instant, nor an amount back from now: the one
++/// refusal its capability check and its translation give.
++pub(crate) const GRAPH_DAYS: &str =
++    "Microsoft Graph search compares days alone; give a day (`date:2026-11-24..`) or `today`";
+ 
+ /// Why Graph answers no flag.
+ const GRAPH_FLAG: &str = "KQL has no flag property, and Graph takes no `$filter` beside `$search`";
+@@ -785,17 +790,19 @@ const NO_RANK: &str = "no ranking without an index; a pimdir store's index ranks
+ 
+ /// Gmail.
+ const GMAIL: &[Row] = storage_rows![
+-    (C::Search(O::Text), Full),
+-    (C::Search(O::Title), Full),
++    (C::Search(O::Text), Partial(GMAIL_TEXT)),
++    (C::Search(O::Title), Partial(GMAIL_TEXT)),
+     (
+         C::Search(O::Body),
+-        Partial("a word anywhere in the message, headers included")
++        Partial(
++            "a word anywhere in the message, headers included; a prefix (a trailing `*`) refused, Gmail having no prefix search"
++        )
+     ),
+-    (C::Search(O::From), Full),
+-    (C::Search(O::To), Full),
+-    (C::Search(O::Cc), Full),
+-    (C::Search(O::Bcc), Full),
+-    (C::Search(O::With), Full),
++    (C::Search(O::From), Partial(GMAIL_TEXT)),
++    (C::Search(O::To), Partial(GMAIL_TEXT)),
++    (C::Search(O::Cc), Partial(GMAIL_TEXT)),
++    (C::Search(O::Bcc), Partial(GMAIL_TEXT)),
++    (C::Search(O::With), Partial(GMAIL_TEXT)),
+     (C::Search(O::IsRead), Full),
+     (C::Search(O::IsFlagged), Full),
+     (C::Search(O::IsAnswered), Not("Gmail has no label for it")),
+@@ -852,6 +859,10 @@ const GMAIL: &[Row] = storage_rows![
+     (C::SubmitCopy, Full),
+ ];
+ 
++/// Where Gmail's text clauses differ.
++const GMAIL_TEXT: &str =
++    "whole words and phrases; a prefix (a trailing `*`) refused, Gmail having no prefix search";
++
+ /// Where Gmail's date clauses differ.
+ const GMAIL_DATE: &str = "compared with the received date, in UTC days, rather than `Date:`";
+ 
+@@ -872,7 +883,7 @@ const MSGRAPH: &[Row] = storage_rows![
+     (C::Search(O::Tag), Not(GRAPH_FLAG)),
+     (C::Search(O::HasAttachment), Full),
+     (C::Search(O::Date), Full),
+-    (C::Search(O::DateInstant), Not("KQL compares days")),
++    (C::Search(O::DateInstant), Not(GRAPH_DAYS)),
+     (
+         C::Search(O::Mid),
+         Partial("alone, Graph taking no `$filter` beside `$search`")
+```
+
+**File**: `src/unified/email/search/filter/query.rs` (modified, +51/-16)
+```diff
+@@ -33,21 +33,21 @@ pub enum SearchEmailsFilterQuery {
+     /// Emails sent strictly before that instant, to the second.
+     BeforeInstant(DateTime<FixedOffset>),
+     /// Emails holding the text anywhere: a header or a text body.
+-    Text(String),
++    Text(SearchEmailsFilterText),
+     /// Emails whose `From:` header holds the text.
+-    From(String),
++    From(SearchEmailsFilterText),
+     /// Emails whose `To:` header holds the text.
+-    To(String),
++    To(SearchEmailsFilterText),
+     /// Emails whose `Cc:` header holds the text.
+-    Cc(String),
++    Cc(SearchEmailsFilterText),
+     /// Emails whose `Bcc:` header holds the text.
+-    Bcc(String),
++    Bcc(SearchEmailsFilterText),
+     /// Emails whose `From:`, `To:`, `Cc:` or `Bcc:` header holds the text.
+-    Address(String),
++    Address(SearchEmailsFilterText),
+     /// Emails whose `Subject:` header holds the text.
+-    Subject(String),
++    Subject(SearchEmailsFilterText),
+     /// Emails one of whose text bodies holds the text.
+-    Body(String),
++    Body(SearchEmailsFilterText),
+     /// Emails carrying the flag.
+     Flag(Flag),
+     /// Emails holding at least one attachment.
+@@ -57,6 +57,41 @@ pub enum SearchEmailsFilterQuery {
+     MessageId(String),
+ }
+ 
++/// The text of a text or address leaf: a word, a prefix or a phrase, as
++/// the query wrote it (pimdir SEARCH §8.3).
++#[derive(Clone, Debug, Eq, PartialEq)]
++pub struct SearchEmailsFilterText {
++    /// The text, without its quotes or its wildcard.
++    pub text: String,
++    /// Whether it was quoted: its words match together, in order.
++    pub phrase: bool,
++    /// Whether a trailing `*` makes it a prefix.
++    pub prefix: bool,
++}
++
++/// A plain word, neither a prefix nor a phrase.
++impl From<&str> for SearchEmailsFilterText {
++    fn from(text: &str) -> Self {
++        Self {
++            text: text.to_owned(),
++            phrase: false,
++            prefix: false,
++        }
++    }
++}
++
++/// Renders the text as the language writes it: a phrase quoted, a prefix
++/// followed by its `*`.
++impl fmt::Display for SearchEmailsFilterText {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
++        match (self.phrase, self.prefix) {
++            (true, _) => write!(f, "\"{}\"", self.text.replace('"', " ")),
++            (false, true) => write!(f, "{}*", Text(&self.text)),
++            (false, false) => write!(f, "{}", Text(&self.text)),
++        }
++    }
++}
++
+ /// Renders the filter in the pimdir SEARCH language, so an error can quote
+ /// the clause it is about as the user would write it.
+ impl fmt::Display for SearchEmailsFilterQuery {
+@@ -72,14 +107,14 @@ impl fmt::Display for SearchEmailsFilterQuery {
+             Q::AfterInstant(instant) => write!(f, "date:{}..", instant.to_rfc3339()),
+             Q::BeforeDate(date) => write!(f, "date:..{}", date.pred_opt().unwrap_or(*date)),
+             Q::BeforeInstant(instant) => write!(f, "date:..{}", instant.to_rfc3339()),
+-            Q::Text(text) => write!(f, "{}", Text(text)),
+-            Q::From(text) => write!(f, "from:{}", Text(text)),
+-            Q::To(text) => write!(f, "to:{}", Text(text)),
+-            Q::Cc(text) => write!(f, "cc:{}", Text(text)),
+-            Q::Bcc(text) => write!(f, "bcc:{}", Text(text)),
+-            Q::Address(text) => write!(f, "with:{}", Text(text)),
+-            Q::Subject(text) => write!(f, "subject:{}", Text(text)),
+-            Q::Body(text) => write!(f, "body:{}", Text(text)),
++            Q::Text(text) => write!(f, "{text}"),
++            Q::From(text) => write!(f, "from:{text}"),
++            Q::To(text) => write!(f, "to:{text}"),
++            Q::Cc(text) => write!(f, "cc:{text}"),
++            Q::Bcc(text) => write!(f, "bcc:{text}"),
++            Q::Address(text) => write!(f, "with:{text}"),
++            Q::Subject(text) => write!(f, "subject:{text}"),
++            Q::Body(text) => write!(f, "body:{text}"),
+             Q::Flag(flag) => match flag.raw() {
+                 "\\Seen" => write!(f, "is:read"),
+                 "\\Flagged" => write!(f, "is:flagged"),
+```
+
+**File**: `src/unified/email/search/query.rs` (modified, +36/-6)
+```diff
+@@ -9,7 +9,7 @@ use ariadne::{Config, Label, Report, ReportKind, Source};
+ use chrono::{DateTime, FixedOffset, NaiveDate};
+ use io_pimdir::search::query::{
+     PimdirQuery, PimdirQueryDate, PimdirQueryDateRange, PimdirQueryError, PimdirQueryErrorCode,
+-    PimdirQueryPredicate, PimdirQueryTextField,
++    PimdirQueryPredicate, PimdirQueryText, PimdirQueryTextField,
+ };
+ use jiff::{Timestamp, tz::TimeZone};
+ use pimalaya_cli::error::CodedError;
+@@ -21,7 +21,7 @@ use crate::{
+         email::{
+             flag::Flag,
+             search::{
+-                filter::query::SearchEmailsFilterQuery,
++                filter::query::{SearchEmailsFilterQuery, SearchEmailsFilterText},
+                 sort::query::{
+                     SearchEmailsSorter, SearchEmailsSorterKind, SearchEmailsSorterOrder,
+                 },
+@@ -238,12 +238,12 @@ fn lower(query: &PimdirQuery, now: i64, zone: &TimeZone) -> Result<SearchEmailsF
+         PimdirQuery::Group(operand) => lower(operand, now, zone)?,
+         PimdirQuery::Term(term) => match &term.predicate {
+             PimdirQueryPredicate::Text { field, text } => match field {
+-                PimdirQueryTextField::Title => Q::Subject(text.text.clone()),
+-                PimdirQueryTextField::Body => Q::Body(text.text.clone()),
+-                _ => Q::Text(text.text.clone()),
++                PimdirQueryTextField::Title => Q::Subject(leaf(text)),
++                PimdirQueryTextField::Body => Q::Body(leaf(text)),
++                _ => Q::Text(leaf(text)),
+             },
+             PimdirQueryPredicate::Address { role, text } => {
+-                let text = text.text.clone();
++                let text = leaf(text);
+                 match role.map(|role| role.as_str()) {
+                     Some("from") => Q::From(text),
+                     Some("to") => Q::To(text),
+@@ -266,6 +266,15 @@ fn lower(query: &PimdirQuery, now: i64, zone: &TimeZone) -> Result<SearchEmailsF
+     Ok(lowered)
+ }
+ 
++/// The text of a leaf, its prefix and phrase marks kept.
++fn leaf(text: &PimdirQueryText) -> SearchEmailsFilterText {
++    SearchEmailsFilterText {
++        text: text.text.clone(),
++        phrase: text.phrase,
++        prefix: text.prefix,
++    }
++}
++
+ /// A date range as the clauses bounding it: a side a calendar point
+ /// names as a day, the others as an instant.
+ fn dates(
+@@ -376,3 +385,24 @@ impl std::str::FromStr for SearchEmailsQuery {
+         Self::new(query, order, 1_795_262_400, TimeZone::UTC)
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::SearchEmailsQuery;
++
++    /// The lowered filter keeps a prefix and a phrase, as the server
++    /// translations and their refusals read them.
++    #[test]
++    fn a_prefix_and_a_phrase_survive_the_lowering() {
++        for text in [
++            "subject:repo*",
++            "zebr*",
++            "from:ali*",
++            "subject:\"report weekly\"",
++            "\"a b\"",
++        ] {
++            let query: SearchEmailsQuery = text.parse().unwrap();
++            assert_eq!(query.filter.unwrap().to_string(), text);
++        }
++    }
++}
+```
+
+**File**: `src/unified/envelope/search.rs` (modified, +13/-10)
+```diff
+@@ -31,11 +31,14 @@ use crate::{
+ /// The query is pimdir SEARCH §8, the language `pimdir search`, Calendula
+ /// and Cardamum read: `from:alice date:2026-11.. is:unread "weekly sync"`.
+ /// A text term is matched as the backend matches text: whole words on
+-/// Maildir, mbox, pimdir, Gmail and Microsoft Graph, a substring on IMAP
+-/// and JMAP. A date reads the `Date:` header, the sent-at, but where the
+-/// server compares the received date: on Gmail, and on JMAP under `or` or
+-/// `not`. A field the backend cannot search is refused with
+-/// `search-unsupported`, never dropped.
++/// Maildir, mbox, pimdir, Gmail and Microsoft Graph, as the server matches
++/// it on IMAP and JMAP (a substring by the RFCs, whole words on some
++/// servers). A prefix (`repo*`) is a prefix there, its stem sent as a
++/// substring on IMAP and JMAP, and refused on Gmail, which has no prefix
++/// search; a phrase is sent whole. A date reads the `Date:` header, the
++/// sent-at, but where the server compares the received date: on Gmail,
++/// and on JMAP under `or` or `not`. A field the backend cannot search is
++/// refused with `search-unsupported`, never dropped.
+ ///
+ /// A message the listing cannot read is an entry of `errors`, the rest
+ /// of the page still listed; the command then exits 3.
+@@ -92,11 +95,11 @@ pub struct EnvelopeSearchCommand {
+     ///   brackets optional.
+     ///
+     /// Days and instants with no offset are read in the local zone (`TZ`,
+-    /// then the system's). A trailing `*` makes a word a prefix. A word or
+-    /// value beginning with `~`, a word or value of two characters or more
+-    /// beginning with `/`, and a value beginning with `{` are reserved and
+-    /// refused (`reserved-form`): quote them to search the characters,
+-    /// `"~tilde"`.
++    /// then the system's). A trailing `*` makes a word a prefix, refused on
++    /// Gmail. A word or value beginning with `~`, a word or value of two
++    /// characters or more beginning with `/`, and a value beginning with `{`
++    /// are reserved and refused (`reserved-form`): quote them to search the
++    /// characters, `"~tilde"`.
+     #[arg(value_name = "QUERY")]
+     pub query: Option<Vec<String>>,
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2072,37 +2630,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: align the readme, changelog and guides on ortie's for v3
+## X. docs: fold the v3 pre-tag fixes into the spec, changelog and guide
 
 **RULE**:
-When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `869fe31f`: docs: align the readme, changelog and guides on ortie's for v3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91f04312`: docs: fold the v3 pre-tag fixes into the spec, changelog and guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Thank you for investing your time in contributing to Himalaya.
-2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide, which chains to the shared architecture and guidelines;
-3. the inline header documentation, starting with src/lib.rs: it is the architecture document of this crate;
-4. the cairn/ folder, which follows [Cairn](https://github.com/pimalaya/cairn): spec/ is current truth, changes/ holds in-flight proposals (landed ones move to changes/archive/), and log/ is the dated history; `sh cairn/verify.sh` checks the structure.
+
+  It takes exactly one part id, no id or several being refused `usage-invalid`, exit 2, before connecting.
+
+- Added `from`, `date` and `flags` to each `imap thread` entry, the flags as the server spells them, as `imap fetch` prints them.
+- Added `pimdir thread`, listing the thread of a message from the search index, oldest first, a member the store cannot read under `errors` (exit 3).
+- Added `pimdir tag`, queueing a flag change on every message a query matches, `--dry-run` queueing nothing, a placement whose flags were never read printing `flags` `null`.
+  `order by` is now `--sort newest-first|oldest-first|title|sender|relevance`, Maildir and mbox match whole words, and a `~`, `/` or `{` form is reserved (`search-invalid`). A clause the backend cannot search fails `search-unsupported`: a prefix (`repo*`) on Gmail, an instant or an amount back from now (`date:2d`) on Microsoft Graph, which compares days. MIGRATION.md maps every v2 clause.
+- **BREAKING**: Changed `jmap email read --json` to print `{emails, errors}`, each email as the server sent it, an id not found an `errors` entry coded `message-not-found` (exit 3).
+- **BREAKING**: Changed `sieve deactivate --json` to print `{id
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-Thank you for investing your time in contributing to Himalaya CLI.
-2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide (Nix environment, build and check commands, dependency overrides, commit style), which chains to the shared architecture and guidelines;
-3. the inline header documentation in src/lib.rs: it is the architecture document of this crate, covering the backends and plumbing, the three command families, and the shared versus protocol-specific surface;
-4. the cairn/ folder, which follows [Cairn](https://github.com/pimalaya/cairn) (spec/ is current truth, changes/ holds in-flight proposals, log/ is the dated history, landed changes moving to changes/archive/), activated by AGENTS.md; `sh cairn/verify.sh` checks its structure.
+- Added `from`, `date` and `flags` to each `imap thread` entry.
+- Added `pimdir thread`, listing the thread of a message from the search index, oldest first.
+- Added `pimdir tag`, queueing a flag change on every message a query matches, `--dry-run` queueing nothing.
+  `order by` is now `--sort newest-first|oldest-first|title|sender|relevance`, Maildir and mbox match whole words, and a `~`, `/` or `{` form is reserved (`search-invalid`). A clause the backend cannot search fails `search-unsupported`; MIGRATION.md maps every v2 clause.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `869fe31f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91f04312` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

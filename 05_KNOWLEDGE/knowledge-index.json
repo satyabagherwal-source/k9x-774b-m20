@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T21:44:29.360Z",
+  "last_updated": "2026-11-26T21:53:00.794Z",
   "total_verified_learnings": 9136,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26207,
+  "total_items": 26212,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113949,10 +113949,10 @@
       "relative_path": "08_VERIFICATION/pimalaya-himalaya-verification-protocol-empirical-defect-shield-for-pimalaya-him.md",
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya/himalaya",
       "repository": "pimalaya/himalaya",
-      "source_version": "fceae497",
-      "content_hash": "f3a2b8b60f497e557f9604f4bc7ff62fea14d4c0229a9b7bf4779723c698ff64",
+      "source_version": "24f28e0f",
+      "content_hash": "6b65b8e5d4aab02fb301bb241f79d18edb5818fca2fde5fee4d6e7389fdf0d99",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:41:44.269Z"
+      "persisted_at": "2026-11-26T21:52:43.285Z"
     },
     "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731": {
       "item_id": "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731",
@@ -114010,9 +114010,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya-himalaya-learnings",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "76d6a7601388e2e5171e26a4bbb2b06a2266363cf172d1cd31c7c261b6396bec",
+      "content_hash": "e69e8641d188a2c9f9c9ece5b6f170a59618c98f777530aa3bec1e9c97843b35",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:41:55.103Z"
+      "persisted_at": "2026-11-26T21:52:59.219Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
@@ -222644,8 +222644,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "ff2624ee",
-      "content_hash": "8ff98ff241c8033d4b3a9fc55f13e414efd5b699fcb864bcb7f037edba413d0d",
+      "source_version": "e03ef4b2",
+      "content_hash": "204457053aa7735b562143d076e5d72adf9b0a0af82d05cf77c9e1b45c82798c",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -222710,7 +222710,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T03:13:12.957Z",
+      "verified_at": "2026-11-26T21:52:54.477Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222764,10 +222764,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "ff2624ee",
-      "content_hash": "33997d09eed74f5c0729964432a5fd873500c3afbbb12959578f45b5c560fab2",
+      "source_version": "e03ef4b2",
+      "content_hash": "13eda5e48d9eeff8216d876e7b0358c887a26b68d3f517174eea4c5c5a23400e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:13:13.869Z"
+      "persisted_at": "2026-11-26T21:52:55.382Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -227208,7 +227208,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
       "source_version": "hf-fermionresearch-phonon-2",
-      "content_hash": "630ff7a61817fa39f351dde20fdced35e57f4fe947f7ef7c3a911e7d9f5ca6c1",
+      "content_hash": "bf624b86d15c271111bb0620b18fe9cfd20bbb6c366d2f37e1be41845d059f6b",
       "dossier_path": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "promoted_rules": [],
@@ -227217,7 +227217,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T09:29:46.934Z",
+      "verified_at": "2026-11-26T21:52:40.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227234,9 +227234,9 @@
       "title": "Research & Knowledge Intelligence: FermionResearch/Phonon-2 Core Invariants",
       "repository": "FermionResearch/Phonon-2",
       "source_version": "hf-fermionresearch-phonon-2",
-      "content_hash": "21a681872f7c29066686563fa8249e7bc19606a412c48bf7216ada5a9e58e95b",
+      "content_hash": "d09593e6b7c23a1a7bc02544eabb7468146b6952e39e4b68e375524823619021",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T09:29:47.524Z"
+      "persisted_at": "2026-11-26T21:52:40.721Z"
     },
     "learn-github-founded-labs-react-native-reusables": {
       "learning_id": "learn-github-founded-labs-react-native-reusables",
@@ -227457,9 +227457,9 @@
       "title": "Research & Knowledge Intelligence: hf-fermionresearch-phonon-2-learnings Core Invariants",
       "repository": "hf-fermionresearch-phonon-2-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e692ee9e297b2cdb9321174ebab080e8324c73d400363f450bfe208b9455dc8",
+      "content_hash": "c83910522f1182bcd44e604762648853a6cd86ab0e23c862c05cd86dd993a84f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T09:29:52.800Z"
+      "persisted_at": "2026-11-26T21:52:59.633Z"
     },
     "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning": {
       "item_id": "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning",
@@ -247079,13 +247079,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-readme-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-W2CQ-empirical-invariant-guard-in-readme-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-9KOO-empirical-invariant-guard-in-readme-md.md",
       "title": "Empirical Invariant Guard in README.md",
-      "repository": "vcaesar-riot-learnings",
+      "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "9bb723f33966d319bf4c89973aa932b4b1ff99fd5edd7b6dcd1e24d12b08f2ef",
+      "content_hash": "f9ad1f3b46dc1076710561f3cf05ff2896077617cfab2fc76900ef57b6add203",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T20:52:09.590Z"
+      "persisted_at": "2026-11-26T21:53:00.411Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning",
@@ -250987,8 +250987,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "fceae497",
-      "content_hash": "f23cd9bb58f88998c6337f89a6580d5feb8a98bc696dc7e2f3fccad7b7f26234",
+      "source_version": "24f28e0f",
+      "content_hash": "3484557a7fadf415f7c3f0d8ffdb0281602a2d9bb6169235f8b0716c33f61cf6",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -251036,6 +251036,11 @@
           "number": 10542,
           "title": "align the readme, changelog and guides on ortie's for v3",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10780,
+          "title": "fold the v3 pre-tag fixes into the spec, changelog and guide",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -251043,7 +251048,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T14:41:43.431Z",
+      "verified_at": "2026-11-26T21:52:42.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251370,9 +251375,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lioensky-vcptoolbox-learnings",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "b729711ba3f5308460a445152807ab0304593badd29e84a7288614c56008af5e",
+      "content_hash": "b8a6a4e5d641100c9d0fe151c4bc7f5730b6f94a018e4c08144bcc5a2f75a147",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:45:58.653Z"
+      "persisted_at": "2026-11-26T21:53:00.794Z"
     },
     "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
@@ -303763,10 +303768,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lioensky-vcptoolbox-architecture-intelligence-lioensky-vcptoolbox-core-invariant.md",
       "title": "Architecture Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "a2c33d06",
-      "content_hash": "fda1998493b214b1c63b656f8b3bf378847c11db7369b07ebba59405bac6f986",
+      "source_version": "e03ef4b2",
+      "content_hash": "825f406ac560698f92ebc17c22518e58d5eb3ec824147330fbd19fb2e5401290",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T21:24:11.661Z"
+      "persisted_at": "2026-11-26T21:52:55.172Z"
     },
     "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants",
@@ -303812,9 +303817,9 @@
       "title": "Architecture Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "60beb697546a8f0eec80dc7f2e84f247281b22ef123b352e8c4039c0ef4618f7",
+      "content_hash": "e4e90cf2760440d153195fe94982bcd67a5e37aadfc1b06a9482982e97188273",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T21:24:16.833Z"
+      "persisted_at": "2026-11-26T21:53:00.605Z"
     },
     "rule-9449": {
       "learning_id": "rule-9449",
@@ -359403,6 +359408,68 @@
       "content_hash": "6e7d52eeb5c8269203dcd8029651c02856f36b6cc215529c57115aadf602ee5a",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T21:17:47.920Z"
+    },
+    "rule-10780": {
+      "learning_id": "rule-10780",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10780,
+      "title": "fold the v3 pre-tag fixes into the spec, changelog and guide",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "24f28e0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T21:52:42.371Z"
+    },
+    "candidate_directive-fold-the-v3-pre-tag-fixes-into-the-spec-changelog-and-guide": {
+      "item_id": "candidate_directive-fold-the-v3-pre-tag-fixes-into-the-spec-changelog-and-guide",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-975V-fold-the-v3-pre-tag-fixes-into-the-spec-changelog-and-guide.md",
+      "title": "fold the v3 pre-tag fixes into the spec, changelog and guide",
+      "repository": "pimalaya/himalaya",
+      "source_version": "24f28e0f",
+      "content_hash": "170fe31a2ae601274b985fbbc98bc3420ea14c1fb76277a5e8195530472b4d5b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T21:52:42.884Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-pimalaya-himalaya-search-distribution-intelligence-pimalaya-himalaya-core-invari.md",
+      "title": "Search & Distribution Intelligence: pimalaya/himalaya Core Invariants",
+      "repository": "pimalaya/himalaya",
+      "source_version": "24f28e0f",
+      "content_hash": "77a58673f13849228603619cf6ceb53959abdf526eb46af90814748f67a7504e",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T21:52:43.084Z"
+    },
+    "candidate_directive-docs-fold-the-v3-pre-tag-fixes-into-the-spec-changelog-and-guide": {
+      "item_id": "candidate_directive-docs-fold-the-v3-pre-tag-fixes-into-the-spec-changelog-and-guide",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9JFZ-docs-fold-the-v3-pre-tag-fixes-into-the-spec-changelog-and-guide.md",
+      "title": "docs: fold the v3 pre-tag fixes into the spec, changelog and guide",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "21a47ecf2cd1715834aaf7ce531b1acb6fcd15852f69a975ef57f96e79707a83",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T21:52:58.803Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-learnings-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-pimalaya-himalaya-learnings-search-distribution-intelligence-pimalaya-himalaya-l.md",
+      "title": "Search & Distribution Intelligence: pimalaya-himalaya-learnings Core Invariants",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6d5884e3d8112636579ef9efbf402b14d0e6f368f89d4f8fd139f550c5a8bb73",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T21:52:59.020Z"
     }
   },
   "ai-builder-brain": {

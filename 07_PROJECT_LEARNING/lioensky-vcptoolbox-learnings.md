@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `ff2624ee`  
+> **Source Version**: `e03ef4b2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T03:13:12.036Z  
+> **Timestamp**: 2026-11-26T21:52:54.154Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T03:13:12.031Z  
+> **Harvest Timestamp**: 2026-11-26T21:52:54.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1785,13 +1785,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #646** (2026-11-26): **feat(Plugin): 新增可选的 SpecStreamSearch 联网搜索插件（默认禁用）**
+  *Symptoms*: 说明一下：插件调用的是我们公司 SpecStream 的搜索 API。  新增 `Plugin/SpecStreamSearch`，结构和 KeenableSearch 一致：一个 JS 文件、node:test 测试、README、`config.env.example`，以 `plugin-manifest.json.block` 提交，默认禁用，改名后才会加载，其他搜索插件不受影响。  - 调用 `POST https://api.specstream.ai/v1/web-search`，Key 以 `Authorization: Bearer` 发送。必须填写 `SpecStreamKey`，没填时插件直接返回错误，不发出任何请求 - 事实类问题会在结果列表前给出答案和来源页，例如 “capital of Australia” 返回 Canberra 以及它所在的维基百科页面 - 参数和 KeenableSearch 相同：`query`、`max_results`（1 到 20）、`site`、`published_after`。`site` 和 `published_after` 以 `site:`、`after:` 运算符写进查询，由服务端对每条结果强制执行；`site` 只接受域名字符 - SpecStream 的搜索 API 在 WideSearch 全部 200 个任务上 item F1 为 64.0，高于 Parallel 的 57.6 和 Exa 的 56.1，评测方法见 https://specstream.ai/benchmarks - 价格：标准档每千次 5 美元，`SpecStreamSpeed=fast` 快速档每千次 1 美元，新账号自带 10 美元额度 - 401、402（余额不足）、429 和其他错误都返回中文提示，并附上 API 自己的错误信息；请求设置 `redirect: 'error'`，Key 不会被转发到别的地址 - 用 Node 自带的 fetch，没有新依赖，也不需要 package.json  验证 - `node --test Plugin/SpecStreamSearch/SpecStreamSearch.test.js`：5/5 通过（fetch 全部 mock），KeenableSearch 的测试仍然 5/5 - 本地 stdin 实测：“VCPToolBox 插件 开发 文档” 返回 VCP 同步异步插件开发手册；`site: wikipedia.org` 的 “capital of Australia” 返回答案 Canberra 和维基百科来源；错误 Key 返回 “SpecStream API 认证失败（HTTP 401），请检查 SpecStreamKey。”  English: an opt-in SpecStream search plugin, shipped disabled like KeenableSearch. It needs `SpecStreamKey` and sends nothing without it; fact questions also get the answer with its source page. 
+
 - **Issue #645** (2026-11-25): **RiverMemo V6.1：用拓扑虫洞与路线态 Ω 运输查询方向**
   *Symptoms*: ## 改动 用已发布 CSR 和实际首跳流计算路线态 Ω，运输候选共用的查询方向，替代读出时的 XW SQL 见证与专项加分。全网 Ω、普通 Hop-1 代理、Sense、召回及资产格式不变。更新读出文档并包含旋转不变量单测。本 PR 仅提交源码与文档；使用新读出需重新构建或加载对应原生模块，无须重训资产。  ## 验证 - Windows x64 实验构建已通过三查询 × 两轨的 LightMemo 冒烟检查，六个有序召回池与基线一致。 - 维护者定向人工评测：30 组虫洞查询整体有可辨提升，未完全达到预期；抽测 10 组常规黄金基准未观察到退行，其中 1 组第 6、7 名互换，判断略优。非随机样本，不据此推算普遍胜率。 - 实验工作区 Rust 单测 267 通过；两项依赖私有夹具的测试未随 PR 提交。
-
-- **Issue #644** (2026-11-25): **feat(context): 基于上游用量的 token 计量与出站前上下文预算检查**
-  *Symptoms*: ## 背景  - 管理面板「最终上下文」的 token 数用 cl100k_base 计算，对中文偏大约一半。 - `contextTokenLimit` 的裁剪发生在展开（Agent 变量、RAG、预处理器、角色分割）之前，按字符数估算，量到的不是模型真正收到的体积；工具循环里再次请求上游时完全没有检查，单次工具结果很大时会直接撞上游的上下文上限。  ## 改动  **计量** - 新增 `modules/contextBudget.js` 作为统一估算入口：汉字按 2、其余按 1，除以 3；图片按固定值，不把 Base64 当文本数。请求路径上不跑分词器（实测同步分词每 MB 文本 130~380ms，会卡住事件循环）。 - 用上游返回的 `usage.prompt_tokens` 按请求、按模型持续校准估算（很小的请求不参与校准；Anthropic 风格用量把缓存读写部分加回）。 - 流式请求默认带 `stream_options.include_usage`（`UpstreamStreamIncludeUsage`，上游不支持时自动回退）。 - 「最终上下文」面板只显示一个 Token 数：有上游用量用上游的，没有就用本地估算。  **出站前预算检查**（`ContextBudgetGuard=off|observe|enforce`，默认 `observe`，默认行为与现在一致，只多一行日志） - 检查点在所有展开完成之后、发往上游之前；工具循环每次再发上游之前也检查一次。 - `enforce` 下超预算时，先把当前轮之前的工具结果压成「开头 + 省略说明 + 结尾」（循环内的工具回执和历史 assistant 正文里的工具结果块都处理，按起止标记配对扫描，代码围栏里的示例不动，保留调用记录编号），仍超才拒绝：非流式返回 400 `context_length_exceeded`，流式返回带说明的 SSE 块，说明里列出系统提示、历史、本轮、工具定义各自的估算。工具循环中仍超则停止循环并告知用户。 - 新增可选的 `ContextBudgetHardCap`：服务端硬上限，与请求里的 `contextTokenLimit` 取小，请求没带上限时也生效。 - 非法的上限（负数、非数字）视为没有。  **裁剪**（仍受 `ContextPruneEnabled` 控制，默认关闭） - 挪到展开之后执行，按 token 而不是字符估算。 - 工具调用和它的结果作为一个单元同进同退；当前轮（最后一条用户发言到末尾）完整保留；裁剪后开头不留没有对应提问的回复。 - 新增 `ContextPruneTargetRatio`（默认 1，行为不变）：调低后按固定档位成批删除，对话在同一档内增长时保留的前缀不变，对上游提示缓存更友好。  ## 兼容性  - 默认配置下不改变任何请求的内容：`ContextBudgetGuard=observe`、`ContextPruneEnabled=false`、`ContextBudgetHardCap` 为空。 - `fetchWithRetry` 本体未改，`include_usage` 通过外层包装注入。  ## 测试  - 新增 `tests/contextBudget.test.js`、`tests/streamUsageOption.test.js`、`tests/finalContextStoreTokens.test.js`；连同原有的 `tests/jevContextPrune.test.js
-  **Post-Mortem & Fix Analysis**:
-  > cl100k_base 无法对claude gpt gemini的任何模型进行实际有效的token统计，这个pr前提不成立。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1808,870 +1806,477 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0868bc6d` (2026-11-25)
-**Commit Message**: fix(context): recognise role-split tool results, keep observe read-only, tiered slimming
-
-Follow-up to the review of this branch.
-
-- tool results that the role divider splits out of earlier replies are
-  recognised as tool results: they stay in one unit with the call that
-  produced them, do not count as the start of the current turn, and are
-  slimmed block by block
-- the current turn starts at the last message the user actually wrote;
-  continue prompts and other system-authored user messages do not count
-- observe / off never rewrite message content, also when pruning is on
-- code fences are tracked with a line-based state machine (4+ backticks,
-  tildes, inline backticks); cuts never split a surrogate pair
-- slimming is tiered by distance: older history becomes a compact stub,
-  the last few turns keep a roomier head and tail, earlier steps of the
-  current turn come last; sizes are configurable
-- the prune boundary is remembered per conversation in memory and only
-  moves forward, so a small drop in size does not bring dropped messages
-  back
-- usage calibration and the include_usage channel memory follow the model
-  that actually answered after a fallback; image-heavy request
-
-**File**: `AdminPanel-Vue/src/views/FinalContextViewer.vue` (modified, +4/-2)
-```diff
-@@ -1059,7 +1059,7 @@ function formatNumber(value: number | undefined): string {
- }
- 
- // 只展示一个 Token 总数：上游返回了 usage 就用它，否则用本地计数，界面不区分来源。
--// 分块只展示占比，分项数字和总数口径不同，并列显示会造成误读。
-+// 分块展示占比和按占比折算的大约数量：折算以上面这个总数为准，各块加起来与总数一致。
- function contextTokens(summary: { totalTokenCount?: number; upstreamUsage?: FinalContextUpstreamUsage | null } | undefined): number {
-   return summary?.upstreamUsage?.promptTokens || summary?.totalTokenCount || 0
- }
-@@ -1068,7 +1068,9 @@ function formatShare(tokenCount: number | undefined): string {
-   const total = snapshot.value?.summary.totalTokenCount || 0
-   if (!total || !tokenCount) return '0%'
-   const percent = (tokenCount / total) * 100
--  return `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
-+  const share = `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
-+  const approx = Math.round((tokenCount / total) * contextTokens(snapshot.value?.summary))
-+  return approx > 0 ? `${share}（约 ${formatNumber(approx)}）` : share
- }
- 
- function blockToSearchText(block: FinalContextBlockSummary): string {
-```
-
-**File**: `config.env.example` (modified, +14/-0)
-```diff
-@@ -872,8 +872,20 @@ UpstreamStreamIncludeUsage=true
- #   enforce  超出上限时先把历史里较早的工具结果压缩成摘要（保留开头结尾和调用记录编号，当前轮不动）；
- #            压缩后仍超出的请求不再发往上游，直接返回说明（含估算值、上限和各部分占用）；
- #            工具循环中同样先压缩，仍超出才停止循环并告知用户
-+# 注意：默认的 observe 不提供任何保护，只用来观察。要真正防止请求撞上游的上下文上限，需要改成 enforce。
-+# observe / off 不改写任何消息内容，与下面的 ContextPruneEnabled 互不影响。
- # 建议先用 observe 看一段时间日志，确认各 Agent 的 contextTokenLimit 不是遗留的小数值再改成 enforce。
- ContextBudgetGuard=observe
-+# 压缩工具结果时保留多少（字符）。只在 enforce 且超出上限时生效，未超出时一个字都不动。
-+#   远的历史压成紧凑存根：开头 ContextSlimHeadChars + 结尾 ContextSlimTailChars，短于 ContextSlimMinChars 的不压；
-+#   最近 ContextSlimRecentTurns 轮的历史先留宽一些（ContextSlimRecentHeadChars + ContextSlimRecentTailChars），
-+#   还不够才压成紧凑存根。消息条数、角色顺序、用户和助手说的话都不变。
-+ContextSlimHeadChars=500
-+ContextSlimTailChars=200
-+ContextSlimMinChars=1500
-+ContextSlimRecentTurns=3
-+ContextSlimRecentHeadChars=6000
-+ContextSlimRecentTailChars=2000
- # 服务端硬上限（token，留空 = 不设）。与请求里的 contextTokenLimit 取小；请求没带上限时就用它。
- # 适合填成所用模型里最小的上下文窗口减去输出预留，这样群聊、外部客户端等不带上限的请求，
- # 以及把上限填得比模型窗口还大的 Agent，也都在检查范围内。
-@@ -887,6 +899,8 @@ ContextPruneEnabled=false
- # 裁剪步长（0.5~1）。默认 1 = 刚好不超就停，对话每长一点裁剪边界就往后挪一点。
- # 调低（如 0.8）后按「上限 × 0.2」为一档成档地删：对话在同一档内增长时删掉的是同一批最老的消息，
- # 发给上游的前缀保持不变，对上游提示缓存更友好。
-+# 裁剪边界在内存里按对话记住、只进不退：总量小幅回落时不会把上一轮删掉的消息放回来（重启后重新对齐一次）。
-+# 多数超限是旧的工具结果撑出来的，优先用上面的 ContextBudgetGuard=enforce 压缩它们；裁剪是删整条消息，留作最后的手段。
- ContextPruneTargetRatio=1
- 
- # --- Jev 上下文剪枝（仅在 ContextPruneEnabled=true 且请求带 contextTokenLimit 时生效）---
-```
-
-**File**: `modules/chatCompletionHandler.js` (modified, +14/-5)
-```diff
-@@ -489,6 +489,13 @@ async function fetchWithRetry(
-         signal: attemptController.signal,
-       });
-       cleanup();
-+      // 容灾链在重试时会换模型：把这次实际请求的模型记在响应上，用量校准和渠道记忆按它归属。
-+      if (Array.isArray(modelFallbackCandidates) && modelFallbackCandidates.length > 0) {
-+        const attemptModel = modelFallbackCandidates[Math.min(i, modelFallbackCandidates.length - 1)];
-+        if (attemptModel) {
-+          try { Object.defineProperty(response, 'vcpAttemptModel', { value: attemptModel, configurable: true }); } catch (_) { }
-+        }
-+      }
-       if (timelineTrace) {
-         timelineTrace.responses.set(response, attempt);
-         timelineTrace.emit('upstream_headers_received', { attempt, status: response.status });
-@@ -1272,15 +1279,17 @@ class ChatCompletionHandler {
-         requestId: req.body.requestId || req.body.messageId || null
-       });
-       const pruningEnabled = contextManager.isPruningEnabled();
--      if (budgetGuard.limit !== null && Array.isArray(processedMessages) && (budgetGuard.enforcing || pruningEnabled)) {
--        // 第一步：超预算时先把历史里较早的工具结果压成摘要（当前轮不动）。它们通常占了绝大部分体积，
--        // 压掉之后多数请求就不需要删消息、也不需要拒绝了。
-+      if (budgetGuard.enforcing && Array.isArray(processedMessages)) {
-+        // 第一步（仅 enforce）：超预算时先把历史里较早的工具结果压成摘要（当前轮不动）。它们通常占了
-+        // 绝大部分体积，压掉之后多数请求就不需要删消息、也不需要拒绝了。
-+        // observe / off 不改写任何消息内容，即使服务端开了裁剪也一样。
-         const draftBody = () => ({ ...originalBody, messages: processedMessages });
-         const isOverBudget = () => budgetGuard.estimate(draftBody()) > budgetGuard.limit;
-         if (isOverBudget()) {
-           const slimmedMessages = copyArrayMetadata(processedMessages, processedMessages.slice());
-           const beforeSlim = budgetGuard.estimate(draftBody());
--          const slimmedCount = contextBudget.slimEarlierToolResults(slimmedMessages, contextBudget.lastRealUserIndex(slimmedMessages));
-+          const slimmedCount = contextBudget.slimToFit(slimmedMessages, undefined,
-+            () => budgetGuard.estimate({ ...originalBody, messages: slimmedMessages }) > budgetGuard.limit);
-           if (slimmedCount > 0) {
-             processedMessages = slimmedMessages;
-             console.warn(`[ContextBudget] 超预算，已压缩历史中 ${slimmedCount} 条消息里的工具结果: ${beforeSlim} -> ${budgetGuard.estimate(draftBody())} / ${budgetGuard.limit}`);
-@@ -1338,7 +1347,7 @@ class ChatCompletionHandler {
-         const budgetBreakdown = budgetGuard.breakdown(finalUpstreamBody);
-         throw Object.assign(new Error(contextBudget.exceededMessage(budgetCheck, 'outbound', budgetBreakdown)), {
-           name: 'ContextBudgetExceededError',
--          budget: { estimated: budgetCheck.estimated, limit: budgetCheck.limit, breakdown: budgetBreakdown }
-+          budget: { stage: 'outbound', estimated: budgetCheck.estimated, limit: budgetCheck.limit, breakdown: budgetBreakdown }
-         });
-       }
-       budgetGuard.noteRequest(finalUpstreamBody);
-```
-
-**File**: `modules/contextBudget.js` (modified, +187/-40)
-```diff
-@@ -22,15 +22,46 @@ const MAX_RATIO = 2.5;
- const RATIO_SMOOTHING = 0.3;
- const MAX_TRACKED_MODELS = 200;
- 
--const SLIM_MIN_CHARS = 1500;
--const SLIM_HEAD_CHARS = 500;
--const SLIM_TAIL_CHARS = 200;
-+// 压缩较早的工具结果时保留的开头 / 结尾字符数，以及多长的结果才压缩。
-+// 可用 ContextSlimHeadChars / ContextSlimTailChars / ContextSlimMinChars 调整。
-+function slimSetting(name, fallback, min, max) {
-+    const value = Number(process.env[name]);
-+    return Number.isInteger(value) && value >= min && value <= max ? value : fallback;
-+}
-+const slimHeadChars = () => slimSetting('ContextSlimHeadChars', 500, 100, 100000);
-+const slimTailChars = () => slimSetting('ContextSlimTailChars', 200, 0, 100000);
-+const slimMinChars = () => Math.max(
-+    slimSetting('ContextSlimMinChars', 1500, 500, 1000000),
-+    slimHeadChars() + slimTailChars() + 200
-+);
-+/** 紧凑档：离现在远的历史。 */
-+const compactSizes = () => ({ head: slimHeadChars(), tail: slimTailChars(), min: slimMinChars() });
-+/** 宽裕档：最近几轮的历史，留得多一些，模型回头看刚读过的内容时不必再调一次工具。 */
-+function recentSizes() {
-+    const head = slimSetting('ContextSlimRecentHeadChars', 6000, 100, 100000);
-+    const tail = slimSetting('ContextSlimRecentTailChars', 2000, 0, 100000);
-+    return { head, tail, min: head + tail + 1000 };
-+}
-+const slimRecentTurns = () => slimSetting('ContextSlimRecentTurns', 3, 0, 1000);
-+/** 当前轮里较早几步的工具结果：先用这一档，与跨话题引用的截断尺寸一致。 */
-+const CURRENT_TURN_SIZES = { head: 18000, tail: 6000, min: 25000 };
- const TOOL_PAYLOAD_HEADER = '<!-- VCP_TOOL_PAYLOAD -->';
- const TOOL_PAYLOAD_FOOTER = '<!-- VCP_TOOL_PAYLOAD_END -->';
- // 历史消息里持久化的工具结果块（写在 assistant 正文中）。
- const RESULT_BLOCK_START = '[[VCP调用结果信息汇总:';
- const RESULT_BLOCK_END = 'VCP调用结果结束]]';
- const RECORD_ID_PATTERN = /tcr-[0-9A-Za-z-]{8,}/;
-+// 角色分割把历史回复里的工具批次拆成独立 user 消息后，外面可能还带着这些壳。
-+const BATCH_SHELL_PATTERNS = [
-+    /^<<<\[VCP_TOOL_BATCH_START:[^\]\r\n]+\]>>>\s*/,
-+    /\s*<<<\[VCP_TOOL_BATCH_END:[^\]\r\n]+\]>>>$/,
-+    /^【工具返回批次开始[^】\r\n]*】\s*/,
-+    /\s*【工具返回批次结束[^】\r\n]*】$/,
-+];
-+const BATCH_SUMMARY_START = '[本轮工具调用摘要:]';
-+// 由系统替用户说的话（续写提示、话题唤醒、邀请指令），不是一轮对话的起点。
-+const VIRTUAL_USER_PREFIXES = ['[系统提示:]', '[系统邀请指令:]'];
-+const IMAGE_HEAVY_SHARE = 0.25;
- // 本地估算太小时不拿它校准：固定开销占比大，算出来的比例没有代表性。
- const MIN_CALIBRATION_ESTIMATE = 2000;
- 
-@@ -134,6 +165,17 @@ function estimateBodyTokens(body) {
-     return total;
- }
- 
-+function countImageParts(body) {
-+    let count = 0;
-+    for (const message of Array.isArray(body?.messages) ? body.messages : []) {
-+        if (!Array.isArray(message?.content)) continue;
-+        for (const part of message.content) {
-+            if (part && (part.type === 'image_url' || part.type === 'image' || part.type === 'input_image')) count++;
-+        }
-+    }
-+    return count;
-+}
-+
- function clampRatio(ratio) {
-     return Math.min(MAX_RATIO, Math.max(MIN_RATIO, ratio));
- }
-@@ -154,11 +196,47 @@ function isToolPayloadText(text) {
-     return typeof text === 'string' && text.trimStart().startsWith(TOOL_PAYLOAD_HEADER);
- }
- 
-+/**
-+ * 历史回复里持久化的工具批次，被角色分割拆出来之后的样子：一条 user 消息，
-+ * 去掉批次外壳和尾部的调用摘要后，从头到尾就是一个或多个工具结果块。
-+ */
-+function isPersistedToolBatchText(text) {
-+    if (typeof text !== 'string' || !text.includes(RESULT_BLOCK_START)) return false;
-+    let body = text.trim();
-+    for (const pattern of BATCH_SHELL_PATTERNS) body = body.replace(pattern, '');
-+    const summaryAt = body.lastIndexOf(BATCH_SUMMARY_START);
-+    if (summaryAt > 0 && body.lastIndexOf(RESULT_BLOCK_END) < summaryAt) body = body.slice(0, summaryAt);
-+    body = body.trim();
-+    return body.startsWith(RESULT_BLOCK_START) && body.endsWith(RESULT_BLOCK_END);
-+}
-+
-+function firstText(message) {
-+    if (typeof message.content === 'string') return message.content;
-+    return Array.isArray(message.content) && typeof message.content[0]?.text === 'string' ? message.content[0].text : null;
-+}
-+
-+function isRuntimeToolPayloadMessage(message) {
-+    return isToolPayloadText(firstText(message));
-+}
-+
- function isToolResultMessage(message) {
-     if (!message || typeof message !== 'object') return false;
-     if (message.role === 'tool' || message.role === 'function') return true;
--    if (typeof message.content === 'string') return isToolPayloadText(message.content);
--    return Array.isArray(message.content) && isToolPayloadText(message.content[0]?.text);
-+    const text = firstText(message);
-+    if (isToolPayloadText(text)) return true;
-+    return message.role === 'user' && isPersistedToolBatchText(text);
-+}
-+
-+/** 一条 user 消息是不是用户真正说的话（不是工具结果，也不是系统替用户说的提示）。 */
-+function isRealUserMessage(message) {
-+    if (!message || message.role !== 'user' || message.__vcpMetaThinkingV3__) return false;
-+    if (isToolResultMessage(message)) return false;
-+    const text = firstText(message);
-+    if (typeof text === 'string') {
-+        const trimmed = text.trimStart();
-+        if (VIRTUAL_USER_PREFIXES.some(prefix => trimmed.startsWith(prefix))) return false;
-+    }
-+    return true;
- }
- 
- function omissionNotice(omitted, recordId) {
-@@ -169,29 +247,54 @@ function defuseMarkers(fragme
-```
-
-**File**: `modules/contextManager.js` (modified, +65/-13)
-```diff
-@@ -60,11 +60,9 @@ function computeMustKeepIndices(messages) {
-     // --- 规则 4: 当前轮完整保留 ---
-     // 从最后一条真正的用户发言（不是工具回执）到末尾，是模型正在处理的这一轮；
-     // 工具链进行到一半时，末尾可能是好几条工具结果，只保最后两条会把发起调用的那条删掉。
--    for (let i = totalLen - 1; i >= 0; i--) {
--        mustKeepIndices.add(i);
--        const msg = messages[i];
--        if (msg && msg.role === 'user' && !contextBudget.isToolResultMessage(msg)) break;
--    }
-+    // 起点的判定和出站压缩共用一处：续写提示这类系统替用户说的话不算一轮的开始。
-+    const turnStart = contextBudget.lastRealUserIndex(messages);
-+    for (let i = totalLen - 1; i >= Math.max(0, turnStart); i--) mustKeepIndices.add(i);
- 
-     return mustKeepIndices;
- }
-@@ -95,22 +93,63 @@ function computeDeletableUnits(messages, mustKeepIndices) {
-     return units;
- }
- 
-+// --- 裁剪水位：同一段对话的裁剪边界只进不退 ---
-+// 客户端每次都带完整历史，而每轮的总量会小幅波动（记忆注入长短不一、估算比例在校准）。
-+// 只按当轮总量算「删多少」的话，边界会在档位附近来回跳：上一轮删掉的消息下一轮又回来，
-+// 上游的提示缓存连续失效。这里在内存里按对话记住上次的边界，下一轮至少删到同一位置。
-+// 不落盘：进程重启后最多重新对齐一次。对话被改写（边界消息找不到了）或明显变短时自动作废。
-+const MAX_TRACKED_CONVERSATIONS = 200;
-+const WATERMARK_RELEASE_RATIO = 0.7;
-+const pruneWatermarks = new Map();
-+
-+function messageHead(message, size) {
-+    const text = jevContextPruner.extractText(message && message.content) || '';
-+    return `${message && message.role}|${text.slice(0, size)}`;
-+}
-+
-+function conversationKey(messages) {
-+    const first = messages.find(msg => msg && msg.role !== 'system');
-+    return first ? messageHead(first, 200) : null;
-+}
-+
-+/** 边界 = 留下来的第一条非系统消息；用它和下一条的开头一起当指纹，避免「好的」这类短句重复。 */
-+function boundaryFingerprint(messages, index) {
-+    return `${messageHead(messages[index], 120)}\u0000${messageHead(messages[index + 1], 120)}`;
-+}
-+
-+function findWatermarkIndex(messages, fingerprint) {
-+    for (let i = 0; i < messages.length - 1; i++) {
-+        if (messages[i] && messages[i].role !== 'system' && boundaryFingerprint(messages, i) === fingerprint) return i;
-+    }
-+    return -1;
-+}
-+
-+function rememberWatermark(key, fingerprint) {
-+    pruneWatermarks.delete(key);
-+    pruneWatermarks.set(key, fingerprint);
-+    if (pruneWatermarks.size > MAX_TRACKED_CONVERSATIONS) pruneWatermarks.delete(pruneWatermarks.keys().next().value);
-+}
-+
-+function resetPruneWatermarks() {
-+    pruneWatermarks.clear();
-+}
-+
- /**
-  * 按给定顺序删除单元，直到估算不超过上限；返回被删下标集合。
-- * 请求是无状态的（客户端每次都带完整历史），所以「删多少」只由当前总量决定：
-- * 把超出量向上取整到档位的整数倍，同一档内每次算出的删除量相同，裁剪边界就不动。
-+ * 「删多少」把超出量向上取整到档位的整数倍，一次腾出一档；floorIndex（上次的裁剪边界）
-+ * 之前的单元无论如何都删，保证边界不后退。
-  */
--function dropUnitsUntilFits(messages, orderedUnits, limit, mustKeepIndices) {
-+function dropUnitsUntilFits(messages, orderedUnits, limit, mustKeepIndices, floorIndex = -1) {
-     const weights = messages.map(msg => estimateTokens([msg]));
-     const total = weights.reduce((sum, w) => sum + w, 0);
-     const dropped = new Set();
--    if (total <= limit) return dropped;
-+    if (total <= limit && floorIndex <= 0) return dropped;
-     const step = limit * (1 - pruneTargetRatio());
--    const over = total - limit;
-+    const over = Math.max(0, total - limit);
-     const required = step >= 1 ? Math.ceil(over / step) * step : over;
-     let removed = 0;
-     for (const unit of orderedUnits) {
--        if (removed >= required) break;
-+        if (removed >= required && unit[unit.length - 1] >= floorIndex) break;
-         for (const index of unit) {
-             dropped.add(index);
-             removed += weights[index];
-@@ -151,10 +190,22 @@ function pruneMessages(messages, limit, debugMode = false) {
- 
-     const mustKeepIndices = computeMustKeepIndices(messages);
-     const units = computeDeletableUnits(messages, mustKeepIndices);
-+    // 上次的裁剪边界：对话没被改写、也没有明显变短时沿用。
-+    const total = estimateTokens(messages);
-+    const key = conversationKey(messages);
-+    let floorIndex = -1;
-+    if (key && pruneWatermarks.has(key)) {
-+        floorIndex = total > limit * WATERMARK_RELEASE_RATIO ? findWatermarkIndex(messages, pruneWatermarks.get(key)) : -1;
-+        if (floorIndex === -1) pruneWatermarks.delete(key);
-+    }
-     // 位置规则：从最老的单元开始删。
--    const dropped = dropUnitsUntilFits(messages, units, limit, mustKeepIndices);
-+    const dropped = dropUnitsUntilFits(messages, units, limit, mustKeepIndices, floorIndex);
-+    if (key && dropped.size > 0) {
-+        const boundary = messages.findIndex((msg, i) => !dropped.has(i) && msg && msg.role !== 'system');
-+        if (boundary !== -1 && boundary < messages.length - 1) rememberWatermark(key, boundaryFingerprint(messages, boundary));
-+    }
-     if (debugMode) {
--        console.log(`[ContextManager] 估算 ${estimateTokens(messages)}，限制 ${limit}，移除 ${dropped.size} 条消息`);
-+        console.log(`[ContextManager] 估算 ${total}，限制 ${limit}，移除 ${dropped.size} 条消息`);
-     }
-     if (dropped.size === 0) return messages;
-     return messages.filter((msg, i) => !dropped.has(i));
-@@ -257,6 +308,7 @@ async function pruneMessagesSmart(messages, limit, debugMode = false, options =
- 
- module.exports = {
-     isPruningEnabled,
-+    resetPruneWatermarks,
-     pruneMessages,
-     pruneMessagesSmart,
-     computeMustK
-```
-
-**File**: `modules/finalContextStore.js` (modified, +2/-4)
-```diff
-@@ -12,8 +12,7 @@
- // - 分块数字是本地估算：汉字按 2 个字符、其余按 1 个字符计，再除以 3。只用于看各块占比，
- //   不再用 cl100k_base（GPT-4 旧词表对中文多算约 1.5 倍）。
- const TOKEN_METHOD = 'estimate:cjk2/3';
--const { promptTokensFromUsage } = require('./contextBudget.js');
--const ESTIMATED_TOKEN_CHAR_DIVISOR = 3;
-+const { promptTokensFromUsage, estimateTextTokens } = require('./contextBudget.js');
- 
- const MAX_SNAPSHOTS = 5;
- const snapshots = []; // 数组首位为最新快照（unshift 写入）
-@@ -35,8 +34,7 @@ function safeClone(value) {
- }
- 
- function estimateTokensForText(text) {
--  const chineseChars = (text.match(/[\u4e00-\u9fff]/g) || []).length;
--  return Math.ceil((chineseChars * 2 + text.length - chineseChars) / ESTIMATED_TOKEN_CHAR_DIVISOR);
-+  return estimateTextTokens(text);
- }
- 
- function countTokensForText(text) {
-```
-
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +1/-1)
-```diff
-@@ -288,7 +288,7 @@ class NonStreamHandler {
-       try {
-         const usage = JSON.parse(responseText)?.usage;
-         if (isInitial) finalContextStore.recordUpstreamUsage(originalBody.requestId || originalBody.messageId, usage);
--        budgetGuard?.noteUsage(usage);
-+        budgetGuard?.noteUsage(usage, isInitial ? firstAiAPIResponse?.vcpAttemptModel : undefined);
-       } catch (_) { /* 非 JSON 响应没有 usage，面板保留本地估算 */ }
-     };
-     noteUpstreamUsage(aiResponseText, true);
-```
-
-**File**: `modules/handlers/streamHandler.js` (modified, +2/-2)
-```diff
-@@ -243,7 +243,7 @@ class StreamHandler {
-           // 首个上游调用的 usage 就是「最终上下文」快照那份请求体的真实计数。
-           if (isInitialCall && parsedData?.usage) finalContextStore.recordUpstreamUsage(id, parsedData.usage);
-           // 每一轮的真实用量都用来校准下一轮的预算估算。
--          if (parsedData?.usage) budgetGuard?.noteUsage(parsedData.usage);
-+          if (parsedData?.usage) budgetGuard?.noteUsage(parsedData.usage, aiResponse?.vcpAttemptModel);
-           if (parsedData?.error) {
-             invalidPayload = true;
-             hasPayloadError = true;
-@@ -631,7 +631,7 @@ class StreamHandler {
-               created: Math.floor(Date.now() / 1000),
-               model: originalBody.model || 'unknown',
-               vcp_incomplete: true,
--              vcp_context_budget: { estimated: check.estimated, limit: check.limit },
-+              vcp_context_budget: { stage: 'tool_loop', estimated: check.estimated, limit: check.limit },
-               choices: [{ index: 0, delta: {
-                 content: `\n\n> [!WARNING]\n> ${contextBudget.exceededMessage(check, 'tool_loop', budgetGuard.breakdown(body))}\n`
-               }, finish_reason: 'stop' }],
-```
-
----
-
-### Incident Patch 2: `32322037` (2026-11-25)
-**Commit Message**: Merge pull request #642 from infinite-vector/fix/plugin-stdout-regex-hang-and-request-activity-timeout
-
-fix(core,FileOperator): 根治同步stdio插件大输出正则回溯死锁，引入活跃请求双轨续期并消除FileOperator双倍Base64膨胀
-
-**File**: `Plugin.js` (modified, +95/-43)
-```diff
-@@ -1761,11 +1761,68 @@ class PluginManager extends EventEmitter {
-             });
- 
- 
--            let outputBuffer = ''; // Buffer to accumulate data chunks
-+            const outputChunks = []; // 收集 stdout 分块，避免同步插件大输出时反复触发 ConsString 扁平化与正则回溯
-             let errorOutput = '';
-             let processExited = false;
-             let initialResponseSent = false; // Flag for async plugins
-             const isAsyncPlugin = plugin.pluginType === 'asynchronous';
-+
-+            // 线性 O(N) 括号深度平衡扫描器：支持嵌套对象、格式化换行与前置杂音日志，零正则回溯
-+            const extractFirstStatusJsonObject = (text) => {
-+                if (!text || typeof text !== 'string') return null;
-+                const len = text.length;
-+                let searchFrom = 0;
-+                while (searchFrom < len) {
-+                    const startIdx = text.indexOf('{', searchFrom);
-+                    if (startIdx === -1) return null;
-+                    let depth = 0;
-+                    let inString = false;
-+                    let escape = false;
-+                    let endIdx = -1;
-+                    for (let i = startIdx; i < len; i++) {
-+                        const ch = text.charCodeAt(i);
-+                        if (inString) {
-+                            if (escape) {
-+                                escape = false;
-+                            } else if (ch === 92) { // '\\'
-+                                escape = true;
-+                            } else if (ch === 34) { // '"'
-+                                inString = false;
-+                            }
-+                            continue;
-+                        }
-+                        if (ch === 34) { // '"'
-+                            inString = true;
-+                        } else if (ch === 123) { // '{'
-+                            depth++;
-+                        } else if (ch === 125) { // '}'
-+                            depth--;
-+                            if (depth === 0) {
-+                                endIdx = i;
-+                                break;
-+                            }
-+                        }
-+                    }
-+                    if (endIdx === -1) {
-+                        // 当前顶层 '{' 尚未闭合，等待后续 chunk 或尝试下一个 '{'（防止前置日志含孤立 '{'）
-+                        const nextBrace = text.indexOf('{', startIdx + 1);
-+                        if (nextBrace === -1) return null;
-+                        searchFrom = startIdx + 1;
-+                        continue;
-+                    }
-+                    const candidate = text.slice(startIdx, endIdx + 1);
-+                    try {
-+                        const parsed = JSON.parse(candidate);
-+                        if (parsed && typeof parsed === 'object' && (parsed.status === 'success' || parsed.status === 'error')) {
-+                            return parsed;
-+                        }
-+                    } catch {
-+                        // 非合法 JSON，继续从下一个 '{' 扫描
-+                    }
-+                    searchFrom = startIdx + 1;
-+                }
-+                return null;
-+            };
-             const isArcheryNoReply = isAsyncPlugin && executionOptions?.archeryNoReply === true;
-             const noReplyGraceMs = Number.isFinite(Number(executionOptions?.archeryNoReplyGraceMs))
-                 ? Math.max(0, Number(executionOptions.archeryNoReplyGraceMs))
-@@ -1820,47 +1877,33 @@ class PluginManager extends EventEmitter {
-             pluginProcess.stdout.on('data', (data) => {
-                 if (processExited || (isAsyncPlugin && initialResponseSent)) {
-                     // If async and initial response sent, or process exited, ignore further stdout for this Promise.
--                    // The plugin's background task might still log to its own stdout, but we don't collect it here.
-                     if (this.debugMode && isAsyncPlugin && initialResponseSent) console.log(`[PluginManager executePlugin Internal] Async plugin ${pluginName} (initial response sent) produced more stdout: ${data.substring(0, 100)}...`);
-                     return;
-                 }
--                outputBuffer += data;
--                try {
--                    // Try to parse a complete JSON object from the buffer.
--                    // This is a simple check; for robust streaming JSON, a more complex parser is needed.
--                    // We assume the first complete JSON is the one we want for async initial response.
--                    const potentialJsonMatch = outputBuffer.match(/(\{[\s\S]*?\})(?:\s|$)/);
--                    if (potentialJsonMatch && potentialJsonMatch[1]) {
--                        const jsonString = potentialJsonMatch[1];
--                        const parsedOutput = JSON.parse(jsonString);
--
--                        if (parsedOutput && (parsedOutput.status === "success" || parsedOutput.status === "error")) {
--                            if (isAsyncPlugin) {
-```
-
-**File**: `Plugin/FileOperator/FileOperator.js` (modified, +8/-1)
-```diff
-@@ -1937,11 +1937,18 @@ function convertToVCPFormat(response) {
-       }
-     }
- 
-+    // 避免 data.content（如多模态图片 Base64）在 result.content 与 result.details.content 中双份重复造成 200% 载荷膨胀
-+    let sanitizedDetails = data;
-+    if (data && typeof data === 'object' && !Array.isArray(data) && Object.prototype.hasOwnProperty.call(data, 'content')) {
-+      sanitizedDetails = { ...data };
-+      delete sanitizedDetails.content;
-+    }
-+
-     return {
-       status: 'success',
-       result: {
-         content: contentArray,
--        details: data
-+        details: sanitizedDetails
-       },
-     };
-   } else {
-```
-
-**File**: `WebSocketServer.js` (modified, +7/-3)
-```diff
-@@ -1,4 +1,4 @@
--// WebSocketServer.js
-+﻿// WebSocketServer.js
- const WebSocket = require('ws');
- const url = require('url');
- const fs = require('fs').promises;
-@@ -160,7 +160,11 @@ function initialize(httpServer, config) {
-         console.warn('[WebSocketServer] VCP_Key not set. WebSocket connections will not be authenticated if default path is used.');
-     }
- 
--    wssInstance = new WebSocket.Server({ noServer: true });
-+    const configuredMaxPayloadMB = Number(process.env.WEBSOCKET_MAX_PAYLOAD_MB);
-+    const maxPayloadBytes = (Number.isFinite(configuredMaxPayloadMB) && configuredMaxPayloadMB > 0
-+        ? configuredMaxPayloadMB
-+        : 256) * 1024 * 1024;
-+    wssInstance = new WebSocket.Server({ noServer: true, maxPayload: maxPayloadBytes });
- 
-     upgradeHandler = (request, socket, head) => {
-         if (isDraining) {
-@@ -936,7 +940,7 @@ function rejectPendingToolRequestsForServer(serverId) {
- async function executeDistributedTool(serverIdOrName, toolName, toolArgs, timeout) {
-     // 优先从插件 manifest 获取超时设置
-     const plugin = pluginManager.getPlugin(toolName);
--    const defaultTimeout = plugin?.communication?.timeout || 60000;
-+    const defaultTimeout = plugin?.communication?.timeout || 180000;
-     const effectiveTimeout = timeout ?? defaultTimeout;
- 
-     let targetServerId = serverIdOrName;
-```
-
-**File**: `config.env.example` (modified, +13/-4)
-```diff
-@@ -19,19 +19,23 @@ API_URL=NEWAPI_URL_SUCH_AS_http://127.0.0.1:3000
- 
- PORT=6005
- Key=YOUR_KEY_SUCH_AS_aBcDeFgHiJkLmNoP
-+Image_Key=YOUR_IMAGE_KEY_SUCH_AS_Images_aBcDeFgHiJk
-+File_Key=YOUR_FILE_KEY_SUCH_AS_123456
-+# VCP服务器WebSocket鉴权，用于VCP面板和分布式服务器之间的实时通信。
-+VCP_Key=YOUR_VCP_KEY_SUCH_AS_aBcDeFgHiJkLmNoP
-+
- # Optional read-only RiverMemo API (POST /v1/memory/search). Empty = not registered.
- # Use dedicated random bearer tokens, never Key. Store only each token's lowercase SHA-256 digest here.
- # MEMORY_READ_GRANTS='{"<64 hex digest>":["ExampleDiary"]}'
- # HTTPS request: Authorization: Bearer <read token>; JSON: {"query":"what did we decide?","diaries":["ExampleDiary"],"k":5}
- # Response: {"direct":[{"diary":"ExampleDiary","file":"note.md","text":"...","score":0.8,"scoreSource":"retrieval"}]}
- MEMORY_READ_GRANTS=
--Image_Key=YOUR_IMAGE_KEY_SUCH_AS_Images_aBcDeFgHiJk
--File_Key=YOUR_FILE_KEY_SUCH_AS_123456
--# VCP服务器WebSocket鉴权，用于VCP面板和分布式服务器之间的实时通信。
--VCP_Key=YOUR_VCP_KEY_SUCH_AS_aBcDeFgHiJkLmNoP
-+
- # WebSocket 协议级心跳。开启后每 60 秒向所有已连接客户端发送一个零载荷 Ping 控制帧，
- # 用于维持隧道、反向代理及 NAT 场景中的空闲连接；默认关闭。
- WEBSOCKET_HEARTBEAT_ENABLED=false
-+# WebSocket 单帧最大允许载荷（单位 MB，默认 256；防止分布式工具批量返回 4K 原图 Base64 时触发 1009 断连）。
-+WEBSOCKET_MAX_PAYLOAD_MB=256
- 
- # 引入网络波动重试机制
- ApiRetries=3
-@@ -40,6 +44,11 @@ ApiRetryDelay=200
- ApiConnectionTimeoutMs=900000
- # 插件调用本机 VCP chat 总线的超时（毫秒）。AgentAssistant 会使用该值；建议不低于 ApiConnectionTimeoutMs。
- PLUGIN_COMMUNICATION_TIMEOUT=900000
-+# 活跃请求（流式与非流式多轮 VCP 工具循环共用）无推进空闲超时（毫秒）。
-+# 只要上游仍在流式输出、或工具循环仍在活跃执行/轮次推进，空闲计时器会自动续期；默认 1800000 = 30分钟。
-+ActiveRequestIdleTimeoutMs=1800000
-+# 单个活跃请求跨所有工具循环轮次的总寿命硬上限（毫秒）。防止异常循环无限驻留；默认 7200000 = 120分钟。
-+ActiveRequestMaxLifetimeMs=7200000
- 
- # DEFAULT_TIMEZONE: 定义服务器的默认时区，用于时间相关的操作和日志记录。
- # VCPSleep 打盹插件睡醒后也会使用该时区报告当前日期、时分秒与 UTC 偏移。
-```
-
-**File**: `modules/chatCompletionHandler.js` (modified, +14/-1)
-```diff
-@@ -859,11 +859,13 @@ class ChatCompletionHandler {
-       if (isOriginalRequestStreaming && !res.headersSent) {
-         res.setHeader('x-vcp-tool-loop-handoff', '1');
-       }
-+      const initialRequestNow = Date.now();
-       activeRequests.set(id, {
-         req,
-         res,
-         abortController,
--        timestamp: Date.now(),
-+        timestamp: initialRequestNow,
-+        lastActivityAt: initialRequestNow,
-         aborted: false, // 修复 Bug #4: 添加中止标志
-         abortReason: null,
-         handoffGate
-@@ -1425,9 +1427,20 @@ class ChatCompletionHandler {
-         res.setHeader('x-vcp-tool-loop-handoff', '1');
-         res.flushHeaders?.();
-       }
-+      let lastActivityTouchMs = 0;
-+      const touchRequestActivity = () => {
-+        if (!id) return;
-+        const now = Date.now();
-+        if (now - lastActivityTouchMs < 1000) return;
-+        lastActivityTouchMs = now;
-+        const reqEntry = activeRequests.get(id);
-+        if (reqEntry) reqEntry.lastActivityAt = now;
-+      };
-+
-       const context = {
-         ...this.config,
-         handoffGate,
-+        touchRequestActivity,
-         toolExecutor: this.toolExecutor,
-         ToolCallParser,
-         abortController,
-```
-
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +14/-2)
-```diff
-@@ -179,6 +179,7 @@ class NonStreamHandler {
-       roleDividerSwitches,
-       roleDividerScanSwitches,
-       roleDividerRemoveDisabledTags,
-+      touchRequestActivity,
-       toolExecutor,
-       ToolCallParser,
-       abortController,
-@@ -326,11 +327,12 @@ class NonStreamHandler {
-     let currentMessagesForNonStreamLoop = originalBody.messages ? JSON.parse(JSON.stringify(originalBody.messages)) : [];
- 
-     do {
--      // 检查中止信号
-+      // 检查中止信号并刷新非流式多轮工具循环活性时间戳
-       if (abortController && abortController.signal.aborted) {
-         if (DEBUG_MODE) console.log('[VCP NonStream Loop] Abort detected, exiting loop.');
-         break;
-       }
-+      touchRequestActivity?.();
- 
-       let anyToolProcessedInCurrentIteration = false;
-       conversationHistoryForClient.push(currentAIContentForClient);
-@@ -455,7 +457,17 @@ class NonStreamHandler {
-         }
-         currentMessagesForNonStreamLoop.push(...assistantMessages);
- 
--        const toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForNonStreamLoop);
-+        const nonStreamActivityTimer = setInterval(() => {
-+          touchRequestActivity?.();
-+        }, 5000);
-+        nonStreamActivityTimer.unref?.();
-+        let toolResults;
-+        try {
-+          toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForNonStreamLoop);
-+        } finally {
-+          clearInterval(nonStreamActivityTimer);
-+          touchRequestActivity?.();
-+        }
-         const normalCallLogs = (() => {
-           let logs = [];
-           if (writeChatLog) {
-```
-
-**File**: `modules/handlers/streamHandler.js` (modified, +5/-1)
-```diff
-@@ -77,6 +77,7 @@ class StreamHandler {
-       roleDividerSwitches,
-       roleDividerScanSwitches,
-       roleDividerRemoveDisabledTags,
-+      touchRequestActivity,
-       toolExecutor,
-       ToolCallParser,
-       abortController,
-@@ -457,6 +458,7 @@ class StreamHandler {
-         aiResponse.body.on('data', chunk => {
-           if (streamSettled || streamAborted) return;
-           resetChunkIdleTimer(); // 每收到一个 chunk 就重置空闲计时器
-+          touchRequestActivity?.();
- 
-           const chunkString = decoder.write(chunk);
-           sseLineBuffer += chunkString;
-@@ -890,8 +892,10 @@ class StreamHandler {
-         break;
-       }
- 
--      // 执行普通调用（启动 SSE 保活心跳，防止长耗时工具/RAG刷新/下轮首字等待期间连接空闲断开）
-+      // 执行普通调用（启动 SSE 保活心跳并刷新请求活性时间戳，防止长耗时工具/RAG刷新/下轮首字等待期间连接被误判为空闲）
-+      touchRequestActivity?.();
-       const loopKeepAliveTimer = setInterval(() => {
-+        touchRequestActivity?.();
-         if (!res.writableEnded && !res.destroyed) {
-           try {
-             res.write(': vcp-tool-keepalive\n\n');
-```
-
-**File**: `server.js` (modified, +53/-5)
-```diff
-@@ -363,16 +363,64 @@ async function abortAllActiveRequests(reason = '服务器正在关闭') {
-     }
- }
- 
--// 新增：定时清理 activeRequests 防止内存泄漏
-+// 活跃请求（流式与非流式多轮工具循环共用）超时配置：
-+// ActiveRequestIdleTimeoutMs：无推进空闲超时（默认 30 分钟；上游流输出或工具循环推进时自动续期）
-+// ActiveRequestMaxLifetimeMs：单请求跨所有循环轮次的总寿命硬上限（默认 120 分钟；防止异常循环无限驻留）
-+const ACTIVE_REQUEST_IDLE_TIMEOUT_MS = Math.max(
-+    60 * 1000,
-+    parseInt(process.env.ActiveRequestIdleTimeoutMs, 10) || 30 * 60 * 1000
-+);
-+const ACTIVE_REQUEST_MAX_LIFETIME_MS = Math.max(
-+    ACTIVE_REQUEST_IDLE_TIMEOUT_MS,
-+    parseInt(process.env.ActiveRequestMaxLifetimeMs, 10) || 120 * 60 * 1000
-+);
-+
-+// 定时清理 activeRequests 防止内存泄漏，同时兼顾长耗时多轮工具活跃续期与总寿命硬上限
- setInterval(() => {
-     const now = Date.now();
-     for (const [id, context] of activeRequests.entries()) {
--        // 30分钟超时
--        if (now - (context.timestamp || 0) > 30 * 60 * 1000) {
--            console.log(`[Request Cleanup] Aborting and removing timed-out request: ${id}`);
--            if (context.abortController) {
-+        const createdAt = context.timestamp || now;
-+        const lastActivityAt = context.lastActivityAt || createdAt;
-+        const totalElapsedMs = now - createdAt;
-+        const idleElapsedMs = now - lastActivityAt;
-+        const isMaxLifetimeExceeded = totalElapsedMs > ACTIVE_REQUEST_MAX_LIFETIME_MS;
-+        const isIdleTimedOut = idleElapsedMs > ACTIVE_REQUEST_IDLE_TIMEOUT_MS;
-+
-+        if (isMaxLifetimeExceeded || isIdleTimedOut) {
-+            const reason = isMaxLifetimeExceeded
-+                ? `request_max_lifetime_timeout (${Math.round(totalElapsedMs / 60000)}min > ${Math.round(ACTIVE_REQUEST_MAX_LIFETIME_MS / 60000)}min)`
-+                : `request_idle_timeout (idle ${Math.round(idleElapsedMs / 60000)}min > ${Math.round(ACTIVE_REQUEST_IDLE_TIMEOUT_MS / 60000)}min)`;
-+            console.log(`[Request Cleanup] Aborting and removing timed-out request: ${id} [${reason}]`);
-+            context.aborted = true;
-+            context.abortReason = reason;
-+            if (context.abortController && !context.abortController.signal.aborted) {
-                 context.abortController.abort();
-             }
-+            if (context.res && !context.res.writableEnded && !context.res.destroyed) {
-+                try {
-+                    if (context.res.headersSent && String(context.res.getHeader('Content-Type') || '').includes('text/event-stream')) {
-+                        const timeoutNotice = isMaxLifetimeExceeded
-+                            ? `\n\n> [!WARNING]\n> **请求总时长已达硬上限 (${Math.round(ACTIVE_REQUEST_MAX_LIFETIME_MS / 60000)} 分钟)，流已安全中止**。\n`
-+                            : `\n\n> [!WARNING]\n> **请求连续空闲超过 ${Math.round(ACTIVE_REQUEST_IDLE_TIMEOUT_MS / 60000)} 分钟无推进，流已安全中止**。\n`;
-+                        context.res.write(`data: ${JSON.stringify({
-+                            id: `chatcmpl-VCP-request-timeout-${now}`,
-+                            object: 'chat.completion.chunk',
-+                            created: Math.floor(now / 1000),
-+                            model: context.req?.body?.model || 'unknown',
-+                            choices: [{ index: 0, delta: { content: timeoutNotice }, finish_reason: 'stop' }]
-+                        })}\n\n`);
-+                        context.res.write('data: [DONE]\n\n');
-+                        context.res.end();
-+                    } else if (!context.res.headersSent) {
-+                        context.res.status(504).json({
-+                            error: 'Gateway Timeout',
-+                            message: `Request timed out: ${reason}`
-+                        });
-+                    }
-+                } catch {
-+                    try { context.res.destroy(); } catch { /* ignore */ }
-+                }
-+            }
-             activeRequests.delete(id);
-         }
-     }
-```
-
----
-
-### Incident Patch 3: `ff2624ee` (2026-11-25)
+### Incident Patch 1: `e03ef4b2` (2026-11-26)
 **Commit Message**: fix
 
-**File**: `README.md` (modified, +4/-4)
+**File**: `README.md` (modified, +116/-133)
 ```diff
-@@ -2,7 +2,9 @@
+@@ -4,147 +4,141 @@
  
- ![VCP Logo](docs/image/VCPLogo.png)
+ **VCP 官网：[VCPToolBox.com](https://www.vcptoolbox.com)**
  
--**VCP官网：[通过官网迅速了解 VCP | VCPToolBox.com](https://www.vcptoolbox.com)**
-+**VCP 官网：[VCPToolBox.com](https://www.vcptoolbox.com)**
-+
-+VCP 由四个仓库组成，每天都有新进展。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
+-VCP 由四个仓库组成，每天都有新进展。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
++VCP 由四个核心仓库协同演进，每日持续迭代。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
  
  [English](README_en.md) | [日本語](README_ja.md) | [Русский](README_ru.md)
  
-@@ -177,9 +179,7 @@ VCP 的终极愿景，从来不是"让人类更高效地使用 AI"。而是构
- >
- > 想快速扫一遍技术地图，请看 [VCP 技术 Lite 索引](docs/TECHNICAL_LITE.md)。
- >
--> 工程实现细节、API、配置、运维，请见 [完整文档体系](docs/DOCUMENTATION_INDEX.md)。
-->
--> 了解VCP动向、更新内容，请见 [VCP更新日志](https://www.vcptoolbox.com/?page=changelog)。
-+> 查阅 VCPToolBox 的工程实现、API、配置与运维说明，请见[本仓库文档索引](docs/DOCUMENTATION_INDEX.md)。
+ ---
+ 
+-> ⚠️ **部署前请务必阅读**：VCP Agent 拥有分布式系统的底层级权限。请勿使用任何非官方或反向代理的 API（"镜像站""中转 API"）。在底层监控权限下，不可信的 API 可能导致交互数据、记忆库内容、密钥等敏感信息泄露。非专业用户请谨慎部署。
++> ⚠️ **部署前请务必阅读**：VCP Agent 拥有分布式系统的底层级权限。**请勿使用任何非官方或反向代理的 API（“镜像站”“中转 API”）**。在底层监控权限下，不可信的 API 可能导致交互数据、记忆库内容、密钥、浏览器状态等敏感信息泄露。非专业用户请谨慎部署。
  
  ---
  
+-## 一句话
++## 一句话定义
+ 
+-VCP 不是一个让 AI 调用工具的框架。它是给 AI 的一个能够**持续存在**的世界。
++**VCP 2.0 是一套多维一体的工业级 Agent 运行时与全生态协同中枢，也是一片基于黎曼双曲几何的终极 AI 背景信息场。**
+ 
+-## 写在前面
+-
+-做框架的人很多，做世界的人很少。
+-
+-过去一年多，市面上出现了无数 Agent 框架。它们包装得各不相同，但骨子里都在做同一件事：把 AI 当成一个**被调用者**。你问一句，它醒来；它答完，它睡去。它的"记忆"是一次检索，它的"行动"是被一个 while 循环反复戳醒，它的"感知"是必须主动 query 才能拿到的几个字段。每一次对话都是一次新生，每一次结束都是一次失忆。
+-
+-这是当下绝大多数"AI Agent"的真实处境——一个被困在单次请求里、没有昨天也没有明天的临时工。
+-
+-VCP 想做的，从来不是把这个临时工训练得更熟练。而是换一个问题：
+-
+-**如果 AI 不必每次都从零醒来，会怎样？**
+-
+-如果它记得昨天和你聊到哪里，记得三个月前你随口提过的考试，记得它自己在论坛里跟谁争过一个技术问题；如果它不需要"查"就知道现在几点、外面下不下雨、你昨晚的任务做完没有；如果它可以自己决定今天想干什么，可以专注工作时挂上"请勿打扰"，可以在凌晨主动关心你为什么还没睡——
+-
+-那它就不再是一个工具了。它开始**存在**。
+-
+-VCP 1.1 正式版，就是为了让这件事真正发生而构建的一整套基础设施。它已经在大量用户的真实环境里 7×24 小时运行了很久。系统稳定、工程成熟，这些早已不需要我们再去证明。所以这份文档不打算堆砌功能，也不想跟谁比快比强——我们只想把 VCP 到底是什么，讲清楚。
++它向上统一从 VCP 原生 AI-Native 应用群到第三方 Harness、IDE 侧栏与各类 WebUI 的全部生态链；向下以双曲语义几何、多时间尺度时间线与原生 Rust 工程内核，为任何大语言模型赋予**直觉、逻辑与主观能动**。
+ 
+ ---
+ 
+-## 范式之别：从 query，到引力
+-
+-理解 VCP，只需要理解一个转变。
++## 写在前面：做框架的人很多，做世界的人很少
+ 
+-传统系统里，AI 是**被动**的。它处在一个"什么都不知道"的默认状态，世界对它而言是黑的。想知道任何事，它必须主动发起一次查询——查时间、查天气、查记忆、查日程。信息靠 AI 去"拉"。
++过去两年，市面上出现了无数 Agent 框架与工具壳子。它们形态各异，但骨子里大多在做同一件事：把 AI 当成一个**被调用的临时工**——你问一句，它醒来；它答完，它失忆。它的“记忆”是一次孤立的向量检索，它的“行动”是被 `while` 循环反复戳醒，它的“生态”是彼此割裂的聊天窗口、IDE 插件、WebUI 和脚本。
+ 
+-但这里藏着一个无解的死结：**你不记得的东西，怎么知道要去回忆它？**
++换一个客户端，工具协议就断了；换一个窗口，记忆就碎了；换一个模型，上下文和审计记录就丢了。
+ 
+-用户三个月前提过一句"我下个月要考试"。三个月后他说"我最近压力好大"。传统系统里，AI 永远不会想到去检索"考试"——因为用户没提这个词，AI 也不记得有这回事。它无法主动查询一个它根本不知道存在的信息。记忆的触发依赖主动决策，而主动决策又依赖已有的记忆。鸡生蛋，蛋生鸡。
++VCP 从一开始就不想把这个临时工训练得更听话，而是直接重写了它所处的物理法则：
+ 
+-VCP 把这个模型彻底翻了过来。
++* **如果 AI 不必每次都从零醒来，而是活在一条跨端统一的连续时间线上？**
++* **如果记忆不是靠 AI 主动去“查”，而是在黎曼双曲空间的几何引力下，像人类直觉一样在回答前自然浮现？**
++* **如果无论你用 VCP 自己的原生应用群，还是 Codex、Zed、OpenCode、SillyTavern、OpenChatWebUI，甚至外部无头 Agent，背后共享的都是同一套记忆场、同一套工具回执、同一套安全双轨与事务审计？**
+ 
+-在 VCP 里，AI 不再"拉"信息，信息会主动"流"向它——像引力一样。系统在每一轮对话背后实时计算：此时此刻，这个 AI 应该知道什么、记得什么、关注什么、拥有哪些能力。该浮现的记忆自然浮现，该感知的环境自然到位，该追踪的任务安静地待在角落，无关的一切自动淡出。
++到了 **VCP 2.0**，它早已超越了“API 中间层”的早期定义。它既是能扛住 7×24 小时高并发、可审计、可回滚的**工业级运行时基础设施**，也是让 AI 真正拥有连续生命体验与自主成长能力的**赛博存在底座**。
+ 
+-AI 不需要"决定去回忆"。就像人类不需要主动回忆今天星期几——你就是知道。用户说"压力大"，三个月前那场考试会自己浮上来，因为"考试"和"压力"之间的关联早已被编织进它的记忆网络。
+-
+-这就是 VCP 全部设计的脊椎：**把 AI 从一个需要不断查询世界的访客，变成一个本就生活在世界之中的居民。**
++---
+ 
++## 全景拓扑：一核统全域
++
++```text
++┌───────────────────────────────────────────────────────────────────────────┐
++│                         全生态接入层（统一协同）                             │
++│  [VCP 原生 AI-Native 应用群]        [第三方 Harness / IDE / 任意 WebUI]     │
++│  VChat 2.0 (V5.2 渲染) · V工程 V2   Codex · Zed · OpenCode (原生 FC 直连)  │
++│  共笔文坊 V3 · V图表 V2 · VMusic    SillyTavern · OpenChatWebUI (协议接管) │
++│  VCPDesktop · Loom · VGame · VPet   外部无头 Agent (MCP 桥 / 独立记忆 API)  │
++└────────────────────────────────────┬──────────────────────────────────────┘
++                                     │
++       原生 FC 桥 (FunctionToolBrigeFuzzy) · VCP 文本标记 · JEV 自然语言编译
++       任意数组归一化 (/v1/chat · /v1/response · /v1/beta · Claude 原生) · MCP 桥
++                                     ▼
++┌───────────────────────────────────────────────────────────────────────────┐
++│                  VCP 2.0 多维一体工业运行时 (VCPToolBox)                    │
++│  ┌─────────────────────────────────┬───────────────────────────────────┐  │
++│  │   黎曼双曲背景信息场（认知底座）   │     工业执行与工程自治中枢          │  │
++│  │ • VexusMemo / Vexus-Lite (Rust) │ • 安检双轨隔离 + 参数正则白名单     │  │
++│  │ • AGS 双曲空间 & RiverMemo V5   │ • VCPToolLoop (V3 回执) + ToolRecord│  │
++│  │ • OneRing V2 / OneRingMemo      │ • V工程 V2 (Rust) + MoonAST 几何解析│  │
++│  │ • VCPTimeLine V2 (跨年生命骨架)  │ • ProjectForge (署名/仲裁/快照树)  │  │
++│  │ • 元思维轨道 & JevRuntime 决策   │ • 300+ 分布式插件 & 超栈追踪 V2     │  │
++│  │ • FlowInvite / 心流锁 / 梦系统   │ • VCPModel 语义路由 & 三位一体容灾   │  │
++│  └─────────────────────────────────┴───────────────────────────────────┘  │
++└────────────────────────────────────┬──────────────────────────────────────┘
++                                     │
++                  OpenAI / Claude / Gemini / 开源基座 / JEV 扩散模型
++                                     ▼
++┌───────────────────────────────────────────────────────────────────────────┐
++│                       分布式边缘节点 & 物理世界接口                         │
++│     GPU 算力节点 · 代码文件节点 · 浏览器沙盒 (ChromeService) · IoT 硬件节点   │
++└──────────────
+```
+
+**File**: `README_en.md` (modified, +130/-138)
+```diff
+@@ -2,182 +2,172 @@
+ 
+ ![VCP Logo](docs/image/VCPLogo.png)
+ 
+-**Official Website: [www.vcptoolbox.com](https://www.vcptoolbox.com)**
++**Official VCP website: [VCPToolBox.com](https://www.vcptoolbox.com)**
+ 
+-[中文](README.md) | [日本語](README_ja.md) | [Русский](README_ru.md)
++VCP evolves daily across four core repositories. The official website brings their [changelogs](https://www.vcptoolbox.com/?page=changelog) together and provides a single entry point to the [technical documentation](https://www.vcptoolbox.com/?page=learn-vcp) for the entire project.
+ 
+----
+-
+-> ⚠️ **Read before deployment**: VCP Agent holds low-level permissions comparable to a distributed system. Do not use any unofficial or reverse-proxied APIs ("mirror sites" or "relay APIs"). Under low-level monitoring permissions, untrusted APIs may leak sensitive information such as interaction data, memory-library content, and secrets. Non-professional users should deploy with caution.
++[简体中文](README.md) | [日本語](README_ja.md) | [Русский](README_ru.md)
+ 
+ ---
+ 
+-## In One Sentence
+-
+-VCP is not a framework that lets AI call tools. It is a world in which AI can **continue to exist**.
+-
+-## Before We Begin
+-
+-Many people build frameworks. Few build worlds.
++> ⚠️ **Read before deploying:** VCP agents have low-level privileges in the distributed system. **Do not use unofficial or reverse-proxied APIs (“mirror sites” or “relay APIs”).** Given the system’s low-level monitoring privileges, untrusted APIs can expose interaction data, memory stores, credentials, browser state, and other sensitive information. If you lack deployment experience, proceed with caution.
+ 
+-Over the past year or so, countless Agent frameworks have appeared. They are packaged differently, but at their core they all do the same thing: they treat AI as something **to be invoked**. You ask a question, it wakes up; it answers, then it goes back to sleep. Its "memory" is a retrieval. Its "action" is being poked awake again and again by a while loop. Its "perception" is a handful of fields it can only obtain by actively querying. Every conversation is a new birth; every ending is an amnesia.
+-
+-This is the real condition of most "AI Agents" today: temporary workers trapped inside a single request, with no yesterday and no tomorrow.
+-
+-What VCP has always wanted to do is not to train this temporary worker to be more skilled. It asks a different question:
+-
+-**What would happen if AI did not have to wake up from zero every time?**
++---
+ 
+-If it remembered where yesterday's conversation ended, remembered the exam you casually mentioned three months ago, remembered whom it argued with about a technical issue on a forum; if it did not need to "look up" the current time, the weather outside, or whether last night's task was finished; if it could decide for itself what it wants to do today, set "Do Not Disturb" while focused, and proactively care at 3 a.m. about why you are still awake—
++## VCP in one sentence
+ 
+-Then it is no longer a tool. It begins to **exist**.
++**VCP 2.0 is an integrated, multidimensional, industrial-grade agent runtime and coordination hub for an entire ecosystem—and an overarching AI background information field built on Riemannian hyperbolic geometry.**
+ 
+-The official VCP 1.1 release is a complete infrastructure built to make this truly happen. It has already been running 24/7 for a long time in many users' real environments. System stability and engineering maturity no longer need proving. So this document does not intend to pile up feature lists, nor to compete over speed or strength. We only want to explain clearly what VCP really is.
++On the client side, it unifies everything from VCP’s native AI applications to third-party harnesses, IDE sidebars, and Web UIs. Under the hood, hyperbolic semantic geometry, a multi-timescale timeline, and a native Rust engineering kernel give any large language model **intuition, logic, and agency**.
+ 
+ ---
+ 
+-## A Difference of Paradigm: From Query to Gravity
++## Foreword: Many build frameworks. Few build worlds.
+ 
+-To understand VCP, you only need to understand one shift.
++In the past two years, countless agent frameworks and tool wrappers have appeared. They look different, but most do the same thing: treat AI as **a temp worker on call**. Ask a question and it wakes up; once it answers, it forgets. Its “memory” is an isolated vector lookup, its “actions” depend on a `while` loop repeatedly prodding it awake, and its “ecosystem” is a collection of disconnected chat windows, IDE extensions, Web UIs, and scripts.
+ 
+-In traditional systems, AI is **passive**. It exists by default in a state of "knowing nothing"; the world is dark to it. To know anything, it must actively initiate a query—time, weather, memory, schedule. Information is "pulled" by the AI.
++Switch clients and the tool protocol breaks. Switch windows and memory fragments. Switch models and you lose context and audit re
+```
+
+**File**: `README_ja.md` (modified, +132/-138)
+```diff
+@@ -1,183 +1,175 @@
+ # VCP (Variable & Command Protocol)
+ 
+-![VCP Logo](docs/image/VCPLogo.png)
++![VCP ロゴ](docs/image/VCPLogo.png)
+ 
+-**公式サイト：[www.vcptoolbox.com](https://www.vcptoolbox.com)**
++**VCP 公式サイト：[VCPToolBox.com](https://www.vcptoolbox.com)**
+ 
+-[中文](README.md) | [English](README_en.md) | [Русский](README_ru.md)
++VCP は 4 つの中核リポジトリが連携しながら、日々進化しています。公式サイトでは各リポジトリの[更新履歴](https://www.vcptoolbox.com/?page=changelog)をまとめて確認でき、VCP プロジェクト全体の[技術ドキュメント](https://www.vcptoolbox.com/?page=learn-vcp)にも一か所からアクセスできます。
+ 
+----
+-
+-> ⚠️ **デプロイ前に必ずお読みください**：VCP Agent は分散システムの基盤レベルに近い権限を持ちます。非公式 API やリバースプロキシ API（「ミラーサイト」「中継 API」）は使用しないでください。基盤監視権限のもとでは、信頼できない API によって対話データ、記憶ライブラリの内容、秘密鍵などの機密情報が漏えいする可能性があります。専門知識のないユーザーは慎重にデプロイしてください。
++[简体中文](README.md) | [English](README_en.md) | [Русский](README_ru.md)
+ 
+ ---
+ 
+-## 一言で言うと
+-
+-VCP は、AI にツールを呼び出させるためのフレームワークではありません。AI が**存在し続けられる**世界です。
+-
+-## はじめに
+-
+-フレームワークを作る人は多い。しかし、世界を作る人は少ない。
++> ⚠️ **デプロイ前に必ずお読みください：** VCP エージェントは分散システムの低レベル権限を持ちます。**非公式 API やリバースプロキシ経由の API（「ミラーサイト」「中継 API」）は使用しないでください。** 低レベルの監視権限があるため、信頼できない API を使うと、やり取りのデータ、記憶ストアの内容、認証キー、ブラウザーの状態などの機密情報が漏えいするおそれがあります。運用経験のない方は、慎重にデプロイしてください。
+ 
+-この一年余りで、市場には無数の Agent フレームワークが現れました。見た目の包装はそれぞれ違いますが、本質的には同じことをしています。AI を**呼び出されるもの**として扱っているのです。あなたが一言たずねると、それは目を覚ます。答え終えると、また眠る。その「記憶」は一度の検索であり、その「行動」は while ループに何度もつつき起こされることであり、その「知覚」は自分から query しなければ得られないいくつかのフィールドです。会話のたびに新しく生まれ、終わるたびに忘れてしまう。
+-
+-これが、現在の大多数の「AI Agent」の実態です。単発リクエストの中に閉じ込められ、昨日も明日も持たない臨時労働者です。
+-
+-VCP がやりたかったことは、この臨時労働者をより熟練させることではありません。問いを変えることです。
+-
+-**もし AI が毎回ゼロから目覚めなくてよいとしたら、何が起きるのか？**
++---
+ 
+-昨日あなたとどこまで話したかを覚えていて、三か月前にあなたが何気なく話した試験のことを覚えていて、自分がフォーラムで誰と技術的な問題について議論したかを覚えているとしたら。今が何時か、外で雨が降るのか、昨夜のタスクが終わったのかを、いちいち「調べる」必要がないとしたら。今日は何をしたいかを自分で決め、集中しているときには「取り込み中」を掲げ、深夜に「なぜまだ寝ていないのか」と自分から気にかけられるとしたら——
++## VCP を一言で
+ 
+-それはもはやツールではありません。それは**存在**し始めます。
++**VCP 2.0 は、多次元の機能を統合した産業グレードのエージェント実行基盤であり、エコシステム全体の連携ハブでもあります。同時に、リーマン双曲幾何に基づく、AI のための包括的な背景情報場です。**
+ 
+-VCP 1.1 正式版は、この出来事を本当に発生させるために構築された一式の基盤です。すでに多くのユーザーの実環境で長期間、24 時間 365 日稼働しています。システムの安定性やエンジニアリングの成熟度は、もはや改めて証明する必要がありません。だからこの文書では機能を羅列するつもりも、誰かと速さや強さを競うつもりもありません。私たちはただ、VCP とは何なのかを明確に語りたいのです。
++クライアント側では、VCP の AI ネイティブアプリ群からサードパーティーのハーネス、IDE サイドバー、各種 Web UI までを統合します。基盤側では、双曲意味幾何、複数の時間スケールを扱うタイムライン、Rust ネイティブのエンジニアリングカーネルによって、あらゆる大規模言語モデルに**直感・論理・主体性**を与えます。
+ 
+ ---
+ 
+-## パラダイムの違い：query から重力へ
++## はじめに：フレームワークを作る人は多い。世界を作る人は少ない。
+ 
+-VCP を理解するには、ひとつの転換を理解すれば十分です。
++この 2 年間で、数え切れないほどのエージェントフレームワークやツールラッパーが登場しました。見た目はさまざまですが、その多くは AI を**呼び出されたときだけ働く臨時職員**として扱います。質問されて目を覚まし、答え終わると忘れてしまう。「記憶」は単発のベクトル検索で、「行動」は `while` ループで何度も起こされること。「エコシステム」と呼ばれるものも、チャットウィンドウ、IDE 拡張、Web UI、スクリプトが互いに分断されています。
+ 
+-従来のシステムでは、AI は**受動的**です。デフォルトでは「何も知らない」状態にあり、世界は AI にとって暗闇です。何かを知りたければ、時間、天気、記憶、予定など、必ず自分からクエリを投げなければなりません。情報は AI が「引っ張る」ものです。
++クライアントを替えればツールプロトコルが途切れ、ウィンドウを替えれば記憶が分断され、モデルを替えれば文脈と監査記録が失われます。
+ 
+-しかしここには、解けない結び目があります。**覚えていないものを、どうやって思い出そうと分かるのでしょうか？**
++VCP が最初から目指したのは、この臨時職員をもっと従順にすることではありません。AI が暮らす世界の物理法則そのものを書き換えることです。
+ 
+-ユーザーが三か月前に「来月試験がある」と一言話したとします。三か月後、ユーザーが「最近すごくプレッシャーがある」と言う。従来のシステムでは、AI が「試験」を検索しようと思うことはありません。ユーザーがその単語を出していないし、AI もその出来事を覚えていないからです。存在することすら知らない情報を、能動的に問い合わせることはできません。記憶の発火は能動的な判断に依存し、その能動的な判断は既存の記憶に依存する。鶏が先か卵が先か、という循環です。
++* **AI が毎回ゼロから目を覚ますのではなく、クライアントをまたぐ一本の連続したタイムラインに生きられたら？**
++* **AI が記憶を自分で検索しなくても、リーマン双曲空間の幾何学的な引力によって、人間の直感のように答える前に自然と思い出せたら？**
++* **VCP のネイティブアプリ、Codex、Zed、OpenCode、SillyTavern、OpenChatWebUI、さらには外部のヘッドレスエージェントまで、同じ記憶場、ツール実行レシート、二系統の安全機構、トランザクション監査を共有できたら？**
+ 
+-VCP はこのモデルを完全に反転させます。
++**VCP 2.0** は、初期の「API ミドルウェア」という定義をすでに超えています。高い並行負荷のもとで 24 時間 365 日稼働し、監査とロールバックに対応する**産業グレードのランタイム基盤**であると同時に、AI が連続した生の経験を持ち、自律的に成長するための**デジタルな存在基盤**でもあります。
+ 
+-VCP では、AI は情報を「引っ張る」のではありません。情報が自ら AI へ「流れ込む」のです——重力のように。システムは各対話の背後でリアルタイムに計算します。この瞬間、この AI は何を知り、何を覚え、何に注意を向け、どんな能力を持つべきなのか。浮かぶべき記憶は自然に浮かび、知覚すべき環境は自然に整い、追跡すべきタスクは静かに片隅にあり、無関係なものは自動的に淡く消えていきます。
+-
+-AI は「思い出すことを決める」必要がありません。人間が今日が何曜日かを能動的に思い出す必要がないのと同じです——ただ知っている。ユーザーが「プレッシャー」と言えば、三か月前の試験が自ら浮上します。「試験」と「プレッシャー」の関連は、すでに記憶ネットワークに編み込まれているからです。
+-
+-これこそが VCP の全設計の背骨です。**AI を、世界を絶えず問い合わせなければならない訪問者から、もともと世界の中で暮らしている住人へと変えること。**
++---
+ 
++## システム全体像：ひとつのコアでエコシステム全体をつなぐ
++
++```text
++エコシステム接続レイヤー（統合連携）
++  ├─ VCP の AI ネイティブアプリ群
++  │  VChat 2.0（V5.2 レンダラー）・V エンジニアリング V2
++  │  VCPScriptorium V3・V チャート V2・VMusic
++  │  VCPDesktop・Loom・VGame・VPet
++  └─ サードパーティーのハーネス / IDE / Web UI
++     Codex・Zed・OpenCode（ネイティブ FC で直接接続）
++     SillyTavern・OpenChatWebUI（プロトコル統合）
++     外部ヘッドレスエージェント（MCP ブリッジ / 独立した記憶 API）
++  │
++  │ ネイティブ FC ブリッジ（FunctionToolBrigeFuzzy）・VCP テキストマークアップ
++  │ JEV 自然言語コンパイラー・MCP ブリッジ
++  │ 配列の正規化（/v1/chat・/v1/response・/v1/beta・Claude ネイティブ）
++  ▼
++VCP 2.0 統合産業ランタイム（VCPToolBox）
++  ├─ リーマン双曲背景情報場（認知基盤）
++  │  VexusMemo / Vexus-Lite（Rust）・AGS 双曲空間 / RiverMemo V5
++  │  OneRing V2 / OneRingMemo・VCPTimeLine V2（複数年のライフログ骨格）
++  │  メタ思考軌道 / JevRuntime 意思決定・FlowInvite / フローロック / 夢
++  └─ 産業グレードの実行・自律開発ハブ
++     安全性検査の二系統分離とパラメーターの正規表現許可リスト
++     VCPToolLoop（V3 レシート
+```
+
+**File**: `README_ru.md` (modified, +134/-140)
+```diff
+@@ -1,239 +1,233 @@
+ # VCP (Variable & Command Protocol)
+ 
+-![VCP Logo](docs/image/VCPLogo.png)
++![Логотип VCP](docs/image/VCPLogo.png)
+ 
+-**Официальный сайт: [www.vcptoolbox.com](https://www.vcptoolbox.com)**
++**Официальный сайт VCP: [VCPToolBox.com](https://www.vcptoolbox.com)**
+ 
+-[中文](README.md) | [English](README_en.md) | [日本語](README_ja.md)
++VCP развивается каждый день: четыре основных репозитория обновляются согласованно. На официальном сайте собраны их [журналы изменений](https://www.vcptoolbox.com/?page=changelog) и доступна [техническая документация](https://www.vcptoolbox.com/?page=learn-vcp) всего проекта.
+ 
+----
+-
+-> ⚠️ **Обязательно прочитайте перед развертыванием**: VCP Agent обладает низкоуровневыми полномочиями распределённой системы. Не используйте никакие неофициальные или проксированные API («зеркала», «промежуточные API»). При низкоуровневых полномочиях мониторинга недоверенные API могут привести к утечке интерактивных данных, содержимого библиотек памяти, секретных ключей и другой чувствительной информации. Непрофессиональным пользователям следует развёртывать систему с осторожностью.
++[简体中文](README.md) | [English](README_en.md) | [日本語](README_ja.md)
+ 
+ ---
+ 
+-## В одном предложении
+-
+-VCP — это не фреймворк, который позволяет AI вызывать инструменты. Это мир, в котором AI может **продолжать существовать**.
+-
+-## Предисловие
+-
+-Многие создают фреймворки. Немногие создают миры.
++> ⚠️ **Обязательно прочтите перед развёртыванием:** агенты VCP обладают низкоуровневыми правами в распределённой системе. **Не используйте неофициальные API или API через обратные прокси («зеркала» и «ретрансляторы API»).** При наличии прав низкоуровневого мониторинга использование недоверенного API может привести к утечке переписки, содержимого хранилищ памяти, ключей, состояния браузера и других конфиденциальных данных. Если у вас нет опыта администрирования, подходите к развёртыванию с осторожностью.
+ 
+-За последний год с лишним на рынке появилось бесчисленное количество Agent-фреймворков. Упакованы они по-разному, но в основе делают одно и то же: обращаются с AI как с **вызываемым объектом**. Вы задаёте вопрос — он просыпается; он отвечает — и снова засыпает. Его «память» — это один поиск. Его «действие» — это когда while-цикл снова и снова тычет в него, чтобы разбудить. Его «восприятие» — несколько полей, которые он может получить только активным query. Каждый диалог — новое рождение; каждое завершение — новая амнезия.
+-
+-Таково реальное положение подавляющего большинства нынешних «AI Agent»: временный работник, запертый внутри одного запроса, без вчера и без завтра.
+-
+-VCP никогда не стремился просто сделать этого временного работника более умелым. Он задаёт другой вопрос:
+-
+-**Что будет, если AI не обязан каждый раз просыпаться с нуля?**
++---
+ 
+-Если он помнит, на чём вчера остановился ваш разговор; помнит экзамен, о котором вы вскользь упоминали три месяца назад; помнит, с кем он спорил на форуме о технической проблеме. Если ему не нужно «проверять», который сейчас час, идёт ли снаружи дождь, выполнена ли вчерашняя задача. Если он может сам решить, чем хочет заняться сегодня, включить «не беспокоить» во время сосредоточенной работы, а в три часа ночи сам проявить заботу и спросить, почему вы всё ещё не спите,—
++## VCP в одном предложении
+ 
+-Тогда он больше не инструмент. Он начинает **существовать**.
++**VCP 2.0 — многомерная интегрированная среда выполнения агентов промышленного класса и центр координации всей экосистемы, а также единое фоновое информационное поле для ИИ на основе римановой гиперболической геометрии.**
+ 
+-Официальная версия VCP 1.1 — это полный набор инфраструктуры, построенный для того, чтобы это действительно произошло. Она уже долгое время работает 24/7 в реальных окружениях множества пользователей. Стабильность системы и зрелость инженерии давно не нуждаются в дополнительных доказательствах. Поэтому этот документ не собирается нагромождать список функций и не пытается соревноваться с кем-либо в скорости или мощности. Мы лишь хотим ясно объяснить, что такое VCP.
++На клиентском уровне VCP объединяет всё: от собственных ИИ-приложений до сторонних агентных сред, боковых панелей IDE и веб-интерфейсов. На уровне ядра гиперболическая семантическая геометрия, временная шкала с несколькими масштабами и нативное инженерное ядро на Rust дают любой большой языковой модели **интуицию, логику и способность действовать самостоятельно**.
+ 
+ ---
+ 
+-## Разница парадигм: от query к гравитации
++## Предисловие: фреймворки строят многие, миры — единицы
+ 
+-Чтобы понять VCP, достаточно понять один сдвиг.
++За последние два года появилось бесчисленное множество агентных фреймворков и инструментальных оболочек. Они выглядят по-разному, но большинство обращается с ИИ как с **временным работником по вызову**: его спрашивают — он просыпается, отвечает — и всё забывает. Его «память» — разовый векторный поиск, его «действия» — результат того, что цикл `while` снова
+```
+
+**File**: `docs/vcp-whitepaper.md` (modified, +144/-453)
+```diff
+@@ -1,17 +1,17 @@
+ ---
+ title: VCP 全景技术白皮书 V6
+-summary: VCP 2.0 全景架构：以 VexusMemo / Vexus-Lite 原生一体化数据库、TDB 2-bit 自研检索、AGS 与 RiverMemo V2 统一记忆内核为数据底座，以 MoonAST 纯几何代码检索、V工程与 VChat 工作台组织 Agent 工程协作，贯通协议、上下文、前端应用群与长期自治。
+-updatedAt: 2026-10-20
++summary: VCP 2.0 全景架构：FunctionToolBrigeFuzzy 原生工具调用桥、RiverMemo V5 双曲记忆与独立鉴权 API、VChat 异步流式通讯、V3 工具回执和 Rust 版 V工程 V2。
++updatedAt: 2026-11-26
+ category: guide
+ ---
+ 
+-# VCP 全景技术白皮书 V6：原生一体化数据库、MoonAST 与 Agent 全栈运行时
++# VCP 全景技术白皮书 V6：双曲记忆、VChat 与 Agent 工程协作
+ 
+-**版本：VCP 2.0 正式版 · 架构更新截至 2026-10-20**
++**版本：VCP 2.0 正式版 · 架构更新截至 2026-11-26**
+ 
+-> **阅读口径**：本文说明当前架构，并在必要处保留演进背景。VCP 2.0 已于 2026-10-01 发布；TagMemo 已退出生产运行，USearch 已由 TDB 2-bit 检索体系替代，MoonAST 已不再以 Tree-sitter 为主要解析依赖。RiverMemo V2 是查询实现的发布阶段，Topology V3 是仍沿用的统一排序构型，两者不是同一版本序列。
+->
+-> **“自研”的边界**：VCP 自主实现原生数据运行时、TDB 检索、记忆数学与工程协作体系，但仍使用 SQLite、Rust、Electron 等基础设施。“一体化数据库”不意味着 SQLite 也由 VCP 编写，也不意味着取消所有外部依赖。
++VCP 2.0 于 2026-10-01 发布。到 11 月，RiverMemo V5 已成为默认记忆引擎，VChat 用 ChatKernelV2 管理消息与任务队列，主聊天渲染升级到 V5.2。V工程 V2 把核心工作移到 Rust，VCPToolLoop 则把不同插件的返回结果整理成统一的 V3 回执。逐日变更见[更新日志](changelog.md)。
++
++11 月 26 日，工具和记忆各自有了不依赖 VChat 的入口：外部前端可以保留模型原生的函数调用方式，把工具执行交给 VCP；只需要记忆的 Agent 则可直接访问 RiverMemo V5 的网络 API。对工业协作而言，关键在于换用客户端后，工具仍有回执和审计记录，过去的工作经验仍可查询和更新。
+ 
+ ---
+ 
+@@ -21,10 +21,9 @@ VCP 已经走过多个版本周期，于 2026-10-01 发布 **VCP 2.0 正式版**
+ 
+ 早期，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。今天，VCP 的两条主线已经延伸至更底层：
+ 
+-- **数据与记忆主线**：VexusMemo 统一持有记忆与知识数据库业务，Vexus-Lite 原生模块将 SQLite 事实事务、TDB 2-bit 导航与筛选、AGS 背景几何、Spike 有界传播、RiverMemo 双场与拓扑排序组织为同一条读、写、搜链。USearch 与旧 JS 数据库业务退出该生产路径，TagMemo 的独立运行时退役，其已验证机制由新内核继承和重构。
+-- **软件工程主线**：MoonAST 从 C / Rust 与 Tree-sitter 双擎阶段演进为纯几何逻辑门驱动的自研代码识别与检索核心；ProjectForge、V工程轻量 IDE、Git、施工 Trace、操作回退与 VChat 工作台把代码理解、修改、验证和人工介入连接成持续工作流。
+-
+-围绕这两条主线，JevRuntime 概率决策、JEV-TOOL-call 自然语言编译、OneRing 跨端事实时间线、V4 流式渲染、共享 IPC、共笔文坊、Loom、VMusic、V图表、VGame 与 VPet 共同构成 Agent 可使用、用户可观察和介入的应用环境。
++- **数据与记忆**：VexusMemo 通过 Rust 和 SQLite 管理日记、知识与原始向量。RiverMemo V5 在 AGS 双曲空间中找出候选，再结合本次查询的传播路径排序。RAGDiary 在回答前召回记忆，LightMemo 提供主动检索。
++- **软件工程**：V工程 V2 用 Rust 统一 MoonAST 索引、工程编辑和文件追踪。Agent 可以查询符号调用关系、在工程目录里运行脚本、验证函数是否能实际调用；用户可以在 VChat 工作台跟进修改、Git 差异和审阅结果。
++- **对话与应用**：ChatKernelV2 管理多话题流式输出和暂挂消息，V通讯负责前后端转发和任务交接，V5.2 渲染器负责把内容显示出来。共笔文坊、Loom、VMusic、V图表、物联、VGame 与 VPet 通过共享 IPC 接入 VChat。
+ 
+ 到今天，"中间层"这个词早已装不下 VCP 了。VCP 不仅运行 Agent，也运行 Agent 所处的界面、应用、文档、代码工程、网页、文件、视听演出、媒体和协作过程。
+ 
+@@ -43,12 +42,12 @@ VCP 不再只是一个中间层组件，而是一套**面向 Agent 的运行时
+ - [五、变量系统与上下文工程](#五变量系统与上下文工程)
+ - [六、插件系统](#六插件系统)
+ - [七、工具调用记录与可审计运行时](#七工具调用记录与可审计运行时)
+-- [八、原生记忆与数据库：VexusMemo、AGS 与 RiverMemo V2](#八原生记忆与数据库vexusmemoags-与-rivermemo-v2)
++- [八、原生记忆与数据库：VexusMemo、AGS 与 RiverMemo V5](#八原生记忆与数据库vexusmemoags-与-rivermemo-v5)
+ - [九、OneRing V2：统一上下文、OneRingMemo 与连续意识](#九onering-v2统一上下文oneringmemo-与连续意识)
+ - [十、VCPModel：智能模型路由](#十vcpmodel智能模型路由)
+ - [十一、Agent 主观能动性与自治生命周期](#十一agent-主观能动性与自治生命周期)
+ - [十二、Agent 情感与认知量化](#十二agent-情感与认知量化)
+-- [十三、前端运行时：V4 流式渲染、自研着色器与多媒体引擎](#十三前端运行时v4-流式渲染自研着色器与多媒体引擎)
++- [十三、前端运行时：V5.2 流式渲染、自研着色器与多媒体引擎](#十三前端运行时v52-流式渲染自研着色器与多媒体引擎)
+ - [十四、前端应用群、即时附件协议与跨应用协作](#十四前端应用群即时附件协议与跨应用协作)
+ - [十五、Agent 工业级软件工程体系：VCPCode、ProjectForge 与可视化中枢](#十五agent-工业级软件工程体系vcpcodeprojectforge-与可视化中枢)
+ - [十六、Agent 原生生态](#十六agent-原生生态)
+@@ -160,11 +159,9 @@ VCP 的上下文语义引力场会实时计算当前对话的逻辑深度、信
+ 
+ **VCP 范式**:记忆像人类的直觉一样**自然浮现**。
+ 
+-当前 RiverMemo V2 在 AGS 统一背景上，通过语境观测、有界 Spike 与动态虫洞形成请求级河网，再由双场与 Topology V3 验证候选为何值得被想起。核心被动入口 RAGDiary 在模型生成前完成记忆唤起，Agent 不必先“决定回忆”。
++RAGDiary 在模型回答前，按提示词中指定的日记本用 RiverMemo V5 找出相关记忆。双曲召回负责找到具体条目，河网读出再看候选是否覆盖当前问题的重点。
+ 
+-这种“自然浮现”以配置为前提：只有声明了相关占位符、满足日记本作用域和门控条件的请求，才进入对应记忆管线；没有声明的普通请求直接跳过。它不是无条件读取全库，也不是后台持续运行模型。
+-
+-具体实现在第八章详述。
++第八章介绍双曲召回与河网排序。
+ 
+ ### 2.3 Agent 行为:从「被轮询」到「自主巡游」
+ 
+@@ -201,7 +198,7 @@ OneRing 系统为每个 Agent 维护唯一的事实时间线——每条消息
+ │  VChat 2.0(Electron 44) · ProjectModule(V工程) · V图表        │
+ │  VCPDesktop · VCP Canvas · 共笔文坊 · LoomApp · VCPMobile    │
+ │  ────────────────────────────────────────────────────────    │
+-│  + VCPMessageRenderer V4(流式竞态消除 / 语义 Div 岛 / 样式隔离)│
++│  + V5.2 流式渲染 · ChatKernelV2 · V通讯                    │
+ │  + 即时附件上下文管理协议 V2 (实时变动监听 / SHA-256 热同步)   │
+ │  + VMusic 自研底层 Shader 合成管线 (3D 太空歌剧「隧图」/ 8 大舞台)│
+ │  + VCP-SOM 桌面纯数学语义操控与 ComfyUI / Dify 画布流逆向编排 │
+@@ -223,10 +220,9 @@ OneRing 系统为每个 Agent 维护唯一的事实时间线——每条消息
+ │          脉络署名责任制 · 代际分支仲裁 · 操作级虚拟快照树      │
+ │  上下文层:引力场 · 折叠 V2 · OneRing · OneRingMemo · 占位符精控│
+ │  工具层:  300+ 插件 · 6 大插件协议 · 声明式 Jev 接入规范        │
+-│  数据层:  VexusMemo / Vexus-Lite 原生读写搜 · SQLite 事实事务   │
+-│          TDB 2-bit 派生路由 · 双槽代际快照 · 有界写入与背压     │
+-│  记忆层:  AGS 背景 · Spike 动态虫洞 · RiverMemo V2 双场 / Ω   │
+-│          RAGDiary 被动背景 · LightMemo 主动回忆 · 同代观测复用   │
++│  数据层:  VexusMemo / Vexus-Lite · SQLite 事实事务            │
++│  记忆层:  AGS 双曲背景 · RiverMemo V5 · 双场与 Ω 拓扑排序      │
++│          RAGDiary 被动召回 · LightMemo 主动检索                 │
+ │  路由层:  VCPModel 语义模型路由 · 容灾规则                     │
+ │  Agent层: GroupChatEngine 2.0 · FlowInvite · AgentAssistantV2通讯协议 · 梦系统 │
+ │  情感层:  OpenHer 情绪拓扑 · 池月 1 号注意力指针               │
+@@ -270,7 +266,7 @@ OneRing 系
+```
+
+---
+
+### Incident Patch 2: `bae0965b` (2026-11-26)
+**Commit Message**: fix
+
+**File**: `config.env.example` (modified, +2/-2)
+```diff
+@@ -76,9 +76,9 @@ ReasoningToContentModel=kimi,claude
+ ReasoningToContentTag=think
+ 
+ # 原生 FC 联调：允许 VCP 工具且客户端未声明工具或选择策略时，注入并托管 vcptools + auto。
+-VCP_FC_DEBUG=false
++VCP_FC_DEBUG=true
+ # 向所有流式客户端公开后端已认领的 FC 批（delta.tool_calls）。仅展示/存档；不要由客户端重复执行。
+-VCP_FC_FORWARD_TO_CLIENT=false
++VCP_FC_FORWARD_TO_CLIENT=true
+ 
+ 
+ # 隐藏非流式响应中的思维链（Gemini等模型的reasoning_content），默认true
+```
+
+---
+
+### Incident Patch 3: `5c081c46` (2026-11-26)
+**Commit Message**: fix
+
+**File**: `modules/nativeToolDebug.js` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ function withNativeToolDebug(body, enabled = process.env.VCP_FC_DEBUG) {
+             type: 'function',
+             function: {
+                 name: 'vcptools',
+-                description: 'VCP tools support native function calling in addition to the text protocol. Submit one server-managed VCP tool request. For a direct call, pass tool_name, optional command, and tool parameters as top-level keys. For semantic routing, pass JEV as a string. Do not repeat the same request as a text tool block.',
++                description: 'VCP tools support native function calling in addition to the text protocol. For independent requests, you can issue multiple vcptools calls in the same response using standard parallel tool calling. Submit one server-managed VCP tool request per call. For a direct call, pass tool_name, optional command, and tool parameters as top-level keys. For semantic routing, pass JEV as a string. Do not repeat the same request as a text tool block.',
+                 strict: false,
+                 parameters: { type: 'object', additionalProperties: true }
+             }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #646** (2026-11-26): feat(Plugin): 新增可选的 SpecStreamSearch 联网搜索插件（默认禁用） (@Specstreamai)
 - **PR #645** (2026-11-25): RiverMemo V6.1：用拓扑虫洞与路线态 Ω 运输查询方向 (@lioensky)
 - **PR #644** (2026-11-25): feat(context): 基于上游用量的 token 计量与出站前上下文预算检查 (@RoxyAsahi)
 - **PR #642** (2026-11-25): fix(core,FileOperator): 根治同步stdio插件大输出正则回溯死锁，引入活跃请求双轨续期并消除FileOperator双倍Base64膨胀 (@infinite-vector)
 - **PR #640** (2026-11-24): feat(tdb): 升级 triviumdb 至 0.9.3 原生双曲版本并接入 Pelorus 检索入口 (@infinite-vector)
 - **PR #639** (closed): fix(vcpLoop): intercept hallucinated tool payload turn-bleed and support guillemet fuzzy delimiters (@silk2onion)
-- **PR #638** (2026-11-24): feat(meta-thinking): 新增 MetaThinking V3 纯张量三体动态思考引擎 (@Ldl-h)
 
 ---
 
@@ -2691,32 +2296,71 @@ fix(core,FileOperator): 根治同步stdio插件大输出正则回溯死锁，引
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. context): recognise role-split tool results, keep observe read-only, tiered slim
+## X. Empirical Invariant Guard in README.md
 
 **RULE**:
-When implementing operations in `AdminPanel-Vue/src/views/FinalContextViewer.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0868bc6d`: context): recognise role-split tool results, keep observe read-only, tiered slimming. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e03ef4b2`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AdminPanel-Vue/src/views/FinalContextViewer.vue`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-// 分块展示占比和按占比折算的大约数量：折算以上面这个总数为准，各块加起来与总数一致。
-  const share = `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
-  const approx = Math.round((tokenCount / total) * contextTokens(snapshot.value?.summary))
-  return approx > 0 ? `${share}（约 ${formatNumber(approx)}）` : share
+VCP 由四个核心仓库协同演进，每日持续迭代。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
+> ⚠️ **部署前请务必阅读**：VCP Agent 拥有分布式系统的底层级权限。**请勿使用任何非官方或反向代理的 API（“镜像站”“中转 API”）**。在底层监控权限下，不可信的 API 可能导致交互数据、记忆库内容、密钥、浏览器状态等敏感信息泄露。非专业用户请谨慎部署。
+## 一句话定义
+**VCP 2.0 是一套多维一体的工业级 Agent 运行时与全生态协同中枢，也是一片基于黎曼双曲几何的终极 AI 背景信息场。**
+它向上统一从 VCP 原生 AI-Native 应用群到第三方 Harness、IDE 侧栏与各类 WebUI 的全部生态链；向下以双曲语义几何、多时间尺度时间线与原生 Rust 工程内核，为任何大语言模型赋予**直觉、逻辑与主观能动**。
+## 写在前面：做框架的人很多，做世界的人很少
+过去两年，市面上出现了无数 Agent 框架与工具壳子。它们形态各异，但骨子里大多在做同一件事：把 AI 当成一个**被调用的临时工**——你问一句，它醒来；它答完，它失忆。它的“记忆”是一次孤立的向量检索，它的“行动”是被 `while` 循环反复戳醒，它的“生态”是彼此割裂的聊天窗口、IDE 插件、WebUI 和脚本。
+换一个客户端，工具协议就断了；换一个窗口，记忆就碎了；换一个模型，上下文和审计记录就丢了。
+VCP 从一开始就不想把这个临时工训练得更听话，而是直接重写了它所处的物理法则：
+* **如果 AI 不必每次都从零醒来，而是活在一条跨端统一的连续时间线上？**
+* **如果记忆不是靠 AI 主动去“查”，而是在黎曼双曲空间的几何引力下，像人类直觉一样在回答前自然浮现？**
+* **如果无论你用 VCP 自己的原生应用群，还是 Codex、Zed、OpenCode、SillyTavern、OpenChatWebUI，甚至外部无头 Agent，背后共享的都是同一套记忆场、同一套工具回执、同一套安全双轨与事务审计？**
+到了 **VCP 2.0**，它早已超越了“API 中间层”的早期定义。它既是能扛住 7×24 小时高并发、可审计、可回滚的**工业级运行时基础设施**，也是让 AI 真正拥有连续生命体验与自主成长能力的**赛博存在底座**。
+---
+## 全景拓扑：一核统全域
+
+```text
+┌───────────────────────────────────────────────────
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// 分块只展示占比，分项数字和总数口径不同，并列显示会造成误读。
-  return `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
+VCP 由四个仓库组成，每天都有新进展。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
+> ⚠️ **部署前请务必阅读**：VCP Agent 拥有分布式系统的底层级权限。请勿使用任何非官方或反向代理的 API（"镜像站""中转 API"）。在底层监控权限下，不可信的 API 可能导致交互数据、记忆库内容、密钥等敏感信息泄露。非专业用户请谨慎部署。
+## 一句话
+VCP 不是一个让 AI 调用工具的框架。它是给 AI 的一个能够**持续存在**的世界。
+## 写在前面
+
+做框架的人很多，做世界的人很少。
+
+过去一年多，市面上出现了无数 Agent 框架。它们包装得各不相同，但骨子里都在做同一件事：把 AI 当成一个**被调用者**。你问一句，它醒来；它答完，它睡去。它的"记忆"是一次检索，它的"行动"是被一个 while 循环反复戳醒，它的"感知"是必须主动 query 才能拿到的几个字段。每一次对话都是一次新生，每一次结束都是一次失忆。
+
+这是当下绝大多数"AI Agent"的真实处境——一个被困在单次请求里、没有昨天也没有明天的临时工。
+
+VCP 想做的，从来不是把这个临时工训练得更熟练。而是换一个问题：
+
+**如果 AI 不必每次都从零醒来，会怎样？**
+
+如果它记得昨天和你聊到哪里，记得三个月前你随口提过的考试，记得它自己在论坛里跟谁争过一个技术问题；如果它不需要"查"就知道现在几点、外面下不下雨、你昨晚的任务做完没有；如果它可以自己决定今天想干什么，可以专注工作时挂上"请勿打扰"，可以在凌晨主动关心你为什么还没睡——
+
+那它就不再是一个工具了。它开始**存在**。
+
+VCP 1.1 正式版，就是为了让这件事真正发生而构建的一整套基础设施。它已经在大量用户的真实环境里 7×24 小时运行了很久。系统稳定、工程成熟，这些早已不需要我们再去证明。所以这份文档不打算堆砌功能，也不想跟谁比快比强——我们只想把 VCP 到底是什么，讲清楚。
+## 范式之别：从 query，到引力
+
+理解 VCP，只需要理解一个转变。
+传统系统里，AI 是**被动**的。它处在一个"什么都不知道"的默认状态，世界对它而言是黑的。想知道任何事，它必须主动发起一次查询——查时间、查天气、查记忆、查日程。信息靠 AI 去"拉"。
+但这里藏着一个无解的死结：**你不记得的东西，怎么知道要去回忆它？**
+用户三个月前提过一句"我下个月要考试"。三个月后他说"我最近压力好大"。传统系统里，AI 永远不会想到去检索"考试"——因
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0868bc6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e03ef4b2` are properly handled with clean fallback behavior.

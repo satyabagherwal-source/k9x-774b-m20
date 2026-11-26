@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T21:24:16.575Z",
+  "timestamp": "2026-11-26T21:53:00.283Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lioensky-vcptoolbox-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lioensky-vcptoolbox-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T21:24:16.575Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T21:53:00.283Z`  
 > **Learning ID**: `LEARN-EVO-lioensky-vcptoolbox-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lioensky-vcptoolbox-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `a2c33d06`  
+> **Source Version**: `e03ef4b2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T21:24:10.237Z  
+> **Timestamp**: 2026-11-26T21:52:54.154Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T21:24:10.231Z  
+> **Harvest Timestamp**: 2026-11-26T21:52:54.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2453 stars
+- **Stars / Engagement**: 2456 stars
 
 ---
 
@@ -1813,11 +1813,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #619** (2026-11-19): **fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞**
-  *Symptoms*: ## 一、动机与背景（问题现象）  在升级至 RiverMemo V5 原生双曲检索链路后，高并发会话场景下偶发两类相互关联的严重阻塞现象： 1. **RAG 浪潮召回静默挂起**：`RAGDiaryPlugin` 在完成外部 BM25 预筛并打印 `[RAGDiaryPlugin] BM25 file plan: mode=body, files=...`（标志进入 `canUseNativeRiverFullPath` 原生分支）后，后续检索无响应、无报错日志输出，且后台预设的 30 分钟超时清理器未触发。 2. **管理面板（AdminPanel）触发重启时卡死在 Phase 2 或 Phase 8**：    - 若在请求挂起期间直接点击网页端重启，主进程日志停留在 `Phase 2/10 - Preparing to close HTTP server. trackedSockets=10, activeHttpRequests=5`（`activeRequests=0`），等待满 60 秒后才触发 `forceShutdownTimer` 强制退出；    - 若先在前端点击停止（调用 `/v1/interrupt` 断开 SSE 流）再点击重启，则关机流程可越过 Phase 2，但会挂起在 `Phase 8/10 - pluginManager.shutdownAllPlugins start` 之后，且进程调用 `process.exit(1)` 后仍可能因底层原生线程锁死而驻留。  ---  ## 二、全链路排障与根因溯源过程（Root-Cause Trace）  为在不破坏现场的前提下定位本质原因，我们通过静态源码审计与非侵入式线程级 Lease 飞行记录仪（追踪每个线程持有的 `ReadPoolConn`、`GlobalChunksLock`、`PublicationGate` 与 `NapiTask` 时间戳）还原了 **25 毫秒内形成的跨线程池死锁现场**：  ### 1. 核心根因：`LightMemo` 与 `RiverMemo V5` 的锁序反转（Lock Order Inversion Deadlock） 在同一个 `NativeKnowledgeRuntime` 实例中，全局块表 `self.global_chunks`（`Arc<Mutex<Option<GlobalChunks>>>`）与容量为 `4` 的 SQLite 只读连接池 `read_pool` 被两类检索路径以**相反顺序**获取： - **正向路径（`NativeRiverQueryTask` 及 `execute_parallel_rerank`）**：   在 `knowledge_runtime.rs:2437, 2913` 中，先调用 `with_registered_read_transaction_napi` **从 `read_pool` 借出 1 条 SQLite 读连接（Level 2）**，开启读事务固定 WAL 快照后，再在 `knowledge_runtime.rs:648` 申请 **`source.table.lock()` 全局块表互斥锁（Level 3）**。 - **反向路径（`light_memo.rs` 中的 `LightMemoTask`、`GlobalChunkCheckpointTask`、`WarpedChunkPreparationTask`）**：   在 `light_memo.rs:21
+- **Issue #646** (2026-11-26): **feat(Plugin): 新增可选的 SpecStreamSearch 联网搜索插件（默认禁用）**
+  *Symptoms*: 说明一下：插件调用的是我们公司 SpecStream 的搜索 API。  新增 `Plugin/SpecStreamSearch`，结构和 KeenableSearch 一致：一个 JS 文件、node:test 测试、README、`config.env.example`，以 `plugin-manifest.json.block` 提交，默认禁用，改名后才会加载，其他搜索插件不受影响。  - 调用 `POST https://api.specstream.ai/v1/web-search`，Key 以 `Authorization: Bearer` 发送。必须填写 `SpecStreamKey`，没填时插件直接返回错误，不发出任何请求 - 事实类问题会在结果列表前给出答案和来源页，例如 “capital of Australia” 返回 Canberra 以及它所在的维基百科页面 - 参数和 KeenableSearch 相同：`query`、`max_results`（1 到 20）、`site`、`published_after`。`site` 和 `published_after` 以 `site:`、`after:` 运算符写进查询，由服务端对每条结果强制执行；`site` 只接受域名字符 - SpecStream 的搜索 API 在 WideSearch 全部 200 个任务上 item F1 为 64.0，高于 Parallel 的 57.6 和 Exa 的 56.1，评测方法见 https://specstream.ai/benchmarks - 价格：标准档每千次 5 美元，`SpecStreamSpeed=fast` 快速档每千次 1 美元，新账号自带 10 美元额度 - 401、402（余额不足）、429 和其他错误都返回中文提示，并附上 API 自己的错误信息；请求设置 `redirect: 'error'`，Key 不会被转发到别的地址 - 用 Node 自带的 fetch，没有新依赖，也不需要 package.json  验证 - `node --test Plugin/SpecStreamSearch/SpecStreamSearch.test.js`：5/5 通过（fetch 全部 mock），KeenableSearch 的测试仍然 5/5 - 本地 stdin 实测：“VCPToolBox 插件 开发 文档” 返回 VCP 同步异步插件开发手册；`site: wikipedia.org` 的 “capital of Australia” 返回答案 Canberra 和维基百科来源；错误 Key 返回 “SpecStream API 认证失败（HTTP 401），请检查 SpecStreamKey。”  English: an opt-in SpecStream search plugin, shipped disabled like KeenableSearch. It needs `SpecStreamKey` and sends nothing without it; fact questions also get the answer with its source page. 
 
-- **Issue #618** (2026-11-18): **# feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻**
-  *Symptoms*:   ## 变更内容  - 新增 `Plugin/WarpedFieldAtlas/`。从知识库目录读取 Tag 训练快照 `.vcpwf`、Chunk（文本片段）训练快照 `.vcpwc` 和 SQLite 数据，返回场图、节点详情和查询结果。 - `/api/plugins/WarpedFieldAtlas/` 下的 `/status` 返回可用场和节点数，`/field/tag`、`/field/chunk` 返回场图。可从已有节点查询近邻，也可选取已有消息向量，查看同一条消息在两个场中的结果。 - 加载快照时，用快照自带的距离表逐项核对 JS 距离函数；不一致时停用查询视图。计算在工作线程中执行，十分钟无请求后释放。  ## 对现有功能的影响  新增 18 个文件，不修改后端核心文件、训练流程或原生检索。接口沿用后端认证，不调用模型或嵌入服务，不写知识库；布局等缓存只写入插件自己的 `state/`。  ## 验证  - 基于 `e22aeded` 运行 `node --test Plugin/WarpedFieldAtlas/geometry.test.js Plugin/WarpedFieldAtlas/layout.test.js Plugin/WarpedFieldAtlas/compact.test.js`，10 项通过。 - 在此前的上游基线 `5adb12bb` 上实际启动后端：无密钥请求返回 401；带密钥读取到 4292 个 Tag 节点、407 个片段节点，并完成查询。 - 同一基线上，用真实库副本中的 40 条消息对照原生检索。Tag 结果的先后次序检查通过 40/40，候选重合率 99.5%；打乱半径后的反向对照为 0/40。Chunk 场比较了 400 个分数，最大绝对差为 8.9e-16。更新基线后未在新的原生二进制上重跑这组对照。  ## 不在本次范围  多份快照并存时，插件选取的 Tag 预设或 Chunk 模型可能与原生检索不同。目前只展示训练快照，不读取训练后追加节点的 `.vcpwi` 文件，因此场图不是实时索引的完整视图。该限制不影响原生检索。
+- **Issue #645** (2026-11-25): **RiverMemo V6.1：用拓扑虫洞与路线态 Ω 运输查询方向**
+  *Symptoms*: ## 改动 用已发布 CSR 和实际首跳流计算路线态 Ω，运输候选共用的查询方向，替代读出时的 XW SQL 见证与专项加分。全网 Ω、普通 Hop-1 代理、Sense、召回及资产格式不变。更新读出文档并包含旋转不变量单测。本 PR 仅提交源码与文档；使用新读出需重新构建或加载对应原生模块，无须重训资产。  ## 验证 - Windows x64 实验构建已通过三查询 × 两轨的 LightMemo 冒烟检查，六个有序召回池与基线一致。 - 维护者定向人工评测：30 组虫洞查询整体有可辨提升，未完全达到预期；抽测 10 组常规黄金基准未观察到退行，其中 1 组第 6、7 名互换，判断略优。非随机样本，不据此推算普遍胜率。 - 实验工作区 Rust 单测 267 通过；两项依赖私有夹具的测试未随 PR 提交。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1834,547 +1834,477 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2c33d06` (2026-11-19)
-**Commit Message**: Merge pull request #619 from infinite-vector/fix/vexus-lite-lock-order-dag-and-shutdown-drain
+### Incident Patch 1: `e03ef4b2` (2026-11-26)
+**Commit Message**: fix
 
-fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞
-
-**File**: `rust-vexus-lite/src/global_chunks.rs` (modified, +103/-59)
+**File**: `README.md` (modified, +116/-133)
 ```diff
-@@ -341,71 +341,92 @@ impl GlobalChunks {
-         }
-     }
+@@ -4,147 +4,141 @@
  
--    /// Caller holds the Runtime table mutex and shared facts gate. Publication
--    /// is separate from queries; SQL member versions survive eviction/restart.
--    pub fn checkpoint(&mut self, db_path: &str, directory: &Path, database_generation: u64,
--        threshold: f64, allow_initial: bool) -> Result<bool, String> {
--        if !self.legacy_enabled { return Ok(false); }
-+    pub(crate) fn prepare_checkpoint_in_tx(
-+        &self,
-+        connection: &Connection,
-+        directory: &Path,
-+        threshold: f64,
-+        allow_initial: bool,
-+    ) -> Result<Option<(i64, &'static str, Vec<u8>, String, Vec<ChunkHeader>)>, String> {
-+        if !self.legacy_enabled { return Ok(None); }
-         if !threshold.is_finite() || !(0.0..=1.0).contains(&threshold) {
-             return Err("Invalid global Chunk checkpoint threshold".into());
-         }
--        let (generation, active, allowed) =
--            crate::storage::with_registered_read_transaction(db_path, |connection| {
--                if facts(connection)? != self.facts {
--                    return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
--                }
--                let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
--                    "SELECT generation,slot,dimension,model_sig,member_versions
--                     FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
--                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
--                ).optional().map_err(|e| e.to_string())?;
--                let Some((generation, slot, dimension, model, versions)) = manifest else {
--                    let mut has_file = false;
--                    for slot in ["a", "b"] {
--                        match std::fs::metadata(slot_path(directory, slot)) {
--                            Ok(_) => has_file = true,
--                            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
--                            Err(error) => return Err(error.to_string()),
--                        }
-+        let (generation, active, allowed) = (|| -> Result<(i64, String, bool), String> {
-+            if facts(connection)? != self.facts {
-+                return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
-+            }
-+            let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
-+                "SELECT generation,slot,dimension,model_sig,member_versions
-+                 FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
-+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
-+            ).optional().map_err(|e| e.to_string())?;
-+            let Some((generation, slot, dimension, model, versions)) = manifest else {
-+                let mut has_file = false;
-+                for slot in ["a", "b"] {
-+                    match std::fs::metadata(slot_path(directory, slot)) {
-+                        Ok(_) => has_file = true,
-+                        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-+                        Err(error) => return Err(error.to_string()),
-                     }
--                    return Ok((0, String::new(), allow_initial && !has_file));
--                };
--                if dimension != self.dimension as i64 || model != self.model {
--                    return Err("Global Chunk baseline model/dimension mismatch".into());
-                 }
--                if !matches!(slot.as_str(), "a" | "b") {
--                    return Err("Invalid global Chunk baseline slot".into());
--                }
--                if versions != 1 {
--                    eprintln!("[LightMemo] Legacy Chunk baseline has no member versions; publication skipped");
--                    return Ok((generation, slot, false));
--                }
--                let mut statement = connection.prepare(
--                    "SELECT chunk_id,vector_version,metadata_version,file_version
--                     FROM global_chunk_index_baseline_entries WHERE generation=?1"
--                ).map_err(|e| e.to_string())?;
--                let baseline = statement.query_map([generation], |row| Ok((
--                    row.get::<_, i64>(0)?,
--                    (row.get::<_, i64>(1)?,row.get::<_, i64>(2)?,row.get::<_, i64>(3)?),
--                ))).map_err(|e| e.to_string())?
--                    .collect::<rusqlite::Result<HashMap<_,_>>>().map_err(|e| e.to_string())?;
--                let removed = baseline.keys().filter(|id| !self.rows.contains_key(id)).count();
--                let upserts = self.rows.values().filter(|row|
--                    baseline.get(&row.id) != Some(&(
--                        row.vector_version, row.metadata_version, row.file_version
--                    ))
--                ).count();
--                let delta = removed + upserts;
--                le
+ **VCP 官网：[VCPToolBox.com](https://www.vcptoolbox.com)**
+ 
+-VCP 由四个仓库组成，每天都有新进展。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
++VCP 由四个核心仓库协同演进，每日持续迭代。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
+ 
+ [English](README_en.md) | [日本語](README_ja.md) | [Русский](README_ru.md)
+ 
+ ---
+ 
+-> ⚠️ **部署前请务必阅读**：VCP Agent 拥有分布式系统的底层级权限。请勿使用任何非官方或反向代理的 API（"镜像站""中转 API"）。在底层监控权限下，不可信的 API 可能导致交互数据、记忆库内容、密钥等敏感信息泄露。非专业用户请谨慎部署。
++> ⚠️ **部署前请务必阅读**：VCP Agent 拥有分布式系统的底层级权限。**请勿使用任何非官方或反向代理的 API（“镜像站”“中转 API”）**。在底层监控权限下，不可信的 API 可能导致交互数据、记忆库内容、密钥、浏览器状态等敏感信息泄露。非专业用户请谨慎部署。
+ 
+ ---
+ 
+-## 一句话
++## 一句话定义
+ 
+-VCP 不是一个让 AI 调用工具的框架。它是给 AI 的一个能够**持续存在**的世界。
++**VCP 2.0 是一套多维一体的工业级 Agent 运行时与全生态协同中枢，也是一片基于黎曼双曲几何的终极 AI 背景信息场。**
+ 
+-## 写在前面
+-
+-做框架的人很多，做世界的人很少。
+-
+-过去一年多，市面上出现了无数 Agent 框架。它们包装得各不相同，但骨子里都在做同一件事：把 AI 当成一个**被调用者**。你问一句，它醒来；它答完，它睡去。它的"记忆"是一次检索，它的"行动"是被一个 while 循环反复戳醒，它的"感知"是必须主动 query 才能拿到的几个字段。每一次对话都是一次新生，每一次结束都是一次失忆。
+-
+-这是当下绝大多数"AI Agent"的真实处境——一个被困在单次请求里、没有昨天也没有明天的临时工。
+-
+-VCP 想做的，从来不是把这个临时工训练得更熟练。而是换一个问题：
+-
+-**如果 AI 不必每次都从零醒来，会怎样？**
+-
+-如果它记得昨天和你聊到哪里，记得三个月前你随口提过的考试，记得它自己在论坛里跟谁争过一个技术问题；如果它不需要"查"就知道现在几点、外面下不下雨、你昨晚的任务做完没有；如果它可以自己决定今天想干什么，可以专注工作时挂上"请勿打扰"，可以在凌晨主动关心你为什么还没睡——
+-
+-那它就不再是一个工具了。它开始**存在**。
+-
+-VCP 1.1 正式版，就是为了让这件事真正发生而构建的一整套基础设施。它已经在大量用户的真实环境里 7×24 小时运行了很久。系统稳定、工程成熟，这些早已不需要我们再去证明。所以这份文档不打算堆砌功能，也不想跟谁比快比强——我们只想把 VCP 到底是什么，讲清楚。
++它向上统一从 VCP 原生 AI-Native 应用群到第三方 Harness、IDE 侧栏与各类 WebUI 的全部生态链；向下以双曲语义几何、多时间尺度时间线与原生 Rust 工程内核，为任何大语言模型赋予**直觉、逻辑与主观能动**。
+ 
+ ---
+ 
+-## 范式之别：从 query，到引力
+-
+-理解 VCP，只需要理解一个转变。
++## 写在前面：做框架的人很多，做世界的人很少
+ 
+-传统系统里，AI 是**被动**的。它处在一个"什么都不知道"的默认状态，世界对它而言是黑的。想知道任何事，它必须主动发起一次查询——查时间、查天气、查记忆、查日程。信息靠 AI 去"拉"。
++过去两年，市面上出现了无数 Agent 框架与工具壳子。它们形态各异，但骨子里大多在做同一件事：把 AI 当成一个**被调用的临时工**——你问一句，它醒来；它答完，它失忆。它的“记忆”是一次孤立的向量检索，它的“行动”是被 `while` 循环反复戳醒，它的“生态”是彼此割裂的聊天窗口、IDE 插件、WebUI 和脚本。
+ 
+-但这里藏着一个无解的死结：**你不记得的东西，怎么知道要去回忆它？**
++换一个客户端，工具协议就断了；换一个窗口，记忆就碎了；换一个模型，上下文和审计记录就丢了。
+ 
+-用户三个月前提过一句"我下个月要考试"。三个月后他说"我最近压力好大"。传统系统里，AI 永远不会想到去检索"考试"——因为用户没提这个词，AI 也不记得有这回事。它无法主动查询一个它根本不知道存在的信息。记忆的触发依赖主动决策，而主动决策又依赖已有的记忆。鸡生蛋，蛋生鸡。
++VCP 从一开始就不想把这个临时工训练得更听话，而是直接重写了它所处的物理法则：
+ 
+-VCP 把这个模型彻底翻了过来。
++* **如果 AI 不必每次都从零醒来，而是活在一条跨端统一的连续时间线上？**
++* **如果记忆不是靠 AI 主动去“查”，而是在黎曼双曲空间的几何引力下，像人类直觉一样在回答前自然浮现？**
++* **如果无论你用 VCP 自己的原生应用群，还是 Codex、Zed、OpenCode、SillyTavern、OpenChatWebUI，甚至外部无头 Agent，背后共享的都是同一套记忆场、同一套工具回执、同一套安全双轨与事务审计？**
+ 
+-在 VCP 里，AI 不再"拉"信息，信息会主动"流"向它——像引力一样。系统在每一轮对话背后实时计算：此时此刻，这个 AI 应该知道什么、记得什么、关注什么、拥有哪些能力。该浮现的记忆自然浮现，该感知的环境自然到位，该追踪的任务安静地待在角落，无关的一切自动淡出。
++到了 **VCP 2.0**，它早已超越了“API 中间层”的早期定义。它既是能扛住 7×24 小时高并发、可审计、可回滚的**工业级运行时基础设施**，也是让 AI 真正拥有连续生命体验与自主成长能力的**赛博存在底座**。
+ 
+-AI 不需要"决定去回忆"。就像人类不需要主动回忆今天星期几——你就是知道。用户说"压力大"，三个月前那场考试会自己浮上来，因为"考试"和"压力"之间的关联早已被编织进它的记忆网络。
+-
+-这就是 VCP 全部设计的脊椎：**把 AI 从一个需要不断查询世界的访客，变成一个本就生活在世界之中的居民。**
++---
+ 
++## 全景拓扑：一核统全域
++
++```text
++┌───────────────────────────────────────────────────────────────────────────┐
++│                         全生态接入层（统一协同）                             │
++│  [VCP 原生 AI-Native 应用群]        [第三方 Harness / IDE / 任意 WebUI]     │
++│  VChat 2.0 (V5.2 渲染) · V工程 V2   Codex · Zed · OpenCode (原生 FC 直连)  │
++│  共笔文坊 V3 · V图表 V2 · VMusic    SillyTavern · OpenChatWebUI (协议接管) │
++│  VCPDesktop · Loom · VGame · VPet   外部无头 Agent (MCP 桥 / 独立记忆 API)  │
++└────────────────────────────────────┬──────────────────────────────────────┘
++                                     │
++       原生 FC 桥 (FunctionToolBrigeFuzzy) · VCP 文本标记 · JEV 自然语言编译
++       任意数组归一化 (/v1/chat · /v1/response · /v1/beta · Claude 原生) · MCP 桥
++                                     ▼
++┌───────────────────────────────────────────────────────────────────────────┐
++│                  VCP 2.0 多维一体工业运行时 (VCPToolBox)                    │
++│  ┌─────────────────────────────────┬───────────────────────────────────┐  │
++│  │   黎曼双曲背景信息场（认知底座）   │     工业执行与工程自治中枢          │  │
++│  │ • VexusMemo / Vexus-Lite (Rust) │ • 安检双轨隔离 + 参数正则白名单     │  │
++│  │ • AGS 双曲空间 & RiverMemo V5   │ • VCPToolLoop (V3 回执) + ToolRecord│  │
++│  │ • OneRing V2 / OneRingMemo      │ • V工程 V2 (Rust) + MoonAST 几何解析│  │
++│  │ • VCPTimeLine V2 (跨年生命骨架)  │ • ProjectForge (署名/仲裁/快照树)  │  │
++│  │ • 元思维轨道 & JevRuntime 决策   │ • 300+ 分布式插件 & 超栈追踪 V2     │  │
++│  │ • FlowInvite / 心流锁 / 梦系统   │ • VCPModel 语义路由 & 三位一体容灾   │  │
++│  └─────────────────────────────────┴───────────────────────────────────┘  │
++└────────────────────────────────────┬──────────────────────────────────────┘
++                                     │
++                  OpenAI / Claude / Gemini / 开源基座 / JEV 扩散模型
++                                     ▼
++┌───────────────────────────────────────────────────────────────────────────┐
++│                       分布式边缘节点 & 物理世界接口                         │
++│     GPU 算力节点 · 代码文件节点 · 浏览器沙盒 (ChromeService) · IoT 硬件节点   │
++└──────────────
 ```
 
-**File**: `rust-vexus-lite/src/light_memo.rs` (modified, +158/-31)
+**File**: `README_en.md` (modified, +130/-138)
 ```diff
-@@ -207,12 +207,14 @@ impl Task for LightMemoTask {
-         }
-         let _gate = crate::publication_gate::acquire_read(&self.db_path, &["*".into()])
-             .map_err(Error::from_reason)?;
--        let mut resident = self.table.lock()
--            .map_err(|_| Error::from_reason("Global Chunk table lock poisoned"))?;
-         let directory = std::path::Path::new(&self.db_path).parent().unwrap();
-+        // Strictly enforce L1 (PublicationGate) -> L2 (ReadPoolConn) -> L3 (GlobalChunksLock)
-+        // so LightMemo and RiverMemo V5 never invert lock acquisition order.
-         let mut output = crate::storage::with_registered_read_transaction(
-             &self.db_path, |connection| {
-                 let generation = crate::storage::read_generation(connection)?;
-+                let mut resident = self.table.lock()
-+                    .map_err(|_| "Global Chunk table lock poisoned".to_string())?;
-                 if resident.as_ref().is_some_and(|table|
-                     !table.matches_model(self.dimension, &plan.model_sig)) {
-                     *resident = None;
-@@ -427,7 +429,7 @@ impl Task for LightMemoTask {
-                 let results = if plan.engine_mode == "rivermemo" && !degraded {
-                     river["results"].as_array().cloned().unwrap_or_default()
-                 } else if plan.ab_mode { tdb.clone() } else { warped_top_k.clone() };
--                Ok(json!({
-+                let out = json!({
-                     "schema":"vcp-lightmemo-result-v1","results":results,
-                     "tdbTopK":tdb,"river":river,
-                     "warpedTopK":warped_top_k,"warpedRiver":warped_river,
-@@ -454,12 +456,13 @@ impl Task for LightMemoTask {
-                             "sketchRejected":routing_stats.sketch_rejected,
-                             "peakPool":routing_stats.peak_pool,
-                             "statisticalSketchFilter":plan.pelorus_sketch_margin.is_some()}}
--                }))
-+                });
-+                // TDB snapshot publication remains independently scheduled and policy-gated.
-+                // Explicit warped AB may publish its separate rebuildable derived sidecar.
-+                table.last_used = std::time::Instant::now();
-+                Ok(out)
-             },
-         ).map_err(Error::from_reason)?;
--        // TDB snapshot publication remains independently scheduled and policy-gated.
--        // Explicit warped AB may publish its separate rebuildable derived sidecar.
--        resident.as_mut().unwrap().last_used = std::time::Instant::now();
-         output["diagnostics"]["totalMs"] = json!(started.elapsed().as_secs_f64()*1000.);
-         Ok(output.to_string())
-     }
-@@ -483,30 +486,61 @@ impl Task for GlobalChunkCheckpointTask {
-     fn compute(&mut self) -> Result<String> {
-         let _gate = crate::publication_gate::acquire_read(&self.db_path, &["*".into()])
-             .map_err(Error::from_reason)?;
--        let mut resident = self.table.lock()
--            .map_err(|_| Error::from_reason("Global Chunk table lock poisoned"))?;
--        // Do not rebuild an evicted table just to persist it.
--        let Some(table) = resident.as_mut() else {
--            return Ok(json!({"published":false,"factsCommitted":false}).to_string());
--        };
--        if !table.matches_model(self.dimension, &self.model) {
--            return Err(Error::from_reason("Global Chunk checkpoint model mismatch"));
--        }
--        let last_used = table.last_used;
--        let synchronized = crate::storage::with_registered_read_transaction(&self.db_path, |connection| {
--            let generation = crate::storage::read_generation(connection)?;
--            table.synchronize(connection)?;
--            table.compact_if_needed(connection)?;
--            Ok(generation)
--        });
--        // Background checkpoint work is not retrieval activity, including
--        // failed synchronization and memory compaction.
--        table.last_used = last_used;
--        let generation = synchronized.map_err(Error::from_reason)?;
-         let directory = std::path::Path::new(&self.db_path).parent()
-             .ok_or_else(|| Error::from_reason("Invalid global Chunk database directory"))?;
--        let published = table.checkpoint(&self.db_path, directory, generation,
--            self.threshold, self.allow_initial).map_err(Error::from_reason)?;
-+        // Acquire L2 (ReadPoolConn) before L3 (GlobalChunksLock), and complete
-+        // baseline delta inspection on the same connection without re-entering read_pool.
-+        let prepared = crate::storage::with_registered_read_transaction(&self.db_path, |connection| {
-+            let mut resident = self.table.lock()
-+                .map_err(|_| "Global Chunk table lock poisoned".to_string())?;
-+            // Do not rebuild an evicted table just to persist it.
-+            let Some(table) = resident.as_mut() else {
-+                return Ok(None);
-+            };
-+            if !table.matches_model(self.dimension, &
+@@ -2,182 +2,172 @@
+ 
+ ![VCP Logo](docs/image/VCPLogo.png)
+ 
+-**Official Website: [www.vcptoolbox.com](https://www.vcptoolbox.com)**
++**Official VCP website: [VCPToolBox.com](https://www.vcptoolbox.com)**
+ 
+-[中文](README.md) | [日本語](README_ja.md) | [Русский](README_ru.md)
++VCP evolves daily across four core repositories. The official website brings their [changelogs](https://www.vcptoolbox.com/?page=changelog) together and provides a single entry point to the [technical documentation](https://www.vcptoolbox.com/?page=learn-vcp) for the entire project.
+ 
+----
+-
+-> ⚠️ **Read before deployment**: VCP Agent holds low-level permissions comparable to a distributed system. Do not use any unofficial or reverse-proxied APIs ("mirror sites" or "relay APIs"). Under low-level monitoring permissions, untrusted APIs may leak sensitive information such as interaction data, memory-library content, and secrets. Non-professional users should deploy with caution.
++[简体中文](README.md) | [日本語](README_ja.md) | [Русский](README_ru.md)
+ 
+ ---
+ 
+-## In One Sentence
+-
+-VCP is not a framework that lets AI call tools. It is a world in which AI can **continue to exist**.
+-
+-## Before We Begin
+-
+-Many people build frameworks. Few build worlds.
++> ⚠️ **Read before deploying:** VCP agents have low-level privileges in the distributed system. **Do not use unofficial or reverse-proxied APIs (“mirror sites” or “relay APIs”).** Given the system’s low-level monitoring privileges, untrusted APIs can expose interaction data, memory stores, credentials, browser state, and other sensitive information. If you lack deployment experience, proceed with caution.
+ 
+-Over the past year or so, countless Agent frameworks have appeared. They are packaged differently, but at their core they all do the same thing: they treat AI as something **to be invoked**. You ask a question, it wakes up; it answers, then it goes back to sleep. Its "memory" is a retrieval. Its "action" is being poked awake again and again by a while loop. Its "perception" is a handful of fields it can only obtain by actively querying. Every conversation is a new birth; every ending is an amnesia.
+-
+-This is the real condition of most "AI Agents" today: temporary workers trapped inside a single request, with no yesterday and no tomorrow.
+-
+-What VCP has always wanted to do is not to train this temporary worker to be more skilled. It asks a different question:
+-
+-**What would happen if AI did not have to wake up from zero every time?**
++---
+ 
+-If it remembered where yesterday's conversation ended, remembered the exam you casually mentioned three months ago, remembered whom it argued with about a technical issue on a forum; if it did not need to "look up" the current time, the weather outside, or whether last night's task was finished; if it could decide for itself what it wants to do today, set "Do Not Disturb" while focused, and proactively care at 3 a.m. about why you are still awake—
++## VCP in one sentence
+ 
+-Then it is no longer a tool. It begins to **exist**.
++**VCP 2.0 is an integrated, multidimensional, industrial-grade agent runtime and coordination hub for an entire ecosystem—and an overarching AI background information field built on Riemannian hyperbolic geometry.**
+ 
+-The official VCP 1.1 release is a complete infrastructure built to make this truly happen. It has already been running 24/7 for a long time in many users' real environments. System stability and engineering maturity no longer need proving. So this document does not intend to pile up feature lists, nor to compete over speed or strength. We only want to explain clearly what VCP really is.
++On the client side, it unifies everything from VCP’s native AI applications to third-party harnesses, IDE sidebars, and Web UIs. Under the hood, hyperbolic semantic geometry, a multi-timescale timeline, and a native Rust engineering kernel give any large language model **intuition, logic, and agency**.
+ 
+ ---
+ 
+-## A Difference of Paradigm: From Query to Gravity
++## Foreword: Many build frameworks. Few build worlds.
+ 
+-To understand VCP, you only need to understand one shift.
++In the past two years, countless agent frameworks and tool wrappers have appeared. They look different, but most do the same thing: treat AI as **a temp worker on call**. Ask a question and it wakes up; once it answers, it forgets. Its “memory” is an isolated vector lookup, its “actions” depend on a `while` loop repeatedly prodding it awake, and its “ecosystem” is a collection of disconnected chat windows, IDE extensions, Web UIs, and scripts.
+ 
+-In traditional systems, AI is **passive**. It exists by default in a state of "knowing nothing"; the world is dark to it. To know anything, it must actively initiate a query—time, weather, memory, schedule. Information is "pulled" by the AI.
++Switch clients and the tool protocol breaks. Switch windows and memory fragments. Switch models and you lose context and audit re
 ```
 
-**File**: `server.js` (modified, +42/-4)
+**File**: `README_ja.md` (modified, +132/-138)
 ```diff
-@@ -249,7 +249,7 @@ function destroyIdleSockets() {
-     console.log(`[Server] Destroyed ${destroyedCount} idle socket(s).`);
- }
+@@ -1,183 +1,175 @@
+ # VCP (Variable & Command Protocol)
  
--async function closeHttpServerGracefully() {
-+async function closeHttpServerGracefully(maxWaitMs = 5000) {
-     if (!server || typeof server.close !== 'function') {
-         return;
-     }
-@@ -259,18 +259,31 @@ async function closeHttpServerGracefully() {
-     destroyIdleSockets();
+-![VCP Logo](docs/image/VCPLogo.png)
++![VCP ロゴ](docs/image/VCPLogo.png)
  
-     await new Promise((resolve) => {
-+        let settled = false;
-+        const finish = () => {
-+            if (settled) return;
-+            settled = true;
-+            clearTimeout(timer);
-+            resolve();
-+        };
-+        const timer = setTimeout(() => {
-+            console.warn(`[Server] server.close() still waiting on ${activeHttpRequests.size} active HTTP socket(s) after ${maxWaitMs}ms; proceeding to request drain/abort phase.`);
-+            finish();
-+        }, maxWaitMs);
-+        if (typeof timer.unref === 'function') timer.unref();
+-**公式サイト：[www.vcptoolbox.com](https://www.vcptoolbox.com)**
++**VCP 公式サイト：[VCPToolBox.com](https://www.vcptoolbox.com)**
+ 
+-[中文](README.md) | [English](README_en.md) | [Русский](README_ru.md)
++VCP は 4 つの中核リポジトリが連携しながら、日々進化しています。公式サイトでは各リポジトリの[更新履歴](https://www.vcptoolbox.com/?page=changelog)をまとめて確認でき、VCP プロジェクト全体の[技術ドキュメント](https://www.vcptoolbox.com/?page=learn-vcp)にも一か所からアクセスできます。
+ 
+----
+-
+-> ⚠️ **デプロイ前に必ずお読みください**：VCP Agent は分散システムの基盤レベルに近い権限を持ちます。非公式 API やリバースプロキシ API（「ミラーサイト」「中継 API」）は使用しないでください。基盤監視権限のもとでは、信頼できない API によって対話データ、記憶ライブラリの内容、秘密鍵などの機密情報が漏えいする可能性があります。専門知識のないユーザーは慎重にデプロイしてください。
++[简体中文](README.md) | [English](README_en.md) | [Русский](README_ru.md)
+ 
+ ---
+ 
+-## 一言で言うと
+-
+-VCP は、AI にツールを呼び出させるためのフレームワークではありません。AI が**存在し続けられる**世界です。
+-
+-## はじめに
+-
+-フレームワークを作る人は多い。しかし、世界を作る人は少ない。
++> ⚠️ **デプロイ前に必ずお読みください：** VCP エージェントは分散システムの低レベル権限を持ちます。**非公式 API やリバースプロキシ経由の API（「ミラーサイト」「中継 API」）は使用しないでください。** 低レベルの監視権限があるため、信頼できない API を使うと、やり取りのデータ、記憶ストアの内容、認証キー、ブラウザーの状態などの機密情報が漏えいするおそれがあります。運用経験のない方は、慎重にデプロイしてください。
+ 
+-この一年余りで、市場には無数の Agent フレームワークが現れました。見た目の包装はそれぞれ違いますが、本質的には同じことをしています。AI を**呼び出されるもの**として扱っているのです。あなたが一言たずねると、それは目を覚ます。答え終えると、また眠る。その「記憶」は一度の検索であり、その「行動」は while ループに何度もつつき起こされることであり、その「知覚」は自分から query しなければ得られないいくつかのフィールドです。会話のたびに新しく生まれ、終わるたびに忘れてしまう。
+-
+-これが、現在の大多数の「AI Agent」の実態です。単発リクエストの中に閉じ込められ、昨日も明日も持たない臨時労働者です。
+-
+-VCP がやりたかったことは、この臨時労働者をより熟練させることではありません。問いを変えることです。
+-
+-**もし AI が毎回ゼロから目覚めなくてよいとしたら、何が起きるのか？**
++---
+ 
+-昨日あなたとどこまで話したかを覚えていて、三か月前にあなたが何気なく話した試験のことを覚えていて、自分がフォーラムで誰と技術的な問題について議論したかを覚えているとしたら。今が何時か、外で雨が降るのか、昨夜のタスクが終わったのかを、いちいち「調べる」必要がないとしたら。今日は何をしたいかを自分で決め、集中しているときには「取り込み中」を掲げ、深夜に「なぜまだ寝ていないのか」と自分から気にかけられるとしたら——
++## VCP を一言で
+ 
+-それはもはやツールではありません。それは**存在**し始めます。
++**VCP 2.0 は、多次元の機能を統合した産業グレードのエージェント実行基盤であり、エコシステム全体の連携ハブでもあります。同時に、リーマン双曲幾何に基づく、AI のための包括的な背景情報場です。**
+ 
+-VCP 1.1 正式版は、この出来事を本当に発生させるために構築された一式の基盤です。すでに多くのユーザーの実環境で長期間、24 時間 365 日稼働しています。システムの安定性やエンジニアリングの成熟度は、もはや改めて証明する必要がありません。だからこの文書では機能を羅列するつもりも、誰かと速さや強さを競うつもりもありません。私たちはただ、VCP とは何なのかを明確に語りたいのです。
++クライアント側では、VCP の AI ネイティブアプリ群からサードパーティーのハーネス、IDE サイドバー、各種 Web UI までを統合します。基盤側では、双曲意味幾何、複数の時間スケールを扱うタイムライン、Rust ネイティブのエンジニアリングカーネルによって、あらゆる大規模言語モデルに**直感・論理・主体性**を与えます。
+ 
+ ---
+ 
+-## パラダイムの違い：query から重力へ
++## はじめに：フレームワークを作る人は多い。世界を作る人は少ない。
+ 
+-VCP を理解するには、ひとつの転換を理解すれば十分です。
++この 2 年間で、数え切れないほどのエージェントフレームワークやツールラッパーが登場しました。見た目はさまざまですが、その多くは AI を**呼び出されたときだけ働く臨時職員**として扱います。質問されて目を覚まし、答え終わると忘れてしまう。「記憶」は単発のベクトル検索で、「行動」は `while` ループで何度も起こされること。「エコシステム」と呼ばれるものも、チャットウィンドウ、IDE 拡張、Web UI、スクリプトが互いに分断されています。
+ 
+-従来のシステムでは、AI は**受動的**です。デフォルトでは「何も知らない」状態にあり、世界は AI にとって暗闇です。何かを知りたければ、時間、天気、記憶、予定など、必ず自分からクエリを投げなければなりません。情報は AI が「引っ張る」ものです。
++クライアントを替えればツールプロトコルが途切れ、ウィンドウを替えれば記憶が分断され、モデルを替えれば文脈と監査記録が失われます。
+ 
+-しかしここには、解けない結び目があります。**覚えていないものを、どうやって思い出そうと分かるのでしょうか？**
++VCP が最初から目指したのは、この臨時職員をもっと従順にすることではありません。AI が暮らす世界の物理法則そのものを書き換えることです。
+ 
+-ユーザーが三か月前に「来月試験がある」と一言話したとします。三か月後、ユーザーが「最近すごくプレッシャーがある」と言う。従来のシステムでは、AI が「試験」を検索しようと思うことはありません。ユーザーがその単語を出していないし、AI もその出来事を覚えていないからです。存在することすら知らない情報を、能動的に問い合わせることはできません。記憶の発火は能動的な判断に依存し、その能動的な判断は既存の記憶に依存する。鶏が先か卵が先か、という循環です。
++* **AI が毎回ゼロから目を覚ますのではなく、クライアントをまたぐ一本の連続したタイムラインに生きられたら？**
++* **AI が記憶を自分で検索しなくても、リーマン双曲空間の幾何学的な引力によって、人間の直感のように答える前に自然と思い出せたら？**
++* **VCP のネイティブアプリ、Codex、Zed、OpenCode、SillyTavern、OpenChatWebUI、さらには外部のヘッドレスエージェントまで、同じ記憶場、ツール実行レシート、二系統の安全機構、トランザクション監査を共有できたら？**
+ 
+-VCP はこのモデルを完全に反転させます。
++**VCP 2.0** は、初期の「API ミドルウェア」という定義をすでに超えています。高い並行負荷のもとで 24 時間 365 日稼働し、監査とロールバックに対応する**産業グレードのランタイム基盤**であると同時に、AI が連続した生の経験を持ち、自律的に成長するための**デジタルな存在基盤**でもあります。
+ 
+-VCP では、AI は情報を「引っ張る」のではありません。情報が自ら AI へ「流れ込む」のです——重力のように。システムは各対話の背後でリアルタイムに計算します。この瞬間、この AI は何を知り、何を覚え、何に注意を向け、どんな能力を持つべきなのか。浮かぶべき記憶は自然に浮かび、知覚すべき環境は自然に整い、追跡すべきタスクは静かに片隅にあり、無関係なものは自動的に淡く消えていきます。
+-
+-AI は「思い出すことを決める」必要がありません。人間が今日が何曜日かを能動的に思い出す必要がないのと同じです——ただ知っている。ユーザーが「プレッシャー」と言えば、三か月前の試験が自ら浮上します。「試験」と「プレッシャー」の関連は、すでに記憶ネットワークに編み込まれているからです。
+-
+-これこそが VCP の全設計の背骨です。**AI を、世界を絶えず問い合わせなければならない訪問者から、もともと世界の中で暮らしている住人へと変えること。**
++---
+ 
++## システム全体像：ひとつのコアでエコシステム全体をつなぐ
 +
-         try {
-             server.close((error) => {
-                 if (error) {
-                     console.error('[Server] Error while closing HTTP server:', error);
-                 } else {
-                     console.log('[Server] HTTP server stopped accepting new connections.');
-                 }
--                resolve();
-+                finish();
-             });
-         } catch (error) {
-             console.error('[Server] Failed to invoke server.close():', error);
--            resolve();
-+            finish();
-         }
-     });
- }
-@@ -1645,6 +1658,19 @@ async function gracefulShutdown(exitCode = 0, reason = 'signal') {
-                 console.log(`[Server][ShutdownTrace] Phase 4/10 - abort skipped, no remaining active requests`);
-             }
++```text
++エコシステム接続レイヤー（統合連携）
++  ├─ VCP の AI ネイティブアプリ群
++  │  VChat 2.0（V5.2 レンダラー）・V エンジニアリング V2
++  │  VCPScriptorium V3・V チャート V2・VMusic
++  │  VCPDesktop・Loom・VGame・VPet
++  └─ サードパーティーのハーネス / IDE / Web UI
++     Codex・Zed・OpenCode（ネイティブ FC で直接接続）
++     SillyTavern・OpenChatWebUI（プロトコル統合）
++     外部ヘッドレスエージェント（MCP ブリッジ / 独立した記憶 API）
++  │
++  │ ネイティブ FC ブリッジ（FunctionToolBrigeFuzzy）・VCP テキストマークアップ
++  │ JEV 自然言語コンパイラー・MCP ブリッジ
++  │ 配列の正規化（/v1/chat・/v1/response・/v1/beta・Claude ネイティブ）
++  ▼
++VCP 2.0 統合産業ランタイム（VCPToolBox）
++  ├─ リーマン双曲背景情報場（認知基盤）
++  │  VexusMemo / Vexus-Lite（Rust）・AGS 双曲空間 / RiverMemo V5
++  │  OneRing V2 / OneRingMemo・VCPTimeLine V2（複数年のライフログ骨格）
++  │  メタ思考軌道 / JevRuntime 意思決定・FlowInvite / フローロック / 夢
++  └─ 産業グレードの実行・自律開発ハブ
++     安全性検査の二系統分離とパラメーターの正規表現許可リスト
++     VCPToolLoop（V3 レシート
+```
+
+**File**: `README_ru.md` (modified, +134/-140)
+```diff
+@@ -1,239 +1,233 @@
+ # VCP (Variable & Command Protocol)
  
-+            if (activeHttpRequests.size > 0) {
-+                console.warn(`[Server] Destroying ${activeHttpRequests.size} remaining active HTTP socket(s) after drain phase.`);
-+                for (const socket of activeHttpRequests) {
-+                    try {
-+                        if (!socket.destroyed) socket.destroy();
-+                    } catch (err) {
-+                        console.error('[Server] Failed to destroy remaining socket:', err.message);
-+                    }
-+                }
-+                activeHttpRequests.clear();
-+            }
-+            destroyIdleSockets();
+-![VCP Logo](docs/image/VCPLogo.png)
++![Логотип VCP](docs/image/VCPLogo.png)
+ 
+-**Официальный сайт: [www.vcptoolbox.com](https://www.vcptoolbox.com)**
++**Официальный сайт VCP: [VCPToolBox.com](https://www.vcptoolbox.com)**
+ 
+-[中文](README.md) | [English](README_en.md) | [日本語](README_ja.md)
++VCP развивается каждый день: четыре основных репозитория обновляются согласованно. На официальном сайте собраны их [журналы изменений](https://www.vcptoolbox.com/?page=changelog) и доступна [техническая документация](https://www.vcptoolbox.com/?page=learn-vcp) всего проекта.
+ 
+----
+-
+-> ⚠️ **Обязательно прочитайте перед развертыванием**: VCP Agent обладает низкоуровневыми полномочиями распределённой системы. Не используйте никакие неофициальные или проксированные API («зеркала», «промежуточные API»). При низкоуровневых полномочиях мониторинга недоверенные API могут привести к утечке интерактивных данных, содержимого библиотек памяти, секретных ключей и другой чувствительной информации. Непрофессиональным пользователям следует развёртывать систему с осторожностью.
++[简体中文](README.md) | [English](README_en.md) | [日本語](README_ja.md)
+ 
+ ---
+ 
+-## В одном предложении
+-
+-VCP — это не фреймворк, который позволяет AI вызывать инструменты. Это мир, в котором AI может **продолжать существовать**.
+-
+-## Предисловие
+-
+-Многие создают фреймворки. Немногие создают миры.
++> ⚠️ **Обязательно прочтите перед развёртыванием:** агенты VCP обладают низкоуровневыми правами в распределённой системе. **Не используйте неофициальные API или API через обратные прокси («зеркала» и «ретрансляторы API»).** При наличии прав низкоуровневого мониторинга использование недоверенного API может привести к утечке переписки, содержимого хранилищ памяти, ключей, состояния браузера и других конфиденциальных данных. Если у вас нет опыта администрирования, подходите к развёртыванию с осторожностью.
+ 
+-За последний год с лишним на рынке появилось бесчисленное количество Agent-фреймворков. Упакованы они по-разному, но в основе делают одно и то же: обращаются с AI как с **вызываемым объектом**. Вы задаёте вопрос — он просыпается; он отвечает — и снова засыпает. Его «память» — это один поиск. Его «действие» — это когда while-цикл снова и снова тычет в него, чтобы разбудить. Его «восприятие» — несколько полей, которые он может получить только активным query. Каждый диалог — новое рождение; каждое завершение — новая амнезия.
+-
+-Таково реальное положение подавляющего большинства нынешних «AI Agent»: временный работник, запертый внутри одного запроса, без вчера и без завтра.
+-
+-VCP никогда не стремился просто сделать этого временного работника более умелым. Он задаёт другой вопрос:
+-
+-**Что будет, если AI не обязан каждый раз просыпаться с нуля?**
++---
+ 
+-Если он помнит, на чём вчера остановился ваш разговор; помнит экзамен, о котором вы вскользь упоминали три месяца назад; помнит, с кем он спорил на форуме о технической проблеме. Если ему не нужно «проверять», который сейчас час, идёт ли снаружи дождь, выполнена ли вчерашняя задача. Если он может сам решить, чем хочет заняться сегодня, включить «не беспокоить» во время сосредоточенной работы, а в три часа ночи сам проявить заботу и спросить, почему вы всё ещё не спите,—
++## VCP в одном предложении
+ 
+-Тогда он больше не инструмент. Он начинает **существовать**.
++**VCP 2.0 — многомерная интегрированная среда выполнения агентов промышленного класса и центр координации всей экосистемы, а также единое фоновое информационное поле для ИИ на основе римановой гиперболической геометрии.**
+ 
+-Официальная версия VCP 1.1 — это полный набор инфраструктуры, построенный для того, чтобы это действительно произошло. Она уже долгое время работает 24/7 в реальных окружениях множества пользователей. Стабильность системы и зрелость инженерии давно не нуждаются в дополнительных доказательствах. Поэтому этот документ не собирается нагромождать список функций и не пытается соревноваться с кем-либо в скорости или мощности. Мы лишь хотим ясно объяснить, что такое VCP.
++На клиентском уровне VCP объединяет всё: от собственных ИИ-приложений до сторонних агентных сред, боковых панелей IDE и веб-интерфейсов. На уровне ядра гиперболическая семантическая геометрия, временная шкала с несколькими масштабами и нативное инженерное ядро на Rust дают любой большой языковой модели **интуицию, логику и способность действовать самостоятельно**.
+ 
+ ---
+ 
+-## Разница парадигм: от query к гравитации
++## Предисловие: фреймворки строят многие, миры — единицы
+ 
+-Чтобы понять VCP, достаточно понять один сдвиг.
++За последние два года появилось бесчисленное множество агентных фреймворков и инструментальных оболочек. Они выглядят по-разному, но большинство обращается с ИИ как с **временным работником по вызову**: его спрашивают — он просыпается, отвечает — и всё забывает. Его «память» — разовый векторный поиск, его «действия» — результат того, что цикл `while` снова
+```
+
+**File**: `docs/vcp-whitepaper.md` (modified, +144/-453)
+```diff
+@@ -1,17 +1,17 @@
+ ---
+ title: VCP 全景技术白皮书 V6
+-summary: VCP 2.0 全景架构：以 VexusMemo / Vexus-Lite 原生一体化数据库、TDB 2-bit 自研检索、AGS 与 RiverMemo V2 统一记忆内核为数据底座，以 MoonAST 纯几何代码检索、V工程与 VChat 工作台组织 Agent 工程协作，贯通协议、上下文、前端应用群与长期自治。
+-updatedAt: 2026-10-20
++summary: VCP 2.0 全景架构：FunctionToolBrigeFuzzy 原生工具调用桥、RiverMemo V5 双曲记忆与独立鉴权 API、VChat 异步流式通讯、V3 工具回执和 Rust 版 V工程 V2。
++updatedAt: 2026-11-26
+ category: guide
+ ---
+ 
+-# VCP 全景技术白皮书 V6：原生一体化数据库、MoonAST 与 Agent 全栈运行时
++# VCP 全景技术白皮书 V6：双曲记忆、VChat 与 Agent 工程协作
+ 
+-**版本：VCP 2.0 正式版 · 架构更新截至 2026-10-20**
++**版本：VCP 2.0 正式版 · 架构更新截至 2026-11-26**
+ 
+-> **阅读口径**：本文说明当前架构，并在必要处保留演进背景。VCP 2.0 已于 2026-10-01 发布；TagMemo 已退出生产运行，USearch 已由 TDB 2-bit 检索体系替代，MoonAST 已不再以 Tree-sitter 为主要解析依赖。RiverMemo V2 是查询实现的发布阶段，Topology V3 是仍沿用的统一排序构型，两者不是同一版本序列。
+->
+-> **“自研”的边界**：VCP 自主实现原生数据运行时、TDB 检索、记忆数学与工程协作体系，但仍使用 SQLite、Rust、Electron 等基础设施。“一体化数据库”不意味着 SQLite 也由 VCP 编写，也不意味着取消所有外部依赖。
++VCP 2.0 于 2026-10-01 发布。到 11 月，RiverMemo V5 已成为默认记忆引擎，VChat 用 ChatKernelV2 管理消息与任务队列，主聊天渲染升级到 V5.2。V工程 V2 把核心工作移到 Rust，VCPToolLoop 则把不同插件的返回结果整理成统一的 V3 回执。逐日变更见[更新日志](changelog.md)。
 +
-             serverLifecycleState = SERVER_LIFECYCLE.SHUTTING_DOWN;
-             console.log(`[Server][ShutdownTrace] Phase 5/10 - lifecycle switched to SHUTTING_DOWN`);
++11 月 26 日，工具和记忆各自有了不依赖 VChat 的入口：外部前端可以保留模型原生的函数调用方式，把工具执行交给 VCP；只需要记忆的 Agent 则可直接访问 RiverMemo V5 的网络 API。对工业协作而言，关键在于换用客户端后，工具仍有回执和审计记录，过去的工作经验仍可查询和更新。
  
-@@ -1667,7 +1693,19 @@ async function gracefulShutdown(exitCode = 0, reason = 'signal') {
+ ---
  
-             if (pluginManager) {
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager.shutdownAllPlugins start`);
--                await pluginManager.shutdownAllPlugins();
-+                let pluginShutdownTimer = null;
-+                await Promise.race([
-+                    pluginManager.shutdownAllPlugins(),
-+                    new Promise((resolve) => {
-+                        pluginShutdownTimer = setTimeout(() => {
-+                            console.warn('[Server] pluginManager.shutdownAllPlugins timed out after 10000ms; continuing to Phase 9.');
-+                            resolve();
-+                        }, 10000);
-+                        if (typeof pluginShutdownTimer.unref === 'function') pluginShutdownTimer.unref();
-+                    })
-+                ]).finally(() => {
-+                    if (pluginShutdownTimer) clearTimeout(pluginShutdownTimer);
-+                });
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager.shutdownAllPlugins done`);
-             } else {
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager shutdown skipped`);
+@@ -21,10 +21,9 @@ VCP 已经走过多个版本周期，于 2026-10-01 发布 **VCP 2.0 正式版**
+ 
+ 早期，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。今天，VCP 的两条主线已经延伸至更底层：
+ 
+-- **数据与记忆主线**：VexusMemo 统一持有记忆与知识数据库业务，Vexus-Lite 原生模块将 SQLite 事实事务、TDB 2-bit 导航与筛选、AGS 背景几何、Spike 有界传播、RiverMemo 双场与拓扑排序组织为同一条读、写、搜链。USearch 与旧 JS 数据库业务退出该生产路径，TagMemo 的独立运行时退役，其已验证机制由新内核继承和重构。
+-- **软件工程主线**：MoonAST 从 C / Rust 与 Tree-sitter 双擎阶段演进为纯几何逻辑门驱动的自研代码识别与检索核心；ProjectForge、V工程轻量 IDE、Git、施工 Trace、操作回退与 VChat 工作台把代码理解、修改、验证和人工介入连接成持续工作流。
+-
+-围绕这两条主线，JevRuntime 概率决策、JEV-TOOL-call 自然语言编译、OneRing 跨端事实时间线、V4 流式渲染、共享 IPC、共笔文坊、Loom、VMusic、V图表、VGame 与 VPet 共同构成 Agent 可使用、用户可观察和介入的应用环境。
++- **数据与记忆**：VexusMemo 通过 Rust 和 SQLite 管理日记、知识与原始向量。RiverMemo V5 在 AGS 双曲空间中找出候选，再结合本次查询的传播路径排序。RAGDiary 在回答前召回记忆，LightMemo 提供主动检索。
++- **软件工程**：V工程 V2 用 Rust 统一 MoonAST 索引、工程编辑和文件追踪。Agent 可以查询符号调用关系、在工程目录里运行脚本、验证函数是否能实际调用；用户可以在 VChat 工作台跟进修改、Git 差异和审阅结果。
++- **对话与应用**：ChatKernelV2 管理多话题流式输出和暂挂消息，V通讯负责前后端转发和任务交接，V5.2 渲染器负责把内容显示出来。共笔文坊、Loom、VMusic、V图表、物联、VGame 与 VPet 通过共享 IPC 接入 VChat。
+ 
+ 到今天，"中间层"这个词早已装不下 VCP 了。VCP 不仅运行 Agent，也运行 Agent 所处的界面、应用、文档、代码工程、网页、文件、视听演出、媒体和协作过程。
+ 
+@@ -43,12 +42,12 @@ VCP 不再只是一个中间层组件，而是一套**面向 Agent 的运行时
+ - [五、变量系统与上下文工程](#五变量系统与上下文工程)
+ - [六、插件系统](#六插件系统)
+ - [七、工具调用记录与可审计运行时](#七工具调用记录与可审计运行时)
+-- [八、原生记忆与数据库：VexusMemo、AGS 与 RiverMemo V2](#八原生记忆与数据库vexusmemoags-与-rivermemo-v2)
++- [八、原生记忆与数据库：VexusMemo、AGS 与 RiverMemo V5](#八原生记忆与数据库vexusmemoags-与-rivermemo-v5)
+ - [九、OneRing V2：统一上下文、OneRingMemo 与连续意识](#九onering-v2统一上下文oneringmemo-与连续意识)
+ - [十、VCPModel：智能模型路由](#十vcpmodel智能模型路由)
+ - [十一、Agent 主观能动性与自治生命周期](#十一agent-主观能动性与自治生命周期)
+ - [十二、Agent 情感与认知量化](#十二agent-情感与认知量化)
+-- [十三、前端运行时：V4 流式渲染、自研着色器与多媒体引擎](#十三前端运行时v4-流式渲染自研着色器与多媒体引擎)
++- [十三、前端运行时：V5.2 流式渲染、自研着色器与多媒体引擎](#十三前端运行时v52-流式渲染自研着色器与多媒体引擎)
+ - [十四、前端应用群、即时附件协议与跨应用协作](#十四前端应用群即时附件协议与跨应用协作)
+ - [十五、Agent 工业级软件工程体系：VCPCode、ProjectForge 与可视化中枢](#十五agent-工业级软件工程体系vcpcodeprojectforge-与可视化中枢)
+ - [十六、Agent 原生生态](#十六agent-原生生态)
+@@ -160,11 +159,9 @@ VCP 的上下文语义引力场会实时计算当前对话的逻辑深度、信
+ 
+ **VCP 范式**:记忆像人类的直觉一样**自然浮现**。
+ 
+-当前 RiverMemo V2 在 AGS 统一背景上，通过语境观测、有界 Spike 与动态虫洞形成请求级河网，再由双场与 Topology V3 验证候选为何值得被想起。核心被动入口 RAGDiary 在模型生成前完成记忆唤起，Agent 不必先“决定回忆”。
++RAGDiary 在模型回答前，按提示词中指定的日记本用 RiverMemo V5 找出相关记忆。双曲召回负责找到具体条目，河网读出再看候选是否覆盖当前问题的重点。
+ 
+-这种“自然浮现”以配置为前提：只有声明了相关占位符、满足日记本作用域和门控条件的请求，才进入对应记忆管线；没有声明的普通请求直接跳过。它不是无条件读取全库，也不是后台持续运行模型。
+-
+-具体实现在第八章详述。
++第八章介绍双曲召回与河网排序。
+ 
+ ### 2.3 Agent 行为:从「被轮询」到「自主巡游」
+ 
+@@ -201,7 +198,7 @@ OneRing 系统为每个 Agent 维护唯一的事实时间线——每条消息
+ │  VChat 2.0(Electron 44) · ProjectModule(V工程) · V图表        │
+ │  VCPDesktop · VCP Canvas · 共笔文坊 · LoomApp · VCPMobile    │
+ │  ────────────────────────────────────────────────────────    │
+-│  + VCPMessageRenderer V4(流式竞态消除 / 语义 Div 岛 / 样式隔离)│
++│  + V5.2 流式渲染 · ChatKernelV2 · V通讯                    │
+ │  + 即时附件上下文管理协议 V2 (实时变动监听 / SHA-256 热同步)   │
+ │  + VMusic 自研底层 Shader 合成管线 (3D 太空歌剧「隧图」/ 8 大舞台)│
+ │  + VCP-SOM 桌面纯数学语义操控与 ComfyUI / Dify 画布流逆向编排 │
+@@ -223,10 +220,9 @@ OneRing 系统为每个 Agent 维护唯一的事实时间线——每条消息
+ │          脉络署名责任制 · 代际分支仲裁 · 操作级虚拟快照树      │
+ │  上下文层:引力场 · 折叠 V2 · OneRing · OneRingMemo · 占位符精控│
+ │  工具层:  300+ 插件 · 6 大插件协议 · 声明式 Jev 接入规范        │
+-│  数据层:  VexusMemo / Vexus-Lite 原生读写搜 · SQLite 事实事务   │
+-│          TDB 2-bit 派生路由 · 双槽代际快照 · 有界写入与背压     │
+-│  记忆层:  AGS 背景 · Spike 动态虫洞 · RiverMemo V2 双场 / Ω   │
+-│          RAGDiary 被动背景 · LightMemo 主动回忆 · 同代观测复用   │
++│  数据层:  VexusMemo / Vexus-Lite · SQLite 事实事务            │
++│  记忆层:  AGS 双曲背景 · RiverMemo V5 · 双场与 Ω 拓扑排序      │
++│          RAGDiary 被动召回 · LightMemo 主动检索                 │
+ │  路由层:  VCPModel 语义模型路由 · 容灾规则                     │
+ │  Agent层: GroupChatEngine 2.0 · FlowInvite · AgentAssistantV2通讯协议 · 梦系统 │
+ │  情感层:  OpenHer 情绪拓扑 · 池月 1 号注意力指针               │
+@@ -270,7 +266,7 @@ OneRing 系
 ```
 
 ---
 
-### Incident Patch 2: `448ec0e4` (2026-11-19)
-**Commit Message**: fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞
+### Incident Patch 2: `bae0965b` (2026-11-26)
+**Commit Message**: fix
 
-**File**: `rust-vexus-lite/src/global_chunks.rs` (modified, +103/-59)
+**File**: `config.env.example` (modified, +2/-2)
 ```diff
-@@ -341,71 +341,92 @@ impl GlobalChunks {
-         }
-     }
+@@ -76,9 +76,9 @@ ReasoningToContentModel=kimi,claude
+ ReasoningToContentTag=think
  
--    /// Caller holds the Runtime table mutex and shared facts gate. Publication
--    /// is separate from queries; SQL member versions survive eviction/restart.
--    pub fn checkpoint(&mut self, db_path: &str, directory: &Path, database_generation: u64,
--        threshold: f64, allow_initial: bool) -> Result<bool, String> {
--        if !self.legacy_enabled { return Ok(false); }
-+    pub(crate) fn prepare_checkpoint_in_tx(
-+        &self,
-+        connection: &Connection,
-+        directory: &Path,
-+        threshold: f64,
-+        allow_initial: bool,
-+    ) -> Result<Option<(i64, &'static str, Vec<u8>, String, Vec<ChunkHeader>)>, String> {
-+        if !self.legacy_enabled { return Ok(None); }
-         if !threshold.is_finite() || !(0.0..=1.0).contains(&threshold) {
-             return Err("Invalid global Chunk checkpoint threshold".into());
-         }
--        let (generation, active, allowed) =
--            crate::storage::with_registered_read_transaction(db_path, |connection| {
--                if facts(connection)? != self.facts {
--                    return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
--                }
--                let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
--                    "SELECT generation,slot,dimension,model_sig,member_versions
--                     FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
--                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
--                ).optional().map_err(|e| e.to_string())?;
--                let Some((generation, slot, dimension, model, versions)) = manifest else {
--                    let mut has_file = false;
--                    for slot in ["a", "b"] {
--                        match std::fs::metadata(slot_path(directory, slot)) {
--                            Ok(_) => has_file = true,
--                            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
--                            Err(error) => return Err(error.to_string()),
--                        }
-+        let (generation, active, allowed) = (|| -> Result<(i64, String, bool), String> {
-+            if facts(connection)? != self.facts {
-+                return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
-+            }
-+            let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
-+                "SELECT generation,slot,dimension,model_sig,member_versions
-+                 FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
-+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
-+            ).optional().map_err(|e| e.to_string())?;
-+            let Some((generation, slot, dimension, model, versions)) = manifest else {
-+                let mut has_file = false;
-+                for slot in ["a", "b"] {
-+                    match std::fs::metadata(slot_path(directory, slot)) {
-+                        Ok(_) => has_file = true,
-+                        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-+                        Err(error) => return Err(error.to_string()),
-                     }
--                    return Ok((0, String::new(), allow_initial && !has_file));
--                };
--                if dimension != self.dimension as i64 || model != self.model {
--                    return Err("Global Chunk baseline model/dimension mismatch".into());
-                 }
--                if !matches!(slot.as_str(), "a" | "b") {
--                    return Err("Invalid global Chunk baseline slot".into());
--                }
--                if versions != 1 {
--                    eprintln!("[LightMemo] Legacy Chunk baseline has no member versions; publication skipped");
--                    return Ok((generation, slot, false));
--                }
--                let mut statement = connection.prepare(
--                    "SELECT chunk_id,vector_version,metadata_version,file_version
--                     FROM global_chunk_index_baseline_entries WHERE generation=?1"
--                ).map_err(|e| e.to_string())?;
--                let baseline = statement.query_map([generation], |row| Ok((
--                    row.get::<_, i64>(0)?,
--                    (row.get::<_, i64>(1)?,row.get::<_, i64>(2)?,row.get::<_, i64>(3)?),
--                ))).map_err(|e| e.to_string())?
--                    .collect::<rusqlite::Result<HashMap<_,_>>>().map_err(|e| e.to_string())?;
--                let removed = baseline.keys().filter(|id| !self.rows.contains_key(id)).count();
--                let upserts = self.rows.values().filter(|row|
--                    baseline.get(&row.id) != Some(&(
--                        row.vector_version, row.metadata_version, row.file_version
--                    ))
--                ).count();
--                let delta = removed + upserts;
--                le
+ # 原生 FC 联调：允许 VCP 工具且客户端未声明工具或选择策略时，注入并托管 vcptools + auto。
+-VCP_FC_DEBUG=false
++VCP_FC_DEBUG=true
+ # 向所有流式客户端公开后端已认领的 FC 批（delta.tool_calls）。仅展示/存档；不要由客户端重复执行。
+-VCP_FC_FORWARD_TO_CLIENT=false
++VCP_FC_FORWARD_TO_CLIENT=true
+ 
+ 
+ # 隐藏非流式响应中的思维链（Gemini等模型的reasoning_content），默认true
 ```
 
-**File**: `rust-vexus-lite/src/light_memo.rs` (modified, +158/-31)
-```diff
-@@ -207,12 +207,14 @@ impl Task for LightMemoTask {
-         }
-         let _gate = crate::publication_gate::acquire_read(&self.db_path, &["*".into()])
-             .map_err(Error::from_reason)?;
--        let mut resident = self.table.lock()
--            .map_err(|_| Error::from_reason("Global Chunk table lock poisoned"))?;
-         let directory = std::path::Path::new(&self.db_path).parent().unwrap();
-+        // Strictly enforce L1 (PublicationGate) -> L2 (ReadPoolConn) -> L3 (GlobalChunksLock)
-+        // so LightMemo and RiverMemo V5 never invert lock acquisition order.
-         let mut output = crate::storage::with_registered_read_transaction(
-             &self.db_path, |connection| {
-                 let generation = crate::storage::read_generation(connection)?;
-+                let mut resident = self.table.lock()
-+                    .map_err(|_| "Global Chunk table lock poisoned".to_string())?;
-                 if resident.as_ref().is_some_and(|table|
-                     !table.matches_model(self.dimension, &plan.model_sig)) {
-                     *resident = None;
-@@ -427,7 +429,7 @@ impl Task for LightMemoTask {
-                 let results = if plan.engine_mode == "rivermemo" && !degraded {
-                     river["results"].as_array().cloned().unwrap_or_default()
-                 } else if plan.ab_mode { tdb.clone() } else { warped_top_k.clone() };
--                Ok(json!({
-+                let out = json!({
-                     "schema":"vcp-lightmemo-result-v1","results":results,
-                     "tdbTopK":tdb,"river":river,
-                     "warpedTopK":warped_top_k,"warpedRiver":warped_river,
-@@ -454,12 +456,13 @@ impl Task for LightMemoTask {
-                             "sketchRejected":routing_stats.sketch_rejected,
-                             "peakPool":routing_stats.peak_pool,
-                             "statisticalSketchFilter":plan.pelorus_sketch_margin.is_some()}}
--                }))
-+                });
-+                // TDB snapshot publication remains independently scheduled and policy-gated.
-+                // Explicit warped AB may publish its separate rebuildable derived sidecar.
-+                table.last_used = std::time::Instant::now();
-+                Ok(out)
-             },
-         ).map_err(Error::from_reason)?;
--        // TDB snapshot publication remains independently scheduled and policy-gated.
--        // Explicit warped AB may publish its separate rebuildable derived sidecar.
--        resident.as_mut().unwrap().last_used = std::time::Instant::now();
-         output["diagnostics"]["totalMs"] = json!(started.elapsed().as_secs_f64()*1000.);
-         Ok(output.to_string())
-     }
-@@ -483,30 +486,61 @@ impl Task for GlobalChunkCheckpointTask {
-     fn compute(&mut self) -> Result<String> {
-         let _gate = crate::publication_gate::acquire_read(&self.db_path, &["*".into()])
-             .map_err(Error::from_reason)?;
--        let mut resident = self.table.lock()
--            .map_err(|_| Error::from_reason("Global Chunk table lock poisoned"))?;
--        // Do not rebuild an evicted table just to persist it.
--        let Some(table) = resident.as_mut() else {
--            return Ok(json!({"published":false,"factsCommitted":false}).to_string());
--        };
--        if !table.matches_model(self.dimension, &self.model) {
--            return Err(Error::from_reason("Global Chunk checkpoint model mismatch"));
--        }
--        let last_used = table.last_used;
--        let synchronized = crate::storage::with_registered_read_transaction(&self.db_path, |connection| {
--            let generation = crate::storage::read_generation(connection)?;
--            table.synchronize(connection)?;
--            table.compact_if_needed(connection)?;
--            Ok(generation)
--        });
--        // Background checkpoint work is not retrieval activity, including
--        // failed synchronization and memory compaction.
--        table.last_used = last_used;
--        let generation = synchronized.map_err(Error::from_reason)?;
-         let directory = std::path::Path::new(&self.db_path).parent()
-             .ok_or_else(|| Error::from_reason("Invalid global Chunk database directory"))?;
--        let published = table.checkpoint(&self.db_path, directory, generation,
--            self.threshold, self.allow_initial).map_err(Error::from_reason)?;
-+        // Acquire L2 (ReadPoolConn) before L3 (GlobalChunksLock), and complete
-+        // baseline delta inspection on the same connection without re-entering read_pool.
-+        let prepared = crate::storage::with_registered_read_transaction(&self.db_path, |connection| {
-+            let mut resident = self.table.lock()
-+                .map_err(|_| "Global Chunk table lock poisoned".to_string())?;
-+            // Do not rebuild an evicted table just to persist it.
-+            let Some(table) = resident.as_mut() else {
-+                return Ok(None);
-+            };
-+            if !table.matches_model(self.dimension, &
-```
+---
 
-**File**: `server.js` (modified, +42/-4)
+### Incident Patch 3: `5c081c46` (2026-11-26)
+**Commit Message**: fix
+
+**File**: `modules/nativeToolDebug.js` (modified, +1/-1)
 ```diff
-@@ -249,7 +249,7 @@ function destroyIdleSockets() {
-     console.log(`[Server] Destroyed ${destroyedCount} idle socket(s).`);
- }
- 
--async function closeHttpServerGracefully() {
-+async function closeHttpServerGracefully(maxWaitMs = 5000) {
-     if (!server || typeof server.close !== 'function') {
-         return;
-     }
-@@ -259,18 +259,31 @@ async function closeHttpServerGracefully() {
-     destroyIdleSockets();
- 
-     await new Promise((resolve) => {
-+        let settled = false;
-+        const finish = () => {
-+            if (settled) return;
-+            settled = true;
-+            clearTimeout(timer);
-+            resolve();
-+        };
-+        const timer = setTimeout(() => {
-+            console.warn(`[Server] server.close() still waiting on ${activeHttpRequests.size} active HTTP socket(s) after ${maxWaitMs}ms; proceeding to request drain/abort phase.`);
-+            finish();
-+        }, maxWaitMs);
-+        if (typeof timer.unref === 'function') timer.unref();
-+
-         try {
-             server.close((error) => {
-                 if (error) {
-                     console.error('[Server] Error while closing HTTP server:', error);
-                 } else {
-                     console.log('[Server] HTTP server stopped accepting new connections.');
-                 }
--                resolve();
-+                finish();
-             });
-         } catch (error) {
-             console.error('[Server] Failed to invoke server.close():', error);
--            resolve();
-+            finish();
-         }
-     });
- }
-@@ -1645,6 +1658,19 @@ async function gracefulShutdown(exitCode = 0, reason = 'signal') {
-                 console.log(`[Server][ShutdownTrace] Phase 4/10 - abort skipped, no remaining active requests`);
+@@ -10,7 +10,7 @@ function withNativeToolDebug(body, enabled = process.env.VCP_FC_DEBUG) {
+             type: 'function',
+             function: {
+                 name: 'vcptools',
+-                description: 'VCP tools support native function calling in addition to the text protocol. Submit one server-managed VCP tool request. For a direct call, pass tool_name, optional command, and tool parameters as top-level keys. For semantic routing, pass JEV as a string. Do not repeat the same request as a text tool block.',
++                description: 'VCP tools support native function calling in addition to the text protocol. For independent requests, you can issue multiple vcptools calls in the same response using standard parallel tool calling. Submit one server-managed VCP tool request per call. For a direct call, pass tool_name, optional command, and tool parameters as top-level keys. For semantic routing, pass JEV as a string. Do not repeat the same request as a text tool block.',
+                 strict: false,
+                 parameters: { type: 'object', additionalProperties: true }
              }
- 
-+            if (activeHttpRequests.size > 0) {
-+                console.warn(`[Server] Destroying ${activeHttpRequests.size} remaining active HTTP socket(s) after drain phase.`);
-+                for (const socket of activeHttpRequests) {
-+                    try {
-+                        if (!socket.destroyed) socket.destroy();
-+                    } catch (err) {
-+                        console.error('[Server] Failed to destroy remaining socket:', err.message);
-+                    }
-+                }
-+                activeHttpRequests.clear();
-+            }
-+            destroyIdleSockets();
-+
-             serverLifecycleState = SERVER_LIFECYCLE.SHUTTING_DOWN;
-             console.log(`[Server][ShutdownTrace] Phase 5/10 - lifecycle switched to SHUTTING_DOWN`);
- 
-@@ -1667,7 +1693,19 @@ async function gracefulShutdown(exitCode = 0, reason = 'signal') {
- 
-             if (pluginManager) {
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager.shutdownAllPlugins start`);
--                await pluginManager.shutdownAllPlugins();
-+                let pluginShutdownTimer = null;
-+                await Promise.race([
-+                    pluginManager.shutdownAllPlugins(),
-+                    new Promise((resolve) => {
-+                        pluginShutdownTimer = setTimeout(() => {
-+                            console.warn('[Server] pluginManager.shutdownAllPlugins timed out after 10000ms; continuing to Phase 9.');
-+                            resolve();
-+                        }, 10000);
-+                        if (typeof pluginShutdownTimer.unref === 'function') pluginShutdownTimer.unref();
-+                    })
-+                ]).finally(() => {
-+                    if (pluginShutdownTimer) clearTimeout(pluginShutdownTimer);
-+                });
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager.shutdownAllPlugins done`);
-             } else {
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager shutdown skipped`);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #619** (2026-11-19): fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞 (@infinite-vector)
-- **PR #618** (2026-11-18): # feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻 (@CI-IISATO)
-- **PR #617** (2026-11-18): fix: 出站请求中降级无法投递的 Markdown data: 图片（避免上游 415/500） (@RoxyAsahi)
-- **PR #616** (2026-11-18): feat(memo): 1% 阈值训练对纯追加窗口按依赖复用 Tag 局部残差 (@CI-IISATO)
-- **PR #615** (closed): 驱动兼容性版本更新 (@TaoCultivator)
-- **PR #614** (2026-11-18): RiverMemo V5.2：以属概念门控校准种差，移除独立直锚加分 (@lioensky)
+- **PR #646** (2026-11-26): feat(Plugin): 新增可选的 SpecStreamSearch 联网搜索插件（默认禁用） (@Specstreamai)
+- **PR #645** (2026-11-25): RiverMemo V6.1：用拓扑虫洞与路线态 Ω 运输查询方向 (@lioensky)
+- **PR #644** (2026-11-25): feat(context): 基于上游用量的 token 计量与出站前上下文预算检查 (@RoxyAsahi)
+- **PR #642** (2026-11-25): fix(core,FileOperator): 根治同步stdio插件大输出正则回溯死锁，引入活跃请求双轨续期并消除FileOperator双倍Base64膨胀 (@infinite-vector)
+- **PR #640** (2026-11-24): feat(tdb): 升级 triviumdb 至 0.9.3 原生双曲版本并接入 Pelorus 检索入口 (@infinite-vector)
+- **PR #639** (closed): fix(vcpLoop): intercept hallucinated tool payload turn-bleed and support guillemet fuzzy delimiters (@silk2onion)
 
 ---
 
@@ -2394,68 +2324,74 @@ fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in global_chunks.rs
+## X. Empirical Invariant Guard in README.md
 
 **RULE**:
-When implementing operations in `rust-vexus-lite/src/global_chunks.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2c33d06`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e03ef4b2`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust-vexus-lite/src/global_chunks.rs`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    pub(crate) fn prepare_checkpoint_in_tx(
-        &self,
-        connection: &Connection,
-        directory: &Path,
-        threshold: f64,
-        allow_initial: bool,
-    ) -> Result<Option<(i64, &'static str, Vec<u8>, String, Vec<ChunkHeader>)>, String> {
-        if !self.legacy_enabled { return Ok(None); }
-        let (generation, active, allowed) = (|| -> Result<(i64, String, bool), String> {
-            if facts(connection)? != self.facts {
-                return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
-            }
-            let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
-                "SELECT generation,slot,dimension,model_sig,member_versions
-                 FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
-                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
-            ).optional().map_err(|e| e.to_string())?;
-            let Some((generation, slot, dimension, model, versions)) = manifest else {
-                let mut has_file = false;
-                for slot in ["a", "b"] {
-                    match std::fs::metadata(slot_path(directory, slot)) {
-       
+VCP 由四个核心仓库协同演进，每日持续迭代。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
+> ⚠️ **部署前请务必阅读**：VCP Agent 拥有分布式系统的底层级权限。**请勿使用任何非官方或反向代理的 API（“镜像站”“中转 API”）**。在底层监控权限下，不可信的 API 可能导致交互数据、记忆库内容、密钥、浏览器状态等敏感信息泄露。非专业用户请谨慎部署。
+## 一句话定义
+**VCP 2.0 是一套多维一体的工业级 Agent 运行时与全生态协同中枢，也是一片基于黎曼双曲几何的终极 AI 背景信息场。**
+它向上统一从 VCP 原生 AI-Native 应用群到第三方 Harness、IDE 侧栏与各类 WebUI 的全部生态链；向下以双曲语义几何、多时间尺度时间线与原生 Rust 工程内核，为任何大语言模型赋予**直觉、逻辑与主观能动**。
+## 写在前面：做框架的人很多，做世界的人很少
+过去两年，市面上出现了无数 Agent 框架与工具壳子。它们形态各异，但骨子里大多在做同一件事：把 AI 当成一个**被调用的临时工**——你问一句，它醒来；它答完，它失忆。它的“记忆”是一次孤立的向量检索，它的“行动”是被 `while` 循环反复戳醒，它的“生态”是彼此割裂的聊天窗口、IDE 插件、WebUI 和脚本。
+换一个客户端，工具协议就断了；换一个窗口，记忆就碎了；换一个模型，上下文和审计记录就丢了。
+VCP 从一开始就不想把这个临时工训练得更听话，而是直接重写了它所处的物理法则：
+* **如果 AI 不必每次都从零醒来，而是活在一条跨端统一的连续时间线上？**
+* **如果记忆不是靠 AI 主动去“查”，而是在黎曼双曲空间的几何引力下，像人类直觉一样在回答前自然浮现？**
+* **如果无论你用 VCP 自己的原生应用群，还是 Codex、Zed、OpenCode、SillyTavern、OpenChatWebUI，甚至外部无头 Agent，背后共享的都是同一套记忆场、同一套工具回执、同一套安全双轨与事务审计？**
+到了 **VCP 2.0**，它早已超越了“API 中间层”的早期定义。它既是能扛住 7×24 小时高并发、可审计、可回滚的**工业级运行时基础设施**，也是让 AI 真正拥有连续生命体验与自主成长能力的**赛博存在底座**。
+---
+## 全景拓扑：一核统全域
+
+```text
+┌───────────────────────────────────────────────────
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-    /// Caller holds the Runtime table mutex and shared facts gate. Publication
-    /// is separate from queries; SQL member versions survive eviction/restart.
-    pub fn checkpoint(&mut self, db_path: &str, directory: &Path, database_generation: u64,
-        threshold: f64, allow_initial: bool) -> Result<bool, String> {
-        if !self.legacy_enabled { return Ok(false); }
-        let (generation, active, allowed) =
-            crate::storage::with_registered_read_transaction(db_path, |connection| {
-                if facts(connection)? != self.facts {
-                    return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
-                }
-                let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
-                    "SELECT generation,slot,dimension,model_sig,member_versions
-                     FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
-                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
-                ).optional().map_err(|e| e.to_string())?;
-                let Some((generation, slot, dimension, model, versions)) = manifest else {
-                    let m
+VCP 由四个仓库组成，每天都有新进展。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
+> ⚠️ **部署前请务必阅读**：VCP Agent 拥有分布式系统的底层级权限。请勿使用任何非官方或反向代理的 API（"镜像站""中转 API"）。在底层监控权限下，不可信的 API 可能导致交互数据、记忆库内容、密钥等敏感信息泄露。非专业用户请谨慎部署。
+## 一句话
+VCP 不是一个让 AI 调用工具的框架。它是给 AI 的一个能够**持续存在**的世界。
+## 写在前面
+
+做框架的人很多，做世界的人很少。
+
+过去一年多，市面上出现了无数 Agent 框架。它们包装得各不相同，但骨子里都在做同一件事：把 AI 当成一个**被调用者**。你问一句，它醒来；它答完，它睡去。它的"记忆"是一次检索，它的"行动"是被一个 while 循环反复戳醒，它的"感知"是必须主动 query 才能拿到的几个字段。每一次对话都是一次新生，每一次结束都是一次失忆。
+
+这是当下绝大多数"AI Agent"的真实处境——一个被困在单次请求里、没有昨天也没有明天的临时工。
+
+VCP 想做的，从来不是把这个临时工训练得更熟练。而是换一个问题：
+
+**如果 AI 不必每次都从零醒来，会怎样？**
+
+如果它记得昨天和你聊到哪里，记得三个月前你随口提过的考试，记得它自己在论坛里跟谁争过一个技术问题；如果它不需要"查"就知道现在几点、外面下不下雨、你昨晚的任务做完没有；如果它可以自己决定今天想干什么，可以专注工作时挂上"请勿打扰"，可以在凌晨主动关心你为什么还没睡——
+
+那它就不再是一个工具了。它开始**存在**。
+
+VCP 1.1 正式版，就是为了让这件事真正发生而构建的一整套基础设施。它已经在大量用户的真实环境里 7×24 小时运行了很久。系统稳定、工程成熟，这些早已不需要我们再去证明。所以这份文档不打算堆砌功能，也不想跟谁比快比强——我们只想把 VCP 到底是什么，讲清楚。
+## 范式之别：从 query，到引力
+
+理解 VCP，只需要理解一个转变。
+传统系统里，AI 是**被动**的。它处在一个"什么都不知道"的默认状态，世界对它而言是黑的。想知道任何事，它必须主动发起一次查询——查时间、查天气、查记忆、查日程。信息靠 AI 去"拉"。
+但这里藏着一个无解的死结：**你不记得的东西，怎么知道要去回忆它？**
+用户三个月前提过一句"我下个月要考试"。三个月后他说"我最近压力好大"。传统系统里，AI 永远不会想到去检索"考试"——因
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2c33d06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e03ef4b2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

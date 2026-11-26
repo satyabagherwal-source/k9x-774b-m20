@@ -13566,3 +13566,6 @@
 | `CYCLE-20261126-05KS` | `2026-11-26T21:17:41.308Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10779` | Yes (`6cb594bc...`) |
 | `CYCLE-20261126-AWUE` | `2026-11-26T21:26:03.206Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`269cf778...`) |
 | `CYCLE-20261126-YBF3` | `2026-11-26T21:44:15.183Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`12265e77...`) |
+| `CYCLE-20261126-95B7` | `2026-11-26T21:52:40.483Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`bf624b86...`) |
+| `CYCLE-20261126-96YO` | `2026-11-26T21:52:42.624Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10780` | Yes (`3484557a...`) |
+| `CYCLE-20261126-9G9X` | `2026-11-26T21:52:54.693Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`20445705...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T21:44:28.926Z",
+  "last_updated": "2026-11-26T21:53:00.411Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1885,14 +1885,14 @@
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
     },
     {
-      "id": "CD-W2CQ",
+      "id": "CD-9KOO",
       "directive_title": "Empirical Invariant Guard in README.md",
-      "source_repo": "vcaesar-riot-learnings",
+      "source_repo": "lioensky-vcptoolbox-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-W2CQ-empirical-invariant-guard-in-readme-md.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-9KOO-empirical-invariant-guard-in-readme-md.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-21",
+      "date_staged": "2026-11-26",
       "domain_letter": "D"
     },
     {
@@ -67241,6 +67241,58 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0D0CE0-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-975V",
+      "directive_title": "fold the v3 pre-tag fixes into the spec, changelog and guide",
+      "source_repo": "pimalaya/himalaya",
+      "source_commit": "24f28e0f",
+      "staged_file": "11_INBOX/candidate-directives/CD-975V-fold-the-v3-pre-tag-fixes-into-the-spec-changelog-and-guide.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-9GAP",
+      "directive_title": "Empirical Invariant Guard in README.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "e03ef4b2",
+      "date_staged": "2026-11-26",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-lioensky-vcptoolbox",
+      "candidateDomain": "D",
+      "candidateDomainName": "Research & Knowledge Intelligence",
+      "secondaryDomains": [
+        "I",
+        "K"
+      ],
+      "classificationConfidence": 0.1,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-9JFZ",
+      "directive_title": "docs: fold the v3 pre-tag fixes into the spec, changelog and guide",
+      "source_repo": "pimalaya-himalaya-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9JFZ-docs-fold-the-v3-pre-tag-fixes-into-the-spec-changelog-and-guide.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-FC02F8",
+      "directive_title": "Empirical Invariant Guard in README.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "lioensky-vcptoolbox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FC02F8-empirical-invariant-guard-in-readme-md.md",
       "staged_date": "2026-11-26"
     }
   ]

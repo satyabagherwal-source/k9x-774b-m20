@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-M3ZJ",
-    "timestamp": "2026-11-25T10:35:14.479Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "5d6c3ac9f1e55f377f046ddc00852f77ad01a1e44aedb8d6512357bf215271ec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-MADM",
-    "timestamp": "2026-11-25T10:35:22.762Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "e7efcf6b9bc9b750d17c6dc4dc70a85c193ce2f6228613f3ea10caa18b86e197",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-MBR4",
-    "timestamp": "2026-11-25T10:35:24.544Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "df160df6c7491841c5b15685878bb4c5b3944c3ae0eca6f4e98b128c71a62b93",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-Z9ZZ",
     "timestamp": "2026-11-25T10:45:28.799Z",
     "repository": "ccore/Qwen3.5-4B-3D-Coder",
@@ -7490,6 +7445,51 @@
     "repository": "Aleph-Alpha/Kolibri-1",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
     "contentHash": "12265e77d6e91a6fadf54bc72c3a83f13f28772faec4f4b0044828f557805151",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-95B7",
+    "timestamp": "2026-11-26T21:52:40.483Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "bf624b86d15c271111bb0620b18fe9cfd20bbb6c366d2f37e1be41845d059f6b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-96YO",
+    "timestamp": "2026-11-26T21:52:42.624Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "3484557a7fadf415f7c3f0d8ffdb0281602a2d9bb6169235f8b0716c33f61cf6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-9G9X",
+    "timestamp": "2026-11-26T21:52:54.693Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "204457053aa7735b562143d076e5d72adf9b0a0af82d05cf77c9e1b45c82798c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

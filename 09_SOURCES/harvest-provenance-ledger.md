@@ -13599,3 +13599,6 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `498590e2` | Multi-dimensional audit evidence | 2026-11-26T21:17:41.312Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-26T21:26:03.210Z |
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-26T21:44:15.187Z |
+| `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-26T21:52:40.488Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `24f28e0f` | Multi-dimensional audit evidence | 2026-11-26T21:52:42.629Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `e03ef4b2` | Multi-dimensional audit evidence | 2026-11-26T21:52:54.698Z |

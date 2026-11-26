@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T09:29:52.684Z",
+  "timestamp": "2026-11-26T21:52:59.508Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-fermionresearch-phonon-2-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-fermionresearch-phonon-2-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T09:29:52.684Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T21:52:59.508Z`  
 > **Learning ID**: `LEARN-EVO-hf-fermionresearch-phonon-2-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-fermionre`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T09:29:46.578Z  
+> **Timestamp**: 2026-11-26T21:52:39.912Z  
 > **Learning ID**: `learn-huggingface-fermionresearch-phonon-2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/FermionResearch/Phonon-2](https://huggingface.co/FermionResearch/Phonon-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T09:29:40.047Z  
+> **Harvest Timestamp**: 2026-11-26T21:52:39.815Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2889 downloads | 395 likes
+- **Stars / Engagement**: 2865 downloads | 402 likes
 
 ---
 

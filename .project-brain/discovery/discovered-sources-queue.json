@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T21:17:47.249Z",
+  "updated_at": "2026-11-26T21:53:00.167Z",
   "stats": {
-    "total_discovered": 10059,
-    "approved_pending_harvest": 9536,
+    "total_discovered": 10066,
+    "approved_pending_harvest": 9543,
     "harvested_count": 0,
     "rejected_count": 523,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9541,
+      "COMMUNITY_AND_EXPERT": 9546,
       "OFFICIAL_DOCUMENTATION": 287,
-      "STANDARDS_AND_SPECIFICATIONS": 158,
+      "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 55,
       "LEGAL_AND_REGULATORY": 2,
@@ -217664,6 +217664,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxhr007-aliens_eye-learnings.md",
         "fileName": "arxhr007-aliens_eye-learnings.md"
+      }
+    },
+    "SRC-323B9EB82C49": {
+      "id": "SRC-323B9EB82C49",
+      "url": "https://www.rfc-editor.org/rfc/rfc6154",
+      "title": "IETF RFC 6154",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:52:58.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-BEB03ADFE592": {
+      "id": "SRC-BEB03ADFE592",
+      "url": "https://www.rfc-editor.org/rfc/rfc8621",
+      "title": "IETF RFC 8621",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:52:58.551Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-99E49DBD2B48": {
+      "id": "SRC-99E49DBD2B48",
+      "url": "https://api.specstream.ai/v1/web-search%60%EF%BC%8CKey",
+      "title": "https://api.specstream.ai/v1/web-search%60%EF%BC%8CKey",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:52:59.911Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-6F7724A517FE": {
+      "id": "SRC-6F7724A517FE",
+      "url": "https://specstream.ai/benchmarks",
+      "title": "https://specstream.ai/benchmarks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:52:59.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-F3F3C9764F6C": {
+      "id": "SRC-F3F3C9764F6C",
+      "url": "https://www.vcptoolbox.com/",
+      "title": "https://www.vcptoolbox.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:53:00.040Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-8737A38E93B3": {
+      "id": "SRC-8737A38E93B3",
+      "url": "https://www.vcptoolbox.com/?page=changelog",
+      "title": "https://www.vcptoolbox.com/?page=changelog",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:53:00.104Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-473EBADDFE54": {
+      "id": "SRC-473EBADDFE54",
+      "url": "https://www.vcptoolbox.com/?page=learn-vcp",
+      "title": "https://www.vcptoolbox.com/?page=learn-vcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T21:53:00.167Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
       }
     }
   }
