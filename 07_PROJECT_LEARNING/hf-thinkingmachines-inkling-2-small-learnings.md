@@ -3,7 +3,7 @@
 > **Source Version**: `hf-thinkingm`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T07:37:02.861Z  
+> **Timestamp**: 2026-11-26T04:22:30.240Z  
 > **Learning ID**: `learn-huggingface-thinkingmachines-inkling-2-small`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/thinkingmachines/Inkling-2-Small](https://huggingface.co/thinkingmachines/Inkling-2-Small))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:37:02.706Z  
+> **Harvest Timestamp**: 2026-11-26T04:22:30.136Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 45356 downloads | 639 likes
+- **Stars / Engagement**: 78274 downloads | 1503 likes
 
 ---
 

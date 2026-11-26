@@ -13235,3 +13235,4 @@
 | `CYCLE-20261126-EWX2` | `2026-11-26T04:13:24.134Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10594` | Yes (`5456f500...`) |
 | `CYCLE-20261126-F663` | `2026-11-26T04:13:36.123Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10595` | Yes (`1207486f...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T04:14:09.358Z` | `doobidoo-mcp-memory-service` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-BC714522` [Domain H] | Yes (`8f61942c...`) |
+| `CYCLE-20261126-QMOO` | `2026-11-26T04:22:30.744Z` | `thinkingmachines/Inkling-2-Small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md` | Yes (`782f2ffd...`) |

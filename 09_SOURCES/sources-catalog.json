@@ -12445,8 +12445,8 @@
     "sourceUrl": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
     "sourceVersion": "hf-thinkingmachines-inkling-2-small",
     "license": "Open-Source",
-    "contentHash": "5928121396a8bb7d58664fde1fc62374840323a32de3cd2fc1d054b0411a87f5",
-    "lastHarvestedAt": "2026-11-22T07:37:03.370Z",
+    "contentHash": "782f2ffdacca2a1f0bb72ff53f16b4ebaeff5fe1a03f04458612817b536e9897",
+    "lastHarvestedAt": "2026-11-26T04:22:30.749Z",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-small"
   },
   "tuist-tuist": {

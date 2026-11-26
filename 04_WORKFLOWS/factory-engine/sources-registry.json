@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T04:13:39.602Z",
-    "lastVerified": "2026-11-26T04:13:39.602Z",
+    "lastChecked": "2026-11-26T04:22:42.611Z",
+    "lastVerified": "2026-11-26T04:22:42.611Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -392,8 +392,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T03:46:52.783Z",
-    "lastVerified": "2026-11-26T03:46:52.783Z",
+    "lastChecked": "2026-11-26T04:22:42.602Z",
+    "lastVerified": "2026-11-26T04:22:42.602Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1949,12 +1949,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T00:18:03.703Z",
-    "lastVerified": "2026-11-26T00:18:03.703Z",
+    "lastChecked": "2026-11-26T04:22:37.616Z",
+    "lastVerified": "2026-11-26T04:22:37.616Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -1963,7 +1963,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f2e66637"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -3790,12 +3791,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "seekstorm-seekstorm": {
-    "name": "SeekStorm/SeekStorm",
+    "name": "SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T02:56:13.299Z",
-    "lastVerified": "2026-11-25T02:56:13.299Z",
+    "lastChecked": "2026-11-26T04:22:40.100Z",
+    "lastVerified": "2026-11-26T04:22:40.100Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
@@ -3804,7 +3805,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d7fb1b21"
   },
   "kuberwastaken-claurst": {
     "name": "claurst",
@@ -6544,9 +6546,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-25T04:07:36.431Z",
+    "lastChecked": "2026-11-26T04:22:35.094Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-25T04:07:36.431Z"
+    "lastVerified": "2026-11-26T04:22:35.094Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -7319,9 +7321,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-11-24T21:47:47.911Z",
+    "lastChecked": "2026-11-26T04:22:27.614Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-11-24T21:47:47.911Z"
+    "lastVerified": "2026-11-26T04:22:27.614Z"
   },
   "hf-autotrust-jev-27b-vl": {
     "name": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
@@ -11230,9 +11232,9 @@
   "nalexn-viewinspector": {
     "name": "ViewInspector",
     "officialUrl": "https://github.com/nalexn/ViewInspector",
-    "lastChecked": "2026-11-23T18:40:45.839Z",
+    "lastChecked": "2026-11-26T04:22:32.714Z",
     "revisionIdentifier": "4d5e732c",
-    "lastVerified": "2026-11-23T18:40:45.839Z"
+    "lastVerified": "2026-11-26T04:22:32.714Z"
   },
   "wooorm-parse-entities": {
     "name": "parse-entities",
@@ -14473,12 +14475,12 @@
     "officialUrl": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T07:37:02.706Z",
-    "lastVerified": "2026-11-22T07:37:02.706Z",
+    "lastChecked": "2026-11-26T04:22:30.136Z",
+    "lastVerified": "2026-11-26T04:22:30.136Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
-    "contentHash": "5928121396a8bb7d58664fde1fc62374840323a32de3cd2fc1d054b0411a87f5",
+    "contentHash": "782f2ffdacca2a1f0bb72ff53f16b4ebaeff5fe1a03f04458612817b536e9897",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T04:13:36.145Z",
+  "last_updated": "2026-11-26T04:22:30.764Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18726,14 +18726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-thinkingmachines-inkling-2-small",
-      "content_hash": "5928121396a8bb7d58664fde1fc62374840323a32de3cd2fc1d054b0411a87f5",
-      "verified_at": "2026-11-22T07:37:03.379Z",
+      "content_hash": "782f2ffdacca2a1f0bb72ff53f16b4ebaeff5fe1a03f04458612817b536e9897",
+      "verified_at": "2026-11-26T04:22:30.763Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:37:03.379Z"
+      "last_updated": "2026-11-26T04:22:30.763Z"
     },
     "tuist/tuist": {
       "repository": "tuist/tuist",

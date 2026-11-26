@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:14:09.842Z",
+  "last_updated": "2026-11-26T04:22:44.757Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57837,11 +57837,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-4CUL",
+      "id": "CD-QWO2",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-4CUL-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-QWO2-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -61416,11 +61416,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-4DWT",
+      "id": "CD-QXHX",
       "directive_title": "Bump version number",
-      "source_repo": "zoontek-react-native-permissions-learnings",
+      "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-4DWT-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-QXHX-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -63128,6 +63128,24 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-1E8E0F",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1E8E0F-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-520690",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-520690-bump-version-number.md",
+      "staged_date": "2026-11-26"
     }
   ]
 }

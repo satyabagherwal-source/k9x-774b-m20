@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-P2GF",
-    "timestamp": "2026-11-24T14:05:49.359Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "2345a5f24a112ed55028fe8f02d953b590e0757d9c6c42897c82ec1520cb391a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-P4QW",
     "timestamp": "2026-11-24T14:05:52.328Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7477,21 @@
     "contentHash": "1207486f59bcb945d7ec1bac8ff1e4c1a287aa9dbe08218e7bc76d101456cb97",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QMOO",
+    "timestamp": "2026-11-26T04:22:30.744Z",
+    "repository": "thinkingmachines/Inkling-2-Small",
+    "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
+    "contentHash": "782f2ffdacca2a1f0bb72ff53f16b4ebaeff5fe1a03f04458612817b536e9897",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

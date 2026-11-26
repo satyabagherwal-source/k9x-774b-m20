@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T04:14:10.418Z",
+  "last_updated": "2026-11-26T04:22:45.110Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4ff9890aa0eda6be22d449409320c06f2c77b77489512ecbd53b86f8a82347c1",
+      "content_hash": "0acf9f8c304f317ef6c9c3cd64f664b49513a73e4889f4cc0fbde337f39d1d7f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:05:11.814Z"
+      "persisted_at": "2026-11-26T04:22:43.862Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf6345d20d0d0d45d70acd99830dc5ff03133a8a0363d6723da3a7e16d819c44",
+      "content_hash": "3e7e9188e0957483271a1d1d69c4cc1bde0c8023647cf6527f1a95b2d70c5a0e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:05:12.064Z"
+      "persisted_at": "2026-11-26T04:22:44.045Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6ec0f5ded7b82d272e7d9ea305b19f36fc30fa2a7f9512e3c2f2a10510cacdc",
+      "content_hash": "fbfa17da708c37f2717fa4c1fe320dcbe6c6a5a4311bd22991377e4a8a25ec40",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:05:12.263Z"
+      "persisted_at": "2026-11-26T04:22:44.208Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -229801,9 +229801,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "94c99776279d3b20c6a2d60b38b56dc3676549ba2561308e6d6c7b7545ed2ef1",
+      "content_hash": "eeb4748da47274d366352e926cafd1d3023557287eb007d65e83d4f03995d043",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T03:38:29.512Z"
+      "persisted_at": "2026-11-26T04:22:44.934Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -229813,9 +229813,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc7bd494855d000e491e755e60cfd3c89d43e1e45aaeb9d9991fb5e97dcd8653",
+      "content_hash": "2316761721e11f9cbf70e25389e88ee39d2dbb7e76a2de1a98313dd2d101a8b0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:38:29.705Z"
+      "persisted_at": "2026-11-26T04:22:45.110Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -282976,7 +282976,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
       "source_version": "hf-thinkingmachines-inkling-2-small",
-      "content_hash": "5928121396a8bb7d58664fde1fc62374840323a32de3cd2fc1d054b0411a87f5",
+      "content_hash": "782f2ffdacca2a1f0bb72ff53f16b4ebaeff5fe1a03f04458612817b536e9897",
       "dossier_path": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md",
       "promoted_rules": [],
@@ -282985,7 +282985,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T07:37:03.133Z",
+      "verified_at": "2026-11-26T04:22:30.508Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283002,9 +283002,9 @@
       "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Small Core Invariants",
       "repository": "thinkingmachines/Inkling-2-Small",
       "source_version": "hf-thinkingmachines-inkling-2-small",
-      "content_hash": "3df6fda5e2ee288d66002da50236516d0c4bdca0ce89d480e1530891555900a3",
+      "content_hash": "fe15af4d3e7ef5a9ea38d53db93e63390cdf60624bb9fb3e9f57979737198057",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T07:37:03.583Z"
+      "persisted_at": "2026-11-26T04:22:30.973Z"
     },
     "rule-9046": {
       "learning_id": "rule-9046",
@@ -283116,9 +283116,9 @@
       "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-small-learnings Core Invariants",
       "repository": "hf-thinkingmachines-inkling-2-small-learnings",
       "source_version": "HEAD",
-      "content_hash": "29ae669bc0b1a06b396c8d20cdb2fa7fbd373d6a6a9f06286d24a302b450feb7",
+      "content_hash": "8f53a8d264d6dc8787fa4eeb831616f426da02230568eb54c094f0c0a5779815",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T07:37:23.015Z"
+      "persisted_at": "2026-11-26T04:22:43.009Z"
     },
     "rule-9049": {
       "learning_id": "rule-9049",
@@ -342799,13 +342799,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4CUL-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QWO2-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e78a1fb402505f06499041aa460f51f075bffa9b0bebd1e961bb46f575c69d04",
+      "content_hash": "ed5b6c4165e056cee83ad8ac8c16158897a972afec5077087c453a01e6306dd6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:05:11.572Z"
+      "persisted_at": "2026-11-26T04:22:43.686Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -348782,13 +348782,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4DWT-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QXHX-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fb0164847fc0411b1dfc2b9ed70bf59cb46ac2e2edfb96569b28f365747c354",
+      "content_hash": "7bd77bf3da5480adfc9b398de7751f83a1d685e1fed8ceb1c78748a67c66c0d3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:05:12.942Z"
+      "persisted_at": "2026-11-26T04:22:44.757Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
