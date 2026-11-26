@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source**: github ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
-> **Source Version**: `e7647d64`  
+> **Source Version**: `ec1eb601`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T02:17:20.881Z  
+> **Timestamp**: 2026-11-26T05:17:05.486Z  
 > **Learning ID**: `learn-github-crate-ci-typos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T02:17:20.604Z  
+> **Harvest Timestamp**: 2026-11-26T05:17:05.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Source code spell checker
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4223 stars
+- **Stars / Engagement**: 4234 stars
 
 ---
 
@@ -1357,14 +1357,14 @@ impl<V> Map<&str, V> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1653** (2026-11-24): **Remove note about 'v1' tag as it's depricated now**
+  *Symptoms*: <!-- Thanks for helping out! -->  ### What does this PR try to solve?  Updates the documentation to record the deprecation of the 'v1' tag and recommend using 'crate-ci/typos@main' for the latest version.  <!-- a maintainer-approved Issue is required for non-trivial changes -->   ### Notes to reviewers  Based on getting a warning in CI and this comment https://github.com/crate-ci/typos/issues/390#issuecomment-5741726326  <!-- Examples: - Larger context this fits within - Manual testing and why it wasn't automated -->  LLM involvement: None 
+  **Post-Mortem & Fix Analysis**:
+  > We shouldn't endorse `main` but versioned tags
+  > Thank you for the feedback. I got the idea to follow main from the warning message. I didn't realize  it wasn't set by this crate.  > ::warning::Using crate-ci/typos@v1 is deprecated and will not receive updates. Use a release tag (preferred) or crate-ci/typos@main  From the github action message https://github.com/MathNya/umya-spreadsheet/actions/runs/45430946203/job/138575750806#step:3:77  All that said, I can see why you wouldn't endorse main. However, I do feel it's the closest to the previous "v1" tag, for people who want to opt into getting updates and understand it might break their CI as a result. But please let me know if you'd prefer that I update the PR to remove the line or at least mention it's deprecated. However, if we are going to mention it's deprecated it doesn't seem like useful info unless we mention an alternative as right above already shows an example with a version tag.
+
 - **Issue #1648** (2026-11-16): **chore(deps): Update Rust Stable to v1.100**
   *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [STABLE](https://redirect.github.com/rust-lang/rust) | minor | `1.99` → `1.100` |  ---  ### Release Notes  <details> <summary>rust-lang/rust (STABLE)</summary>  ### [`v1.100`](https://redirect.github.com/rust-lang/rust/blob/HEAD/RELEASES.md#Version-11000-2026-11-12)  [Compare Source](https://redirect.github.com/rust-lang/rust/compare/1.99.0...1.100.0)  \==========================  <a id="1.100.0-Language"></a>  ## Language  - [Stabilize never type](https://redirect.github.com/rust-lang/rust/pull/155499) - [Lint against repeated `#[repr(..)]` attributes](https://redirect.github.com/rust-lang/rust/pull/157036) - [Stabilize `extern "custom"`](https://redirect.github.com/rust-lang/rust/pull/158504) - [Extend `dropping_references`, `dropping_copy_types` and `undropped_manually_drops` lints to `drop_in_place`](https://redirect.github.com/rust-lang/rust/pull/160229) - [`unfulfilled_lint_expectations` no longer fires on `#[expect(dead_code)]` inside code that is covered by a dead parent's diagnostic](https://redirect.github.com/rust-lang/rust/pull/161005) - [Turn the error for `repr(align)` fields in a `repr(packed)` type into a deny-by-default lint `aligned_fields_in_packed`](https://redirect.github.com/rust-lang/rust/pull/162160) - [volatile: allow accesses to non-AM memory to trap](https://redirect.github.com/rust-lang/rust/pull/160564/)  <a id="1.100.0-Compiler"></a>  ## Compiler  - [Stabilize 
-
-- **Issue #1647** (2026-11-15): **Alternative to frop: from**
-  *Symptoms*: ### Please complete the following tasks  - [x] I have searched the [open](https://github.com/crate-ci/typos/issues?q=is%3Aissue%20state%3Aopen%20label%3AA-exclude) and [rejected](https://github.com/crate-ci/typos/issues?q=is%3Aissue%20state%3Aclosed%20label%3AA-exclude) issues  ### Example data  from  ### Incorrect correction  drop  ### Description of data format  /  ### Justification  from is replaced automatically by `drop` it could be a `from`  ### Notes  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > file.txt  ```  frop  from  drop ```  ``` error: `frop` should be `drop`   ╭▸ ./file.txt:2:1   │ 2 │ frop   ╰╴━━━━ ```
-  > This template is for when there is an incorrect correction. This is still a valid correction, just there are multiple valid corrections.  I'd recommend adding this to #1639.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1381,68 +1381,53 @@ impl<V> Map<&str, V> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7647d64` (2026-11-16)
-**Commit Message**: chore(deps): Update Rust Stable to v1.100 (#1648)
+### Incident Patch 1: `ec1eb601` (2026-11-24)
+**Commit Message**: Merge pull request #1653 from c-git/patch-1
 
-This PR contains the following updates:
+Remove note about 'v1' tag as it's depricated now
 
-| Package | Update | Change |
-|---|---|---|
-| [STABLE](https://redirect.github.com/rust-lang/rust) | minor | `1.99`
-→ `1.100` |
+**File**: `docs/github-action.md` (modified, +0/-3)
+```diff
+@@ -31,9 +31,6 @@ jobs:
+ [#1191](https://github.com/crate-ci/typos/issues/1191)
+ ).
+ 
+-**Notes:**
+-- The tag `v1` is available but CI could fail when new releases find new typos
+-
+ ## Input
+ 
+ | Name               | Description                                                     | Required | Default                                              |
+```
 
 ---
 
-### Release Notes
+### Incident Patch 2: `eecddb53` (2026-11-24)
+**Commit Message**: Remove deprecated notes from GitHub Action documentation
 
-<details>
-<summary>rust-lang/rust (STABLE)</summary>
+Removed deprecated notes about the 'v1' tag.
 
-###
-[`v1.100`](https://redirect.github.com/rust-lang/rust/blob/HEAD/RELEASES.md#Version-11000-2026-11-12)
-
-[Compare
-Source](https://redirect.github.com/rust-lang/rust/compare/1.99.0...1.100.0)
-
-\==========================
-
-<a id="1.100.0-Language"></a>
-
-## Language
-
-- [Stabilize never
-type](https://redirect.github.com/rust-lang/rust/pull/155499)
-- [Lint against repeated `#[repr(..)]`
-attributes](https://redirect.github.com/rust-lang/rust/pull/157036)
-- [Stabilize `extern
-"custom"`](https://redirect.github.com/rust-lang/rust/pull/158504)
-- [Extend `dropping_references`, `dropping_copy_types` and
-`undropped_manually_drops` lints to
-`drop_in_place`](https://redirect.github.com/rust-lang/rust/pull/160229)
-- [`unfulfilled_lint_expectations` no longer fires on
-`#[expect(dead_code)]` inside code that is covered by a dead parent's
-diagnostic](https://redirect.github.com/rust-lang/rust/pull/161005
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `docs/github-action.md` (modified, +0/-3)
 ```diff
-@@ -15,7 +15,7 @@ env:
-   CLICOLOR: 1
-   COLUMNS: 130
-   CARGO_INCREMENTAL: 0
--  RUST_TOOLCHAIN_STABLE: "1.99"  # STABLE
-+  RUST_TOOLCHAIN_STABLE: "1.100"  # STABLE
+@@ -31,9 +31,6 @@ jobs:
+ [#1191](https://github.com/crate-ci/typos/issues/1191)
+ ).
  
- concurrency:
-   group: "${{ github.workflow }}-${{ github.ref }}"
+-**Notes:**
+-- The tag `v1` is deprecated. If you'd like to get the latest version please use crate-ci/typos@main but CI could fail when new releases find new typos
+-
+ ## Input
+ 
+ | Name               | Description                                                     | Required | Default                                              |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1653** (2026-11-24): Remove note about 'v1' tag as it's depricated now (@c-git)
 - **PR #1648** (2026-11-16): chore(deps): Update Rust Stable to v1.100 (@renovate[bot])
 - **PR #1645** (2026-11-09): fix(dict): Resolve extraversion, causalities false positives (@epage)
 - **PR #1642** (2026-11-04): chore: Add license and readme as dynamic metadata to `typos-cli` Python project (@edgarrmondragon)
 - **PR #1640** (2026-11-02): feat(dict): October updates (@epage)
 - **PR #1638** (2026-11-01): chore(deps): Update compatible (actions) (@renovate[bot])
-- **PR #1637** (2026-11-01): chore(deps): Update compatible (@renovate[bot])
 
 ---
 
@@ -1456,34 +1441,3 @@ diagnostic](https://redirect.github.com/rust-lang/rust/pull/161005
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. deps): Update Rust Stable to v1.100
-
-**RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate-ci/typos. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e7647d64`: deps): Update Rust Stable to v1.100. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-  RUST_TOOLCHAIN_STABLE: "1.100"  # STABLE
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-  RUST_TOOLCHAIN_STABLE: "1.99"  # STABLE
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7647d64` are properly handled with clean fallback behavior.

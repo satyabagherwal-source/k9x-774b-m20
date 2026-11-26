@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T04:56:44.379Z",
+  "updated_at": "2026-11-26T05:19:38.975Z",
   "statistics": {
-    "total_nodes": 552,
-    "total_edges": 228,
+    "total_nodes": 555,
+    "total_edges": 229,
     "domain_distribution": {
-      "D": 333,
+      "D": 334,
       "M": 1,
-      "H": 100,
+      "H": 101,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -18,10 +18,11 @@
       "B": 4,
       "E": 2,
       "I": 14,
-      "C": 1
+      "C": 1,
+      "A": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 224,
+      "CONSTRAINED_BY_ARCHITECTURE": 225,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12326,6 +12327,64 @@
       ],
       "created_at": "2026-11-26T04:56:44.378Z",
       "updated_at": "2026-11-26T04:56:44.378Z"
+    },
+    "DOM-D-E4E82055": {
+      "id": "DOM-D-E4E82055",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): crate-ci/typos",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  \n> **Source**: github ([https://github.com/crate-ci/ty -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  \n> **Source**: github ([https://github.com/crate-ci/ty",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://crate-ci-typos/crate-ci-typos-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T05:18:18.494Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crate-ci-typos)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-26T05:18:54.896Z",
+      "updated_at": "2026-11-26T05:18:54.896Z"
+    },
+    "DOM-H-4E1550AF": {
+      "id": "DOM-H-4E1550AF",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Talker Pipeline Hang on Mid-Utterance User Barge-In (BUG-SOPHON-01)",
+      "summary": "Acquisition of a non-reentrant synchronization lock inside an audio generation loop without wrapping the awaitable in a `try...finally` bloc -> Streaming audio generators running under asynchronous cancellation triggers must isolate buffer locking from I/O awaits and provide explicit",
+      "confidence": 0.9,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-adventists-ai-sophon-realtime-v1/hf-adventists-ai-sophon-realtime-v1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T05:18:56.282Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-adventists-ai-sophon-realtime-v1)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "A"
+      ],
+      "created_at": "2026-11-26T05:19:38.974Z",
+      "updated_at": "2026-11-26T05:19:38.974Z"
+    },
+    "NODE-A-domain-bridge-a": {
+      "id": "NODE-A-domain-bridge-a",
+      "domain": "A",
+      "type": "DOMAIN_CONCEPT_BRIDGE",
+      "title": "Domain A Concept Space",
+      "summary": "",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {},
+      "tags": [],
+      "created_at": "2026-11-26T05:19:38.974Z",
+      "updated_at": "2026-11-26T05:19:38.974Z"
     }
   },
   "edges": [
@@ -14608,6 +14667,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-F-C1405A3A [F] with Domain G",
       "created_at": "2026-11-26T04:56:44.379Z"
+    },
+    {
+      "id": "EDGE-91D5B92C055B",
+      "sourceId": "DOM-H-4E1550AF",
+      "targetId": "NODE-A-domain-bridge-a",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-4E1550AF [H] with Domain A",
+      "created_at": "2026-11-26T05:19:38.975Z"
     }
   ]
 }

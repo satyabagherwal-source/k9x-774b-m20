@@ -13249,3 +13249,8 @@
 | `CYCLE-20261126-9GX9` | `2026-11-26T05:05:09.357Z` | `laion/clap-htsat-fused` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md` | Yes (`586a05e0...`) |
 | `CYCLE-20261126-9OZL` | `2026-11-26T05:05:19.809Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10601` | Yes (`75e1089a...`) |
 | `CYCLE-20261126-9QGK` | `2026-11-26T05:05:21.716Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`a82a171c...`) |
+| `CYCLE-20261126-OU00` | `2026-11-26T05:17:06.144Z` | `crate-ci/typos` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/crate-ci-typos-learnings.md` | Yes (`15c1cd60...`) |
+| `CYCLE-20261126-P4AV` | `2026-11-26T05:17:19.495Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10602` | Yes (`1a2aa2a8...`) |
+| `CYCLE-20261126-QAJF` | `2026-11-26T05:18:14.235Z` | `adventists-ai/Sophon-Realtime-v1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10603, Rule 10604` | Yes (`cb8b3ba3...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T05:18:54.900Z` | `crate-ci-typos` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E4E82055` [Domain D] | Yes (`80321417...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T05:19:38.978Z` | `hf-adventists-ai-sophon-realtime-v1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-4E1550AF` [Domain H] | Yes (`b95af0de...`) |

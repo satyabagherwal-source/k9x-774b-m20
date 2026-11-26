@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T05:05:28.117Z",
-  "total_records": 2706,
+  "last_updated": "2026-11-26T05:19:41.910Z",
+  "total_records": 2710,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1015,
+      "total": 1016,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1087,7 +1087,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-comfy-core-invariants",
         "DOM-D-760DF4AB",
-        "DOM-D-5C5BC093"
+        "DOM-D-5C5BC093",
+        "DOM-D-E4E82055"
       ]
     },
     "E": {
@@ -1694,7 +1695,7 @@
       ]
     },
     "H": {
-      "total": 645,
+      "total": 648,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2340,7 +2341,10 @@
         "domain_intelligence-technical-construction-intelligence-cloudwego-volo-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-learnings-core-invariants",
-        "DOM-H-BC714522"
+        "DOM-H-BC714522",
+        "domain_intelligence-technical-construction-intelligence-adventists-ai-sophon-realtime-v1-core-invari",
+        "DOM-H-4E1550AF",
+        "domain_intelligence-technical-construction-intelligence-hf-adventists-ai-sophon-realtime-v1-learning"
       ]
     },
     "I": {
@@ -22615,8 +22619,8 @@
       "title": "Content & Information Intelligence: pixeltable/pixeltable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-content-information-intelligence-pixeltable-pixeltable-cor.md",
       "repository": "pixeltable/pixeltable",
-      "content_hash": "883e1b0ea2d5085dd76afc5a014a7affd4376c86927590d8e5d4ae4a76953ebf",
-      "created_at": "2026-11-24T08:59:58.290Z"
+      "content_hash": "6e465da8bf7a8d01593ee5480cb4adde4896ff67e65ea94fe9a0c9471965dcd3",
+      "created_at": "2026-11-26T05:17:20.114Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
@@ -22624,8 +22628,8 @@
       "title": "Content & Information Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-learnings-content-information-intelligence-pixeltable-pixe.md",
       "repository": "pixeltable-pixeltable-learnings",
-      "content_hash": "215b0c96d6c37021e9545f4f6ebd307e50c3e14023e370f2491a33efbe0b58a6",
-      "created_at": "2026-11-24T09:00:03.492Z"
+      "content_hash": "f6bde88d0ec2e6f7cd133b07d65437692a5456bce8e8ff97140cccff18bcd059",
+      "created_at": "2026-11-26T05:19:41.910Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g",
@@ -23763,8 +23767,8 @@
       "title": "Product Intelligence: crate-ci/typos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-crate-ci-typos-product-intelligence-crate-ci-typos-core-invariants.md",
       "repository": "crate-ci/typos",
-      "content_hash": "2c086260b9efca5e63934c89a638a2323225aa324a4d93fe0ed737562efec50f",
-      "created_at": "2026-11-16T02:17:21.837Z"
+      "content_hash": "1163cab1f15b2682dfad3d8e194973f1ecc742f2e3e83c5f411de2987b83ee00",
+      "created_at": "2026-11-26T05:17:06.483Z"
     },
     "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants",
@@ -23790,8 +23794,8 @@
       "title": "Product Intelligence: crate-ci-typos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-crate-ci-typos-learnings-product-intelligence-crate-ci-typos-learnings-core-inva.md",
       "repository": "crate-ci-typos-learnings",
-      "content_hash": "5e5d249ed1508ff9fe1571a9a4473c9524fe4037d3e1d73edc36d4ac0d113b18",
-      "created_at": "2026-11-16T02:17:36.748Z"
+      "content_hash": "d0e4ac8f2e6cf638977ecee3c9c85e9532c95a8231b95d5e7b73713dd01bc888",
+      "created_at": "2026-11-26T05:18:56.008Z"
     },
     "domain_intelligence-quality-verification-intelligence-shifthackz-stable-diffusion-kmp-learnings-core": {
       "record_id": "domain_intelligence-quality-verification-intelligence-shifthackz-stable-diffusion-kmp-learnings-core",
@@ -45710,6 +45714,108 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T04:56:44.350Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-adventists-ai-sophon-realtime-v1-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-adventists-ai-sophon-realtime-v1-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: adventists-ai/Sophon-Realtime-v1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-adventists-ai-sophon-realtime-v1-technical-construction-intelligence-adventis.md",
+      "repository": "adventists-ai/Sophon-Realtime-v1",
+      "content_hash": "10b08eb3ea15c8eaf6a806ce9c785b91481536d0e30b6933d2629518ac45c72c",
+      "created_at": "2026-11-26T05:18:14.837Z"
+    },
+    "DOM-D-E4E82055": {
+      "record_id": "DOM-D-E4E82055",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): crate-ci/typos",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  \n> **Source**: github ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  \n> **Source Version**: `ec1eb601`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesize",
+      "content_hash": "803214174ce1f60511f901595a0ae82a7f92d9291170393574d5b66683f17860",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  \n> **Source**: github ([https://github.com/crate-ci/ty -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  \n> **Source**: github ([https://github.com/crate-ci/ty",
+      "provenance": {
+        "source_uri": "project://crate-ci-typos/crate-ci-typos-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T05:18:18.494Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crate-ci-typos)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of crate-ci-typos"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T05:18:54.853Z"
+    },
+    "DOM-H-4E1550AF": {
+      "record_id": "DOM-H-4E1550AF",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "A",
+          "id": "human_need",
+          "name": "Human & Need Intelligence"
+        }
+      ],
+      "title": "Talker Pipeline Hang on Mid-Utterance User Barge-In (BUG-SOPHON-01)",
+      "content": "Streaming audio generators running under asynchronous cancellation triggers must isolate buffer locking from I/O awaits and provide explicit `CancelledError` cleanup semantics.",
+      "content_hash": "b95af0deefc91afaafdd3ebfac0d405233645e44ff94cca59ef0ec784f29fc45",
+      "summary": "Acquisition of a non-reentrant synchronization lock inside an audio generation loop without wrapping the awaitable in a `try...finally` bloc -> Streaming audio generators running under asynchronous cancellation triggers must isolate buffer locking from I/O awaits and provide explicit",
+      "provenance": {
+        "source_uri": "project://hf-adventists-ai-sophon-realtime-v1/hf-adventists-ai-sophon-realtime-v1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T05:18:56.282Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-adventists-ai-sophon-realtime-v1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Decoupled Thinker/Talker config definitions in `config.json` (`\"thinker_subdir\": \"thinker\"`, `\"talker_subdir\": \"talker\"`), necessitating explicit queue decoupling."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "A"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T05:19:38.924Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-adventists-ai-sophon-realtime-v1-learning": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-adventists-ai-sophon-realtime-v1-learning",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-adventists-ai-sophon-realtime-v1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-adventists-ai-sophon-realtime-v1-learnings-technical-construction-intelligenc.md",
+      "repository": "hf-adventists-ai-sophon-realtime-v1-learnings",
+      "content_hash": "68a2d0bae83a9c6d260857585f261f7c1ca44fe203e753ef013ab069f1b1e70b",
+      "created_at": "2026-11-26T05:19:39.941Z"
     }
   }
 }

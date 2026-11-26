@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T05:05:28.467Z",
+  "last_updated": "2026-11-26T05:19:42.615Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T03:46:54.300Z",
@@ -1288,9 +1288,9 @@
       "staged_for_review": 1
     },
     "crate-ci-typos-learnings.md": {
-      "processed_at": "2026-11-16T02:17:36.241Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-26T05:18:54.900Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "juullabs-kable-learnings.md": {
       "processed_at": "2026-11-25T15:57:40.766Z",
@@ -1523,7 +1523,7 @@
       "staged_for_review": 0
     },
     "pixeltable-pixeltable-learnings.md": {
-      "processed_at": "2026-11-24T09:00:03.009Z",
+      "processed_at": "2026-11-26T05:19:40.677Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2533,9 +2533,9 @@
       "staged_for_review": 1
     },
     "hf-adventists-ai-sophon-realtime-v1-learnings.md": {
-      "processed_at": "2026-11-22T09:11:07.978Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 0
+      "processed_at": "2026-11-26T05:19:39.004Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
     },
     "software-mansion-react-native-gesture-handler-learnings.md": {
       "processed_at": "2026-11-17T19:45:04.563Z",
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4389,
-  "total_canonical_promoted": 553,
-  "total_staged_for_review": 3327
+  "total_dossiers_evaluated": 4392,
+  "total_canonical_promoted": 555,
+  "total_staged_for_review": 3329
 }

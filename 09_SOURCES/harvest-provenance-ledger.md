@@ -13282,3 +13282,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-laion-clap-htsat-fused` | `https://huggingface.co/laion/clap-htsat-fused` | `hf-laion-c` | Multi-dimensional audit evidence | 2026-11-26T05:05:09.362Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `94618dd3` | Multi-dimensional audit evidence | 2026-11-26T05:05:19.813Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ecf5907c` | Multi-dimensional audit evidence | 2026-11-26T05:05:21.721Z |
+| `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `ec1eb601` | Multi-dimensional audit evidence | 2026-11-26T05:17:06.149Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `704c8dc3` | Multi-dimensional audit evidence | 2026-11-26T05:17:19.500Z |
+| `learn-huggingface-adventists-ai-sophon-realtime-v1` | `https://huggingface.co/adventists-ai/Sophon-Realtime-v1` | `hf-adventi` | Multi-dimensional audit evidence | 2026-11-26T05:18:14.240Z |
+| `learn-dom-d-e4e82055` | `project://crate-ci-typos` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md` | 2026-11-26T05:18:54.900Z |
+| `learn-dom-h-4e1550af` | `project://hf-adventists-ai-sophon-realtime-v1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md` | 2026-11-26T05:19:38.978Z |

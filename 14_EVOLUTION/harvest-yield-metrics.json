@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T05:05:21.735Z",
-  "total_cycles_completed": 12574,
-  "total_learnings_persisted": 12574,
-  "total_rules_promoted": 11495,
+  "last_updated": "2026-11-26T05:18:14.253Z",
+  "total_cycles_completed": 12577,
+  "total_learnings_persisted": 12577,
+  "total_rules_promoted": 11498,
   "history": [
-    {
-      "timestamp": "2026-11-25T10:25:31.280Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T10:35:11.194Z",
-      "repository": "baidu/Unlimited-OCR-2",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T10:35:14.489Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T10:35:22.772Z",
       "repository": "siderolabs/talos",
@@ -1403,6 +1382,27 @@
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:17:06.164Z",
+      "repository": "crate-ci/typos",
+      "learningId": "learn-github-crate-ci-typos",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:17:19.516Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:18:14.253Z",
+      "repository": "adventists-ai/Sophon-Realtime-v1",
+      "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

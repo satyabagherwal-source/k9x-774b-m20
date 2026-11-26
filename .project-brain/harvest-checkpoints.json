@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T05:05:21.739Z",
+  "last_updated": "2026-11-26T05:18:14.258Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "a3f0be602e63ccbf6ded02ef3fc8d10fb294d6d6e280e4a243fa5c6a8231b5c4",
-      "verified_at": "2026-11-24T08:59:57.911Z",
+      "content_hash": "1a2aa2a8994db5458a43a6c8223e7b920bf37d65d409f7e0ed78aa8564530880",
+      "verified_at": "2026-11-26T05:17:19.520Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T08:59:57.911Z"
+      "last_updated": "2026-11-26T05:17:19.520Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -10656,14 +10656,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-ci-typos",
-      "content_hash": "24cf7c3cd133bb761e74e71940faf1c1b3f8732a9d1b43976a11f3ce68136cb3",
-      "verified_at": "2026-11-16T02:17:21.605Z",
+      "content_hash": "15c1cd60e2750e56cf734ca5cf5f704b745d79b1c87ff7e498dc39aa6873af22",
+      "verified_at": "2026-11-26T05:17:06.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T02:17:21.605Z"
+      "last_updated": "2026-11-26T05:17:06.173Z"
     },
     "emberstack/kubernetes-reflector": {
       "repository": "emberstack/kubernetes-reflector",
@@ -18891,14 +18891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-adventists-ai-sophon-realtime-v1",
-      "content_hash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
-      "verified_at": "2026-11-22T09:11:04.921Z",
+      "content_hash": "cb8b3ba3ebc7342ac1da7e9827c33ada4c6655c79ceab551803214b19e7a42d1",
+      "verified_at": "2026-11-26T05:18:14.257Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T09:11:04.921Z"
+      "last_updated": "2026-11-26T05:18:14.257Z"
     },
     "deepseek-ai/DeepSeek-V3.2": {
       "repository": "deepseek-ai/DeepSeek-V3.2",

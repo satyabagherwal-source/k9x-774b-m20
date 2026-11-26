@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T05:05:27.684Z",
+  "updated_at": "2026-11-26T05:19:41.195Z",
   "stats": {
-    "total_discovered": 9599,
-    "approved_pending_harvest": 9100,
+    "total_discovered": 9606,
+    "approved_pending_harvest": 9107,
     "harvested_count": 0,
     "rejected_count": 499,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9089,
+      "COMMUNITY_AND_EXPERT": 9096,
       "OFFICIAL_DOCUMENTATION": 282,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -207712,6 +207712,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-FEB26CE94BFA": {
+      "id": "SRC-FEB26CE94BFA",
+      "url": "https://github.com/crate-ci/typos/issues/390",
+      "title": "https://github.com/crate-ci/typos/issues/390",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:18:54.996Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-35E7514FE466": {
+      "id": "SRC-35E7514FE466",
+      "url": "https://github.com/MathNya/umya-spreadsheet/actions/runs/45430946203/job/138575750806",
+      "title": "https://github.com/MathNya/umya-spreadsheet/actions/runs/45430946203/job/138575750806",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:18:55.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-56A226A8C3B9": {
+      "id": "SRC-56A226A8C3B9",
+      "url": "https://github.com/crate-ci/typos/issues/1191",
+      "title": "https://github.com/crate-ci/typos/issues/1191",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:18:55.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-3B0D1AE93855": {
+      "id": "SRC-3B0D1AE93855",
+      "url": "https://github.com/pixeltable/pixeltable/actions/runs/45533001480",
+      "title": "https://github.com/pixeltable/pixeltable/actions/runs/45533001480",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:19:40.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-E039FE013C0E": {
+      "id": "SRC-E039FE013C0E",
+      "url": "https://github.com/pixeltable/pixeltable/actions/runs/45664156628",
+      "title": "https://github.com/pixeltable/pixeltable/actions/runs/45664156628",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:19:40.875Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-C14AA903623D": {
+      "id": "SRC-C14AA903623D",
+      "url": "https://app.reviewnb.com/pixeltable/pixeltable/pull/2059",
+      "title": "https://app.reviewnb.com/pixeltable/pixeltable/pull/2059",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:19:41.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-2F193A19636D": {
+      "id": "SRC-2F193A19636D",
+      "url": "https://app.reviewnb.com/pixeltable/pixeltable/pull/2059/files/?expand=docs%2Frelease%2Fhowto%2Fproviders%2Fworking-with-fireworks.ipynb",
+      "title": "https://app.reviewnb.com/pixeltable/pixeltable/pull/2059/files/?expand=docs%2Frelease%2Fhowto%2Fproviders%2Fworking-with-fireworks.ipynb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:19:41.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
       }
     }
   }

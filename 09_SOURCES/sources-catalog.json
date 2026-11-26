@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "f89365df",
+    "sourceVersion": "704c8dc3",
     "license": "Apache-2.0",
-    "contentHash": "a3f0be602e63ccbf6ded02ef3fc8d10fb294d6d6e280e4a243fa5c6a8231b5c4",
-    "lastHarvestedAt": "2026-11-24T08:59:57.897Z",
+    "contentHash": "1a2aa2a8994db5458a43a6c8223e7b920bf37d65d409f7e0ed78aa8564530880",
+    "lastHarvestedAt": "2026-11-26T05:17:19.500Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -7073,10 +7073,10 @@
     "repository": "crate-ci/typos",
     "platform": "github",
     "sourceUrl": "https://github.com/crate-ci/typos",
-    "sourceVersion": "e7647d64",
+    "sourceVersion": "ec1eb601",
     "license": "Apache-2.0",
-    "contentHash": "24cf7c3cd133bb761e74e71940faf1c1b3f8732a9d1b43976a11f3ce68136cb3",
-    "lastHarvestedAt": "2026-11-16T02:17:21.598Z",
+    "contentHash": "15c1cd60e2750e56cf734ca5cf5f704b745d79b1c87ff7e498dc39aa6873af22",
+    "lastHarvestedAt": "2026-11-26T05:17:06.149Z",
     "learningId": "learn-github-crate-ci-typos"
   },
   "emberstack-kubernetes-reflector": {
@@ -12555,8 +12555,8 @@
     "sourceUrl": "https://huggingface.co/adventists-ai/Sophon-Realtime-v1",
     "sourceVersion": "hf-adventists-ai-sophon-realtime-v1",
     "license": "Open-Source",
-    "contentHash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
-    "lastHarvestedAt": "2026-11-22T09:11:04.913Z",
+    "contentHash": "cb8b3ba3ebc7342ac1da7e9827c33ada4c6655c79ceab551803214b19e7a42d1",
+    "lastHarvestedAt": "2026-11-26T05:18:14.240Z",
     "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1"
   },
   "hf-deepseek-ai-deepseek-v3.2": {
