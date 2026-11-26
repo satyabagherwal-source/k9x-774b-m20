@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T03:55:21.991Z",
-    "lastVerified": "2026-11-26T03:55:21.991Z",
+    "lastChecked": "2026-11-26T04:05:10.111Z",
+    "lastVerified": "2026-11-26T04:05:10.111Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T03:30:06.705Z",
-    "lastVerified": "2026-11-26T03:30:06.705Z",
+    "lastChecked": "2026-11-26T04:05:10.098Z",
+    "lastVerified": "2026-11-26T04:05:10.098Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1762,12 +1762,12 @@
     "lastVerified": "2026-11-25T10:07:23.342Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T23:59:21.399Z",
-    "lastVerified": "2026-11-25T23:59:21.399Z",
+    "lastChecked": "2026-11-26T04:05:04.660Z",
+    "lastVerified": "2026-11-26T04:05:04.660Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1776,7 +1776,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "aba54549"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -3649,9 +3650,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-11-25T02:38:45.823Z",
+    "lastChecked": "2026-11-26T04:05:07.190Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-11-25T02:38:45.823Z"
+    "lastVerified": "2026-11-26T04:05:07.190Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -6430,9 +6431,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-25T03:50:49.404Z",
+    "lastChecked": "2026-11-26T04:05:02.155Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-25T03:50:49.404Z"
+    "lastVerified": "2026-11-26T04:05:02.155Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -7242,9 +7243,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-11-24T21:24:04.949Z",
+    "lastChecked": "2026-11-26T04:04:54.746Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-11-24T21:24:04.949Z"
+    "lastVerified": "2026-11-26T04:04:54.746Z"
   },
   "hf-jialinyyzz-humanizer": {
     "name": "jialinyyzz/humanizer",
@@ -11189,9 +11190,9 @@
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",
     "officialUrl": "https://github.com/paololeonardi/WaterfallGrid",
-    "lastChecked": "2026-11-23T18:23:49.489Z",
+    "lastChecked": "2026-11-26T04:04:59.746Z",
     "revisionIdentifier": "c7c08652",
-    "lastVerified": "2026-11-23T18:23:49.489Z"
+    "lastVerified": "2026-11-26T04:04:59.746Z"
   },
   "syntax-tree-hast-util-to-html": {
     "name": "hast-util-to-html",
@@ -14454,12 +14455,12 @@
     "officialUrl": "https://huggingface.co/Lakonik/pi-H3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T07:27:26.037Z",
-    "lastVerified": "2026-11-22T07:27:26.037Z",
+    "lastChecked": "2026-11-26T04:04:57.599Z",
+    "lastVerified": "2026-11-26T04:04:57.599Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-lakonik-pi-h3",
-    "contentHash": "023d0227a5d2691c36f2ebe26a6d2c8e9e92b8e35cf820dd0b9cd8d1737070b9",
+    "contentHash": "f90b08524fa0bdde4ba72bbfc00c893c5fa6138516242b17bc4e6a1f68a96b60",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

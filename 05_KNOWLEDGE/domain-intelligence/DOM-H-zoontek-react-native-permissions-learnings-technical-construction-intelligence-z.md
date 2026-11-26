@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T03:30:09.354Z",
+  "timestamp": "2026-11-26T04:05:12.795Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zoontek-react-native-permissions-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zoontek-react-native-permissions-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T03:30:09.354Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:05:12.795Z`  
 > **Learning ID**: `LEARN-EVO-zoontek-react-native-permissions-learnings`
 
 

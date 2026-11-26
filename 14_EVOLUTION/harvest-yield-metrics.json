@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T03:55:19.039Z",
-  "total_cycles_completed": 12557,
-  "total_learnings_persisted": 12557,
+  "last_updated": "2026-11-26T04:04:58.426Z",
+  "total_cycles_completed": 12558,
+  "total_learnings_persisted": 12558,
   "total_rules_promoted": 11486,
   "history": [
-    {
-      "timestamp": "2026-11-25T08:56:15.040Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T09:07:53.350Z",
       "repository": "flox/flox",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-26T03:55:19.039Z",
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:04:58.426Z",
+      "repository": "Lakonik/pi-H3",
+      "learningId": "learn-huggingface-lakonik-pi-h3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

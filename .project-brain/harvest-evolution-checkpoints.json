@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T03:55:55.627Z",
+  "last_updated": "2026-11-26T04:05:13.655Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T03:46:54.300Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-26T03:55:54.211Z",
+      "processed_at": "2026-11-26T04:05:10.917Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-26T03:30:09.088Z",
+      "processed_at": "2026-11-26T04:05:12.495Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3708,8 +3708,8 @@
       "staged_for_review": 1
     },
     "hf-lakonik-pi-h3-learnings.md": {
-      "processed_at": "2026-11-22T07:29:02.968Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-26T04:05:10.296Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "abue-ammar-tinycast-learnings.md": {
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4365,
+  "total_dossiers_evaluated": 4368,
   "total_canonical_promoted": 551,
-  "total_staged_for_review": 3310
+  "total_staged_for_review": 3312
 }

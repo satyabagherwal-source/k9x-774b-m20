@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-D4IO",
-    "timestamp": "2026-11-24T13:56:32.160Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "c078c7deeb5a8dde2de3274c7eeb5e10109496a506226d78ecadf141654c3da3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-DD06",
     "timestamp": "2026-11-24T13:56:43.158Z",
     "repository": "rqlite/rqlite",
@@ -7490,6 +7475,21 @@
     "repository": "matrixorigin/matrixone",
     "learningId": "learn-github-matrixorigin-matrixone",
     "contentHash": "b1e8ec76ae85f9b3a634d85e4a698f30f55f1010dd1fe2b4de9cb4c0ec4e04c1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-42P1",
+    "timestamp": "2026-11-26T04:04:58.405Z",
+    "repository": "Lakonik/pi-H3",
+    "learningId": "learn-huggingface-lakonik-pi-h3",
+    "contentHash": "f90b08524fa0bdde4ba72bbfc00c893c5fa6138516242b17bc4e6a1f68a96b60",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
