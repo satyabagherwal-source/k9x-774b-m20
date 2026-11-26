@@ -4,24 +4,24 @@
 {
   "source_repository": "ratatui/ratatui",
   "source_url": "https://github.com/ratatui/ratatui",
-  "source_version": "0e6e2990",
+  "source_version": "87417f36",
   "license": "MIT",
-  "timestamp": "2026-11-24T08:24:33.239Z",
+  "timestamp": "2026-11-26T17:48:09.268Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ratatui-ratatui",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `0e6e2990`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T08:24:33.239Z`  
+> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `87417f36`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T17:48:09.268Z`  
 > **Learning ID**: `learn-github-ratatui-ratatui`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ratatui/ratatui:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T08:24:30.279Z  
+> **Harvest Timestamp**: 2026-11-26T17:48:07.817Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23406 stars
+- **Stars / Engagement**: 23450 stars
 
 ---
 
@@ -954,11 +954,11 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2961** (2026-11-23): **build(deps): bump chrono from 0.4.41 to 0.4.45**
-  *Symptoms*: Bumps [chrono](https://github.com/chronotope/chrono) from 0.4.41 to 0.4.45. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/chronotope/chrono/releases">chrono's releases</a>.</em></p> <blockquote> <h2>0.4.45</h2> <h2>What's Changed</h2> <ul> <li>fix(tz): reject TZ offset hour of 24 to avoid FixedOffset overflow by <a href="https://github.com/SAY-5"><code>@​SAY-5</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1787">chronotope/chrono#1787</a></li> <li>tz_data: fix tzdata locations on Android by <a href="https://github.com/caruschalalamove"><code>@​caruschalalamove</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1789">chronotope/chrono#1789</a></li> </ul> <h2>0.4.44</h2> <h2>What's Changed</h2> <ul> <li>docs: match MSRV with <code>Cargo.toml</code> contents by <a href="https://github.com/coryan"><code>@​coryan</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1772">chronotope/chrono#1772</a></li> <li>Add track_caller to non-deprecated functions by <a href="https://github.com/svix-jplatte"><code>@​svix-jplatte</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1774">chronotope/chrono#1774</a></li> </ul> <h2>0.4.43</h2> <h2>What's Changed</h2> <ul> <li>Install extra components for lint workflow by <a href="https://github.com/djc"><code>@​djc</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1741">chronotope/chrono#17
+- **Issue #2963** (2026-11-25): **fix(crossterm): make the crossterm_0_28 feature select only crossterm 0.28**
+  *Symptoms*: <!-- Please read CONTRIBUTING.md before submitting any pull request. -->  Fixes #2962  ## What  `ratatui = { default-features = false, features = ["crossterm_0_28"] }` now builds the crossterm backend on crossterm 0.28 only, and `ratatui::crossterm` is crossterm 0.28. Before, the backend still used crossterm 0.29, so an application on crossterm 0.28 got mismatched types (see the issue for a reproduction).  ## Root cause  `ratatui` depended on `ratatui-crossterm` with its default features, which enable `crossterm_0_29`. `ratatui-crossterm` re-exports the newest enabled version, so 0.29 always won.  ## The change  - The workspace dependency on `ratatui-crossterm` sets `default-features = false` (only `ratatui`   uses it). - `crossterm_0_28` and `crossterm_0_29` each enable `dep:ratatui-crossterm`, their crossterm   version, `ratatui-crossterm/underline-color` and `std`. - `crossterm` now enables `crossterm_0_29`, so default features and `features = ["crossterm"]`   keep crossterm 0.29. - The `cfg(feature = "crossterm")` gates in `ratatui/src/lib.rs` and `prelude.rs` become   `cfg(any(feature = "crossterm_0_28", feature = "crossterm_0_29"))`, since `crossterm_0_28` no   longer turns on the `crossterm` feature. - `cargo xtask check --all-features` runs `cargo tree` for `ratatui` with only one crossterm   version feature and fails if any other crossterm version is in the tree.  `ratatui-crossterm/underline-color` is forwarded from the version features to keep today's behavior: it 
 
-- **Issue #2960** (2026-11-23): **build(deps): bump trybuild from 1.0.122 to 1.0.125**
-  *Symptoms*: Bumps [trybuild](https://github.com/dtolnay/trybuild) from 1.0.122 to 1.0.125. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/dtolnay/trybuild/releases">trybuild's releases</a>.</em></p> <blockquote> <h2>1.0.125</h2> <ul> <li>Set -Zthreads=1 to get deterministic ordering of diagnostics on nightlies that default to parallel frontend (<a href="https://redirect.github.com/dtolnay/trybuild/issues/352">#352</a>)</li> </ul> <h2>1.0.124</h2> <ul> <li>Hide terminal size from cargo subprocess (<a href="https://redirect.github.com/dtolnay/trybuild/issues/350">#350</a>)</li> <li>Re-enable color output during compilation of dependencies (<a href="https://redirect.github.com/dtolnay/trybuild/issues/351">#351</a>)</li> </ul> <h2>1.0.123</h2> <ul> <li>Pass --diagnostic-width to every cargo invocation (<a href="https://redirect.github.com/dtolnay/trybuild/issues/345">#345</a>, thanks <a href="https://github.com/nazar-pc"><code>@​nazar-pc</code></a>)</li> <li>Copy [profile] from the workspace root into the generated manifest (<a href="https://redirect.github.com/dtolnay/trybuild/issues/346">#346</a>, thanks <a href="https://github.com/nazar-pc"><code>@​nazar-pc</code></a>)</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/dtolnay/trybuild/commit/b0820fd696e120ea6fb0bae2235140929f0c5237"><code>b0820fd</code></a> Release 1.0.125</li> <li><a href="https://github.com/dtolnay/trybuild/commit/30e
+- **Issue #2962** (2026-11-25): **`crossterm_0_28` feature still builds the backend on crossterm 0.29**
+  *Symptoms*: ## Description  `ratatui` exposes `crossterm_0_28` and `crossterm_0_29` features (#2270), but `crossterm_0_28` does not select crossterm 0.28. `ratatui` depends on `ratatui-crossterm` with its default features, and those enable `ratatui-crossterm/crossterm_0_29`. When both version features are on, `ratatui-crossterm` re-exports the newest one, so `ratatui::crossterm` and the backend use crossterm 0.29 even when default features are disabled.  An application that uses crossterm 0.28 directly then gets types from two crossterm versions, and its own events and commands do not match `ratatui::crossterm`.  ## To Reproduce  ```toml [dependencies] crossterm = "0.28" ratatui = { version = "0.30.2", default-features = false, features = ["crossterm_0_28"] } ```  ```rust fn main() {     let event: ratatui::crossterm::event::Event = crossterm::event::Event::FocusGained;     println!("{event:?}"); } ```  ```text error[E0308]: mismatched types  --> src/main.rs:2:51   | 2 |     let event: ratatui::crossterm::event::Event = crossterm::event::Event::FocusGained;   |                --------------------------------   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `ratatui::crossterm::event::Event`, found `crossterm::event::Event`   | note: there are multiple different versions of crate `crossterm` in the dependency graph ```  In the ratatui repository, `cargo tree -p ratatui --no-default-features --features crossterm_0_28 -e features -i crossterm@0.29` shows the path: `ratatui-crossterm feature 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -975,250 +975,216 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7a577c8` (2026-11-23)
-**Commit Message**: build(deps): bump chrono from 0.4.41 to 0.4.45 (#2961)
+### Incident Patch 1: `87417f36` (2026-11-25)
+**Commit Message**: fix(crossterm): make the crossterm_0_28 feature select only crossterm 0.28 (#2963)
 
-Bumps [chrono](https://github.com/chronotope/chrono) from 0.4.41 to
-0.4.45.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/chronotope/chrono/releases">chrono's
-releases</a>.</em></p>
-<blockquote>
-<h2>0.4.45</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>fix(tz): reject TZ offset hour of 24 to avoid FixedOffset overflow
-by <a href="https://github.com/SAY-5"><code>@​SAY-5</code></a> in <a
-href="https://redirect.github.com/chronotope/chrono/pull/1787">chronotope/chrono#1787</a></li>
-<li>tz_data: fix tzdata locations on Android by <a
-href="https://github.com/caruschalalamove"><code>@​caruschalalamove</code></a>
-in <a
-href="https://redirect.github.com/chronotope/chrono/pull/1789">chronotope/chrono#1789</a></li>
-</ul>
-<h2>0.4.44</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>docs: match MSRV with <code>Cargo.toml</code> contents by <a
-href="https://github.com/coryan"><code>@​coryan</code></a> in <a
-href="https://redirect.github.com/chronotope/chrono/pull/1772">chronotope/chrono#1772</a></li>
-<li>Add track_caller to non-deprecated functions by <a
-href="https://github.com/svix-jplatte"><code>@​svix-jplatte</c
+<!-- Please read CONTRIBUTING.md before submitting any pull request. -->
 
-**File**: `Cargo.lock` (modified, +3/-10)
+Fixes #2962
+
+## What
+
+`ratatui = { default-features = false, features = ["crossterm_0_28"] }`
+now builds the crossterm
+backend on crossterm 0.28 only, and `ratatui::crossterm` is crossterm
+0.28. Before, the backend
+still used crossterm 0.29, so an application on crossterm 0.28 got
+mismatched types (see the issue
+for a reproduction).
+
+## Root cause
+
+`ratatui` depended on `ratatui-crossterm` with its default features,
+which enable
+`crossterm_0_29`. `ratatui-crossterm` re-exports the newest enabled
+version, so 0.29 always won.
+
+## The change
+
+- The workspace dependency on `ratatui-crossterm` sets `default-features
+= false` (only `ratatui`
+  uses it).
+- `crossterm_0_28` and `crossterm_0_29` each enable
+`dep:ratatui-crossterm`, their crossterm
+  version, `ratatui-crossterm/underline-color` and `std`.
+- `crossterm` now enables `crossterm_0_29`, so default features and
+`features = ["crossterm"]`
+  keep crossterm 0.29.
+- The `cfg(feature = "crossterm")` gates in `ratatui/src/lib.rs` and
+`prelude.rs` become
+`cfg(any(feature = "crosster
+
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -50,12 +50,6 @@ version = "0.2.21"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
- 
--[[package]]
--name = "android-tzdata"
--version = "0.1.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
--
- [[package]]
- name = "android_system_properties"
- version = "0.1.5"
-@@ -386,17 +380,16 @@ dependencies = [
- 
- [[package]]
- name = "chrono"
--version = "0.4.41"
-+version = "0.4.45"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c469d952047f47f91b68d1cba3f10d63c11d73e4636f24f08daf0278abf01c4d"
-+checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
- dependencies = [
-- "android-tzdata",
-  "iana-time-zone",
-  "js-sys",
-  "num-traits",
-  "serde",
-  "wasm-bindgen",
-- "windows-link 0.1.3",
-+ "windows-link 0.2.1",
- ]
- 
- [[package]]
+@@ -57,7 +57,7 @@ rand_chacha = "0.10"
+ ratatui = { path = "ratatui", version = "0.30.2" }
+ ratatui-calendar = { path = "ratatui-calendar", version = "0.1.0", default-features = false }
+ ratatui-core = { path = "ratatui-core", version = "0.1.2" }
+-ratatui-crossterm = { path = "ratatui-crossterm", version = "0.1.2" }
++ratatui-crossterm = { path = "ratatui-crossterm", version = "0.1.2", default-features = false }
+ ratatui-macros = { path = "ratatui-macros", version = "0.7.2" }
+ ratatui-termina = { path = "ratatui-termina", version = "0.1.0" }
+ ratatui-termion = { path = "ratatui-termion", version = "0.1.2" }
 ```
 
----
-
-### Incident Patch 2: `2adf218b` (2026-11-23)
-**Commit Message**: build(deps): bump rand from 0.10.3 to 0.10.4 (#2959)
-
-Bumps [rand](https://github.com/rust-random/rand) from 0.10.3 to 0.10.4.
-<details>
-<summary>Changelog</summary>
-<p><em>Sourced from <a
-href="https://github.com/rust-random/rand/blob/master/CHANGELOG.md">rand's
-changelog</a>.</em></p>
-<blockquote>
-<h2>[0.10.4] — 2026-11-15</h2>
-<h3>Fixes</h3>
-<ul>
-<li>Fix possible panic due to sampling a deserialized
-<code>Uniform&lt;Duration&gt;</code> (<a
-href="https://redirect.github.com/rust-random/rand/issues/1841">#1841</a>)</li>
-</ul>
-<p><a
-href="https://redirect.github.com/rust-random/rand/issues/1841">#1841</a>:
-<a
-href="https://redirect.github.com/rust-random/rand/pull/1841">rust-random/rand#1841</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/rust-random/rand/commit/c03e547d051fee1e7c8b1217ff04b11bf0ea5138"><code>c03e547</code></a>
-Rand 0.10.4: reject validate UniformDuration sampler state during
-deserializa...</li>
-<li><a
-href="https://github.com/rust-random/rand/commit/d1cbc134a1d039cf4680b82835ac008f172c3dee"><code>d1cbc13</code></a>
-Document StdRng / ThreadRng duplication concerns (<a
-href="https://redirect.github.com/rust-
-
-**File**: `Cargo.lock` (modified, +10/-10)
+**File**: `ratatui/Cargo.toml` (modified, +17/-5)
 ```diff
-@@ -849,7 +849,7 @@ version = "0.0.0"
- dependencies = [
-  "clap",
-  "crossterm 0.29.0",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "ratatui",
-  "termion",
-  "termwiz",
-@@ -865,7 +865,7 @@ dependencies = [
-  "itertools 0.15.0",
-  "jiff",
-  "palette",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "rand_chacha 0.10.0",
-  "ratatui",
-  "strum",
-@@ -1636,7 +1636,7 @@ version = "0.0.0"
- dependencies = [
-  "color-eyre",
-  "crossterm 0.29.0",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "ratatui",
- ]
+@@ -29,11 +29,23 @@ rustdoc-args = ["--cfg", "docsrs"]
+ default = ["all-widgets", "crossterm", "layout-cache", "macros", "underline-color"]
+ #! Generally an application will only use one backend, so you should only enable one of the following features:
+ ## enables the [`CrosstermBackend`](backend::CrosstermBackend) backend and adds a dependency on [`crossterm`].
+-crossterm = ["dep:ratatui-crossterm", "std"]
+-## selects the crossterm 0.28.x backend implementation
+-crossterm_0_28 = ["crossterm", "ratatui-crossterm/crossterm_0_28"]
+-## selects the crossterm 0.29.x backend implementation (default)
+-crossterm_0_29 = ["crossterm", "ratatui-crossterm/crossterm_0_29"]
++## This uses crossterm 0.29.x.
++crossterm = ["crossterm_0_29"]
++## enables the crossterm backend with crossterm 0.28.x. Disable the default features to use it, as
++## the default `crossterm` feature selects crossterm 0.29.x.
++crossterm_0_28 = [
++  "dep:ratatui-crossterm",
++  "ratatui-crossterm/crossterm_0_28",
++  "ratatui-crossterm/underline-color",
++  "std",
++]
++## enables the crossterm backend with crossterm 0.29.x.
++crossterm_0_29 = [
++  "dep:ratatui-crossterm",
++  "ratatui-crossterm/crossterm_0_29",
++  "ratatui-crossterm/underline-color",
++  "std",
++]
+ ## enables the [`TermionBackend`](backend::TermionBackend) backend and adds a dependency on [`termion`].
+ termion = ["dep:ratatui-termion", "std"]
+ ## enables the [`TerminaBackend`](backend::TerminaBackend) backend and adds a dependency on [`termina`].
+```
+
+**File**: `ratatui/src/lib.rs` (modified, +4/-4)
+```diff
+@@ -525,7 +525,7 @@ pub use palette;
+ pub use ratatui_core::terminal::{CompletedFrame, Frame, Terminal, TerminalOptions, Viewport};
+ pub use ratatui_core::{buffer, layout};
+ /// re-export the `crossterm` crate so that users don't have to add it as a dependency
+-#[cfg(feature = "crossterm")]
++#[cfg(any(feature = "crossterm_0_28", feature = "crossterm_0_29"))]
+ pub use ratatui_crossterm::crossterm;
+ #[cfg(feature = "macros")]
+ pub use ratatui_macros as macros;
+@@ -539,7 +539,7 @@ pub use ratatui_termion::termion;
+ #[cfg(feature = "termwiz")]
+ pub use ratatui_termwiz::termwiz;
  
-@@ -2053,7 +2053,7 @@ dependencies = [
-  "color-eyre",
-  "crossterm 0.29.0",
-  "line_drawing",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "ratatui",
- ]
+-#[cfg(feature = "crossterm")]
++#[cfg(any(feature = "crossterm_0_28", feature = "crossterm_0_29"))]
+ #[doc(inline)]
+ pub use crate::init::{
+     DefaultTerminal, init, init_with_options, restore, run, run_with_options, try_init,
+@@ -549,7 +549,7 @@ pub use crate::init::{
+ /// Re-exports for the backend implementations.
+ pub mod backend {
+     pub use ratatui_core::backend::{Backend, ClearType, ScrollByRegion, TestBackend, WindowSize};
+-    #[cfg(feature = "crossterm")]
++    #[cfg(any(feature = "crossterm_0_28", feature = "crossterm_0_29"))]
+     pub use ratatui_crossterm::{CrosstermBackend, FromCrossterm, IntoCrossterm};
+     #[cfg(feature = "termina")]
+     pub use ratatui_termina::{FromTermina, IntoTermina, TerminaBackend};
+@@ -563,5 +563,5 @@ pub mod prelude;
+ pub use ratatui_core::{style, symbols, text};
+ pub mod widgets;
+ pub use ratatui_widgets::border;
+-#[cfg(feature = "crossterm")]
++#[cfg(any(feature = "crossterm_0_28", feature = "crossterm_0_29"))]
+ pub mod init;
+```
+
+**File**: `ratatui/src/prelude.rs` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@
  
-@@ -2652,7 +2652,7 @@ dependencies = [
-  "bytes",
-  "getrandom 0.4.1",
-  "lru-slab",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "rand_pcg",
-  "ring",
-  "rustc-hash",
-@@ -2715,9 +2715,9 @@ dependencies = [
- 
- [[package]]
- name = "rand"
--version = "0.10.3"
-+version = "0.10.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af"
-+checksum = "8f6fa277c67e6ea590466f04c3fe82cb509f0864fe470643e5570de9514a9b11"
- dependencies = [
-  "chacha20",
-  "getrandom 0.4.1",
-@@ -2790,7 +2790,7 @@ dependencies = [
-  "jiff",
-  "palette",
-  "pretty_assertions",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "ratatui-calendar",
-  "ratatui-core",
-  "ratatui-crossterm",
-@@ -4310,7 +4310,7 @@ dependencies = [
-  "color-eyre",
-  "colorgrad",
-  "crossterm 0.29.0",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "ratatui",
- ]
- 
-@@ -4486,7 +4486,7 @@ version = "0.0.0"
- dependencies = [
-  "color-eyre",
-  "crossterm 0.29.0",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "ratatui",
- ]
+ #[doc(no_inline)]
+ pub use ratatui_core::backend::{self, Backend};
+-#[cfg(feature = "crossterm")]
++#[cfg(any(feature = "crossterm_0_28", feature = "crossterm_0_29"))]
+ #[doc(no_inline)]
+ pub use ratatui_crossterm::{CrosstermBackend, FromCrossterm, IntoCrossterm};
  
 ```
 
----
-
-### Incident Patch 3: `8a0d4c93` (2026-11-23)
-**Commit Message**: build(deps): bump bnjbvr/cargo-machete from 0.9.2 to 0.10.1 (#2955)
-
-Bumps [bnjbvr/cargo-machete](https://github.com/bnjbvr/cargo-machete)
-from 0.9.2 to 0.10.1.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/bnjbvr/cargo-machete/releases">bnjbvr/cargo-machete's
-releases</a>.</em></p>
-<blockquote>
-<h2>v0.10.1</h2>
-<p>You know what they say: one release a day keeps the doctor away. This
-one makes it so that release builds include MacOS builds as well; thanks
-to <a href="https://github.com/rwojsznis"><code>@​rwojsznis</code></a>
-for reporting!</p>
-<h2>What's Changed</h2>
-<ul>
-<li>Action: Fix aarch64 triple, use musl since 0.10 by <a
-href="https://github.com/gwen-lg"><code>@​gwen-lg</code></a> in <a
-href="https://redirect.github.com/bnjbvr/cargo-machete/pull/291">bnjbvr/cargo-machete#291</a></li>
-<li>ci: fix <code>macos</code> release builds by <a
-href="https://github.com/bnjbvr"><code>@​bnjbvr</code></a> in <a
-href="https://redirect.github.com/bnjbvr/cargo-machete/pull/293">bnjbvr/cargo-machete#293</a></li>
-<li>chore: release v0.10.1 by <a
-href="https://github.com/bnjbvr"><code>@​bnjbvr</code></a> in <a
-href="https://redirect.github.com/bnjb
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `xtask/src/commands/check.rs` (modified, +45/-1)
 ```diff
-@@ -62,7 +62,7 @@ jobs:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
--      - uses: bnjbvr/cargo-machete@ac30a525c0a8d163a92d727b3ff079ee3f6ecb08 # v0.9.2
-+      - uses: bnjbvr/cargo-machete@431e75731b681a69a4cfdeb1315b505778bb5c70 # v0.10.1
+@@ -1,6 +1,8 @@
+ use color_eyre::Result;
++use color_eyre::eyre::bail;
++use duct::cmd;
  
-   # Check for unused dependencies that static source scanning cannot distinguish.
-   # This complements cargo-machete by compiling the workspace and checking rustc dep-info.
+-use crate::{CROSSTERM_COMMON_FEATURES, CROSSTERM_VERSION_FEATURES, Run, run_cargo};
++use crate::{CROSSTERM_COMMON_FEATURES, CROSSTERM_VERSION_FEATURES, ExpressionExt, Run, run_cargo};
+ 
+ /// Run cargo check
+ #[derive(Clone, Debug, clap::Args)]
+@@ -28,6 +30,7 @@ impl Run for Check {
+                     features.as_str(),
+                 ];
+                 run_cargo(command)?;
++                check_ratatui_crossterm_version(crossterm_feature)?;
+             }
+ 
+             run_cargo(vec![
+@@ -47,3 +50,44 @@ impl Run for Check {
+         }
+     }
+ }
++
++/// Check that `ratatui` built with only `crossterm_feature` depends on that crossterm version
++/// alone, so an application using the same crossterm version gets matching types.
++fn check_ratatui_crossterm_version(crossterm_feature: &str) -> Result<()> {
++    let tree = cmd(
++        "cargo",
++        [
++            "tree",
++            "--package",
++            "ratatui",
++            "--no-default-features",
++            "--features",
++            crossterm_feature,
++            "--edges",
++            "normal",
++            "--prefix",
++            "none",
++            "--format",
++            "{p}",
++        ],
++    )
++    .stdout_capture()
++    .run_with_trace()?;
++    let tree = String::from_utf8(tree.stdout)?;
++    let expected = crossterm_feature.replace("crossterm_0_", "crossterm v0.");
++    let crossterm_versions: Vec<&str> = tree
++        .lines()
++        .filter(|line| line.starts_with("crossterm v"))
++        .collect();
++    if crossterm_versions.is_empty()
++        || crossterm_versions
++            .iter()
++            .any(|version| !version.starts_with(&expected))
++    {
++        bail!(
++            "ratatui with only the `{crossterm_feature}` feature should depend on {expected} \
++            only, but it depends on {crossterm_versions:?}"
++        );
++    }
++    Ok(())
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2963** (2026-11-25): fix(crossterm): make the crossterm_0_28 feature select only crossterm 0.28 (@coleleavitt)
 - **PR #2961** (2026-11-23): build(deps): bump chrono from 0.4.41 to 0.4.45 (@dependabot[bot])
 - **PR #2960** (2026-11-23): build(deps): bump trybuild from 1.0.122 to 1.0.125 (@dependabot[bot])
 - **PR #2959** (2026-11-23): build(deps): bump rand from 0.10.3 to 0.10.4 (@dependabot[bot])
 - **PR #2958** (2026-11-23): build(deps): bump jiff from 1.0.0 to 1.0.1 (@dependabot[bot])
 - **PR #2957** (2026-11-23): build(deps): bump clap from 4.6.7 to 4.6.9 (@dependabot[bot])
-- **PR #2956** (2026-11-23): build(deps): bump taiki-e/install-action from 2.90.3 to 2.90.6 (@dependabot[bot])
 
 ---
 
@@ -1238,42 +1204,31 @@ href="https://redirect.github.com/bnjb
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump chrono from 0.4.41 to 0.4.45
+## X. crossterm): make the crossterm_0_28 feature select only crossterm 0.28
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7a577c8`: build(deps): bump chrono from 0.4.41 to 0.4.45. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `87417f36`: crossterm): make the crossterm_0_28 feature select only crossterm 0.28. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.4.45"
-checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
- "windows-link 0.2.1",
+ratatui-crossterm = { path = "ratatui-crossterm", version = "0.1.2", default-features = false }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-[[package]]
-name = "android-tzdata"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
-
-version = "0.4.41"
-checksum = "c469d952047f47f91b68d1cba3f10d63c11d73e4636f24f08daf0278abf01c4d"
- "android-tzdata",
- "windows-link 0.1.3",
+ratatui-crossterm = { path = "ratatui-crossterm", version = "0.1.2" }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7a577c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `87417f36` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

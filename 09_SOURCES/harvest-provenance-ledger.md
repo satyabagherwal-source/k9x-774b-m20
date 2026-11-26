@@ -13526,3 +13526,7 @@ Every entry in this ledger must capture:
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `55eba7b1` | Multi-dimensional audit evidence | 2026-11-26T17:39:22.072Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `cc291d42` | Multi-dimensional audit evidence | 2026-11-26T17:39:28.682Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `5ad08921` | Multi-dimensional audit evidence | 2026-11-26T17:39:31.053Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-26T17:48:07.736Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `87417f36` | Multi-dimensional audit evidence | 2026-11-26T17:48:09.023Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `d414fa94` | Multi-dimensional audit evidence | 2026-11-26T17:48:21.880Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `50d1f268` | Multi-dimensional audit evidence | 2026-11-26T17:48:23.999Z |

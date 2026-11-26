@@ -13493,3 +13493,7 @@
 | `CYCLE-20261126-7E4Y` | `2026-11-26T17:39:22.067Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10738` | Yes (`093e61c2...`) |
 | `CYCLE-20261126-7J8M` | `2026-11-26T17:39:28.678Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10739` | Yes (`381a8ff2...`) |
 | `CYCLE-20261126-7L2G` | `2026-11-26T17:39:31.048Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10740` | Yes (`78c03ecb...`) |
+| `CYCLE-20261126-INQR` | `2026-11-26T17:48:07.731Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`64bda7b3...`) |
+| `CYCLE-20261126-IOQI` | `2026-11-26T17:48:09.018Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10741` | Yes (`65a5d7ae...`) |
+| `CYCLE-20261126-IYNO` | `2026-11-26T17:48:21.876Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10742` | Yes (`4d8a526d...`) |
+| `CYCLE-20261126-J0AJ` | `2026-11-26T17:48:23.995Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10743` | Yes (`32140050...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T17:39:36.713Z",
+  "last_updated": "2026-11-26T17:48:29.493Z",
   "total_records": 2767,
   "domains": {
     "A": {
@@ -8976,10 +8976,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "8921a2d50b5ed0befd56728eebe04b51754f3d9c7abe808b08b1b04d09b8de27",
-      "created_at": "2026-11-26T14:22:22.705Z"
+      "content_hash": "0ec4dd6f457c8927b1eceef7d81a23d4f0a1fedd5fe705260f5e2c77ec728207",
+      "created_at": "2026-11-26T17:48:22.306Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -11486,8 +11486,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-m3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-m3-research-knowledge-intelligence-baai-bge-m3-core-invariants.md",
       "repository": "BAAI/bge-m3",
-      "content_hash": "80457639fcb1b26706168a6fb7465bad0d0c3bfdec85a6916eba6080f150f01d",
-      "created_at": "2026-11-23T00:56:21.070Z"
+      "content_hash": "6d95ca2d26ee4c966825a9f03172aaf2eb790f8793bfeddf8242b3ffcdd722da",
+      "created_at": "2026-11-26T17:48:07.986Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants",
@@ -11582,8 +11582,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-m3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-m3-learnings-research-knowledge-intelligence-hf-baai-bge-m3-learning.md",
       "repository": "hf-baai-bge-m3-learnings",
-      "content_hash": "00c128ad0fdf29fd4378a55f2b8858ad17f1402eea57bb83264d70f0c42b5d9b",
-      "created_at": "2026-11-23T00:56:36.066Z"
+      "content_hash": "0bc77a28c1b1bf31b5206a47e6ae130bfec1f69f890fb602b411d873356e9325",
+      "created_at": "2026-11-26T17:48:28.565Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants",
@@ -12824,8 +12824,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "fb7f0642256d42c1fea6cf79ad29b125cc40cf7a6728b94ff6ff6d6347ddb6fa",
-      "created_at": "2026-11-26T13:18:07.532Z"
+      "content_hash": "91c91d4d57a29d36c653ea50808f7ebab10d8e23d327d04865822a81f8293b1d",
+      "created_at": "2026-11-26T17:48:24.440Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -24929,8 +24929,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-turso-learnings",
-      "content_hash": "e3c3c29d329a6e358aa94b804dab8674effb49730e2d13bc570af2974a24391f",
-      "created_at": "2026-11-25T23:12:03.285Z"
+      "content_hash": "eb58739ef469a7a4298d1d19f162694902d525ef974242487770807af1992a01",
+      "created_at": "2026-11-26T17:48:29.493Z"
     },
     "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",
@@ -25751,8 +25751,8 @@
       "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
       "repository": "ratatui/ratatui",
-      "content_hash": "d27a03252061bf71925aae32ed4ee4fecfbb038133d3bce84e8c8c562f8c3fce",
-      "created_at": "2026-11-24T08:24:33.410Z"
+      "content_hash": "339c262aaf667ea6930a0cea51e10997825127e01ab97a756a88e96264c51913",
+      "created_at": "2026-11-26T17:48:09.481Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -25760,8 +25760,8 @@
       "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-learnings-architecture-intelligence-ratatui-ratatui-learnings-co.md",
       "repository": "ratatui-ratatui-learnings",
-      "content_hash": "d36358bac8ee58baba0184dee929a2704419c2524240942f4eb688cf10dba6cf",
-      "created_at": "2026-11-24T08:25:12.477Z"
+      "content_hash": "12ada7dd24a497ff31acc79b5008189b1b16af43ff06d4a0813494651fb1ea3e",
+      "created_at": "2026-11-26T17:48:27.972Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",

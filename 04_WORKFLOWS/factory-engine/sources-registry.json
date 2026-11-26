@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T17:39:34.436Z",
-    "lastVerified": "2026-11-26T17:39:34.436Z",
+    "lastChecked": "2026-11-26T17:48:27.322Z",
+    "lastVerified": "2026-11-26T17:48:27.322Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -193,22 +193,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T17:15:02.116Z",
-    "lastVerified": "2026-11-26T17:15:02.116Z",
+    "lastChecked": "2026-11-26T17:48:22.829Z",
+    "lastVerified": "2026-11-26T17:48:22.829Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "e9694e1c8fb735a3dbb160128766b0ee3ea36b7a8a719240ad9636e27d93ce11",
+    "contentHash": "3214005029a11539dfdc9e6eb3ce2b0186a9c4cf274e26c740e814959d2718b0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8fd5aa1b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1281,14 +1280,14 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T23:11:54.732Z",
-    "lastVerified": "2026-11-25T23:11:54.732Z",
+    "lastChecked": "2026-11-26T17:48:20.712Z",
+    "lastVerified": "2026-11-26T17:48:20.712Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "c771ab7a789d144aff6a3e5cb712e375f5eeeacd8b800191eacc6de562fe1581",
+    "contentHash": "4d8a526d22871d0963425bb7ce5f9d57ca3a0272923da979f7353b656af1cdc4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1572,9 +1571,9 @@
   "react-native-elements-react-native-elements": {
     "name": "react-native-elements",
     "officialUrl": "https://github.com/react-native-elements/react-native-elements",
-    "lastChecked": "2026-11-24T08:34:20.242Z",
+    "lastChecked": "2026-11-26T17:48:09.770Z",
     "revisionIdentifier": "32ae0eda",
-    "lastVerified": "2026-11-24T08:34:20.242Z"
+    "lastVerified": "2026-11-26T17:48:09.770Z"
   },
   "go-kratos-kratos": {
     "name": "kratos",
@@ -1697,9 +1696,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-26T13:26:37.799Z",
+    "lastChecked": "2026-11-26T17:48:14.524Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-26T13:26:37.799Z"
+    "lastVerified": "2026-11-26T17:48:14.524Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2842,13 +2841,13 @@
     "officialUrl": "https://github.com/ratatui/ratatui",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T10:21:18.604Z",
-    "lastVerified": "2026-11-25T10:21:18.604Z",
+    "lastChecked": "2026-11-26T17:48:07.817Z",
+    "lastVerified": "2026-11-26T17:48:07.817Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "d0713a511f2b99936262ce80a55ac6987cd9fb90db8d1d6728d6049dd509ba74",
-    "promotedRulesCount": 2,
+    "contentHash": "65a5d7aea28e8801619eeb6b222dab1be920766530f4f8911c9eb6885ac703ca",
+    "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -3900,12 +3899,12 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T00:56:20.196Z",
-    "lastVerified": "2026-11-23T00:56:20.196Z",
+    "lastChecked": "2026-11-26T17:48:07.051Z",
+    "lastVerified": "2026-11-26T17:48:07.051Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "ff3944616ea00a08972a7704ca581ad633416f088ad55fa178e532aa694b2e78",
+    "contentHash": "64bda7b38eedba6c667566fed7e8002fbdd9a7404bd084e059b36f2984245a23",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4703,12 +4702,12 @@
     "lastVerified": "2026-11-24T16:45:56.000Z"
   },
   "clastix-kamaji": {
-    "name": "clastix/kamaji",
+    "name": "kamaji",
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T00:09:26.589Z",
-    "lastVerified": "2026-11-26T00:09:26.589Z",
+    "lastChecked": "2026-11-26T17:48:12.123Z",
+    "lastVerified": "2026-11-26T17:48:12.123Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
@@ -4717,7 +4716,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7a53df4a"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
