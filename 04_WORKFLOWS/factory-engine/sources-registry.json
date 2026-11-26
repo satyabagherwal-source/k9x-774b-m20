@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T07:10:31.816Z",
-    "lastVerified": "2026-11-26T07:10:31.816Z",
+    "lastChecked": "2026-11-26T07:19:15.946Z",
+    "lastVerified": "2026-11-26T07:19:15.946Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T06:44:08.460Z",
+    "lastChecked": "2026-11-26T07:19:10.012Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T06:44:08.460Z"
+    "lastVerified": "2026-11-26T07:19:10.012Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -451,14 +451,14 @@
     "officialUrl": "https://github.com/nginx/kubernetes-ingress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T07:04:36.794Z",
-    "lastVerified": "2026-11-25T07:04:36.794Z",
+    "lastChecked": "2026-11-26T07:19:08.042Z",
+    "lastVerified": "2026-11-26T07:19:08.042Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "dafc553e775bb3a2d7e59b293ba5edbcfb92008376355f9f2d126c3c983e4f91",
+    "contentHash": "7849623a4cf0a62a885491515288c6ce3438e897f706abd9b7f2db1da96779f8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1257,14 +1257,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T03:13:09.584Z",
-    "lastVerified": "2026-11-26T03:13:09.584Z",
+    "lastChecked": "2026-11-26T07:19:11.108Z",
+    "lastVerified": "2026-11-26T07:19:11.108Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "40745a28a365069b9265f7ec575ddf7600ffe9fcf7db984c099f1b1545355cbf",
+    "contentHash": "c74ddc86936e454ece4a70189dfb170ac56149e0520c12f27f5fe98681f3eb90",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4973,9 +4973,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-25T06:12:54.388Z",
+    "lastChecked": "2026-11-26T07:19:07.349Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-25T06:12:54.388Z"
+    "lastVerified": "2026-11-26T07:19:07.349Z"
   },
   "transact-rs-sqlx": {
     "name": "transact-rs/sqlx",
@@ -8376,9 +8376,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-11-25T01:00:47.007Z",
+    "lastChecked": "2026-11-26T07:18:54.958Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-11-25T01:00:47.007Z"
+    "lastVerified": "2026-11-26T07:18:54.958Z"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
     "name": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -11673,9 +11673,9 @@
   "mikelikesdesign-swiftui-experiments": {
     "name": "SwiftUI-experiments",
     "officialUrl": "https://github.com/mikelikesdesign/SwiftUI-experiments",
-    "lastChecked": "2026-11-23T21:31:19.608Z",
+    "lastChecked": "2026-11-26T07:19:00.005Z",
     "revisionIdentifier": "8deaa990",
-    "lastVerified": "2026-11-23T21:31:19.608Z"
+    "lastVerified": "2026-11-26T07:19:00.005Z"
   },
   "scrapinghub-dateparser": {
     "name": "dateparser",
@@ -14824,12 +14824,12 @@
     "officialUrl": "https://huggingface.co/internlm/Sage-S2.1-Flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T12:56:47.361Z",
-    "lastVerified": "2026-11-22T12:56:47.361Z",
+    "lastChecked": "2026-11-26T07:18:57.540Z",
+    "lastVerified": "2026-11-26T07:18:57.540Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
-    "contentHash": "22a5bf26c0202a0ed659fd7cd290afad2791a19b17768ed602ca81a0ce1f9a62",
+    "contentHash": "f93bf8e71334bfd043f75fb9b032752ef2dade99ddedccb922d9c3d4d73d625a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

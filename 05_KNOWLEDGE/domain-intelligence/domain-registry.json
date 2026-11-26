@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T07:10:35.120Z",
-  "total_records": 2717,
+  "last_updated": "2026-11-26T07:19:18.512Z",
+  "total_records": 2719,
   "domains": {
     "A": {
       "total": 22,
@@ -2750,7 +2750,7 @@
       ]
     },
     "L": {
-      "total": 26,
+      "total": 28,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -2777,7 +2777,9 @@
         "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-learnings-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-core-invariants",
-        "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-learnings-core-invar"
+        "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-learnings-core-invar",
+        "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-learnings-core-invar"
       ]
     },
     "M": {
@@ -10083,8 +10085,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "c60610ea3f824a3e4e71cb18e12b88f84c8cbabf8f8bab88375c3f9803fe8081",
-      "created_at": "2026-11-26T03:13:11.194Z"
+      "content_hash": "668d72e59dbeaa416956b692b9b7834ad8967786e3fa88bb6428d2dd62d8bdb7",
+      "created_at": "2026-11-26T07:19:12.940Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10161,8 +10163,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "ce3963241d14d8496061760544ad98b02df2e4d41dedc3a0c8abbf029420c503",
-      "created_at": "2026-11-26T03:13:20.157Z"
+      "content_hash": "94e3a2b70717359e72abce50802aabe41560a58e77c2674b83e9da2278f68afa",
+      "created_at": "2026-11-26T07:19:18.512Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -27989,8 +27991,8 @@
       "title": "Research & Knowledge Intelligence: internlm/Sage-S2.1-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internlm-sage-s2-1-flash-research-knowledge-intelligence-internlm-sage-s2-1-f.md",
       "repository": "internlm/Sage-S2.1-Flash",
-      "content_hash": "673aad05a80e99f0d05849434b6aa6ca739b0191ffe38adffee729e237f665e2",
-      "created_at": "2026-11-22T13:01:50.965Z"
+      "content_hash": "7eed025b01ec3dbad6c51c527d55394ae377ef9085ec0e801eb477b7e605a1e5",
+      "created_at": "2026-11-26T07:18:58.638Z"
     },
     "domain_intelligence-technical-construction-intelligence-diggerhq-digger-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-diggerhq-digger-core-invariants",
@@ -28100,8 +28102,8 @@
       "title": "Research & Knowledge Intelligence: hf-internlm-sage-s2.1-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internlm-sage-s2-1-flash-learnings-research-knowledge-intelligence-hf-internl.md",
       "repository": "hf-internlm-sage-s2.1-flash-learnings",
-      "content_hash": "692cf85ad07c7da26893d95e01f67e8784c910f53a9eb12984737dcd57e488fa",
-      "created_at": "2026-11-22T13:01:54.011Z"
+      "content_hash": "a0f8bc9105a6e7896cc3ac01860bfe1a488c9dc72cef7c52e2157d45c7498e6b",
+      "created_at": "2026-11-26T07:19:16.387Z"
     },
     "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants",
@@ -45952,6 +45954,24 @@
       "repository": "sozercan-kaset-learnings",
       "content_hash": "44a57532d08b9cffe4b92201f19561751a8117b5e7f9605063e30e5ed87e2301",
       "created_at": "2026-11-26T06:44:13.753Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: nginx/kubernetes-ingress Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-nginx-kubernetes-ingress-deployment-operations-intelligence-nginx-kubernetes-ing.md",
+      "repository": "nginx/kubernetes-ingress",
+      "content_hash": "8b9b3a6d45819ac8b2cade6b76e2c5387ea84ce017ba24bf815694b7739a7ebf",
+      "created_at": "2026-11-26T07:19:09.843Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-learnings-core-invar": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-learnings-core-invar",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-nginx-kubernetes-ingress-learnings-deployment-operations-intelligence-nginx-kube.md",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "content_hash": "6153ea6b35a64d7a93e88522ffbfd2458ff4353bc22f260a76776212c0687a34",
+      "created_at": "2026-11-26T07:19:17.468Z"
     }
   }
 }

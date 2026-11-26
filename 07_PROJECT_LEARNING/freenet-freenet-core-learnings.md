@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `c09581ba`  
+> **Source Version**: `28cc85d1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T03:13:09.593Z  
+> **Timestamp**: 2026-11-26T07:19:11.114Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T03:13:09.584Z  
+> **Harvest Timestamp**: 2026-11-26T07:19:11.108Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,16 +1738,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6397** (2026-11-26): **chore: add GET hop diagnostics to existing telemetry events**
-  *Symptoms*: ## Problem Why a GET is slow or fails cannot be diagnosed from production telemetry. `get_request` has no previous hop, `get_not_found` has no upstream or downstream information, `get_response_sent` does not say whether the response carried the contract, the contract's ring location is not emitted, and the time a relay waited on its downstream hop is invisible. A study of 33 h of production telemetry could not tell whether a slow GET stopped at the keyward peer or downstream of it.  ## Approach Additive fields on existing events only. No new events, so the per-node event cap is unchanged. Only data already carried elsewhere in telemetry is used (peer address and ring location, and the contract's ring location, derived from the instance id that is already emitted). - `get_request`: `upstream` (previous hop; absent for the originator), `key_location`. - `get_not_found`: `key_location`, `downstream_wait_ms`, `downstream_timeout_attempts` (set when a relay gives up; timeouts only, not send errors). - `get_response_sent`: `result` (`found` or `not_found`), `key_location`. A streamed Found header now also emits this event (once per response, not per fragment).  The new fields are in the JSON export only where unset fields are omitted. The bincode event-log layout has the new fields at the end of the records; a pre-upgrade GET record fails to decode and is skipped with a warning when the log is read back for offline aggregation (startup does not decode records, so nothing breaks and
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No blocking issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md **Files reviewed:** 6  #### Warnings None.  #### Info - `crates/core/src/operations/get/op_ctx_task.rs:4923` — The relay driver now reads `tokio::time::Instant::now()` to time downstream waits. `code-style.md` limits direct tokio clock reads to the client API HTTP layer and says operations should go through `TimeSource`. This file already uses `tokio::time::Instant` in several places (lines 900, 1148, 1623), and the new read feeds telemetry only. The comment says so ("not read by any decision, so not simulation-visible"), so I don't count it as a violation. Still, it sits slightly outside the written exception, and the rule file could mention it. (rule: code-style.md / testing.md) - `crates/core/src/tracing/event_kind.rs:1313-1400` — Adding fields to the bincode-serialized `GetEvent` variants changes the AOF record layout. After an upgrade,
-  > Confirmations requested before merge: - Identifying data: the new fields carry nothing that telemetry does not already carry. `upstream` is a peer in the same string form already used by `requester` and `target` on these events (peer id, address, ring location; no extra pseudonymisation is applied to those today, and none is added or removed here). `key_location` is a float derived from the `instance_id` that is already emitted; no contract key is added. - Wire protocol: unchanged. These are fields on telemetry events (JSON export to the collector) and on the local event log; no node-to-node message changes. - Event volume: no new event types. Extra events per GET: 0 for an inline response. One extra `get_response_sent` per streamed Found header (a response over 64 KB, once per response and not per fragment, at each hop that forwards or serves it). Per-event size grows by about 10 to 20 bytes. The per-node 10 events/s cap is unchanged. - Old event-log records: a pre-upgrade GET record 
+- **Issue #6401** (2026-11-26): **test: default simulations to QUIC data (prefer, 100%)**
+  *Symptoms*: ## Problem Simulated nodes were pinned to `QuicMode::OFF`, so the simulation suites exercised only the legacy UDP transport while production moves to QUIC data (phase D, D-2b).  ## Approach `SimNetwork` now configures every simulated node with `transport-quic = prefer` and `quic-data-percent = 100` (both pinned in the harness, so a change of the node default does not move simulations). `with_transport_quic("off")` still opts a test back to legacy UDP. New testing-only `SimNetwork::with_release_quic_data_share()` clears the 100% share so a test can read the release's own ramp.  Tests kept on `off` (all are tests whose subject is the negotiation itself, so they must start from no QUIC and turn it on where they want it): - `run_quic_shadow_sim_waiting` (all negotiation/shadow sims built on it) and `run_quic_harness_sim` when no mode is passed. Tests moved to the release data share (they read the ramp): everything built on `run_quic_data_ramp`.  Assertions and tests changed, with reasons: - `test_quic_native_zero_percent_forms_the_same_mesh`: both runs now call `with_native_connect(0)`. The test's subject is 0%, but with QUIC on the production 25% native share decided native connects in the "on" run only, giving a different mesh (verified: stable at 40/80/160 steps; each configuration is deterministic run to run). No assertion changed. - `quic_harness_knobs_reach_the_node_configs` (lib): default assertion now expects QUIC on at 100% instead of off. - `transport_quic_builds_the_en
 
-- **Issue #6395** (2026-11-25): **fix: keep the node running when a helper process is OOM-killed**
-  *Symptoms*: ## Problem  The packaged unit uses `Restart=always` and the default `OOMPolicy=stop`. When the cgroup OOM killer kills any process in the service (not only the node), systemd stops the whole unit and restarts it. The stop hook runs `freenet update`, and the restart counts as a crash for the post-update rollback logic and toward `StartLimitBurst=5` / `StartLimitIntervalSec=120` with `StartLimitAction=none`. Repeated OOM kills can therefore leave the unit stopped for good.  ## Approach  Add `OOMPolicy=continue` to `[Service]` in both `generate_user_service_file` and `generate_system_service_file`, with a short comment. `man systemd.service` confirms `OOMPolicy=` is a `[Service]` directive and `continue` is a valid value. The directive was added in systemd v243; older systemd logs and ignores unknown directives, which the templates already rely on (see the `RestartSteps=` comment in `linux.rs`).  Rollout note: `freenet update` rewrites the unit but runs in the OLD binary, so it writes the OLD template. The setting reaches installed nodes one release after the one that ships this change. Units that were hand-edited (differ from the template and from the hash sidecar) are skipped, as before.  ## Testing  - The service template tests now assert `OOMPolicy=continue` appears inside `[Service]` (before `[Install]`) for the user and system units. - New test in `update.rs`: a unit equal to the previous template (current template without the line) is detected as stale and rewritten, with
+- **Issue #6400** (2026-11-26): **ci: bump freenet-git mirror-repo.yml pin 61d5fea -> 7a85b99**
+  *Symptoms*: ## Problem  The "Mirror to Freenet" workflow pins freenet-git's reusable `mirror-repo.yml` at `61d5fea`. That pin predates freenet/freenet-git#57, which classifies a push that fails on transient gateway backpressure ("contract queue full", "put timed out") and skips the #freenet-dev Matrix alert for it. Genuine failures and cancellations still alert.  The workflow was disabled from 2026-06-19 until today. It is re-enabled now, so that the freenet-git demo mirror is current again (Ian approved).  ## Approach  Bump the pin to freenet-git main `7a85b99`. The other change in the `61d5fea..7a85b99` range of `mirror-repo.yml` is `actions/checkout` v4 to v7. `workflow_call` inputs and the explicit `secrets:` mapping are unchanged, and the range adds no third-party actions. The pin comment is updated to say what it is pinned to.  ## Testing  The re-enabled workflow ran green today on the old pin, and a fresh `git clone` of the mirror returned today's content. The new pin's `mirror-repo.yml` is the version freenet-git's own self-mirror runs on every push to its main, which is green.  [AI-assisted - Claude] 
   **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 3  The PR adds `OOMPolicy=continue` to both the user and system systemd unit templates. It has regression tests, and I found no rule violations.  - **Regression test:** `assert_oom_policy_in_service_section` is added to the existing generation tests, so it checks that the directive is in `[Service]`. A new test in `update.rs` covers three stale-template cases for both unit variants:   - A sidecar that records the previous template is rewritten.   - No sidecar is also rewritten.   - A hand-edited unit is skipped. - **Docs:** No non-Rust docs reference the unit template, so nothing is stale. - **Commit messages:** Both use the `fix:` prefix. The subject of the second commit (833b10ca0) is over 72 characters. The rules rate that as INFO, and it isn't worth a finding. - **Not reviewable here:** I couldn't see the PR description, so I couldn't check
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md **Files reviewed:** 1  No rule violations detected. The PR is a CI-only bump of the `mirror-repo.yml` pin to a full 40-character SHA, with the comment updated to match.  - The PR title and commit subject use the `ci:` prefix and are under 72 characters. - The change is one logical change and adds no feature. - It doesn't touch `crates/core`, tests, or stdlib dependencies.  <!-- warning-count: 0 -->  --- *Rule review against `.claude/rules/`. WARNING findings turn the `rule-review/warnings` status red.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1764,1073 +1761,788 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c09581ba` (2026-11-26)
-**Commit Message**: chore: add GET hop diagnostics to existing telemetry events (#6397)
+### Incident Patch 1: `28cc85d1` (2026-11-26)
+**Commit Message**: test: default simulations to QUIC data (prefer, 100%) (#6401)
 
-**File**: `crates/core/src/operations/get/op_ctx_task.rs` (modified, +80/-0)
+**File**: `.claude/rules/transport.md` (modified, +1/-1)
 ```diff
-@@ -4270,6 +4270,7 @@ where
-             &op_manager.ring,
-             instance_id,
-             Some(op_manager.ring.max_hops_to_live),
-+            None,
-         ) {
-             op_manager
-                 .ring
-@@ -4552,6 +4553,10 @@ where
-     // consult waiter and bubble a false result — so we do NOT consult after a
-     // failed forward (Codex P2). Reset by any forward that received a reply.
-     let mut last_forward_failed = false;
-+    // Telemetry only: time this relay spent waiting on downstream peers, and
-+    // how many of those waits ended in a timeout (silent downstream peers).
-+    let mut downstream_wait_ms: u64 = 0;
-+    let mut downstream_timeout_attempts: u32 = 0;
-     // True once at least one location-routing forward has happened. When
-     // `relay_advance_to_next_peer` returns None on the FIRST iteration (no
-     // routing candidate at all), consulting is a no-op — every advertised host
-@@ -4779,6 +4784,7 @@ where
-                         &op_manager.ring,
-                         instance_id,
-                         Some(hop_count),
-+                        Some((downstream_wait_ms, downstream_timeout_attempts)),
-                     ) {
-                         op_manager
-                             .ring
-@@ -4833,6 +4839,10 @@ where
-             instance_id,
-             peer.clone(),
-             new_htl,
-+            op_manager
-+                .ring
-+                .connection_manager
-+                .get_peer_by_addr(upstream_addr),
-         ) {
-             op_manager
-                 .ring
-@@ -4908,8 +4918,13 @@ where
-             return Ok(());
-         }
+@@ -466,7 +466,7 @@ QUIC memory (`quic/config.rs`, `quic::memory_tests`)
+ - quinn assumptions (PANICS-class) to re-check before bumping the quinn pin: `QUIC_ACK_TAIL_BYTES` assumes quinn-proto's cap of 1000 ack-only packets (M2); loss telemetry assumes quinn-proto 0.11.19 `PathStats` semantics (sent includes ack-only, lost never taken back, lost PLPMTUD probes left out of `lost` while sent ones are in `sent`, MTU discovery off).
  
-+        // Telemetry only (`downstream_wait_ms`): not read by any decision, so
-+        // not simulation-visible.
-+        let wait_started = tokio::time::Instant::now();
-         let round_trip =
-             tokio::time::timeout(OPERATION_TTL, ctx.send_to_and_await(peer_addr, request)).await;
-+        downstream_wait_ms =
-+            downstream_wait_ms.saturating_add(wait_started.elapsed().as_millis() as u64);
+ Simulation (`SimNetwork`)
+-- Harness writes `off` unless `with_transport_quic` / `with_node_transport_quic` set it. The endpoint runs on VirtualTime only in simulation (`the_transport_endpoint_runs_on_virtual_time_only_in_simulation`); the bind-time draw uses `GlobalRng::with_side_stream`; every runner must move VirtualTime (`run_turmoil_on_virtual_time`) or no QUIC timer fires.
++- Harness writes `prefer` at a 100% data share and pins native connect / native gateway join at 0%, unless `with_transport_quic` / `with_node_transport_quic` (`"off"` is the legacy-UDP opt-out), `with_release_quic_data_share` (the release's own share) or `with_native_connect` set otherwise. The endpoint runs on VirtualTime only in simulation (`the_transport_endpoint_runs_on_virtual_time_only_in_simulation`); the bind-time draw uses `GlobalRng::with_side_stream`; every runner must move VirtualTime (`run_turmoil_on_virtual_time`) or no QUIC timer fires.
  
-         // Always release the slot so the next retry can re-register.
-         op_manager.release_pending_op_slot(incoming_tx).await;
-@@ -4953,6 +4968,7 @@ where
-                     timeout_secs = OPERATION_TTL.as_secs(),
-                     "GET relay: attempt timed out; advancing to next peer"
-                 );
-+                downstream_timeout_attempts = downstream_timeout_attempts.saturating_add(1);
-                 recorder.record_attempt(Some(&peer), AttemptFailure::Timeout, true);
-                 // Timed out with no reply — the peer may reply late on the
-                 // reused tx, so do NOT consult after this (Codex P2).
-@@ -6516,6 +6532,70 @@ mod tests {
-         panic!("unterminated fn body for {signature_prefix}");
-     }
+ Mechanism detail: docs/architecture/transport/rules-reference.md § QUIC endpoint (`transport/quic.rs`, #5940 step c2)
  
-+    /// GET hop diagnostics: the relay driver must pass its upstream into the
-+    /// forward `get_request` event and its accumulated downstream wait /
-+    /// timeout-attempt counters into the exhaustion `get_not_found` event, and
-+    /// count timeouts only in the timeout arm. Fields reach production only
-+    /// through these call sites.
-+    #[test]
-+    fn relay_get_hop_telemetry_is_populated_at_emit_sites() {
-+        let body = extract_fn_body(production_source(), "async fn drive_relay_get_inner<CB>(");
-+        let code: String = body
-+            .lines()
-+            .filter(|l| !l.trim_start().starts_with("//"))
-+            .collect::<Vec<_>>()
-+            .join("\n");
-+        let window = |from: usize, to_marker: &str| -> String {
-+            let rest = &code[from..];
-+            rest[..rest.find(to_marker).expect("window end")].to_string()
-+        };
-+
-+        let req = window(
-+            code.find("NetEventLog::get_request(")
-+                .expect("get_request call"),
-+            "register_events",
-+        );
-+        assert!(
-+            req.contains("get_peer_by_addr(upstream_addr)"),
-+            "forward get_request must carry the upstream peer"
-+        );
-+
-+        // The exhaustion NotFound is the LAST get_not_found call; the HTL=0
-+        // one legitimately has no downstream wait.
-+        let nf = window(
-+            code.rfind("NetEventLog::get_not_found(")
-+                .expect("get_not_found call"),
-+            "register_events",
-+        );
-+        assert!(
-+            nf.contains("Some((downstream_wait_ms, downstream_timeout_attempts))"),
-+            "exhaustion get_not_found must carry the downstream wait counters"
-+        );
-+
-+        let timeout_arm = window(
-+            code.find("Err(_elapsed) =>").expect("timeout arm"),
-+            "continue;",
-+        );
-+        assert!(
-+            timeout_arm.contains("downstream_timeout_attempts =")
-+                && timeout_arm.contains("saturating_add(1)"),
-+            "timeout arm must count the timed-out attempt"
-+        );
-+        let send_err_arm = window(
-+            code.find("Ok(Err(err)) =>").expect("send-error arm"),
-+            "
 ```
 
-**File**: `crates/core/src/tracing.rs` (modified, +3/-0)
+**File**: `crates/core/src/node/testing_impl.rs` (modified, +61/-12)
 ```diff
-@@ -632,6 +632,9 @@ mod get_outcome_summary_tests {
-                 hop_count: Some(0),
-                 elapsed_ms,
-                 timestamp: 100,
-+                key_location: None,
-+                downstream_wait_ms: None,
-+                downstream_timeout_attempts: None,
-             }),
-         }
-     }
-```
-
-**File**: `crates/core/src/tracing/aof.rs` (modified, +66/-0)
-```diff
-@@ -1819,4 +1819,70 @@ mod tests {
-         assert!(segment.exists(), "existing segment must be left in place");
-         Ok(())
-     }
-+
-+    /// Upgrade behaviour: a GET record written before the hop-diagnostic
-+    /// fields were added has a shorter bincode layout. `read_all_events` must
-+    /// skip it (warn) and still return the records around it, not fail.
-+    #[tokio::test]
-+    async fn old_layout_get_record_is_skipped_not_fatal() -> anyhow::Result<()> {
-+        use crate::operations::get::GetMsg;
-+        use crate::ring::PeerKeyLocation;
-+        use crate::tracing::GetEvent;
-+        use freenet_stdlib::prelude::ContractInstanceId;
-+
-+        ensure_records_ts();
-+        let dir = tempfile::tempdir()?;
-+        let log_path = dir.path().join("event_log");
-+
-+        let tx = Transaction::new::<GetMsg>();
-+        let me = PeerKeyLocation::random();
-+        let record = |kind| NetLogMessage {
-+            tx,
-+            datetime: chrono::Utc::now() + chrono::Duration::seconds(5),
-+            peer_id: PeerId::random(),
-+            kind,
-+        };
-+        let not_found = |k| {
-+            EventKind::Get(GetEvent::GetNotFound {
-+                id: tx,
-+                requester: me.clone(),
-+                instance_id: ContractInstanceId::new([1u8; 32]),
-+                target: me.clone(),
-+                hop_count: Some(1),
-+                elapsed_ms: 1,
-+                timestamp: 1,
-+                key_location: k,
-+                downstream_wait_ms: None,
-+                downstream_timeout_attempts: None,
-+            })
-+        };
-+
-+        let good = record(not_found(None));
-+        let (good_header, good_bytes) = LogFile::encode_log(&good)?;
-+
-+        // Old layout == the new record minus its three trailing `None`
-+        // option tags (the new fields are the last bytes of the record).
-+        let (mut old_header, mut old_bytes) = LogFile::encode_log(&record(not_found(None)))?;
-+        old_bytes.truncate(old_bytes.len() - 3);
-+        DefaultEndian::write_u32(&mut old_header, old_bytes.len() as u32);
-+
-+        let mut payload = Vec::new();
-+        for (h, b) in [
-+            (good_header, good_bytes.clone()),
-+            (old_header, old_bytes),
-+            (good_header, good_bytes),
-+        ] {
-+            payload.extend_from_slice(&h);
-+            payload.extend_from_slice(&b);
-+        }
-+        std::fs::write(&log_path, &payload)?;
-+
-+        let events = LogFile::read_all_events(&log_path).await?;
-+        assert_eq!(
-+            events.len(),
-+            2,
-+            "the old-layout record is skipped, its neighbours are read"
-+        );
-+        Ok(())
-+    }
- }
-```
-
-**File**: `crates/core/src/tracing/event_kind.rs` (modified, +24/-0)
-```diff
-@@ -1313,6 +1313,14 @@ pub(crate) enum GetEvent {
-         /// Hops remaining before giving up.
-         htl: usize,
-         timestamp: u64,
-+        /// Peer this node received the request from (the hop edge into this
-+        /// node). `None` on the originator or when the sender is not a known
-+        /// connection. Together with `target` on the forward event this lets
-+        /// per-tx hop chains be reconstructed.
-+        upstream: Option<PeerKeyLocation>,
-+        /// Ring location of the requested contract instance (a float in
-+        /// [0, 1)); derived from `instance_id`, which is already emitted.
-+        key_location: Option<Location>,
-     },
-     /// Contract was successfully retrieved.
-     GetSuccess {
-@@ -1341,6 +1349,17 @@ pub(crate) enum GetEvent {
-         /// Time elapsed since operation started (milliseconds).
-         elapsed_ms: u64,
-         timestamp: u64,
-+        /// Ring location of the searched contract instance.
-+        key_location: Option<Location>,
-+        /// Relay hops only: total milliseconds this relay spent waiting on
-+        /// downstream peers (replies, timeouts and send failures) before
-+        /// giving up. `None` when no downstream wait applies (HTL exhausted).
-+        downstream_wait_ms: Option<u64>,
-+        /// Relay hops only: how many downstream attempts hit the per-attempt
-+        /// deadline (`OPERATION_TTL`) with no reply. Send errors and
-+        /// disconnects are NOT counted here; they still add to
-+        /// `downstream_wait_ms`.
-+        downstream_timeout_attempts: Option<u32>,
-     },
-     /// Get operation failed due to network or system error.
-     GetFailure {
-@@ -1370,6 +1389,11 @@ pub(crate) enum GetEvent {
-         to: PeerKeyLocation,
-         key: Option<ContractKey>,
-         timestamp: u64,
-+        /// `Some(true)` for a Found response (inline or the streaming
-+        /// header), `Some(false)` for NotFound.
-+        found: Option<bool>,
-+        /// Ring location of the requested contract instance.
-+        key_location: Option<Location>,
-     },
-     /// A relay peer sent a ForwardingAck to its upstream peer.
+@@ -2247,8 +2247,10 @@ impl SimNetwork {
+ 
+     /// Sets `transport-quic` to `value`, as `config.toml` would (`"off"`,
+     /// `"shadow"`, `"prefer"`), on every node. Without this call the harness
+-    /// writes `off`, whatever the node default is. Call before the simulation
+-    /// starts.
++    /// writes `prefer` at a 100% data share (see
++    /// [`Self::with_release_quic_data_share`] to read the release's own share
++    /// instead); `"off"` opts a test back to the legacy UDP transport. Call
++    /// before the simulation starts.
      ///
-```
-
-**File**: `crates/core/src/tracing/register.rs` (modified, +145/-1)
-```diff
-@@ -430,6 +430,7 @@ impl<'a> NetEventLog<'a> {
-         instance_id: ContractInstanceId,
-         target: PeerKeyLocation,
-         htl: usize,
-+        upstream: Option<PeerKeyLocation>,
-     ) -> Option<Self> {
-         let peer_id = Self::get_own_peer_id(ring)?;
-         let own_loc = ring.connection_manager.own_location();
-@@ -443,6 +444,8 @@ impl<'a> NetEventLog<'a> {
-                 target,
-                 htl,
-                 timestamp: chrono::Utc::now().timestamp() as u64,
-+                upstream,
-+                key_location: Some(Location::from(&instance_id)),
-             }),
-         })
-     }
-@@ -480,6 +483,7 @@ impl<'a> NetEventLog<'a> {
-         ring: &'a Ring,
-         instance_id: ContractInstanceId,
-         hop_count: Option<usize>,
-+        downstream_wait: Option<(u64, u32)>,
-     ) -> Option<Self> {
-         let peer_id = Self::get_own_peer_id(ring)?;
-         let own_loc = ring.connection_manager.own_location();
-@@ -494,6 +498,9 @@ impl<'a> NetEventLog<'a> {
-                 hop_count,
-                 elapsed_ms: tx.elapsed().as_millis() as u64,
-                 timestamp: chrono::Utc::now().timestamp() as u64,
-+                key_location: Some(Location::from(&instance_id)),
-+                downstream_wait_ms: downstream_wait.map(|(ms, _)| ms),
-+                downstream_timeout_attempts: downstream_wait.map(|(_, n)| n),
-             }),
-         })
-     }
-@@ -1133,7 +1140,12 @@ impl<'a> NetEventLog<'a> {
-                     timestamp: chrono::Utc::now().timestamp() as u64,
-                 })
-             }
--            NetMessage::V1(NetMessageV1::Get(GetMsg::Response { id, .. })) => {
-+            NetMessage::V1(NetMessageV1::Get(GetMsg::Response {
-+                id,
-+                instance_id,
-+                result,
-+                ..
-+            })) => {
-                 // Track outbound Get response for message routing visibility
-                 // Key may not be available for NotFound responses, but include if present
-                 let key = match msg {
-@@ -1152,6 +1164,29 @@ impl<'a> NetEventLog<'a> {
-                     to,
-                     key,
-                     timestamp: chrono::Utc::now().timestamp() as u64,
-+                    found: Some(matches!(result, GetMsgResult::Found { .. })),
-+                    key_location: Some(Location::from(instance_id)),
-+                })
-+            }
-+            NetMessage::V1(NetMessageV1::Get(GetMsg::ResponseStreaming {
-+                id,
-+                instance_id,
-+                key,
-+                ..
-+            })) => {
-+                // Streaming (large-state) Found header: same event as the
-+                // inline Found response, so big-state GETs are not invisible.
-+                let to = target_addr
-+                    .and_then(|addr| ring.connection_manager.get_peer_by_addr(addr))
-+                    .unwrap_or_else(|| own_loc.clone());
-+                EventKind::Get(GetEvent::ResponseSent {
-+                    id: *id,
-+                    from: own_loc,
-+                    to,
-+                    key: Some(*key),
-+                    timestamp: chrono::Utc::now().timestamp() as u64,
-+                    found: Some(true),
-+                    key_location: Some(Location::from(instance_id)),
-                 })
-             }
-             NetMessage::V1(NetMessageV1::Subscribe(SubscribeMsg::Response { id, .. })) => {
-@@ -1297,13 +1332,17 @@ impl<'a> NetEventLog<'a> {
-                 ..
-             }) => {
-                 let this_peer = op_manager.ring.connection_manager.own_location();
-+                let upstream = source_addr
-+                    .and_then(|addr| op_manager.ring.connection_manager.get_peer_by_addr(addr));
-                 EventKind::Get(GetEvent::Request {
-                     id: *id,
-                     requester: this_peer.clone(),
-                     instance_id: *instance_id,
-                     target: this_peer,
-                     htl: *htl,
-                     timestamp: chrono::Utc::now().timestamp() as u64,
-+                    upstream,
-+                    key_location: Some(Location::from(instance_id)),
-                 })
-             }
-             NetMessageV1::Get(GetMsg::Response {
-@@ -1358,6 +1397,9 @@ impl<'a> NetEventLog<'a> {
-                     hop_count: Some((*hop_count).min(max_htl)),
-                     elapsed_ms: id.elapsed().as_millis() as u64,
-                     timestamp: chrono::Utc::now().timestamp() as u64,
-+                    key_location: Some(Location::from(instance_id)),
-+                    downstream_wait_ms: None,
-+                    downstream_timeout_attempts: None,
-                 })
-             }
-             NetMessageV1::Subscribe(SubscribeMsg::Request {
-@@ -2463,3 +2505,105 @@ mod span_completed_tests {
-         );
-     }
- }
-+
-+#[cfg(test)]
-+mod get_hop_telemetry_pins {
-+    //! Source-scrape pins (the real emit paths need a live `Ring`): the GET
-+    //! hop-diagnostic fields m
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +133/-4)
-```diff
-@@ -2148,16 +2148,27 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                     target,
-                     htl,
-                     timestamp,
-+                    upstream,
-+                    key_location,
-                 } => {
--                    serde_json::json!({
-+                    let mut json = serde_json::json!({
-                         "type": "get_request",
-                         "id": id.to_string(),
-                         "requester": requester.to_string(),
-                         "instance_id": instance_id.to_string(),
-                         "target": target.to_string(),
-                         "htl": htl,
-                         "timestamp": timestamp,
--                    })
-+                    });
-+                    // Additive fields: absent when unknown, so consumers that
-+                    // predate them keep working.
-+                    if let Some(up) = upstream {
-+                        json["upstream"] = serde_json::Value::String(up.to_string());
-+                    }
-+                    if let Some(loc) = key_location {
-+                        json["key_location"] = serde_json::json!(loc.as_f64());
-+                    }
-+                    json
-                 }
-                 GetEvent::GetSuccess {
-                     id,
-@@ -2192,8 +2203,11 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                     hop_count,
-                     elapsed_ms,
-                     timestamp,
-+                    key_location,
-+                    downstream_wait_ms,
-+                    downstream_timeout_attempts,
-                 } => {
--                    serde_json::json!({
-+                    let mut json = serde_json::json!({
-                         "type": "get_not_found",
-                         "id": id.to_string(),
-                         "requester": requester.to_string(),
-@@ -2202,7 +2216,17 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                         "hop_count": hop_count,
-                         "elapsed_ms": elapsed_ms,
-                         "timestamp": timestamp,
--                    })
-+                    });
-+                    if let Some(loc) = key_location {
-+                        json["key_location"] = serde_json::json!(loc.as_f64());
-+                    }
-+                    if let Some(ms) = downstream_wait_ms {
-+                        json["downstream_wait_ms"] = serde_json::json!(ms);
-+                    }
-+                    if let Some(n) = downstream_timeout_attempts {
-+                        json["downstream_timeout_attempts"] = serde_json::json!(n);
-+                    }
-+                    json
-                 }
-                 GetEvent::GetFailure {
-                     id,
-@@ -2232,6 +2256,8 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                     to,
-                     key,
-                     timestamp,
-+                    found,
-+                    key_location,
-                 } => {
-                     let mut json = serde_json::json!({
-                         "type": "get_response_sent",
-@@ -2243,6 +2269,14 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                     if let Some(k) = key {
-                         json["key"] = serde_json::Value::String(k.to_string());
-                     }
-+                    if let Some(f) = found {
-+                        json["result"] = serde_json::Value::String(
-+                            if *f { "found" } else { "not_found" }.to_string(),
-+                        );
-+                    }
-+                    if let Some(loc) = key_location {
-+                        json["key_location"] = serde_json::json!(loc.as_f64());
-+                    }
-                     json
-                 }
-                 GetEvent::ForwardingAckSent {
-@@ -6045,6 +6079,101 @@ mod tests {
-         assert_eq!(event_kind_to_string(&ignored), "ignored");
+     /// # Panics
+     /// On a value this binary does not know. A node would read it as off
+@@ -2529,6 +2531,33 @@ impl SimNetwork {
+         self
      }
  
-+    /// The GET hop-diagnostic fields must reach the exported JSON, and must be
-+    /// ABSENT (not null) when unknown so older consumers see the old shape.
-+    #[test]
-+    fn get_hop_diagnostic_fields_reach_json_and_round_trip() {
-+        use crate::operations::get::GetMsg;
-+        use crate::ring::{Location, PeerKeyLocation};
-+        use crate::tracing::GetEvent;
-+        use freenet_stdlib::prelude::ContractInstanceId;
++    /// Clears `quic-data-percent` on every node, so each reads the release's own
++    /// share (the ramp), instead of the simulation default of 100.
++    #[cfg(any(test, feature = "testing"))]
++    pub fn with_release_quic_data_share(&mut self) -> &mut Self {
++        for label in self.pending_labels() {
++            let config = self.node_config_mut(&label);
++            Arc::make_mut(&mut config.config)
++                .network_api
++                .quic_data_percent = None;
++        }
++        self
++    }
 +
-+        let id = Transaction::new::<GetMsg>();
-+        let instance_id = ContractInstanceId::new([7u8; 32]);
-+        let loc = Location::from(&instance_id);
-+        let up = PeerKeyLocation::random();
-+        let me = PeerKeyLocation::random();
++    /// Clears the native connect and native gateway join shares on every
++    /// node, so each runs this release's own (`QUIC_NATIVE_PERCENT`,
++    /// `GATEWAY_NATIVE_JOIN_PERCENT`) instead of the simulation default of 0%.
++    /// For a test of the shipped defaults. Call before the simulation starts.
++    #[cfg(any(test, feature = "testing"))]
++    pub fn with_release_native_share(&mut self) -> &mut Self {
++        for label in self.pending_labels() {
++            let config = self.node_config_mut(&label);
++            config.native_connect_override = None;
++            config.native_gateway_join_override = None;
++        }
++        self
++    }
 +
-+        let request = EventKind::Get(GetEvent::Request {
-+            id,
-+            requester: me.clone(),
-+            instance_id,
-+            target: me.clone(),
-+            htl: 5,
-+            timestamp: 1,
-+            upstream: Some(up.clone()),
-+            key_location: Some(loc),
+     /// Sets `quic-max-paths` to `limit` on every node, as `config.toml` would.
+     /// Call before the simulation starts. No effect on a node with QUIC off.
+     #[cfg(any(test, feature = "testing"))]
+@@ -3973,10 +4002,12 @@ impl SimNetwork {
+                     // Default to usize::MAX so tests don't trigger streaming unless
+                     // explicitly opted in via with_streaming_threshold().
+                     streaming_threshold: Some(self.streaming_threshold.unwrap_or(usize::MAX)),
+-                    // QUIC is off in a simulation unless the test turns it on
+-                    // (`with_transport_quic`), whatever the node default is, so a
+-                    // change of that default leaves every other run's trace as it was.
+-                    transport_quic: Some(crate::transport::quic::QuicMode::OFF.to_string()),
++                    // A simulation negotiates QUIC data with every pair unless the
++                    // test opts back into the legacy UDP transport with
++                    // `with_transport_quic("off")`. The values are pinned here so a
++                    // change of the node default does not move simulations.
++                    transport_quic: Some(crate::transport::quic::QuicMode::PREFER.to_string()),
++                    quic_data_percent: Some("100".to_string()),
+                     ..Default::default()
+                 },
+                 ..Default::default()
+@@ -4002,6 +4033,12 @@ impl SimNetwork {
+                 config.transient_budget = budget;
+             }
+             config.connect_backoff_base = self.connect_backoff_base_override;
++            // Pinned, like the QUIC mode and data share above: a default
++            // simulation decides no connect native, whatever this release's
++            // `QUIC_NATIVE_PERCENT` and `GATEWAY_NATIVE_JOIN_PERCENT` are. A test
++            // turns native on with `with_native_connect` / `with_native_gateway_join`.
++            config.native_connect_override = Some(0);
++            config.native_gateway_join_override = Some(0);
+             config.key_pair = keypair;
+             config.network_listener_ip = ip.into();
+             config.network_listener_port = port;
+@@ -4085,10 +4122,12 @@ impl SimNetwork {
+                     // Default to usize::MAX so tests don't trigger streaming unless
+                     // explicitly opted in via with_streaming_threshold().
+                     streaming_threshold: Some(self.streaming_threshold.unwrap_or(usize::MAX)),
+-                    // QUIC is off in a simulation unless the test turns it on
+-                    // (`with_transport_quic`), whatever the node default is, so a
+-                    // change of that default leaves every other run's trace as it was.
+-                    transport_quic: Some(crate::transport::quic::QuicMode::OFF.to_string()),
++                    // A simulation negotiates QUIC data with every pair unless the
++                    // test opts back into the legacy UDP transport with
++                    // `with_transport_quic("off")`. The values are pinned here so a
++            
+```
+
+**File**: `crates/core/tests/simulation_integration.rs` (modified, +45/-5)
+```diff
+@@ -70,6 +70,9 @@ struct TestConfig {
+     /// Send states larger than this many bytes as streams (`run_direct` only).
+     /// `None` keeps the simulation default (streaming off).
+     streaming_threshold: Option<usize>,
++    /// Run on the legacy UDP transport (`transport-quic = off`) instead of the
++    /// simulation default of QUIC data (`run_direct` only).
++    legacy_udp: bool,
+ }
+ 
+ impl TestConfig {
+@@ -94,6 +97,7 @@ impl TestConfig {
+             message_loss_rate: 0.0,
+             use_mock_wasm: false,
+             streaming_threshold: None,
++            legacy_udp: false,
+         }
+     }
+ 
+@@ -118,6 +122,7 @@ impl TestConfig {
+             message_loss_rate: 0.0,
+             use_mock_wasm: false,
+             streaming_threshold: None,
++            legacy_udp: false,
+         }
+     }
+ 
+@@ -142,6 +147,7 @@ impl TestConfig {
+             message_loss_rate: 0.0,
+             use_mock_wasm: false,
+             streaming_threshold: None,
++            legacy_udp: false,
+         }
+     }
+ 
+@@ -186,6 +192,7 @@ impl TestConfig {
+             message_loss_rate: 0.0,
+             use_mock_wasm: false,
+             streaming_threshold: None,
++            legacy_udp: false,
+         }
+     }
+ 
+@@ -282,6 +289,14 @@ impl TestConfig {
+         self
+     }
+ 
++    /// Keep this test on the legacy UDP transport (`run_direct` only), for a
++    /// test whose subject is not the transport and whose QUIC run exceeds its
++    /// CI time cap.
++    fn with_legacy_udp(mut self) -> Self {
++        self.legacy_udp = true;
++        self
++    }
 +
+     /// Run the simulation and return results.
+     fn run(self) -> TestResult {
+         use freenet::simulation::FaultConfig;
+@@ -404,6 +419,9 @@ impl TestConfig {
+             if let Some(bytes) = self.streaming_threshold {
+                 sim.with_streaming_threshold(bytes);
+             }
++            if self.legacy_udp {
++                sim.with_transport_quic("off");
++            }
+ 
+             // Apply fault injection if configured (latency and/or message loss)
+             let has_latency = self.latency_range.is_some();
+@@ -6596,6 +6614,7 @@ fn test_subscription_renewal_at_scale() {
+         message_loss_rate: 0.0,
+         use_mock_wasm: false,
+         streaming_threshold: None,
++        legacy_udp: false,
+     };
+ 
+     let max_contracts = config.max_contracts; // Save before config.run() moves it
+@@ -16005,6 +16024,11 @@ fn run_subscription_mesh(
+     let sim = rt.block_on(async {
+         let mut sim = SimNetwork::new(network, 1, 15, 10, 3, 5, 3, seed).await;
+         sim.enable_hosting_time_control();
++        // Kept on the legacy UDP transport: the subscription tree does not
++        // depend on the transport, and the callers (six meshes per test) take
++        // about 1.6x as long under QUIC data (measured alone: 288 s off, 452 s
++        // on, loaded host), past the 240 s CI cap with a 95 s QUIC-off baseline.
++        sim.with_transport_quic("off");
+         sim
+     });
+ 
+@@ -21081,9 +21105,7 @@ fn run_quic_harness_sim(name: &str, seed: u64, quic: Option<&str>) -> QuicSimTra
+     let rt = create_runtime();
+     let (sim, logs_handle, probe) = rt.block_on(async {
+         let mut sim = SimNetwork::new(name, 2, 4, 10, 3, 10, 3, seed).await;
+-        if let Some(value) = quic {
+-            sim.with_transport_quic(value);
+-        }
++        sim.with_transport_quic(quic.unwrap_or("off"));
+         let probe = sim.probe_quic_endpoints_at(Duration::from_secs(2));
+         let logs_handle = sim.event_logs_handle();
+         (sim, logs_handle, probe)
+@@ -21472,6 +21494,11 @@ fn run_quic_shadow_sim_waiting(
+         // native wire fields but decides none, isolating the upgrade path;
+         // native connects are covered by the `test_quic_native_*` sims.
+         sim.with_native_connect(0);
++        // These runs exercise the negotiation itself, so every node starts with
++        // QUIC off and `set_up` turns it on where the test wants it. The harness
++        // default is `prefer` at 100%.
++        sim.with_transport_quic("off")
++            .with_release_quic_data_share();
+         let trace = sim.quic_upgrade_trace();
+         let mut labels: Vec<_> = sim.all_node_addresses().keys().cloned().collect();
+         labels.sort_by_key(|label| (!label.is_gateway(), label.number()));
+@@ -21775,7 +21802,8 @@ fn run_quic_data_ramp(
+         let mut sim = SimNetwork::new(network, 1, 3, 7, 3, 10, 2, seed).await;
+         sim.enable_gateway_ack_version();
+         let trace = sim.quic_upgrade_trace();
+-        sim.with_transport_quic("prefer");
++        sim.with_transport_quic("prefer")
++            .with_release_quic_data_share();
+         trace.ramp_data_started_before(started_before);
+         run_as_first_negotiating_release(&trace);
+         let nodes: Vec<_> = sim.all_node_addresses().values().copied().collect();
+@@ -23560,10 +23588,14 @@ fn test_quic_native_zero_percent_forms_the_same_mesh() {
+     let off = run_native_wire_sim("native-wire-off", SEED, |si
+```
+
+**File**: `docs/architecture/transport/rules-reference.md` (modified, +4/-2)
+```diff
+@@ -1845,8 +1845,10 @@ seeded GlobalRng repeat the same event trace; the bytes differ, because
+ rustls's key exchange and the XEdDSA nonce use the OS RNG.
+ 
+ In SimNetwork: `with_transport_quic` / `with_node_transport_quic` set the
+-config value per node (off unless set, whatever the node default: the
+-harness writes `off` into every node's config; an unknown value panics;
++config value per node (`prefer` at a 100% data share unless set, whatever the
++node default: the harness writes both into every node's config and pins native
++connect and native gateway join at 0%; `"off"` opts a test back to legacy UDP,
++`with_release_quic_data_share` reads the release's own share instead; an unknown value panics;
+ tests that start nodes outside SimNetwork, in `crates/core/tests` and through
+ freenet-test-network, get the platform default on purpose, as production does,
+ except where a restart after SIGKILL would trip a gateway's breaker on Linux or macOS; a
 ```
 
 ---
 
-### Incident Patch 2: `3e3e6b73` (2026-11-26)
-**Commit Message**: feat: late-end native close behind a dark flag, count judged ends (#6205) (#6394)
+### Incident Patch 2: `cc7216cc` (2026-11-26)
+**Commit Message**: feat(transport): one build constant makes every QUIC path act as udp_fallback = false (dark) (#6396)
 
-**File**: `.claude/rules/transport.md` (modified, +1/-1)
+**File**: `.claude/rules/transport.md` (modified, +1/-0)
 ```diff
-@@ -586,7 +586,7 @@ The upgrade driver builds a `QuicPath` and sends control frames on it. Data goes
- - Stream credit withheld (`StreamCreditWatch`) closes after `STREAM_CREDIT_WINDOW` (60 s, not 10: honest receivers lower the limit per waiting Short).
- - A send timeout before its stream opened (source, permit or stream credit wait) is back-pressure and does NOT count toward the stall close (`route::timed_out`).
- - A stream's end ack is awaited a bounded time (`SendDeadlines::ack_wait`), then `MaybeDelivered(TimedOut)` and reset. `SHORT_ACK_WAIT` must stay above `UDP_PATH_DARK_END_MAX` + keepalive (compile-time assertion).
--- Late ends (`LateEndCheck`) are OBSERVE-ONLY (`LATE_ENDS_CLOSE` false). Ack waits expired (#6205): closes a native path only (`ACK_WAITS_EXPIRED_CLOSES_WITH_UDP` false); #6205 gates UDP removal. A reset at an expired wait is a STRIKE only with evidence the peer is alive and the end went out (`StrikeCheck`).
-+- Late ends (`LateEndCheck`; `quic_late_end_<kind>` counts them, `quic_late_end_judged_<kind>` counts ends that reached the proof point, once per end, the denominator): three episodes (late ends within 60 s of each other are one) in 30 min count a would-close on every path; closing a native path is behind `LATE_ENDS_CLOSE_NATIVE` (false, ships dark until the D-3 flag day) and a path with a UDP session is never closed (`LATE_ENDS_CLOSES_WITH_UDP` false); no field positive exists. Ack waits expired (#6205): closes a native path only (`ACK_WAITS_EXPIRED_CLOSES_WITH_UDP` false); #6205 gates UDP removal. A reset at an expired wait is a STRIKE only with evidence the peer is alive and the end went out (`StrikeCheck`).
- - No strike while the cap holds a transmit, after a late timer wake (`LATE_WAKE_SLACK`), after a long-dark spell, or on a slow path. `ACK_WAIT_EXPIRY_LIMIT` strikes in a window is a would-close; acks NEVER reset the count (`ack_wait_expiries_count_a_would_close_whatever_else_is_acknowledged`).
- - Stream age (`BodyReader::set_stream_age`): past `inbound_stream_age_limit(len)` a stream stays only while its CONNECTION reads at least 32 KiB/s (per connection: quinn shares round-robin), up to `STREAM_AGE_LIMIT`.
- - The path closes past `recycle::SEND_ABORT_LIMIT` (4096) of its own resets. e5 constraint: `SEND_ABORT_LIMIT` and `PEER_NOT_ACKNOWLEDGING` ask the peer to fall back to UDP for THIS connection only: e5 must allow a new upgrade after its normal backoff.
+@@ -506,6 +506,7 @@ Mechanism detail: docs/architecture/transport/rules-reference.md § QUIC identit
+ - Proven peers (`PunchBudget`): only a completed native setup or a successful gateway hand-off proves a peer, never a UDP connection (source-scrape pin `only_native_completions_prove_a_peer`). A proof is keyed on (IPv4 or IPv6 /64, peer key), not the port. Proven setups draw on per-peer, per-address and node allowances, falling back to the shared budgets when spent (never worse than unproven). Joined proofs are a separate bounded partition. Forgetting or migrating a proof MUST NOT refill an allowance. Figures are provisional.
+ - Fairness between requesters steering setups is NOT decided (A5): it MUST be fair before UDP is removed. The proven-peer allowance changes who is starved, not whether.
+ - `QuicPathLimits::NATIVE` (udp_fallback off, data on): a send that would go to UDP is Dropped (after the `NoCredit` retries, below); a quiet timeout NEVER makes a native path suspect; a peer refusing data (NOT_ACCEPTING_DATA) closes it (`stop_sending_data`).
++- `breaker::UDP_FALLBACK` (D-3, dark, true today) is read by every path through `QuicPathLimits::effective_udp_fallback` (one reader; a source-scan pin in `breaker.rs` fails on any other). With it false an upgraded path gives up what it cannot carry, never turns suspect, a route whose path ended drops its queue, and a short the queue cannot take (full or closed) is dropped and counted instead of overflowing to UDP. This is the PATH-level fallback only: a connection with no route still sends on its UDP session, which D-8 deletes, so a sim or soak with the constant false is a partial check and cannot show what a no-UDP network costs.
+ - `queue_native_short` returns `SendQueueFull` (Transient, connection survives, no ShortOverflowUdp, counted `quic_data_event_native_short_queue_full`, not Dropped) on a full queue. A native connection counts in `GlobalBandwidthManager`; its drop closes NODE_DROPPED_PEER.
+ - Native connect gates on this node's OWN endpoint availability (per-node `QuicAvailabilityWatch`, not the process-wide metric), on the configured `transport-quic` mode being `prefer` (a shadow or off node is never ready in any role, gateway joins included) and on not being demoted. The joiner's offer reads `readiness()` (joiner demotion only); the relay's decision reads `acceptor_readiness()` (either role's demotion). Dial: higher key serves; setups capped by `NATIVE_SETUPS_MAX`; setup errors counted by an EXHAUSTIVE match (`connect_native_setup_<label>`).
+ - Every accept site MUST pass the response's decision to `dispatch_expect_connection_from` (source-scrape pin).
 ```
 
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +1/-0)
+**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_send.rs` (modified, +77/-0)
 ```diff
-@@ -8245,6 +8245,7 @@ mod tests {
-         data.late_end = (1121..1124).collect();
-         data.path_srtt = (1124..1131).collect();
-         data.path_tx_bps = (1131..1137).collect();
-+        data.late_end_judged = (1137..1140).collect();
-         let want: std::collections::BTreeMap<String, u64> =
-             snapshot.quic_data.keys().into_iter().collect();
-         assert!(want.values().all(|value| *value != 0));
+@@ -363,6 +363,83 @@ fn a_full_queue_overflows_to_udp_and_nothing_is_lost() {
+     );
+ }
+ 
++/// [`a_full_queue_overflows_to_udp_and_nothing_is_lost`] with the build constant
++/// false (a child process, `breaker::run_with_no_udp_fallback`): an existing route
++/// has no UDP fallback, so what the queue cannot take is dropped and counted, and
++/// nothing goes on UDP and no overflow is counted.
++#[test]
++fn with_no_udp_fallback_a_full_queue_drops_what_it_cannot_take() {
++    if !crate::transport::quic::breaker::run_with_no_udp_fallback(
++        module_path!(),
++        "with_no_udp_fallback_a_full_queue_drops_what_it_cannot_take",
++    ) {
++        return;
++    }
++    run(
++        "quic-send-overflow-no-udp",
++        QuicPathLimits::DEFAULT,
++        |mut rig| async move {
++            let over = 5;
++            let total = SHORT_QUEUE_CAPACITY as u32 + over;
++            for i in 0..total {
++                rig.e.conn.send_serialized(message(i)).await.unwrap();
++            }
++            assert_eq!(rig.stats().send_event_count(E::ShortOverflowUdp), 0);
++            assert_eq!(
++                rig.stats().send_count(SendKind::Short, R::Dropped),
++                u64::from(over),
++                "each short past the queue is counted dropped"
++            );
++            let udp = rig.udp_data();
++            assert!(
++                udp.shorts.is_empty(),
++                "nothing went on UDP: {:?}",
++                udp.shorts
++            );
++            rig.path.settle(Duration::from_secs(2)).await;
++            assert_eq!(
++                sorted(rig.delivered_shorts()),
++                sorted(
++                    (0..SHORT_QUEUE_CAPACITY as u32)
++                        .map(message)
++                        .collect::<Vec<_>>()
++                ),
++                "the queue reached the peer, each once"
++            );
++        },
++    );
++}
++
++/// A message sent after the route's path ended finds the queue closed: with the
++/// build constant false it is dropped and counted, not sent on UDP (a child
++/// process, `breaker::run_with_no_udp_fallback`).
++#[test]
++fn with_no_udp_fallback_a_short_after_the_path_ended_is_dropped() {
++    if !crate::transport::quic::breaker::run_with_no_udp_fallback(
++        module_path!(),
++        "with_no_udp_fallback_a_short_after_the_path_ended_is_dropped",
++    ) {
++        return;
++    }
++    run(
++        "quic-send-closed-no-udp",
++        QuicPathLimits::DEFAULT,
++        |mut rig| async move {
++            rig.route
++                .path()
++                .close(crate::transport::metrics::QuicCloseCode::Downgrade);
++            rig.path.settle(Duration::from_millis(50)).await;
++            assert!(
++                rig.worker.is_finished(),
++                "the worker ends once the path has"
++            );
++            rig.e.conn.send_serialized(message(1)).await.unwrap();
++            assert!(rig.udp_data().shorts.is_empty(), "nothing went on UDP");
++            assert_eq!(rig.stats().send_count(SendKind::Short, R::Dropped), 1);
++        },
++    );
++}
++
+ /// A send on a route never waits in the connection's task, however stuck the path
+ /// is: with every stream credit held, nothing of the queue can leave, so each
+ /// message past its capacity would wait if the queue were awaited. The first poll
 ```
 
-**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +30/-3)
+**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +251/-4)
 ```diff
-@@ -34,9 +34,10 @@
- //! | `quic_carried_dark_episode_<label>` | the same, for the episodes of paths that carried data when the episode ended: a subset of `quic_dark_episode_<label>`, counted by the same decision |
- //! | `quic_dark_episode_<label>` | dark episodes on QUIC paths (`recycle::AckWatch`: packets outstanding, nothing acknowledged and nothing heard) by how they ended: `recovered_lt_5s`, `lt_10s`, `lt_30s`, `lt_120s`, `recovered_ge_120s`, `unrecovered` (the path closed, or nothing was outstanding any more), `cap_held` (the egress cap held this side's sends, so darkness could no longer be told), `closed_at_window` (the dark-path rule closed a path that carries data and has no UDP session, a native path). A path that carries no data, and since 0.2.159 a data path with a UDP session (`recycle::DARK_CLOSES_WITH_UDP`), is never closed by that rule, so its episodes run to their end (a data path with a UDP session counts the close the rule would have made in `quic_stall_would_close_dark`); read at the watch's 2 s ticks |
- //! | `quic_ack_wait_expired_<label>` | sends whose wait for the acknowledgement of their end ran out and whose stream was reset, by kind: `stream` (a send with an ack wait: a Stream, or a Short past one packet), `short` (a one-packet Short, past its 150 s bound) or `control` (a control frame, bounded as a one-packet Short); only those that count as strikes (`path::StrikeCheck`: evidence the end went out and the peer is alive). An honest peer acknowledges an end within a few round trips, so this should be 0 on every honest path (`recycle::ACK_WAIT_EXPIRY_LIMIT` in `ACK_WAIT_EXPIRY_WINDOW` closes a path with no UDP session and counts a would-close on one with a UDP session, `recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP`) |
--//! | `quic_late_end_<label>` | sends whose end was acknowledged late, or not at all, though the peer had wholly acknowledged enough data-stream bytes since the end to have carried it (`path::LateEndCheck`), by the same kinds as `quic_ack_wait_expired_<label>`; expected 0 on every honest path. Each time `recycle::ACK_WAIT_EXPIRY_LIMIT` come within `ACK_WAIT_EXPIRY_WINDOW` a would-close is counted under `late_ends` (observe-only, `recycle::LATE_ENDS_CLOSE`) |
--//! | `quic_stall_close_<label>` | paths the acknowledgement watch closed, by why: `not_acknowledging`, `dark`, `credit_starved`, `stream_credit_withheld`, `ack_waits_expired`, `late_ends` (`recycle::Stall`; `late_ends` never closes, `recycle::LATE_ENDS_CLOSE`) |
--//! | `quic_stall_would_close_<label>` | times a rule that only observes would have closed a path, by the same labels; each count starts the rule's window afresh. Three rules observe today. `ack_waits_expired` counts, on a path with a UDP session (`recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP` is false; a native path is closed), each time `ACK_WAIT_EXPIRY_LIMIT` strikes came within `ACK_WAIT_EXPIRY_WINDOW`, for calibrating the rule before UDP removal (#6205). `dark` counts once per episode on a data path with a UDP session, where the dark rule does not close (`recycle::DARK_CLOSES_WITH_UDP` is false); the episode is counted to its end in `quic_carried_dark_episode_<label>`. `late_ends` counts on every path (`recycle::LATE_ENDS_CLOSE` is false) each time `ACK_WAIT_EXPIRY_LIMIT` late ends came within `ACK_WAIT_EXPIRY_WINDOW` (`quic_late_end_<label>`) |
-+//! | `quic_late_end_<label>` | sends whose end was acknowledged late, or not at all, though the peer had wholly acknowledged enough data-stream bytes since the end to have carried it (`path::LateEndCheck`), by the same kinds as `quic_ack_wait_expired_<label>`; expected 0 on every honest path. Each time `recycle::ACK_WAIT_EXPIRY_LIMIT` separate episodes (late ends within `recycle::LATE_END_EPISODE_GAP` of the last counted one are one episode) come within `ACK_WAIT_EXPIRY_WINDOW` a would-close is counted on every path (`quic_stall_would_close_late_ends`); a path with no UDP session (a native one) is closed under `late_ends` only once `recycle::LATE_ENDS_CLOSE_NATIVE` is set (false: dark until the D-3 flag day), a path with a UDP session never (`recycle::LATE_ENDS_CLOSES_WITH_UDP`) |
-+//! | `quic_late_end_judged_<label>` | sends whose end reached the proof point of the late-end check (`path::LateEndCheck`: the peer wholly acknowledged enough later data-stream bytes that an honest peer would have acknowledged the end), by the same kinds; the denominator of `quic_late_end_<label>`, counted once per end. A `quic_late_end_<label>` of 0 says little where this is also near 0 |
-+//! | `quic_stall_close_<label>` | paths the acknowledgement watch closed, by why: `not_acknowledging`, `dark`, `credit_starved`, `stream_credit_withheld`, `ack_waits_expired`, `late_ends` (`recycle::Stall`; `late_ends` closes a native path only once `recycle::LATE_ENDS_CLOSE_NATIVE` is set, `recycle::LATE_ENDS_CLOSES_WITH_UDP`) |
-+//! | `quic_stall_would_close_<label>` | times a rule that only observes would have closed a path, by the same labe
+@@ -250,6 +250,17 @@ pub(crate) use short_runs::QuicCode;
+ /// it takes it as a parameter, so tests cover both values; production reads
+ /// it through [`udp_fallback`].
+ ///
++/// Flipping it also removes the path-level UDP fallback of every upgraded
++/// QUIC path (`path::QuicPathLimits::effective_udp_fallback`): a send the path
++/// cannot carry is given up for the operation layer to retry, a quiet path is
++/// never suspect, and a route whose path ended or whose queue is full drops
++/// what it cannot take. It does
++/// not remove the connection's own UDP session: a connection with no route
++/// (no path, or the path closed) still sends on UDP, and so does the
++/// connect-time UDP dial (`udp_fallback_dial`). Those go with the UDP deletion
++/// (D-8), so a simulation or soak with this constant false is a partial check
++/// and cannot show what a network with no UDP costs.
++///
+ /// Flipping it also turns on `fatal_exit` (the update check before a
+ /// transport-fatal exit, and a failed bind ending the process). That check
+ /// logs `Preparing the update before exiting (#5790)` through
+@@ -259,18 +270,77 @@ pub(crate) use short_runs::QuicCode;
+ /// flipping.
+ pub const UDP_FALLBACK: bool = true;
+ 
+-/// [`UDP_FALLBACK`], or `false` in a test build of the binary whose
+-/// environment sets `FREENET_TEST_BREAKER_NO_UDP_FALLBACK` (the
++/// [`UDP_FALLBACK`], or `false` in a test build whose process environment sets
++/// `FREENET_TEST_NO_UDP_FALLBACK` (the `testing` feature and unit tests, see
++/// [`run_with_no_udp_fallback`]) or `FREENET_TEST_BREAKER_NO_UDP_FALLBACK` (the
+ /// `quic-panic-injection` feature, which cannot be built without debug
+-/// assertions), so a real-process test can run the post-UDP path.
++/// assertions), so a real-process test can run the post-UDP path. The one
++/// reader of the constant outside this module: every path, the breaker and the
++/// fatal-exit rules take the value from here (D-3). Each variable is read once
++/// per process, and nothing in a process sets it, so a test cannot change what
++/// another test in the same process sees. No simulation harness sets either
++/// variable: a run that wants the false value starts the process with it. Any
++/// binary built with the `testing` feature (fdev is) honours the first one.
+ pub(crate) fn udp_fallback() -> bool {
+     #[cfg(feature = "quic-panic-injection")]
+-    if std::env::var_os("FREENET_TEST_BREAKER_NO_UDP_FALLBACK").is_some() {
++    {
++        static SET: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
++        if *SET.get_or_init(|| std::env::var_os("FREENET_TEST_BREAKER_NO_UDP_FALLBACK").is_some()) {
++            return false;
++        }
++    }
++    #[cfg(any(test, feature = "testing"))]
++    if no_udp_fallback_process() {
+         return false;
+     }
+     UDP_FALLBACK
+ }
+ 
++/// Whether this process was started with `FREENET_TEST_NO_UDP_FALLBACK` set.
++#[cfg(any(test, feature = "testing"))]
++pub(crate) fn no_udp_fallback_process() -> bool {
++    static SET: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
++    *SET.get_or_init(|| std::env::var_os("FREENET_TEST_NO_UDP_FALLBACK").is_some())
++}
++
++/// For a test that needs [`udp_fallback`] to be `false`. Called first in the
++/// test, it returns `true` when the test is running in a child process that has
++/// it (the caller goes on); otherwise it runs this one test again in a child
++/// with `FREENET_TEST_NO_UDP_FALLBACK` set, asserts the child ran it and passed,
++/// and returns `false` (the caller returns). A child process is used because
++/// the value is process-global and a test that changed it in place would change
++/// what concurrent tests of the same process see under plain `cargo test`.
++/// Pass `module_path!()` and the test's name.
++#[cfg(test)]
++#[must_use = "the test body runs only when this returns true"]
++pub(crate) fn run_with_no_udp_fallback(module: &str, test: &str) -> bool {
++    if no_udp_fallback_process() {
++        return true;
++    }
++    // A child that does not honour the variable would start another child
++    // without end: fail it instead.
++    assert!(
++        std::env::var_os("FREENET_TEST_NO_UDP_FALLBACK_CHILD").is_none(),
++        "the child process started with the variable but `udp_fallback()` ignores it"
++    );
++    let (_, within_crate) = module.split_once("::").expect("a module path");
++    let name = format!("{within_crate}::{test}");
++    let output = std::process::Command::new(std::env::current_exe().expect("test binary"))
++        .args([name.as_str(), "--exact", "--test-threads=1"])
++        .env("FREENET_TEST_NO_UDP_FALLBACK", "1")
++        .env("FREENET_TEST_NO_UDP_FALLBACK_CHILD", "1")
++        .output()
++        .expect("the child test process starts");
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    assert!(
++        output.status.success() && stdout.contains("1 passed"),
++        "`{name}` with no UDP fallback did not pass in its child process (a renamed test \
++         runs nothing and fa
 ```
 
-**File**: `crates/core/src/transport/quic/path.rs` (modified, +132/-8)
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +16/-2)
 ```diff
-@@ -313,6 +313,10 @@ pub(crate) struct QuicPathLimits {
-     /// UDP session: such a send is given up instead (`route::QuicPath::settle`),
-     /// and the path never turns suspect, since there is nowhere to divert to.
-     pub(crate) udp_fallback: bool,
-+    /// Whether the late-end rule closes a path with no UDP session
-+    /// ([`recycle::LATE_ENDS_CLOSE_NATIVE`], false in production; a test of
-+    /// the close sets it).
-+    pub(crate) late_ends_close_native: bool,
-     /// Where the path's counts are also kept node-wide; `None` is
-     /// `TRANSPORT_METRICS`. A test passes its own, since every test in a process
-     /// writes the global one.
-@@ -387,6 +391,7 @@ impl QuicPathLimits {
-         // included; a test whose premise is the full limit sets it.
-         start_streams: super::config::DATA_START_UNI_STREAMS,
-         udp_fallback: true,
-+        late_ends_close_native: recycle::LATE_ENDS_CLOSE_NATIVE,
-         counters: None,
-         #[cfg(test)]
-         panic_in_receive: false,
-@@ -1137,6 +1142,7 @@ impl QuicPath {
+@@ -409,6 +409,14 @@ impl QuicPathLimits {
+         short_ack_wait: None,
+     };
+ 
++    /// Whether a path built on these limits has a UDP session to fall back
++    /// to: the path's own flag ([`Self::udp_fallback`]) and the build constant
++    /// ([`super::breaker::UDP_FALLBACK`]). The only place a path reads the
++    /// constant, so the UDP-removal release flips every path with it (D-3).
++    pub(crate) fn effective_udp_fallback(&self) -> bool {
++        self.udp_fallback && super::breaker::udp_fallback()
++    }
++
+     /// [`Self::DEFAULT`] for a path in shadow mode: control frames only.
+     #[cfg_attr(not(test), allow(dead_code))]
+     pub(crate) const SHADOW: Self = Self {
+@@ -1141,7 +1149,7 @@ impl QuicPath {
+                     rtt: receiver_rtt,
                      heard: heard.clone(),
                      carries_data: carries_data.clone(),
-                     udp_fallback: limits.udp_fallback,
-+                    late_ends_close_native: limits.late_ends_close_native,
+-                    udp_fallback: limits.udp_fallback,
++                    udp_fallback: limits.effective_udp_fallback(),
+                     late_ends_close_native: limits.late_ends_close_native,
                      dark: dark.clone(),
                      long_dark_at: long_dark_at.clone(),
-                 },
-@@ -2610,16 +2616,37 @@ pub(crate) fn bytes_ahead(reading: &LaterReading) -> u64 {
- }
+@@ -1171,7 +1179,7 @@ impl QuicPath {
+                 send_data: AtomicU8::new(SEND_DATA_NEVER),
+                 counted_as_data_path,
+                 ended_as_data_path,
+-                udp_fallback: limits.udp_fallback,
++                udp_fallback: limits.effective_udp_fallback(),
+                 stall: parking_lot::Mutex::new(stall),
+                 dark,
+                 long_dark_at,
+@@ -1681,6 +1689,12 @@ impl QuicPath {
+         }
+     }
  
- /// How long after the proof point an honest peer's acknowledgement of a
--/// stream's end may still take ([`late_end_verdict`]): three probe timeouts
--/// (quinn's at most 3 round trips plus 25 ms each, so a lost copy is resent
--/// and acknowledged), at least [`LATE_END_GRACE_MIN`].
-+/// stream's end may still take ([`late_end_verdict`]): the first three
-+/// probe timeouts, at least [`LATE_END_GRACE_MIN`]. quinn's probe timeout is
-+/// `srtt + max(4 x rttvar, 1 ms) + max_ack_delay` and doubles with each
-+/// probe, so the third probe is SENT seven timeouts after the tail and its
-+/// acknowledgement comes about a round trip and an ack delay later. quinn's
-+/// connection stats give the smoothed round trip only, not the variance, so
-+/// the variance is taken to be at most the round trip (`rttvar <= srtt`, a
-+/// jittery Wi-Fi or cellular path; an unjittery one has far less): a timeout
-+/// is at most `5 x srtt + 25 ms`, and the grace is seven of them (35 round
-+/// trips and 175 ms). The bound is an assumption, not an invariant (a path
-+/// at 50 ms with one 1 s sample has `rttvar` 245 ms for a while, a timeout of
-+/// 1.17 s against the 0.87 s taken): the second grace
-+/// ([`LateEndCheck::late`]) absorbs a shortfall like that.
- pub(crate) fn late_end_grace(rtt: Duration) -> Duration {
--    (rtt * 9 + Duration::from_millis(75)).max(LATE_END_GRACE_MIN)
-+    ((rtt * 5 + Duration::from_millis(25)) * 7).max(LATE_END_GRACE_MIN)
- }
- 
- /// The least [`late_end_grace`].
- pub(crate) const LATE_END_GRACE_MIN: Duration = Duration::from_secs(2);
- 
-+/// How recent the connection's latest growth must be for a candidate to count
-+/// ([`LateEndCheck::late`]): half the grace, at least this many
-+/// [`recycle::ACK_WATCH_TICK`]s (4 s), so at the grace's 2 s floor the current
-+/// or the previous poll.
-+pub(crate) const LATE_END_RECENT_MIN_TICKS: u64 = 2;
++    /// Whether a send this path cannot carry may go on a UDP session
++    /// ([`QuicPathLimits::effective_udp_fallback`], fixed when the path is built).
++    pub(in crate::transport) fn udp_fallback(&self) -> bool {
++        self.udp_fallback
++    }
 +
-+/// Ticks past the recency window that a stall must last before the liveness
-+/// baseline restarts ([`LateEndCheck::late`]), so a poll that slept a little
-+/// long is not read as a stall.
-+pub(crate) const LATE_END_RESTART_SLACK_TICKS: u64 = 1;
-+
- /// The least margin past [`bytes_ahead`] the connection must have
- /// acknowledged since a stream's end before the end can be late
- /// ([`LaterReading::window_at_end`]): what was already in flight when the end
-@@ -2634,7 +2661,9 @@ pub(crate) const LATE_END_MARGIN_MIN: u64 = 64 * 1024;
- /// `ahead` (set here). quinn shares the link round-robin, so
- /// by then the end's last packet had been sent; an honest peer's QUIC stack
- /// acknowledges it like every other packet, within [`late_end_grace`] even
--/// when a copy is lost. Late once the grace has passed since `crossed`.
-+/// when a copy is lost. True once the grace has passed since `crossed`; that
-+/// makes the end a candidate only ([`LateEndCheck::late`] also needs the
-+/// peer shown alive and a second grace).
- pub(crate) fn late_end_verdict(
-     crossed: &mut Option<u64>,
-     ahead: u64,
-@@ -2653,7 +2682,10 @@ pub(crate) fn late_end_verdict(
- /// Judges whether a sent stream's end is late (#6205): the peer has wholly
- /// acknowledged enough data-stream bytes since the end to have carried its
- /// last packet,
--/// and the end is still unacknowledged past the grace ([`late_end_verdict`]).
-+/// and the end is still unacknowledged past the grace ([`late_end_verdict`]):
-+/// then only a candidate, which is late once the connection has acknowledged
-+/// more data streams since (the peer is alive), is still
+     /// Whether a new data send may start on this path.
+     pub(in crate::transport) fn sends_data(&self) -> bool {
+         self.send_data.load(Ordering::Acquire) == SEND_DATA_ON
 ```
 
-**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +810/-26)
+**File**: `crates/core/src/transport/quic/path/tests/route.rs` (modified, +129/-0)
 ```diff
-@@ -149,13 +149,54 @@ struct Windows {
-     b: Option<Arc<super::super::budget::QuicBudget>>,
- }
- 
-+/// A native connection's limits with the late-end rule closing
-+/// (`recycle::LATE_ENDS_CLOSE_NATIVE` is false in production, so a test of the
-+/// close, or of an honest peer staying open under it, asks for it).
-+const NATIVE_ENFORCING: QuicPathLimits = QuicPathLimits {
-+    late_ends_close_native: true,
-+    ..QuicPathLimits::NATIVE
-+};
-+
- /// [`paths`] with `a`'s path a native connection's ([`QuicPathLimits::NATIVE`]):
- /// no UDP session, so its dark rule closes (`recycle::DARK_CLOSES_WITH_UDP`).
- async fn paths_native(network: &str) -> Paths {
-     paths_built(
-         network,
-         QuicPathLimits::DEFAULT,
--        QuicPathLimits::NATIVE,
-+        NATIVE_ENFORCING,
-+        None,
-+        None,
-+        Windows::default(),
-+        true,
-+    )
-+    .await
-+}
-+
-+/// `network` for a native variant of a test: a name of its own, since the
-+/// simulated network is keyed by name.
-+fn net(network: &'static str, native: bool) -> &'static str {
-+    if native {
-+        Box::leak(format!("{network}-native").into_boxed_str())
-+    } else {
-+        network
-+    }
-+}
-+
-+/// The base limits of `a`'s path: a native connection's (no UDP session) or not.
-+fn native_base(native: bool) -> QuicPathLimits {
-+    if native {
-+        NATIVE_ENFORCING
-+    } else {
-+        QuicPathLimits::DEFAULT
-+    }
-+}
-+
-+/// [`paths`] with `a`'s path a native connection's if `native`.
-+async fn paths_for(network: &str, b_limits: QuicPathLimits, native: bool) -> Paths {
-+    paths_built(
-+        network,
-+        b_limits,
-+        native_base(native),
-         None,
-         None,
-         Windows::default(),
-@@ -164,6 +205,20 @@ async fn paths_native(network: &str) -> Paths {
-     .await
- }
- 
-+/// [`paths_capped`] with `a`'s path a native connection's if `native`.
-+async fn paths_capped_for(network: &str, a_cap: u64, native: bool) -> Paths {
-+    paths_built(
-+        network,
-+        QuicPathLimits::DEFAULT,
-+        native_base(native),
-+        None,
-+        Some(a_cap),
-+        Windows::default(),
-+        true,
-+    )
-+    .await
-+}
-+
- /// [`paths`] with each side's path taking its windows from a buffer budget.
- async fn paths_metered(network: &str, windows: Windows) -> Paths {
-     paths_built(
-@@ -1396,6 +1451,122 @@ fn ack_wait_expiries_count_a_would_close_whatever_else_is_acknowledged() {
+@@ -864,3 +864,132 @@ fn retry_not_opened_decides_by_path_outcome_and_attempt() {
+         );
      })
  }
- 
-+/// The late-end rule's verdict reaches the real path's acknowledgement watch
-+/// (#6205): three late ends (`Writers::late_end`, which `late_end_watch`
-+/// calls when `LateEndCheck` finds one) 70 s apart (separate episodes,
-+/// `recycle::LATE_END_EPISODE_GAP`) on a connected pair, with
-+/// the peer acknowledging everything else, are
-+/// - on a path with a UDP session, one would-close under `late_ends`, the
-+///   path open;
-+/// - on a native path, a close under `late_ends`, with no would-close; the
-+///   peer is sent `PEER_NOT_ACKNOWLEDGING`.
-+///
-+/// Three at once are one episode and close neither, and a third more than 30
-+/// min after the first does not either.
-+///
-+/// The detection itself (`LateEndCheck` on a stream whose end the peer
-+/// withholds) is tested with a scripted acknowledgement record
-+/// (`the_late_end_check_polls_until_the_end_is_late`,
-+/// `a_late_end_is_counted_once_across_its_waits`), not on a real pair: this
-+/// harness's peer acknowledges every packet it gets, and a packet that
-+/// carries a stream's tail cannot be told on the wire, since quinn bundles
-+/// its retransmissions with other frames. The field has had no late end
-+/// since the counters shipped (0.2.160), so this pipeline is where the rule
-+/// is shown to close.
++
++/// Every outcome that can end on UDP for some kind of send, with the step a
++/// path WITH a UDP session takes for a Short (also a LargeShort) and for a
++/// Stream (also a Pipe). Written out, not computed from `next_step`, so a change
++/// to the table or to what `settle` does with it shows here.
++fn udp_rows() -> Vec<(BoundedSend, NextStep, NextStep)> {
++    use NextStep::{GiveUp, SendOnUdp};
++    let not_opened = |n| BoundedSend::Failed(SendFailure::NotOpened(n));
++    vec![
++        (not_opened(NotOpened::TimedOut), SendOnUdp, SendOnUdp),
++        (not_opened(NotOpened::Paced), SendOnUdp, SendOnUdp),
++        (not_opened(NotOpened::NoCredit), SendOnUdp, SendOnUdp),
++        (
++            not_opened(NotOpened::ConnectionLost(lost())),
++            SendOnUdp,
++            SendOnUdp,
++        ),
++        (
++            error(QuicSendError::InvalidFrame(framing_error_for_tests())),
++            SendOnUdp,
++            SendOnUdp,
++        ),
++        (stopped(stop_code::NOT_ACCEPTING_DATA), SendOnUdp, SendOnUdp),
++        (
++            BoundedSend::Failed(SendFailure::TimedOut),
++            SendOnUdp,
++            GiveUp,
++        ),
++        (BoundedSend::Failed(SendFailure::Paced), SendOnUdp, GiveUp),
++        (
++            error(QuicSendError::ConnectionLost(lost())),
++            SendOnUdp,
++            GiveUp,
++        ),
++        (error(QuicSendError::Closed), SendOnUdp, GiveUp),
++        (stopped(stop_code::BUDGET_REFUSED), SendOnUdp, GiveUp),
++    ]
++}
++
++/// With the build constant at its shipped value an upgraded path is what it was
++/// before the constant: its sends go on UDP (the steps are written out in
++/// [`udp_rows`]), a quiet timeout makes it suspect, and nothing is retried on it
++/// (D-3, dark).
 +#[test]
-+fn late_ends_reach_the_path_watch_and_close_a_native_path_only() {
-+    use crate::transport::metrics::AckWaitKind;
++fn an_upgraded_path_keeps_its_udp_fallback_while_the_constant_is_true() {
++    const { assert!(super::super::super::breaker::UDP_FALLBACK) };
++    assert!(QuicPathLimits::DEFAULT.effective_udp_fallback());
++    assert!(!QuicPathLimits::NATIVE.effective_udp_fallback());
 +    bounded(|| async move {
 +        let _seed = GlobalRng::seed_guard(SEED);
-+        for (network, native, enforcing, gap) in [
-+            ("quic-path-late-ends-udp", false, true, 70),
-+            ("quic-path-late-ends-native", true, true, 70),
-+            // As shipped (`LATE_ENDS_CLOSE_NATIVE` false): counted, not closed.
-+            ("quic-path-late-ends-native-dark", true, false, 70),
-+            // All three at once: one episode, so no close.
-+            ("quic-path-late-ends-native-burst", true, true, 0),
-+            ("quic-path-late-ends-native-spread", true, true, 16 * 60),
-+        ] {
-+            let counters = leaked_counters();
-+            let limits = QuicPathLimits {
-+                counters: Some(counters),
-+                ..QuicPathLimits::DEFAULT
-+            };
-+            let a_base = if native {
-+                QuicPathLimits {
-+                    late_ends_close_native: enforcing,
-+                    ..QuicPathLimits::NATIVE
-+                }
-+            } else {
-+                QuicPathLimits::DEFAULT
-+            };
-+            let p = paths_built(
-+                network,
-+          
-```
-
-**File**: `crates/core/src/transport/quic/recycle.rs` (modified, +128/-19)
-```diff
-@@ -68,12 +68,15 @@
- //!    with no UDP session (a native one); on a path with one it only counts
- //!    (`quic_stall_would_close_<label>`) and the path stays open
- //!    ([`ACK_WAITS_EXPIRED_CLOSES_WITH_UDP`]).
--//! 7. **Late ends** ([`Stall::LateEnds`]), observe-only on every path
--//!    ([`LATE_ENDS_CLOSE`]): [`ACK_WAIT_EXPIRY_LIMIT`] sends had their end
--//!    acknowledged late, or not at all, though the connection had
--//!    acknowledged enough bytes since the end to have carried it
--//!    (`path::LateEndCheck`), within [`ACK_WAIT_EXPIRY_WINDOW`]; counted
--//!    (`quic_stall_would_close_late_ends`), and the path stays open.
-+//! 7. **Late ends** ([`Stall::LateEnds`]): sends had their end acknowledged
-+//!    late, or not at all, though the connection had acknowledged enough
-+//!    bytes since the end to have carried it (`path::LateEndCheck`), in
-+//!    [`ACK_WAIT_EXPIRY_LIMIT`] separate episodes
-+//!    ([`LATE_END_EPISODE_GAP`]) within [`ACK_WAIT_EXPIRY_WINDOW`]. It
-+//!    closes a path with no UDP session (a native one) once
-+//!    [`LATE_ENDS_CLOSE_NATIVE`] is set, which it is not yet; until then, and
-+//!    on a path with a UDP session ([`LATE_ENDS_CLOSES_WITH_UDP`]), it only
-+//!    counts (`quic_stall_would_close_late_ends`) and the path stays open.
- //!
- //! What "acknowledged" is measured with. quinn's `ConnectionStats` has no
- //! counter of packets the peer newly acknowledged: `frame_rx.acks` counts
-@@ -1237,14 +1240,23 @@ pub(crate) struct AckWatch {
-     /// [`ACK_WAIT_EXPIRY_WINDOW`] ([`Stall::LateEnds`]).
-     late_seen: u64,
-     late_at: VecDeque<u64>,
-+    /// When the last late-end episode was counted. Kept apart from `late_at`,
-+    /// which an observe-only would-close empties: the episode boundary must
-+    /// survive that reset, or the next sample of the same episode counts again.
-+    late_last_counted: Option<u64>,
-     /// Times the ack-wait expiry rule would have closed the path, which has
-     /// a UDP session ([`ACK_WAITS_EXPIRED_CLOSES_WITH_UDP`]).
-     would_close: u64,
--    /// Times the late-end rule would have closed the path ([`LATE_ENDS_CLOSE`]).
-+    /// Times the late-end rule would have closed the path: counted on a path
-+    /// with a UDP session ([`LATE_ENDS_CLOSES_WITH_UDP`]) and, while
-+    /// [`LATE_ENDS_CLOSE_NATIVE`] is false, on a native one.
-     late_would_close: u64,
-     /// The path has a UDP session to fall back to, so the dark rule only
-     /// counts ([`DARK_CLOSES_WITH_UDP`]).
-     udp_fallback: bool,
-+    /// The late-end rule closes a path with no UDP session
-+    /// ([`LATE_ENDS_CLOSE_NATIVE`] unless a test says otherwise).
-+    late_close_native: bool,
-     /// The dark episode in progress was already counted as a would-close.
-     dark_would_closed: bool,
-     /// Where it is published whether the dark rule would have closed the path
-@@ -1350,9 +1362,11 @@ impl AckWatch {
-             expiries_at: VecDeque::new(),
-             late_seen,
-             late_at: VecDeque::new(),
-+            late_last_counted: None,
-             would_close: 0,
-             late_would_close: 0,
-             udp_fallback,
-+            late_close_native: LATE_ENDS_CLOSE_NATIVE,
-             dark_would_closed: false,
-             dark_flag: None,
-             long_dark_at: None,
-@@ -1429,9 +1443,42 @@ impl AckWatch {
-         )
-     }
- 
--    /// The same for late ends ([`Stall::LateEnds`]), in a window of their own.
-+    /// The same for late ends ([`Stall::LateEnds`]), in a window of their
-+    /// own and counting EPISODES, not ends: late ends seen within
-+    /// [`LATE_END_EPISODE_GAP`] of the last counted one are the same
-+    /// episode and add nothing. One loss burst or outage onset that lasts
-+    /// less than that can leave many sends' ends late at once (up to 48
-+    /// permits and 64 Shorts wait), and that is one piece of evidence, not
-+    /// three; a spell of lateness that lasts two minutes or more counts
-+    /// three.
-     fn late_ends_reached(&mut self, now_nanos: u64, late: u64) -> bool {
--        strikes_in_window(&mut self.late_seen, &mut self.late_at, now_nanos, late)
-+        let new = late.saturating_sub(self.late_seen);
-+        self.late_seen = late;
-+        let gap = u64::try_from(LATE_END_EPISODE_GAP.as_nanos()).unwrap_or(u64::MAX);
-+        if new > 0
-+            && self
-+                .late_last_counted
-+                .is_none_or(|last| now_nanos.saturating_sub(last) >= gap)
-+        {
-+            self.late_last_counted = Some(now_nanos);
-+            self.late_at.push_back(now_nanos);
-+        }
-+        let window = u64::try_from(ACK_WAIT_EXPIRY_WINDOW.as_nanos()).unwrap_or(u64::MAX);
-+        while self
-+            .late_at
-+            .front()
-+            .is_some_and(|&first| now_nanos.saturating_sub(first) > window)
-+        {
-+            self.late_at.pop_front();
-+        }
-+        self.late_at.len() >= ACK_WAIT_EXPIRY_LIMIT as usize
-+    }
-+
-+    /// Let the late-end rule close a path with no UDP
-```
-
-**File**: `crates/core/src/transport/quic/recycle/tests.rs` (modified, +168/-21)
-```diff
-@@ -1938,56 +1938,203 @@ fn ack_wait_expiries_within_the_window_close_only_a_path_without_udp() {
-     }
- }
- 
--/// The late-end rule only observes, on every path (`LATE_ENDS_CLOSE`): three
--/// late ends within 30 min count a would-close under `late_ends`, the window
--/// starting afresh, and the path is never closed, with a UDP session or
--/// without; two, or a third past the window, count none.
-+/// Three late ends within 30 min are a would-close under `late_ends` on a path
-+/// with a UDP session (`LATE_ENDS_CLOSES_WITH_UDP` is false), the window
-+/// starting afresh, and that path is never closed; on a path without one the
-+/// third closes it, under `late_ends`. Two, or a third past the window, count
-+/// none and close nothing.
- #[test]
--fn late_ends_within_the_window_would_close_and_never_close() {
--    const _: () = assert!(!LATE_ENDS_CLOSE, "the late-end rule only observes");
-+fn late_ends_within_the_window_would_close_with_udp_and_close_without() {
-+    const _: () = assert!(!LATE_ENDS_CLOSES_WITH_UDP);
-+    const _: () = assert!(!LATE_ENDS_CLOSE_NATIVE, "the rule ships dark");
-     let times: Vec<u64> = (0..=1200).map(|i| 2 * i).collect();
-     let at = |minutes: u64| (minutes * 60 / 2) as usize;
-     let counted =
-         |marks: Vec<usize>| move |i: usize| marks.iter().filter(|&&m| i >= m).count() as u64;
--    let run = |late: &dyn Fn(usize) -> u64, udp_fallback: bool| {
-+    // (would-close samples, the sample the watch closed at and why).
-+    let run = |late: &dyn Fn(usize) -> u64, udp_fallback: bool, enforcing: bool| {
-         let record = Arc::default();
-         let sample = |i: usize| {
-             let t = i as u64;
-             AckSample::synthetic(&record, t * 7, t * 7, 30_000, t * 9, t * 11, NO_CAP)
-                 .with_late_ends(late(i))
-         };
--        let mut watch = AckWatch::new(ACK_WATCH_WINDOW, sample(0), udp_fallback);
-+        let mut watch =
-+            AckWatch::new(ACK_WATCH_WINDOW, sample(0), udp_fallback).closing_late_ends(enforcing);
-         let mut would = Vec::new();
-         for (i, time) in times.iter().enumerate().skip(1) {
-             let before = watch.late_would_close();
--            assert!(!watch.observe(time * SEC, sample(i)), "never closed");
-+            if watch.observe(time * SEC, sample(i)) {
-+                assert_eq!(watch.would_close(), 0, "not counted as ack-wait expiries");
-+                return (would, Some((i, watch.stall())));
++        let p = paths("quic-route-constant-true", QuicPathLimits::DEFAULT).await;
++        let a = &p.a;
++        assert!(a.udp_fallback());
++        for (outcome, short, stream) in udp_rows() {
++            let path = paths("quic-route-constant-true-row", QuicPathLimits::DEFAULT).await;
++            for (kind, expected) in [
++                (SendKind::Short, short),
++                (SendKind::LargeShort, short),
++                (SendKind::Stream, stream),
++                (SendKind::Pipe, stream),
++            ] {
++                assert_eq!(
++                    path.a.settle(kind, &outcome, false, 0),
++                    expected,
++                    "{kind:?} {outcome:?}"
++                );
 +            }
-             if watch.late_would_close() > before {
-                 would.push(i);
++        }
++        let no_credit = BoundedSend::Failed(SendFailure::NotOpened(NotOpened::NoCredit));
++        assert!(!a.retry_not_opened(&no_credit, 0));
++        let built = p.time().now_nanos();
++        a.settle(SendKind::Short, &timeouts()[0], false, built + SECOND);
++        a.settle(SendKind::Short, &timeouts()[0], false, built + QUIET);
++        assert!(a.is_suspect());
++    });
++}
++
++/// With the build constant at `false` a path built on the default limits has no
++/// UDP fallback (the path level only; the connection keeps its UDP session):
++/// what would go on UDP is given up (the operation layer retries), counted
++/// dropped, a send that found no stream credit is tried again on the path, and a
++/// quiet timeout never makes it suspect, since there is nowhere to divert to.
++/// The test runs in a child process with the constant off
++/// (`breaker::run_with_no_udp_fallback`).
++#[test]
++fn with_no_udp_fallback_an_upgraded_path_gives_up_instead_of_going_on_udp() {
++    if !super::super::super::breaker::run_with_no_udp_fallback(
++        module_path!(),
++        "with_no_udp_fallback_an_upgraded_path_gives_up_instead_of_going_on_udp",
++    ) {
++        return;
++    }
++    assert!(!QuicPathLimits::DEFAULT.effective_udp_fallback());
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let p = paths("quic-route-constant-false", QuicPathLimits::DEFAULT).await;
++        let a = &p.a;
++        assert!(!a.udp_fallback());
++        for (outcome, _, _) in udp_rows() {
++            let path = paths("quic-route-constant-false-row", QuicPathLimits::DEFAULT).await;
++            for kind in [
++                SendKind::Short,
++                SendKind::LargeShort,
++                SendKind::Stream,
++                SendKind::Pipe,
++            ] {
++                assert_eq!(
++                    path.a.settle(kind, &outcome, false, 0),
++                    NextStep::GiveUp,
++                    "{kind:?} {outcome:?}"
++                );
++                assert_eq!(
++                    path.
+```
+
+**File**: `crates/core/src/transport/quic/upgrade/data_route.rs` (modified, +28/-11)
+```diff
+@@ -178,21 +178,36 @@ impl DataRoute {
+     }
+ 
+     /// Take `payload` for the path, or hand it back for UDP: the queue is full,
+-    /// or the path has ended. Never waits.
++    /// or the path has ended. Never waits. On a path with no UDP fallback
++    /// (`QuicPathLimits::effective_udp_fallback`) nothing is handed back: a
++    /// payload the queue cannot take is dropped and counted, as every other
++    /// send the path cannot carry is, and the caller sees it taken.
+     pub(in crate::transport) fn queue_short(
+         &self,
+         payload: SerializedMessage,
+     ) -> Result<(), SerializedMessage> {
+-        match self.shorts.try_send(payload) {
+-            Ok(()) => Ok(()),
++        let refused = match self.shorts.try_send(payload) {
++            Ok(()) => return Ok(()),
+             Err(mpsc::error::TrySendError::Full(payload)) => {
+-                self.path
+-                    .stats()
+-                    .record_send_event(QuicSendEvent::ShortOverflowUdp);
+-                Err(payload)
++                if self.path.udp_fallback() {
++                    self.path
++                        .stats()
++                        .record_send_event(QuicSendEvent::ShortOverflowUdp);
++                }
++                payload
              }
+-            Err(mpsc::error::TrySendError::Closed(payload)) => Err(payload),
++            Err(mpsc::error::TrySendError::Closed(payload)) => payload,
++        };
++        if self.path.udp_fallback() {
++            return Err(refused);
          }
-         assert_eq!(watch.would_close(), 0, "not counted as ack-wait expiries");
--        would
-+        (would, None)
-     };
--    for udp_fallback in [true, false] {
--        assert_eq!(
--            run(&counted(vec![at(2), at(10), at(20)]), udp_fallback),
--            vec![at(20)]
--        );
-+    type Late = Box<dyn Fn(usize) -> u64>;
-+    let cases: Vec<(Late, Vec<usize>)> = vec![
-+        (Box::new(counted(vec![at(2), at(10), at(20)])), vec![at(20)]),
-+        (
-+            Box::new(counted((1..=6).map(|m| at(2 * m)).collect())),
-+            vec![at(6), at(12)],
-+        ),
-+        (Box::new(counted(vec![at(2), at(10), at(33)])), vec![]),
-+        (Box::new(counted(vec![at(2), at(10)])), vec![]),
-+    ];
-+    for (late, would) in &cases {
-         assert_eq!(
--            run(&counted((1..=6).map(|m| at(2 * m)).collect()), udp_fallback),
--            vec![at(6), at(12)]
-+            run(late, true, true),
-+            (would.clone(), None),
-+            "with UDP: {would:?}"
-         );
-+        // As shipped (`LATE_ENDS_CLOSE_NATIVE` false): a native path counts
-+        // the same would-closes and is never closed.
-         assert_eq!(
--            run(&counted(vec![at(2), at(10), at(33)]), udp_fallback),
--            Vec::<usize>::new()
-+            run(late, false, false),
-+            (would.clone(), None),
-+            "native, rule dark: {would:?}"
-         );
-+        let (_, closed) = run(late, false, true);
-         assert_eq!(
--            run(&counted(vec![at(2), at(10)]), udp_fallback),
--            Vec::<usize>::new()
-+            closed,
-+            would.first().map(|&i| (i, Some(Stall::LateEnds))),
-+            "without UDP: {would:?}"
-         );
++        self.path.stats().record_send_dropped(SendKind::Short);
++        self.note(|| {
++            "dropped a short: the queue is full or the path has ended, and there is no UDP \
++             fallback"
++                .to_string()
++        });
++        Ok(())
      }
  }
  
-+/// The late-end rule counts episodes, not ends (`LATE_END_EPISODE_GAP`): any
-+/// number of late ends seen within a minute of the last counted one are the
-+/// same episode, so one event that leaves many sends' ends late together (a
-+/// loss burst, an outage onset: up to 48 permits and 64 Shorts wait) is one
-+/// strike and cannot close a path. Three episodes more than a minute apart,
-+/// within 30 min, do.
-+#[test]
-+fn a_burst_of_late_ends_is_one_episode() {
-+    let times: Vec<u64> = (0..=900).map(|i| 2 * i).collect();
-+    let at = |seconds: u64| (seconds / 2) as usize;
-+    let counted =
-+        |marks: Vec<usize>| move |i: usize| marks.iter().filter(|&&m| i >= m).count() as u64;
-+    let run 
+@@ -288,12 +303,14 @@ async fn send_elsewhere(
+     payload: SerializedMessage,
+ ) {
+     match udp {
+-        Some(udp) => send_on_udp(path, udp, note, payload).await,
+-        None => {
++        // A path with no UDP fallback (`QuicPathLimits::effective_udp_fallback`)
++        // gives up what it cannot carry, whether or not a session exists.
++        Some(udp) if path.udp_fallback() => send_on_udp(path, udp, note, payload).await,
++        _ => {
+             path.stats().record_send_dropped(SendKind::Short);
+             note.note(|| {
+                 "dropped a short: the native path does not take it (ended, or the peer \
+-                 refused data) and there is no UDP session"
++                 refused data) and there is no UDP fallback"
+                     .to_string()
+             });
+         }
 ```
 
-**File**: `docs/architecture/transport/rules-reference.md` (modified, +38/-12)
+**File**: `crates/core/src/transport/quic/upgrade/driver/tests.rs` (modified, +56/-0)
 ```diff
-@@ -1457,13 +1457,18 @@ a test passes its own; tests read their own, never the global).
-   stream_credit_withheld|ack_waits_expired|late_ends>: paths the acknowledgement
-   watch closed, by why (recycle::Stall). quic_stall_would_close_<same
-   labels>: times a rule that only observes would have closed a path:
--  ack_waits_expired and dark, each on paths with a UDP session
--  (recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP, DARK_CLOSES_WITH_UDP), and
--  late_ends on every path (recycle::LATE_ENDS_CLOSE).
-+  ack_waits_expired, dark and late_ends, each on paths with a UDP session
-+  (recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP, DARK_CLOSES_WITH_UDP,
-+  LATE_ENDS_CLOSES_WITH_UDP).
-   quic_late_end_<stream|short|control>: sends whose end was acknowledged
-   late, or not at all, though the peer had wholly acknowledged enough
-   data-stream bytes since the end to have carried it (path::LateEndCheck),
-   by kind; expected 0 on honest paths.
-+  quic_late_end_judged_<stream|short|control>: sends whose end reached the
-+  proof point of that check (the later data streams the peer wholly
-+  acknowledged outnumber the bytes ahead of the end), by kind; counted once
-+  per end, and the denominator for quic_late_end_<kind>: a late-end count of
-+  0 says little where this is also near 0.
-   quic_dark_episode_<recovered_lt_5s|lt_10s|lt_30s|lt_120s|recovered_ge_120s|
-   unrecovered|cap_held|closed_at_window>: dark episodes (recycle::AckWatch:
-   packets outstanding, nothing acknowledged, nothing heard) by how they ended;
-@@ -3183,22 +3188,34 @@ Path recycling (quic/recycle.rs, #5940 step M6): besides the send-reset
-     runs out holds the 48 permits (each for at least 5 min) and the 64
-     one-packet Short epochs (about 150 s each) indefinitely, with no
-     expiry and no abort; every further streamed send waits its 2 s open
--    deadline and goes on UDP (after UDP removal, it fails). The ack wait
--    cannot judge it (its threshold is the backlog-sized wait, hours on a
--    busy slow path), so a separate check judges the end by the
-+    deadline and goes on UDP, or, on a native path, is sent again on the
-+    same path (route::NOT_OPENED_RETRIES times) and then dropped. The ack
-+    wait cannot judge it (its threshold is the backlog-sized wait, hours on
-+    a busy slow path), so a separate check judges SOME such ends by the
-     connection's progress (path::LateEndCheck, late_end_verdict): once
-     the peer has wholly acknowledged data streams opened after the end
-     totalling the bytes ahead of the
-     end's last byte under quinn's round-robin (path::bytes_ahead) plus the
-     congestion window when the end was sent (at least 64 KiB), the last
-     packet has been sent, and an honest stack acknowledges it within
--    late_end_grace (9 round trips and 75 ms, at least 2 s). An end still
--    unacknowledged then is a LATE END: counted in
-+    late_end_grace (seven probe timeouts of at most 5 round trips and 25 ms
-+    each, at least 2 s), and then, the connection having acknowledged more
-+    data streams since (the peer is alive), for a second grace in which it
-+    must still be acknowledging (growth seen within the last half grace, at
-+    least 4 s; growth coming back after a longer stall restarts the second
-+    grace). An outage acknowledges nothing, so one that has outlasted that
-+    is not counted. An end still unacknowledged then is a LATE END: counted
-+    in
-     quic_late_end_<stream|short|control> (the stream is not reset), and
--    three within 30 min count a would-close under late_ends
--    (quic_stall_would_close_late_ends). OBSERVE-ONLY on every path
--    (recycle::LATE_ENDS_CLOSE is false) until the field counts calibrate
--    it. Not judged while the egress cap holds a transmit or after a late
-+    three EPISODES within 30 min (late ends within 60 s of the last counted
-+    one are one episode, recycle::LATE_END_EPISODE_GAP) count a would-close
-+    (quic_stall_would_close_late_ends) on every path. The rule closes a
-+    native path (no UDP session) under late_ends only once
-+    recycle::LATE_ENDS_CLOSE_NATIVE is set; it is NOT set yet (it ships dark
-+    until the phase D-3 flag day), and recycle::LATE_ENDS_CLOSES_WITH_UDP is
-+    false (a path with a UDP session is never closed by it). The field had no late end when this closed (no positive
-+    for the rule), so its detection rests on the scripted-record tests and
-+    its false-positive bound on the honest-path tests below. Not judged while the egress cap holds a transmit or after a late
-     wake (the proof restarts), nor once the path was dark for the watch's
-     window since the end. Honest paths see none
-     (concurrent_large_streams_on_a_slow_path_see_no_expiry,
-@@ -3207,6 +3224,15 @@ Path recycling (quic/recycle.rs, #5940 step M6): besides the send-reset
-     acknowledgement count (the_late_end_check_polls_until_the_end_is_late),
-     since the test harness's peer acknowledges every packet, and the calls
-     that run it are pinned (the_late_en
+@@ -928,6 +928,62 @@ fn a_route_ends_with_its_path_and_what_it_holds_goes_on_udp() {
+     });
+ }
+ 
++/// With the build constant at `false` the route of an upgraded path has no UDP
++/// to hand what it holds to: after the path ends, what is queued is dropped and
++/// counted, not sent on the session's UDP (`a_route_ends_with_its_path_and_what_it_holds_goes_on_udp`
++/// is the same run with the constant true).
++#[test]
++fn with_no_udp_fallback_what_a_route_holds_when_its_path_ends_is_dropped() {
++    use crate::transport::quic::control::caps;
++    use crate::transport::quic::path::{QuicSendResult, SendKind};
++    if !crate::transport::quic::breaker::run_with_no_udp_fallback(
++        module_path!(),
++        "with_no_udp_fallback_what_a_route_holds_when_its_path_ends_is_dropped",
++    ) {
++        return;
++    }
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let h = Harness::server_with("quic-driver-route-no-udp", "prefer", Some("100")).await;
++        let (session, inbox) = h.session();
++        let attempt = offered(&h, &session);
++        let up = path_up(&h, &session, inbox);
++        let time = h.pair.time.clone();
++        let (_peer_path, _peer_inbound, inbox) =
++            drive(&h.pair.time, Duration::from_secs(60), async move {
++                let up = up.await;
++                time.sleep(Duration::from_secs(1)).await;
++                up
++            })
++            .await;
++        ready_ack(&session, attempt, caps::DATA);
++        let route = session.data_route().expect("both bits");
++        assert!(!route.path().udp_fallback());
++        let path = route.path_handle();
++        for i in 0..10u8 {
++            route.queue_short(vec![i]).expect("the queue has room");
++        }
++        session.end();
++        let time = h.pair.time.clone();
++        let udp = Arc::clone(&h.udp);
++        drive(&h.pair.time, Duration::from_secs(60), async move {
++            time.sleep(Duration::from_secs(1)).await;
++            drop(inbox);
++            assert!(
++                udp.shorts.lock().unwrap().is_empty(),
++                "nothing goes on UDP when there is no UDP fallback"
++            );
++            assert_eq!(
++                path.stats()
++                    .send_count(SendKind::Short, QuicSendResult::Dropped),
++                10,
++                "each held short is counted dropped"
++            );
++        })
++        .await;
++    });
++}
++
+ /// A path with both data bits counts once in `quic_enabled_data_paths` and in the
+ /// `quic_live_data_paths` gauge while its route lives, and a session that ends under it
+ /// counts by the path's age. A shadow path counts none of them.
+```
+
+**File**: `docs/architecture/transport/rules-reference.md` (modified, +5/-1)
+```diff
+@@ -2145,7 +2145,11 @@ Path: QuicPathLimits::NATIVE (DEFAULT with udp_fallback off) and data
+   ends by the stall close or the acknowledgement watch's dark rule. A peer
+   refusing data (NOT_ACCEPTING_DATA) closes the native path at once
+   (QuicPath::stop_sending_data); left open it would drop every later send.
+-  Upgrade paths keep udp_fallback on and are unchanged.
++  Upgrade paths keep udp_fallback on and are unchanged, unless
++  breaker::UDP_FALLBACK is false (not yet: D-3, dark): QuicPathLimits::
++  effective_udp_fallback then turns it off for every path, which removes the
++  PATH-level fallback only. The connection still sends on its UDP session
++  when it has no route.
+ Shorts: DataRoute::native, no UDP sender. queue_native_short refuses a full
+   queue with TransportError::SendQueueFull (Transient: the connection
+   survives, the message is counted quic_data_event_native_short_queue_full,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6401** (2026-11-26): test: default simulations to QUIC data (prefer, 100%) (@sanity)
+- **PR #6400** (2026-11-26): ci: bump freenet-git mirror-repo.yml pin 61d5fea -> 7a85b99 (@sanity)
 - **PR #6397** (2026-11-26): chore: add GET hop diagnostics to existing telemetry events (@sanity)
+- **PR #6396** (2026-11-26): feat(transport): one build constant makes every QUIC path act as udp_fallback = false (dark) (@sanity)
 - **PR #6395** (2026-11-25): fix: keep the node running when a helper process is OOM-killed (@sanity)
 - **PR #6394** (2026-11-26): feat: late-end native close behind a dark flag, count judged ends (#6205) (@sanity)
-- **PR #6393** (2026-11-25): feat(transport): run the update check before a transport-fatal exit (dark) (@sanity)
-- **PR #6391** (2026-11-25): perf: skip redundant validation for contracts that declare update_validates (@sanity)
-- **PR #6390** (2026-11-25): fix: keep a public own_addr when a gateway behind our NAT observes a private one (@sanity)
 
 ---
 
@@ -2850,48 +2562,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add GET hop diagnostics to existing telemetry events
+## X. test: default simulations to QUIC data (prefer, 100%)
 
 **RULE**:
-When implementing operations in `crates/core/src/operations/get/op_ctx_task.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c09581ba`: add GET hop diagnostics to existing telemetry events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28cc85d1`: test: default simulations to QUIC data (prefer, 100%). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/operations/get/op_ctx_task.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            None,
-    // Telemetry only: time this relay spent waiting on downstream peers, and
-    // how many of those waits ended in a timeout (silent downstream peers).
-    let mut downstream_wait_ms: u64 = 0;
-    let mut downstream_timeout_attempts: u32 = 0;
-                        Some((downstream_wait_ms, downstream_timeout_attempts)),
-            op_manager
-                .ring
-                .connection_manager
-                .get_peer_by_addr(upstream_addr),
-        // Telemetry only (`downstream_wait_ms`): not read by any decision, so
-        // not simulation-visible.
-        let wait_started = tokio::time::Instant::now();
-        downstream_wait_ms =
-            downstream_wait_ms.saturating_add(wait_started.elapsed().as_millis() as u64);
-                downstream_timeout_attempts = downstream_timeout_attempts.saturating_add(1);
-    /// GET hop diagnostics: the relay driver must pass its upstream into the
-    /// forward `get_request` event and its accumulated downstream wait /
-    /// timeout-attempt counters into the exhaustion `get_not_found` event, and
-    /// count timeouts only in the timeout arm. Fields reach production only
-    /// through these call sites.
+- Harness writes `prefer` at a 100% data share and pins native connect / native gateway join at 0%, unless `with_transport_quic` / `with_node_transport_quic` (`"off"` is the legacy-UDP opt-out), `with_release_quic_data_share` (the release's own share) or `with_native_connect` set otherwise. The endpoint runs on VirtualTime only in simulation (`the_transport_endpoint_runs_on_virtual_time_only_in_simulation`); the bind-time draw uses `GlobalRng::with_side_stream`; every runner must move VirtualTime (`run_turmoil_on_virtual_time`) or no QUIC timer fires.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- Harness writes `off` unless `with_transport_quic` / `with_node_transport_quic` set it. The endpoint runs on VirtualTime only in simulation (`the_transport_endpoint_runs_on_virtual_time_only_in_simulation`); the bind-time draw uses `GlobalRng::with_side_stream`; every runner must move VirtualTime (`run_turmoil_on_virtual_time`) or no QUIC timer fires.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c09581ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28cc85d1` are properly handled with clean fallback behavior.

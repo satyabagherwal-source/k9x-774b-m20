@@ -13321,3 +13321,6 @@ Every entry in this ledger must capture:
 | `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `d9294511` | Multi-dimensional audit evidence | 2026-11-26T07:10:23.232Z |
 | `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `eca1a62a` | Multi-dimensional audit evidence | 2026-11-26T07:10:25.514Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ecf5907c` | Multi-dimensional audit evidence | 2026-11-26T07:10:28.128Z |
+| `learn-huggingface-internlm-sage-s2-1-flash` | `https://huggingface.co/internlm/Sage-S2.1-Flash` | `hf-internl` | Multi-dimensional audit evidence | 2026-11-26T07:18:58.362Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `2f46a26c` | Multi-dimensional audit evidence | 2026-11-26T07:19:09.284Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `28cc85d1` | Multi-dimensional audit evidence | 2026-11-26T07:19:12.421Z |

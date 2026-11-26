@@ -13288,3 +13288,6 @@
 | `CYCLE-20261126-QINV` | `2026-11-26T07:10:23.227Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10620` | Yes (`1f6b5716...`) |
 | `CYCLE-20261126-QKF9` | `2026-11-26T07:10:25.509Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10621` | Yes (`20c421dc...`) |
 | `CYCLE-20261126-QMFV` | `2026-11-26T07:10:28.123Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`cdadba81...`) |
+| `CYCLE-20261126-1K51` | `2026-11-26T07:18:58.357Z` | `internlm/Sage-S2.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md` | Yes (`f93bf8e7...`) |
+| `CYCLE-20261126-1SKF` | `2026-11-26T07:19:09.279Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10622` | Yes (`7849623a...`) |
+| `CYCLE-20261126-1UZL` | `2026-11-26T07:19:12.417Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10623` | Yes (`c74ddc86...`) |

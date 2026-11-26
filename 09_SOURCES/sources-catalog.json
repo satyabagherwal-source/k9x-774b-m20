@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "c09581ba",
+    "sourceVersion": "28cc85d1",
     "license": "NOASSERTION",
-    "contentHash": "40745a28a365069b9265f7ec575ddf7600ffe9fcf7db984c099f1b1545355cbf",
-    "lastHarvestedAt": "2026-11-26T03:13:10.762Z",
+    "contentHash": "c74ddc86936e454ece4a70189dfb170ac56149e0520c12f27f5fe98681f3eb90",
+    "lastHarvestedAt": "2026-11-26T07:19:12.421Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "a60c25c3",
+    "sourceVersion": "2f46a26c",
     "license": "Apache-2.0",
-    "contentHash": "dafc553e775bb3a2d7e59b293ba5edbcfb92008376355f9f2d126c3c983e4f91",
-    "lastHarvestedAt": "2026-11-25T07:04:37.915Z",
+    "contentHash": "7849623a4cf0a62a885491515288c6ce3438e897f706abd9b7f2db1da96779f8",
+    "lastHarvestedAt": "2026-11-26T07:19:09.284Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -12785,8 +12785,8 @@
     "sourceUrl": "https://huggingface.co/internlm/Sage-S2.1-Flash",
     "sourceVersion": "hf-internlm-sage-s2.1-flash",
     "license": "Open-Source",
-    "contentHash": "22a5bf26c0202a0ed659fd7cd290afad2791a19b17768ed602ca81a0ce1f9a62",
-    "lastHarvestedAt": "2026-11-22T13:01:50.772Z",
+    "contentHash": "f93bf8e71334bfd043f75fb9b032752ef2dade99ddedccb922d9c3d4d73d625a",
+    "lastHarvestedAt": "2026-11-26T07:18:58.362Z",
     "learningId": "learn-huggingface-internlm-sage-s2-1-flash"
   },
   "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T07:10:35.452Z",
+  "last_updated": "2026-11-26T07:19:18.800Z",
   "total_verified_learnings": 9123,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25727,
+  "total_items": 25734,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "c09581ba",
-      "content_hash": "c60610ea3f824a3e4e71cb18e12b88f84c8cbabf8f8bab88375c3f9803fe8081",
+      "source_version": "28cc85d1",
+      "content_hash": "668d72e59dbeaa416956b692b9b7834ad8967786e3fa88bb6428d2dd62d8bdb7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T03:13:11.194Z"
+      "persisted_at": "2026-11-26T07:19:12.940Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "c09581ba",
-      "content_hash": "609ea2444aab5e6fffab92a2b589b76ec4e72e6052baab96d7b2b4f8786a7c97",
+      "source_version": "28cc85d1",
+      "content_hash": "70eb723d8e26a72a83d32a4f2da3dad66f324d1b0fac8f466ca4758c6e59b5c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:13:11.388Z"
+      "persisted_at": "2026-11-26T07:19:13.162Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce3963241d14d8496061760544ad98b02df2e4d41dedc3a0c8abbf029420c503",
+      "content_hash": "94e3a2b70717359e72abce50802aabe41560a58e77c2674b83e9da2278f68afa",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T03:13:20.157Z"
+      "persisted_at": "2026-11-26T07:19:18.512Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e83a9e24bd9cc57ab34b1aef239beb7bbc54ec249bed7c3cc85023d8133cea8",
+      "content_hash": "ac0a3b6afe4c31923f23e8c7bd5667db03f3ce5ccf848f680724cfcc1f8ddf0b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:13:20.348Z"
+      "persisted_at": "2026-11-26T07:19:18.800Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -218768,8 +218768,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "a60c25c3",
-      "content_hash": "dafc553e775bb3a2d7e59b293ba5edbcfb92008376355f9f2d126c3c983e4f91",
+      "source_version": "2f46a26c",
+      "content_hash": "7849623a4cf0a62a885491515288c6ce3438e897f706abd9b7f2db1da96779f8",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -218822,6 +218822,11 @@
           "number": 10476,
           "title": "Update branch for 5.8.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10622,
+          "title": "Route release image builds through the proxy runner & F5 registry",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218829,7 +218834,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T07:04:37.710Z",
+      "verified_at": "2026-11-26T07:19:09.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218883,10 +218888,10 @@
       "relative_path": "08_VERIFICATION/nginx-kubernetes-ingress-verification-protocol-empirical-defect-shield-for-nginx.md",
       "title": "Verification Protocol: Empirical Defect Shield for nginx/kubernetes-ingress",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "a60c25c3",
-      "content_hash": "2ca9350e7468c5de79e26a684b3ca389e2604c09dfb19c51a2c00e7550fcd0d6",
+      "source_version": "2f46a26c",
+      "content_hash": "51cc85eafc25f584a81b1905b2c7f908e7a838f44fc198db5c14276e611aefb7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:04:38.476Z"
+      "persisted_at": "2026-11-26T07:19:10.060Z"
     },
     "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria",
@@ -218944,9 +218949,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nginx-kubernetes-ingress-learnings",
       "repository": "nginx-kubernetes-ingress-learnings",
       "source_version": "HEAD",
-      "content_hash": "e8a6f9a48a6fb5707a5ee2a488245d5d6db601a6aa38d830996fa08890790347",
+      "content_hash": "4f2eb64f7fdf45130aa343be9b5b865142d85c88a82eeadfedc3272b24f3fec5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:04:50.540Z"
+      "persisted_at": "2026-11-26T07:19:17.747Z"
     },
     "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k": {
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
@@ -221066,8 +221071,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "c09581ba",
-      "content_hash": "40745a28a365069b9265f7ec575ddf7600ffe9fcf7db984c099f1b1545355cbf",
+      "source_version": "28cc85d1",
+      "content_hash": "c74ddc86936e454ece4a70189dfb170ac56149e0520c12f27f5fe98681f3eb90",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -221240,6 +221245,11 @@
           "number": 10591,
           "title": "add GET hop diagnostics to existing telemetry events",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10623,
+          "title": "default simulations to QUIC data (prefer, 100%)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221247,7 +221257,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T03:13:10.535Z",
+      "verified_at": "2026-11-26T07:19:12.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277002,7 +277012,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/internlm/Sage-S2.1-Flash",
       "source_version": "hf-internlm-sage-s2.1-flash",
-      "content_hash": "22a5bf26c0202a0ed659fd7cd290afad2791a19b17768ed602ca81a0ce1f9a62",
+      "content_hash": "f93bf8e71334bfd043f75fb9b032752ef2dade99ddedccb922d9c3d4d73d625a",
       "dossier_path": "07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md",
       "promoted_rules": [],
@@ -277011,7 +277021,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T13:01:50.546Z",
+      "verified_at": "2026-11-26T07:18:58.043Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277028,9 +277038,9 @@
       "title": "Research & Knowledge Intelligence: internlm/Sage-S2.1-Flash Core Invariants",
       "repository": "internlm/Sage-S2.1-Flash",
       "source_version": "hf-internlm-sage-s2.1-flash",
-      "content_hash": "673aad05a80e99f0d05849434b6aa6ca739b0191ffe38adffee729e237f665e2",
+      "content_hash": "7eed025b01ec3dbad6c51c527d55394ae377ef9085ec0e801eb477b7e605a1e5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T13:01:50.965Z"
+      "persisted_at": "2026-11-26T07:18:58.638Z"
     },
     "learn-github-diggerhq-digger": {
       "learning_id": "learn-github-diggerhq-digger",
@@ -277173,9 +277183,9 @@
       "title": "Research & Knowledge Intelligence: hf-internlm-sage-s2.1-flash-learnings Core Invariants",
       "repository": "hf-internlm-sage-s2.1-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "692cf85ad07c7da26893d95e01f67e8784c910f53a9eb12984737dcd57e488fa",
+      "content_hash": "a0f8bc9105a6e7896cc3ac01860bfe1a488c9dc72cef7c52e2157d45c7498e6b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T13:01:54.011Z"
+      "persisted_at": "2026-11-26T07:19:16.387Z"
     },
     "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants",
@@ -352322,6 +352332,94 @@
       "content_hash": "2986a882c1d8b3a0f4c9a1a1be9c33da9bf2156267202b78e5b239a3770f99ce",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T07:10:34.822Z"
+    },
+    "rule-10622": {
+      "learning_id": "rule-10622",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10622,
+      "title": "Route release image builds through the proxy runner & F5 registry",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "2f46a26c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T07:19:09.015Z"
+    },
+    "candidate_directive-route-release-image-builds-through-the-proxy-runner-f5-registry": {
+      "item_id": "candidate_directive-route-release-image-builds-through-the-proxy-runner-f5-registry",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1YPF-route-release-image-builds-through-the-proxy-runner-f5-registry.md",
+      "title": "Route release image builds through the proxy runner & F5 registry",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "934d81fb1ec12b74bf4918d3961cc7dc5f09be554909876350e952020a880960",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T07:19:17.240Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-nginx-kubernetes-ingress-deployment-operations-intelligence-nginx-kubernetes-ing.md",
+      "title": "Deployment & Operations Intelligence: nginx/kubernetes-ingress Core Invariants",
+      "repository": "nginx/kubernetes-ingress",
+      "source_version": "2f46a26c",
+      "content_hash": "8b9b3a6d45819ac8b2cade6b76e2c5387ea84ce017ba24bf815694b7739a7ebf",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T07:19:09.843Z"
+    },
+    "rule-10623": {
+      "learning_id": "rule-10623",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10623,
+      "title": "default simulations to QUIC data (prefer, 100%)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "28cc85d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T07:19:12.099Z"
+    },
+    "candidate_directive-default-simulations-to-quic-data-prefer-100": {
+      "item_id": "candidate_directive-default-simulations-to-quic-data-prefer-100",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1V7L-default-simulations-to-quic-data-prefer-100.md",
+      "title": "default simulations to QUIC data (prefer, 100%)",
+      "repository": "freenet/freenet-core",
+      "source_version": "28cc85d1",
+      "content_hash": "77390daae86e81ab11931f11c2a96e135ee0129b3dbc8bfd46ef24134f2955e7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T07:19:12.710Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-learnings-core-invar": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-nginx-kubernetes-ingress-learnings-deployment-operations-intelligence-nginx-kube.md",
+      "title": "Deployment & Operations Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6153ea6b35a64d7a93e88522ffbfd2458ff4353bc22f260a76776212c0687a34",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T07:19:17.468Z"
+    },
+    "candidate_directive-test-default-simulations-to-quic-data-prefer-100": {
+      "item_id": "candidate_directive-test-default-simulations-to-quic-data-prefer-100",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1ZHK-test-default-simulations-to-quic-data-prefer-100.md",
+      "title": "test: default simulations to QUIC data (prefer, 100%)",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7fb446c84d041e8061406f9064b5a1024600d6f60a9a7758e59750d914d9d398",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T07:19:18.253Z"
     }
   },
   "ai-builder-brain": {

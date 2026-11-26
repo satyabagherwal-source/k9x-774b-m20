@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-16WB",
-    "timestamp": "2026-11-24T17:03:12.683Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "aee1178c5e6e8a42519096a9873b1a96f7b693f9479c3d7828c30d29362d424a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-1A90",
-    "timestamp": "2026-11-24T17:03:17.028Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "d3c6bc422d31a1e0d54e4d916e2ced52db6cf78658bb3126536c6582ae783376",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-EG6D",
-    "timestamp": "2026-11-24T17:13:31.237Z",
-    "repository": "Aleph-Alpha/Kolibri-1.1",
-    "learningId": "learn-huggingface-aleph-alpha-kolibri-1-1",
-    "contentHash": "a55946688504cbeede06b523ce0eb2cbeb1ee90c1a59ec72de25ab169f1ea19b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-EI55",
     "timestamp": "2026-11-24T17:13:33.785Z",
     "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
@@ -7490,6 +7445,51 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "cdadba81ee8e33f4d6a16c0a3a9da765a9e66a1ca6b8215dbab1391179370aa4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1K51",
+    "timestamp": "2026-11-26T07:18:58.357Z",
+    "repository": "internlm/Sage-S2.1-Flash",
+    "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
+    "contentHash": "f93bf8e71334bfd043f75fb9b032752ef2dade99ddedccb922d9c3d4d73d625a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1SKF",
+    "timestamp": "2026-11-26T07:19:09.279Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "7849623a4cf0a62a885491515288c6ce3438e897f706abd9b7f2db1da96779f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1UZL",
+    "timestamp": "2026-11-26T07:19:12.417Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "c74ddc86936e454ece4a70189dfb170ac56149e0520c12f27f5fe98681f3eb90",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T07:04:50.103Z",
+  "timestamp": "2026-11-26T07:19:17.103Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nginx-kubernetes-ingress-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nginx-kubernetes-ingress-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T07:04:50.103Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T07:19:17.103Z`  
 > **Learning ID**: `LEARN-EVO-nginx-kubernetes-ingress-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `a60c25c3`  
+> **Source Version**: `2f46a26c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T07:04:36.798Z  
+> **Timestamp**: 2026-11-26T07:19:08.048Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T07:04:36.794Z  
+> **Harvest Timestamp**: 2026-11-26T07:19:08.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5109 stars
+- **Stars / Engagement**: 5110 stars
 
 ---
 
@@ -1452,211 +1452,462 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a60c25c3` (2026-11-24)
-**Commit Message**: Update branch for 5.8.1 (#11475) (#11526)
+### Incident Patch 1: `2f46a26c` (2026-11-25)
+**Commit Message**: Route release image builds through the proxy runner & F5 registry (#11473)
 
-**File**: `.github/ISSUE_TEMPLATE/BUG-REPORT.yml` (modified, +1/-0)
+* ci: route release image builds through the proxy runner and Artifactory mirror
+
+* ci: apply registry mirror to base images and fix Artifactory check
+
+- build-base-images: pass DOCKER_REGISTRY/GHCR_REGISTRY, log in to the
+  F5 registry, pull BuildKit/QEMU images via DOCKER_REGISTRY
+- Artifactory reference check: run as root, pass only on grep exit 1
+- Dockerfile: derive UBI10_PACKAGES_IMAGE default from GHCR_REGISTRY
+- renovate: UBI digest manager matches Makefile and build/Dockerfile
+
+* add proxy runners to actionlint
+
+* Make release build runner variable based
+
+* ci: set default runner for release prep workflows
+
+* Address PR copilot feedback
+
+---------
+
+Co-authored-by: Venktesh Patel <[REDACTED_EMAIL]>
+
+**File**: `.github/actionlint.yaml` (modified, +2/-0)
 ```diff
-@@ -22,6 +22,7 @@ body:
-       description: What version of our F5 NGINX Ingress Controller are you running?
-       options:
-         - edge
-+        - 5.8.1
-         - 5.8.0
-         - 5.7.1
-         - 5.7.0
+@@ -7,6 +7,8 @@ self-hosted-runner:
+     - ubuntu-26.04
+     - ubuntu-26.04-amd64
+     - aw-ubuntu-26.04-amd64
++    - proxy-ubuntu-24.04-amd64
++    - proxy-ubuntu-26.04-amd64
+ # Configuration variables in array of strings defined in your repository or
+ # organization. `null` means disabling configuration variables check.
+ # Empty array means no configuration variable is allowed.
 ```
 
-**File**: `README.md` (modified, +13/-13)
+**File**: `.github/actions/build-push-retry/action.yaml` (modified, +6/-0)
 ```diff
-@@ -63,20 +63,20 @@ NGINX with native Kubernetes integration.
- ### Install with Helm (recommended)
- 
- ```bash
--helm install <RELEASE_NAME> oci://ghcr.io/nginx/charts/nginx-ingress --version 2.9.0
-+helm install <RELEASE_NAME> oci://ghcr.io/nginx/charts/nginx-ingress --version 2.9.1
- ```
- 
- ### Install with Manifests
- 
- ```shell
- # Install the Custom Resource Definitions (required for the default configuration)
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deploy/crds.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ns-and-sa.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/rbac/rbac.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/nginx-config.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/deployment/nginx-ingress.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/service/loadbalancer.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ingress-class.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deploy/crds.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ns-and-sa.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/rbac/rbac.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/nginx-config.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/deployment/nginx-ingress.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/service/loadbalancer.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ingress-class.yaml
- ```
- 
- **[Full Installation Guide →](https://docs.nginx.com/nginx-ingress-controller/install/)**
-@@ -87,14 +87,14 @@ Once installed, deploy a sample application:
- 
- ```bash
- # Deploy the Cafe example app
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe.yaml
- 
- # Create a self-signed TLS certificate for cafe.example.com and store it in the Secret referenced by the Ingress
- openssl req -x509 -nodes -newkey rsa:2048 -days 365 -keyout cafe.key -out cafe.crt \
-   -subj "/CN=cafe.example.com" -addext "subjectAltName=DNS:cafe.example.com"
- kubectl create secret tls tls-secret --cert=cafe.crt --key=cafe.key
- 
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe-ingress.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe-ingress.yaml
- ```
- 
- See more [examples](https://github.com/nginx/kubernetes-ingress/tree/main/examples) to explore all capabilities.
-@@ -110,7 +110,7 @@ See more [examples](https://github.com/nginx/kubernetes-ingress/tree/main/exampl
- 
- ## Docker Images
- 
--The latest stable release is [5.8.0](https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.0). For production
-+The latest stable release is [5.8.1](https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.1). For production
- use, we recommend that you choose the latest stable release.
- 
- | Registry | Link |
-@@ -127,12 +127,12 @@ You can also [build your own image](https://docs.nginx.com/nginx-ingress-control
- 
- | Version | Description | Image for NGINX | Image for NGINX Plus | Installation Manifests and Helm Chart | Documentation and Examples |
- | ------- | ----------- | --------------- | -------------------- | --------------------------------------- | -------------------------- |
--| Latest stable release | For production use | Use the 5.8.0 images from [DockerHub](https://hub.docker.com/r/nginx/nginx-ingress/), [GitHub Container](https://github.com/nginx/kubernetes-ingress/pkgs/container/kubernetes-ingress), [Amazon ECR Public Gallery](https://gallery.ecr.aws/nginx/nginx-ingress) or [Quay.io](https://quay.io/repository/nginx/nginx-ingress) or [build your own image](https://docs.nginx.com/nginx-ingress-controller/install/build/). | Use the 5.8.0 images from the [F5 Container Registry](https://docs.nginx.com/nginx-ingress-controller/install/images/registry-download/) or [Build your own image](https://docs.nginx.com/nginx-ingress-controller/install/build). | [Manifests](https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/deployments). [Helm chart](https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/charts/nginx-ingress). | [Documen
+@@ -29,6 +29,9 @@ inputs:
+   secret-files:
+     description: Secret files (newline-separated key=path pairs)
+     required: false
++  secret-envs:
++    description: Secrets read from environment variables (newline-separated id=ENV_VAR pairs)
++    required: false
+   cache-from:
+     description: Cache sources
+     required: false
+@@ -88,6 +91,7 @@ runs:
+         target: ${{ inputs.target }}
+         build-args: ${{ inputs.build-args }}
+         secret-files: ${{ inputs.secret-files }}
++        secret-envs: ${{ inputs.secret-envs }}
+         cache-from: ${{ inputs.cache-from }}
+         cache-to: ${{ inputs.cache-to }}
+         push: ${{ inputs.push }}
+@@ -121,6 +125,7 @@ runs:
+         target: ${{ inputs.target }}
+         build-args: ${{ inputs.build-args }}
+         secret-files: ${{ inputs.secret-files }}
++        secret-envs: ${{ inputs.secret-envs }}
+         cache-from: ${{ inputs.cache-from }}
+         push: ${{ inputs.push }}
+         load: ${{ inputs.load }}
+@@ -153,6 +158,7 @@ runs:
+         target: ${{ inputs.target }}
+         build-args: ${{ inputs.build-args }}
+         secret-files: ${{ inputs.secret-files }}
++        secret-envs: ${{ inputs.secret-envs }}
+         cache-from: ${{ inputs.cache-from }}
+         push: ${{ inputs.push }}
+         load: ${{ inputs.load }}
 ```
 
-**File**: `charts/nginx-ingress/Chart.yaml` (modified, +2/-2)
+**File**: `.github/skills/nic-ci-pipelines/SKILL.md` (modified, +1/-1)
 ```diff
-@@ -5,10 +5,10 @@ appVersion: 5.9.0
- kubeVersion: ">= 1.25.0-0"
- type: application
- description: NGINX Ingress Controller
--icon: https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/charts/nginx-ingress/chart-icon.png
-+icon: https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/charts/nginx-ingress/chart-icon.png
- home: https://github.com/nginx/kubernetes-ingress
- sources:
--  - https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/charts/nginx-ingress
-+  - https://github.com/nginx/kubernetes-ingress/tree/v5.8.1/charts/nginx-ingress
- keywords:
-   - ingress
-   - nginx
-```
-
-**File**: `charts/nginx-ingress/values-icp.yaml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ controller:
-   nginxplus: true
-   image:
-     repository: mycluster.icp:8500/kube-system/nginx-plus-ingress
--    tag: "5.8.0"
-+    tag: "5.8.1"
-   nodeSelector:
-     beta.kubernetes.io/arch: "amd64"
-     proxy: true
-```
-
-**File**: `charts/nginx-ingress/values-plus.yaml` (modified, +1/-1)
-```diff
-@@ -3,4 +3,4 @@ controller:
-   nginxplus: true
-   image:
-     repository: nginx-plus-ingress
--    tag: "5.8.0"
-+    tag: "5.8.1"
-```
-
-**File**: `charts/nginx-ingress/values.schema.json` (modified, +5/-5)
-```diff
-@@ -854,10 +854,10 @@
-             },
-             "tag": {
-               "type": "string",
--              "default": "5.8.0",
-+              "default": "5.8.1",
-               "title": "The tag of the Ingress Controller image",
-               "examples": [
--                "5.8.0"
-+                "5.8.1"
-               ]
-             },
-             "digest": {
-@@ -893,7 +893,7 @@
-           "examples": [
-             {
-               "repository": "nginx/nginx-ingress",
--              "tag": "5.8.0",
-+              "tag": "5.8.1",
-               "pullPolicy": "IfNotPresent"
-             }
-           ]
-@@ -2436,7 +2436,7 @@
-           "customPorts": [],
-           "image": {
-             "repository": "nginx/nginx-ingress",
--            "tag": "5.8.0",
-+            "tag": "5.8.1",
-             "digest": "",
-             "pullPolicy": "IfNotPresent"
-           },
-@@ -3083,7 +3083,7 @@
-         "customPorts": [],
-         "image": {
-           "repository": "nginx/nginx-ingress",
--          "tag": "5.8.0",
-+          "tag": "5.8.1",
-           "digest": "",
-           "pullPolicy": "IfNotPresent"
-         },
-```
-
-**File**: `charts/nginx-ingress/values.yaml` (modified, +1/-1)
-```diff
-@@ -252,7 +252,7 @@ controller:
-     repository: nginx/nginx-ingress
+@@ -137,7 +137,7 @@ Because the stages are decoupled and live in separate repos, a transient failure
+ | `lint-format.yml` | PR to `main`/`embargo/security-fixes*`, merge_group | Format & lint checks (gofumpt, goimports, golangci-lint, actionlint, markdownlint, yamllint, workflow gating validation) |
+ | `regression.yml` | Daily cron (03:00 UTC), manual dispatch | Multi-K8s-version regression matrix tests |
+ | `single-image-regression.yml` | Manual dispatch | Runs Python e2e tests on a single image variant and K8s version |
+-| `build-base-images.yml` | Weekday cron (04:30 UTC), manual, workflow_call | Rebuilds all base images (alpine, debian, ubi) |
++| `build-base-images.yml` | Weekday cron (04:30 UTC), manual (optional `push_images`) | Rebuilds all base images (alpine, debian, ubi) |
+ | `build-ubi-dependency.yml` | Push to `main` touching `build/dependencies/Dockerfile.ubi10`, manual | Builds the UBI dependency image published to `ghcr.io/nginx/dependencies/nginx-ubi` |
+ | `image-promotion.yml` | Push to `main`/`release-*`, workflow_call | Rebuilds images via `build-artifacts.yml` (`force: true`), tags `edge`/`stable`, runs security scans, publishes GHCR edge chart |
  
-     ## The tag of the Ingress Controller image. If not specified the appVersion from Chart.yaml is used as a tag.
--    # tag: "5.8.0"
-+    # tag: "5.8.1"
-     ## The digest of the Ingress Controller image.
-     ## If digest is specified it has precedence over tag and will be used instead
-     # digest: "sha256:CHANGEME"
 ```
 
-**File**: `deployments/daemon-set/nginx-ingress.yaml` (modified, +2/-2)
+**File**: `.github/workflows/build-base-images.yml` (modified, +190/-4)
 ```diff
-@@ -34,7 +34,7 @@ spec:
-       # - name: nginx-log
-       #   emptyDir: {}
-       containers:
--      - image: nginx/nginx-ingress:5.8.0
-+      - image: nginx/nginx-ingress:5.8.1
-         imagePullPolicy: IfNotPresent
-         name: nginx-ingress
-         ports:
-@@ -101,7 +101,7 @@ spec:
-         # - -enable-prometheus-metrics
-         # - -global-configuration=$(POD_NAMESPACE)/nginx-configuration
-       # initContainers:
--#      - image: nginx/nginx-ingress:5.8.0
-+#      - image: nginx/nginx-ingress:5.8.1
-       #   imagePullPolicy: IfNotPresent
-       #   name: init-nginx-ingress
-       #   command: ['cp', '-vdR', '/etc/nginx/.', '/mnt/etc']
+@@ -2,7 +2,12 @@ name: Build Base Images
+ 
+ on:
+   workflow_dispatch:
+-  workflow_call:
++    inputs:
++      push_images:
++        description: 'Whether to push images'
++        required: false
++        default: true
++        type: boolean
+   schedule:
+     - cron: "30 4 * * 1-5" # run Mon-Fri at 04:30 UTC
+ 
+@@ -59,13 +64,59 @@ jobs:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+ 
++      - name: Resolve Dockerfile syntax frontend
++        run: |
++          syntax=$(sed -n '1s/^# syntax=//p' build/Dockerfile)
++          test -n "$syntax"
++          echo "BUILDKIT_SYNTAX=${DOCKER_REGISTRY}/${syntax}" >> "$GITHUB_ENV"
++        env:
++          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
++
++      - name: Setup Docker Hub secrets
++        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++        with:
++          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
++          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
++          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
++          secret-names: "docker-username, docker-password"
++          env-names: "DOCKER_USERNAME, DOCKER_PASSWORD"
++
++      - name: DockerHub Login
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
++        with:
++          username: ${{ env.DOCKER_USERNAME }}
++          password: ${{ env.DOCKER_PASSWORD }}
++        if: ${{ contains(vars.DOCKER_REGISTRY || 'docker.io', 'docker.io') }}
++
++      - name: Setup Artifactory secrets
++        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++        with:
++          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
++          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
++          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
++          secret-names: "artifactory-service-user-nginx, artifactory-service-user-nginx-token"
++          env-names: "ARTIFACTORY_USER, ARTIFACTORY_TOKEN"
++        if: ${{ vars.F5_REPO_HOST != '' }}
++
++      - name: F5 registry login
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
++        with:
++          registry: ${{ vars.F5_REGISTRY_HOST }}
++          username: ${{ env.ARTIFACTORY_USER }}
++          password: ${{ env.ARTIFACTORY_TOKEN }}
++        if: ${{ vars.F5_REGISTRY_HOST != '' && vars.F5_REPO_HOST != '' }}
++
+       - name: Docker Buildx
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
++        with:
++          driver-opts: |
++            image=${{ vars.DOCKER_REGISTRY || 'docker.io' }}/moby/buildkit:buildx-stable-1
+ 
+       - name: Setup QEMU
+         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+         with:
+           platforms: arm64
++          image: "${{ vars.DOCKER_REGISTRY || 'docker.io' }}/tonistiigi/binfmt:latest"
+ 
+       - name: Login to GCR
+         uses: ./.github/actions/vault-gcr-login
+@@ -105,15 +156,35 @@ jobs:
+           tags: ${{ steps.meta.outputs.tags }}
+           platforms: ${{ matrix.platforms }}
+           pull: true
+-          push: true
++          push: ${{ github.event_name != 'workflow_dispatch' || inputs.push_images }}
+           build-args: |
++            DOCKER_REGISTRY=${{ vars.DOCKER_REGISTRY || 'docker.io' }}
++            BUILDKIT_SYNTAX=${{ env.BUILDKIT_SYNTAX }}
++            GHCR_REGISTRY=${{ vars.GHCR_REGISTRY || 'ghcr.io' }}
+             BUILD_OS=${{ matrix.build_os }}
+             IC_VERSION=${{ needs.checks.outputs.ic_version }}
++            F5_REPO_HOST=${{ vars.F5_REPO_HOST }}
++            F5_ALPINE_REPO=${{ vars.F5_ALPINE_REPO }}
++            F5_DEBIAN_REPO=${{ vars.F5_DEBIAN_REPO }}
++            F5_DEBIAN_SECURITY_REPO=${{ vars.F5_DEBIAN_SECURITY_REPO }}
++            F5_UBI_REPO=${{ vars.F5_UBI_REPO }}
++            F5_EPEL_REPO=${{ vars.F5_EPEL_REPO }}
++            F5_FEDORA_REPO=${{ vars.F5_FEDORA_REPO }}
+             OSS_PACKAGE_REPO=${{ vars.OSS_REPO }}
++          secret-envs: |
++            ${{ vars.F5_REPO_HOST != '' && 'f5-repo-user=ARTIFACTORY_USER' || '' }}
++            ${{ vars.F5_REPO_HOST != '' && 'f5-repo-token=ARTIFACTORY_TOKEN' || '' }}
+           secret-files: |
+             ${{ vars.OSS_REPO != 'packages.nginx.org' && 'nginx-repo.crt=nginx-repo.crt' || '' }}
+             ${{ vars.OSS_REPO != 'packages.nginx.org' && 'nginx-repo.key=nginx-repo.key' || '' }}
+ 
++      - name: Check image for Artifactory references
++        run: docker run --rm --platform linux/amd64 --user 0 --entrypoint sh "$IMAGE" -c 'grep -rl "$0" /etc; test $? -eq 1' "$F5_REPO_HOST"
++        env:
++          IMAGE: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
++          F5_REPO_HOST: ${{ vars.F5_REPO_HOST }}
++        if: ${{ vars.F5_REPO_HOST != '' && (github.event_name != 'workflow_dispatch' || inputs.push_images) }}
++
+       - name: Clean up secrets
+         run: |
+```
+
+**File**: `.github/workflows/build-oss.yml` (modified, +97/-2)
+```diff
+@@ -87,6 +87,14 @@ jobs:
+           ref: ${{ inputs.branch }}
+           fetch-depth: 0
+ 
++      - name: Resolve Dockerfile syntax frontend
++        run: |
++          syntax=$(sed -n '1s/^# syntax=//p' build/Dockerfile)
++          test -n "$syntax"
++          echo "BUILDKIT_SYNTAX=${DOCKER_REGISTRY}/${syntax}" >> "$GITHUB_ENV"
++        env:
++          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
++
+       - name: NGINX package secrets
+         uses: ./.github/actions/nginx-pkg-secrets
+         with:
+@@ -104,12 +112,30 @@ jobs:
+           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+         if: ${{ inputs.authenticated }}
+ 
++      - name: Setup Artifactory secrets
++        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++        with:
++          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
++          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
++          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
++          secret-names: "artifactory-service-user-nginx, artifactory-service-user-nginx-token"
++          env-names: "ARTIFACTORY_USER, ARTIFACTORY_TOKEN"
++        if: ${{ inputs.authenticated && vars.F5_REPO_HOST != '' }}
++
+       - name: DockerHub Login
+         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           username: ${{ env.DOCKER_USERNAME }}
+           password: ${{ env.DOCKER_PASSWORD }}
+-        if: ${{ inputs.authenticated }}
++        if: ${{ inputs.authenticated && contains(vars.DOCKER_REGISTRY || 'docker.io', 'docker.io') }}
++
++      - name: F5 registry login
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
++        with:
++          registry: ${{ vars.F5_REGISTRY_HOST }}
++          username: ${{ env.ARTIFACTORY_USER }}
++          password: ${{ env.ARTIFACTORY_TOKEN }}
++        if: ${{ inputs.authenticated && vars.F5_REGISTRY_HOST != '' && vars.F5_REPO_HOST != '' }}
+ 
+       - name: Docker meta
+         id: meta
+@@ -153,13 +179,30 @@ jobs:
+         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+         with:
+           platforms: arm64
++          image: "${{ vars.DOCKER_REGISTRY || 'docker.io' }}/tonistiigi/binfmt:latest"
++        if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
++
++      - name: Export runner proxy settings
++        run: |
++          {
++            echo "HTTP_PROXY=${HTTP_PROXY:-${http_proxy:-}}"
++            echo "HTTPS_PROXY=${HTTPS_PROXY:-${https_proxy:-}}"
++            echo "NO_PROXY=${NO_PROXY:-${no_proxy:-}}"
++          } >> "$GITHUB_ENV"
+         if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
+ 
+       - name: Docker Buildx
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
++        with:
++          driver-opts: |
++            env.http_proxy=${{ env.HTTP_PROXY }}
++            env.https_proxy=${{ env.HTTPS_PROXY }}
++            "env.no_proxy=${{ env.NO_PROXY }}"
++            image=${{ vars.DOCKER_REGISTRY || 'docker.io' }}/moby/buildkit:buildx-stable-1
+         if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
+ 
+       - name: Build Base Container
++        id: build-base
+         uses: ./.github/actions/build-push-retry
+         with:
+           file: build/Dockerfile
+@@ -172,14 +215,40 @@ jobs:
+           push: true
+           no-cache: true
+           build-args: |
++            HTTP_PROXY=${{ env.HTTP_PROXY }}
++            HTTPS_PROXY=${{ env.HTTPS_PROXY }}
++            NO_PROXY=${{ env.NO_PROXY }}
++            http_proxy=${{ env.HTTP_PROXY }}
++            https_proxy=${{ env.HTTPS_PROXY }}
++            no_proxy=${{ env.NO_PROXY }}
++            DOCKER_REGISTRY=${{ vars.DOCKER_REGISTRY || 'docker.io' }}
++            BUILDKIT_SYNTAX=${{ env.BUILDKIT_SYNTAX }}
++            GHCR_REGISTRY=${{ vars.GHCR_REGISTRY || 'ghcr.io' }}
++            F5_REPO_HOST=${{ vars.F5_REPO_HOST }}
++            F5_ALPINE_REPO=${{ vars.F5_ALPINE_REPO }}
++            F5_DEBIAN_REPO=${{ vars.F5_DEBIAN_REPO }}
++            F5_DEBIAN_SECURITY_REPO=${{ vars.F5_DEBIAN_SECURITY_REPO }}
++            F5_UBI_REPO=${{ vars.F5_UBI_REPO }}
++            F5_EPEL_REPO=${{ vars.F5_EPEL_REPO }}
++            F5_FEDORA_REPO=${{ vars.F5_FEDORA_REPO }}
+             OSS_PACKAGE_REPO=${{ inputs.pkg-src-oss }}
+             BUILD_OS=${{ inputs.build-os }}
+             IC_VERSION=${{ inputs.ic-version && inputs.ic-version || steps.meta.outputs.version }}
++          secret-envs: |
++            ${{ inputs.authenticated && vars.F5_REPO_HOST != '' && 'f5-repo-user=ARTIFACTORY_USER' || '' }}
++            ${{ inputs.authenticated && vars.F5_REPO_HOST != '' && 'f5-repo-token=ARTIFACTORY_TOKEN' || '' }}
+           secret-files: |
+             ${{ inputs.pkg-src-oss != 'packages.nginx.org' && 'n
+```
+
+**File**: `.github/workflows/build-plus.yml` (modified, +97/-2)
+```diff
+@@ -99,6 +99,14 @@ jobs:
+           ref: ${{ inputs.branch }}
+           fetch-depth: 0
+ 
++      - name: Resolve Dockerfile syntax frontend
++        run: |
++          syntax=$(sed -n '1s/^# syntax=//p' build/Dockerfile)
++          test -n "$syntax"
++          echo "BUILDKIT_SYNTAX=${DOCKER_REGISTRY}/${syntax}" >> "$GITHUB_ENV"
++        env:
++          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
++
+       - name: NGINX package secrets
+         uses: ./.github/actions/nginx-pkg-secrets
+         with:
+@@ -116,12 +124,30 @@ jobs:
+           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+         if: ${{ inputs.authenticated }}
+ 
++      - name: Setup Artifactory secrets
++        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++        with:
++          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
++          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
++          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
++          secret-names: "artifactory-service-user-nginx, artifactory-service-user-nginx-token"
++          env-names: "ARTIFACTORY_USER, ARTIFACTORY_TOKEN"
++        if: ${{ inputs.authenticated && vars.F5_REPO_HOST != '' }}
++
+       - name: DockerHub Login
+         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           username: ${{ env.DOCKER_USERNAME }}
+           password: ${{ env.DOCKER_PASSWORD }}
+-        if: ${{ inputs.authenticated }}
++        if: ${{ inputs.authenticated && contains(vars.DOCKER_REGISTRY || 'docker.io', 'docker.io') }}
++
++      - name: F5 registry login
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
++        with:
++          registry: ${{ vars.F5_REGISTRY_HOST }}
++          username: ${{ env.ARTIFACTORY_USER }}
++          password: ${{ env.ARTIFACTORY_TOKEN }}
++        if: ${{ inputs.authenticated && vars.F5_REGISTRY_HOST != '' && vars.F5_REPO_HOST != '' }}
+ 
+       - name: NAP modules
+         id: nap_modules
+@@ -168,13 +194,30 @@ jobs:
+         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+         with:
+           platforms: arm64
++          image: "${{ vars.DOCKER_REGISTRY || 'docker.io' }}/tonistiigi/binfmt:latest"
++        if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
++
++      - name: Export runner proxy settings
++        run: |
++          {
++            echo "HTTP_PROXY=${HTTP_PROXY:-${http_proxy:-}}"
++            echo "HTTPS_PROXY=${HTTPS_PROXY:-${https_proxy:-}}"
++            echo "NO_PROXY=${NO_PROXY:-${no_proxy:-}}"
++          } >> "$GITHUB_ENV"
+         if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
+ 
+       - name: Docker Buildx
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
++        with:
++          driver-opts: |
++            env.http_proxy=${{ env.HTTP_PROXY }}
++            env.https_proxy=${{ env.HTTPS_PROXY }}
++            "env.no_proxy=${{ env.NO_PROXY }}"
++            image=${{ vars.DOCKER_REGISTRY || 'docker.io' }}/moby/buildkit:buildx-stable-1
+         if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
+ 
+       - name: Build Base Container
++        id: build-base
+         uses: ./.github/actions/build-push-retry
+         with:
+           file: build/Dockerfile
+@@ -187,17 +230,43 @@ jobs:
+           push: true
+           no-cache: true
+           build-args: |
++            HTTP_PROXY=${{ env.HTTP_PROXY }}
++            HTTPS_PROXY=${{ env.HTTPS_PROXY }}
++            NO_PROXY=${{ env.NO_PROXY }}
++            http_proxy=${{ env.HTTP_PROXY }}
++            https_proxy=${{ env.HTTPS_PROXY }}
++            no_proxy=${{ env.NO_PROXY }}
++            DOCKER_REGISTRY=${{ vars.DOCKER_REGISTRY || 'docker.io' }}
++            BUILDKIT_SYNTAX=${{ env.BUILDKIT_SYNTAX }}
++            GHCR_REGISTRY=${{ vars.GHCR_REGISTRY || 'ghcr.io' }}
++            F5_REPO_HOST=${{ vars.F5_REPO_HOST }}
++            F5_ALPINE_REPO=${{ vars.F5_ALPINE_REPO }}
++            F5_DEBIAN_REPO=${{ vars.F5_DEBIAN_REPO }}
++            F5_DEBIAN_SECURITY_REPO=${{ vars.F5_DEBIAN_SECURITY_REPO }}
++            F5_UBI_REPO=${{ vars.F5_UBI_REPO }}
++            F5_EPEL_REPO=${{ vars.F5_EPEL_REPO }}
++            F5_FEDORA_REPO=${{ vars.F5_FEDORA_REPO }}
+             BUILD_OS=${{ inputs.build-os }}
+             PLUS_PACKAGE_REPO=${{ inputs.pkg-src-plus }}
+             WAF_PACKAGE_REPO=${{ inputs.pkg-src-waf }}
+             DOS_PACKAGE_REPO=${{ inputs.pkg-src-dos }}
+             IC_VERSION=${{ inputs.ic-version && inputs.ic-version || steps.meta.outputs.version }}
+             ${{ inputs.nap-modules != '' && format('NAP_MODULES={0}', steps.nap_modules.outputs.name) || '' }}
++          secret-envs: |
++            ${{ inputs.authenticated && vars.F5_REPO_HOST != '' && 'f5-repo-us
+```
+
+**File**: `.github/workflows/release-prep-lts.yml` (modified, +1/-1)
+```diff
+@@ -116,7 +116,7 @@ jobs:
+       tag: ${{ needs.variables.outputs.source_tag }}
+       go-md5: ${{ needs.variables.outputs.go_code_md5 }}
+       docker-md5: ${{ needs.variables.outputs.docker_md5 }}
+-      runner: "aw-ubuntu-24.04-amd64"
++      runner: ${{ vars.RELEASE_RUNNER || 'aw-ubuntu-24.04-amd64' }}
+       write-to-cache: true
+       read-from-cache: false
+     secrets: inherit
+```
+
+**File**: `.github/workflows/release-prep.yml` (modified, +1/-1)
+```diff
+@@ -123,7 +123,7 @@ jobs:
+       tag: ${{ needs.variables.outputs.source_tag }}
+       go-md5: ${{ needs.variables.outputs.go_code_md5 }}
+       docker-md5: ${{ needs.variables.outputs.docker_md5 }}
+-      runner: "aw-ubuntu-24.04-amd64"
++      runner: ${{ vars.RELEASE_RUNNER || 'aw-ubuntu-24.04-amd64' }}
+       write-to-cache: true
+       read-from-cache: false
+     secrets: inherit
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11526** (2026-11-24): Update branch for 5.8.1 (#11475) (@vepatel)
-- **PR #11518** (2026-11-23): Fix NKP catalogue publishing (@vepatel)
-- **PR #11516** (2026-11-24): Add types to issue template (@danielnginx)
-- **PR #11515** (closed): Update issue types on templates (@danielnginx)
-- **PR #11514** (2026-11-23): sync: security hardening and minor bug fixes for release-5.8 (@nic-create-pr[bot])
-- **PR #11513** (2026-11-23): Update WAF and nginx for main (@nic-create-pr[bot])
+- **PR #11537** (2026-11-25): [ci]: 5.3-release-5.8: adopt composite actions in release, image-promotion and cve-publish workflows (@javorszky)
+- **PR #11536** (2026-11-25): [ci]: 5.3-lts: adopt composite actions in release, image-promotion and cve-publish workflows- #11535 (@javorszky)
+- **PR #11535** (2026-11-25): [ci]: 5.3: adopt composite actions in release, image-promotion and cve-publish workflows (@javorszky)
+- **PR #11533** (2026-11-25): Add nginx.org/policies and nginx.com/policies (@nic-create-pr[bot])
+- **PR #11531** (2026-11-25): [ci]: 5.1/5.2: enable ci.yml and cve-publish.yml in the internal repo (@javorszky)
+- **PR #11530** (2026-11-25): [ci]: 5.1/5.2 release-5.8: enable ci.yml and cve-publish.yml in the internal repo (@javorszky)
 
 ---
 
@@ -1676,21 +1927,22 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update branch for 5.8.1
+## X. Route release image builds through the proxy runner & F5 registry
 
 **RULE**:
-When implementing operations in `.github/ISSUE_TEMPLATE/BUG-REPORT.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actionlint.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a60c25c3`: Update branch for 5.8.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f46a26c`: Route release image builds through the proxy runner & F5 registry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/BUG-REPORT.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actionlint.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        - 5.8.1
+    - proxy-ubuntu-24.04-amd64
+    - proxy-ubuntu-26.04-amd64
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1700,7 +1952,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a60c25c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f46a26c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
