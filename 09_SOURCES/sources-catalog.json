@@ -155,8 +155,8 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "e074e4a0a758a9aa01bff6798c44220d4e0049cf0235c931ea0fe44f3b4a0fc3",
-    "lastHarvestedAt": "2026-11-22T16:57:22.511Z",
+    "contentHash": "0c177cc789d267f459fd34251752ed2d5334477bcd5a6e9d842d8ad2d6da5727",
+    "lastHarvestedAt": "2026-11-26T09:52:50.308Z",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2"
   },
   "hf-baai-bge-small-en-v1.5": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "7ceeba65",
+    "sourceVersion": "1a8626d5",
     "license": "Apache-2.0",
-    "contentHash": "525933856b8125c59ef8d717fe85bb315470d460ca4acfb03109fc775bbf8215",
-    "lastHarvestedAt": "2026-11-25T09:25:00.839Z",
+    "contentHash": "d53cf75c3b054e431837807473e506a018870bc2f681cfcb2f18f2a226e9a9f4",
+    "lastHarvestedAt": "2026-11-26T09:48:00.091Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "d3588a3c",
+    "sourceVersion": "e13b16bc",
     "license": "NOASSERTION",
-    "contentHash": "3375aaa9c1bc9a4d330c29ba31a3d3bb7388aca3c58344934278f1140d628f5e",
-    "lastHarvestedAt": "2026-11-25T02:38:39.998Z",
+    "contentHash": "df77688a8b7ef0140278d69c2920069814663cee982fadc8ebe4e622058d71c1",
+    "lastHarvestedAt": "2026-11-26T09:47:53.835Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "a389daa1",
+    "sourceVersion": "31093800",
     "license": "GPL-3.0",
-    "contentHash": "d71906c581f3f27c02df7663108e0526c838f19b8fc09910a35932bee48377f3",
-    "lastHarvestedAt": "2026-11-23T23:31:31.655Z",
+    "contentHash": "4d93c3df5990a65eb3484c66425b2730e78a89fde3fa30fdc0ce79d3cf159524",
+    "lastHarvestedAt": "2026-11-26T09:47:57.842Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {

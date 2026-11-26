@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T09:37:46.190Z",
-  "total_cycles_completed": 12642,
-  "total_learnings_persisted": 12642,
-  "total_rules_promoted": 11537,
+  "last_updated": "2026-11-26T09:52:50.315Z",
+  "total_cycles_completed": 12646,
+  "total_learnings_persisted": 12646,
+  "total_rules_promoted": 11540,
   "history": [
-    {
-      "timestamp": "2026-11-25T14:32:16.967Z",
-      "repository": "burner22/numbat",
-      "learningId": "learn-huggingface-burner22-numbat",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T14:32:27.018Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T14:41:40.942Z",
-      "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T14:41:43.663Z",
-      "repository": "pimalaya/himalaya",
-      "learningId": "learn-github-pimalaya-himalaya",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T14:50:12.376Z",
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
@@ -1403,6 +1375,34 @@
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T09:47:53.851Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T09:47:57.858Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T09:48:00.108Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T09:52:50.315Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

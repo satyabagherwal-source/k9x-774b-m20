@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T09:37:51.504Z",
+  "updated_at": "2026-11-26T09:52:56.081Z",
   "stats": {
-    "total_discovered": 9724,
-    "approved_pending_harvest": 9224,
+    "total_discovered": 9725,
+    "approved_pending_harvest": 9225,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9211,
+      "COMMUNITY_AND_EXPERT": 9212,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210455,6 +210455,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
         "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-AC3200C0894A": {
+      "id": "SRC-AC3200C0894A",
+      "url": "https://github.com/user-attachments/files/35434180/typewhisper-diagnostics-2026-11-25T21-05-46Z.json",
+      "title": "https://github.com/user-attachments/files/35434180/typewhisper-diagnostics-2026-11-25T21-05-46Z.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T09:52:56.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
+        "fileName": "typewhisper-typewhisper-mac-learnings.md"
       }
     }
   }

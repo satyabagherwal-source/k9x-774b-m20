@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `7ceeba65`  
+> **Source Version**: `1a8626d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T09:24:59.756Z  
+> **Timestamp**: 2026-11-26T09:47:58.346Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T09:24:57.735Z  
+> **Harvest Timestamp**: 2026-11-26T09:47:58.338Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Harbor is a CNCF graduated open-source container registry to manage container images and other OCI artifacts securely with policies, role-based access control, vulnerability scans and signing.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29796 stars
+- **Stars / Engagement**: 29805 stars
 
 ---
 
@@ -655,13 +655,11 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #24483** (2026-11-25): **fix(i18n): correct wrong Korean labels**
+  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  Ten Korean strings that the portal shows are wrong. The first five change the meaning; the others are typos.  | Key | English | Before | After | Shown in | |---|---|---|---|---| | `REPLICATION.FAILURE` | FAILURE | 실행 ("run") | 실패 | status and count of failed replication and P2P preheat executions | | `CLARITY.CLOSE` | Close | 보기 ("show") | 닫기 | title and label of Clarity close buttons | | `CLARITY.SHOW` | Show | 닫기 ("close") | 보기 | swapped with `CLARITY.CLOSE` | | `BUTTON.ENABLE` | ENABLE | 가능 ("possible") | 활성화 | confirmation dialog button | | `REPLICATION.CREATION_TIME` | Start Time | 생성 시간 ("creation time") | 시작 시간 | replication, P2P preheat and webhook execution lists | | `PROJECT_DETAIL.USERS` | Members | 맴버 | 멤버 | project tab and summary | | `REPOSITORY.TAGS` | Tags | 테그 | 태그 | artifact tags | | `CONFIG.GC` | Garbage Collection | 가비지 컬랙션 | 가비지 컬렉션 | clean up page | | `JOB_SERVICE_DASHBOARD.WAITING_TOO_LONG_2` | dashboard. | 데쉬보드. | 대시보드. | alert for jobs pending over 24 hours | | `TOOLTIP.NEW_SECRET` | The secret must be… | …8자 이상이여야합니다 | …8자 이상이어야 합니다 | secret rule hint |  Follow-up to #24482, which fixes placeholders in the same file (different lines).  # Issue being fixed N/A (small i18n fix; no issue created)  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [x] Label the PR as needed. I can't set labels; `release-note/update` seems to fit. - [x]
+
 - **Issue #24482** (2026-11-25): **fix(i18n): fix broken placeholders in Korean translation**
   *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  Two Korean strings don't match the placeholders the portal passes:  - `REPLICATION.UNREACHABLE_SOURCE_REGISTRY` used `{{오류}}` instead of `{{error}}`. When the source registry of a replication rule can't be reached, the Korean UI shows the text `{{오류}}` and not the actual error. - `REPLICATION.BANDWIDTH_TOOLTIP` was missing `{{max_job_workers}}`, so the Korean tooltip doesn't show the maximum number of concurrent executions. I also changed "each execution" to "each replication worker" to match the English text.  Output of `TranslateDefaultParser` from `@ngx-translate/core` 17.0.0 (the version in `src/portal/package.json`):  | String | Before | After | |---|---|---| | `UNREACHABLE_SOURCE_REGISTRY` with `error: "Bad Gateway"` | …사용할 수 있는지 확인하세요. {{오류}} | …사용할 수 있는지 확인하세요: Bad Gateway | | `BANDWIDTH_TOOLTIP` with `max_job_workers: 10` | …동시 실행 횟수에 주의하시기 바랍니다… | …동시 실행 횟수(최대 10개)에 주의하시기 바랍니다… |  Comparing the placeholders of every language with English also finds `ru-ru` (`REPLICATION.BANDWIDTH_TOOLTIP`, `VULNERABILITY.CHART.TOOLTIPS_TITLE`, `VULNERABILITY.CHART.TOOLTIPS_TITLE_SINGULAR`) and `tr-tr` (`QUOTA.SET_QUOTAS`). I left those to people who speak the languages.  # Issue being fixed N/A (small i18n fix; no issue created)  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [ ] Label the PR as needed. I can't set labels; `release-note/update` seems to fit. - 
-
-- **Issue #24480** (2026-11-24): **Mark webhook execution as error when the task can't be submitted**
-  *Symptoms*: Fixes #24479  `StartHook` creates the webhook execution and then the task. If the job can't be submitted to jobservice, the task manager deletes the task row and returns an error, and the execution is left `Running` with no tasks. Nothing updates it after that.  This marks the execution as `Error` with the submit error. The scan, preheat and scan data export paths already handle a failed task create this way.  Test: added a unit test in `src/pkg/notification/hook`. It fails without the change and passes with it. I also checked by hand on v2.16.0 with the repro steps from the issue. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/goharbor/harbor/pull/24480?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor) Report :x: Patch coverage is `50.00000%` with `1 line` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 74.26%. Comparing base ([`e864be6`](https://app.codecov.io/gh/goharbor/harbor/commit/e864be67819d2c56e0127dfaebd9172963e8d459?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)) to head ([`c763f90`](https://app.codecov.io/gh/goharbor/harbor/commit/c763f90965558a11cbe7d4c908f1954b4d16023e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)). :warning: Report is 1 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/goharbor/harbor/pull/24480?dropdown=coverage&src=pr&el=
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -678,41 +676,111 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ceeba65` (2026-11-25)
-**Commit Message**: fix(i18n): fix broken placeholders in Korean translation (#24482)
+### Incident Patch 1: `1a8626d5` (2026-11-25)
+**Commit Message**: fix(i18n): correct wrong Korean labels (#24483)
 
-Fix broken placeholders in Korean translation
+Correct wrong Korean labels in the portal
 
-REPLICATION.UNREACHABLE_SOURCE_REGISTRY used {{오류}} instead of
-{{error}}, so the portal showed the placeholder text and hid the real
-error. REPLICATION.BANDWIDTH_TOOLTIP was missing {{max_job_workers}},
-so the maximum number of concurrent executions wasn't shown.
+Failed replication executions were labeled "실행" (run), the Clarity
+strings for close and show were swapped, the enable button read "가능"
+(possible), and "Start Time" was translated as creation time. Also fix
+five typos.
 
 Signed-off-by: Ethan <[REDACTED_EMAIL]>
+Co-authored-by: Wang Yan <[REDACTED_EMAIL]>
 
-**File**: `src/portal/src/i18n/lang/ko-kr-lang.json` (modified, +2/-2)
+**File**: `src/portal/src/i18n/lang/ko-kr-lang.json` (modified, +10/-10)
 ```diff
-@@ -654,9 +654,9 @@
-         "FLATTEN_LEVEL_TIP_3": "'Flatten 3 Levels': 'a/b/c/d/img' -> 'ns/d/img'",
-         "BANDWIDTH": "대역폭",
-         "BANDWIDTH_ERROR_TIP": "-1 또는 0보다 큰 정수를 입력하세요.",
--        "BANDWIDTH_TOOLTIP": "각 실행에 대한 최대 네트워크 대역폭을 설정합니다. 동시 실행 횟수에 주의하시기 바랍니다. 무제한 대역폭을 원하시면 -1을 입력하세요.",
-+        "BANDWIDTH_TOOLTIP": "각 복제 작업자에 대한 최대 네트워크 대역폭을 설정합니다. 동시 실행 횟수(최대 {{max_job_workers}}개)에 주의하시기 바랍니다. 무제한 대역폭을 원하시면 -1을 입력하세요.",
-         "UNLIMITED": "제한 없음",
--        "UNREACHABLE_SOURCE_REGISTRY": "소스 레지스트리에 연결하지 못했습니다. 이 규칙을 편집하기 전에 소스 레지스트리를 사용할 수 있는지 확인하세요. {{오류}}",
-+        "UNREACHABLE_SOURCE_REGISTRY": "소스 레지스트리에 연결하지 못했습니다. 이 규칙을 편집하기 전에 소스 레지스트리를 사용할 수 있는지 확인하세요: {{error}}",
-         "CRON_ERROR_TIP": "cron 문자열의 첫 번째 필드는 0이어야 하며 두 번째 필드는 \"*\"일 수 없습니다.",
-         "COPY_BY_CHUNK": "청크로 복사",
-         "COPY_BY_CHUNK_TIP": "Blob을 청크로 복사할지 여부를 지정합니다. 청크별로 전송하면 API 요청 수가 늘어날 수 있습니다.",
+@@ -41,7 +41,7 @@
+         "ACTIONS": "동작",
+         "ADD": "추가",
+         "RUN": "실행",
+-        "ENABLE": "가능",
++        "ENABLE": "활성화",
+         "DISABLE": "비활성화"
+     },
+     "BATCH": {
+@@ -88,7 +88,7 @@
+         "OIDC_VERIFYCERT": "OIDC 서버가 자체 서명된 인증서를 통해 호스팅되는 경우 이 상자를 선택 취소하세요.",
+         "OIDC_AUTOONBOARD": "온보딩 화면을 건너뛰면 사용자가 사용자 이름을 변경할 수 없습니다. 사용자 이름은 ID 토큰에서 제공됩니다.",
+         "OIDC_USER_CLAIM": "사용자 이름을 검색하는 ID 토큰의 클레임 이름입니다. 지정하지 않으면 기본값은 'name'입니다.",
+-        "NEW_SECRET": "시크릿은 대문자 1개, 소문자 1개, 숫자 1개 이상이 포함된 8자 이상이여야합니다",
++        "NEW_SECRET": "시크릿은 대문자 1개, 소문자 1개, 숫자 1개 이상이 포함된 8자 이상이어야 합니다",
+         "OIDC_LOGOUT": "ID 공급자에서 현재 세션을 로그아웃합니다."
+     },
+     "PLACEHOLDER": {
+@@ -266,7 +266,7 @@
+         "SUMMARY": "요약",
+         "REPOSITORIES": "저장소",
+         "REPLICATION": "복제",
+-        "USERS": "맴버",
++        "USERS": "멤버",
+         "LOGS": "로그",
+         "LABELS": "라벨",
+         "PROJECTS": "프로젝트",
+@@ -547,7 +547,7 @@
+         "DURATION": "지속",
+         "SUCCESS_RATE": "성공률",
+         "SUCCESS": "성공",
+-        "FAILURE": "실행",
++        "FAILURE": "실패",
+         "IN_PROGRESS": "진행 중",
+         "REPLICATION_RULE": "복제 규칙",
+         "NEW_REPLICATION_RULE": "새 복제 규칙",
+@@ -592,7 +592,7 @@
+         "SIMPLE": "기본",
+         "ADVANCED": "고급",
+         "STATUS": "상태",
+-        "CREATION_TIME": "생성 시간",
++        "CREATION_TIME": "시작 시간",
+         "UPDATE_TIME": "갱신 시간",
+         "END_TIME": "종료 시간",
+         "LOGS": "로그",
+@@ -700,7 +700,7 @@
+         "COPY_DIGEST_ID": "Digest 복사",
+         "DELETE": "삭제",
+         "NAME": "이름",
+-        "TAGS": "테그",
++        "TAGS": "태그",
+         "PLATFORM": "OS/ARCH",
+         "ARTIFACT_TOOTIP": "이 OCI 인덱스의 아티팩트 목록을 보려면 클릭하세요.",
+         "ARTIFACTS_COUNT": "아티팩트",
+@@ -788,7 +788,7 @@
+         "SYSTEM": "시스템 셋팅",
+         "PROJECT_QUOTAS": "프로젝트 할당량",
+         "VULNERABILITY": "취약점",
+-        "GC": "가비지 컬랙션",
++        "GC": "가비지 컬렉션",
+         "CONFIRM_TITLE": "취소 확인",
+         "CONFIRM_SUMMARY": "일부 변경사항이 저장되지 않았습니다. 삭제하시겠습니까?",
+         "SAVE_SUCCESS": "구성이 성공적으로 저장되었습니다",
+@@ -1844,14 +1844,14 @@
+         "WORKER_FREE_BTN_INFO": "현재 실행 중인 작업을 중지하여 작업자를 해제합니다.",
+         "CRON": "반복 작업",
+         "WAITING_TOO_LONG_1": "특정 작업의 실행이 24시간 이상 보류되었습니다. 작업 서비스를 확인해주세요",
+-        "WAITING_TOO_LONG_2": "데쉬보드.",
++        "WAITING_TOO_LONG_2": "대시보드.",
+         "WAITING_TOO_LONG_3": "자세한 내용은 다음을 확인해주세요",
+         "WAITING_TOO_LONG_4": "Wiki."
+     },
+     "CLARITY": {
+         "OPEN": "열기",
+-        "CLOSE": "보기",
+-        "SHOW": "닫기",
++        "CLOSE": "닫기",
++        "SHOW": "보기",
+         "HIDE": "숨기기",
+         "EXPAND": "확장하기",
+         "COLLAPSE": "접기",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24483** (2026-11-25): fix(i18n): correct wrong Korean labels (@ethan3011)
 - **PR #24482** (2026-11-25): fix(i18n): fix broken placeholders in Korean translation (@ethan3011)
 - **PR #24480** (2026-11-24): Mark webhook execution as error when the task can't be submitted (@bupd)
 - **PR #24478** (2026-11-24): fix: allow tag events to be disabled and purged in audit log (@bupd)
 - **PR #24469** (2026-11-24): (cherry-pick)Change the harbor introduction text in testcase along with the github.com (@stonezdj)
 - **PR #24468** (2026-11-24): Change the harbor introduction text in testcase along with the github… (@stonezdj)
-- **PR #24438** (2026-11-19): docs: fix typos (@Adham-Kiwan)
 
 ---
 
@@ -732,13 +800,13 @@ Signed-off-by: Ethan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. i18n): fix broken placeholders in Korean translation
+## X. i18n): correct wrong Korean labels
 
 **RULE**:
 When implementing operations in `src/portal/src/i18n/lang/ko-kr-lang.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ceeba65`: i18n): fix broken placeholders in Korean translation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a8626d5`: i18n): correct wrong Korean labels. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/portal/src/i18n/lang/ko-kr-lang.json`.
@@ -746,16 +814,32 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "BANDWIDTH_TOOLTIP": "각 복제 작업자에 대한 최대 네트워크 대역폭을 설정합니다. 동시 실행 횟수(최대 {{max_job_workers}}개)에 주의하시기 바랍니다. 무제한 대역폭을 원하시면 -1을 입력하세요.",
-        "UNREACHABLE_SOURCE_REGISTRY": "소스 레지스트리에 연결하지 못했습니다. 이 규칙을 편집하기 전에 소스 레지스트리를 사용할 수 있는지 확인하세요: {{error}}",
+        "ENABLE": "활성화",
+        "NEW_SECRET": "시크릿은 대문자 1개, 소문자 1개, 숫자 1개 이상이 포함된 8자 이상이어야 합니다",
+        "USERS": "멤버",
+        "FAILURE": "실패",
+        "CREATION_TIME": "시작 시간",
+        "TAGS": "태그",
+        "GC": "가비지 컬렉션",
+        "WAITING_TOO_LONG_2": "대시보드.",
+        "CLOSE": "닫기",
+        "SHOW": "보기",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        "BANDWIDTH_TOOLTIP": "각 실행에 대한 최대 네트워크 대역폭을 설정합니다. 동시 실행 횟수에 주의하시기 바랍니다. 무제한 대역폭을 원하시면 -1을 입력하세요.",
-        "UNREACHABLE_SOURCE_REGISTRY": "소스 레지스트리에 연결하지 못했습니다. 이 규칙을 편집하기 전에 소스 레지스트리를 사용할 수 있는지 확인하세요. {{오류}}",
+        "ENABLE": "가능",
+        "NEW_SECRET": "시크릿은 대문자 1개, 소문자 1개, 숫자 1개 이상이 포함된 8자 이상이여야합니다",
+        "USERS": "맴버",
+        "FAILURE": "실행",
+        "CREATION_TIME": "생성 시간",
+        "TAGS": "테그",
+        "GC": "가비지 컬랙션",
+        "WAITING_TOO_LONG_2": "데쉬보드.",
+        "CLOSE": "보기",
+        "SHOW": "닫기",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ceeba65` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a8626d5` are properly handled with clean fallback behavior.

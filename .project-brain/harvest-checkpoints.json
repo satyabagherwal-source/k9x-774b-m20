@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T09:37:46.197Z",
+  "last_updated": "2026-11-26T09:52:50.320Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -96,14 +96,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "e074e4a0a758a9aa01bff6798c44220d4e0049cf0235c931ea0fe44f3b4a0fc3",
-      "verified_at": "2026-11-22T16:57:22.520Z",
+      "content_hash": "0c177cc789d267f459fd34251752ed2d5334477bcd5a6e9d842d8ad2d6da5727",
+      "verified_at": "2026-11-26T09:52:50.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:57:22.520Z"
+      "last_updated": "2026-11-26T09:52:50.319Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "525933856b8125c59ef8d717fe85bb315470d460ca4acfb03109fc775bbf8215",
-      "verified_at": "2026-11-25T09:25:00.858Z",
+      "content_hash": "d53cf75c3b054e431837807473e506a018870bc2f681cfcb2f18f2a226e9a9f4",
+      "verified_at": "2026-11-26T09:48:00.120Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T09:25:00.858Z"
+      "last_updated": "2026-11-26T09:48:00.120Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "3375aaa9c1bc9a4d330c29ba31a3d3bb7388aca3c58344934278f1140d628f5e",
-      "verified_at": "2026-11-25T02:38:40.015Z",
+      "content_hash": "df77688a8b7ef0140278d69c2920069814663cee982fadc8ebe4e622058d71c1",
+      "verified_at": "2026-11-26T09:47:53.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:38:40.015Z"
+      "last_updated": "2026-11-26T09:47:53.862Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
@@ -15201,14 +15201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
-      "content_hash": "d71906c581f3f27c02df7663108e0526c838f19b8fc09910a35932bee48377f3",
-      "verified_at": "2026-11-23T23:31:31.663Z",
+      "content_hash": "4d93c3df5990a65eb3484c66425b2730e78a89fde3fa30fdc0ce79d3cf159524",
+      "verified_at": "2026-11-26T09:47:57.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:31:31.663Z"
+      "last_updated": "2026-11-26T09:47:57.862Z"
     },
     "vitest-dev/vitest": {
       "repository": "vitest-dev/vitest",

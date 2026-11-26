@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T09:37:53.562Z",
+  "last_updated": "2026-11-26T09:52:57.470Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -78,9 +78,9 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-25T02:39:19.304Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-26T09:52:53.704Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "hf-webai-official-twil-8b-learnings.md": {
       "processed_at": "2026-11-26T00:46:45.584Z",
@@ -1733,7 +1733,7 @@
       "staged_for_review": 0
     },
     "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md": {
-      "processed_at": "2026-11-22T16:57:44.280Z",
+      "processed_at": "2026-11-26T09:52:55.326Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -1813,7 +1813,7 @@
       "staged_for_review": 0
     },
     "typewhisper-typewhisper-mac-learnings.md": {
-      "processed_at": "2026-11-23T23:31:41.641Z",
+      "processed_at": "2026-11-26T09:52:55.968Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3963,7 +3963,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4464,
+  "total_dossiers_evaluated": 4467,
   "total_canonical_promoted": 558,
-  "total_staged_for_review": 3377
+  "total_staged_for_review": 3379
 }

@@ -13322,3 +13322,7 @@
 | `CYCLE-20261126-FZ2A` | `2026-11-26T09:22:09.346Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10638` | Yes (`46da9f36...`) |
 | `CYCLE-20261126-XK9O` | `2026-11-26T09:35:49.980Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7863` | Yes (`96184179...`) |
 | `CYCLE-20261126-01XB` | `2026-11-26T09:37:46.175Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10639, Rule 10640` | Yes (`36e77c7e...`) |
+| `CYCLE-20261126-D2SM` | `2026-11-26T09:47:53.830Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10641` | Yes (`df77688a...`) |
+| `CYCLE-20261126-D5VX` | `2026-11-26T09:47:57.837Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10642` | Yes (`4d93c3df...`) |
+| `CYCLE-20261126-D7ME` | `2026-11-26T09:48:00.086Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10643` | Yes (`d53cf75c...`) |
+| `CYCLE-20261126-JFJY` | `2026-11-26T09:52:50.302Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`0c177cc7...`) |

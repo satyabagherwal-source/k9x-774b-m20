@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T23:31:41.833Z",
+  "timestamp": "2026-11-26T09:52:56.266Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-typewhisper-typewhisper-mac-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [typewhisper-typewhisper-mac-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T23:31:41.833Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T09:52:56.266Z`  
 > **Learning ID**: `LEARN-EVO-typewhisper-typewhisper-mac-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source**: github ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
-> **Source Version**: `a389daa1`  
+> **Source Version**: `31093800`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T23:31:30.590Z  
+> **Timestamp**: 2026-11-26T09:47:56.237Z  
 > **Learning ID**: `learn-github-typewhisper-typewhisper-mac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:31:30.585Z  
+> **Harvest Timestamp**: 2026-11-26T09:47:56.229Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Local speech-to-text for macOS  on-device AI, fully private, optional cloud
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1943 stars
+- **Stars / Engagement**: 1940 stars
 
 ---
 
@@ -1929,11 +1929,11 @@ final class ExampleWebhookS
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1966** (2026-11-19): **Speaker diarization detects only one speaker in two-person conversations**
-  *Symptoms*: ### Platform  macOS  ### Description  TypeWhisper for macOS detects only one speaker in every two-person recording I’ve tried. Both voices are clearly audible, and both people actively take turns speaking throughout the conversation. The transcript still shows a single speaker label.  ### Steps to Reproduce  1. Open TypeWhisper on macOS. 2. Import an audio recording of a conversation in which two clearly audible speakers take turns throughout. 3. Transcribe the recording with speaker detection enabled. 4. Check the speaker labels in the transcript. Only one speaker is shown. 5. Repeat with another two-person recording. The same issue occurs.  ### Expected Behavior  TypeWhisper should detect both speakers and assign each spoken segment to the correct speaker, using two distinct labels throughout the transcript.  ### OS Version  _No response_  ### TypeWhisper Version  1.8.3  ### Diagnostics / Logs  ```shell  ```
+- **Issue #2032** (2026-11-25): **Safari does not appear in the app picker (Terminal Apps selection)**
+  *Symptoms*: ### Platform  macOS  ### Description  **Environment** - TypeWhisper 1.9.0 daily build (v1.9.0-daily.20261125), direct download - macOS 27.2.1 (26B131), MacBook Air (Apple silicon)  **Context** Related to #2031. To silence the false "No text field detected" warning in Safari, I wanted to add Safari to Settings > Dictation > Terminal Apps, as suggested by the setting's own description.  **Problem** In the "Select Apps…" picker, Safari does not appear at all — searching for "Safari" returns nothing. Other browsers (e.g. Chrome) and other apps are listed normally. Safari seems to be the only app missing, which makes the Terminal Apps workaround unreachable for the one app I need it for.  **Suspected cause** The picker appears to scan only the top level of /Applications, ~/Applications and /System/Applications. On recent macOS versions, Safari is delivered on the system cryptex volume and is not enumerated there as a regular app bundle.  **Workaround that works** Quit TypeWhisper, then run in Terminal: defaults write com.typewhisper.mac terminalAppBundleIdentifiers -array-add com.apple.Safari After relaunching TypeWhisper, Safari appears in the Terminal Apps list and dictations into Safari no longer show the warning.  ### Steps to Reproduce  1. Open Settings > Dictation > Terminal Apps. 2. Click “Select Apps…”. 3. Search for “Safari”.  ### Expected Behavior  Safari should be selectable in the app picker like any other installed app — or the picker should offer a way to add an app 
 
-- **Issue #1898** (2026-11-11): **Diarization seems to be enabled while using Dictation which causes extra usage**
-  *Symptoms*: ### Platform  macOS  ### Description  When using Reson8 with the option speaker diarization ON in the plugin diarization is also used when dictating which seems unnecessary since it's causes extra usage and cost. (visible on the usage page of reson8).   I didn't check to see if it's a general behavior or reson8 specific.    ### Steps to Reproduce  Enable speaker diarization in the Reson8 plugin and start dictating (using Rumble).  ### Expected Behavior  Not using diarization while dictating only when transcribing a recording (with multiple speakers)  ### OS Version  _No response_  ### TypeWhisper Version  v1.8.2-daily.20261110  ### Diagnostics / Logs  ```shell  ```
+- **Issue #2031** (2026-11-25): **False "No text field detected" error in Safari although text is inserted correctly**
+  *Symptoms*: ### Platform  macOS  ### Description  **Environment** - TypeWhisper 1.8.3 (build 1628), direct download - macOS 27.2.1 (26B131), MacBook Air (Apple silicon) - Engine: Apple Speech, model speechanalyzer-fr_FR - Accessibility and Microphone permissions: granted  **Actual result** The transcription is pasted into the field correctly, but the indicator shows "No text field detected" and the error is logged (category: insertion). The diagnostics export contains 200 error entries, all of them this single message, sometimes several per dictation.  **Notes** The same dictation into TextEdit produces no error, and dictating into the same web pages in Chrome produces no error either. The problem seems specific to how the focused field / its change is reported by Safari web content: the paste succeeds, but the verification step finds no text field.  [typewhisper-diagnostics-2026-11-25T21-05-46Z.json](https://github.com/user-attachments/files/35434180/typewhisper-diagnostics-2026-11-25T21-05-46Z.json)  ### Steps to Reproduce  1. Focus a text field in a web page in Safari (e.g. a web chat composer). 2. Dictate with TypeWhisper.  ### Expected Behavior  No error when the text was successfully inserted.  ### OS Version  macOS 27.2.1 (26B131), MacBook Air (Apple silicon)  ### TypeWhisper Version  1.8.3 (build 1628), direct download  ### Diagnostics / Logs  ```shell A diagnostics export (typewhisper-diagnostics-2026-11-25T21-05-46Z.json) is attached below. ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1950,900 +1950,1399 @@ final class ExampleWebhookS
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d733f820` (2026-11-23)
-**Commit Message**: (bug) Stop the Recorder from crashing when an accessibility client reads a failed transcript (#2009)
+### Incident Patch 1: `c636d716` (2026-11-25)
+**Commit Message**: (bug) Fix Chinese number normalization for mixed numerals and spoken tails (#2023)
 
-* (bug) Stop the Recorder from crashing when an accessibility client reads a failed transcript
+* fix: normalize mixed Chinese numerals and spoken tails
 
-A recording whose transcript failed shows its error as selectable text with a VoiceOver label in
-the same modifier chain. Selectable text is backed by an AppKit element, so SwiftUI resolves the
-label through that element, which asks SwiftUI for the label again. When an accessibility client
-such as VoiceOver reads the Recorder page, the recursion overflows the main thread's stack.
+* fix: limit spoken-tail scaling and check overflow in Han number parsing
 
-The label now sits on a plain container around the selectable text, through the new
-selectableTextAccessibilityLabel(_:value:) modifier. The History metadata rows, the managed
-settings list and the vocabulary import sheet had the same pattern and use it too. A test scans
-the app's sources for accessibility modifiers in the modifier chain of selectable text.
+Address CodeRabbit review findings on the mixed-numeral fix:
 
-Fixes #2004
+- Record explicit ASCII zeroes so 1万05 normalizes to 10005 while 1万5
+  keeps the spoken-tail reading 15000.
+- Apply spoken-tail scaling only to a single trailing digit, so
+  multi-digit ASCII tails like 1万2345 keep literal place values.
+- Use checked arithmetic in unit and final accumulation, returning nil
+  on overflow instead of trapping on inputs like 万9223372036854775807.
+- Restrict the approximation-prefix guard to bare unit runs so count
+  labels such as 总数, 人数 and 訂單數 no longer block normalization of
+  digit-led numbers (总数一百 -> 总数100), while genuine approximations
+  (數百, 幾千, 成千上萬) stay unchanged.
 
-* Read selectable text once in VoiceOver and scan multi-line modifiers above it
+* fix: compose ascending large units and protect lexical words at digit boundaries
 
-The container around selectable text now replaces the text for VoiceOver as one static text, so a
-History metadata row or an error line is not read a second time f
+Address the second round of CodeRabbit review findings:
 
-**File**: `TypeWhisper.xcodeproj/project.pbxproj` (modified, +4/-0)
+- Ascending large units now compose multiplicatively, so 1万亿 =
+  1000000000000 instead of 100010000, while descending expressions
+  such as 1亿2万 stay additive.
+- Adjac
+
+**File**: `TypeWhisper/Services/NumberNormalization/ChineseNumberWordParser.swift` (modified, +1/-1)
 ```diff
-@@ -180,6 +180,7 @@
- 		133200000000000000000002 /* SetupWizardEngineRecommendationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133200000000000000000001 /* SetupWizardEngineRecommendationTests.swift */; };
- 		545000000000000000000004 /* SetupWizardTrialSignalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545000000000000000000003 /* SetupWizardTrialSignalTests.swift */; };
- 		AA00000000000000000367 /* AccessibilityPermissionPaneTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000367 /* AccessibilityPermissionPaneTests.swift */; };
-+		AA00000000000000000368 /* SelectableTextAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */; };
- 		91B4D7E2C5A809F1632E4B7E /* StreamingHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B4D7E2C5A809F1632E4B7F /* StreamingHandlerTests.swift */; };
- 		9A584149706C7567496E0100 /* XAIPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A584149706C7567496E0101 /* XAIPluginTests.swift */; };
- 		9A584149706C7567496E0200 /* XAIPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A584149706C7567496E0210 /* XAIPlugin.swift */; };
-@@ -1488,6 +1489,7 @@
- 		133200000000000000000001 /* SetupWizardEngineRecommendationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetupWizardEngineRecommendationTests.swift; sourceTree = "<group>"; };
- 		545000000000000000000003 /* SetupWizardTrialSignalTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetupWizardTrialSignalTests.swift; sourceTree = "<group>"; };
- 		BB00000000000000000367 /* AccessibilityPermissionPaneTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessibilityPermissionPaneTests.swift; sourceTree = "<group>"; };
-+		BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SelectableTextAccessibilityTests.swift; sourceTree = "<group>"; };
- 		D4A100000000000000000004 /* RecorderTranscriptionBufferTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecorderTranscriptionBufferTests.swift; sourceTree = "<group>"; };
- 		91B4D7E2C5A809F1632E4B7F /* StreamingHandlerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StreamingHandlerTests.swift; sourceTree = "<group>"; };
- 		9A584149706C7567496E0101 /* XAIPluginTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = XAIPluginTests.swift; sourceTree = "<group>"; };
-@@ -3580,6 +3582,7 @@
- 				133200000000000000000001 /* SetupWizardEngineRecommendationTests.swift */,
- 				545000000000000000000003 /* SetupWizardTrialSignalTests.swift */,
- 				BB00000000000000000367 /* AccessibilityPermissionPaneTests.swift */,
-+				BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */,
- 				B2D4F6A8C0E2143F9B7D5C1A /* PromptActionTemperaturePersistenceTests.swift */,
- 				FEEDFACE00000000000000B1 /* PromptProcessingModelResolutionTests.swift */,
- 				F41BD305007A3A158038C75C /* ProfileServiceTests.swift */,
-@@ -5768,6 +5771,7 @@
- 				133200000000000000000002 /* SetupWizardEngineRecommendationTests.swift in Sources */,
- 				545000000000000000000004 /* SetupWizardTrialSignalTests.swift in Sources */,
- 				AA00000000000000000367 /* AccessibilityPermissionPaneTests.swift in Sources */,
-+				AA00000000000000000368 /* SelectableTextAccessibilityTests.swift in Sources */,
- 				A1C3E59B7D1042F9A8C6E2B1 /* PromptActionTemperaturePersistenceTests.swift in Sources */,
- 				FEEDFACE00000000000000A1 /* PromptProcessingModelResolutionTests.swift in Sources */,
- 				86F4253D3CDE30E859D0F219 /* ProfileServiceTests.swift in Sources */,
-```
-
-**File**: `TypeWhisper/Views/AppVocabularyImportSheet.swift` (modified, +2/-2)
-```diff
-@@ -83,7 +83,7 @@ struct AppVocabularyImportSheet: View {
-                                     .lineLimit(3)
-                                     .help(row.entry.replacement ?? row.entry.original)
-                                     .textSelection(.enabled)
--                                    .accessibilityLabel(row.entry.replacement ?? String(localized: "None"))
-+                                    .selectableTextAccessibilityLabel(row.entry.replacement ?? String(localized: "None"))
-                             }
-                             TableColumn(String(localized: "Status")) { row in
-                                 Text(status(row.outcome))
-@@ -108,7 +108,7 @@ struct AppVocabularyImportSheet: View {
+@@ -2,6 +2,6 @@ import Foundation
  
-             if let error = model.error {
-                 Text(error).foregroundStyle(.red).textSelection(.enabled)
--                    .accessibilityLabel(String(localized: "Error: \(error)"))
-+                    .selectableTextAccessibilityLabel(String(localized: "Error: \(error)"))
-             }
-             Spacer(minLength: 0)
-             HStack {
-```
-
-**File**: `TypeWhisper/Views/AudioRecorderView.swift` (modified, +1/-1)
-```diff
-@@ -778,7 +778,7 @@ private struct RecordingRow: View {
-                     .foregroundStyle(.red)
-                     .textSelection(.enabled)
-                     .fixedSize(horizontal: false, vertical: true)
--                    .accessibilityLabel(String(localized: "Error: \(failureSummary)"))
-+                    .selectableTextAccessibilityLabel(String(localized: "Error: \(failureSummary)"))
-             }
- 
-             // Expandable transcript
-```
-
-**File**: `TypeWhisper/Views/HistoryRecordViews.swift` (modified, +1/-2)
-```diff
-@@ -608,8 +608,7 @@ struct HistoryRecordDetailView: View {
-                 .accessibilityHidden(true)
-             // Read as one "label, value" pair instead of two unrelated texts.
-             Text(value).textSelection(.enabled)
--                .accessibilityLabel(label)
--                .accessibilityValue(spokenValue ?? value)
-+                .selectableTextAccessibilityLabel(label, value: spokenValue ?? value)
-         }
+ enum ChineseNumberWordParser {
+     static func parse(_ words: [String]) -> NumberWordNormalizer.ParsedWords? {
+-        HanNumberWordParser.parse(words)
++        HanNumberWordParser.parse(words, spokenTailEnabled: true)
      }
- 
-```
-
-**File**: `TypeWhisper/Views/ManagedSettingsView.swift` (modified, +2/-6)
-```diff
-@@ -83,9 +83,7 @@ struct ManagedSettingsSection: View {
-                             Text(row.name)
-                                 .font(.callout.monospaced())
-                                 .textSelection(.enabled)
--                                .accessibilityElement(children: .ignore)
--                                .accessibilityLabel(Self.accessibilityLabel(for: row))
--                                .accessibilityAddTraits(.isStaticText)
-+                                .selectableTextAccessibilityLabel(Self.accessibilityLabel(for: row))
-                             Text(row.scope)
-                                 .accessibilityHidden(true)
-                             Text(row.value)
-@@ -113,9 +111,7 @@ struct ManagedSettingsSection: View {
-                         .font(.caption)
-                         .foregroundStyle(.secondary)
-                         .textSelection(.enabled)
--                        .accessibilityElement(children: .ignore)
--                        .accessibilityLabel(problem)
--                        .accessibilityAddTraits(.isStaticText)
-+                        .selectableTextAccessibilityLabel(problem)
-                     }
-                 }
-             }
-```
-
-**File**: `TypeWhisper/Views/SettingsVisualComponents.swift` (modified, +24/-0)
-```diff
-@@ -200,6 +200,30 @@ extension View {
-     ) -> some View {
-         modifier(KeyboardActivatableCard(cornerRadius: cornerRadius, isEnabled: isEnabled, action: action))
-     }
-+
-+    /// Gives selectable text a VoiceOver label without crashing.
-+    ///
-+    /// `.textSelection(.enabled)` backs the text with an AppKit element. An accessibility modifier
-+    /// in the same chain makes SwiftUI read the label through that element, and the element asks
-+    /// SwiftUI for the label again. When an accessibility client such as VoiceOver reads the text,
-+    /// this repeats until the main thread's stack overflows (#2004). The label therefore sits on a
-+    /// plain container around the text, and the text itself keeps no accessibility modifiers.
-+    /// The container replaces the text for VoiceOver, so the text is read once, as static text.
-+    @ViewBuilder
-+    func selectableTextAccessibilityLabel(_ label: String, value: String? = nil) -> some View {
-+        let container = HStack(spacing: 0) {
-+            self
-+        }
-+        .accessibilityElement(children: .ignore)
-+        .accessibilityAddTraits(.isStaticText)
-+        .accessibilityLabel(label)
-+
-+        if let value {
-+            container.accessibilityValue(value)
-+        } else {
-+            container
-+        }
-+    }
  }
- 
- /// A short, visible confirmation for an action that otherwise changes nothing on
 ```
 
-**File**: `TypeWhisperTests/SelectableTextAccessibilityTests.swift` (added, +139/-0)
+**File**: `TypeWhisper/Services/NumberNormalization/HanNumberWordParser.swift` (modified, +120/-10)
 ```diff
-@@ -0,0 +1,139 @@
-+import Foundation
-+import XCTest
+@@ -17,7 +17,10 @@ enum HanNumberWordParser {
+     private static let decimalMarkers: Set<Character> = ["点", "點"]
+     private static let negativeMarkers: Set<Character> = ["负", "負"]
+ 
+-    static func parse(_ words: [String]) -> NumberWordNormalizer.ParsedWords? {
++    static func parse(
++        _ words: [String],
++        spokenTailEnabled: Bool = false
++    ) -> NumberWordNormalizer.ParsedWords? {
+         guard !words.isEmpty else { return nil }
+ 
+         var consumedWords = 0
+@@ -37,11 +40,11 @@ enum HanNumberWordParser {
+ 
+         let numberText = pieces.joined()
+         guard containsNumberMarker(numberText) else { return nil }
+-        guard let parsed = parseNumberText(numberText) else { return nil }
++        guard let parsed = parseNumberText(numberText, spokenTailEnabled: spokenTailEnabled) else { return nil }
+         return NumberWordNormalizer.ParsedWords(value: parsed, consumedWords: consumedWords, kind: parsed.contains(".") ? .decimal : .number)
+     }
+ 
+-    private static func parseNumberText(_ text: String) -> String? {
++    private static func parseNumberText(_ text: String, spokenTailEnabled: Bool) -> String? {
+         var characters = Array(text)
+         var isNegative = false
+ 
+@@ -52,7 +55,10 @@ enum HanNumberWordParser {
+         }
+ 
+         let parts = splitDecimal(characters)
+-        guard let integer = parseInteger(parts.integer), parts.integerHadNumber else { return nil }
++        guard let integer = parseInteger(parts.integer, spokenTailEnabled: spokenTailEnabled),
++              parts.integerHadNumber else {
++            return nil
++        }
+ 
+         var replacement = "\(integer)"
+         if let decimal = parts.decimal {
+@@ -77,50 +83,154 @@ enum HanNumberWordParser {
+         return (integer, integer.contains(where: isNumericCharacter), decimal)
+     }
+ 
+-    private static func parseInteger(_ characters: [Character]) -> Int? {
++    private static func parseInteger(_ characters: [Character], spokenTailEnabled: Bool) -> Int? {
+         guard !characters.isEmpty else { return nil }
+ 
+         var total = 0
+         var section = 0
+         var number = 0
++        var lastUnit: Int?
++        var lastLargeUnit: Int?
++        var lastUnitHadExplicitZero = false
++        var lastCharacterWasDigit = false
++        var previousCharacterWasASCIIDigit = false
++        // Length of the digit run after the most recent unit. The spoken-tail
++        // reading only exists for a single trailing digit; longer runs such as
++        // the `2345` in `1万2345` or the `05` in `1万05` keep their literal
++        // place values.
++        var trailingDigitCount = 0
+ 
+         for character in characters {
++            if let digit = asciiDigitValue(character) {
++                if previousCharacterWasASCIIDigit {
++                    let (multiplied, multiplyOverflow) = number.multipliedReportingOverflow(by: 10)
++                    guard !multiplyOverflow else { return nil }
++                    let (sum, addOverflow) = multiplied.addingReportingOverflow(digit)
++                    guard !addOverflow else { return nil }
++                    number = sum
++                    trailingDigitCount += 1
++                } else {
++                    number = digit
++                    trailingDigitCount = 1
++                }
++                // No explicit-zero tracking needed here: ASCII zeroes only
++                // appear in multi-digit tails, which trailingDigitCount
++                // already keeps literal (1万05 = 10005).
++                lastCharacterWasDigit = true
++                previousCharacterWasASCIIDigit = true
++                continue
++            }
 +
-+/// `.textSelection(.enabled)` backs a text with an AppKit element. An accessibility label or value
-+/// in the same modifier chain makes SwiftUI resolve the label through that element, which asks
-+/// SwiftUI for it again, so an accessibility client reading the text overflows the main thread's
-+/// stack (#2004, the Recorder's line for a failed transcript). Such text takes its label through
-+/// `selectableTextAccessibilityLabel(_:value:)`, which puts it on a container instead.
-+final class SelectableTextAccessibilityTests: XCTestCase {
-+    private static let forbiddenModifiers = [
-+        ".accessibilityLabel(",
-+        ".accessibilityValue(",
-+        ".accessibilityElement(",
-+        ".accessibilityAddTraits(",
-+        ".accessibilityHint(",
-+        ".accessibilityLabeledPair(",
-+        ".accessibilityRepresentation",
+             if let digit = digitValues[character] {
+                 number = digit
++                if digit == 0 {
++                    lastUnitHadExplicitZero = true
++                }
++                lastCharacterWasDigit = true
++                previousCharacterWasASCIIDigit = false
++                trailingDigitCount += 1
+                 continue
+             }
+ 
+             if let unit = unitValues[character] {
+-                section += (number == 0 ? 1 : number) * unit
++                let magnitude = number == 0 ? 1 : number
++                let (product, multiplyOverflow) = magnitude.multipliedReportingOverflow(by: unit)
++                guard !multiplyOverflow else { return nil }
++                let (sectionSum, addOverflow) = section.addingReportingOverflow(product)
++                guard !addOverflow else { return nil }
++                section = sectionSum
+                 number = 0
++                lastUnit = unit
++                lastUnitHadExplicitZero = false
++                lastCharacterWasDigit = false
++                previousCharacterWasASCIIDigit = false
++                trailingDigitCount = 0
+                 continue
+             }
+ 
+             if let largeUnit = largeUnitValues[character] {
+-                section += number
+-                total += max(section, 1) * largeUnit
++        
+```
+
+**File**: `TypeWhisper/Services/NumberWordNormalizer.swift` (modified, +128/-1)
+```diff
+@@ -8,6 +8,16 @@ enum NumberWordNormalizer {
+     private static let ordinaryWordsByLanguage: [String: Set<String>] = [
+         "pl": ["ten", "one"],
+     ]
++    private static let hanLexicalNumberWords: Set<String> = [
++        "萬能", "万能", "萬一", "万一", "萬分", "万分",
++        "百般", "百姓",
 +    ]
-+
-+    func testSelectableTextKeepsAccessibilityModifiersOffItsModifierChain() throws {
-+        let sourceRoot = repositoryRoot.appendingPathComponent("TypeWhisper")
-+        var findings: [String] = []
-+        var checkedChains = 0
-+
-+        let enumerator = try XCTUnwrap(FileManager.default.enumerator(at: sourceRoot, includingPropertiesForKeys: nil))
-+        for case let url as URL in enumerator where url.pathExtension == "swift" {
-+            let lines = try String(contentsOf: url, encoding: .utf8).components(separatedBy: "\n")
-+            for (index, line) in lines.enumerated() where line.contains(".textSelection(.enabled)") {
-+                checkedChains += 1
-+                for modifier in Self.modifiers(inChainAround: index, of: lines)
-+                where Self.forbiddenModifiers.contains(where: modifier.hasPrefix) {
-+                    findings.append("\(url.lastPathComponent):\(index + 1): \(modifier)")
++    private static let hanApproximationPrefixes: Set<Character> = [
++        "幾", "几", "數", "数", "上", "成",
++    ]
++    private static let hanUnitCharacters: Set<Character> = [
++        "十", "百", "千", "万", "萬", "亿", "億",
++    ]
+     private static let cjkNumberCharacters = Set("零〇一二两兩三四五六七八九十百千万萬亿億点點負负".map { $0 })
+ 
+     static func supports(language: String?) -> Bool {
+@@ -244,6 +254,23 @@ enum NumberWordNormalizer {
+             parsed = wordParser.parse(normalized)
+         } else {
+             let wordTexts = words.map(\.text)
++            if languageCode == "zh" || languageCode == "ja" {
++                if isHanLexicalNumberWord(startingAt: index, text: wordTexts[0], in: tokens) {
++                    return nil
++                }
++                if index > 1,
++                   tokens[index - 1].kind == .other,
++                   tokens[index - 1].text == ".",
++                   tokens[index - 2].kind == .digit {
++                    // A merged numeric run directly preceded by "<digits>."
++                    // belongs to a decimal fraction (1.5万, 2.3亿), not to
++                    // the large unit. The Han parsers cannot represent
++                    // fractional unit scaling yet, so leave the text
++                    // unchanged rather than producing a plausible-looking
++                    // wrong value such as 1.50000元.
++                    return nil
 +                }
 +            }
-+        }
-+
-+        XCTAssertGreaterThan(checkedChains, 0, "The scan found no selectable text; check the source path.")
-+        XCTAssertEqual(findings, [], "Give this text its label with selectableTextAccessibilityLabel(_:value:).")
+             switch languageCode {
+             case "zh":
+                 parsed = ChineseNumberWordParser.parse(wordTexts)
+@@ -306,7 +333,107 @@ enum NumberWordNormalizer {
+             tokens.append(Token(text: current, kind: currentKind))
+         }
+ 
+-        return tokens
++        return mergingAdjacentNumericRuns(tokens)
 +    }
 +
-+    func testChainScanSeesModifiersOnTheSameAndTheFollowingLines() {
-+        let lines = [
-+            "Label(summary, systemImage: \"exclamationmark.triangle.fill\")",
-+            "    .foregroundStyle(.red)",
-+            "    .textSelection(.enabled)",
-+            "    .accessibilityLabel(localizedAppText(",
-+            "        \"Error\",",
-+            "        de: \"Fehler\"",
-+            "    ))",
-+            "    .accessibilityValue(value)",
-+            "Text(error).font(.caption).textSelection(.enabled)",
-+        ]
++    private static func mergingAdjacentNumericRuns(_ tokens: [Token]) -> [Token] {
++        var result: [Token] = []
++        var index = 0
 +
-+        XCTAssertEqual(Self.modifiers(inChainAround: 2, of: lines), [
-+            ".foregroundStyle(.red)",
-+            ".textSelection(.enabled)",
-+            ".accessibilityLabel(localizedAppText(\"Error\",de: \"Fehler\"))",
-+            ".accessibilityValue(value)",
-+        ])
-+        XCTAssertEqual(Self.modifiers(inChainAround: 8, of: lines), [
-+            ".font(.caption)",
-+            ".textSelection(.enabled)",
-+        ])
-+    }
-+
-+    func testChainScanSeesAMultiLineModifierAboveTheSelection() {
-+        let lines = [
-+            "if let failure {",
-+            "    Text(failure)",
-+            "        .accessibilityLabel(localizedAppText(",
-+            "            \"Error\",",
-+            "            de: \"Fehler\"",
-+            "        ))",
-+            "        .font(.caption)",
-+            "        .textSelection(.enabled)",
-+            "}",
-+        ]
-+
-+        XCTAssertEqual(Self.modifiers(inChainAround: 7, of: lines), [
-+            ".accessibilityLabel(localizedAppText(\"Error\",de: \"Fehler\"))",
-+            ".font(.caption)",
-+            ".textSelection(.enabled)",
-+        ])
-+    }
-+
-+    /// The top-level modifiers of the expression that line `index` belongs to. The expression starts
-+    /// at the nearest line above that does not begin with `.` and ends before the first later line
-+    /// that neither begins with `.` nor continues an open argument list.
-+    private static func modifiers(inChainAround index: Int, of lines: [String]) -> [String] {
-+        let trimmed = lines.map { $0.trimmingCharacters(in: .whitespaces) }
-+
-+        // Walk up through modifier lines and through argument lines of a multi-line modifier,
-+        // which close parentheses that a line further up opened.
-+        var first = index
-+        var unclosedAbove = 0
-+        while first > 0, trimmed[first].hasPrefix(".") || unclosedAbove > 0 {
-+            first -= 1
-+            for character in trimmed[first] {
-+                if character == ")" { unclosedAbove += 1 } else if character == "(" { unclosedAbove -= 1 }
++        while index < tokens.count {
++            guard tokens[index].kind == .digit || tokens[index].kind == .cjkNumber else {
++                result.append(tokens[index])
++                index += 1
++                continue
 +            }
-+            unclosedAbove = max(0, unclosedAbove)
++
++            var endIndex = index
++            var text = ""
++            var containsCJKNumber = false
++            var stoppedAtLexicalWord = false
++            while endIndex < tokens.count,
++                  (tokens[endIndex].kind == .digit || tokens[endIndex].kind == .cjkNumber) {
++                if tokens[endIndex].kind == .digit,
++                   !text.isEmpty,
++                   let lexical = hanLexicalNumberWords.first(where: { text.hasSuffix($0) }) {
++                    // A digit run must not merge into a lexical word: in
++                    // 万一5个人都来了 the 万一 is "in case", not a number.
++                    // Mixed numbers such as 1万5 keep merging because 万
++                    // alone is never lexical. Merging resumes after the
++                    // protected word so later numerals still combine.
++                    if text.count > lexical.count {
++                        let numberPart = String(text.dropLast(lexical.count))
++                        result.append(Token(text: numberPart, kind: .cjkNumber))
++                    }
++                    result.append(Token(text: lexical, kind: .cjkNumber))
++                    index = endIndex
++                    stoppedAtLexicalWord = true
++                    break
++                }
++                text += tokens[endIndex].text
++                containsCJKNumber = containsCJKNumber || tokens[endIndex].kind == .cjkNumber
++                endIndex += 1
++            }
++
++            if stoppedAtLexicalWord {
++                // The loop above stopped at a protected lexical word and
++                // already emitted it; continue merging at the digit run.
++                continue
++            }
++
++            if containsCJKNumber {
++                result.append(Token(text: text, kind: .cjkNumber))
++            } else {
++                result.append(contentsOf: tokens[index..<endIndex])
++            }
++            index = endIndex
 +        }
 +
-+        var chain = ""
-+        var depth = 0
-+        var lineIndex = first
-+        while lineIndex < trimmed.count {
-+            let line = trimmed[lineIndex]
-+            if li
++        return result
++    }
++
++    private static func isHanLexicalNumberWord(
++        startingAt index: Int,
++        text: String,
++        in tokens: [Token]
++    ) -> Bool {
++        if hanLexicalNumberWords.contains(text) {
++            return true
++        }
++
++        if index > 0,
++           tokens[index - 1].kind == .word,
++           let left = tokens[index - 1].text.last {
++            // Approximations attach the prefix directly to bare units
++            // (幾千, 數百, 成千上萬). Count-label suffixes such as 总数, 人数
++            // and 訂單數 end in the same character, so only tr
+```
+
+**File**: `TypeWhisperTests/NumberWordNormalizerTests.swift` (modified, +117/-0)
+```diff
+@@ -343,9 +343,126 @@ final class NumberWordNormalizerTests: XCTestCase {
+         XCTAssertEqual(NumberWordNormalizer.normalize(text: "负二点五", language: "zh"), "-2.5")
+     }
+ 
++    func testChineseMixedASCIIDigitsAndLargeUnitsNormalize() {
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "10万", language: "zh"), "100000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "100万", language: "zh"), "1000000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1億", language: "zh"), "100000000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万2千", language: "zh"), "12000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "十萬", language: "zh"), "100000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "負二點五", language: "zh"), "-2.5")
++    }
++
++    func testChineseSpokenTailNumbersNormalize() {
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一萬五", language: "zh"), "15000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "兩萬三", language: "zh"), "23000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "千二", language: "zh"), "1200")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一百二", language: "zh"), "120")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一百零二", language: "zh"), "102")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一千零二", language: "zh"), "1002")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一千二百三十四", language: "zh"), "1234")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一萬五千", language: "zh"), "15000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一萬零五", language: "zh"), "10005")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一萬零二", language: "zh"), "10002")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万5", language: "zh"), "15000")
++    }
++
++    func testChineseSpokenTailDoesNotScaleMultiDigitTails() {
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万05", language: "zh"), "10005")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万005", language: "zh"), "10005")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万2345", language: "zh"), "12345")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万23", language: "zh"), "10023")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "2千345", language: "zh"), "2345")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "10万5", language: "zh"), "105000")
++    }
++
++    func testChineseHanNumberOverflowIsPreserved() {
++        let oversized = "万9223372036854775807"
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: oversized, language: "zh"), oversized)
++        let overflowingUnit = "9223372036854775807万"
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: overflowingUnit, language: "zh"), overflowingUnit)
++        let overflowingLargeUnit = "922337203685477580億"
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: overflowingLargeUnit, language: "zh"), overflowingLargeUnit)
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "10万", language: "zh"), "100000")
++    }
++
++    func testChineseAscendingLargeUnitsComposeMultiplicatively() {
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万亿", language: "zh"), "1000000000000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一万亿", language: "zh"), "1000000000000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "万亿", language: "zh"), "1000000000000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一万二千亿", language: "zh"), "1200000000000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一千二百万亿", language: "zh"), "1200000000000000")
++        // Descending large units stay additive.
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1亿2万", language: "zh"), "100020000")
++    }
++
++    func testChineseLexicalWordsStayIntactBeforeASCIIDigits() {
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "万一5个人都来了", language: "zh"), "万一5个人都来了")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "萬一5個人都來了", language: "zh"), "萬一5個人都來了")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "萬能5", language: "zh"), "萬能5")
++        // Mixed numerals that do not form lexical words keep merging.
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万5", language: "zh"), "15000")
++        // Numerals after a protected lexical word still merge and normalize.
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "万一5个人，10万", language: "zh"), "万一5个人，100000")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "萬一5個人，10萬", language: "zh"), "萬一5個人，100000")
++    }
++
++    func testChineseCountLabelSuffixesStillNormalize() {
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "总数一百", language: "zh"), "总数100")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text
 ```
 
 ---
 
-### Incident Patch 2: `43ca4e75` (2026-11-21)
-**Commit Message**: (bug) Speak OpenAI text through the Realtime API before the speech models shut down (#1985)
+### Incident Patch 2: `2c9949f0` (2026-11-24)
+**Commit Message**: (bug) Mix the Recorder's microphone without ducking when it doesn't pick up the call (#2018)
 
-* (bug) Speak OpenAI text through the Realtime API before the speech models shut down
+* (bug) Mix the Recorder's microphone without ducking when it doesn't pick up the call
 
-OpenAI shuts down every /v1/audio/speech model (gpt-4o-mini-tts, tts-1,
-tts-1-hd) on 6 January 2027 and names gpt-realtime-2.1-mini, a Realtime
-API model, as the replacement. Speech now runs through that model with
-instructions to read the text aloud word for word; the user's voice
-instructions only change the delivery. The Realtime API rejects Fable,
-Nova and Onyx, so 10 voices remain. A saved retired voice stays selected,
-shows as not available in the plugin settings and fails with a message to
-choose another voice.
+Echo handling lowers the microphone to 18 % (aggressive) or 42 %
+(medium) whenever the system audio has sound, so a call on loudspeakers
+isn't heard twice in the mixed recording. On headphones there is no
+echo to remove, and the ducking only pushed the user's voice under
+whatever else the system audio carried: another voice on the line,
+noise, or the other person talking over them. The transcript then lost
+the user's words or showed the other sound instead.
 
-The built-in LLM fallback list drops GPT-4.1 Nano and o4-mini, which
-OpenAI shut down on 23 October 2026.
+At stop the Recorder now measures the echo from the recording with
+SpeakerChannelAttribution's echo model. Without an echo at least a
+tenth as loud as the system audio and above the microphone's activity
+level, the file and the final buffer are mixed without ducking. With
+too little system audio to measure, the setting applies as before.
 
-* Read OpenAI's speech error while the text is still being sent
+* Keep the ducking decision open when the echo can't be measured
 
-With an invalid key the Realtime API accepts the connection, sends an
-error event and closes the socket. Speech sent its three events before
-reading anything, so the next send failed and the error event was never
-read: an invalid key ended in a generic network error, or in the 120 s
-timeout when a send on the closed socke
+The echo search returned no delay both when the microphone doesn't
+follow the system audio and when the system audio's loudness doesn't
+vary, which 
 
-**File**: `TypeWhisper/Services/ModelManagerService.swift` (modified, +2/-1)
+**File**: `TypeWhisper/Services/AudioRecorderService.swift` (modified, +30/-3)
 ```diff
-@@ -2488,7 +2488,8 @@ final class ModelManagerService: ObservableObject {
-                 } else {
-                     // If selection was rejected and the old ID remained unchanged, keep
-                     // checking the requested ID so a different loaded model is not accepted.
--                    expectedModelId = cloudModelOverride
-+                    // A replaced model counts as its replacement, which may already be selected.
-+                    expectedModelId = plugin.currentModelId(for: cloudModelOverride)
-                 }
+@@ -735,12 +735,15 @@ final class AudioRecorderService: ObservableObject, @unchecked Sendable {
  
-                 if pluginConfiguredState(
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/OpenAIPlugin/Localizable.xcstrings` (modified, +56/-0)
-```diff
-@@ -1,6 +1,62 @@
- {
-   "sourceLanguage": "en",
-   "strings": {
-+    "%@ (not available)": {
-+      "localizations": {
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "%@ (nicht verfügbar)"
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "%@ (no disponible)"
-+          }
-+        },
-+        "ja": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "%@（利用不可）"
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "%@（不可用）"
-+          }
-+        }
-+      }
-+    },
-+    "OpenAI no longer offers this voice. Choose another voice.": {
-+      "localizations": {
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "OpenAI bietet diese Stimme nicht mehr an. Wähle eine andere Stimme."
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "OpenAI ya no ofrece esta voz. Elige otra voz."
-+          }
-+        },
-+        "ja": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "OpenAIはこの音声の提供を終了しました。別の音声を選んでください。"
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "OpenAI 已不再提供此语音。请选择其他语音。"
-+          }
-+        }
-+      }
-+    },
-     "Hide API key": {
-       "localizations": {
-         "de": {
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/OpenAIPlugin/OpenAIPlugin.swift` (modified, +434/-99)
-```diff
-@@ -677,6 +677,13 @@ private struct OpenAITranscriptionModelCapability: Sendable {
-     let modelInfo: PluginModelInfo
-     let transport: Transport
-     let supportsTranslation: Bool
-+    /// The day OpenAI shuts the model down. From then on the list leaves it out and a saved
-+    /// selection uses GPT Transcribe.
-+    var shutdownDate: Date? = nil
-+
-+    func isShutDown(at date: Date) -> Bool {
-+        shutdownDate.map { date >= $0 } ?? false
-+    }
- 
-     var usesContextAwareHints: Bool {
-         switch transport {
-@@ -700,6 +707,10 @@ private struct OpenAITranscriptionModelCapability: Sendable {
-     static let gptLiveTranscribeModelID = "gpt-live-transcribe"
-     static let legacyRealtimeModelID = "gpt-realtime-whisper"
- 
-+    /// 26 February 2027, 00:00 UTC. OpenAI shuts down Whisper 1, GPT-4o Transcribe and
-+    /// GPT-4o Mini Transcribe that day and names GPT Transcribe or GPT Live Transcribe as replacements.
-+    static let legacyFileModelsShutdownDate = Date(timeIntervalSince1970: 1_803_600_000)
-+
-     static let all: [OpenAITranscriptionModelCapability] = [
-         OpenAITranscriptionModelCapability(
-             modelInfo: PluginModelInfo(id: gptTranscribeModelID, displayName: "GPT Transcribe"),
-@@ -714,17 +725,20 @@ private struct OpenAITranscriptionModelCapability: Sendable {
-         OpenAITranscriptionModelCapability(
-             modelInfo: PluginModelInfo(id: "whisper-1", displayName: "Whisper 1"),
-             transport: .legacyFile(responseFormat: "verbose_json"),
--            supportsTranslation: true
-+            supportsTranslation: true,
-+            shutdownDate: legacyFileModelsShutdownDate
-         ),
-         OpenAITranscriptionModelCapability(
-             modelInfo: PluginModelInfo(id: "gpt-4o-transcribe", displayName: "GPT-4o Transcribe"),
-             transport: .legacyFile(responseFormat: "json"),
--            supportsTranslation: false
-+            supportsTranslation: false,
-+            shutdownDate: legacyFileModelsShutdownDate
-         ),
-         OpenAITranscriptionModelCapability(
-             modelInfo: PluginModelInfo(id: "gpt-4o-mini-transcribe", displayName: "GPT-4o Mini Transcribe"),
-             transport: .legacyFile(responseFormat: "json"),
--            supportsTranslation: false
-+            supportsTranslation: false,
-+            shutdownDate: legacyFileModelsShutdownDate
-         ),
-         OpenAITranscriptionModelCapability(
-             modelInfo: PluginModelInfo(id: legacyRealtimeModelID, displayName: "GPT Realtime Whisper"),
-@@ -736,6 +750,18 @@ private struct OpenAITranscriptionModelCapability: Sendable {
-     static func capability(for modelID: String) -> OpenAITranscriptionModelCapability? {
-         all.first { $0.modelInfo.id == modelID }
-     }
-+
-+    static func available(at date: Date) -> [OpenAITranscriptionModelCapability] {
-+        all.filter { !$0.isShutDown(at: date) }
+     /// Thread-safe snapshot of the current 16kHz mono buffer for streaming transcription.
+     func getCurrentBuffer() -> [Float] {
++        currentBuffer(micDuckingMode: micDuckingMode)
 +    }
 +
-+    /// The model a saved ID uses at `date`: the model itself until OpenAI shuts it down,
-+    /// GPT Transcribe afterwards, and nil for an ID OpenAI never offered here.
-+    static func current(for modelID: String, at date: Date) -> OpenAITranscriptionModelCapability? {
-+        guard let saved = capability(for: modelID) else { return nil }
-+        guard saved.isShutDown(at: date) else { return saved }
-+        return capability(for: gptTranscribeModelID)
-+    }
- }
++    private func currentBuffer(micDuckingMode: MicDuckingMode) -> [Float] {
+         if let currentBufferOverride {
+             return currentBufferOverride()
+         }
+         let micEnabled = self.micEnabled
+         let systemAudioEnabled = self.systemAudioEnabled
+-        let micDuckingMode = self.micDuckingMode
+         return transcriptionBufferLock.withLock { buffer in
+             buffer.currentBuffer(
+                 micEnabled: micEnabled,
+@@ -934,7 +937,6 @@ final class AudioRecorderService: ObservableObject, @unchecked Sendable {
+         let stoppedFinalOutputURL = finalOutputURL
+         let stoppedOutputFormat = outputFormat
+         let stoppedTrackMode = trackMode
+-        let stoppedMicDuckingMode = micDuckingMode
  
- struct OpenAIRealtimeTranscriptionConfiguration: Sendable {
-@@ -1028,21 +1054,27 @@ final class OpenAIRealtimeWebSocketOpenWaiter: @unchecked Sendable {
- 
-     private let state = OSAllocatedUnfairLock(initialState: State())
- 
-+    /// Returns once the socket opens. A cancelled wait, such as the open timeout or a stopped
-+    /// readback, ends right away instead of waiting for URLSession's own timeout.
-     func waitForOpen() async throws {
--        try await withCheckedThrowingContinuation { continuation in
--            let result = state.withLock { state -> Result<Void, Error>? in
--                if state.opened {
--                    return .success(())
-+        try await withTaskCancellationHandler {
-+            try await withCheckedThrowingContinuation { continuation in
-+                let result = state.withLock { state -> Result<Void, Error>? in
-+                    if state.opened {
-+                        return .success(())
-+                    }
-+                    if let failure = state.failure {
-+                        return .failure(failure)
-+                    }
-+                    state.continuations.append(continuation)
-+                    return nil
-                 }
--                if let failure = state.failure {
--                    return .failure(failure)
-+                if let result {
-+                    continuation.resume(with: result)
-                 }
--                state.continuations.append(continuation)
--                return nil
--            }
--            if let result {
--                continuation.resume(with: result)
-             }
-+  
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/OpenAIPlugin/Tests/OpenAIPluginTests.swift` (modified, +419/-40)
-```diff
-@@ -4,6 +4,20 @@ import TypeWhisperPluginSDK
- @testable import OpenAIPlugin
- import os
- 
-+enum OpenAITestDates {
-+    /// OpenAI shuts down Whisper 1, GPT-4o Transcribe and GPT-4o Mini Transcribe on this day.
-+    static let legacyShutdown = Date(timeIntervalSince1970: 1_803_600_000)
-+    /// A fixed day before that, so tests that use those models keep passing afterwards.
-+    static let beforeLegacyShutdown = legacyShutdown.addingTimeInterval(-86_400)
-+}
-+
-+/// A plugin with a fixed clock, so the tests do not depend on today's date.
-+func makeOpenAIPlugin(at date: Date = OpenAITestDates.beforeLegacyShutdown) -> OpenAIPlugin {
-+    let plugin = OpenAIPlugin()
-+    plugin.currentDate = { date }
-+    return plugin
-+}
-+
- final class OpenAIPluginTests: XCTestCase {
-     override func tearDown() {
-         PluginHTTPClientTestHarness.reset()
-@@ -59,7 +73,7 @@ final class OpenAIPluginTests: XCTestCase {
-     }
- 
-     func testOpenAIPluginAdvertisesLiveSTTAndTTSProtocols() {
--        let plugin: Any = OpenAIPlugin()
-+        let plugin: Any = makeOpenAIPlugin()
- 
-         XCTAssertTrue(plugin is any LiveTranscriptionCapablePlugin)
-         XCTAssertTrue(plugin is any LanguageHintDictionaryTermHintTranscriptionEnginePlugin)
-@@ -69,7 +83,7 @@ final class OpenAIPluginTests: XCTestCase {
- 
-     func testOpenAINewInstallDefaultsToGPTTranscribeAndKeepsLegacyModels() throws {
-         let host = try PluginTestHostServices()
--        let plugin = OpenAIPlugin()
-+        let plugin = makeOpenAIPlugin()
- 
-         plugin.activate(host: host)
- 
-@@ -90,17 +104,76 @@ final class OpenAIPluginTests: XCTestCase {
- 
-     func testOpenAIActivationPreservesPersistedLegacyModelSelection() throws {
-         let host = try PluginTestHostServices(defaults: ["selectedModel": "gpt-4o-mini-transcribe"])
--        let plugin = OpenAIPlugin()
-+        let plugin = makeOpenAIPlugin()
- 
-         plugin.activate(host: host)
- 
-         XCTAssertEqual(plugin.selectedModelId, "gpt-4o-mini-transcribe")
-         XCTAssertEqual(host.userDefault(forKey: "selectedModel") as? String, "gpt-4o-mini-transcribe")
-     }
- 
-+    func testOpenAILeavesOutLegacyFileModelsFromTheirShutdownDate() throws {
-+        let host = try PluginTestHostServices()
-+        let plugin = makeOpenAIPlugin(at: OpenAITestDates.legacyShutdown)
-+
-+        plugin.activate(host: host)
-+
-+        XCTAssertEqual(
-+            plugin.transcriptionModels.map(\.id),
-+            ["gpt-transcribe", "gpt-live-transcribe", "gpt-realtime-whisper"]
-+        )
-+        XCTAssertFalse(plugin.supportsTranslation)
-+
-+        plugin.currentDate = { OpenAITestDates.beforeLegacyShutdown }
-+        XCTAssertTrue(plugin.transcriptionModels.contains { $0.id == "whisper-1" })
-+        XCTAssertTrue(plugin.supportsTranslation)
-+    }
-+
-+    func testOpenAIUsesGPTTranscribeForASavedModelAfterItsShutdownAndKeepsTheSetting() async throws {
-+        let host = try PluginTestHostServices(
-+            defaults: ["selectedModel": "whisper-1"],
-+            secrets: ["api-key": "sk-live"]
-+        )
-+        let plugin = makeOpenAIPlugin(at: OpenAITestDates.legacyShutdown)
-+        plugin.activate(host: host)
-+
-+        XCTAssertEqual(plugin.selectedModelId, "gpt-transcribe")
-+        XCTAssertEqual(host.userDefault(forKey: "selectedModel") as? String, "whisper-1")
-+        XCTAssertEqual(plugin.currentModelId(forModelId: "whisper-1"), "gpt-transcribe")
-+        XCTAssertEqual(plugin.currentModelId(forModelId: "gpt-4o-transcribe"), "gpt-transcribe")
-+        XCTAssertEqual(plugin.currentModelId(forModelId: "gpt-4o-mini-transcribe"), "gpt-transcribe")
-+        XCTAssertEqual(plugin.currentModelId(forModelId: "gpt-live-transcribe"), "gpt-live-transcribe")
-+        XCTAssertNil(plugin.currentModelId(forModelId: "unknown-model"))
-+
-+        let store = PluginHTTPClientSessionStore()
-+        PluginHTTPClientTestHarness.configure { _ in
-+            store.makeSession(outcomes: [
-+                .success(
-+                    Data(#"{"text":"Hallo"}"#.utf8),
-+                    Self.httpResponse(url: "https://api.openai.com/v1/audio/transcriptions", statusCode: 200)
-+                ),
-+            ])
-+        }
-+
-+        let result = try await plugin.transcribe(
-+            audio: Self.testAudio(),
-+            language: nil,
-+            translate: false,
-+            prompt: nil
-+        )
-+
-+        XCTAssertEqual(result.text, "Hallo")
-+        let request = try XCTUnwrap(store.sessions.first?.requestedRequests.first)
-+        let body = String(decoding: try XCTUnwrap(request.httpBody), as: UTF8.self)
-+        XCTAssertTrue(body.contains("name=\"model\"\r\n\r\ngpt-transcribe"))
-+
-+        plugin.currentDate = { OpenAITestDates.beforeLegacyShutdown }
-+        XCTAssertEqual(plugin.selectedModelId, "whisper-1")
-+    }
-+
-     func testOpenAIContextAndLiveDelayPersistWithLowAsDefault() throws {
-         let host = try PluginTestHostServices()
--        let plugin = OpenAIPlugin()
-+        let plugin = makeOpenAIPlug
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/OpenAIPlugin/manifest.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-     "id": "com.typewhisper.openai",
-     "name": "OpenAI / ChatGPT",
--    "version": "1.4.0",
-+    "version": "1.5.0",
-     "minHostVersion": "1.8.0",
-     "sdkCompatibilityVersion": "v1",
-     "minOSVersion": "14.0",
-```
-
-**File**: `TypeWhisperTests/ModelManagerLiveSessionModelOverrideTests.swift` (modified, +35/-1)
-```diff
-@@ -89,6 +89,34 @@ final class ModelManagerLiveSessionModelOverrideTests: XCTestCase {
-         XCTAssertEqual(plugin.selectedModelId, "alpha")
-     }
- 
-+    func testOverrideWithAReplacedModelUsesItsReplacementWhenThatIsAlreadySelected() async throws {
-+        let appSupportDirectory = try TestSupport.makeTemporaryDirectory()
-+        defer { TestSupport.remove(appSupportDirectory) }
-+
-+        let plugin = LiveModelOverrideTranscriptionPlugin(modelAliases: ["legacy-beta": "beta"])
-+        plugin.selectModel("beta")
-+        let modelManager = installLivePlugin(plugin, appSupportDirectory: appSupportDirectory)
-+        modelManager.setPluginRestoreWaitConfigurationForTesting(
-+            initialAttempts: 1,
-+            busyAttempts: 0,
-+            pollInterval: .milliseconds(10)
-+        )
-+
-+        // A workflow saved with a model the plugin has since replaced, while the
-+        // replacement is already the selected model.
-+        let sessionHandle = try await modelManager.createLiveTranscriptionSession(
-+            languageSelection: .auto,
-+            task: .transcribe,
-+            cloudModelOverride: "legacy-beta",
-+            onProgress: { _ in true }
-+        )
-+        let handle = try XCTUnwrap(sessionHandle)
-+
-+        XCTAssertEqual(plugin.selectedModelId, "beta")
-+        await modelManager.cancelLiveTranscriptionSession(handle)
-+        XCTAssertEqual(plugin.selectedModelId, "beta")
-+    }
-+
-     func testLiveSessionNormalizesLanguageForOverrideModel() async throws {
-         let appSupportDirectory = try TestSupport.makeTemporaryDirectory()
-         defer { TestSupport.remove(appSupportDirectory) }
-@@ -1176,8 +1204,14 @@ private final class LiveModelOverrideTranscriptionPlugin: NSObject, Transcriptio
-     func deactivate() {}
- 
-     func selectModel(_ modelId: String) {
-+        currentModelId = resolvedModelId(forModelId: modelId)
-+    }
-+
-+    /// The model an alias stands for now, like a plugin that renamed or replaced a model.
-+    @objc(currentModelIdForModelId:)
-+    func resolvedModelId(forModelId modelId: String) -> String? {
-         let resolvedModelId = modelAliases[modelId] ?? modelId
--        currentModelId = models.contains { $0.id == resolvedModelId } ? resolvedModelId : nil
-+        return models.contains { $0.id == resolvedModelId } ? resolvedModelId : nil
-     }
- 
-     func transcribe(
-```
-
-**File**: `TypeWhisperTests/PluginManifestValidationTests.swift` (modified, +2/-2)
-```diff
-@@ -224,12 +224,12 @@ final class PluginManifestValidationTests: XCTestCase {
-         XCTAssertEqual(manifest.supportedArchitectures, ["arm64"])
-     }
- 
--    func testOpenAIPlugin140RequiresCompatibleHost18AndDeclaresCloudHosting() throws {
-+    func testOpenAIPlugin150RequiresCompatibleHost18AndDeclaresCloudHosting() throws {
-         let manifestURL = TestSupport.repoRoot.appendingPathComponent("TypeWhisperPluginSDK/Plugins/OpenAIPlugin/manifest.json")
-         let data = try Data(contentsOf: manifestURL)
-         let manifest = try JSONDecoder().decode(PluginManifest.self, from: data)
- 
--        XCTAssertEqual(manifest.version, "1.4.0")
-+        XCTAssertEqual(manifest.version, "1.5.0")
-         XCTAssertEqual(manifest.minHostVersion, "1.8.0")
-         XCTAssertEqual(manifest.sdkCompatibilityVersion, PluginSDKCompatibility.currentVersion)
-         XCTAssertEqual(manifest.hosting, .cloud)
-```
-
-**File**: `docs/release-notes/unreleased.md` (modified, +1/-0)
-```diff
-@@ -1,5 +1,6 @@
- # Unreleased
- 
-+- OpenAI 1.5.0: Text-to-speech now runs through OpenAI's Realtime API with `gpt-realtime-2.1-mini`, because OpenAI shuts down `gpt-4o-mini-tts` and the other speech models on January 6, 2027. The model is told to read the text aloud word for word, and the voice instructions change only how it speaks. The Realtime API does not offer Fable, Nova and Onyx, so 10 voices remain. A saved one stays selected, shows as not available in the plugin settings and fails with a message to choose another voice instead of switching to one on its own. Without a fetched model list, prompts no longer offer GPT-4.1 Nano and o4-mini, which OpenAI shut down on October 23, 2026. From February 26, 2027, when OpenAI shuts them down, Whisper 1, GPT-4o Transcribe and GPT-4o Mini Transcribe leave the transcription model list and translation is no longer offered. A saved one then transcribes with GPT Transcribe, also in workflows saved with one, which show GPT Transcribe.
- - Dictating into the agterm terminal no longer ends with "No text field detected" while the text arrives, and with **Preserve clipboard content** on, the text is no longer inserted twice. agterm now gets the paste that Terminal, iTerm2, Ghostty and the other built-in terminals get, and a terminal that shows the pasted text only once the shell echoes it no longer counts as a missed text field. A new **Terminal Apps** section in the Dictation settings adds other terminals, picked like the apps of a workflow.
- - Qwen3 ASR 1.2.0: The model list offers Rumble-2-Flash (8-bit), Reson8's open speech model in the Qwen3-ASR architecture, as a 0.7 GB download that runs on Macs with 8 GB of memory. In the TypeWhisper benchmark it made fewer errors than Qwen3 0.6B (6.8 % against 10.1 % WER on 38 suites), about as few as Qwen3 1.7B, and transcribed at 94 times real time, against 61 for Qwen3 0.6B and 30 for Qwen3 1.7B. It covers the same 30 languages and detects the language itself when none is set.
- - AssemblyAI 1.4.0 (requires TypeWhisper 1.9.0): AssemblyAI-STT-3.7 replaces Universal-3.5 Pro, which AssemblyAI deprecated when it released the new model on November 17, 2026. A saved Universal-3.5 Pro or Universal-3 Pro selection switches to it. The async API transcribes 32 languages with it instead of 18, at the same $0.21/h, and sends a language it does not support to Universal-2. Filler words stay out of the transcript, as with Universal-3.5 Pro; AssemblyAI-STT-3.7 would keep them by default. Live dictations stream to AssemblyAI-STT-3.7-Realtime-Agent at $0.45/h, the price of the Universal-3.5 Pro realtime model, which AssemblyAI retires on February 1, 2027. A new Live model setting offers AssemblyAI-STT-3.7-Realtime at $0.30/h instead: in our tests both wrote the same final text, but its live preview changed more while speaking and showed half words in German. Live dictations can be steered to all 32 languages. The Sync API runs Universal-3.6 Pro, to which AssemblyAI already routes requests for Universal-3.5 Pro.
-```
-
----
-
-### Incident Patch 3: `a389daa1` (2026-11-23)
-**Commit Message**: (bug) Offer Cohere's 14 languages and stop sending English without a language (#2011)
-
-* List Cohere Transcribe's 14 languages in the Cohere plugin
-
-The plugin offered Bengali, Hindi, Russian, Swahili and Turkish, which Cohere Transcribe does not support, and left out Greek, Italian, Dutch, Polish and Vietnamese. Use the 14 languages from Cohere's documentation, as the Cohere Transcribe (Local) plugin does, and bump the plugin to 1.0.9.
-
-* Let the host pick Cohere's language instead of sending English
-
-Adopt HostLanguageDetectionEnginePlugin like Cohere Transcribe (Local) 1.1.0: for automatic detection the host picks one of the 14 languages. Without a supported language the plugin fails with an explanation instead of sending en, for example for a saved language the list no longer offers. Bump the plugin to 1.1.0, which requires TypeWhisper 1.8.1.
-
-**File**: `TypeWhisperPluginSDK/Plugins/CoherePlugin/CoherePlugin.swift` (modified, +47/-3)
-```diff
-@@ -4,9 +4,11 @@ import TypeWhisperPluginSDK
- 
- // MARK: - Supported Languages
- 
-+// The 14 languages of Cohere Transcribe (docs.cohere.com/docs/transcribe), as in the
-+// Cohere Transcribe (Local) plugin.
- private let cohereSupportedLanguages = [
--    "ar", "bn", "de", "en", "es", "fr", "hi", "ja", "ko", "pt",
--    "ru", "sw", "tr", "zh",
-+    "ar", "de", "el", "en", "es", "fr", "it", "ja", "ko", "nl",
-+    "pl", "pt", "vi", "zh",
- ]
- 
- // MARK: - Plugin Entry Point
-@@ -68,7 +70,11 @@ final class CoherePlugin: NSObject, TranscriptionEnginePlugin, DictionaryTermsCa
+         // Test overrides own their capture lifecycle. Production capture must be fully
+         // stopped before any live-session or file finalization work begins.
+@@ -970,7 +972,12 @@ final class AudioRecorderService: ObservableObject, @unchecked Sendable {
+             micFileLock.withLock { $0 = nil }
          }
  
-         let model = "cohere-transcribe-03-2026"
--        let lang = language ?? "en"
-+        // Cohere Transcribe has no language detection. For automatic detection the host picks one of
-+        // `languagesForHostDetection`; without one of them the request fails here instead of sending English.
-+        guard let lang = Self.cohereLanguage(for: language) else {
-+            throw CoherePluginError.explicitLanguageRequired(supportedLanguages: cohereSupportedLanguages)
-+        }
- 
-         guard let url = URL(string: "https://api.cohere.com/v2/audio/transcriptions") else {
-             throw PluginTranscriptionError.apiError("Invalid Cohere API URL")
-@@ -144,6 +150,20 @@ final class CoherePlugin: NSObject, TranscriptionEnginePlugin, DictionaryTermsCa
+-        let transcriptionSamples = includeTranscriptionSamples ? getCurrentBuffer() : []
++        let stoppedMicDuckingMode = stoppedTrackMode == .mixed && stoppedMicEnabled && stoppedSystemAudioEnabled
++            ? effectiveMicDuckingMode(micDuckingMode)
++            : micDuckingMode
++        let transcriptionSamples = includeTranscriptionSamples
++            ? currentBuffer(micDuckingMode: stoppedMicDuckingMode)
++            : []
+         let ownSpeech = includeTranscriptionSamples && stoppedMicEnabled && stoppedSystemAudioEnabled
+             ? transcriptionBufferLock.withLock { buffer in
+                 SpeakerChannelAttribution.ownSpeechRanges(
+@@ -1664,6 +1671,26 @@ final class AudioRecorderService: ObservableObject, @unchecked Sendable {
          }
      }
  
-+    /// The base ISO 639-1 code Cohere accepts for a host language code, or nil when there is none.
-+    static func cohereLanguage(for language: String?) -> String? {
-+        guard let language else { return nil }
-+        let normalized = language
-+            .trimmingCharacters(in: .whitespacesAndNewlines)
-+            .lowercased()
-+            .replacingOccurrences(of: "_", with: "-")
-+        guard !normalized.isEmpty, normalized != "auto", normalized != "und" else { return nil }
-+        let baseCode = normalized.split(separator: "-", omittingEmptySubsequences: true).first.map(String.init)
-+        let canonicalCode = baseCode == "cmn" ? "zh" : baseCode
-+        guard let canonicalCode, cohereSupportedLanguages.contains(canonicalCode) else { return nil }
-+        return canonicalCode
-+    }
-+
-     // MARK: - API Key Validation
- 
-     fileprivate func validateApiKey(_ key: String) async -> Bool {
-@@ -194,6 +214,30 @@ final class CoherePlugin: NSObject, TranscriptionEnginePlugin, DictionaryTermsCa
-     }
- }
- 
-+// MARK: - Host Language Detection
-+
-+extension CoherePlugin: HostLanguageDetectionEnginePlugin {
-+    var languagesForHostDetection: [String] { cohereSupportedLanguages }
-+}
-+
-+// MARK: - Errors
-+
-+enum CoherePluginError: LocalizedError {
-+    case explicitLanguageRequired(supportedLanguages: [String])
-+
-+    var errorDescription: String? {
-+        switch self {
-+        case .explicitLanguageRequired(let supportedLanguages):
-+            let message = Bundle(for: CoherePlugin.self).localizedString(
-+                forKey: "Cohere Transcribe requires an explicitly selected supported language. Automatic language detection is not available. Supported languages:",
-+                value: nil,
-+                table: nil
++    /// The ducking a mixed recording gets: none when the microphone didn't
++    /// pick up the system audio. Ducking keeps a call on loudspeakers from
++    /// being heard twice, but on headphones it only lowered the user's voice
++    /// whenever the system audio had sound, such as another voice or noise
++    /// on the line, and the transcript lost the user's words there.
++    private func effectiveMicDuckingMode(_ mode: MicDuckingMode) -> MicDuckingMode {
++        guard mode != .off else { return mode }
++        let hearsSystemAudio = transcriptionBufferLock.withLock { buffer in
++            SpeakerChannelAttribution.microphoneHearsSystemAudio(
++                microphone: buffer.micSamples,
++                system: buffer.systemSamples,
++                sampleRate: Self.transcriptionSampleRate
 +            )
-+            return "\(message) \(supportedLanguages.joined(separator: ", "))."
 +        }
++        // Without enough audio to measure, the setting applies as it is.
++        guard hearsSystemAudio == false else { return mode }
++        logger.info("Microphone didn't pick up the system audio; mixing without ducking")
++        return .off
 +    }
-+}
 +
- // MARK: - Settings View
- 
- private struct CohereSettingsView: View {
+     private func createDirectoryIfNeeded(_ url: URL) throws {
+         if !FileManager.default.fileExists(atPath: url.path) {
+             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
 ```
 
-**File**: `TypeWhisperPluginSDK/Plugins/CoherePlugin/Localizable.xcstrings` (modified, +28/-0)
+**File**: `TypeWhisper/Services/SpeakerChannelAttribution.swift` (modified, +95/-15)
 ```diff
-@@ -336,6 +336,34 @@
-           }
+@@ -59,8 +59,7 @@ enum SpeakerChannelAttribution {
+         let systemLevels = levels(of: system, frameLength: frameLength)
+ 
+         let microphoneReference = percentile(microphoneLevels, 0.95)
+-        let microphoneFloor = percentile(microphoneLevels, 0.10)
+-        let threshold = max(minimumLevel, microphoneFloor * 3, microphoneReference * 0.12)
++        let threshold = activityThreshold(microphoneLevels)
+         guard microphoneReference > threshold else { return [] }
+         let echo = expectedEcho(microphone: microphoneLevels, system: systemLevels)
+         let systemReference = max(percentile(systemLevels, 0.95), minimumLevel)
+@@ -88,6 +87,50 @@ enum SpeakerChannelAttribution {
+             .map { max(0, $0.start - padding)...min(duration, $0.end + padding) }
+     }
+ 
++    /// An echo this much quieter than the system audio isn't heard twice in a mix.
++    static let audibleEchoGain: Float = 0.1
++
++    /// Whether the microphone picks up the system audio, as on a call on
++    /// loudspeakers: the echo measured from the recording comes back at least
++    /// `audibleEchoGain` as loud as the system audio and above the level
++    /// that counts as microphone activity. On headphones there is no such
++    /// echo. Nil when there is nothing to measure: less than a second of
++    /// system audio, or system audio too steady for the echo search.
++    static func microphoneHearsSystemAudio(
++        microphone: [Float],
++        system: [Float],
++        sampleRate: Double = 16_000
++    ) -> Bool? {
++        let frameLength = max(1, Int(frameDuration * sampleRate))
++        let microphoneLevels = levels(of: microphone, frameLength: frameLength)
++        let systemLevels = levels(of: system, frameLength: frameLength)
++        guard !microphoneLevels.isEmpty, !systemLevels.isEmpty else { return nil }
++        // Any sound counts, playback without a pause too.
++        guard Double(systemLevels.filter { $0 > minimumLevel }.count) * frameDuration >= 1 else { return nil }
++        switch echo(microphone: microphoneLevels, system: systemLevels) {
++        case .unmeasurable:
++            return nil
++        case .absent:
++            return false
++        case let .measured(_, _, systemThreshold, delay):
++            // Against the system level at the echo's delay, not the widened
++            // one own speech uses: that overstates the system audio where its
++            // level changes quickly, so an audible echo would look faint.
++            let pairs = microphoneLevels.indices.compactMap { index -> (microphone: Float, system: Float)? in
++                let systemIndex = index - delay
++                guard systemLevels.indices.contains(systemIndex), systemLevels[systemIndex] > systemThreshold else {
++                    return nil
++                }
++                return (microphoneLevels[index], systemLevels[systemIndex])
++            }
++            guard Double(pairs.count) * frameDuration >= 1 else { return nil }
++            let loudest = pairs.sorted { $0.system > $1.system }.prefix(max(1, pairs.count / 4))
++            let gain = percentile(loudest.map { $0.microphone / $0.system }, 0.25)
++            guard gain >= audibleEchoGain else { return false }
++            return percentile(pairs.map { $0.system * gain }, 0.5) > activityThreshold(microphoneLevels)
++        }
++    }
++
+     /// Diarizer turns with the user's own speech cut out of them and added
+     /// as turns of `ownSpeakerLabel`.
+     ///
+@@ -152,7 +195,30 @@ enum SpeakerChannelAttribution {
+     /// its lower quarter: the echo is there whenever the system audio is
+     /// loud, the user's voice only now and then.
+     private static func expectedEcho(microphone: [Float], system: [Float]) -> [Float]? {
+-        guard let delay = echoDelay(microphone: microphone, system: system) else { return nil }
++        guard case let .measured(source, gain, _, _) = echo(microphone: microphone, system: system) else { return nil }
++        return source.map { $0 * gain }
++    }
++
++    /// What the recording tells about the echo.
++    private enum EchoMeasurement {
++        /// The system level held over the echo's delay and reverberation,
++        /// how loud it comes back on the microphone, the level from which
++        /// the system audio counts as sound, and the delay in frames; see
++        /// `expectedEcho`.
++        case measured(source: [Float], gain: Float, systemThreshold: Float, delay: Int)
++        /// The microphone doesn't follow the system audio at any delay.
++        case absent
++        /// The system audio doesn't vary, or has too little loud sound, to tell.
++        case unmeasurable
++    }
++
++    private static func echo(microphone: [Float], system: [Float]) -> EchoMeasurement {
++        let delay: Int
++        switch echoDelay(microphone: microphone, system: system) {
++        case .found(let found): delay = found
++        case .absent: return .absent
++        case .unmeasurable: return .unmeasurable
++        }
+         va
+```
+
+**File**: `TypeWhisperTests/SpeakerTranscriptCoordinatorTests.swift` (modified, +97/-0)
+```diff
+@@ -1177,6 +1177,103 @@ final class SpeakerChannelAttributionTests: XCTestCase {
+         XCTAssertTrue(SpeakerChannelAttribution.ownSpeechRanges(microphone: [], system: system).isEmpty)
+     }
+ 
++    /// On headphones the microphone only hears the user, even while another
++    /// voice talks on the system audio, so the Recorder mixes it without ducking.
++    func testMicrophoneOnHeadphonesDoesNotHearTheSystemAudio() {
++        let remote = words(from: 1, count: 6, variant: 1) + words(from: 13, count: 6, variant: 3)
++        let background = words(from: 4, count: 14, variant: 2)
++        let user = words(from: 4.2, count: 5, variant: 4) + words(from: 7.5, count: 5, variant: 5)
++        let system = zip(
++            track(duration: 18, words: remote, level: 0.3),
++            track(duration: 18, words: background, level: 0.1, noise: 0)
++        ).map { $0 + $1 }
++        let microphone = track(duration: 18, words: user, level: 0.05)
++
++        XCTAssertEqual(SpeakerChannelAttribution.microphoneHearsSystemAudio(microphone: microphone, system: system), false)
++    }
++
++    /// Near loudspeakers the remote voice comes back on the microphone, which
++    /// ducking keeps from being heard twice; a faint echo doesn't need it.
++    func testMicrophoneNearLoudspeakersHearsTheSystemAudio() {
++        let remote = words(from: 1, count: 6, variant: 1) + words(from: 7, count: 6, variant: 2)
++            + words(from: 13, count: 6, variant: 3)
++        let user = words(from: 4.2, count: 5, variant: 4) + words(from: 10.2, count: 5, variant: 5)
++        let system = track(duration: 18, words: remote, level: 0.3)
++        let speech = track(duration: 18, words: user, level: 0.05)
++        for (echoLevel, hears) in [(Float(0.05), true), (0.012, false)] {
++            let echo = track(duration: 18, words: remote, level: echoLevel, delay: 0.24, noise: 0)
++            let microphone = zip(speech, echo).map { $0 + $1 }
++
++            XCTAssertEqual(
++                SpeakerChannelAttribution.microphoneHearsSystemAudio(microphone: microphone, system: system),
++                hears,
++                "echo level \(echoLevel)"
++            )
++        }
++    }
++
++    /// Playback without a pause still counts as system audio: the
++    /// microphone on headphones doesn't follow it, so there is no echo.
++    func testPlaybackWithoutPausesOnHeadphonesIsNoEcho() {
++        let system = (0..<Int(5 * sampleRate)).map { index -> Float in
++            let time = Double(index) / sampleRate
++            let level = 0.2 * Float(1 + 0.25 * sin(2 * .pi * time / 1.3))
++            return index % 2 == 0 ? level : -level
++        }
++        let microphone = track(duration: 5, speech: [], level: 0)
++
++        XCTAssertEqual(SpeakerChannelAttribution.microphoneHearsSystemAudio(microphone: microphone, system: system), false)
++    }
++
++    /// System audio of steady loudness gives the echo search nothing to
++    /// correlate, even with its copy on the microphone, so the decision stays
++    /// open. Where the tone starts and stops, those edges show the echo.
++    func testSteadySystemAudioLeavesTheDuckingDecisionOpen() {
++        let delay = Int(0.24 * sampleRate)
++        func microphone(hearing system: [Float]) -> [Float] {
++            system.indices.map { $0 >= delay ? 0.2 * system[$0 - delay] : 0 }
++        }
++        let steady = (0..<Int(10 * sampleRate)).map { index -> Float in index % 2 == 0 ? 0.3 : -0.3 }
++        let toneWithEdges = steady.indices.map { index -> Float in
++            (3...6).contains(Double(index) / sampleRate) ? steady[index] : 0
++        }
++
++        XCTAssertNil(SpeakerChannelAttribution.microphoneHearsSystemAudio(
++            microphone: microphone(hearing: steady),
++            system: steady
++        ))
++        XCTAssertEqual(SpeakerChannelAttribution.microphoneHearsSystemAudio(
++            microphone: microphone(hearing: toneWithEdges),
++            system: toneWithEdges
++        ), true)
++    }
++
++    /// System audio whose level changes from frame to frame comes back on
++    /// the microphone at an eighth: an echo to duck, although the widened
++    /// level own speech uses would put it at a sixteenth.
++    func testAnEchoOfQuicklyChangingSystemAudioCountsAtItsTrueGain() {
++        let frame = Int(SpeakerChannelAttribution.frameDuration * sampleRate)
++        let system = (0..<(180 * frame)).map { index -> Float in
++            let frameIndex = index / frame
++            guard (40..<140).contains(frameIndex) else { return 0 }
++            let level: Float = frameIndex % 2 == 0 ? 0.25 : 0.125
++            return index % 2 == 0 ? level : -level
++        }
++        let microphone = system.map { $0 * 0.125 }
++
++        XCTAssertEqual(SpeakerChannelAttribution.microphoneHearsSystemAudio(microphone: microphone, system: system), true)
++    }
++
++    func testTooLittleSystemAudioLeavesTheDuckingDecisionOpen() {
++        let microphone = track(duration: 5, speech: [1...3], level: 0.2)
++
++        XCTAssertNil(SpeakerCha
+```
+
+---
+
+### Incident Patch 3: `50ec2567` (2026-11-25)
+**Commit Message**: (bug) Fix automatic iCloud sync when the Mac has not downloaded the iCloud folder yet (#2030)
+
+* Fetch dataless iCloud folders before the bridge looks into them
+
+iCloud Drive keeps a container folder that another device created, or
+that macOS evicted, as a dataless placeholder. Plain FileManager calls
+inside it fail with EDEADLK, which Foundation reports as "couldn't be
+saved" (NSFileWriteUnknownError), and fileExists reports every item in
+it as missing. Automatic iCloud sync on a Mac could therefore never
+create typewhisper-sync when the iPhone had created the container
+first, and a mirror pass could count the iCloud package as empty.
+
+The iCloud side of the mirror now fetches a dataless folder's listing
+with a coordinated read before it lists, looks up or creates items in
+it, treats failed lookups as errors, and creates and removes items
+through file coordination. The helper replies with the cause, so the
+app shows what to do for iCloud off, a folder that is not available
+yet, full iCloud storage and a full Mac disk. Uploads refused for a
+full iCloud are reported while the pass completes. Switching the sync location
+clears the device list of the previous one.
+
+* Keep checking iCl
+
+**File**: `AppStore/Sources/AppStoreICloudMirror.swift` (modified, +17/-7)
+```diff
+@@ -30,7 +30,8 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
+         )
+     }
+ 
+-    func synchronize() async throws {
++    @discardableResult
++    func synchronize() async throws -> PremiumICloudBridgeReport {
+         try await perform { local, remote in
+             try PremiumICloudBridgeFileMirror.synchronize(localRoot: local, remoteRoot: remote)
+         }
+@@ -39,6 +40,7 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
+     func deleteRemotePackage() async throws {
+         try await perform { local, remote in
+             try PremiumICloudBridgeFileMirror.deletePackages(localRoot: local, remoteRoot: remote)
++            return PremiumICloudBridgeReport()
+         }
+     }
+ 
+@@ -55,12 +57,17 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
+                     )
+                 }
+             )
++            return PremiumICloudBridgeReport()
+         }
+     }
+ 
+     /// Runs `operation` on a serial background queue: resolving the ubiquity
+-    /// container can block, and mirror passes must not overlap.
+-    private func perform(_ operation: @escaping @Sendable (URL, URL) throws -> Void) async throws {
++    /// container can block, and mirror passes must not overlap. Failures are
++    /// reported as the cause the user can act on, as the helper does.
++    @discardableResult
++    private func perform(
++        _ operation: @escaping @Sendable (URL, URL) throws -> PremiumICloudBridgeReport
++    ) async throws -> PremiumICloudBridgeReport {
+         guard let local = localFolderURL else {
+             throw PremiumICloudBridgeError.appGroupUnavailable
+         }
+@@ -69,18 +76,21 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
+         }
+         let containerIdentifier = containerIdentifier
+         let fileManager = fileManager
+-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
++        return try await withCheckedThrowingContinuation {
++            (continuation: CheckedContinuation<PremiumICloudBridgeReport, Error>) in
+             queue.async {
+                 do {
+                     guard let container = fileManager.url(
+                         forUbiquityContainerIdentifier: containerIdentifier
+                     ) else {
+                         throw PremiumICloudBridgeError.iCloudUnavailable
+                     }
+-                    try operation(local, container.appendingPathComponent("Documents", isDirectory: true))
+-                    continuation.resume()
++                    continuation.resume(returning: try operation(
++                        local,
++                        container.appendingPathComponent("Documents", isDirectory: true)
++                    ))
+                 } catch {
+-                    continuation.resume(throwing: error)
++                    continuation.resume(throwing: PremiumICloudBridgeError.classify(error))
+                 }
+             }
+         }
+```
+
+**File**: `TypeWhisper/Resources/Localizable.xcstrings` (modified, +146/-0)
+```diff
+@@ -29,6 +29,90 @@
          }
        }
-+    },
-+    "Cohere Transcribe requires an explicitly selected supported language. Automatic language detection is not available. Supported languages:": {
-+      "localizations": {
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Cohere Transcribe requiere un idioma compatible seleccionado explícitamente. La detección automática de idioma no está disponible. Idiomas compatibles:"
+     },
++    "The private iCloud sync helper is unavailable." : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Die private iCloud-Sync-Hilfe ist nicht verfügbar."
 +          }
 +        },
-+        "ja": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Cohere Transcribeでは対応言語を明示的に選択する必要があります。言語の自動検出は利用できません。対応言語："
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "El asistente privado de sincronización de iCloud no está disponible."
 +          }
 +        },
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Cohere Transcribe benötigt eine explizit ausgewählte unterstützte Sprache. Automatische Spracherkennung ist nicht verfügbar. Unterstützte Sprachen:"
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "プライベートiCloud同期ヘルパーを利用できません。"
 +          }
 +        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Cohere Transcribe 需要明确选择支持的语言。不支持自动语言检测。支持的语言："
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "私有 iCloud 同步辅助程序不可用。"
 +          }
 +        }
 +      }
-     }
-   },
-   "version": "1.0"
++    },
++    "The shared TypeWhisper container is unavailable." : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Der gemeinsame TypeWhisper-Container ist nicht verfügbar."
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "El contenedor compartido de TypeWhisper no está disponible."
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "TypeWhisperの共有コンテナを利用できません。"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "TypeWhisper 共享容器不可用。"
++          }
++        }
++      }
++    },
++    "This Mac is out of storage space, so TypeWhisper can't sync. Free up space and TypeWhisper tries again automatically." : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Auf diesem Mac ist kein Speicherplatz mehr frei, daher kann TypeWhisper nicht synchronisieren. Gib Speicherplatz frei, dann versucht es TypeWhisper automatisch erneut."
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Este Mac no tiene espacio de almacenamiento disponible, así que TypeWhisper no puede sincronizar. Libera espacio y TypeWhisper lo volverá a intentar automáticamente."
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "このMacのストレージ容量が不足しているため、TypeWhisperは同期できません。空き容量を確保すると、TypeWhisperが自動的に再試行します。"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "这台 Mac 的储存空间不足，TypeWhisper 无法同步。请释放空间，TypeWhisper 会自动重试。"
++          }
++        }
++      }
++    },
+     "TypeWhisper pastes dictations into terminal apps and does not report “No text field detected” for them, because a terminal often shows pasted text only once the shell echoes it. Terminal, iTerm2, WezTerm, Warp, Ghostty, cmux and agterm are always included. Add another terminal if dictating into it ends with that message." : {
+       "localizations" : {
+         "de" : {
+@@ -57,6 +141,34 @@
+         }
+       }
+     },
++    "Your iCloud storage is full. TypeWhisper keeps your changes on this Mac and uploads them once iCloud has space again." : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Dein iCloud-Speicher ist voll. TypeWhisper behält deine Änderungen auf diesem Mac und lädt sie hoch, sobald in iCloud wieder Platz ist."
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Tu almacenamiento de iCloud está lleno. TypeWhisper conserva tus cambios en este Mac y los sube cuando vuelva a haber espacio en iCloud."
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "iCloudのストレージがいっぱいです。TypeWhisperは変更をこのMacに保持し、iCloudに空きができたらアップロードします。"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "你的 iCloud 储存空间已满。TypeWhisper 会将更改保留在这台 Mac 上，并在 iCloud 有可用空间后上传。"
++          }
++        }
++      }
++    },
+     "askHistory.answer.omitted" : {
+       "localizations" : {
+         "de" : {
+@@ -2707,6 +2819,34 @@
+         }
+       }
+     },
++    "iCloud Drive hasn't made the TypeWhisper sync folder available on this Mac yet. TypeWhisper tries again automatically. Check that this Mac is online." : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "iCloud Drive hat den TypeWhisper-Sync-Ordner auf diesem Mac noch nicht bereitgestellt. TypeWhisper versucht es automatisch erneut. Prüfe, ob dieser Mac online ist."
++          }
++        },
 ```
 
-**File**: `TypeWhisperPluginSDK/Plugins/CoherePlugin/manifest.json` (modified, +2/-2)
+**File**: `TypeWhisper/Services/Sync/CloudFolderSyncSettingsView.swift` (modified, +27/-2)
 ```diff
-@@ -1,8 +1,8 @@
- {
-     "id": "com.typewhisper.cohere",
-     "name": "Cohere",
--    "version": "1.0.8",
--    "minHostVersion": "1.8.0",
-+    "version": "1.1.0",
-+    "minHostVersion": "1.8.1",
-     "sdkCompatibilityVersion": "v1",
-     "minOSVersion": "14.0",
-     "author": "TypeWhisper",
-```
-
-**File**: `TypeWhisperTests/PluginManifestValidationTests.swift` (modified, +12/-0)
-```diff
-@@ -224,6 +224,18 @@ final class PluginManifestValidationTests: XCTestCase {
-         XCTAssertEqual(manifest.supportedArchitectures, ["arm64"])
+@@ -1143,6 +1143,12 @@ final class CloudFolderSyncController: ObservableObject {
+         pendingChanges = 0
+         statusMessage = nil
+         errorMessage = nil
++        if newMode != .off {
++            // The list shows the devices of the previous sync location until a sync in the
++            // new one replaces it; a failing first sync would leave them on screen.
++            devices = []
++            deviceCount = 0
++        }
+         updateICloudObservation()
+         lastSyncDate = state(for: newMode)?.lastSyncAt
+         if isConfigured { await syncNow() }
+@@ -1281,6 +1287,7 @@ final class CloudFolderSyncController: ObservableObject {
+         }
+ 
+         do {
++            var iCloudStorageFull = false
+             if syncMode == .automaticICloud {
+                 try await automaticICloudBridge.synchronize()
+             }
+@@ -1295,7 +1302,7 @@ final class CloudFolderSyncController: ObservableObject {
+             )
+             setState(syncState, for: syncMode)
+             if syncMode == .automaticICloud {
+-                try await automaticICloudBridge.synchronize()
++                iCloudStorageFull = try await automaticICloudBridge.synchronize().iCloudStorageFull
+             }
+             let audioDiagnostics = await installPendingSynchronizedAudio(in: folderURL)
+             guard mode == syncMode else { return }
+@@ -1321,11 +1328,23 @@ final class CloudFolderSyncController: ObservableObject {
+                     Int64(synchronizedChanges), Int64(diagnostics.count)
+                 )
+             }
++            showICloudStorageFull(iCloudStorageFull)
+         } catch {
+             errorMessage = error.localizedDescription
+         }
      }
  
-+    func testCoherePlugin110RequiresHost181ForHostLanguageDetection() throws {
-+        let manifestURL = TestSupport.repoRoot.appendingPathComponent(
-+            "TypeWhisperPluginSDK/Plugins/CoherePlugin/manifest.json"
-+        )
-+        let data = try Data(contentsOf: manifestURL)
-+        let manifest = try JSONDecoder().decode(PluginManifest.self, from: data)
-+
-+        XCTAssertEqual(manifest.version, "1.1.0")
-+        XCTAssertEqual(manifest.minHostVersion, "1.8.1")
-+        XCTAssertEqual(manifest.sdkCompatibilityVersion, PluginSDKCompatibility.currentVersion)
++    /// A pass still completes while iCloud is full: this Mac's changes wait in the iCloud
++    /// container on disk until iCloud has space, and files already in iCloud still download.
++    private func showICloudStorageFull(_ isFull: Bool) {
++        let message = PremiumICloudBridgeError.iCloudStorageFull.localizedDescription
++        if isFull {
++            errorMessage = message
++        } else if errorMessage == message {
++            errorMessage = nil
++        }
 +    }
 +
-     func testOpenAIPlugin150RequiresHost183AndDeclaresCloudHosting() throws {
-         let manifestURL = TestSupport.repoRoot.appendingPathComponent("TypeWhisperPluginSDK/Plugins/OpenAIPlugin/manifest.json")
-         let data = try Data(contentsOf: manifestURL)
+     private func selectCustomFolder(_ url: URL) async {
+         guard !isSyncing else { return }
+         let bookmark: Data
+@@ -1473,9 +1492,10 @@ final class CloudFolderSyncController: ObservableObject {
+ 
+         isCheckingForChanges = true
+         defer { isCheckingForChanges = false }
++        var iCloudStorageFull: Bool?
+         if syncMode == .automaticICloud {
+             do {
+-                try await automaticICloudBridge.synchronize()
++                iCloudStorageFull = try await automaticICloudBridge.synchronize().iCloudStorageFull
+             } catch {
+                 // Let a full sync report the bridge failure, as the unconditional poll did.
+                 await syncNow()
+@@ -1495,6 +1515,11 @@ final class CloudFolderSyncController: ObservableObject {
+             folderURL.stopAccessingSecurityScopedResource()
+         }
+         guard mode == syncMode else { return true }
++        // Only after the mode check: deleting the sync folder meanwhile turns sync off and
++        // clears the message, and the check's answer must not bring it back.
++        if let iCloudStorageFull {
++            showICloudStorageFull(iCloudStorageFull)
++        }
+         guard !isSyncing else {
+             // A sync started meanwhile; compare again once it has recorded its package state.
+             needsChangeCheck = true
+```
+
+**File**: `TypeWhisper/Services/Sync/PremiumICloudBridgeClient.swift` (modified, +17/-14)
+```diff
+@@ -4,7 +4,9 @@ protocol PremiumICloudBridging: Sendable {
+     var isAvailable: Bool { get }
+     var localFolderURL: URL? { get }
+ 
+-    func synchronize() async throws
++    /// Mirrors the local sync package and the iCloud container.
++    @discardableResult
++    func synchronize() async throws -> PremiumICloudBridgeReport
+     func deleteRemotePackage() async throws
+     func removeDevice(_ deviceID: String) async throws
+ }
+@@ -21,13 +23,13 @@ enum PremiumICloudBridgeFactory {
+ 
+ private final class PremiumICloudBridgeReplyGate: @unchecked Sendable {
+     private let lock = NSLock()
+-    private var continuation: CheckedContinuation<Void, Error>?
++    private var continuation: CheckedContinuation<PremiumICloudBridgeReport, Error>?
+ 
+-    init(continuation: CheckedContinuation<Void, Error>) {
++    init(continuation: CheckedContinuation<PremiumICloudBridgeReport, Error>) {
+         self.continuation = continuation
+     }
+ 
+-    func finish(with result: Result<Void, Error>) {
++    func finish(with result: Result<PremiumICloudBridgeReport, Error>) {
+         let pendingContinuation = lock.withLock {
+             let pendingContinuation = continuation
+             self.continuation = nil
+@@ -61,7 +63,8 @@ final class PremiumICloudBridgeClient: PremiumICloudBridging, @unchecked Sendabl
+         )
+     }
+ 
+-    func synchronize() async throws {
++    @discardableResult
++    func synchronize() async throws -> PremiumICloudBridgeReport {
+         try await perform { proxy, reply in
+             proxy.synchronize(reply: reply)
+         }
+@@ -79,16 +82,17 @@ final class PremiumICloudBridgeClient: PremiumICloudBridging, @unchecked Sendabl
+         }
+     }
+ 
++    @discardableResult
+     private func perform(
+         _ operation: @escaping (
+             PremiumICloudBridgeXPCProtocol,
+-            @escaping (String?) -> Void
++            @escaping (Data) -> Void
+         ) -> Void
+-    ) async throws {
++    ) async throws -> PremiumICloudBridgeReport {
+         guard isAvailable else {
+             throw PremiumICloudBridgeError.serviceUnavailable
+         }
+-        try await withCheckedThrowingContinuation { continuation in
++        return try await withCheckedThrowingContinuation { continuation in
+             let gate = PremiumICloudBridgeReplyGate(continuation: continuation)
+             let connection = NSXPCConnection(serviceName: serviceName)
+             connection.remoteObjectInterface = NSXPCInterface(
+@@ -110,13 +114,12 @@ final class PremiumICloudBridgeClient: PremiumICloudBridging, @unchecked Sendabl
+                 connection.invalidate()
+                 return
+             }
+-            operation(proxy) { message in
+-                if let message {
+-                    gate.finish(with: .failure(
+-                        PremiumICloudBridgeError.operationFailed(message)
+-                    ))
++            operation(proxy) { data in
++                let reply = PremiumICloudBridgeReply.decoded(from: data)
++                if let failure = reply.failure {
++                    gate.finish(with: .failure(failure))
+                 } else {
+-                    gate.finish(with: .success(()))
++                    gate.finish(with: .success(reply.report))
+                 }
+                 connection.invalidate()
+             }
+```
+
+**File**: `TypeWhisperICloudBridge/PremiumICloudBridgeService.swift` (modified, +50/-38)
+```diff
+@@ -1,58 +1,70 @@
+ import Foundation
++import OSLog
+ 
+ final class PremiumICloudBridgeService: NSObject, PremiumICloudBridgeXPCProtocol {
++    private static let logger = Logger(
++        subsystem: Bundle.main.bundleIdentifier ?? "typewhisper-icloud-bridge",
++        category: "ICloudBridge"
++    )
+     private let operationLock = NSLock()
+ 
+-    func synchronize(reply: @escaping (String?) -> Void) {
+-        reply(operationLock.withLock {
+-            do {
+-                let roots = try bridgeRoots()
+-                try PremiumICloudBridgeFileMirror.synchronize(
+-                    localRoot: roots.local,
+-                    remoteRoot: roots.remote
+-                )
+-                return nil
+-            } catch {
+-                return error.localizedDescription
++    func synchronize(reply: @escaping (Data) -> Void) {
++        reply(perform("synchronize") { roots in
++            let report = try PremiumICloudBridgeFileMirror.synchronize(
++                localRoot: roots.local,
++                remoteRoot: roots.remote
++            )
++            if report.iCloudStorageFull {
++                Self.logger.notice("iCloud refuses uploads because its storage is full")
+             }
++            return report
+         })
+     }
+ 
+-    func deleteRemotePackage(reply: @escaping (String?) -> Void) {
+-        reply(operationLock.withLock {
+-            do {
+-                let roots = try bridgeRoots()
+-                try PremiumICloudBridgeFileMirror.deletePackages(
+-                    localRoot: roots.local,
+-                    remoteRoot: roots.remote
+-                )
+-                return nil
+-            } catch {
+-                return error.localizedDescription
+-            }
++    func deleteRemotePackage(reply: @escaping (Data) -> Void) {
++        reply(perform("deleteRemotePackage") { roots in
++            try PremiumICloudBridgeFileMirror.deletePackages(
++                localRoot: roots.local,
++                remoteRoot: roots.remote
++            )
++            return PremiumICloudBridgeReport()
+         })
+     }
+ 
+     /// Removes the record from the mirror and from iCloud; the mirror would
+     /// otherwise copy it back on the next pass.
+-    func removeDevice(_ deviceID: String, reply: @escaping (String?) -> Void) {
+-        reply(operationLock.withLock {
++    func removeDevice(_ deviceID: String, reply: @escaping (Data) -> Void) {
++        reply(perform("removeDevice") { roots in
++            try PremiumSyncDeviceRemoval.removeRecords(
++                of: deviceID,
++                inPackages: [roots.local, roots.remote].map {
++                    $0.appendingPathComponent(
++                        PremiumICloudBridgeConstants.packageDirectoryName,
++                        isDirectory: true
++                    )
++                }
++            )
++            return PremiumICloudBridgeReport()
++        })
++    }
++
++    /// Runs one request at a time and answers with an encoded `PremiumICloudBridgeReply`.
++    /// Failures are logged with their error codes, which the app does not show for every cause.
++    private func perform(
++        _ request: String,
++        _ body: ((local: URL, remote: URL)) throws -> PremiumICloudBridgeReport
++    ) -> Data {
++        operationLock.withLock {
+             do {
+-                let roots = try bridgeRoots()
+-                try PremiumSyncDeviceRemoval.removeRecords(
+-                    of: deviceID,
+-                    inPackages: [roots.local, roots.remote].map {
+-                        $0.appendingPathComponent(
+-                            PremiumICloudBridgeConstants.packageDirectoryName,
+-                            isDirectory: true
+-                        )
+-                    }
+-                )
+-                return nil
++                return PremiumICloudBridgeReply(report: try body(bridgeRoots())).encoded()
+             } catch {
+-                return error.localizedDescription
++                let failure = PremiumICloudBridgeError.classify(error)
++                Self.logger.error(
++                    "\(request, privacy: .public) failed: \(PremiumICloudBridgeError.technicalSummary(of: error), privacy: .public)"
++                )
++                return PremiumICloudBridgeReply(failure: failure).encoded()
+             }
+-        })
++        }
+     }
+ 
+     private func bridgeRoots() throws -> (local: URL, remote: URL) {
+```
+
+**File**: `TypeWhisperICloudBridge/PremiumICloudBridgeShared.swift` (modified, +534/-142)
+```diff
+@@ -98,50 +98,339 @@ enum PremiumICloudBridgeConstants {
+ 
+ @objc(PremiumICloudBridgeXPCProtocol)
+ protocol PremiumICloudBridgeXPCProtocol: NSObjectProtocol {
+-    func synchronize(reply: @escaping (String?) -> Void)
+-    func deleteRemotePackage(reply: @escaping (String?) -> Void)
+-    func removeDevice(_ deviceID: String, reply: @escaping (String?) -> Void)
++    /// Every reply is an encoded `PremiumICloudBridgeReply`.
++    func synchronize(reply: @escaping (Data) -> Void)
++    func deleteRemotePackage(reply: @escaping (Data) -> Void)
++    func removeDevice(_ deviceID: String, reply: @escaping (Data) -> Void)
+ }
+ 
+-enum PremiumICloudBridgeError: LocalizedError, Equatable, Sendable {
++enum PremiumICloudBridgeError: LocalizedError, Codable, Equatable, Sendable {
+     case serviceUnavailable
+     case appGroupUnavailable
+     case iCloudUnavailable
++    /// iCloud Drive could not provide a folder of the container, usually while it still
++    /// fetches the folder from another device or while the Mac is offline.
++    case iCloudFolderNotReady
++    case iCloudStorageFull
++    case macStorageFull
+     case operationFailed(String)
+ 
+     var errorDescription: String? {
+         switch self {
+         case .serviceUnavailable:
+-            "The private iCloud sync helper is unavailable."
++            String(localized: "The private iCloud sync helper is unavailable.")
+         case .appGroupUnavailable:
+-            "The shared TypeWhisper container is unavailable."
++            String(localized: "The shared TypeWhisper container is unavailable.")
+         case .iCloudUnavailable:
+-            "Sign in to iCloud and enable iCloud Drive to use automatic sync."
++            String(localized: "Sign in to iCloud and enable iCloud Drive to use automatic sync.")
++        case .iCloudFolderNotReady:
++            String(localized: "iCloud Drive hasn't made the TypeWhisper sync folder available on this Mac yet. TypeWhisper tries again automatically. Check that this Mac is online.")
++        case .iCloudStorageFull:
++            String(localized: "Your iCloud storage is full. TypeWhisper keeps your changes on this Mac and uploads them once iCloud has space again.")
++        case .macStorageFull:
++            String(localized: "This Mac is out of storage space, so TypeWhisper can't sync. Free up space and TypeWhisper tries again automatically.")
+         case let .operationFailed(message):
+             message
+         }
+     }
++
++    private static let fileProviderErrorDomain = "NSFileProviderErrorDomain"
++
++    /// What a failed file operation means for the user. An error without a known cause keeps
++    /// its system description and gains its error codes, so a screenshot of the message is
++    /// enough to tell the cause apart.
++    static func classify(_ error: any Error) -> PremiumICloudBridgeError {
++        if let error = error as? PremiumICloudBridgeError {
++            return error
++        }
++        if let failure = error as? PremiumSyncDeviceRemoval.Failure {
++            return .operationFailed(failure.localizedDescription)
++        }
++        let chain = errorChain(of: error)
++        func matches(_ domain: String, _ codes: Int...) -> Bool {
++            chain.contains { $0.domain == domain && codes.contains($0.code) }
++        }
++        // Foundation reports EDQUOT and ENOSPC both as NSFileWriteOutOfSpaceError, so the
++        // POSIX code decides between iCloud and the Mac.
++        if matches(NSCocoaErrorDomain, NSUbiquitousFileNotUploadedDueToQuotaError)
++            || matches(fileProviderErrorDomain, -1003) // insufficient quota
++            || matches(NSPOSIXErrorDomain, Int(EDQUOT)) {
++            return .iCloudStorageFull
++        }
++        if matches(NSCocoaErrorDomain, NSFileWriteOutOfSpaceError)
++            || matches(NSPOSIXErrorDomain, Int(ENOSPC)) {
++            return .macStorageFull
++        }
++        // Not signed in, iCloud Drive turned off, no iCloud Drive domain.
++        if matches(fileProviderErrorDomain, -1000, -2011, -2013) {
++            return .iCloudUnavailable
++        }
++        // A folder iCloud Drive has not fetched yet (EDEADLK), or iCloud cannot be reached.
++        if matches(NSPOSIXErrorDomain, Int(EDEADLK))
++            || matches(NSCocoaErrorDomain, NSUbiquitousFileUbiquityServerNotAvailable)
++            || matches(fileProviderErrorDomain, -1004, -2012) {
++            return .iCloudFolderNotReady
++        }
++        return .operationFailed("\(error.localizedDescription) (\(technicalSummary(of: error)))")
++    }
++
++    /// The domain and code of an error and of the errors beneath it, outermost first.
++    static func technicalSummary(of error: any Error) -> String {
++        errorChain(of: error).map { "\($0.domain) \($0.code)" }.joined(separator: ", ")
++    }
++
++    private static func errorChain(of error: any Error) -> [NSError] {
++        var chain: [NSError] = []
++        var next: NSError? = error as NSError
++        while let current = next, chain.count < 8 {
+```
+
+**File**: `TypeWhisperTests/CloudFolderSyncTests.swift` (modified, +482/-5)
+```diff
+@@ -368,9 +368,34 @@ private final class RecordingPremiumICloudBridge: PremiumICloudBridging, @unchec
+         self.localFolderURL = localFolderURL
+     }
+ 
+-    func synchronize() async throws {
+-        lock.withLock { storedSynchronizeCount += 1 }
++    /// Thrown by every mirror pass while set.
++    var synchronizeError: PremiumICloudBridgeError? {
++        get { lock.withLock { storedSynchronizeError } }
++        set { lock.withLock { storedSynchronizeError = newValue } }
+     }
++    /// Reported by every completed mirror pass.
++    var report: PremiumICloudBridgeReport {
++        get { lock.withLock { storedReport } }
++        set { lock.withLock { storedReport = newValue } }
++    }
++    private var storedSynchronizeError: PremiumICloudBridgeError?
++    private var storedReport = PremiumICloudBridgeReport()
++
++    @discardableResult
++    func synchronize() async throws -> PremiumICloudBridgeReport {
++        let (error, report) = lock.withLock {
++            storedSynchronizeCount += 1
++            return (storedSynchronizeError, storedReport)
++        }
++        if let synchronizeGate {
++            await synchronizeGate.wait()
++        }
++        if let error { throw error }
++        return report
++    }
++
++    /// Holds mirror passes until opened, to act while one is running.
++    var synchronizeGate: RemovalGate?
+ 
+     func deleteRemotePackage() async throws {
+         lock.withLock { storedDeleteCount += 1 }
+@@ -387,6 +412,43 @@ private final class RecordingPremiumICloudBridge: PremiumICloudBridging, @unchec
+     var removalGate: RemovalGate?
+ }
+ 
++/// iCloud access for tests: preparing a folder unlocks it, standing in for iCloud Drive
++/// fetching the listing of a dataless folder, and every prepared folder is recorded.
++private final class LockedFolderAccess: @unchecked Sendable {
++    private let lock = NSLock()
++    private var storedPrepared: [String] = []
++
++    var prepared: Set<String> { lock.withLock { Set(storedPrepared) } }
++
++    func access(
++        unlocks: Bool = true,
++        uploadStatus: @escaping @Sendable (URL) -> PremiumICloudBridgeUploadStatus = { _ in .uploaded }
++    ) -> PremiumICloudBridgeFolderAccess {
++        PremiumICloudBridgeFolderAccess(
++            prepareDirectory: { [self] url in
++                lock.withLock { storedPrepared.append(url.standardizedFileURL.path) }
++                let permissions = try? FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions]
++                if unlocks, (permissions as? NSNumber)?.intValue == 0 {
++                    try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: url.path)
++                }
++            },
++            coordinatesChanges: true,
++            uploadStatus: uploadStatus
++        )
++    }
++}
++
++/// A flag shared with an upload status closure.
++private final class UploadedFlag: @unchecked Sendable {
++    private let lock = NSLock()
++    private var storedIsUploaded = false
++
++    var isUploaded: Bool {
++        get { lock.withLock { storedIsUploaded } }
++        set { lock.withLock { storedIsUploaded = newValue } }
++    }
++}
++
+ private actor RemovalGate {
+     private var isOpen = false
+     private var waiters: [CheckedContinuation<Void, Never>] = []
+@@ -1562,6 +1624,129 @@ final class CloudFolderSyncTests: XCTestCase {
+         XCTAssertNil(controller.errorMessage)
+     }
+ 
++    @MainActor
++    func testAutomaticSyncCompletesAndReportsFullICloudStorage() async throws {
++        let suiteName = "PremiumSyncICloudFull-\(UUID().uuidString)"
++        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
++        defer { defaults.removePersistentDomain(forName: suiteName) }
++        let folder = try TestSupport.makeTemporaryDirectory(prefix: "PremiumSyncICloudFull")
++        defer { TestSupport.remove(folder) }
++        let bridge = RecordingPremiumICloudBridge(localFolderURL: folder)
++        bridge.report = PremiumICloudBridgeReport(iCloudStorageFull: true)
++        let controller = try Self.makeAutomaticSyncController(
++            suiteName: suiteName,
++            defaults: defaults,
++            folder: folder,
++            store: InMemoryUserDataSyncStore(dictionaryEntries: [
++                Self.dictionaryEntry(original: "Full", updatedAt: Self.date(10)),
++            ]),
++            bridge: bridge
++        )
++        defer { controller.deactivate() }
++        try await XCTUnwrap(controller.initialSyncTask).value
++
++        // The pass completed; only the upload waits for space in iCloud.
++        XCTAssertEqual(bridge.synchronizeCount, 2)
++        XCTAssertNotNil(controller.lastSyncDate)
++        XCTAssertEqual(controller.deviceCount, 1)
++        XCTAssertEqual(
++            controller.errorMessage,
++            PremiumICloudBridgeError.iCloudStorageFull.localizedDescription
++        )
++
++        bridge.report = PremiumICloudBridgeReport()
++        await controller.syncIfNeeded()
++
++        XCTAssertNil(controller.errorMessage)
++    }
++
++    
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2011** (2026-11-23): (bug) Offer Cohere's 14 languages and stop sending English without a language (@SeoFood)
-- **PR #2010** (2026-11-23): (bug) Require TypeWhisper 1.8.1 for OpenRouter 1.3.0 (@SeoFood)
-- **PR #2009** (2026-11-23): (bug) Stop the Recorder from crashing when an accessibility client reads a failed transcript (@SeoFood)
-- **PR #2008** (2026-11-23): (feature) Add a manual microphone gain slider next to Whisper Mode (@SeoFood)
-- **PR #2007** (2026-11-23): (feature) Pick the reasoning effort for Groq and OpenRouter models (@SeoFood)
-- **PR #2006** (2026-11-23): (feature) Pick the reasoning effort for Cerebras models (@SeoFood)
+- **PR #2037** (2026-11-25): (bug) Stop reporting a missed text field in Safari editors without a text role (@SeoFood)
+- **PR #2036** (2026-11-25): (bug) Show Safari in the app pickers (@SeoFood)
+- **PR #2034** (2026-11-25): (chore) Bump the release-tools-minor-patch group in /.github/release-tools with 2 updates (@dependabot[bot])
+- **PR #2033** (2026-11-25): (chore) Bump the actions-minor-patch group with 3 updates (@dependabot[bot])
+- **PR #2030** (2026-11-25): (bug) Fix automatic iCloud sync when the Mac has not downloaded the iCloud folder yet (@SeoFood)
+- **PR #2029** (2026-11-25): (feature) Show processing time and highlight differences when comparing History versions (@SeoFood)
 
 ---
 
@@ -2863,34 +3362,31 @@ Adopt HostLanguageDetectionEnginePlugin like Cohere Transcribe (Local) 1.1.0: fo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. (bug) Stop the Recorder from crashing when an accessibility client reads a faile
+## X. (bug) Fix Chinese number normalization for mixed numerals and spoken tails
 
 **RULE**:
-When implementing operations in `TypeWhisper.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `TypeWhisper/Services/NumberNormalization/ChineseNumberWordParser.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d733f820`: (bug) Stop the Recorder from crashing when an accessibility client reads a failed transcript. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c636d716`: (bug) Fix Chinese number normalization for mixed numerals and spoken tails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisper.xcodeproj/project.pbxproj`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisper/Services/NumberNormalization/ChineseNumberWordParser.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-		AA00000000000000000368 /* SelectableTextAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */; };
-		BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SelectableTextAccessibilityTests.swift; sourceTree = "<group>"; };
-				BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */,
-				AA00000000000000000368 /* SelectableTextAccessibilityTests.swift in Sources */,
+        HanNumberWordParser.parse(words, spokenTailEnabled: true)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        HanNumberWordParser.parse(words)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d733f820` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c636d716` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

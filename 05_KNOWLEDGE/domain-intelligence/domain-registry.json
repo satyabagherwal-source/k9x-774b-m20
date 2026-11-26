@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T09:37:53.013Z",
-  "total_records": 2728,
+  "last_updated": "2026-11-26T09:52:56.708Z",
+  "total_records": 2730,
   "domains": {
     "A": {
       "total": 22,
@@ -2585,7 +2585,7 @@
       ]
     },
     "K": {
-      "total": 169,
+      "total": 171,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2755,7 +2755,9 @@
         "domain_intelligence-quality-verification-intelligence-prof18-feed-flow-core-invariants",
         "domain_intelligence-quality-verification-intelligence-prof18-feed-flow-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-oshai-kotlin-logging-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-oshai-kotlin-logging-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-oshai-kotlin-logging-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-oven-sh-bun-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-oven-sh-bun-learnings-core-invariants"
       ]
     },
     "L": {
@@ -12977,8 +12979,8 @@
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "repository": "goharbor/harbor",
-      "content_hash": "c0b7d4e92df55a4899f9a96f33abe361cf2b3859bb898074859c7adbbe4d0d72",
-      "created_at": "2026-11-25T09:25:01.262Z"
+      "content_hash": "9c988477f270db36648cc82d5052306af92a9cc446bb8b4c561beff1347d8d12",
+      "created_at": "2026-11-26T09:48:00.717Z"
     },
     "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants",
@@ -25976,8 +25978,8 @@
       "title": "Architecture Intelligence: TypeWhisper/typewhisper-mac Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-architecture-intelligence-typewhisper-typewhisper-ma.md",
       "repository": "TypeWhisper/typewhisper-mac",
-      "content_hash": "0cac76b3c71bb8e45e2eb741a39ffc3cad3039b58fb73b60a6f04678a61174d2",
-      "created_at": "2026-11-23T23:31:32.069Z"
+      "content_hash": "d3bfb5dfea7f3b0e85f4d621b43562f53c76ae920a0c9a34cc401ec3b1858289",
+      "created_at": "2026-11-26T09:47:58.549Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant",
@@ -25994,8 +25996,8 @@
       "title": "Architecture Intelligence: typewhisper-typewhisper-mac-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-learnings-architecture-intelligence-typewhisper-type.md",
       "repository": "typewhisper-typewhisper-mac-learnings",
-      "content_hash": "079d17569c49ee23de2946ed9be8e6154012ba3c073b73b2d1268673e2c796d9",
-      "created_at": "2026-11-23T23:31:42.119Z"
+      "content_hash": "50386c16b888bc2cc9b2836b1f6ac145fe10b27832f10b6c3762f980bd57dc9a",
+      "created_at": "2026-11-26T09:52:56.708Z"
     },
     "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants",
@@ -29504,8 +29506,8 @@
       "title": "Research & Knowledge Intelligence: cross-encoder/ms-marco-MiniLM-L6-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cross-encoder-ms-marco-minilm-l6-v2-research-knowledge-intelligence-cross-enc.md",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "content_hash": "9037209445dd51f632caac932a9c3c6d15742215d9ed400c19b528bc823abbd4",
-      "created_at": "2026-11-22T16:57:22.750Z"
+      "content_hash": "a397f393c447cf67c9b223d3d442b7ecf9b05f0ca89fe43d4e64e85aa8e1a1f8",
+      "created_at": "2026-11-26T09:52:50.641Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
@@ -29513,8 +29515,8 @@
       "title": "Research & Knowledge Intelligence: hf-cross-encoder-ms-marco-minilm-l6-v2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings-research-knowledge-intelligence.md",
       "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
-      "content_hash": "99c4094e9e3a5b1f574b153fffa097cd7033e21378017170106fd33ef4045c57",
-      "created_at": "2026-11-22T16:57:44.499Z"
+      "content_hash": "f971f9ade0f62da7a0da290578a63b4efe33274e529a44540a1483334c475087",
+      "created_at": "2026-11-26T09:52:55.661Z"
     },
     "DOM-D-6018CADD": {
       "record_id": "DOM-D-6018CADD",
@@ -46095,6 +46097,24 @@
       "repository": "hf-sentence-transformers-all-minilm-l6-v2-learnings",
       "content_hash": "28a092fd83ea860e440ed5139d9e28542f5fee247fa8c2d99b264a580068d2aa",
       "created_at": "2026-11-26T09:37:50.708Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-oven-sh-bun-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-oven-sh-bun-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: oven-sh/bun Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-oven-sh-bun-quality-verification-intelligence-oven-sh-bun-core-invariants.md",
+      "repository": "oven-sh/bun",
+      "content_hash": "cda01d0ae4d1747d982974aa14509f8290e14b36491a033df3c14b41badf35e9",
+      "created_at": "2026-11-26T09:47:54.502Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-oven-sh-bun-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-oven-sh-bun-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: oven-sh-bun-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-oven-sh-bun-learnings-quality-verification-intelligence-oven-sh-bun-learnings-co.md",
+      "repository": "oven-sh-bun-learnings",
+      "content_hash": "8ec9220c61b66b0079fd312f69b91b4aeeb8bd839010c31689b198c2ad795a86",
+      "created_at": "2026-11-26T09:52:54.572Z"
     }
   }
 }

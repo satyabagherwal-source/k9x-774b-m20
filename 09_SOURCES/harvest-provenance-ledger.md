@@ -13355,3 +13355,7 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `adfdb353` | Multi-dimensional audit evidence | 2026-11-26T09:22:09.350Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `5ca337e7` | Multi-dimensional audit evidence | 2026-11-26T09:35:49.985Z |
 | `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-26T09:37:46.179Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `e13b16bc` | Multi-dimensional audit evidence | 2026-11-26T09:47:53.835Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `31093800` | Multi-dimensional audit evidence | 2026-11-26T09:47:57.842Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `1a8626d5` | Multi-dimensional audit evidence | 2026-11-26T09:48:00.091Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-26T09:52:50.308Z |
