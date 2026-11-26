@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
   "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T19:18:32.738Z",
+  "timestamp": "2026-11-26T12:28:55.472Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [prism-ml/Ternary-Bonsai-2-27B-gguf](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf) (Revision: `hf-prism-m`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T19:18:32.738Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T12:28:55.472Z`  
 > **Learning ID**: `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:18:31.517Z  
+> **Harvest Timestamp**: 2026-11-26T12:28:54.587Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1303582 downloads | 3097 likes
+- **Stars / Engagement**: 1283338 downloads | 3141 likes
 
 ---
 

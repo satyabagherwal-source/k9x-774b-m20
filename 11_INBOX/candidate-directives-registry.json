@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T12:20:21.393Z",
+  "last_updated": "2026-11-26T12:29:14.844Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3601,14 +3601,14 @@
       "learning_id": "learn-github-nucleoidai-nucleoid"
     },
     {
-      "id": "CD-FM4F",
+      "id": "CD-4GL9",
       "directive_title": "Empirical Invariant Guard in ci.yml",
-      "source_repo": "provablehq-snarkos-learnings",
-      "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-FM4F-empirical-invariant-guard-in-ci-yml.md",
-      "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-24",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "f2c57796",
+      "staged_file": "11_INBOX/candidate-directives/CD-4GL9-empirical-invariant-guard-in-ci-yml.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
       "domain_letter": "D"
     },
     {
@@ -64873,6 +64873,57 @@
       "source_repo": "saffsanity-sill",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-074585-revert-settings-the-scroll-view-places-t.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-4JP4",
+      "directive_title": "数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86",
+      "source_repo": "folkbench-folkbench-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4JP4-public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-4KPL",
+      "directive_title": "highball tricks from a CLI built from source finds cabextract: outside any bundl",
+      "source_repo": "gauthierpiarrette-highball-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4KPL-highball-tricks-from-a-cli-built-from-source-finds-cabextract-outside-any-bundl.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-4ECL",
+      "directive_title": "import native VM disks through CDI without intermediate conversion",
+      "source_repo": "goodrain/rainbond",
+      "source_commit": "9f4fd68c",
+      "staged_file": "11_INBOX/candidate-directives/CD-4ECL-import-native-vm-disks-through-cdi-without-intermediate-conversion.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-7E533F",
+      "directive_title": "数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "folkbench-folkbench",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7E533F--public-03ac8fb6ff74f38786191514ee11d8e6.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-F6CA81",
+      "directive_title": "highball tricks from a CLI built from source finds cabextract: outside any bundl",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gauthierpiarrette-highball",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F6CA81-highball-tricks-from-a-cli-built-from-so.md",
       "staged_date": "2026-11-26"
     }
   ]

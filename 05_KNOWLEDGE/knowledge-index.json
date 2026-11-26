@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T12:20:21.812Z",
+  "last_updated": "2026-11-26T12:29:15.219Z",
   "total_verified_learnings": 9127,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25892,
+  "total_items": 25899,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112821,10 +112821,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ecf5907c",
-      "content_hash": "66e67eac5adbe771c8b7a656fdb0339a598898708576a29a888e2a7758860c7d",
+      "source_version": "f2c57796",
+      "content_hash": "3b6b1f59832bfb953ff8b0a712c81ded5810ec6035460d40f1f861a23e60ceeb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T07:10:28.729Z"
+      "persisted_at": "2026-11-26T12:29:09.693Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
@@ -112833,10 +112833,10 @@
       "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ecf5907c",
-      "content_hash": "66a672cbb1289a325f1ca4e13e3e232fda606e49f9f943e7c3f3b0332ae1eb44",
+      "source_version": "f2c57796",
+      "content_hash": "d7d1bac5c81e9ae03624a6606b4b5c9dcd7c8f5d577b48feeecf68302812004e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T07:10:29.018Z"
+      "persisted_at": "2026-11-26T12:29:10.029Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -113253,10 +113253,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
       "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
       "repository": "gauthierpiarrette/highball",
-      "source_version": "062ea35b",
-      "content_hash": "1aa1a7e062e159bc7c39e0b2ad90da252c4cfa30bb419eb861006da8bcb91e8f",
+      "source_version": "8d514548",
+      "content_hash": "63661aaf164e384d3eba3837182a993275c0a3d0b212055703afffd5177d62f2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T01:56:02.122Z"
+      "persisted_at": "2026-11-26T12:29:04.489Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball",
@@ -113265,10 +113265,10 @@
       "relative_path": "08_VERIFICATION/gauthierpiarrette-highball-verification-protocol-empirical-defect-shield-for-gau.md",
       "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette/highball",
       "repository": "gauthierpiarrette/highball",
-      "source_version": "062ea35b",
-      "content_hash": "b2f59ada8d9544208c93b23be73c637196f26df719aca95c996e6c47025ec53b",
+      "source_version": "8d514548",
+      "content_hash": "d84e7375ce67624aa57f655c0385205972693ee0a2b9e429b0b8164f384339df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:56:02.308Z"
+      "persisted_at": "2026-11-26T12:29:04.678Z"
     },
     "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733": {
       "item_id": "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733",
@@ -113338,9 +113338,9 @@
       "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
       "repository": "gauthierpiarrette-highball-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d7783377c599c8bea4a9dfa203262cec0954a7a4dc4f7194f06144e9bcc9967",
+      "content_hash": "8c5d9e0419da22399d5c5386e97eae522ecca9f5c27c078723b0dedb8da1ec97",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T01:56:07.627Z"
+      "persisted_at": "2026-11-26T12:29:15.029Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea",
@@ -113350,9 +113350,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette-highball-learnings",
       "repository": "gauthierpiarrette-highball-learnings",
       "source_version": "HEAD",
-      "content_hash": "45bde330898345b4ca425fda48b5eb59b4867135030496900be5db614b162a2b",
+      "content_hash": "2e540181ad0f4b86f07dc4a06e3b179c1f43534d8cf6ec9eac627d5594a68654",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:56:07.815Z"
+      "persisted_at": "2026-11-26T12:29:15.219Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
@@ -216206,8 +216206,8 @@
       "slug": "provablehq-snarkos",
       "platform": "github",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "ecf5907c",
-      "content_hash": "cdadba81ee8e33f4d6a16c0a3a9da765a9e66a1ca6b8215dbab1391179370aa4",
+      "source_version": "f2c57796",
+      "content_hash": "a07c33fe08d7799ce692a7834d45a2312c7c455c0d32f9e283be00a95ab96790",
       "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
@@ -216337,7 +216337,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T07:10:27.767Z",
+      "verified_at": "2026-11-26T12:29:09.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252239,8 +252239,8 @@
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "3d312f45",
-      "content_hash": "2808c050594b1dcf933c3ba903d6c41d8eb704bbc809cc551881c30bdc69fd42",
+      "source_version": "9f4fd68c",
+      "content_hash": "fe17adadc354648bcd1eb23f2d8a943c7f0363c37f1f7ec51df0535df108b774",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "promoted_rules": [
@@ -252268,6 +252268,11 @@
           "number": 10521,
           "title": "Empirical Invariant Guard in vm_power_container_disk_defaults_test.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10678,
+          "title": "import native VM disks through CDI without intermediate conversion",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -252275,7 +252280,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T12:09:10.826Z",
+      "verified_at": "2026-11-26T12:29:06.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252329,10 +252334,10 @@
       "relative_path": "08_VERIFICATION/goodrain-rainbond-verification-protocol-empirical-defect-shield-for-goodrain-rai.md",
       "title": "Verification Protocol: Empirical Defect Shield for goodrain/rainbond",
       "repository": "goodrain/rainbond",
-      "source_version": "3d312f45",
-      "content_hash": "e84c0658177bb4623fb186c7efcfc438efb1a5dc963e135ff02f202989937582",
+      "source_version": "9f4fd68c",
+      "content_hash": "b13cc4629b04b79bf3b831113eb282465c282676d0df3d690ad62bae3eb8b8fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:09:11.695Z"
+      "persisted_at": "2026-11-26T12:29:06.963Z"
     },
     "learn-github-seekstorm-seekstorm": {
       "learning_id": "learn-github-seekstorm-seekstorm",
@@ -258642,8 +258647,8 @@
       "slug": "folkbench-folkbench",
       "platform": "github",
       "source_url": "https://github.com/Folkbench/folkbench",
-      "source_version": "43425e50",
-      "content_hash": "a53790fa1506fc541ebc9de875804288d7968ea90dd321811a4cd316f3c55475",
+      "source_version": "d9954bb4",
+      "content_hash": "c57dd74a4d9a154baad2d86c33fc12646894342d98cc7ff16443db7c7956fc48",
       "dossier_path": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "promoted_rules": [
@@ -258681,6 +258686,11 @@
           "number": 10457,
           "title": "数据：更新每日公开快照（快照 public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dc",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10676,
+          "title": "数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258688,7 +258698,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T04:51:56.794Z",
+      "verified_at": "2026-11-26T12:28:57.656Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258730,10 +258740,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "repository": "Folkbench/folkbench",
-      "source_version": "43425e50",
-      "content_hash": "c7219a8e806788593109437a8f921105ede742c76db0d3db03aed406c1bd94ef",
+      "source_version": "d9954bb4",
+      "content_hash": "cef44c208591325a1c926f9f8ffe0f24310781ed7168394653dc7aba60bb96da",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:51:57.656Z"
+      "persisted_at": "2026-11-26T12:28:58.315Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench",
@@ -258742,10 +258752,10 @@
       "relative_path": "08_VERIFICATION/folkbench-folkbench-verification-protocol-empirical-defect-shield-for-folkbench-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Folkbench/folkbench",
       "repository": "Folkbench/folkbench",
-      "source_version": "43425e50",
-      "content_hash": "bf65b24c0d2a5e9cf4ddb8fd5f556f219541a30d8a9e3d6660de4925b09b3dc4",
+      "source_version": "d9954bb4",
+      "content_hash": "8f2f942892a71789ec15cd08bbc96f7f54ae4a971cc93e55debe8df5cbf79d4e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:51:57.891Z"
+      "persisted_at": "2026-11-26T12:28:58.504Z"
     },
     "rule-8712": {
       "learning_id": "rule-8712",
@@ -258874,9 +258884,9 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "0182fe1fd72cad61eea407a70a0a9227310461f84d56804598ba3c39a837c007",
+      "content_hash": "24e45366c33712b19a444dcf06c62bd6a99608e597e7a2f5fc5fc5d65624e107",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:52:15.912Z"
+      "persisted_at": "2026-11-26T12:29:13.714Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings",
@@ -258886,9 +258896,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for folkbench-folkbench-learnings",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "4bb4372197a9575b4696e5a9fca6d5fdf5d8312c7175611250a394115518e04b",
+      "content_hash": "80bb154aeaaf3973ae002099e807dd7a4ce6fe0c2152c4c323fe8e3fa90848b6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:52:16.144Z"
+      "persisted_at": "2026-11-26T12:29:13.900Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -267815,25 +267825,25 @@
       "rule_number": 8826,
       "title": "Empirical Invariant Guard in ci.yml",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "045bb278",
+      "source_version": "f2c57796",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T13:30:19.405Z"
+      "verified_at": "2026-11-26T12:29:09.029Z"
     },
     "candidate_directive-empirical-invariant-guard-in-ci-yml": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-ci-yml",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FM4F-empirical-invariant-guard-in-ci-yml.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4GL9-empirical-invariant-guard-in-ci-yml.md",
       "title": "Empirical Invariant Guard in ci.yml",
-      "repository": "provablehq-snarkos-learnings",
-      "source_version": "HEAD",
-      "content_hash": "d36bb7e1ae6a436c6cc7357a9fcbc6d85121b0e92e17fe9dfdede5e6d70e0222",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "f2c57796",
+      "content_hash": "e01784c86d60e130865efbad7eb459835928f7a3e016f15b75259395cefaa8bc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T13:30:28.677Z"
+      "persisted_at": "2026-11-26T12:29:09.505Z"
     },
     "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
@@ -267842,10 +267852,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "82e8fb92",
-      "content_hash": "4cdcedfaa3b6886af8d94d36347e123cb65a876971f41abdb9c5f67416ba2239",
+      "source_version": "f2c57796",
+      "content_hash": "85d50bc3ac5dc87818697e92f75a3f011b67873e23c5897a47b28cf3cd3803f9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T03:27:54.838Z"
+      "persisted_at": "2026-11-26T12:29:09.874Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -271736,8 +271746,8 @@
       "slug": "gauthierpiarrette-highball",
       "platform": "github",
       "source_url": "https://github.com/gauthierpiarrette/highball",
-      "source_version": "062ea35b",
-      "content_hash": "aef2a9124eb6dd3e3aa7c03924de8793e83aca4712300b48a27fc157131d092c",
+      "source_version": "8d514548",
+      "content_hash": "2856cbcee1380109db70082b888e7418f8d55ded9ad394571e89efa03e7a0353",
       "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "promoted_rules": [
@@ -271755,6 +271765,11 @@
           "number": 10174,
           "title": "highball play --wait follows Mac builds, Steam for Mac's included, and the libra",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10677,
+          "title": "highball tricks from a CLI built from source finds cabextract: outside any bundl",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271762,7 +271777,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T01:56:01.405Z",
+      "verified_at": "2026-11-26T12:29:03.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286656,7 +286671,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "973b3e4f0fee62b61f4996428b4bd3e0da509a1cf75821ef0bd76b5343d56d2a",
+      "content_hash": "a2e4c1539fb3530f946c7cb4c1c6f1bed264ed79cae62aa3fd0faea6a53e7586",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [],
@@ -286665,7 +286680,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:18:32.094Z",
+      "verified_at": "2026-11-26T12:28:54.994Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286682,9 +286697,9 @@
       "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2-27B-gguf Core Invariants",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "064a491ef0e776ccf4073bf27fe6b6a9e8140468d0e2642cfe96557b8118b283",
+      "content_hash": "115ce42ade376a667b201fa8eabac75b4de75d0f00d61a249cd68ba260b5f8d7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:18:32.739Z"
+      "persisted_at": "2026-11-26T12:28:55.473Z"
     },
     "rule-9104": {
       "learning_id": "rule-9104",
@@ -286732,9 +286747,9 @@
       "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings Core Invariants",
       "repository": "hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "30c5f3422960a9e8f53b4380a6db69e373f9451091738f9c2ea22cac3986fac5",
+      "content_hash": "7ad1c000a88ec5e5068b1b79a34e62d451902c3d4d925347a37227acfa9b1395",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:18:51.802Z"
+      "persisted_at": "2026-11-26T12:29:14.282Z"
     },
     "agent_contract-agent-contract-skyhook-io-radar-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-skyhook-io-radar-learnings-autonomous-specialist-persona",
@@ -354749,6 +354764,96 @@
       "content_hash": "895aea7edc11e1459f16d4e109878268a7c4016202a5aafa98b46fbd83066750",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T12:20:21.596Z"
+    },
+    "rule-10676": {
+      "learning_id": "rule-10676",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10676,
+      "title": "数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86",
+      "source_url": "https://github.com/Folkbench/folkbench",
+      "source_version": "d9954bb4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:28:57.656Z"
+    },
+    "candidate_directive-public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86": {
+      "item_id": "candidate_directive-public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4JP4-public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86.md",
+      "title": "数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9522e71ba20c1c306fc84c5ce0daa7f1db250cfaba5923f15738392c6895ab73",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:29:13.529Z"
+    },
+    "rule-10677": {
+      "learning_id": "rule-10677",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10677,
+      "title": "highball tricks from a CLI built from source finds cabextract: outside any bundl",
+      "source_url": "https://github.com/gauthierpiarrette/highball",
+      "source_version": "8d514548",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:29:03.832Z"
+    },
+    "candidate_directive-highball-tricks-from-a-cli-built-from-source-finds-cabextract-outside-any-bundl": {
+      "item_id": "candidate_directive-highball-tricks-from-a-cli-built-from-source-finds-cabextract-outside-any-bundl",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4KPL-highball-tricks-from-a-cli-built-from-source-finds-cabextract-outside-any-bundl.md",
+      "title": "highball tricks from a CLI built from source finds cabextract: outside any bundl",
+      "repository": "gauthierpiarrette-highball-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b6a2c679eb822c9360646b05a2823e54581ebbb7117c3d2384ff8d1b131cad1c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T12:29:14.844Z"
+    },
+    "rule-10678": {
+      "learning_id": "rule-10678",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10678,
+      "title": "import native VM disks through CDI without intermediate conversion",
+      "source_url": "https://github.com/goodrain/rainbond",
+      "source_version": "9f4fd68c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:29:06.091Z"
+    },
+    "candidate_directive-import-native-vm-disks-through-cdi-without-intermediate-conversion": {
+      "item_id": "candidate_directive-import-native-vm-disks-through-cdi-without-intermediate-conversion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4ECL-import-native-vm-disks-through-cdi-without-intermediate-conversion.md",
+      "title": "import native VM disks through CDI without intermediate conversion",
+      "repository": "goodrain/rainbond",
+      "source_version": "9f4fd68c",
+      "content_hash": "a4574ddcda1ad538979fe245a08580758cc254465131ba9c144aa8db4f3a4576",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T12:29:06.600Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-goodrain-rainbond-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-goodrain-rainbond-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-goodrain-rainbond-research-knowledge-intelligence-goodrain-rainbond-core-invaria.md",
+      "title": "Research & Knowledge Intelligence: goodrain/rainbond Core Invariants",
+      "repository": "goodrain/rainbond",
+      "source_version": "9f4fd68c",
+      "content_hash": "af34ec0c02166330f6c2003a0d0daab02e820258f8d5c8f3758cb0afe78e54b0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T12:29:06.782Z"
     }
   },
   "ai-builder-brain": {

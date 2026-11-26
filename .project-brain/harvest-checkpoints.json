@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T12:20:15.537Z",
+  "last_updated": "2026-11-26T12:29:09.280Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -425,14 +425,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "973b3e4f0fee62b61f4996428b4bd3e0da509a1cf75821ef0bd76b5343d56d2a",
-      "verified_at": "2026-11-22T19:18:32.437Z",
+      "content_hash": "a2e4c1539fb3530f946c7cb4c1c6f1bed264ed79cae62aa3fd0faea6a53e7586",
+      "verified_at": "2026-11-26T12:28:55.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:18:32.437Z"
+      "last_updated": "2026-11-26T12:28:55.264Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "cdadba81ee8e33f4d6a16c0a3a9da765a9e66a1ca6b8215dbab1391179370aa4",
-      "verified_at": "2026-11-26T07:10:28.148Z",
+      "content_hash": "a07c33fe08d7799ce692a7834d45a2312c7c455c0d32f9e283be00a95ab96790",
+      "verified_at": "2026-11-26T12:29:09.280Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T07:10:28.148Z"
+      "last_updated": "2026-11-26T12:29:09.280Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -4071,14 +4071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goodrain-rainbond",
-      "content_hash": "2808c050594b1dcf933c3ba903d6c41d8eb704bbc809cc551881c30bdc69fd42",
-      "verified_at": "2026-11-25T12:09:11.073Z",
+      "content_hash": "fe17adadc354648bcd1eb23f2d8a943c7f0363c37f1f7ec51df0535df108b774",
+      "verified_at": "2026-11-26T12:29:06.347Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T12:09:11.073Z"
+      "last_updated": "2026-11-26T12:29:06.347Z"
     },
     "bee-san/Ciphey": {
       "repository": "bee-san/Ciphey",
@@ -15876,14 +15876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gauthierpiarrette-highball",
-      "content_hash": "aef2a9124eb6dd3e3aa7c03924de8793e83aca4712300b48a27fc157131d092c",
-      "verified_at": "2026-11-24T01:56:01.667Z",
+      "content_hash": "2856cbcee1380109db70082b888e7418f8d55ded9ad394571e89efa03e7a0353",
+      "verified_at": "2026-11-26T12:29:04.090Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:56:01.667Z"
+      "last_updated": "2026-11-26T12:29:04.090Z"
     },
     "MiniMaxAI/MiniMax-M3.1-Flash": {
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
@@ -19116,14 +19116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-folkbench-folkbench",
-      "content_hash": "a53790fa1506fc541ebc9de875804288d7968ea90dd321811a4cd316f3c55475",
-      "verified_at": "2026-11-25T04:51:57.100Z",
+      "content_hash": "c57dd74a4d9a154baad2d86c33fc12646894342d98cc7ff16443db7c7956fc48",
+      "verified_at": "2026-11-26T12:28:57.905Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T04:51:57.100Z"
+      "last_updated": "2026-11-26T12:28:57.905Z"
     },
     "IFM/PAN2": {
       "repository": "IFM/PAN2",

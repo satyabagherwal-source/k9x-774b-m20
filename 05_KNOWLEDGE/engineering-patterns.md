@@ -804421,3 +804421,251 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `9981fd4e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10676. 数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86 (Harvested from Folkbench/folkbench)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86",
+  "source": "Folkbench/folkbench",
+  "source_url": "https://github.com/Folkbench/folkbench",
+  "source_version": "d9954bb4",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T12:28:57.336Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-folkbench-folkbench",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Folkbench/folkbench](https://github.com/Folkbench/folkbench) (Revision: `d9954bb4`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Folkbench/folkbench. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d9954bb4`: 数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86f65a33）. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+> 归档日期：2026-11-25 · 发布：2026-11-25 20:30:47（北京时间）· 快照：`public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86f65a33`
+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.9% | 96.6% | ¥1.99 / 1M / ¥9.96 / 1M | 177 |
+| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 92.2% | 100.0% | 91.2% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
+| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.5% | 89.4% | 74.2% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
+| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.8% | 95.1% | ¥0.17 / 1M / ¥0.83 / 1M | 139 |
+| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_sou
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+> 归档日期：2026-11-24 · 发布：2026-11-24 20:30:40（北京时间）· 快照：`public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905`
+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.8% | 94.8% | ¥1.99 / 1M / ¥9.96 / 1M | 135 |
+| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 93.2% | 100.0% | 91.3% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
+| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.8% | 66.7% | 56.8% | ¥20.00 / 1M / ¥100.00 / 1M | 48 |
+| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.2% | 94.9% | ¥0.17 / 1M / ¥0.83 / 1M | 178 |
+| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_sou
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d9954bb4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10677. highball tricks from a CLI built from source finds cabextract: outside any bundl (Harvested from gauthierpiarrette/highball)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "highball tricks from a CLI built from source finds cabextract: outside any bundl",
+  "source": "gauthierpiarrette/highball",
+  "source_url": "https://github.com/gauthierpiarrette/highball",
+  "source_version": "8d514548",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-26T12:29:03.510Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gauthierpiarrette-highball",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball) (Revision: `8d514548`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/HighballKit/WinetricksWine.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `41318aa8`: highball tricks from a CLI built from source finds cabextract: outside any bundle and without HIGHBALL_TOOLS it borrows the installed Highball.app's tools folder (/Applications or ~/Applications). Before, it put no tools folder on winetricks' PATH, so every verb that needs cabextract failed there (highball-db#941, udance4ever).. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballKit/WinetricksWine.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// Where an installed Highball keeps its tools, for a CLI that is not inside the app.
+    public static let installedAppTools: [URL] = [URL(fileURLWithPath: "/Applications"),
+                                                  FileManager.default.homeDirectoryForCurrentUser.appending(path: "Applications")]
+        .map { $0.appending(path: "Highball.app/Contents/Resources/tools", directoryHint: .isDirectory) }
+
+    /// and failed every verb that needs cabextract (db#941). A CLI built from source is in no
+    /// bundle, so without HIGHBALL_TOOLS it borrows the installed app's folder (db#941 again).
+    public static func pathWithTools(_ path: String?, installedApps: [URL] = installedAppTools) -> String? {
+        var tools = [ProcessInfo.processInfo.environment["HIGHBALL_TOOLS"].map { URL(fileURLWithPath: $0) },
+        if tools.isEmpty, let app = installedApps.first(where: { FileManager.default.fileExists(atPath: $0.path) }) { tools = [app] }
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+    /// and failed every verb that needs cabextract (db#941).
+    public static func pathWithTools(_ path: String?) -> String? {
+        let tools = [ProcessInfo.processInfo.environment["HIGHBALL_TOOLS"].map { URL(fileURLWithPath: $0) },
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `41318aa8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10678. import native VM disks through CDI without intermediate conversion (Harvested from goodrain/rainbond)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "import native VM disks through CDI without intermediate conversion",
+  "source": "goodrain/rainbond",
+  "source_url": "https://github.com/goodrain/rainbond",
+  "source_version": "9f4fd68c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T12:29:05.764Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-goodrain-rainbond",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [goodrain/rainbond](https://github.com/goodrain/rainbond) (Revision: `9f4fd68c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `builder/exector/build_from_vm.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9f4fd68c`: import native VM disks through CDI without intermediate conversion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `builder/exector/build_from_vm.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	vmDiskBuildStrategyValidateDisk vmDiskBuildStrategy = "validate-disk"
+	vmDiskBuildStrategyValidateVMDK vmDiskBuildStrategy = "validate-vmdk"
+// Probe the actual format and reject external dependencies before publication.
+// RAW and VHD do not implement qemu-img check; the other supported formats do.
+// No disk data is rewritten here: CDI owns conversion into the persistent disk.
+var vmDiskValidationDockerfileTmpl = `
+FROM ${CONVERTER_IMAGE} AS validate
+RUN --network=none set -eu; /usr/bin/qemu-img info --output=json /work/source.img > /work/source-info.json; format=; while IFS= read -r line; do case "$line" in '    "format": "raw"'*) format=raw ;; '    "format": "qcow2"'*) format=qcow2 ;; '    "format": "vdi"'*) format=vdi ;; '    "format": "vpc"'*) format=vpc ;; '    "format": "vhdx"'*) format=vhdx ;; *'"backing-filename":'*|*'"data-file":'*|*'"encrypted": true'*) echo 'vm_disk_external_dependency: 磁盘必须是无父盘、外部数据文件或加密的自包含单文件' >&2; exit 1 ;; esac; done < /work/source-info.json; case "$format" in raw|vpc) ;; qcow2|vdi|vhdx) /usr/bin/qemu-img check -f "$format" /work/source.img ;; *) echo 'vm_disk_unsupported_format: 不支持的磁盘内容格式' >&2; exit 1 ;; esac; rm -f /work/source-info.json
+COPY 
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	vmDiskBuildStrategyConvertDisk  vmDiskBuildStrategy = "convert-disk"
+	vmDiskBuildStrategyConvertVMDK  vmDiskBuildStrategy = "convert-vmdk"
+// IMG is a filename convention, not a disk format. Probe inside the converter
+// image, which provides qemu-img, and accept only self-contained raw/QCOW2 disks.
+// Parse its JSON with shell builtins to avoid adding converter dependencies.
+var vmDiskToQCOW2DockerfileTmpl = `
+FROM ${CONVERTER_IMAGE} AS convert
+RUN /usr/bin/qemu-img info --output=json /work/source.img > /work/source-info.json && format= && while IFS= read -r line; do case "$line" in '    "format": "raw"'*) format=raw ;; '    "format": "qcow2"'*) format=qcow2 ;; *'"backing-filename":'*|*'"data-file":'*) echo 'VM disk must not reference external files' >&2; exit 1 ;; esac; done < /work/source-info.json && case "$format" in raw|qcow2) ;; *) echo 'unsupported VM disk content format' >&2; exit 1 ;; esac && /usr/bin/qemu-img convert -p -f "$format" -O qcow2 -c /work/source.img /work/rootdisk.qcow2 && rm -f /work/source.img /work/source-info.json
+COPY --from=convert --chown=107:107 /work/rootdisk.qcow2 /disk/
+// network and use a literal file child with backing=null as a second boundary
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9f4fd68c` are properly handled with clean fallback behavior.

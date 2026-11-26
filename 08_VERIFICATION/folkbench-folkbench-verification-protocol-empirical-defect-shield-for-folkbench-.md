@@ -4,22 +4,22 @@
 {
   "source_repository": "Folkbench/folkbench",
   "source_url": "https://github.com/Folkbench/folkbench",
-  "source_version": "43425e50",
+  "source_version": "d9954bb4",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T04:51:57.416Z",
+  "timestamp": "2026-11-26T12:28:58.117Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-folkbench-folkbench",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Folkbench/folkbench](https://github.com/Folkbench/folkbench) (Revision: `43425e50`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T04:51:57.416Z`  
+> **Provenance**: Harvested from [Folkbench/folkbench](https://github.com/Folkbench/folkbench) (Revision: `d9954bb4`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T12:28:58.117Z`  
 > **Learning ID**: `learn-github-folkbench-folkbench`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Folkbench/folkbench` (Commit: `43425e50`)
+- **Target Repository**: `Folkbench/folkbench` (Commit: `d9954bb4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/folkbench-folkbench-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Folkbench/folkbench](https://github.com/Folkbench/folkbench))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T04:51:55.337Z  
+> **Harvest Timestamp**: 2026-11-26T12:28:56.728Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: AI API 中转站推荐与评测：中转站排行榜、中转站检测、Claude / GPT / Gemini 中转站对比 · AI API relay rankings · Folkbench Switch for Claude Code, Codex & Gemini CLI
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3635 stars
+- **Stars / Engagement**: 3739 stars
 
 ---
 
@@ -1151,41 +1151,41 @@ process.stdout.write(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `43425e50` (2026-11-24)
-**Commit Message**: 数据：更新每日公开快照（快照 public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905）
+### Incident Patch 1: `d9954bb4` (2026-11-25)
+**Commit Message**: 数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86f65a33）
 
-**File**: `README.md` (modified, +59/-56)
+**File**: `README.md` (modified, +58/-58)
 ```diff
-@@ -70,92 +70,95 @@ Folkbench 帮你挑线路、配好客户端，不是自建代理教程。
+@@ -70,95 +70,95 @@ Folkbench 帮你挑线路、配好客户端，不是自建代理教程。
  ## 今日公开快照
  
  <!-- FOLKBENCH-BOARD:START -->
--> 归档日期：2026-11-23 · 发布：2026-11-23 20:30:34（北京时间）· 快照：`public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744ce6342`
-+> 归档日期：2026-11-24 · 发布：2026-11-24 20:30:40（北京时间）· 快照：`public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905`
+-> 归档日期：2026-11-24 · 发布：2026-11-24 20:30:40（北京时间）· 快照：`public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905`
++> 归档日期：2026-11-25 · 发布：2026-11-25 20:30:47（北京时间）· 快照：`public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86f65a33`
  > 排序沿用主站规则，包含合作档位与运营加分。本页提供公开快照，不是原始运行记录。
  
  | 模型 | # | 中转站 | 综合 | 可用率 | 稳定性 | 输入 / 输出价 | 样本 |
  | :-- | :-: | :-- | --: | --: | --: | :-- | --: |
--| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.0% | 95.7% | ¥1.99 / 1M / ¥9.96 / 1M | 199 |
--| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 94.7% | 100.0% | 89.3% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
--| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 89.6% | 72.3% | 59.9% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
-+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.8% | 94.8% | ¥1.99 / 1M / ¥9.96 / 1M | 135 |
-+| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 93.2% | 100.0% | 91.3% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
-+| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.8% | 66.7% | 56.8% | ¥20.00 / 1M / ¥100.00 / 1M | 48 |
+-| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.8% | 94.8% | ¥1.99 / 1M / ¥9.96 / 1M | 135 |
+-| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 93.2% | 100.0% | 91.3% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
+-| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.8% | 66.7% | 56.8% | ¥20.00 / 1M / ¥100.00 / 1M | 48 |
++| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.9% | 96.6% | ¥1.99 / 1M / ¥9.96 / 1M | 177 |
++| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 92.2% | 100.0% | 91.2% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
++| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.5% | 89.4% | 74.2% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
  | | | [完整 Claude Fable 5.1 榜单 →](https://folkbench.com/rankings/claude-fable-5-1?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-more) | | | | | |
--| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.7% | 94.9% | ¥0.17 / 1M / ¥0.83 / 1M | 132 |
--| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 93.5% | 100.0% | 91.7% | ¥0.10 / 1M / ¥0.50 / 1M | 47 |
--| | | [完整 Claude Haiku 5.5 榜单 →](https://folkbench.com/rankings/claude-haiku-5-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-more) | | | | | |
--| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 98.7% | 95.7% | ¥1.00 / 1M / ¥4.98 / 1M | 154 |
-+| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.2% | 94.9% | ¥0.17 / 1M / ¥0.83 / 1M | 178 |
-+| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 92.0% | 100.0% | 91.5% | ¥0.10 / 1M / ¥0.50 / 1M | 48 |
-+| | | [完整 claude-haiku-5-5 榜单 →](https://folkbench.com/rankings/claude-haiku-5-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-more) | | | | | |
-+| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 97.3% | 93.4% | ¥1.00 / 1M / ¥4.98 / 1M | 109 |
+-| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.2% | 94.9% | ¥0.17 / 1M / ¥0.83 / 1M | 178 |
+-| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 92.0% | 100.0% | 91.5% | ¥0.10 / 1M / ¥0.50 / 1M | 48 |
++| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.8% | 95.1% | ¥0.17 / 1M / ¥0.83 / 1M | 139 |
++| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 91.9% | 100.0% | 91.9% | ¥0.10 / 1M / ¥0.50 / 1M | 47 |
+ | | | [完整 claude-haiku-5-5 榜单 →](https://folkbench.com/rankings/claude-haiku-5-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-more) | | | | | |
+-| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 97.3% | 93.4% | ¥1.00 / 1M / ¥4.98 / 1M | 109 |
++| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 98.5% | 95.9% | ¥1.00 / 1M / ¥4.98 / 1M | 194 |
  | | | [完整 Claude Opus 5 榜单 →](https://folkbench.com/rankings/claude-opus-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-more) | | | | | |
--| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 98.6% | 95.8% | ¥0.80 / 1M / ¥3.98 / 1M | 142 |
--| Claude Opus 5.5 | 2 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r2) | 95.7% | 100.0% | 75.3% | ¥4.00 / 1M / ¥20.00 / 1M | 47 |
--| Claude Opus 5.5 | 3 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r3) | 94.2% | 100.0% | 86.8% | ¥4.80 / 1M / ¥24.00 / 1M | 47 |
-+| Claude Opus 5.5 | 1 | [Modelflare](https://
+-| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 97.8% | 95.6% | ¥0.80 / 1M / ¥3.98 / 1M | 186 |
+-| Claude Opus 5.5 | 2 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r2) | 95.7% | 100.0% | 89.8% | ¥4.00 / 1M / ¥20.00 / 1M | 48 |
+-| Claude Opus 5.5 | 3 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r3) | 94.5% | 100.0% | 85.3% | ¥4.80 / 1M / ¥24.00 / 1M | 47 |
++| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 98.2% | 95.7% | ¥0.80 / 1M / ¥3.98 / 1M | 162 |
++| C
 ```
 
 #### Recent Merged Pull Requests:
@@ -1213,13 +1213,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 数据：更新每日公开快照（快照 public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dc
+## X. 数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Folkbench/folkbench. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `43425e50`: 数据：更新每日公开快照（快照 public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905）. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9954bb4`: 数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86f65a33）. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -1227,6 +1227,17 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
+> 归档日期：2026-11-25 · 发布：2026-11-25 20:30:47（北京时间）· 快照：`public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86f65a33`
+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.9% | 96.6% | ¥1.99 / 1M / ¥9.96 / 1M | 177 |
+| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 92.2% | 100.0% | 91.2% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
+| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.5% | 89.4% | 74.2% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
+| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.8% | 95.1% | ¥0.17 / 1M / ¥0.83 / 1M | 139 |
+| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_sou
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
 > 归档日期：2026-11-24 · 发布：2026-11-24 20:30:40（北京时间）· 快照：`public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905`
 | Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.8% | 94.8% | ¥1.99 / 1M / ¥9.96 / 1M | 135 |
 | claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 93.2% | 100.0% | 91.3% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
@@ -1235,19 +1246,8 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 | claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_sou
 ```
 
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Induced defect failure mode:
-> 归档日期：2026-11-23 · 发布：2026-11-23 20:30:34（北京时间）· 快照：`public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744ce6342`
-| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.0% | 95.7% | ¥1.99 / 1M / ¥9.96 / 1M | 199 |
-| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 94.7% | 100.0% | 89.3% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
-| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 89.6% | 72.3% | 59.9% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
-| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.7% | 94.9% | ¥0.17 / 1M / ¥0.83 / 1M | 132 |
-| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_sou
-```
-
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `43425e50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9954bb4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

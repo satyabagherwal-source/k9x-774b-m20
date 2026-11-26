@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T12:20:21.596Z",
-  "total_records": 2746,
+  "last_updated": "2026-11-26T12:29:15.029Z",
+  "total_records": 2747,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1022,
+      "total": 1023,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1095,7 +1095,8 @@
         "DOM-D-B8D29B23",
         "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria",
         "DOM-D-439581EA",
-        "DOM-D-68A82B80"
+        "DOM-D-68A82B80",
+        "domain_intelligence-research-knowledge-intelligence-goodrain-rainbond-core-invariants"
       ]
     },
     "E": {
@@ -8852,8 +8853,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "66e67eac5adbe771c8b7a656fdb0339a598898708576a29a888e2a7758860c7d",
-      "created_at": "2026-11-26T07:10:28.729Z"
+      "content_hash": "3b6b1f59832bfb953ff8b0a712c81ded5810ec6035460d40f1f861a23e60ceeb",
+      "created_at": "2026-11-26T12:29:09.693Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9131,8 +9132,8 @@
       "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
       "repository": "gauthierpiarrette/highball",
-      "content_hash": "1aa1a7e062e159bc7c39e0b2ad90da252c4cfa30bb419eb861006da8bcb91e8f",
-      "created_at": "2026-11-24T01:56:02.122Z"
+      "content_hash": "63661aaf164e384d3eba3837182a993275c0a3d0b212055703afffd5177d62f2",
+      "created_at": "2026-11-26T12:29:04.489Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants",
@@ -9209,8 +9210,8 @@
       "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-learnings-architecture-intelligence-gauthierpiarrette.md",
       "repository": "gauthierpiarrette-highball-learnings",
-      "content_hash": "0d7783377c599c8bea4a9dfa203262cec0954a7a4dc4f7194f06144e9bcc9967",
-      "created_at": "2026-11-24T01:56:07.627Z"
+      "content_hash": "8c5d9e0419da22399d5c5386e97eae522ecca9f5c27c078723b0dedb8da1ec97",
+      "created_at": "2026-11-26T12:29:15.029Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
@@ -24214,8 +24215,8 @@
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "repository": "Folkbench/folkbench",
-      "content_hash": "c7219a8e806788593109437a8f921105ede742c76db0d3db03aed406c1bd94ef",
-      "created_at": "2026-11-25T04:51:57.656Z"
+      "content_hash": "cef44c208591325a1c926f9f8ffe0f24310781ed7168394653dc7aba60bb96da",
+      "created_at": "2026-11-26T12:28:58.315Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
@@ -24232,8 +24233,8 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
       "repository": "folkbench-folkbench-learnings",
-      "content_hash": "0182fe1fd72cad61eea407a70a0a9227310461f84d56804598ba3c39a837c007",
-      "created_at": "2026-11-25T04:52:15.912Z"
+      "content_hash": "24e45366c33712b19a444dcf06c62bd6a99608e597e7a2f5fc5fc5d65624e107",
+      "created_at": "2026-11-26T12:29:13.714Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -30230,8 +30231,8 @@
       "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2-27B-gguf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-27b-gguf-research-knowledge-intelligence-prism-ml-t.md",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "content_hash": "064a491ef0e776ccf4073bf27fe6b6a9e8140468d0e2642cfe96557b8118b283",
-      "created_at": "2026-11-22T19:18:32.739Z"
+      "content_hash": "115ce42ade376a667b201fa8eabac75b4de75d0f00d61a249cd68ba260b5f8d7",
+      "created_at": "2026-11-26T12:28:55.473Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-",
@@ -30239,8 +30240,8 @@
       "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-research-knowledge-intelligence-.md",
       "repository": "hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings",
-      "content_hash": "30c5f3422960a9e8f53b4380a6db69e373f9451091738f9c2ea22cac3986fac5",
-      "created_at": "2026-11-22T19:18:51.802Z"
+      "content_hash": "7ad1c000a88ec5e5068b1b79a34e62d451902c3d4d925347a37227acfa9b1395",
+      "created_at": "2026-11-26T12:29:14.282Z"
     },
     "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants",
@@ -46374,6 +46375,15 @@
       "repository": "saffsanity-sill-learnings",
       "content_hash": "895aea7edc11e1459f16d4e109878268a7c4016202a5aafa98b46fbd83066750",
       "created_at": "2026-11-26T12:20:21.596Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-goodrain-rainbond-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-goodrain-rainbond-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: goodrain/rainbond Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-goodrain-rainbond-research-knowledge-intelligence-goodrain-rainbond-core-invaria.md",
+      "repository": "goodrain/rainbond",
+      "content_hash": "af34ec0c02166330f6c2003a0d0daab02e820258f8d5c8f3758cb0afe78e54b0",
+      "created_at": "2026-11-26T12:29:06.782Z"
     }
   }
 }

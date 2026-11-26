@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T01:56:07.287Z",
+  "timestamp": "2026-11-26T12:29:14.718Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gauthierpiarrette-highball-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gauthierpiarrette-highball-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T01:56:07.287Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T12:29:14.718Z`  
 > **Learning ID**: `LEARN-EVO-gauthierpiarrette-highball-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source**: github ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
-> **Source Version**: `062ea35b`  
+> **Source Version**: `8d514548`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T01:56:00.485Z  
+> **Timestamp**: 2026-11-26T12:29:02.931Z  
 > **Learning ID**: `learn-github-gauthierpiarrette-highball`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:56:00.479Z  
+> **Harvest Timestamp**: 2026-11-26T12:29:02.925Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Run Windows games on Apple Silicon — free, open source, with an open compatibility database that tells you what actually works.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2332 stars
+- **Stars / Engagement**: 2356 stars
 
 ---
 
@@ -1151,361 +1151,199 @@ writePNG(render(scale: 2), args[2], scale: 2)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d471e91` (2026-11-23)
-**Commit Message**: highball play --wait follows Mac builds, Steam for Mac's included, and the library JSON says installedOnWindows and hidden (highball#432). RunningGames, which --wait reads, held only the sessions in environments, so a wait on a game Steam for Mac started ran to --start-timeout and gave up while the game played (Terraforming Mars, udance4ever timed 49 s). It now also holds the Epic and GOG Mac builds Highball started and the Steam for Mac games Play opened, followed by their process under steamapps/common for up to ten minutes to appear and then until they quit. The JSON's installed is now installedOnWindows, beside installedOnMac, since the command hasn't shipped yet, and hidden says what the player hid from the library. play's id help names the form. New test in PlayFromCommandLineTests, 16 tests pass, and highball library --json lists the real library with both fields. The Steam for Mac wait is not tried live yet.
+### Incident Patch 1: `41318aa8` (2026-11-25)
+**Commit Message**: highball tricks from a CLI built from source finds cabextract: outside any bundle and without HIGHBALL_TOOLS it borrows the installed Highball.app's tools folder (/Applications or ~/Applications). Before, it put no tools folder on winetricks' PATH, so every verb that needs cabextract failed there (highball-db#941, udance4ever). (#795)
 
-**File**: `Sources/HighballApp/AppState.swift` (modified, +45/-6)
+**File**: `Sources/HighballKit/WinetricksWine.swift` (modified, +10/-3)
 ```diff
-@@ -511,7 +511,31 @@ final class AppState {
-         if item.source == .epic { epicPlayMac(item); return }
-         guard let appid = item.steamAppID else { return }
-         recordPlay(item)
--        _ = openInSteamForMac(URL(string: "steam://run/\(appid)")!)
-+        if openInSteamForMac(URL(string: "steam://run/\(appid)")!),
-+           let game = macSteamGames.first(where: { $0.appid == appid }), !game.installdir.isEmpty {
-+            watchMacSteamGame(item.id, markers: SessionWatch.markers(installdir: game.installdir))
-+        }
+@@ -56,15 +56,22 @@ public enum WinetricksWine {
+         return out
+     }
+ 
++    /// Where an installed Highball keeps its tools, for a CLI that is not inside the app.
++    public static let installedAppTools: [URL] = [URL(fileURLWithPath: "/Applications"),
++                                                  FileManager.default.homeDirectoryForCurrentUser.appending(path: "Applications")]
++        .map { $0.appending(path: "Highball.app/Contents/Resources/tools", directoryHint: .isDirectory) }
++
+     /// `path` with Highball's tool folders in front. winetricks shells out to cabextract for
+     /// Microsoft's cabinet installers (the core fonts among them) and macOS does not ship it, so
+     /// the app bundles one under Resources/tools (highball#96). HIGHBALL_TOOLS names another
+     /// directory, for the CLI. Shared by recipes and `highball tricks`, whose PATH once lacked it
+-    /// and failed every verb that needs cabextract (db#941).
+-    public static func pathWithTools(_ path: String?) -> String? {
+-        let tools = [ProcessInfo.processInfo.environment["HIGHBALL_TOOLS"].map { URL(fileURLWithPath: $0) },
++    /// and failed every verb that needs cabextract (db#941). A CLI built from source is in no
++    /// bundle, so without HIGHBALL_TOOLS it borrows the installed app's folder (db#941 again).
++    public static func pathWithTools(_ path: String?, installedApps: [URL] = installedAppTools) -> String? {
++        var tools = [ProcessInfo.processInfo.environment["HIGHBALL_TOOLS"].map { URL(fileURLWithPath: $0) },
+                      Bundle.main.resourceURL?.appending(path: "tools", directoryHint: .isDirectory)]
+             .compactMap { $0 }.filter { FileManager.default.fileExists(atPath: $0.path) }
++        if tools.isEmpty, let app = installedApps.first(where: { FileManager.default.fileExists(atPath: $0.path) }) { tools = [app] }
+         guard !tools.isEmpty else { return path }
+         return (tools.map(\.path) + [path ?? ProcessInfo.processInfo.environment["PATH"] ?? "/usr/bin:/bin"]).joined(separator: ":")
+     }
+```
+
+**File**: `Tests/HighballKitTests/WinetricksWineTests.swift` (modified, +13/-0)
+```diff
+@@ -62,6 +62,19 @@ final class WinetricksWineTests: XCTestCase {
+         XCTAssertEqual(WinetricksWine.pathWithTools(engineBin), without, "a folder that is not there is not added")
+     }
+ 
++    /// A CLI built from source is in no bundle: without HIGHBALL_TOOLS it used no tools folder at
++    /// all and every cabextract verb failed (db#941). It borrows the installed app's.
++    func testACLIOutsideTheAppBorrowsTheInstalledAppsTools() throws {
++        let tools = FileManager.default.temporaryDirectory.appending(path: "hb-apptools-\(UUID().uuidString)", directoryHint: .isDirectory)
++        try FileManager.default.createDirectory(at: tools, withIntermediateDirectories: true)
++        defer { try? FileManager.default.removeItem(at: tools) }
++        unsetenv("HIGHBALL_TOOLS")
++        let engineBin = "/engines/e/engine/bin:/usr/bin:/bin"
++        let missing = tools.appending(path: "missing")
++        XCTAssertEqual(WinetricksWine.pathWithTools(engineBin, installedApps: [missing, tools]), "\(tools.path):\(engineBin)")
++        XCTAssertEqual(WinetricksWine.pathWithTools(engineBin, installedApps: [missing]), engineBin, "no app, no change")
 +    }
 +
-+    /// Follows a game Steam for Mac started for Highball by its process, whose path runs through
-+    /// its steamapps/common folder: up to ten minutes for it to appear (Steam may update it first),
-+    /// then until it quits. Only `highball play --wait` reads it (writeRunningGames).
-+    private func watchMacSteamGame(_ id: String, markers: [String]) {
-+        Task { [weak self] in
-+            var seen = false
-+            for _ in 0..<300 {
-+                try? await Task.sleep(for: .seconds(2))
-+                let alive = SessionWatch.isAlive(markers: markers, ps: await Self.processList())
-+                guard let self else { return }
-+                if alive, !seen { seen = true; self.macSteamRunning.insert(id) }
-+                if seen, !alive { self.macSteamRunning.remove(id); return }
-+            }
-+            while seen {
-+                try? await Task.sleep(for: .seconds(2))
-+                guard let self else { return }
-+                if !SessionWatch.isAlive(markers: markers, ps: await Self.processList()) { self.macSteamRunning.remove(id); return }
-+            }
-+        }
-     }
- 
-     /// Hands the game to Steam for Mac, whose own dialog asks where to put it; without it, the
-@@ -2769,10 +2793,23 @@ final class AppState {
-     /// nothing here blocks the app while a game runs. Kept in the home as well (RunningGames), so
-     /// `highball play --wait` returns when its game quits (highball#432).
-     var runningSessions: [GameSession] = [] {
--        didSet {
--            let ids = runningSessions.compactMap(\.libraryID)
--            if ids != oldValue.compactMap(\.libraryID) { RunningGames.write(ids, paths: paths) }
--        }
-+        didSet { writeRunningGames() }
-+    }
-+    /// Steam for Mac games started from Highball and running now, by library id, seen by their
-+    /// process (watchMacSteamGame). Steam for Mac starts them, so there is no process of ours.
-+    var macSteamRunning: Set<String> = [] {
-+        didSet { writeRunningGames() }
-+    }
-+    @ObservationIgnored private var runningGamesWritten: Set<String>?
-+    /// What RunningGames holds for `highball play --wait`: the sessions in environments, the Mac
-+    /// builds Highball started (Epic and GOG ones by their process, Steam for Mac ones by watching).
-+    /// Before, only sessions counted, so a wait on a Mac game ended at --start-timeout
-+    /// (highball#432, Terraforming Mars through Steam for Mac).
-+    private func writeRunningGames() {
-+        let ids = Set(runningSessions.compactMap(\.libraryID)).union(macGameProcesses.keys).union(macSteamRunning)
-+        guard ids != runningGamesWritten else { return }
-+        runningGamesWritten = ids
-+        RunningGames.write(ids.sorted(), paths: paths)
-     }
-     /// The last session that ended, for the post-play prompt to come.
-     var lastEndedSession: SessionRecord?
-@@ -4689,7 +4726,9 @@ final class AppState {
- 
-     /// Mac builds running now, by library id: their process, for the achievement card's
-     /// placement and so Play cannot start a second copy.
--    var macGameProcesses: [String: Process] = [:]
-+    var macGameProcesses: [String: Process] = [:] {
-+        didSet { writeRunningGames() }
-+    }
- 
-     /// Whether a game runs now, either build: changing or removing a build then would pull its
-     /// files from under it.
-```
-
-**File**: `Sources/HighballKit/Library.swift` (modified, +8/-4)
-```diff
-@@ -455,21 +455,25 @@ public enum LibraryListing {
-         public let title: String
-         public let source: String
-         public let environment: String?
--        public let installed: Bool
-+        /// Installed in a Highball environment. Named for what it is beside installedOnMac: a plain
-+        /// "installed" read as "installed anywhere" (highball#432).
-+        public let installedOnWindows: Bool
-         public let installedOnMac: Bool
-+        /// Hidden from the library by the player, so a frontend can leave it out too (highball#432).
-+        public let hidden: Bool
-     }
- 
-     /// `title` is the name shown in the app: a custom one (NameStore) or the store's.
--    public static func entry(_ item: LibraryItem, title: String) -> Entry {
-+    public static func entry(_ item: LibraryItem, title: String, hidden: Bool = false) -> Entry {
-         Entry(id: item.id, title: title, source: item.source.rawValue, environment: item.bottleName,
--              installed: item.installed, installedOnMac: item.installedOnMac)
-+              installedOnWindows: item.installed, installedOnMac: item.installedOnMac, hidden: hidden)
-     }
- 
-     public static func line(_ entry: Entry) -> String {
-         func field(_ text: String) -> String {
-             text.replacingOccurrences(of: "[\t\r\n]+", with: " ", options: .regularExpression)
-         }
--        let state = entry.installed ? "installed" : entry.installedOnMac ? "installed on Mac" : "not installed"
-+        let state = entry.installedOnWindows ? "installed" : entry.installedOnMac ? "installed on Mac" : "not installed"
-         return [entry.id, field(entry.title), field(entry.environment ?? "-"), state].joined(separator: "\t")
-     }
- }
-```
-
-**File**: `Sources/highball/main.swift` (modified, +5/-3)
-```diff
-@@ -976,9 +976,11 @@ struct LibraryCommand: AsyncParsableCommand {
-     func run() async throws {
-         let paths = HighballPaths()
-         let names = NameStore(paths: paths).names()
-+        let hiddenIDs = LibraryStore(paths: paths).hiddenIDs()
-         let entries = currentLibrary(paths: paths, epic: true)
-             .filter { !installed || $0.installedAnywhere }
--            .map { LibraryListing.entry($0, title: NameStore.name(for: $0.id, in: names) ?? $0.title) }
-+            .map { LibraryListing.entry($0, title: NameStore.name(for: $0.id, in: names) ?? $0.title,
-+                                        hidden: LibraryStore.isHidden($0.id, in: hiddenIDs)) }
-             .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
-         if json {
-             let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
-@@ -999,9 +1001,9 @@ struct Play: AsyncParsableCommand {
-             With --wait the command returns once the game has quit, for frontends such as ES-DE, \
-             and Highball and Steam keep running. A game that isn't installed fails the command at once, \
-             with or without --wait, after Highball shows what it can do with it. It follows the games Highball runs in its \
--            environments, so a game Steam for Mac starts ends the wait only at --start-timeout.
-+            environments and the Mac builds it starts, Steam for Mac's included.
-             """)
--    @Argument(help: "The game's library id.") var id: String
-+    @Argument(help: "The game's library id, as `highball library` lists it (for example steam:620).") var id: String
-     @Flag(help: "Return only once the game has quit.") var wait = false
-     @Option(help: "With --wait, how many seconds the game has to start before the command gives up.") var startTimeout: Int = 600
- 
-```
-
-**File**: `Tests/HighballKitTests/PlayFromCommandLineTests.swift` (modified, +12/-0)
-```diff
-@@ -50,6 +50,18 @@ final class PlayFromCommandLineTests: XCTestCase {
-         XCTAssertEqual(LibraryListing.line(LibraryListing.entry(game, title: "Portal Deux")), "steam:620\tPortal Deux\tGames\tinstalled")
-     }
- 
-+    /// The JSON names the Windows install for what it is and says what the player hid (highball#432).
-+    func testTheJSONSaysWhereAGameIsInstalledAndWhetherItIsHidden() throws {
-+        let pin = HighballKit.LibraryItem(source: .pin, id: "pin:EA:FBB214D7-6752-4D99-AADE-4913311A953D", title: "regedit", bottleName: "EA", installed: true)
-+        let entry = LibraryListing.entry(pin, title: "regedit (EA)", hidden: true)
-+        let json = try XCTUnwrap(try JSONSerialization.jsonObject(with: JSONEncoder().encode(entry)) as? [String: Any])
-+        XCTAssertEqual(json["installedOnWindows"] as? Bool, true)
-+        XCTAssertEqual(json["installedOnMac"] as? Bool, false)
-+        XCTAssertEqual(json["hidden"] as? Bool, true)
-+        XCTAssertNil(json["installed"], "renamed before the command ships")
-+        XCTAssertEqual(LibraryListing.entry(pin, title: "regedit").hidden, false)
-+    }
-+
-     func testRunningGamesRoundTripAndAGoneAppReadsAsNothingKnown() throws {
-         let home = FileManager.default.temporaryDirectory.appending(path: "hb-running-\(UUID().uuidString)")
-         defer { try? FileManager.default.removeItem(at: home) }
+     private func run(_ args: [String], env: [String: String]) throws -> String {
+         let p = Process()
+         p.executableURL = URL(fileURLWithPath: "/bin/sh")
 ```
 
 ---
 
-### Incident Patch 2: `7c512cbd` (2026-11-23)
-**Commit Message**: DXMT counts as unavailable below macOS 15, so a new environment on macOS 14 starts on DXVK, an environment set to DXMT falls back with a note, and Play says why. Every DXMT build Highball has shipped, from the Wine 10 r19 engine to Wine 11 r35, carries a built-in shader library compiled for macOS 15 (air64-apple-macosx15.0.0 next to the macOS 14 one, measured in winemetal.so of r19, r28, r30, r31 and r33), and on macOS 14 Metal refuses those shaders ('Function cs_clear_buffer_uint is using language version 3.2 which is incompatible with this OS', highball#584: Palia drew only its cursor on an M2 Pro on macOS 14.8.5). Renderer.minimumMacOS holds the floor, availability returns needsMacOS(15) where the engine has DXMT but macOS is older, the reason says to update macOS or pick another mode, and the CLI's engine list shows it. Only 3 of 1,286 database reports come from macOS 14, none on DXMT. New test in RendererAvailabilityTests, 42 renderer tests pass. Not tried on a macOS 14 Mac.
+### Incident Patch 2: `8d514548` (2026-11-25)
+**Commit Message**: Mac builds get their row in the activity strip, as Windows builds have: Starting while Steam for Mac gets the game going, then running with its time and a Quit button that asks the game to quit as Command Q would (every app from its folder, and the process Highball started). Before, a Mac build Highball started showed nothing once Steam or the game had it (highball#432, udance4ever). (#794)
 
-**File**: `Sources/HighballApp/AppState.swift` (modified, +1/-1)
+**File**: `Sources/HighballApp/ActivityStrip.swift` (modified, +26/-1)
 ```diff
-@@ -747,7 +747,7 @@ final class AppState {
-             case .needsLicence:
-                 pendingD3DMetal = (item, bottle, engine)
-                 return
--            case .notShipped:
-+            case .notShipped, .needsMacOS:
-                 // The mode the game's recipe names comes first: the per-game mode a player chose on another route
-                 // follows the game to an engine that lacks it (D3DMetal, on the native arm64 line).
-                 let named = fixRecipe(for: item)?.renderer.flatMap { $0.availability(in: engine) == .available ? $0 : nil }
-```
-
-**File**: `Sources/HighballKit/Bottle.swift` (modified, +27/-8)
-```diff
-@@ -183,20 +183,39 @@ public enum Renderer: String, Codable, CaseIterable, Sendable {
-         case available
-         case needsLicence(String)
-         case notShipped
-+        /// The engine has it, but this Mac's macOS is older than the mode needs.
-+        case needsMacOS(Int)
-     }
+@@ -9,7 +9,7 @@ struct ActivityStrip: View {
+     @Environment(AppState.self) private var state
  
--    public func availability(in engine: InstalledEngine) -> Availability {
-+    /// The macOS major version a mode needs, where it needs more than Highball itself (macOS 14).
-+    /// Every DXMT build Highball has shipped, from the Wine 10 r19 engine to Wine 11 r35, carries a
-+    /// built-in shader library compiled for macOS 15 (Metal language 3.2) next to its macOS 14 one,
-+    /// and on macOS 14 Metal refuses those shaders ("language version 3.2 which is incompatible with
-+    /// this OS", cs_clear_buffer_uint), so games drew nothing but the cursor (highball#584, Palia on
-+    /// an M2 Pro). Below it DXMT counts as unavailable, so a new environment starts on DXVK, a
-+    /// setting falls back with a note, and Play says why.
-+    public static let minimumMacOS: [Renderer: Int] = [.dxmt: 15]
-+
-+    /// This Mac's macOS major version.
-+    public static var hostMacOSMajor: Int { ProcessInfo.processInfo.operatingSystemVersion.majorVersion }
-+
-+    public func availability(in engine: InstalledEngine, macOSMajor: Int = Renderer.hostMacOSMajor) -> Availability {
-         if self == .wined3d { return .available }
--        if engine.rendererDir(rawValue) != nil { return .available }
-+        if engine.rendererDir(rawValue) != nil {
-+            if let floor = Self.minimumMacOS[self], macOSMajor < floor { return .needsMacOS(floor) }
-+            return .available
-+        }
-         if let gate = EngineManifest.gatedRenderers[rawValue], engine.ships(rawValue) { return .needsLicence(gate) }
-         return .notShipped
-     }
- 
-     /// One sentence for a person: what stops this renderer in `engine` and what to do. Nil when it runs.
--    public func unavailableReason(in engine: InstalledEngine) -> String? {
-+    public func unavailableReason(in engine: InstalledEngine, macOSMajor: Int = Renderer.hostMacOSMajor) -> String? {
-         let name = Self.displayName(self)
--        switch availability(in: engine) {
-+        switch availability(in: engine, macOSMajor: macOSMajor) {
-         case .available: return nil
-+        case let .needsMacOS(floor):
-+            return "\(name) needs macOS \(floor) or later, and this Mac runs macOS \(macOSMajor). Update macOS, or choose another graphics mode."
-         case .needsLicence:
-             return "\(name) is in engine \(engine.id), but Apple's licence has not been accepted for that engine. Accept it in the environment's settings (Graphics → Review licence…), or choose another graphics mode."
-         case .notShipped:
-@@ -209,15 +228,15 @@ public enum Renderer: String, Codable, CaseIterable, Sendable {
-     public static let fallbackOrder: [Renderer] = [.dxmt, .dxvk, .wined3d]
- 
-     /// The best renderer `engine` can run in place of `wanted`. Never `wanted` itself.
--    public static func fallback(for wanted: Renderer, in engine: InstalledEngine) -> Renderer {
--        fallbackOrder.first { $0 != wanted && $0.availability(in: engine) == .available } ?? .wined3d
-+    public static func fallback(for wanted: Renderer, in engine: InstalledEngine, macOSMajor: Int = Renderer.hostMacOSMajor) -> Renderer {
-+        fallbackOrder.first { $0 != wanted && $0.availability(in: engine, macOSMajor: macOSMajor) == .available } ?? .wined3d
-     }
- 
-     /// The mode a new environment starts on: the first in `fallbackOrder` this engine can run.
-     /// DXMT on every Intel engine, as before; DXVK on an engine without DXMT (the arm64 line),
-     /// rather than a DXMT setting that would degrade at every launch.
--    public static func defaultMode(for engine: InstalledEngine) -> Renderer {
--        fallbackOrder.first { $0.availability(in: engine) == .available } ?? .wined3d
-+    public static func defaultMode(for engine: InstalledEngine, macOSMajor: Int = Renderer.hostMacOSMajor) -> Renderer {
-+        fallbackOrder.first { $0.availability(in: engine, macOSMajor: macOSMajor) == .available } ?? .wined3d
-     }
- 
-     public static func displayName(_ r: Renderer) -> String {
-```
-
-**File**: `Sources/highball/main.swift` (modified, +1/-0)
-```diff
-@@ -46,6 +46,7 @@ struct Engine: AsyncParsableCommand {
-                     switch r.availability(in: e) {
-                     case .available: return r.rawValue
-                     case .needsLicence: return "\(r.rawValue) (licence not accepted)"
-+                    case let .needsMacOS(v): return "\(r.rawValue) (needs macOS \(v))"
-                     case .notShipped: return nil
+     var body: some View {
+-        if state.busy || state.doneState != nil || state.postPlay != nil || state.funnelOffer || !state.runningSessions.isEmpty || !steamBottles.isEmpty {
++        if state.busy || state.doneState != nil || state.postPlay != nil || state.funnelOffer || !state.runningSessions.isEmpty || !state.macRuns.isEmpty || !steamBottles.isEmpty {
+             VStack(spacing: 0) {
+                 Divider()
+                 VStack(spacing: 0) {
+@@ -23,6 +23,9 @@ struct ActivityStrip: View {
+                     ForEach(state.runningSessions) { session in
+                         sessionRow(session)
                      }
-                 }.joined(separator: ",")
-```
-
-**File**: `Tests/HighballKitTests/RendererAvailabilityTests.swift` (modified, +17/-0)
-```diff
-@@ -55,6 +55,23 @@ final class RendererAvailabilityTests: EnglishCopyTestCase {
-         XCTAssertEqual(Renderer.defaultMode(for: try engine(ships: [], accepted: false)), .wined3d)
++                    ForEach(state.macRuns) { run in
++                        macRow(run)
++                    }
+                     ForEach(steamBottles, id: \.name) { bottle in
+                         steamRow(bottle)
+                     }
+@@ -158,6 +161,28 @@ struct ActivityStrip: View {
+         .padding(.horizontal, 14).padding(.vertical, 8)
      }
  
-+    /// DXMT's built-in shaders need macOS 15 (highball#584: Palia drew only its cursor on macOS 14.8
-+    /// on an M2 Pro). Below it DXMT is unavailable, so nothing picks it on its own.
-+    func testDXMTNeedsMacOS15() throws {
-+        let e = try engine(accepted: false)
-+        XCTAssertEqual(Renderer.dxmt.availability(in: e, macOSMajor: 14), .needsMacOS(15))
-+        XCTAssertEqual(Renderer.dxmt.availability(in: e, macOSMajor: 15), .available)
-+        XCTAssertEqual(Renderer.dxvk.availability(in: e, macOSMajor: 14), .available, "DXVK has no such floor")
-+        XCTAssertEqual(Renderer.defaultMode(for: e, macOSMajor: 14), .dxvk, "a new environment on macOS 14 starts on DXVK")
-+        XCTAssertEqual(Renderer.defaultMode(for: e, macOSMajor: 27), .dxmt)
-+        XCTAssertEqual(Renderer.fallback(for: .dxmt, in: e, macOSMajor: 14), .dxvk)
-+        let why = try XCTUnwrap(Renderer.dxmt.unavailableReason(in: e, macOSMajor: 14))
-+        XCTAssertTrue(why.contains("macOS 15"), why)
-+        XCTAssertNil(Renderer.dxmt.unavailableReason(in: e, macOSMajor: 26))
-+        // An engine without DXMT says so, whatever the macOS.
-+        XCTAssertEqual(Renderer.dxmt.availability(in: try engine(ships: ["dxvk"], accepted: false), macOSMajor: 14), .notShipped)
++    /// A Mac build Highball started: starting while Steam for Mac gets it going, then running,
++    /// with Quit, which asks it to quit as Command Q would (highball#432).
++    private func macRow(_ run: AppState.MacRun) -> some View {
++        TimelineView(.periodic(from: .now, by: 15)) { ctx in
++            HStack(spacing: 10) {
++                if run.starting {
++                    ProgressView().controlSize(.small)
++                } else {
++                    Circle().fill(HB.good).frame(width: 8, height: 8).padding(.horizontal, 4)
++                }
++                Text(String(format: run.starting ? L("Starting %@") : L("%@ is running"), run.title)).font(.callout.weight(.medium)).lineLimit(1)
++                Spacer(minLength: 12)
++                if !run.starting {
++                    Text(run.started.flatMap { ActivityText.minutes(since: $0, now: ctx.date) }.map { String(format: L("%d min"), $0) } ?? L("just started"))
++                        .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
++                    Button(L("Quit")) { state.quitMacGame(run) }.controlSize(.small)
++                }
++            }
++            .padding(.horizontal, 14).padding(.vertical, 8)
++        }
 +    }
 +
-     // MARK: Direct3D 12-only programs (highball#139)
- 
-     func testADirect3D12OnlyProgramGetsAModeThatHasIt() throws {
+     private func sessionRow(_ session: GameSession) -> some View {
+         TimelineView(.periodic(from: .now, by: 15)) { ctx in
+             HStack(spacing: 10) {
 ```
 
----
-
-### Incident Patch 3: `f7dd70ce` (2026-11-21)
-**Commit Message**: A preview engine a player took for a game also shows its line's later revisions. hsuanice took arm64 r4 from Play for Forza Horizon 6, and r5, which carried the 7.1.4 sound fix the game needed, never appeared: the opt-in counted r4 alone, so the environment's Engine picker listed one arm64 engine and stayed hidden, and only a defaults write showed r5 (highball#672). EngineChannels.visible now counts an opt-in for the same engine and every later revision of its line, never earlier ones or another line, the same rule Play already follows when it moves an environment to the revision a recipe pins (EngineChannels.runsLine). A recipe pinning a later revision is no longer hidden for such a player, and Play then offers the move once, as before. The old test's other engine is now on another line.
-
-**File**: `Sources/HighballKit/EngineChannels.swift` (modified, +4/-2)
+**File**: `Sources/HighballApp/AppState.swift` (modified, +45/-2)
 ```diff
-@@ -23,10 +23,12 @@ public enum EngineChannels {
-         }
+@@ -528,15 +528,21 @@ final class AppState {
+ 
+     /// Follows a game Steam for Mac started for Highball by its process, whose path runs through
+     /// its steamapps/common folder: up to ten minutes for it to appear (Steam may update it first),
+-    /// then until it quits. Only `highball play --wait` reads it (writeRunningGames).
++    /// then until it quits. `highball play --wait` reads it (writeRunningGames), and the strip
++    /// shows it starting, then running (macRuns).
+     private func watchMacSteamGame(_ id: String, markers: [String]) {
++        macSteamStarting.insert(id)
+         Task { [weak self] in
++            defer { self?.macSteamStarting.remove(id) }
+             var seen = false
+             for _ in 0..<300 {
+                 try? await Task.sleep(for: .seconds(2))
+                 let alive = SessionWatch.isAlive(markers: markers, ps: await Self.processList())
+                 guard let self else { return }
+-                if alive, !seen { seen = true; self.macSteamRunning.insert(id) }
++                if alive, !seen {
++                    seen = true; self.macLaunchedAt[id] = Date()
++                    self.macSteamStarting.remove(id); self.macSteamRunning.insert(id)
++                }
+                 if seen, !alive { self.macSteamRunning.remove(id); return }
+             }
+             while seen {
+@@ -2810,6 +2816,43 @@ final class AppState {
+     var macSteamRunning: Set<String> = [] {
+         didSet { writeRunningGames() }
      }
- 
--    /// The same rule for one engine, counting the player's opt-ins: a preview engine they took for a game.
-+    /// The same rule for one engine, counting the player's opt-ins: a preview engine they took for a game, and the
-+    /// later revisions of its line. A player who took r4 for Forza Horizon 6 never saw r5, which carried the sound fix
-+    /// the game needed: the environment's Engine picker listed r4 alone and so stayed hidden (highball#672).
-     public static func visible(_ manifest: EngineManifest, beta: Bool, preview: Bool, optedIn: Set<String>) -> Bool {
-         visible(channel: manifest.channel, beta: beta, preview: preview)
--            || (manifest.channel == Self.preview && optedIn.contains(manifest.id))
-+            || (manifest.channel == Self.preview && optedIn.contains { EngineManifest.isAtOrAfter(current: manifest.id, wanted: $0) })
-     }
- 
-     /// Whether a recipe's engine pin names a bundled engine this install may not see. Such a recipe
-```
-
-**File**: `Tests/HighballKitTests/EngineChannelsTests.swift` (modified, +14/-1)
-```diff
-@@ -46,7 +46,7 @@ final class EngineChannelsTests: XCTestCase {
- 
-     func testAPreviewEngineTakenForAGameIsSeenAndNoOtherIs() throws {
-         let line = try manifest(id: "arm64-line-r1", channel: "preview")
--        let other = try manifest(id: "arm64-line-r2", channel: "preview")
-+        let other = try manifest(id: "arm64-other-r2", channel: "preview")
-         let betaLine = try manifest(id: "x64-beta-r1", channel: "beta")
-         XCTAssertTrue(EngineChannels.visible(line, beta: false, preview: false, optedIn: ["arm64-line-r1"]))
-         XCTAssertFalse(EngineChannels.visible(other, beta: false, preview: false, optedIn: ["arm64-line-r1"]))
-@@ -56,6 +56,19 @@ final class EngineChannelsTests: XCTestCase {
-         XCTAssertTrue(EngineChannels.hidesPin("arm64-line-r1", bundled: [line], beta: false, preview: false, optedIn: []))
-     }
- 
-+    func testAPreviewOptInAlsoShowsTheLaterRevisionsOfItsLine() throws {
-+        let r3 = try manifest(id: "arm64-line-r3", channel: "preview")
-+        let r4 = try manifest(id: "arm64-line-r4", channel: "preview")
-+        let r5 = try manifest(id: "arm64-line-r5", channel: "preview")
-+        let other = try manifest(id: "arm64-other-r5", channel: "preview")
-+        let opted: Set<String> = ["arm64-line-r4"]
-+        XCTAssertTrue(EngineChannels.visible(r5, beta: false, preview: false, optedIn: opted), "the revision after the one taken")
-+        XCTAssertTrue(EngineChannels.visible(r4, beta: false, preview: false, optedIn: opted))
-+        XCTAssertFalse(EngineChannels.visible(r3, beta: false, preview: false, optedIn: opted), "not the ones before it")
-+        XCTAssertFalse(EngineChannels.visible(other, beta: false, preview: false, optedIn: opted), "not another line")
-+        XCTAssertFalse(EngineChannels.hidesPin("arm64-line-r5", bundled: [r4, r5], beta: false, preview: false, optedIn: opted))
++    /// Steam for Mac games Highball asked Steam to start whose process has not appeared yet.
++    var macSteamStarting: Set<String> = []
++
++    /// A Mac build Highball started, for the strip: starting (a Steam for Mac game Steam has not
++    /// started yet) or running, with a Quit for the running one. Windows builds have their
++    /// sessions; Mac builds had nothing on screen (highball#432).
++    struct MacRun: Identifiable, Equatable {
++        let id: String
++        let title: String
++        let started: Date?
++        let starting: Bool
++    }
++    var macRuns: [MacRun] {
++        let running = Set(macGameProcesses.keys).union(macSteamRunning)
++        return running.union(macSteamStarting).sorted().compactMap { id in
++            guard let item = libraryItems.first(where: { $0.id == id }) else { return nil }
++            return MacRun(id: id, title: displayTitle(item), started: macLaunchedAt[id], starting: !running.contains(id))
++        }
 +    }
 +
-     func testPlayOffersAHiddenPreviewPinAndNothingElse() throws {
-         let bundled = [try manifest(id: "arm64-line-r1", channel: "preview"), try manifest(id: "x64-line-r9", channel: nil),
-                        try manifest(id: "x64-beta-r1", channel: "beta")]
++    /// Asks a running Mac build to quit as Command Q would: every app from its folder, and the
++    /// process Highball started. A game may ask to save first, which is its own business. A
++    /// process that is not an app gets a terminate instead.
++    func quitMacGame(_ run: MacRun) {
++        guard let item = libraryItems.first(where: { $0.id == run.id }) else { return }
++        let started = macGameProcesses[run.id].flatMap { $0.isRunning ? $0 : nil }
++        let folder = macFolder(for: item)
++        appendLog("\(run.title): asking the Mac version to quit")
++        Task { [weak self] in
++            var pids = Set(await Task.detached { folder.map(MacGameWatch.processes(runningFrom:)) ?? [] }.value)
++            if let started { pids.insert(started.processIdentifier) }
++            let apps = pids.compactMap(NSRunningApplication.init(processIdentifier:)).filter { $0.activationPolicy == .regular }
++            for app in apps { app.terminate() }
++            if apps.isEmpty, let started { started.terminate() }
++            if apps.isEmpty, started == nil { self?.appendLog("\(run.title): no app of its Mac version was found running") }
++        }
++    }
+     @ObservationIgnored private var runningGamesWritten: Set<String>?
+     /// What RunningGames holds for `highball play --wait`: the sessions in environments, the Mac
+     /// builds Highball started (Epic and GOG ones by their process, Steam for Mac ones by watching).
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #795** (2026-11-25): highball tricks borrows the installed app's cabextract when built from source (@gauthierpiarrette)
+- **PR #794** (2026-11-25): Mac builds show Starting, then running with Quit, in the activity strip (@gauthierpiarrette)
 - **PR #783** (2026-11-24): CLI: --wait follows Mac builds, JSON gets installedOnWindows and hidden (@gauthierpiarrette)
 - **PR #782** (2026-11-24): DXMT needs macOS 15: macOS 14 environments use DXVK instead (@gauthierpiarrette)
 - **PR #774** (2026-11-22): Two Chinese lines from #759 in the translator's wording (@gauthierpiarrette)
 - **PR #769** (2026-11-22): A preview engine opt-in also shows the later revisions of its line (@gauthierpiarrette)
-- **PR #762** (2026-11-24): Show progress while games load (@aswanth6000)
-- **PR #759** (2026-11-21): Move a program to another environment, and pick the environment when running a program (@gauthierpiarrette)
 
 ---
 
@@ -1525,57 +1363,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. highball play --wait follows Mac builds, Steam for Mac's included, and the libra
+## X. highball tricks from a CLI built from source finds cabextract: outside any bundl
 
 **RULE**:
-When implementing operations in `Sources/HighballApp/AppState.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/HighballKit/WinetricksWine.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d471e91`: highball play --wait follows Mac builds, Steam for Mac's included, and the library JSON says installedOnWindows and hidden (highball#432). RunningGames, which --wait reads, held only the sessions in environments, so a wait on a game Steam for Mac started ran to --start-timeout and gave up while the game played (Terraforming Mars, udance4ever timed 49 s). It now also holds the Epic and GOG Mac builds Highball started and the Steam for Mac games Play opened, followed by their process under steamapps/common for up to ten minutes to appear and then until they quit. The JSON's installed is now installedOnWindows, beside installedOnMac, since the command hasn't shipped yet, and hidden says what the player hid from the library. play's id help names the form. New test in PlayFromCommandLineTests, 16 tests pass, and highball library --json lists the real library with both fields. The Steam for Mac wait is not tried live yet.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41318aa8`: highball tricks from a CLI built from source finds cabextract: outside any bundle and without HIGHBALL_TOOLS it borrows the installed Highball.app's tools folder (/Applications or ~/Applications). Before, it put no tools folder on winetricks' PATH, so every verb that needs cabextract failed there (highball-db#941, udance4ever).. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballApp/AppState.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballKit/WinetricksWine.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        if openInSteamForMac(URL(string: "steam://run/\(appid)")!),
-           let game = macSteamGames.first(where: { $0.appid == appid }), !game.installdir.isEmpty {
-            watchMacSteamGame(item.id, markers: SessionWatch.markers(installdir: game.installdir))
-        }
-    }
+    /// Where an installed Highball keeps its tools, for a CLI that is not inside the app.
+    public static let installedAppTools: [URL] = [URL(fileURLWithPath: "/Applications"),
+                                                  FileManager.default.homeDirectoryForCurrentUser.appending(path: "Applications")]
+        .map { $0.appending(path: "Highball.app/Contents/Resources/tools", directoryHint: .isDirectory) }
 
-    /// Follows a game Steam for Mac started for Highball by its process, whose path runs through
-    /// its steamapps/common folder: up to ten minutes for it to appear (Steam may update it first),
-    /// then until it quits. Only `highball play --wait` reads it (writeRunningGames).
-    private func watchMacSteamGame(_ id: String, markers: [String]) {
-        Task { [weak self] in
-            var seen = false
-            for _ in 0..<300 {
-                try? await Task.sleep(for: .seconds(2))
-                let alive = SessionWatch.isAlive(markers: markers, ps: await Self.processList())
-                guard let self else { return }
-                if alive, !seen { seen = true; self.macSteamRunning.insert(id) }
-                if seen, !alive { self.macSteamRunning.remove(id); return }
-            }
-            while seen {
-                try? await Task.sleep(for: .seconds(2))
-                gu
+    /// and failed every verb that needs cabextract (db#941). A CLI built from source is in no
+    /// bundle, so without HIGHBALL_TOOLS it borrows the installed app's folder (db#941 again).
+    public static func pathWithTools(_ path: String?, installedApps: [URL] = installedAppTools) -> String? {
+        var tools = [ProcessInfo.processInfo.environment["HIGHBALL_TOOLS"].map { URL(fileURLWithPath: $0) },
+        if tools.isEmpty, let app = installedApps.first(where: { FileManager.default.fileExists(atPath: $0.path) }) { tools = [app] }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        _ = openInSteamForMac(URL(string: "steam://run/\(appid)")!)
-        didSet {
-            let ids = runningSessions.compactMap(\.libraryID)
-            if ids != oldValue.compactMap(\.libraryID) { RunningGames.write(ids, paths: paths) }
-        }
-    var macGameProcesses: [String: Process] = [:]
+    /// and failed every verb that needs cabextract (db#941).
+    public static func pathWithTools(_ path: String?) -> String? {
+        let tools = [ProcessInfo.processInfo.environment["HIGHBALL_TOOLS"].map { URL(fileURLWithPath: $0) },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d471e91` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41318aa8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

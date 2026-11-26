@@ -13376,3 +13376,8 @@
 | `CYCLE-20261126-SRTZ` | `2026-11-26T12:20:04.199Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10673` | Yes (`41d1169e...`) |
 | `CYCLE-20261126-STXH` | `2026-11-26T12:20:06.917Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10674` | Yes (`4ebd2f99...`) |
 | `CYCLE-20261126-T0K7` | `2026-11-26T12:20:15.511Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10675` | Yes (`628de032...`) |
+| `CYCLE-20261126-45LA` | `2026-11-26T12:28:55.246Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`a2e4c153...`) |
+| `CYCLE-20261126-47MG` | `2026-11-26T12:28:57.880Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10676` | Yes (`c57dd74a...`) |
+| `CYCLE-20261126-4CED` | `2026-11-26T12:29:04.069Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10677` | Yes (`2856cbce...`) |
+| `CYCLE-20261126-4E4V` | `2026-11-26T12:29:06.319Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10678` | Yes (`fe17adad...`) |
+| `CYCLE-20261126-4GEH` | `2026-11-26T12:29:09.257Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`a07c33fe...`) |

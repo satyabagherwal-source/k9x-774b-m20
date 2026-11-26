@@ -13409,3 +13409,8 @@ Every entry in this ledger must capture:
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `22ab5a3e` | Multi-dimensional audit evidence | 2026-11-26T12:20:04.203Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `eb29cd1f` | Multi-dimensional audit evidence | 2026-11-26T12:20:06.922Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `4fc0fe7e` | Multi-dimensional audit evidence | 2026-11-26T12:20:15.516Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-26T12:28:55.250Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `d9954bb4` | Multi-dimensional audit evidence | 2026-11-26T12:28:57.885Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `8d514548` | Multi-dimensional audit evidence | 2026-11-26T12:29:04.073Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `9f4fd68c` | Multi-dimensional audit evidence | 2026-11-26T12:29:06.323Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `f2c57796` | Multi-dimensional audit evidence | 2026-11-26T12:29:09.262Z |
