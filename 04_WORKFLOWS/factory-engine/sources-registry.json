@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T06:44:11.224Z",
-    "lastVerified": "2026-11-26T06:44:11.224Z",
+    "lastChecked": "2026-11-26T06:52:33.291Z",
+    "lastVerified": "2026-11-26T06:52:33.291Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -151,12 +151,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "stakater-reloader": {
-    "name": "stakater/Reloader",
+    "name": "Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T06:39:21.016Z",
-    "lastVerified": "2026-11-25T06:39:21.016Z",
+    "lastChecked": "2026-11-26T06:52:25.799Z",
+    "lastVerified": "2026-11-26T06:52:25.799Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-stakater-reloader",
@@ -165,7 +165,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "35ca482b"
   },
   "microsoft-security-101": {
     "name": "Security-101",
@@ -391,8 +392,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T06:18:26.427Z",
-    "lastVerified": "2026-11-26T06:18:26.427Z",
+    "lastChecked": "2026-11-26T06:52:33.281Z",
+    "lastVerified": "2026-11-26T06:52:33.281Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -987,8 +988,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T02:46:45.307Z",
-    "lastVerified": "2026-11-26T02:46:45.307Z",
+    "lastChecked": "2026-11-26T06:52:28.309Z",
+    "lastVerified": "2026-11-26T06:52:28.309Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -4767,8 +4768,8 @@
     "officialUrl": "https://github.com/skyzh/mini-lsm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T05:45:33.699Z",
-    "lastVerified": "2026-11-25T05:45:33.699Z",
+    "lastChecked": "2026-11-26T06:52:30.747Z",
+    "lastVerified": "2026-11-26T06:52:30.747Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-skyzh-mini-lsm",
@@ -8252,9 +8253,9 @@
   "killercup-cargo-edit": {
     "name": "cargo-edit",
     "officialUrl": "https://github.com/killercup/cargo-edit",
-    "lastChecked": "2026-11-25T00:35:06.300Z",
+    "lastChecked": "2026-11-26T06:52:18.285Z",
     "revisionIdentifier": "5cf6c0ba",
-    "lastVerified": "2026-11-25T00:35:06.300Z"
+    "lastVerified": "2026-11-26T06:52:18.285Z"
   },
   "hf-facebook-sam3": {
     "name": "facebook/sam3",
@@ -11611,9 +11612,9 @@
   "aheze-popovers": {
     "name": "Popovers",
     "officialUrl": "https://github.com/aheze/Popovers",
-    "lastChecked": "2026-11-23T21:04:39.969Z",
+    "lastChecked": "2026-11-26T06:52:23.393Z",
     "revisionIdentifier": "576b4d3e",
-    "lastVerified": "2026-11-23T21:04:39.969Z"
+    "lastVerified": "2026-11-26T06:52:23.393Z"
   },
   "goose3-goose3": {
     "name": "goose3",
@@ -14773,12 +14774,12 @@
     "officialUrl": "https://huggingface.co/nex-agi/Nex-N2.6",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T11:47:42.438Z",
-    "lastVerified": "2026-11-22T11:47:42.438Z",
+    "lastChecked": "2026-11-26T06:52:21.054Z",
+    "lastVerified": "2026-11-26T06:52:21.054Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nex-agi-nex-n2-6",
-    "contentHash": "c9105f20186dae2e75e641a97a0ce9c7c8b35948f7cb89cde48872ce1184a8aa",
+    "contentHash": "3ee16bd06020a07b3c061ac6fd382342249c68194d834d118135908e6967afc2",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

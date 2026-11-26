@@ -13314,3 +13314,4 @@ Every entry in this ledger must capture:
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `690f59f2` | Multi-dimensional audit evidence | 2026-11-26T06:43:59.190Z |
 | `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `49c8bb52` | Multi-dimensional audit evidence | 2026-11-26T06:44:05.032Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `54f54578` | Multi-dimensional audit evidence | 2026-11-26T06:44:07.633Z |
+| `learn-huggingface-nex-agi-nex-n2-6` | `https://huggingface.co/nex-agi/Nex-N2.6` | `hf-nex-agi` | Multi-dimensional audit evidence | 2026-11-26T06:52:21.751Z |

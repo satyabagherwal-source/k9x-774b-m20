@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T06:44:13.753Z",
+  "last_updated": "2026-11-26T06:52:35.691Z",
   "total_records": 2717,
   "domains": {
     "A": {
@@ -8487,8 +8487,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "22de63c9d4a53a3e61daf59091fa63e3c22ac72f414cf16df9cf9318bf5bffe5",
-      "created_at": "2026-11-26T06:35:35.275Z"
+      "content_hash": "b78904d43de455b276875965c041e9b731c035a94729f5b4c6a56dcc1156e8c3",
+      "created_at": "2026-11-26T06:52:35.691Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8532,8 +8532,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "73c3658e329a2a4afb1e1938e6866e270333bfcb3c55d3c0630e7cc3ada567a7",
-      "created_at": "2026-11-26T05:48:52.252Z"
+      "content_hash": "57bd3f5b7b1bba31adedecf6c634cccd8a13a55b027058d7c78f200e08628f03",
+      "created_at": "2026-11-26T06:52:34.571Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -27731,8 +27731,8 @@
       "title": "Research & Knowledge Intelligence: nex-agi/Nex-N2.6 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nex-agi-nex-n2-6-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invari.md",
       "repository": "nex-agi/Nex-N2.6",
-      "content_hash": "72f2830e98c4a443d57d3853de7937c08d336e5b177c54167be9b3a9636760a9",
-      "created_at": "2026-11-22T11:47:43.457Z"
+      "content_hash": "69e9d69d4ebfd22b066a7a9e1b3e00282afc6162fb0cee18bec9aa34d65386d0",
+      "created_at": "2026-11-26T06:52:21.998Z"
     },
     "domain_intelligence-research-knowledge-intelligence-maxwell-model-maxwell-v1-flash-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-maxwell-model-maxwell-v1-flash-core-invariants",
@@ -27842,8 +27842,8 @@
       "title": "Research & Knowledge Intelligence: hf-nex-agi-nex-n2.6-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nex-agi-nex-n2-6-learnings-research-knowledge-intelligence-hf-nex-agi-nex-n2-.md",
       "repository": "hf-nex-agi-nex-n2.6-learnings",
-      "content_hash": "dba0c6d39fc68bc0a5f3d9f456f30a5751207ed4f3a7f3f05e95a97e1d092b1a",
-      "created_at": "2026-11-22T11:48:02.352Z"
+      "content_hash": "92a295c5c707f830ae810df7b40c2dad6936f72599fad8a1006c1ff0e77fdd19",
+      "created_at": "2026-11-26T06:52:33.695Z"
     },
     "DOM-D-4085BE40": {
       "record_id": "DOM-D-4085BE40",

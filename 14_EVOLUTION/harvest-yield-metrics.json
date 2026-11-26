@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:44:07.646Z",
-  "total_cycles_completed": 12602,
-  "total_learnings_persisted": 12602,
+  "last_updated": "2026-11-26T06:52:21.765Z",
+  "total_cycles_completed": 12603,
+  "total_learnings_persisted": 12603,
   "total_rules_promoted": 11513,
   "history": [
-    {
-      "timestamp": "2026-11-25T12:09:00.722Z",
-      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T12:09:03.602Z",
       "repository": "GitoxideLabs/gitoxide",
@@ -1403,6 +1396,13 @@
       "repository": "DNSControl/dnscontrol",
       "learningId": "learn-github-dnscontrol-dnscontrol",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:52:21.765Z",
+      "repository": "nex-agi/Nex-N2.6",
+      "learningId": "learn-huggingface-nex-agi-nex-n2-6",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

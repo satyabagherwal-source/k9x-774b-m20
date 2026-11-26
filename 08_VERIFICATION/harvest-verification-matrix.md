@@ -13281,3 +13281,4 @@
 | `CYCLE-20261126-SKEP` | `2026-11-26T06:43:59.185Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10617` | Yes (`062c639b...`) |
 | `CYCLE-20261126-SOWZ` | `2026-11-26T06:44:05.027Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10618` | Yes (`1b8b6625...`) |
 | `CYCLE-20261126-SQX9` | `2026-11-26T06:44:07.629Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10619` | Yes (`a6af0992...`) |
+| `CYCLE-20261126-3C6Q` | `2026-11-26T06:52:21.746Z` | `nex-agi/Nex-N2.6` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md` | Yes (`3ee16bd0...`) |

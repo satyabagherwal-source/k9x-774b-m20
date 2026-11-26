@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T06:44:14.182Z",
+  "last_updated": "2026-11-26T06:52:36.075Z",
   "total_verified_learnings": 9123,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "22de63c9d4a53a3e61daf59091fa63e3c22ac72f414cf16df9cf9318bf5bffe5",
+      "content_hash": "b78904d43de455b276875965c041e9b731c035a94729f5b4c6a56dcc1156e8c3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T06:35:35.275Z"
+      "persisted_at": "2026-11-26T06:52:35.691Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "325bbf41f684fed57c057d33d6e4a29827cd5f682be4d29ec15ee65adc016fe0",
+      "content_hash": "1afe3f9421c9ecb293d226d6cf99cd781fbc72de28d212e26579af5e7c34c801",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T06:35:35.480Z"
+      "persisted_at": "2026-11-26T06:52:35.903Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "28c1dc57d6946551c51cf2419ee6446def9ce6739efabc21fb8cab41a0c6eb74",
+      "content_hash": "2e035a8166ba35571543d0c12531acd382e3d72dbac57db64f6556da7f09522b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:35:35.656Z"
+      "persisted_at": "2026-11-26T06:52:36.075Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "73c3658e329a2a4afb1e1938e6866e270333bfcb3c55d3c0630e7cc3ada567a7",
+      "content_hash": "57bd3f5b7b1bba31adedecf6c634cccd8a13a55b027058d7c78f200e08628f03",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T05:48:52.252Z"
+      "persisted_at": "2026-11-26T06:52:34.571Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "70379ca199f64a770ee1bcee8fcaa29e9b38e05ab0b7be5594fc3878d005bcb1",
+      "content_hash": "5d7d2b1d8ed2f69024b4e022bbd06cd6757831e3e7eae2c81c23505ee65fc6c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T05:48:52.500Z"
+      "persisted_at": "2026-11-26T06:52:34.795Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -276575,7 +276575,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nex-agi/Nex-N2.6",
       "source_version": "hf-nex-agi-nex-n2.6",
-      "content_hash": "c9105f20186dae2e75e641a97a0ce9c7c8b35948f7cb89cde48872ce1184a8aa",
+      "content_hash": "3ee16bd06020a07b3c061ac6fd382342249c68194d834d118135908e6967afc2",
       "dossier_path": "07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md",
       "promoted_rules": [],
@@ -276584,7 +276584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T11:47:42.922Z",
+      "verified_at": "2026-11-26T06:52:21.471Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -276601,9 +276601,9 @@
       "title": "Research & Knowledge Intelligence: nex-agi/Nex-N2.6 Core Invariants",
       "repository": "nex-agi/Nex-N2.6",
       "source_version": "hf-nex-agi-nex-n2.6",
-      "content_hash": "72f2830e98c4a443d57d3853de7937c08d336e5b177c54167be9b3a9636760a9",
+      "content_hash": "69e9d69d4ebfd22b066a7a9e1b3e00282afc6162fb0cee18bec9aa34d65386d0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T11:47:43.457Z"
+      "persisted_at": "2026-11-26T06:52:21.998Z"
     },
     "learn-huggingface-maxwell-model-maxwell-v1-flash": {
       "learning_id": "learn-huggingface-maxwell-model-maxwell-v1-flash",
@@ -276688,9 +276688,9 @@
       "title": "Research & Knowledge Intelligence: hf-nex-agi-nex-n2.6-learnings Core Invariants",
       "repository": "hf-nex-agi-nex-n2.6-learnings",
       "source_version": "HEAD",
-      "content_hash": "dba0c6d39fc68bc0a5f3d9f456f30a5751207ed4f3a7f3f05e95a97e1d092b1a",
+      "content_hash": "92a295c5c707f830ae810df7b40c2dad6936f72599fad8a1006c1ff0e77fdd19",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T11:48:02.352Z"
+      "persisted_at": "2026-11-26T06:52:33.695Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-maxwell-model-maxwell-v1-flash-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-maxwell-model-maxwell-v1-flash-learnings-core",
@@ -336721,13 +336721,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TOKN-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3LX6-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "64604eb641f0a2b43e4399851ac91b297d33b04120568630c7aefd0dc864bd5b",
+      "content_hash": "8ae5f14c266b250d9ba5e349c073528904246427351052e66a2040fcac3a1621",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T05:48:52.013Z"
+      "persisted_at": "2026-11-26T06:52:34.365Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -351714,13 +351714,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HRFY-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3MSC-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a77423412e11e20fd1b28b7818b678f11a3d2e9dc1c2c35c2c95df637ee1dcb",
+      "content_hash": "92812f0cef425460d5597187fb01d4446043ebb81dc036d7907baa39a6ad8671",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T06:35:35.086Z"
+      "persisted_at": "2026-11-26T06:52:35.484Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",

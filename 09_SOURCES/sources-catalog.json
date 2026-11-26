@@ -12755,8 +12755,8 @@
     "sourceUrl": "https://huggingface.co/nex-agi/Nex-N2.6",
     "sourceVersion": "hf-nex-agi-nex-n2.6",
     "license": "Open-Source",
-    "contentHash": "c9105f20186dae2e75e641a97a0ce9c7c8b35948f7cb89cde48872ce1184a8aa",
-    "lastHarvestedAt": "2026-11-22T11:47:43.221Z",
+    "contentHash": "3ee16bd06020a07b3c061ac6fd382342249c68194d834d118135908e6967afc2",
+    "lastHarvestedAt": "2026-11-26T06:52:21.751Z",
     "learningId": "learn-huggingface-nex-agi-nex-n2-6"
   },
   "hf-maxwell-model-maxwell-v1-flash": {
