@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
   "source_version": "hf-unsloth-qwen-image-2.1-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T22:06:19.246Z",
+  "timestamp": "2026-11-26T15:02:10.210Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [unsloth/Qwen-Image-2.1-GGUF](https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF) (Revision: `hf-unsloth`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T22:06:19.246Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T15:02:10.210Z`  
 > **Learning ID**: `learn-huggingface-unsloth-qwen-image-2-1-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF](https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T22:06:18.110Z  
+> **Harvest Timestamp**: 2026-11-26T15:02:09.126Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1503135 downloads | 481 likes
+- **Stars / Engagement**: 1458783 downloads | 487 likes
 
 ---
 

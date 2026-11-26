@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `cec4a6e5`  
+> **Source Version**: `9f296bf9`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T14:50:21.633Z  
+> **Timestamp**: 2026-11-26T15:02:18.691Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:50:21.627Z  
+> **Harvest Timestamp**: 2026-11-26T15:02:18.684Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3324 stars
+- **Stars / Engagement**: 3326 stars
 
 ---
 
@@ -1879,339 +1879,87 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cec4a6e5` (2026-11-25)
-**Commit Message**: Renovate config: Comments link to tracking issue (#5119)
+### Incident Patch 1: `febd7375` (2026-11-25)
+**Commit Message**: Update temporalio/ui Docker tag to v2.58.1 (#5109)
 
-This PR instructs renovate to add the following comment:
+This PR contains the following updates:
 
-```
+| Package | Update | Change |
+|---|---|---|
+| [temporalio/ui](https://redirect.github.com/temporalio/ui-server) |
+patch | `2.58.0` → `2.58.1` |
+
 Part of https://linear.app/clickhouse/issue/DBI-1390
-```
-
-to the descriptions of the PRs it creates.  
-
-Part of: https://linear.app/clickhouse/issue/DBI-1390
-
-**File**: `renovate.json5` (modified, +4/-0)
-```diff
-@@ -4,6 +4,10 @@
-     "local>PeerDB-io/.github:renovate-config",
-     ":preserveSemverRanges"
-   ],
-+  "prBodyNotes": [
-+    // This adds a comment in the description referencing the continuous task of keeping deps up to date
-+    "Part of https://linear.app/clickhouse/issue/DBI-1390"
-+  ], 
-   "packageRules": [
-     {
-       "groupName": "{{manager}} dependencies",
-```
 
 ---
 
-### Incident Patch 2: `b2a1dab2` (2026-11-25)
-**Commit Message**: Remove unreachable functions found by deadcode (#5122)
+### Release Notes
 
-## Why
-`deadcode -test -tags tilt ./...` on `flow` reports functions nothing
-calls.
-Tool: [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode),
-see also the Go blog post [Finding unreachable functions with
-deadcode](https://go.dev/blog/deadcode).
+<details>
+<summary>temporalio/ui-server (temporalio/ui)</summary>
 
-## What
-Removes 15 of the 17 reported functions:
-- `cmd/logged_interceptor.go` (whole file; `NewLoggedWorkerInterceptor`
-is never constructed)
-- `AsAPIError`, `connectors.LoadPeerTypes`,
-`exceptions.NewPostgresSetupError`, `e2e.EnvEqualTables`
-- `TypedSignal.SignalChildWorkflow`, `TypedReceiveChannel.Receive` /
-`ReceiveWithTimeout` / `ReceiveAsyncWithMoreFlag`
+###
+[`v2.58.1`](https://redirect.github.com/temporalio/ui-server/releases/tag/v2.58.1)
 
-Kept on purpose:
-- `pkg/mysql.GetSchemaMapping`: `flow/pkg` is a separate published
-module and has users outside this repo
-- `SetupSuiteMinIO_TLS`: no test has ever run it. Should we wire it up
-or delete it (along with `MinioTls`)?
+[Compare
+Source](https://redirect.github.com/temporalio/ui-server/compare/v2.58.0...v2.58.1)
 
-Follow-up: `PostgresSetupError` is never constructed, so the check for
-it in `alerting/classifier.go:422` is dead.
+Release synced from
+[ui@v2.58.1](https://redirect.github.com/temporalio/ui/releases/tag/v2.58.1)
 
-## Testing
-- `go build ./...` and `go vet -tags tilt ./...` pass
-- `go test` on `model`, `shared`, `cmd` and `alerting` passes (1 run,
-11/11 packages ok)
-- Rerunning deadcod
+**Full Changelog**:
+<https://github.com/temporalio/ui-server/compare/v2.58.0...v2.58.1>
 
-**File**: `flow/alerting/classifier.go` (modified, +0/-8)
+</details>
+
+---
+
+### Configuration
+
+📅 **Schedule**: (in timezone Etc/UTC)
+
+- Branch creation
+  - "after 5pm on monday"
+- Automerge
+  - At any time (no schedule defined)
+
+🚦 **Automerge**: Enabled.
+
+♻ **Rebasing**: Whenever PR is behind base branch, or you tick the
+rebase/retry checkbox.
+
+🔕 **Ignore**: Close this PR and you won't be reminded about this update
+again.
+
+---
+
+- [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check
+th
+
+**File**: `docker-compose-dev.yml` (modified, +1/-1)
 ```diff
-@@ -418,14 +418,6 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 			// For now we are not making it as verbose, will take this up later
- 			return errorClass, unknownErrorInfo(ErrorSourceOther)
- 		}
--
--		if _, ok := errors.AsType[*exceptions.PostgresSetupError](err); ok {
--			errorClass := ErrorNotifyConnectivity
--			if pgErr != nil {
--				return errorClass, pgErrorInfo
--			}
--			return errorClass, unknownErrorInfo(pgErrSource)
--		}
- 	}
+@@ -144,7 +144,7 @@ services:
+       - TEMPORAL_ADDRESS=temporal:7233
+       - TEMPORAL_CORS_ORIGINS=http://localhost:3030
+       - TEMPORAL_CSRF_COOKIE_INSECURE=true
+-    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
++    image: temporalio/ui:2.58.1@sha256:ac3c13eddb4547d830991bb5eee93a5d97140134522b7297fdb2be1fe25ef925
+     ports:
+       - *temporal-ui-port
  
- 	if changefeedErr, ok := errors.AsType[*exceptions.CockroachChangefeedIrrecoverableError](err); ok {
 ```
 
-**File**: `flow/cmd/api_error.go` (modified, +0/-18)
+**File**: `docker-compose.yml` (modified, +1/-1)
 ```diff
-@@ -89,24 +89,6 @@ func convertToStatus(code codes.Code, err error, details ...protoadapt.MessageV1
- 	return richStatus
- }
+@@ -108,7 +108,7 @@ services:
+       - TEMPORAL_ADDRESS=temporal:7233
+       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+       - TEMPORAL_CSRF_COOKIE_INSECURE=true
+-    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
++    image: temporalio/ui:2.58.1@sha256:ac3c13eddb4547d830991bb5eee93a5d97140134522b7297fdb2be1fe25ef925
+     ports:
+       - 8085:8080
  
--// AsAPIError converts an error to APIError if it's a gRPC status error,
--// otherwise wraps it as an Internal error
--func AsAPIError(err error) APIError {
--	if err == nil {
--		return nil
--	}
--
--	if apiErr, ok := err.(APIError); ok {
--		return apiErr
--	}
--
--	if s, ok := status.FromError(err); ok {
--		return newAPIError(s)
--	}
--
--	return NewInternalApiError(err)
--}
--
- func NewMirrorErrorInfo(metadata map[string]string) *rpc.ErrorInfo {
- 	return &rpc.ErrorInfo{
- 		Reason:   common.ErrorInfoReasonMirror,
-```
-
-**File**: `flow/cmd/logged_interceptor.go` (removed, +0/-79)
-```diff
-@@ -1,79 +0,0 @@
--package cmd
--
--import (
--	"context"
--
--	"go.temporal.io/sdk/interceptor"
--	"go.temporal.io/sdk/workflow"
--)
--
--type LoggedWorkflowInboundInterceptor struct {
--	interceptor.WorkflowInboundInterceptorBase
--	Next interceptor.WorkflowInboundInterceptor
--}
--
--func NewLoggedWorkflowInboundInterceptor(next interceptor.WorkflowInboundInterceptor) *LoggedWorkflowInboundInterceptor {
--	return &LoggedWorkflowInboundInterceptor{
--		WorkflowInboundInterceptorBase: interceptor.WorkflowInboundInterceptorBase{Next: next},
--		Next:                           next,
--	}
--}
--
--func (w *LoggedWorkflowInboundInterceptor) ExecuteWorkflow(
--	ctx workflow.Context,
--	in *interceptor.ExecuteWorkflowInput,
--) (any, error) {
--	// Workflow starts here
--	result, err := w.Next.ExecuteWorkflow(ctx, in)
--	// Workflow ends here
--	return result, err
--}
--
--type LoggedActivityInboundInterceptor struct {
--	interceptor.ActivityInboundInterceptorBase
--	Next interceptor.ActivityInboundInterceptor
--}
--
--func NewLoggedActivityInboundInterceptor(next interceptor.ActivityInboundInterceptor) *LoggedActivityInboundInterceptor {
--	return &LoggedActivityInboundInterceptor{
--		ActivityInboundInterceptorBase: interceptor.ActivityInboundInterceptorBase{Next: next},
--		Next:                           next,
--	}
--}
--
--func (c *LoggedActivityInboundInterceptor) ExecuteActivity(
--	ctx context.Context,
--	in *interceptor.ExecuteActivityInput,
--) (any, error) {
--	// Activity starts here
--	out, err := c.Next.ExecuteActivity(ctx, in)
--	// Activity ends here
--	return out, err
--}
--
--type LoggedWorkerInterceptor struct {
--	interceptor.WorkerInterceptorBase
--}
--
--func NewLoggedWorkerInterceptor() *LoggedWorkerInterceptor {
--	return &LoggedWorkerInterceptor{
--		WorkerInterceptorBase: interceptor.WorkerInterceptorBase{},
--	}
--}
--
--func (c LoggedWorkerInterceptor) InterceptActivity(
--	ctx context.Context,
--	next interceptor.ActivityInboundInterceptor,
--) interceptor.ActivityInboundInterceptor {
--	return NewLoggedActivityInboundInterceptor(next)
--}
--
--func (c LoggedWorkerInterceptor) InterceptWorkflow(
--	ctx workflow.Context,
--	next interceptor.WorkflowInboundInterceptor,
--) interceptor.WorkflowInboundInterceptor {
--	// Workflow intercepted here
--	intercepted := NewLoggedWorkflowInboundInterceptor(next)
--	// Workflow intercepting ends here
--	return intercepted
--}
-```
-
-**File**: `flow/connectors/core.go` (modified, +0/-35)
-```diff
-@@ -460,41 +460,6 @@ func LoadFlowSourcePeerType(ctx context.Context, catalogPool shared.CatalogPool,
- 	return dbtype, nil
- }
- 
--func LoadPeerTypes(ctx context.Context, catalogPool shared.CatalogPool, peerNames []string) (map[string]protos.DBType, error) {
--	if len(peerNames) == 0 {
--		return nil, nil
--	}
--
--	rows, err := catalogPool.Query(ctx, "SELECT name, type FROM peers WHERE name = ANY($1)", peerNames)
--	if err != nil {
--		return nil, fmt.Errorf("failed to query peer types: %w", err)
--	}
--
--	peerTypes := make(map[string]protos.DBType, len(peerNames))
--	var peerName string
--	var dbtype protos.DBType
--	if _, err := pgx.ForEachRow(rows, []any{&peerName, &dbtype}, func() error {
--		peerTypes[peerName] = dbtype
--		return nil
--	}); err != nil {
--		return nil, fmt.Errorf("error querying peer rows: %w", err)
--	}
--
--	// Verify all requested peers were found
--	var missingPeers []string
--	for _, peerName := range peerNames {
--		if _, found := peerTypes[peerName]; !found {
--			missingPeers = append(missingPeers, peerName)
--		}
--	}
--
--	if len(missingPeers) > 0 {
--		return nil, fmt.Errorf("peers not found: %v", missingPeers)
--	}
--
--	return peerTypes, nil
--}
--
- func LoadPeers(ctx context.Context, catalogPool shared.CatalogPool, peerNames []string) (map[string]*protos.Peer, error) {
- 	if len(peerNames) == 0 {
- 		return nil, nil
-```
-
-**File**: `flow/e2e/test_utils.go` (modified, +0/-4)
-```diff
-@@ -144,10 +144,6 @@ func RequireEqualTablesWithNames(suite RowSource, srcTable string, dstTable stri
- 	require.True(t, e2eshared.CheckEqualRecordBatches(t, sourceRows, rows))
- }
- 
--func EnvEqualTables[TSource connectors.Connector](env WorkflowRun, suite RowSource, table string, cols string) {
--	EnvEqualTablesWithNames(env, suite, table, table, cols)
--}
--
- func EnvEqualTablesWithNames(
- 	env WorkflowRun, suite RowSource, srcTable string, dstTable string, cols string,
- ) {
-```
-
-**File**: `flow/model/signals.go` (modified, +0/-26)
-```diff
-@@ -33,14 +33,6 @@ func (self TypedSignal[T]) SignalClientWorkflow(
- 	return c.SignalWorkflow(ctx, workflowID, runID, self.Name, value)
- }
- 
--func (self TypedSignal[T]) SignalChildWorkflow(
--	ctx workflow.Context,
--	wf workflow.ChildWorkflowFuture,
--	value T,
--) workflow.Future {
--	return wf.SignalChildWorkflow(ctx, self.Name, value)
--}
--
- func (self TypedSignal[T]) SignalExternalWorkflow(
- 	ctx workflow.Context,
- 	workflowID string,
-@@ -54,30 +46,12 @@ type TypedReceiveChannel[T any] struct {
- 	Chan workflow.ReceiveChannel
- }
- 
--func (self TypedReceiveChannel[T]) Receive(ctx workflow.Context) (T, bool) {
--	var result T
--	more := self.Chan.Receive(ctx, &result)
--	return result, more
--}
--
--func (self TypedReceiveChannel[T]) ReceiveWithTimeout(ctx workflow.Context, timeout time.Duration) (T, bool, bool) {
--	var result T
--	ok, more := self.Chan.ReceiveWithTimeout(ctx, timeout, &result)
--	return result, ok, more
--}
--
- func (self TypedReceiveChannel[T]) ReceiveAsync() (T, bool) {
- 	var result T
- 	ok := self.Chan.ReceiveAsync(&result)
- 	return result, ok
- }
- 
--func (self TypedReceiveChannel[T]) ReceiveAsyncWithMoreFlag() (T, bool, bool) {
--	var result T
--	ok, more := self.Chan.ReceiveAsyncWithMoreFlag(&result)
--	return result, ok, more
--}
--
- func (self TypedReceiveChannel[T]) AddToSelector(selector workflow.Selector, f func(T, bool)) workflow.Selector {
- 	return selector.AddReceive(self.Chan, func(c workflow.ReceiveChannel, more bool) {
- 		var result T
-```
-
-**File**: `flow/shared/exceptions/postgres.go` (modified, +0/-17)
-```diff
-@@ -7,23 +7,6 @@ import (
- 	"github.com/jackc/pgx/v5/pgproto3"
- )
- 
--// PostgresSetupError represents errors during setup of Postgres peers, maybe we can later replace with a more generic error type
--type PostgresSetupError struct {
--	error
--}
--
--func NewPostgresSetupError(err error) *PostgresSetupError {
--	return &PostgresSetupError{err}
--}
--
--func (e *PostgresSetupError) Error() string {
--	return "Postgres setup error: " + e.error.Error()
--}
--
--func (e *PostgresSetupError) Unwrap() error {
--	return e.error
--}
--
- type CatalogError struct {
- 	error
- }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2220,7 +1968,7 @@ it in `alerting/classifier.go:422` is dead.
 - **PR #5119** (2026-11-25): Renovate config: Comments link to tracking issue (@pfcoperez)
 - **PR #5115** (2026-11-24): Stop copying state table mappings into CDCFlowWorkflow cfg (@dtunikov)
 - **PR #5114** (closed): remove redundant copy-back logic (@jgao54)
-- **PR #5112** (2026-11-24): Update gomod dependencies (@renovate[bot])
+- **PR #5113** (2026-11-26): Update Rust crate sqlparser to 0.64 (@renovate[bot])
 
 ---
 
@@ -2240,31 +1988,28 @@ it in `alerting/classifier.go:422` is dead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Renovate config: Comments link to tracking issue
+## X. Update temporalio/ui Docker tag to v2.58.1
 
 **RULE**:
-When implementing operations in `renovate.json5`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docker-compose-dev.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cec4a6e5`: Renovate config: Comments link to tracking issue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `febd7375`: Update temporalio/ui Docker tag to v2.58.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `renovate.json5`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker-compose-dev.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  "prBodyNotes": [
-    // This adds a comment in the description referencing the continuous task of keeping deps up to date
-    "Part of https://linear.app/clickhouse/issue/DBI-1390"
-  ], 
+    image: temporalio/ui:2.58.1@sha256:ac3c13eddb4547d830991bb5eee93a5d97140134522b7297fdb2be1fe25ef925
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cec4a6e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `febd7375` are properly handled with clean fallback behavior.

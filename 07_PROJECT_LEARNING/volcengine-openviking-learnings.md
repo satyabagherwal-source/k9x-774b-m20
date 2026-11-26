@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `af412110`  
+> **Source Version**: `fe354f74`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T13:49:33.105Z  
+> **Timestamp**: 2026-11-26T15:02:24.169Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T13:49:33.097Z  
+> **Harvest Timestamp**: 2026-11-26T15:02:24.163Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42755 stars
+- **Stars / Engagement**: 42862 stars
 
 ---
 
@@ -1498,631 +1498,993 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f905a91c` (2026-11-25)
-**Commit Message**: feat(plugins): session_history support across the memory plugins and two Claude Code capture fixes (#7872)
+### Incident Patch 1: `2b4dc8c4` (2026-11-26)
+**Commit Message**: fix(plugins): send the profile again after a host compaction drops it (#8497)
 
-* fix(claude-code): keep host-authored transcript records out of capture
+* fix(dsh): send the profile again after a compaction drops it
 
-Claude Code writes its compaction summary and other meta records into the
-transcript as user turns. They were captured into the OpenViking session
-as if the user had said them. They are now marked when the transcript is
-read and left out of what is sent, for the main session and for subagent
-transcripts; they still count for the capture cursor, so later turns keep
-their positions.
+The profile block (with the skill catalog) went out once per process: a
+latch set at delivery was never cleared, and the re-seed check scanned the
+raw event log, which a compaction never edits. After the first compaction
+the model lost the block for the rest of the session, and a restart over
+the compacted session did not bring it back either.
 
-* fix(claude-code): capture the turn in progress before a compaction commit
+The latch is gone. A pre-step sends the block whenever the model would not
+see it: not in session.deriveMessages() (the history the model keeps), the
+pending inbox, or the step's claimed batch. The batch check also covers a
+pressure compaction that runs inside the pre-step after the startup block
+was claimed, and a cancelled step no longer loses the block for good.
 
-An auto-compaction can happen in the middle of a long turn, before any
-Stop hook has run for it, so nothing of that turn was on the server when
-the session was committed. PreCompact now runs the capture over the
-transcript first, in its own process, and waits for it up to 20 s before
-it commits. A catch-up that takes longer is left running, never killed,
-and its messages land in the live tail after the commit as before. A
-commit that does not finish in what is left of the hook timeout is
-queued and replayed later.
+* fix(opencode): send the session-start context again after a compaction
 
-Captures of one Claude Code session
+The session-start block went out on the first message of a session and an
+in-memory set kept it from ever going out again, so a compaction that
+summarized it away left the session without the profile and skill catalog.
 
-**File**: `agent-plugins/servers/shared/mcp-proxy-core.mjs` (modified, +32/-0)
+- The set now records the compaction each block
+
+**File**: `docs/en/agent-integrations/16-capability-reference.md` (modified, +12/-11)
 ```diff
-@@ -12,6 +12,7 @@ import { createInterface } from "node:readline";
- import { buildOvHeaders } from "./ov-http.mjs";
+@@ -60,7 +60,7 @@ Long-term memories are extracted from a session only after a **commit**. Capture
+ | Qoder CLI | Yes, session-aware | Profile, memory index, skills | Every 8 captured messages | Yes | Commits uncommitted messages |
+ | Antigravity | Yes, session-aware, at the first model call of each turn | Profile, memory index, skills | Every turn | No exit hook; turns are already committed | No pre-compaction hook |
+ | OpenCode | Yes, session-aware | Profile, memory index, skills, indexed repositories | At 20,000 pending tokens, when idle | Yes, within the host's cleanup time | Commits around compaction |
+-| DSH | Yes, session-aware | Profile, memory index, skills, once per session | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
++| DSH | Yes, session-aware | Profile, memory index, skills | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
+ | pi | Yes, session-aware | Profile, memory index, skills, every turn | Takeover on: about 30,000 tokens; off: 20,000 | Takeover on: no; off: yes | Takeover replaces pi's summary |
+ | OpenClaw | Yes, session-aware | Profile, every turn | At half the token budget (64,000 by default) | No | The plugin owns compaction |
+ | Hermes (bundled) | Yes, session-aware with a fallback | Profile and memory listings | No; only at session boundaries | Yes, if pending uploads finish within 10 seconds | Commits at fork-style compaction |
+@@ -257,13 +257,14 @@ When each integration injects it:
+ | Integration | When |
+ |---|---|
+ | Claude Code | `SessionStart`, every source |
+-| Codex | `SessionStart` on startup, clear, and resume |
+-| Cursor, TRAE, TRAE CN, ZCode, Antigravity | `SessionStart` |
++| Codex | `SessionStart` on startup, clear, resume, and compact |
++| Cursor, TRAE, TRAE CN, ZCode | `SessionStart` |
++| Antigravity | `SessionStart`, and the first turn after each compaction checkpoint in the transcript |
+ | Kimi Code | The first prompt; retried on later prompts until it succeeds |
+-| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent |
++| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent. CodeBuddy drops `SessionStart` context at a compaction, so the next prompt sends it again |
+ | Qoder CLI | `SessionStart`, every source (`startup`, `resume`, `compact`) |
+-| OpenCode | The first message of each session; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
+-| DSH | Once per session; not sent again after compaction |
++| OpenCode | The first message of each session and the first after each compaction; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
++| DSH | At session start, and again on the next model step when a compaction dropped it |
+ | pi | In the system prompt, rebuilt every turn |
+ | OpenClaw | In the system prompt, rebuilt every turn: `<user-profile>` for the user's profile and, with `peer_role`, the actor peer's profile. No memory index or skill catalog |
+ | Hermes | Its own reader loads the profile and the preferences and entities listings, with a 6,000-token default budget |
+@@ -442,15 +443,15 @@ When the host shortens its context, most integrations make sure the dropped mess
+ | Integration | Approach | Before compaction | After compaction |
+ |---|---|---|---|
+ | Claude Code | Host summarizes | `PreCompact` commits synchronously; this is the one write that never runs in the background, because the host rewrites the transcript right after | `SessionStart` with `source="compact"` injects the archive overview and up to 5 summaries |
+-| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | The archive summary is injected on resume |
++| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | `SessionStart` with `source="compact"` sends the profile again; the archive summary is injected on resume |
+ | Cursor | Host summarizes | `preCompact` commits | Nothing |
+-| CodeBuddy Code | Host summarizes | `PreCompact` commits | Nothing |
++| CodeBuddy Code | Host summarizes | `PreCompact` commits | The next prompt sends the profile again |
+ | Qoder CLI | Host summarizes | `PreCompact` commits | Nothing |
+ | TRAE, TRAE CN, ZCode | Host summarizes | No pre-compaction event | Nothing |
+-| Antigravity | Not verified | No pre-compaction hook | Nothing |
++| Antigravity | Host summarizes | No pre-compaction hook | The first turn after the compaction checkpoint sends the profile again |
+ | Kimi Code | Host s
+```
+
+**File**: `docs/en/agent-integrations/17-dsh.md` (modified, +1/-1)
+```diff
+@@ -118,7 +118,7 @@ To remove the bundle, use **Uninstall** on its Plugins page entry, or quit Deskt
  
- const DEFAULT_PROTOCOL_VERSION = "2025-06-18";
-+const SESSION_HISTORY_TOOL = "session_history";
- const DELETE_TIMEOUT_MS = 2000;
- const MAX_CONCURRENT_REQUESTS = 16;
+ ## How it works
  
-@@ -145,6 +146,9 @@ export function createOpenVikingMcpProxy({
-   loggerFactory,
-   fetchImpl = globalThis.fetch,
-   localToolProvider = null,
-+  // (params) => the OV session id of the host session making this tools/call,
-+  // or "" when the harness cannot tell; fills `session_history`'s `session`.
-+  defaultHistorySession = null,
- } = {}) {
-   if (typeof fetchImpl !== "function") {
-     throw new Error("global fetch is required; use Node.js 18 or newer");
-@@ -219,6 +223,33 @@ export function createOpenVikingMcpProxy({
-     return localToolProvider.callTool(message.params, { config: proxyConfig });
-   }
+-The bundle runs inside DSH as a Cordis plugin rather than as external hooks, so it follows the session in-process. At session start it injects your OpenViking profile block, an index of available memories, and an `<available-skills>` catalog of your OpenViking skills. When a model step takes new user input, it searches OpenViking with the text the user typed and appends what it finds to that step as a durable message, so the injection replays with the session and is visible to compaction. Context that DSH or other plugins inject (for example `time-context` or job notices) and tool results neither trigger recall nor enter the query. It captures user, assistant, and (optionally) tool-result messages straight from DSH's event stream, skipping injected context, and commits to OpenViking once pending tokens cross the threshold or when DSH begins a compaction, archiving every captured message. Writes that fail land in a pending queue and replay at the next session start.
++The bundle runs inside DSH as a Cordis plugin rather than as external hooks, so it follows the session in-process. At session start it injects your OpenViking profile block, an index of available memories, and an `<available-skills>` catalog of your OpenViking skills; when a compaction summarizes that block away, the next model step sends it again. When a model step takes new user input, it searches OpenViking with the text the user typed and appends what it finds to that step as a durable message, so the injection replays with the session and is visible to compaction. Context that DSH or other plugins inject (for example `time-context` or job notices) and tool results neither trigger recall nor enter the query. It captures user, assistant, and (optionally) tool-result messages straight from DSH's event stream, skipping injected context, and commits to OpenViking once pending tokens cross the threshold or when DSH begins a compaction, archiving every captured message. Writes that fail land in a pending queue and replay at the next session start.
  
-+  // A `session` the model passed is kept as is, even one this proxy would not
-+  // have chosen; only a missing or blank one is filled.
-+  function withDefaultHistorySession(message) {
-+    if (
-+      typeof defaultHistorySession !== "function"
-+      || message.method !== "tools/call"
-+      || message.params?.name !== SESSION_HISTORY_TOOL
-+    ) {
-+      return message;
-+    }
-+    const args = message.params.arguments;
-+    const given = args && typeof args === "object" ? args.session : undefined;
-+    if (given != null && (typeof given !== "string" || given.trim())) return message;
-+    let session = "";
+ Each DSH session maps to `dsh-<session-id>` in OpenViking, and every subagent gets its own session.
+ 
+```
+
+**File**: `docs/zh/agent-integrations/16-capability-reference.md` (modified, +12/-11)
+```diff
+@@ -60,7 +60,7 @@
+ | Qoder CLI | 是，带会话 | profile、记忆索引、skill | 每捕获 8 条消息 | 是 | 提交尚未提交的消息 |
+ | Antigravity | 是，带会话，在每轮第一次模型调用时 | profile、记忆索引、skill | 每轮 | 没有退出 hook；每轮已提交 | 没有压缩前 hook |
+ | OpenCode | 是，带会话 | profile、记忆索引、skill、已索引的仓库 | 空闲时，待提交 token 达到 20,000 | 是，在宿主的清理时限内 | 在压缩前后提交 |
+-| DSH | 是，带会话 | profile、记忆索引、skill，每个会话一次 | 待提交 token 达到 20,000 | 是，预算 3 秒 | 先提交，再由宿主摘要 |
++| DSH | 是，带会话 | profile、记忆索引、skill | 待提交 token 达到 20,000 | 是，预算 3 秒 | 先提交，再由宿主摘要 |
+ | pi | 是，带会话 | profile、记忆索引、skill，每轮 | takeover 开：约 30,000 token；关：20,000 | takeover 开：否；关：是 | takeover 替换 pi 的摘要 |
+ | OpenClaw | 是，带会话 | profile，每轮 | token 预算的一半（默认 64,000） | 否 | 插件接管压缩 |
+ | Hermes（内置） | 是，带会话，有回退路径 | profile 与记忆清单 | 否；只在会话边界 | 是，前提是待上传内容在 10 秒内完成 | fork 型压缩时提交 |
+@@ -255,13 +255,14 @@ skill 走单独的路径。创建、安装或替换 skill 用 MCP `add_skill` 
+ | 集成 | 时机 |
+ |---|---|
+ | Claude Code | `SessionStart`，所有 source |
+-| Codex | `SessionStart` 的 startup、clear 和 resume |
+-| Cursor、TRAE、TRAE CN、ZCode、Antigravity | `SessionStart` |
++| Codex | `SessionStart` 的 startup、clear、resume 和 compact |
++| Cursor、TRAE、TRAE CN、ZCode | `SessionStart` |
++| Antigravity | `SessionStart`，以及 transcript 中每个压缩检查点之后的第一轮 |
+ | Kimi Code | 首次提问时；失败后在后续提问中重试，直到成功 |
+-| CodeBuddy Code | `SessionStart`，所有 source；同一会话内可能投递两次，因此 hook 是幂等的 |
++| CodeBuddy Code | `SessionStart`，所有 source；同一会话内可能投递两次，因此 hook 是幂等的。CodeBuddy 压缩时会丢掉 `SessionStart` 上下文，因此下一次提问重新发送 |
+ | Qoder CLI | `SessionStart`，所有 source（`startup`、`resume`、`compact`） |
+-| OpenCode | 每个会话的第一条消息；失败后不重试，子代理会话跳过。已索引仓库的列表同时进入 system prompt |
+-| DSH | 每个会话一次；压缩后不再发送 |
++| OpenCode | 每个会话的第一条消息，以及每次压缩后的第一条消息；失败后不重试，子代理会话跳过。已索引仓库的列表同时进入 system prompt |
++| DSH | 会话开始时；压缩去掉它之后，在下一个模型步骤重新发送 |
+ | pi | 放在 system prompt 中，每轮重建 |
+ | OpenClaw | 放在 system prompt 中，每轮重建：`<user-profile>` 包含用户的 profile，设置了 `peer_role` 时还包含当前 actor peer 的 profile。不注入记忆索引和 skill 清单 |
+ | Hermes | 用自己的读取逻辑加载 profile 及 preferences、entities 清单，默认预算 6,000 token |
+@@ -440,15 +441,15 @@ Claude Code 和 Codex 默认 `auto`，其他集成默认 `off`。支持服务端
+ | 集成 | 方式 | 压缩前 | 压缩后 |
+ |---|---|---|---|
+ | Claude Code | 宿主摘要 | `PreCompact` 同步提交；这是唯一不在后台运行的写入，因为宿主紧接着就会重写 transcript | `source="compact"` 的 `SessionStart` 注入归档概览和最多 5 条摘要 |
+-| Codex、TraeCode CLI 2.0 | 宿主摘要 | `PreCompact` 补齐未捕获的轮次，提交全部内容，并开始一个新的 OpenViking 会话。补齐不完整时不提交，稍后重试 | resume 时注入归档摘要 |
++| Codex、TraeCode CLI 2.0 | 宿主摘要 | `PreCompact` 补齐未捕获的轮次，提交全部内容，并开始一个新的 OpenViking 会话。补齐不完整时不提交，稍后重试 | `source="compact"` 的 `SessionStart` 重新发送 profile；resume 时注入归档摘要 |
+ | Cursor | 宿主摘要 | `preCompact` 提交 | 无 |
+-| CodeBuddy Code | 宿主摘要 | `PreCompact` 提交 | 无 |
++| CodeBuddy Code | 宿主摘要 | `PreCompact` 提交 | 下一次提问重新发送 profile |
+ | Qoder CLI | 宿主摘要 | `PreCompact` 提交 | 无 |
+ | TRAE、TRAE CN、ZCode | 宿主摘要 | 没有压缩前事件 | 无 |
+-| Antigravity | 未验证 | 没有压缩前 hook | 无 |
++| Antigravity | 宿主摘要 | 没有压缩前 hook | 压缩检查点之后的第一轮重新发送 profile |
+ | Kimi Code | 宿主摘要 | `PreCompact` 提交 | 无 |
+-| OpenCode | 宿主摘要 | v1 刷新并提交；v2 捕获 transcript | v1 在 `session.compacted` 时再提交一次；v2 在 `session.compaction.ended` 后提交 |
+-| DSH | 宿主摘要 | `compaction/start` 无论 token 阈值如何都会提交。注入的上下文是一条用户消息，随宿主压缩一起缩减；profile 不再发送 | 无 |
++| OpenCode | 宿主摘要 | v1 刷新并提交；v2 捕获 transcript | v1 在 `session.compacted` 时再提交一次；v2 在 `session.compaction.ended` 后提交。下一条消息重新发送会话开始上下文 |
++| DSH | 宿主摘要 | `compaction/start` 无论 token 阈值如何都会提交。注入的上下文是一条用户消息，随宿主压缩一起缩减 | 压缩去掉了 profile 时，下一个模型步骤重新发送 |
+ | pi | takeover，默认开启 | 提交并等待归档概览 | 用概览替换 pi 的摘要；失败时 pi 照常压缩 |
+ | OpenClaw | 插件接管压缩 | `compact()` 提交并等待 | 下一次上下文组装从服务端重建历史 |
+ | Hermes（内置） | 宿主摘要 | fork 型压缩提交旧会话；原地压缩不做任何处理 | 无 |
+```
+
+**File**: `docs/zh/agent-integrations/17-dsh.md` (modified, +1/-1)
+```diff
+@@ -118,7 +118,7 @@ Windows 上安装器不可用，只能用这种方式；macOS 上不想跑安装
+ 
+ ## 工作方式
+ 
+-插件以 Cordis 插件的形式跑在 DSH 进程内，而不是外挂 hook，因此能贴着会话走。会话开始时注入 OpenViking 画像块、可用记忆索引和 OpenViking 技能清单 `<available-skills>`；模型步骤带有新的用户输入时，用用户输入的文本做语义检索，把结果作为持久消息追加到同一步骤，因此注入会随会话重放，也对压缩可见。DSH 或其他插件注入的上下文（例如 `time-context`、job 通知）和工具结果既不触发召回，也不拼进检索文本。它直接从 DSH 的事件流捕获 user、assistant 以及（可选的）工具结果消息，并跳过注入的上下文，待同步 token 超过阈值或 DSH 开始压缩时即 commit，每次 commit 都归档全部已捕获的消息。写入失败会进入待写队列，在下次会话开始时重放。
++插件以 Cordis 插件的形式跑在 DSH 进程内，而不是外挂 hook，因此能贴着会话走。会话开始时注入 OpenViking 画像块、可用记忆索引和 OpenViking 技能清单 `<available-skills>`，压缩把这块内容摘要掉后，下一个模型步骤会重新发送；模型步骤带有新的用户输入时，用用户输入的文本做语义检索，把结果作为持久消息追加到同一步骤，因此注入会随会话重放，也对压缩可见。DSH 或其他插件注入的上下文（例如 `time-context`、job 通知）和工具结果既不触发召回，也不拼进检索文本。它直接从 DSH 的事件流捕获 user、assistant 以及（可选的）工具结果消息，并跳过注入的上下文，待同步 token 超过阈值或 DSH 开始压缩时即 commit，每次 commit 都归档全部已捕获的消息。写入失败会进入待写队列，在下次会话开始时重放。
+ 
+ 每个 DSH 会话映射为 OpenViking 中的 `dsh-<session-id>`，子 agent 各自拥有独立会话。
+ 
+```
+
+**File**: `examples/agent-hook-plugin/hosts/antigravity.mjs` (modified, +20/-2)
+```diff
+@@ -98,6 +98,23 @@ export function resolveAntigravityTurnStep(jsonl, initialNumSteps, lastUserInput
+   return lastUserStep + 1;
+ }
+ 
++/**
++ * The step index of the latest compaction. Antigravity has no compaction hook;
++ * each compaction writes a `CHECKPOINT` step, and the context before it, the
++ * session-start profile included, is gone.
++ */
++export function latestAntigravityCheckpoint(jsonl) {
++  let latest;
++  for (const line of String(jsonl || "").split("\n")) {
++    if (!line.includes('"CHECKPOINT"')) continue;
 +    try {
-+      session = String(defaultHistorySession(message.params) || "").trim();
-+    } catch (err) {
-+      logError("default_history_session", err);
-+    }
-+    log("default_history_session", { filled: Boolean(session) });
-+    if (!session) return message;
-+    return {
-+      ...message,
-+      params: { ...message.params, arguments: { ...(args || {}), session } },
-+    };
++      const step = JSON.parse(line);
++      if (step.type === "CHECKPOINT" && step.source === "SYSTEM") latest = step.step_index;
++    } catch { /* a partial last line */ }
 +  }
++  return latest;
++}
 +
-   function reloadConfig(reason) {
-     proxyConfig = readConfig();
-     logger = loggerFactory("mcp-proxy", proxyConfig);
-@@ -429,6 +460,7 @@ export function createOpenVikingMcpProxy({
-       return;
-     }
- 
-+    message = withDefaultHistorySession(message);
-     const expectsResponse = isRequest(message);
-     if (message.method === "initialize") {
-       initializeRequest = cloneMessage(message);
+ /** The user requests and text replies of finished steps after `afterStep`. */
+ export function buildAntigravityTurns(jsonl, afterStep = -1) {
+   const turns = [];
+@@ -168,8 +185,9 @@ export const antigravity = {
+     let turnStep;
+     if (input.transcriptPath) {
+       try {
+-        turnStep = resolveAntigravityTurnStep(
+-          readFileSync(antigravityTranscriptPath(input.transcriptPath), "utf8"), input.initialNumSteps, text);
++        const jsonl = readFileSync(antigravityTranscriptPath(input.transcriptPath), "utf8");
++        turnStep = resolveAntigravityTurnStep(jsonl, input.initialNumSteps, text);
++        input.latestCompaction = latestAntigravityCheckpoint(jsonl);
+       } catch {
+         turnStep = undefined;
+       }
 ```
 
-**File**: `docs/en/agent-integrations/12-cursor.md` (modified, +2/-1)
+**File**: `examples/agent-hook-plugin/hosts/codebuddy.mjs` (modified, +4/-2)
 ```diff
-@@ -48,7 +48,8 @@ Once installed, start a new Cursor session and ask it to follow https://docs.ope
- - `beforeReadFile` denies reading a `viking://` path as a local file and points the Agent to OpenViking MCP tools. Shell commands are not checked.
- - `afterMCPExecution` appends completed calls to the `openviking` MCP server to a local tool log, preserving the native call ID, input, output, and success or failure status. It does not upload messages or rewrite earlier results.
- - `stop` uploads new conversation turns and locally recorded tool results through `add message`. Capture progress advances only after upload succeeds, and `session commit` follows the existing message threshold. Tool records do not add to that threshold's message count.
--- `preCompact` and `sessionEnd` commit pending messages for memory extraction.
-+- `preCompact` and `sessionEnd` commit pending messages for memory extraction. After a compaction, the next `beforeSubmitPrompt` also adds a short note naming the session's OpenViking id (`cu-<conversation id>`) and the `session_history` MCP tool for looking up exact earlier details.
-+- `preToolUse` matches only `MCP:session_history` and adds the current conversation as its `session` argument when the Agent leaves it out.
- 
- Tool capture requires `afterMCPExecution` to provide `tool_use_id`, `mcp_server_name`, `tool_name`, `tool_input`, and `result_json`. Events without an identity or result are skipped, never inferred to be successful. Failed uploads remain local for the same conversation's next capture attempt; incomplete capture prevents a commit.
- 
+@@ -42,8 +42,10 @@ export const codebuddy = {
+     return null;
+   },
+   // SessionStart context is dropped after a compaction and a --resume, so they
+-  // leave the note for the next UserPromptSubmit. `/compact` after `-c` fired
+-  // no PreCompact, hence SessionStart(compact) too (DESIGN.md §12).
++  // leave the note, and after a compaction the profile, for the next
++  // UserPromptSubmit. `/compact` after `-c` fired no PreCompact, hence
++  // SessionStart(compact) too (DESIGN.md §12).
++  compactionDropsProfile: true,
+   historyPointer: {
+     sessionDefault: true,
+     defer: (event, input) => {
 ```
 
-**File**: `docs/en/agent-integrations/13-trae.md` (modified, +2/-1)
+**File**: `examples/agent-hook-plugin/hosts/codebuddy/plugin.json` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@ Give TRAE, TRAE CN, and TraeCode CLI 2.0 long-term memory across projects and se
- 
- ## Install
- 
--Prerequisites: macOS or Linux, Node.js 18+, and a TRAE/TRAE CN release that supports the `SessionStart`, `UserPromptSubmit`, `PreToolUse`, and `Stop` Hooks. TraeCode CLI 2.0 uses the Codex-compatible plugin format directly. The installer guides you through the OpenViking connection settings.
-+Prerequisites: macOS or Linux, Node.js 18+, and a TRAE/TRAE CN release that supports the `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `Stop`, and `PostCompact` Hooks. TraeCode CLI 2.0 uses the Codex-compatible plugin format directly. The installer guides you through the OpenViking connection settings.
- 
- For a managed connection, select **OpenViking Managed Service**, then:
- 
-@@ -48,6 +48,7 @@ Once installed, start a new TRAE session and ask it to follow https://docs.openv
- - `UserPromptSubmit` recalls and injects context for the current request, including your own skills and those shared with your account under `viking://agent/skills`.
- - `PreToolUse` on TRAE and TRAE CN denies `Read`, `Glob`, and `Grep` calls whose path is a `viking://` URI and points to OpenViking MCP tools; a `Bash` or `RunCommand` command that carries a `viking://` URI still runs, with a notice suggesting those tools. TraeCode CLI 2.0 uses the Codex plugin, which has no URI guard.
- - TRAE/TRAE CN `Stop` captures and commits the completed turn. TraeCode CLI 2.0 follows the Codex plugin’s capture and lifecycle commit policy.
-+- TRAE/TRAE CN `PostCompact` adds a short note after a compaction, naming the session's OpenViking id and the `session_history` MCP tool for looking up exact earlier details; the Agent passes that id as the tool's `session`.
- - The OpenViking MCP server transparently exposes the full server MCP tool set (21 tools): `find`, `search`, `read`, `download`, `list`, `tree`, `remember`, `write`, `edit`, `add_resource`, `add_skill`, `list_watches`, `cancel_watch`, `grep`, `glob`, `forget`, `health`, `list_users`, `list_groups`, `get_acl`, and `set_acl`. `search` with `mode="context"` returns assembled context.
- - TRAE/TRAE CN skills: `openviking-memory`, `openviking-skills`, `ov-experience-memory`, `openviking-rule-search`, and `ov-memory-doctor` are installed into `~/.trae/skills/<name>` (TRAE CN: `~/.trae-cn/skills/<name>`). A skill you edited, or an existing unmanaged directory of the same name, is preserved on upgrade. TraeCode CLI also reads `~/.trae/skills`, so with both the TRAE integration and the TraeCode CLI 2.0 plugin installed, the CLI lists each of these skills twice: once bare and once under the plugin namespace.
- The skill catalog lists your own skills before those shared with your account, with each description cut to about 40 tokens. Its budget, `skillCatalogTokenBudget` (default `1200` tokens), is separate from the profile budget; when not every description fits, the catalog lists names only. Set `skillCatalog` to `false` or the budget to `0` to turn it off, either in the `plugin` section of `~/.openviking/ovcli.conf` ([Plugin Settings](../configuration/02-client.md#plugin-settings)) or through `OPENVIKING_SKILL_CATALOG` and `OPENVIKING_SKILL_CATALOG_TOKEN_BUDGET`.
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.5.37",
++  "version": "0.5.38",
+   "description": "Long-term semantic memory for the CodeBuddy Code CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
+   "author": {
+     "name": "OpenViking",
 ```
 
-**File**: `docs/en/agent-integrations/20-codebuddy.md` (modified, +3/-2)
+**File**: `examples/agent-hook-plugin/hosts/cursor/openviking.integration.json` (modified, +1/-1)
 ```diff
-@@ -44,12 +44,13 @@ The installer assembles a self-contained plugin under `~/.openviking/agent-integ
- - **UserPromptSubmit** recalls relevant memories and injects them as an `<openviking-context>` block in `additionalContext`. Host-generated continuation turns are skipped, so a turn the host produced on its own never triggers a search.
- - **PreToolUse** denies reading or writing a `viking://` URI as a local path and points the Agent at the OpenViking MCP tools. Shell commands are not checked, so `ov` invocations and literal `viking://` arguments still work.
- - **Stop**, **PreCompact**, and **SessionEnd** capture new transcript turns incrementally in a detached worker. `Stop` commits the OpenViking session every 8 captured messages (`commitTurnThreshold`); `PreCompact` and `SessionEnd` commit everything not yet committed, including messages `Stop` already sent.
-+- After a compaction or a resume, the next **UserPromptSubmit** also adds a short note naming the session's OpenViking id and the `session_history` MCP tool for looking up exact earlier details. The MCP proxy fills that tool's `session` argument from the call when the Agent leaves it out.
- 
- Hooks and MCP read the same credentials from `~/.openviking/ovcli.conf`, so they cannot disagree about the server, account, or user. `OPENVIKING_URL` and `OPENVIKING_API_KEY` override that file, and per-plugin settings live under `plugin.codebuddy` (see [Plugin Settings](../configuration/02-client.md#plugin-settings)). Sessions are stored in OpenViking as `cb-<session id>`.
- 
- ### Behaviour that follows from the host
- 
--`UserPromptSubmit` and `SessionEnd` fire **only in the interactive TUI**. Headless runs (`-p`, `--input-format stream-json`) never emit them, so a headless session captures on `Stop` but never sends the final commit. `SessionStart` carries no `cwd` and can be delivered twice per session, so the session-start hook is idempotent and falls back to the process working directory. A hook that overruns its timeout is killed, but its child processes are not, which is what lets commits run in a detached worker after the hook process returns.
-+`SessionEnd` fires **only in the interactive TUI**, so a headless session (`-p`, `--input-format stream-json`) captures on `Stop` but never sends the final commit. `UserPromptSubmit` also fires only in the TUI before CodeBuddy Code 2.185.0; from 2.185.0 it fires in headless `-p` runs too. `SessionStart` carries no `cwd` and can be delivered twice per session, so the session-start hook is idempotent and falls back to the process working directory. A hook that overruns its timeout is killed, but its child processes are not, which is what lets commits run in a detached worker after the hook process returns.
- 
- Subagent capture is not supported yet: the host fires `SubagentStart`/`SubagentStop`, but the shared dispatcher has no subagent stage. The verified host contract and transcript format are recorded in [`hosts/codebuddy/DESIGN.md`](https://github.com/volcengine/OpenViking/blob/main/examples/agent-hook-plugin/hosts/codebuddy/DESIGN.md).
- 
-@@ -67,7 +68,7 @@ Uninstall removes the plugin, its local marketplace, the copy CodeBuddy caches,
- 
- | Symptom | Cause and fix |
- |---------|---------------|
--| No recall in headless runs | `UserPromptSubmit` fires only in the interactive TUI. Use an interactive session. |
-+| No recall in headless runs | Before CodeBuddy Code 2.185.0, `UserPromptSubmit` fires only in the interactive TUI. Upgrade or use an interactive session. |
- | The plugin is not listed | Re-run the installer and check that `codebuddy` is on `PATH`, then start a new session. |
- | MCP does not connect | Check the URL/API key in `~/.openviking/ovcli.conf`, then start a new session. |
- | Detailed diagnostics are needed | Start CodeBuddy with `OPENVIKING_DEBUG=1` and inspect `~/.openviking/logs/codebuddy-hooks.log`. |
-```
-
-**File**: `docs/en/agent-integrations/21-qoder.md` (modified, +2/-1)
-```diff
-@@ -46,7 +46,8 @@ Every Qoder CLI build on `PATH` gets the plugin: `qodercli` in `~/.qoder` (`QODE
- 
- - **SessionStart** injects the user profile and replays anything the offline queue is holding.
- - **UserPromptSubmit** recalls relevant memories and injects them as an `<openviking-context>` block in `additionalContext`.
--- **PreToolUse** denies reading or writing a `viking://` URI as a local path and points the Agent at the OpenViking MCP tools. A Bash command that contains such a URI still runs, with a notice pointing at the same tools, so `ov` invocations and literal `viking://` arguments still work.
-+- **PreToolUse** denies reading or writing a `viking://` URI as a local path and points the Agent at the OpenViking MCP tools. A Bash command that contains such a URI still runs, with a notice pointing at the same tools, so `ov` invocations and literal `viking://` arguments still work. A second `PreToolUse` entry on `mcp_call` adds the current session as the `session` argument of a `session_history` call that leaves it out.
-+- After a compaction or a resume, **SessionStart** also adds a short note naming the session's OpenViking id and the `session_history` MCP tool for looking up exact earlier details.
- - **Stop**, **PreCompact**, and **SessionEnd** capture new transcript turns incrementally in a detached worker. `Stop` commits the OpenViking session every 8 captured messages (`commitTurnThreshold`); `PreCompact` and `SessionEnd` commit everything not yet committed, including messages `Stop` already sent.
- 
- Hooks and MCP read the same credentials from `~/.openviking/ovcli.conf`, so they cannot disagree about the server, account, or user. `OPENVIKING_URL` and `OPENVIKING_API_KEY` override that file, and per-plugin settings live under `plugin.qoder` (see [Plugin Settings](../configuration/02-client.md#plugin-settings)). Sessions are stored in OpenViking as `qd-<session id>`.
-```
-
-**File**: `docs/zh/agent-integrations/12-cursor.md` (modified, +2/-1)
-```diff
-@@ -48,7 +48,8 @@ curl -fsSL https://openviking.ai/install | bash
- - `beforeReadFile`：阻止把 `viking://` 虚拟路径当作本地文件读取，并提示改用 OpenViking MCP 工具；shell 命令不做检查。
- - `afterMCPExecution`：将 `openviking` MCP 服务的工具完成记录追加到本地工具日志，保留真实调用 ID、输入、输出和成功或失败状态；此时不向服务端写入消息，也不重写此前的结果。
- - `stop`：将新增对话与本地工具记录一起通过 `add message` 上报；成功后才推进捕获位置，达到原有消息阈值时执行 `session commit`。工具记录不额外增加该阈值的消息计数。
--- `preCompact` / `sessionEnd`：提交尚未处理的消息，触发记忆抽取。
-+- `preCompact` / `sessionEnd`：提交尚未处理的消息，触发记忆抽取。压缩之后，下一次 `beforeSubmitPrompt` 还会追加一段简短说明，给出会话的 OpenViking id（`cu-<conversation id>`）以及用来查回之前确切细节的 `session_history` MCP 工具。
-+- `preToolUse`：只匹配 `MCP:session_history`，Agent 没传 `session` 参数时补上当前会话。
- 
- 工具采集要求 `afterMCPExecution` 提供 `tool_use_id`、`mcp_server_name`、`tool_name`、`tool_input` 和 `result_json`。缺少身份或结果的事件会跳过，不会推断为成功。上传失败时保留本地记录，等待同一会话的后续采集重试；消息未传完整时不提交。
- 
-```
-
-**File**: `docs/zh/agent-integrations/13-trae.md` (modified, +2/-1)
-```diff
-@@ -4,7 +4,7 @@
- 
- ## 安装
- 
--前置条件：macOS 或 Linux、Node.js 18+，以及支持 `SessionStart`、`UserPromptSubmit`、`PreToolUse`、`Stop` Hook 的 TRAE/TRAE CN 版本。TraeCode CLI 2.0 直接使用兼容 Codex 的插件格式。安装过程中会引导配置 OpenViking 连接信息。
-+前置条件：macOS 或 Linux、Node.js 18+，以及支持 `SessionStart`、`UserPromptSubmit`、`PreToolUse`、`Stop`、`PostCompact` Hook 的 TRAE/TRAE CN 版本。TraeCode CLI 2.0 直接使用兼容 Codex 的插件格式。安装过程中会引导配置 OpenViking 连接信息。
- 
- 连接托管实例时，选择 **OpenViking 托管服务**，再选择服务商：
- 
-@@ -48,6 +48,7 @@ TRAE 和 TRAE CN 使用安装后的 `hooks.json`，不需要审阅 hook，安装
- - `UserPromptSubmit`：根据当前问题召回并注入相关内容，召回范围包括你自己的 skill 和账号内共享在 `viking://agent/skills` 下的 skill。
- - `PreToolUse`：在 TRAE 和 TRAE CN 上，`Read`、`Glob`、`Grep` 的路径是 `viking://` URI 时拒绝调用，并提示改用 OpenViking MCP 工具；`Bash` 或 `RunCommand` 命令带 `viking://` URI 时照常执行，同时附加改用建议。TraeCode CLI 2.0 使用 Codex 插件，它不安装 URI guard。
- - TRAE/TRAE CN 的 `Stop` 捕获并提交本轮消息；TraeCode CLI 2.0 遵循 Codex 插件的捕获与生命周期提交策略。
-+- TRAE/TRAE CN 的 `PostCompact` 在压缩后追加一段简短说明，给出会话的 OpenViking id 以及用来查回之前确切细节的 `session_history` MCP 工具；Agent 调用时把这个 id 作为 `session` 传入。
- - OpenViking MCP Server：透传服务端完整 MCP 工具集（21 个工具）：`find`、`search`、`read`、`download`、`list`、`tree`、`remember`、`write`、`edit`、`add_resource`、`add_skill`、`list_watches`、`cancel_watch`、`grep`、`glob`、`forget`、`health`、`list_users`、`list_groups`、`get_acl`、`set_acl`。其中 `search` 的 `mode="context"` 可返回组装后的上下文。
- - TRAE/TRAE CN 的 skill：`openviking-memory`、`openviking-skills`、`ov-experience-memory`、`openviking-rule-search` 和 `ov-memory-doctor` 安装到 `~/.trae/skills/<name>`（TRAE CN 为 `~/.trae-cn/skills/<name>`）。你修改过的 skill，或已有的同名非托管目录，升级时保留。TraeCode CLI 也读取 `~/.trae/skills`，同时安装 TRAE 集成和 TraeCode CLI 2.0 插件时，CLI 会把这几个 skill 各列两次：一次不带前缀，一次在插件命名空间下。
- skill 清单先列你自己的 skill，再列账号内共享的 skill，每条描述截到约 40 token。清单的预算 `skillCatalogTokenBudget`（默认 `1200` token）独立于画像预算；描述放不下时只列名称。把 `skillCatalog` 设为 `false` 或把预算设为 `0` 即可关闭，既可以写在 `~/.openviking/ovcli.conf` 的 `plugin` 段（见[插件配置](../configuration/02-client.md#插件配置)），也可以用环境变量 `OPENVIKING_SKILL_CATALOG` 和 `OPENVIKING_SKILL_CATALOG_TOKEN_BUDGET`。
-```
-
-**File**: `docs/zh/agent-integrations/20-codebuddy.md` (modified, +3/-2)
-```diff
-@@ -44,12 +44,13 @@ curl -fsSL https://openviking.ai/install | bash
- - **UserPromptSubmit** 召回相关记忆，以 `additionalContext` 中的 `<openviking-context>` 块注入。宿主自动生成的续写轮次会被跳过，因此宿主自己产生的轮次不会触发检索。
- - **PreToolUse** 拒绝把 `viking://` URI 当本地路径读写，并引导 Agent 改用 OpenViking MCP 工具。Shell 命令不做检查，`ov` 调用与字面量 `viking://` 参数照常可用。
- - **Stop**、**PreCompact** 和 **SessionEnd** 在分离的 worker 中增量捕获 transcript 中的新轮次。`Stop` 每捕获 8 条消息（`commitTurnThreshold`）提交一次 OpenViking session；`PreCompact` 和 `SessionEnd` 提交所有尚未提交的消息，包括 `Stop` 已经发送的。
-+- 压缩或恢复之后，下一次 **UserPromptSubmit** 还会追加一段简短说明，给出会话的 OpenViking id 以及用来查回之前确切细节的 `session_history` MCP 工具。Agent 没传该工具的 `session` 参数时，MCP 代理从调用中补上。
- 
- hook 与 MCP 从 `~/.openviking/ovcli.conf` 读取同一份凭据，不会在服务端、账号或用户上各说各话。`OPENVIKING_URL` 与 `OPENVIKING_API_KEY` 可覆盖该文件，按插件的配置位于 `plugin.codebuddy` 下（见[插件配置](../configuration/02-client.md#插件配置)）。会话在 OpenViking 中记为 `cb-<session id>`。
- 
- ### 宿主决定的行为
- 
--`UserPromptSubmit` 与 `SessionEnd` **只在交互式 TUI 触发**。headless 运行（`-p`、`--input-format stream-json`）不会触发它们，因此 headless 会话只在 `Stop` 捕获，不发收尾提交。`SessionStart` 不带 `cwd`，且同一会话内可能投递两次，因此该 hook 是幂等的，并以进程工作目录兜底。hook 超时会被杀，但其子进程不会，这正是提交能在 hook 进程返回后由分离的 worker 完成的原因。
-+`SessionEnd` **只在交互式 TUI 触发**，因此 headless 会话（`-p`、`--input-format stream-json`）只在 `Stop` 捕获，不发收尾提交。CodeBuddy Code 2.185.0 之前 `UserPromptSubmit` 也只在 TUI 触发；从 2.185.0 起 headless `-p` 运行同样会触发。`SessionStart` 不带 `cwd`，且同一会话内可能投递两次，因此该 hook 是幂等的，并以进程工作目录兜底。hook 超时会被杀，但其子进程不会，这正是提交能在 hook 进程返回后由分离的 worker 完成的原因。
- 
- 暂不支持子代理采集：宿主会触发 `SubagentStart`/`SubagentStop`，但共享 dispatcher 还没有子代理阶段。经过实测的宿主契约与 transcript 格式记录在 [`hosts/codebuddy/DESIGN.md`](https://github.com/volcengine/OpenViking/blob/main/examples/agent-hook-plugin/hosts/codebuddy/DESIGN.md)。
- 
-@@ -67,7 +68,7 @@ curl -fsSL https://openviking.ai/install | bash -s -- --uninstall --yes --harnes
- 
- | 现象 | 原因与处理 |
- |------|------------|
--| headless 运行没有召回 | `UserPromptSubmit` 只在交互式 TUI 触发，请使用交互式会话。 |
-+| headless 运行没有召回 | CodeBuddy Code 2.185.0 之前 `UserPromptSubmit` 只在交互式 TUI 触发，请升级或使用交互式会话。 |
- | 插件列表中没有它 | 重新运行安装器并确认 `codebuddy` 在 `PATH` 中，然后新建会话。 |
- | MCP 连不上 | 检查 `~/.openviking/ovcli.conf` 中的 URL/API Key，然后新建会话。 |
- | 需要详细诊断 | 以 `OPENVIKING_DEBUG=1` 启动 CodeBuddy，查看 `~/.openviking/logs/codebuddy-hooks.log`。 |
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.37",
++  "version": "0.5.38",
+   "clients": [
+     "cursor"
+   ],
 ```
 
 ---
 
-### Incident Patch 2: `4afd0e7f` (2026-11-25)
-**Commit Message**: fix(pgvector): preserve cosine pagination and reuse query vector strings (#7985)
+### Incident Patch 2: `fe354f74` (2026-11-26)
+**Commit Message**: fix(snapshot-log): isolate sqlite/mysql index by service_name (#8452)
 
-* fix(pgvector): avoid costly probes in filtered vector search
+* feat(snapshot-log): isolate sqlite/mysql index by service_name
 
-Admit narrow exact routing only for cheap scalar index plans and defer cosine eligibility checks to avoid redundant vector reads while preserving native fallback behavior.
+Add a service_name column to the SQLite and MySQL snapshot_log tables and
+prefix the unique key and both lookup indexes with it, so multiple OV
+deployments sharing one database keep independent path-history indexes.
 
-* fix(ui): unblock frontend CI after main merge
+Thread the top-level service_name from the binding through build_git_service
+into the SQLite/MySQL store constructors; validate it as 1..=255 ASCII
+[0-9A-Za-z._-] at connect time. The SnapshotLogStore trait and GitService
+are unchanged.
 
-Extract reference search requests with safe response types and split destination validation tests to satisfy lint limits without changing behavior.
+MySQL no longer runs CREATE TABLE at startup. Provision the table once with
+the new snapshot_log_mysql_init.sql so the runtime role needs only
+SELECT/INSERT, keeping DDL and DML privileges separate. A missing table or
+insufficient privilege disables the index and falls back to Git scanning.
 
-* test(ui): align write URI expectations with plain editor text
+PostgreSQL is intentionally left unchanged and gets the same service_name
+treatment in a follow-up change, keeping this commit easy to backport.
 
-Keep clickable URI coverage for command echoes while matching the intentional editor behavior introduced on main.
+* fix(snapshot-log): cap mysql service_name at 128 to fit index limit
 
-* fix(pgvector): isolate filter planning and qualify candidate tables
+Adding service_name to the MySQL composite indexes pushed the path-bearing
+keys past InnoDB's 3072
 
-* fix(ci): allow more time for the full UI test suite
-
-* fix(pgvector): retain zero-vector pagination fixes and query string reuse
-
-* fix(pgvector): keep HNSW candidate ordering index-compatible
-
-**File**: `docs/en/guides/25-pgvector.md` (modified, +9/-0)
+**File**: `crates/ragfs-python/src/binding/client.rs` (modified, +4/-2)
 ```diff
-@@ -99,6 +99,15 @@ scanning to improve recall with filters, but ANN recall and filtered TopK are
- not guaranteed; measure recall and p99 with representative filters. Cosine
- zero vectors are not included in a pgvector HNSW index.
+@@ -8,25 +8,27 @@ fn build_git_from_cfg(
+     git_cfg: ragfs::git::GitConfig,
+     fs: &Arc<MountableFS>,
+     rt: &tokio::runtime::Runtime,
++    service_name: &str,
+ ) -> PyResult<(Option<Arc<ragfs::git::GitService>>, Option<String>)> {
+     let backend = git_cfg.backend.clone();
+     let vfs = fs.clone() as Arc<dyn ragfs::core::FileSystem>;
+     let _guard = rt.enter();
+-    let svc = git::build_git_service(&git_cfg, vfs)?;
++    let svc = git::build_git_service(&git_cfg, vfs, service_name)?;
+     Ok((svc, Some(backend)))
+ }
  
-+Cosine search also excludes zero vectors from flat results and dense candidates
-+in hybrid/time-decay search. Native dense search drops NaN distances after
-+sorting and pagination: PostgreSQL sorts NaN after all finite distances, so zero
-+vectors cannot displace eligible results or alter valid pagination. Hybrid
-+sparse recall excludes them before applying its candidate budget, with a CASE
-+expression that evaluates the norm only after scalar filtering. Sparse-only
-+search still accepts these records. Ordinary dense queries serialize the query
-+vector once and reuse the string for both SQL parameters.
-+
- Flat search stays exact even when the table also contains an ANN index. On
- reconnect, the configured collection dimension, metric and index type must
- match persisted metadata; missing or invalid ANN indexes produce errors.
+ fn load_git_from_config(
+     path: &str,
+     fs: &Arc<MountableFS>,
+     rt: &tokio::runtime::Runtime,
++    service_name: &str,
+ ) -> PyResult<(Option<Arc<ragfs::git::GitService>>, Option<String>)> {
+     let body = std::fs::read_to_string(path)
+         .map_err(|e| PyRuntimeError::new_err(format!("read config_path {}: {}", path, e)))?;
+     let cfg: BindingConfig = toml::from_str(&body)
+         .map_err(|e| PyRuntimeError::new_err(format!("parse config_path: {}", e)))?;
+     match cfg.git {
+-        Some(git_cfg) => build_git_from_cfg(git_cfg, fs, rt),
++        Some(git_cfg) => build_git_from_cfg(git_cfg, fs, rt, service_name),
+         None => Ok((None, None)),
+     }
+ }
 ```
 
-**File**: `docs/zh/guides/25-pgvector.md` (modified, +7/-0)
+**File**: `crates/ragfs-python/src/binding/client/constructor.rs` (modified, +12/-2)
 ```diff
-@@ -92,6 +92,13 @@ HNSW 开启 strict iterative scanning 来改善带过滤的召回，但不保证
- 召回率或过滤后 TopK 数量；需用真实过滤条件验证召回率和 p99。
- pgvector HNSW 的 cosine 索引不包含零向量。
- 
-+Cosine 检索同样从 flat 结果以及 hybrid/时间衰减的 dense 候选中排除零向量。
-+原生 dense 查询在距离排序和分页之后排除 NaN：PostgreSQL 将 NaN 排在所有
-+有限距离之后，因此零向量不会挤掉有效结果或改变有效分页。hybrid 的 sparse
-+分支在候选预算截取之前排除零向量，并通过 CASE 保证标量过滤通过后才计算范数。
-+仅 sparse 查询仍允许这些记录参与检索。普通 dense 查询只将查询向量转为字符串
-+一次，供两个 SQL 参数复用。
-+
- 即使表中额外存在 ANN 索引，flat 检索仍保持精确。重新连接时会校验配置与
- 持久化元数据中的维度、距离和索引类型，ANN 索引缺失或无效会明确报错。
- 修改 `ef_search` 在重新连接后生效，不需要重建索引；修改索引类型或构建参数
+@@ -236,9 +236,19 @@ impl RAGFSBindingClient {
+         // Build the git service from inline config when present; otherwise fall
+         // back to loading the [git] section from a config file path.
+         let (git_service, git_backend) = match inline_git_cfg {
+-            Some(git_cfg) => build_git_from_cfg(git_cfg, &stack.mountable, &rt)?,
++            Some(git_cfg) => {
++                let service_name = service_name
++                    .as_deref()
++                    .ok_or_else(|| PyValueError::new_err("service_name is required"))?;
++                build_git_from_cfg(git_cfg, &stack.mountable, &rt, service_name)?
++            }
+             None => match git_config_path {
+-                Some(path) => load_git_from_config(path, &stack.mountable, &rt)?,
++                Some(path) => load_git_from_config(
++                    path,
++                    &stack.mountable,
++                    &rt,
++                    service_name.as_deref().unwrap_or("ragfs"),
++                )?,
+                 None => (None, None),
+             },
+         };
 ```
 
-**File**: `openviking/storage/vectordb_adapters/opengauss/retrieval.py` (modified, +28/-8)
+**File**: `crates/ragfs-python/src/git.rs` (modified, +16/-9)
 ```diff
-@@ -432,6 +432,23 @@ def _drop_sparse_postings_on_cursor(self, cursor) -> None:
-     def _validate_ranked_filters(self, filters) -> None:
-         _validate_filters(filters, self._field_names)
+@@ -42,6 +42,7 @@ use ragfs::git::{CasMode, S3Config, S3IndexStore, S3ObjectStore, S3RefStore};
+ pub fn build_git_service(
+     cfg: &GitConfig,
+     vfs: Arc<dyn FileSystem>,
++    service_name: &str,
+ ) -> PyResult<Option<Arc<GitService>>> {
+     if !cfg.enabled {
+         return Ok(None);
+@@ -82,7 +83,7 @@ pub fn build_git_service(
+         }
+     };
  
-+    def _dense_vector_guard(self, op: str) -> str:
-+        return '"vector" IS NOT NULL'
-+
-+    def _dense_filter_clause(self, op, where, filter_params):
-+        condition = f"({where})" if where else "TRUE"
-+        return f"{condition} AND {self._dense_vector_guard(op)}", list(filter_params)
-+
-+    def _dense_candidate_query(self, index_name, where, filter_params, vector_text, op, budget):
-+        """Backend hook for dense recall, kept inside the ranking statement's snapshot."""
-+        predicate, params = self._dense_filter_clause(op, where, filter_params)
-+        return (
-+            f'SELECT "id" AS _ov_candidate_id FROM {_quote_identifier(self._name)} '
-+            f"WHERE {predicate} "
-+            f'ORDER BY "vector" {op} %s::vector LIMIT %s',
-+            [*params, vector_text, budget],
-+        )
-+
-     def search_ranked(
-         self,
-         index_name: str,
-@@ -505,24 +522,27 @@ def search_ranked(
-             for term, weight in sparse.items():
-                 params.extend([term, weight])
-         if has_dense:
--            ctes.append(
--                f'dense_candidates AS (SELECT "id" AS _ov_candidate_id FROM {table} '
--                f'WHERE {condition} AND "vector" IS NOT NULL '
--                f'ORDER BY "vector" {op} %s::vector LIMIT %s)'
-+            dense_sql, dense_params = self._dense_candidate_query(
-+                index_name, where, filter_params, vector_text, op, budget
-             )
--            params.extend([*filter_params, vector_text, budget])
-+            ctes.append(f"dense_candidates AS ({dense_sql})")
-+            params.extend(dense_params)
-             candidate_selects.append("SELECT _ov_candidate_id FROM dense_candidates")
-         if has_sparse:
--            vector_guard = ' AND "vector" IS NOT NULL' if has_dense else ""
-+            sparse_predicate, sparse_params = (
-+                self._dense_filter_clause(op, where, filter_params)
-+                if has_dense
-+                else (condition, list(filter_params))
-+            )
-             ctes.append(
-                 f"sparse_candidates AS (SELECT p.id AS _ov_candidate_id FROM {postings} p "
-                 "JOIN query_sparse q ON p.term = q.term "
-                 f'WHERE EXISTS (SELECT 1 FROM {table} WHERE "id" = p.id '
--                f"AND {condition}{vector_guard}) GROUP BY p.id "
-+                f"AND {sparse_predicate}) GROUP BY p.id "
-                 "HAVING SUM(p.weight * q.weight) > 0 "
-                 "ORDER BY SUM(p.weight * q.weight) DESC, p.id LIMIT %s)"
-             )
--            params.extend([*filter_params, budget])
-+            params.extend([*sparse_params, budget])
-             candidate_selects.append("SELECT _ov_candidate_id FROM sparse_candidates")
-         ctes.append("candidates AS (" + " UNION ".join(candidate_selects) + ")")
-         distance_sql = (
+-    let snapshot_log_store = build_snapshot_log_store(cfg)?;
++    let snapshot_log_store = build_snapshot_log_store(cfg, service_name)?;
+ 
+     let svc = GitService::with_index(vfs, object_store, ref_store, index_store)
+         .with_blob_exists_precheck(cfg.tuning.blob_exists_precheck_enabled);
+@@ -93,6 +94,7 @@ pub fn build_git_service(
+ 
+ fn build_snapshot_log_store(
+     cfg: &GitConfig,
++    service_name: &str,
+ ) -> PyResult<Option<Arc<dyn ragfs::git::SnapshotLogStore>>> {
+     match cfg.snapshot.log.provider.as_str() {
+         "none" => Ok(None),
+@@ -105,8 +107,11 @@ fn build_snapshot_log_store(
+                     "git.snapshot.log.sqlite.path is required for sqlite provider",
+                 )
+             })?;
++            let service_name = service_name.to_string();
+             match handle
+-                .block_on(async move { ragfs::git::SqliteSnapshotLogStore::connect(&path).await })
++                .block_on(async move {
++                    ragfs::git::SqliteSnapshotLogStore::connect(&service_name, &path).await
++                })
+             {
+                 Ok(store) => Ok(Some(
+                     Arc::new(store) as Arc<dyn ragfs::git::SnapshotLogStore>
+@@ -132,8 +137,10 @@ fn build_snapshot_log_store(
+             })?;
+             let max_connections = mysql.max_connections;
+             let connect_timeout_ms = mysql.connect_timeout_ms;
++            let service_name = service_name.to_string();
+             match handle.block_on(async move {
+                 ragfs::git::MySqlSnapshotLogStore::connect(
++                    &service_name,
+                     &dsn,
+                     max_connections,
+                     connect_timeout_ms,
+@@ -806,7 +813,7 @@ mod tests {
+         Python::initialize();
+         let mut cfg = local_cfg("/tmp/snapshot-pg-config");
+         cfg.snapshot.log.provider = "postgres".into();
+-        let err = match build_snapshot_log_store(&cfg) {
++        let err = match build_snapshot_log_store(&cfg, "test-service") {
+             Err(err) => err,
+             Ok(_) => panic!("missing PostgreSQL section must fail"),
+         };
+@@ -819,7 +826,7 @@ mod tests {
+             connect_timeout_ms: 1000,
+             operation_timeout_ms: 1000,
+         });
+-        let err = match build_snapshot_log_store(&cfg) {
++        let err = match build_snapshot_log_store(&cfg, "test-service") {
+             Err(err) => err,
+             Ok(_) => panic!("missing PostgreSQL DSN environment must fail"),
+         };
+@@ -841,7 +848,7 @@ mod tests {
+         });
+         let runtime = tokio::runtime::Runtime::new().unwrap();
+         let _enter = runtime.enter();
+-        let store = build_snapshot_log_store(&cfg)
++        let store = build_snapshot_log_store(&cfg, "test-service")
+             .unwrap()
+             .expect("PG index enabled");
+         runtime.block_on(async {
+@@ -876,15 +883,15 @@ mod tests {
+         let fs = Arc::new(MountableFS::new()) as Arc<dyn ragfs::core::FileSystem>;
+         let mut cfg = local_cfg("/tmp/ov-git-test-disabled");
+         cfg.enabled = false;
+-        let svc = build_git_service(&cfg, fs).expect("build ok");
++        let svc = build_git_service(&cfg, fs, "test-service").expect("build ok");
+         assert!(svc.is_none());
+     }
+ 
+     #[tokio::test]
+     async fn build_git_service_local_returns_some() {
+         let fs = Arc::new(MountableFS::new()) as Arc<dyn ragfs::core::FileSystem>;
+         let cfg = local_cfg("/tmp/ov-git-test-local");
+-        let svc = build_git_service(&cfg, fs).expect("build ok");
++        let svc = build_git_service(&cfg, fs, "test-service").expect("build ok");
+         assert!(svc.is_some());
+     }
+ 
+@@ -897,7 +904,7 @@ mod tests {
+         let mut cfg = local_cfg("/tmp/ov-git-test-bad");
+         cfg.backend = "bogus".into();
+         // `GitService` is not `Debug`, so we can't use `unwrap_err()`; match instead.
+-        let err = match build_git_service(&cfg, fs) {
++        let err = match build_git_service(&cfg, fs, "test-service") {
+             Ok(_) => panic!("expected error for bogus backend"),
+             Err(e) => e,
+         };
+@@ -910,7 +917,7 @@ mod tests {
+         let fs = Arc::new(MountableFS::new()) as Arc<dyn ragfs::core::FileSystem>;
+         let mut cfg = local_cfg("/tmp/ov-git-test-nolocal");
+         cfg.local = None;
+-        let err = match build_git_service(&cfg, fs) {
++        let err = match build_git_service(&cfg, fs, "test-service") {
+             Ok(_) => panic!("expected error when [git.local] missing"),
+             Err(e) => e,
+         };
 ```
 
-**File**: `openviking/storage/vectordb_adapters/pgvector_adapter.py` (modified, +50/-2)
+**File**: `crates/ragfs/src/git/snapshot_log/mod.rs` (modified, +2/-2)
 ```diff
-@@ -10,6 +10,7 @@
- from __future__ import annotations
+@@ -11,8 +11,8 @@ pub use mysql::MySqlSnapshotLogStore;
+ pub use postgres::PostgresSnapshotLogStore;
+ pub use sqlite::SqliteSnapshotLogStore;
+ pub use store::{
+-    can_index_account_branch, can_index_paths, fanout_changed_paths, SnapshotLogError,
+-    SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
++    can_index_account_branch, can_index_paths, fanout_changed_paths, validate_service_name,
++    SnapshotLogError, SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
+ };
  
- import json
-+import math
- import os
- import re
- import threading
-@@ -175,6 +176,48 @@ def upsert_data(self, data_list, ttl=0):
-             raise NotImplementedError("pgvector TTL writes are not supported")
-         return super().upsert_data(data_list, ttl=0)
+ /// Conservative per-commit row cap for synchronous best-effort indexing.
+```
+
+**File**: `crates/ragfs/src/git/snapshot_log/mysql.rs` (modified, +24/-20)
+```diff
+@@ -5,37 +5,28 @@ use sqlx::mysql::MySqlPoolOptions;
+ use sqlx::{MySql, MySqlPool, QueryBuilder};
  
-+    def _dense_vector_guard(self, op):
-+        # pgvector does not index cosine zero vectors. Exact fallback must use
-+        # the same eligible set and avoid propagating their NaN distances.
-+        guard = super()._dense_vector_guard(op)
-+        return f"{guard} AND vector_norm(vector) > 0" if op == "<=>" else guard
-+
-+    def _dense_filter_clause(self, op, where, filter_params):
-+        if op != "<=>" or not where:
-+            return super()._dense_filter_clause(op, where, filter_params)
-+        # SQL AND does not guarantee evaluation order. Keep the scalar predicate
-+        # visible to indexes, but fence the TOAST-reading norm behind CASE.
-+        return (
-+            f'({where}) AND "vector" IS NOT NULL AND '
-+            f"CASE WHEN ({where}) THEN vector_norm(vector) > 0 ELSE FALSE END",
-+            [*filter_params, *filter_params],
+ use super::store::{
+-    ensure_latest_matches, validate_append, SnapshotLogError, SnapshotLogHit, SnapshotLogLimits,
+-    SnapshotLogRow, SnapshotLogStore,
++    ensure_latest_matches, validate_append, validate_service_name, SnapshotLogError,
++    SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
+ };
+ 
+ const MYSQL_INSERT_BATCH_ROWS: usize = 1_000;
+ 
+-const MYSQL_SCHEMA: &str = r#"CREATE TABLE IF NOT EXISTS snapshot_log (
+-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+-  account VARBINARY(255) NOT NULL,
+-  branch VARBINARY(512) NOT NULL,
+-  path VARBINARY(2048) NOT NULL,
+-  commit_oid CHAR(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+-  UNIQUE KEY uniq_snapshot_log_path_commit (account, branch, path, commit_oid),
+-  KEY idx_snapshot_log_latest (account, branch, id DESC),
+-  KEY idx_snapshot_log_lookup (account, branch, path, id DESC)
+-)"#;
+-
+ /// MySQL-backed SnapshotLog store.
+ pub struct MySqlSnapshotLogStore {
+     pool: MySqlPool,
+     limits: SnapshotLogLimits,
++    service_name: String,
+ }
+ 
+ impl MySqlSnapshotLogStore {
+-    /// Open a MySQL SnapshotLog store and run idempotent migrations.
++    /// Connect to a pre-provisioned MySQL table without creating or migrating it.
+     pub async fn connect(
++        service_name: &str,
+         dsn: &str,
+         max_connections: u32,
+         connect_timeout_ms: u64,
+     ) -> Result<Self, SnapshotLogError> {
++        validate_service_name(service_name)?;
+         if dsn.is_empty() {
+             return Err(SnapshotLogError::Config(
+                 "mysql snapshot_log dsn must not be empty".to_string(),
+@@ -46,10 +37,18 @@ impl MySqlSnapshotLogStore {
+             .acquire_timeout(Duration::from_millis(connect_timeout_ms))
+             .connect(dsn)
+             .await?;
+-        sqlx::query(MYSQL_SCHEMA).execute(&pool).await?;
++        // Fail initialization when deployment DDL/permissions are missing, allowing
++        // the binding's best-effort fallback to the Git scan path. The runtime role
++        // needs only DML (SELECT/INSERT), so the table is provisioned separately.
++        sqlx::query(
++            "SELECT id, service_name, account, branch, path, commit_oid FROM snapshot_log LIMIT 0",
 +        )
-+
-+    def _dense_candidate_query(self, index_name, where, filter_params, vector_text, op, budget):
-+        if op != "<=>":
-+            return super()._dense_candidate_query(
-+                index_name, where, filter_params, vector_text, op, budget
-+            )
-+        # PostgreSQL sorts NaN after finite distances in ascending order. Cosine
-+        # zero vectors therefore cannot displace any eligible top-budget row.
-+        # Filter after LIMIT to avoid norm/TOAST reads on scalar-rejected rows
-+        # and a second vector read on scalar exact plans. HNSW itself omits zeros.
-+        condition = f"({where}) AND " if where else ""
-+        # PostgreSQL 16 cannot match a second sort key to the HNSW ordering.
-+        # Keep candidate recall distance-only for ANN; final ranking sorts ties.
-+        order = "_ov_distance"
-+        if self._indexes[index_name]["_pg_index_type"] == "flat":
-+            order += ", _ov_candidate_id"
-+        return (
-+            'SELECT _ov_candidate_id FROM (SELECT "id" AS _ov_candidate_id, '
-+            f'"vector" {op} %s::vector AS _ov_distance '
-+            f"FROM public.{_quote_identifier(self._name)} "
-+            f'WHERE {condition}"vector" IS NOT NULL '
-+            f"ORDER BY {order} LIMIT %s) _ov_native_candidates "
-+            "WHERE _ov_distance <> 'NaN'::double precision",
-+            [vector_text, *filter_params, budget],
-+        )
-+
-     def search_by_vector(
-         self,
-         index_name,
-@@ -207,6 +250,7 @@ def search_by_vector(
-             return SearchResult(data=[])
-         vector = _validate_vector(dense_vector, self._dim)
-         metric, op = self._resolve_distance_and_op(index_name)
-+        vector_text = str(vector)
-         where, params = _build_where_clause(
-             self._normalize_filter_date_times(filters), self._array_fields
++        .execute(&pool)
++        .await?;
+         Ok(Self {
+             pool,
+             limits: SnapshotLogLimits::default(),
++            service_name: service_name.to_string(),
+         })
+     }
+ }
+@@ -69,8 +68,9 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
+     ) -> Result<Option<(i64, String)>, SnapshotLogError> {
+         let row = sqlx::query_as::<_, (i64, Vec<u8>)>(
+             "SELECT id, commit_oid FROM snapshot_log \
+-             WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
++             WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
          )
-@@ -215,13 +259,17 @@ def search_by_vector(
-             f"SELECT {self._select_output_columns(output_fields)}, "
-             f"vector {op} %s::vector AS _ov_distance "
-             f"FROM {_quote_identifier(self._name)} "
--            f"WHERE {condition}vector IS NOT NULL "
-+            f'WHERE {condition}"vector" IS NOT NULL '
-             f"ORDER BY vector {op} %s::vector, id LIMIT %s OFFSET %s",
--            [str(vector), *params, str(vector), limit, offset],
-+            [vector_text, *params, vector_text, limit, offset],
-             index_name,
++        .bind(&self.service_name)
+         .bind(account)
+         .bind(branch)
+         .fetch_optional(&self.pool)
+@@ -92,8 +92,9 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
+         let mut tx = self.pool.begin().await?;
+         let latest = sqlx::query_as::<_, (i64, Vec<u8>)>(
+             "SELECT id, commit_oid FROM snapshot_log \
+-             WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1 FOR UPDATE",
++             WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1 FOR UPDATE",
          )
-         items = []
-         for row in rows:
-+            # NaN zero-vector distances sort last, so removing them after native
-+            # pagination cannot drop an otherwise eligible result at this offset.
-+            if metric == "cosine" and math.isnan(float(row[-1])):
-+                continue
-             record = self._row_to_dict(row[:-1], columns[:-1])
-             items.append(
-                 SearchItemResult(
++        .bind(&self.service_name)
+         .bind(account)
+         .bind(branch)
+         .fetch_optional(&mut *tx)
+@@ -108,10 +109,11 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
+         )?;
+         for chunk in rows.chunks(MYSQL_INSERT_BATCH_ROWS) {
+             let mut builder = QueryBuilder::<MySql>::new(
+-                "INSERT INTO snapshot_log (account, branch, path, commit_oid) ",
++                "INSERT INTO snapshot_log (service_name, account, branch, path, commit_oid) ",
+             );
+             builder.push_values(chunk, |mut row_builder, row| {
+                 row_builder
++                    .push_bind(&self.service_name)
+                     .push_bind(account)
+                     .push_bind(branch)
+                     .push_bind(&row.path)
+@@ -140,9 +142,11 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
+             i64::try_from(offset).map_err(|err| sqlx::Error::Encode(Box::new(err)))?;
+         let mut builder = QueryBuilder::<MySql>::new(
+             "SELECT commit_oid, MAX(id) AS last_id FROM snapshot_log \
+-             WHERE account = ",
++             WHERE service_name = ",
+         );
+         builder
++            .push_bind(&self.service_name)
++            .push(" AND account = ")
+             .push_bind(account)
+             .push(" AND branch = ")
+             .push_bind(branch)
 ```
 
-**File**: `tests/storage/test_pgvector_adapter.py` (modified, +229/-0)
+**File**: `crates/ragfs/src/git/snapshot_log/sqlite.rs` (modified, +19/-10)
 ```diff
-@@ -492,6 +492,235 @@ def test_distance_metrics(adapter, metric):
-         other.close()
+@@ -7,38 +7,41 @@ use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions};
+ use sqlx::{QueryBuilder, Sqlite, SqlitePool};
  
+ use super::store::{
+-    ensure_latest_matches, validate_append, SnapshotLogError, SnapshotLogHit, SnapshotLogLimits,
+-    SnapshotLogRow, SnapshotLogStore,
++    ensure_latest_matches, validate_append, validate_service_name, SnapshotLogError,
++    SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
+ };
  
-+def test_cosine_guard_never_reads_scalar_rejected_vectors(adapter):
-+    adapter.upsert(
-+        [
-+            {"id": "mine", "vector": [1, 0, 0], "account_id": "one"},
-+            {"id": "zero", "vector": [0, 0, 0], "account_id": "one"},
-+            {"id": "foreign", "vector": [-1, 0, 0], "account_id": "two"},
-+        ]
+ const SQLITE_INSERT_BATCH_ROWS: usize = 200;
+ 
+ const SQLITE_SCHEMA: &[&str] = &[
+     r#"CREATE TABLE IF NOT EXISTS snapshot_log (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
++  service_name TEXT NOT NULL,
+   account TEXT NOT NULL,
+   branch TEXT NOT NULL,
+   path TEXT NOT NULL,
+   commit_oid TEXT NOT NULL,
+   created_at INTEGER NOT NULL DEFAULT (unixepoch())
+ )"#,
+     r#"CREATE UNIQUE INDEX IF NOT EXISTS uniq_snapshot_log_path_commit
+-ON snapshot_log (account, branch, path, commit_oid)"#,
++ON snapshot_log (service_name, account, branch, path, commit_oid)"#,
+     r#"CREATE INDEX IF NOT EXISTS idx_snapshot_log_lookup
+-ON snapshot_log (account, branch, path, id DESC)"#,
++ON snapshot_log (service_name, account, branch, path, id DESC)"#,
+     r#"CREATE INDEX IF NOT EXISTS idx_snapshot_log_latest
+-ON snapshot_log (account, branch, id DESC)"#,
++ON snapshot_log (service_name, account, branch, id DESC)"#,
+ ];
+ 
+ /// SQLite-backed SnapshotLog store.
+ pub struct SqliteSnapshotLogStore {
+     pool: SqlitePool,
+     limits: SnapshotLogLimits,
++    service_name: String,
+ }
+ 
+ impl SqliteSnapshotLogStore {
+     /// Open a SQLite SnapshotLog store and run idempotent migrations.
+-    pub async fn connect(path: &str) -> Result<Self, SnapshotLogError> {
++    pub async fn connect(service_name: &str, path: &str) -> Result<Self, SnapshotLogError> {
++        validate_service_name(service_name)?;
+         if !Path::new(path).is_absolute() {
+             return Err(SnapshotLogError::Config(
+                 "sqlite snapshot_log path must be absolute".to_string(),
+@@ -62,6 +65,7 @@ impl SqliteSnapshotLogStore {
+         Ok(Self {
+             pool,
+             limits: SnapshotLogLimits::default(),
++            service_name: service_name.to_string(),
+         })
+     }
+ }
+@@ -81,8 +85,9 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
+     ) -> Result<Option<(i64, String)>, SnapshotLogError> {
+         let row = sqlx::query_as::<_, (i64, String)>(
+             "SELECT id, commit_oid FROM snapshot_log \
+-             WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
++             WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
+         )
++        .bind(&self.service_name)
+         .bind(account)
+         .bind(branch)
+         .fetch_optional(&self.pool)
+@@ -106,8 +111,9 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
+         let result = async {
+             let latest = sqlx::query_as::<_, (i64, String)>(
+                 "SELECT id, commit_oid FROM snapshot_log \
+-                 WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
++                 WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
+             )
++            .bind(&self.service_name)
+             .bind(account)
+             .bind(branch)
+             .fetch_optional(&mut *conn)
+@@ -118,9 +124,10 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
+             )?;
+             for chunk in rows.chunks(SQLITE_INSERT_BATCH_ROWS) {
+                 let mut builder =
+-                    QueryBuilder::<Sqlite>::new("INSERT INTO snapshot_log (account, branch, path, commit_oid) ");
++                    QueryBuilder::<Sqlite>::new("INSERT INTO snapshot_log (service_name, account, branch, path, commit_oid) ");
+                 builder.push_values(chunk, |mut row_builder, row| {
+                     row_builder
++                        .push_bind(&self.service_name)
+                         .push_bind(account)
+                         .push_bind(branch)
+                         .push_bind(&row.path)
+@@ -161,9 +168,11 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
+             i64::try_from(offset).map_err(|err| sqlx::Error::Encode(Box::new(err)))?;
+         let mut builder = QueryBuilder::<Sqlite>::new(
+             "SELECT commit_oid, MAX(id) AS last_id FROM snapshot_log \
+-             WHERE account = ",
++             WHERE service_name = ",
+         );
+         builder
++            .push_bind(&self.service_name)
++            .push(" AND account = ")
+             .push_bind(account)
+             .push(" AND branch = ")
+             .push_bind(branch)
+```
+
+**File**: `crates/ragfs/src/git/snapshot_log/store.rs` (modified, +20/-1)
+```diff
+@@ -19,7 +19,7 @@ pub struct SnapshotLogLimits {
+ impl Default for SnapshotLogLimits {
+     fn default() -> Self {
+         Self {
+-            account_bytes: 255,
++            account_bytes: 64,
+             branch_bytes: 512,
+             path_bytes: 2048,
+             max_rows_per_commit: SNAPSHOT_LOG_MAX_ROWS_PER_COMMIT,
+@@ -122,6 +122,25 @@ pub trait SnapshotLogStore: Send + Sync {
+     ) -> Result<Vec<SnapshotLogHit>, SnapshotLogError>;
+ }
+ 
++/// Maximum service_name length in bytes.
++pub const SNAPSHOT_LOG_SERVICE_NAME_BYTES: usize = 64;
++
++/// Validate the deployment-scoped service_name used for shared-DB isolation.
++pub fn validate_service_name(service_name: &str) -> Result<(), SnapshotLogError> {
++    if service_name.is_empty()
++        || service_name.len() > SNAPSHOT_LOG_SERVICE_NAME_BYTES
++        || !service_name
++            .bytes()
++            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
++    {
++        return Err(SnapshotLogError::Config(
++            "snapshot log service_name must be 1..=64 ASCII letters, digits, '.', '_' or '-'"
++                .to_string(),
++        ));
++    }
++    Ok(())
++}
++
+ /// Return whether an account and branch fit provider index limits.
+ pub fn can_index_account_branch(
+     limits: SnapshotLogLimits,
+```
+
+**File**: `crates/ragfs/src/git/tests/test_snapshot_log.rs` (modified, +44/-1)
+```diff
+@@ -14,7 +14,7 @@ async fn make_snapshot_log_store() -> Arc<dyn SnapshotLogStore> {
+     let dir = tempfile::tempdir().unwrap().keep();
+     let db_path = dir.join("snapshot-log.db");
+     Arc::new(
+-        SqliteSnapshotLogStore::connect(db_path.to_str().unwrap())
++        SqliteSnapshotLogStore::connect("test-service", db_path.to_str().unwrap())
+             .await
+             .unwrap(),
+     )
+@@ -325,3 +325,46 @@ async fn test_snapshot_log_store_rejects_non_root_commit_when_empty() {
+         .unwrap()
+         .is_none());
+ }
++
++/// Verify two services sharing one SQLite file keep independent index progress.
++#[tokio::test]
++async fn test_snapshot_log_service_name_isolates_shared_sqlite_db() {
++    let dir = tempfile::tempdir().unwrap().keep();
++    let path = dir.join("snapshot-log-isolation.db").to_str().unwrap().to_string();
++
++    let store_a = SqliteSnapshotLogStore::connect("svc-a", &path).await.unwrap();
++    let store_b = SqliteSnapshotLogStore::connect("svc-b", &path).await.unwrap();
++
++    let root_row = vec![SnapshotLogRow {
++        path: "/".into(),
++        commit_oid: "1111111111111111111111111111111111111111".into(),
++    }];
++    store_a
++        .append_rows_if_latest("acct", "main", None, &root_row)
++        .await
++        .unwrap();
++
++    // service b must not see service a's indexed progress.
++    assert!(store_b
++        .load_latest_indexed_commit("acct", "main")
++        .await
++        .unwrap()
++        .is_none());
++    assert!(store_a
++        .load_latest_indexed_commit("acct", "main")
++        .await
++        .unwrap()
++        .is_some());
++
++    // The same account/branch/commit under another service is not a unique-key conflict.
++    store_b
++        .append_rows_if_latest("acct", "main", None, &root_row)
++        .await
++        .unwrap();
++
++    // Illegal service_name values are rejected before touching the database.
++    assert!(SqliteSnapshotLogStore::connect("bad name", &path)
++        .await
++        .is_err());
++    assert!(SqliteSnapshotLogStore::connect("", &path).await.is_err());
++}
+```
+
+---
+
+### Incident Patch 3: `2faf02a6` (2026-11-26)
+**Commit Message**: fix(task): make periodic task history cleanup configurable (#8469)
+
+* fix(task): allow read replicas to disable history cleanup
+
+* docs(config): 补充读副本任务历史清理说明 (#8492)
+
+说明读节点如何关闭清理，以及共享历史存储如何保留可写清理节点。
+
+Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+* fix(config): move task history cleanup under server
+
+---------
+
+Co-authored-by: bot-of-qin-ctx <[REDACTED_EMAIL]>
+Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+**File**: `docs/en/guides/01-configuration.md` (modified, +12/-1)
+```diff
+@@ -2193,6 +2193,16 @@ When config files are at the default path, OpenViking loads them automatically 
+ > the two values identical and rotate both files together. The normal
+ > tenant-scoped `api_key` remains a separate user/admin credential.
+ 
++### Task history cleanup on read replicas {#task-history-cleanup}
++
++The startup option `server.enable_task_history_cleanup` defaults to `true`.
++When enabled, the node cleans up expired Task and Compile history every five minutes.
++On a read replica, set it to `false` in `ov.conf` and restart the service.
++Running tasks can still receive cancellation signals.
++
++For each shared Task store and Compile history store, keep cleanup enabled on
++at least one node with write access to that store.
++
+ ### Reload boundary
+ 
+ The server reads `ov.conf` during process startup and does not watch the file
+@@ -2476,7 +2486,8 @@ When running OpenViking as an HTTP service, add a `server` section to `ov.conf`:
+ | `root_api_key` | str | Root API key for multi-tenant auth in `api_key` mode. In `trusted` mode it is required on every deployment, including localhost; it does not become the source of user identity | `null` |
+ | `account_store.provider` | str | Complete Account store provider. Built-in values are `"file"`, `"mysql"`, `"postgres"`, and `"redis_mysql"`; it owns account, user, group, and API-key records. `"file"` preserves the existing AGFS JSON registry and owns its process-local lookup indexes. `"postgres"` uses PostgreSQL directly. `"redis_mysql"` keeps MySQL authoritative and adds a shared Redis cache for authentication and request identity reads. | `"file"` |
+ | `account_store.params` | object | Provider-specific startup parameters. Framework-owned filesystem and File-provider API-key hashing dependencies cannot be overridden here. | `{}` |
+-| `account_store.params.read_only` | bool | File provider only. Load an existing writer-created registry without locks, bootstrap, or credential migrations, and reject identity mutations. Keep the replica's data mount read-only and set `reconcile_system_assets_on_startup=false`; enable `api_key_watch_enabled` to observe writer changes. A missing registry prevents startup. | `false` |
++| `account_store.params.read_only` | bool | File provider only. Load an existing writer-created registry without locks, bootstrap, or credential migrations, and reject identity mutations. Keep the replica's data mount read-only and set `reconcile_system_assets_on_startup=false`; enable `api_key_watch_enabled` to observe writer changes. A missing registry prevents startup. Configure [task history cleanup](#task-history-cleanup) separately. | `false` |
++| `enable_task_history_cleanup` | bool | Periodically delete expired Task and Compile history on this node. | `true` |
+ | `profile_enabled` | bool | Whether to allow request-scoped cProfile via `profile=1` on HTTP requests. When disabled, the server ignores that query parameter. When enabled, the CLI can display the returned `profile`, while the Python HTTP client currently triggers profiling but does not automatically attach the top-level `profile` field to most SDK return values. | `false` |
+ | `cors_origins` | list | Allowed CORS origins | `["*"]` |
+ | `public_base_url` | str | Public-facing base URL emitted in MCP-issued upload instructions. Resolution order: env var `OPENVIKING_PUBLIC_BASE_URL` → this field → `X-Forwarded-Host`/`X-Forwarded-Proto` request headers → `Host` request header → listen-address fallback. Set this (or the env var) when the server runs behind a reverse proxy that does not forward `X-Forwarded-*` headers. | `null` |
+```
+
+**File**: `docs/zh/guides/01-configuration.md` (modified, +9/-1)
+```diff
+@@ -2153,6 +2153,13 @@ OpenViking 使用两个配置文件：
+ > 副本。如果该 CLI 用于管理这个服务端，两处值必须一致，并在轮换时同时更新。
+ > 普通租户数据使用的 `api_key` 仍是另一把 user/admin 凭据。
+ 
++### 读副本的任务历史清理 {#task-history-cleanup}
++
++启动参数 `server.enable_task_history_cleanup` 默认为 `true`。开启时，本节点每 5 分钟清理过期的 Task 和 Compile 历史。
++在读副本的 `ov.conf` 中设为 `false` 并重启服务，运行中的任务仍能收到取消信号。
++
++每组共享的 Task 存储和 Compile 历史存储，都应至少有一个能写入相应存储的节点开启清理。
++
+ ### 配置重载边界
+ 
+ 服务端只在进程启动时读取 `ov.conf`，不会监听文件变化。修改 `embedding`、
+@@ -2431,7 +2438,8 @@ ov add-resource ./docs --exclude "*.tmp"
+ | `root_api_key` | str | `api_key` 模式必填的 Root API Key；`trusted` 模式在所有部署中均必填，包括 localhost，不负责解析普通用户身份 | `null` |
+ | `account_store.provider` | str | 完整 Account Store Provider。内置 `"file"`、`"mysql"`、`"postgres"` 和 `"redis_mysql"`；统一持久化 Account、User、Group 和 API Key。`"file"` 兼容现有 AGFS JSON 注册表，并由 Provider 自身维护进程内查询索引。`"postgres"` 直接使用 PostgreSQL。`"redis_mysql"` 保持 MySQL 为权威存储，并增加共享 Redis 认证和请求身份读取缓存。 | `"file"` |
+ | `account_store.params` | object | Provider 启动参数。不能通过这里覆盖框架注入的 VikingFS 和 File Provider API Key Hash 配置。 | `{}` |
+-| `account_store.params.read_only` | bool | 仅 File Provider。只读取 writer 已创建的注册表，启动时不写锁、不初始化、不迁移凭据，并拒绝身份变更。副本数据盘仍保持只读挂载，设置 `reconcile_system_assets_on_startup=false`；开启 `api_key_watch_enabled` 感知 writer 的变更。注册表缺失时拒绝启动。 | `false` |
++| `account_store.params.read_only` | bool | 仅 File Provider。只读取 writer 已创建的注册表，启动时不写锁、不初始化、不迁移凭据，并拒绝身份变更。副本数据盘仍保持只读挂载，设置 `reconcile_system_assets_on_startup=false`；开启 `api_key_watch_enabled` 感知 writer 的变更。注册表缺失时拒绝启动。[任务历史清理](#task-history-cleanup)需另行配置。 | `false` |
++| `enable_task_history_cleanup` | bool | 是否在本节点定期清理过期的 Task 和 Compile 历史。 | `true` |
+ | `profile_enabled` | bool | 是否允许 HTTP 请求通过 `profile=1` 开启请求级 cProfile。关闭时服务端会忽略该请求参数；开启后，CLI 可以显示返回的 `profile`，而 Python HTTP client 默认只触发服务端 profile，不会把顶层 `profile` 字段自动附着到大多数 SDK 返回值上。 | `false` |
+ | `cors_origins` | list | CORS 允许的来源 | `["*"]` |
+ | `public_base_url` | str | MCP `add_resource` 和 `add_skill` 工具向客户端返回的上传指令里使用的对外可见 base URL。解析顺序：环境变量 `OPENVIKING_PUBLIC_BASE_URL` → 本字段 → 请求头 `X-Forwarded-Host` / `X-Forwarded-Proto` → 请求头 `Host` → 监听地址兜底。当 server 部署在反向代理后且代理不转发 `X-Forwarded-*` 时，请显式设置本字段（或环境变量）。 | `null` |
+```
+
+**File**: `openviking/server/config.py` (modified, +4/-0)
+```diff
+@@ -483,6 +483,10 @@ class ServerConfig(BaseModel):
+     roles: List[Literal["api", "queue_worker", "scheduler"]] = Field(
+         default_factory=lambda: ["api", "queue_worker", "scheduler"], min_length=1
+     )
++    enable_task_history_cleanup: bool = Field(
++        default=True,
++        description="Periodically delete expired Task and Compile history on this node.",
 +    )
-+    collection = adapter.get_collection()._Collection__collection
-+    predicate, params = collection._dense_filter_clause("<=>", '"account_id" = %s', ["one"])
-+    cursor = collection._cursor()
+     executor_threads: int = Field(
+         default=64,
+         ge=0,
+```
+
+**File**: `openviking/service/core.py` (modified, +5/-1)
+```diff
+@@ -1049,7 +1049,11 @@ async def start_background(self, *, queue_worker: bool = True, scheduler: bool =
+             await self._expiry_runtime.start_roles()
+         if self._runtime_config_manager is not None:
+             self._runtime_config_manager.start_refresh_loop()
+-        get_task_tracker().start_cleanup_loop()
++        get_task_tracker().start_cleanup_loop(
++            cleanup_history=(
++                self._server_config is None or self._server_config.enable_task_history_cleanup
++            )
++        )
+         if scheduler:
+             await self.start_scheduler()
+         if queue_worker:
+```
+
+**File**: `openviking/service/task_tracker.py` (modified, +3/-2)
+```diff
+@@ -422,8 +422,9 @@ async def restore_work_tasks(self, owners: Dict[str, tuple[str, str]]) -> List[T
+                 restored.append(task)
+         return restored
+ 
+-    def start_cleanup_loop(self) -> None:
+-        if self._cleanup_task is None or self._cleanup_task.done():
++    def start_cleanup_loop(self, *, cleanup_history: bool = True) -> None:
++        """Start cancellation polling. Set cleanup_history=False on read-only replicas."""
++        if cleanup_history and (self._cleanup_task is None or self._cleanup_task.done()):
+             self._cleanup_task = asyncio.create_task(self._cleanup_loop())
+         if self._cancel_poll_task is None or self._cancel_poll_task.done():
+             self._cancel_poll_task = asyncio.create_task(self._cancel_poll_loop())
+```
+
+**File**: `tests/service/test_task_work_contract.py` (modified, +1/-1)
+```diff
+@@ -736,7 +736,7 @@ async def execute():
+         assert await tracker.get_work_state("task", work_ids[0], **OWNER) is WorkState.CANCELLED
+         assert not worker.done()
+         monkeypatch.setattr("openviking.service.task_tracker._CANCEL_POLL_INTERVAL", 0)
+-        remote.start_cleanup_loop()
++        remote.start_cleanup_loop(cleanup_history=False)
+         # Cancellation delivery precedes durable cleanup. MySQL commits during
+         # unregister_running_task must settle before the worker propagates it;
+         # a one-second timeout on the worker can cancel that cleanup itself.
+```
+
+**File**: `tests/test_server_config_loader.py` (modified, +3/-0)
+```diff
+@@ -56,6 +56,7 @@ def test_load_server_config_preserves_supported_fields(tmp_path):
+                     "host": "0.0.0.0",
+                     "port": 1944,
+                     "workers": 2,
++                    "enable_task_history_cleanup": False,
+                     "executor_threads": 48,
+                     "timeout_keep_alive": 120,
+                     "auth_mode": "trusted",
+@@ -74,6 +75,7 @@ def test_load_server_config_preserves_supported_fields(tmp_path):
+     assert config.host == "0.0.0.0"
+     assert config.port == 1944
+     assert config.workers == 2
++    assert config.enable_task_history_cleanup is False
+     assert config.executor_threads == 48
+     assert config.timeout_keep_alive == 120
+     assert config.auth_mode == "trusted"
+@@ -89,6 +91,7 @@ def test_load_server_config_defaults(tmp_path):
+ 
+     config = load_server_config(str(config_path))
+ 
++    assert config.enable_task_history_cleanup is True
+     assert config.timeout_keep_alive == 5
+     assert config.executor_threads == 64
+ 
+```
+
+**File**: `tests/test_task_tracker.py` (modified, +23/-0)
+```diff
+@@ -687,6 +687,29 @@ def __deepcopy__(self, memo):
+ # ── TTL / Eviction ──
+ 
+ 
++@pytest.mark.parametrize("cleanup_history", [True, False])
++async def test_periodic_history_cleanup(tracker, monkeypatch, cleanup_history):
++    compile_cleanup = AsyncMock(return_value=0)
++    # End the loop after one sweep reaches the Task store.
++    task_cleanup = AsyncMock(side_effect=asyncio.CancelledError)
++    tracker.compile_history_cleanup = compile_cleanup
++    monkeypatch.setattr(tracker._store, "delete_expired", task_cleanup)
++    monkeypatch.setattr(tracker, "CLEANUP_INTERVAL", 0)
++
++    tracker.start_cleanup_loop(cleanup_history=cleanup_history)
 +    try:
-+        # A cheap norm function lets the planner evaluate an ordinary AND before
-+        # scalar filtering. CASE must protect scalar-rejected heap rows.
-+        cursor.execute(
-+            """CREATE FUNCTION pg_temp.ov_test_norm(v vector) RETURNS double precision
-+               LANGUAGE plpgsql COST 0.0001 AS $$
-+               BEGIN
-+                 IF v = '[-1,0,0]'::vector THEN
-+                   RAISE EXCEPTION 'read scalar-rejected vector';
-+                 END IF;
-+                 RETURN vector_norm(v);
-+               END $$"""
-+        )
-+        cursor.execute("SET LOCAL enable_indexscan = off")
-+        cursor.execute("SET LOCAL enable_bitmapscan = off")
-+        cursor.execute(
-+            f'SELECT id FROM "{adapter.collection_name}" WHERE '
-+            + predicate.replace("vector_norm(vector)", "pg_temp.ov_test_norm(vector)"),
-+            params,
-+        )
-+        assert cursor.fetchall() == [("mine",)]
++        if cleanup_history:
++            await asyncio.wait_for(tracker._cleanup_task, timeout=1)
++            compile_cleanup.assert_awaited_once()
++            task_cleanup.assert_awaited_once()
++        else:
++            assert tracker._cleanup_task is None
++            compile_cleanup.assert_not_awaited()
++            task_cleanup.assert_not_awaited()
 +    finally:
-+        collection._conn.rollback()
-+        cursor.close()
-+    assert [
-+        r["id"]
-+        for r in adapter.query(query_vector=[1, 0, 0], filter=Eq("account_id", "one"), limit=10)
-+    ] == ["mine"]
++        await tracker.stop_background_loops()
 +
 +
-+@pytest.mark.parametrize("offset", [0, 1, 2, 3])
-+def test_cosine_zero_vectors_after_dense_pagination(adapter, offset):
-+    adapter.upsert(
-+        [
-+            {"id": "first", "vector": [1, 0, 0], "account_id": "one"},
-+            {"id": "second", "vector": [0, 1, 0], "account_id": "one"},
-+            *[{"id": f"zero_{i}", "vector": [0, 0, 0], "account_id": "one"} for i in range(8)],
-+        ]
-+    )
-+    expected = ["first", "second"][offset : offset + 3]
-+    for advance in [None, {"time_decay": {"protection": "1d"}}]:
-+        rows = adapter.query(
-+            query_vector=[1, 0, 0],
-+            filter=Eq("account_id", "one"),
-+            limit=3,
-+            offset=offset,
-+            advance=advance,
-+        )
-+        assert [r["id"] for r in rows] == expected
-+    assert adapter.query(query_vector=[0, 0, 0], filter=Eq("account_id", "one")) == []
-+
-+
-+@pytest.mark.parametrize("depth", [-1, 0, 1])
-+def test_cosine_zero_vectors_scoped_pagination_and_ranked(adapter, depth):
-+    collection = adapter.get_collection()._Collection__collection
-+    path = "viking://resources/目录_%"
-+    records = [
-+        {
-+            "id": f"mine_{i:02d}",
-+            "vector": [1, i / 10, 0],
-+            "sparse_vector": {"hello": i + 1},
-+            "uri": path if i == 0 else path + ("/sub" if i % 2 else "") + f"/f{i}",
-+            "account_id": "one",
-+            "search_tags": ["allowed"],
-+            "updated_at": "2026-11-12T00:00:00Z",
-+        }
-+        for i in range(12)
-+    ]
-+    records += [
-+        {
-+            "id": "tenant",
-+            "vector": [1, 0, 0],
-+            "uri": path,
-+            "account_id": "two",
-+            "search_tags": ["allowed"],
-+        },
-+        {
-+            "id": "acl",
-+            "vector": [1, 0, 0],
-+            "uri": path,
-+            "account_id": "one",
-+            "search_tags": ["denied"],
-+        },
-+        {
-+            "id": "sibling",
-+            "vector": [1, 0, 0],
-+            "uri": path + "suffix/f",
-+            "account_id": "one",
-+            "search_tags": ["allowed"],
-+        },
-+        {"id": "null", "uri": path, "account_id": "one", "search_tags": ["allowed"]},
-+        {
-+            "id": "zero",
-+            "vector": [0, 0, 0],
-+            "sparse_vector": {"hello": 100},
-+            "uri": path,
-+            "account_id": "one",
-+            "search_tags": ["allowed"],
-+        },
-+    ]
-+    adapter.upsert(records)
-+    scope = And(
-+        [Eq("account_id", "one"), Eq("search_tags", "allowed"), PathScope("uri", path, depth)]
-+    )
-+    modes = [
-+        {},
-+        {"sparse_query_vector": {"hello": 1}},
-+        {"advance": {"time_decay": {"protection": "1d", "origin": "2026-11-15T00:00:00Z"}}},
-+    ]
-+    for mode in modes:
-+        actual = adapter.query(
-+            query_vector=[1, 0, 0], filter=scope, limit=3, offset=1, output_fields=["uri"], **mode
-+        )
-+        # Flat search on the same table is the oracle even with a physical HNSW
-+        # index. Restore metadata before the next query.
-+        index_meta = collection._indexes["default"]
-+        previous_type = index_meta["_pg_index_type"]
-+        try:
-+    
-```
-
----
-
-### Incident Patch 3: `89a50ed9` (2026-11-25)
-**Commit Message**: fix(snapshot): 拒绝含反斜杠的分支名 (#8415)
-
-让快照分支名校验符合 Git ref 命名规则，在读取分支引用时拒绝非法输入。
-
-**File**: `crates/ragfs/src/git/util.rs` (modified, +3/-0)
-```diff
-@@ -36,6 +36,7 @@ pub fn validate_ref_name(ref_name: &str) -> Result<(), RefStoreError> {
-         || ref_name.contains('?')
-         || ref_name.contains('[')
-         || ref_name.contains('*')
-+        || ref_name.contains('\\')
-     {
-         return Err(RefStoreError::InvalidName(
-             "ref name contains invalid characters".to_string(),
-@@ -204,6 +205,7 @@ mod tests {
-     fn test_validate_ref_name() {
-         assert!(validate_ref_name("refs/heads/main").is_ok());
-         assert!(validate_ref_name("refs/tags/v1.0").is_ok());
-+        assert!(validate_ref_name("feature/topic").is_ok());
-         assert!(validate_ref_name("HEAD").is_ok());
- 
-         assert!(validate_ref_name("").is_err());
-@@ -217,6 +219,7 @@ mod tests {
-         assert!(validate_ref_name("refs?head").is_err());
-         assert!(validate_ref_name("refs[head]").is_err());
-         assert!(validate_ref_name("refs*head").is_err());
-+        assert!(validate_ref_name(r"feature\topic").is_err());
-     }
- 
-     #[test]
+ @pytest.mark.parametrize("already_missing", [False, True])
+ async def test_evict_expired_completed(already_missing, monkeypatch):
+     agfs = _FakeAgfs()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8439** (2026-11-25): fix(studio):  disable arranger temporarily (@vikinglbx)
-- **PR #8436** (2026-11-25): feat(gateway): rotate the request log file hourly like the usage log (@t0saki)
-- **PR #8435** (closed): fix(sdk): exclude output archive from directory upload (@ktz03)
-- **PR #8433** (closed): fix(web-studio): preserve numeric values in JSON previews (@ktz03)
-- **PR #8430** (2026-11-25): feat(admin): freeze user agent files through account metadata (@MaojiaSheng)
-- **PR #8427** (closed): fix(cli): match Ollama models by full identity (@ktz03)
+- **PR #8535** (2026-11-26): fix(snapshot-log): backport service_name isolation to v0.5.6 (@baojun-zhang)
+- **PR #8534** (2026-11-26): fix(setup): detect an Antigravity sign-in that lives outside ~/.gemini (@ZaynJarvis)
+- **PR #8520** (2026-11-26): feat(compile): limit source directories to 100 (@fujiajie666)
+- **PR #8515** (2026-11-26): fix(superagent): report apps the upgrade left running (@ZaynJarvis)
+- **PR #8513** (2026-11-26): docs: clarify managed setup connection requirements (@ehz0ah)
+- **PR #8500** (2026-11-26): feat(onboarding): align BytePlus managed-service setup (@ehz0ah)
 
 ---
 
@@ -2142,55 +2504,43 @@ Keep clickable URI coverage for command echoes while matching the intentional ed
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plugins): session_history support across the memory plugins and two Claude Code 
+## X. plugins): send the profile again after a host compaction drops it
 
 **RULE**:
-When implementing operations in `agent-plugins/servers/shared/mcp-proxy-core.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/agent-integrations/16-capability-reference.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f905a91c`: plugins): session_history support across the memory plugins and two Claude Code capture fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b4dc8c4`: plugins): send the profile again after a host compaction drops it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-plugins/servers/shared/mcp-proxy-core.mjs`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/agent-integrations/16-capability-reference.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-const SESSION_HISTORY_TOOL = "session_history";
-  // (params) => the OV session id of the host session making this tools/call,
-  // or "" when the harness cannot tell; fills `session_history`'s `session`.
-  defaultHistorySession = null,
-  // A `session` the model passed is kept as is, even one this proxy would not
-  // have chosen; only a missing or blank one is filled.
-  function withDefaultHistorySession(message) {
-    if (
-      typeof defaultHistorySession !== "function"
-      || message.method !== "tools/call"
-      || message.params?.name !== SESSION_HISTORY_TOOL
-    ) {
-      return message;
-    }
-    const args = message.params.arguments;
-    const given = args && typeof args === "object" ? args.session : undefined;
-    if (given != null && (typeof given !== "string" || given.trim())) return message;
-    let session = "";
-    try {
-      session = String(defaultHistorySession(message.params) || "").trim();
-    } catch (err) {
-      logError("default_history_session", err);
-    }
-    log("default_history_session", { filled: Boolean(session) });
-    if (!session) return message;
-    return {
-      ...message,
-      params: { ...message.params, arguments: { ...(args || {}), se
+| DSH | Yes, session-aware | Profile, memory index, skills | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
+| Codex | `SessionStart` on startup, clear, resume, and compact |
+| Cursor, TRAE, TRAE CN, ZCode | `SessionStart` |
+| Antigravity | `SessionStart`, and the first turn after each compaction checkpoint in the transcript |
+| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent. CodeBuddy drops `SessionStart` context at a compaction, so the next prompt sends it again |
+| OpenCode | The first message of each session and the first after each compaction; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
+| DSH | At session start, and again on the next model step when a compaction dropped it |
+| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | `SessionStart` with `source="compact"` sends the profile again; the archive summary is injected
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+| DSH | Yes, session-aware | Profile, memory index, skills, once per session | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
+| Codex | `SessionStart` on startup, clear, and resume |
+| Cursor, TRAE, TRAE CN, ZCode, Antigravity | `SessionStart` |
+| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent |
+| OpenCode | The first message of each session; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
+| DSH | Once per session; not sent again after compaction |
+| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | The archive summary is injected on resume |
+| CodeBuddy Code | Host summarizes | `PreCompact` commits | Nothing |
+| Antigravity | Not verified | No pre-compaction hook | Nothing |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f905a91c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b4dc8c4` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T14:53:36.658Z",
+  "last_updated": "2026-11-26T15:02:31.722Z",
   "total_records": 2754,
   "domains": {
     "A": {
@@ -9331,8 +9331,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "2b4bb5cc8df13d6c873bdb28de6d4aa41f9a761bb2e2750b00f2351fa3dd8cf7",
-      "created_at": "2026-11-25T13:49:35.189Z"
+      "content_hash": "72496767dfd574d44d70963dfce02f05e5c81babbd52ceb9c5dd60897d7447e4",
+      "created_at": "2026-11-26T15:02:26.020Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -9937,8 +9937,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen-Image-2.1-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-research-knowledge-intelligence-unsloth-qwen-imag.md",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "content_hash": "5d6260d88bade7bbdfe4de3b69362c3393112918133951c16a01e281c2648165",
-      "created_at": "2026-11-22T22:06:19.248Z"
+      "content_hash": "c3c7ec668232914633a6db53e1adea1c1f44d9c16f15f86c223d82ad722353d2",
+      "created_at": "2026-11-26T15:02:10.211Z"
     },
     "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
@@ -9997,8 +9997,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen-image-2.1-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-learnings-research-knowledge-intelligence-hf-unsl.md",
       "repository": "hf-unsloth-qwen-image-2.1-gguf-learnings",
-      "content_hash": "55b7a76df541c8ac9c9bbb25603c0df8ac3ddb4d8f00df4b55bf057e62addcdc",
-      "created_at": "2026-11-22T22:06:36.529Z"
+      "content_hash": "a771a07c4a77f791672ea7ad84e2353f5d3d649c003e52b0bd648780f06c5c58",
+      "created_at": "2026-11-26T15:02:30.743Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
@@ -30292,8 +30292,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "ef9fa28c5d87b877b3d7b3ac32500dde239531a469c301080845e0e01c4e2d62",
-      "created_at": "2026-11-25T14:50:23.400Z"
+      "content_hash": "33b6a677358c38122036585de518ba992cc1eba7a7c4ce8b87ff45a9520b89df",
+      "created_at": "2026-11-26T15:02:20.772Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -31877,8 +31877,8 @@
       "title": "Technical Construction Intelligence: ajeetdsouza/zoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-technical-construction-intelligence-ajeetdsouza-zoxide-core-i.md",
       "repository": "ajeetdsouza/zoxide",
-      "content_hash": "f1ba87ae54b220c67a79f6d5b55d4a0081400b10f59f637a9ef52ace7336e302",
-      "created_at": "2026-11-24T04:53:49.805Z"
+      "content_hash": "e4b4c5757f6a89b70795f71a698b2d772bf4afe5a6526f5ed9f0e8cc7acbf307",
+      "created_at": "2026-11-26T15:02:14.044Z"
     },
     "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants",
@@ -31886,8 +31886,8 @@
       "title": "Technical Construction Intelligence: ajeetdsouza-zoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-learnings-technical-construction-intelligence-ajeetdsouza-zox.md",
       "repository": "ajeetdsouza-zoxide-learnings",
-      "content_hash": "2989162b1510670eb4efe1942daff86369144755727694b09bebe16872e89c24",
-      "created_at": "2026-11-24T04:53:59.999Z"
+      "content_hash": "96eaf328a45a37446e7447def61adca37827c021b1b3aa98102daa3211beeb5c",
+      "created_at": "2026-11-26T15:02:29.956Z"
     },
     "DOM-H-50457654": {
       "record_id": "DOM-H-50457654",
@@ -38042,8 +38042,8 @@
       "title": "Technical Construction Intelligence: yazinsai/OpenOats Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yazinsai-openoats-technical-construction-intelligence-yazinsai-openoats-core-inv.md",
       "repository": "yazinsai/OpenOats",
-      "content_hash": "3556cb15cd4124e83a25994c8c4bac1a8b8c57bb680262acb200b75084089163",
-      "created_at": "2026-11-24T04:45:14.439Z"
+      "content_hash": "0662d9fde2211ebccf25276aeb5ba709c8152a5d37e4f32ef99b7350ebc31788",
+      "created_at": "2026-11-26T15:02:20.130Z"
     },
     "domain_intelligence-technical-construction-intelligence-comfy-org-moss-image-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-comfy-org-moss-image-core-invariants",
@@ -38112,8 +38112,8 @@
       "title": "Technical Construction Intelligence: yazinsai-openoats-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yazinsai-openoats-learnings-technical-construction-intelligence-yazinsai-openoat.md",
       "repository": "yazinsai-openoats-learnings",
-      "content_hash": "43f13fc31fca06287448e7d4ce9e2453abd5c700f9b378cd47567f37f2c5b075",
-      "created_at": "2026-11-24T04:45:23.601Z"
+      "content_hash": "90e48737413cfd6e54b78527d32f9502d640f384d5f942432df9faac5365f8ce",
+      "created_at": "2026-11-26T15:02:31.722Z"
     },
     "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants",

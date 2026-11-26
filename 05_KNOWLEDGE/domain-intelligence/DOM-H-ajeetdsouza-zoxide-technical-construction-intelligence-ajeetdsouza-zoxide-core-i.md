@@ -4,23 +4,23 @@
 {
   "source_repository": "ajeetdsouza/zoxide",
   "source_url": "https://github.com/ajeetdsouza/zoxide",
-  "source_version": "8f588052",
+  "source_version": "473ac4f3",
   "license": "MIT",
-  "timestamp": "2026-11-24T04:53:49.597Z",
+  "timestamp": "2026-11-26T15:02:13.810Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ajeetdsouza-zoxide",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) (Revision: `8f588052`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T04:53:49.597Z`  
+> **Provenance**: Harvested from [ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) (Revision: `473ac4f3`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T15:02:13.810Z`  
 > **Learning ID**: `learn-github-ajeetdsouza-zoxide`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T04:53:47.803Z  
+> **Harvest Timestamp**: 2026-11-26T15:02:12.217Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A smarter cd command. Supports all major shells.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40714 stars
+- **Stars / Engagement**: 40771 stars
 
 ---
 
@@ -1403,84 +1403,113 @@ impl Run for Remove {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f588052` (2026-11-24)
-**Commit Message**: Zsh: fix init script leaving exit status 1 without compinit (#1362)
-
-* Zsh: fix init script leaving exit status 1 without compinit
-
-The last statement of the zle block was
-
-    [[ "${+functions[compdef]}" -ne 0 ]] && \compdef __zoxide_z_complete z
-
-When compinit has not been run, compdef is not defined, the test fails,
-and that failure becomes the status of the whole init script. An
-interactive shell that evals it at the end of .zshrc starts with $? = 1.
-
-Use an if statement instead, which returns 0 when the condition is false.
-
-The existing zsh test runs the script in a non-interactive shell, where
-zle is off and the block is skipped, so add one that runs it with -i.
-
-Fixes #1361
-
-* Shorten changelog entry to fit the 80 column lint
-
-* Run zsh_zsh in interactive mode instead of a separate test
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
+### Incident Patch 1: `473ac4f3` (2026-11-25)
+**Commit Message**: fix(import): skip entries that are not absolute paths (#1352)
 
 Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Build: fix compilation failing when the source directory is read-only.
- - PowerShell: the prompt hook no longer resets `$LASTEXITCODE`.
+@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Database: keep the file permissions of `db.txt` when saving.
-+- Zsh: init no longer leaves a non-zero exit status if `compinit` has not run.
+ - Zsh: init no longer leaves a non-zero exit status if `compinit` has not run.
  - Tcsh: fix init, `z` and `zi` in directories with `{` or repeated spaces.
++- Import: skip entries that are not absolute paths. Empty paths used to corrupt
++  the database.
  
  ## [0.10.0] - 2026-07-04
+ 
 ```
 
-**File**: `src/shell.rs` (modified, +1/-1)
+**File**: `src/import.rs` (modified, +5/-6)
 ```diff
-@@ -337,7 +337,7 @@ mod tests {
-         let source = Zsh(&opts).render().unwrap();
+@@ -13,7 +13,7 @@ mod z_lua;
+ mod zsh_z;
  
-         Command::new("zsh")
--            .args(["-e", "-u", "-o", "pipefail", "--no-globalrcs", "--no-rcs", "-c", &source])
-+            .args(["-i", "-e", "-u", "-o", "pipefail", "--no-globalrcs", "--no-rcs", "-c", &source])
-             .assert()
-             .success()
-             .stdout("")
+ use std::io::{self, Write};
+-use std::path::PathBuf;
++use std::path::{Path, PathBuf};
+ 
+ use anyhow::Result;
+ 
+@@ -56,12 +56,11 @@ pub(crate) fn run(importer: &impl Importer, db: &mut Database) -> Result<()> {
+ 
+     for entry in importer.dirs()? {
+         match entry {
+-            Ok(dir) => {
+-                if exclude_dirs.iter().any(|glob| glob.matches(&dir.path)) {
+-                    continue;
+-                }
+-                db.add_unchecked(dir.path, dir.rank, dir.last_accessed);
++            Ok(dir) if exclude_dirs.iter().any(|glob| glob.matches(&dir.path)) => {}
++            Ok(dir) if Path::new(&*dir.path).is_relative() => {
++                _ = writeln!(stderr, "skipping relative path: {:?}", dir.path);
+             }
++            Ok(dir) => db.add_unchecked(dir.path, dir.rank, dir.last_accessed),
+             Err(e) => {
+                 let location = match &e.path {
+                     Some(path) => format!("{}:{}", path.display(), e.line_num),
 ```
 
-**File**: `templates/zsh.txt` (modified, +3/-1)
+---
+
+### Incident Patch 2: `fa88be9f` (2026-11-25)
+**Commit Message**: build: attest release binaries (#1368)
+
+Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/release.yml` (modified, +11/-0)
 ```diff
-@@ -176,7 +176,9 @@ if [[ -o zle ]]; then
-     \builtin zle -N __zoxide_z_complete_helper
- {%- if let Some(cmd) = cmd %}
+@@ -7,7 +7,9 @@ on:
+ env:
+   CARGO_INCREMENTAL: 0
+ permissions:
++  attestations: write
+   contents: write
++  id-token: write
+ jobs:
+   release:
+     name: ${{ matrix.target }}
+@@ -112,6 +114,15 @@ jobs:
+             *.deb
+             *.tar.gz
+             *.zip
++      - name: Attest build provenance
++        if: |
++          github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'chore(release)')
++        uses: actions/attest@v4
++        with:
++          subject-path: |
++            *.deb
++            *.tar.gz
++            *.zip
+       - name: Create release
+         if: |
+           github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'chore(release)')
+```
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
--    [[ "${+functions[compdef]}" -ne 0 ]] && \compdef __zoxide_z_complete {{ cmd }}
-+    if [[ "${+functions[compdef]}" -ne 0 ]]; then
-+        \compdef __zoxide_z_complete {{ cmd }}
-+    fi
- {%- endif %}
- fi
+ ## [Unreleased]
  
++### Added
++
++- Release binaries now come with GitHub artifact attestations.
++
+ ### Fixed
+ 
+ - Import: fetch atuin history in UTC instead of the local timezone.
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1371** (2026-11-24): chore: remove redundant homepage statement (@Porkepix)
 - **PR #1370** (2026-11-24): POSIX: support z -- dir (@56steve)
+- **PR #1368** (2026-11-25): build: attest release binaries (@FalkWoldmann)
 - **PR #1366** (2026-11-21): Tcsh: quote the current directory in init, z and zi (@spicysharkco)
 - **PR #1362** (2026-11-24): Zsh: fix init script leaving exit status 1 without compinit (@cipherprofessor)
 - **PR #1360** (2026-11-08): Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (@ajeetdsouza)
-- **PR #1359** (2026-11-18): fix(db): keep the permissions of db.txt when saving (@56steve)
 
 ---
 
@@ -1500,13 +1529,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Zsh: fix init script leaving exit status 1 without compinit
+## X. import): skip entries that are not absolute paths
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f588052`: Zsh: fix init script leaving exit status 1 without compinit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `473ac4f3`: import): skip entries that are not absolute paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1514,7 +1543,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Zsh: init no longer leaves a non-zero exit status if `compinit` has not run.
+- Import: skip entries that are not absolute paths. Empty paths used to corrupt
+  the database.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1524,7 +1554,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f588052` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `473ac4f3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

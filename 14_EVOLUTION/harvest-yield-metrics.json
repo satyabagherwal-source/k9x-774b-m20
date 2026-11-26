@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T14:53:28.657Z",
-  "total_cycles_completed": 12749,
-  "total_learnings_persisted": 12749,
-  "total_rules_promoted": 11609,
+  "last_updated": "2026-11-26T15:02:25.506Z",
+  "total_cycles_completed": 12754,
+  "total_learnings_persisted": 12754,
+  "total_rules_promoted": 11613,
   "history": [
-    {
-      "timestamp": "2026-11-26T03:13:14.414Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T03:21:24.405Z",
-      "repository": "Cactus-Compute/mirage",
-      "learningId": "learn-huggingface-cactus-compute-mirage",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T03:21:25.389Z",
-      "repository": "graphprotocol/graph-node",
-      "learningId": "learn-github-graphprotocol-graph-node",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T03:29:54.877Z",
-      "repository": "Comfy-Org/RelayVSR",
-      "learningId": "learn-huggingface-comfy-org-relayvsr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T03:38:15.261Z",
-      "repository": "Zyphra/ZONOS3-Mini",
-      "learningId": "learn-huggingface-zyphra-zonos3-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T03:46:41.015Z",
       "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-26T14:53:28.657Z",
       "repository": "MetrolistGroup/Metrolist",
       "learningId": "learn-github-metrolistgroup-metrolist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:02:09.938Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:02:13.535Z",
+      "repository": "ajeetdsouza/zoxide",
+      "learningId": "learn-github-ajeetdsouza-zoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:02:19.525Z",
+      "repository": "yazinsai/OpenOats",
+      "learningId": "learn-github-yazinsai-openoats",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:02:20.244Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:02:25.506Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

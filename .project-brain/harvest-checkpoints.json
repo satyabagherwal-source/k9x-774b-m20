@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T14:53:28.667Z",
+  "last_updated": "2026-11-26T15:02:25.516Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -665,14 +665,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "content_hash": "ebe10e839eaec712e54ee8b1fb94a1d419d0a21ae409843c981cf57f2fac2118",
-      "verified_at": "2026-11-22T22:06:18.971Z",
+      "content_hash": "79765fe6b3baca1d15e155c407c3294e36780859a082c043810007244eac050d",
+      "verified_at": "2026-11-26T15:02:09.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T22:06:18.971Z"
+      "last_updated": "2026-11-26T15:02:09.942Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Pro-RL": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "f5855f34044e197e6895d784e08acacd07dd13eee613e18b1e0983f4cb844711",
-      "verified_at": "2026-11-25T13:49:34.608Z",
+      "content_hash": "f03b2add7b726dd6b0937b245ed884f059dd8d44f5ca34c8c48d654023d3899b",
+      "verified_at": "2026-11-26T15:02:25.515Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T13:49:34.608Z"
+      "last_updated": "2026-11-26T15:02:25.515Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -4131,14 +4131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ajeetdsouza-zoxide",
-      "content_hash": "677ce3fdbaae00baed51a505de37ee9231c7c3549ab2ae6d1d7673e8a1ee151d",
-      "verified_at": "2026-11-24T04:53:49.330Z",
+      "content_hash": "e3d42044fd9ee277df5e391e43c8c6ddd4af58cbe2c3d6576cbb4c5a25763858",
+      "verified_at": "2026-11-26T15:02:13.544Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T04:53:49.330Z"
+      "last_updated": "2026-11-26T15:02:13.544Z"
     },
     "react-native-elements/react-native-elements": {
       "repository": "react-native-elements/react-native-elements",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "c83614ecbe8985bc54f641e2638298296a902469c97ede71a829b9e56b0fdbd2",
-      "verified_at": "2026-11-25T14:50:22.874Z",
+      "content_hash": "a5155995ac2996a1b2a1512d7357c9f6760d77220aa1b6fec3310512cb937360",
+      "verified_at": "2026-11-26T15:02:20.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T14:50:22.874Z"
+      "last_updated": "2026-11-26T15:02:20.255Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -19176,14 +19176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yazinsai-openoats",
-      "content_hash": "cc308f542fe80639414308f371373575d4bc83d3bb27d0bdd2d2ef25f4997bf9",
-      "verified_at": "2026-11-24T04:45:14.081Z",
+      "content_hash": "03111ccd4d0fef5f675c0d5a7f5e8ea7e82193e2d1c50b3b1c0288afbde49997",
+      "verified_at": "2026-11-26T15:02:19.537Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T04:45:14.081Z"
+      "last_updated": "2026-11-26T15:02:19.537Z"
     },
     "mdiri-ai/SoduWork": {
       "repository": "mdiri-ai/SoduWork",

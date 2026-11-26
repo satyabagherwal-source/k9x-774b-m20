@@ -535,8 +535,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "ebe10e839eaec712e54ee8b1fb94a1d419d0a21ae409843c981cf57f2fac2118",
-    "lastHarvestedAt": "2026-11-22T22:06:18.960Z",
+    "contentHash": "79765fe6b3baca1d15e155c407c3294e36780859a082c043810007244eac050d",
+    "lastHarvestedAt": "2026-11-26T15:02:09.924Z",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "af412110",
+    "sourceVersion": "fe354f74",
     "license": "AGPL-3.0",
-    "contentHash": "f5855f34044e197e6895d784e08acacd07dd13eee613e18b1e0983f4cb844711",
-    "lastHarvestedAt": "2026-11-25T13:49:34.588Z",
+    "contentHash": "f03b2add7b726dd6b0937b245ed884f059dd8d44f5ca34c8c48d654023d3899b",
+    "lastHarvestedAt": "2026-11-26T15:02:25.492Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2663,10 +2663,10 @@
     "repository": "ajeetdsouza/zoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/ajeetdsouza/zoxide",
-    "sourceVersion": "8f588052",
+    "sourceVersion": "473ac4f3",
     "license": "MIT",
-    "contentHash": "677ce3fdbaae00baed51a505de37ee9231c7c3549ab2ae6d1d7673e8a1ee151d",
-    "lastHarvestedAt": "2026-11-24T04:53:49.312Z",
+    "contentHash": "e3d42044fd9ee277df5e391e43c8c6ddd4af58cbe2c3d6576cbb4c5a25763858",
+    "lastHarvestedAt": "2026-11-26T15:02:13.520Z",
     "learningId": "learn-github-ajeetdsouza-zoxide"
   },
   "react-native-elements-react-native-elements": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "cec4a6e5",
+    "sourceVersion": "9f296bf9",
     "license": "AGPL-3.0",
-    "contentHash": "c83614ecbe8985bc54f641e2638298296a902469c97ede71a829b9e56b0fdbd2",
-    "lastHarvestedAt": "2026-11-25T14:50:22.856Z",
+    "contentHash": "a5155995ac2996a1b2a1512d7357c9f6760d77220aa1b6fec3310512cb937360",
+    "lastHarvestedAt": "2026-11-26T15:02:20.226Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -12723,10 +12723,10 @@
     "repository": "yazinsai/OpenOats",
     "platform": "github",
     "sourceUrl": "https://github.com/yazinsai/OpenOats",
-    "sourceVersion": "8e84f291",
+    "sourceVersion": "d8caac78",
     "license": "MIT",
-    "contentHash": "cc308f542fe80639414308f371373575d4bc83d3bb27d0bdd2d2ef25f4997bf9",
-    "lastHarvestedAt": "2026-11-24T04:45:14.067Z",
+    "contentHash": "03111ccd4d0fef5f675c0d5a7f5e8ea7e82193e2d1c50b3b1c0288afbde49997",
+    "lastHarvestedAt": "2026-11-26T15:02:19.508Z",
     "learningId": "learn-github-yazinsai-openoats"
   },
   "mdiri-ai-soduwork": {

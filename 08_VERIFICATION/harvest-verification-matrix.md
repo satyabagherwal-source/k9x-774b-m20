@@ -13433,3 +13433,8 @@
 | `CYCLE-20261126-9WSK` | `2026-11-26T14:53:21.860Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`76c56319...`) |
 | `CYCLE-20261126-9ZPD` | `2026-11-26T14:53:25.633Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10628` | Yes (`e2a9a46a...`) |
 | `CYCLE-20261126-A20V` | `2026-11-26T14:53:28.639Z` | `MetrolistGroup/Metrolist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10707` | Yes (`eb0de6e6...`) |
+| `CYCLE-20261126-L88W` | `2026-11-26T15:02:09.920Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`79765fe6...`) |
+| `CYCLE-20261126-LB0S` | `2026-11-26T15:02:13.516Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10708` | Yes (`e3d42044...`) |
+| `CYCLE-20261126-LFN3` | `2026-11-26T15:02:19.503Z` | `yazinsai/OpenOats` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10709` | Yes (`03111ccd...`) |
+| `CYCLE-20261126-LG71` | `2026-11-26T15:02:20.221Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10710` | Yes (`a5155995...`) |
+| `CYCLE-20261126-LK9B` | `2026-11-26T15:02:25.487Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10711` | Yes (`f03b2add...`) |

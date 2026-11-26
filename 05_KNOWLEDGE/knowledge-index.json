@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T14:53:36.912Z",
+  "last_updated": "2026-11-26T15:02:31.962Z",
   "total_verified_learnings": 9129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25982,
+  "total_items": 25991,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113541,10 +113541,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "af412110",
-      "content_hash": "2b4bb5cc8df13d6c873bdb28de6d4aa41f9a761bb2e2750b00f2351fa3dd8cf7",
+      "source_version": "fe354f74",
+      "content_hash": "72496767dfd574d44d70963dfce02f05e5c81babbd52ceb9c5dd60897d7447e4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:49:35.189Z"
+      "persisted_at": "2026-11-26T15:02:26.020Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113553,10 +113553,10 @@
       "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
       "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
       "repository": "volcengine/OpenViking",
-      "source_version": "af412110",
-      "content_hash": "08e4465764786d4779a9433a6af72146c474cca537f973b745a79d61eb661ec7",
+      "source_version": "fe354f74",
+      "content_hash": "39f2576fbf2a5461c108a34eea3c1a80e2cce7e00f3d4d8a4df8972626330c5f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:49:35.460Z"
+      "persisted_at": "2026-11-26T15:02:26.278Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
@@ -114406,9 +114406,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen-Image-2.1-GGUF Core Invariants",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "5d6260d88bade7bbdfe4de3b69362c3393112918133951c16a01e281c2648165",
+      "content_hash": "c3c7ec668232914633a6db53e1adea1c1f44d9c16f15f86c223d82ad722353d2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:06:19.248Z"
+      "persisted_at": "2026-11-26T15:02:10.211Z"
     },
     "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
@@ -114466,9 +114466,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen-image-2.1-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-qwen-image-2.1-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "55b7a76df541c8ac9c9bbb25603c0df8ac3ddb4d8f00df4b55bf057e62addcdc",
+      "content_hash": "a771a07c4a77f791672ea7ad84e2353f5d3d649c003e52b0bd648780f06c5c58",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T22:06:36.529Z"
+      "persisted_at": "2026-11-26T15:02:30.743Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
@@ -231703,8 +231703,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "cec4a6e5",
-      "content_hash": "c83614ecbe8985bc54f641e2638298296a902469c97ede71a829b9e56b0fdbd2",
+      "source_version": "9f296bf9",
+      "content_hash": "a5155995ac2996a1b2a1512d7357c9f6760d77220aa1b6fec3310512cb937360",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -231752,6 +231752,11 @@
           "number": 10543,
           "title": "Renovate config: Comments link to tracking issue",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10710,
+          "title": "Update temporalio/ui Docker tag to v2.58.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231759,7 +231764,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T14:50:22.588Z",
+      "verified_at": "2026-11-26T15:02:19.863Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231813,10 +231818,10 @@
       "relative_path": "08_VERIFICATION/peerdb-io-peerdb-verification-protocol-empirical-defect-shield-for-peerdb-io-pee.md",
       "title": "Verification Protocol: Empirical Defect Shield for PeerDB-io/peerdb",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "cec4a6e5",
-      "content_hash": "578faadf3c88a94bfc6521a7ed6aa56449f5cd0324845ff3ecd3322ac08fbc94",
+      "source_version": "9f296bf9",
+      "content_hash": "3d2d45a6fceacfdacc3e7ec10c2a80b4de451caa7ba3680bccbe914083b469c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:50:23.596Z"
+      "persisted_at": "2026-11-26T15:02:20.997Z"
     },
     "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
       "item_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
@@ -243121,8 +243126,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "af412110",
-      "content_hash": "f5855f34044e197e6895d784e08acacd07dd13eee613e18b1e0983f4cb844711",
+      "source_version": "fe354f74",
+      "content_hash": "f03b2add7b726dd6b0937b245ed884f059dd8d44f5ca34c8c48d654023d3899b",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -243165,6 +243170,11 @@
           "number": 10536,
           "title": "session_history support across the memory plugins and two Claude Code",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10711,
+          "title": "send the profile again after a host compaction drops it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243172,7 +243182,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T13:49:34.300Z",
+      "verified_at": "2026-11-26T15:02:25.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263033,8 +263043,8 @@
       "slug": "yazinsai-openoats",
       "platform": "github",
       "source_url": "https://github.com/yazinsai/OpenOats",
-      "source_version": "8e84f291",
-      "content_hash": "cc308f542fe80639414308f371373575d4bc83d3bb27d0bdd2d2ef25f4997bf9",
+      "source_version": "d8caac78",
+      "content_hash": "03111ccd4d0fef5f675c0d5a7f5e8ea7e82193e2d1c50b3b1c0288afbde49997",
       "dossier_path": "07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
       "promoted_rules": [
@@ -263062,6 +263072,11 @@
           "number": 10201,
           "title": "Name Meetings after their calendar event, optionally: matched at Stop over the w",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10709,
+          "title": "Rebuild a mic the headset rebound; don't blame mics for route changes; pad track",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -263069,7 +263084,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T04:45:13.867Z",
+      "verified_at": "2026-11-26T15:02:19.181Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263186,9 +263201,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yazinsai-openoats-learnings",
       "repository": "yazinsai-openoats-learnings",
       "source_version": "HEAD",
-      "content_hash": "89933af3385ff093431ea1a38f8200a805318c6d3539a51fb4440280502f88ab",
+      "content_hash": "c9ded21b860658e11e36210dfdf3992752ec10d714749fe97de5d805587db218",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:45:23.757Z"
+      "persisted_at": "2026-11-26T15:02:31.962Z"
     },
     "rule-8766": {
       "learning_id": "rule-8766",
@@ -287279,10 +287294,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "cec4a6e5",
-      "content_hash": "ef9fa28c5d87b877b3d7b3ac32500dde239531a469c301080845e0e01c4e2d62",
+      "source_version": "9f296bf9",
+      "content_hash": "33b6a677358c38122036585de518ba992cc1eba7a7c4ce8b87ff45a9520b89df",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:50:23.400Z"
+      "persisted_at": "2026-11-26T15:02:20.772Z"
     },
     "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla": {
       "item_id": "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla",
@@ -288901,7 +288916,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "ebe10e839eaec712e54ee8b1fb94a1d419d0a21ae409843c981cf57f2fac2118",
+      "content_hash": "79765fe6b3baca1d15e155c407c3294e36780859a082c043810007244eac050d",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "promoted_rules": [],
@@ -288910,7 +288925,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T22:06:18.624Z",
+      "verified_at": "2026-11-26T15:02:09.606Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -293319,8 +293334,8 @@
       "slug": "ajeetdsouza-zoxide",
       "platform": "github",
       "source_url": "https://github.com/ajeetdsouza/zoxide",
-      "source_version": "8f588052",
-      "content_hash": "677ce3fdbaae00baed51a505de37ee9231c7c3549ab2ae6d1d7673e8a1ee151d",
+      "source_version": "473ac4f3",
+      "content_hash": "e3d42044fd9ee277df5e391e43c8c6ddd4af58cbe2c3d6576cbb4c5a25763858",
       "dossier_path": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "promoted_rules": [
@@ -293338,6 +293353,11 @@
           "number": 10203,
           "title": "fix init script leaving exit status 1 without compinit",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10708,
+          "title": "skip entries that are not absolute paths",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -293345,7 +293365,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T04:53:49.067Z",
+      "verified_at": "2026-11-26T15:02:13.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -293387,10 +293407,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-technical-construction-intelligence-ajeetdsouza-zoxide-core-i.md",
       "title": "Technical Construction Intelligence: ajeetdsouza/zoxide Core Invariants",
       "repository": "ajeetdsouza/zoxide",
-      "source_version": "8f588052",
-      "content_hash": "f1ba87ae54b220c67a79f6d5b55d4a0081400b10f59f637a9ef52ace7336e302",
+      "source_version": "473ac4f3",
+      "content_hash": "e4b4c5757f6a89b70795f71a698b2d772bf4afe5a6526f5ed9f0e8cc7acbf307",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:53:49.805Z"
+      "persisted_at": "2026-11-26T15:02:14.044Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide",
@@ -293399,10 +293419,10 @@
       "relative_path": "08_VERIFICATION/ajeetdsouza-zoxide-verification-protocol-empirical-defect-shield-for-ajeetdsouza.md",
       "title": "Verification Protocol: Empirical Defect Shield for ajeetdsouza/zoxide",
       "repository": "ajeetdsouza/zoxide",
-      "source_version": "8f588052",
-      "content_hash": "337235a0e110adc1dc780fb9c341eb02bb7ac20346f041df0de767fa31595aba",
+      "source_version": "473ac4f3",
+      "content_hash": "2b7cdb7b33d98dfd4a04bd93c554a4b5c46efaaa5789f3feb546295465c0feab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:53:50.055Z"
+      "persisted_at": "2026-11-26T15:02:14.283Z"
     },
     "rule-9220": {
       "learning_id": "rule-9220",
@@ -293450,9 +293470,9 @@
       "title": "Technical Construction Intelligence: ajeetdsouza-zoxide-learnings Core Invariants",
       "repository": "ajeetdsouza-zoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "2989162b1510670eb4efe1942daff86369144755727694b09bebe16872e89c24",
+      "content_hash": "96eaf328a45a37446e7447def61adca37827c021b1b3aa98102daa3211beeb5c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:53:59.999Z"
+      "persisted_at": "2026-11-26T15:02:29.956Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide-learnings",
@@ -293462,9 +293482,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ajeetdsouza-zoxide-learnings",
       "repository": "ajeetdsouza-zoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d0c27836eec6caeccb36245784a1d74385bff4854f1ad101925fea94a79e6a6",
+      "content_hash": "05b61545d0efa4c9fa0b2081563e95251126f6982381d5359c357c5f2466719f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:54:00.247Z"
+      "persisted_at": "2026-11-26T15:02:30.250Z"
     },
     "rule-9221": {
       "learning_id": "rule-9221",
@@ -317155,10 +317175,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yazinsai-openoats-technical-construction-intelligence-yazinsai-openoats-core-inv.md",
       "title": "Technical Construction Intelligence: yazinsai/OpenOats Core Invariants",
       "repository": "yazinsai/OpenOats",
-      "source_version": "8e84f291",
-      "content_hash": "3556cb15cd4124e83a25994c8c4bac1a8b8c57bb680262acb200b75084089163",
+      "source_version": "d8caac78",
+      "content_hash": "0662d9fde2211ebccf25276aeb5ba709c8152a5d37e4f32ef99b7350ebc31788",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:45:14.439Z"
+      "persisted_at": "2026-11-26T15:02:20.130Z"
     },
     "rule-9758": {
       "learning_id": "rule-9758",
@@ -317378,9 +317398,9 @@
       "title": "Technical Construction Intelligence: yazinsai-openoats-learnings Core Invariants",
       "repository": "yazinsai-openoats-learnings",
       "source_version": "HEAD",
-      "content_hash": "43f13fc31fca06287448e7d4ce9e2453abd5c700f9b378cd47567f37f2c5b075",
+      "content_hash": "90e48737413cfd6e54b78527d32f9502d640f384d5f942432df9faac5365f8ce",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:45:23.601Z"
+      "persisted_at": "2026-11-26T15:02:31.722Z"
     },
     "rule-9761": {
       "learning_id": "rule-9761",
@@ -356085,6 +356105,122 @@
       "content_hash": "aa1a75a427e79ff5a578a81dcc7067ff7fdb1dadbdfe9f5aa9e5063c536e6f2d",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T14:53:36.380Z"
+    },
+    "rule-10708": {
+      "learning_id": "rule-10708",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10708,
+      "title": "skip entries that are not absolute paths",
+      "source_url": "https://github.com/ajeetdsouza/zoxide",
+      "source_version": "473ac4f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T15:02:13.239Z"
+    },
+    "candidate_directive-skip-entries-that-are-not-absolute-paths": {
+      "item_id": "candidate_directive-skip-entries-that-are-not-absolute-paths",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LB8Y-skip-entries-that-are-not-absolute-paths.md",
+      "title": "skip entries that are not absolute paths",
+      "repository": "ajeetdsouza/zoxide",
+      "source_version": "473ac4f3",
+      "content_hash": "2ea4e36b5bab51baf54878e9447be02ed6ba24c05c73e643907411467866a6c4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T15:02:13.811Z"
+    },
+    "rule-10709": {
+      "learning_id": "rule-10709",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10709,
+      "title": "Rebuild a mic the headset rebound; don't blame mics for route changes; pad track",
+      "source_url": "https://github.com/yazinsai/OpenOats",
+      "source_version": "d8caac78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T15:02:19.181Z"
+    },
+    "rule-10710": {
+      "learning_id": "rule-10710",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10710,
+      "title": "Update temporalio/ui Docker tag to v2.58.1",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "9f296bf9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T15:02:19.863Z"
+    },
+    "candidate_directive-update-temporalio-ui-docker-tag-to-v2-58-1": {
+      "item_id": "candidate_directive-update-temporalio-ui-docker-tag-to-v2-58-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LGG0-update-temporalio-ui-docker-tag-to-v2-58-1.md",
+      "title": "Update temporalio/ui Docker tag to v2.58.1",
+      "repository": "PeerDB-io/peerdb",
+      "source_version": "9f296bf9",
+      "content_hash": "94c94dddf1d393ccbb01ee195b181ba1abc018f935793ad253683c57afe81808",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T15:02:20.550Z"
+    },
+    "rule-10711": {
+      "learning_id": "rule-10711",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10711,
+      "title": "send the profile again after a host compaction drops it",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "fe354f74",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T15:02:25.177Z"
+    },
+    "candidate_directive-send-the-profile-again-after-a-host-compaction-drops-it": {
+      "item_id": "candidate_directive-send-the-profile-again-after-a-host-compaction-drops-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LKHM-send-the-profile-again-after-a-host-compaction-drops-it.md",
+      "title": "send the profile again after a host compaction drops it",
+      "repository": "volcengine/OpenViking",
+      "source_version": "fe354f74",
+      "content_hash": "27ef41a25636c89a7f8b306fc6d00602454bc3746eade01a344c3eec15bbe21f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T15:02:25.793Z"
+    },
+    "candidate_directive-import-skip-entries-that-are-not-absolute-paths": {
+      "item_id": "candidate_directive-import-skip-entries-that-are-not-absolute-paths",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LNHV-import-skip-entries-that-are-not-absolute-paths.md",
+      "title": "import): skip entries that are not absolute paths",
+      "repository": "ajeetdsouza-zoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b597a1075201f95244e14207a6e280310a543f88610f890b0aaa285e7194905",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T15:02:29.684Z"
+    },
+    "candidate_directive-rebuild-a-mic-the-headset-rebound-don-t-blame-mics-for-route-changes-pad-track": {
+      "item_id": "candidate_directive-rebuild-a-mic-the-headset-rebound-don-t-blame-mics-for-route-changes-pad-track",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LOW4-rebuild-a-mic-the-headset-rebound-don-t-blame-mics-for-route-changes-pad-track.md",
+      "title": "Rebuild a mic the headset rebound; don't blame mics for route changes; pad track",
+      "repository": "yazinsai-openoats-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e8ae4765885dc71a77e7f20db9f6efd36a6e415a471411fcec89c63078ca6590",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T15:02:31.497Z"
     }
   },
   "ai-builder-brain": {

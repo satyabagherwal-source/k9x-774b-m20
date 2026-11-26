@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yazinsai-openoats-learnings.md`  
 > **Source**: github ([https://github.com/yazinsai/OpenOats](https://github.com/yazinsai/OpenOats))  
-> **Source Version**: `8e84f291`  
+> **Source Version**: `d8caac78`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T04:45:13.008Z  
+> **Timestamp**: 2026-11-26T15:02:18.079Z  
 > **Learning ID**: `learn-github-yazinsai-openoats`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yazinsai-openoats-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yazinsai/OpenOats](https://github.com/yazinsai/OpenOats))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T04:45:13.003Z  
+> **Harvest Timestamp**: 2026-11-26T15:02:18.073Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -887,13 +887,13 @@ public struct GeminiTranscription: TranscriptionBackend {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #786** (2026-11-24): **Rebuild a mic the headset rebound; don't blame mics for route changes; pad tracks at Stop**
+  *Symptoms*: A trimmed version of #783 by @dandaka, follow-up to #781/#782. Credit for the diagnosis and the design goes to them; this keeps their fix and drops the riskiest part.  ## Problem  When a Bluetooth headset changes profile (e.g. a call ends), AVFAudio can move a running engine's input to another device without posting `AVAudioEngineConfigurationChange`. The engine keeps running and delivers nothing. The watchdog then marks every mic that went silent as stalled, so after two route changes it can fall back to a mic that never delivers. On Stop, the mic track ends early.  ## Kept from #783  - **Watchdog detects a rebound mic:** a mic that's been silent for 1 s and is no longer bound the way its tap was made (another device, or a different usable rate or channel count) is rebuilt right away as a route change. Rebuilds are debounced and capped at one every 2 s. - **No blame for route changes:** a mic that goes silent soon after a route change isn't added to `stalledMics`. - **Recorder pads stopped tracks at Stop** so both tracks end together. Tracks that never delivered stay empty. - The `MicRebuildTests` and `RecorderTests` from #783.  ## Changed from #783  - **Dropped the input-unit property listener** (`AudioUnitAddPropertyListener` with an unmanaged context). It only made the rebuild about 2 s faster than the watchdog, and it was the riskiest code in the capture path. The watchdog's 2 s tick now catches the rebind, so the gap is about 1.5–3.5 s instead of 4–7 s. - **Padding is w
+
 - **Issue #785** (2026-11-22): **Name Meetings after their calendar event (optional)**
   *Symptoms*: ## Summary  Meetings can be named after the calendar event they happened in. Off unless the user turns it on.  ```diff  AppModel.stop() / recorder stopped / recoverInterruptedMeetings +  nameFromCalendar(folder)        # only if titleFromCalendar == true and access is .fullAccess +    CalendarTitles.title(for: startedAt...endedAt)   # EventKit, fresh store, main app only +      CalendarEvent.title(for:in:)                   # OatsCore, pure +    status.title = event title    # wins over the Notes title, like Rename    enqueue(folder) ```  Matching (lessons from 1.x #701, #706): - only events with other attendees or a call link; all-day, cancelled, declined skipped - most overlap with the whole recording wins, shorter event on a tie - overlap ≥ ¼ of the shorter of event and recording, so the tail of the previous meeting doesn't name it  Asking (lessons from 1.x #517, #671, #711): access is requested only when the user turns it on, never from a view appearing or a timer; status re-read on every use.  ```diff  Settings › General +  Calendar: "Name Meetings after calendar events" toggle (+ Open System Settings when denied)  Onboarding +  4. Calendar (optional) [Allow]  Meeting detail (finished Meeting) +  📅 Name Meetings after your calendar events?  Turn On · Not Now   # until answered once ```  `Info.plist` gains `NSCalendarsFullAccessUsageDescription`; entitlements gain `com.apple.security.personal-information.calendars`. ADR 0006.  ## Evidence  - `CalendarTitleTests` (9): mee
   **Post-Mortem & Fix Analysis**:
   > risk:high because it adds the calendars entitlement and a new permission. Merge and release approved directly by @yazinsai (operator instruction).
-
-- **Issue #784** (2026-11-22): **Notifications default to Persistent so the "Record this meeting?" prompt waits for a click**
-  *Symptoms*: The call prompt showed as a temporary banner. It disappeared after about 5 seconds, usually while you were busy joining the call, and then sat unseen in Notification Center.  `NSUserNotificationAlertStyle = alert` in Info.plist makes Persistent the default style. macOS reads it only when it first registers the app, so it applies to new installs. Existing users keep whatever they have and can change it in System Settings → Notifications → OpenOats.  The setting covers every OpenOats notification, not only the call prompt. That's fine: the call prompt is withdrawn by itself when the call ends or recording starts, and the others ("Meeting file ready", "Recording stopped", errors) are worth seeing.  Not tested on a clean install. It's a one-key plist change; `plutil -lint` passes and the build script copies the plist into the bundle as-is.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -910,281 +910,311 @@ public struct GeminiTranscription: TranscriptionBackend {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e84f291` (2026-11-22)
-**Commit Message**: Name Meetings after their calendar event, optionally: matched at Stop over the whole recording, events with others or a call link only; asked for only from the Settings toggle, an optional onboarding row or a one-time tip; ADR 0006 (#785)
+### Incident Patch 1: `d8caac78` (2026-11-24)
+**Commit Message**: Rebuild a mic the headset rebound; don't blame mics for route changes; pad tracks at Stop (#786)
 
-**File**: `OpenOats/Sources/OatsCore/CalendarTitle.swift` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+import Foundation
-+
-+/// A calendar event as the title lookup sees it. The app reads these from EventKit, leaving out all-day, cancelled
-+/// and declined events.
-+public struct CalendarEvent: Sendable, Equatable {
-+    public var title: String
-+    public var start: Date
-+    public var end: Date
-+    /// Other attendees or a call link: a meeting, not a personal block such as "Focus" or "Lunch".
-+    public var withOthers: Bool
-+
-+    public init(title: String, start: Date, end: Date, withOthers: Bool) {
-+        self.title = title
-+        self.start = start
-+        self.end = end
-+        self.withOthers = withOthers
-+    }
-+
-+    /// The title of the meeting a recording was part of: the event with others it overlaps most, the shorter one on a
-+    /// tie (a meeting inside an all-hands block). The overlap must be at least a quarter of the shorter of the two,
-+    /// so a recording that started in the last minutes of the previous meeting isn't named after it. nil when none.
-+    public static func title(for recording: DateInterval, in events: [CalendarEvent]) -> String? {
-+        let candidates = events.compactMap { event -> (CalendarEvent, TimeInterval)? in
-+            let title = event.title.trimmingCharacters(in: .whitespacesAndNewlines)
-+            guard event.withOthers, !title.isEmpty, event.end > event.start else { return nil }
-+            let overlap = min(event.end, recording.end).timeIntervalSince(max(event.start, recording.start))
-+            let shorter = min(event.end.timeIntervalSince(event.start), recording.duration)
-+            guard overlap > 0, overlap >= shorter / 4 else { return nil }
-+            return (CalendarEvent(title: title, start: event.start, end: event.end, withOthers: true), overlap)
-+        }
-+        return candidates.min { a, b in
-+            if a.1 != b.1 { return a.1 > b.1 }
-+            let (la, lb) = (a.0.end.timeIntervalSince(a.0.start), b.0.end.timeIntervalSince(b.0.start))
-+            return la != lb ? la < lb : a.0.start < b.0.start
-+        }?.0.title
-+    }
-+}
-```
+Trimmed from #783 by @dandaka: the watchdog detects the rebind instead of an input-unit property listener, and Stop pads silence 10 s at a time.
 
-**File**: `OpenOats/Sources/OatsCore/MeetingFolder.swift` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ public struct MeetingStatus: Codable, Sendable, Equatable {
-     /// The Meeting file last written and the SHA-256 of what was written, for the re-process rule.
-     public var meetingFile: String?
-     public var meetingFileHash: String?
--    /// Set by Rename; wins over the Notes title when the Meeting file is written again.
-+    /// Set by Rename or from the calendar event at Stop; wins over the Notes title when the Meeting file is written again.
-     public var title: String?
- 
-     public init(state: State, startedAt: Date, language: String? = nil) {
-```
+Co-authored-by: Vlad Rafeev <[REDACTED_EMAIL]>
 
-**File**: `OpenOats/Sources/OatsCore/Settings.swift` (modified, +3/-0)
+**File**: `OpenOats/Sources/OatsCapture/LiveCapture.swift` (modified, +37/-6)
 ```diff
-@@ -16,6 +16,8 @@ public struct Settings: Codable, Sendable, Equatable {
-     public var askToRecordCalls = true
-     /// `CallApp` ids the user said not to ask about again.
-     public var ignoredCallApps: [String] = []
-+    /// Name Meetings after the calendar event they happened in. nil until the user chooses, so the app can offer it once.
-+    public var titleFromCalendar: Bool?
+@@ -20,6 +20,9 @@ public final class LiveCapture: CaptureSource, @unchecked Sendable {
+     private var watchdog: DispatchSourceTimer?
+     /// Mics that went silent since the last default-input change; skipped when picking the next one.
+     private var stalledMics: Set<AudioDeviceID> = []
++    /// Last default-device change or mic hardware format change, on the `Activity` clock.
++    private var routeChangedAt = -TimeInterval.infinity
++    private var micRebuiltAt = -TimeInterval.infinity
+     private var lastProblem: [Track: String] = [:]
+     private var assertion: IOPMAssertionID = 0
  
-     public init() {}
- 
-@@ -31,6 +33,7 @@ public struct Settings: Codable, Sendable, Equatable {
-         deleteAudioAfterProcessing = try c.decodeIfPresent(Bool.self, forKey: .deleteAudioAfterProcessing) ?? false
-         askToRecordCalls = try c.decodeIfPresent(Bool.self, forKey: .askToRecordCalls) ?? true
-         ignoredCallApps = try c.decodeIfPresent([String].self, forKey: .ignoredCallApps) ?? []
-+        titleFromCalendar = try c.decodeIfPresent(Bool.self, forKey: .titleFromCalendar)
-     }
- 
-     /// The language a new Meeting is recorded in.
-```
-
-**File**: `OpenOats/Sources/OpenOats/AppModel.swift` (modified, +12/-0)
-```diff
-@@ -45,6 +45,7 @@ final class AppModel: ObservableObject {
-     func launch() {
-         Migration.runIfNeeded(settings)
-         for meeting in store.recoverInterruptedMeetings() {
-+            nameFromCalendar(meeting.folder)
-             Notifier.post(meeting.message, "Its Meeting file will be marked as interrupted.", meeting: meeting.folder.id)
-         }
-         Task {
-@@ -152,9 +153,19 @@ final class AppModel: ObservableObject {
-         lowDiskSpace = nil
-         recordingCall = nil
-         do { try recorder.stop() } catch { Notifier.post("The recording didn't close cleanly", error.localizedDescription) }
-+        nameFromCalendar(recorder.folder)
-         enqueue(recorder.folder)
-     }
- 
-+    /// With "Name Meetings from your calendar" on, titles a just-recorded Meeting after the event it was part of,
-+    /// before Processing writes its Meeting file. Without a matching event the Notes title is used, as always.
-+    private func nameFromCalendar(_ folder: MeetingFolder) {
-+        guard settings.load().titleFromCalendar == true, let status = try? folder.readStatus(), status.title == nil,
-+              let end = status.endedAt, end > status.startedAt,
-+              let title = CalendarTitles.title(for: DateInterval(start: status.startedAt, end: end)) else { return }
-+        _ = try? folder.updateStatus { $0.title = title }
-+    }
-+
-     /// Queues a Meeting (after Stop, Retry, re-process, import).
-     func enqueue(_ folder: MeetingFolder) {
-         Task {
-@@ -194,6 +205,7 @@ final class AppModel: ObservableObject {
-                 recordingCall = nil
+@@ -47,12 +50,12 @@ public final class LiveCapture: CaptureSource, @unchecked Sendable {
              }
-             Notifier.post("Recording stopped", reason)
-+            nameFromCalendar(folder)
-             enqueue(folder)
-         }
-     }
-```
-
-**File**: `OpenOats/Sources/OpenOats/CalendarTitles.swift` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+import EventKit
-+import OatsCore
-+
-+/// Names a Meeting after the calendar event it happened in. Optional: only with the setting on and full calendar
-+/// access, read on this Mac, never sent anywhere. Access is asked for only when the user turns the setting on.
-+enum CalendarTitles {
-+    /// Re-read every time: the user can change it in System Settings at any moment, and a denial is never asked again.
-+    static var allowed: Bool { EKEventStore.authorizationStatus(for: .event) == .fullAccess }
-+    static var denied: Bool { [.denied, .restricted].contains(EKEventStore.authorizationStatus(for: .event)) }
-+
-+    static let privacySettings = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars")!
-+
-+    /// Shows the system prompt the first time; afterwards returns the saved answer.
-+    static func requestAccess() async -> Bool {
-+        (try? await EKEventStore().requestFullAccessToEvents()) ?? false
-+    }
-+
-+    /// The event title for a recording, or nil. A fresh store each time, so calendars added since are seen.
-+    static func title(for recording: DateInterval) -> String? {
-+        guard allowed, recording.duration > 0 else { return nil }
-+        let store = EKEventStore()
-+        let events = store.events(matching: store.predicateForEvents(withStart: recording.start, end: recording.end, calendars: nil))
-+        return CalendarEvent.title(for: recording, in: events.compactMap(CalendarEvent.init))
-+    }
-+}
-+
-+extension CalendarEvent {
-+    /// nil for events that can't be the meeting: all-day, cancelled, or declined.
-+    init?(_ event: EKEvent) {
-+        let me = event.attendees?.first(where: \.isCurrentUser)
-+        guard !event.isAllDay, event.status != .canceled, me?.participantStatus != .declined else { return nil }
-+        let others = event.attendees?.contains { !$0.isCurrentUser } ?? false
-+        let text = [event.location, event.notes].compactMap { $0?.lowercased() }.joined(separator: " ")
-+        let link = event.url != nil || Self.callHosts.contains { text.contains($0) }
-+        self.init(title: event.title ?? "", start: event.startDate, end: event.endDate, withOthers: others || link)
-+    }
-+
-+    private static let callHosts = ["meet.google.com", "zoom.us", "teams.microsoft.com", "teams.live.com", "webex.com",
-+                                    "whereby.com", "around.co", "facetime.apple.com"]
-+}
-```
-
-**File**: `OpenOats/Sources/OpenOats/Info.plist` (modified, +2/-0)
-```diff
-@@ -35,6 +35,8 @@
-     <string>OpenOats needs microphone access to record your side of a meeting.</string>
-     <key>NSAudioCaptureUsageDescription</key>
-     <string>OpenOats needs system audio recording access to record the other side of a meeting.</string>
-+    <key>NSCalendarsFullAccessUsageDescription</key>
-+    <string>OpenOats names each meeting after the calendar event it happened in. Your calendar stays on this Mac.</string>
-     <key>LSApplicationCategoryType</key>
-     <string>public.app-category.productivity</string>
-     <key>LSMultipleInstancesProhibited</key>
-```
-
-**File**: `OpenOats/Sources/OpenOats/MeetingsWindow.swift` (modified, +23/-0)
-```diff
-@@ -303,11 +303,13 @@ struct MeetingDetail<Actions: View>: View {
-     @State private var draft = ""
-     @State private var copied = false
-     @FocusState private var titleFocused: Bool
-+    @ObservedObject private var settings = SettingsModel.shared
- 
-     var body: some View {
-         ScrollView {
-             VStack(alignment: .leading, spacing: 0) {
-                 header.padding(.bottom, Theme.s5)
-+                if showsCalendarTip { calendarTip.padding(.bottom, Theme.s5).transition(.opacity) }
-                 banner
-                 if let file {
-                     file.transition(.opacity)
-@@ -357,6 +359,27 @@ struct MeetingDetail<Actions: View>: View {
-         }
-     }
- 
-+    /// Offered once, on a finished Meeting, until the user turns calendar titles on or says Not Now.
-+    private var showsCalendarTip: Bool {
-+        settings.settings.titleFromCalendar == nil && !settings.calendarDenied && entry.state == .done && entry.folder != nil && !renaming
-+    }
-+
-+    private var calendarTip: some View {
-+        HStack(spacing: Theme.s3) {
-+            Label("Name Meetings after your calendar events?", systemImage: "calendar").foregroundStyle(Theme.ink2)
-+            Button("Turn On") { withAnimation(Theme.gentle) { settings.setCalendarTitles(true) } }
-+                .foregroundStyle(Theme.accent).fontWeight(.medium)
-+            Button("Not Now") { withAnimation(Theme.gentle) { settings.setCalendarTitles(false) } }
-+                .foregroundStyle(Theme.ink3)
-+        }
-+        .font(Theme.meta)
-+        .buttonStyle(.plain)
-+        .lineLimit(1)
-+        .fixedSize()
-+        .accessibilityElement(children: .contain)
-+        .accessibilityIdentifier("meeting.calendarTip")
-+    }
-+
-     @ViewBuilder private var banner: some View {
-         switch entry.state {
-         case .needsAttention(let reason):
-```
-
-**File**: `OpenOats/Sources/OpenOats/OnboardingView.swift` (modified, +8/-0)
-```diff
-@@ -25,6 +25,12 @@ struct OnboardingView: View {
-                 Theme.line.frame(height: 1).padding(.leading, 56)
-                 step(3, "Notes folder", model.settings.notesFolder.path(percentEncoded: false), done: false, button: "Choose…",
-                      action: model.chooseNotesFolder)
-+                Theme.line.frame(height: 1).padding(.leading, 56)
-+                step(4, "Calendar (optional)", model.calendarDenied ? "Allow OpenOats in System Settings › Privacy & Security › Calendars."
-+                        : "Names each Meeting after the calendar event it happened in.",
-+                     done: model.settings.titleFromCalendar == true && model.calendarAllowed, button: model.calendarDenied ? "Open Settings" : "Allow") {
-+                    if model.calendarDenied { NSWorkspace.shared.open(CalendarTitles.privacySettings) } else { model.setCalendarTitles(true) }
-+                }
+             IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleSystemSleep as CFString, IOPMAssertionLevel(kIOPMAssertionLevelOn),
+                                         "OpenOats is recording a meeting" as CFString, &assertion)
+-            listen(kAudioHardwarePropertyDefaultInputDevice) { $0.rebuild(.mic, deviceChanged: true) }
++            listen(kAudioHardwarePropertyDefaultInputDevice) { $0.routeChanged(rebuildMic: true) }
+             // The tap is bound to the output device's UID. Output changes (Bluetooth A2DP ↔ HFP) can also silence the
+             // mic; rebuilding it here would cost ~0.5 s of speech each time, so the watchdog handles that, with every mic
+             // eligible again.
+             listen(kAudioHardwarePropertyDefaultOutputDevice) {
+-                $0.stalledMics = []
++                $0.routeChanged(rebuildMic: false)
+                 $0.rebuild(.system, deviceChanged: true)
              }
-             .background(RoundedRectangle(cornerRadius: Theme.r3, style: .continuous).fill(Theme.sidebar))
-             .overlay(RoundedRectangle(cornerRadius: Theme.r3, style: .continuous).strokeBorder(Theme.line, lineWidth: 1))
-@@ -58,7 +64,9 @@ struct OnboardingView: View {
-         .background(Theme.canvas.ignoresSafeArea())
-         .accessibilityElement(children: .contain)
-         .accessibilityIdentifier("onboarding.root")
-+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in model.refreshCalendarAccess() }
-         .onAppear {
-+            model.refreshCalendarAccess()
-             app.downloadModel()
-             withAnimation(Theme.gentle) { appeared = true }
+             let timer = DispatchSource.makeTimerSource(queue: queue)
+@@ -91,13 +94,33 @@ public final class LiveCapture: CaptureSource, @unchecked Sendable {
          }
+     }
+ 
++    /// A default device or the mic's hardware format changed: every mic is eligible again, and silence that follows
++    /// isn't held against the mic.
++    private func routeChanged(rebuildMic: Bool) {
++        let now = ProcessInfo.processInfo.systemUptime
++        routeChangedAt = now
++        stalledMics = []
++        if rebuildMic { rebuild(.mic, deviceChanged: true, after: Self.routeRebuildDelay(sinceLast: now - micRebuiltAt)) }
++    }
++
++    /// A burst of route changes causes one rebuild, and at most one every 2 s.
++    static func routeRebuildDelay(sinceLast: TimeInterval) -> TimeInterval {
++        max(0.5, 2 - sinceLast)
++    }
++
++    /// Whether a mic silent for `silentFor` seconds is to blame: not if a route changed shortly before it went silent.
++    static func blamesMic(silentFor: TimeInterval, sinceRouteChange: TimeInterval) -> Bool {
++        sinceRouteChange > silentFor + 2
++    }
++
+     /// Rebuilds `track` after a short pause, so a burst of device notifications causes one rebuild.
+-    private func rebuild(_ track: Track, deviceChanged: Bool) {
++    private func rebuild(_ track: Track, deviceChanged: Bool, after delay: TimeInterval? = nil) {
+         if deviceChanged, track == .mic { stalledMics = [] }
+         pending[track]?.cancel()
+         let item = DispatchWorkItem { [weak self] in
+             guard let self, let deliver else { return }
+             pending[track] = nil
++            if track == .mic { micRebuiltAt = ProcessInfo.processInfo.systemUptime }
+             do {
+                 if track == .mic { try startMic() } else { try system.start(deliver) }
+                 lastProblem[track] = nil
+@@ -109,16 +132,24 @@ public final class LiveCapture: CaptureSource, @unchecked Sendable {
+             }
+         }
+         pending[track] = item
+-        queue.asyncAfter(deadline: .now() + (deviceChanged ? 0.5 : 0), execute: item)
++        queue.asyncAfter(deadline: .now() + (delay ?? (deviceChanged ? 0.5 : 0)), execute: item)
+     }
+ 
+     /// CoreAudio can announce a new default device before a Bluetooth device has finished connecting, or a mic can go
+     /// silent after an HFP switch, with no further notification. Rebuild whatever stopped delivering. The tap only
+     /// delivers while the output device runs, so an idle one isn't stalled; nor is one that never delivered (the
+     /// system-audio permission prompt may be up, and Core Audio blocks teardown until it is answered).
+     private func checkStalls() {
+-        if mic.activity.age >= Self.stallAfter, pending[.mic] == nil {
+-            stalledMics.insert(mic.device)
++        let silent = mic.activity.age
++        // A Bluetooth headset profile switch can rebind the input unit with no notification, leaving the engine running
++        // and silent; a silent mic no longer bound the way its tap was made is rebuilt now, as a route change. A fresh
++        // engine reads its binding back, so it is never rebound.
++        if silent >= 1, pending[.mic] == nil, mic.isRebound {
++            routeChanged(rebuildMic: true)
++        } else if silent >= Self.stallAfter, pending[.mic] == nil {
++            if Self.blamesMic(silent
 ```
 
----
-
-### Incident Patch 2: `405869dc` (2026-11-22)
-**Commit Message**: Notifications default to Persistent so the "Record this meeting?" prompt waits for a click (#784)
-
-**File**: `OpenOats/Sources/OpenOats/Info.plist` (modified, +2/-0)
+**File**: `OpenOats/Sources/OatsCapture/MicCapture.swift` (modified, +34/-0)
 ```diff
-@@ -45,6 +45,8 @@
-     <true/>
-     <key>SUPublicEDKey</key>
-     <string>RMSxoyjk8gEBvqmECGMvBLYQ7Kl7ptbacDBWSbsdgeI=</string>
-+    <key>NSUserNotificationAlertStyle</key>
-+    <string>alert</string>
-     <key>LSUIElement</key>
-     <true/>
-     <key>NSAppTransportSecurity</key>
+@@ -5,8 +5,16 @@ import OatsObjC
+ 
+ /// The Mic track: an AVAudioEngine input tap on one device. Used on the LiveCapture queue only.
+ final class MicCapture: @unchecked Sendable {
++    /// What a tap was made for: the input unit's device and the hardware format.
++    struct Binding: Equatable {
++        var device: AudioDeviceID
++        var rate: Double
++        var channels: AVAudioChannelCount
++    }
++
+     private let queue: DispatchQueue
+     private var engine: AVAudioEngine?
++    private var bound: Binding?
+     /// AVAudioEngine teardown races AVAudioIOUnit callbacks during route changes (AirPods); keep recently
+     /// stopped engines alive so AVFAudio's internal queues can drain.
+     private var retired: [AVAudioEngine] = []
+@@ -16,6 +24,29 @@ final class MicCapture: @unchecked Sendable {
+ 
+     init(queue: DispatchQueue) { self.queue = queue }
+ 
++    /// True when the input unit moved to another device, or the hardware has a usable format other than the tap's. An
++    /// unknown device or unusable format (mid switch) is left to the restart and the watchdog.
++    static func rebound(_ tap: Binding, now: Binding) -> Bool {
++        (now.device != kAudioObjectUnknown && now.device != tap.device)
++            || (now.rate > 0 && now.channels > 0 && (now.rate != tap.rate || now.channels != tap.channels))
++    }
++
++    /// Whether the running engine is no longer bound the way its tap was made. Cheap; reads the unit and node.
++    var isRebound: Bool {
++        guard let engine, let bound, let unit = engine.inputNode.audioUnit else { return false }
++        let hardware = try? Self.guarded { engine.inputNode.inputFormat(forBus: 0) }
++        let now = Binding(device: Self.device(of: unit) ?? AudioDeviceID(kAudioObjectUnknown),
++                          rate: hardware?.sampleRate ?? 0, channels: hardware?.channelCount ?? 0)
++        return Self.rebound(bound, now: now)
++    }
++
++    private static func device(of unit: AudioUnit) -> AudioDeviceID? {
++        var id = AudioDeviceID(kAudioObjectUnknown)
++        var size = UInt32(MemoryLayout<AudioDeviceID>.size)
++        let status = AudioUnitGetProperty(unit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &id, &size)
++        return status == noErr && id != kAudioObjectUnknown ? id : nil
++    }
++
+     /// Builds a fresh engine on `device`, replacing any running one. On failure the engine is retired again.
+     func start(device: AudioDeviceID, _ deliver: @escaping @Sendable (CapturedAudio) -> Void) throws {
+         stop()
+@@ -49,6 +80,8 @@ final class MicCapture: @unchecked Sendable {
+         let channels = usable ? hardware.channelCount : output.channelCount
+         guard rate > 0, channels > 0, let tapFormat = AVAudioFormat(standardFormatWithSampleRate: rate, channels: channels)
+         else { throw CaptureError.micFailed("no usable input format") }
++        // Read back, so a fresh engine is never rebound by construction.
++        bound = Binding(device: Self.device(of: unit) ?? device, rate: rate, channels: channels)
+         let resampler = Resampler(.mic, deliver)
+         let activity = activity
+         try Self.guarded {
+@@ -72,6 +105,7 @@ final class MicCapture: @unchecked Sendable {
+     func stop() {
+         if let observer { NotificationCenter.default.removeObserver(observer) }
+         observer = nil
++        bound = nil
+         guard let engine else { return }
+         _ = OatsCatchException { engine.inputNode.removeTap(onBus: 0) }
+         _ = OatsCatchException { engine.stop() }
+```
+
+**File**: `OpenOats/Sources/OatsCore/Recorder.swift` (modified, +21/-1)
+```diff
+@@ -142,10 +142,30 @@ public final class Recorder: @unchecked Sendable {
+     @discardableResult
+     public func stop() throws -> MeetingFolder {
+         source.stop()
+-        try queue.sync { try finish() }
++        try queue.sync {
++            guard !finished else { return }
++            try padStoppedTracks()
++            try finish()
++        }
+         return folder
+     }
+ 
++    /// A track that stopped delivering before Stop (a mic gone silent) ends with silence, like a gap, so the tracks end
++    /// together. One that never delivered stays empty. Written 10 s at a time, so a long silence stays small in memory.
++    private func padStoppedTracks() throws {
++        try write()
++        let end = Int(((clock() - startTime) * TrackAudio.sampleRate).rounded())
++        let chunk = 10 * Int(TrackAudio.sampleRate), zeros = Data(count: 2 * chunk)
++        for (track, var writer) in writers where writer.written > 0 && writer.written < end {
++            while writer.written < end {
++                let count = min(chunk, end - writer.written)
++                try writer.handle.write(contentsOf: zeros.prefix(2 * count))
++                writer.written += count
++            }
++            writers[track] = writer
++        }
++    }
++
+     private func append(_ chunk: CapturedAudio) {
+         guard !finished, var writer = writers[chunk.track] else { return }
+         let offset = Int(((chunk.hostTime - startTime) * TrackAudio.sampleRate).rounded())
+```
+
+**File**: `OpenOats/Tests/OatsCaptureTests/MicRebuildTests.swift` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++import CoreAudio
++@testable import OatsCapture
++import Testing
++
++private func bound(_ device: AudioDeviceID, _ rate: Double, _ channels: UInt32) -> MicCapture.Binding {
++    MicCapture.Binding(device: device, rate: rate, channels: channels)
++}
++
++@Test func aNewHardwareFormatRebuildsTheMic() {
++    // Bluetooth headset profile switch: AVFAudio rebinds the input to a 1 ch 44.1 kHz device under a 48 kHz tap.
++    #expect(MicCapture.rebound(bound(125, 48_000, 2), now: bound(167, 44_100, 1)))
++    #expect(MicCapture.rebound(bound(125, 48_000, 1), now: bound(125, 44_100, 1)))
++    #expect(MicCapture.rebound(bound(125, 48_000, 2), now: bound(125, 48_000, 1)))
++    // Engine 1 right after start: 3 ch 44.1 kHz → 3 ch 48 kHz.
++    #expect(MicCapture.rebound(bound(101, 44_100, 3), now: bound(101, 48_000, 3)))
++}
++
++@Test func anotherDeviceRebuildsTheMicEvenAtTheSameFormat() {
++    #expect(MicCapture.rebound(bound(125, 48_000, 1), now: bound(167, 48_000, 1)))
++}
++
++@Test func aFreshEngineIsNotRebound() {
++    // The change a fresh engine posts just after starting reports the binding its tap was made at.
++    #expect(!MicCapture.rebound(bound(125, 48_000, 1), now: bound(125, 48_000, 1)))
++}
++
++@Test func anUnknownDeviceOrUnusableFormatIsLeftToTheWatchdog() {
++    let unknown = AudioDeviceID(kAudioObjectUnknown)
++    #expect(!MicCapture.rebound(bound(125, 48_000, 1), now: bound(unknown, 0, 0)))
++    #expect(!MicCapture.rebound(bound(125, 48_000, 1), now: bound(125, 0, 1)))
++    #expect(!MicCapture.rebound(bound(125, 48_000, 1), now: bound(125, 44_100, 0)))
++}
++
++@Test func routeRebuildsAreDebouncedAndAtMostOneEvery2Seconds() {
++    #expect(LiveCapture.routeRebuildDelay(sinceLast: .infinity) == 0.5)
++    #expect(LiveCapture.routeRebuildDelay(sinceLast: 10) == 0.5)
++    #expect(LiveCapture.routeRebuildDelay(sinceLast: 0.5) == 1.5)
++    #expect(LiveCapture.routeRebuildDelay(sinceLast: 0) == 2)
++}
++
++@Test func aMicSilentSinceARouteChangeIsNotBlamed() {
++    // Rebuilt 0.5 s after the change, silent ever since.
++    #expect(!LiveCapture.blamesMic(silentFor: 4, sinceRouteChange: 4.5))
++    #expect(!LiveCapture.blamesMic(silentFor: 5, sinceRouteChange: 6))
++}
++
++@Test func aMicThatDiesWithNoRouteChangeIsBlamed() {
++    #expect(LiveCapture.blamesMic(silentFor: 4, sinceRouteChange: .infinity))
++    // Worked for a while after the change, then went silent; or stayed silent through a second rebuild.
++    #expect(LiveCapture.blamesMic(silentFor: 4, sinceRouteChange: 30))
++    #expect(LiveCapture.blamesMic(silentFor: 4, sinceRouteChange: 8.5))
++}
+```
+
+**File**: `OpenOats/Tests/OatsCoreTests/RecorderTests.swift` (modified, +32/-0)
+```diff
+@@ -117,6 +117,38 @@ final class EventLog: @unchecked Sendable {
+         #expect(mic[31_999] == 100 && mic[32_000] == 101 && mic[39_999] == 101 && mic[40_000] == 102)
+     }
+ 
++    @Test func padsATrackThatStoppedDeliveringToTheEndOfTheRecording() throws {
++        let recorder = try start()
++        source.send(.system, 200, seconds: 2, at: 0)
++        // The mic goes silent after a second and delivers nothing more before Stop at 3 s.
++        source.send(.mic, 100, seconds: 1, at: 0)
++        source.now = 1003
++        let folder = try recorder.stop()
++
++        let mic = try samples(folder.micTrackURL), system = try samples(folder.systemTrackURL)
++        #expect(mic.count == 48_000 && system.count == 48_000)
++        #expect(mic[15_999] == 100 && mic[16_000] == 0 && mic[47_999] == 0)
++        #expect(system[31_999] == 200 && system[32_000] == 0)
++    }
++
++    @Test func padsALongSilenceInChunks() throws {
++        let recorder = try start()
++        source.send(.mic, 100, seconds: 1, at: 0)
++        source.now = 1025
++        let mic = try samples(try recorder.stop().micTrackURL)
++        #expect(mic.count == 400_000 && mic[15_999] == 100 && mic[16_000] == 0 && mic[399_999] == 0)
++    }
++
++    @Test func leavesATrackThatNeverDeliveredEmpty() throws {
++        let recorder = try start()
++        source.send(.mic, 100, seconds: 1, at: 0)
++        source.now = 1002
++        let folder = try recorder.stop()
++
++        #expect(try samples(folder.micTrackURL).count == 32_000)
++        #expect(try samples(folder.systemTrackURL).isEmpty)
++    }
++
+     @Test func systemTrackStartsAtItsFirstAudioWhenNothingPlaysAtFirst() throws {
+         let recorder = try start()
+         // The process tap delivers nothing while the output device is idle; then a meeting app starts playing,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #786** (2026-11-24): Rebuild a mic the headset rebound; don't blame mics for route changes; pad tracks at Stop (@yazinsai)
 - **PR #785** (2026-11-22): Name Meetings after their calendar event (optional) (@yazinsai)
 - **PR #784** (2026-11-22): Notifications default to Persistent so the "Record this meeting?" prompt waits for a click (@yazinsai)
+- **PR #783** (closed): Rebuild the mic at once when AVFAudio rebinds it during a Bluetooth route change (@dandaka)
+- **PR #782** (2026-11-24): Mic tap uses the engine's input hardware format and survives AVFAudio exceptions (@dandaka)
 - **PR #780** (2026-11-17): Stop the recording when the Mac sleeps; retry cloud calls while offline after wake (@yazinsai)
-- **PR #779** (closed): Handle sleep, back-to-back meetings and quitting mid-processing (@yazinsai)
-- **PR #778** (2026-11-17): Update Homebrew cask for 2.1.0 (@yazinsai)
-- **PR #777** (2026-11-17): Meeting detection: a "Record this meeting?" prompt for the app on the mic (@yazinsai)
 
 ---
 
@@ -1204,51 +1234,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Name Meetings after their calendar event, optionally: matched at Stop over the w
+## X. Rebuild a mic the headset rebound; don't blame mics for route changes; pad track
 
 **RULE**:
-When implementing operations in `OpenOats/Sources/OatsCore/CalendarTitle.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yazinsai/OpenOats. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `OpenOats/Sources/OatsCapture/LiveCapture.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yazinsai/OpenOats. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e84f291`: Name Meetings after their calendar event, optionally: matched at Stop over the whole recording, events with others or a call link only; asked for only from the Settings toggle, an optional onboarding row or a one-time tip; ADR 0006. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d8caac78`: Rebuild a mic the headset rebound; don't blame mics for route changes; pad tracks at Stop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `OpenOats/Sources/OatsCore/CalendarTitle.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `OpenOats/Sources/OatsCapture/LiveCapture.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-import Foundation
-
-/// A calendar event as the title lookup sees it. The app reads these from EventKit, leaving out all-day, cancelled
-/// and declined events.
-public struct CalendarEvent: Sendable, Equatable {
-    public var title: String
-    public var start: Date
-    public var end: Date
-    /// Other attendees or a call link: a meeting, not a personal block such as "Focus" or "Lunch".
-    public var withOthers: Bool
-
-    public init(title: String, start: Date, end: Date, withOthers: Bool) {
-        self.title = title
-        self.start = start
-        self.end = end
-        self.withOthers = withOthers
+    /// Last default-device change or mic hardware format change, on the `Activity` clock.
+    private var routeChangedAt = -TimeInterval.infinity
+    private var micRebuiltAt = -TimeInterval.infinity
+            listen(kAudioHardwarePropertyDefaultInputDevice) { $0.routeChanged(rebuildMic: true) }
+                $0.routeChanged(rebuildMic: false)
+    /// A default device or the mic's hardware format changed: every mic is eligible again, and silence that follows
+    /// isn't held against the mic.
+    private func routeChanged(rebuildMic: Bool) {
+        let now = ProcessInfo.processInfo.systemUptime
+        routeChangedAt = now
+        stalledMics = []
+        if rebuildMic { rebuild(.mic, deviceChanged: true, after: Self.routeRebuildDelay(sinceLast: now - micRebuiltAt)) }
     }
 
-    /// The title of the meeting a recording was part of: the event with others it overlaps most, the shorter one on a
-    /// tie (a meeting inside an all-hands block). The overlap must be at least a quarter of the shorter of the two,
-    /// so a recording that started in the last minutes of the previous meeting isn't named after it. nil when none.
-    public static func title(for recording: DateInterval, in events: [CalendarEvent]) -> String? {
-        let candidates = events.compactMap { event -> (CalendarEvent, TimeInterval)? in
-            let title = event.title.tri
+    /// A burst of route changes causes one rebuild, and at most one every 2 s.
+    static func routeRebuildDelay(sinceLast: TimeInterval) -> TimeInterval {
+        max(0.5, 2 - sinceLast)
+    }
+
+    /// Whether a mic silent for `silentFor` seconds is to blame: not if a route changed shortly before it went silent.
+    static func blamesMic(silentFor: TimeInterval, sinceRouteChange: TimeInterval) -> Bool 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            listen(kAudioHardwarePropertyDefaultInputDevice) { $0.rebuild(.mic, deviceChanged: true) }
+                $0.stalledMics = []
+    private func rebuild(_ track: Track, deviceChanged: Bool) {
+        queue.asyncAfter(deadline: .now() + (deviceChanged ? 0.5 : 0), execute: item)
+        if mic.activity.age >= Self.stallAfter, pending[.mic] == nil {
+            stalledMics.insert(mic.device)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e84f291` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d8caac78` are properly handled with clean fallback behavior.

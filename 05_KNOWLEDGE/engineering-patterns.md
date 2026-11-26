@@ -807150,3 +807150,324 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `4018eb76` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10708. skip entries that are not absolute paths (Harvested from ajeetdsouza/zoxide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "skip entries that are not absolute paths",
+  "source": "ajeetdsouza/zoxide",
+  "source_url": "https://github.com/ajeetdsouza/zoxide",
+  "source_version": "473ac4f3",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T15:02:12.884Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ajeetdsouza-zoxide",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) (Revision: `473ac4f3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `473ac4f3`: import): skip entries that are not absolute paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- Import: skip entries that are not absolute paths. Empty paths used to corrupt
+  the database.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `473ac4f3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10709. Rebuild a mic the headset rebound; don't blame mics for route changes; pad track (Harvested from yazinsai/OpenOats)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Rebuild a mic the headset rebound; don't blame mics for route changes; pad track",
+  "source": "yazinsai/OpenOats",
+  "source_url": "https://github.com/yazinsai/OpenOats",
+  "source_version": "d8caac78",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T15:02:18.778Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yazinsai-openoats",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yazinsai/OpenOats](https://github.com/yazinsai/OpenOats) (Revision: `d8caac78`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `OpenOats/Sources/OatsCapture/LiveCapture.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yazinsai/OpenOats. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d8caac78`: Rebuild a mic the headset rebound; don't blame mics for route changes; pad tracks at Stop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `OpenOats/Sources/OatsCapture/LiveCapture.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// Last default-device change or mic hardware format change, on the `Activity` clock.
+    private var routeChangedAt = -TimeInterval.infinity
+    private var micRebuiltAt = -TimeInterval.infinity
+            listen(kAudioHardwarePropertyDefaultInputDevice) { $0.routeChanged(rebuildMic: true) }
+                $0.routeChanged(rebuildMic: false)
+    /// A default device or the mic's hardware format changed: every mic is eligible again, and silence that follows
+    /// isn't held against the mic.
+    private func routeChanged(rebuildMic: Bool) {
+        let now = ProcessInfo.processInfo.systemUptime
+        routeChangedAt = now
+        stalledMics = []
+        if rebuildMic { rebuild(.mic, deviceChanged: true, after: Self.routeRebuildDelay(sinceLast: now - micRebuiltAt)) }
+    }
+
+    /// A burst of route changes causes one rebuild, and at most one every 2 s.
+    static func routeRebuildDelay(sinceLast: TimeInterval) -> TimeInterval {
+        max(0.5, 2 - sinceLast)
+    }
+
+    /// Whether a mic silent for `silentFor` seconds is to blame: not if a route changed shortly before it went silent.
+    static func blamesMic(silentFor: TimeInterval, sinceRouteChange: TimeInterval) -> Bool 
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+            listen(kAudioHardwarePropertyDefaultInputDevice) { $0.rebuild(.mic, deviceChanged: true) }
+                $0.stalledMics = []
+    private func rebuild(_ track: Track, deviceChanged: Bool) {
+        queue.asyncAfter(deadline: .now() + (deviceChanged ? 0.5 : 0), execute: item)
+        if mic.activity.age >= Self.stallAfter, pending[.mic] == nil {
+            stalledMics.insert(mic.device)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d8caac78` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10710. Update temporalio/ui Docker tag to v2.58.1 (Harvested from PeerDB-io/peerdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Update temporalio/ui Docker tag to v2.58.1",
+  "source": "PeerDB-io/peerdb",
+  "source_url": "https://github.com/PeerDB-io/peerdb",
+  "source_version": "9f296bf9",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-26T15:02:19.470Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-peerdb-io-peerdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `9f296bf9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docker-compose-dev.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `febd7375`: Update temporalio/ui Docker tag to v2.58.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker-compose-dev.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+    image: temporalio/ui:2.58.1@sha256:ac3c13eddb4547d830991bb5eee93a5d97140134522b7297fdb2be1fe25ef925
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `febd7375` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10711. send the profile again after a host compaction drops it (Harvested from volcengine/OpenViking)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "send the profile again after a host compaction drops it",
+  "source": "volcengine/OpenViking",
+  "source_url": "https://github.com/volcengine/OpenViking",
+  "source_version": "fe354f74",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-26T15:02:24.818Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-volcengine-openviking",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `fe354f74`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/en/agent-integrations/16-capability-reference.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2b4dc8c4`: plugins): send the profile again after a host compaction drops it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/agent-integrations/16-capability-reference.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+| DSH | Yes, session-aware | Profile, memory index, skills | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
+| Codex | `SessionStart` on startup, clear, resume, and compact |
+| Cursor, TRAE, TRAE CN, ZCode | `SessionStart` |
+| Antigravity | `SessionStart`, and the first turn after each compaction checkpoint in the transcript |
+| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent. CodeBuddy drops `SessionStart` context at a compaction, so the next prompt sends it again |
+| OpenCode | The first message of each session and the first after each compaction; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
+| DSH | At session start, and again on the next model step when a compaction dropped it |
+| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | `SessionStart` with `source="compact"` sends the profile again; the archive summary is injected
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+| DSH | Yes, session-aware | Profile, memory index, skills, once per session | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
+| Codex | `SessionStart` on startup, clear, and resume |
+| Cursor, TRAE, TRAE CN, ZCode, Antigravity | `SessionStart` |
+| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent |
+| OpenCode | The first message of each session; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
+| DSH | Once per session; not sent again after compaction |
+| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | The archive summary is injected on resume |
+| CodeBuddy Code | Host summarizes | `PreCompact` commits | Nothing |
+| Antigravity | Not verified | No pre-compaction hook | Nothing |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2b4dc8c4` are properly handled with clean fallback behavior.

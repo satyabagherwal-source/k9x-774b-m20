@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T14:53:37.102Z",
+  "last_updated": "2026-11-26T15:02:32.199Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -2043,7 +2043,7 @@
       "staged_for_review": 1
     },
     "hf-unsloth-qwen-image-2.1-gguf-learnings.md": {
-      "processed_at": "2026-11-22T22:06:36.262Z",
+      "processed_at": "2026-11-26T15:02:30.466Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3203,7 +3203,7 @@
       "staged_for_review": 0
     },
     "yazinsai-openoats-learnings.md": {
-      "processed_at": "2026-11-24T04:45:23.117Z",
+      "processed_at": "2026-11-26T15:02:30.996Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3433,7 +3433,7 @@
       "staged_for_review": 1
     },
     "ajeetdsouza-zoxide-learnings.md": {
-      "processed_at": "2026-11-24T04:53:59.315Z",
+      "processed_at": "2026-11-26T15:02:29.184Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3978,7 +3978,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4554,
+  "total_dossiers_evaluated": 4557,
   "total_canonical_promoted": 562,
-  "total_staged_for_review": 3433
+  "total_staged_for_review": 3435
 }

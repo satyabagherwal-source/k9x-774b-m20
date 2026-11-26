@@ -13466,3 +13466,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-26T14:53:21.864Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `8838e415` | Multi-dimensional audit evidence | 2026-11-26T14:53:25.638Z |
 | `learn-github-metrolistgroup-metrolist` | `https://github.com/MetrolistGroup/Metrolist` | `6fa4e821` | Multi-dimensional audit evidence | 2026-11-26T14:53:28.643Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-26T15:02:09.924Z |
+| `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `473ac4f3` | Multi-dimensional audit evidence | 2026-11-26T15:02:13.520Z |
+| `learn-github-yazinsai-openoats` | `https://github.com/yazinsai/OpenOats` | `d8caac78` | Multi-dimensional audit evidence | 2026-11-26T15:02:19.508Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `9f296bf9` | Multi-dimensional audit evidence | 2026-11-26T15:02:20.226Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `fe354f74` | Multi-dimensional audit evidence | 2026-11-26T15:02:25.492Z |
