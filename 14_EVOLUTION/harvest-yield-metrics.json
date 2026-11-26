@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T03:21:25.389Z",
-  "total_cycles_completed": 12552,
-  "total_learnings_persisted": 12552,
+  "last_updated": "2026-11-26T03:29:54.877Z",
+  "total_cycles_completed": 12553,
+  "total_learnings_persisted": 12553,
   "total_rules_promoted": 11486,
   "history": [
-    {
-      "timestamp": "2026-11-25T08:43:55.640Z",
-      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
-      "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T08:44:08.970Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1396,13 @@
       "repository": "graphprotocol/graph-node",
       "learningId": "learn-github-graphprotocol-graph-node",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T03:29:54.877Z",
+      "repository": "Comfy-Org/RelayVSR",
+      "learningId": "learn-huggingface-comfy-org-relayvsr",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

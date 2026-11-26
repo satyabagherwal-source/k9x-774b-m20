@@ -13257,3 +13257,4 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d536eec8` | Multi-dimensional audit evidence | 2026-11-26T03:13:14.402Z |
 | `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-26T03:21:24.389Z |
 | `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `abab8260` | Multi-dimensional audit evidence | 2026-11-26T03:21:25.376Z |
+| `learn-huggingface-comfy-org-relayvsr` | `https://huggingface.co/Comfy-Org/RelayVSR` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-26T03:29:54.863Z |

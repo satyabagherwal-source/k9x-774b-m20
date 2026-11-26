@@ -12365,8 +12365,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/RelayVSR",
     "sourceVersion": "hf-comfy-org-relayvsr",
     "license": "Open-Source",
-    "contentHash": "c518870b1fe1f8ed567fdebf1927ade100d4917bd1f004bea9e7fdb91c69b713",
-    "lastHarvestedAt": "2026-11-22T06:49:19.251Z",
+    "contentHash": "f4a211814f7d6f697cc0371cc20f25f30914a0753e507f6d9ec485d095910e39",
+    "lastHarvestedAt": "2026-11-26T03:29:54.863Z",
     "learningId": "learn-huggingface-comfy-org-relayvsr"
   },
   "hf-zyphra-zonos3-mini": {

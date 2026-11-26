@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T03:21:25.392Z",
+  "last_updated": "2026-11-26T03:29:54.882Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18606,14 +18606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-relayvsr",
-      "content_hash": "c518870b1fe1f8ed567fdebf1927ade100d4917bd1f004bea9e7fdb91c69b713",
-      "verified_at": "2026-11-22T06:49:19.259Z",
+      "content_hash": "f4a211814f7d6f697cc0371cc20f25f30914a0753e507f6d9ec485d095910e39",
+      "verified_at": "2026-11-26T03:29:54.881Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T06:49:19.259Z"
+      "last_updated": "2026-11-26T03:29:54.881Z"
     },
     "Zyphra/ZONOS3-Mini": {
       "repository": "Zyphra/ZONOS3-Mini",
