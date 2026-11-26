@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:27:01.827Z",
+  "last_updated": "2026-11-26T01:36:43.888Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-26T00:59:36.910Z",
+      "processed_at": "2026-11-26T01:36:42.577Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -913,8 +913,8 @@
       "staged_for_review": 1
     },
     "hf-prunaai-p-h3-image-learnings.md": {
-      "processed_at": "2026-11-22T04:39:42.430Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-26T01:36:40.752Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "zarf-dev-zarf-learnings.md": {
@@ -2228,7 +2228,7 @@
       "staged_for_review": 0
     },
     "infiniflow-infinity-learnings.md": {
-      "processed_at": "2026-11-25T00:08:37.898Z",
+      "processed_at": "2026-11-26T01:36:41.358Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4314,
+  "total_dossiers_evaluated": 4317,
   "total_canonical_promoted": 549,
-  "total_staged_for_review": 3277
+  "total_staged_for_review": 3279
 }

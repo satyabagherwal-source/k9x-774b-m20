@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T01:27:01.668Z",
+  "last_updated": "2026-11-26T01:36:43.677Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25604,
+  "total_items": 25607,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f68a3d930bc1f218b7e8a9212c21207fb21989c703735027dc72963dd7636233",
+      "content_hash": "aeb9a0f64a672b422786dc1f019a90cbf99ac5246728b6de0fea0851e02b8c5b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T00:59:37.506Z"
+      "persisted_at": "2026-11-26T01:36:43.388Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c0bb1820b12167b4c354401442cf145c94dae0287c3d704a7a68747f790aa5b",
+      "content_hash": "8cf943c9c5847da0cf6ae43bc52458d0a8c13a09a1cb7fe036206703a44a1ef6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:59:37.694Z"
+      "persisted_at": "2026-11-26T01:36:43.677Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -218960,8 +218960,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "75bc1f15",
-      "content_hash": "6082cbd3438dbdfc87ffe100964b7ef7b3eb742b4996bd709c38cd048a4d052a",
+      "source_version": "2842d7e4",
+      "content_hash": "c7f4994f2c8555f885426e8d8e48633c292510b48b1f3bcba9d8715cf86b8bd9",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -219014,6 +219014,11 @@
           "number": 10395,
           "title": "align COPY/JSONL import, fulltext chunks & query parsing, and optim",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10581,
+          "title": "update doc_id_ before BM25Score threshold check in PhraseDocIter",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219021,7 +219026,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:08:30.220Z",
+      "verified_at": "2026-11-26T01:36:36.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219075,10 +219080,10 @@
       "relative_path": "08_VERIFICATION/infiniflow-infinity-verification-protocol-empirical-defect-shield-for-infiniflow.md",
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow/infinity",
       "repository": "infiniflow/infinity",
-      "source_version": "75bc1f15",
-      "content_hash": "5c15b8b8913b1ef924d43fc467b58714643ba3164ce8db6e03a5ffe567062d2c",
+      "source_version": "2842d7e4",
+      "content_hash": "3b2edc3128f539395c1c8f423e720ec35fca1a8abfaca7522434817b5c62764a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:08:30.973Z"
+      "persisted_at": "2026-11-26T01:36:37.789Z"
     },
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -219233,9 +219238,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow-infinity-learnings",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "aea418dd7adf5273c658a70276d68f13c0b421a4b84509a7c3b0337ca5bb1d46",
+      "content_hash": "28852c015a2ca0fedeee05eb7d1f48d12f807567db376414d9aefd4a283de052",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:08:38.481Z"
+      "persisted_at": "2026-11-26T01:36:42.319Z"
     },
     "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase": {
       "item_id": "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase",
@@ -267279,7 +267284,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PrunaAI/P-H3-Image",
       "source_version": "hf-prunaai-p-h3-image",
-      "content_hash": "cb5546f06b66d9f4bb01a37f98d0e73dfaa60f3ef58de06a616da1167e7ff071",
+      "content_hash": "2a47d2a3947e0eaf2dfa5674c7ec5c0c5a72a8aad31e11d7ccc9c4cad23aaeb7",
       "dossier_path": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md",
       "promoted_rules": [],
@@ -267288,7 +267293,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T04:38:56.879Z",
+      "verified_at": "2026-11-26T01:36:20.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267513,9 +267518,9 @@
       "title": "Research & Knowledge Intelligence: hf-prunaai-p-h3-image-learnings Core Invariants",
       "repository": "hf-prunaai-p-h3-image-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ecc7b9cefd274306f314e3987f3d566495159b1eafa8d6ec668bc37bd890038",
+      "content_hash": "343aa978eba76b14cde216213e82b1778351764c93f0afc7309701408efd11eb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T04:39:42.740Z"
+      "persisted_at": "2026-11-26T01:36:41.061Z"
     },
     "candidate_directive-ci-persist-ui-and-console-image-caches-across-runners": {
       "item_id": "candidate_directive-ci-persist-ui-and-console-image-caches-across-runners",
@@ -301723,10 +301728,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-technical-construction-intelligence-infiniflow-infinity-core.md",
       "title": "Technical Construction Intelligence: infiniflow/infinity Core Invariants",
       "repository": "infiniflow/infinity",
-      "source_version": "e7db7afb",
-      "content_hash": "ae0c3eaf557cdd8f22d7ad7c2e5c533b43cc5e1332ec5424f6174bc8bd91f4cd",
+      "source_version": "2842d7e4",
+      "content_hash": "2ad51fd4230381294bf756141c479c5b49aaecad75335da24250e294b2d07473",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T03:41:51.182Z"
+      "persisted_at": "2026-11-26T01:36:37.532Z"
     },
     "rule-9426": {
       "learning_id": "rule-9426",
@@ -321677,9 +321682,9 @@
       "title": "Technical Construction Intelligence: infiniflow-infinity-learnings Core Invariants",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "cebb80e040b22f1e827cea79b029fc9c3ae4ee837bb1afe7fc08bc2c5e9ef98f",
+      "content_hash": "555b28cfbfc407e4fb0c7d1f9d2510152b1c23264968a1d4ad038cf0f31f8e2c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T03:41:56.525Z"
+      "persisted_at": "2026-11-26T01:36:42.010Z"
     },
     "rule-9884": {
       "learning_id": "rule-9884",
@@ -322370,9 +322375,9 @@
       "title": "Research & Knowledge Intelligence: PrunaAI/P-Image-OSS Core Invariants",
       "repository": "PrunaAI/P-Image-OSS",
       "source_version": "hf-prunaai-p-h3-image",
-      "content_hash": "e6ff11d0d35ee50a8364a0acc4888e3af74fd0b0a78cfdb1cddb0e73e3fd88ca",
+      "content_hash": "c4e89af882713fc54a9d4a68b30d33ca9ca70e4f4a425687754a6c114fc18693",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T04:38:57.418Z"
+      "persisted_at": "2026-11-26T01:36:21.417Z"
     },
     "rule-9895": {
       "learning_id": "rule-9895",
@@ -336525,13 +336530,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HPM0-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TF24-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "69c25c5eaec165d4503179ff0de7f08b4b1fe06f11e7c1e83a4c891a00f64b89",
+      "content_hash": "5cc93222a56de738ae842e35d086c9f9c0fae76d46801cd5453b375b8c6f3440",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T00:59:37.323Z"
+      "persisted_at": "2026-11-26T01:36:43.136Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -350537,6 +350542,44 @@
       "content_hash": "28c4eb8f1a6e7762b586c30a46bce13cdd4fc8d858406ceb9ec502b749dbd70e",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T01:26:33.631Z"
+    },
+    "rule-10581": {
+      "learning_id": "rule-10581",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10581,
+      "title": "update doc_id_ before BM25Score threshold check in PhraseDocIter",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "2842d7e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T01:36:36.617Z"
+    },
+    "candidate_directive-update-doc_id_-before-bm25score-threshold-check-in-phrasedociter": {
+      "item_id": "candidate_directive-update-doc_id_-before-bm25score-threshold-check-in-phrasedociter",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TAJE-update-doc_id_-before-bm25score-threshold-check-in-phrasedociter.md",
+      "title": "update doc_id_ before BM25Score threshold check in PhraseDocIter",
+      "repository": "infiniflow/infinity",
+      "source_version": "2842d7e4",
+      "content_hash": "02bd38e8126cf731f081e6ae9134ab7880522053e8ce0bac889aed2f4b10511e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:36:37.275Z"
+    },
+    "candidate_directive-invertedindex-update-doc_id_-before-bm25score-threshold-check-in-phrasedociter": {
+      "item_id": "candidate_directive-invertedindex-update-doc_id_-before-bm25score-threshold-check-in-phrasedociter",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TDZZ-invertedindex-update-doc_id_-before-bm25score-threshold-check-in-phrasedociter.md",
+      "title": "invertedindex): update doc_id_ before BM25Score threshold check in PhraseDocIter",
+      "repository": "infiniflow-infinity-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ae6a2abcc71b8efe2438717b53777ad30657b3aade0c1df5fae08fff56b0fd62",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:36:41.760Z"
     }
   },
   "ai-builder-brain": {

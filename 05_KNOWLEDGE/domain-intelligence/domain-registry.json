@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T01:27:01.467Z",
+  "last_updated": "2026-11-26T01:36:43.388Z",
   "total_records": 2699,
   "domains": {
     "A": {
@@ -8514,8 +8514,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "f68a3d930bc1f218b7e8a9212c21207fb21989c703735027dc72963dd7636233",
-      "created_at": "2026-11-26T00:59:37.506Z"
+      "content_hash": "aeb9a0f64a672b422786dc1f019a90cbf99ac5246728b6de0fea0851e02b8c5b",
+      "created_at": "2026-11-26T01:36:43.388Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -25701,8 +25701,8 @@
       "title": "Research & Knowledge Intelligence: hf-prunaai-p-h3-image-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-learnings-research-knowledge-intelligence-hf-prunaai-p-h3-.md",
       "repository": "hf-prunaai-p-h3-image-learnings",
-      "content_hash": "2ecc7b9cefd274306f314e3987f3d566495159b1eafa8d6ec668bc37bd890038",
-      "created_at": "2026-11-22T04:39:42.740Z"
+      "content_hash": "343aa978eba76b14cde216213e82b1778351764c93f0afc7309701408efd11eb",
+      "created_at": "2026-11-26T01:36:41.061Z"
     },
     "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants",
@@ -34420,8 +34420,8 @@
       "title": "Technical Construction Intelligence: infiniflow/infinity Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-technical-construction-intelligence-infiniflow-infinity-core.md",
       "repository": "infiniflow/infinity",
-      "content_hash": "ae0c3eaf557cdd8f22d7ad7c2e5c533b43cc5e1332ec5424f6174bc8bd91f4cd",
-      "created_at": "2026-11-24T03:41:51.182Z"
+      "content_hash": "2ad51fd4230381294bf756141c479c5b49aaecad75335da24250e294b2d07473",
+      "created_at": "2026-11-26T01:36:37.532Z"
     },
     "DOM-D-2BF9F19D": {
       "record_id": "DOM-D-2BF9F19D",
@@ -39394,8 +39394,8 @@
       "title": "Technical Construction Intelligence: infiniflow-infinity-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-learnings-technical-construction-intelligence-infiniflow-inf.md",
       "repository": "infiniflow-infinity-learnings",
-      "content_hash": "cebb80e040b22f1e827cea79b029fc9c3ae4ee837bb1afe7fc08bc2c5e9ef98f",
-      "created_at": "2026-11-24T03:41:56.525Z"
+      "content_hash": "555b28cfbfc407e4fb0c7d1f9d2510152b1c23264968a1d4ad038cf0f31f8e2c",
+      "created_at": "2026-11-26T01:36:42.010Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
@@ -39578,8 +39578,8 @@
       "title": "Research & Knowledge Intelligence: PrunaAI/P-Image-OSS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-research-knowledge-intelligence-prunaai-p-image-oss-core-i.md",
       "repository": "PrunaAI/P-Image-OSS",
-      "content_hash": "e6ff11d0d35ee50a8364a0acc4888e3af74fd0b0a78cfdb1cddb0e73e3fd88ca",
-      "created_at": "2026-11-22T04:38:57.418Z"
+      "content_hash": "c4e89af882713fc54a9d4a68b30d33ca9ca70e4f4a425687754a6c114fc18693",
+      "created_at": "2026-11-26T01:36:21.417Z"
     },
     "DOM-D-03750A38": {
       "record_id": "DOM-D-03750A38",

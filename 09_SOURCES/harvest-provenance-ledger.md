@@ -13226,3 +13226,5 @@ Every entry in this ledger must capture:
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `a41117e7` | Multi-dimensional audit evidence | 2026-11-26T01:26:20.976Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `726f74dc` | Multi-dimensional audit evidence | 2026-11-26T01:26:29.643Z |
 | `learn-dom-i-f9c7458b` | `project://aws-aws-cdk` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md` | 2026-11-26T01:27:00.836Z |
+| `learn-huggingface-prunaai-p-h3-image` | `https://huggingface.co/PrunaAI/P-H3-Image` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-26T01:36:21.133Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `2842d7e4` | Multi-dimensional audit evidence | 2026-11-26T01:36:36.970Z |

@@ -4,22 +4,22 @@
 {
   "source_repository": "infiniflow/infinity",
   "source_url": "https://github.com/infiniflow/infinity",
-  "source_version": "75bc1f15",
+  "source_version": "2842d7e4",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T00:08:30.643Z",
+  "timestamp": "2026-11-26T01:36:37.275Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-infiniflow-infinity",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [infiniflow/infinity](https://github.com/infiniflow/infinity) (Revision: `75bc1f15`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T00:08:30.643Z`  
+> **Provenance**: Harvested from [infiniflow/infinity](https://github.com/infiniflow/infinity) (Revision: `2842d7e4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T01:36:37.275Z`  
 > **Learning ID**: `learn-github-infiniflow-infinity`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `infiniflow/infinity` (Commit: `75bc1f15`)
+- **Target Repository**: `infiniflow/infinity` (Commit: `2842d7e4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:08:29.336Z  
+> **Harvest Timestamp**: 2026-11-26T01:36:35.476Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4773 stars
+- **Stars / Engagement**: 4775 stars
 
 ---
 
@@ -1360,518 +1360,214 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75bc1f15` (2026-11-24)
-**Commit Message**: rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optimize WAND (#3587)
+### Incident Patch 1: `2842d7e4` (2026-11-25)
+**Commit Message**: fix(invertedindex): update doc_id_ before BM25Score threshold check in PhraseDocIterator::Next (#3590)
 
-**File**: `rust_engine/crates/executor/src/engine/dml.rs` (modified, +5/-14)
+**File**: `src/main/config_impl.cpp` (modified, +13/-2)
 ```diff
-@@ -1483,20 +1483,11 @@ impl Engine {
-         }
-     }
- 
--    /// Maintains declared indexes on insert.
--    pub(crate) fn update_indexes_on_insert(
--        &self,
--        table: &str,
--        seq: usize,
--        values: &[Literal],
--        schema: &[String],
--    ) -> Result<()> {
--        let targets = self.secondary_targets(table, schema);
--        self.insert_secondary_keys(&targets, seq, values)
--    }
--
--    /// [`Self::update_indexes_on_insert`] with the targets already resolved, for
--    /// a bulk load that resolves them once per batch.
-+    /// Feeds one row into every secondary index of `table`, resolving the
-+    /// targets first.
-+    ///
-+    /// Kept for the statement paths that insert one row at a time; a bulk load
-+    /// resolves the targets once and calls [`Self::insert_secondary_keys`].
-     pub(crate) fn insert_secondary_keys(
-         &self,
-         targets: &[SecondaryTarget],
-```
-
-**File**: `rust_engine/crates/executor/src/engine/import.rs` (modified, +113/-75)
-```diff
-@@ -404,14 +404,25 @@ impl Engine {
-                     }
-                     continue;
-                 }
--                // One allocation per cell, not two: `normalize_cell` hands back
--                // the field unchanged for the plain numeric/text cells that
-+                // A text cell keeps the file's bytes (the reference stores the
-+                // raw `string_view`), so only a parsed type is trimmed. One
-+                // allocation per cell, not two: `normalize_cell_cow` hands the
-+                // field back unchanged for the plain numeric/text cells that
-                 // make up most of a `COPY`.
-                 let mut cells: Vec<String> = fields
-                     .into_iter()
--                    .map(|f| match normalize_cell_cow(&f) {
--                        std::borrow::Cow::Borrowed(_) => f,
--                        std::borrow::Cow::Owned(o) => o,
-+                    .enumerate()
-+                    .map(|(i, f)| {
-+                        let trim = types_for_scan
-+                            .get(i)
-+                            .is_none_or(|t| !super::types::is_text_type(t));
-+                        let normalize_vector = types_for_scan.get(i).is_none_or(|t| {
-+                            !super::types::is_text_type(t) && !super::types::is_json_type(t)
-+                        });
-+                        match super::state::normalize_csv_cell_cow(&f, trim, normalize_vector) {
-+                            std::borrow::Cow::Borrowed(_) => f,
-+                            std::borrow::Cow::Owned(o) => o,
-+                        }
-                     })
-                     .collect();
-                 if cells.len() > types_for_scan.len() {
-@@ -525,6 +536,19 @@ impl Engine {
-                         for (seq, texts) in &texts_by_row {
-                             self.note_ivf_insert(table, *seq as u64, texts);
-                         }
-+                        // `PopulateFtIndexInner` checks the row capacity after
-+                        // **every block** it inserts and dumps the moment an
-+                        // index holds `mem_index_capacity` rows
-+                        // (`new_txn_index_impl.cpp:1406`), then starts a fresh
-+                        // memory indexer for the rest. The chunk boundaries an
-+                        // import leaves are therefore fixed by the row count,
-+                        // not by where the statement ends - a 100 k-row file
-+                        // with the default 65,536 comes out as 65,536 + 34,464
-+                        // on both engines. Sealing only once at the end wrote a
-+                        // single chunk instead, which merged the two indexes'
-+                        // dictionaries into one and made the on-disk layout
-+                        // differ from the reference's.
-+                        self.seal_text_over_capacity(table).await;
-                     }
-                     total += take;
-                     staged += take;
-@@ -609,6 +633,13 @@ impl Engine {
-     /// Inserts one row per JSON object (keyed by column name). Sparse columns
-     /// come as `{index: value}` objects (float) or index arrays (bit);
-     /// everything else is a scalar.
-+    ///
-+    /// The rows then take [`Self::import_literal_rows`], the same commit every
-+    /// other `COPY` format uses. This used to commit them here instead, with a
-+    /// hand-written transaction that published the rows but never wrote their
-+    /// block: `COPY … FORMAT JSONL` left chunks on disk and no `seg_0`, so the
-+    /// rows read back fine until the process restarted and then `count(*)` was
-+    /// 0 while `CSV` was unaffected (a silent loss of the whole file).
-     pub(crate) async fn insert_json_objects(
-         &self,
-         table: &str,
-@@ -675,55 +706,8 @@ impl Engine {
-         if rows.is_empty() {
-             return Ok(QueryResult::Inserted { count: 0 });
-         }
--        let opened = self.begin_import(table).await?;
--        let (range, _cursor) = self.reserve_import_rows(table, rows.len(), opened).await?;
--        let base = range.base;
--        self.note_index_insert(table, rows.len());
--        let mut t = self.txn.begin();
--        t.set_op(TxnOp::Import {
--            table: table.to_string(),
--        });
--        // `PrepareCommitImport` seals the segment and writes its rows into the
--        // block as part of the transaction, after it commits.
--        let turn = self.txn.reserve_commit_ts();
--        let ts = turn.ts();
--        let _ts = self.txn.commit_at_deferred(t, ts).await?;
--        let _visible = BottomGuard::new(&self.txn, _ts);
--        self.note_append(table, rows.len(), true, Some(_ts));
--        self.note_import_ts(table, (base >> 32) as u32, _ts);
--        self.publish_rows(table, base, &rows)?;
--        let schema = self.table_schema(table).unwrap_or_default();
--        // `NewTxn::Import`: the indexes are populated once, at the end of the
--        // transaction, not by the appen
-```
-
-**File**: `rust_engine/crates/executor/src/engine/index_build.rs` (modified, +45/-0)
-```diff
-@@ -1947,6 +1947,51 @@ impl Engine {
-         }
-     }
- 
-+    /// Seals every full-text index of `table` that has reached
-+    /// `mem_index_capacity` rows.
-+    ///
-+    /// This is the reference's in-loop dump: `PopulateFtIndexInner` inserts one
-+    /// block at a time and, after each, checks
-+    /// `memory_indexer->GetRowCount() >= mem_index_capacity`, dumps, and starts
-+    /// a new memory indexer (`new_txn_index_impl.cpp:1400-1425`). An import
-+    /// therefore leaves one chunk per full capacity worth of rows, and the
-+    /// chunk boundaries depend only on the row count. Sealing a single time
-+    /// once the statement ended produced one merged chunk instead, so the same
-+    /// file laid out differently from the reference's.
-+    ///
-+    /// Called from the import's staging loop; `capacity == 0` (the option
-+    /// turns the trigger off) leaves the whole tail for the end-of-import seal.
-+    pub(crate) async fn seal_text_over_capacity(&self, table: &str) {
-+        let capacity = self.memindex_capacity();
-+        if capacity == 0 {
-+            return;
-+        }
-+        let key = self.table_key(table);
-+        let full: Vec<(u64, SharedTextIndex)> = self
-+            .tables
-+            .lock()
-+            .unwrap()
-+            .get(&key)
-+            .map(|entry| {
-+                entry
-+                    .text
-+                    .iter()
-+                    .map(|(id, shared)| (*id, shared.clone()))
-+                    .collect()
-+            })
-+            .unwrap_or_default();
-+        for (index_id, shared) in full {
-+            let reached = {
-+                let index = shared.read().await;
-+                index.should_seal(capacity)
-+            };
-+            if !reached {
-+                continue;
-+            }
-+            self.seal_text_index(table, index_id).await;
-+        }
-+    }
-+
-     /// Runs `publish` with the index directory's write gate held
-     /// ([`crate::engine::text_index::dir_gate`]).
-     ///
-```
-
-**File**: `rust_engine/crates/executor/src/engine/state.rs` (modified, +619/-75)
-```diff
-@@ -313,7 +313,7 @@ pub(crate) fn innermost_groups(text: &str) -> Vec<Vec<String>> {
-             .collect()
-     } else {
-         let items: Vec<String> = inner
--            .split(',')
-+            .split(|c: char| c == ',' || c.is_ascii_whitespace())
-             .map(|s| s.trim().to_string())
-             .filter(|s| !s.is_empty())
-             .collect();
-@@ -2067,6 +2067,7 @@ impl std::hash::Hasher for FxHasher {
- /// rather than a trait object because doc()/tf()/len() run once per visited
- /// document inside the block-max WAND loop, where the indirect call was a
- /// measurable share of the work.
-+#[allow(clippy::large_enum_variant)]
- pub(crate) enum Source<'a> {
-     /// The unsealed segment's memory tail: (row, tf, positions) plus the
-     /// document-length map.
-@@ -2192,9 +2193,10 @@ impl<'a> Source<'a> {
-                 lens.push(cur.doc_len_at(i));
-             }
-             cur.skip(n);
--            // The block is consumed; only `doc()` can say whether another one
--            // follows (`skip` does not cross blocks, `block()` is now empty).
--            let ended = cur.doc().is_none();
-+            // Do not eagerly decode the next block via `cur.doc()`: if the
-+            // caller hops past it with `skip_block_shallow`, decoding it here
-+            // would be wasted work.
-+            let ended = cur.is_exhausted();
-             return (n, ended);
-         }
-         let mut n = 0;
-@@ -2218,6 +2220,12 @@ impl<'a> Source<'a> {
-         (n, self.doc().is_none())
-     }
- 
-+    pub(crate) fn disable_positions(&mut self) {
-+        if let Source::Segment(cur) = self {
-+            cur.disable_positions();
-+        }
-+    }
-+
-     pub(crate) fn advance(&mut self, target: u64) {
-         match self {
-             Source::Mem { list, at, .. } => {
-@@ -2234,6 +2242,32 @@ impl<'a> Source<'a> {
-         }
-     }
- 
-+    /// `NextShallow` for one source: move the block cursor to the block holding
-+    /// `target` without decoding it. `Some(true)` moved, `Some(false)` could not
-+    /// (needs the in-block walk), `None` exhausted.
-+    pub(crate) fn skip_block_shallow(&mut self, target: u64) -> Option<bool> {
-+        match self {
-+            Source::Segment(cur) => cur.skip_block_shallow(target),
-+            Source::Mem { .. } | Source::Owned { .. } => Some(false),
-+        }
-+    }
-+
-+    /// `BlockLastDocID()` from the skip list, without decoding the block.
-+    pub(crate) fn block_last_shallow(&mut self) -> Option<u64> {
-+        match self {
-+            Source::Segment(cur) => cur.block_last_only(),
-+            Source::Mem { .. } | Source::Owned { .. } => None,
-+        }
-+    }
-+
-+    /// `GetBlockMaxInfo()` from the skip list, without decoding the block.
-+    pub(crate) fn block_max_shallow(&mut self) -> Option<(u32, u16)> {
-+        match self {
-+            Source::Segment(cur) => cur.block_max_only(),
-+            Source::Mem { .. } | Source::Owned { .. } => None,
-+        }
-+    }
-+
-     /// The row range this source covers: sealed segments and the memory tail
-     /// know it, which is what the concat path needs.
-     pub(crate) fn range(&self) -> Option<(u64, u64)> {
-@@ -2266,7 +2300,7 @@ impl<'a> Source<'a> {
-         match self {
-             Source::Segment(cur) => {
-                 cur.doc()?;
--                let last_row = cur.block().and_then(|(rows, _, _)| rows.last().copied())?;
-+                let last_row = cur.block_rows().and_then(|rows| rows.last().copied())?;
-                 let (max_tf, pct) = cur.block_max()?;
-                 Some((last_row, max_tf, pct))
-             }
-@@ -2638,6 +2672,70 @@ impl<'a> MergeCursor<'a> {
-         }
-         self.settle();
-     }
-+
-+    /// `NextShallow`: move to the block holding `target` through the skip list
-+    /// alone. Only the shapes where "positioned but undecoded" is meaningful
-+    /// take it - one sealed segment, or the concatenation of disjoint segments.
-+    ///
-+    /// `Some(true)` moved, `Some(false)` cannot hop (a memory tail, a spilled
-+    /// run, or a target inside the current block), `None` exhausted.
-+    pub(crate) fn skip_block_shallow(&mut self, target: u64) -> Option<bool> {
-+        let moved = if self.single {
-+            self.sources[0].skip_block_shallow(target)
-+        } else if self.concat {
-+            while self.next + 1 < self.sources.len()
-+                && self.sources[self.next]
-+                    .range()
-+                    .is_some_and(|(_, hi)| hi < target)
-+            {
-+                self.next += 1;
-+            }
-+            loop {
-+                match self.sources[self.next].skip_block_shallow(target) {
-+                    Some(true) => break Some(true),
-+                    Some(false) => break Some(false),
-+                    None if self.next + 1 < self.sources.len() => {
-+                        self.next += 1;
-+                    }
-+                    None => break None,
+@@ -2148,9 +2148,18 @@ Status Config::Init(const std::shared_ptr<std::string> &config_path, DefaultConf
+             if (config_toml.contains("buffer")) {
+                 auto buffer_config = config_toml["buffer"];
+                 auto buffer_config_table = buffer_config.as_table();
++                if (buffer_config_table->contains("unsealed_memory_quota") && buffer_config_table->contains(MEMINDEX_MEMORY_QUOTA_OPTION_NAME)) {
++                    return Status::InvalidConfig("Cannot specify both 'memindex_memory_quota' and 'unsealed_memory_quota' in 'buffer' field.");
 +                }
-+            }
-+        } else {
-+            return Some(false);
-```
-
-**File**: `rust_engine/crates/executor/src/engine/statements.rs` (modified, +36/-29)
-```diff
-@@ -5140,6 +5140,16 @@ impl Engine {
-             crate::engine::state::index_row_direct(&mut index, &doc);
-             index.maybe_seal(self.memindex_capacity()).await;
-         }
-+        // The final chunk: `PopulateIndex` calls `DumpSegmentMemIndex` after
-+        // `PopulateFtIndexInner` returns (`new_txn_index_impl.cpp:1162-1175`), so
-+        // the rows past the last full capacity also land in a chunk of their own.
-+        // Without this a 100 k-row build wrote only the first 65,536-row chunk
-+        // and left the remaining 34,464 rows in memory: one chunk where the
-+        // reference has two, and a tail a restart had to rebuild.
-+        //
-+        // `index` is still local (the seal below runs before the publish), so
-+        // this is the in-place seal rather than `seal_text_index_at`.
-+        index.seal().await;
-         // The chunks on disk are consistent and complete now; only the publish
-         // touches shared state, and it must not run with the gate held (it takes
-         // `tables`, which the gate may not nest inside).
-@@ -8363,27 +8373,22 @@ impl Engine {
-                 .unwrap_or(false)
-         });
-         let query = arg_str(m.args.first()).unwrap_or_default();
--        // A query ending in a boolean keyword (`... OR NOT`) is incomplete.
--        let ends_with_op = query
--            .split_whitespace()
--            .last()
--            .map(|w| {
--                w.eq_ignore_ascii_case("or")
--                    || w.eq_ignore_ascii_case("and")
--                    || w.eq_ignore_ascii_case("not")
--            })
--            .unwrap_or(false);
--        // ... unless an explicit `operator=` supplies the default.
-+        // An explicit `operator=` selects the term-list grammar (`kAnd`/`kOr`),
-+        // which is what decides whether the query string is parsed as a boolean
-+        // expression at all.
-         let has_operator_opt = params.split(';').any(|p| {
-             p.split_once('=')
-                 .map(|(k, _)| k.trim().eq_ignore_ascii_case("operator"))
-                 .unwrap_or(false)
-         });
--        if ends_with_op && !has_operator_opt {
--            return Err(Error::Invalid(
--                "parser: incomplete boolean expression in the full-text query".into(),
--            ));
--        }
-+        // A query that ends in a boolean keyword is **not** an error here. The
-+        // reference's grammar reads `query clause` (juxtaposition) as an `Or`, so
-+        // `revolution and` is two clauses and returns hits; only a *dangling*
-+        // uppercase `AND`/`OR`/`NOT` reaches its parser and fails there, with its
-+        // own message. This port used to reject on a case-insensitive match
-+        // before parsing, which turned the very common trailing English word
-+        // "and"/"or" into an error - 35 of 1000 enwiki queries - where the
-+        // reference returned rows.
-         let cols: Vec<usize> = match_columns(&m.column)
-             .iter()
-             .filter_map(|c| schema.iter().position(|s| s == c))
-@@ -8465,7 +8470,6 @@ impl Engine {
-         let terms: Vec<String> = units
-             .iter()
-             .flat_map(|(_, u, _, _)| u.iter().cloned())
--            .filter(|t| t != "or" && t != "and")
-             .collect();
-         if terms.is_empty() {
-             return Ok((Vec::new(), hidden.to_vec()));
-@@ -9367,19 +9371,22 @@ impl Engine {
-             return Ok(None);
-         };
-         let driver = SearchDriver::new(field2analyzer, default_field);
--        let Ok(tree) = driver.parse_single_with_fields(columns, query) else {
--            // A `column:term` naming a column outside `columns` is not "no
--            // syntax": falling back would search `title:foo` as ordinary text and
--            // answer a different question. The reference resolves field names
--            // against every index of the table, so such a leaf finds no postings -
--            // match nothing instead of guessing.
--            let outside = query_field_qualifiers(query)
--                .into_iter()
--                .any(|field| !columns.split(',').any(|spec| column_of(spec) == field));
--            if outside {
--                return Ok(Some(Vec::new()));
-+        let tree = match driver.parse_single_with_fields(columns, query) {
-+            Ok(tree) => tree,
-+            Err(err) => {
-+                // A `column:term` naming a column outside `columns` is not "no
-+                // syntax": falling back would search `title:foo` as ordinary text and
-+                // answer a different question. The reference resolves field names
-+                // against every index of the table, so such a leaf finds no postings -
-+                // match nothing instead of guessing.
-+                let outside = query_field_qualifiers(query)
-+                    .into_iter()
-+                    .any(|field| !columns.split(',').any(|spec| column_of(spec) == field));
-+                if outside {
-+                    return Ok(Some(Vec:
-```
-
-**File**: `rust_engine/crates/executor/src/engine/tests_ut.rs` (modified, +12/-2)
-```diff
-@@ -877,6 +877,16 @@ mod tests {
-         // Make the cache one row short of the table: that is the cold path a bulk
-         // load which bypassed the DML hooks takes, and it is what puts a rebuild
-         // on the query path while a cache is still in place.
-+        //
-+        // The row is appended **after** the index was built and then dropped from
-+        // the memory tail. Removing a row of the build itself no longer works:
-+        // `CREATE INDEX` now seals its tail (the reference's trailing
-+        // `DumpSegmentMemIndex`), so every posting is sealed and
-+        // `index_delete_row` would only mark the row `overridden` without making
-+        // the cache shorter.
-+        e.execute("INSERT INTO raced VALUES (30, 'title30', 'harmful chemical row30');")
-+            .await
-+            .unwrap();
-         {
-             let tkey = e.table_key("raced");
-             let shared = {
-@@ -892,9 +902,9 @@ mod tests {
-                     .expect("the index is cached")
-             };
-             let mut index = shared.write().await;
--            crate::engine::state::index_delete_row(&mut index, 0);
-+            crate::engine::state::index_delete_row(&mut index, 30);
-             assert!(
--                index.total_docs() < 30,
-+                index.total_docs() < 31,
-                 "the cache has to look short of the table"
-             );
-         }
-```
-
-**File**: `rust_engine/crates/executor/src/engine/text_index.rs` (modified, +12/-5)
-```diff
-@@ -1936,15 +1936,22 @@ impl TextIndex {
-             .map(|row| row >> 32)
-     }
+                 for (auto &elem : *buffer_config_table) {
  
--    /// True when the unsealed segment has reached either budget and should be
--    /// sealed (`MemoryIndexer::MemUsed` or `mem_index_capacity` rows), or when a
--    /// previous seal failed and its tail is still waiting to be written.
-+    /// True when the unsealed segment has reached `mem_index_capacity` rows and
-+    /// should be sealed, when a previous seal failed and its tail is still
-+    /// waiting to be written, or when the resident tail exceeds the safety byte
-+    /// ceiling (1 GiB).
-+    ///
-+    /// The primary bound is the reference's row count
-+    /// (`new_txn_index_impl.cpp:1381`, `memory_indexer->GetRowCount() >=
-+    /// mem_index_capacity`), with a 1 GiB safety byte ceiling so huge documents
-+    /// cannot grow unboundedly when `memindex_quota` is 0 (disabled).
-     pub(crate) fn should_seal(&self, capacity: usize) -> bool {
-+        const TEXT_SEGMENT_SAFETY_BYTES: usize = 1024 * 1024 * 1024;
-         if self.inflight.is_some() {
-             return true;
-         }
--        self.mem.mem_used() >= text_segment_bytes()
--            || (capacity > 0 && self.mem.pending_docs() >= capacity)
-+        (capacity > 0 && self.mem.pending_docs() >= capacity)
-+            || self.mem.mem_used() >= TEXT_SEGMENT_SAFETY_BYTES
-     }
- 
-     /// Takes the work of one seal, so the caller can [`SealJob::write`] it with
+                     std::string var_name = std::string(elem.first);
++                    if (var_name == "unsealed_reclaim_interval" || var_name == "unsealed_max_tables_per_round") {
++                        continue;
++                    }
++                    if (var_name == "unsealed_memory_quota") {
++                        var_name = MEMINDEX_MEMORY_QUOTA_OPTION_NAME;
++                    }
+                     GlobalOptionIndex option_index = global_options_.GetOptionIndex(var_name);
+                     if (option_index == GlobalOptionIndex::kInvalid) {
+                         return Status::InvalidConfig(fmt::format("Unrecognized config parameter: {} in 'buffer' field", var_name));
+@@ -2207,14 +2216,16 @@ Status Config::Init(const std::shared_ptr<std::string> &config_path, DefaultConf
+                         }
+                         case GlobalOptionIndex::kMemIndexMemoryQuota: {
+                             i64 mem_index_memory_quota = DEFAULT_MEMINDEX_MEMORY_QUOTA;
+-                            if (elem.second.is_string()) {
++                            if (elem.second.is_integer() && elem.second.value_or(-1) == 0) {
++                                mem_index_memory_quota = 0;
++                            } else if (elem.second.is_string()) {
+                                 std::string mem_index_memory_quota_str = elem.second.value_or(DEFAULT_MEMINDEX_MEMORY_QUOTA_STR.data());
+                                 auto res = ParseByteSize(mem_index_memory_quota_str, mem_index_memory_quota);
+                                 if (!res.ok()) {
+                                     return res;
+                                 }
+                             } else {
+-                                return Status::InvalidConfig("'mem_index_memory_quota' field isn't string.");
++                                return Status::InvalidConfig("'mem_index_memory_quota' field isn't string or 0.");
+                             }
+                             std::unique_ptr<IntegerOption> mem_index_memory_quota_option =
+                                 std::make_unique<IntegerOption>(MEMINDEX_MEMORY_QUOTA_OPTION_NAME,
 ```
 
-**File**: `rust_engine/crates/executor/src/engine/text_query.rs` (modified, +22/-0)
+**File**: `src/storage/invertedindex/search/phrase_doc_iterator_impl.cpp` (modified, +6/-4)
 ```diff
-@@ -42,6 +42,13 @@ use crate::query_builder::{
- /// True when `query` uses anything `query_units` cannot express: a boolean
- /// keyword, a group, or a `column:value` qualifier. Quoted text and `^boost` are
- /// left to the fast path.
-+///
-+/// The keywords are **uppercase only**, like the reference's lexer
-+/// (`search_lexer.l:66-70` matches `AND`/`OR`/`NOT` literally, and flex is
-+/// case-sensitive). The lowercase words are ordinary text there, and they are
-+/// extremely common at the end of a real sentence ("revolution and"), so
-+/// matching them case-insensitively sent 35 of 1000 enwiki queries down the
-+/// boolean grammar, which then rejected them.
- pub(crate) fn has_query_syntax(query: &str) -> bool {
-     let mut token = String::new();
-     let mut in_quote = false;
-@@ -298,4 +305,19 @@ mod tests {
-         // A keyword inside quotes is text, not an operator.
-         assert!(!has_query_syntax("\"alpha AND beta\""));
-     }
-+
-+    /// The reference's lexer matches `AND`/`OR`/`NOT` literally
-+    /// (`search_lexer.l:66-70`), so the lowercase words are ordinary text. A
-+    /// case-insensitive match here sent 35 of 1000 enwiki queries - ones whose
-+    /// prose happens to end in "and"/"or" - to the boolean grammar, which then
-+    /// rejected them while the reference answered with rows.
-+    #[test]
-+    fn lowercase_boolean_words_are_text() {
-+        assert!(!has_query_syntax("revolution and"));
-+        assert!(!has_query_syntax("political philosophy or"));
-+        assert!(!has_query_syntax("not"));
-+        assert!(!has_query_syntax("harmful and chemical"));
-+        // Uppercase in the same positions is still an operator.
-+        assert!(has_query_syntax("revolution AND"));
-+    }
+@@ -87,10 +87,12 @@ bool PhraseDocIterator::Next(const RowID doc_id) {
+         }
+         if (target_doc_id == pos_iters_[0]->DocID()) {
+             bool found = GetPhraseMatchData();
+-            if (found && (threshold_ <= 0.0f || BM25Score() > threshold_)) {
++            if (found) {
+                 doc_id_ = target_doc_id;
+-                UpdateBlockRangeDocID();
+-                return true;
++                if (threshold_ <= 0.0f || BM25Score() > threshold_) {
++                    UpdateBlockRangeDocID();
++                    return true;
++                }
+             }
+             ++target_doc_id;
+         }
+@@ -367,4 +369,4 @@ bool PhraseDocIterator::GetSloppyPhraseMatchData() {
+     return false;
  }
+ 
+-} // namespace infinity
+\ No newline at end of file
++} // namespace infinity
+```
+
+**File**: `src/unit_test/main/config_ut.cpp` (modified, +45/-0)
+```diff
+@@ -258,3 +258,48 @@ TEST_F(ConfigTest, TestValidValues) {
+     // persistence
+     EXPECT_EQ(config.PersistenceDir(), "/var/infinity/persistence");
+ }
++
++TEST_F(ConfigTest, TestDefaultConfWithRustUnsealedOptions) {
++    using namespace infinity;
++    std::shared_ptr<std::string> path = std::make_shared<std::string>("conf/infinity_conf.toml");
++    Config config;
++    auto status = config.Init(path, nullptr);
++    ASSERT_TRUE(status.ok()) << status.message();
++    EXPECT_EQ(config.MemIndexMemoryQuota(), 1024l * 1024l * 1024l);
++}
++
++TEST_F(ConfigTest, TestUnsealedMemoryQuotaZeroAndDuplicate) {
++    using namespace infinity;
++    std::ifstream base_in("conf/infinity_conf.toml");
++    ASSERT_TRUE(base_in.is_open());
++    std::string base_content((std::istreambuf_iterator<char>(base_in)), std::istreambuf_iterator<char>());
++
++    const std::string zero_path = "/tmp/test_unsealed_zero.toml";
++    {
++        std::string zero_content = base_content;
++        auto pos = zero_content.find("unsealed_memory_quota    = \"1GB\"");
++        ASSERT_NE(pos, std::string::npos);
++        zero_content.replace(pos, std::string("unsealed_memory_quota    = \"1GB\"").size(), "unsealed_memory_quota = 0");
++        std::ofstream out(zero_path);
++        out << zero_content;
++    }
++    Config zero_cfg;
++    auto zero_status = zero_cfg.Init(std::make_shared<std::string>(zero_path), nullptr);
++    ASSERT_TRUE(zero_status.ok()) << zero_status.message();
++    EXPECT_EQ(zero_cfg.MemIndexMemoryQuota(), 0);
++    std::remove(zero_path.c_str());
++
++    const std::string dup_path = "/tmp/test_unsealed_dup.toml";
++    {
++        std::string dup_content = base_content;
++        auto pos = dup_content.find("unsealed_memory_quota    = \"1GB\"");
++        ASSERT_NE(pos, std::string::npos);
++        dup_content.insert(pos, "memindex_memory_quota = \"4GB\"\n");
++        std::ofstream out(dup_path);
++        out << dup_content;
++    }
++    Config dup_cfg;
++    auto dup_status = dup_cfg.Init(std::make_shared<std::string>(dup_path), nullptr);
++    EXPECT_EQ(dup_status.code(), ErrorCode::kInvalidConfig);
++    std::remove(dup_path.c_str());
++}
+```
+
+**File**: `src/unit_test/storage/invertedindex/search/query_match_ut.cpp` (modified, +65/-0)
+```diff
+@@ -319,6 +319,71 @@ TEST_P(QueryMatchTest, bmw_heap_differential) {
+     EXPECT_TRUE(txn_mgr->CommitTxn(txn).ok());
+ }
+ 
++TEST_P(QueryMatchTest, test_phrase_top_k_threshold_updates_doc_id) {
++    datas_.clear();
++    datas_.push_back({"0", "d0", "one of"});
++    datas_.push_back({"1", "d1", "one of a b c d e f g h i j k l m n o p q r s t u v w x y z"});
++    datas_.push_back({"2", "d2", "one of x y z"});
++    datas_.push_back({"3", "d3", "one of one of"});
++
++    std::string db_name = "default_db";
++    std::string table_name = "phrase_topk_tbl";
++    std::string index_name = "phrase_topk_idx";
++
++    CreateDBAndTable(db_name, table_name);
++    InsertData(db_name, table_name);
++    CreateIndex(db_name, table_name, index_name, "standard");
++
++    Storage *storage = InfinityContext::instance().storage();
++    NewTxnManager *txn_mgr = storage->new_txn_manager();
++    auto *txn = txn_mgr->BeginTxn(std::make_unique<std::string>("phrase topk"), TransactionType::kRead);
++    auto [table_info, status] = txn->GetTableInfo(db_name, table_name);
++    ASSERT_TRUE(status.ok());
++
++    std::shared_ptr<IndexReader> index_reader;
++    status = txn->GetFullTextIndexReader(db_name, table_name, index_reader);
++    ASSERT_TRUE(status.ok());
++
++    auto run_top_k = [&](EarlyTermAlgo algo, bool use_threshold, u32 topn) {
++        QueryBuilder query_builder(table_info);
++        query_builder.Init(index_reader);
++        SearchDriver driver(query_builder.GetColumn2Analyzer(), "text");
++        FullTextQueryContext context(FulltextSimilarity::kBM25, BM25Params{}, MinimumShouldMatchOption{}, RankFeaturesOption{}, topn);
++        context.early_term_algo_ = algo;
++        context.query_tree_ = driver.ParseSingleWithFields("text", "\"one of\"");
++        std::unique_ptr<DocIterator> doc_iterator = query_builder.CreateSearch(context);
++        EXPECT_NE(doc_iterator, nullptr);
++        std::vector<float> scores(topn, 0.0f);
++        std::vector<RowID> row_ids(topn);
++        FullTextScoreResultHeap result_heap(topn, scores.data(), row_ids.data());
++        while (doc_iterator->Next()) {
++            if (result_heap.AddResult(doc_iterator->Score(), doc_iterator->DocID()) && use_threshold) {
++                doc_iterator->UpdateScoreThreshold(result_heap.GetScoreThreshold());
++            }
++        }
++        std::vector<std::pair<RowID, float>> top;
++        for (size_t i = 0; i < result_heap.GetResultSize(); ++i) {
++            top.emplace_back(row_ids[i], scores[i]);
++        }
++        std::sort(top.begin(), top.end(), [](const auto &lhs, const auto &rhs) {
++            if (lhs.second != rhs.second) {
++                return lhs.second > rhs.second;
++            }
++            return lhs.first < rhs.first;
++        });
++        return top;
++    };
++
++    auto naive_top1 = run_top_k(EarlyTermAlgo::kNaive, false, 1);
++    auto wand_top1 = run_top_k(EarlyTermAlgo::kBMW, true, 1);
++    ASSERT_EQ(naive_top1.size(), 1u);
++    ASSERT_EQ(wand_top1.size(), 1u);
++    EXPECT_EQ(wand_top1[0].first, naive_top1[0].first);
++    EXPECT_FLOAT_EQ(wand_top1[0].second, naive_top1[0].second);
++
++    EXPECT_TRUE(txn_mgr->CommitTxn(txn).ok());
++}
++
+ void QueryMatchTest::CreateDBAndTable(const std::string &db_name, const std::string &table_name) {
+     std::vector<std::shared_ptr<ColumnDef>> column_defs;
+     {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3591** (closed): fix(config): accept Rust unsealed_* buffer options in C++ config parser (@yuzhichang)
+- **PR #3590** (2026-11-25): fix(invertedindex): update doc_id_ before BM25Score threshold check in PhraseDocIterator::Next (@yuzhichang)
+- **PR #3589** (2026-11-25): rust_engine: read phrase child positions lazily on sealed segments (@yuzhichang)
+- **PR #3588** (2026-11-25): test: add RAGFlow production load test Go/model2vec-rs harness (@yuzhichang)
 - **PR #3587** (2026-11-24): rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optimize WAND (@yuzhichang)
 - **PR #3585** (2026-11-24): rust_engine: fix five concurrency defects the index-combination soak (@yingfeng)
-- **PR #3584** (2026-11-24): fulltext: align JSON escapes, query terms, block skips and BM25 with the reference (@yuzhichang)
-- **PR #3583** (2026-11-23): fix a series of rust_engine issues (@yingfeng)
-- **PR #3582** (2026-11-23): Rust engine: express row visibility as bitmaps, and reclaim unsealed memory on a tick (@yuzhichang)
-- **PR #3581** (2026-11-23): plaid: build and fold a tensor mirror in chunks (@yingfeng)
 
 ---
 
@@ -1891,48 +1587,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optim
+## X. invertedindex): update doc_id_ before BM25Score threshold check in PhraseDocIter
 
 **RULE**:
-When implementing operations in `rust_engine/crates/executor/src/engine/dml.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/main/config_impl.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75bc1f15`: rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optimize WAND. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2842d7e4`: invertedindex): update doc_id_ before BM25Score threshold check in PhraseDocIterator::Next. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/crates/executor/src/engine/dml.rs`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/main/config_impl.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    /// Feeds one row into every secondary index of `table`, resolving the
-    /// targets first.
-    ///
-    /// Kept for the statement paths that insert one row at a time; a bulk load
-    /// resolves the targets once and calls [`Self::insert_secondary_keys`].
+                if (buffer_config_table->contains("unsealed_memory_quota") && buffer_config_table->contains(MEMINDEX_MEMORY_QUOTA_OPTION_NAME)) {
+                    return Status::InvalidConfig("Cannot specify both 'memindex_memory_quota' and 'unsealed_memory_quota' in 'buffer' field.");
+                }
+                    if (var_name == "unsealed_reclaim_interval" || var_name == "unsealed_max_tables_per_round") {
+                        continue;
+                    }
+                    if (var_name == "unsealed_memory_quota") {
+                        var_name = MEMINDEX_MEMORY_QUOTA_OPTION_NAME;
+                    }
+                            if (elem.second.is_integer() && elem.second.value_or(-1) == 0) {
+                                mem_index_memory_quota = 0;
+                            } else if (elem.second.is_string()) {
+                                return Status::InvalidConfig("'mem_index_memory_quota' field isn't string or 0.");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    /// Maintains declared indexes on insert.
-    pub(crate) fn update_indexes_on_insert(
-        &self,
-        table: &str,
-        seq: usize,
-        values: &[Literal],
-        schema: &[String],
-    ) -> Result<()> {
-        let targets = self.secondary_targets(table, schema);
-        self.insert_secondary_keys(&targets, seq, values)
-    }
-
-    /// [`Self::update_indexes_on_insert`] with the targets already resolved, for
-    /// a bulk load that resolves them once per batch.
+                            if (elem.second.is_string()) {
+                                return Status::InvalidConfig("'mem_index_memory_quota' field isn't string.");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75bc1f15` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2842d7e4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

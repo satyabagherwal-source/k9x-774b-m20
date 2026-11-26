@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-TGBJ",
-    "timestamp": "2026-11-24T09:57:17.407Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "20d5cead4e0c1f2fc3d90f87199b542d9c2d0b607481b3a5285aecf0e7e61ebb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-HDXQ",
-    "timestamp": "2026-11-24T10:43:53.678Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "44e5afc4772d1d032a909be7bd15575f22a279f5132c4776ca5d096d09047a04",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-8XM9",
     "timestamp": "2026-11-24T11:05:18.897Z",
     "repository": "typedb/typedb",
@@ -7490,6 +7460,36 @@
     "repository": "aws/aws-cdk",
     "learningId": "learn-github-aws-aws-cdk",
     "contentHash": "6649accbb6d778152f25054573077caa1adafc402c06c62c0060bb7b04f961a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-SY2V",
+    "timestamp": "2026-11-26T01:36:21.127Z",
+    "repository": "PrunaAI/P-Image-OSS",
+    "learningId": "learn-huggingface-prunaai-p-h3-image",
+    "contentHash": "2a47d2a3947e0eaf2dfa5674c7ec5c0c5a72a8aad31e11d7ccc9c4cad23aaeb7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-TAAT",
+    "timestamp": "2026-11-26T01:36:36.965Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "c7f4994f2c8555f885426e8d8e48633c292510b48b1f3bcba9d8715cf86b8bd9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

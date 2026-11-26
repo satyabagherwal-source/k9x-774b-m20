@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "75bc1f15",
+    "sourceVersion": "2842d7e4",
     "license": "Apache-2.0",
-    "contentHash": "6082cbd3438dbdfc87ffe100964b7ef7b3eb742b4996bd709c38cd048a4d052a",
-    "lastHarvestedAt": "2026-11-25T00:08:30.421Z",
+    "contentHash": "c7f4994f2c8555f885426e8d8e48633c292510b48b1f3bcba9d8715cf86b8bd9",
+    "lastHarvestedAt": "2026-11-26T01:36:36.970Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -12125,8 +12125,8 @@
     "sourceUrl": "https://huggingface.co/PrunaAI/P-H3-Image",
     "sourceVersion": "hf-prunaai-p-h3-image",
     "license": "Open-Source",
-    "contentHash": "cb5546f06b66d9f4bb01a37f98d0e73dfaa60f3ef58de06a616da1167e7ff071",
-    "lastHarvestedAt": "2026-11-22T04:38:57.160Z",
+    "contentHash": "2a47d2a3947e0eaf2dfa5674c7ec5c0c5a72a8aad31e11d7ccc9c4cad23aaeb7",
+    "lastHarvestedAt": "2026-11-26T01:36:21.133Z",
     "learningId": "learn-huggingface-prunaai-p-h3-image"
   },
   "hf-nousresearch-arete-27b": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:26:29.649Z",
-  "total_cycles_completed": 12522,
-  "total_learnings_persisted": 12522,
-  "total_rules_promoted": 11470,
+  "last_updated": "2026-11-26T01:36:36.986Z",
+  "total_cycles_completed": 12524,
+  "total_learnings_persisted": 12524,
+  "total_rules_promoted": 11471,
   "history": [
-    {
-      "timestamp": "2026-11-25T06:56:10.585Z",
-      "repository": "XHToken/Spark-X2.6-4B",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:04:28.037Z",
-      "repository": "InternScience/Sage-A1.5",
-      "learningId": "learn-huggingface-internscience-sage-a1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T07:04:30.678Z",
       "repository": "googleworkspace/cli",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T01:26:29.649Z",
       "repository": "aws/aws-cdk",
       "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:36:21.148Z",
+      "repository": "PrunaAI/P-Image-OSS",
+      "learningId": "learn-huggingface-prunaai-p-h3-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:36:36.986Z",
+      "repository": "infiniflow/infinity",
+      "learningId": "learn-github-infiniflow-infinity",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
