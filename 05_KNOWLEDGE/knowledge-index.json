@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T02:01:23.232Z",
+  "last_updated": "2026-11-26T02:10:16.215Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25614,
+  "total_items": 25619,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112965,10 +112965,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-technical-construction-intelligence-bridgecrewio-checkov-co.md",
       "title": "Technical Construction Intelligence: bridgecrewio/checkov Core Invariants",
       "repository": "bridgecrewio/checkov",
-      "source_version": "d266c8a5",
-      "content_hash": "c42d04d16b90a8bcdb93509fea3f6163d65d83176ca72051f491641b6ef06030",
+      "source_version": "a8ee1c49",
+      "content_hash": "9730a00788e3f03449a928e86918c421ebe5b4c337939d650e7075f62feb1b46",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:44:26.103Z"
+      "persisted_at": "2026-11-26T02:09:43.793Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov",
@@ -112977,10 +112977,10 @@
       "relative_path": "03_SKILLS/bridgecrewio-checkov-skill-operational-integration-playbook-for-bridgecrewio-che.md",
       "title": "Skill: Operational & Integration Playbook for bridgecrewio/checkov",
       "repository": "bridgecrewio/checkov",
-      "source_version": "d266c8a5",
-      "content_hash": "c0d46ac15b3171bea887c3cc41ae8c343b67bcfab050411c68c991d638d19743",
+      "source_version": "a8ee1c49",
+      "content_hash": "5a0c3c4d3d5b1b1aafe2b257b089170161e60ac83b5945ba35c76339979dd2ca",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:44:26.278Z"
+      "persisted_at": "2026-11-26T02:09:43.975Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov",
@@ -112989,10 +112989,10 @@
       "relative_path": "08_VERIFICATION/bridgecrewio-checkov-verification-protocol-empirical-defect-shield-for-bridgecre.md",
       "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio/checkov",
       "repository": "bridgecrewio/checkov",
-      "source_version": "d266c8a5",
-      "content_hash": "1dd7825eafee6bb1805b2c4631bc4e594d85e44976c9504d5fe437e4e87542aa",
+      "source_version": "a8ee1c49",
+      "content_hash": "ad41d599b4c73a06da29aeb17245384ea48ba9893e48db0e7e339a143c442ca0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:44:26.428Z"
+      "persisted_at": "2026-11-26T02:09:44.159Z"
     },
     "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg": {
       "item_id": "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg",
@@ -113074,9 +113074,9 @@
       "title": "Technical Construction Intelligence: bridgecrewio-checkov-learnings Core Invariants",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "64fc9c7dc9dc4374f2c8279ff7ab6a1555b480af5c50c5eac386f1225c645c2f",
+      "content_hash": "3f3f10f052c3713ffbf40b828a5ab0d5900cbf87c7691c33e0e6a7ec4b12ad82",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:44:38.176Z"
+      "persisted_at": "2026-11-26T02:10:15.852Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov-learnings": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov-learnings",
@@ -113086,9 +113086,9 @@
       "title": "Skill: Operational & Integration Playbook for bridgecrewio-checkov-learnings",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8dddd6bb2a323d51c021aa78e3cb3d6d8971120327ff475c98f73a55917fcf3",
+      "content_hash": "9bbf82267f0956944032df5505d2973c72207718b21b9b0c22c2a05e478be4df",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:44:38.356Z"
+      "persisted_at": "2026-11-26T02:10:16.051Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings",
@@ -113098,9 +113098,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio-checkov-learnings",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "691429554cef854dfbe94fc67a6144fe590b72d3546ebea6dbf5f9480b7b3a1a",
+      "content_hash": "7369ff4d0b9d0ae16f5b620461865197a367f0bc6ca395fd1270390fcfad2e39",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:44:38.501Z"
+      "persisted_at": "2026-11-26T02:10:16.215Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
@@ -221512,7 +221512,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
       "source_version": "hf-scantist-glm-5.3-slim-gguf",
-      "content_hash": "85815755a85899d6e138308e59158f603f8f7a71f538e72a693e9d9d37ca5e60",
+      "content_hash": "c082142e1c2492f6c334554d1b68ef9255f1ca961f69cf87998a271322660ee2",
       "dossier_path": "07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md",
       "promoted_rules": [],
@@ -221521,7 +221521,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T05:19:49.419Z",
+      "verified_at": "2026-11-26T02:09:32.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221538,9 +221538,9 @@
       "title": "Research & Knowledge Intelligence: Scantist/GLM-5.3-SLIM-GGUF Core Invariants",
       "repository": "Scantist/GLM-5.3-SLIM-GGUF",
       "source_version": "hf-scantist-glm-5.3-slim-gguf",
-      "content_hash": "bba369e4ddef28161d0b0edd1ea4168056b81367b8ebb37b6e8c04540a094110",
+      "content_hash": "3fdcea34191f1a3c92b45a1e5f8c60567586a7332630fd454efe099468ed32c5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T05:19:49.757Z"
+      "persisted_at": "2026-11-26T02:09:33.232Z"
     },
     "rule-8413": {
       "learning_id": "rule-8413",
@@ -221576,9 +221576,9 @@
       "title": "Research & Knowledge Intelligence: hf-scantist-glm-5.3-slim-gguf-learnings Core Invariants",
       "repository": "hf-scantist-glm-5.3-slim-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "7166b0b1bcddc2fba0e4b3e3327490272225187e67708acd7988adbf0c6283b4",
+      "content_hash": "e8837942001ceaa3e5859189c1e556f0b62358a5e798a0798ddb2192a50cb246",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T05:20:01.743Z"
+      "persisted_at": "2026-11-26T02:09:47.216Z"
     },
     "candidate_directive-deps-dev-bump-the-build-tooling-group-across-1-directory-with-2-updates": {
       "item_id": "candidate_directive-deps-dev-bump-the-build-tooling-group-across-1-directory-with-2-updates",
@@ -260402,8 +260402,8 @@
       "slug": "duongductrong-snapzy",
       "platform": "github",
       "source_url": "https://github.com/duongductrong/Snapzy",
-      "source_version": "508f68ca",
-      "content_hash": "6a048c113ed26a409e3cba95d4ecebad0eca69c57129af9c3885f31179030877",
+      "source_version": "193d9422",
+      "content_hash": "7b26159bd7abbfe638d03dc2ea323dae0f503aa7d324c2dba6a56e20a1bd1f97",
       "dossier_path": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "promoted_rules": [
@@ -260421,6 +260421,11 @@
           "number": 10066,
           "title": "stop the status badges from painting over the duration readout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10585,
+          "title": "Improved Light Mode contrast and inline slider layout across UI components",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260428,7 +260433,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:28:45.896Z",
+      "verified_at": "2026-11-26T02:09:40.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260482,10 +260487,10 @@
       "relative_path": "08_VERIFICATION/duongductrong-snapzy-verification-protocol-empirical-defect-shield-for-duongduct.md",
       "title": "Verification Protocol: Empirical Defect Shield for duongductrong/Snapzy",
       "repository": "duongductrong/Snapzy",
-      "source_version": "508f68ca",
-      "content_hash": "5797c73afc5260a4f66aee28a11c4221c9c125617055fb0844bace71d4ad3242",
+      "source_version": "193d9422",
+      "content_hash": "4e63b0ca841b0267ac77edc05fe40e0f6533492ec4ca741e1d8ad7a72873a937",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:28:46.684Z"
+      "persisted_at": "2026-11-26T02:09:41.067Z"
     },
     "rule-8740": {
       "learning_id": "rule-8740",
@@ -260585,9 +260590,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for duongductrong-snapzy-learnings",
       "repository": "duongductrong-snapzy-learnings",
       "source_version": "HEAD",
-      "content_hash": "fad9384bfa0f8b3ea5e005631f09c2e2c24f1f03f642a3eadff5379b586c91da",
+      "content_hash": "b823edd8693570bd94fe6032fcf504504a7fc6df271e85b42ce730c53d8901d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:28:52.112Z"
+      "persisted_at": "2026-11-26T02:10:14.923Z"
     },
     "candidate_directive-build-stop-marking-release-binaries-as-dirty": {
       "item_id": "candidate_directive-build-stop-marking-release-binaries-as-dirty",
@@ -305259,8 +305264,8 @@
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "d266c8a5",
-      "content_hash": "7dcdbea96240ee852dd261f918032ca840bd465d92a240d9ba8e6ba20923b889",
+      "source_version": "a8ee1c49",
+      "content_hash": "9bd277d4866ba5645cac89e38bfd470a24d323974ef9d2b68e6cc119f89d29ae",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "promoted_rules": [
@@ -305278,6 +305283,11 @@
           "number": 10419,
           "title": "optional per-file pre-validation for custom regex rules",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10586,
+          "title": "CHECKOV_SECRETS_PREVALIDATION also controls detect-sec…",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -305285,7 +305295,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T01:44:25.468Z",
+      "verified_at": "2026-11-26T02:09:43.164Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -330042,10 +330052,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duongductrong-snapzy-architecture-intelligence-duongductrong-snapzy-core-invaria.md",
       "title": "Architecture Intelligence: duongductrong/Snapzy Core Invariants",
       "repository": "duongductrong/Snapzy",
-      "source_version": "508f68ca",
-      "content_hash": "89b265f290df28f5443ddfcd789b0b15d653ff958855558c83e56dc62bb08e9d",
+      "source_version": "193d9422",
+      "content_hash": "5977126d803cfe9e8c93e09ff708b621afcc552f9f4b7f4e2bc3ca94016f5a60",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:28:46.508Z"
+      "persisted_at": "2026-11-26T02:09:40.896Z"
     },
     "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants",
@@ -330055,9 +330065,9 @@
       "title": "Architecture Intelligence: duongductrong-snapzy-learnings Core Invariants",
       "repository": "duongductrong-snapzy-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc8f50c3df488bfdf2061832baa89b27490ad7265566b250e27b73c686b9dd08",
+      "content_hash": "c0385ce4a86a0431ce3ecdc9bc3b89243c94734a2ab071ef49fe3b6434affca0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:28:51.932Z"
+      "persisted_at": "2026-11-26T02:10:14.726Z"
     },
     "rule-10067": {
       "learning_id": "rule-10067",
@@ -350690,6 +350700,70 @@
       "content_hash": "10f291e305f0b51f350eda2edcde80bcf29e9f7047ec686d721039bb8d2efcb6",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T02:01:22.207Z"
+    },
+    "rule-10585": {
+      "learning_id": "rule-10585",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10585,
+      "title": "Improved Light Mode contrast and inline slider layout across UI components",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "193d9422",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T02:09:40.265Z"
+    },
+    "candidate_directive-improved-light-mode-contrast-and-inline-slider-layout-across-ui-components": {
+      "item_id": "candidate_directive-improved-light-mode-contrast-and-inline-slider-layout-across-ui-components",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0J22-improved-light-mode-contrast-and-inline-slider-layout-across-ui-components.md",
+      "title": "Improved Light Mode contrast and inline slider layout across UI components",
+      "repository": "duongductrong-snapzy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "569963511f144f5220ed3221588067fe923172fcb4f6df28482910515b6c5a5f",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-26T02:10:14.531Z"
+    },
+    "rule-10586": {
+      "learning_id": "rule-10586",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10586,
+      "title": "CHECKOV_SECRETS_PREVALIDATION also controls detect-sec…",
+      "source_url": "https://github.com/bridgecrewio/checkov",
+      "source_version": "a8ee1c49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T02:09:43.165Z"
+    },
+    "candidate_directive-checkov_secrets_prevalidation-also-controls-detect-sec": {
+      "item_id": "candidate_directive-checkov_secrets_prevalidation-also-controls-detect-sec",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZV7E-checkov_secrets_prevalidation-also-controls-detect-sec.md",
+      "title": "CHECKOV_SECRETS_PREVALIDATION also controls detect-sec…",
+      "repository": "bridgecrewio/checkov",
+      "source_version": "a8ee1c49",
+      "content_hash": "a7a5417f0694feb923ddafc837b8c0345b2534ffbc293b63626cfbdbf764a0fd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T02:09:43.611Z"
+    },
+    "candidate_directive-secrets-checkov_secrets_prevalidation-also-controls-detect-sec": {
+      "item_id": "candidate_directive-secrets-checkov_secrets_prevalidation-also-controls-detect-sec",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0JX7-secrets-checkov_secrets_prevalidation-also-controls-detect-sec.md",
+      "title": "secrets): CHECKOV_SECRETS_PREVALIDATION also controls detect-sec…",
+      "repository": "bridgecrewio-checkov-learnings",
+      "source_version": "HEAD",
+      "content_hash": "17144db89955524f50f671fa6ef8cd60458e36ed7f64838edd7e22a3e5e9a7c8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T02:10:15.643Z"
     }
   },
   "ai-builder-brain": {

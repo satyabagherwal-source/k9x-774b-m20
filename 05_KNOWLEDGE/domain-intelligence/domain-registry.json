@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T02:01:23.084Z",
-  "total_records": 2699,
+  "last_updated": "2026-11-26T02:10:15.852Z",
+  "total_records": 2700,
   "domains": {
     "A": {
       "total": 22,
@@ -1098,7 +1098,7 @@
       ]
     },
     "F": {
-      "total": 114,
+      "total": 115,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1213,7 +1213,8 @@
         "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants",
         "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants",
         "DOM-F-BD142F65",
-        "DOM-F-4026A5FE"
+        "DOM-F-4026A5FE",
+        "DOM-F-973FB0DB"
       ]
     },
     "G": {
@@ -8901,8 +8902,8 @@
       "title": "Technical Construction Intelligence: bridgecrewio/checkov Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-technical-construction-intelligence-bridgecrewio-checkov-co.md",
       "repository": "bridgecrewio/checkov",
-      "content_hash": "c42d04d16b90a8bcdb93509fea3f6163d65d83176ca72051f491641b6ef06030",
-      "created_at": "2026-11-25T01:44:26.103Z"
+      "content_hash": "9730a00788e3f03449a928e86918c421ebe5b4c337939d650e7075f62feb1b46",
+      "created_at": "2026-11-26T02:09:43.793Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
@@ -8979,8 +8980,8 @@
       "title": "Technical Construction Intelligence: bridgecrewio-checkov-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-learnings-technical-construction-intelligence-bridgecrewio-.md",
       "repository": "bridgecrewio-checkov-learnings",
-      "content_hash": "64fc9c7dc9dc4374f2c8279ff7ab6a1555b480af5c50c5eac386f1225c645c2f",
-      "created_at": "2026-11-25T01:44:38.176Z"
+      "content_hash": "3f3f10f052c3713ffbf40b828a5ab0d5900cbf87c7691c33e0e6a7ec4b12ad82",
+      "created_at": "2026-11-26T02:10:15.852Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
@@ -12678,8 +12679,8 @@
       "title": "Research & Knowledge Intelligence: Scantist/GLM-5.3-SLIM-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-scantist-glm-5-3-slim-gguf-research-knowledge-intelligence-scantist-glm-5-3-s.md",
       "repository": "Scantist/GLM-5.3-SLIM-GGUF",
-      "content_hash": "bba369e4ddef28161d0b0edd1ea4168056b81367b8ebb37b6e8c04540a094110",
-      "created_at": "2026-11-22T05:19:49.757Z"
+      "content_hash": "3fdcea34191f1a3c92b45a1e5f8c60567586a7332630fd454efe099468ed32c5",
+      "created_at": "2026-11-26T02:09:33.232Z"
     },
     "DOM-D-0C0C2CB4": {
       "record_id": "DOM-D-0C0C2CB4",
@@ -12729,8 +12730,8 @@
       "title": "Research & Knowledge Intelligence: hf-scantist-glm-5.3-slim-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-scantist-glm-5-3-slim-gguf-learnings-research-knowledge-intelligence-hf-scant.md",
       "repository": "hf-scantist-glm-5.3-slim-gguf-learnings",
-      "content_hash": "7166b0b1bcddc2fba0e4b3e3327490272225187e67708acd7988adbf0c6283b4",
-      "created_at": "2026-11-22T05:20:01.743Z"
+      "content_hash": "e8837942001ceaa3e5859189c1e556f0b62358a5e798a0798ddb2192a50cb246",
+      "created_at": "2026-11-26T02:09:47.216Z"
     },
     "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-core-invariants",
@@ -41060,8 +41061,8 @@
       "title": "Architecture Intelligence: duongductrong/Snapzy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duongductrong-snapzy-architecture-intelligence-duongductrong-snapzy-core-invaria.md",
       "repository": "duongductrong/Snapzy",
-      "content_hash": "89b265f290df28f5443ddfcd789b0b15d653ff958855558c83e56dc62bb08e9d",
-      "created_at": "2026-11-23T16:28:46.508Z"
+      "content_hash": "5977126d803cfe9e8c93e09ff708b621afcc552f9f4b7f4e2bc3ca94016f5a60",
+      "created_at": "2026-11-26T02:09:40.896Z"
     },
     "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants",
@@ -41069,8 +41070,8 @@
       "title": "Architecture Intelligence: duongductrong-snapzy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duongductrong-snapzy-learnings-architecture-intelligence-duongductrong-snapzy-le.md",
       "repository": "duongductrong-snapzy-learnings",
-      "content_hash": "bc8f50c3df488bfdf2061832baa89b27490ad7265566b250e27b73c686b9dd08",
-      "created_at": "2026-11-23T16:28:51.932Z"
+      "content_hash": "c0385ce4a86a0431ce3ecdc9bc3b89243c94734a2ab071ef49fe3b6434affca0",
+      "created_at": "2026-11-26T02:10:14.726Z"
     },
     "DOM-D-9A12E1C8": {
       "record_id": "DOM-D-9A12E1C8",
@@ -45508,6 +45509,48 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T01:27:00.805Z"
+    },
+    "DOM-F-973FB0DB": {
+      "record_id": "DOM-F-973FB0DB",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Improved Light Mode contrast and inline slider layout across UI components",
+      "content": "When implementing operations in `Snapzy/Features/Annotate/InlineAreaAnnotateWindow.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "2dd30ac9b9caf822d327a63cfe2eb85d5da39f17d531b194cd1643411aa753ef",
+      "summary": "Prevents defects observed in production commit `193d9422`: Improved Light Mode contrast and inline slider layout across UI components. Unval -> When implementing operations in `Snapzy/Features/Annotate/InlineAreaAnnotateWindow.swift`, engineers MUST enforce rigorous boundary validati",
+      "provenance": {
+        "source_uri": "project://duongductrong-snapzy/duongductrong-snapzy-learnings.md",
+        "source_version": "193d9422",
+        "observed_at": "2026-11-26T02:09:39.354Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (duongductrong-snapzy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of duongductrong-snapzy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.79,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T02:10:14.230Z"
     }
   }
 }

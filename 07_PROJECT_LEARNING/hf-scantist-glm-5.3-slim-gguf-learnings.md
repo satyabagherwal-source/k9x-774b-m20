@@ -3,7 +3,7 @@
 > **Source Version**: `hf-scantist-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T05:19:49.213Z  
+> **Timestamp**: 2026-11-26T02:09:32.502Z  
 > **Learning ID**: `learn-huggingface-scantist-glm-5-3-slim-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF](https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T05:19:49.093Z  
+> **Harvest Timestamp**: 2026-11-26T02:09:32.383Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 26940 downloads | 794 likes
+- **Stars / Engagement**: 27248 downloads | 794 likes
 
 ---
 

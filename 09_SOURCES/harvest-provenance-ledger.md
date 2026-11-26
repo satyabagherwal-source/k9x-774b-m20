@@ -13235,3 +13235,7 @@ Every entry in this ledger must capture:
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `77a83f3b` | Multi-dimensional audit evidence | 2026-11-26T01:53:37.914Z |
 | `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-26T02:01:08.582Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `a010f98f` | Multi-dimensional audit evidence | 2026-11-26T02:01:18.179Z |
+| `learn-huggingface-scantist-glm-5-3-slim-gguf` | `https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF` | `hf-scantis` | Multi-dimensional audit evidence | 2026-11-26T02:09:33.004Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `193d9422` | Multi-dimensional audit evidence | 2026-11-26T02:09:40.477Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `a8ee1c49` | Multi-dimensional audit evidence | 2026-11-26T02:09:43.377Z |
+| `learn-dom-f-973fb0db` | `project://duongductrong-snapzy` | `193d9422` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md` | 2026-11-26T02:10:14.264Z |

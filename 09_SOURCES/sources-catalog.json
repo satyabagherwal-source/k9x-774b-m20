@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "d266c8a5",
+    "sourceVersion": "a8ee1c49",
     "license": "Apache-2.0",
-    "contentHash": "7dcdbea96240ee852dd261f918032ca840bd465d92a240d9ba8e6ba20923b889",
-    "lastHarvestedAt": "2026-11-25T01:44:25.689Z",
+    "contentHash": "9bd277d4866ba5645cac89e38bfd470a24d323974ef9d2b68e6cc119f89d29ae",
+    "lastHarvestedAt": "2026-11-26T02:09:43.377Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {
@@ -9153,10 +9153,10 @@
     "repository": "duongductrong/Snapzy",
     "platform": "github",
     "sourceUrl": "https://github.com/duongductrong/Snapzy",
-    "sourceVersion": "508f68ca",
+    "sourceVersion": "193d9422",
     "license": "BSD-3-Clause",
-    "contentHash": "6a048c113ed26a409e3cba95d4ecebad0eca69c57129af9c3885f31179030877",
-    "lastHarvestedAt": "2026-11-23T16:28:46.110Z",
+    "contentHash": "7b26159bd7abbfe638d03dc2ea323dae0f503aa7d324c2dba6a56e20a1bd1f97",
+    "lastHarvestedAt": "2026-11-26T02:09:40.477Z",
     "learningId": "learn-github-duongductrong-snapzy"
   },
   "scrapy-plugins-scrapy-deltafetch": {
@@ -12215,8 +12215,8 @@
     "sourceUrl": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
     "sourceVersion": "hf-scantist-glm-5.3-slim-gguf",
     "license": "Open-Source",
-    "contentHash": "85815755a85899d6e138308e59158f603f8f7a71f538e72a693e9d9d37ca5e60",
-    "lastHarvestedAt": "2026-11-22T05:19:49.587Z",
+    "contentHash": "c082142e1c2492f6c334554d1b68ef9255f1ca961f69cf87998a271322660ee2",
+    "lastHarvestedAt": "2026-11-26T02:09:33.004Z",
     "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf"
   },
   "wquguru-cicada": {

@@ -13202,3 +13202,7 @@
 | `CYCLE-20261126-F62D` | `2026-11-26T01:53:37.909Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10583` | Yes (`38017b8e...`) |
 | `CYCLE-20261126-OTSY` | `2026-11-26T02:01:08.578Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md` | Yes (`67847b48...`) |
 | `CYCLE-20261126-P17J` | `2026-11-26T02:01:18.175Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10584` | Yes (`06439902...`) |
+| `CYCLE-20261126-ZN0O` | `2026-11-26T02:09:33.000Z` | `Scantist/GLM-5.3-SLIM-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md` | Yes (`c082142e...`) |
+| `CYCLE-20261126-ZSS9` | `2026-11-26T02:09:40.473Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10585` | Yes (`7b26159b...`) |
+| `CYCLE-20261126-ZV0T` | `2026-11-26T02:09:43.373Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10586` | Yes (`9bd277d4...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T02:10:14.264Z` | `duongductrong-snapzy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-973FB0DB` [Domain F] | Yes (`2dd30ac9...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T02:01:22.940Z",
+  "last_updated": "2026-11-26T02:10:15.643Z",
   "directives": [
     {
       "id": "CD-001",
@@ -62710,6 +62710,39 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BC49ED-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-0J22",
+      "directive_title": "Improved Light Mode contrast and inline slider layout across UI components",
+      "source_repo": "duongductrong-snapzy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0J22-improved-light-mode-contrast-and-inline-slider-layout-across-ui-components.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-ZV7E",
+      "directive_title": "CHECKOV_SECRETS_PREVALIDATION also controls detect-sec…",
+      "source_repo": "bridgecrewio/checkov",
+      "source_commit": "a8ee1c49",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZV7E-checkov_secrets_prevalidation-also-controls-detect-sec.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-0JX7",
+      "directive_title": "secrets): CHECKOV_SECRETS_PREVALIDATION also controls detect-sec…",
+      "source_repo": "bridgecrewio-checkov-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0JX7-secrets-checkov_secrets_prevalidation-also-controls-detect-sec.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
     }
   ]
 }

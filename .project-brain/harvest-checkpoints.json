@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T02:01:18.193Z",
+  "last_updated": "2026-11-26T02:09:43.392Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7791,14 +7791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bridgecrewio-checkov",
-      "content_hash": "7dcdbea96240ee852dd261f918032ca840bd465d92a240d9ba8e6ba20923b889",
-      "verified_at": "2026-11-25T01:44:25.705Z",
+      "content_hash": "9bd277d4866ba5645cac89e38bfd470a24d323974ef9d2b68e6cc119f89d29ae",
+      "verified_at": "2026-11-26T02:09:43.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:44:25.705Z"
+      "last_updated": "2026-11-26T02:09:43.392Z"
     },
     "apache/zookeeper": {
       "repository": "apache/zookeeper",
@@ -13776,14 +13776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duongductrong-snapzy",
-      "content_hash": "6a048c113ed26a409e3cba95d4ecebad0eca69c57129af9c3885f31179030877",
-      "verified_at": "2026-11-23T16:28:46.118Z",
+      "content_hash": "7b26159bd7abbfe638d03dc2ea323dae0f503aa7d324c2dba6a56e20a1bd1f97",
+      "verified_at": "2026-11-26T02:09:40.492Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:28:46.118Z"
+      "last_updated": "2026-11-26T02:09:40.492Z"
     },
     "scrapy-plugins/scrapy-deltafetch": {
       "repository": "scrapy-plugins/scrapy-deltafetch",
@@ -18381,14 +18381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-scantist-glm-5-3-slim-gguf",
-      "content_hash": "85815755a85899d6e138308e59158f603f8f7a71f538e72a693e9d9d37ca5e60",
-      "verified_at": "2026-11-22T05:19:49.594Z",
+      "content_hash": "c082142e1c2492f6c334554d1b68ef9255f1ca961f69cf87998a271322660ee2",
+      "verified_at": "2026-11-26T02:09:33.018Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T05:19:49.594Z"
+      "last_updated": "2026-11-26T02:09:33.018Z"
     },
     "wquguru/cicada": {
       "repository": "wquguru/cicada",

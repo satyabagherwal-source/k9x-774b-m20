@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T02:01:18.183Z",
-  "total_cycles_completed": 12531,
-  "total_learnings_persisted": 12531,
-  "total_rules_promoted": 11475,
+  "last_updated": "2026-11-26T02:09:43.382Z",
+  "total_cycles_completed": 12534,
+  "total_learnings_persisted": 12534,
+  "total_rules_promoted": 11477,
   "history": [
-    {
-      "timestamp": "2026-11-25T07:22:24.839Z",
-      "repository": "alejandrobujan/tendedero",
-      "learningId": "learn-github-alejandrobujan-tendedero",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:22:37.722Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:30:58.978Z",
-      "repository": "unsloth/flint-GGUF",
-      "learningId": "learn-huggingface-unsloth-flint-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T07:39:18.345Z",
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T02:01:18.183Z",
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:09:33.016Z",
+      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+      "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:09:40.489Z",
+      "repository": "duongductrong/Snapzy",
+      "learningId": "learn-github-duongductrong-snapzy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:09:43.382Z",
+      "repository": "bridgecrewio/checkov",
+      "learningId": "learn-github-bridgecrewio-checkov",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
