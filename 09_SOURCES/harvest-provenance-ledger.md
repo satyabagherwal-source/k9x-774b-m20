@@ -13332,3 +13332,6 @@ Every entry in this ledger must capture:
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `a5225084` | Multi-dimensional audit evidence | 2026-11-26T07:48:43.872Z |
 | `learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-26T07:57:47.065Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `45bb874b` | Multi-dimensional audit evidence | 2026-11-26T07:57:55.965Z |
+| `learn-huggingface-apple-fastframes-l` | `https://huggingface.co/apple/FastFrames-L` | `hf-apple-f` | Multi-dimensional audit evidence | 2026-11-26T08:10:13.552Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `a6682352` | Multi-dimensional audit evidence | 2026-11-26T08:10:15.603Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `c57711cf` | Multi-dimensional audit evidence | 2026-11-26T08:10:21.692Z |

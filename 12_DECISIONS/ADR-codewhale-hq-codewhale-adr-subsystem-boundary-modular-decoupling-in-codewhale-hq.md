@@ -4,17 +4,17 @@
 {
   "source_repository": "codewhale-hq/Codewhale",
   "source_url": "https://github.com/codewhale-hq/Codewhale",
-  "source_version": "336cd8a4",
+  "source_version": "a6682352",
   "license": "MIT",
-  "timestamp": "2026-11-16T07:19:49.116Z",
+  "timestamp": "2026-11-26T08:10:15.894Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-codewhale-hq-codewhale",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `336cd8a4`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T07:19:49.116Z`  
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `a6682352`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T08:10:15.894Z`  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`
 
 
@@ -30,17 +30,17 @@ During deep inspection of codewhale-hq/Codewhale, modular boundaries, performanc
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T07:19:48.030Z  
+> **Harvest Timestamp**: 2026-11-26T08:10:00.425Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `codewhale-hq/Codewhale`
-- **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
+- **Description**: Open-source Rust coding agent for terminal, web, and desktop. Any model, multi-agent fleets, MCP & plugins, OS sandboxing, and session receipts.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41180 stars
+- **Stars / Engagement**: 41211 stars
 
 ---
 
@@ -1312,7 +1312,7 @@ pub enum FragmentId {
     Route,
     AgentTopology,
     SkillsTools,
-    TokenBudget,
+    SessionRelay,
     ProjectInstructions,
     Constitution,
 }
@@ -1326,7 +1326,7 @@ impl FragmentId {
             Self::Route => "route",
             Self::AgentTopology => "agent_topology",
             Self::SkillsTools => "skills_tools",
-            Self::TokenBudget => "token_budget",
+            Self::SessionRelay => "session_relay",
             Self::ProjectInstructions => "project_instructions",
             Self::Constitution => "constitution",
         }
@@ -1339,7 +1339,7 @@ impl FragmentId {
             Self::Route => "<!-- cw:ctx:route -->",
             Self::AgentTopology => "<!-- cw:ctx:agent_topology -->",
             Self::SkillsTools => "<!-- cw:ctx:skills_tools -->",
-            Self::TokenBudget => "<!-- cw:ctx:token_budget -->",
+            Self::SessionRelay => "<!-- cw:ctx:session_relay -->",
             Self::ProjectInstructions => "<!-- cw:ctx:project_instructions -->",
             Self::Constitution => "<!-- cw:ctx:constitution -->",
         }
@@ -1352,7 +1352,7 @@ impl FragmentId {
             Self::Route => FragmentRole::Route,
             Self::AgentTopology => FragmentRole::AgentTopology,
             Self::SkillsTools => FragmentRole::SkillsTools,
-            Self::TokenBudget => FragmentRole::TokenBudget,
+            Self::SessionRelay => FragmentRole::SessionRelay,
             Self::ProjectInstructions => FragmentRole::ProjectInstructions,
             Self::Constitution => FragmentRole::Constitution,
         }
@@ -1365,7 +1365,7 @@ impl FragmentId {
             Self::Route,
             Self::AgentTopology,
             Self::SkillsTools,
-            Self::TokenBudget,
+            Self::SessionRelay,
             Self::ProjectInstructions,
             Self::Constitution,
         ]
@@ -1379,7 +1379,7 @@ pub enum FragmentRole {
     Route,
     AgentTopology,
     SkillsTools,
-    TokenBudget,
+    SessionRelay,
     ProjectInstructions,
     Constitution,
 }
@@ -1393,7 +1393,7 @@ impl FragmentRole {
             Self::Route => "route",
             Self::AgentTopology => "agent_topology",
             Self::SkillsTools => "skills_tools",
-            Self::TokenBudget => "token_budget",
+            Self::SessionRelay => "session_relay",
             Self::ProjectInstructions => "project_instructions",
             Self::Constitution => "constitution",
         }
@@ -1597,7 +1597,7 @@ pub fn read_project_instruction_file(file: std::fs::File) -> Option<String> {
             .max(observed_len)
             .saturating_sub(INSTRUCTIONS_FILE_MAX_BYTES as u64);
         text.push_str(&format!("\n[…truncated: {omitted} bytes omitted]"));
-        return S
+     
 ```
 
 ### Core Architecture Module: `crates/core/src/lib.rs`
@@ -1979,11 +1979,14 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7323** (2026-11-12): **fix(app-server): read the original path of a worktree-side rename**
-  *Symptoms*: ## What and why  `parse_porcelain` in `crates/app-server/src/runtime_api/git.rs` read the extra original-path record of a rename/copy only when the **index** column was `R` or `C`.  Git reports a rename in either column, and since 2.18 the worktree column carries one when only the working tree moved — for example `git mv` followed by `git reset` and `git add -N`, which reports `" R new.md\0old.md\0"`. The original-path record was then parsed as a status row of its own:  - With a non-ASCII source (`ab说明.md`), `record[3..]` sliced at byte 3, inside `说` (`E8 AF B4`), and panicked. The panic happens inside `spawn_blocking`, so every `GET /v1/git` and `GET /v1/changes` returned 500 `git status failed` until the worktree changed. - With an ASCII source, a phantom row appeared (`index = 'a'`, `worktree = '.'`, `path = "xt"`), corrupting the file list, the staged/unstaged counts and the row revision tokens.  The parser now reads the original path when either column reports a rename or copy, and slices the path through `get` before consuming the next field, so a malformed record is skipped instead of panicking and the record stream stays in sync.  ## Where this came from  Refs #7309  ## How I tested it  Two new tests in the existing `runtime_api::git::tests` module. Both use a real temporary repository and drive the same sequence the issue describes (`git mv`, `git reset`, `git add -N`), so neither mocks the parser input.  `cargo test -p codewhale-app-server --lib -- worktree_column_r
+- **Issue #7561** (2026-11-25): **fix(util,engine): resolve remaining R5 durability, grep timeout cancel, and bounded review read defects**
+  *Symptoms*: ## What and why  Resolves the remaining unaddressed R5 audit gaps from #7461 (on top of `1fa6548ce` and `7e003749f` already landed on `main`) and adds missing behavioral regression tests:  - **R5-L10-01** (`crates/util/src/{utils,fs_confined}.rs`, `crates/engine/src/tools/workflow/journal.rs`): Exported shared best-effort `codewhale_util::utils::sync_directory`, added `codewhale_util::fs_confined::append_durable` (data `sync_all` + best-effort parent directory sync on create), and routed `WorkflowRunJournal::append_record` through it. - **R5-L10-02** (`crates/engine/src/session_manager.rs`, `test_cases_04.rs`): Replaced hard-failing `File::open(...)?.sync_all()?` calls left by `1fa6548ce` (which break on network/FUSE mounts) with shared best-effort `sync_directory` across all session/sidecar/checkpoint/archive unlink paths, with regression test `delete_session_removes_sidecars_and_preserves_shared_runtime_store`. - **R5-L7-01** (`crates/engine/src/tools/search.rs`, `tests.rs`): Derived a child `worker_cancel_token` with `drop_guard` in `run_blocking_grep` (matching `run_blocking_file_search`) so timeouts cancel the worker without cancelling the caller's parent token, with regression test `test_grep_blocking_wrapper_cancels_worker_on_timeout`. - **R5-L9-02** (`crates/engine/src/tools/review.rs`): Passed caller `max_chars` into `resolve_review_source` / `resolve_file_target`, pre-checked size against `max_chars * 4`, read boundedly via `File::take(max_bytes + 1)` inside `spawn_
 
-- **Issue #7322** (2026-11-12): **fix(tui): count characters, not bytes, for the session title limit**
-  *Symptoms*: ## What and why  Renaming a session in the session picker rejected a 36-character Chinese title as too long ("1–100 characters").  - **Root cause**: `SessionPickerView::rename_selected` checked `new_title.len() > 100`, which counts bytes. A CJK character is three bytes in UTF-8, so a Chinese title over 33 characters failed the check. The engine's own rename validation already counts characters against `MAX_SESSION_TITLE_CHARS`. - **Fix**: the picker counts characters and uses `MAX_SESSION_TITLE_CHARS` instead of the literal `100`, so it matches the engine and the message.  ## Where this came from  Bug fix, no issue.  ## How I tested it  - New regression test `rename_selected_limits_title_by_characters` (36 Chinese characters, 108 bytes). It fails on `main` (the rename is rejected) and passes with the fix. - With the branch merged onto current `main`: `RUST_MIN_STACK=16777216 cargo test --locked -p codewhale-tui --lib -- session_picker::tests::rename_selected`: 2 passed, 0 failed. With the old byte check put back: 1 passed, 1 failed (`rename_selected_limits_title_by_characters`). - `cargo fmt --all -- --check`: clean  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and tests cover new or changed behavior - [ ] If this adds or changes a user-facing feature, I updated its docs and its row in `docs/features.toml` (not applicable: bug fix only) 
+- **Issue #7557** (2026-11-24): **fix(tui): use the engine catalog effort parser and add the Ollama Cloud effort ladder**
+  *Symptoms*: The model picker had its own catalog-token parser (`catalog_effort_value`) duplicating one the engine already owns.  - Use `ReasoningEffort::from_catalog_token` and `ReasoningEffort::catalog_effort_values_for_offering` instead, and always keep `Auto` first in the resulting list. - Add an explicit Ollama Cloud effort ladder (`Auto`, `Off`, `Low`, `Medium`, `High`, `Max`).  Rebased onto current `main`. The branch's separate skills commit was dropped: that work is already on `main` via #7544, and re-applying it would have reverted the merged version.  Net effect: `crates/tui/src/tui/model_picker.rs`, one file. <!-- devin-review-badge-begin -->  ---  <a href="https://app.devin.ai/review/codewhale-hq/codewhale/pull/7557" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://static.devin.ai/assets/gh-devin-review-dark.svg?v=4"><img src="https://static.devin.ai/assets/gh-devin-review-light.svg?v=4" alt="Devin Review"></picture></a> <!-- devin-review-badge-end -->
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"942707f524abff1409e2682fc600857967ae4775","has_any_findings":true,"has_unresolved_findings":true,"status":"failed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ❌ Failed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ❌ **Failed** <relative-time datetime="2026-11-24T19:35:39.042376Z">2026-11-24T19:35:39.042376Z</relative-time><br/>We couldn’t complete this review. Comment `@codex review` to try again. | `942707f` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when yo
+  > You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage). To continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/settings/code-review).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2000,1066 +2003,1431 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `336cd8a4` (2026-11-16)
-**Commit Message**: tui: show exact, estimated, or unknown cost labels and update changelog
+### Incident Patch 1: `84b57765` (2026-11-26)
+**Commit Message**: fix(command-contract): background facet carries a fn pointer and plain request, not a boxed future
 
-Unifies App::session_cost_label and config_policy cost_label through App::status_cost_label so subscription plans and local routes display localized unknown rather than plan names, local tags, or a zero fallback, while preserving frame footer behavior and pruning stale missing-outcome reasons on late usage.
+What: the background-command facet (issue 7468, /update and /init off the UI
+task) now transports `BackgroundJob = fn(BackgroundRequest, BackgroundCancel)
+-> BackgroundCommandResult`. `BackgroundRequest` is plain owned data
+(workspace, language, updater path, the raw /update argument) and
+`BackgroundCancel` is an `Arc<AtomicBool>` the host owns. The contract no
+longer names `Pin<Box<dyn Future>>`.
 
-Verified (CW-7892 stack):
-- cargo fmt --all -- --check && cargo clippy -p codewhale-config -p codewhale-engine -p codewhale-app-server -p codewhale-tui -p codewhale-cli --lib --tests -- -D warnings
-- codewhale-engine: 1696 passed (usage|cost_status|accounting|purge|model_routing|subagent|rlm|review|receipt), 186 passed (-- usage cost_status), 10/10 regressions + saved-session load test, 7/7 dsh_llm
-- codewhale-tui: 263 passed (cost|usage|auto_route|dispatch), 6/6 terminal + label regressions
-- codewhale-app-server: 34 passed (runtime_threads|receipt|usage|cost|catalog_parity)
-- codewhale-cli: 427 passed
-- check-facts, check-runtime-contract-budget, preflight --check: OK
+Why: the hosted Lint gate check-command-crate-boundaries.py failed on
+facets/background.rs:7 (rule D1: no boxed storage in the contract; transport
+is fn pointers and plain data). The gate is unchanged.
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+Host (commands/background_host.rs): runs the job with spawn_blocking, keeps
+one run per command with the localized refusal, delivers through the
+existing completion drain, and cancels (Esc / Ctrl-C / `/update cancel` /
+`/init cancel` / closed mailbox) by setting the run's flag and discarding its
+result. /update's job spawns the updater with std::process::Command, drains
+stdout/stderr on reader threads, polls try_wait and the flag every 50 ms and
+kills and reaps the child on cancel; this rep
+
+**File**: `crates/command-contract/src/facets/background.rs` (modified, +16/-5)
 ```diff
-@@ -169,6 +169,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -1,16 +1,27 @@
+-use std::future::Future;
+-use std::pin::Pin;
++use std::path::PathBuf;
++use std::sync::Arc;
++use std::sync::atomic::AtomicBool;
  
- ### Changed
+ use crate::outcome::BackgroundCommandResult;
  
-+- The cost label shows an exact cost, an estimate or unknown.
- - **Docs for agents match the release:** `/llms-full.txt` and `/docs-markdown/*` now serve the documents as they were at the published release tag, from a committed snapshot that is checked against the published release.
- - **Extension host (experimental): trusted plugins ask for review once more.** With `extension_host` turned on, plugins you already trusted are shown for review again after this update, because the capability table they were reviewed against gained the `remote` service. No plugin can use that service yet: none is granted it.
- - **Website text for agents:** llms.txt now gives agents the install steps for the released version, the current release and the state of each part of Codewhale, from the same content as the pages. `/docs-markdown/install.md` serves those install steps as a page, and the main-branch documents beside it now say which release they can run ahead of.
-@@ -188,6 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Cost tracking can no longer fail your work: a turn, a review, an Auto-Review check, a purge, a sub-agent or an Auto routing decision finishes even when Codewhale cannot record its cost, and the cost then shows as unknown.
- - **Credential redaction:** text, JSON, and workflow-disclosure redaction now masks multi-line private-key blocks across PGP armor headers (including `Comment:` URLs), longer preambles, and 16-character wrapped lines; masks credential values inside nested or escaped JSON assignments, escaped quotes, `\u003c`/`\u003e` delimiters, and spaced or nested JSON objects and arrays; and treats plural token keys (`API_TOKENS`, `ACCESS_TOKENS`) and credential-shaped `tokens` values as credentials while keeping model and tokenizer metric names (`max_tokens`, `tokenizer`, `token_limit`, `tokens=5`) visible.
- - Child processes now inherit only the standard locale variables (`LC_ALL`, `LC_CTYPE` and the other locale categories, plus `LC_TERMINAL` and `LC_TERMINAL_VERSION`) and a listed set of `DOTNET_` host, SDK and runtime settings. Other `DOTNET_` variables, including application configuration keys, are no longer passed to child processes or MCP servers.
- - **Deny rules and command safety:** a command whose command word is not a plain literal, or that redefines a command name earlier in the same call, is now refused while a deny rule is configured; the background destroyer hold reads commands the shell tokenizer rejects, decodes ANSI-C escapes inside shell payloads, and holds Windows drive, UNC, and backslash recursive delete targets; and `sed`, `find`, `sort`, `rg`, `fd`, `uniq`, `env`, `less`, `more`, `ag`, `info` and `git` count as read-only only when their words are literal and use read-only flags, with `codewhale --version` and Windows trailing-backslash paths normalized before checking.
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -169,6 +169,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Changed
- 
-+- The cost label shows an exact cost, an estimate or unknown.
- - **Docs for agents match the release:** `/llms-full.txt` and `/docs-markdown/*` now serve the documents as they were at the published release tag, from a committed snapshot that is checked against the published release.
- - **Extension host (experimental): trusted plugins ask for review once more.** With `extension_host` turned on, plugins you already trusted are shown for review again after this update, because the capability table they were reviewed against gained the `remote` service. No plugin can use that service yet: none is granted it.
- - **Website text for agents:** llms.txt now gives agents the install steps for the released version, the current release and the state of each part of Codewhale, from the same content as the pages. `/docs-markdown/install.md` serves those install steps as a page, and the main-branch documents beside it now say which release they can run ahead of.
-@@ -188,6 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Cost tracking can no longer fail your work: a turn, a review, an Auto-Review check, a purge, a sub-agent or an Auto routing decision finishes even when Codewhale cannot record its cost, and the cost then shows as unknown.
- - **Credential redaction:** text, JSON, and workflow-disclosure redaction now masks multi-line private-key blocks across PGP armor headers (including `Comment:` URLs), longer preambles, and 16-character wrapped lines; masks credential values inside nested or escaped JSON assignments, escaped quotes, `\u003c`/`\u003e` delimiters, and spaced or nested JSON objects and arrays; and treats plural token keys (`API_TOKENS`, `ACCESS_TOKENS`) and credential-shaped `tokens` values as credentials while keeping model and tokenizer metric names (`max_tokens`, `tokenizer`, `token_limit`, `tokens=5`) visible.
- - Child processes now inherit only the standard locale variables (`LC_ALL`, `LC_CTYPE` and the other locale categories, plus `LC_TERMINAL` and `LC_TERMINAL_VERSION`) and a listed set of `DOTNET_` host, SDK and runtime settings. Other `DOTNET_` variables, including application configuration keys, are no longer passed to child processes or MCP servers.
- - **Deny rules and command safety:** a command whose command word is not a plain literal, or that redefines a command name earlier in the same call, is now refused while a deny rule is configured; the background destroyer hold reads commands the shell tokenizer rejects, decodes ANSI-C escapes inside shell payloads, and holds Windows drive, UNC, and backslash recursive delete targets; and `sed`, `find`, `sort`, `rg`, `fd`, `uniq`, `env`, `less`, `more`, `ag`, `info` and `git` count as read-only only when their words are literal and use read-only flags, with `codewhale --version` and Windows trailing-backslash paths normalized before checking.
-```
-
-**File**: `crates/tui/src/commands/config_policy_status_tests.rs` (modified, +29/-0)
-```diff
-@@ -643,6 +643,35 @@ mod tests {
-             Some("  Project docs:    no project docs")
-         );
-     }
-+
-+    #[test]
-+    fn status_cost_row_uses_unknown_for_subscription_and_local_routes() {
-+        let tmpdir = TempDir::new().expect("temp dir");
-+        let mut app = create_test_app(tmpdir.path().to_path_buf());
-+        app.billing_presentation =
-+            codewhale_engine::route_billing::BillingPresentation::Subscription("Codex OAuth quota");
-+        let sub_report = format_status(&mut app);
-+        let sub_cost_line = sub_report
-+            .lines()
-+            .find(|line| line.trim_start().starts_with("Session cost:"))
-+            .expect("subscription Session cost line");
-+        assert!(sub_cost_line.ends_with("unknown"), "{sub_cost_line}");
-+        assert!(
-+            !sub_cost_line.contains("Codex OAuth quota"),
-+            "{sub_cost_line}"
-+        );
-+        assert!(!sub_cost_line.contains('$'), "{sub_cost_line}");
-+
-+        app.billing_presentation = codewhale_engine::route_billing::BillingPresentation::Local;
-+        let local_report = format_status(&mut app);
-+        let local_cost_line = local_report
-+            .lines()
-+            .find(|line| line.trim_start().starts_with("Session cost:"))
-+            .expect("local Session cost line");
-+        assert!(local_cost_line.ends_with("unknown"), "{local_cost_line}");
-+        assert!(!local_cost_line.contains("local"), "{local_cost_line}");
-+        assert!(!local_cost_line.contains('$'), "{local_cost_line}");
-+    }
- }
- 
- fn safety_id(flag: Option<bool>) -> MessageId {
-```
-
-**File**: `crates/tui/src/commands/contract/config_policy.rs` (modified, +1/-13)
-```diff
-@@ -214,19 +214,7 @@ fn project_status(app: &App) -> ConfigStatusView {
-         cache_miss_tokens: app.session.displayed_total_cache_miss_tokens(),
-         cost: app.session_cost_for_currency(app.cost_currency),
-         currency: to_command_currency(app.cost_display_currency(app.cost_currency)),
--        cost_label: match app.cumulative_usage_chip() {
--            chip @ codewhale_engine::route_billing::UsageChip::PricedSubtotal { .. } => {
--                codewhale_engine::route_billing::format_usage_chip(&chip, app.ui_locale)
--            }
--            codewhale_engine::route_billing::UsageChip::Unknown(_) => Some(
--                codewhale_localization::tr(
--                    app.ui_locale,
--                    codewhale_localization::MessageId::CmdCostUnknownValue,
--                )
--                .into_owned(),
--            ),
--            _ => None,
--        },
-+        cost_label: app.status_cost_label(),
-         metrics,
-         ascii_safe: crate::tui::color_compat::ascii_safe_enabled(),
-         tool_outputs: outputs,
-```
-
-**File**: `crates/tui/src/tui/app.rs` (modified, +20/-17)
-```diff
-@@ -5402,27 +5402,30 @@ impl App {
-     }
- 
-     /// Price is one number, everywhere (design §2.11 item 5): the session
--    /// cost as the footer chip, the price view, and the roster print it.
--    /// Money routes print the amount; subscription and local routes print the
--    /// same words the chip uses; a metered route that has not spent yet prints
--    /// `$0.00`; a session with no confirmed price says `unknown` rather than
--    /// inventing a zero.
--    #[must_use]
--    pub fn session_cost_label(&self) -> String {
--        let chip = self.cumulative_usage_chip();
--        if matches!(chip, codewhale_engine::route_billing::UsageChip::Hidden) {
--            return self
--                .format_cost_amount(self.displayed_session_cost_for_currency(self.cost_currency));
--        }
--        codewhale_engine::route_billing::format_usage_chip(&chip, self.ui_locale).unwrap_or_else(
--            || {
-+    /// cost as the price view and status surface print it — money routes print
-+    /// exact or estimated dollars (or `$0.00` before spending), while
-+    /// subscription, local, and unpriced sessions say `unknown` rather than
-+    /// printing plan names, `"local"`, or an invented zero.
-+    pub(crate) fn status_cost_label(&self) -> Option<String> {
-+        use codewhale_engine::route_billing::UsageChip;
-+        match self.cumulative_usage_chip() {
-+            UsageChip::Money(_) | UsageChip::Hidden => None,
-+            UsageChip::PricedSubtotal { amount, .. } => Some(amount),
-+            UsageChip::Allowance { .. } | UsageChip::Local | UsageChip::Unknown(_) => Some(
-                 codewhale_localization::tr(
-                     self.ui_locale,
-                     codewhale_localization::MessageId::CmdCostUnknownValue,
-                 )
--                .into_owned()
--            },
--        )
-+                .into_owned(),
-+            ),
-+        }
-+    }
-+
-+    #[must_use]
-+    pub fn session_cost_label(&self) -> String {
-+        self.status_cost_label().unwrap_or_else(|| {
-+            self.format_cost_amount(self.displayed_session_cost_for_currency(self.cost_currency))
-+        })
-     }
- 
-     pub(crate) fn cost_display_currency(&self, currency: CostCurrency) -> CostCurrency {
-```
-
-**File**: `crates/tui/src/tui/app/tests.rs` (modified, +90/-0)
-```diff
-@@ -2402,6 +2402,96 @@ fn subscription_route_hides_stale_session_dollars_in_footer() {
-     assert!(rendered.contains("Codex OAuth quota"), "{rendered}");
- }
- 
-+#[test]
-+fn session_cost_label_renders_money_or_unknown_without_plan_names_or_local() {
-+    let unknown = codewhale_localization::tr(
-+        codewhale_localization::Locale::En,
-+        codewhale_localization::MessageId::CmdCostUnknownValue,
-+    )
-+    .into_owned();
-+
-+    let mut sub = App::new(test_options(false), &Config::default());
-+    sub.billing_presentation =
-+        codewhale_engine::route_billing::BillingPresentation::Subscription("Codex OAuth quota");
-+    assert_eq!(sub.session_cost_label(), unknown);
-+    assert_eq!(sub.status_cost_label().as_deref(), Some(unknown.as_str()));
-+
-+    let mut local = App::new(test_options(false), &Config::default());
-+    local.billing_presentation = codewhale_engine::route_billing::BillingPresentation::Local;
-+    assert_eq!(local.session_cost_label(), unknown);
-+    assert_eq!(local.status_cost_label().as_deref(), Some(unknown.as_str()));
-+
-+    let mut metered = App::new(test_options(false), &Config::default());
-+    metered.api_provider = ProviderKind::Deepseek;
-+    metered.model = "deepseek-v4-flash".to_string();
-+    metered.billing_presentation = codewhale_engine::route_billing::BillingPresentation::Metered;
-+    assert_eq!(metered.session_cost_label(), "$0.00");
-+    assert_eq!(metered.status_cost_label(), None);
-+
-+    metered.session.cost_priced_turns = 1;
-+    metered.accrue_session_cost_estimate(CostEstimate::usd_only(0.42));
-+    assert_eq!(metered.session_cost_label(), "$0.42");
-+    assert_eq!(metered.status_cost_label(), None);
-+
-+    metered.session.cost_unpriced_turns = 1;
-+    assert_eq!(metered.session_cost_label(), "$0.42");
-+    assert_eq!(metered.status_cost_label().as_deref(), Some("$0.42"));
+-pub type BackgroundCommandWork =
+-    Pin<Box<dyn Future<Output = BackgroundCommandResult> + Send + 'static>>;
++#[derive(Debug, Clone, Default, PartialEq, Eq)]
++pub struct BackgroundRequest {
++    pub workspace: PathBuf,
++    pub language: String,
++    pub updater: PathBuf,
++    pub argument: String,
 +}
 +
-+#[test]
-+fn late_reported_usage_prunes_stale_request_outcome_unknown_reason() {
-+    let mut app = App::new(test_options(false), &Config::default());
-+    let route = codewhale_engine::cost_status::EffectiveRouteEnvelope::capture(
-+        None,
-+        ProviderKind::Deepseek,
-+        "deepseek",
-+        "deepseek-v4-flash",
-+        Some(ProviderKind::Deepseek.provider().default_base_url()),
-+        chrono::Utc::now(),
-+    );
-+    let drop_pool = codewhale_engine::cost_status::background_cost_for_runtime_drop(
-+        &codewhale_engine::cost_status::RuntimeUsageDropRecord {
-+            reason: codewhale_engine::cost_status::RuntimeUsageMissingReason::RequestOutcomeUnknown,
-+            source_id: "cw-7882-late-source".to_string(),
-+            route: route.clone(),
-+        },
-+    );
-+    app.absorb_pending_background_cost(&drop_pool);
-+    assert_eq!(app.session.cost_unpriced_turns, 1);
-+    assert!(
-+        app.session
-+            .cost_unpriced_reasons
-+            .contains("request_outcome_unknown")
-+    );
++pub type BackgroundCancel = Arc<AtomicBool>;
 +
-+    let settled = codewhale_engine::cost_status::NativeUsageSource::capture(
-+        "cw-7882-late-source",
-+        codewhale_engine::cost_status::UsageSpendOwner::Auxiliary,
++pub type BackgroundJob = fn(BackgroundRequest, BackgroundCancel) -> BackgroundCommandResult;
+ 
+ pub trait CommandBackgroundContext {
+     fn start(
+         &mut self,
+         command: &'static str,
+-        work: BackgroundCommandWork,
++        job: BackgroundJob,
++        request: BackgroundRequest,
+     ) -> Result<String, String>;
+ 
+     fn cancel(&mut self, command: &'static str) -> Result<String, String>;
+```
+
+**File**: `crates/command-contract/src/tests.rs` (modified, +56/-32)
+```diff
+@@ -3945,46 +3945,68 @@ fn status_facet_is_object_safe_and_construction_never_observes_or_grants_mutatio
+     assert!(parts.workspace.is_none());
+ }
+ 
++type ParkedJob = (
++    &'static str,
++    crate::BackgroundJob,
++    crate::BackgroundRequest,
++    crate::BackgroundCancel,
++);
++
+ #[derive(Default)]
+ struct BackgroundFixture {
+-    running: Vec<&'static str>,
+-    parked: Vec<crate::BackgroundCommandWork>,
++    parked: Vec<ParkedJob>,
++}
++
++impl BackgroundFixture {
++    fn running(&self, command: &str) -> Option<&crate::BackgroundCancel> {
++        self.parked
++            .iter()
++            .find(|(name, _, _, cancel)| {
++                *name == command && !cancel.load(std::sync::atomic::Ordering::SeqCst)
++            })
++            .map(|(_, _, _, cancel)| cancel)
++    }
+ }
+ 
+ impl CommandBackgroundContext for BackgroundFixture {
+     fn start(
+         &mut self,
+         command: &'static str,
+-        work: crate::BackgroundCommandWork,
++        job: crate::BackgroundJob,
++        request: crate::BackgroundRequest,
+     ) -> Result<String, String> {
+-        if self.running.contains(&command) {
++        if self.running(command).is_some() {
+             return Err(format!("/{command} is already running"));
+         }
+-        self.running.push(command);
+-        self.parked.push(work);
++        self.parked
++            .push((command, job, request, crate::BackgroundCancel::default()));
+         Ok(format!("/{command} started"))
+     }
+ 
+     fn cancel(&mut self, command: &'static str) -> Result<String, String> {
+-        let Some(index) = self.running.iter().position(|name| *name == command) else {
++        let Some(cancel) = self.running(command) else {
+             return Err(format!("/{command} is not running"));
+         };
+-        self.running.remove(index);
+-        drop(self.parked.remove(index));
++        cancel.store(true, std::sync::atomic::Ordering::SeqCst);
+         Ok(format!("/{command} cancelled"))
+     }
+ }
+ 
+-struct DropFlag(std::sync::Arc<std::sync::atomic::AtomicBool>);
+-
+-impl Drop for DropFlag {
+-    fn drop(&mut self) {
+-        self.0.store(true, std::sync::atomic::Ordering::SeqCst);
++fn echo_job(
++    request: crate::BackgroundRequest,
++    cancel: crate::BackgroundCancel,
++) -> crate::outcome::BackgroundCommandResult {
++    if cancel.load(std::sync::atomic::Ordering::SeqCst) {
++        return crate::outcome::BackgroundCommandResult::error("cancelled");
+     }
++    crate::outcome::BackgroundCommandResult::message(request.argument)
+ }
+ 
+-fn background_work(message: &'static str) -> crate::BackgroundCommandWork {
+-    Box::pin(async move { crate::outcome::BackgroundCommandResult::message(message) })
++fn echo_request(argument: &str) -> crate::BackgroundRequest {
++    crate::BackgroundRequest {
++        argument: argument.to_string(),
++        ..crate::BackgroundRequest::default()
++    }
+ }
+ 
+ #[test]
+@@ -4012,7 +4034,7 @@ fn background_slot_is_optional_and_taken_once() {
+     assert!(parts.workspace.is_none());
+     assert!(parts.presentation.is_none());
+     assert_eq!(
+-        background.start("update", background_work("done")),
++        background.start("update", echo_job, echo_request("done")),
+         Ok("/update started".to_string())
+     );
+ }
+@@ -4028,32 +4050,34 @@ fn background_duplicate_slot_fails_loudly() {
+ }
+ 
+ #[test]
+-fn background_facet_refuses_a_second_run_and_cancel_drops_the_work() {
++fn background_facet_refuses_a_second_run_and_cancel_signals_the_job() {
+     let mut fixture = BackgroundFixture::default();
+     let facet: &mut dyn CommandBackgroundContext = &mut fixture;
+-    let dropped = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+-    let flag = DropFlag(dropped.clone());
+-    let work: crate::BackgroundCommandWork = Box::pin(async move {
+-        let _held = flag;
+-        crate::outcome::BackgroundCommandResult::ok()
+-    });
+-    assert!(facet.start("init", work).is_ok());
++    assert!(facet.start("init", echo_job, echo_request("first")).is_ok());
+     assert_eq!(
+-        facet.start("init", background_work("second")),
++        facet.start("init", echo_job, echo_request("second")),
+         Err("/init is already running".to_string())
+     );
+-    assert!(facet.start("update", background_work("other")).is_ok());
+-    assert!(!dropped.load(std::sync::atomic::Ordering::SeqCst));
+-    assert_eq!(facet.cancel("init"), Ok("/init cancelled".to_string()));
+     assert!(
+-        dropped.load(std::sync::atomic::Ordering::SeqCst),
+-        "cancelling drops the unfinished work"
++        facet
++            .start("update", echo_job, echo_request("other"))
++            .is_ok()
+     );
++    assert_eq!(facet.cancel("init"), Ok("/init cancelled".to_string()));
+     assert_eq!(
+         facet.cancel("init"),
+         Err("/init is not running".to_string())
+     );
+-    assert!(facet.start("init", background_work("again")).is_ok());
++    assert!(facet.start("init", echo_job, echo_request("again")).is_ok());
++
++    let results: Vec<_> = fixtu
+```
+
+**File**: `crates/tui/src/commands/background_host.rs` (modified, +123/-80)
+```diff
+@@ -1,8 +1,11 @@
+ use std::collections::HashMap;
+ use std::path::PathBuf;
++use std::sync::atomic::Ordering;
+ use std::sync::{Arc, Mutex, MutexGuard, OnceLock, PoisonError};
+ 
+-use codewhale_command_contract::facets::{BackgroundCommandWork, CommandBackgroundContext};
++use codewhale_command_contract::facets::{
++    BackgroundCancel, BackgroundJob, BackgroundRequest, CommandBackgroundContext,
++};
+ use codewhale_command_contract::handler::CommandCapabilities;
+ use codewhale_command_contract::outcome::{BackgroundAction, BackgroundCommandResult};
+ use codewhale_localization::{Locale, MessageId, tr};
+@@ -12,7 +15,7 @@ use crate::tui::app::{App, AppAction, DispatchApplyFn};
+ 
+ struct Running {
+     id: u64,
+-    abort: tokio::task::AbortHandle,
++    cancel: BackgroundCancel,
+ }
+ 
+ #[derive(Default)]
+@@ -50,7 +53,7 @@ impl BackgroundCommands {
+         let running = self.lock().running.remove(command);
+         match running {
+             Some(running) => {
+-                running.abort.abort();
++                running.cancel.store(true, Ordering::SeqCst);
+                 true
+             }
+             None => false,
+@@ -63,7 +66,7 @@ impl BackgroundCommands {
+             .running
+             .drain()
+             .map(|(command, running)| {
+-                running.abort.abort();
++                running.cancel.store(true, Ordering::SeqCst);
+                 command
+             })
+             .collect();
+@@ -152,27 +155,35 @@ impl CommandBackgroundContext for BackgroundHost {
+     fn start(
+         &mut self,
+         command: &'static str,
+-        work: BackgroundCommandWork,
++        job: BackgroundJob,
++        request: BackgroundRequest,
+     ) -> Result<String, String> {
+         let mut state = self.commands.lock();
+         if state.running.contains_key(command) {
+             return Err(self.line(MessageId::CmdBackgroundAlreadyRunning, command));
+         }
+         state.next_id += 1;
+         let id = state.next_id;
+-        let task = self.runtime.spawn(work);
++        let cancel = BackgroundCancel::default();
+         state.running.insert(
+             command,
+             Running {
+                 id,
+-                abort: task.abort_handle(),
++                cancel: cancel.clone(),
+             },
+         );
+         drop(state);
++        let job_cancel = cancel.clone();
++        let task = self
++            .runtime
++            .spawn_blocking(move || job(request, job_cancel));
+         self.runtime.spawn(supervise(
+-            self.commands.clone(),
+-            command,
+-            id,
++            Supervised {
++                commands: self.commands.clone(),
++                command,
++                id,
++                cancel,
++            },
+             task,
+             self.completion.clone(),
+             Delivery {
+@@ -199,14 +210,25 @@ struct Delivery {
+     stale: String,
+ }
+ 
+-async fn supervise(
++struct Supervised {
+     commands: BackgroundCommands,
+     command: &'static str,
+     id: u64,
++    cancel: BackgroundCancel,
++}
++
++async fn supervise(
++    supervised: Supervised,
+     mut task: tokio::task::JoinHandle<BackgroundCommandResult>,
+     completion: tokio::sync::mpsc::Sender<DispatchApplyFn>,
+     delivery: Delivery,
+ ) {
++    let Supervised {
++        commands,
++        command,
++        id,
++        cancel,
++    } = supervised;
+     let Delivery {
+         workspace,
+         failed,
+@@ -216,10 +238,10 @@ async fn supervise(
+         joined = &mut task => Some(joined),
+         () = completion.closed() => None,
+     };
+-    let current = commands.finish(command, id);
++    let current = commands.finish(command, id) && !cancel.load(Ordering::SeqCst);
+     let result = match joined {
+         None => {
+-            task.abort();
++            cancel.store(true, Ordering::SeqCst);
+             return;
+         }
+         Some(Ok(result)) => result,
+@@ -245,20 +267,11 @@ async fn supervise(
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+-    use std::sync::atomic::{AtomicBool, Ordering};
+-    use std::time::Duration;
++    use std::time::{Duration, Instant};
+ 
+     use codewhale_engine::core::engine::mock_engine_handle;
+     use codewhale_runtime::config::Config;
+ 
+-    struct DropFlag(Arc<AtomicBool>);
+-
+-    impl Drop for DropFlag {
+-        fn drop(&mut self) {
+-            self.0.store(true, Ordering::SeqCst);
+-        }
+-    }
+-
+     type Mailbox = tokio::sync::mpsc::Receiver<DispatchApplyFn>;
+ 
+     fn test_host(workspace: &std::path::Path) -> (BackgroundHost, Mailbox) {
+@@ -282,17 +295,44 @@ mod tests {
+         (app, config)
+     }
+ 
+-    fn held(flag: &Arc<AtomicBool>) -> BackgroundCommandWork {
+-        let flag = DropFlag(flag.clone());
+-        Box::pin(async move {
+-            let _held = flag;
+-            std::future::pending::<BackgroundCommandResult>().await
+-        })
++    fn held(_request: BackgroundRequest, cancel: BackgroundCancel) -> BackgroundCommandResult {
++        let deadline = Instant::now() + Duration::from_secs(10);
++        while
+```
+
+**File**: `crates/tui/src/commands/groups/project/init.rs` (modified, +25/-20)
+```diff
+@@ -9,6 +9,7 @@
+ use std::io::Read;
+ use std::path::{Path, PathBuf};
+ 
++use codewhale_command_contract::facets::{BackgroundCancel, BackgroundRequest};
+ use codewhale_command_contract::handler::CommandContexts;
+ use codewhale_command_contract::outcome::{BackgroundAction, BackgroundCommandResult};
+ 
+@@ -887,23 +888,21 @@ fn init_contextual(mut contexts: CommandContexts<'_>, arg: Option<&str>) -> Comm
+     background
+         .start(
+             INIT_INFO.name,
+-            Box::pin(async move {
+-                match codewhale_runtime::runtime_control::owner_work(move || {
+-                    Ok(prepare_init(&workspace, &language))
+-                })
+-                .await
+-                {
+-                    Ok((message, prompt)) => BackgroundCommandResult::with_message_and_action(
+-                        message,
+-                        BackgroundAction::SendMessage(prompt),
+-                    ),
+-                    Err(error) => BackgroundCommandResult::error(error.to_string()),
+-                }
+-            }),
++            init_job,
++            BackgroundRequest {
++                workspace,
++                language,
++                ..BackgroundRequest::default()
++            },
+         )
+         .map_or_else(CommandResult::error, CommandResult::message)
+ }
+ 
++fn init_job(request: BackgroundRequest, _cancel: BackgroundCancel) -> BackgroundCommandResult {
++    let (message, prompt) = prepare_init(&request.workspace, &request.language);
++    BackgroundCommandResult::with_message_and_action(message, BackgroundAction::SendMessage(prompt))
++}
++
+ // ---------------------------------------------------------------------------
+ // Tests
+ // ---------------------------------------------------------------------------
+@@ -992,20 +991,24 @@ mod tests {
+     }
+ 
+     struct Background {
+-        started: Vec<codewhale_command_contract::facets::BackgroundCommandWork>,
++        started: Vec<(
++            codewhale_command_contract::facets::BackgroundJob,
++            BackgroundRequest,
++        )>,
+         cancelled: usize,
+     }
+ 
+     impl codewhale_command_contract::facets::CommandBackgroundContext for Background {
+         fn start(
+             &mut self,
+             command: &'static str,
+-            work: codewhale_command_contract::facets::BackgroundCommandWork,
++            job: codewhale_command_contract::facets::BackgroundJob,
++            request: BackgroundRequest,
+         ) -> Result<String, String> {
+             if !self.started.is_empty() {
+                 return Err(format!("/{command} is already running"));
+             }
+-            self.started.push(work);
++            self.started.push((job, request));
+             Ok(format!("/{command} started"))
+         }
+ 
+@@ -1059,8 +1062,8 @@ mod tests {
+         }
+     }
+ 
+-    #[tokio::test]
+-    async fn init_returns_at_once_and_delivers_the_prompt_as_the_background_result() {
++    #[test]
++    fn init_returns_at_once_and_delivers_the_prompt_as_the_background_result() {
+         let tmpdir = TempDir::new().unwrap();
+         let mut workspace = Workspace(tmpdir.path().to_path_buf());
+         let mut presentation = Presentation;
+@@ -1093,8 +1096,10 @@ mod tests {
+         assert!(refused.is_error, "{refused:?}");
+         assert!(refused.message.unwrap().contains("already running"));
+ 
+-        let work = background.started.pop().expect("background work");
+-        let finished = work.await;
++        let (job, request) = background.started.pop().expect("background job");
++        assert_eq!(request.workspace, tmpdir.path());
++        assert_eq!(request.language, "English");
++        let finished = job(request, BackgroundCancel::default());
+         assert!(!finished.is_error, "{finished:?}");
+         assert!(finished.message.unwrap().contains("Creating AGENTS.md"));
+         assert!(matches!(
+```
+
+**File**: `crates/tui/src/commands/groups/utility/update.rs` (modified, +126/-10)
+```diff
+@@ -18,9 +18,14 @@
+ //!   Telling the user to restart is the honest slice; that is also the only
+ //!   possible answer on Windows, where the replaced image is the one running.
+ 
++use std::io::Read;
+ use std::path::{Path, PathBuf};
+-use std::process::{Command, Output};
++use std::process::{Command, Output, Stdio};
++use std::sync::atomic::{AtomicBool, Ordering};
++use std::thread::JoinHandle;
++use std::time::Duration;
+ 
++use codewhale_command_contract::facets::{BackgroundCancel, BackgroundRequest};
+ use codewhale_command_contract::handler::{CommandCapabilities, CommandContexts, CommandHandler};
+ use codewhale_command_contract::metadata::{CommandInfo, RegisterCommand};
+ use codewhale_command_contract::outcome::BackgroundCommandResult;
+@@ -199,7 +204,12 @@ fn update(mut contexts: CommandContexts<'_>, arg: Option<&str>) -> CommandResult
+             Some(background) => background
+                 .start(
+                     COMMAND_INFO.name,
+-                    Box::pin(run_updater_in_background(updater, mode)),
++                    update_job,
++                    BackgroundRequest {
++                        updater,
++                        argument: arg.unwrap_or_default().to_string(),
++                        ..BackgroundRequest::default()
++                    },
+                 )
+                 .map_or_else(CommandResult::error, CommandResult::message),
+             None => crate::commands::contract::run_owner_blocking(move || {
+@@ -223,10 +233,72 @@ fn run_updater(updater: &Path, mode: UpdateMode) -> CommandResult {
+     updater_result(updater, mode, updater_command(updater, mode).output())
+ }
+ 
+-async fn run_updater_in_background(updater: PathBuf, mode: UpdateMode) -> BackgroundCommandResult {
+-    let mut command = tokio::process::Command::from(updater_command(&updater, mode));
+-    command.kill_on_drop(true);
+-    updater_result(&updater, mode, command.output().await)
++fn update_job(request: BackgroundRequest, cancel: BackgroundCancel) -> BackgroundCommandResult {
++    let mode = match parse_mode(Some(&request.argument)) {
++        Ok(mode) => mode,
++        Err(message) => return BackgroundCommandResult::error(message),
++    };
++    let updater = request.updater;
++    match run_until_cancelled(updater_command(&updater, mode), &cancel) {
++        Some(output) => updater_result(&updater, mode, output),
++        None => {
++            BackgroundCommandResult::error(format!("`{} update` was cancelled.", updater.display()))
++        }
++    }
++}
++
++const CANCEL_POLL: Duration = Duration::from_millis(50);
++
++fn run_until_cancelled(
++    mut command: Command,
++    cancel: &AtomicBool,
++) -> Option<std::io::Result<Output>> {
++    command
++        .stdin(Stdio::null())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped());
++    let mut child = match command.spawn() {
++        Ok(child) => child,
++        Err(err) => return Some(Err(err)),
++    };
++    let stdout = child.stdout.take().map(drain);
++    let stderr = child.stderr.take().map(drain);
++    loop {
++        if cancel.load(Ordering::SeqCst) {
++            let _ = child.kill();
++            let _ = child.wait();
++            return None;
++        }
++        match child.try_wait() {
++            Ok(Some(status)) => {
++                return Some(Ok(Output {
++                    status,
++                    stdout: collected(stdout),
++                    stderr: collected(stderr),
++                }));
++            }
++            Ok(None) => std::thread::sleep(CANCEL_POLL),
++            Err(err) => {
++                let _ = child.kill();
++                let _ = child.wait();
++                return Some(Err(err));
++            }
++        }
++    }
++}
++
++fn drain(mut pipe: impl Read + Send + 'static) -> JoinHandle<Vec<u8>> {
++    std::thread::spawn(move || {
++        let mut bytes = Vec::new();
++        let _ = pipe.read_to_end(&mut bytes);
++        bytes
++    })
++}
++
++fn collected(reader: Option<JoinHandle<Vec<u8>>>) -> Vec<u8> {
++    reader
++        .and_then(|reader| reader.join().ok())
++        .unwrap_or_default()
+ }
+ 
+ fn updater_result<A>(
+@@ -456,7 +528,8 @@ mod tests {
+         fn start(
+             &mut self,
+             command: &'static str,
+-            _work: codewhale_command_contract::facets::BackgroundCommandWork,
++            _job: codewhale_command_contract::facets::BackgroundJob,
++            _request: BackgroundRequest,
+         ) -> Result<String, String> {
+             Err(format!("/{command} must not start in this test"))
+         }
+@@ -504,10 +577,17 @@ mod tests {
+         assert!(message.contains("no such file"), "{message}");
+     }
+ 
+-    #[tokio::test]
+-    async fn a_background_updater_run_reports_a_missing_binary_without_blocking() {
++    #[test]
++    fn a_background_updater_job_reports_a_missing_binary() {
+         let missing = std::env::temp_dir().join("codewhale-update-test-missing-binary");
+-        let result = run_updater_in_background(missing.clone(), UpdateMode::Check).await;
++        let result = u
+```
+
+**File**: `scripts/check-blocking-calls-budget.json` (modified, +3/-0)
+```diff
+@@ -467,6 +467,9 @@
+   "crates/tui/src/commands/groups/project/init.rs": {
+     "std_fs": 13
+   },
++  "crates/tui/src/commands/groups/utility/update.rs": {
++    "thread_sleep": 1
++  },
+   "crates/tui/src/commands/session_acceptance.rs": {
+     "std_fs": 6
+   },
+```
+
+---
+
+### Incident Patch 2: `c6493898` (2026-11-25)
+**Commit Message**: fix(tui): approval Enter re-arms on reveal, says when it is ignored, and keeps the command readable
+
+Review should_fix findings on the Enter-allows approval bar (decision
+292.1):
+
+- approval/view.rs:383, re-arming: ModalView gains on_became_top, which
+  ViewStack::note_top_change calls whenever the top view changes. The
+  approval card resets its arming clock there, so a card revealed again
+  after another prompt covered it is armed again.
+- approval/view.rs:384, rejected Enter: the process-wide last-Enter stamp
+  is gone. The card keeps its own last Enter and compares it with the
+  200 ms quiet gap, so a held key never commits and a human retry after
+  the 750 ms arming delay does. An ignored Enter emits a localized status
+  notice (ApprovalEnterIgnored) instead of doing nothing visibly.
+- external_agent.rs:547: external-agent cards take
+  config.approval_default_selection() like native cards.
+- widgets/mod.rs:2065, 80 columns: below 100 columns the controls drop
+  their padding, glyphs and the scope arrow
+  (`[d] Allow [Enter] [m] Deny [n]`), so the action text keeps its room.
+  A new test renders a critical rm -rf card at 80 columns and checks the
+  command and every key are on 
+
+**File**: `crates/tui/src/tui/approval/tests.rs` (modified, +93/-69)
+```diff
+@@ -1534,111 +1534,113 @@ fn is_approved(action: &ViewAction) -> bool {
+     )
+ }
+ 
++fn enter_was_refused(action: &ViewAction) -> bool {
++    matches!(
++        action,
++        ViewAction::Emit(ViewEvent::StatusToast { message, .. })
++            if message == tr(Locale::En, MessageId::ApprovalEnterIgnored).as_ref()
 +    )
-+    .reported(
-+        &route,
-+        &codewhale_models::Usage {
-+            input_tokens: 1_000,
-+            output_tokens: 200,
-+            ..Default::default()
-+        },
-+    );
-+    let settled_pool = codewhale_engine::cost_status::background_cost_for_runtime_usage(&settled);
-+    app.absorb_pending_background_cost(&settled_pool);
-+    assert_eq!(app.session.cost_priced_turns, 1);
-+    assert_eq!(app.session.cost_unpriced_turns, 0);
-+    assert!(
-+        !app.session
-+            .cost_unpriced_reasons
-+            .contains("request_outcome_unknown")
-+    );
-+    assert!(
-+        !app.session
-+            .cost_cny_unpriced_reasons
-+            .contains("request_outcome_unknown")
-+    );
++}
++
++fn at(base: std::time::Instant, millis: u64) -> std::time::Instant {
++    base + std::time::Duration::from_millis(millis)
 +}
 +
  #[test]
- fn provider_switch_keeps_audited_cumulative_spend_visible() {
-     let mut app = App::new(test_options(false), &Config::default());
-```
-
----
-
-### Incident Patch 2: `2b7a3770` (2026-11-16)
-**Commit Message**: fix(app-server): wait for settled live turn events in remote pairing test
-
-NodeRemoteHarness::wait_thread_idle returned as soon as turn.status and
-workspace.state left pending, which raced emit_turn_completed_if_missing and the
-background turn.artifacts emission from settle_turn_workspace in
-an_open_sse_stream_ends_cleanly_on_withdrawal_archive_and_plugin_revoke (making
-last_seq reach 55 after the test expected 54). Wait for replay_events to include
-turn.completed and, when workspace settled or failed delta, turn.artifacts on
-live turns identified by turn.started or non-null workspace state so hydrated
-saved-session turns do not hang.
-
-Checks (macOS, sccache, hermetic test home, CODEWHALE_EXT_HOST_TESTS=1):
-- cargo fmt --all -- --check: PASS
-- cargo clippy -p codewhale-app-server --lib --tests --locked -- -D warnings: PASS (18.46s)
-- nextest -p codewhale-app-server --lib -E 'test(remote_pairing)': 17 passed, 865 skipped
-- 5x soak an_open_sse_stream_ends_cleanly_on_withdrawal_archive_and_plugin_revoke: 5/5 passed
-- sh scripts/preflight.sh --check --base origin/main: OK
-
-**File**: `crates/app-server/src/runtime_api/tests/remote_pairing.rs` (modified, +39/-3)
-```diff
-@@ -298,16 +298,52 @@ impl NodeRemoteHarness {
-                 .error_for_status()?
-                 .json()
-                 .await?;
--            let all_terminal = detail["turns"].as_array().is_some_and(|turns| {
-+            let turns = detail["turns"].as_array();
-+            let all_terminal = turns.is_some_and(|turns| {
-                 turns.iter().all(|turn| {
-                     matches!(
-                         turn["status"].as_str(),
-                         Some("completed" | "failed" | "interrupted" | "canceled")
--                    )
-+                    ) && turn["workspace"]["state"].as_str() != Some("pending")
-                 })
-             });
-             if all_terminal {
--                return Ok(());
-+                let mut replay = self
-+                    .state
-+                    .runtime_threads
-+                    .replay_events(thread_id, None, None)
-+                    .await?;
-+                let mut events = Vec::new();
-+                while let Some(batch) = replay.batches.recv().await {
-+                    events.extend(batch.map_err(anyhow::Error::msg)?);
-+                }
-+                let all_events_settled = turns.is_some_and(|turns| {
-+                    turns.iter().all(|turn| {
-+                        let Some(id) = turn["id"].as_str() else {
-+                            return false;
-+                        };
-+                        let ran_live = events.iter().any(|ev| {
-+                            ev.event == "turn.started" && ev.turn_id.as_deref() == Some(id)
-+                        }) || turn.get("workspace").is_some_and(|w| !w.is_null());
-+                        if !ran_live {
-+                            return true;
-+                        }
-+                        let has_completed = events.iter().any(|ev| {
-+                            ev.event == "turn.completed" && ev.turn_id.as_deref() == Some(id)
-+                        });
-+                        let needs_artifacts = turn["workspace"]["state"].as_str()
-+                            == Some("settled")
-+                            || turn["workspace"]["reason"].as_str() == Some("delta_failed");
-+                        let has_artifacts = !needs_artifacts
-+                            || events.iter().any(|ev| {
-+                                ev.event == "turn.artifacts" && ev.turn_id.as_deref() == Some(id)
-+                            });
-+                        has_completed && has_artifacts
-+                    })
-+                });
-+                if all_events_settled {
-+                    return Ok(());
-+                }
-             }
-             if Instant::now() >= deadline {
-                 anyhow::bail!("timed out waiting for thread {thread_id} to go idle: {detail}");
-```
-
----
-
-### Incident Patch 3: `b62308f1` (2026-11-15)
-**Commit Message**: feat(extension-host,plugins,tui): implement plugins arm install, remove, enable, disable (CR-03, CW-8080)
-
-Implement the CR-03 plugins arm mutation surface (`install`, `remove`,
-`enable`, `disable`) across `codewhale-plugins`, `codewhale-engine`, and
-`codewhale-tui`, record plugin approval provenance (`installed_by_the_agent` /
-`approved_by`), gate DSH npm transitive resolution and remote tarball
-installs on `BrokerEffect::Reach` / `Write`, enforce atomic review+enable via
-`PluginRegistry::trust_and_enable_by`, synchronously revoke stale/removed
-extension-host owners on `plugins_changed`, and bind `observe_native_activation`
-to `(plugin_id, authority)` via `owner_report_for_authority`:
-
-- `crates/plugins/src/install.rs`, `npm_deps.rs`, `host_services.rs`,
-  `registry.rs`: add shared `installed_by_the_agent`, regular
-  `.installed-from` marker validation (`has_regular_install_marker`),
-  `PreparedSource::Remote` ephemeral staging (`prepare_remote_install`) and
-  `InstallRemoteExact`, `trust_and_enable_by`, `sync_user_plugins_from`, and
-  named `UnresolvedSeed`/`UnresolvedSeeds` aliases for clippy cleanliness.
-- `crates/engine/src/extension_host/dsh_plugins.rs`, `mod.rs`, `registry.r
-
-**File**: `CHANGELOG.md` (modified, +3/-1)
-```diff
-@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Creator mode inspection tools:** wire DeepSeek Harness's unmodified `tool-cordis` in the built-in creator module (`cordis_inspect_list` and `cordis_inspect_query`), serving live host services, events, plugin config schemas, caller-accessible tools, and plugin seats as approval-free Auto inspection tools in Creator mode. (CW-8077)
+ fn enter_does_not_allow_a_card_that_only_just_became_answerable() {
+-    let _serial = ENTER_GUARD_TESTS
+-        .lock()
+-        .unwrap_or_else(std::sync::PoisonError::into_inner);
+     for request in one_request_per_card_shape() {
+-        super::view::clear_last_approval_enter();
+         let mut untouched = guarded_view(request.clone());
+-        assert!(matches!(
+-            untouched.handle_key(create_key_event(KeyCode::Enter)),
+-            ViewAction::None
++        assert!(enter_was_refused(
++            &untouched.handle_key(create_key_event(KeyCode::Enter))
+         ));
  
- - **Plugin creator:** a new built-in row on the Plugins page and a `[features] plugin_creator` key, on by default. It hosts DeepSeek Harness's own `plugin_manager` tool, unmodified, in Codewhale's built-in host process, which runs with the extension-host switch off. It reports "not ready in this build" until the install path behind it lands. (CW-8091)
-+- **Plugin manager mutations (`plugin_manager`):** Creator's built-in `plugins` broker arm now supports `install`, `remove`, `enable`, and `disable` with atomic review-and-enable transitions, agent/person provenance tracking, resolved-reach gating for remote and npm sources, and synchronous revocation across open sessions on disable or removal. (CW-8080)
-+- **Plugin install symlink and reparse guard (Windows):** Plugin install on Windows refuses a source folder that contains a junction or another reparse point, as it already refused symbolic links.
- - **Unmodified DSH plugin compatibility (`CW-8020`):** Admitted unmodified `@deepseek-ai/dsh-*` plugins end-to-end with grant-gated host-service bridges (`workspace`, `llm`, `credentials`, `settings`, `pluginManager`, `deepseekAccount`, `terminal`, `remote`), 9 `host-spine` row bridges, inert/mixed `@deepseek-ai/dsh-agent-presets` handling alongside executable composition rows, duplicate-key `package.json` parsing, sanitized manifest descriptions, a `16,384`-file / `256 MiB` bundle budget, and reviewed `registry.npmjs.org` transitive dependency staging during conversion.
- - **Receipt edit line counts:** `/receipts` and session summaries now count `edit_file` additions and deletions using a line diff of each search/replace pair instead of counting every line of both texts, matching `git diff --stat` and edit cards (with multi-edit calls summed per pair). (CW-8147)
- - **Featured provider disclosure line:** `/provider` and the model picker now show the localized referral disclosure directly below the featured OrcaRouter row across widths (and hide the row when both cannot fit above the list), while keeping `zh-Hans` and mainland China sessions hidden. (CW-8149)
-@@ -171,7 +173,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - ACP: editors can start, list, load, prompt and cancel Codewhale sessions and approve or reject tool permissions through the Runtime; prompts with image or audio blocks and relative session directories are now refused instead of ignored, and edit and read tools report the right kind. Sessions an editor drives now run the plugin tools (TypeScript and DSH, when the extension host is on) and the MCP servers configured in Codewhale; their calls show as ACP tool calls and ask through the session's permission setting, and `initialize` reports the state under `agentCapabilities._meta.codewhale`. MCP servers an editor passes in `mcpServers` and configured shell hooks still do not run in ACP sessions. A real-editor journey is not yet proved.
- - Extension host: the `sessions` and `systemPrompt` services now come from a reviewed DSH adapter instead of inline shims, and `sessions.flush` refuses an empty checkpoint ticket. Session reads and events and the `agent/pre-step` hook are still not available to plugins. (CW-7959)
- - Extension host: DSH service adapters now have one ticketed `dsh/broker` request to the core, each ticket is bound to the plugin, the service and the session, and every service (workspace, llm, network, settings, catalog, terminal and remote) refuses with a typed `not_available` until its broker lands. Nothing new is offered to plugins yet. (CW-8012)
--- **Plugin host services and who approved:** a plugin can now be granted a Codewhale host service, and only by a review that shows it. The review names each service and the plugins it is shared with, and every review records who approved it: you, the agent (in Full Access, in Auto-Review, or from a shell command carrying the agent's mark), or the command line with `--yes`; who turned the plugin on is recorded too. Reviewed plugins share one process while a plugin the agent approved runs in its own host process for that project, so a service works in a host process only while every plugin loaded in it holds the same grant. A plugin the agent approved is active only in its own project and its code never runs beside the plugins you reviewed until you review it. No service is offered yet, and a plugin reviewed before this release holds no grant until it is reviewed again. Once a plugin has been reviewed or turned on in this release, Codewhale 0.10.2 and earlier cannot read the p
-```
-
-**File**: `crates/engine/src/extension_host/composition_review.rs` (modified, +12/-5)
-```diff
-@@ -59,11 +59,18 @@ pub fn review(input: &Value) -> Result<Value, String> {
-         &[],
-     )?;
-     // A bounded process runner, not another Engine or session runtime.
--    tokio::runtime::Builder::new_current_thread()
--        .enable_all()
--        .build()
--        .map_err(|_| "composition review worker is unavailable")?
--        .block_on(run(launch, input))
-+    std::thread::Builder::new()
-+        .name("dsh-composition-review".to_string())
-+        .spawn(move || {
-+            tokio::runtime::Builder::new_current_thread()
-+                .enable_all()
-+                .build()
-+                .map_err(|_| "composition review worker is unavailable".to_string())?
-+                .block_on(run(launch, input))
-+        })
-+        .map_err(|_| "composition review worker is unavailable".to_string())?
-+        .join()
-+        .map_err(|_| "composition review worker failed".to_string())?
+-        super::view::clear_last_approval_enter();
+         let mut ticked = guarded_view(request.clone());
+         assert!(matches!(ticked.tick(), ViewAction::None));
+         assert!(ticked.answerable_since.is_some());
+-        assert!(matches!(
+-            ticked.handle_key(create_key_event(KeyCode::Enter)),
+-            ViewAction::None
++        assert!(enter_was_refused(
++            &ticked.handle_key(create_key_event(KeyCode::Enter))
+         ));
+ 
+-        super::view::clear_last_approval_enter();
+         let mut settled = guarded_view(request);
+         settled.answerable_since = long_ago();
+         assert!(is_approved(
+             &settled.handle_key(create_key_event(KeyCode::Enter))
+         ));
+     }
+-    super::view::clear_last_approval_enter();
  }
  
- async fn bounded_read(pipe: impl AsyncRead + Unpin, limit: usize) -> Result<Vec<u8>, String> {
-```
-
-**File**: `crates/engine/src/extension_host/mod.rs` (modified, +153/-45)
-```diff
-@@ -165,7 +165,7 @@ pub mod test_support;
- #[cfg(test)]
- mod tests;
+ #[test]
+-fn held_enter_does_not_allow_the_next_card() {
+-    let _serial = ENTER_GUARD_TESTS
+-        .lock()
+-        .unwrap_or_else(std::sync::PoisonError::into_inner);
+-    super::view::clear_last_approval_enter();
+-
+-    let mut first = guarded_view(shell_request());
+-    first.answerable_since = long_ago();
+-    assert!(is_approved(
+-        &first.handle_key(create_key_event(KeyCode::Enter))
+-    ));
++fn a_refused_enter_does_not_postpone_the_next_one() {
++    let base = std::time::Instant::now();
++    let mut view = guarded_view(shell_request());
++    ModalView::on_became_top(&mut view, base);
++    assert!(!view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 400)));
++    assert!(view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 900)));
  
--use std::collections::{BTreeMap, BTreeSet, HashSet, VecDeque};
-+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
- use std::fmt;
- use std::path::{Path, PathBuf};
- use std::sync::atomic::{AtomicU64, Ordering};
-@@ -185,8 +185,8 @@ use self::supervisor::{HostEvents, HostProcess, HostRequestContext};
- use self::tier::{BuiltinModule, HostCohort, HostTier, PluginCohort};
- use codewhale_config::PluginAuthority;
- use codewhale_config::{EntryRef, OwnerRef};
--use codewhale_plugins::PluginRegistry;
- use codewhale_plugins::activation::{self, PluginActivationCapability};
-+use codewhale_plugins::{PluginRegistry, types::LoadedPlugin};
- 
- /// The host bundle, embedded so every distribution channel carries it.
- const BUNDLE: &[u8] = include_bytes!("../../extension-host/dist/codewhale-extension-host.mjs");
-@@ -886,6 +886,13 @@ impl ManagerShared {
-         }
-     }
- 
-+    fn clear_plugin_diagnostics(&self, plugin_id: &str) {
-+        self.diagnostics
-+            .lock()
-+            .expect("diagnostics lock")
-+            .retain(|entry| entry.plugin_id.as_deref() != Some(plugin_id));
-+    }
-+
-     /// The shared fast liveness guard: current policy, running host, exact
-     /// owner generation/tier and its reviewed authority. `live_host` follows
-     /// with Native receipt validation and another host check; root admission
-@@ -1772,28 +1779,43 @@ impl ExtensionHostManager {
-     /// log. The command renderer escapes each field before displaying it.
-     #[must_use]
-     pub fn owner_report(&self, plugin_id: &str) -> Option<OwnerReport> {
-+        self.owner_report_for(plugin_id, None)
-+    }
-+
-+    #[must_use]
-+    pub(super) fn owner_report_for(
-+        &self,
-+        plugin_id: &str,
-+        expected_authority: Option<&PluginAuthority>,
-+    ) -> Option<OwnerReport> {
-         let registry = self.shared.registry.lock().expect("registry lock");
--        let (state, cohort) = registry
--            .owner(plugin_id)
--            .map(|entry| {
--                let state = match &entry.state {
--                    OwnerState::Failed(reason) => {
--                        OwnerState::Failed(bounded_diagnostic(reason.clone()))
--                    }
--                    OwnerState::Faulted(reason) => {
--                        OwnerState::Faulted(bounded_diagnostic(reason.clone()))
--                    }
--                    state => state.clone(),
--                };
--                (Some(state), Some(entry.cohort.clone()))
-+        let matching_entry = registry.owner(plugin_id).filter(|entry| {
-+            expected_authority.is_none_or(|expected| {
-+                entry.authority.as_ref().is_some_and(|auth| {
-+                    auth.plugin_id == expected.plugin_id
-+                        && auth.content_hash == expected.content_hash
-+                        && auth.capability_hash == expected.capability_hash
-+                        && auth.state_generation == expected.state_generation
-+                        && auth.state_path == expected.state_path
-+                })
-             })
--            .unwrap_or((None, None));
--        let tools = registry
--            .live_tools()
--            .into_iter()
--            .filter(|tool| tool.owner.plugin_id == plugin_id)
--            .map(|tool| tool.name)
--            .collect();
-+        });
-+        let cohort = matching_entry.map(|entry| entry.cohort.clone());
-+        let state = matching_entry.map(|entry| match &entry.state {
-+            OwnerState::Failed(reason) => OwnerState::Failed(bounded_diagnostic(reason.clone())),
-+            OwnerState::Faulted(reason) => OwnerState::Faulted(bounded_diagnostic(reason.clone())),
-+            state => state.clone(),
-+        });
-+        let tools = if state.is_some() {
-+            registry
-+                .live_tools()
-+                .into_iter()
-+                .filter(|tool| tool.owner.plugin_id == plugin_id)
-+                .map(|tool| tool.name)
-+                .collect()
-+        } else {
-+            Vec::new()
-+        };
-         drop(registry);
-         let mut diagnostics: Vec<_> = self
-             .shared
-@@ -2050,48 +2072,123 @@ impl ExtensionHostManager {
-     /// Replace the snapshot of every engine attached to `plugins`'s
-     /// workspace: a plugin was enabled, disabled, trusted or revoked there.
-     fn refresh_workspace(&self, plugins: &Arc<PluginRegistry>) {
--        let ids: Vec<_> = self
--            .shared
--            .attachments
--            .lock()
--            .expect("attachments lock")
--            .iter()
--            .filter(|(_, state)| state.plugins.workspace() == plugins.workspace())
--            .map(|(id, _)| *id)
--            .collect();
--        for id in ids {
--            self.shared.core_calls.revoke_attachment(id);
--        }
--        for state in self
--            .shared
--            .attachments
--            .lock()
--            .expect("attachments lock")
--            .valu
-```
-
-**File**: `crates/plugins/src/discovery.rs` (modified, +50/-0)
-```diff
-@@ -410,6 +410,22 @@ fn load_plugin(
-     }
-     let validated = refreshed;
- 
-+    let install_nonce = match read_install_nonce(&validated.canonical_root) {
-+        Ok(nonce) => nonce,
-+        Err(error) => {
-+            diagnostics.push(PluginDiagnostic::warning(
-+                "install-record-invalid",
-+                error,
-+                Some(
-+                    validated
-+                        .canonical_root
-+                        .join(codewhale_skill_install::install::INSTALLED_FROM_MARKER),
-+                ),
-+            ));
-+            None
-+        }
-+    };
-+
-     Ok(LoadedPlugin {
-         id,
-         manifest: validated.manifest,
-@@ -430,11 +446,45 @@ fn load_plugin(
-         enabled_by: None,
-         host_services: Vec::new(),
-         outside_reach: false,
-+        install_nonce,
-         skill_snapshots,
-         diagnostics,
-     })
- }
- 
-+pub(crate) fn read_install_nonce(root: &Path) -> Result<Option<String>, String> {
-+    use std::io::Read as _;
-+
-+    let path = root.join(codewhale_skill_install::install::INSTALLED_FROM_MARKER);
-+    let metadata = match fs::symlink_metadata(&path) {
-+        Ok(metadata) => metadata,
-+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-+        Err(error) => {
-+            return Err(format!("failed to inspect {}: {error}", path.display()));
-+        }
-+    };
-+    if metadata_is_link_or_reparse(&metadata) || !metadata.file_type().is_file() {
-+        return Err(format!(
-+            "{} is not an ordinary regular file",
-+            path.display()
-+        ));
-+    }
-+    let file = codewhale_util::bundle_file::open_bundle_file(&path)
-+        .map_err(|error| format!("failed to open {}: {error}", path.display()))?;
-+    let mut raw = String::new();
-+    file.take(64 * 1024 + 1)
-+        .read_to_string(&mut raw)
-+        .map_err(|error| format!("failed to read {}: {error}", path.display()))?;
-+    if raw.len() > 64 * 1024 {
-+        return Err(format!("{} exceeds maximum marker size", path.display()));
-+    }
-+    Ok(
-+        serde_json::from_str::<codewhale_skill_install::install::InstalledFromMarker>(&raw)
-+            .ok()
-+            .and_then(|marker| marker.install_nonce().map(str::to_string)),
-+    )
+-    // An older card revealed by that answer was answerable long ago.
+-    let mut revealed = guarded_view(shell_request());
+-    revealed.answerable_since = long_ago();
+-    for _ in 0..40 {
+-        assert!(matches!(
+-            revealed.handle_key(create_key_event(KeyCode::Enter)),
+-            ViewAction::None
+-        ));
+-    }
++    let mut steady = guarded_view(shell_request());
++    ModalView::on_became_top(&mut steady, base);
++    assert!(!steady.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 300)));
++    assert!(!steady.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 600)));
++    assert!(steady.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 900)));
 +}
-+
- fn parse_skill_snapshots(
-     validated: &ValidatedManifest,
- ) -> Result<(Vec<PluginSkillSnapshot>, Vec<PluginDiagnostic>), String> {
-```
-
-**File**: `crates/plugins/src/host_service_tests.rs` (modified, +194/-0)
-```diff
-@@ -1203,3 +1203,197 @@ fn v0_10_2_reads_this_state_file_until_a_plugin_is_reviewed_or_turned_on_here()
-     let refused = older(&config).unwrap_err().to_string();
-     assert!(refused.contains("unknown field `version`"), "{refused}");
- }
-+
+ 
+-    let mut fresh = guarded_view(shell_request());
+-    for _ in 0..40 {
+-        assert!(matches!(
+-            fresh.handle_key(create_key_event(KeyCode::Enter)),
+-            ViewAction::None
+-        ));
 +#[test]
-+fn an_identical_reinstall_cannot_match_a_registry_read_before_the_removal() {
-+    let _policy = TestPolicyGuard::extension_host(true);
-+    let tmp = tempfile::tempdir().unwrap();
-+    let config = config(tmp.path());
-+
-+    write_plugin(&config, "alpha", &[], "export function apply() {}\n");
-+    let by_agent = agent(&config, AgentPosture::FullAccess);
-+    let mut first = discover_with_config(&config);
-+    approve(&mut first, "alpha", by_agent.clone());
-+
-+    let stale = discover_with_config(&config);
-+    let stale_staged = stale.get("alpha").unwrap().staged_root.clone().unwrap();
-+    assert!(stale_staged.is_dir());
-+
-+    discover_with_config(&config)
-+        .prune_state_entry("alpha")
-+        .unwrap();
-+    let mut fresh = discover_with_config(&config);
-+    approve(&mut fresh, "alpha", person());
-+    assert!(stale_staged.is_dir());
-+
-+    let before_state = fs::read(&config.state_path).unwrap();
-+    let mut stale_review = stale.clone();
-+    let shown = stale_review
-+        .host_service_review_for("alpha", &by_agent)
-+        .map(|review| review.token);
-+    let review_refused = stale_review
-+        .trust_reviewed(
-+            "alpha",
-+            ReviewApproval {
-+                approved_by: by_agent.clone(),
-+                host_services: shown,
-+            },
-+        )
-+        .unwrap_err();
-+    assert!(
-+        review_refused.contains("state or review changed"),
-+        "{review_refused}"
-+    );
-+    assert_eq!(fs::read(&config.state_path).unwrap(), before_state);
-+
-+    let mut stale_enable = stale;
-+    let enable_refused = stale_enable
-+        .enable_by("alpha", by_agent.clone())
-+        .unwrap_err();
-+    assert!(
-+        enable_refused.contains("state or review changed"),
-+        "{enable_refused}"
-+    );
-+    assert_eq!(fs::read(&config.state_path).unwrap(), before_state);
-+
-+    let install_tmp = tempfile::tempdir().unwrap();
-+    let source = install_tmp.path().join("beta-src");
-+    fs::create_dir_all(source.join("native")).unwrap();
-+    fs::write(
-+        source.join("native/index.mjs"),
-+        "export function apply() {}\n",
-+    )
-+    .unwrap();
-+    fs::write(
-+        source.join("plugin.toml"),
-+        "schema_version = 1\n[plugin]\nname = \"beta\"\nversion = \"1.0.0\"\n[native]\npath = \"native/index.mjs\"\n",
-+    )
-+    .unwrap();
-+    let install_config = super::discovery::DiscoveryConfig {
-+        workspace: install_tmp.path().join("project"),
-+        user_plugins_dir: install_tmp.path().join("user"),
-+        workspace_plugins_dir: install_tmp.path().join("workspace"),
-+        builtin_plugin_dirs: Vec::new(),
-+        state_path: install_tmp.path().join("state/plugin-state.json"),
-+    };
-+    fs::create_dir_all(&install_config.workspace).unwrap();
-+    fs::create_dir_all(&install_config.user_plugins_dir).unwrap();
-+    fs::create_dir_all(&install_config.workspace_plugins_dir).unwrap();
-+
-+    let runtime = tokio::runtime::Builder::new_current_thread()
-+        .enable_all()
-+        .build()
-+        .unwrap();
-+    let network = codewhale_net::network_policy::NetworkPolicy::default();
-+    let mut reg = discover_with_config(&install_config);
-+    let installed_first = runtime
-+        .block_on(super::mutation::execute(
-+            super::mutation::PluginMutationRequest::Install {
-+                source: super::install::PluginInstallSource::parse(source.to_str().unwrap())
-+                    .unwrap(),
-+            },
-+            &super::mutation::PluginMutationContext {
-+                network: &network,
-+                max_size: super::install::DEFAULT_MAX_SIZE_BYTES,
-+            },
-+            &mut reg,
-+        ))
-+        .unwrap();
-+    assert_eq!(
-+        installed_first.outcome,
-+        super::mutation::PluginMutationOutcome::Installed
-+    );
-+    let same_agent = agent(&install_config, AgentPosture::FullAccess);
-+    let mut reg = discover_with_config(&install_config);
-+    approve(&mut reg, "beta", same_agent.clone());
-+
-+    let pre_removal = discover_with_config(&install_config);
-+    let first_nonce = pre_removal.get("beta").unwrap().install_nonce.clone();
-+    assert!(first_nonce.is_some());
-+    let first_staged = pre_removal
-+        .get("beta")
-+        .unwrap()
-+        .staged_root
-+        .clone()
-+        .unwrap();
-+    assert!(first_staged.is_dir());
-+
-+    let mut deleter = discover_with_config(&install_config);
-+    deleter.disable("beta").unwrap();
-+    let mut deleter = discover_with_config(&install_config);
-+    runtime
-+        .block_on(super::mutation::execute(
-+            super::mutation::PluginMutationRequest::Uninstall {
-+                selector: "beta".to_string(),
-+            },
-+            &super::mutation::PluginMutationContext {
-+ 
-```
-
-**File**: `crates/plugins/src/install/dsh.rs` (modified, +12/-0)
-```diff
-@@ -3485,6 +3485,18 @@ pub fn plan_npm_install(
- // Entry point
- // ─────────────────────────────────────────────────────────────────────────────
- 
-+/// Return whether a DSH package imports declared external npm dependencies not bundled in `node_modules`.
-+pub fn has_unresolved_npm_dependencies(package: &Path) -> Result<bool> {
-+    let package = Package::open(package)?;
-+    let loaded = load_bundle(&package)?;
-+    let (_, seeds) = super::npm_deps::collect_unresolved_seeds(
-+        &package.root,
-+        &loaded.manifest,
-+        &loaded.entries,
-+    )?;
-+    Ok(!seeds.is_empty())
-+}
-+
- /// Convert the DSH bundle package at `package` into a fresh native bundle at
- /// `output`. `output` must not exist; nothing is written unless every
- /// component validated, and a failed write removes what it created.
-```
-
-**File**: `crates/plugins/src/install/mod.rs` (modified, +395/-14)
-```diff
-@@ -93,6 +93,7 @@ mod tarball;
- #[cfg(test)]
- mod tests;
- 
-+pub use npm_deps::NpmDepsNetworkError;
- use place::{ensure_target_within_plugins_dir, finalize_install, plugin_target_path};
- use stage::stage_local_copy;
- pub use summary::{PluginSummary, PreviousInstall, SummaryClause, SummaryInput, build_summary};
-@@ -130,6 +131,14 @@ impl PluginInstallSource {
-     ///   (via [`InstallSource::parse`]; registry names are unreachable here)
-     /// * `path:<dir>` or any other value → [`PluginInstallSource::LocalPath`]
-     pub fn parse(spec: &str) -> Result<Self> {
-+        Self::parse_inner(spec, true)
-+    }
-+
-+    pub fn parse_syntax(spec: &str) -> Result<Self> {
-+        Self::parse_inner(spec, false)
-+    }
-+
-+    fn parse_inner(spec: &str, inspect_fs: bool) -> Result<Self> {
-         let trimmed = spec.trim();
-         if trimmed.is_empty() {
-             bail!("install source must not be empty");
-@@ -197,7 +206,7 @@ impl PluginInstallSource {
-             ))));
-         }
-         if let Some(path) = trimmed.strip_prefix("path:") {
--            return Self::local(path);
-+            return Self::local(path, inspect_fs);
-         }
-         if let Some(path) = trimmed.strip_prefix("dsh:") {
-             let path = path.trim();
-@@ -221,16 +230,16 @@ impl PluginInstallSource {
-                 }
-             };
-         }
--        Self::local(trimmed)
-+        Self::local(trimmed, inspect_fs)
-     }
- 
--    fn local(spec: &str) -> Result<Self> {
-+    fn local(spec: &str, inspect_fs: bool) -> Result<Self> {
-         let trimmed = spec.trim();
-         if trimmed.is_empty() {
-             bail!("local install path must not be empty");
-         }
-         let path = PathBuf::from(trimmed);
--        if dsh::try_is_dsh_package(&path)? {
-+        if inspect_fs && dsh::try_is_dsh_package(&path)? {
-             return Ok(Self::Dsh(path));
-         }
-         Ok(Self::LocalPath(path))
-@@ -479,7 +488,22 @@ async fn install_inner(
-             )
-         }
-         PluginInstallSource::Dsh(package) => {
--            let converted = convert_dsh_off_runtime(package.clone(), network.clone()).await?;
-+            let converted = match convert_dsh_off_runtime(package.clone(), network.clone()).await {
-+                Ok(converted) => converted,
-+                Err(err) => {
-+                    if let Some(net_err) = err.downcast_ref::<NpmDepsNetworkError>() {
-+                        return Ok(match net_err {
-+                            NpmDepsNetworkError::NeedsApproval(host) => {
-+                                PluginInstallOutcome::NeedsApproval((*host).to_string())
-+                            }
-+                            NpmDepsNetworkError::Denied(host) => {
-+                                PluginInstallOutcome::NetworkDenied((*host).to_string())
-+                            }
-+                        });
-+                    }
-+                    return Err(err);
-+                }
-+            };
-             install_converted_dsh(
-                 converted,
-                 user_plugins_dir,
-@@ -621,6 +645,174 @@ fn verify_expected_content_hash(
-     .into())
- }
- 
-+#[derive(Debug, Clone)]
-+pub struct DownloadedRemote {
-+    pub remote: InstallSource,
-+    pub resolved_url: String,
-+    pub bytes: Vec<u8>,
-+}
-+
-+#[derive(Debug)]
-+pub enum RemoteDownloadOutcome {
-+    Downloaded {
-+        archive: DownloadedRemote,
-+        has_npm_deps: bool,
-+    },
-+    NeedsApproval(String),
-+    NetworkDenied(String),
-+}
-+
-+#[derive(Debug, Clone)]
-+pub struct PreparedRemote {
-+    pub remote: InstallSource,
-+    pub resolved_url: String,
-+    pub bytes: Vec<u8>,
-+    pub name: String,
-+    pub content_hash: String,
-+}
-+
-+#[derive(Debug)]
-+pub enum RemotePreviewOutcome {
-+    Ready(PreparedRemote),
-+    NeedsApproval(String),
-+    NetworkDenied(String),
-+}
-+
-+pub async fn download_remote_install_archive(
-+    remote: InstallSource,
-+    max_size: u64,
-+    network: &NetworkPolicy,
-+) -> Result<RemoteDownloadOutcome> {
-+    let (bytes, url) = match fetch_tarball(&remote, network, max_size).await? {
-+        FetchOutcome::Bytes { bytes, url } => (bytes, url),
-+        FetchOutcome::NeedsApproval(host) => {
-+            return Ok(RemoteDownloadOutcome::NeedsApproval(host));
-+        }
-+        FetchOutcome::Denied(host) => {
-+            return Ok(RemoteDownloadOutcome::NetworkDenied(host));
-+        }
-+    };
-+    let checksum = sha256_hex(&bytes);
-+    let (bundle_path, pinned_sha256) = remote_fragment(&remote)?;
-+    if let Some(pinned) = pinned_sha256
-+        && pinned != checksum
-+    {
-+        return Err(PluginArchiveMismatch {
-+            url,
-+            expected: pinned,
-+            actual: checksum,
-+        }
-+        .into());
-+    }
-+    let bytes_clone = bytes.clone();
-+    #[cfg(any(test, feature = "test-support"))]
-+    let env_scope = codewhale_runtime::test_support::env_scope_ticket();
-+    let has_npm_deps = tokio::task::spawn_blocking(move || -> Result<bool> {
-+        #[cfg(any(test, feature = "test-
-```
-
-**File**: `crates/plugins/src/install/npm_deps.rs` (modified, +415/-228)
-```diff
-@@ -1,4 +1,5 @@
- use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
-+use std::fmt;
- use std::fs::{self, File};
- use std::io::Write;
- use std::path::{Component, Path, PathBuf};
-@@ -8,7 +9,7 @@ use std::time::Duration;
- use anyhow::{Context, Result, bail};
- use base64::Engine as _;
- use codewhale_net::guard::{GuardedGet, PrivateTargets};
--use codewhale_net::network_policy::NetworkPolicy;
-+use codewhale_net::network_policy::{Decision, NetworkPolicy};
- use codewhale_skill_install::bounded_tar::{
-     entry_names_within_bound, map_stream_limit, open_bounded_tarball,
- };
-@@ -22,12 +23,43 @@ use sha2::{Digest, Sha512};
- use super::dsh::{Value, presets};
- 
- const NPM_REGISTRY: &str = "https://registry.npmjs.org";
-+const NPM_REGISTRY_HOST: &str = "registry.npmjs.org";
-+
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub enum NpmDepsNetworkError {
-+    NeedsApproval(&'static str),
-+    Denied(&'static str),
-+}
-+
-+impl fmt::Display for NpmDepsNetworkError {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        match self {
-+            Self::NeedsApproval(host) => write!(
-+                f,
-+                "Network approval required for {host}; use /network allow {host}, then retry"
-+            ),
-+            Self::Denied(host) => write!(f, "Network access denied for {host}"),
-+        }
-+    }
-+}
-+
-+impl std::error::Error for NpmDepsNetworkError {}
-+
-+fn ensure_registry_allowed(network: &NetworkPolicy) -> Result<()> {
-+    match network.decide(NPM_REGISTRY_HOST) {
-+        Decision::Allow => Ok(()),
-+        Decision::Prompt => Err(NpmDepsNetworkError::NeedsApproval(NPM_REGISTRY_HOST).into()),
-+        Decision::Deny => Err(NpmDepsNetworkError::Denied(NPM_REGISTRY_HOST).into()),
-+    }
-+}
- const NPM_ACCEPT_HEADER: &str = "application/vnd.npm.install-v1+json, application/json";
- const MAX_PACKUMENT_BYTES: usize = 32 * 1024 * 1024;
- const MAX_TARBALL_BYTES: usize = 64 * 1024 * 1024;
- const MAX_UNPACKED_PACKAGES: usize = 256;
- const MAX_UNPACKED_FILES: usize = 14_000;
- const MAX_UNPACKED_BYTES: u64 = 220 * 1024 * 1024;
-+const MAX_SCAN_DEPTH: usize = 32;
-+const MAX_SCAN_FILE_BYTES: usize = 2 * 1024 * 1024;
- 
- type CachedTarballs = HashMap<(String, String), Arc<Vec<u8>>>;
- 
-@@ -368,6 +400,7 @@ fn strip_tar_package_prefix(raw_path: &Path) -> Option<PathBuf> {
- }
- 
- async fn fetch_packument(package_name: &str, network: &NetworkPolicy) -> Result<Arc<Packument>> {
-+    ensure_registry_allowed(network)?;
-     if !is_valid_npm_name(package_name) {
-         bail!("invalid npm package name `{package_name}`");
-     }
-@@ -412,6 +445,7 @@ async fn fetch_verified_tarball(
-     dist: &PackumentDist,
-     network: &NetworkPolicy,
- ) -> Result<Arc<Vec<u8>>> {
-+    ensure_registry_allowed(network)?;
-     let key = (package_name.to_string(), version.to_string());
-     if let Ok(guard) = tarball_cache().lock()
-         && let Some(cached) = guard.get(&key)
-@@ -450,248 +484,373 @@ async fn fetch_verified_tarball(
-     Ok(arc)
- }
- 
--pub(crate) fn maybe_stage_with_dependencies(
--    package_root: &Path,
--    manifest: &Value,
--    entries: &[Value],
--    network: &NetworkPolicy,
--) -> Result<Option<tempfile::TempDir>> {
--    let declared = declared_dependencies(manifest);
--    if declared.is_empty() {
--        return Ok(None);
-+fn read_capped_scan_text(path: &Path, max_bytes: usize) -> Result<Option<String>> {
-+    let file = codewhale_util::bundle_file::open_bundle_file(path)
-+        .with_context(|| format!("failed to open DSH file `{}`", path.display()))?;
-+    let mut buf = Vec::new();
-+    let mut limited = std::io::Read::take(file, (max_bytes + 1) as u64);
-+    std::io::Read::read_to_end(&mut limited, &mut buf)?;
-+    if buf.len() > max_bytes {
-+        bail!(
-+            "DSH source file `{}` exceeds {max_bytes} byte scan limit",
-+            path.display()
++fn held_enter_never_allows() {
++    let base = std::time::Instant::now();
++    let mut view = guarded_view(shell_request());
++    ModalView::on_became_top(&mut view, base);
++    for repeat in 0..200 {
++        assert!(
++            !view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, repeat * 33)),
++            "repeat {repeat}"
 +        );
      }
--    let root = package_root.to_path_buf();
--    let entries = entries.to_vec();
--    let network = network.clone();
--    std::thread::spawn(move || -> Result<Option<tempfile::TempDir>> {
--        fn scan_dir(
--            base: &Path,
--            cur: &Path,
--            declared: &BTreeMap<String, String>,
--            has_roster: bool,
--            import_re: &Regex,
--            referenced: &mut BTreeSet<String>,
--        ) -> Result<()> {
--            for entry in fs::read_dir(cur)? {
--                let entry = entry?;
--                let path = entry.path();
--                let meta = fs::symlink_metadata(&path)?;
--                if meta.file_type().is_symlink() {
--                    continue;
--                }
--                let Ok(rel) = path.strip_prefix(base) else {
--                    continue;
--                };
--                if meta.is_dir() {
--                    if let Some(name) = path.file_name().and_then(|s| s.to_str())
--                        && matches!(
--                            name,
--                            "node_modules"
--                                | "artifacts"
--          
++    assert!(view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 200 * 33 + 250)));
+ 
+-    // A held Enter that refused the first card does not allow the next.
+-    super::view::clear_last_approval_enter();
+-    let mut denied = ApprovalView::new_with_default_selection(
++    let mut deny = ApprovalView::new_with_default_selection(
+         shell_request(),
+         Locale::En,
+         ApprovalDefaultSelection::Deny,
+     );
+-    denied.enter_guard = true;
++    deny.enter_guard = true;
+     assert!(matches!(
+-        denied.handle_key(create_key_event(KeyCode::Enter)),
++        deny.handle_key(create_key_event(KeyCode::Enter)),
+         ViewAction::EmitAndClose(ViewEvent::ApprovalDecision {
+             decision: ReviewDecision::Denied,
+             ..
+         })
+     ));
+-    let mut after_denial = guarded_view(shell_request());
+-    after_denial.answerable_since = long_ago();
+-    assert!(matches!(
+-        after_denial.handle_key(create_key_event(KeyCode::Enter)),
+-        ViewAction::None
+-    ));
+ 
+-    // The explicit key still answers at once, and so does a later Enter.
++    let
+```
+
+**File**: `crates/tui/src/tui/approval/view.rs` (modified, +23/-30)
+```diff
+@@ -5,17 +5,16 @@
+ //! authority boundaries.
+ //!
+ //! Enter allows the highlighted action by default, so an Enter that approves
+-//! is admitted only after the card has been the answerable prompt for
+-//! `ENTER_ARMING_DELAY`, that long after the previous Enter on any approval
+-//! card, and `ENTER_QUIET_GAP` after the last character key. Known limits:
+-//! a key-repeat delay longer than the arming delay, a repeat slower than the
+-//! quiet gap, an Enter held on a non-approval prompt that closes onto an
+-//! older approval card, and the letter shortcuts (`y`, `a`, `1`) are not
+-//! covered by this guard. Unit tests answer a card the instant it is built,
+-//! so the guard starts off under `cfg(test)` and a test turns it on.
++//! is admitted only after the card has been the top prompt for
++//! `ENTER_ARMING_DELAY` (the view stack re-arms it each time the card becomes
++//! the top view again) and `ENTER_QUIET_GAP` after the previous Enter or
++//! character key on this card. A refused Enter says so in a status notice.
++//! Known limits: a key-repeat delay longer than the arming delay, a repeat
++//! slower than the quiet gap, and the letter shortcuts (`y`, `a`, `1`) are
++//! not covered by this guard. Unit tests answer a card the instant it is
++//! built, so the guard starts off under `cfg(test)` and a test turns it on.
+ 
+ use std::cell::{Cell, RefCell};
+-use std::sync::{Mutex, PoisonError};
+ use std::time::{Duration, Instant};
+ 
+ use codewhale_config::ToolAskRule;
+@@ -38,22 +37,6 @@ use codewhale_engine::core::authority::RiskLevel;
+ pub(super) const ENTER_ARMING_DELAY: Duration = Duration::from_millis(750);
+ pub(super) const ENTER_QUIET_GAP: Duration = Duration::from_millis(200);
+ 
+-static LAST_APPROVAL_ENTER: Mutex<Option<Instant>> = Mutex::new(None);
+-
+-fn replace_last_approval_enter(at: Option<Instant>) -> Option<Instant> {
+-    std::mem::replace(
+-        &mut *LAST_APPROVAL_ENTER
+-            .lock()
+-            .unwrap_or_else(PoisonError::into_inner),
+-        at,
+-    )
+-}
+-
+-#[cfg(test)]
+-pub(super) fn clear_last_approval_enter() {
+-    replace_last_approval_enter(None);
+-}
+-
+ /// Indices into the option list shared by both variants.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum ApprovalOption {
+@@ -150,6 +133,7 @@ pub struct ApprovalView {
+     pub(crate) scopes_open: bool,
+     pub(crate) details_expanded: bool,
+     pub(super) answerable_since: Option<Instant>,
++    pub(super) last_enter_at: Option<Instant>,
+     pub(super) last_char_key_at: Option<Instant>,
+     pub(super) enter_guard: bool,
+ }
+@@ -196,6 +180,7 @@ impl ApprovalView {
+             scopes_open: false,
+             details_expanded: false,
+             answerable_since: None,
++            last_enter_at: None,
+             last_char_key_at: None,
+             enter_guard: !cfg!(test),
+         }
+@@ -376,18 +361,17 @@ impl ApprovalView {
+         self.locale
+     }
+ 
+-    fn enter_may_commit(&mut self, option: ApprovalOption, now: Instant) -> bool {
++    pub(super) fn enter_may_commit(&mut self, option: ApprovalOption, now: Instant) -> bool {
+         if !self.enter_guard {
+             return true;
+         }
+         let answerable_since = *self.answerable_since.get_or_insert(now);
+-        let previous_enter = replace_last_approval_enter(Some(now));
++        let previous_enter = self.last_enter_at.replace(now);
+         if !option.grants() {
+             return true;
+         }
+         now.saturating_duration_since(answerable_since) >= ENTER_ARMING_DELAY
+-            && previous_enter
+-                .is_none_or(|at| now.saturating_duration_since(at) >= ENTER_ARMING_DELAY)
++            && previous_enter.is_none_or(|at| now.saturating_duration_since(at) >= ENTER_QUIET_GAP)
+             && self
+                 .last_char_key_at
+                 .is_none_or(|at| now.saturating_duration_since(at) >= ENTER_QUIET_GAP)
+@@ -551,7 +535,10 @@ impl ModalView for ApprovalView {
+         if key.code == KeyCode::Enter {
+             let option = self.current_option();
+             if !self.enter_may_commit(option, now) {
+-                return ViewAction::None;
++                return ViewAction::Emit(ViewEvent::StatusToast {
++                    message: tr(self.locale, MessageId::ApprovalEnterIgnored).into_owned(),
++                    level: crate::tui::app::StatusToastLevel::Info,
++                });
+             }
+             return self.commit_option(option);
+         }
+@@ -709,6 +696,12 @@ impl ModalView for ApprovalView {
+         ApprovalWidget::new(&self.request, self).docked_height(width)
+     }
+ 
++    fn on_became_top(&mut self, at: Instant) {
++        self.answerable_since = Some(at);
++        self.last_enter_at = None;
++        self.last_char_key_at = None;
++    }
++
+     fn tick(&mut self) -> ViewAction {
+         self.answerable_since.get_or_insert_with(Instant::now);
+         if self.is_timed_out() {
+```
+
+**File**: `crates/tui/src/tui/external_agent.rs` (modified, +14/-4)
+```diff
+@@ -335,7 +335,10 @@ pub(crate) fn handle_external_approval_decision(
+     Some(true)
+ }
+ 
+-pub(crate) fn drain_external_agent_events(app: &mut App) -> bool {
++pub(crate) fn drain_external_agent_events(
++    app: &mut App,
++    default_selection: codewhale_runtime::config::ApprovalDefaultSelection,
++) -> bool {
+     let Some(session) = app.external_agent.as_mut() else {
+         return false;
+     };
+@@ -395,7 +398,7 @@ pub(crate) fn drain_external_agent_events(app: &mut App) -> bool {
+     }
+ 
+     for record in records {
+-        apply_external_event(app, &agent_name, record);
++        apply_external_event(app, &agent_name, record, default_selection);
+         changed = true;
+     }
+ 
+@@ -432,7 +435,12 @@ fn finish_streaming_assistant(app: &mut App) {
+     }
+ }
+ 
+-fn apply_external_event(app: &mut App, agent_name: &str, record: RuntimeEventRecord) {
++fn apply_external_event(
++    app: &mut App,
++    agent_name: &str,
++    record: RuntimeEventRecord,
++    default_selection: codewhale_runtime::config::ApprovalDefaultSelection,
++) {
+     match record.event.as_str() {
+         "turn.started" => {
+             if let Some(turn_id) = record.turn_id
+@@ -547,7 +555,7 @@ fn apply_external_event(app: &mut App, agent_name: &str, record: RuntimeEventRec
+                 .push(ApprovalView::new_with_default_selection(
+                     request,
+                     app.ui_locale,
+-                    Default::default(),
++                    default_selection,
+                 ));
+         }
+         "turn.completed" => {
+@@ -784,6 +792,7 @@ mod tests {
+                     }
+                 }),
+             },
++            Default::default(),
+         );
+         assert!(!app.is_loading);
+         assert!(app.history.iter().any(|cell| matches!(
+@@ -810,6 +819,7 @@ mod tests {
+                     }
+                 }),
+             },
++            Default::default(),
+         );
+         assert!(!app.is_loading);
+         assert!(
+```
+
+**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +4/-1)
+```diff
+@@ -2814,7 +2814,10 @@ pub(crate) async fn run_event_loop(
+         if crate::tui::external_agent::poll_external_agent_discovery(app, config) {
+             app.needs_redraw = true;
+         }
+-        if crate::tui::external_agent::drain_external_agent_events(app) {
++        if crate::tui::external_agent::drain_external_agent_events(
++            app,
++            config.approval_default_selection(),
++        ) {
+             app.needs_redraw = true;
+         }
+ 
+```
+
+**File**: `crates/tui/src/tui/views/mod.rs` (modified, +13/-1)
+```diff
+@@ -1502,6 +1502,7 @@ pub trait ModalView: std::any::Any {
+     fn tick(&mut self) -> ViewAction {
+         ViewAction::None
+     }
++    fn on_became_top(&mut self, _at: std::time::Instant) {}
+     /// Erased downcast hook for views that need a typed reference back from
+     /// the boxed trait object (e.g. the live transcript overlay needs `&mut`
+     /// access from outside the trait so it can refresh its snapshot of the
+@@ -1591,7 +1592,11 @@ impl ViewStack {
+     /// Restamp `top_since` when the top view changed since `before`.
+     fn note_top_change(&mut self, before: Option<(*const (), usize)>) {
+         if self.top_identity() != before {
+-            self.top_since = Some(std::time::Instant::now());
++            let now = std::time::Instant::now();
++            self.top_since = Some(now);
++            if let Some(view) = self.views.last_mut() {
++                view.on_became_top(now);
++            }
+         }
+     }
+ 
+@@ -1813,6 +1818,13 @@ impl ViewStack {
+         tracing::debug!(target: "codewhale_tui::view_stack", action = "push_boxed", kind = ?kind, depth = self.views.len(), "view pushed");
+     }
+ 
++    #[cfg(test)]
++    pub(crate) fn top_approval_for_test(
++        &mut self,
++    ) -> Option<&mut crate::tui::approval::ApprovalView> {
++        self.views.last_mut()?.as_any_mut().downcast_mut()
++    }
++
+     pub fn pop(&mut self) -> Option<Box<dyn ModalView>> {
+         let top = self.top_identity();
+         let popped = self.views.pop();
+```
+
+**File**: `crates/tui/src/tui/widgets/mod.rs` (modified, +3/-3)
+```diff
+@@ -2062,8 +2062,8 @@ impl<'a> ApprovalWidget<'a> {
+         };
+ 
+         let selected_pill = menu_style::selected_row_style().add_modifier(Modifier::REVERSED);
+-        let wide = bar_area.width >= 72;
+-        let padded = bar_area.width >= 56;
++        let wide = bar_area.width >= 100;
++        let padded = wide;
+         let allow_text = if workflow_plan {
+             "Approve"
+         } else if wide {
+@@ -2099,7 +2099,7 @@ impl<'a> ApprovalWidget<'a> {
+         );
+         let m_label = if workflow_plan {
+             String::new()
+-        } else if !padded {
++        } else if !wide {
+             "[m]".to_string()
+         } else if self.view.scopes_open {
+             if ascii { "[^ m]" } else { "[▴ m]" }.to_string()
+```
+
+**File**: `docs/CONFIGURATION.md` (modified, +4/-3)
+```diff
+@@ -2478,9 +2478,10 @@ reasoning contract, and all four membership ids omit generic sampling fields.
+   (default) or `deny`. Enter commits the highlighted control, which is tagged
+   `[Enter]`, so by default Enter allows the one action shown, once; `n` denies
+   and `Esc` refuses the action and stops the turn. An Enter that would allow
+-  is ignored for the first three quarters of a second and straight after
+-  another Enter or typed characters, so a key in flight, a held key or pasted
+-  text does not approve. Set `deny` to make Enter refuse the call instead
++  is ignored, with a notice saying so, for the first three quarters of a
++  second after the bar becomes the prompt in front and straight after another
++  Enter or typed characters, so an Enter in flight, held or pasted does not
++  approve. The letter keys (`y`, `a`, `1`) are not delayed. Set `deny` to make Enter refuse the call instead
+   (the earlier default, #5293); `y` still allows once. It moves the
+   highlight only: which calls are prompted for is still `approval_policy`
+   plus the rules in `permissions.toml`. The sandbox elevation prompt is not
+```
+
+**File**: `docs/MODES.md` (modified, +6/-4)
+```diff
+@@ -280,10 +280,12 @@ will run, then `Details [d]`, `Allow [Enter]`, `[▾ m]` and `Deny [n]`.
+   their numbers: `[1] Allow once`, `[2] Allow in this conversation` and, where
+   it is offered, `[3] Always allow in this repo`.
+ - An `Enter` that would allow is ignored for the first three quarters of a
+-  second the bar is the prompt in front of you, for the same time after
+-  another `Enter` on an approval, and straight after typed characters. A key
+-  already in flight, a held key or text pasted into the terminal therefore
+-  does not approve. Denying is never delayed, and `y` answers at once.
++  second the bar is the prompt in front of you (again each time it comes back
++  to the front after another prompt covered it), and straight after another
++  `Enter` or typed characters. An `Enter` already in flight, held or pasted
++  therefore does not approve, and a notice says the key was ignored and why;
++  press `Enter` again to allow. Denying is never delayed, and the letter keys
++  (`y`, `a`, `1`) answer at once.
+ - To make `Enter` deny instead, set `[approval] default_selection = "deny"`
+   (see [Configuration](CONFIGURATION.md)).
+ 
+```
+
+---
+
+### Incident Patch 3: `03863506` (2026-11-25)
+**Commit Message**: fix(tui): deliver background /update and /init results, show them running, cancel on Esc or Ctrl-C
+
+Review blocking finding (commands/groups/utility/background.rs:85):
+background::take_ready had no caller, so a finished /init never wrote
+AGENTS.md or sent its prompt and /update install never reported.
+
+The event loop's completion drain now applies every ready background
+result through apply_command_result right after the completion closure
+that parked it. While a background command runs, a standing status notice
+says "/<command> is working in the background. Esc or Ctrl+C stops it."
+and is retired when it ends. Esc with nothing else to do, and the Ctrl+C
+that would arm quit, cancel the running background commands first and say
+so. A second run of the same command is still refused by the host.
+
+The host moves from groups/utility to commands/background_host.rs beside
+the other hosts: it takes the concrete App, which the command migration
+scan does not allow inside a migrated group. The facet keeps the
+future-based work it shipped with; the half-finished change to a
+fn-pointer job in the WIP was reverted, because the future form already
+cancels for real (abort drops the updater future
+
+**File**: `crates/command-contract/src/tests.rs` (modified, +7/-2)
+```diff
+@@ -4004,7 +4004,9 @@ fn background_slot_is_optional_and_taken_once() {
+     assert!(CommandContexts::empty().take_background().is_none());
+     let mut fixture = BackgroundFixture::default();
+     let mut contexts = CommandContexts::empty().with_background(&mut fixture);
+-    let background = contexts.take_background().expect("selected background facet");
++    let background = contexts
++        .take_background()
++        .expect("selected background facet");
+     assert!(contexts.take_background().is_none());
+     let parts = contexts.into_parts();
+     assert!(parts.workspace.is_none());
+@@ -4047,7 +4049,10 @@ fn background_facet_refuses_a_second_run_and_cancel_drops_the_work() {
+         dropped.load(std::sync::atomic::Ordering::SeqCst),
+         "cancelling drops the unfinished work"
+     );
+-    assert_eq!(facet.cancel("init"), Err("/init is not running".to_string()));
++    assert_eq!(
++        facet.cancel("init"),
++        Err("/init is not running".to_string())
++    );
+     assert!(facet.start("init", background_work("again")).is_ok());
+ }
+ 
+```
+
+**File**: `crates/tui/src/commands/background_host.rs` (renamed, +81/-5)
+```diff
+@@ -57,6 +57,26 @@ impl BackgroundCommands {
+         }
+     }
+ 
++    fn cancel_all(&self) -> Vec<&'static str> {
++        let mut cancelled: Vec<&'static str> = self
++            .lock()
++            .running
++            .drain()
++            .map(|(command, running)| {
++                running.abort.abort();
++                command
++            })
++            .collect();
++        cancelled.sort_unstable();
++        cancelled
++    }
++
++    fn running(&self) -> Vec<&'static str> {
++        let mut running: Vec<&'static str> = self.lock().running.keys().copied().collect();
++        running.sort_unstable();
++        running
++    }
++
+     fn push_ready(&self, result: BackgroundCommandResult) {
+         self.lock().ready.push(result);
+     }
+@@ -86,6 +106,18 @@ pub(crate) fn take_ready() -> Vec<CommandResult> {
+     shared().take_ready()
+ }
+ 
++pub(crate) fn running() -> Vec<&'static str> {
++    shared().running()
++}
++
++pub(crate) fn cancel_all() -> Vec<&'static str> {
++    shared().cancel_all()
++}
++
++pub(crate) fn line(locale: Locale, id: MessageId, command: &str) -> String {
++    tr(locale, id).replace("{command}", command)
++}
++
+ pub(in crate::commands) struct BackgroundHost {
+     commands: BackgroundCommands,
+     completion: tokio::sync::mpsc::Sender<DispatchApplyFn>,
+@@ -112,7 +144,7 @@ pub(in crate::commands) fn host(
+ 
+ impl BackgroundHost {
+     fn line(&self, id: MessageId, command: &str) -> String {
+-        tr(self.locale, id).replace("{command}", command)
++        line(self.locale, id, command)
+     }
+ }
+ 
+@@ -243,7 +275,10 @@ mod tests {
+ 
+     fn test_app(workspace: &std::path::Path) -> (App, Config) {
+         let config = Config::default();
+-        let app = App::new(crate::tui::test_support::test_tui_options(workspace), &config);
++        let app = App::new(
++            crate::tui::test_support::test_tui_options(workspace),
++            &config,
++        );
+         (app, config)
+     }
+ 
+@@ -311,7 +346,10 @@ mod tests {
+             matches!(&ready[0].action, Some(AppAction::SendMessage(prompt)) if prompt == "prompt")
+         );
+         assert!(!ready[0].is_error);
+-        assert!(host.commands.take_ready().is_empty(), "a result is applied once");
++        assert!(
++            host.commands.take_ready().is_empty(),
++            "a result is applied once"
++        );
+ 
+         let flag = Arc::new(AtomicBool::new(false));
+         assert!(
+@@ -320,6 +358,38 @@ mod tests {
+         );
+     }
+ 
++    #[tokio::test]
++    async fn a_running_command_shows_a_notice_and_an_interrupt_cancels_it() {
++        let tmp = tempfile::tempdir().unwrap();
++        let (mut app, _config) = test_app(tmp.path());
++        let (completion, _mailbox) = tokio::sync::mpsc::channel::<DispatchApplyFn>(2);
++        app.dispatch_completion_tx = Some(completion);
++        let mut background = host(&app, CommandCapabilities::BACKGROUND).expect("background host");
++        let flag = Arc::new(AtomicBool::new(false));
++        assert!(background.start("update", held(&flag)).is_ok());
++
++        let working = super::line(app.ui_locale, MessageId::CmdBackgroundWorking, "update");
++        let mut shown = Vec::new();
++        crate::tui::ui::sync_background_command_notices(&mut app, &mut shown);
++        assert_eq!(shown, ["update"]);
++        assert!(app.status_toasts.iter().any(|toast| toast.text == working));
++
++        assert!(crate::tui::ui::cancel_background_commands(&mut app));
++        assert_eq!(
++            app.status_message,
++            Some(super::line(
++                app.ui_locale,
++                MessageId::CmdBackgroundCancelled,
++                "update"
++            ))
++        );
++        assert!(settled(&flag).await, "the cancelled work is dropped");
++        crate::tui::ui::sync_background_command_notices(&mut app, &mut shown);
++        assert!(shown.is_empty());
++        assert!(!app.status_toasts.iter().any(|toast| toast.text == working));
++        assert!(!crate::tui::ui::cancel_background_commands(&mut app));
++    }
++
+     #[tokio::test]
+     async fn an_error_result_is_delivered_as_an_error() {
+         let tmp = tempfile::tempdir().unwrap();
+@@ -386,7 +456,10 @@ mod tests {
+         );
+         assert!(settled(&flag).await, "cancelled work is dropped");
+         tokio::time::sleep(Duration::from_millis(20)).await;
+-        assert!(mailbox.try_recv().is_err(), "a cancelled run reports nothing");
++        assert!(
++            mailbox.try_recv().is_err(),
++            "a cancelled run reports nothing"
++        );
+         assert!(host.commands.take_ready().is_empty());
+         assert_eq!(
+             host.cancel("update"),
+@@ -408,7 +481,10 @@ mod tests {
+ 
+         assert!(host.start("update", held(&flag)).is_ok());
+         drop(mailbox);
+-        assert!(settled(&flag).await, "work stops when the event loop is gone");
++        assert!(
++            settled(&flag).await,
++            "work stops when the event loop is gone"
++        );
+         assert!(host.commands.lock().running.is_emp
+```
+
+**File**: `crates/tui/src/commands/groups/utility/mod.rs` (modified, +0/-1)
+```diff
+@@ -3,7 +3,6 @@
+ 
+ mod attachment;
+ mod automation;
+-pub(crate) mod background;
+ mod jobs;
+ mod mcp;
+ mod network;
+```
+
+**File**: `crates/tui/src/commands/groups/utility/update.rs` (modified, +4/-1)
+```diff
+@@ -497,7 +497,10 @@ mod tests {
+         assert!(result.is_error);
+         assert!(result.action.is_none());
+         let message = result.message.expect("error message");
+-        assert!(message.contains("/usr/local/bin/codewhale update"), "{message}");
++        assert!(
++            message.contains("/usr/local/bin/codewhale update"),
++            "{message}"
++        );
+         assert!(message.contains("no such file"), "{message}");
+     }
+ 
+```
+
+**File**: `crates/tui/src/commands/mod.rs` (modified, +2/-1)
+```diff
+@@ -6,6 +6,7 @@
+ //! module keeps registry construction, user-command precedence, and the
+ //! fall-through behaviour.
+ 
++pub(crate) mod background_host;
+ mod builtin_execution;
+ mod config_group;
+ mod config_host;
+@@ -476,7 +477,7 @@ fn execute_in_context(
+                     capabilities,
+                     handler: contextual,
+                 } => {
+-                    let mut background = groups::utility::background::host(app, capabilities);
++                    let mut background = background_host::host(app, capabilities);
+                     let mut bundle = app.command_contexts_with_config(config);
+                     let mut contexts = bundle.contexts(capabilities);
+                     if let Some(background) = background.as_mut() {
+```
+
+**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +52/-1)
+```diff
+@@ -2190,6 +2190,7 @@ pub(crate) async fn run_event_loop(
+     // Set when the telemetry disclosure cell is queued; cleared (and the
+     // disclosure recorded) by the first draw that paints it.
+     let mut telemetry_notice_awaiting_render = false;
++    let mut background_commands_shown: Vec<&'static str> = Vec::new();
+     let mut active_translation_client = fallback_translation_client.clone();
+     let mut active_translation_route: Option<codewhale_engine::core::events::TurnRoute> = None;
+     let mut translation_sequence = 0_u64;
+@@ -2479,7 +2480,13 @@ pub(crate) async fn run_event_loop(
+             let _ = apply(app, &engine_handle, &*config);
+             // Drain this completion immediately: a later completion cannot replace an edit.
+             super::feedback_host::dispatch_ready(app, config, &engine_handle).await?;
++            for result in crate::commands::background_host::take_ready() {
++                if apply_command_result(terminal, app, &mut engine_handle, config, result).await? {
++                    return Ok(());
++                }
++            }
+         }
++        sync_background_command_notices(app, &mut background_commands_shown);
+ 
+         if app.onboarding == OnboardingState::Provider && app.view_stack.top_kind().is_none() {
+             let recover_configured_route = app.onboarding_recovers_configured_route();
+@@ -7444,7 +7451,9 @@ pub(crate) async fn run_event_loop(
+                             return Ok(());
+                         }
+                         CtrlCDisposition::ArmExit => {
+-                            app.arm_quit();
++                            if !cancel_background_commands(app) {
++                                app.arm_quit();
++                            }
+                         }
+                     }
+                 }
+@@ -7540,6 +7549,9 @@ pub(crate) async fn run_event_loop(
+                             app.clear_composer_draft();
+                         }
+                         EscapeAction::Noop => {
++                            if cancel_background_commands(app) {
++                                continue;
++                            }
+                             // Nothing else cares about this Esc — route it
+                             // through the backtrack state machine. While
+                             // streaming or with the live transcript already
+@@ -9312,6 +9324,45 @@ mod launch_session_sync_tests {
+     }
+ }
+ 
++fn background_command_notice_id(command: &str) -> String {
++    format!("background-command:{command}")
++}
++
++pub(crate) fn sync_background_command_notices(app: &mut App, shown: &mut Vec<&'static str>) {
++    use crate::commands::background_host as background;
++    let running = background::running();
++    if running == *shown {
++        return;
++    }
++    for command in shown.iter().filter(|command| !running.contains(command)) {
++        app.retire_event_notices(&background_command_notice_id(command));
++    }
++    for command in running.iter().filter(|command| !shown.contains(command)) {
++        app.push_status_toast_record(crate::tui::app::StatusToast::standing(
++            background::line(app.ui_locale, MessageId::CmdBackgroundWorking, command),
++            StatusToastLevel::Info,
++            background_command_notice_id(command),
++        ));
++    }
++    *shown = running;
++    app.needs_redraw = true;
++}
++
++pub(crate) fn cancel_background_commands(app: &mut App) -> bool {
++    use crate::commands::background_host as background;
++    let cancelled = background::cancel_all();
++    if cancelled.is_empty() {
++        return false;
++    }
++    let lines: Vec<String> = cancelled
++        .iter()
++        .map(|command| background::line(app.ui_locale, MessageId::CmdBackgroundCancelled, command))
++        .collect();
++    app.status_message = Some(lines.join(" "));
++    app.needs_redraw = true;
++    true
++}
++
+ pub(crate) fn bank_live_turn_time(app: &mut App) {
+     let Some(started) = app.turn_started_at.take() else {
+         return;
+```
+
+**File**: `tests/portable-core-navigation/README.md` (modified, +4/-3)
+```diff
+@@ -45,9 +45,10 @@ insertions must not silently admit runtime or storage services into the closure.
+ 
+ ## Capability limitations
+ 
+-`NAVIGATION` and `VOICE_INPUT` occupy the last two bits of the existing `u32`.
+-No free bit remains. A future capability must first make an explicit, reviewed
+-representation/scoping decision; do not silently widen or renumber identities.
++The capability set is a `u64`. `NAVIGATION` and `VOICE_INPUT` occupy bits 30
++and 31, the last two of the original `u32`; `BACKGROUND` (commands that run
++their work off the UI loop) is bit 32, added when the set was widened for it.
++A future capability takes the next free bit; do not renumber identities.
+ 
+ The current `WORKSPACE` facet includes confined anchor read/append/replace,
+ path inspection and home-directory resolution, not just path reads. Other
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7323** (closed): fix(app-server): read the original path of a worktree-side rename (@SparkofSpike)
-- **PR #7322** (2026-11-12): fix(tui): count characters, not bytes, for the session title limit (@luochen211)
-- **PR #7319** (2026-11-12): fix(mcp,lsp): answer server requests instead of taking them as replies (@luochen211)
-- **PR #7317** (2026-11-12): fix: show non-ASCII paths as written in /diff and git mentions (@luochen211)
-- **PR #7316** (2026-11-12): fix(state,snapshot): keep index entries after a torn line and clamp prune age (@luochen211)
-- **PR #7315** (2026-11-12): fix(config): read every env alias chain through env_non_blank (@luochen211)
+- **PR #7561** (2026-11-25): fix(util,engine): resolve remaining R5 durability, grep timeout cancel, and bounded review read defects (@NieZhuZhu)
+- **PR #7560** (2026-11-25): chore(release): cut 0.10.5 (@Hmbown)
+- **PR #7559** (closed): docs(changelog): consolidate and deduplicate the 0.10.5 Unreleased notes (@Hmbown)
+- **PR #7558** (2026-11-24): feat(0.10.5): DSH 0.2.2 host services, per-plugin settings, telemetry honesty, and Wave 2 runtime (@Hmbown)
+- **PR #7557** (2026-11-24): fix(tui): use the engine catalog effort parser and add the Ollama Cloud effort ladder (@Hmbown)
+- **PR #7556** (2026-11-24): test(engine): match the strict [skills] contract in the creator-skills test (@Hmbown)
 
 ---
 
@@ -3079,32 +3447,50 @@ to `(plugin_id, authority)` via `owner_report_for_authority`:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui: show exact, estimated, or unknown cost labels and update changelog
+## X. command-contract): background facet carries a fn pointer and plain request, not 
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/command-contract/src/facets/background.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `336cd8a4`: tui: show exact, estimated, or unknown cost labels and update changelog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84b57765`: command-contract): background facet carries a fn pointer and plain request, not a boxed future. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/command-contract/src/facets/background.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The cost label shows an exact cost, an estimate or unknown.
-- Cost tracking can no longer fail your work: a turn, a review, an Auto-Review check, a purge, a sub-agent or an Auto routing decision finishes even when Codewhale cannot record its cost, and the cost then shows as unknown.
+use std::path::PathBuf;
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct BackgroundRequest {
+    pub workspace: PathBuf,
+    pub language: String,
+    pub updater: PathBuf,
+    pub argument: String,
+}
+
+pub type BackgroundCancel = Arc<AtomicBool>;
+
+pub type BackgroundJob = fn(BackgroundRequest, BackgroundCancel) -> BackgroundCommandResult;
+        job: BackgroundJob,
+        request: BackgroundRequest,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+use std::future::Future;
+use std::pin::Pin;
+pub type BackgroundCommandWork =
+    Pin<Box<dyn Future<Output = BackgroundCommandResult> + Send + 'static>>;
+        work: BackgroundCommandWork,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `336cd8a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84b57765` are properly handled with clean fallback behavior.
 
 
 ## Consequences

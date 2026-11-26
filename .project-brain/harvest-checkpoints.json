@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T07:57:55.985Z",
+  "last_updated": "2026-11-26T08:10:21.710Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "e1decd0ddd4da9a2cb34bf70efa3e8224cae19a912abcd4369be7bdea63bba17",
-      "verified_at": "2026-11-25T06:47:43.937Z",
+      "content_hash": "e0825208fd0705fe210c08810e91370a8970beb658d0486d538bf05176429055",
+      "verified_at": "2026-11-26T08:10:15.621Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T06:47:43.937Z"
+      "last_updated": "2026-11-26T08:10:15.621Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "178e41ee61e7693ec48ffd18fa130d13d844922ed806d1a9865c2cc984e6e136",
-      "verified_at": "2026-11-25T07:48:44.223Z",
+      "content_hash": "aca6b17c7c01f3bf204b96766f3e5accf0c5c67a6ebbcc179044e05de99fc50a",
+      "verified_at": "2026-11-26T08:10:21.709Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T07:48:44.223Z"
+      "last_updated": "2026-11-26T08:10:21.709Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -19341,14 +19341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-fastframes-l",
-      "content_hash": "6afa59671dbef263914e01b42be9846d2e7b17af747763cca85cd40373ecf66b",
-      "verified_at": "2026-11-22T15:01:13.757Z",
+      "content_hash": "01715e01e51d8be2bf242e1f0312bbfbf03b3e13840f2e1f81ac83915fbd6f9a",
+      "verified_at": "2026-11-26T08:10:13.575Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T15:01:13.757Z"
+      "last_updated": "2026-11-26T08:10:13.575Z"
     },
     "spartan-ng/spartan": {
       "repository": "spartan-ng/spartan",

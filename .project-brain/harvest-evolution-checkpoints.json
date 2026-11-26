@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T07:58:03.689Z",
+  "last_updated": "2026-11-26T08:10:29.265Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -48,7 +48,7 @@
       "staged_for_review": 1
     },
     "codewhale-hq-codewhale-learnings.md": {
-      "processed_at": "2026-11-25T01:36:10.092Z",
+      "processed_at": "2026-11-26T08:10:25.422Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -358,7 +358,7 @@
       "staged_for_review": 1
     },
     "gardener-gardener-learnings.md": {
-      "processed_at": "2026-11-25T07:48:53.898Z",
+      "processed_at": "2026-11-26T08:10:27.589Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3373,7 +3373,7 @@
       "staged_for_review": 1
     },
     "hf-apple-fastframes-l-learnings.md": {
-      "processed_at": "2026-11-22T15:01:18.954Z",
+      "processed_at": "2026-11-26T08:10:27.052Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3958,7 +3958,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4443,
+  "total_dossiers_evaluated": 4446,
   "total_canonical_promoted": 557,
-  "total_staged_for_review": 3364
+  "total_staged_for_review": 3366
 }

@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "44a016aa",
+    "sourceVersion": "c57711cf",
     "license": "Apache-2.0",
-    "contentHash": "178e41ee61e7693ec48ffd18fa130d13d844922ed806d1a9865c2cc984e6e136",
-    "lastHarvestedAt": "2026-11-25T07:48:44.202Z",
+    "contentHash": "aca6b17c7c01f3bf204b96766f3e5accf0c5c67a6ebbcc179044e05de99fc50a",
+    "lastHarvestedAt": "2026-11-26T08:10:21.692Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "b4f71726",
+    "sourceVersion": "a6682352",
     "license": "MIT",
-    "contentHash": "6557dbe6d31decd6ad8b1c24133b9b5c9fd0104401cadf824fc0741ac4decb35",
-    "lastHarvestedAt": "2026-11-25T01:35:58.033Z",
+    "contentHash": "e0825208fd0705fe210c08810e91370a8970beb658d0486d538bf05176429055",
+    "lastHarvestedAt": "2026-11-26T08:10:15.603Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
@@ -12835,8 +12835,8 @@
     "sourceUrl": "https://huggingface.co/apple/FastFrames-L",
     "sourceVersion": "hf-apple-fastframes-l",
     "license": "Open-Source",
-    "contentHash": "6afa59671dbef263914e01b42be9846d2e7b17af747763cca85cd40373ecf66b",
-    "lastHarvestedAt": "2026-11-22T15:01:13.745Z",
+    "contentHash": "01715e01e51d8be2bf242e1f0312bbfbf03b3e13840f2e1f81ac83915fbd6f9a",
+    "lastHarvestedAt": "2026-11-26T08:10:13.552Z",
     "learningId": "learn-huggingface-apple-fastframes-l"
   },
   "spartan-ng-spartan": {

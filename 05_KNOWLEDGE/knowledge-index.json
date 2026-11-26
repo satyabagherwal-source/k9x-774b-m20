@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T07:58:03.461Z",
+  "last_updated": "2026-11-26T08:10:29.068Z",
   "total_verified_learnings": 9124,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25752,
+  "total_items": 25757,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -220154,8 +220154,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "44a016aa",
-      "content_hash": "178e41ee61e7693ec48ffd18fa130d13d844922ed806d1a9865c2cc984e6e136",
+      "source_version": "c57711cf",
+      "content_hash": "aca6b17c7c01f3bf204b96766f3e5accf0c5c67a6ebbcc179044e05de99fc50a",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -220213,6 +220213,11 @@
           "number": 10486,
           "title": "Update golang:1.27.4 Docker digest to 3102e2c",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10629,
+          "title": "Update dependency kubernetes/kubernetes to v1.37.3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220220,7 +220225,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T07:48:43.926Z",
+      "verified_at": "2026-11-26T08:10:21.308Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220262,10 +220267,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "repository": "gardener/gardener",
-      "source_version": "44a016aa",
-      "content_hash": "edfca70031e6e6dcd5035f0b1a90e268b099fb09538bac71b6f35f2a748f9f18",
+      "source_version": "c57711cf",
+      "content_hash": "10c122e299f1e5011595111235d09e6b306a7b93f83072507e3f851e17b905c6",
       "domain_letter": "L",
-      "persisted_at": "2026-11-25T07:48:44.808Z"
+      "persisted_at": "2026-11-26T08:10:22.258Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener",
@@ -220274,10 +220279,10 @@
       "relative_path": "08_VERIFICATION/gardener-gardener-verification-protocol-empirical-defect-shield-for-gardener-gar.md",
       "title": "Verification Protocol: Empirical Defect Shield for gardener/gardener",
       "repository": "gardener/gardener",
-      "source_version": "86782dd1",
-      "content_hash": "5a148c0a9f93ed4d7433592c5d9f17ae397c7f3154aa387a046aaac957fb6d44",
+      "source_version": "c57711cf",
+      "content_hash": "d5daec6db5f1ace64258762f811cff875f7fb40183ed94974bd2b794d4d65cc6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:59:43.042Z"
+      "persisted_at": "2026-11-26T08:10:22.483Z"
     },
     "rule-8406": {
       "learning_id": "rule-8406",
@@ -220451,9 +220456,9 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "8313b0f46d4d00591ad808e7b6fd61ca874fc941eda86b4c4f55563dd2542b4d",
+      "content_hash": "d51635a992b8e4134fbc42ebcd4888e8023e91e15b64611122f47b1623b85817",
       "domain_letter": "L",
-      "persisted_at": "2026-11-25T07:48:55.409Z"
+      "persisted_at": "2026-11-26T08:10:28.640Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings",
@@ -220463,9 +220468,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gardener-gardener-learnings",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "c4176abbc13b532cf771e476e5aaca5a7a5da5399b47e10811ddc6485a69bca3",
+      "content_hash": "7adbd04d82a92080ce51c6707ab5d5a8529e7406d87524b97d061af4f219f62a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:48:55.643Z"
+      "persisted_at": "2026-11-26T08:10:29.068Z"
     },
     "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
@@ -233008,13 +233013,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "b4f71726",
-      "content_hash": "e1decd0ddd4da9a2cb34bf70efa3e8224cae19a912abcd4369be7bdea63bba17",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "a6682352",
+      "content_hash": "e0825208fd0705fe210c08810e91370a8970beb658d0486d538bf05176429055",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -233090,6 +233095,11 @@
           "number": 10200,
           "title": "keep build-machine paths out of self-hosted macOS shipping binaries",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10628,
+          "title": "background facet carries a fn pointer and plain request, not",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233097,7 +233107,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T06:47:43.658Z",
+      "verified_at": "2026-11-26T08:10:15.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233136,37 +233146,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "b4f71726",
-      "content_hash": "e475b634bf4573ce1f108fc14b1d7ba6d782ba4038ff75944668246e48d94a00",
+      "source_version": "a6682352",
+      "content_hash": "00a4eff9dcdafc78e724ad1ed77312f99820766d4885f274a806edcb6a7b5924",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:47:44.342Z"
+      "persisted_at": "2026-11-26T08:10:16.119Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "b4f71726",
-      "content_hash": "d7c114540b5316ed5abd67091a0b72358e519fa3072af8f976915fea6f987753",
+      "source_version": "a6682352",
+      "content_hash": "24d53a98a7fa4f8869caefeaf1010abbf7111109fc69fef39c58f1b39945f57c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:47:44.519Z"
+      "persisted_at": "2026-11-26T08:10:16.541Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
+      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "b4f71726",
-      "content_hash": "f7037f5ee7caa00225c3bc4bdb90b365e22df2edcb9bcc45b2e600fc8f50d4cc",
+      "source_version": "a6682352",
+      "content_hash": "bae69f8167198e3e3d5e2ae642cf7d15aa992230463ebb586244b8e8bfe66cd1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T06:47:44.667Z"
+      "persisted_at": "2026-11-26T08:10:16.776Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -233188,9 +233198,9 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "f3387328c1394cb1cb5a2c209e9a66c5e991cbcc71c11c0308b7bb876c7669f2",
+      "content_hash": "c03f1899ded9cb7d656255766ee2268216bbc76c8f3295c84d23dbfc58f9a120",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T01:36:11.462Z"
+      "persisted_at": "2026-11-26T08:10:26.212Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona",
@@ -233200,9 +233210,9 @@
       "title": "Agent Contract: codewhale-hq-codewhale-learnings Autonomous Specialist Persona",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb6acbf5546e21bec34bce8b8dd1fd69922a85b0428b4aabe5741c165a3329dd",
+      "content_hash": "76d2e11943127a4ae0d94ae8b8c6a10503542fa0bcd0ebd01f92047a2cc959d7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T01:36:11.646Z"
+      "persisted_at": "2026-11-26T08:10:26.650Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin",
@@ -233212,9 +233222,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq-codewhale-learnings",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d01cba6e35e63373267a389943d6c350389ea77cfff387273a19d664e36cb2e",
+      "content_hash": "0178d85d937468cbdb44d2b14ffa977f95055821b69381cca66ddbc2915f445a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:36:11.801Z"
+      "persisted_at": "2026-11-26T08:10:26.839Z"
     },
     "learn-huggingface-bingsu-adetailer": {
       "learning_id": "learn-huggingface-bingsu-adetailer",
@@ -241790,13 +241800,13 @@
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale",
       "artifact_type": "architecture_decision",
       "target_folder": "12_DECISIONS",
-      "relative_path": "12_DECISIONS/ADR-hmbown-codewhale-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codew.md",
+      "relative_path": "12_DECISIONS/ADR-codewhale-hq-codewhale-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "6c211938",
-      "content_hash": "8c74920c8c38f7be9b960daabab7546123e4044c7c4db98b8d21d6d4ba358ae8",
+      "source_version": "a6682352",
+      "content_hash": "01c98cd79ed87ac394854745bbd02e8913ddd3d3a3aabed503126a4aa04e85c6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T12:37:57.841Z"
+      "persisted_at": "2026-11-26T08:10:16.345Z"
     },
     "learn-github-apollographql-apollo-kotlin": {
       "learning_id": "learn-github-apollographql-apollo-kotlin",
@@ -259736,9 +259746,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in codewhale-hq-codewhale-learnings",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "428c61c42aa44815277fe6b47e6c5e2784d2b031dbd384e94f86bcb3c38fe765",
+      "content_hash": "f87a9e87f3066ab6c83fb78b1dc986ad601f0ab6585b64538769ee7725bef7b8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:19:58.855Z"
+      "persisted_at": "2026-11-26T08:10:26.436Z"
     },
     "rule-8725": {
       "learning_id": "rule-8725",
@@ -287577,7 +287587,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/FastFrames-L",
       "source_version": "hf-apple-fastframes-l",
-      "content_hash": "6afa59671dbef263914e01b42be9846d2e7b17af747763cca85cd40373ecf66b",
+      "content_hash": "01715e01e51d8be2bf242e1f0312bbfbf03b3e13840f2e1f81ac83915fbd6f9a",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md",
       "promoted_rules": [],
@@ -287586,7 +287596,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T15:01:13.408Z",
+      "verified_at": "2026-11-26T08:10:13.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287603,9 +287613,9 @@
       "title": "Research & Knowledge Intelligence: apple/FastFrames-L Core Invariants",
       "repository": "apple/FastFrames-L",
       "source_version": "hf-apple-fastframes-l",
-      "content_hash": "318ac172816be3c2b7b621e7e0186afca62c427b5581be597aceb49349f1c388",
+      "content_hash": "c7bf4141b27632ef871441e90f87344364f078e0ac58bb2edb8b0d7ff6d98c8e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T15:01:14.026Z"
+      "persisted_at": "2026-11-26T08:10:13.832Z"
     },
     "learn-huggingface-comfy-org-qwen-image-2-1": {
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
@@ -287720,9 +287730,9 @@
       "title": "Research & Knowledge Intelligence: hf-apple-fastframes-l-learnings Core Invariants",
       "repository": "hf-apple-fastframes-l-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce892b88f297db76e8b9fdf82b3595ca1ec70f8dbbc13579c86ba84851d76660",
+      "content_hash": "c9522506533b3edb67ca2f4261c90c8b495204c1d81fffaebb5795cc55dfe4ca",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T15:01:19.237Z"
+      "persisted_at": "2026-11-26T08:10:27.321Z"
     },
     "candidate_directive-eventbus-add-clientadvertise-to-the-jetstream-eventbus": {
       "item_id": "candidate_directive-eventbus-add-clientadvertise-to-the-jetstream-eventbus",
@@ -352680,6 +352690,70 @@
       "content_hash": "0a8459cee7cbd4876a8d7ec1aa367a6545649c4179d1f323d7f4964a04297418",
       "domain_letter": "I",
       "persisted_at": "2026-11-26T07:58:01.505Z"
+    },
+    "rule-10628": {
+      "learning_id": "rule-10628",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10628,
+      "title": "background facet carries a fn pointer and plain request, not",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "a6682352",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T08:10:15.254Z"
+    },
+    "candidate_directive-background-facet-carries-a-fn-pointer-and-plain-request-not": {
+      "item_id": "candidate_directive-background-facet-carries-a-fn-pointer-and-plain-request-not",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VIS1-background-facet-carries-a-fn-pointer-and-plain-request-not.md",
+      "title": "background facet carries a fn pointer and plain request, not",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "a6682352",
+      "content_hash": "1c7b7ed80329879f1579f6f27e3defa8746affff8dbb53cdb941932e0c284073",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T08:10:15.895Z"
+    },
+    "rule-10629": {
+      "learning_id": "rule-10629",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10629,
+      "title": "Update dependency kubernetes/kubernetes to v1.37.3",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "c57711cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T08:10:21.308Z"
+    },
+    "candidate_directive-update-dependency-kubernetes-kubernetes-to-v1-37-3": {
+      "item_id": "candidate_directive-update-dependency-kubernetes-kubernetes-to-v1-37-3",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VSFH-update-dependency-kubernetes-kubernetes-to-v1-37-3.md",
+      "title": "Update dependency kubernetes/kubernetes to v1.37.3",
+      "repository": "gardener-gardener-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0ffd13d51efdca347363c8f31790a51aeb59f0e35986d431a7fcde7beeb0ff45",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T08:10:28.397Z"
+    },
+    "candidate_directive-command-contract-background-facet-carries-a-fn-pointer-and-plain-request-not": {
+      "item_id": "candidate_directive-command-contract-background-facet-carries-a-fn-pointer-and-plain-request-not",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VQJ5-command-contract-background-facet-carries-a-fn-pointer-and-plain-request-not.md",
+      "title": "command-contract): background facet carries a fn pointer and plain request, not",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "be5bcc9d79d4bacb8a307ceac1ef9918917bd8debce5852246449af9d9c9f115",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T08:10:25.944Z"
     }
   },
   "ai-builder-brain": {

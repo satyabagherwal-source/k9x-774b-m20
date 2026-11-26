@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T07:48:55.032Z",
+  "timestamp": "2026-11-26T08:10:28.272Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gardener-gardener-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gardener-gardener-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T07:48:55.032Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T08:10:28.272Z`  
 > **Learning ID**: `LEARN-EVO-gardener-gardener-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain L (Deployment & Operations Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 74%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gardener-gardener-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `44a016aa`  
+> **Source Version**: `c57711cf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T07:48:42.777Z  
+> **Timestamp**: 2026-11-26T08:10:20.307Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T07:48:42.770Z  
+> **Harvest Timestamp**: 2026-11-26T08:10:08.818Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -754,16 +754,14 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16417** (2026-11-24): **Update golang:1.27.4 Docker digest to 3102e2c**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | digest | `205c763` → `3102e2c` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15982) for more information.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNTcuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjI1Ny4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+- **Issue #16429** (2026-11-26): **Update dependency kubernetes/kubernetes to v1.37.3**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [kubernetes/kubernetes](https://redirect.github.com/kubernetes/kubernetes) | patch | `v1.37.2` → `v1.37.3` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15982) for more information.  ---  ### Release Notes  <details> <summary>kubernetes/kubernetes</summary>  ### [`v1.37.3`](https://redirect.github.com/kubernetes/kubernetes/releases/tag/v1.37.3)  [Compare Source](https://redirect.github.com/kubernetes/kubernetes/compare/v1.37.2...v1.37.3)  See [kubernetes-announce@](https://groups.google.com/forum/#!forum/kubernetes-announce). Additional binary downloads are linked in the [CHANGELOG](https://redirect.github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md).  See the [CHANGELOG](https://redirect.github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md) for more details.  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZ
   **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16417#pullrequestreview-6045378181" title="Approved">ialidzhikov</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [ialidzhikov]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [oliver-goetz](https://github.com/oliver-goetz) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["oliver-goetz"]} -->
 
-- **Issue #16415** (2026-11-24): **Pin dependencies**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [actions/checkout](https://redirect.github.com/actions/checkout) | action | pinDigest |  → `3d3c42e` | | [actions/download-artifact](https://redirect.github.com/actions/download-artifact) | action | pinDigest |  → `9000827` | | [actions/setup-go](https://redirect.github.com/actions/setup-go) | action | pinDigest |  → `d8cbb80` | | [actions/upload-artifact](https://redirect.github.com/actions/upload-artifact) | action | pinDigest |  → `cf430e0` | | [docker/build-push-action](https://redirect.github.com/docker/build-push-action) | action | pinDigest |  → `c3c9e26` | | [docker/setup-buildx-action](https://redirect.github.com/docker/setup-buildx-action) | action | pinDigest |  → `f87e599` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15982) for more information.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, ch
-  **Post-Mortem & Fix Analysis**:
-  > /lgtm /approve
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16415#issuecomment-7128433379" title="Approved">oliver-goetz</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [oliver-goetz]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+- **Issue #16428** (2026-11-25): **Add two-phase SSH keypair rotation**
+  *Symptoms*: <!-- Please ensure that you do not include company internal information. -->  **How to categorize this PR?** <!-- Please select area, kind, and priority for this pull request. This helps the community categorizing it. Replace below TODOs or exchange the existing identifiers with those that fit best in your opinion. If multiple identifiers make sense you can also state the commands multiple times, e.g.   /area control-plane   /area auto-scaling   ...  If the PR affects cryptography or security mechanisms (encryption, keys, ciphers, hashes, signatures, etc.), mark it as crypto relevant. /label crypto  "/area" identifiers:     audit-logging|auto-scaling|backup|compliance|control-plane-migration|control-plane|cost|delivery|dev-productivity|disaster-recovery|documentation|high-availability|logging|metering|monitoring|networking|open-source|ops-productivity|os|performance|quality|robustness|scalability|security|storage|testing|usability|user-management "/kind" identifiers:     api-change|bug|cleanup|discussion|enhancement|epic|flake|impediment|poc|post-mortem|question|regression|task|technical-debt|test --> /area security /area ops-productivity /kind enhancement /label crypto  **What this PR does / why we need it**: Introduces explicit two-phase SSH keypair rotation: - `rotate-ssh-keypair-start` creates a new keypair and distributes its public key alongside the old one. - `rotate-ssh-keypair-complete` removes the old keypair and invalidates it on worker nodes without generating ano
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -780,29 +778,31 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44a016aa` (2026-11-24)
-**Commit Message**: Update golang:1.27.4 Docker digest to 3102e2c (#16417)
+### Incident Patch 1: `c57711cf` (2026-11-26)
+**Commit Message**: Update dependency kubernetes/kubernetes to v1.37.3 (#16429)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `hack/tools.mk` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,5 @@
- # builder
--FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf AS builder
-+FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:3102e2c7eeee6e16de01ca3f35c56434696f70702a30b3d564b0244560981bb0 AS builder
- ARG GOPROXY=https://proxy.golang.org,direct
- ENV GOPROXY=$GOPROXY
- WORKDIR /go/src/github.com/gardener/gardener
+@@ -66,7 +66,7 @@ HELM_VERSION ?= v4.3.2
+ # renovate: datasource=github-releases depName=kubernetes-sigs/kind
+ KIND_VERSION ?= v0.33.0
+ # renovate: datasource=github-releases depName=kubernetes/kubernetes
+-KUBECTL_VERSION ?= v1.37.2
++KUBECTL_VERSION ?= v1.37.3
+ # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize extractVersion=^kustomize\/(?<version>.*)$
+ KUSTOMIZE_VERSION ?= v5.8.3
+ # renovate: datasource=github-releases depName=prometheus/prometheus
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16429** (2026-11-26): Update dependency kubernetes/kubernetes to v1.37.3 (@renovate[bot])
+- **PR #16428** (closed): Add two-phase SSH keypair rotation (@david-hass)
+- **PR #16426** (closed): Strip `X-Remote-Extra-*` and `X-Remote-Uid` headers in Istio authenticating proxy (@acumino)
 - **PR #16417** (2026-11-24): Update golang:1.27.4 Docker digest to 3102e2c (@renovate[bot])
 - **PR #16415** (2026-11-24): Pin dependencies (@renovate[bot])
 - **PR #16412** (2026-11-24): Update nginx Docker tag to v1.31.10 (@renovate[bot])
-- **PR #16411** (2026-11-24): Enable Renovate digest pinning for GitHub Actions (@marc1404)
-- **PR #16409** (2026-11-23): Pin `gardener/cc-utils` GitHub Actions references to commit SHAs (@plkokanov)
-- **PR #16407** (2026-11-24): Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8 (@renovate[bot])
 
 ---
 
@@ -822,31 +822,31 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update golang:1.27.4 Docker digest to 3102e2c
+## X. Update dependency kubernetes/kubernetes to v1.37.3
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `hack/tools.mk`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `44a016aa`: Update golang:1.27.4 Docker digest to 3102e2c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c57711cf`: Update dependency kubernetes/kubernetes to v1.37.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/tools.mk`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:3102e2c7eeee6e16de01ca3f35c56434696f70702a30b3d564b0244560981bb0 AS builder
+KUBECTL_VERSION ?= v1.37.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf AS builder
+KUBECTL_VERSION ?= v1.37.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44a016aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c57711cf` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

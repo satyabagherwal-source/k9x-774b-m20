@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/apple/FastFrames-L",
   "source_version": "hf-apple-fastframes-l",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T15:01:14.025Z",
+  "timestamp": "2026-11-26T08:10:13.831Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-apple-fastframes-l",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apple/FastFrames-L](https://huggingface.co/apple/FastFrames-L) (Revision: `hf-apple-f`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T15:01:14.025Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T08:10:13.831Z`  
 > **Learning ID**: `learn-huggingface-apple-fastframes-l`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/apple/FastFrames-L](https://huggingface.co/apple/FastFrames-L))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:56:11.998Z  
+> **Harvest Timestamp**: 2026-11-26T08:09:59.061Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 512 likes
+- **Stars / Engagement**: 0 downloads | 633 likes
 
 ---
 

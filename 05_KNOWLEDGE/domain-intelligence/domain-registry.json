@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T07:58:02.966Z",
+  "last_updated": "2026-11-26T08:10:28.640Z",
   "total_records": 2722,
   "domains": {
     "A": {
@@ -12311,8 +12311,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "edfca70031e6e6dcd5035f0b1a90e268b099fb09538bac71b6f35f2a748f9f18",
-      "created_at": "2026-11-25T07:48:44.808Z"
+      "content_hash": "10c122e299f1e5011595111235d09e6b306a7b93f83072507e3f851e17b905c6",
+      "created_at": "2026-11-26T08:10:22.258Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -12406,8 +12406,8 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
       "repository": "gardener-gardener-learnings",
-      "content_hash": "8313b0f46d4d00591ad808e7b6fd61ca874fc941eda86b4c4f55563dd2542b4d",
-      "created_at": "2026-11-25T07:48:55.409Z"
+      "content_hash": "d51635a992b8e4134fbc42ebcd4888e8023e91e15b64611122f47b1623b85817",
+      "created_at": "2026-11-26T08:10:28.640Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
@@ -16561,10 +16561,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "e475b634bf4573ce1f108fc14b1d7ba6d782ba4038ff75944668246e48d94a00",
-      "created_at": "2026-11-25T06:47:44.342Z"
+      "content_hash": "00a4eff9dcdafc78e724ad1ed77312f99820766d4885f274a806edcb6a7b5924",
+      "created_at": "2026-11-26T08:10:16.119Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -16572,8 +16572,8 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-learnings-architecture-intelligence-codewhale-hq-codewhal.md",
       "repository": "codewhale-hq-codewhale-learnings",
-      "content_hash": "f3387328c1394cb1cb5a2c209e9a66c5e991cbcc71c11c0308b7bb876c7669f2",
-      "created_at": "2026-11-25T01:36:11.462Z"
+      "content_hash": "c03f1899ded9cb7d656255766ee2268216bbc76c8f3295c84d23dbfc58f9a120",
+      "created_at": "2026-11-26T08:10:26.212Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",
@@ -30332,8 +30332,8 @@
       "title": "Research & Knowledge Intelligence: apple/FastFrames-L Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-fastframes-l-research-knowledge-intelligence-apple-fastframes-l-core-in.md",
       "repository": "apple/FastFrames-L",
-      "content_hash": "318ac172816be3c2b7b621e7e0186afca62c427b5581be597aceb49349f1c388",
-      "created_at": "2026-11-22T15:01:14.026Z"
+      "content_hash": "c7bf4141b27632ef871441e90f87344364f078e0ac58bb2edb8b0d7ff6d98c8e",
+      "created_at": "2026-11-26T08:10:13.832Z"
     },
     "DOM-D-AD9F2297": {
       "record_id": "DOM-D-AD9F2297",
@@ -30383,8 +30383,8 @@
       "title": "Research & Knowledge Intelligence: hf-apple-fastframes-l-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-fastframes-l-learnings-research-knowledge-intelligence-hf-apple-fastfra.md",
       "repository": "hf-apple-fastframes-l-learnings",
-      "content_hash": "ce892b88f297db76e8b9fdf82b3595ca1ec70f8dbbc13579c86ba84851d76660",
-      "created_at": "2026-11-22T15:01:19.237Z"
+      "content_hash": "c9522506533b3edb67ca2f4261c90c8b495204c1d81fffaebb5795cc55dfe4ca",
+      "created_at": "2026-11-26T08:10:27.321Z"
     },
     "domain_intelligence-quality-verification-intelligence-kotest-kotest-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-kotest-kotest-core-invariants",

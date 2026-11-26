@@ -13299,3 +13299,6 @@
 | `CYCLE-20261126-3TUK` | `2026-11-26T07:48:43.868Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10626` | Yes (`08135c98...`) |
 | `CYCLE-20261126-FGZ7` | `2026-11-26T07:57:47.059Z` | `harness-hub/Qwen3.8-27B-pi-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md` | Yes (`05467ae1...`) |
 | `CYCLE-20261126-FNUF` | `2026-11-26T07:57:55.959Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10627` | Yes (`8dd9c65e...`) |
+| `CYCLE-20261126-VGYZ` | `2026-11-26T08:10:13.547Z` | `apple/FastFrames-L` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md` | Yes (`01715e01...`) |
+| `CYCLE-20261126-VIJZ` | `2026-11-26T08:10:15.599Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10628` | Yes (`e0825208...`) |
+| `CYCLE-20261126-VN93` | `2026-11-26T08:10:21.687Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10629` | Yes (`aca6b17c...`) |

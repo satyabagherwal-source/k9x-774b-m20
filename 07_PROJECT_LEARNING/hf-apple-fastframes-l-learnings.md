@@ -3,7 +3,7 @@
 > **Source Version**: `hf-apple-fas`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T15:01:12.983Z  
+> **Timestamp**: 2026-11-26T08:10:12.824Z  
 > **Learning ID**: `learn-huggingface-apple-fastframes-l`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/apple/FastFrames-L](https://huggingface.co/apple/FastFrames-L))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:56:11.998Z  
+> **Harvest Timestamp**: 2026-11-26T08:09:59.061Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 512 likes
+- **Stars / Engagement**: 0 downloads | 633 likes
 
 ---
 

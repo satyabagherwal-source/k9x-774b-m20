@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T07:57:55.980Z",
-  "total_cycles_completed": 12620,
-  "total_learnings_persisted": 12620,
-  "total_rules_promoted": 11522,
+  "last_updated": "2026-11-26T08:10:21.706Z",
+  "total_cycles_completed": 12623,
+  "total_learnings_persisted": 12623,
+  "total_rules_promoted": 11524,
   "history": [
-    {
-      "timestamp": "2026-11-25T13:05:48.016Z",
-      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T13:06:00.242Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T13:06:05.606Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T13:20:25.092Z",
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T07:57:55.980Z",
       "repository": "kube-rs/kube",
       "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:10:13.572Z",
+      "repository": "apple/FastFrames-L",
+      "learningId": "learn-huggingface-apple-fastframes-l",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:10:15.618Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:10:21.706Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
