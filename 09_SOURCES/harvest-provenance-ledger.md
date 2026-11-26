@@ -13633,3 +13633,7 @@ Every entry in this ledger must capture:
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `86b0b067` | Multi-dimensional audit evidence | 2026-11-26T23:40:54.898Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `caa24586` | Multi-dimensional audit evidence | 2026-11-26T23:41:01.107Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `c2ec24c0` | Multi-dimensional audit evidence | 2026-11-26T23:41:03.176Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-26T23:49:26.564Z |
+| `learn-github-margelo-react-native-mmkv` | `https://github.com/margelo/react-native-mmkv` | `7780ab11` | Multi-dimensional audit evidence | 2026-11-26T23:49:34.029Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `603220f0` | Multi-dimensional audit evidence | 2026-11-26T23:49:36.666Z |
+| `learn-dom-h-e3fddff0` | `project://envoyproxy-envoy` | `603220f0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | 2026-11-26T23:50:09.433Z |

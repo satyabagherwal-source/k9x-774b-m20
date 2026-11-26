@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T23:41:09.391Z",
-  "total_verified_learnings": 9137,
+  "last_updated": "2026-11-26T23:50:10.253Z",
+  "total_verified_learnings": 9138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26258,
+  "total_items": 26268,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216163,8 +216163,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "baf651b8",
-      "content_hash": "362c15df676b0a38fd764a0a30d947d960d6f75c913b5daa0e470313ca9ea197",
+      "source_version": "603220f0",
+      "content_hash": "ead616ec5e6315a3f90aa14f0c99afead4174204e5b7309f725735e4c311b35c",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -216222,6 +216222,11 @@
           "number": 10608,
           "title": "fix cluster async host selection threading and handle lifetime",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10797,
+          "title": "enable per-filter buffer in upstream wasm integration tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216229,7 +216234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T05:57:09.990Z",
+      "verified_at": "2026-11-26T23:49:36.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216271,10 +216276,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "repository": "envoyproxy/envoy",
-      "source_version": "baf651b8",
-      "content_hash": "209e5a5005d589512f943d058c5e81ab83fb467b25e298d7e15ba529acef4e40",
+      "source_version": "603220f0",
+      "content_hash": "93efebe81ca61c288cd2bf270ce7e9ddce781615eaf794553d84333a49ba0acb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T05:57:10.635Z"
+      "persisted_at": "2026-11-26T23:49:37.113Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy",
@@ -216283,10 +216288,10 @@
       "relative_path": "08_VERIFICATION/envoyproxy-envoy-verification-protocol-empirical-defect-shield-for-envoyproxy-en.md",
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy/envoy",
       "repository": "envoyproxy/envoy",
-      "source_version": "baf651b8",
-      "content_hash": "a128cc4a4bcc6b52e64b781d6c04a22cd98bef39fc08f32861b6017539fd8799",
+      "source_version": "603220f0",
+      "content_hash": "7e9d65a1ba934963aedb9de1e3a6792d3deea2efa73aab153b11aeee366ac738",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T05:57:10.823Z"
+      "persisted_at": "2026-11-26T23:49:37.315Z"
     },
     "learn-github-aleo-labs-protocol-snarkos": {
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
@@ -216617,9 +216622,9 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "b57f66b9aa7e75a640983b4962b7eb5cbb504c37db26524f9a241541fefa8b37",
+      "content_hash": "79bd226f1f14c996470f47c348485ee59876bed1c00de232741e74267563cd90",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T05:57:46.508Z"
+      "persisted_at": "2026-11-26T23:50:10.030Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings",
@@ -216629,9 +216634,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy-envoy-learnings",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e58b74bca44b13d98fe4987f368d9bee21365560b3bc638d7c270dec053cde8",
+      "content_hash": "dd1057a7549fba430ebd97d35c4668279d6b01d4e37dd9fe844c78fddb63b8a8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T05:57:46.699Z"
+      "persisted_at": "2026-11-26T23:50:10.253Z"
     },
     "learn-huggingface-google-bert-bert-base-uncased": {
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
@@ -230554,7 +230559,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai-community/gpt2",
       "source_version": "hf-openai-community-gpt2",
-      "content_hash": "303ad1fd0256c8e4f78c1e8942e30b4e53e71a5b38cce77ad2eadfdeb7627570",
+      "content_hash": "91107f5c60fc048f6a1391ec784a6eef70e2364237139cbe3ce7ec04831b85d7",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "promoted_rules": [],
@@ -230563,7 +230568,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T15:04:20.899Z",
+      "verified_at": "2026-11-26T23:49:26.291Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230580,9 +230585,9 @@
       "title": "Research & Knowledge Intelligence: openai-community/gpt2 Core Invariants",
       "repository": "openai-community/gpt2",
       "source_version": "hf-openai-community-gpt2",
-      "content_hash": "1020914edcdbbb2f34c35820dd7f60316d63a8d9dec1a3ed5beb93582f36bc56",
+      "content_hash": "0d669202c02e6fe5367bd4b8347f8a01cf533a6f0b52fbd473c7cb2de17f71ba",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:04:21.511Z"
+      "persisted_at": "2026-11-26T23:49:26.799Z"
     },
     "learn-github-skyhook-io-radar": {
       "learning_id": "learn-github-skyhook-io-radar",
@@ -230737,9 +230742,9 @@
       "title": "Research & Knowledge Intelligence: hf-openai-community-gpt2-learnings Core Invariants",
       "repository": "hf-openai-community-gpt2-learnings",
       "source_version": "HEAD",
-      "content_hash": "4355f535fa0d0e906f5f3a837da798620be1f8e1c7881663b699791affdef0be",
+      "content_hash": "ca70abea2f9420681164245ff86daa55b32f72e7fa7dffbe0d3a387f1fd8e324",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:04:40.028Z"
+      "persisted_at": "2026-11-26T23:49:40.413Z"
     },
     "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants",
@@ -360147,6 +360152,151 @@
       "content_hash": "1452217fa3c75f970d8b14d09dd6ed1a1ad73dd1fc6bef2ae55215c6f26464b9",
       "domain_letter": "I",
       "persisted_at": "2026-11-26T23:41:03.467Z"
+    },
+    "learn-github-margelo-react-native-mmkv": {
+      "learning_id": "learn-github-margelo-react-native-mmkv",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "margelo/react-native-mmkv",
+      "repository": "margelo/react-native-mmkv",
+      "slug": "margelo-react-native-mmkv",
+      "platform": "github",
+      "source_url": "https://github.com/margelo/react-native-mmkv",
+      "source_version": "7780ab11",
+      "content_hash": "456a9e5086217a8e7a6ab5715844be3fb9ddd2f2489ca3419192625374dabd88",
+      "dossier_path": "07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10796,
+          "title": "Update AsyncStorage migration docs to use `requestIdleCallback`",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-26T23:49:33.772Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10796": {
+      "learning_id": "rule-10796",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10796,
+      "title": "Update AsyncStorage migration docs to use `requestIdleCallback`",
+      "source_url": "https://github.com/margelo/react-native-mmkv",
+      "source_version": "7780ab11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T23:49:33.772Z"
+    },
+    "candidate_directive-update-asyncstorage-migration-docs-to-use-requestidlecallback": {
+      "item_id": "candidate_directive-update-asyncstorage-migration-docs-to-use-requestidlecallback",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FMBC-update-asyncstorage-migration-docs-to-use-requestidlecallback.md",
+      "title": "Update AsyncStorage migration docs to use `requestIdleCallback`",
+      "repository": "margelo-react-native-mmkv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "281547da4da8c5c6e900fb5cd0a16e5a896021138828a91ce3c6a16b568a8d7d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T23:49:40.920Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-margelo-react-native-mmkv-technical-construction-intelligence-margelo-react-nati.md",
+      "title": "Technical Construction Intelligence: margelo/react-native-mmkv Core Invariants",
+      "repository": "margelo/react-native-mmkv",
+      "source_version": "7780ab11",
+      "content_hash": "96a27c02f0fabf81d54e8229473104f170765b3bec670b3a2fcd57d63c7fe3fa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T23:49:34.469Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-margelo-react-native-mmkv": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-margelo-react-native-mmkv",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/margelo-react-native-mmkv-verification-protocol-empirical-defect-shield-for-marg.md",
+      "title": "Verification Protocol: Empirical Defect Shield for margelo/react-native-mmkv",
+      "repository": "margelo/react-native-mmkv",
+      "source_version": "7780ab11",
+      "content_hash": "c0000e031701c5f22e37eb3964654c83bdb245ad6e99221df55eb1d55186b455",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T23:49:34.671Z"
+    },
+    "rule-10797": {
+      "learning_id": "rule-10797",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10797,
+      "title": "enable per-filter buffer in upstream wasm integration tests",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "603220f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T23:49:36.420Z"
+    },
+    "candidate_directive-enable-per-filter-buffer-in-upstream-wasm-integration-tests": {
+      "item_id": "candidate_directive-enable-per-filter-buffer-in-upstream-wasm-integration-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FJ7W-enable-per-filter-buffer-in-upstream-wasm-integration-tests.md",
+      "title": "enable per-filter buffer in upstream wasm integration tests",
+      "repository": "envoyproxy/envoy",
+      "source_version": "603220f0",
+      "content_hash": "6aa3594ddfc7baa758a1588c24bf36482eded4671f32ae10c7d1362c463510ee",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T23:49:36.909Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-learnings-core-inv": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-margelo-react-native-mmkv-learnings-technical-construction-intelligence-margelo-.md",
+      "title": "Technical Construction Intelligence: margelo-react-native-mmkv-learnings Core Invariants",
+      "repository": "margelo-react-native-mmkv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "46580909841d0147ad3909f06c5cdd241ffccf87042a321dc750dadaefa236cb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T23:49:41.135Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-margelo-react-native-mmkv-lear": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-margelo-react-native-mmkv-lear",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/margelo-react-native-mmkv-learnings-verification-protocol-empirical-defect-shiel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for margelo-react-native-mmkv-learnings",
+      "repository": "margelo-react-native-mmkv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "32a38ee40b5abb19c12a3cb938a1d8f1c558b65fd8932ccc095d7eb98a909f34",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T23:49:41.339Z"
+    },
+    "candidate_directive-wasm-enable-per-filter-buffer-in-upstream-wasm-integration-tests": {
+      "item_id": "candidate_directive-wasm-enable-per-filter-buffer-in-upstream-wasm-integration-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G8LW-wasm-enable-per-filter-buffer-in-upstream-wasm-integration-tests.md",
+      "title": "wasm: enable per-filter buffer in upstream wasm integration tests",
+      "repository": "envoyproxy-envoy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c49aa5caea6242189e674e37b16341ff50e55f528e952c5871eb13f18300bfb7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T23:50:09.812Z"
     }
   },
   "ai-builder-brain": {

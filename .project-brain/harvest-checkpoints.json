@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T23:41:03.199Z",
+  "last_updated": "2026-11-26T23:49:36.687Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1520,14 +1520,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-community-gpt2",
-      "content_hash": "303ad1fd0256c8e4f78c1e8942e30b4e53e71a5b38cce77ad2eadfdeb7627570",
-      "verified_at": "2026-11-23T15:04:21.225Z",
+      "content_hash": "91107f5c60fc048f6a1391ec784a6eef70e2364237139cbe3ce7ec04831b85d7",
+      "verified_at": "2026-11-26T23:49:26.579Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T15:04:21.225Z"
+      "last_updated": "2026-11-26T23:49:26.579Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7101,14 +7101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-margelo-react-native-mmkv",
-      "content_hash": "1208571917a3fe47c4055540d8499d0c24b69a5ecace46870315f52836c779f3",
-      "verified_at": "2026-11-09T23:40:39.751Z",
+      "content_hash": "456a9e5086217a8e7a6ab5715844be3fb9ddd2f2489ca3419192625374dabd88",
+      "verified_at": "2026-11-26T23:49:34.049Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T23:40:39.751Z"
+      "last_updated": "2026-11-26T23:49:34.049Z"
     },
     "aquasecurity/trivy": {
       "repository": "aquasecurity/trivy",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "362c15df676b0a38fd764a0a30d947d960d6f75c913b5daa0e470313ca9ea197",
-      "verified_at": "2026-11-26T05:57:10.236Z",
+      "content_hash": "ead616ec5e6315a3f90aa14f0c99afead4174204e5b7309f725735e4c311b35c",
+      "verified_at": "2026-11-26T23:49:36.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T05:57:10.236Z"
+      "last_updated": "2026-11-26T23:49:36.687Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",

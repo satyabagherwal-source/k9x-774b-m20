@@ -13600,3 +13600,7 @@
 | `CYCLE-20261126-4CFI` | `2026-11-26T23:40:54.894Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10794` | Yes (`f0d4b3bd...`) |
 | `CYCLE-20261126-4H7Y` | `2026-11-26T23:41:01.102Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10658` | Yes (`6db611d7...`) |
 | `CYCLE-20261126-4ITG` | `2026-11-26T23:41:03.172Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10795` | Yes (`d5ab62b9...`) |
+| `CYCLE-20261126-FB8F` | `2026-11-26T23:49:26.559Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`91107f5c...`) |
+| `CYCLE-20261126-FGZS` | `2026-11-26T23:49:34.024Z` | `margelo/react-native-mmkv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10796` | Yes (`456a9e50...`) |
+| `CYCLE-20261126-FJ12` | `2026-11-26T23:49:36.662Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10797` | Yes (`ead616ec...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T23:50:09.433Z` | `envoyproxy-envoy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E3FDDFF0` [Domain H] | Yes (`8a85ebd3...`) |

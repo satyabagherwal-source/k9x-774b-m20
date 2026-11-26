@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T22:39:36.588Z",
+  "updated_at": "2026-11-26T23:50:09.425Z",
   "statistics": {
-    "total_nodes": 569,
-    "total_edges": 234,
+    "total_nodes": 570,
+    "total_edges": 235,
     "domain_distribution": {
       "D": 342,
       "M": 1,
-      "H": 106,
+      "H": 107,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -22,7 +22,7 @@
       "A": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 230,
+      "CONSTRAINED_BY_ARCHITECTURE": 231,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12698,6 +12698,29 @@
       ],
       "created_at": "2026-11-26T22:39:36.587Z",
       "updated_at": "2026-11-26T22:39:36.587Z"
+    },
+    "DOM-H-E3FDDFF0": {
+      "id": "DOM-H-E3FDDFF0",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "wasm: enable per-filter buffer in upstream wasm integration tests",
+      "summary": "Prevents defects observed in production commit `603220f0`: wasm: enable per-filter buffer in upstream wasm integration tests. Unvalidated ex -> When implementing operations in `test/extensions/filters/http/wasm/wasm_filter_integration_test.cc`, engineers MUST enforce rigorous boundar",
+      "confidence": 0.95,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://envoyproxy-envoy/envoyproxy-envoy-learnings.md",
+        "source_version": "603220f0",
+        "observed_at": "2026-11-26T23:49:35.493Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (envoyproxy-envoy)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-26T23:50:09.424Z",
+      "updated_at": "2026-11-26T23:50:09.424Z"
     }
   },
   "edges": [
@@ -15040,6 +15063,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-F-1B31BB0E [F] with Domain G",
       "created_at": "2026-11-26T20:50:17.429Z"
+    },
+    {
+      "id": "EDGE-2288FF1E83FB",
+      "sourceId": "DOM-H-E3FDDFF0",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-E3FDDFF0 [H] with Domain G",
+      "created_at": "2026-11-26T23:50:09.424Z"
     }
   ]
 }

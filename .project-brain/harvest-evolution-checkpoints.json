@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:41:09.602Z",
+  "last_updated": "2026-11-26T23:50:10.433Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T23:32:29.720Z",
@@ -228,7 +228,7 @@
       "staged_for_review": 0
     },
     "envoyproxy-envoy-learnings.md": {
-      "processed_at": "2026-11-26T05:57:45.933Z",
+      "processed_at": "2026-11-26T23:50:09.433Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -2548,7 +2548,7 @@
       "staged_for_review": 0
     },
     "hf-openai-community-gpt2-learnings.md": {
-      "processed_at": "2026-11-23T15:04:39.689Z",
+      "processed_at": "2026-11-26T23:49:40.149Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4006,9 +4006,14 @@
       "processed_at": "2026-11-26T21:17:46.833Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "margelo-react-native-mmkv-learnings.md": {
+      "processed_at": "2026-11-26T23:49:40.635Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4719,
-  "total_canonical_promoted": 569,
-  "total_staged_for_review": 3542
+  "total_dossiers_evaluated": 4722,
+  "total_canonical_promoted": 570,
+  "total_staged_for_review": 3543
 }

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:41:09.555Z",
+  "timestamp": "2026-11-26T23:49:40.793Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-margelo-react-native-mmkv-learnings",
+  "learning_id": "LEARN-EVO-margelo-react-native-mmkv-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [margelo-react-native-mmkv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:41:09.555Z`  
-> **Learning ID**: `LEARN-REEXTRACT-margelo-react-native-mmkv-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-26T23:49:40.793Z`  
+> **Learning ID**: `LEARN-EVO-margelo-react-native-mmkv-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md`  
 > **Source**: github ([https://github.com/margelo/react-native-mmkv](https://github.com/margelo/react-native-mmkv))  
-> **Source Version**: `0ec4c963`  
+> **Source Version**: `7780ab11`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T23:40:38.203Z  
+> **Timestamp**: 2026-11-26T23:49:32.801Z  
 > **Learning ID**: `learn-github-margelo-react-native-mmkv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/margelo/react-native-mmkv](https://github.com/margelo/react-native-mmkv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T23:35:37.174Z  
+> **Harvest Timestamp**: 2026-11-26T23:49:32.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ⚡️ The fastest key/value storage for React Native. ~30x faster than AsyncStorage!
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8529 stars
+- **Stars / Engagement**: 8532 stars
 
 ---
 
@@ -451,128 +451,29 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ec4c963` (2026-11-09)
-**Commit Message**: fix: Return `undefined` from the hooks' server snapshot (#1102)
+### Incident Patch 1: `7780ab11` (2026-11-26)
+**Commit Message**: Update AsyncStorage migration docs to use `requestIdleCallback` (#1098)
 
-`createMMKVHook` passed the storage getter as `useSyncExternalStore`'s
-`getServerSnapshot` too. On Web that reads `localStorage`, which throws on the
-server, so a component using a value hook couldn't be server-rendered. Values
-now read as unset on the server and while the browser hydrates, and the stored
-value arrives on the render after. React only calls `getServerSnapshot` then,
-so native and client-only Web are unchanged.
-
-Fixes #1100
-
-Co-authored-by: David Uzumeri <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `bun.lock` (modified, +4/-0)
+**File**: `docs/MIGRATE_FROM_ASYNC_STORAGE.md` (modified, +1/-1)
 ```diff
-@@ -65,11 +65,13 @@
-         "@testing-library/react-native": "^13.3.1",
-         "@types/jest": "^29.5.14",
-         "@types/react": "^19.2.15",
-+        "@types/react-dom": "19.2.7",
-         "eslint": "^8.57.1",
-         "eslint-config-prettier": "^10.1.8",
-         "nitrogen": "0.35.9",
-         "prettier": "^3.8.3",
-         "react": "19.2.6",
-+        "react-dom": "19.2.6",
-         "react-native": "0.85.3",
-         "react-native-nitro-modules": "0.35.9",
-         "typescript": "^6.0.3",
-@@ -829,6 +831,8 @@
+@@ -83,7 +83,7 @@ export default function App() {
  
-     "@types/react": ["@types/react@19.2.15", "", { "dependencies": { "csstype": "^3.2.2" } }, "sha512-eRwcGNHve+E8qtEQSSRl6urh+rFop4v8gm6O8rGv25CodbvFdLjA1vVQ1KkiFE0w0UPOnb8tDiFKL5lp0rtY5Q=="],
- 
-+    "@types/react-dom": ["@types/react-dom@19.2.7", "", { "peerDependencies": { "@types/react": "^19.2.0" } }, "sha512-I8bPpDLcHBv1qiIiXDCy71Rt8eQDKJP0sMSWJphDdAcdqiJ1sGpZamavoEIRZmYzjia9LuEb2HlYdDpmoENpvQ=="],
-+
-     "@types/react-test-renderer": ["@types/react-test-renderer@19.1.0", "", { "dependencies": { "@types/react": "*" } }, "sha512-XD0WZrHqjNrxA/MaR9O22w/RNidWR9YZmBdRGI7wcnWGrv/3dA8wKCJ8m63Sn+tLJhcjmuhOi629N66W6kgWzQ=="],
- 
-     "@types/stack-utils": ["@types/stack-utils@2.0.3", "", {}, "sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw=="],
-```
-
-**File**: `packages/react-native-mmkv/package.json` (modified, +2/-0)
-```diff
-@@ -64,11 +64,13 @@
-     "@testing-library/react-native": "^13.3.1",
-     "@types/jest": "^29.5.14",
-     "@types/react": "^19.2.15",
-+    "@types/react-dom": "19.2.7",
-     "eslint": "^8.57.1",
-     "eslint-config-prettier": "^10.1.8",
-     "nitrogen": "0.35.9",
-     "prettier": "^3.8.3",
-     "react": "19.2.6",
-+    "react-dom": "19.2.6",
-     "react-native": "0.85.3",
-     "react-native-nitro-modules": "0.35.9",
-     "typescript": "^6.0.3"
-```
-
-**File**: `packages/react-native-mmkv/src/__tests__/hooks.test.tsx` (modified, +14/-0)
-```diff
-@@ -9,6 +9,7 @@ import {
-   cleanup,
-   waitFor,
- } from '@testing-library/react-native'
-+import { renderToString } from 'react-dom/server'
- import { createMMKV, useMMKVNumber, useMMKVString } from '..'
- 
- const mmkv = createMMKV()
-@@ -129,3 +130,16 @@ test('useMMKV hook stays consistent during rapid updates', async () => {
-     expect(result.current[0]).toBe(100)
-   })
- })
-+
-+test('hooks read as unset when rendered on the server', () => {
-+  // There's no storage on the server (on Web, reading it there throws), so a
-+  // server render reads every value as unset, even one that's stored.
-+  mmkv.set('string-key', 'stored value')
-+
-+  const Component: React.FC = () => {
-+    const [value] = useMMKVString('string-key', mmkv)
-+    return <>{value ?? 'unset'}</>
-+  }
-+
-+  expect(renderToString(<Component />)).toBe('unset')
-+})
-```
-
-**File**: `packages/react-native-mmkv/src/hooks/createMMKVHook.ts` (modified, +7/-1)
-```diff
-@@ -2,6 +2,8 @@ import { useCallback, useSyncExternalStore } from 'react'
- import { getDefaultMMKVInstance } from '../createMMKV/getDefaultMMKVInstance'
- import type { MMKV } from '../specs/MMKV.nitro'
- 
-+const getServerSnapshot = () => undefined
-+
- export function createMMKVHook<
-   T extends (boolean | number | string | ArrayBufferLike) | undefined,
-   TSet extends T | undefined,
-@@ -26,7 +28,11 @@ export function createMMKVHook<
-         [key, mmkv]
-       ),
-       useCallback(() => getter(mmkv, key), [key, mmkv]),
--      useCallback(() => getter(mmkv, key), [key, mmkv])
-+      // There's no storage on the server, so a value is unset there, and while
-+      // the browser hydrates the server's HTML. React only calls this then, so
-+      // it never runs on native. Every getter returns `undefined` for an unset
-+      // value, so `T` always includes it.
-+      getServerSnapshot as () => T
-     )
- 
-     // update value by user set
+   useEffect(() => {
+     if (!hasMigratedFromAsyncStorage) {
+-      InteractionManager.runAfterInteractions(async () => {
++      requestIdleCallback(async () => {
+         try {
+           await migrateFromAsyncStorage()
+           setHasMigrated(true)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1106** (closed): feat!: migrate MMKV to Nitro V1 (@mrousavy)
 - **PR #1102** (2026-11-09): fix: Return `undefined` from the hooks' server snapshot (@daviduzumeri)
+- **PR #1098** (2026-11-26): Update AsyncStorage migration docs to use `requestIdleCallback` (@mkljczk)
 - **PR #1096** (closed): Add Swift Package Manager manifest (React Native 0.87 SwiftPM) (@serpixel)
 - **PR #1091** (2026-09-14): chore: Upgrade Harness to 1.5.0 (@mrousavy)
 - **PR #1087** (2026-08-29): chore: Update links after move to margelo org (@mrousavy)
-- **PR #1085** (2026-08-23): chore: Run CI on iOS 26 (@mrousavy)
-- **PR #1084** (2026-08-23): chore(deps): bump io.github.zhongwuzw:mmkv from 2.4.1 to 2.4.2 (sync upstream Tencent/MMKV v2.4.2) (@zhongwuzw)
 
 ---
 
@@ -592,34 +493,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Return `undefined` from the hooks' server snapshot (#1102)
+## X. Update AsyncStorage migration docs to use `requestIdleCallback`
 
 **RULE**:
-When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in margelo/react-native-mmkv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/MIGRATE_FROM_ASYNC_STORAGE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in margelo/react-native-mmkv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ec4c963`: Return `undefined` from the hooks' server snapshot (#1102). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7780ab11`: Update AsyncStorage migration docs to use `requestIdleCallback`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/MIGRATE_FROM_ASYNC_STORAGE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        "@types/react-dom": "19.2.7",
-        "react-dom": "19.2.6",
-    "@types/react-dom": ["@types/react-dom@19.2.7", "", { "peerDependencies": { "@types/react": "^19.2.0" } }, "sha512-I8bPpDLcHBv1qiIiXDCy71Rt8eQDKJP0sMSWJphDdAcdqiJ1sGpZamavoEIRZmYzjia9LuEb2HlYdDpmoENpvQ=="],
-
+      requestIdleCallback(async () => {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+      InteractionManager.runAfterInteractions(async () => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ec4c963` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7780ab11` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-CE9E",
-    "timestamp": "2026-11-25T12:19:39.698Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "3c06bdd8dfb893713e667d5f3e01caab50a7f6be6f37cef92af541a6f6a55884",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-OBP9",
-    "timestamp": "2026-11-25T12:28:56.253Z",
-    "repository": "Diffuspace/Clover-35B-A3B-Preview",
-    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-    "contentHash": "4b58a83c8cfe87550952bb4cbc0dff4c8411770d469d85a28fc0976aa6625947",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-OM8X",
-    "timestamp": "2026-11-25T12:29:09.921Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "a2314fc11064c08a76e4f43af95fb79d373d5cc19e599ceb1c36daf361290329",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-1ETE",
     "timestamp": "2026-11-25T12:39:06.818Z",
     "repository": "LiconStudio/Minimax-H3-VBVR",
@@ -7490,6 +7445,51 @@
     "repository": "temporalio/temporal",
     "learningId": "learn-github-temporalio-temporal",
     "contentHash": "d5ab62b9195acd3405271ccfaddb74fcb3fd7456456ee12bd97ab6bb4dc149cc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-FB8F",
+    "timestamp": "2026-11-26T23:49:26.559Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "91107f5c60fc048f6a1391ec784a6eef70e2364237139cbe3ce7ec04831b85d7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-FGZS",
+    "timestamp": "2026-11-26T23:49:34.024Z",
+    "repository": "margelo/react-native-mmkv",
+    "learningId": "learn-github-margelo-react-native-mmkv",
+    "contentHash": "456a9e5086217a8e7a6ab5715844be3fb9ddd2f2489ca3419192625374dabd88",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-FJ12",
+    "timestamp": "2026-11-26T23:49:36.662Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "ead616ec5e6315a3f90aa14f0c99afead4174204e5b7309f725735e4c311b35c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

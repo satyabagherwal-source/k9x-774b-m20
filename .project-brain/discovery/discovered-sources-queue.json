@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T23:24:16.266Z",
+  "updated_at": "2026-11-26T23:49:40.668Z",
   "stats": {
-    "total_discovered": 10093,
-    "approved_pending_harvest": 9569,
+    "total_discovered": 10094,
+    "approved_pending_harvest": 9570,
     "harvested_count": 0,
     "rejected_count": 524,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9573,
+      "COMMUNITY_AND_EXPERT": 9574,
       "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -218405,6 +218405,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
         "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-3E945E567E99": {
+      "id": "SRC-3E945E567E99",
+      "url": "https://github.com/margelo/react-native-mmkv",
+      "title": "https://github.com/margelo/react-native-mmkv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T23:49:40.668Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md",
+        "fileName": "margelo-react-native-mmkv-learnings.md"
       }
     }
   }

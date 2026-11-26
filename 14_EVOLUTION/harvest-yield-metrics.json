@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:41:03.195Z",
-  "total_cycles_completed": 12909,
-  "total_learnings_persisted": 12909,
-  "total_rules_promoted": 11704,
+  "last_updated": "2026-11-26T23:49:36.684Z",
+  "total_cycles_completed": 12912,
+  "total_learnings_persisted": 12912,
+  "total_rules_promoted": 11706,
   "history": [
-    {
-      "timestamp": "2026-11-26T13:17:57.581Z",
-      "repository": "kirillzyusko/react-native-keyboard-controller",
-      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T13:18:06.931Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T13:26:28.471Z",
-      "repository": "zhouxiaoka/autoclip",
-      "learningId": "learn-github-zhouxiaoka-autoclip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T13:26:31.699Z",
       "repository": "HemmingwayAI/Hemmingway-1",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T23:41:03.195Z",
       "repository": "temporalio/temporal",
       "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T23:49:26.577Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T23:49:34.047Z",
+      "repository": "margelo/react-native-mmkv",
+      "learningId": "learn-github-margelo-react-native-mmkv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T23:49:36.684Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

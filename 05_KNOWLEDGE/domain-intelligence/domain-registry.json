@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T23:41:09.168Z",
-  "total_records": 2789,
+  "last_updated": "2026-11-26T23:50:10.030Z",
+  "total_records": 2792,
   "domains": {
     "A": {
       "total": 23,
@@ -1723,7 +1723,7 @@
       ]
     },
     "H": {
-      "total": 677,
+      "total": 680,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2401,7 +2401,10 @@
         "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-learnings-core-invarian",
         "DOM-H-82FF7827",
         "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-learnings-core-inv",
+        "DOM-H-E3FDDFF0"
       ]
     },
     "I": {
@@ -11241,8 +11244,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "209e5a5005d589512f943d058c5e81ab83fb467b25e298d7e15ba529acef4e40",
-      "created_at": "2026-11-26T05:57:10.635Z"
+      "content_hash": "93efebe81ca61c288cd2bf270ce7e9ddce781615eaf794553d84333a49ba0acb",
+      "created_at": "2026-11-26T23:49:37.113Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -11361,8 +11364,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "b57f66b9aa7e75a640983b4962b7eb5cbb504c37db26524f9a241541fefa8b37",
-      "created_at": "2026-11-26T05:57:46.508Z"
+      "content_hash": "79bd226f1f14c996470f47c348485ee59876bed1c00de232741e74267563cd90",
+      "created_at": "2026-11-26T23:50:10.030Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -15703,8 +15706,8 @@
       "title": "Research & Knowledge Intelligence: openai-community/gpt2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-community-gpt2-research-knowledge-intelligence-openai-community-gpt2-c.md",
       "repository": "openai-community/gpt2",
-      "content_hash": "1020914edcdbbb2f34c35820dd7f60316d63a8d9dec1a3ed5beb93582f36bc56",
-      "created_at": "2026-11-23T15:04:21.511Z"
+      "content_hash": "0d669202c02e6fe5367bd4b8347f8a01cf533a6f0b52fbd473c7cb2de17f71ba",
+      "created_at": "2026-11-26T23:49:26.799Z"
     },
     "domain_intelligence-architecture-intelligence-skyhook-io-radar-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-skyhook-io-radar-core-invariants",
@@ -15814,8 +15817,8 @@
       "title": "Research & Knowledge Intelligence: hf-openai-community-gpt2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-community-gpt2-learnings-research-knowledge-intelligence-hf-openai-com.md",
       "repository": "hf-openai-community-gpt2-learnings",
-      "content_hash": "4355f535fa0d0e906f5f3a837da798620be1f8e1c7881663b699791affdef0be",
-      "created_at": "2026-11-23T15:04:40.028Z"
+      "content_hash": "ca70abea2f9420681164245ff86daa55b32f72e7fa7dffbe0d3a387f1fd8e324",
+      "created_at": "2026-11-26T23:49:40.413Z"
     },
     "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants",
@@ -47068,6 +47071,66 @@
       "repository": "linkerd-linkerd2-learnings",
       "content_hash": "81af82f4fcf53400bb75cbb5d7bfe4a4aaa7c3b10ab5ce9bdd12cdb7d2d31405",
       "created_at": "2026-11-26T23:24:16.893Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: margelo/react-native-mmkv Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-margelo-react-native-mmkv-technical-construction-intelligence-margelo-react-nati.md",
+      "repository": "margelo/react-native-mmkv",
+      "content_hash": "96a27c02f0fabf81d54e8229473104f170765b3bec670b3a2fcd57d63c7fe3fa",
+      "created_at": "2026-11-26T23:49:34.469Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: margelo-react-native-mmkv-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-margelo-react-native-mmkv-learnings-technical-construction-intelligence-margelo-.md",
+      "repository": "margelo-react-native-mmkv-learnings",
+      "content_hash": "46580909841d0147ad3909f06c5cdd241ffccf87042a321dc750dadaefa236cb",
+      "created_at": "2026-11-26T23:49:41.135Z"
+    },
+    "DOM-H-E3FDDFF0": {
+      "record_id": "DOM-H-E3FDDFF0",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "wasm: enable per-filter buffer in upstream wasm integration tests",
+      "content": "When implementing operations in `test/extensions/filters/http/wasm/wasm_filter_integration_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "8a85ebd3b06220d7d41fc627aa54e20185297719c0ad15dddaecb5d8446f811c",
+      "summary": "Prevents defects observed in production commit `603220f0`: wasm: enable per-filter buffer in upstream wasm integration tests. Unvalidated ex -> When implementing operations in `test/extensions/filters/http/wasm/wasm_filter_integration_test.cc`, engineers MUST enforce rigorous boundar",
+      "provenance": {
+        "source_uri": "project://envoyproxy-envoy/envoyproxy-envoy-learnings.md",
+        "source_version": "603220f0",
+        "observed_at": "2026-11-26T23:49:35.493Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (envoyproxy-envoy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of envoyproxy-envoy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.95,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T23:50:09.397Z"
     }
   }
 }

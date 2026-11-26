@@ -1145,8 +1145,8 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "303ad1fd0256c8e4f78c1e8942e30b4e53e71a5b38cce77ad2eadfdeb7627570",
-    "lastHarvestedAt": "2026-11-23T15:04:21.213Z",
+    "contentHash": "91107f5c60fc048f6a1391ec784a6eef70e2364237139cbe3ce7ec04831b85d7",
+    "lastHarvestedAt": "2026-11-26T23:49:26.564Z",
     "learningId": "learn-huggingface-openai-community-gpt2"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
@@ -4653,10 +4653,10 @@
     "repository": "margelo/react-native-mmkv",
     "platform": "github",
     "sourceUrl": "https://github.com/margelo/react-native-mmkv",
-    "sourceVersion": "0ec4c963",
+    "sourceVersion": "7780ab11",
     "license": "MIT",
-    "contentHash": "1208571917a3fe47c4055540d8499d0c24b69a5ecace46870315f52836c779f3",
-    "lastHarvestedAt": "2026-11-09T23:40:39.732Z",
+    "contentHash": "456a9e5086217a8e7a6ab5715844be3fb9ddd2f2489ca3419192625374dabd88",
+    "lastHarvestedAt": "2026-11-26T23:49:34.029Z",
     "learningId": "learn-github-margelo-react-native-mmkv"
   },
   "aquasecurity-trivy": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "baf651b8",
+    "sourceVersion": "603220f0",
     "license": "Apache-2.0",
-    "contentHash": "362c15df676b0a38fd764a0a30d947d960d6f75c913b5daa0e470313ca9ea197",
-    "lastHarvestedAt": "2026-11-26T05:57:10.221Z",
+    "contentHash": "ead616ec5e6315a3f90aa14f0c99afead4174204e5b7309f725735e4c311b35c",
+    "lastHarvestedAt": "2026-11-26T23:49:36.666Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
