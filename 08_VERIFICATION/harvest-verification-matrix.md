@@ -13536,3 +13536,9 @@
 | `CYCLE-20261126-F5WZ` | `2026-11-26T19:37:23.123Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10765` | Yes (`d6129c26...`) |
 | `CYCLE-20261126-PVVL` | `2026-11-26T19:45:43.329Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`f8e6e397...`) |
 | `CYCLE-20261126-1SOV` | `2026-11-26T19:54:59.071Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`19b3b7c1...`) |
+| `CYCLE-20261126-DQKH` | `2026-11-26T20:04:16.193Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`c458ee42...`) |
+| `CYCLE-20261126-DTDX` | `2026-11-26T20:04:19.845Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10766` | Yes (`a6168fa4...`) |
+| `CYCLE-20261126-DW2O` | `2026-11-26T20:04:23.328Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md` | Yes (`90f884d1...`) |
+| `CYCLE-20261126-DYJL` | `2026-11-26T20:04:26.529Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6725` | Yes (`934985a2...`) |
+| `CYCLE-20261126-E2Q6` | `2026-11-26T20:04:31.950Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10767` | Yes (`3902e251...`) |
+| `CYCLE-20261126-E4RF` | `2026-11-26T20:04:34.587Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10768` | Yes (`3b839d98...`) |

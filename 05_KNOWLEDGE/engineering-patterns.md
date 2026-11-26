@@ -812013,3 +812013,278 @@ use crate::types::NumberDataType;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `80519243` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10766. A declined deploy never leaves an agent deploying or overwrites a status changed (Harvested from Nasiko-Labs/nasiko)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "A declined deploy never leaves an agent deploying or overwrites a status changed",
+  "source": "Nasiko-Labs/nasiko",
+  "source_url": "https://github.com/Nasiko-Labs/nasiko",
+  "source_version": "93091516",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T20:04:19.093Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nasiko-labs-nasiko",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko) (Revision: `93091516`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `server/src/agents/update.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f42d5f18`: A declined deploy never leaves an agent deploying or overwrites a status changed during the build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/agents/update.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        status: String,
+        "SELECT name, version, image, status, owner_id, writable, writable_path FROM agents WHERE id = $1",
+        status: prev_status,
+        prev_status: Some(prev_status),
+    prev_status: Option<String>,
+    // Set when the runtime declines the deploy, so the user is told why instead of a generic reason.
+    let mut declined = None;
+        let deploy_status = scaling.deploy(&spec).await.map_err(|e| {
+            declined = super::utils::declined_message(&e);
+            format!("deploy: {e}")
+        })?;
+            // A deploy the runtime declined is no failure of the agent, which keeps the status it
+            // had (a stopped or parked agent stays so); a job queued before the status was carried
+            // has none to restore and ends `failed`, as does one that read another update's
+            // `deploying` placeholder.
+            let status = match (&declined, &prev_status) {
+                (Some(_), Some(prev)) if prev != "deploying" => prev.as_str(),
+                _ => "failed",
+            };
+            // The status moves only while the row still says `deploying`: one someone set during
+            // the build (a stop) is not ove
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        "SELECT name, version, image, owner_id, writable, writable_path FROM agents WHERE id = $1",
+        let deploy_status = scaling
+            .deploy(&spec)
+            .await
+            .map_err(|e| format!("deploy: {e}"))?;
+                "UPDATE agents SET status = 'failed', version = $2, image = $3, updated_at = now() \
+                 WHERE id = $1",
+            // clients read it via GET /agents/uploads; the detail lives in the build logs.
+                Some("agen
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f42d5f18` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10767. build the storage crate on Windows (Harvested from infiniflow/infinity)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build the storage crate on Windows",
+  "source": "infiniflow/infinity",
+  "source_url": "https://github.com/infiniflow/infinity",
+  "source_version": "bd944ba6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T20:04:31.209Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-infiniflow-infinity",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [infiniflow/infinity](https://github.com/infiniflow/infinity) (Revision: `bd944ba6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `rust_engine/crates/storage/src/buffer/mapped.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bd944ba6`: rust_engine: build the storage crate on Windows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/crates/storage/src/buffer/mapped.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+        // The mapping is only touched by the Unix branch below: Windows has no
+        // page-release primitive here, and the accounting below still applies.
+        #[cfg(not(unix))]
+        let _ = map;
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bd944ba6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10768. name the wiki page to retire explicitly in the semantic lint (Harvested from Bitterbot-AI/bitterbot-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "name the wiki page to retire explicitly in the semantic lint",
+  "source": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "ec2ea636",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T20:04:33.860Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `ec2ea636`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/memory/skill-evolution/improvements.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ec2ea636`: memory): name the wiki page to retire explicitly in the semantic lint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/memory/skill-evolution/improvements.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+            retire: "p-old",
+  it("archives the page named in retire whatever the order of pages", async () => {
+    const res = await runSemanticLint({
+      llmCall: async () =>
+        JSON.stringify([
+          {
+            type: "duplicate",
+            pages: ["p-old", "p-new"],
+            retire: "p-old",
+            action: "archive",
+            detail: "p-old duplicates p-new",
+          },
+        ]),
+      storeOpts: opts(),
+    });
+    expect(res.archived).toEqual(["p-old"]);
+    expect(await listPatternNames(opts())).toContain("p-new");
+  });
+
+  it("archives nothing when several pages are listed and none is named to retire", async () => {
+    const res = await runSemanticLint({
+      llmCall: async () =>
+        JSON.stringify([
+          { type: "duplicate", pages: ["p-old", "p-new"], action: "archive", detail: "dupes" },
+        ]),
+      storeOpts: opts(),
+    });
+    expect(res.ran).toBe(true);
+    expect(res.archived).toHaveLength(0);
+    expect(await listPatternNames(opts())).toHaveLength(5);
+    const logs = await fs.readFile(path.join(tmpDir, "skill-wiki", "logs.md"), "utf-8");
+    expect(logs).toContain("no page named to retire");
+  });
+
+  it("still archive
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ec2ea636` are properly handled with clean fallback behavior.

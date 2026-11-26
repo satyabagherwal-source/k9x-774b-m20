@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source**: github ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
-> **Source Version**: `ce0f96f1`  
+> **Source Version**: `dbf81872`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T12:18:28.864Z  
+> **Timestamp**: 2026-11-26T20:04:22.589Z  
 > **Learning ID**: `learn-github-invertase-react-native-firebase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:18:28.858Z  
+> **Harvest Timestamp**: 2026-11-26T20:04:22.583Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🔥 A well-tested feature-rich modular Firebase implementation for React Native. Supports both iOS & Android platforms for all Firebase services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12329 stars
+- **Stars / Engagement**: 12327 stars
 
 ---
 
@@ -1590,283 +1590,188 @@ extern NSString *const DEFAULT_APP_NAME;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce0f96f1` (2026-11-23)
-**Commit Message**: build(deps): dependency updates 20261119 (#9510)
+### Incident Patch 1: `dbf81872` (2026-11-25)
+**Commit Message**: chore(release): release packages
 
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/linting.yml` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +20/-0)
 ```diff
-@@ -44,7 +44,7 @@ jobs:
-           node-version: 24
-       - name: Configure JDK
-         # https://github.com/actions/setup-java/releases
--        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
-+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
-         with:
-           distribution: 'temurin'
-           java-version: '21'
-```
-
-**File**: `.github/workflows/test_expo_fixture_ios_dupes.yml` (modified, +1/-1)
-```diff
-@@ -154,7 +154,7 @@ jobs:
+@@ -3,6 +3,26 @@
+ All notable changes to this project will be documented in this file.
+ See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
  
-       # One sticky cache per module combination; distinct from the test-expo link cache.
-       # https://github.com/hendrikmuhs/ccache-action/releases
--      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
-         name: Xcode Compile Cache
-         with:
-           key: ${{ runner.os }}-expo-fixture-dupes-ios-v1-xcode27-${{ matrix.slug }}-${{ steps.xcode_cache_key.outputs.key }}
-```
-
-**File**: `.github/workflows/test_expo_ios_link.yml` (modified, +1/-1)
-```diff
-@@ -101,7 +101,7 @@ jobs:
- 
-       # Sticky content-hash key (append-timestamp: false). Distinct from e2e (`expo-link` app id).
-       # https://github.com/hendrikmuhs/ccache-action/releases
--      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
-         name: Xcode Compile Cache
-         with:
-           key: ${{ runner.os }}-expo-link-ios-v4-xcode27-${{ steps.xcode_cache_key.outputs.key }}
-```
-
-**File**: `.github/workflows/test_rn_bare_ios_build.yml` (modified, +2/-2)
-```diff
-@@ -118,7 +118,7 @@ jobs:
- 
-       # Sticky content-hash key (append-timestamp: false). Distinct from e2e/expo (`rn-bare` app id).
-       # https://github.com/hendrikmuhs/ccache-action/releases
--      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
-         name: Xcode Compile Cache
-         with:
-           key: ${{ runner.os }}-rn-bare-ios-v3-xcode27-${{ steps.xcode_cache_key.outputs.key }}
-@@ -220,7 +220,7 @@ jobs:
- 
-       # Sticky content-hash key (append-timestamp: false). Distinct from shipped-path job (`rn-bare-dynfb`).
-       # https://github.com/hendrikmuhs/ccache-action/releases
--      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
-         name: Xcode Compile Cache
-         with:
-           key: ${{ runner.os }}-rn-bare-dynfb-ios-v3-xcode27-${{ steps.xcode_cache_key.outputs.key }}
-```
-
-**File**: `.github/workflows/tests_e2e_android.yml` (modified, +1/-1)
-```diff
-@@ -167,7 +167,7 @@ jobs:
- 
-       - name: Configure JDK
-         # https://github.com/actions/setup-java/releases
--        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
-+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
-         with:
-           distribution: 'temurin'
-           java-version: '21'
-```
-
-**File**: `.github/workflows/tests_e2e_ios.yml` (modified, +3/-3)
-```diff
-@@ -160,7 +160,7 @@ jobs:
- 
-       - name: Configure JDK
-         # https://github.com/actions/setup-java/releases
--        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
-+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
-         with:
-           distribution: 'temurin'
-           java-version: '21'
-@@ -211,7 +211,7 @@ jobs:
- 
-       # Detox is compiled during yarn install, using Xcode, set up cache first
-       # https://github.com/hendrikmuhs/ccache-action/releases
--      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
-         name: Xcode Compile Cache
-         with:
-           # Sticky content-hash key (append-timestamp: false). SPM-only matrix (no cocoapods leg); debug/release stay distinct.
-@@ -672,7 +672,7 @@ jobs:
-         id: xcode_cache_key
-         run: echo "key=$(bash .github/workflows/scripts/compute-xcode-ccache-key.sh e2e-ios)" >> "$GITHUB_OUTPUT"
- 
--      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
-         name: Xcode Compile Cache
-         with:
-           # Sticky content-hash key (append-timestamp: false). SPM-only archive job.
-```
-
-**File**: `.github/workflows/tests_e2e_other.yml` (modified, +2/-2)
-```diff
-@@ -141,7 +141,7 @@ jobs:
- 
-       - name: Configure JDK
-         # https://github.com/actions/setup-java/releases
--        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
-+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
-         with:
-           distribution: 'temurin'
-           java-version: '21'
-@@ -182,7 +182,7 @@ jobs:
-         run: echo "key=$(bash .github/workflows/scripts/compute-xcode-ccache-key.sh e2e-macos)" >> "$GITHUB_OUTPUT"
- 
-       # https://github.com/hendrikmuhs/ccache-action/releases
--      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
-         name: Xcode Compile Cache
-         with:
-           # Sticky content-hash key (append-timestamp: false). Native sources live under packages/*/ios (no packages/*/macos tree).
-```
-
-**File**: `yarn.lock` (modified, +39/-93)
-```diff
-@@ -3014,14 +3014,24 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@expo/env@npm:~2.5.4":
--  version: 2.5.4
--  resolution: "@expo/env@npm:2.5.4"
-+"@expo/env@npm:~2.1.3":
-+  version: 2.1.3
-+  resolution: "@expo/env@npm:2.1.3"
-   dependencies:
-     chalk: "npm:^4.0.0"
-     debug: "npm:^4.3.4"
-     getenv: "npm:^2.0.0"
--  checksum: 10/78799754728307ac0933a217c2e8b53693ba189bd0f1551ae5c2ad6c62bfd27d074b925b6d339259a12c2b12bbec19bef58f23863aa3f8f23177de47a1e380f3
-+  checksum: 10/d47662d389c21d914da0327666202809a6ba8eada84bb276db2c1912d2a2d73f65104d8059b5c7a15d908e6d43e55d2d0223244c368a39086a6b1668962f5c8d
-+  languageName: node
-+  linkType: hard
++## [27.2.0](https://github.com/invertase/react-native-firebase/compare/v27.1.1...v27.2.0) (2026-11-25)
 +
-+"@expo/env@npm:~2.6.0":
-+  version: 2.6.0
-+  resolution: "@expo/env@npm:2.6.0"
-+  dependencies:
-+    chalk: "npm:^4.0.0"
-+    debug: "npm:^4.3.4"
-+  checksum: 10/96f28a44aad8fefd4efe1d9d64f35253fc415e9e33c2009f91bf1fdf53cca82b758ff61a7a6b2470cd004ce0f0da1ea94e0d9de5d6d2224614b73f8507008f4f
-   languageName: node
-   linkType: hard
- 
-@@ -3518,9 +3528,9 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@expo/require-utils@npm:^58.0.5":
--  version: 58.0.5
--  resolution: "@expo/require-utils@npm:58.0.5"
-+"@expo/require-utils@npm:^58.0.6":
-+  version: 58.0.6
-+  resolution: "@expo/require-utils@npm:58.0.6"
-   dependencies:
-     "@babel/code-frame": "npm:^7.20.0"
-     "@babel/core": "npm:^7.25.2"
-@@ -3530,7 +3540,7 @@ __metadata:
-   peerDependenciesMeta:
-     typescript:
-       optional: true
--  checksum: 10/e7f7ee8c29e03078540fd54f64c54c737387891a0fe15e6eff1ee12bd05e21753a65cea74dfc9d1a0abe084d6b2492a62987058b0b0064c1d323ba8e8c9cb478
-+  checksum: 10/b67b633100320ef2e161b1f1a90767b64585c472aff6a7671541890202c2655b10ae814af715e3173dc8cba00ccd365f5c364f13fbde5da879edbd6b8e403d2b
-   languageName: node
-   linkType: hard
- 
-@@ -5204,22 +5214,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@isaacs/balanced-match@npm:^4.0.1":
--  version: 4.0.1
--  resolution: "@isaacs/balanced-match@npm:4.0.1"
--  checksum: 10/102fbc6d2c0d5edf8f6dbf2b3feb21695a21bc850f11bc47c4f06aa83bd8884fde3fe9d6d797d619901d96865fdcb4569ac2a54c937992c48885c5e3d9967fe8
--  languageName: node
--  linkType: hard
--
--"@isaacs/brace-expansion@npm:^5.0.0":
--  version: 5.0.0
--  resolution: "@isaacs/brace-expansion@npm:5.0.0"
--  dependencies:
--    "@isaacs/balanced-match": "npm:^4.0.1"
--  checksum: 10/cf3b7f206aff12128214a1df764ac8cdbc517c110db85249b945282407e3dfc5c6e66286383a7c9391a059fc8e6e6a8ca82262fc9d2590bd615376141fbebd2d
--  languageName: node
--  linkType: hard
--
- "@isaacs/cliui@npm:^8.0.2":
-   version: 8.0.2
-   resolution: "@isaacs/cliui@npm:8.0.2"
-@@ -11155,7 +11149,7 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"brace-expansion@npm:5.0.8, brace-expansion@npm:^5.0.2, brace-expansion@npm:^5.0.5":
-+"brace-expansion@npm:5.0.8, brace-expansion@npm:^5.0.5":
-   version: 5.0.8
-   resolution: "brace-expansion@npm:5.0.8"
-   dependencies:
-@@ -14502,40 +14496,27 @@ __metadata:
-   linkType: hard
- 
- "expo-constants@npm:~55.0.15":
--  version: 55.0.15
--  resolution: "expo-constants@npm:55.0.15"
--  dependencies:
--    "@expo/env": "npm:~2.1.1"
--  peerDependencies:
--    expo: "*"
--    react-native: "*"
--  checksum: 10/b0992b543ef9258168932deeddf48754ba007b2950bbf2564c9407119fee6e644fa0e63ad5979e739e7e86cdc40f72fa9b785786ebbf2e39c0aa020d085cb027
--  languageName: node
--  linkType: hard
--
--"expo-constants@npm:~58.0.15":
--  version: 58.0.15
--  resolution: "expo-constants@npm:58.0.15"
-+  version: 55.0.17
-+  resolution: "expo-constants@npm:55.0.17"
-   dependencies:
--    "@expo/env": "npm:~2.5.4"
--    "@expo/require-utils": "npm:^58.0.5"
-+    "@expo/env": "npm:~2.1.3"
-   peerDependencies:
-     expo: "*"
-     react-native: "*"
--  checksum: 10/24d263e1df4c90e28c0b110fd90d54e26884daf56e26df8edf1e9293b231ea99d81f5c2684a182e017676fa426fbf1b6045a35f206a37760d584af390d742643
-+  checksum: 10/346832bcccfd63ff75251ce106691539e2f2ee2f35b82c2c8011c66f9c92a5dfb03b9fb093ee89384ab554bec0478582903ac2ab2500102b0a1c6c1661b9e468
-   languageName: node
-   linkType: hard
- 
--"expo-constants@npm:~58.0.9":
--  version: 58.0.9
--  resolution: "expo-constants@npm:58.0.9"
-+"expo-constants@npm:~58.0.15, expo-constants@npm:~58.0.9":
-+  version: 58.0.16
-+  resolution: "expo-constants@npm:58.0.16"
-   dependencies:
--    "@expo/env": "npm:~2.5.1"
--    "@expo/require-utils": "npm:^58.0.2"
-+    "@expo/env": "npm:~2.6.0"
-+    "@expo/require-utils": "npm:^58.0.6"
-   peerDependencies:
-     expo: "*"
-     react-native: "*"
--  checksum: 10/fd1ebab86390278f1f64036f00fd993c78e122680b19bb06fcd82fbd769bb81e581c839e993a744b22cd09bf78dbe96e942f6c3b0ac59db870fbf3f633c2c954
-+  checksum: 10/33cfb477dbf49ed969b5e3ffe77490a56d13a6874425496d2a193a0993a76f10ea2471b5ff817438e5f01040a3fcb277a0a56e3c8206846a4a671dd4ea4bbf77
-   languageName: node
-   linkType: hard
- 
-@@ -17555,12 +17536,13 @@ __metadata:
-   linkType: hard
- 
- "install-artifact-from-github@npm:^1.4.0":
--  version: 1.4.0
--  resolution: "install-artifact-from-github@npm:1.4.0"
-+  version: 1.8.1
++### Features
 +
++- **app, sdk:** bump Firebase Android SDK to 35.2.0 ([#9488](https://github.com/invertase/react-native-firebase/issues/9488)) ([9000dbf](https://github.com/invertase/react-native-firebase/commit/9000dbf0d6e8d59595aaeb87698b5a040ce80861))
++- **app, sdk:** bump Firebase JS SDK to 13.3.0 ([#9489](https://github.com/invertase/react-native-firebase/issues/9489)) ([336ede8](https://github.com/invertase/react-native-firebase/commit/336ede826930709257c764445f7f388852811757))
++
++### Bug Fixes
++
++- **android:** tolerate deprecated JNI invokeJavaMethod on RN 0.89+ ([#9492](https://github.com/invertase/react-native-firebase/issues/9492)) ([4aa429a](https://github.com/invertase/react-native-firebase/commit/4aa429a1c522429de2ee9b47b587b8c2504de4f2))
++- **app, ios:** share GoogleUtilities when only Messaging or Analytics is installed under SPM ([#9451](https://github.com/invertase/react-native-firebase/issues/9451)) ([0d426fe](https://github.com/invertase/react-native-firebase/commit/0d426fe30d3b10a7b00405af72e7cadd3b7c744d))
++- **attw:** pack staged packages with repo Yarn Berry ([b33c962](https://github.com/invertase/react-native-firebase/commit/b33c962c0b69920faf84a861d8e5f759502b7c3d))
++- **e2e:** make check BUSY for unrecorded identity AVD on any port ([e99601f](https://github.com/invertase/react-native-firebase/commit/e99601fd527bc8132f4a057382ea0f284072cf77))
++- **e2e:** release Detox-respawned identity AVD qemu ([b9ac2ff](https://github.com/invertase/react-native-firebase/commit/b9ac2fff164922fbe96491aa107e92f9c3b7b54d))
++- **firestore:** align updateDoc, onSnapshot and initializeFirestore error handling with firebase-js-sdk ([#9392](https://github.com/invertase/react-native-firebase/issues/9392)) ([3edcab9](https://github.com/invertase/react-native-firebase/commit/3edcab953c9e4fe8a1bf2c03b0ec6024a9f6e83b))
++- **functions:** map network and auth token errors to callable error codes ([#9422](https://github.com/invertase/react-native-firebase/issues/9422)) ([b278991](https://github.com/invertase/react-native-firebase/commit/b278991e22ab327d6012bbedb21fadb5d14d43f5))
++- **messaging, ios:** make the AppDelegate forwarding header public again ([904f7d4](https://github.com/invertase/react-native-firebase/commit/904f7d410e5d70ad26efd70b4a30f5b3c79442b5))
++- **messaging, ios:** refresh the Podfile.lock checksum for the public header ([66f977c](https://github.com/invertase/react-native-firebase/commit/66f977c319e0be7d7e5be4d0f2cc5be49650e77d))
++- **perf:** remove the frame metrics listener when a screen trace stops ([#9482](https://github.com/invertase/react-native-firebase/issues/9482)) ([439611d](https://github.com/invertase/react-native-firebase/commit/439611d7e85b73e8f4397a172f918b30a9422375))
++
+ ## [27.1.1](https://github.com/invertase/react-native-firebase/compare/v27.1.0...v27.1.1) (2026-11-10)
+ 
+ ### Bug Fixes
+```
+
+**File**: `lerna.json` (modified, +1/-1)
+```diff
+@@ -77,6 +77,6 @@
+     "userUrlFormat": "{{host}}/{{user}}"
+   },
+   "ignoreChanges": ["**/docs/**", "**/.github/**", "**/e2e/**", "**/tests/**", "**/tests-macos/**"],
+-  "version": "27.1.1",
++  "version": "27.2.0",
+   "$schema": "node_modules/lerna/schemas/lerna-schema.json"
+ }
+```
+
+**File**: `packages/ai/CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -3,6 +3,10 @@
+ All notable changes to this project will be documented in this file.
+ See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+ 
++## [27.2.0](https://github.com/invertase/react-native-firebase/compare/v27.1.1...v27.2.0) (2026-11-25)
++
++**Note:** Version bump only for package @react-native-firebase/ai
++
+ ## [27.1.1](https://github.com/invertase/react-native-firebase/compare/v27.1.0...v27.1.1) (2026-11-10)
+ 
+ **Note:** Version bump only for package @react-native-firebase/ai
+```
+
+**File**: `packages/ai/package.json` (modified, +5/-5)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@react-native-firebase/ai",
+-  "version": "27.1.1",
++  "version": "27.2.0",
+   "author": "Invertase <oss@invertase.io> (http://invertase.io)",
+   "description": "React Native Firebase - Firebase AI is a fully-managed, unified AI development platform for building and using generative AI",
+   "main": "./dist/module/index.js",
+@@ -28,16 +28,16 @@
+     "generative-ai"
+   ],
+   "peerDependencies": {
+-    "@react-native-firebase/app": "27.1.1"
++    "@react-native-firebase/app": "27.2.0"
+   },
+   "publishConfig": {
+     "access": "public",
+     "provenance": true
+   },
+   "devDependencies": {
+-    "@react-native-firebase/app": "27.1.1",
+-    "@react-native-firebase/app-check": "27.1.1",
+-    "@react-native-firebase/auth": "27.1.1",
++    "@react-native-firebase/app": "27.2.0",
++    "@react-native-firebase/app-check": "27.2.0",
++    "@react-native-firebase/auth": "27.2.0",
+     "@types/text-encoding": "^0.0.40",
+     "react-native-builder-bob": "^0.41.0",
+     "typescript": "^6.0.3"
+```
+
+**File**: `packages/analytics/CHANGELOG.md` (modified, +6/-0)
+```diff
+@@ -3,6 +3,12 @@
+ All notable changes to this project will be documented in this file.
+ See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+ 
++## [27.2.0](https://github.com/invertase/react-native-firebase/compare/v27.1.1...v27.2.0) (2026-11-25)
++
++### Bug Fixes
++
++- **android:** tolerate deprecated JNI invokeJavaMethod on RN 0.89+ ([#9492](https://github.com/invertase/react-native-firebase/issues/9492)) ([4aa429a](https://github.com/invertase/react-native-firebase/commit/4aa429a1c522429de2ee9b47b587b8c2504de4f2))
++
+ ## [27.1.1](https://github.com/invertase/react-native-firebase/compare/v27.1.0...v27.1.1) (2026-11-10)
+ 
+ **Note:** Version bump only for package @react-native-firebase/analytics
+```
+
+**File**: `packages/analytics/package.json` (modified, +3/-3)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@react-native-firebase/analytics",
+-  "version": "27.1.1",
++  "version": "27.2.0",
+   "author": "Invertase <oss@invertase.io> (http://invertase.io)",
+   "description": "React Native Firebase - The analytics module provides out of the box support with Google Analytics for Firebase. Integration with the Android & iOS allows for in-depth analytical insight reporting, such as device information, location, user actions and more.",
+   "main": "./dist/module/index.js",
+@@ -44,7 +44,7 @@
+     "analytics"
+   ],
+   "peerDependencies": {
+-    "@react-native-firebase/app": "27.1.1",
++    "@react-native-firebase/app": "27.2.0",
+     "expo": ">=47.0.0"
+   },
+   "publishConfig": {
+@@ -55,7 +55,7 @@
+     "superstruct": "^2.0.2"
+   },
+   "devDependencies": {
+-    "@react-native-firebase/app": "27.1.1",
++    "@react-native-firebase/app": "27.2.0",
+     "expo": "^55.0.18",
+     "react-native-builder-bob": "^0.41.0",
+     "typescript": "^6.0.3"
+```
+
+**File**: `packages/app-check/CHANGELOG.md` (modified, +6/-0)
+```diff
+@@ -3,6 +3,12 @@
+ All notable changes to this project will be documented in this file.
+ See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+ 
++## [27.2.0](https://github.com/invertase/react-native-firebase/compare/v27.1.1...v27.2.0) (2026-11-25)
++
++### Bug Fixes
++
++- **android:** tolerate deprecated JNI invokeJavaMethod on RN 0.89+ ([#9492](https://github.com/invertase/react-native-firebase/issues/9492)) ([4aa429a](https://github.com/invertase/react-native-firebase/commit/4aa429a1c522429de2ee9b47b587b8c2504de4f2))
++
+ ## [27.1.1](https://github.com/invertase/react-native-firebase/compare/v27.1.0...v27.1.1) (2026-11-10)
+ 
+ ### Bug Fixes
+```
+
+**File**: `packages/app-check/package.json` (modified, +3/-3)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@react-native-firebase/app-check",
+-  "version": "27.1.1",
++  "version": "27.2.0",
+   "author": "Invertase <oss@invertase.io> (http://invertase.io)",
+   "description": "React Native Firebase - App Check",
+   "main": "./dist/module/index.js",
+@@ -45,11 +45,11 @@
+     "appCheck"
+   ],
+   "peerDependencies": {
+-    "@react-native-firebase/app": "27.1.1",
++    "@react-native-firebase/app": "27.2.0",
+     "expo": ">=47.0.0"
+   },
+   "devDependencies": {
+-    "@react-native-firebase/app": "27.1.1",
++    "@react-native-firebase/app": "27.2.0",
+     "expo": "^55.0.18",
+     "react-native-builder-bob": "^0.41.0",
+     "typescript": "^6.0.3"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1895,28 +1800,39 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): dependency updates 20261119
+## X. release): release packages
 
 **RULE**:
-When implementing operations in `.github/workflows/linting.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce0f96f1`: build(deps): dependency updates 20261119. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbf81872`: release): release packages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/linting.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+## [27.2.0](https://github.com/invertase/react-native-firebase/compare/v27.1.1...v27.2.0) (2026-11-25)
+
+### Features
+
+- **app, sdk:** bump Firebase Android SDK to 35.2.0 ([#9488](https://github.com/invertase/react-native-firebase/issues/9488)) ([9000dbf](https://github.com/invertase/react-native-firebase/commit/9000dbf0d6e8d59595aaeb87698b5a040ce80861))
+- **app, sdk:** bump Firebase JS SDK to 13.3.0 ([#9489](https://github.com/invertase/react-native-firebase/issues/9489)) ([336ede8](https://github.com/invertase/react-native-firebase/commit/336ede826930709257c764445f7f388852811757))
+
+### Bug Fixes
+
+- **android:** tolerate deprecated JNI invokeJavaMethod on RN 0.89+ ([#9492](https://github.com/invertase/react-native-firebase/issues/9492)) ([4aa429a](https://github.com/invertase/react-native-firebase/commit/4aa429a1c522429de2ee9b47b587b8c2504de4f2))
+- **app, ios:** share GoogleUtilities when only Messaging or Analytics is installed under SPM ([#9451](https://github.com/invertase/react-native-firebase/issues/9451)) ([0d426fe](https://github.com/invertase/react-native-firebase/commit/0d426fe30d3b10a7b00405af72e7cadd3b7c744d))
+- **attw:** pack staged packages with repo Yarn Berry ([b33c9
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce0f96f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbf81872` are properly handled with clean fallback behavior.

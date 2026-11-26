@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T19:54:59.096Z",
+  "last_updated": "2026-11-26T20:04:34.620Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1175,14 +1175,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "91ec00fbff7364c506967b5b7db8f6824e8474985d1103d95c7d25437dfccdf6",
-      "verified_at": "2026-11-23T06:37:31.514Z",
+      "content_hash": "c458ee42b7aeddd6b3844e9da7678b109f869ae92938915ceb615fde66c01dbf",
+      "verified_at": "2026-11-26T20:04:16.219Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T06:37:31.514Z"
+      "last_updated": "2026-11-26T20:04:16.219Z"
     },
     "openai/gpt-oss-120b": {
       "repository": "openai/gpt-oss-120b",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "78c03ecbf5a096a477a4814fc96b68b12d162bd22bc65d45519f2db55a0a41e5",
-      "verified_at": "2026-11-26T17:39:31.073Z",
+      "content_hash": "3b839d981083341d954c2990c3a73e7aa8aca39ddfd6de00eececb9ea1c0b411",
+      "verified_at": "2026-11-26T20:04:34.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T17:39:31.073Z"
+      "last_updated": "2026-11-26T20:04:34.619Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -5466,14 +5466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-invertase-react-native-firebase",
-      "content_hash": "efb427fc80374ac8d7b24e3d5a99c2de06722e1799263a182d36da5e8d454e13",
-      "verified_at": "2026-11-24T12:18:29.996Z",
+      "content_hash": "90f884d1ab6988f7e112d9fc13572834f764ee6a3f3668c067cea0d49bcd61f3",
+      "verified_at": "2026-11-26T20:04:23.396Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T12:18:29.996Z"
+      "last_updated": "2026-11-26T20:04:23.396Z"
     },
     "PeerDB-io/peerdb": {
       "repository": "PeerDB-io/peerdb",
@@ -6561,14 +6561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nasiko-labs-nasiko",
-      "content_hash": "32c0888a8d59bf4d49553e58e51a073c85a251db983d00ce1309554116316893",
-      "verified_at": "2026-11-25T12:56:31.675Z",
+      "content_hash": "a6168fa492ce778c933741fd75eee30dfd0ef1c4acecc8ade4cb9a3e0069178f",
+      "verified_at": "2026-11-26T20:04:19.883Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T12:56:31.675Z"
+      "last_updated": "2026-11-26T20:04:19.883Z"
     },
     "berty/berty": {
       "repository": "berty/berty",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "b909e2561ff7f36b4cd3c258611d02ba9deaaeb4cd143f0d6a6db6b4cdd794a2",
-      "verified_at": "2026-11-25T02:02:06.517Z",
+      "content_hash": "934985a2d1ffc5d107588d3a5abef5f33b992d307e3a5ee4e244edce118264be",
+      "verified_at": "2026-11-26T20:04:26.561Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:02:06.517Z"
+      "last_updated": "2026-11-26T20:04:26.561Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "c7f4994f2c8555f885426e8d8e48633c292510b48b1f3bcba9d8715cf86b8bd9",
-      "verified_at": "2026-11-26T01:36:36.990Z",
+      "content_hash": "3902e251da149fb84d6021c602e79eb2c4a8e66d71e1ecce259321cdfe642123",
+      "verified_at": "2026-11-26T20:04:31.983Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T01:36:36.990Z"
+      "last_updated": "2026-11-26T20:04:31.983Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",

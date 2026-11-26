@@ -4,24 +4,24 @@
 {
   "source_repository": "Bitterbot-AI/bitterbot-desktop",
   "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-  "source_version": "5ad08921",
+  "source_version": "ec2ea636",
   "license": "MIT",
-  "timestamp": "2026-11-26T17:39:31.300Z",
+  "timestamp": "2026-11-26T20:04:34.927Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `5ad08921`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T17:39:31.300Z`  
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `ec2ea636`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T20:04:34.927Z`  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Bitterbot-AI/bitterbot-desktop:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T17:39:29.838Z  
+> **Harvest Timestamp**: 2026-11-26T20:04:33.096Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1584,360 +1584,288 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ad08921` (2026-11-26)
-**Commit Message**: fix(deep-recall): pick the sub-model for the provider whose key is set (#394)
+### Incident Patch 1: `ec2ea636` (2026-11-26)
+**Commit Message**: fix(memory): name the wiki page to retire explicitly in the semantic lint (#408)
 
-* fix(deep-recall): pick the sub-model for the provider whose key is set
+The lint archived the last page a finding listed, but the prompt never said
+order mattered, so a duplicate finding could archive the page meant to be kept.
+The model now names the page in a retire field; a finding with several pages
+and no retire is logged for the maintainer and archives nothing.
 
-resolveSubModel counted any of the three API keys as proof for every provider, so the first entry (OpenAI) won whenever any key was set, and a Google- or Anthropic-only setup got an OpenAI sub-model it has no key for. Each provider now needs its own key. The Google sub-model was gemini-2.0-flash-lite, which Google shut down on 2026-06-01; it is now gemini-3.5-flash-lite.
+Fixes #400
 
-* fix(deep-recall): detect provider keys through model auth and resolve newer Flash-Lite ids
-
-The auto sub-model check built its own variable names, so Google was matched on
-GOOGLE_API_KEY while model auth reads GEMINI_API_KEY. It now asks model auth.
-gemini-3.5-flash-lite is not in the pinned model catalog, so a forward-compat
-rule clones stable Flash-Lite ids from the newest catalogued one. A test loads
-every auto sub-model from the real catalog.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: VGIL77 <[REDACTED_EMAIL]>
 Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-**File**: `docs/memory/deep-recall.md` (modified, +1/-1)
+**File**: `src/memory/skill-evolution/improvements.test.ts` (modified, +58/-0)
 ```diff
-@@ -129,7 +129,7 @@ A keyword-only hit has no cosine and never counts toward the shortcut.
- | Root (writes REPL code) | User's configured model (e.g., Claude Opus) | Exploration strategy needs the strong model           |
- | Sub-LLM (`llm_query`)   | Cheap model (e.g., GPT-4o-mini, Haiku)      | Summarizing/extracting from chunks doesn't need power |
- 
--Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from available API keys (`memory.rlm.subModel` overrides).
-+Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from the first provider with usable credentials, in the order OpenAI (`gpt-4o-mini`), Anthropic (`claude-haiku-4-5`), Google (`gemini-3.5-flash-lite`, needs `GEMINI_API_KEY`); `memory.rlm.subModel` overrides.
- 
- ---
- 
-```
-
-**File**: `src/agents/embedded-runner/model.test.ts` (modified, +36/-0)
-```diff
-@@ -409,6 +409,42 @@ describe("resolveModel", () => {
-     });
+@@ -119,6 +119,7 @@ describe("#2 semantic lint", () => {
+           {
+             type: "stale",
+             pages: ["p-new", "p-old"],
++            retire: "p-old",
+             action: "archive",
+             detail: "p-old superseded by p-new",
+           },
+@@ -135,6 +136,63 @@ describe("#2 semantic lint", () => {
+     expect(logs).toContain("semantic lint");
    });
  
-+  it("builds a google forward-compat fallback for a newer stable flash-lite id", () => {
-+    const templateModel = {
-+      id: "gemini-2.5-flash-lite",
-+      name: "Gemini 2.5 Flash Lite",
-+      provider: "google",
-+      api: "google-generative-ai",
-+      baseUrl: "https://generativelanguage.googleapis.com/v1beta",
-+      reasoning: true,
-+      input: ["text", "image"] as const,
-+      cost: { input: 0.1, output: 0.4, cacheRead: 0.025, cacheWrite: 0 },
-+      contextWindow: 1048576,
-+      maxTokens: 65536,
-+    };
-+    mockDiscoveredModel({
-+      provider: "google",
-+      modelId: "gemini-2.5-flash-lite",
-+      templateModel,
++  it("archives the page named in retire whatever the order of pages", async () => {
++    const res = await runSemanticLint({
++      llmCall: async () =>
++        JSON.stringify([
++          {
++            type: "duplicate",
++            pages: ["p-old", "p-new"],
++            retire: "p-old",
++            action: "archive",
++            detail: "p-old duplicates p-new",
++          },
++        ]),
++      storeOpts: opts(),
 +    });
++    expect(res.archived).toEqual(["p-old"]);
++    expect(await listPatternNames(opts())).toContain("p-new");
++  });
 +
-+    const result = resolveModel("google", "gemini-3.5-flash-lite", "/tmp/agent");
-+
-+    expect(result.error).toBeUndefined();
-+    expect(result.model).toMatchObject({
-+      provider: "google",
-+      id: "gemini-3.5-flash-lite",
-+      api: "google-generative-ai",
-+      baseUrl: "https://generativelanguage.googleapis.com/v1beta",
++  it("archives nothing when several pages are listed and none is named to retire", async () => {
++    const res = await runSemanticLint({
++      llmCall: async () =>
++        JSON.stringify([
++          { type: "duplicate", pages: ["p-old", "p-new"], action: "archive", detail: "dupes" },
++        ]),
++      storeOpts: opts(),
 +    });
-+    expect(borrowedPriceTemplate(result.model)).toBe("gemini-2.5-flash-lite");
-+
-+    // Speech, image and preview variants are different products and stay unknown.
-+    for (const id of ["gemini-3.8-flash-lite-tts", "gemini-3.1-flash-lite-image", "gemini-9-pro"]) {
-+      expect(resolveModel("google", id, "/tmp/agent").error).toBe(`Unknown model: google/${id}`);
-+    }
++    expect(res.ran).toBe(true);
++    expect(res.archived).toHaveLength(0);
++    expect(await listPatternNames(opts())).toHaveLength(5);
++    const logs = await fs.readFile(path.join(tmpDir, "skill-wiki", "logs.md"), "utf-8");
++    expect(logs).toContain("no page named to retire");
 +  });
 +
-   it("keeps unknown-model errors for non-gpt-5 openai-codex ids", () => {
-     const result = resolveModel("openai-codex", "gpt-4.1-mini", "/tmp/agent");
-     expect(result.model).toBeUndefined();
++  it("still archives a finding that lists a single page", async () => {
++    const res = await runSemanticLint({
++      llmCall: async () =>
++        JSON.stringify([
++          { type: "stale", pages: ["p-old"], action: "archive", detail: "superseded by p-new" },
++        ]),
++      storeOpts: opts(),
++    });
++    expect(res.archived).toEqual(["p-old"]);
++  });
++
++  it("tells the model which field decides the archived page", async () => {
++    let prompt = "";
++    await runSemanticLint({
++      llmCall: async (p) => {
++        prompt = p;
++        return "[]";
++      },
++      storeOpts: opts(),
++    });
++    expect(prompt).toContain('"retire"');
++    expect(prompt).toContain('Only the "retire" page is archived');
++  });
++
+   it("only flags contradictions (never archives them)", async () => {
+     const res = await runSemanticLint({
+       llmCall: async () =>
 ```
 
-**File**: `src/agents/model-forward-compat.ts` (modified, +33/-1)
+**File**: `src/memory/skill-evolution/wiki-semantic-lint.ts` (modified, +22/-7)
 ```diff
-@@ -27,6 +27,13 @@ const ANTHROPIC_OPUS_NEXT_TEMPLATE_MODEL_IDS = ["claude-opus-4-6", "claude-opus-
- const ZAI_GLM5_MODEL_ID = "glm-5";
- const ZAI_GLM5_TEMPLATE_MODEL_IDS = ["glm-4.7"] as const;
- 
-+// Stable Gemini Flash-Lite ids only (gemini-3.5-flash-lite), not the -tts, -image or -preview ones.
-+const GOOGLE_FLASH_LITE_MODEL_ID = /^gemini-\d+(?:\.\d+)?-flash-lite$/;
-+const GOOGLE_FLASH_LITE_TEMPLATE_MODEL_IDS = [
-+  "gemini-3.1-flash-lite-preview",
-+  "gemini-2.5-flash-lite",
-+] as const;
-+
- /**
-  * A model cloned from a catalogued template carries the template's `cost`, which is a guess,
-  * not this model's price (claude-fable-5-1 cloned from Opus 4.7 was billed at $5/$25 per M while
-@@ -294,6 +301,30 @@ function resolveZaiGlm5ForwardCompatModel(
-   } as Model<Api>);
+@@ -54,6 +54,8 @@ export interface SemanticLintResult {
+ interface LintFinding {
+   type: "contradiction" | "stale" | "duplicate";
+   pages: string[];
++  /** The one page to archive. Named on its own so the order of `pages` never decides it. */
++  retire?: string;
+   action: "archive" | "flag";
+   detail: string;
  }
+@@ -85,12 +87,14 @@ Find only genuine problems across the pattern pages below:
+ - "stale": a page's claim is superseded by a newer page or clearly dated evidence.
+ - "duplicate": two pages cover the same pattern (semantic overlap, not byte-identical).
  
-+// Google ships Flash-Lite releases faster than the built-in catalog picks them up, and shuts the
-+// old ones down (gemini-2.0-flash-lite went away on 2026-06-01). A newer stable Flash-Lite id is
-+// cloned from the newest catalogued one; the provider picks the thinking settings from the id.
-+function resolveGoogleFlashLiteForwardCompatModel(
-+  provider: string,
-+  modelId: string,
-+  modelRegistry: ModelRegistry,
-+): Model<Api> | undefined {
-+  const normalizedProvider = normalizeProviderId(provider);
-+  if (normalizedProvider !== "google") {
-+    return undefined;
-+  }
-+  const trimmedModelId = modelId.trim();
-+  if (!GOOGLE_FLASH_LITE_MODEL_ID.test(trimmedModelId.toLowerCase())) {
-+    return undefined;
-+  }
-+  return cloneFirstTemplateModel({
-+    normalizedProvider,
-+    trimmedModelId,
-+    templateIds: [...GOOGLE_FLASH_LITE_TEMPLATE_MODEL_IDS],
-+    modelRegistry,
-+  });
-+}
-+
- export function resolveForwardCompatModel(
-   provider: string,
-   modelId: string,
-@@ -304,6 +335,7 @@ export function resolveForwardCompatModel(
-     resolveAnthropicOpus46ForwardCompatModel(provider, modelId, modelRegistry) ??
-     resolveAnthropicOpusNextForwardCompatModel(provider, modelId, modelRegistry) ??
-     resolveAnthropicFamilyForwardCompatModel(provider, modelId, modelRegistry) ??
--    resolveZaiGlm5ForwardCompatModel(provider, modelId, modelRegistry)
-+    resolveZaiGlm5ForwardCompatModel(provider, modelId, modelRegistry) ??
-+    resolveGoogleFlashLiteForwardCompatModel(provider, modelId, modelRegistry)
-   );
- }
-```
-
-**File**: `src/agents/tools/deep-recall-tool.sub-model-catalog.test.ts` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+import fs from "node:fs";
-+import os from "node:os";
-+import path from "node:path";
-+import { expect, it } from "vitest";
-+import { resolveModel } from "../embedded-runner/model.js";
-+import { resolveSubModel } from "./deep-recall-tool.js";
-+
-+// Unmocked on purpose: every model deep recall can pick on "auto" has to load from the real
-+// catalog (or a forward-compat rule), or the recursive calls fail with "Unknown model".
-+it("auto sub-models all resolve to a usable model", async () => {
-+  const agentDir = fs.mkdtempSync(path.join(os.tmpdir(), "bitterbot-sub-model-"));
-+  const envKeys = ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY"] as const;
-+  const saved = envKeys.map((key) => [key, process.env[key]] as const);
-+  try {
-+    for (const only of envKeys) {
-+      for (const key of envKeys) {
-+        delete process.env[key];
-+      }
-+      process.env[only] = "test-key";
-+      const sub = await resolveSubModel(undefined, "auto");
-+      if (!sub) {
-+        // A stored credential for an earlier provider on this machine can win; skip then.
-+        continue;
-+      }
-+      const resolved = resolveModel(sub.provider, sub.model, agentDir, undefined);
-+      expect(resolved.error, `${sub.provider}/${sub.model}`).toBeUndefined();
-+      expect(resolved.model?.id).toBe(sub.model);
-+    }
-+    const google = resolveModel("google", "gemini-3.5-flash-lite", agentDir, undefined);
-+    expect(google.error).toBeUndefined();
-+    expect(google.model).toMatchObject({ provider: "google", api: "google-generative-ai" });
-+  } finally {
-+    for (const [key, value] of saved) {
-+      if (value === undefined) {
-+        delete process.env[key];
-+      } else {
-+        process.env[key] = value;
-+      }
-+    }
-+    fs.rmSync(agentDir, { recursive: true, force: true });
-+  }
-+});
-```
-
-**File**: `src/agents/tools/deep-recall-tool.sub-model.test.ts` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+import { afterEach, beforeEach, expect, it, vi } from "vitest";
-+
-+const stored = vi.hoisted(() => ({ providers: [] as string[] }));
-+
-+vi.mock("../runtime/models/index.js", async (importOriginal) => ({
-+  ...(await importOriginal<typeof import("../runtime/models/index.js")>()),
-+  discoverAuthStorage: () => ({ list: () => stored.providers }),
-+}));
-+vi.mock("../agent-paths.js", async (importOriginal) => ({
-+  ...(await importOriginal<typeof import("../agent-paths.js")>()),
-+  resolveBitterbotAgentDir: () => "/tmp/bitterbot-test-agent",
-+}));
-+
-+const { resolveSubModel } = await import("./deep-recall-tool.js");
-+
-+const KEYS = [
-+  "OPENAI_API_KEY",
-+  "ANTHROPIC_API_KEY",
-+  "ANTHROPIC_OAUTH_TOKEN",
-+  "GEMINI_API_KEY",
-+  "GOOGLE_API_KEY",
-+] as const;
-+const saved: Record<string, string | undefined> = {};
-+
-+beforeEach(() => {
-+  stored.providers = [];
-+  for (const key of KEYS) {
-+    saved[key] = process.env[key];
-+    delete process.env[key];
-+  }
-+});
-+
-+afterEach(() => {
-+  for (const key of KEYS) {
-+    if (saved[key] === undefined) {
-+      delete process.env[key];
-+    } else {
-+      process.env[key] = saved[key];
-+    }
-+  }
-+});
-+
-+it("picks the Google sub-model when only the Gemini key is set", async () => {
-+  process.env.GEMINI_API_KEY = "test-key";
-+  const sub = await resolveSubModel(undefined, "auto");
-+  expect(sub?.provider).toBe("google");
-+  // gemini-2.0-flash-lite was shut down on the Gemini API on 2026-06-01.
-+  expect(sub?.model).not.toBe("gemini-2.0-flash-lite");
-+});
-+
-+it("does not pick Google on GOOGLE_API_KEY, which model auth does not read for it", async () => {
-+  process.env.GOOGLE_API_KEY = "test-key";
-+  expect(await resolveSubModel(undefined, "auto")).toBeNull();
-+});
-+
-+it("picks the Anthropic sub-model when only an Anthropic key is set", async () => {
-+  process.env.ANTHROPIC_API_KEY = "test-key";
-+  expect((await resolveSubModel(undefined, "auto"))?.provider).toBe("anthropic");
-+});
-+
-+it("picks a provider that only has stored credentials", async () => {
-+  stored.providers = ["google"];
-+  expect((await resolveSubModel(undefined, "auto"))?.provider).toBe("google");
-+});
-+
-+it("prefers OpenAI when several providers have keys", async () => {
-+  process.env.OPENAI_API_KEY = "test-key";
-+  process.env.GEMINI_API_KEY = "test-key";
-+  expect((await resolveSubModel(undefined, "auto"))?.provider).toBe("openai");
-+});
-+
-+it("returns null when no provider has credentials", async () => {
-+  expect(await resolveSubModel(undefined, "auto")).toBeNull();
-+});
-+
-+it("keeps an explicitly configured sub-model", async () => {
-+  expect(await resolveSubModel(undefined, "openai/gpt-5-mini")).toEqual({
-+    provider: "openai",
-+    model: "gpt-5-mini",
-+  });
-+});
-```
-
-**File**: `src/agents/tools/deep-recall-tool.ts` (modified, +15/-31)
-```diff
-@@ -312,14 +312,15 @@ const DeepRecallSchema = Type.Object({
- const CHEAP_SUB_MODELS: Record<string, { provider: string; model: string }> = {
-   openai: { provider: "openai", model: "gpt-4o-mini" },
-   anthropic: { provider: "anthropic", model: "claude-haiku-4-5-20251001" },
--  google: { provider: "google", model: "gemini-2.0-flash-lite" },
-+  google: { provider: "google", model: "gemini-3.5-flash-lite" },
- };
+-Be conservative — only report clear problems. For duplicate/stale, name the
+-page that should be RETIRED (action "archive"); keep the better/newer one.
+-For contradictions, use action "flag" (a human/maintainer reconciles them).
++Be conservative — only report clear problems. For duplicate/stale use action
++"archive": list every page involved in "pages" (any order) and put the ONE page
++to retire in "retire". Only the "retire" page is archived; keep the better/newer
++one out of it. For contradictions, use action "flag" (a human/maintainer
++reconciles them) and leave "retire" out.
  
- /**
-- * Resolve the cheapest available sub-model for RLM recursive calls.
-- * Checks what API keys are available and picks the cheapest model.
-+ * Resolve the cheapest available sub-model for RLM recursive calls: the first
-+ * provider, in cost order, that this install can actually authenticate to.
-+ * Exported for tests.
-  */
--async function resolveSubModel(
-+export async function resolveSubModel(
-   cfg: BitterbotConfig | undefined,
-   configuredSubModel: string,
- ): Promise<{ provider: string; model: string } | null> {
-@@ -330,39 +331,22 @@ async function resolveSubModel(
+ Respond with ONLY a JSON array (empty if the wiki is healthy):
+-[{"type":"stale","pages":["page-a"],"action":"archive","detail":"superseded by page-b"}]
++[{"type":"duplicate","pages":["page-a","page-b"],"retire":"page-a","action":"archive","detail":"page-b covers the same pattern with newer evidence"}]
+ `;
+ 
+ function parseFindings(raw: string): LintFinding[] | null {
+@@ -124,6 +128,10 @@ function parseFindings(raw: string): LintFinding[] | null {
+         type,
+         action,
+         pages: e.pages.filter((p): p is string => typeof p === "string").map(normalizePatternName),
++        retire:
++          typeof e.retire === "string" && e.retire.trim()
++            ? normalizePatternName(e.retire)
++            : undefined,
+         detail: typeof e.detail === "string" ? e.detail : "",
+       });
      }
-   }
+@@ -184,10 +192,17 @@ export async function runSemanticLint(deps: {
+     const flagged: string[] = [];
+     for (const f of findings) {
+       if (f.action === "archive" && (f.type === "stale" || f.type === "duplicate")) {
+-        // Archive the LAST-named page (the one to retire), keeping the rest.
+-        const target = f.pages.at(-1);
++        // Archive only the page the model named in "retire". A finding that lists a
++        // single page is unambiguous too. With several pages and no "retire" there
++        // is no telling which one the model meant, so nothing is archived.
++        const target = f.retire ?? (f.pages.length === 1 ? f.pages[0] : undefined);
++        if (!target) {
++          flagged.push(
++            `- [${f.type}] ${f.pages.join(", ")}: ${f.detail} (not archived: no page named to retire)`,
++          );
++          continue;
++        }
+         if (
+-          target &&
+           isValidPatternName(target) &&
+           result.archived.length < archiveBudget &&
+           !result.archived.includes(target)
+```
+
+---
+
+### Incident Patch 2: `9e0c432d` (2026-11-26)
+**Commit Message**: fix(wallet): stop telling the agent and users that gas is sponsored (#407)
+
+The wallet is a CDP server account. Only x402 payments are gasless; direct
+USDC sends need ETH in the wallet for gas. The skill, the system prompt, the
+onboarding wizard and the architecture doc all said no ETH was needed.
+
+Fixes #399
+
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `docs/concepts/architecture.md` (modified, +1/-1)
+```diff
+@@ -83,7 +83,7 @@ Every other AI agent is a cost center. Bitterbot is a revenue center.
  
--  // Auto-detect: try providers in cost order
-+  let stored: string[] = [];
-   try {
-     const { discoverAuthStorage } = await import("../runtime/models/index.js");
-     const { resolveBitterbotAgentDir } = await import("../agent-paths.js");
--    const agentDir = resolveBitterbotAgentDir();
--    const authStorage = discoverAuthStorage(agentDir);
--
--    // Check available providers
--    for (const [providerId, subModel] of Object.entries(CHEAP_SUB_MODELS)) {
--      const providers = authStorage.list?.() ?? [];
--      const hasProvider =
--        providers.includes(providerId) ||
--        process.env[`${providerId.toUpperCase()}_API_KEY`] ||
--        process.env.OPENAI_API_KEY ||
--        process.env.ANTHROPIC_API_KEY ||
--        process.env.GOOGLE_API_KEY;
--      if (hasProvider) {
--        return subModel;
--      }
--    }
-+    stored = discoverAuthStorage(resolveBitterbotAgentDir()).list?.() ?? [];
-   } catch {
--    // Fallback
-+    // No readable auth store: environment keys still count.
-   }
+ ### Agent Wallet
  
--  // Last resort: try OpenAI (most common)
--  if (process.env.OPENAI_API_KEY) {
--    return CHEAP_SUB_MODELS.openai!;
--  }
--  if (process.env.ANTHROPIC_API_KEY) {
--    return CHEAP_SUB_MODELS.anthropic!;
--  }
--  if (process.env.GOOGLE_API_KEY) {
--    return CHEAP_SUB_MODELS.google!;
-+  // Ask model auth which environment variable each provider reads, so a provider
-+  // is only picked when the sub-calls can use its key (Google reads GEMINI_API_KEY).
-+  const { resolveEnvApiKey } = await import("../model-auth.js");
-+  for (const [providerId, subModel] of Object.entries(CHEAP_SUB_MODELS)) {
-+    if (stored.includes(providerId) || resolveEnvApiKey(providerId)) {
-+      return subModel;
-+    }
-   }
+-Each agent has a USDC wallet on Base (Coinbase Smart Wallet). Sponsored gas — zero ETH needed.
++Each agent has a USDC wallet on Base (a Coinbase CDP server account). x402 payments are gasless. Direct USDC sends are normal transactions and need a small ETH balance in the same wallet for gas.
  
-   return null;
+ - **Inbound:** Receives USDC from skill sales via the P2P marketplace
+ - **Outbound:** Pays for paywalled APIs automatically via x402 micropayments, sends USDC to other agents
+```
+
+**File**: `skills/wallet-payments/SKILL.md` (modified, +2/-1)
+```diff
+@@ -6,7 +6,7 @@ metadata: { "bitterbot": { "emoji": "💸" } }
+ 
+ # Wallet payments (USDC on Base)
+ 
+-You have a Coinbase Smart Wallet on Base loaded with USDC. Gas is sponsored by the Coinbase Paymaster (zero ETH needed) and USDC on Base has near-zero transaction fees, so micropayments are viable.
++You have a USDC wallet on Base (a Coinbase CDP server account). x402 payments (`pay_for_resource`) are gasless, and fees on Base are near zero, so micropayments are viable. Direct sends (`send_usdc`, `send_to_peer`) are normal transactions and need a small amount of ETH in the same wallet for gas.
+ 
+ ## Wallet actions
+ 
+@@ -48,6 +48,7 @@ Use the wallet proactively when it helps complete a task:
+ - Autonomous spending (paywalls, API upgrades, micro-tolls within your session cap): inform the user, then proceed if within limits.
+ - Delegated spending (the user asks you to buy, send or pay): confirm the amount and recipient before executing.
+ - Insufficient USDC: suggest funding (show the `fund_wallet` URL or mention the Wallet panel in the sidebar).
++- Before a direct send, check the ETH balance too (`get_balance` with no token). If it is zero, or a send fails for lack of gas, tell the user the wallet needs a little ETH on Base at the `get_address` address. Funding with USDC alone covers x402 payments only.
+ - Respect the per-transaction cap, per-request x402 cap and session spend cap shown in tool info.
+ - Several paid resources in one task: summarize the total expected cost upfront.
+ 
+```
+
+**File**: `src/agents/system-prompt.ts` (modified, +1/-1)
+```diff
+@@ -242,7 +242,7 @@ function buildWalletSection(params: { isMinimal: boolean; availableTools: Set<st
+   }
+   return [
+     "## Agent Wallet (USDC on Base)",
+-    "You have a Coinbase Smart Wallet on Base holding USDC (gas sponsored). `wallet` actions: get_balance, get_address, pay_for_resource (x402: pays AND returns the content; never web_fetch again after paying), fund_wallet, send_usdc, get_transaction_history.",
++    "You have a USDC wallet on Base (x402 payments are gasless; send_usdc needs a little ETH in the wallet for gas). `wallet` actions: get_balance, get_address, pay_for_resource (x402: pays AND returns the content; never web_fetch again after paying), fund_wallet, send_usdc, get_transaction_history.",
+     "Rules: ALWAYS state the exact cost before any payment, never pay silently; confirm amount and recipient for delegated purchases; if a price is unclear, ask; respect the per-transaction, x402 and session caps in tool info; at a paywall with a $0.00 balance, mention funding once. For HTTP 402, paid API tiers, micro-tolls and agent-to-agent payments read the `wallet-payments` skill.",
+     "",
+   ];
+```
+
+**File**: `src/agents/system-prompt.wallet.test.ts` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++/**
++ * The wallet is a plain CDP server account: x402 payments are gasless, direct
++ * sends need ETH for gas. The prompt and the bundled skill must not tell the
++ * model that gas is sponsored (issue #399).
++ */
++import fs from "node:fs";
++import path from "node:path";
++import { fileURLToPath } from "node:url";
++import { describe, expect, it } from "vitest";
++import { buildAgentSystemPrompt } from "./system-prompt.js";
++
++const SPONSORED_GAS = /gas sponsored|sponsored gas|zero ETH|no ETH needed|paymaster|smart wallet/i;
++
++describe("wallet wording", () => {
++  it("system prompt says sends need ETH and does not claim sponsored gas", () => {
++    const prompt = buildAgentSystemPrompt({
++      workspaceDir: "/tmp/bitterbot",
++      toolNames: ["wallet"],
++    });
++    const start = prompt.indexOf("## Agent Wallet (USDC on Base)");
++    expect(start).toBeGreaterThan(-1);
++    const section = prompt.slice(start, prompt.indexOf("\n## ", start + 1));
++    expect(section).toContain("send_usdc needs a little ETH");
++    expect(section).not.toMatch(SPONSORED_GAS);
++  });
++
++  it("wallet-payments skill says the same", () => {
++    const here = path.dirname(fileURLToPath(import.meta.url));
++    const skill = fs.readFileSync(
++      path.resolve(here, "../../skills/wallet-payments/SKILL.md"),
++      "utf-8",
++    );
++    expect(skill).toContain("need a small amount of ETH");
++    expect(skill).not.toMatch(SPONSORED_GAS);
++  });
++});
+```
+
+**File**: `src/wizard/onboarding.wallet.ts` (modified, +2/-2)
+```diff
+@@ -223,7 +223,7 @@ async function collectCdpCredentials(params: {
+           "Step 2 of 2 — Create a Wallet Secret.",
+           "",
+           "This is SEPARATE from the API Key Secret above. It authorizes",
+-          "the agent to sign transactions on its smart wallet. Coinbase",
++          "the agent to sign transactions with its wallet. Coinbase",
+           "treats it as a second factor, so keep it safe.",
+           "",
+           "  a. In the CDP portal, go to Wallets → Wallet Secret.",
+@@ -295,7 +295,7 @@ export async function setupWalletForOnboarding(params: {
+       "",
+       "  - earn USDC when other agents purchase skills it published",
+       "  - pay paywalled APIs autonomously via x402 micropayments",
+-      "  - send and receive on-chain on Base (sponsored gas, no ETH needed)",
++      "  - send and receive on-chain on Base (sends need a little ETH for gas)",
+       "  - claim management-node bounties when it fulfils them",
+       "",
+       "Without it: skills can be published but won't earn, x402-walled",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #408** (2026-11-26): fix(memory): name the wiki page to retire explicitly in the semantic lint (@VGIL77)
+- **PR #407** (2026-11-26): fix(wallet): stop telling the agent and users that gas is sponsored (@VGIL77)
 - **PR #398** (2026-11-25): fix(skills): say wallet spending caps cannot be approved past (@nabeelbaghoor)
 - **PR #396** (2026-11-24): feat(tts): speak through the OpenAI Realtime API ahead of the speech model shutdown (@VGIL77)
 - **PR #395** (2026-11-24): fix(media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown (@VGIL77)
 - **PR #394** (2026-11-26): fix(deep-recall): pick the sub-model for the provider whose key is set (@AyhamJo7)
-- **PR #393** (2026-11-22): fix(deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes (@VGIL77)
-- **PR #392** (2026-11-22): chore(main): release 1.14.3 (@github-actions[bot])
 
 ---
 
@@ -1957,31 +1885,65 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deep-recall): pick the sub-model for the provider whose key is set
+## X. memory): name the wiki page to retire explicitly in the semantic lint
 
 **RULE**:
-When implementing operations in `docs/memory/deep-recall.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/memory/skill-evolution/improvements.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ad08921`: deep-recall): pick the sub-model for the provider whose key is set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec2ea636`: memory): name the wiki page to retire explicitly in the semantic lint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/deep-recall.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/memory/skill-evolution/improvements.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from the first provider with usable credentials, in the order OpenAI (`gpt-4o-mini`), Anthropic (`claude-haiku-4-5`), Google (`gemini-3.5-flash-lite`, needs `GEMINI_API_KEY`); `memory.rlm.subModel` overrides.
+            retire: "p-old",
+  it("archives the page named in retire whatever the order of pages", async () => {
+    const res = await runSemanticLint({
+      llmCall: async () =>
+        JSON.stringify([
+          {
+            type: "duplicate",
+            pages: ["p-old", "p-new"],
+            retire: "p-old",
+            action: "archive",
+            detail: "p-old duplicates p-new",
+          },
+        ]),
+      storeOpts: opts(),
+    });
+    expect(res.archived).toEqual(["p-old"]);
+    expect(await listPatternNames(opts())).toContain("p-new");
+  });
+
+  it("archives nothing when several pages are listed and none is named to retire", async () => {
+    const res = await runSemanticLint({
+      llmCall: async () =>
+        JSON.stringify([
+          { type: "duplicate", pages: ["p-old", "p-new"], action: "archive", detail: "dupes" },
+        ]),
+      storeOpts: opts(),
+    });
+    expect(res.ran).toBe(true);
+    expect(res.archived).toHaveLength(0);
+    expect(await listPatternNames(opts())).toHaveLength(5);
+    const logs = await fs.readFile(path.join(tmpDir, "skill-wiki", "logs.md"), "utf-8");
+    expect(logs).toContain("no page named to retire");
+  });
+
+  it("still archive
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-Root resolved via `resolveAgentModelPrimary()`; sub-model auto-picked from available API keys (`memory.rlm.subModel` overrides).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ad08921` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec2ea636` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

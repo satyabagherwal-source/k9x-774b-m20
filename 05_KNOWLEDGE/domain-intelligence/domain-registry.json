@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T19:55:13.815Z",
+  "last_updated": "2026-11-26T20:04:43.952Z",
   "total_records": 2772,
   "domains": {
     "A": {
@@ -9166,8 +9166,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "3be833582b9b958f0d3f490372cab880b8487a09e4fe549537d6b01ad0f620ba",
-      "created_at": "2026-11-25T02:02:07.052Z"
+      "content_hash": "3a5ee600b11f2c26347ee9d899e5db4c81096e971ed9d55bbe09ced04c7380af",
+      "created_at": "2026-11-26T20:04:27.163Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -12058,8 +12058,8 @@
       "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
       "repository": "infiniflow/infinity",
-      "content_hash": "79b7f7ae9e4661ed930ae60727261e23fbcb50569afb96a323f6fdb41048426a",
-      "created_at": "2026-11-25T00:08:30.809Z"
+      "content_hash": "879912bd3117cc26411091befa596d400f729058b14697d9afa334e7ddb64fd5",
+      "created_at": "2026-11-26T20:04:32.570Z"
     },
     "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian",
@@ -12561,8 +12561,8 @@
       "title": "Technical Construction Intelligence: invertase/react-native-firebase Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-technical-construction-intelligence-invertase-re.md",
       "repository": "invertase/react-native-firebase",
-      "content_hash": "581c50c020da499f4d0a764a0a16429b6cbd2ecb8c5d618c9a87a8e0296d4770",
-      "created_at": "2026-11-24T12:18:30.391Z"
+      "content_hash": "e3ebcb0cab2b2e24f38e623d26c92f71b492d9b5805b4441d08c90e64d2d4682",
+      "created_at": "2026-11-26T20:04:24.007Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants",
@@ -12664,8 +12664,8 @@
       "title": "Technical Construction Intelligence: invertase-react-native-firebase-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-learnings-technical-construction-intelligence-in.md",
       "repository": "invertase-react-native-firebase-learnings",
-      "content_hash": "ffde92c23158fe0dae844de1d33933161097dfbd6277b4d7ee54dc0470b3f5ac",
-      "created_at": "2026-11-24T12:19:02.940Z"
+      "content_hash": "0385c1dcb61b2d6d98eab765901791643e0a40b5eeea12f9bf4d9e90cfed16e1",
+      "created_at": "2026-11-26T20:04:43.952Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
@@ -13306,8 +13306,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B-Instruct Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-instruct-research-knowledge-intelligence-meta-llam.md",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "content_hash": "4460a69afd5c00a6c8f5af85722d78adc91f025a1b1932590079f91c38a8f30a",
-      "created_at": "2026-11-23T06:37:31.783Z"
+      "content_hash": "7086a43e820bf49ebef2fc7db36232c40b2d414d7a9f7ee924f963a7c6a2546b",
+      "created_at": "2026-11-26T20:04:16.527Z"
     },
     "DOM-J-B241A1ED": {
       "record_id": "DOM-J-B241A1ED",
@@ -13363,8 +13363,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-instruct-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-instruct-learnings-research-knowledge-intelligence.md",
       "repository": "hf-meta-llama-meta-llama-3-8b-instruct-learnings",
-      "content_hash": "c0766b8048742b03d1de8d6dd989713072f49a8606de070dc3ba3fd0cfe0aa8b",
-      "created_at": "2026-11-23T06:37:46.861Z"
+      "content_hash": "3a76e28f56892eaa9136c76ff2fc2b7ca2c6d2365e0370312b0977535e93eded",
+      "created_at": "2026-11-26T20:04:40.623Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants",
@@ -19050,8 +19050,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "f85767f4d5694d98c0958a54ebde3043bb33207569934cc8001e6735395f1ed5",
-      "created_at": "2026-11-26T17:39:31.506Z"
+      "content_hash": "66de67b970684a4cd513b097328f1347450aefee340f75db24cd671473c2fce0",
+      "created_at": "2026-11-26T20:04:35.204Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -21750,8 +21750,8 @@
       "title": "Architecture Intelligence: Nasiko-Labs/nasiko Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-architecture-intelligence-nasiko-labs-nasiko-core-invariants.md",
       "repository": "Nasiko-Labs/nasiko",
-      "content_hash": "f529c04c40489b73a0faca324ae56bf91a053511752a37589521db1b6cd05772",
-      "created_at": "2026-11-25T12:56:32.145Z"
+      "content_hash": "35b9f8e4bb4699b361bfd68553de5490b1b2f1f5b4a0bbe3375699db68bf001d",
+      "created_at": "2026-11-26T20:04:20.525Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
@@ -21759,8 +21759,8 @@
       "title": "Architecture Intelligence: nasiko-labs-nasiko-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-learnings-architecture-intelligence-nasiko-labs-nasiko-learni.md",
       "repository": "nasiko-labs-nasiko-learnings",
-      "content_hash": "9c086cdd53762b5f1d35d952aa78959b23c450da56e89f830e0bc6821bce3183",
-      "created_at": "2026-11-25T12:56:45.888Z"
+      "content_hash": "40d95c51a247042d0bce902c0e5a49723ef25b4804b0c77ad4a0fd5babda2c22",
+      "created_at": "2026-11-26T20:04:39.756Z"
     },
     "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants",

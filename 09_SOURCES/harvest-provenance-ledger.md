@@ -13569,3 +13569,9 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `f1fb8936` | Multi-dimensional audit evidence | 2026-11-26T19:37:23.127Z |
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-26T19:45:43.333Z |
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-26T19:54:59.076Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-26T20:04:16.198Z |
+| `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `93091516` | Multi-dimensional audit evidence | 2026-11-26T20:04:19.851Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `dbf81872` | Multi-dimensional audit evidence | 2026-11-26T20:04:23.333Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `e1e64c4b` | Multi-dimensional audit evidence | 2026-11-26T20:04:26.535Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `bd944ba6` | Multi-dimensional audit evidence | 2026-11-26T20:04:31.955Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `ec2ea636` | Multi-dimensional audit evidence | 2026-11-26T20:04:34.592Z |

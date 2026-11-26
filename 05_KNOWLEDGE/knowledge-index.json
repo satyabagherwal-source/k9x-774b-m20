@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T19:55:14.084Z",
+  "last_updated": "2026-11-26T20:04:44.236Z",
   "total_verified_learnings": 9133,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26153,
+  "total_items": 26162,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -104322,15 +104322,15 @@
       "learning_id": "rule-6725",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6725,
-      "title": "build(deps-ui-dev): bump addressable (#14718)",
+      "title": "build(deps-ui-dev): bump addressable",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "e045a46c",
+      "source_version": "e1e64c4b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T02:26:14.066Z"
+      "verified_at": "2026-11-26T20:04:26.209Z"
     },
     "rule-6726": {
       "learning_id": "rule-6726",
@@ -113289,10 +113289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "81a7d3ab",
-      "content_hash": "3be833582b9b958f0d3f490372cab880b8487a09e4fe549537d6b01ad0f620ba",
+      "source_version": "e1e64c4b",
+      "content_hash": "3a5ee600b11f2c26347ee9d899e5db4c81096e971ed9d55bbe09ced04c7380af",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T02:02:07.052Z"
+      "persisted_at": "2026-11-26T20:04:27.163Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113301,10 +113301,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "81a7d3ab",
-      "content_hash": "396ebdb1450ef0b214964d821aca765ff716d98017394a457bfb27f8e898acb6",
+      "source_version": "e1e64c4b",
+      "content_hash": "22f5995d1968e2c98285a3160125d86947e0a1ab21e58f991c7b0ea6172b3e77",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:02:07.339Z"
+      "persisted_at": "2026-11-26T20:04:27.451Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -219085,8 +219085,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "2842d7e4",
-      "content_hash": "c7f4994f2c8555f885426e8d8e48633c292510b48b1f3bcba9d8715cf86b8bd9",
+      "source_version": "bd944ba6",
+      "content_hash": "3902e251da149fb84d6021c602e79eb2c4a8e66d71e1ecce259321cdfe642123",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -219144,6 +219144,11 @@
           "number": 10581,
           "title": "update doc_id_ before BM25Score threshold check in PhraseDocIter",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10767,
+          "title": "build the storage crate on Windows",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219151,7 +219156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T01:36:36.617Z",
+      "verified_at": "2026-11-26T20:04:31.627Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219193,10 +219198,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
       "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
       "repository": "infiniflow/infinity",
-      "source_version": "75bc1f15",
-      "content_hash": "79b7f7ae9e4661ed930ae60727261e23fbcb50569afb96a323f6fdb41048426a",
+      "source_version": "bd944ba6",
+      "content_hash": "879912bd3117cc26411091befa596d400f729058b14697d9afa334e7ddb64fd5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:08:30.809Z"
+      "persisted_at": "2026-11-26T20:04:32.570Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity",
@@ -219205,10 +219210,10 @@
       "relative_path": "08_VERIFICATION/infiniflow-infinity-verification-protocol-empirical-defect-shield-for-infiniflow.md",
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow/infinity",
       "repository": "infiniflow/infinity",
-      "source_version": "2842d7e4",
-      "content_hash": "3b2edc3128f539395c1c8f423e720ec35fca1a8abfaca7522434817b5c62764a",
+      "source_version": "bd944ba6",
+      "content_hash": "bb2d8ac8d973d14d06ac23b400e3c957d49d6c82ead863fd8f6572720a7420fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T01:36:37.789Z"
+      "persisted_at": "2026-11-26T20:04:32.871Z"
     },
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -219218,8 +219223,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "5ad08921",
-      "content_hash": "78c03ecbf5a096a477a4814fc96b68b12d162bd22bc65d45519f2db55a0a41e5",
+      "source_version": "ec2ea636",
+      "content_hash": "3b839d981083341d954c2990c3a73e7aa8aca39ddfd6de00eececb9ea1c0b411",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -219282,6 +219287,11 @@
           "number": 10740,
           "title": "pick the sub-model for the provider whose key is set",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10768,
+          "title": "name the wiki page to retire explicitly in the semantic lint",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219289,7 +219299,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T17:39:30.798Z",
+      "verified_at": "2026-11-26T20:04:34.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219343,10 +219353,10 @@
       "relative_path": "08_VERIFICATION/bitterbot-ai-bitterbot-desktop-verification-protocol-empirical-defect-shield-for.md",
       "title": "Verification Protocol: Empirical Defect Shield for Bitterbot-AI/bitterbot-desktop",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "5ad08921",
-      "content_hash": "c2504953e121e20342d9cd9caddc0fa4397dbb4f90e10493b864214c74d9806a",
+      "source_version": "ec2ea636",
+      "content_hash": "c00b892db5435d48f2d82aaab3bdb81b30757f6f081f6f15b1fd1374e97ce227",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T17:39:31.729Z"
+      "persisted_at": "2026-11-26T20:04:35.471Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -221083,8 +221093,8 @@
       "slug": "invertase-react-native-firebase",
       "platform": "github",
       "source_url": "https://github.com/invertase/react-native-firebase",
-      "source_version": "ce0f96f1",
-      "content_hash": "efb427fc80374ac8d7b24e3d5a99c2de06722e1799263a182d36da5e8d454e13",
+      "source_version": "dbf81872",
+      "content_hash": "90f884d1ab6988f7e112d9fc13572834f764ee6a3f3668c067cea0d49bcd61f3",
       "dossier_path": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "promoted_rules": [
@@ -221114,7 +221124,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T12:18:29.761Z",
+      "verified_at": "2026-11-26T20:04:23.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221156,10 +221166,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-technical-construction-intelligence-invertase-re.md",
       "title": "Technical Construction Intelligence: invertase/react-native-firebase Core Invariants",
       "repository": "invertase/react-native-firebase",
-      "source_version": "ce0f96f1",
-      "content_hash": "581c50c020da499f4d0a764a0a16429b6cbd2ecb8c5d618c9a87a8e0296d4770",
+      "source_version": "dbf81872",
+      "content_hash": "e3ebcb0cab2b2e24f38e623d26c92f71b492d9b5805b4441d08c90e64d2d4682",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T12:18:30.391Z"
+      "persisted_at": "2026-11-26T20:04:24.007Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-invertase-react-native-firebas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-invertase-react-native-firebas",
@@ -221169,9 +221179,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for invertase-react-native-firebase-learnings",
       "repository": "invertase-react-native-firebase-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4763e480fa3091f0701145fe04fe0705815057d3573040001af1db319304126",
+      "content_hash": "14696a8457aac099ce5d3786de39ddd2e0e62f4e87756a4797c3bf305c507411",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:19:03.143Z"
+      "persisted_at": "2026-11-26T20:04:44.236Z"
     },
     "learn-github-freenet-freenet-core": {
       "learning_id": "learn-github-freenet-freenet-core",
@@ -221463,9 +221473,9 @@
       "title": "Technical Construction Intelligence: invertase-react-native-firebase-learnings Core Invariants",
       "repository": "invertase-react-native-firebase-learnings",
       "source_version": "HEAD",
-      "content_hash": "ffde92c23158fe0dae844de1d33933161097dfbd6277b4d7ee54dc0470b3f5ac",
+      "content_hash": "0385c1dcb61b2d6d98eab765901791643e0a40b5eeea12f9bf4d9e90cfed16e1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T12:19:02.940Z"
+      "persisted_at": "2026-11-26T20:04:43.952Z"
     },
     "learn-huggingface-black-forest-labs-flux-1-schnell": {
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
@@ -223138,7 +223148,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "91ec00fbff7364c506967b5b7db8f6824e8474985d1103d95c7d25437dfccdf6",
+      "content_hash": "c458ee42b7aeddd6b3844e9da7678b109f869ae92938915ceb615fde66c01dbf",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [],
@@ -223147,7 +223157,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T06:37:31.213Z",
+      "verified_at": "2026-11-26T20:04:15.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223164,9 +223174,9 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B-Instruct Core Invariants",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "4460a69afd5c00a6c8f5af85722d78adc91f025a1b1932590079f91c38a8f30a",
+      "content_hash": "7086a43e820bf49ebef2fc7db36232c40b2d414d7a9f7ee924f963a7c6a2546b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T06:37:31.783Z"
+      "persisted_at": "2026-11-26T20:04:16.527Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings",
@@ -223176,9 +223186,9 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-instruct-learnings Core Invariants",
       "repository": "hf-meta-llama-meta-llama-3-8b-instruct-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0766b8048742b03d1de8d6dd989713072f49a8606de070dc3ba3fd0cfe0aa8b",
+      "content_hash": "3a76e28f56892eaa9136c76ff2fc2b7ca2c6d2365e0370312b0977535e93eded",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T06:37:46.861Z"
+      "persisted_at": "2026-11-26T20:04:40.623Z"
     },
     "learn-huggingface-zai-org-glm-5-2": {
       "learning_id": "learn-huggingface-zai-org-glm-5-2",
@@ -241050,8 +241060,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "81a7d3ab",
-      "content_hash": "b909e2561ff7f36b4cd3c258611d02ba9deaaeb4cd143f0d6a6db6b4cdd794a2",
+      "source_version": "e1e64c4b",
+      "content_hash": "934985a2d1ffc5d107588d3a5abef5f33b992d307e3a5ee4e244edce118264be",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -241063,6 +241073,11 @@
         {
           "number": 4898,
           "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6725,
+          "title": "build(deps-ui-dev): bump addressable",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -241116,7 +241131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T02:02:06.201Z",
+      "verified_at": "2026-11-26T20:04:26.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242045,10 +242060,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "5ad08921",
-      "content_hash": "f85767f4d5694d98c0958a54ebde3043bb33207569934cc8001e6735395f1ed5",
+      "source_version": "ec2ea636",
+      "content_hash": "66de67b970684a4cd513b097328f1347450aefee340f75db24cd671473c2fce0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T17:39:31.506Z"
+      "persisted_at": "2026-11-26T20:04:35.204Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -249958,8 +249973,8 @@
       "slug": "nasiko-labs-nasiko",
       "platform": "github",
       "source_url": "https://github.com/Nasiko-Labs/nasiko",
-      "source_version": "4e2d65d1",
-      "content_hash": "32c0888a8d59bf4d49553e58e51a073c85a251db983d00ce1309554116316893",
+      "source_version": "93091516",
+      "content_hash": "a6168fa492ce778c933741fd75eee30dfd0ef1c4acecc8ade4cb9a3e0069178f",
       "dossier_path": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "promoted_rules": [
@@ -249987,6 +250002,11 @@
           "number": 10529,
           "title": "uploaded MCP servers can't redirect the gateway off their origin (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10766,
+          "title": "A declined deploy never leaves an agent deploying or overwrites a status changed",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -249994,7 +250014,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T12:56:31.398Z",
+      "verified_at": "2026-11-26T20:04:19.511Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250036,10 +250056,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-architecture-intelligence-nasiko-labs-nasiko-core-invariants.md",
       "title": "Architecture Intelligence: Nasiko-Labs/nasiko Core Invariants",
       "repository": "Nasiko-Labs/nasiko",
-      "source_version": "4e2d65d1",
-      "content_hash": "f529c04c40489b73a0faca324ae56bf91a053511752a37589521db1b6cd05772",
+      "source_version": "93091516",
+      "content_hash": "35b9f8e4bb4699b361bfd68553de5490b1b2f1f5b4a0bbe3375699db68bf001d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:56:32.145Z"
+      "persisted_at": "2026-11-26T20:04:20.525Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko",
@@ -250048,10 +250068,10 @@
       "relative_path": "08_VERIFICATION/nasiko-labs-nasiko-verification-protocol-empirical-defect-shield-for-nasiko-labs.md",
       "title": "Verification Protocol: Empirical Defect Shield for Nasiko-Labs/nasiko",
       "repository": "Nasiko-Labs/nasiko",
-      "source_version": "4e2d65d1",
-      "content_hash": "e47436b56c6b904eab7867415b926899520213d071fe1a7aafb675b9403df5bc",
+      "source_version": "93091516",
+      "content_hash": "7e351949c79f51ea34ad79b497ff35121e81fe03a7c0a89378d603992fcfdc61",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:56:32.347Z"
+      "persisted_at": "2026-11-26T20:04:20.873Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
@@ -250061,9 +250081,9 @@
       "title": "Architecture Intelligence: nasiko-labs-nasiko-learnings Core Invariants",
       "repository": "nasiko-labs-nasiko-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c086cdd53762b5f1d35d952aa78959b23c450da56e89f830e0bc6821bce3183",
+      "content_hash": "40d95c51a247042d0bce902c0e5a49723ef25b4804b0c77ad4a0fd5babda2c22",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:56:45.888Z"
+      "persisted_at": "2026-11-26T20:04:39.756Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko-learnings",
@@ -250073,9 +250093,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nasiko-labs-nasiko-learnings",
       "repository": "nasiko-labs-nasiko-learnings",
       "source_version": "HEAD",
-      "content_hash": "83961595b5a59ab32c3a461abbe8a069992a954a9b1f8f2f55710a3210893cff",
+      "content_hash": "fcb96221f1e9d1ab7e6971b70815c27b5fb7a5f5afef4293c7bc0662f87a5126",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:56:46.081Z"
+      "persisted_at": "2026-11-26T20:04:40.029Z"
     },
     "rule-8612": {
       "learning_id": "rule-8612",
@@ -358605,6 +358625,120 @@
       "content_hash": "23904719f06a44fbf0251c4902b24b8b38f06e1ff22cb890166483b6c0de153f",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T19:37:28.435Z"
+    },
+    "rule-10766": {
+      "learning_id": "rule-10766",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10766,
+      "title": "A declined deploy never leaves an agent deploying or overwrites a status changed",
+      "source_url": "https://github.com/Nasiko-Labs/nasiko",
+      "source_version": "93091516",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T20:04:19.511Z"
+    },
+    "candidate_directive-a-declined-deploy-never-leaves-an-agent-deploying-or-overwrites-a-status-changed": {
+      "item_id": "candidate_directive-a-declined-deploy-never-leaves-an-agent-deploying-or-overwrites-a-status-changed",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E8IR-a-declined-deploy-never-leaves-an-agent-deploying-or-overwrites-a-status-changed.md",
+      "title": "A declined deploy never leaves an agent deploying or overwrites a status changed",
+      "repository": "nasiko-labs-nasiko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "49eb7148d84d7da0010a05378644e63015c4def7cb265b7a24ed0ca8bbc763a1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T20:04:39.467Z"
+    },
+    "candidate_directive-release-packages": {
+      "item_id": "candidate_directive-release-packages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DWDG-release-packages.md",
+      "title": "release packages",
+      "repository": "invertase/react-native-firebase",
+      "source_version": "dbf81872",
+      "content_hash": "46b2368b9bc7356a858c8735cfd9cc488971af9729846cb523d282c0778dbd2c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T20:04:23.723Z"
+    },
+    "candidate_directive-build-deps-ui-dev-bump-addressable": {
+      "item_id": "candidate_directive-build-deps-ui-dev-bump-addressable",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DYTA-build-deps-ui-dev-bump-addressable.md",
+      "title": "build(deps-ui-dev): bump addressable",
+      "repository": "gocd/gocd",
+      "source_version": "e1e64c4b",
+      "content_hash": "ebe19d773ff12fbcca3a1f5831f6bc531c8c1b3fd3a5043121b889f2455d3f28",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T20:04:26.879Z"
+    },
+    "rule-10767": {
+      "learning_id": "rule-10767",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10767,
+      "title": "build the storage crate on Windows",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "bd944ba6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T20:04:31.627Z"
+    },
+    "candidate_directive-build-the-storage-crate-on-windows": {
+      "item_id": "candidate_directive-build-the-storage-crate-on-windows",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E2ZO-build-the-storage-crate-on-windows.md",
+      "title": "build the storage crate on Windows",
+      "repository": "infiniflow/infinity",
+      "source_version": "bd944ba6",
+      "content_hash": "69cb369eb550d37bf779716fa1032ee5507dc90e248238869d40c0b977ecd3d7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T20:04:32.299Z"
+    },
+    "rule-10768": {
+      "learning_id": "rule-10768",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10768,
+      "title": "name the wiki page to retire explicitly in the semantic lint",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "ec2ea636",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T20:04:34.265Z"
+    },
+    "candidate_directive-name-the-wiki-page-to-retire-explicitly-in-the-semantic-lint": {
+      "item_id": "candidate_directive-name-the-wiki-page-to-retire-explicitly-in-the-semantic-lint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E50U-name-the-wiki-page-to-retire-explicitly-in-the-semantic-lint.md",
+      "title": "name the wiki page to retire explicitly in the semantic lint",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "source_version": "ec2ea636",
+      "content_hash": "634aca5dfa05b7db0cd9385b6b523f034d0bc22866ea8939fd4a02fbe582cd64",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T20:04:34.933Z"
+    },
+    "candidate_directive-release-release-packages": {
+      "item_id": "candidate_directive-release-release-packages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EBRR-release-release-packages.md",
+      "title": "release): release packages",
+      "repository": "invertase-react-native-firebase-learnings",
+      "source_version": "HEAD",
+      "content_hash": "32609d6b40dff26079ebb4fb65154764f0dc16c2336c51f8375f65005123ef3c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T20:04:43.677Z"
     }
   },
   "ai-builder-brain": {

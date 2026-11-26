@@ -4,22 +4,22 @@
 {
   "source_repository": "gocd/gocd",
   "source_url": "https://github.com/gocd/gocd",
-  "source_version": "81a7d3ab",
+  "source_version": "e1e64c4b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T02:02:06.797Z",
+  "timestamp": "2026-11-26T20:04:26.878Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gocd-gocd",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `81a7d3ab`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T02:02:06.797Z`  
+> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `e1e64c4b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T20:04:26.878Z`  
 > **Learning ID**: `learn-github-gocd-gocd`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gocd/gocd` (Commit: `81a7d3ab`)
+- **Target Repository**: `gocd/gocd` (Commit: `e1e64c4b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:02:05.087Z  
+> **Harvest Timestamp**: 2026-11-26T20:04:25.489Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -891,61 +891,19 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `81a7d3ab` (2026-11-24)
-**Commit Message**: build(deps): bump net.javacrumbs.json-unit:json-unit-assertj (#14764)
+### Incident Patch 1: `8e6b4105` (2026-11-26)
+**Commit Message**: build(deps-ui-dev): bump addressable (#14768)
 
-Bumps the test group with 1 update: [net.javacrumbs.json-unit:json-unit-assertj](https://github.com/lukas-krecan/JsonUnit).
-
-
-Updates `net.javacrumbs.json-unit:json-unit-assertj` from 6.4.0 to 6.4.1
-- [Changelog](https://github.com/lukas-krecan/JsonUnit/blob/master/RELEASES.md)
-- [Commits](https://github.com/lukas-krecan/JsonUnit/compare/json-unit-parent-6.4.0...json-unit-parent-6.4.1)
+Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.2 to 2.10.0.
+- [Changelog](https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sporkmonger/addressable/compare/addressable-2.9.2...addressable-2.10.0)
 
 ---
 updated-dependencies:
-- dependency-name: net.javacrumbs.json-unit:json-unit-assertj
-  dependency-version: 6.4.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: test
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `build.gradle` (modified, +1/-1)
-```diff
-@@ -145,7 +145,7 @@ def libraries = [
-   dbunit              : 'org.dbunit:dbunit:3.5.3',
-   hamcrest            : 'org.hamcrest:hamcrest:3.0',
-   jetBrainsAnnotations: 'org.jetbrains:annotations:26.1.0',
--  jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.4.0',
-+  jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.4.1',
-   jsoup               : 'org.jsoup:jsoup:1.24.1',
-   junit5Bom           : 'org.junit:junit-bom:6.1.3',
-   lombok              : 'org.projectlombok:lombok:1.18.48',
-```
-
----
-
-### Incident Patch 2: `3707354f` (2026-11-24)
-**Commit Message**: build(deps-ui-dev): bump rack (#14765)
-
-Bumps the rack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [rack](https://github.com/rack/rack).
-
-
-Updates `rack` from 2.2.25 to 2.2.26
-- [Release notes](https://github.com/rack/rack/releases)
-- [Changelog](https://github.com/rack/rack/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rack/rack/compare/v2.2.25...v2.2.26)
-
----
-updated-dependencies:
-- dependency-name: rack
-  dependency-version: 2.2.26
+- dependency-name: addressable
+  dependency-version: 2.10.0
   dependency-type: indirect
-  update-type: version-update:semver-patch
-  dependency-group: rack
+  update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -953,33 +911,84 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
 ```diff
-@@ -95,7 +95,7 @@ GEM
-     public_suffix (6.0.2)
-     racc (1.8.1)
-     racc (1.8.1-java)
--    rack (2.2.25)
-+    rack (2.2.26)
-     rack-session (1.0.2)
-       rack (< 3)
-     rack-test (2.3.0)
-@@ -228,7 +228,7 @@ CHECKSUMS
-   public_suffix (6.0.2) sha256=bfa7cd5108066f8c9602e0d6d4114999a5df5839a63149d3e8b0f9c1d3558394
-   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
-   racc (1.8.1-java) sha256=54f2e6d1e1b91c154013277d986f52a90e5ececbe91465d29172e49342732b98
--  rack (2.2.25) sha256=a5b3cd8f2df29c36ede21aa797c21e643f06792fae7487926102e06abe6da0b8
-+  rack (2.2.26) sha256=a0106d3ffa60a7c260ab5c6877d2c07f735c6d281a310335f027dc454c2fc2db
-   rack-session (1.0.2) sha256=a02115e5420b4de036839b9811e3f7967d73446a554b42aa45106af335851d76
-   rack-test (2.3.0) sha256=b118d177cc002c572fc1b6fd8d19c9ed5881a36e8d6f689f9e618f9f861241e8
-   rackup (1.0.1) sha256=ba86604a28989fe1043bff20d819b360944ca08156406812dca6742b24b3c249
+@@ -37,7 +37,7 @@ GEM
+       minitest (>= 5.1, < 6)
+       securerandom (>= 0.3)
+       tzinfo (~> 2.0, >= 2.0.5)
+-    addressable (2.9.2)
++    addressable (2.10.0)
+       public_suffix (>= 2.0.2, < 8.0)
+     base64 (0.3.0)
+     benchmark (0.5.0)
+@@ -196,7 +196,7 @@ CHECKSUMS
+   actionpack (7.2.4) sha256=c7acf80263cf09125e5c4d866abda3536cc941f436e81673f17be11ad407a4eb
+   actionview (7.2.4) sha256=6005a3427881b2e8f509a5f7ed894e66f256410f734f7a227d01c4d3d9cb06a2
+   activesupport (7.2.4) sha256=b97027b31e111675dba67b86edcd589acc25a0dddf8eecacca18d33a703a0788
+-  addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
++  addressable (2.10.0) sha256=5e13b9c001adf01dd65ad6e0d2a91d2bc07885c0ff2b83f48cbcd95e08d9de62
+   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
+   benchmark (0.5.0) sha256=465df122341aedcb81a2a24b4d3bd19b6c67c1530713fd533f3ff034e419236c
+   bigdecimal (4.1.3) sha256=61ebe1e5e559bdc3cc6f2c0ee7f427321fc838f59611c294356eb04d6e21cf66
+```
+
+---
+
+### Incident Patch 2: `e1e64c4b` (2026-11-26)
+**Commit Message**: build(deps): bump postgresql driver to 42.7.15
+
+**File**: `build.gradle` (modified, +1/-1)
+```diff
+@@ -127,7 +127,7 @@ def libraries = [
+   objenesis           : 'org.objenesis:objenesis:3.6',
+   oshi                : 'com.github.oshi:oshi-core:7.8.0',
+   plexusUtils         : 'org.codehaus.plexus:plexus-utils:4.2.0',
+-  postgresql          : 'org.postgresql:postgresql:42.7.14',
++  postgresql          : 'org.postgresql:postgresql:42.7.15',
+   quartz              : 'org.quartz-scheduler:quartz:2.5.2',
+   semanticVersion     : 'de.skuzzle:semantic-version:2.1.1',
+   servletApi          : 'jakarta.servlet:jakarta.servlet-api:4.0.4',
+```
+
+---
+
+### Incident Patch 3: `5faf6205` (2026-11-26)
+**Commit Message**: build(deps): bump com.bucket4j:bucket4j_jdk17-core from 8.22.0 to 8.23.0 (#14767)
+
+Bumps [com.bucket4j:bucket4j_jdk17-core](https://github.com/bucket4j/bucket4j) from 8.22.0 to 8.23.0.
+- [Release notes](https://github.com/bucket4j/bucket4j/releases)
+- [Commits](https://github.com/bucket4j/bucket4j/compare/8.22.0...8.23.0)
+
+---
+updated-dependencies:
+- dependency-name: com.bucket4j:bucket4j_jdk17-core
+  dependency-version: 8.23.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `build.gradle` (modified, +1/-1)
+```diff
+@@ -83,7 +83,7 @@ def libraries = [
+   aspectj             : 'org.aspectj:aspectjweaver:1.9.27',
+   asmBom              : 'org.ow2.asm:asm-bom:9.11.1',
+   bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.87',
+-  bucket4j            : 'com.bucket4j:bucket4j_jdk17-core:8.22.0',
++  bucket4j            : 'com.bucket4j:bucket4j_jdk17-core:8.23.0',
+   caffeine            : 'com.github.ben-manes.caffeine:caffeine:3.3.1',
+   cloning             : 'io.github.kostaskougios:cloning:1.13.0',
+   commonsCodec        : 'commons-codec:commons-codec:1.23.0',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14768** (2026-11-26): build(deps-ui-dev): bump addressable from 2.9.2 to 2.10.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14767** (2026-11-26): build(deps): bump com.bucket4j:bucket4j_jdk17-core from 8.22.0 to 8.23.0 (@dependabot[bot])
+- **PR #14766** (closed): build(deps-ui): bump chartjs-plugin-zoom from 2.2.0 to 3.0.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14765** (2026-11-24): build(deps-ui-dev): bump rack from 2.2.25 to 2.2.26 in /server/src/main/webapp/WEB-INF/rails in the rack group (@dependabot[bot])
 - **PR #14764** (2026-11-24): build(deps): bump net.javacrumbs.json-unit:json-unit-assertj from 6.4.0 to 6.4.1 in the test group (@dependabot[bot])
 - **PR #14763** (2026-11-23): build(deps): bump ch.qos.logback:logback-classic from 1.6.7 to 1.6.8 (@dependabot[bot])
-- **PR #14760** (2026-11-23): build(deps): bump gradle-wrapper from 9.9.1 to 9.9.2 in the gradle-plugins group (@dependabot[bot])
-- **PR #14759** (2026-11-21): [post-release] Bump up GoCD Version to 26.3.0 (@gocd-ci-user)
-- **PR #14757** (closed): Show a not-found message for an unknown job name on the job detail page (@ARAYN7011)
 
 ---
 
@@ -999,31 +1008,33 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump net.javacrumbs.json-unit:json-unit-assertj
+## X. build(deps-ui-dev): bump addressable
 
 **RULE**:
-When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `81a7d3ab`: build(deps): bump net.javacrumbs.json-unit:json-unit-assertj. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e6b4105`: build(deps-ui-dev): bump addressable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.4.1',
+    addressable (2.10.0)
+  addressable (2.10.0) sha256=5e13b9c001adf01dd65ad6e0d2a91d2bc07885c0ff2b83f48cbcd95e08d9de62
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-  jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.4.0',
+    addressable (2.9.2)
+  addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `81a7d3ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e6b4105` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

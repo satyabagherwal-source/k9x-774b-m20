@@ -905,8 +905,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "91ec00fbff7364c506967b5b7db8f6824e8474985d1103d95c7d25437dfccdf6",
-    "lastHarvestedAt": "2026-11-23T06:37:31.503Z",
+    "contentHash": "c458ee42b7aeddd6b3844e9da7678b109f869ae92938915ceb615fde66c01dbf",
+    "lastHarvestedAt": "2026-11-26T20:04:16.198Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct"
   },
   "hf-openai-gpt-oss-120b": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "5ad08921",
+    "sourceVersion": "ec2ea636",
     "license": "MIT",
-    "contentHash": "78c03ecbf5a096a477a4814fc96b68b12d162bd22bc65d45519f2db55a0a41e5",
-    "lastHarvestedAt": "2026-11-26T17:39:31.053Z",
+    "contentHash": "3b839d981083341d954c2990c3a73e7aa8aca39ddfd6de00eececb9ea1c0b411",
+    "lastHarvestedAt": "2026-11-26T20:04:34.592Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "ce0f96f1",
+    "sourceVersion": "dbf81872",
     "license": "NOASSERTION",
-    "contentHash": "efb427fc80374ac8d7b24e3d5a99c2de06722e1799263a182d36da5e8d454e13",
-    "lastHarvestedAt": "2026-11-24T12:18:29.982Z",
+    "contentHash": "90f884d1ab6988f7e112d9fc13572834f764ee6a3f3668c067cea0d49bcd61f3",
+    "lastHarvestedAt": "2026-11-26T20:04:23.333Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {
@@ -4293,10 +4293,10 @@
     "repository": "Nasiko-Labs/nasiko",
     "platform": "github",
     "sourceUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "sourceVersion": "4e2d65d1",
+    "sourceVersion": "93091516",
     "license": "NOASSERTION",
-    "contentHash": "32c0888a8d59bf4d49553e58e51a073c85a251db983d00ce1309554116316893",
-    "lastHarvestedAt": "2026-11-25T12:56:31.657Z",
+    "contentHash": "a6168fa492ce778c933741fd75eee30dfd0ef1c4acecc8ade4cb9a3e0069178f",
+    "lastHarvestedAt": "2026-11-26T20:04:19.851Z",
     "learningId": "learn-github-nasiko-labs-nasiko"
   },
   "berty-berty": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "81a7d3ab",
+    "sourceVersion": "e1e64c4b",
     "license": "Apache-2.0",
-    "contentHash": "b909e2561ff7f36b4cd3c258611d02ba9deaaeb4cd143f0d6a6db6b4cdd794a2",
-    "lastHarvestedAt": "2026-11-25T02:02:06.496Z",
+    "contentHash": "934985a2d1ffc5d107588d3a5abef5f33b992d307e3a5ee4e244edce118264be",
+    "lastHarvestedAt": "2026-11-26T20:04:26.535Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "2842d7e4",
+    "sourceVersion": "bd944ba6",
     "license": "Apache-2.0",
-    "contentHash": "c7f4994f2c8555f885426e8d8e48633c292510b48b1f3bcba9d8715cf86b8bd9",
-    "lastHarvestedAt": "2026-11-26T01:36:36.970Z",
+    "contentHash": "3902e251da149fb84d6021c602e79eb2c4a8e66d71e1ecce259321cdfe642123",
+    "lastHarvestedAt": "2026-11-26T20:04:31.955Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
