@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T20:22:15.113Z",
+  "timestamp": "2026-11-26T06:10:42.822Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-iplug2-iplug2-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [iplug2-iplug2-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T20:22:15.113Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T06:10:42.822Z`  
 > **Learning ID**: `LEARN-EVO-iplug2-iplug2-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from iplug2-iplug2-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source**: github ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
-> **Source Version**: `3d378017`  
+> **Source Version**: `a6186c7a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T20:22:00.422Z  
+> **Timestamp**: 2026-11-26T06:10:29.928Z  
 > **Learning ID**: `learn-github-iplug2-iplug2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T20:22:00.417Z  
+> **Harvest Timestamp**: 2026-11-26T06:10:29.924Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2453 stars
+- **Stars / Engagement**: 2456 stars
 
 ---
 
@@ -1554,609 +1554,477 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e118ffc` (2026-11-22)
-**Commit Message**: ARA: synchronize rendering with model edits and harden the example archive
+### Incident Patch 1: `68ec2f20` (2026-11-23)
+**Commit Message**: Add Linux support to the IGraphics accessibility layer
 
-- Lock the playback and editor renderers out of the ARA model graph during host editing
-  cycles and sample access changes (as in Celemony's ARA test plug-in), so that sample cache
-  updates and region destruction cannot race with the audio thread. The audio thread never
-  blocks: while locked out it skips rendering for that block.
-- Balance analysis progress start/completion when an analysis is aborted.
-- Drop stale analysis results when the host reports changed audio source samples.
-- Version the document archive, write notes field by field rather than as raw structs, and
-  bound-check note counts and ID lengths against the remaining archive bytes. Bump the
-  example's archive ID accordingly.
-- Move the note/pitch detection into IPlugARAExample_Analysis.h.
-- Smooth the gain parameter, add missing includes and document nearest-sample rendering.
-- Log ignored ARA 1 binding attempts and clarify ARA_ANALYZEABLE_CONTENT_TYPES usage.
-- Add IPLUG2_ARA_FETCH_SDK to opt out of fetching the ARA SDK during configure.
+Exposes IGraphics controls to Orca and other AT-SPI clients on Linux, using
+AccessKit's Unix adapter.
 
-**File**: `Examples/IPlugARAExample/CMakeLists.txt` (modified, +1/-0)
+- IGraphicsLinux: IGraphicsAccessibilityLinux owns the adapter, reports X11
+  focus changes, and polls the window's position on the screen while
+  assistive technology is in use, since an embedded window isn't told when
+  its host's window moves.
+- IGraphicsAccessibility: RequestFullUpdate() and SetInactive(), for
+  adapters that call their handlers on a thread other than the UI thread.
+  The tree is then built on the next frame rather than in the activation
+  handler.
+- Freeing the Unix adapter only queues its removal, so its handlers are
+  given an ID that is looked up in a registry of live instances, rather
+  than a pointer that could be dangling.
+- CMake: IGRAPHICS_ACCESSKIT now works on Linux. AccessKit's symbols are
+  not exported, and binaries are linked with -z nodelete because AccessKit's
+  thread lasts for as long as the process does.
+- Documentation/accessibility.md: Linux section.
+
+Tested with the IPlugControls standalone via libatspi (tree, actions,
+events, focus, bounds, reactivation, and closing under AddressSa
+
+**File**: `Dependencies/IGraphics/download-accesskit.sh` (modified, +1/-1)
 ```diff
-@@ -20,6 +20,7 @@ iplug_add_plugin(${PROJECT_NAME}
-     IPlugARAExample.cpp
-     IPlugARAExample.h
-     IPlugARAExample_ARA.h
-+    IPlugARAExample_Analysis.h
-     IPlugARAExample_Controls.h
-     config.h
-   RESOURCES
+@@ -3,7 +3,7 @@ set -eo pipefail
+ 
+ # Downloads the prebuilt AccessKit C bindings (https://github.com/AccessKit/accesskit-c)
+ # used by IGraphics when IGRAPHICS_ACCESSKIT is defined.
+-# The release archive contains headers and libraries for all platforms.
++# The release archive contains headers and libraries for all platforms (macOS, Windows and Linux x86_64/x86).
+ # Result: Dependencies/Build/accesskit/{include,lib}
+ 
+ ACCESSKIT_VERSION=0.23.2
 ```
 
-**File**: `Examples/IPlugARAExample/IPlugARAExample.cpp` (modified, +11/-3)
+**File**: `Documentation/accessibility.md` (modified, +15/-3)
 ```diff
-@@ -68,10 +68,18 @@ void IPlugARAExample::ProcessBlock(sample** inputs, sample** outputs, int nFrame
-   if (auto* pEditorRenderer = GetARAEditorRenderer<IPlugARAExampleEditorRenderer>())
-     pEditorRenderer->RenderPreview(outputs, nChans, GetSampleRate(), nFrames);
+@@ -1,6 +1,6 @@
+ # IGraphics accessibility
  
--  for (int c = 0; c < nChans; c++)
-+  for (int s = 0; s < nFrames; s++)
-   {
--    for (int s = 0; s < nFrames; s++)
--      outputs[c][s] *= gain;
-+    const sample smoothedGain = mGainSmoother.Process(gain);
+-IGraphics can expose its controls to assistive technology (VoiceOver on macOS; Narrator, NVDA and JAWS on Windows) using [AccessKit](https://accesskit.dev). It is opt-in, and currently supported on macOS and Windows.
++IGraphics can expose its controls to assistive technology (VoiceOver on macOS; Narrator, NVDA and JAWS on Windows; Orca and other AT-SPI clients on Linux) using [AccessKit](https://accesskit.dev). It is opt-in, and currently supported on macOS, Windows and Linux.
+ 
+ Keyboard navigation is part of the same work, but doesn't depend on AccessKit and can be used on its own.
+ 
+@@ -16,7 +16,7 @@ Keyboard navigation is part of the same work, but doesn't depend on AccessKit an
+ 
+    | Build system | What to do |
+    |---|---|
+-   | CMake | Configure with `-DIGRAPHICS_ACCESSKIT=ON` |
++   | CMake (all platforms, the only option on Linux) | Configure with `-DIGRAPHICS_ACCESSKIT=ON` |
+    | Xcode | In `MyPlugin-mac.xcconfig`, add `IGRAPHICS_ACCESSKIT` to `EXTRA_ALL_DEFS` and `$(ACCESSKIT_LNK_FLAGS)` to `EXTRA_LNK_FLAGS` |
+    | Visual Studio | In `MyPlugin-win.props`, add `IGRAPHICS_ACCESSKIT` to `EXTRA_ALL_DEFS` (the library is linked automatically) |
+ 
+@@ -44,6 +44,18 @@ Enabled by default when `IGRAPHICS_ACCESSKIT` is defined, otherwise off. Use `IG
+ 
+ Keys that aren't used for navigation still reach the control under the mouse and the function set with `SetKeyHandlerFunc()`, as before. `SetFocusRingColor()` changes the colour of the focus ring.
+ 
++## Linux
 +
-+    for (int c = 0; c < nChans; c++)
-+      outputs[c][s] *= smoothedGain;
++The Linux implementation uses AT-SPI over D-Bus, so it needs no extra libraries at build time or run time. If there is no accessibility bus, or no assistive technology is running, it does nothing.
++
++- A plug-in appears to assistive technology as its own application, named after the host's process, rather than as part of the host's window. The UI is a window called after the plug-in.
++- AccessKit runs a thread that lasts for as long as the process does, so binaries are linked with `-z nodelete`: once a plug-in has been loaded, the host can't unload it. AccessKit's symbols are not exported.
++- The position of the window on the screen comes from X11, so it may be wrong under XWayland. It is polled a few times a second while assistive technology is in use, since an embedded window isn't told when its host's window moves.
++- The window is reported as active while it has the X11 keyboard focus, which it takes when it is clicked.
++- The AccessKit release only has x86_64 and x86 libraries for Linux. For other architectures, build [accesskit-c](https://github.com/AccessKit/accesskit-c) and put `libaccesskit.a` in `Dependencies/Build/accesskit/lib/linux/<arch>/static`.
++
++To try it without a screen reader, [Accerciser](https://gitlab.gnome.org/GNOME/accerciser) shows the tree and can perform actions. AccessKit only builds the tree while the `IsEnabled` property of `org.a11y.Status` on the session bus is true, which a screen reader or the desktop's accessibility settings take care of.
++
+ ## Custom controls
+ 
+ Controls that inherit from one of the base classes usually need nothing. Otherwise:
+@@ -61,7 +73,7 @@ To hide a control from assistive technology, call `SetAccessibleRole(EAccessible
+ 
+ ## Limitations
+ 
+-- Linux, iOS and Web are not supported yet.
++- iOS and Web are not supported yet.
+ - The contents of `IPopupMenuControl` and `ITextEntryControl` (the menus and text entries drawn by IGraphics) are not exposed. Platform menus and text entries are.
+ - Meters are exposed without a value, and `IVKeyboardControl` is not exposed.
+ - Whether the Tab and arrow keys reach a plug-in's UI depends on the host.
+```
+
+**File**: `IGraphics/IGraphicsAccessibility.cpp` (modified, +15/-3)
+```diff
+@@ -293,8 +293,7 @@ accesskit_tree_update* IGraphicsAccessibility::ActivationHandler(void* pUserData
+ accesskit_tree_update* IGraphicsAccessibility::UpdateFactory(void* pUserData)
+ {
+   auto* pThis = static_cast<IGraphicsAccessibility*>(pUserData);
+-  const bool full = !pThis->mActive;
+-  pThis->mActive = true;
++  const bool full = !pThis->mActive.exchange(true);
+   return pThis->MakeUpdate(full);
+ }
+ 
+@@ -368,9 +367,22 @@ void IGraphicsAccessibility::ProcessActions()
    }
  }
-+
-+void IPlugARAExample::OnReset()
+ 
++void IGraphicsAccessibility::RequestFullUpdate()
 +{
-+  mGainSmoother.SetSmoothTime(20., GetSampleRate());
-+  mGainSmoother.SetValue(GetParam(kGain)->Value() / 100.);
++  mActive = false;
++  mUpdateRequested = true;
 +}
- #endif
++
++void IGraphicsAccessibility::SetInactive()
++{
++  mActive = false;
++}
++
+ void IGraphicsAccessibility::OnFrame(bool controlsDirty)
+ {
+-  if (controlsDirty)
++  const bool updateRequested = mUpdateRequested.exchange(false);
++
++  if (controlsDirty || updateRequested)
+     UpdateIfActive(UpdateFactory, this);
+ }
+ 
 ```
 
-**File**: `Examples/IPlugARAExample/IPlugARAExample.h` (modified, +6/-0)
+**File**: `IGraphics/IGraphicsAccessibility.h` (modified, +10/-1)
 ```diff
-@@ -4,6 +4,7 @@
+@@ -18,6 +18,7 @@
  
- #include "IPlug_include_in_plug_hdr.h"
- #include "IPlugARAExample_ARA.h"
-+#include "Smoothers.h"
+ #ifdef IGRAPHICS_ACCESSKIT
  
- const int kNumPresets = 1;
++#include <atomic>
+ #include <mutex>
+ #include <vector>
+ #include <unordered_map>
+@@ -65,6 +66,13 @@ class IGraphicsAccessibility
+   /** @return The scale factor between IGraphics coordinates and the coordinates that the platform adapter expects, which by default is physical pixels */
+   virtual double GetRootScale() const;
  
-@@ -22,6 +23,7 @@ class IPlugARAExample final : public Plugin
- 
- #if IPLUG_DSP
-   void ProcessBlock(sample** inputs, sample** outputs, int nFrames) override;
-+  void OnReset() override;
- #endif
- 
-   /** @return the last transport position seen by the audio thread, in seconds */
-@@ -31,6 +33,10 @@ class IPlugARAExample final : public Plugin
-   bool GetTransportWasRunning() const { return mTransportRunning.load(std::memory_order_relaxed); }
++  /** Ask for the whole tree to be sent to the platform adapter on the next frame, even if no controls are dirty.
++   * For platform adapters that call their activation handler on a thread other than the UI thread, where the tree can't be built in the handler. Can be called on any thread */
++  void RequestFullUpdate();
++
++  /** Call when assistive technology stops using the tree. Can be called on any thread */
++  void SetInactive();
++
+   IGraphics& mGraphics;
  
  private:
-+#if IPLUG_DSP
-+  LogParamSmooth<sample> mGainSmoother {20., 1.};
-+#endif
+@@ -98,7 +106,8 @@ class IGraphicsAccessibility
+   std::vector<Node> mNodes; // The nodes that were last sent to the adapter
+   std::unordered_map<IControl*, uint32_t> mControlIds;
+   uint32_t mNextControlId = 1;
+-  bool mActive = false;
++  std::atomic<bool> mActive { false };
++  std::atomic<bool> mUpdateRequested { false };
+ 
+   std::mutex mActionMutex;
+   std::vector<Action> mActions;
+```
+
+**File**: `IGraphics/Platforms/IGraphicsLinux.cpp` (modified, +238/-0)
+```diff
+@@ -62,6 +62,222 @@
+ using namespace iplug;
+ using namespace igraphics;
+ 
++#ifdef IGRAPHICS_ACCESSKIT
++#include "IGraphicsAccessibility.h"
 +
-   std::atomic<double> mPlayheadPos {0.};
-   std::atomic<bool> mTransportRunning {false};
++BEGIN_IPLUG_NAMESPACE
++BEGIN_IGRAPHICS_NAMESPACE
++
++/** Owns the AccessKit adapter that exposes the controls in an IGraphicsLinux window via AT-SPI.
++ * AccessKit calls the handlers on its own thread, so the tree is never built in the activation handler.
++ * Instead the handler asks for the whole tree to be sent on the next frame, on the UI thread.
++ * That thread can still call the handlers after the adapter has been freed, since freeing it only queues its removal.
++ * So the handlers are given an ID rather than a pointer, which is looked up in a registry of the instances that are alive */
++class IGraphicsAccessibilityLinux : public IGraphicsAccessibility
++{
++public:
++  IGraphicsAccessibilityLinux(IGraphics& graphics, Display* pDisplay, Window wnd)
++  : IGraphicsAccessibility(graphics)
++  , mDisplay(pDisplay)
++  , mWnd(wnd)
++  {
++    Registry& registry = GetRegistry();
++    void* pId = nullptr;
++
++    {
++      std::lock_guard<std::mutex> lock(registry.mutex);
++      mId = registry.nextId++;
++      registry.instances[mId] = this;
++      pId = reinterpret_cast<void*>(mId);
++    }
++
++    mAdapter = accesskit_unix_adapter_new(OnActivate, pId, OnAction, pId, OnDeactivate, pId);
++  }
++
++  ~IGraphicsAccessibilityLinux()
++  {
++    {
++      // Once this lock is released, no handler can be using this object
++      Registry& registry = GetRegistry();
++      std::lock_guard<std::mutex> lock(registry.mutex);
++      registry.instances.erase(mId);
++    }
++
++    accesskit_unix_adapter_free(mAdapter);
++  }
++
++  void SetWindowFocused(bool focused)
++  {
++    accesskit_unix_adapter_update_window_focus_state(mAdapter, focused);
++  }
++
++  /** Tell the adapter where the window is on the screen, which X11 doesn't notify an embedded window about.
++   * Called once per frame, but only does anything a few times a second, and only if assistive technology is in use */
++  void UpdateWindowBounds()
++  {
++    if (!mWantsBounds)
++      return;
++
++    const auto now = std::chrono::steady_clock::now();
++
++    if (!mBoundsRequested.exchange(false) && now - mBoundsTime < std::chrono::milliseconds(250))
++      return;
++
++    mBoundsTime = now;
++
++    // XCB is used so that an error (e.g. a window manager frame that was just destroyed) is returned, instead of reaching the Xlib error handler
++    xcb_connection_t* pConnection = XGetXCBConnection(mDisplay);
++
++    if (!pConnection)
++      return;
++
++    accesskit_rect inner;
++
++    if (!GetScreenRect(pConnection, static_cast<xcb_window_t>(mWnd), inner))
++      return;
++
++    // The outer bounds are those of the top level window, including the window manager's frame if there is one
++    accesskit_rect outer = inner;
++    xcb_window_t topLevel = static_cast<xcb_window_t>(mWnd);
++
++    for (int depth = 0; depth < 64; depth++)
++    {
++      xcb_query_tree_reply_t* pTree = xcb_query_tree_reply(pConnection, xcb_query_tree(pConnection, topLevel), nullptr);
++
++      if (!pTree)
++        return;
++
++      const xcb_window_t parent = pTree->parent;
++      const bool parentIsRoot = !parent || parent == pTree->root;
++      free(pTree);
++
++      if (parentIsRoot)
++        break;
++
++      topLevel = parent;
++    }
++
++    if (topLevel != mWnd && !GetScreenRect(pConnection, topLevel, outer))
++      return;
++
++    if (RectsEqual(inner, mInnerBounds) && RectsEqual(outer, mOuterBounds))
++      return;
++
++    mInnerBounds = inner;
++    mOuterBounds = outer;
++    accesskit_unix_adapter_set_root_window_bounds(mAdapter, outer, inner);
++  }
++
++protected:
++  void UpdateIfActive(accesskit_tree_update_factory factory, void* pUserData) override
++  {
++    accesskit_unix_adapter_update_if_active(mAdapter, factory, pUserData);
++  }
++
++private:
++  struct Registry
++  {
++    std::mutex mutex;
++    std::unordered_map<uintptr_t, IGraphicsAccessibilityLinux*> instances;
++    uintptr_t nextId = 1;
++  };
++
++  static Registry& GetRegistry()
++  {
++    // Never deleted, because AccessKit's thread can outlive static destruction
++    static Registry* sRegistry = new Registry();
++    return *sRegistry;
++  }
++
++  /** @return The instance that a handler was called for, or nullptr if it has been deleted. The registry must be locked */
++  static IGraphicsAccessibilityLinux* GetInstance(void* pUserData)
++  {
++    Registry& registry = GetRegistry();
++    auto itr = registry.instances.find(reinterpret_cast<uintptr_t>(pUserData));
++    return itr != registry.instances.end() ? itr->second : nullptr;
++  }
++
++  static accesskit_tree_update* OnActivate(void* pUserData)
++  {
++    std::lock_guard<std::mutex> lock(GetRegistry().mutex);
++
++    if (auto* pThis = GetInstance(pUserData))
++    {
++      pThis->mWantsBounds = true;
++      pThis->mBoundsRequested = true;
++      pThis->RequestFullUpdate();
++    }
++
++    return nullptr;
++  }
++
++  static void OnDeactivate(void* pUserData)
++  {
++    std::lock_guard<std::mutex> l
+```
+
+**File**: `Scripts/cmake/IGraphics.cmake` (modified, +23/-3)
+```diff
+@@ -12,7 +12,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/IPlug.cmake)
+ 
+ set(IGRAPHICS_DEPS_DIR ${DEPS_DIR}/IGraphics)
+ 
+-# Optional accessibility support (screen readers etc.) on macOS and Windows, using AccessKit
++# Optional accessibility support (screen readers etc.) on macOS, Windows and Linux, using AccessKit
+ # Requires the prebuilt libraries, see Dependencies/IGraphics/download-accesskit.sh
+ option(IGRAPHICS_ACCESSKIT "Enable IGraphics accessibility support via AccessKit" OFF)
+ 
+@@ -99,7 +99,7 @@ if(NOT TARGET iPlug2::IGraphics)
+     )
+   endif()
+ 
+-  if(IGRAPHICS_ACCESSKIT AND (WIN32 OR (APPLE AND NOT IOS)))
++  if(IGRAPHICS_ACCESSKIT AND (WIN32 OR (APPLE AND NOT IOS) OR (UNIX AND NOT APPLE AND NOT EMSCRIPTEN)))
+     set(ACCESSKIT_DIR "${DEPS_DIR}/Build/accesskit" CACHE PATH "Location of the prebuilt AccessKit C bindings")
+ 
+     if(WIN32)
+@@ -112,9 +112,21 @@ if(NOT TARGET iPlug2::IGraphics)
+       endif()
+       set(ACCESSKIT_LIB_DIR "${ACCESSKIT_DIR}/lib/windows/${ACCESSKIT_ARCH}/msvc/static")
+       set(ACCESSKIT_LIB "${ACCESSKIT_LIB_DIR}/accesskit.lib")
+-    else()
++    elseif(APPLE)
+       set(ACCESSKIT_LIB_DIR "${ACCESSKIT_DIR}/lib/macos/universal/static")
+       set(ACCESSKIT_LIB "${ACCESSKIT_LIB_DIR}/libaccesskit.a")
++    else()
++      # The AccessKit release only has x86_64 and x86 libraries for Linux. For other architectures,
++      # build accesskit-c from source and put libaccesskit.a in lib/linux/<arch>/static
++      if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|arm64|aarch64)$")
++        set(ACCESSKIT_ARCH "arm64")
++      elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
++        set(ACCESSKIT_ARCH "x86")
++      else()
++        set(ACCESSKIT_ARCH "x86_64")
++      endif()
++      set(ACCESSKIT_LIB_DIR "${ACCESSKIT_DIR}/lib/linux/${ACCESSKIT_ARCH}/static")
++      set(ACCESSKIT_LIB "${ACCESSKIT_LIB_DIR}/libaccesskit.a")
+     endif()
+ 
+     if(NOT EXISTS "${ACCESSKIT_LIB}")
+@@ -128,6 +140,14 @@ if(NOT TARGET iPlug2::IGraphics)
+     if(WIN32)
+       # IGraphicsWin.cpp links accesskit.lib and the system libraries that it needs with #pragma comment(lib, ...)
+       target_link_directories(iPlug2::IGraphics INTERFACE "${ACCESSKIT_LIB_DIR}")
++    elseif(UNIX AND NOT APPLE)
++      target_link_libraries(iPlug2::IGraphics INTERFACE dl pthread m)
++      target_link_options(iPlug2::IGraphics INTERFACE
++        # Don't export AccessKit's symbols, so that plug-ins with different versions of it can't interfere with each other
++        "LINKER:--exclude-libs,libaccesskit.a"
++        # AccessKit's AT-SPI thread runs for as long as the process does, so a plug-in must stay loaded once it has opened a UI
++        "LINKER:-z,nodelete"
++      )
+     endif()
+ 
+     message(STATUS "IGraphics: accessibility enabled (AccessKit)")
+```
+
+---
+
+### Incident Patch 2: `5260bc42` (2026-11-25)
+**Commit Message**: Merge pull request #1488 from iPlug2/fix/app-wm-size-before-open
+
+Ignore WM_SIZE in the standalone app until the plug-in window is open
+
+**File**: `IPlug/APP/IPlugAPP_dialog.cpp` (modified, +10/-8)
+```diff
+@@ -41,9 +41,14 @@ using namespace igraphics;
+ #endif
+ 
+ #define IDT_SCREENSHOT_TIMER 1001
++
++// Guards WM_SIZE before the plugin window is open and the dialog has been sized to it. Until then the dialog's
++// client area is the size of its resource template, not the editor's, and passing that to OnParentWindowResize()
++// would make a plug-in that scales its UI to fit the window (PLUG_HOST_RESIZE) shrink it
++static bool sPlugWindowOpen = false;
++
+ #ifdef OS_LINUX
+ #define IDT_OPENWINDOW_TIMER 1002
+-static bool sPlugWindowOpen = false; // guards WM_SIZE before plugin window is ready
+ 
+ // SWELL does not position the modal dialogs it creates, and window managers
+ // that do not place transient windows themselves leave them at the screen
+@@ -646,6 +651,7 @@ WDL_DLGRET IPlugAPPHost::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
+       }
+ 
+       ClientResize(hwndDlg, pPlug->GetEditorWidth(), pPlug->GetEditorHeight());
++      sPlugWindowOpen = true;
+ 
+       ShowWindow(hwndDlg, SW_SHOW);
+ #endif
+@@ -713,9 +719,7 @@ WDL_DLGRET IPlugAPPHost::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
+     case WM_DESTROY:
+       pAppHost->CloseWindow();
+       gHWND = NULL;
+-#ifdef OS_LINUX
+       sPlugWindowOpen = false;
+-#endif
+       IPlugAPPHost::sInstance = nullptr;
+       
+       #ifdef OS_WIN
+@@ -983,13 +987,11 @@ WDL_DLGRET IPlugAPPHost::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
+       case SIZE_RESTORED:
+       case SIZE_MAXIMIZED:
+       {
+-#ifdef OS_LINUX
+-        // Ignore WM_SIZE events that fire before the plugin window opens.
+-        // ShowWindow + ClientResize generate spurious resize events (including
+-        // the dialog template size) that would recreate the FBO multiple times.
++        // Ignore WM_SIZE events that fire before the plugin window opens and the dialog is sized to it: they have
++        // the dialog template's size. e.g. a plug-in that changes the window's frame in OnUIOpen() (SWP_FRAMECHANGED)
++        // gets one, and on Linux ShowWindow + ClientResize generate them, which would recreate the FBO multiple times
+         if (!sPlugWindowOpen)
+           return 0;
+-#endif
+         if (pPlug->GetHostResizeEnabled())
+         {
+           RECT r;
+```
+
+---
+
+### Incident Patch 3: `cdb44465` (2026-11-25)
+**Commit Message**: Merge pull request #1491 from iPlug2/fix/noisegate-uninitialized-history
+
+NoiseGate: initialize mHistory1
+
+**File**: `IPlug/Extras/NoiseGate.h` (modified, +2/-1)
+```diff
+@@ -118,7 +118,8 @@ class NoiseGate
+   double mHoldTime = 0.01f;
+   double mReleaseTime = 0.01f;
+   double mMinRate = mAttackTime;
+-  T mHistory1, mHistory2 = 0.0f;
++  T mHistory1 = T(0);
++  T mHistory2 = T(0);
+   bool mPrevGate = false;
+   int mHoldCounter = 0;
  };
 ```
 
-**File**: `Examples/IPlugARAExample/IPlugARAExample_ARA.h` (modified, +250/-231)
-```diff
-@@ -2,14 +2,18 @@
- 
- #include <algorithm>
- #include <atomic>
-+#include <chrono>
- #include <cmath>
-+#include <cstdint>
- #include <cstring>
- #include <mutex>
- #include <string>
- #include <thread>
-+#include <type_traits>
- #include <vector>
- 
- #include "IPlugARA.h"
-+#include "IPlugARAExample_Analysis.h"
- 
- 
- /** Results of the (simulated) offline analysis of an audio source: an overall peak/RMS plus a list
-@@ -26,10 +30,10 @@ struct IPlugARAExampleAnalysisResult
- /** An ARA audio source that caches all its samples in memory, so that the playback renderer
-  * can access them from the realtime audio thread, and runs a background analysis over that cache
-  * which produces the results persisted in the ARA document archive.
-- * N.B. for the sake of simplicity this example does not synchronize sample cache updates
-- * (main thread) with rendering (audio thread) - a real plug-in must add appropriate
-- * synchronization. The analysis results are properly guarded, since they are produced on a
-- * background thread. */
-+ * The sample cache is only modified on the main thread while the document controller has locked
-+ * the renderers out of the model graph (see IPlugARAExampleDocumentController::RendererAccess),
-+ * and only after the analysis thread that reads it has been stopped. The analysis results are
-+ * guarded by a mutex, since they are produced on the background thread. */
- class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
- {
- public:
-@@ -100,6 +104,15 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
-     return mAnalysis;
-   }
- 
-+  /** Discard the analysis results, e.g. because the audio source samples changed */
-+  void ClearAnalysis()
-+  {
-+    mHasAnalysis.store(false, std::memory_order_release);
-+
-+    std::lock_guard<std::mutex> lock(mAnalysisMutex);
-+    mAnalysis = IPlugARAExampleAnalysisResult();
-+  }
-+
-   /** Called when restoring from an archive - the archived results stand in for a re-analysis,
-    * which is the whole point of persisting them */
-   void SetAnalysis(const IPlugARAExampleAnalysisResult& result)
-@@ -123,6 +136,15 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
- private:
-   void RunAnalysis()
-   {
-+    // the ARA Library requires every progress start to be balanced by a completion, including
-+    // when the analysis is aborted - otherwise the host may show the progress forever.
-+    // N.B. unlike most document controller functions, the progress notifications may be called
-+    // from any thread: the ARA Library queues them and sends them from notifyModelUpdates().
-+    const auto finish = [this]() {
-+      mAnalysing.store(false, std::memory_order_release);
-+      getDocumentController()->notifyAudioSourceAnalysisProgressCompleted(this);
-+    };
-+
-     IPlugARAExampleAnalysisResult result;
- 
-     const auto nChans = static_cast<int>(getChannelCount());
-@@ -152,7 +174,7 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
-     {
-       if (mAnalysisAbort.load(std::memory_order_relaxed))
-       {
--        mAnalysing.store(false, std::memory_order_release);
-+        finish();
-         return;
-       }
- 
-@@ -184,7 +206,7 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
- 
-     result.peak = peak;
-     result.rms = (nFrames > 0) ? std::sqrt(sumSq / (static_cast<double>(nFrames) * kFrame)) : 0.;
--    result.notes = DetectNotes(mono, envelope, kHop, kFrame, sampleRate);
-+    result.notes = IPlugARAExampleAnalysis::DetectNotes(mono, envelope, kHop, kFrame, sampleRate);
- 
-     {
-       std::lock_guard<std::mutex> lock(mAnalysisMutex);
-@@ -193,151 +215,13 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
- 
-     mAnalysisProgress.store(1.f, std::memory_order_relaxed);
-     mHasAnalysis.store(true, std::memory_order_release);
--    mAnalysing.store(false, std::memory_order_release);
--
--    getDocumentController()->notifyAudioSourceAnalysisProgressCompleted(this);
-+    finish();
- 
-     // the content update itself must go out from the main thread - flag it for the document
-     // controller to pick up in willNotifyModelUpdates()
-     mAnalysisCompleted.store(true, std::memory_order_release);
-   }
- 
--  /** Segment the envelope into notes and estimate a pitch for each by autocorrelation.
--   * Crude by design - it stands in for the real detection a pitch editor would perform. */
--  static std::vector<ARA::ARAContentNote> DetectNotes(const std::vector<float>& mono, const std::vector<float>& envelope, int hop, int frame, double sampleRate)
--  {
--    std::vector<ARA::ARAContentNote> notes;
--
--    if (envelope.empty() || sampleRate <= 0.)
--      return notes;
--
--    const float threshold = std::max(0.005f, *std::max_element(envelope.begin(), envelope.end()) * 0.2f);
--
--    int noteStartFrame = -1;
--
--    const auto emitNote = [&](int startFrame, int endFrame) {
--      const auto startSample = static_cast<size_t>(startFrame) * static_cast<size_t>(hop);
--      const auto endSample = static
-```
-
-**File**: `Examples/IPlugARAExample/IPlugARAExample_Analysis.h` (added, +153/-0)
-```diff
-@@ -0,0 +1,153 @@
-+#pragma once
-+
-+/** The (deliberately crude) signal analysis behind IPlugARAExample's note detection: onset
-+ * segmentation of an RMS envelope plus a normalized-autocorrelation pitch estimate. It stands in
-+ * for the real detection a pitch editor would perform, and is kept apart from the ARA model code
-+ * because none of it is ARA specific. */
-+
-+#include <algorithm>
-+#include <cmath>
-+#include <vector>
-+
-+#include "ARA_API/ARAInterface.h"
-+#include "IPlugUtilities.h"
-+
-+namespace IPlugARAExampleAnalysis
-+{
-+
-+/** Normalized autocorrelation pitch estimate over one window,
-+ * @return frequency in Hz, or 0 if the window has no clear pitch */
-+inline double EstimatePitch(const std::vector<float>& mono, size_t start, size_t windowSize, double sampleRate)
-+{
-+  constexpr double kMinFreq = 50.;
-+  constexpr double kMaxFreq = 2000.;
-+  constexpr double kPeakThreshold = 0.85; // fraction of the best score a peak must reach to count
-+
-+  const auto minLag = static_cast<size_t>(sampleRate / kMaxFreq);
-+  const auto maxLag = static_cast<size_t>(sampleRate / kMinFreq);
-+
-+  if (start + windowSize + maxLag > mono.size() || maxLag <= minLag)
-+    return 0.;
-+
-+  double energy = 0.;
-+  for (size_t i = 0; i < windowSize; i++)
-+    energy += static_cast<double>(mono[start + i]) * mono[start + i];
-+
-+  if (energy <= 0.)
-+    return 0.;
-+
-+  // normalized correlation per lag - dividing by the energy of the lagged window as well keeps
-+  // the score comparable across lags, which matters for the peak picking below
-+  std::vector<double> scores(maxLag - minLag + 1, 0.);
-+
-+  for (size_t lag = minLag; lag <= maxLag; lag++)
-+  {
-+    double corr = 0.;
-+    double lagEnergy = 0.;
-+
-+    for (size_t i = 0; i < windowSize; i++)
-+    {
-+      const double a = mono[start + i];
-+      const double b = mono[start + i + lag];
-+      corr += a * b;
-+      lagEnergy += b * b;
-+    }
-+
-+    const double norm = std::sqrt(energy * lagEnergy);
-+    scores[lag - minLag] = (norm > 0.) ? (corr / norm) : 0.;
-+  }
-+
-+  const double maxScore = *std::max_element(scores.begin(), scores.end());
-+
-+  if (maxScore < 0.5)
-+    return 0.;
-+
-+  // A periodic signal correlates just as well at every multiple of its period, so simply taking
-+  // the highest score picks an arbitrary subharmonic (an octave-down error). Take the *first*
-+  // local peak that gets close to the best score instead - that is the fundamental period.
-+  for (size_t i = 1; i + 1 < scores.size(); i++)
-+  {
-+    if (scores[i] >= kPeakThreshold * maxScore && scores[i] >= scores[i - 1] && scores[i] >= scores[i + 1])
-+    {
-+      // parabolic interpolation around the peak for sub-sample period accuracy
-+      const double s0 = scores[i - 1];
-+      const double s1 = scores[i];
-+      const double s2 = scores[i + 1];
-+      const double denom = (2. * s1) - s0 - s2;
-+      const double offset = (denom != 0.) ? (0.5 * (s0 - s2) / denom) : 0.;
-+
-+      const double lag = static_cast<double>(minLag + i) + iplug::Clip(offset, -1., 1.);
-+      return (lag > 0.) ? (sampleRate / lag) : 0.;
-+    }
-+  }
-+
-+  return 0.;
-+}
-+
-+/** Segment an RMS envelope (one value per hop) into notes and estimate a pitch for each */
-+inline std::vector<ARA::ARAContentNote> DetectNotes(const std::vector<float>& mono, const std::vector<float>& envelope, int hop, int frame, double sampleRate)
-+{
-+  std::vector<ARA::ARAContentNote> notes;
-+
-+  if (envelope.empty() || sampleRate <= 0.)
-+    return notes;
-+
-+  const float threshold = std::max(0.005f, *std::max_element(envelope.begin(), envelope.end()) * 0.2f);
-+
-+  int noteStartFrame = -1;
-+
-+  const auto emitNote = [&](int startFrame, int endFrame) {
-+    const auto startSample = static_cast<size_t>(startFrame) * static_cast<size_t>(hop);
-+    const auto endSample = static_cast<size_t>(endFrame) * static_cast<size_t>(hop);
-+
-+    if (endSample <= startSample || endSample > mono.size())
-+      return;
-+
-+    ARA::ARAContentNote note {};
-+    note.startPosition = static_cast<double>(startSample) / sampleRate;
-+    note.noteDuration = static_cast<double>(endSample - startSample) / sampleRate;
-+    note.signalDuration = note.noteDuration;
-+    note.attackDuration = std::min(0.01, note.noteDuration);
-+
-+    float envPeak = 0.f;
-+    for (int f = startFrame; f < endFrame && f < static_cast<int>(envelope.size()); f++)
-+      envPeak = std::max(envPeak, envelope[static_cast<size_t>(f)]);
-+
-+    note.volume = std::min(1.f, envPeak);
-+
-+    const double freq = EstimatePitch(mono, startSample, static_cast<size_t>(frame), sampleRate);
-+
-+    if (freq > 0.)
-+    {
-+      note.frequency = static_cast<float>(freq);
-+      note.pitchNumber = static_cast<ARA::ARAPitchNumber>(std::lround(69. + 12. * std::log2(freq / 440.)));
-+    }
-+    else
-+    {
-+      note.frequency = ARA::kARAInvalidFrequency;
-+      note.pitchNumber = ARA::kARAInvalidPitchNumber;
-+    }
-+
-+    notes.push_back(note);
-+  };
-+
-+  for (int f = 0; f < static_cast<int>(envelope.size()); f++)
-+  {
-+   
-```
-
-**File**: `Examples/IPlugARAExample/README.md` (modified, +14/-5)
-```diff
-@@ -94,10 +94,16 @@ editor renderer, right-click to toggle the modification's reverse edit.
- It also uses the `"Fx|OnlyARA"` VST3 subcategory, which marks a plug-in that requires ARA to
- operate. Plug-ins that also work without ARA should use `"Fx|ARA"` instead.
- 
--N.B. For clarity this example does not synchronize ARA model edits (main thread) with rendering
--(audio thread) - a real plug-in must do so. Its archive format is also simplified (native endian),
--and the note detection is deliberately crude, standing in for the real analysis a pitch editor
--would perform.
-+**Synchronizing rendering with model edits.** The host edits the ARA model on the main thread
-+while the renderers read it on the audio thread. Following Celemony's ARA test plug-in, the
-+document controller locks the renderers out of the model for the duration of each host editing
-+cycle (and while sample access is toggled). The audio thread never blocks - while locked out it
-+outputs silence for that block. See `IPlugARAExampleDocumentController::RendererAccess`.
-+
-+N.B. The archive format is simplified (native endian, but versioned and bounds checked), and the
-+note detection in `IPlugARAExample_Analysis.h` is deliberately crude, standing in for the real
-+analysis a pitch editor would perform. Regions are rendered with nearest-sample lookup, so
-+stretched regions alias.
- 
- ## Building
- 
-@@ -109,7 +115,10 @@ cmake --build build --target IPlugARAExample-vst3-ara
- The ARA SDK (`ARA_API` + `ARA_Library`, Apache 2.0 licensed) is fetched automatically via CMake
- FetchContent, pinned to an ARA SDK release tag. To use a local copy instead, clone
- [Celemony/ARA_SDK](https://github.com/Celemony/ARA_SDK) (with submodules) into
--`Dependencies/IPlug/ARA_SDK`, or pass `-DARA_SDK_DIR=/path/to/ARA_SDK`.
-+`Dependencies/IPlug/ARA_SDK`, or pass `-DARA_SDK_DIR=/path/to/ARA_SDK`. To configure without
-+network access and without ARA targets, pass `-DIPLUG2_ARA_FETCH_SDK=OFF`.
-+
-+The example builds on macOS, Windows and Linux, and CI builds it on all three.
- 
- The VST3 SDK must be present in `Dependencies/IPlug/VST3_SDK` (see
- `Dependencies/IPlug/download-vst3-sdk.sh`).
-```
-
-**File**: `Examples/IPlugARAExample/config.h` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@
- 
- #define ARA_DOC_CONTROLLER_CLASS IPlugARAExampleDocumentController
- #define ARA_FACTORY_ID "com.AcmeInc.IPlugARAExample.arafactory"
--#define ARA_DOC_ARCHIVE_ID "com.AcmeInc.IPlugARAExample.aradocumentarchive.2"
-+#define ARA_DOC_ARCHIVE_ID "com.AcmeInc.IPlugARAExample.aradocumentarchive.3"
- 
- // This plug-in stretches playback regions to fit the borders the host gives them, so hosts may
- // let the user drag a region's borders independently of its content
-```
-
-**File**: `IPlug/ARA/IPlugARA_include_in_plug_src.h` (modified, +4/-1)
-```diff
-@@ -38,7 +38,10 @@ DEF_CLASS_IID(ARA::IPlugInEntryPoint2)
- #endif
- 
- /** Comma separated list of ARA::ARAContentType values that the plug-in can analyze and then
-- * export to the host, e.g. ARA::kARAContentTypeNotes. Hosts use this both to decide which
-+ * export to the host, without enclosing braces, e.g.
-+ * #define ARA_ANALYZEABLE_CONTENT_TYPES ARA::kARAContentTypeNotes, ARA::kARAContentTypeKeySignatures
-+ * The list is used to initialize an array, so if defined it must not be empty - leave the macro
-+ * undefined if the plug-in does not analyze any content. Hosts use this both to decide which
-  * content to request and to show the plug-in's capabilities in their UI. */
- #ifdef ARA_ANALYZEABLE_CONTENT_TYPES
-   #define ARA_HAS_ANALYZEABLE_CONTENT_TYPES 1
-```
-
----
-
-### Incident Patch 2: `c1245e20` (2026-11-21)
-**Commit Message**: Bump devalue from 5.8.1 to 5.9.4 in /Examples/IPlugSvelteUI/web-ui
-
-Bumps [devalue](https://github.com/sveltejs/devalue) from 5.8.1 to 5.9.4.
-- [Release notes](https://github.com/sveltejs/devalue/releases)
-- [Changelog](https://github.com/sveltejs/devalue/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sveltejs/devalue/compare/v5.8.1...v5.9.4)
-
----
-updated-dependencies:
-- dependency-name: devalue
-  dependency-version: 5.9.4
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Examples/IPlugSvelteUI/web-ui/package-lock.json` (modified, +3/-3)
-```diff
-@@ -535,9 +535,9 @@
-       }
-     },
-     "node_modules/devalue": {
--      "version": "5.8.1",
--      "resolved": "https://registry.npmjs.org/devalue/-/devalue-5.8.1.tgz",
--      "integrity": "sha512-4CXDYRBGqN+57wVJkuXBYmpAVUSg3L6JAQa/DFqm238G73E1wuyc/JhGQJzN7vUf/CMphYau2zXbfWzDR5aTEw==",
-+      "version": "5.9.4",
-+      "resolved": "https://registry.npmjs.org/devalue/-/devalue-5.9.4.tgz",
-+      "integrity": "sha512-sPAT4pztbu6586/hrhOnMKS17IJrvg12mXiSPSS3W5qDeN2RGgvZ0diZCm31dBbnevfVmujNO3IM2wrS4Y2Rhg==",
-       "dev": true,
-       "license": "MIT"
-     },
-```
-
----
-
-### Incident Patch 3: `ecd7309a` (2026-11-21)
-**Commit Message**: Bump vite from 8.1.4 to 8.3.8 in /Examples/IPlugSvelteUI/web-ui
-
-Bumps [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite) from 8.1.4 to 8.3.8.
-- [Release notes](https://github.com/vitejs/vite/releases)
-- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
-- [Commits](https://github.com/vitejs/vite/commits/v8.3.8/packages/vite)
-
----
-updated-dependencies:
-- dependency-name: vite
-  dependency-version: 8.3.8
-  dependency-type: direct:development
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Examples/IPlugSvelteUI/web-ui/package-lock.json` (modified, +200/-167)
-```diff
-@@ -11,25 +11,25 @@
-         "@sveltejs/vite-plugin-svelte": "^7.1.2",
-         "@tsconfig/svelte": "^5.0.8",
-         "svelte": "^5.55.7",
--        "vite": "^8.1.4"
-+        "vite": "^8.3.8"
-       }
-     },
-     "node_modules/@emnapi/core": {
--      "version": "1.11.1",
--      "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-1.11.1.tgz",
--      "integrity": "sha512-RSvbQmHzdKzNsLYa/wHrbc3KN4sYLKAdPZxqiM2HATqv/SBk2/ENSHpvXGaLOMcsAyz0poEGqkmmKYG3OWiJEQ==",
-+      "version": "2.0.0-beta.2",
-+      "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-2.0.0-beta.2.tgz",
-+      "integrity": "sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A==",
-       "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "dependencies": {
--        "@emnapi/wasi-threads": "1.2.2",
-+        "@emnapi/wasi-threads": "2.2.0",
-         "tslib": "^2.4.0"
-       }
-     },
-     "node_modules/@emnapi/runtime": {
--      "version": "1.11.1",
--      "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.1.tgz",
--      "integrity": "sha512-vgj7R3y3Wgx24IQaGPA/R6YFXLHVMOZ0uVEyIQPaWs+rd1AzfEMXlAC22FYwO1XkKR6NPsq7mUandH8oIRdZFw==",
-+      "version": "2.0.0-beta.2",
-+      "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-2.0.0-beta.2.tgz",
-+      "integrity": "sha512-JcrSPzPvZuNZvJqPTF9Fw25LbOJ8avzFVlaf2grmH4Cku0oGP47tRgqPZadcfj3YoZMHkFVnCYFbQM8I+i5QEw==",
-       "dev": true,
-       "license": "MIT",
-       "optional": true,
-@@ -38,9 +38,9 @@
-       }
-     },
-     "node_modules/@emnapi/wasi-threads": {
--      "version": "1.2.2",
--      "resolved": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.2.tgz",
--      "integrity": "sha512-c95qOXkHdydNKhscBTebqEC1CVAZpyqOfVfBzQ1qgzyl3gfeldUjIggDbIZgDKsHLgnsM+igH7TJ/eAasaVuMA==",
-+      "version": "2.2.0",
-+      "resolved": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-2.2.0.tgz",
-+      "integrity": "sha512-JP7OYH38Q7+pyTAe14raZHLQIK7BDKbdwji+Xi3pcd/6QkJYQH3SX4wu6EplGrGJWRepoNzedfm0G3B9Z4e9Rw==",
-       "dev": true,
-       "license": "MIT",
-       "optional": true,
-@@ -99,38 +99,58 @@
-       }
-     },
-     "node_modules/@napi-rs/wasm-runtime": {
--      "version": "1.1.6",
--      "resolved": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.1.6.tgz",
--      "integrity": "sha512-ZLv/JdUfkvOy9eCnnBaGfiO+XimbjebAeO+MRQqD/B+FR1tnRN0tpKSJHRbE8sFfS6aqsXZ67TQjfwfsxULVbg==",
-+      "version": "1.2.6",
-+      "resolved": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.2.6.tgz",
-+      "integrity": "sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw==",
-       "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "dependencies": {
-         "@tybys/wasm-util": "^0.10.3"
-       },
-+      "engines": {
-+        "node": "^20.19.0 || ^22.13.0 || >=23.5.0"
-+      },
-       "funding": {
-         "type": "github",
-         "url": "https://github.com/sponsors/Brooooooklyn"
-       },
-       "peerDependencies": {
--        "@emnapi/core": "^1.7.1",
--        "@emnapi/runtime": "^1.7.1"
-+        "@emnapi/core": "^1.7.1 || 2.0.0-beta.2",
-+        "@emnapi/runtime": "^1.7.1 || 2.0.0-beta.2"
-       }
-     },
-     "node_modules/@oxc-project/types": {
--      "version": "0.139.0",
--      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.139.0.tgz",
--      "integrity": "sha512-r9gHphtCs+1M7J0pw6Sn/hh/Wpa/iQrOOkrNAlVLF/gHq+/CJmHIWKKUUhdWjcD6CIa8idarspCsASiXCXvFUw==",
-+      "version": "0.156.0",
-+      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
-+      "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==",
-       "dev": true,
-       "license": "MIT",
-       "funding": {
--        "url": "https://github.com/sponsors/Boshen"
-+        "url": "https://github.com/sponsors/oxc-project"
-+      }
-+    },
-+    "node_modules/@rolldown/binding-android-arm-eabi": {
-+      "version": "1.2.19",
-+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.19.tgz",
-+      "integrity": "sha512-e+Ebe0WT+9tbXmNKPIiC8YrWAHYwug3m6i4p3rZGGulfZri1jtI4HslT+OZnFf/OIHowWF71DTlHwXBP2SiA7A==",
-+      "cpu": [
-+        "arm"
-+      ],
-+      "dev": true,
-+      "license": "MIT",
-+      "optional": true,
-+      "os": [
-+        "android"
-+      ],
-+      "engines": {
-+        "node": "^20.19.0 || >=22.12.0"
-       }
-     },
-     "node_modules/@rolldown/binding-android-arm64": {
--      "version": "1.1.5",
--      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.1.5.tgz",
--      "integrity": "sha512-lZg8fqIv2v7FF237bwMgzGZEJvGL79/s5knJ/i6FmsGF4XXlzccZ4jb+TrFIxtSSxFtIpdsgrPZeMk1I9AFcyQ==",
-+      "version": "1.2.19",
-+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.
-```
-
-**File**: `Examples/IPlugSvelteUI/web-ui/package.json` (modified, +1/-1)
-```diff
-@@ -12,6 +12,6 @@
-     "@sveltejs/vite-plugin-svelte": "^7.1.2",
-     "@tsconfig/svelte": "^5.0.8",
-     "svelte": "^5.55.7",
--    "vite": "^8.1.4"
-+    "vite": "^8.3.8"
-   }
- }
-```
-
 #### Recent Merged Pull Requests:
+- **PR #1493** (2026-11-25): Make IGraphicsNanoVG::ReleaseBitmap free the bitmap (@olilarkin)
+- **PR #1491** (2026-11-25): NoiseGate: initialize mHistory1 (@olilarkin)
+- **PR #1488** (2026-11-25): Ignore WM_SIZE in the standalone app until the plug-in window is open (@olilarkin)
 - **PR #1487** (2026-11-23): Update vendored Yoga to v3.2.2 (@olilarkin)
 - **PR #1486** (2026-11-22): cmake: RC_INCLUDE_DIRS option and Windows bundle folder icons (@olilarkin)
-- **PR #1484** (2026-11-21): Bump devalue from 5.8.1 to 5.9.4 in /Examples/IPlugSvelteUI/web-ui (@dependabot[bot])
-- **PR #1483** (2026-11-21): Bump vite from 8.1.4 to 8.3.8 in /Examples/IPlugSvelteUI/web-ui (@dependabot[bot])
-- **PR #1482** (2026-11-21): Bump source-map-js from 1.2.1 to 1.2.4 in /Examples/IPlugSvelteUI/web-ui (@dependabot[bot])
-- **PR #1480** (closed): Fixes to cmake scripts on Windows (resources and icons) (@pressplay-music)
+- **PR #1485** (2026-11-25): Add opt-in IGraphics accessibility layer using AccessKit (@olilarkin)
 
 ---
 
@@ -2176,31 +2044,31 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ARA: synchronize rendering with model edits and harden the example archive
+## X. Add Linux support to the IGraphics accessibility layer
 
 **RULE**:
-When implementing operations in `Examples/IPlugARAExample/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dependencies/IGraphics/download-accesskit.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e118ffc`: ARA: synchronize rendering with model edits and harden the example archive. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68ec2f20`: Add Linux support to the IGraphics accessibility layer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `Examples/IPlugARAExample/CMakeLists.txt`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dependencies/IGraphics/download-accesskit.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-    IPlugARAExample_Analysis.h
+# The release archive contains headers and libraries for all platforms (macOS, Windows and Linux x86_64/x86).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# The release archive contains headers and libraries for all platforms.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e118ffc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68ec2f20` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

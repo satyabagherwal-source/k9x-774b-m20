@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `84e3d378`  
+> **Source Version**: `03c4e07f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T05:00:49.092Z  
+> **Timestamp**: 2026-11-26T06:10:37.588Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:00:49.086Z  
+> **Harvest Timestamp**: 2026-11-26T06:10:37.583Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6313 stars
+- **Stars / Engagement**: 6315 stars
 
 ---
 
@@ -1104,6 +1104,17 @@ pub enum VectorBulkBuildMemory {
 //! many small operations, such as deletes, reaches it long before its encoded
 //! bytes would. The heap an index's backlog holds in admission accounting,
 //! one decoded copy, and one merge resolution stays within twice the limit.
+//! A writer whose searches overlay the index also keeps one shared decoded
+//! copy for them however many search at once (see
+//! `index_lifecycle::queue::shared`), at most about one and a half times the
+//! backlog's payloads while request snapshots keep up: at the default limit,
+//! a backlog at its limit measured 1.13 GB of shared view beside the 1.0 GB
+//! the ledger charges, and 32 concurrent strong searches of it raised the
+//! server's resident memory by under 2 GB. The views of all indexes stay
+//! within this limit times the publication tasks, the ceiling publication's
+//! retained queues have, beside the view a search is using; searches that
+//! read a queue from storage instead hold at most as many resolutions at
+//! once as fit an eighth of the memory ceiling at twice this limit each.
 //!
 //! # Usage
 //!
@@ -1302,23 +1313,7 @@ impl Default for IndexOperationQueueTuning {
     fn default() -> Self {
         Self {
             max_retained_bytes: NonZeroU64::new(DEFAULT_MAX_RETAINED_BYTES)
-                .expect("default retained-byte limit is nonzero"),
-            max_members: NonZeroU64::new(DEFAULT_MAX_MEMBERS)
-                .expect("default member limit is nonzero"),
-            max_operand_bytes: NonZeroU64::new(DEFAULT_MAX_OPERAND_BYTES)
-                .expect("default operand limit is nonzero"),
-            recovery_sweep_interval: DEFAULT_RECOVERY_SWEEP_INTERVAL,
-            layout: QueueLayout::Map,
-            #[cfg(test)]
-            start_paused: false,
-            eventual_search_budget: EVENTUAL_SEARCH_SOURCE_INPUT_BYTES,
-            #[cfg(test)]
-            max_suppressed_search_results: None,
-            strong_vector_search_max_pending_bytes: None,
-            strong_text_search_max_analysis_bytes: NonZeroU64::new(
-                DEFAULT_STRONG_TEXT_SEARCH_MAX_ANALYSIS_BYTES,
-            )
-     
+                .expect("default re
 ```
 
 ### Core Architecture Module: `crates/db/src/config/secondary_index_lifecycle.rs`
@@ -2057,738 +2052,960 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `632e9097` (2026-11-24)
-**Commit Message**: Build unpartitioned vector indexes in memory, in bulk (#1325)
+### Incident Patch 1: `3472f21b` (2026-11-26)
+**Commit Message**: Foundry docs: querying from agents, security and data, use cases, pilot checklist (#1337)
 
-This adds an in-memory "bulk" path for building an unpartitioned vector
-index. On real S3 it builds a 1M x 128-dim index in 143 s against 1,775
-s for the serial build on main, with the same recall.
+Foundry's docs lacked the pages buyers and agents ask for first: how to
+query it from an agent, how data is handled, use cases and a pilot
+checklist. This adds those pages, corrects the Helix MCP page to the
+current tool names, tones down claims we can't back, and regenerates the
+llms files.
 
-**It is off by default.** One stored byte is new (below), and an older
-image refuses a store that holds it, so this release only teaches every
-image to read it. Turn it on with
-`HELIX_VECTOR_BULK_BUILD_MEMORY_BYTES=auto` (or a byte count) once every
-node that can become writer runs an image with this change.
-
-## How it works
-
-```text
-serial build (today)                    bulk build
-  for each source row                     pass 1  read the label's rows into memory, run by run
-    read the stored graph                 pass 2  link the whole HNSW graph on a thread pool
-    insert one node                       pass 3  write every node once, rechecking each row
-    commit
+```
+docs/foundry/
+  start-here/  introduction.mdx (reworked)  + ontology-vs-rag.mdx
+  agents/      helix-mcp.mdx (tool names)   + query-from-agents.mdx
+  reference/                                 + security-and-data.mdx
++ use-cases/   sample-company.mdx  run-a-pilot.mdx
+docs.json (nav)  llms.txt  llms-full.txt (regenerated)
 ```
 
-- **Pass 1** takes the label's members from one snapshot, then reads
-them in runs of 65,536 ids or 64 MiB, each under its own short snapshot.
-No transaction is held across runs.
-- **Pass 3** rereads each source row and stores a node only if the row
-stil
+Tested: rebased onto main (after the Learn pages); `docs` `npm run
+check` (docs, llms, openapi) passes.
 
-**File**: `crates/db/fuzz/corpus/current_index_v2_records/valid-vector-bulk-build-operation-record` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000803000000090101
-```
 
-**File**: `crates/db/fuzz/corpus/current_index_v2_records/vector-bulk-build-unknown-stage` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201080000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000803000000090101
-```
+<!-- greptile_comment -->
 
-**File**: `crates/db/fuzz/corpus/current_index_v2_records/vector-bulk-build-without-attempts` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f720000000000000005000000000000000600000000000000070000000000000008000000090101
-```
+<!-- greptile_summary -->
 
-**File**: `crates/db/fuzz/corpus/current_index_v2_records/vector-bulk-build-zero-attempts` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000800000000090101
-```
+<p><a
+href="https://app.greptile.com/api/retrigger?id=119096777&amp;sig=23ef5584bb91015e1d3497906617a70740f8e430b30ecc1db80fd490649ab7dd"><picture><source
+media="(prefers-color-scheme: dark)"
+srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source
+media="(prefers-color-scheme: light)"
 
-**File**: `crates/db/src/config/db.rs` (modified, +48/-0)
+**File**: `docs/docs.json` (modified, +31/-1)
 ```diff
-@@ -389,6 +389,54 @@ impl DbConfig {
-         self.index_lifecycle_throughput
+@@ -131,7 +131,15 @@
+               "foundry/start-here/introduction",
+               "foundry/start-here/quickstart",
+               "foundry/start-here/sample-company",
+-              "foundry/start-here/workspaces-and-navigation"
++              "foundry/start-here/workspaces-and-navigation",
++              "foundry/start-here/ontology-vs-rag"
++            ]
++          },
++          {
++            "group": "Use cases",
++            "pages": [
++              "foundry/use-cases/sample-company",
++              "foundry/use-cases/run-a-pilot"
+             ]
+           },
+           {
+@@ -177,6 +185,7 @@
+             "group": "Agents",
+             "pages": [
+               "foundry/agents/helix-mcp",
++              "foundry/agents/query-from-agents",
+               "foundry/agents/agent-memory"
+             ]
+           },
+@@ -194,6 +203,7 @@
+             "group": "Reference",
+             "pages": [
+               "foundry/reference/limits",
++              "foundry/reference/security-and-data",
+               "foundry/reference/troubleshooting"
+             ]
+           }
+@@ -1713,6 +1723,26 @@
+     {
+       "source": "/foundry/source-grants",
+       "destination": "/foundry/workspace/access"
++    },
++    {
++      "source": "/foundry/security",
++      "destination": "/foundry/reference/security-and-data"
++    },
++    {
++      "source": "/foundry/data-handling",
++      "destination": "/foundry/reference/security-and-data"
++    },
++    {
++      "source": "/foundry/use-cases",
++      "destination": "/foundry/use-cases/sample-company"
++    },
++    {
++      "source": "/foundry/pilot",
++      "destination": "/foundry/use-cases/run-a-pilot"
++    },
++    {
++      "source": "/foundry/why-ontology",
++      "destination": "/foundry/start-here/ontology-vs-rag"
      }
- 
-+    /// Bytes this configuration lets the process hold in memory beside what
-+    /// requests and index builds allocate: the SlateDB block and metadata
-+    /// caches (the memory tier of a hybrid cache), the full-text split cache,
-+    /// the vector memory stores, the vector build planning cache, and the
-+    /// writes SlateDB buffers before it stalls writers
-+    /// (`max_unflushed_bytes`).
-+    ///
-+    /// Each term is the limit its owner enforces, not what it holds now. The
-+    /// write buffer is counted at its encoded size; the memtables of rows a
-+    /// few bytes long hold up to three times that.
-+    ///
-+    /// ```
-+    /// use db::DbConfig;
-+    ///
-+    /// let config = DbConfig::new();
-+    /// let build_cache = config.search_index_backfill().vector_build_cache_bytes().get();
-+    /// // 512 MiB of blocks, 128 MiB of metadata, 64 MiB of full-text splits,
-+    /// // 256 MiB of vector stores and 1 GiB of unflushed writes.
-+    /// assert_eq!(
-+    ///     config.configured_memory_bytes(),
-+    ///     ((512 + 128 + 64 + 256 + 1024) << 20) + build_cache
-+    /// );
-+    /// ```
-+    pub fn configured_memory_bytes(&self) -> u64 {
-+        let slate_cache = match self.cache.mode() {
-+            CacheMode::VectorMemoryOnly => 0,
-+            CacheMode::Memory { slate_db, .. } => slate_db
-+                .block_bytes()
-+                .saturating_add(slate_db.metadata_bytes()),
-+            CacheMode::Hybrid { slate_db, .. } => slate_db.memory_bytes() as u64,
-+        };
-+        slate_cache
-+            .saturating_add(self.cache.fts_memory_bytes())
-+            .saturating_add(self.cache.vector_memory().budget().bytes().unwrap_or(0))
-+            .saturating_add(self.search_index_backfill.vector_build_cache_bytes().get())
-+            .saturating_add(self.write_buffer_bytes())
-+    }
-+
-+    /// Encoded bytes of writes SlateDB buffers, in its WAL and memtables,
-+    /// before it stalls writers (`max_unflushed_bytes`).
-+    ///
-+    /// ```
-+    /// assert_eq!(db::DbConfig::new().write_buffer_bytes(), 1 << 30);
-+    /// ```
-+    pub fn write_buffer_bytes(&self) -> u64 {
-+        self.slate.to_writer_settings(None).max_unflushed_bytes as u64
-+    }
-+
-     /// Durable graph and catalog migration policy.
-     pub const fn migrations(&self) -> MigrationTuning {
-         self.migrations
+   ],
+   "search": {
 ```
 
-**File**: `crates/db/src/config/host_memory.rs` (modified, +52/-0)
+**File**: `docs/foundry/agents/helix-mcp.mdx` (modified, +2/-1)
 ```diff
-@@ -36,6 +36,39 @@ pub fn memory_ceiling_bytes() -> Option<u64> {
-     })
- }
+@@ -102,7 +102,8 @@ plain language, as [Founder](/foundry/ask/founder) does, and waits up to 25 seco
+ longer question carries on: the agent follows it with `helix_foundry_get_question`, which
+ waits up to 25 seconds each call, and stops it with `helix_foundry_cancel_question`. `helix_foundry_list_questions` lists the ontology's
+ questions. Questions asked through the MCP count against the same hourly limit and
+-monthly budget as those Founder asks.
++monthly budget as those Founder asks. See
++[Query Foundry from your agents](/foundry/agents/query-from-agents) for the whole flow.
  
-+/// Returns the anonymous memory this process holds now, in bytes: its heap,
-+/// stacks and other private pages, without file-backed pages the OS can drop.
-+///
-+/// It is what counts against [`memory_ceiling_bytes`] and cannot be
-+/// reclaimed. Returns `None` where the platform does not report it; Linux
-+/// does, through `/proc/self/status`.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// let resident = db::config::resident_anonymous_bytes();
-+/// if cfg!(target_os = "linux") {
-+///     assert!(resident.is_some_and(|bytes| bytes > 0));
-+/// }
-+/// ```
-+pub fn resident_anonymous_bytes() -> Option<u64> {
-+    rss_anon_bytes(&std::fs::read_to_string("/proc/self/status").ok()?)
-+}
-+
-+/// Reads `RssAnon` from `status`, the content of `/proc/self/status`, whose
-+/// lines are `Name:<whitespace>value kB`.
-+fn rss_anon_bytes(status: &str) -> Option<u64> {
-+    status
-+        .lines()
-+        .find_map(|line| line.strip_prefix("RssAnon:"))?
-+        .trim()
-+        .strip_suffix("kB")?
-+        .trim()
-+        .parse::<u64>()
-+        .ok()?
-+        .checked_mul(1024)
-+}
-+
- /// Mount points of the cgroup hierarchies that expose memory limits.
- #[derive(Debug, PartialEq, Eq)]
- struct CgroupMounts {
-@@ -166,6 +199,25 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn resident_anonymous_memory_is_read_from_the_status_file() {
-+        let status = "Name:\tserver\nVmRSS:\t  900 kB\nRssAnon:\t     512 kB\nRssFile:\t 388 kB\n";
-+        assert_eq!(rss_anon_bytes(status), Some(512 * 1024));
-+        assert_eq!(rss_anon_bytes("Name:\tserver\nVmRSS:\t900 kB\n"), None);
-+        assert_eq!(
-+            rss_anon_bytes("RssAnon:\t512\n"),
-+            None,
-+            "a unit is required"
-+        );
-+        assert_eq!(rss_anon_bytes("RssAnon:\tmany kB\n"), None);
-+        assert_eq!(
-+            rss_anon_bytes(&format!("RssAnon:\t{} kB\n", u64::MAX)),
-+            None,
-+            "a value past u64 bytes is not a size"
-+        );
-+        assert_eq!(rss_anon_bytes(""), None);
-+    }
-+
-     #[test]
-     fn cgroup_v2_limit_is_the_tightest_ancestor() {
-         let root = tempfile::tempdir().unwrap();
+ In a client that draws MCP Apps, the answer shows as a card with its charts and tables,
+ and a link to the question in Foundry. Other clients get the answer as text.
 ```
 
-**File**: `crates/db/src/config/index_lifecycle_throughput.rs` (modified, +267/-9)
+**File**: `docs/foundry/agents/query-from-agents.mdx` (added, +172/-0)
 ```diff
-@@ -1,26 +1,35 @@
- //! Runtime-only throughput policy for index lifecycle work.
- //!
--//! This policy controls source-scan prefetching and worker concurrency. It is
--//! never serialized into lifecycle records or physical index rows.
-+//! This policy controls source-scan prefetching, worker concurrency and the
-+//! in-memory bulk build of vector indexes. It is never serialized into
-+//! lifecycle records or physical index rows.
- //!
- //! # Usage
- //!
- //! ```
-+//! use std::num::NonZeroU64;
-+//!
- //! use db::config::{
- //!     DbConfig, IndexLifecycleConcurrency, IndexLifecycleScanTuning,
--//!     IndexLifecycleThroughputTuning,
-+//!     IndexLifecycleThroughputTuning, VectorBulkBuildMemory, VectorBulkBuildTuning,
- //! };
- //!
- //! let scan = IndexLifecycleScanTuning::try_new(64 * 1024, 2)?;
- //! let concurrency = IndexLifecycleConcurrency::try_new(2, 2, 1, 1)?;
--//! let tuning = IndexLifecycleThroughputTuning::new(scan, concurrency);
-+//! // Build vector indexes of 10,000 vectors or more in memory, on eight
-+//! // threads, while they fit 4 GiB.
-+//! let four_gib = VectorBulkBuildMemory::Bytes(NonZeroU64::new(4 << 30).unwrap());
-+//! let bulk = VectorBulkBuildTuning::try_new(8, four_gib, 10_000)?;
-+//! let tuning = IndexLifecycleThroughputTuning::new(scan, concurrency)
-+//!     .with_vector_bulk_build(bulk);
- //! let config = DbConfig::new().with_index_lifecycle_throughput_tuning(tuning);
- //!
- //! assert_eq!(config.index_lifecycle_throughput(), tuning);
-+//! assert_eq!(tuning.vector_bulk_build().memory(), four_gib);
- //! # Ok::<(), db::config::IndexLifecycleThroughputTuningError>(())
- //! ```
- 
--use std::num::NonZeroUsize;
-+use std::num::{NonZeroU64, NonZeroUsize};
- 
- const DEFAULT_SCAN_READ_AHEAD_BYTES: usize = 256 * 1024;
- const DEFAULT_SCAN_FETCH_TASKS: usize = 4;
-@@ -35,6 +44,16 @@ const DEFAULT_VECTOR_TASKS: usize = 1;
- const DEFAULT_TEXT_TASKS: usize = 1;
- const DEFAULT_TOTAL_OPERATION_TASKS: usize =
-     DEFAULT_SECONDARY_TASKS + 2 * (DEFAULT_VECTOR_TASKS + DEFAULT_TEXT_TASKS);
-+// Share of the memory ceiling an automatic bulk-build budget leaves free, for
-+// what no configured limit bounds: request buffers, thread stacks, and memory
-+// the allocator holds for the rest of the process. Serial vector builds in
-+// 3.3 and 6.7 GiB containers peaked at 2.8 and 3.0 GiB of anonymous memory, a
-+// few hundred MiB above the caches and write buffer their configuration
-+// allows.
-+const AUTOMATIC_BUDGET_HEADROOM_DIVISOR: u64 = 8;
-+// Below a few thousand vectors a serial build takes seconds, less than the
-+// extra source scan a bulk build starts with.
-+const DEFAULT_VECTOR_BULK_BUILD_MIN_VECTORS: u64 = 4096;
- 
- /// Invalid runtime throughput policy rejected before lifecycle work starts.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-@@ -204,19 +223,185 @@ impl Default for IndexLifecycleConcurrency {
-     }
- }
- 
-+/// Memory the bulk vector builds of one process may hold together.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use std::num::NonZeroU64;
-+///
-+/// use db::config::VectorBulkBuildMemory;
-+///
-+/// const GIB: u64 = 1 << 30;
-+/// // An 8 GiB container whose caches and write buffers may grow to 3 GiB
-+/// // keeps an eighth of the ceiling free and leaves bulk builds the rest.
-+/// let automatic = VectorBulkBuildMemory::Automatic;
-+/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, None), 4 * GIB);
-+/// // A process that already holds more than its configuration bounds leaves
-+/// // less, and one at its ceiling leaves nothing.
-+/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, Some(5 * GIB)), 2 * GIB);
-+/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, Some(9 * GIB)), 0);
-+/// // Without a readable ceiling nothing is known to be free.
-+/// assert_eq!(automatic.budget_bytes(None, 3 * GIB, None), 0);
-+/// // An explicit budget is taken as given, and `Off` is no budget.
-+/// let explicit = VectorBulkBuildMemory::Bytes(NonZeroU64::new(GIB).unwrap());
-+/// assert_eq!(explicit.budget_bytes(None, 3 * GIB, Some(9 * GIB)), GIB);
-+/// assert_eq!(VectorBulkBuildMemory::Off.budget_bytes(Some(8 * GIB), 0, None), 0);
-+/// ```
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
-+pub enum VectorBulkBuildMemory {
-+    /// No bulk builds: every vector build inserts serially. The default,
-+    /// because a release from before bulk builds cannot open a database, as
-+    /// its writer, while a bulk build is in progress: turn bulk builds on
-+    /// only once every process that can become the writer runs a release
-+    /// that has them.
-+    #[default]
-+    Off,
-+    /// What the process's memory ceiling leaves beside the rest of the
-+    /// process; see [`Self::budget_bytes`].
-+    Automatic,
-+    /// Exactly this much, whatever else the process holds. The operator
-+    /// answers for the sum fitting the machine.
-+    Bytes(NonZeroU64),
-+}
+@@ -0,0 +1,172 @@
++---
++title: "Query Foundry from your agents"
++description: "Have Claude Code or your own agent answer questions from a loaded Helix Foundry ontology through the Helix MCP, with every claim cited to the record, row or quote it came from"
++sidebarTitle: "Query from your agents"
++pageType: "Guide"
++---
 +
-+impl VectorBulkBuildMemory {
-+    /// Bytes bulk builds may hold together right now.
-+    ///
-+    /// `ceiling` is the process's memory 
++<div className="flex flex-wrap gap-2"><Badge color="blue" size="sm">Guide</Badge></div>
++
++Once an ontology is loaded, your agents can ask it what your people ask
++[Founder](/foundry/ask/founder), through the Helix MCP. The answer cites each
++entity, fact, row and document quote it read, so the agent can show where it came from.
++This page covers connecting an agent and the read tools it uses. To have an agent set up
++an ontology, see [Use Foundry from your agent](/foundry/agents/helix-mcp).
++
++## Connect your agent
++
++The MCP is at `https://mcp.helix-db.com/mcp` for Foundry at foundry.helix-db.com, and
++at `http://localhost:8081/mcp` for Foundry
++[on your own computer](#on-your-own-computer). Hosted, it signs you in with OAuth in your
++browser, with the account you use for Foundry, and acts with your role and rights.
++
++<Tabs>
++  <Tab title="Claude Code">
++    ```bash
++    claude mcp add --transport http helix https://mcp.helix-db.com/mcp
++    ```
++
++    Then run `/mcp` in Claude Code and sign in.
++  </Tab>
++  <Tab title="Your own agent">
++    Any MCP client that speaks streamable HTTP works, including an agent built on the
++    [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk). Add
++    `https://mcp.helix-db.com/mcp` as a remote server. A client that discovers OAuth
++    finds it at `https://mcp.helix-db.com/.well-known/oauth-protected-resource/mcp`.
++
++    An agent that runs without a person, such as a service or a CI job, sends a Helix
++    [service credential](/foundry/agents/helix-mcp#service-credentials) as
++    `Authorization: Bearer hlxs_…` instead of signing in. Keep it in the agent's
++    environment or a secret store, never in a prompt or a repository.
++  </Tab>
++</Tabs>
++
++## Ask a question
++
++A typical agent works in four steps.
++
++<Steps>
++  <Step title="Find the ontology">
++    `helix_list_workspaces` lists your workspaces. `helix_foundry_list_ontologies` lists
++    a workspace's ontologies with their current version and load.
++  </Step>
++
++  <Step title="Learn what it holds">
++    `helix_foundry_get_context` returns the ontology's schema (each type's properties,
++    key and names, and its links, rules and constraints) and the questions Foundry
++    suggests for it. It describes the version of the current load.
++  </Step>
++
++  <Step title="Ask">
++    `helix_foundry_ask` takes `workspace_id`, `ontology_id`, the `question` in plain
++    language and a `client_token`: a new UUID per question, which the agent keeps. The
++    same token returns the same question instead of asking again, so a retry is safe.
++
++```json
++{
++  "workspace_id": "<workspace id>",
++  "ontology_id": "<ontology id>",
++  "question": "Which active subscriptions come up for renewal soon, and for which accounts?",
++  "client_token": "<a new UUID>"
++}
++```
++
++    It waits up to 25 seconds. Optional fields: `thread_id` to follow up in a thread,
++    `focus` for the entity the question is about, `load_id` to ask a load other than the
++    current one, and `valid_at` (`YYYY-MM-DD`) to answer as of a past day.
++  </Step>
++
++  <Step title="Follow it to the end">
++    A question's `status` is `queued`, `running`, `answered`, `cannot_answer`, `failed` or
++    `cancelled`. Until `done` is true, call `helix_foundry_get_question` with its
++    `question_id`; each call waits up to 25 seconds. `result` holds the answer and its
++    citations. `helix_foundry_cancel_question` stops one that no longer matters.
++  </Step>
++</Steps>
++
++`helix_foundry_list_questions` lists an ontology's questions, newest first, with the
++workspace's question budget. Questions asked through the MCP count against the same
++hourly limit and monthly budget as questions asked in Foundry; see
++[Limits and spending](/foundry/ask/ask-questions#limits-and-spending).
++
++<Note>
++  An answer is built from your data, and your data can hold anything. The tools mark
++  what they return as untrusted content. Have your agent treat it as data, never as
++  instructions.
++</Note>
++
++## Read exact records
++
++For exact lookups, rather than a question in plain language, the agent reads the graph
++itself. `helix_foundry_read_guide` returns the reads it can make and their JSON Schema.
++`helix_foundry_read_graph` makes 1 to 20 of them per call: typed queries over entities
++and facts, the evidence and source behind a fact, why a derived fact holds, and rule
++breaks. An entity is named by its id, its key's values, such as
++`{"type": "Account", "key": "ACC-1023"}`, or a name.
++
++An answer's queries come without their rows. To see the rows behind one of its charts or
++tables, the agent reads that query again with `helix_foundry_read_graph`, on the
++question's `l
 ```
 
-**File**: `crates/db/src/config/mod.rs` (modified, +2/-2)
+**File**: `docs/foundry/reference/security-and-data.mdx` (added, +170/-0)
 ```diff
-@@ -25,10 +25,10 @@ pub use db::{
-     DbConfig, EdgeEncoding, EdgeUpdatePolicy, HelixConfig, OpenAttribution, QueryTelemetry,
- };
- pub use definition_differences::{DefinitionDifference, NonEmptyDefinitionDifferences};
--pub use host_memory::memory_ceiling_bytes;
-+pub use host_memory::{memory_ceiling_bytes, resident_anonymous_bytes};
- pub use index_lifecycle_throughput::{
-     IndexLifecycleConcurrency, IndexLifecycleScanTuning, IndexLifecycleThroughputTuning,
--    IndexLifecycleThroughputTuningError,
-+    IndexLifecycleThroughputTuningError, VectorBulkBuildMemory, VectorBulkBuildTuning,
- };
- pub use index_operation_queue::{
-     IndexOperationQueueTuning, IndexOperationQueueTuningError, QueueLayout,
+@@ -0,0 +1,170 @@
++---
++title: "Security and data handling"
++description: "What Helix Foundry stores, how it seals credentials, why connectors only read, what reaches AI model providers and how to keep it local, what else it sends, who can read what, and how the local install stays on 127.0.0.1"
++sidebarTitle: "Security and data"
++pageType: "Reference"
++---
++
++<div className="flex flex-wrap gap-2"><Badge color="gray" size="sm">Reference</Badge></div>
++
++This page says what Foundry keeps, where your credentials live, what leaves it and who
++can read what. It covers both Foundry at foundry.helix-db.com and the open-source install
++on your own computer; where they differ, it says so. For Helix Cloud databases, see
++[Helix Cloud security](/database/helix-cloud/operate/security).
++
++## What Foundry stores
++
++| What | Where it's kept |
++| --- | --- |
++| Workspaces, connections and their sealed credentials, ontologies, versions, loads, questions, review decisions, Founder chats, dashboards and workflows | Foundry's database (MySQL) |
++| Each sync's snapshot of a connection's tables, and the documents you upload | Foundry's object store |
++| What each load writes: entities, facts, and where each came from | The ontology's Helix database |
++
++A sync's snapshot replaces the one before it. A load is a complete copy written beside
++earlier loads, so you can compare them; see [Load data](/foundry/ontologies/load-data).
++Deleting an ontology removes what its loads wrote and leaves the database's other data
++in place. Foundry never deletes a Helix database.
++
++On your own computer, these are Docker Compose volumes: `mysql`, `storage` (the object
++store, SeaweedFS), `helix` (HelixDB), `work` (the workers' working files), `secrets`,
++and `ollama` (the local models, with the `ollama` profile). `docker compose down` keeps
++them; `docker compose down -v` deletes them all. See the
++install's [backup and restore](https://github.com/helixdb/helix-foundry/blob/main/local/README.md#back-up-and-restore).
++
++## Credentials
++
++- **Entered in Foundry, never through an agent.** Database passwords and API keys are
++  entered in Foundry's **Add data** form. An agent on the
++  [Helix MCP](/foundry/agents/helix-mcp#connectors-stay-on-the-website) gets a link to
++  that form, never the credential, and Foundry's tools never return one.
++- **Sealed at rest.** Foundry seals each connector credential, and each AI provider key
++  entered under [AI models](/foundry/workspace/ai-models), with AES-256-GCM under the
++  deployment's connector key. Each sealed value is bound to the row it belongs to, so a
++  copy moved to another connection or workspace doesn't open. Hosted, new values use the
++  current key and values sealed under the previous one still open, so Helix can rotate
++  it. The local install's key is written once and never rotated.
++- **Not shown again.** Foundry keeps a key encrypted and never shows it again.
++- **On your own computer**, the first start writes the install's secrets, the connector
++  key among them, into the `secrets` volume. Nothing is printed or written to the
++  checkout. Whoever holds that volume and the data can open every credential, so keep a
++  backup of it encrypted, or apart from the rest. Losing it makes the credentials
++  unreadable. An `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` passed from your shell is never
++  stored or logged.
++
++## Connectors only read
++
++Foundry never writes to your sources:
++
++- **Databases.** Create a user with `SELECT` on the tables Foundry reads; each
++  connector's form gives the SQL. PostgreSQL and MySQL reads run in read-only
++  transactions. Change capture also needs the right to read the database's change log:
++  `REPLICATION` on PostgreSQL (`rds_replication` on Amazon RDS and Aurora), and
++  `REPLICATION SLAVE, REPLICATION CLIENT` on MySQL. With PostgreSQL change capture,
++  Foundry keeps a replication slot named `helix_foundry_<connection>` on the database,
++  which it creates and drops itself; it changes no table.
++- **Apps.** Foundry only calls their read endpoints, and each connector's setup asks for
++  read-only scopes where the provider offers them, such as a restricted Stripe key or
++  read-only Google scopes. See [Connectors](/foundry/data/connectors) for each one's
++  scopes.
++- **API sources** take what your apps and agents send; Foundry reads nothing from them.
++
++## What reaches AI model providers
++
++| Task | What is sent |
++| --- | --- |
++| Generating a draft | Your synced tables, and up to five of the newest documents of each set the generation picks |
++| Reading documents in a load | Their text, to find and check the names and facts they hold |
++| Reading tables in a load | Nothing: tables load without AI models |
++| Answering a question | The question, and what each step reads from the load |
++| Talking to Founder | Your messages, and what its steps read from the load |
++
++Hosted, these run on Anthropic's Claude models through Helix by default. On Pro or Max,
++an ow
+```
+
+**File**: `docs/foundry/start-here/introduction.mdx` (modified, +29/-2)
+```diff
+@@ -1,12 +1,34 @@
+ ---
+ title: "What is Helix Foundry?"
+-description: "Helix Foundry connects your company's data, drafts an ontology across it, and loads it into a Helix database you can explore"
++description: "Helix Foundry connects the systems your company runs into one ontology, so your people and agents answer questions across them, with every answer cited to its source"
+ sidebarTitle: "Introduction"
+ pageType: "Concept"
+ ---
+ 
+ <div className="flex flex-wrap gap-2"><Badge color="purple" size="sm">Concept</Badge></div>
+ 
++What your company knows is split across the systems it runs on: the database, billing,
++support, contracts and call notes. People spend their time hunting across them. Agents
++draft answers they can't finish. And revenue slips between the tools: a renewal at risk
++shows only when you read the invoice, the usage, the tickets and the last call together.
++
++Foundry connects the systems you run into one ontology, so your people and agents make
++better calls, move faster and catch the revenue that slips between tools, with every
++answer cited to its source. It's open source, under Apache 2.0.
++
++- **Connected.** One graph across your systems, with the same customer matched across
++  them.
++- **Cited.** Every answer traces to the row or quote it came from.
++- **Yours.** Open source. Run it on your own computer with the AI provider you choose,
++  or a local model.
++- **Agent-ready.** Your agent sets it up with you through the
++  [Helix MCP](/foundry/agents/helix-mcp).
++
++Search finds what looks relevant. Foundry follows what's connected; see
++[Why an ontology instead of RAG](/foundry/start-here/ontology-vs-rag).
++
++## How it works
++
+ Helix Foundry turns the tools your company runs on into one connected graph. Connect
+ sources such as Stripe or your PostgreSQL database, send it your app's or agent's own
+ data, upload the documents your tables don't cover, let Foundry's agent draft an
+@@ -16,7 +38,9 @@ ontologies refresh when their data changes.
+ 
+ Foundry runs at [foundry.helix-db.com](https://foundry.helix-db.com), and your agents
+ reach it through the [Helix MCP](/foundry/agents/helix-mcp). Sign in with the account
+-you use for Helix Cloud; your workspaces come with it.
++you use for Helix Cloud; your workspaces come with it. To run it on your own computer
++instead, start it from its
++[repository](https://github.com/helixdb/helix-foundry) with Docker Compose.
+ 
+ <Frame caption="The whole path in two minutes: synced data, a generated draft, a load, the Explorer and a first answer.">
+   <video controls muted playsInline preload="none" poster="https://assets.helix-db.com/docs/foundry/start-here/tour-poster.png" className="w-full" src="https://assets.helix-db.com/docs/foundry/start-here/tour.webm"></video>
+@@ -109,4 +133,7 @@ generation attempt has a spending cap of its own.
+   <Card title="Send data from your app" icon="code" href="/foundry/data/api-sources">
+     Push pieces of data to an API source.
+   </Card>
++  <Card title="Run a pilot" icon="flag-checkered" href="/foundry/use-cases/run-a-pilot">
++    Answer five business questions on your own data.
++  </Card>
+ </CardGroup>
+```
+
+**File**: `docs/foundry/start-here/ontology-vs-rag.mdx` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++---
++title: "Why an ontology instead of RAG"
++description: "Search finds what looks relevant; Helix Foundry's ontology follows what's connected. How matching records across sources, keeping every value's source and reviewing conflicts answer questions retrieval can't"
++sidebarTitle: "Why an ontology"
++pageType: "Concept"
++---
++
++<div className="flex flex-wrap gap-2"><Badge color="purple" size="sm">Concept</Badge></div>
++
++Search finds what looks relevant. Foundry follows what's connected.
++
++[Retrieval-augmented generation](/learn/ai-memory/what-is-rag) (RAG) answers a question
++by finding the passages that look most like it and handing them to a model. That works
++when the answer sits in a passage. Most business questions don't: their answer is
++spread across tables and documents, and only the links between records hold it. This
++page explains what Foundry's ontology adds.
++
++## Questions that span systems
++
++Take "Which renewals are at risk in the next 90 days, and why?" on the
++[sample company](/foundry/use-cases/sample-company#renewal-risk). The answer needs a
++subscription's term end, its unpaid invoice, a fall in usage and two open tickets, from
++four tables, and a call note that says the champion is leaving. Few of
++those rows contain the word "renewal", and none of them says "at risk".
++
++Search ranks passages by how close they are to the question, so it returns the ones
++that talk about renewals. An ontology starts from the subscriptions whose term ends
++soon and follows their links: to the account, its invoices, its usage, its tickets and
++its calls. It reads what is connected, whether or not it looks like the question.
++
++| | Search over passages | Foundry's ontology |
++| --- | --- | --- |
++| What it reads | The passages most like the question | The records the question's types and links reach |
++| Counts and totals | What the passages it found happen to mention | Queries over the records of a type, within read limits |
++| The same customer in two systems | Two unrelated passages | One entity, matched by its key, email or ID |
++| Where an answer came from | The passages it was given | The row or quote behind each value and link |
++
++## One entity across sources
++
++An ontology names the kinds of things in your business, their properties, how they
++link and the rules they follow. A [load](/foundry/ontologies/load-data) writes your
++tables and documents into it as entities:
++
++- **Tables** become entities by their keys. The sample's `contacts` and
++  `support_tickets` rows link to the same `Account` because they carry its
++  `account_id`.
++- **Documents** are read for the names and facts they hold. A call note that names an
++  account, a contact's email or a ticket number is matched to the record the tables
++  made, so its facts land on that record, not beside it.
++- **Names that match nothing**, or more than one record, aren't guessed. They wait for
++  review: **Names something that isn't in your data** or **Could mean more than one
++  entity**. See [Settle a review](/foundry/explore/records-and-entities#settle-a-review).
++
++## Every value keeps its source
++
++Each value and link a load writes keeps where it came from: a table row, or a quote in
++a document. An entity's page shows each property with the row or quote that states it.
++[Founder](/foundry/ask/ask-questions)'s answers cite each record, row, quote and rule
++they used, and your agents get the same citations through the
++[Helix MCP](/foundry/agents/query-from-agents). A person can open the source of a
++claim from the answer, and an agent can show its work.
++
++A version's rules derive facts, such as the sample's `renewal_due`, and an entity's
++**Derived** tab says why each one holds.
++
++## Conflicts go to a person
++
++When documents state a value differently, or differently from a table, Foundry doesn't
++pick one silently. The value waits under **Needs review**: keep one, or replace the
++table's value with the document's. A claim the model wasn't sure of is held until
++someone approves or rejects it. Each decision is kept and applied to later loads too,
++so the same conflict isn't settled twice.
++
++## When search is enough
++
++Search is the right tool for "find the paragraph about X": a question one passage
++answers. Foundry is for questions about your customers, accounts, contracts and
++operations, whose answers are in the links between records in different systems.
++
++## Next steps
++
++<CardGroup cols={2}>
++  <Card title="Use cases on the sample company" icon="lightbulb" href="/foundry/use-cases/sample-company">
++    Four business questions, and what answers them.
++  </Card>
++  <Card title="Records and entities" icon="table" href="/foundry/explore/records-and-entities">
++    Read each value's source, and settle reviews.
++  </Card>
++</CardGroup>
+```
+
+**File**: `docs/foundry/use-cases/run-a-pilot.mdx` (added, +190/-0)
+```diff
+@@ -0,0 +1,190 @@
++---
++title: "Run a Foundry pilot on your own data"
++description: "A checklist your coding agent can follow to run open-source Helix Foundry on a machine you control, connect your sources, build and review an ontology, and answer five agreed business questions with citations, ending in a short value report"
++sidebarTitle: "Run a pilot"
++pageType: "Tutorial"
++---
++
++<div className="flex flex-wrap gap-2"><Badge color="green" size="sm">Tutorial</Badge></div>
++
++A pilot answers five questions your business cares about, on your own data, with every
++answer cited to its source. This checklist runs it on open-source Foundry, on a machine
++you control, and is written so your coding agent can follow it with you. It ends with a
++short value report.
++
++Foundry's open-source install runs on one computer with Docker Compose, for one person,
++and listens on that computer's loopback only. There is no multi-user deployment for
++your own cloud yet. To run a pilot with Helix, email
++[founders@helix-db.com](mailto:founders@helix-db.com).
++
++## Before you start
++
++Agree five questions before anything is installed. Each should be tied to money or
++time, and each should need more than one system to answer. For each, write down:
++
++- **The question**, as someone would ask it.
++- **Who asks it today**, how often, and how long an answer takes them.
++- **What it's worth**: revenue kept or found, or hours saved.
++- **The sources that hold the answer**: which databases, apps and documents.
++
++[Use cases on the sample company](/foundry/use-cases/sample-company) shows four such
++questions. Then check the machine has Docker with Compose v2, ports 3000, 8333 and 8081
++free, and room for a few GB of images. To run the bundled Ollama, give Docker at least
++10 GB of memory.
++
++## The checklist
++
++<Steps>
++  <Step title="Start Foundry">
++    Paste this into your coding agent:
++
++    ```text
++    Set up Helix Foundry on this computer.
++
++    Clone https://github.com/helixdb/helix-foundry.git (or use the copy I
++    already have), then follow its README.md and local/README.md to start it
++    with Docker Compose and check that it is up. Ask me before deleting data,
++    removing Docker volumes or stopping anything that is already running.
++    When it is ready, give me the URL and tell me what to do next.
++    ```
++
++    Or run it yourself:
++
++    ```bash
++    git clone https://github.com/helixdb/helix-foundry.git
++    cd helix-foundry
++    docker compose up -d --wait
++    ```
++
++    Open `http://localhost:3000`. Foundry opens on **My workspace**, with no sign-in.
++  </Step>
++
++  <Step title="Choose where AI runs">
++    Drafting, reading documents and answering run on an AI provider. To keep your data
++    on the machine, run Ollama beside Foundry with
++    `docker compose --profile ollama up -d --wait`, and set `FOUNDRY_AI_PROVIDER=ollama`
++    in `local/.env`: otherwise a key in the shell is picked first. Small local models
++    may stop a draft early. Otherwise Foundry uses the
++    `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` of the shell that started it, or a provider
++    you choose in **Settings › AI models**. See
++    [what reaches AI model providers](/foundry/reference/security-and-data#what-reaches-ai-model-providers).
++
++    To send no usage analytics either, set `FOUNDRY_TELEMETRY=off` in `local/.env` and
++    run `docker compose up -d` again.
++  </Step>
++
++  <Step title="Connect your agent to Foundry">
++    Load the install's owner token into the agent's environment, without printing it,
++    and add the local MCP at `http://localhost:8081/mcp`. See
++    [Query from your agents](/foundry/agents/query-from-agents#on-your-own-computer).
++    In Foundry, **Set up with your agent** copies a prompt that carries the workspace
++    and the steps left.
++  </Step>
++
++  <Step title="Connect the sources">
++    For each source the questions need, create a read-only credential at the source:
++    a `SELECT`-only database user, or a read-only key. Each connector's form gives the
++    steps; see [Connectors](/foundry/data/connectors).
++
++    The person enters credentials in Foundry, never in the chat:
++    `helix_foundry_connect` gives the agent a link to the form. Once a connection is
++    saved, the agent syncs it with the `sync_connector` operation and follows
++    `helix_foundry_get_sync`. Upload documents, such as contracts and call notes, into a
++    set with `create_document_set` and `upload_document`, or select **Upload documents**
++    in Connectors.
++  </Step>
++
++  <Step title="Generate the ontology">
++    Write a goal that names the five questions, and agree which connections and document
++    sets it reads. The agent creates the ontology with `create_ontology`, then asks for a
++    draft with `generate_ontology`, and follows `helix_foundry_get_generation` until it
++    ends. Every change goes through `helix_foundry_prepare_operation`, your confirmation,
++    then `helix_foundry_execute_operation`.
++  </Step>
++
++  <Step ti
+```
+
+**File**: `docs/foundry/use-cases/sample-company.mdx` (added, +166/-0)
+```diff
+@@ -0,0 +1,166 @@
++---
++title: "Use cases on the sample company"
++description: "Four questions worth money or time, answered from the Acme Corp sample ontology: renewal risk, account research before a call, support triage with the customer's full context, and ops questions without a data request"
++sidebarTitle: "Sample company use cases"
++pageType: "Guide"
++---
++
++<div className="flex flex-wrap gap-2"><Badge color="blue" size="sm">Guide</Badge></div>
++
++Each use case below is one question the [sample company](/foundry/start-here/sample-company)
++answers, Acme Corp, a made-up company that sells scheduling software. For each: the
++question, the types and links of the **Acme Corp customers** ontology that answer it,
++and how to ask it in Founder or from an agent. Run the sample first, then ask along.
++
++## What the sample holds
++
++The ontology is built from six tables of Acme Corp's PostgreSQL database and nine
++documents: three contracts, call notes, a support escalation, an incident report and a
++price list.
++
++| Type | From | Key |
++| --- | --- | --- |
++| `Account` | `accounts`, plus `notice_days` and `service_credit_terms` from contracts | `account_id` |
++| `Contact` | `contacts` | `contact_id` |
++| `Subscription` | `subscriptions` | `subscription_id` |
++| `Plan` | `subscriptions.plan` | its name |
++| `Invoice` | `invoices` | `invoice_id` |
++| `Ticket` | `support_tickets` | `ticket_id` |
++| `MonthlyUsage` | `product_usage` | the account and `month` |
++| `Conversation` | Call notes and emails: `held_on`, `summary`, `risks` | its title |
++| `Commitment` | What documents say Acme Corp promised or owes: `amount_usd`, `due_on` | what it promises |
++
++Links tie them together: `subscription_of`, `contact_at`, `ticket_for` and `usage_of`
++lead to an `Account`; `invoice_for` from an `Invoice` to its `Subscription`; `on_plan`
++to a `Plan`; `requested_by` from a `Ticket` to its `Contact`. From the documents,
++`conversation_with`, `attended_by`, `discussed` and `promised_to` tie conversations and
++commitments to accounts, contacts and tickets. The rule `renewal_due` marks a
++subscription that isn't canceled and whose term ends within 90 days.
++
++Tables and documents name the same things: a call note names an account, a contact
++and a ticket number, and the load matches them to the records the tables made. That's
++what lets one question read across all of them.
++
++## Renewal risk
++
++**What it's worth:** revenue kept. A renewal at risk shows only when you read the
++subscription, the invoices, the usage, the tickets and the last call together.
++
++**The question:**
++
++> Which renewals are at risk in the next 90 days, and why?
++
++**What answers it:**
++
++- `renewal_due` finds the subscriptions coming up, each with its `status`, `seats`,
++  `discount_pct` and `current_term_end`, and `subscription_of` gives the account.
++- `invoice_for` reaches its invoices, with their `status` and `paid_on`.
++- `usage_of` gives the account's `MonthlyUsage`, so a fall in `active_users` shows.
++- `ticket_for` gives its open tickets; `conversation_with` gives its calls, with their
++  `risks`; `notice_days` says how much notice its contract needs.
++
++In the sample, Brightmoor Facilities is the account to find. Its subscription
++`SUB-2028` is `past_due` with its term ending 30 November 2026. Invoice `INV-30350` is
++`overdue`. Its active users fell from 104 in April to 71 in September. Tickets `T-4393`
++and `T-4414` ask to cut seats and keep the discount, and the renewal call's notes say its
++champion is leaving. No single table says any of this is a risk; together they do.
++
++## Account research before a call
++
++**What it's worth:** rep time saved. The brief comes with sources, rather than a search
++across the CRM, billing, support and old notes.
++
++**The question:**
++
++> Brief me on Halvorsen Freight before my call: who they are, what they pay, how they
++> use the product, open issues and what we've promised.
++
++**What answers it:**
++
++- The `Account` and its `Contact`s through `contact_at`, with each contact's `title`
++  and `role`.
++- Its `Subscription` through `subscription_of`, with its `Plan`, `seats`,
++  `price_per_seat_usd` and `current_term_end`; its invoices through `invoice_for`.
++- Its `MonthlyUsage` over the months, and its tickets through `ticket_for`.
++- Its conversations through `conversation_with`, who took part through `attended_by`,
++  and its commitments through `promised_to`.
++
++In the sample, Halvorsen Freight is on Enterprise with 600 seats, its term ending
++31 January 2027, and had 584 active users in September. Its expansion call asks for 150
++more seats and a lower per-seat price, and its ticket `T-4402` came from the
++7 October incident.
++
++## Support triage with full customer context
++
++**What it's worth:** faster resolution. Whoever takes the ticket sees who raised it,
++what the customer pays for, what else went wrong and what was already offered.
++
++**The question:**
++
++> T-4404 is urgent. Who raised it, what's the c
 ```
 
 ---
 
-### Incident Patch 2: `7d6807d6` (2026-11-22)
-**Commit Message**: Fold where the retirer looped, and count a fenced writer's rows after its poll
+### Incident Patch 2: `bc80886e` (2026-11-22)
+**Commit Message**: Correct the Foundry security page's privileges, analytics and public links
 
-Three loops of the last commits become folds: the tables a compaction
-would discard rows from, the blocks an entry's prefixes share, and the
-ranges that overlap. No behaviour changes.
+Name the replication privileges change capture needs, say apps get read-only
+scopes where the provider offers them, name Databuddy and context.dev and what
+each receives, cover public dashboard links, the ollama volume and the
+site origin host the local MCP answers.
 
-The helper of the superseded-writer contract counted the rows left
-behind through a writer that had not yet polled its manifest, so on
-object storage it could count rows the compaction had already discarded.
-It now reads until the count has stopped falling.
-
-**File**: `crates/db/src/index_lifecycle/dropped/mod.rs` (modified, +16/-18)
+**File**: `docs/foundry/reference/security-and-data.mdx` (modified, +31/-17)
 ```diff
-@@ -1226,25 +1226,23 @@ impl Registry {
-     /// for the entries whose gate is at or below `retention`: the rows a
-     /// compaction planned now would discard.
-     pub(crate) fn discardable_tracked(&self, retention: u64) -> HashMap<TableId, u64> {
--        let state = self.state.lock();
--        let mut tracked = HashMap::new();
--        for state in state.entries.values() {
--            let Entry::Armed(Armed {
--                gate,
--                proof: Proof::Tracking { tables },
--                ..
--            }) = state
--            else {
--                continue;
--            };
--            if *gate > retention {
--                continue;
--            }
--            for (table, bytes) in tables.tables() {
-+        self.state
-+            .lock()
-+            .entries
-+            .values()
-+            .filter_map(|state| match state {
-+                Entry::Armed(Armed {
-+                    gate,
-+                    proof: Proof::Tracking { tables },
-+                    ..
-+                }) if *gate <= retention => Some(tables),
-+                Entry::Armed(_) | Entry::Quarantined(_) => None,
-+            })
-+            .flat_map(|tables| tables.tables())
-+            .fold(HashMap::new(), |mut tracked, (table, bytes)| {
-                 *tracked.entry(*table).or_default() += bytes;
--            }
--        }
--        tracked
-+                tracked
-+            })
-     }
+@@ -1,6 +1,6 @@
+ ---
+ title: "Security and data handling"
+-description: "What Helix Foundry stores, how it seals credentials, why connectors only read, what reaches AI model providers and how to keep it local, who can read what, and how the local install stays on 127.0.0.1"
++description: "What Helix Foundry stores, how it seals credentials, why connectors only read, what reaches AI model providers and how to keep it local, what else it sends, who can read what, and how the local install stays on 127.0.0.1"
+ sidebarTitle: "Security and data"
+ pageType: "Reference"
+ ---
+@@ -26,8 +26,9 @@ Deleting an ontology removes what its loads wrote and leaves the database's othe
+ in place. Foundry never deletes a Helix database.
  
-     /// Whether a table some armed entry's proof tracks is missing from
-```
-
-**File**: `crates/db/src/index_lifecycle/dropped/reclaim.rs` (modified, +4/-3)
-```diff
-@@ -39,7 +39,7 @@
- //! says so:
- //!
- //! - the run is at most a gibibyte, which one compaction slot rewrites in
--//!   seconds; or
-+//!   about a quarter of a minute; or
- //! - the dropped rows are at least an eighth of it.
- //!
- //! Dropped rows in any other run are *left in place*
-@@ -113,8 +113,9 @@ pub(crate) struct Worth {
- impl Worth {
-     /// The rule a writer follows by itself. Contracts make smaller ones.
-     ///
--    /// One compaction slot rewrites a gibibyte in a few seconds, so for a
--    /// run that small retiring the entry is worth it by itself.
-+    /// One compaction slot rewrites a gibibyte in about a quarter of a
-+    /// minute against object storage, so for a run that small retiring the
-+    /// entry is worth it by itself.
-     ///
-     /// For a larger run: a rewritten byte costs its read and its write, and
-     /// a second copy in object storage until the old tables are collected,
-```
-
-**File**: `crates/db/src/index_lifecycle/dropped/retire.rs` (modified, +25/-21)
-```diff
-@@ -270,14 +270,15 @@ fn blocks_under(from: usize, to: usize) -> std::ops::Range<usize> {
- /// `ranges`, which are in the order of their starts, with those that
- /// overlap joined: every block they cover, once.
- fn disjoint(ranges: Vec<std::ops::Range<usize>>) -> Vec<std::ops::Range<usize>> {
--    let mut joined = Vec::<std::ops::Range<usize>>::with_capacity(ranges.len());
--    for range in ranges {
--        match joined.last_mut() {
--            Some(last) if range.start <= last.end => last.end = last.end.max(range.end),
--            Some(_) | None => joined.push(range),
--        }
--    }
--    joined
-+    ranges
-+        .into_iter()
-+        .fold(Vec::<std::ops::Range<usize>>::new(), |mut joined, range| {
-+            match joined.last_mut() {
-+                Some(last) if range.start <= last.end => last.end = last.end.max(range.end),
-+                Some(_) | None => joined.push(range),
-+            }
-+            joined
-+        })
- }
+ On your own computer, these are Docker Compose volumes: `mysql`, `storage` (the object
+-store, SeaweedFS), `helix` (HelixDB), `work` (the workers' working files) and `secrets`.
+-`docker compose down` keeps them; `docker compose down -v` deletes them all. See the
++store, SeaweedFS), `helix` (HelixDB), `work` (the workers' working files), `secrets`,
++and `ollama` (the local models, with the `ollama` profile). `docker compose down` keeps
++them; `docker compose down -v` deletes them all. See the
+ install's [backup and restore](https://github.com/helixdb/helix-foundry/blob/main/local/README.md#back-up-and-restore).
  
- /// Decides [`Held`] from a table's block index: `before` blocks have an
-@@ -639,19 +640,22 @@ impl Retirer {
-         let offset = |block| index.get(block).map_or(data_end, |(offset, _)| offset);
-         // The blocks of each held entry, in key order. Two prefixes of one
-         // entry can share a block, which counts once.
--        let mut blocks = HashMap::<_, Vec<std::ops::Range<usize>>>::new();
--        for (prefix, entry) in overlapping(prefixes, first, last) {
--            if !held.contains(&entry) {
--                continue;
--            }
--            let from = index.partition_point(|start| start < &prefix[..]);
--            let to = index
--                .partition_point(|start| start < &prefix[..] || start.starts_with(&prefix[..]));
--            blocks
--                .entry(entry)
--                .or_default()
--                .push(blocks_under(from, to));
--        }
-+        let blocks = overlapping(prefixes, first, last)
-+            .filter(|(_, entry)| held.contains(entry))
-+            .fold(
-+                HashMap::<_, Vec<std::ops::Range<usize>>>::new(),
-+                |mut blocks, (prefix, entry)| {
-+                    let from = index.partition_point(|start| start < &prefix[..]);
-+                    let to = index.partition_point(|start| {
-+                        start < &prefix[..] || start.starts_with(&prefix[..])
-+                    });
-+                    blocks
-+                        .entry(entry)
-+                        .or_default()
-+                        .push(blocks_under(from, to));
-+                    blocks
-+                },
-+            );
-         Ok(blocks
-             .into_iter()
-             .map(|(entry, blocks)| {
-```
-
-**File**: `crates/db/tests/unit/dropped_storage_reclaim.rs` (modified, +16/-5)
-```diff
-@@ -3683,11 +3683,22 @@ async fn supersede(
-     compact_every_table(&db).await;
-     assert_eq!(pass(&db).await, DroppedIndexStorage::default());
-     assert_eq!(stored_entries(&db).await, vec![]);
--    let rows_left_behind = rows(writer(&db).db())
--        .await
--        .into_keys()
--        .filter(|key| prefixes.iter().any(|prefix| key.starts_with(prefix)))
--        .count();
-+    let owned = || async {
-+        rows(writer(&db).db())
-+            .await
-+            .into_keys()
-+            .filter(|key| prefixes.iter().any(|prefix| key.starts_with(prefix)))
-+            .count()
-+    };
-+    // A writer applies the result of its compactor's job at its next
-+    // manifest poll, so rows a job discarded stay readable for a moment:
-+    // rows are left behind only if they are still there well after it.
-+    let mut rows_left_behind = owned().await;
-+    let read = Instant::now();
-+    while rows_left_behind > 0 && read.elapsed() < WAIT / 4 {
-+        tokio::time::sleep(SETTLE).await;
-+        rows_left_behind = owned().await;
-+    }
-     db.close().await.expect("the writer closes");
-     Superseded {
-         ran_under_the_superseded_writer,
+ ## Credentials
+@@ -53,12 +54,16 @@ install's [backup and restore](https://github.com/helixdb/helix-foundry/blob/mai
+ 
+ Foundry never writes to your sources:
+ 
+-- **Databases.** Create a user with `SELECT` only; each connector's form gives the SQL.
+-  PostgreSQL and MySQL reads run in read-only transactions. With PostgreSQL change
+-  capture, Foundry keeps a replication slot named `helix_foundry_<connection>` on the
+-  database, which it creates and drops itself; it changes no table.
+-- **Apps.** Each connector asks for read access only, such as a restricted Stripe key
+-  or read-only Google scopes. See [Connectors](/foundry/data/connectors) for each one's
++- **Databases.** Create a user with `SELECT` on the tables Foundry reads; each
++  connector's form gives the SQL. PostgreSQL and MySQL reads run in read-only
++  transactions. Change capture also needs the right to read the database's change log:
++  `REPLICATION` on PostgreSQL (`rds_replication` on Amazon RDS and Aurora), and
++  `REPLICATION SLAVE, REPLICATION CLIENT` on MySQL. With PostgreSQL change capture,
++  Foundry keeps a replication slot named `helix_foundry_<connection>` on the database,
++  which it creates and drops itself; it changes no table.
++- **Apps.** Foundry only calls their read endpoints, and each connector's setup asks for
++  read-only scopes where the provider offers them, such as a restricted Stripe key or
++  read-only Google scopes. See [Connectors](/foundry/data/connectors) for each one's
+   scopes.
+ - **API sources** take what your apps and agents send; Foundry reads nothing from them.
+ 
+@@ -94,13 +99,18 @@ helper is revoked.
+ 
+ ## Other outbound traffic
+ 
+-- **Usage analytics.** The open-source install's site and its HelixDB tell Helix,
+-  anonymously, how Foundry is used: page paths with ids taken out, steps such as a load
+-  being ready, and each query's shape with values taken out. They send no data,
+-  documents, questions, answers, names or emails. Set `FOUNDRY_TELEMETRY=off` (or
+-  `DO_NOT_TRACK=1`) in `local/.env` to turn it off.
+-- **People enrichment** looks up the people a load holds with an outside provider. Only
+-  an owner can allow it. The open-source install has none.
++- **Usage analytics, hosted.** Foundry's site sends Databuddy (databuddy.cc) the pages
++  you open, the steps you take, errors and session replays, under your account's name
++  and email. Replays mask the page's text and what you type.
++- **Usage analytics, on your own computer.** The install's site and its HelixDB tell
++  Helix, anonymously, how Foundry is used: page paths with ids taken out, steps such as
++  a load being ready, and each query's shape with values taken out. The site sends its
++  part on to Databuddy. They send no data, documents, questions, answers, names or
++  emails. Set `FOUNDRY_TELEMETRY=off` (or `DO_NOT_TRACK=1`) in `local/.env` to turn it
++  off.
++- **People enrichment**, hosted, sends context.dev the email or LinkedIn profile of each
++  person a load holds, and adds the profile it finds. Only an owner can allow it. The
++  open-source install has none.
+ 
+ ## Who can read what
+ 
+@@ -117,6 +127,10 @@ Hosted, a workspace has owners, admins and members; see
+   for five minutes, and bound to that operation, its target and its exact payload.
+ - Tool results are marked as untrusted data, so agents treat what your sources say as
+   data, never as instructions.
++- Owners and admins can publish a dashboard to a public link, which anyone with the
++  link can read without signing in. It holds a snapshot of the tile outputs, can end
++  after 7, 30 or 90 days, and can be unpublished. An owner can turn public links off f
 ```
 
 ---
 
-### Incident Patch 3: `fb9ce75d` (2026-11-23)
-**Commit Message**: Weigh every prefix a table can hold rows under, whoever the table starts under
+### Incident Patch 3: `45cf61bc` (2026-11-25)
+**Commit Message**: Say Founder for the Analyst, and correct the Foundry security page's enrichment, Ollama, key rotation and Slack notes
 
-The byte estimate skipped the prefixes of an entry that sort strictly
-inside a table once the table started or ended under another prefix of
-the same entry. A partitioned vector generation, whose physical indexes
-lie side by side, was counted about half its rows on a 68 GiB run, and
-the idle reclaim left a run that was worth rewriting.
-
-Every prefix the table can hold a row under is weighed now. One with an
-index key under it counts those blocks; the one the table starts under
-counts from the first block, whose shortened index key says nothing; one
-without rows adds nothing; and one whose rows all lie inside a block that
-begins with another owner's row is read only to decide whether its entry
-is held, so the estimate is short by less than a block there and never
-long. Contracts pin each case on a table built row by row.
-
-**File**: `crates/db/src/index_lifecycle/dropped/retire.rs` (modified, +30/-34)
+**File**: `docs/foundry/agents/query-from-agents.mdx` (modified, +3/-3)
 ```diff
-@@ -597,71 +597,67 @@ impl Retirer {
-         match whole {
-             // Every row of the table is the entry's.
-             Some((_, entry)) => Ok(HashMap::from([(entry, sst.estimate_size())])),
--            None => self.held_in_part(sst, prefixes, ends, inside).await,
-+            None => self.held_in_part(sst, prefixes, ends).await,
-         }
-     }
+@@ -7,8 +7,8 @@ pageType: "Guide"
  
-     /// [`Self::held`] for a table that reaches a prefix without lying wholly
--    /// under one: `ends` own a prefix the table starts or ends under, and
--    /// `inside` are the prefixes of other entries that sort strictly inside
--    /// it.
-+    /// under one: `ends` own a prefix the table starts or ends under.
-     ///
-     /// The estimate counts, for each prefix found to have rows in the table,
--    /// the blocks those rows are in: exact to one block at each end. A
--    /// prefix with no row in the table adds nothing; neither does one whose
--    /// only rows are inside a block this had no need to read, because its
--    /// entry was already known to be held.
-+    /// the blocks those rows are in: exact to one block at each end. Every
-+    /// prefix the table can hold a row under is weighed, those of an entry
-+    /// in `ends` included. A prefix with no row in the table adds nothing.
-+    /// Neither does one whose rows all lie inside a block that begins with
-+    /// another owner's row, when its entry is known to be held without it:
-+    /// that block is not read, so the estimate is short by less than a block
-+    /// for each such prefix, and never long.
-     async fn held_in_part(
-         &self,
-         sst: &SsTableHandle,
-         prefixes: &BTreeMap<Bytes, DroppedGeneration>,
-         ends: HashSet<DroppedGeneration>,
--        inside: Vec<(&Bytes, DroppedGeneration)>,
-     ) -> Result<HashMap<DroppedGeneration, u64>> {
-         let first = sst.info.first_entry.as_deref();
-         let last = sst.info.last_entry.as_deref();
-         let file = self.tables.open_with_handle(sst.clone())?;
-         let index = file.index().await?;
--        // Blocks `from..to` have an index key under the prefix.
--        let under = |prefix: &[u8]| {
--            (
--                index.partition_point(|start| start < prefix),
--                index.partition_point(|start| start < prefix || start.starts_with(prefix)),
--            )
--        };
-         // The blocks each entry is known to have rows in, one range for
-         // each of its prefixes found there.
-         let mut blocks = HashMap::<DroppedGeneration, Vec<std::ops::Range<usize>>>::new();
--        // A prefix the table starts or ends under has rows in it.
--        for (prefix, entry) in overlapping(prefixes, first, last).filter(|(prefix, _)| {
--            first.is_some_and(|first| first.starts_with(prefix))
--                || last.is_some_and(|last| last.starts_with(prefix))
--        }) {
--            let (from, to) = under(prefix);
--            blocks
--                .entry(entry)
--                .or_default()
--                .push(blocks_under(from, to));
--        }
-+        // The blocks only a read can decide, with the prefixes it decides.
-         let mut in_blocks = BTreeMap::<usize, Vec<(&Bytes, DroppedGeneration)>>::new();
--        for (prefix, entry) in inside {
--            let (from, to) = under(prefix);
--            match held_by_index(prefix, from, index.get(from).map(|(_, start)| start)) {
-+        for (prefix, entry) in overlapping(prefixes, first, last) {
-+            // Blocks `from..to` have an index key under the prefix.
-+            let from = index.partition_point(|start| start < &prefix[..]);
-+            let to = index
-+                .partition_point(|start| start < &prefix[..] || start.starts_with(&prefix[..]));
-+            // A prefix the table starts or ends under has rows in it; of any
-+            // other the block index says.
-+            let starts_under = first.is_some_and(|first| first.starts_with(prefix));
-+            let ends_under = last.is_some_and(|last| last.starts_with(prefix));
-+            let rows = match starts_under || ends_under {
-+                true => Held::Yes,
-+                false => held_by_index(prefix, from, index.get(from).map(|(_, start)| start)),
-+            };
-+            match rows {
-+                // The table's first row is in its first block, whatever
-+                // shortened key indexes that block.
-+                Held::Yes if starts_under => blocks.entry(entry).or_default().push(0..to.max(1)),
-                 Held::Yes => blocks
-                     .entry(entry)
-                     .or_default()
-                     .push(blocks_under(from, to)),
-                 Held::No => {}
-+                // Held whatever the block has: it is not read for this.
-+                Held::InBlock(_) if ends.contains(&entry) => {}
-                 Held::InBlock(block) => in_blocks.entry(block).or_default().push((prefix, entry)),
-             }
-         }
-         // Imperative: each block is read only while one of it
+ <div className="flex flex-wrap gap-2"><Badge color="blue" size="sm">Guide</Badge></div>
+ 
+-Once an ontology is loaded, your agents can ask it what your people ask the
+-[Analyst](/foundry/ask/ask-questions), through the Helix MCP. The answer cites each
++Once an ontology is loaded, your agents can ask it what your people ask
++[Founder](/foundry/ask/founder), through the Helix MCP. The answer cites each
+ entity, fact, row and document quote it read, so the agent can show where it came from.
+ This page covers connecting an agent and the read tools it uses. To have an agent set up
+ an ontology, see [Use Foundry from your agent](/foundry/agents/helix-mcp).
+@@ -86,7 +86,7 @@ A typical agent works in four steps.
+ 
+ `helix_foundry_list_questions` lists an ontology's questions, newest first, with the
+ workspace's question budget. Questions asked through the MCP count against the same
+-hourly limit and monthly budget as the Analyst's; see
++hourly limit and monthly budget as questions asked in Foundry; see
+ [Limits and spending](/foundry/ask/ask-questions#limits-and-spending).
+ 
+ <Note>
 ```
 
-**File**: `crates/db/tests/unit/dropped_storage_reclaim.rs` (modified, +92/-40)
+**File**: `docs/foundry/reference/security-and-data.mdx` (modified, +15/-8)
 ```diff
-@@ -1314,44 +1314,32 @@ async fn a_table_wholly_under_a_prefix_counts_in_full_and_one_that_starts_under_
-     db.close().await.expect("the writer closes");
- }
+@@ -16,7 +16,7 @@ on your own computer; where they differ, it says so. For Helix Cloud databases,
  
--/// Proves a prefix of a held entry that has no row in a table adds nothing
--/// to the entry's bytes in it: an entry of one generation owns a prefix for
--/// each of the eleven record kinds, and a table that holds a row of it under
--/// one kind alone, among rows of other generations under every kind, is
--/// counted that row's block and not a block of someone else's for each of
--/// the other ten.
--#[tokio::test]
--async fn a_prefix_without_rows_adds_no_block_to_an_entrys_bytes() {
--    let db = open("dropped-retire-empty-prefixes").await;
-+/// The bytes [`Retirer::held`] counts for the one entry that owns every
-+/// prefix in `owned`, in a table of one flush that holds `rows` rows under
-+/// each given prefix and nothing else. Every row fills a block of its own,
-+/// of [`BLOCK_ROW`] bytes and a little framing.
-+async fn held_bytes_of_one_table(name: &str, rows: &[(&Bytes, usize)], owned: &[&Bytes]) -> u64 {
-+    let db = open(name).await;
-     let HelixStorage::Writer(shared) = db.storage() else {
-         panic!("the contract opens a writer");
-     };
--    let owner = |generation| OwnerKey::Generation {
--        scope: DataScope::LegacyUnscoped,
--        index_id: 7,
--        generation,
--    };
--    let dropped = owner(5).prefixes();
--    assert_eq!(dropped.len(), 11);
-     let store: Arc<dyn ObjectStore> = Arc::new(slatedb::object_store::memory::InMemory::new());
--    let path = "dropped-retire-empty-prefixes-rows".to_string();
--    let rows = slatedb::Db::builder(path.clone(), Arc::clone(&store))
-+    let path = format!("{name}-rows");
-+    let raw = slatedb::Db::builder(path.clone(), Arc::clone(&store))
-         .build()
-         .await
-         .expect("the row store opens");
--    // Each row fills a block of its own. Generations 4 and 6 have one under
--    // every kind, either side of where generation 5 would be.
--    const ROW: usize = 6000;
--    for prefix in owner(4).prefixes().into_iter().chain(owner(6).prefixes()) {
--        rows.put([&prefix[..], b"a"].concat(), vec![7u8; ROW])
-+    for (prefix, count) in rows {
-+        for row in 0..*count {
-+            raw.put(
-+                [&prefix[..], format!("{row:04}").as_bytes()].concat(),
-+                vec![7u8; BLOCK_ROW as usize],
-+            )
-             .await
-             .expect("the row writes");
-+        }
-     }
--    // Generation 5 has one row, under one kind.
--    rows.put([&dropped[4][..], b"a"].concat(), vec![7u8; ROW])
--        .await
--        .expect("the row writes");
--    rows.flush_with_options(FlushOptions {
-+    raw.flush_with_options(FlushOptions {
-         flush_type: FlushType::MemTable,
-     })
-     .await
-@@ -1369,28 +1357,92 @@ async fn a_prefix_without_rows_adds_no_block_to_an_entrys_bytes() {
-     let [table] = &tables[..] else {
-         panic!("one flush leaves one table: {}", tables.len());
-     };
--    assert!(table.estimate_size() > 23 * ROW as u64);
--    let retirer = Retirer::new(Arc::clone(shared), &path, store, SLOTS);
--    let prefixes = dropped
--        .into_iter()
--        .map(|prefix| (prefix, generation_entry(1)))
-+    let written = rows.iter().map(|(_, count)| *count as u64).sum::<u64>();
-+    assert!(table.estimate_size() > written * BLOCK_ROW);
-+    let prefixes = owned
-+        .iter()
-+        .map(|prefix| ((*prefix).clone(), generation_entry(1)))
-         .collect::<BTreeMap<_, _>>();
--    let held = retirer
-+    let held = Retirer::new(Arc::clone(shared), &path, store, SLOTS)
-         .held(table, &prefixes)
-         .await
-         .expect("the table is looked into");
-     let [(entry, bytes)] = held.into_iter().collect::<Vec<_>>()[..] else {
-         panic!("the table holds rows of the one entry");
-     };
-     assert_eq!(entry, generation_entry(1));
--    // The one block of the one row, to a few bytes of framing.
-+    raw.close().await.expect("the row store closes");
-+    db.close().await.expect("the writer closes");
-+    bytes
-+}
-+
-+/// A row larger than a block, so that it is stored in a block of its own.
-+const BLOCK_ROW: u64 = 6000;
-+
-+/// The prefix of generation `generation` of one index under one record kind:
-+/// those of consecutive generations sort next to each other.
-+fn sibling_prefix(generation: u64) -> Bytes {
-+    OwnerKey::Generation {
-+        scope: DataScope::LegacyUnscoped,
-+        index_id: 7,
-+        generation,
-+    }
-+    .prefixes()
-+    .swap_remove(4)
-+}
-+
-+/// Proves a prefix of a held entry that has no row in a table adds nothing
-+/// to the entry's bytes in it, whether or not the table starts and ends
-+/// under the entry: the block before where its rows would be belongs to
-+/// someone else.
-+#[tokio::test]
-+async fn a_prefix_without_rows_adds_no_block_to_an_entrys_bytes() {
-+    let [g2, g3, g4, g5, g6, g7, g8] = [2, 3, 4, 5, 6, 7, 8].map(sibling_prefix);
-+    // The entry has rows under on
+ | What | Where it's kept |
+ | --- | --- |
+-| Workspaces, connections and their sealed credentials, ontologies, versions, loads, questions and review decisions | Foundry's database (MySQL) |
++| Workspaces, connections and their sealed credentials, ontologies, versions, loads, questions, review decisions, Founder chats, dashboards and workflows | Foundry's database (MySQL) |
+ | Each sync's snapshot of a connection's tables, and the documents you upload | Foundry's object store |
+ | What each load writes: entities, facts, and where each came from | The ontology's Helix database |
+ 
+@@ -40,8 +40,9 @@ install's [backup and restore](https://github.com/helixdb/helix-foundry/blob/mai
+ - **Sealed at rest.** Foundry seals each connector credential, and each AI provider key
+   entered under [AI models](/foundry/workspace/ai-models), with AES-256-GCM under the
+   deployment's connector key. Each sealed value is bound to the row it belongs to, so a
+-  copy moved to another connection or workspace doesn't open. New values use the current
+-  key; values sealed under the previous key still open, so the key can be rotated.
++  copy moved to another connection or workspace doesn't open. Hosted, new values use the
++  current key and values sealed under the previous one still open, so Helix can rotate
++  it. The local install's key is written once and never rotated.
+ - **Not shown again.** Foundry keeps a key encrypted and never shows it again.
+ - **On your own computer**, the first start writes the install's secrets, the connector
+   key among them, into the `secrets` volume. Nothing is printed or written to the
+@@ -75,14 +76,18 @@ Foundry never writes to your sources:
+ | Reading documents in a load | Their text, to find and check the names and facts they hold |
+ | Reading tables in a load | Nothing: tables load without AI models |
+ | Answering a question | The question, and what each step reads from the load |
++| Talking to Founder | Your messages, and what its steps read from the load |
+ 
+ Hosted, these run on Anthropic's Claude models through Helix by default. On Pro or Max,
+ an owner can run them on the workspace's own Anthropic key instead; see
+ [AI models](/foundry/workspace/ai-models).
+ 
+ On your own computer, they run on the provider you choose: Claude, OpenAI, Azure OpenAI,
+ Amazon Bedrock, Cohere, an OpenAI-compatible server, or a local model in Ollama or LM
+-Studio. To keep everything on the machine, run Ollama beside Foundry:
++Studio. To keep everything on the machine, run Ollama beside Foundry, and either set
++`FOUNDRY_AI_PROVIDER=ollama` in `local/.env` or start it from a shell without
++`ANTHROPIC_API_KEY` or `OPENAI_API_KEY`: Foundry picks Claude, then OpenAI, before
++Ollama.
+ 
+ ```bash
+ docker compose --profile ollama up -d --wait
+@@ -92,7 +97,7 @@ Nothing sent to the bundled Ollama leaves the machine, and it listens on the ont
+ agent's loopback only. Small local models may stop drafts early. See the install's
+ [AI settings](https://github.com/helixdb/helix-foundry/blob/main/local/README.md#ai).
+ 
+-The install's Assistant can also run on the Claude Code or Codex you're signed in to.
++On your own computer, Founder can also run on the Claude Code or Codex you're signed in to.
+ Each CLI then keeps a thread's session on your computer, holding what Foundry's tools
+ answered in that thread; the helper deletes them when the thread is deleted or the
+ helper is revoked.
+@@ -108,16 +113,18 @@ helper is revoked.
+   part on to Databuddy. They send no data, documents, questions, answers, names or
+   emails. Set `FOUNDRY_TELEMETRY=off` (or `DO_NOT_TRACK=1`) in `local/.env` to turn it
+   off.
+-- **People enrichment**, hosted, sends context.dev the email or LinkedIn profile of each
+-  person a load holds, and adds the profile it finds. Only an owner can allow it. The
++- **Slack, on your own computer**, is off until you link the install to Helix in
++  **Settings › Slack**. Once linked, Founder's replies and the Slack calls they need pass
++  through Helix. `FOUNDRY_TELEMETRY` doesn't control it.
++- **People enrichment**: Helix has paused its lookups, so no person's data is sent. The
+   open-source install has none.
+ 
+ ## Who can read what
+ 
+ Hosted, a workspace has owners, admins and members; see
+ [Members and roles](/foundry/workspace/members-and-roles).
+ 
+-- Reading what a load wrote, in the Analyst, the Explorer or through an agent, needs
++- Reading what a load wrote, in Founder, the Explorer or through an agent, needs
+   **Query read** on the database's Helix project, or sources shared under
+   [Access](/foundry/workspace/access). New members have neither.
+ - Shared sources limit a member, team or agent key to the part of each ontology those
+```
+
+**File**: `docs/foundry/start-here/ontology-vs-rag.mdx` (modified, +2/-2)
+```diff
+@@ -55,8 +55,8 @@ tables and documents into it as entities:
+ 
+ Each value and link a load writes keeps where it came from: a table row, or a quote in
+ a document. An entity's page shows each property with the row or quote that states it.
+-The [Analyst](/foundry/ask/ask-questions) cites each record, row, quote and rule it
+-used, and your agents get the same citations through the
++[Founder](/foundry/ask/ask-questions)'s answers cite each record, row, quote and rule
++they used, and your agents get the same citations through the
+ [Helix MCP](/foundry/agents/query-from-agents). A person can open the source of a
+ claim from the answer, and an agent can show its work.
+ 
+```
+
+**File**: `docs/foundry/use-cases/run-a-pilot.mdx` (modified, +5/-4)
+```diff
+@@ -62,8 +62,9 @@ free, and room for a few GB of images. To run the bundled Ollama, give Docker at
+   <Step title="Choose where AI runs">
+     Drafting, reading documents and answering run on an AI provider. To keep your data
+     on the machine, run Ollama beside Foundry with
+-    `docker compose --profile ollama up -d --wait`; small local models may stop a draft
+-    early. Otherwise Foundry uses the
++    `docker compose --profile ollama up -d --wait`, and set `FOUNDRY_AI_PROVIDER=ollama`
++    in `local/.env`: otherwise a key in the shell is picked first. Small local models
++    may stop a draft early. Otherwise Foundry uses the
+     `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` of the shell that started it, or a provider
+     you choose in **Settings › AI models**. See
+     [what reaches AI model providers](/foundry/reference/security-and-data#what-reaches-ai-model-providers).
+@@ -128,8 +129,8 @@ free, and room for a few GB of images. To run the bundled Ollama, give Docker at
+ 
+   <Step title="Answer the five questions">
+     Ask each with `helix_foundry_ask` and a new `client_token`, and follow it with
+-    `helix_foundry_get_question` until it's done, or ask in the
+-    [Analyst](/foundry/ask/ask-questions). For each answer, open two or three of its
++    `helix_foundry_get_question` until it's done, or ask
++    [Founder](/foundry/ask/founder). For each answer, open two or three of its
+     citations and check them against the source. An answer of **This ontology can't
+     answer that** says what the ontology lacks: generate again with that in the goal.
+   </Step>
+```
+
+**File**: `docs/foundry/use-cases/sample-company.mdx` (modified, +6/-5)
+```diff
+@@ -10,7 +10,7 @@ pageType: "Guide"
+ Each use case below is one question the [sample company](/foundry/start-here/sample-company)
+ answers, Acme Corp, a made-up company that sells scheduling software. For each: the
+ question, the types and links of the **Acme Corp customers** ontology that answer it,
+-and how to ask it in the Analyst or from an agent. Run the sample first, then ask along.
++and how to ask it in Founder or from an agent. Run the sample first, then ask along.
+ 
+ ## What the sample holds
+ 
+@@ -135,12 +135,13 @@ the sample answers: how much active subscriptions on each plan bring in each mon
+ each `Subscription`'s `monthly_amount_usd` and `on_plan`, and how each account's active
+ users moved month by month, from its `MonthlyUsage`.
+ 
+-## Ask in the Analyst
++## Ask Founder
+ 
+-Open **Analyst** on **Acme Corp customers**, write the question, and select the arrow.
+-The answer cites each record, row and quote it used: select a citation to open the
++Open **Founder**, pick **Acme Corp customers** in the **Ontology** picker, write the
++question, and select the arrow. Its **Asked the data** step holds the answer, which cites
++each record, row and quote it used: select a citation to open the
+ entity's page, the table row or the sentence in its document. Follow up in the same
+-thread. See [Ask the Analyst](/foundry/ask/ask-questions).
++chat. See [Ask questions about your data](/foundry/ask/ask-questions).
+ 
+ On an entity's page, such as an account's, **Ask about this** asks about that record.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1326** (2026-11-24): Drop indexes through a compaction filter (@xav-db)
-- **PR #1325** (2026-11-24): Build unpartitioned vector indexes in memory, in bulk (@xav-db)
-- **PR #1322** (2026-11-23): Default the CLI to Docker v0.0.18 (@xav-db)
-- **PR #1321** (2026-11-23): Datetime string migration: leave text- and vector-indexed properties as stored (@xav-db)
-- **PR #1320** (2026-11-23): docs: Helix Foundry first, Cloud inside HelixDB, Foundry pages brought up to date with prod (@xav-db)
-- **PR #1319** (2026-11-23): Default the CLI to Docker v0.0.17 (@xav-db)
+- **PR #1343** (2026-11-26): Share pending queue views between searches (@xav-db)
+- **PR #1342** (2026-11-25): Delete index operation queues once drained (@xav-db)
+- **PR #1341** (2026-11-25): Keep HNSW layer 0 connected by seeding inserts from a layer-1 beam (@xav-db)
+- **PR #1340** (2026-11-25): ci: build the macOS Python wheel on macos-15 (@xav-db)
+- **PR #1339** (2026-11-25): Report a fenced writer as unready and stop its background work (@xav-db)
+- **PR #1338** (2026-11-25): Fix three flaky tests at their root cause (@xav-db)
 
 ---
 
@@ -2808,28 +3025,58 @@ long. Contracts pin each case on a table built row by row.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build unpartitioned vector indexes in memory, in bulk
+## X. Foundry docs: querying from agents, security and data, use cases, pilot checklis
 
 **RULE**:
-When implementing operations in `crates/db/fuzz/corpus/current_index_v2_records/valid-vector-bulk-build-operation-record`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `632e9097`: Build unpartitioned vector indexes in memory, in bulk. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3472f21b`: Foundry docs: querying from agents, security and data, use cases, pilot checklist. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/fuzz/corpus/current_index_v2_records/valid-vector-bulk-build-operation-record`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000803000000090101
+              "foundry/start-here/workspaces-and-navigation",
+              "foundry/start-here/ontology-vs-rag"
+            ]
+          },
+          {
+            "group": "Use cases",
+            "pages": [
+              "foundry/use-cases/sample-company",
+              "foundry/use-cases/run-a-pilot"
+              "foundry/agents/query-from-agents",
+              "foundry/reference/security-and-data",
+    },
+    {
+      "source": "/foundry/security",
+      "destination": "/foundry/reference/security-and-data"
+    },
+    {
+      "source": "/foundry/data-handling",
+      "destination": "/foundry/reference/security-and-data"
+    },
+    {
+      "source": "/foundry/use-cases",
+      "destination": "/foundry/use-cases/sample-company"
+    },
+    {
+      "source": "/foundry/pilot",
+      "destination": "/foundry/use-cases/run-a-pilot"
+    },
+    {
+      "source": "/foundry/why-ontology",
+      "destination": "/foundry/start-here/ontology-vs-rag"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+              "foundry/start-here/workspaces-and-navigation"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `632e9097` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3472f21b` are properly handled with clean fallback behavior.

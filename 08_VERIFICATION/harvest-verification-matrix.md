@@ -13266,3 +13266,7 @@
 | `CYCLE-20261126-4CZS` | `2026-11-26T05:57:10.216Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10608` | Yes (`362c15df...`) |
 | `CYCLE-20261126-4GVA` | `2026-11-26T05:57:15.238Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10609` | Yes (`a5ece367...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T05:57:45.933Z` | `envoyproxy-envoy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F039AD05` [Domain H] | Yes (`b862d65e...`) |
+| `CYCLE-20261126-LD8Y` | `2026-11-26T06:10:23.698Z` | `autotrust/AutoTrust-Decider-Pro-Vision-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md` | Yes (`bf423631...`) |
+| `CYCLE-20261126-LISX` | `2026-11-26T06:10:30.897Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10610` | Yes (`554a559b...`) |
+| `CYCLE-20261126-LKDF` | `2026-11-26T06:10:32.931Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10611` | Yes (`59229656...`) |
+| `CYCLE-20261126-LOR4` | `2026-11-26T06:10:38.608Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10612` | Yes (`9de75ac2...`) |

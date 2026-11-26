@@ -13299,3 +13299,7 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `baf651b8` | Multi-dimensional audit evidence | 2026-11-26T05:57:10.221Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `2a7e1bd4` | Multi-dimensional audit evidence | 2026-11-26T05:57:15.242Z |
 | `learn-dom-h-f039ad05` | `project://envoyproxy-envoy` | `baf651b8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | 2026-11-26T05:57:45.933Z |
+| `learn-huggingface-autotrust-autotrust-decider-pro-vision-27b` | `https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-26T06:10:23.701Z |
+| `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `a6186c7a` | Multi-dimensional audit evidence | 2026-11-26T06:10:30.901Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `9b575d91` | Multi-dimensional audit evidence | 2026-11-26T06:10:32.935Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `03c4e07f` | Multi-dimensional audit evidence | 2026-11-26T06:10:38.612Z |

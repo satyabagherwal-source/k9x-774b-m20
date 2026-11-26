@@ -4,24 +4,24 @@
 {
   "source_repository": "k3s-io/k3s",
   "source_url": "https://github.com/k3s-io/k3s",
-  "source_version": "a5327bed",
+  "source_version": "9b575d91",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T05:54:43.149Z",
+  "timestamp": "2026-11-26T06:10:33.234Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-k3s-io-k3s",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [k3s-io/k3s](https://github.com/k3s-io/k3s) (Revision: `a5327bed`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T05:54:43.149Z`  
+> **Provenance**: Harvested from [k3s-io/k3s](https://github.com/k3s-io/k3s) (Revision: `9b575d91`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T06:10:33.234Z`  
 > **Learning ID**: `learn-github-k3s-io-k3s`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from k3s-io/k3s:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:54:41.398Z  
+> **Harvest Timestamp**: 2026-11-26T06:10:31.910Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34513 stars
+- **Stars / Engagement**: 34528 stars
 
 ---
 
@@ -900,11 +900,11 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15058** (2026-11-24): **[release-1.36] Pin Multus E2E charts to 4.3.204**
-  *Symptoms*: <!-- HTML Comments can be left in place or removed. --> <!-- Please see our contributing guide at https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md for guidance on opening pull requests -->  #### Proposed Changes ####  <!-- Describe the big picture of your changes here to communicate to the maintainers why we should accept this pull request. -->  Pin both `rke2-multus` and `rke2-multus-crd` to version `4.3.204` in the Multus E2E manifest.  #### Types of Changes ####  <!-- What types of changes does your code introduce to K3s? Bugfix, New Feature, Breaking Change, etc -->  Test configuration fix.  #### Verification ####  <!-- How can the changes be verified? Please provide whatever additional information necessary to help verify the proposed changes. -->  - `helm show chart rke2-multus --repo https://rke2-charts.rancher.io --version 4.3.204`: passed; resolved version `4.3.204`. - `helm show chart rke2-multus-crd --repo https://rke2-charts.rancher.io --version 4.3.204`: passed; resolved version `4.3.204`. - `git diff --check`: passed.  #### Testing ####  <!-- Is this change covered by testing? If not, consider adding a Unit or Integration test. --> <!-- See https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md for more info -->  - `ruby -e 'require "yaml"; docs = YAML.load_stream(File.read("tests/e2e/multus/multus-config.yaml")); expected = {"rke2-multus-crd" => "4.3.204", "rke2-multus" => "4.3.204"}; actual = docs.to_h { |doc| [doc.fetch("spec").fetch("chart"), doc.fe
+- **Issue #15067** (2026-11-25): **[release-1.35] Backports for 2026-11**
+  *Symptoms*: #### Proposed Changes ####  Backports: * https://github.com/k3s-io/k3s/pull/14836 * https://github.com/k3s-io/k3s/pull/14904 * https://github.com/k3s-io/k3s/pull/14914 * https://github.com/k3s-io/k3s/pull/14912 * https://github.com/k3s-io/k3s/pull/14837 * https://github.com/k3s-io/k3s/pull/14929 * https://github.com/k3s-io/k3s/pull/14939 * https://github.com/k3s-io/k3s/pull/14931 * https://github.com/k3s-io/k3s/pull/14958 * https://github.com/k3s-io/k3s/pull/14971 * https://github.com/k3s-io/k3s/pull/14972 * https://github.com/k3s-io/k3s/pull/15002 * https://github.com/k3s-io/k3s/pull/15005 * https://github.com/k3s-io/k3s/pull/15054 * https://github.com/k3s-io/k3s/pull/15053 * https://github.com/k3s-io/k3s/pull/15027  #### Types of Changes ####  Backports  #### Verification ####  See linked issues  #### Testing ####  #### Linked Issues #### *   #### User-Facing Change #### ```release-note * Make immutable mtime accept 1st Unix second * Set IdleTimeout on the supervisor http server * Close tcpproxy backend connection when client connection is closed * Fix airgap tarballs re-imported on every start with .cache.json * Remove temporary etcd datastore copy when opening it fails * Normalize pause image to ensure pinning * Allow configuring flannel vxlan vni and port via env var * Bump Spegel to v0.8.1 * Bump kine to v0.16.6 * Disable LB+tunnel on agentless servers with local apiserver * update busybox image to 1.38.0 * Avoid panic in ArgValue when a matching arg has no value * Fix 
 
-- **Issue #15057** (2026-11-24): **[release-1.35] Pin Multus E2E charts to 4.3.204**
-  *Symptoms*: <!-- HTML Comments can be left in place or removed. --> <!-- Please see our contributing guide at https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md for guidance on opening pull requests -->  #### Proposed Changes ####  <!-- Describe the big picture of your changes here to communicate to the maintainers why we should accept this pull request. -->  Pin the Multus e2e test's `rke2-multus` and `rke2-multus-crd` HelmCharts to `4.3.204` rather than using the latest charts.  #### Types of Changes ####  <!-- What types of changes does your code introduce to K3s? Bugfix, New Feature, Breaking Change, etc -->  Test configuration update.  #### Verification ####  <!-- How can the changes be verified? Please provide whatever additional information necessary to help verify the proposed changes. -->  - `git diff --check` — passed. - `for chart in rke2-multus rke2-multus-crd; do echo "--- $chart ---"; helm show chart "$chart" --repo https://rke2-charts.rancher.io --version 4.3.204 || exit; done` — passed; both charts resolved to version `4.3.204`. - Parsed both manifest documents and confirmed the requested chart version.  #### Testing ####  <!-- Is this change covered by testing? If not, consider adding a Unit or Integration test. --> <!-- See https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md for more info -->  - `go test -timeout=15m ./tests/e2e/multus/... -run E2E` — not run; Vagrant is not installed on this host.  #### Linked Issues ####  <!-- Link any related issues, pull-r
+- **Issue #15066** (2026-11-25): **[release-1.36] Backports for 2026-11**
+  *Symptoms*: #### Proposed Changes ####  Backports: * https://github.com/k3s-io/k3s/pull/14836 * https://github.com/k3s-io/k3s/pull/14903 * https://github.com/k3s-io/k3s/pull/14904 * https://github.com/k3s-io/k3s/pull/14914 * https://github.com/k3s-io/k3s/pull/14912 * https://github.com/k3s-io/k3s/pull/14837 * https://github.com/k3s-io/k3s/pull/14929 * https://github.com/k3s-io/k3s/pull/14939 * https://github.com/k3s-io/k3s/pull/14931 * https://github.com/k3s-io/k3s/pull/14958 * https://github.com/k3s-io/k3s/pull/14971 * https://github.com/k3s-io/k3s/pull/14972 * https://github.com/k3s-io/k3s/pull/15002 * https://github.com/k3s-io/k3s/pull/15005 * https://github.com/k3s-io/k3s/pull/15054 * https://github.com/k3s-io/k3s/pull/15053 * https://github.com/k3s-io/k3s/pull/15027  #### Types of Changes ####  Backports  #### Verification ####  See linked issues  #### Testing ####  #### Linked Issues #### *   #### User-Facing Change #### ```release-note * Make immutable mtime accept 1st Unix second * Add containerd server/metrics plugin * Set IdleTimeout on the supervisor http server * Close tcpproxy backend connection when client connection is closed * Fix airgap tarballs re-imported on every start with .cache.json * Remove temporary etcd datastore copy when opening it fails * Normalize pause image to ensure pinning * Allow configuring flannel vxlan vni and port via env var * Bump Spegel to v0.8.1 * Bump kine to v0.16.6 * Disable LB+tunnel on agentless servers with local apiserver * update busybox
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -921,40 +921,258 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80bc4519` (2026-11-18)
-**Commit Message**: Fix node matching for local snapshots in the legacy configmap
+### Incident Patch 1: `9b575d91` (2026-11-19)
+**Commit Message**: Wait for the image being processed before pruning the import cache
 
-reconcile trimmed the trailing timestamp from local snapshot keys with
-strings.TrimRight(s, "-012345678"). The cutset has no 9, so trimming
-stops at the first 9 in the timestamp and the node name no longer
-matches; the entry is then deleted as belonging to a missing node. The
-cutset also eats trailing digits of node names such as server-1.
-Cut at the last dash instead, which removes exactly the timestamp.
+pruneCache drops every entry not yet seen since the start. importAndWatchImages
+calls it once the workqueue is empty, which is also the case while the worker is
+still processing the last item, so that item's entry was dropped and it was
+imported again at the next start.
 
-Signed-off-by: farisbasha <[REDACTED_EMAIL]>
+The worker now holds a read lock on filesCache while it processes an item, and
+pruneCache takes the write lock, so the prune waits for the item in flight.
 
-**File**: `pkg/etcd/snapshot_controller.go` (modified, +3/-1)
+Signed-off-by: Anders Ingemann <[REDACTED_EMAIL]>
+
+**File**: `pkg/agent/containerd/watcher.go` (modified, +8/-0)
 ```diff
-@@ -268,7 +268,9 @@ func (e *etcdSnapshotHandler) reconcile() error {
- 			// A node is considered to match the snapshot if the snapshot name matches the node name
- 			// after trimming the leading local- prefix and trailing timestamp and extension.
- 			s, _ = strings.CutSuffix(s, ".zip")
--			s = strings.TrimRight(s, "-012345678")
-+			if i := strings.LastIndexByte(s, '-'); i >= 0 {
-+				s = s[:i]
-+			}
- 			var matchingNode bool
- 			for _, node := range nodeList.Items {
- 				if strings.HasSuffix(s, node.Name) {
+@@ -7,6 +7,7 @@ import (
+ 	"os"
+ 	"path/filepath"
+ 	"strings"
++	"sync"
+ 	"time"
+ 
+ 	containerd "github.com/containerd/containerd/v2/client"
+@@ -33,6 +34,7 @@ type watchqueue struct {
+ 	watcher    *fsnotify.Watcher
+ 	filesCache map[string]*fileInfo
+ 	workqueue  workqueue.TypedDelayingInterface[string]
++	mu         sync.RWMutex
+ }
+ 
+ func createWatcher(path string) (*fsnotify.Watcher, error) {
+@@ -114,6 +116,9 @@ func (w *watchqueue) processNextEventForImages(ctx context.Context, client *cont
+ func (w *watchqueue) processImageEvent(ctx context.Context, key string, client *containerd.Client, imageClient runtimeapi.ImageServiceClient) error {
+ 	defer w.workqueue.Done(key)
+ 
++	w.mu.RLock()
++	defer w.mu.RUnlock()
++
+ 	// Watch is rooted at the parent dir of the images dir, but we only need to handle things within the images dir
+ 	if !strings.HasPrefix(key, w.cfg.Images) {
+ 		return nil
+@@ -217,6 +222,9 @@ func fileChanged(current os.FileInfo, stored *fileInfo) bool {
+ // and syncs the cache to disk. This is done to ensure that the cache file does not grow without
+ // bounds by continuing to track files that do not exist.
+ func (w *watchqueue) pruneCache() {
++	w.mu.Lock()
++	defer w.mu.Unlock()
++
+ 	for path, fileState := range w.filesCache {
+ 		if !fileState.seen {
+ 			delete(w.filesCache, path)
+```
+
+---
+
+### Incident Patch 2: `6769053c` (2026-11-25)
+**Commit Message**: [main] Bump k3s-io/kubernetes and Go references (#15061)
+
+* chore: Bump k8s.io/kubernetes require line
+
+Made with ❤️️ by updatecli
+
+* chore: Bump k8s.io/kubernetes replace directive
+
+Made with ❤️️ by updatecli
+
+* chore: Bump k3s-io/kubernetes staging module versions
+
+Made with ❤️️ by updatecli
+
+* chore: Bump k8s.io/* modules pinned to client-go version
+
+Made with ❤️️ by updatecli
+
+* chore: Bump Go version directive in go.mod
+
+Made with ❤️️ by updatecli
+
+* chore: Run go mod tidy
+
+Made with ❤️️ by updatecli
+
+* chore: Bump Go version in Dockerfiles
+
+Made with ❤️️ by updatecli
+
+* Remove release-1.34 from updatecli_k8s.yaml action
+
+Signed-off-by: Rafael Breno <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Rafael Breno <[REDACTED_EMAIL]>
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+Co-authored-by: Rafael Breno <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/updatecli_k8s.yaml` (modified, +0/-1)
+```diff
+@@ -22,7 +22,6 @@ jobs:
+           - release-1.37
+           - release-1.36
+           - release-1.35
+-          - release-1.34
+     steps:
+       - name: Checkout
+         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+```
+
+**File**: `Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-ARG GOLANG=golang:1.26.10-alpine3.24
++ARG GOLANG=golang:1.26.11-alpine3.24
+ ARG XX=tonistiigi/xx:1.6.1
+ 
+ FROM --platform=$BUILDPLATFORM ${XX} AS xx
+```
+
+**File**: `Dockerfile.manifest` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-ARG GOLANG=golang:1.26.10-alpine3.24
++ARG GOLANG=golang:1.26.11-alpine3.24
+ FROM ${GOLANG}
+ 
+ COPY --from=plugins/manifest:1.2.3 /bin/* /bin/
+```
+
+**File**: `Dockerfile.test` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-ARG GOLANG=golang:1.26.10-alpine3.24
++ARG GOLANG=golang:1.26.11-alpine3.24
+ 
+ FROM ${GOLANG} AS test-base
+ 
+```
+
+**File**: `go.mod` (modified, +44/-44)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/k3s-io/k3s
+ 
+-go 1.26.10
++go 1.26.11
+ 
+ replace (
+ 	github.com/Microsoft/hcsshim => github.com/Microsoft/hcsshim v0.15.0-rc.1
+@@ -34,40 +34,40 @@ replace (
+ 	golang.org/x/sys => golang.org/x/sys v0.47.0
+ 	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20230525234035-dd9d682886f9
+ 	google.golang.org/grpc => google.golang.org/grpc v1.83.2
+-	k8s.io/api => github.com/k3s-io/kubernetes/staging/src/k8s.io/api v1.37.2-k3s1
+-	k8s.io/apiextensions-apiserver => github.com/k3s-io/kubernetes/staging/src/k8s.io/apiextensions-apiserver v1.37.2-k3s1
+-	k8s.io/apimachinery => github.com/k3s-io/kubernetes/staging/src/k8s.io/apimachinery v1.37.2-k3s1
+-	k8s.io/apiserver => github.com/k3s-io/kubernetes/staging/src/k8s.io/apiserver v1.37.2-k3s1
+-	k8s.io/cli-runtime => github.com/k3s-io/kubernetes/staging/src/k8s.io/cli-runtime v1.37.2-k3s1
+-	k8s.io/client-go => github.com/k3s-io/kubernetes/staging/src/k8s.io/client-go v1.37.2-k3s1
+-	k8s.io/cloud-provider => github.com/k3s-io/kubernetes/staging/src/k8s.io/cloud-provider v1.37.2-k3s1
+-	k8s.io/cluster-bootstrap => github.com/k3s-io/kubernetes/staging/src/k8s.io/cluster-bootstrap v1.37.2-k3s1
+-	k8s.io/code-generator => github.com/k3s-io/kubernetes/staging/src/k8s.io/code-generator v1.37.2-k3s1
+-	k8s.io/component-base => github.com/k3s-io/kubernetes/staging/src/k8s.io/component-base v1.37.2-k3s1
+-	k8s.io/component-helpers => github.com/k3s-io/kubernetes/staging/src/k8s.io/component-helpers v1.37.2-k3s1
+-	k8s.io/controller-manager => github.com/k3s-io/kubernetes/staging/src/k8s.io/controller-manager v1.37.2-k3s1
+-	k8s.io/cri-api => github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-api v1.37.2-k3s1
+-	k8s.io/cri-client => github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-client v1.37.2-k3s1
+-	k8s.io/cri-streaming => github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-streaming v1.37.2-k3s1
+-	k8s.io/csi-translation-lib => github.com/k3s-io/kubernetes/staging/src/k8s.io/csi-translation-lib v1.37.2-k3s1
+-	k8s.io/dynamic-resource-allocation => github.com/k3s-io/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v1.37.2-k3s1
+-	k8s.io/endpointslice => github.com/k3s-io/kubernetes/staging/src/k8s.io/endpointslice v1.37.2-k3s1
+-	k8s.io/externaljwt => github.com/k3s-io/kubernetes/staging/src/k8s.io/externaljwt v1.37.2-k3s1
++	k8s.io/api => github.com/k3s-io/kubernetes/staging/src/k8s.io/api v1.37.3-k3s1
++	k8s.io/apiextensions-apiserver => github.com/k3s-io/kubernetes/staging/src/k8s.io/apiextensions-apiserver v1.37.3-k3s1
++	k8s.io/apimachinery => github.com/k3s-io/kubernetes/staging/src/k8s.io/apimachinery v1.37.3-k3s1
++	k8s.io/apiserver => github.com/k3s-io/kubernetes/staging/src/k8s.io/apiserver v1.37.3-k3s1
++	k8s.io/cli-runtime => github.com/k3s-io/kubernetes/staging/src/k8s.io/cli-runtime v1.37.3-k3s1
++	k8s.io/client-go => github.com/k3s-io/kubernetes/staging/src/k8s.io/client-go v1.37.3-k3s1
++	k8s.io/cloud-provider => github.com/k3s-io/kubernetes/staging/src/k8s.io/cloud-provider v1.37.3-k3s1
++	k8s.io/cluster-bootstrap => github.com/k3s-io/kubernetes/staging/src/k8s.io/cluster-bootstrap v1.37.3-k3s1
++	k8s.io/code-generator => github.com/k3s-io/kubernetes/staging/src/k8s.io/code-generator v1.37.3-k3s1
++	k8s.io/component-base => github.com/k3s-io/kubernetes/staging/src/k8s.io/component-base v1.37.3-k3s1
++	k8s.io/component-helpers => github.com/k3s-io/kubernetes/staging/src/k8s.io/component-helpers v1.37.3-k3s1
++	k8s.io/controller-manager => github.com/k3s-io/kubernetes/staging/src/k8s.io/controller-manager v1.37.3-k3s1
++	k8s.io/cri-api => github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-api v1.37.3-k3s1
++	k8s.io/cri-client => github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-client v1.37.3-k3s1
++	k8s.io/cri-streaming => github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-streaming v1.37.3-k3s1
++	k8s.io/csi-translation-lib => github.com/k3s-io/kubernetes/staging/src/k8s.io/csi-translation-lib v1.37.3-k3s1
++	k8s.io/dynamic-resource-allocation => github.com/k3s-io/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v1.37.3-k3s1
++	k8s.io/endpointslice => github.com/k3s-io/kubernetes/staging/src/k8s.io/endpointslice v1.37.3-k3s1
++	k8s.io/externaljwt => github.com/k3s-io/kubernetes/staging/src/k8s.io/externaljwt v1.37.3-k3s1
+ 	k8s.io/klog/v2 => github.com/k3s-io/klog/v2 v2.140.0-k3s1 // k3s-main
+-	k8s.io/kms => github.com/k3s-io/kubernetes/staging/src/k8s.io/kms v1.37.2-k3s1
+-	k8s.io/kube-aggregator => github.com/k3s-io/kubernetes/staging/src/k8s.io/kube-aggregator v1.37.2-k3s1
+-	k8s.io/kube-controller-manager => github.com/k3s-io/kubernetes/staging/src/k8s.io/kube-controller-manager v1.37.2-k3s1
++	k8s.io/kms => github.com/k3s-io/kubernetes/staging/src/k8s.io/kms v1.37.3-k3s1
++	k8s.io/kube-aggregator => github.com/k3s-io/kubernetes/staging/src/k8s.io/kube-aggregator v1.37.3-k3s1
++	k8s.io/kube-controller-manager => github.com/k3s-io/kubernetes/staging/src/k8s.io/kube-controller-manager v1.37.3-k3s1
+ 	k8s.io/kube-openapi => k8s.
+```
+
+**File**: `go.sum` (modified, +60/-60)
+```diff
+@@ -1169,66 +1169,66 @@ github.com/k3s-io/klog/v2 v2.140.0-k3s1 h1:Z6S9oqaxcKtLaTcQNgWsaZNE5a+qJmCrTI+La
+ github.com/k3s-io/klog/v2 v2.140.0-k3s1/go.mod h1:o+/RWfJ6PwpnFn7OyAG3QnO47BFsymfEfrz6XyYSSp0=
+ github.com/k3s-io/kube-router/v2 v2.11.1-k3s1 h1:V2ghRaWtKxP+/fJahabPgvh/YlnPcYDUBkZPsMdjaAM=
+ github.com/k3s-io/kube-router/v2 v2.11.1-k3s1/go.mod h1:r1iCBrpsTDMCdGGIV9PWON2an5oGieC84grEOWP++B8=
+-github.com/k3s-io/kubernetes v1.37.2-k3s1 h1:ykbV+Zio2FawsFfgBuJoHoveZX2s1PKGGqd/n6kzqfY=
+-github.com/k3s-io/kubernetes v1.37.2-k3s1/go.mod h1:zAK7e3i5feyBL/bhucQnA5VRKuyrS8F+ijHJkZzQaWw=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/api v1.37.2-k3s1 h1:DncNuVWgRs4PsSbVueg+rRpdJ9lSbFwggBXPPTTW6oI=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/api v1.37.2-k3s1/go.mod h1:bmaIjNmJ6Cs8xONPccVPdtYXdAPzH+sKQ0N8TH6D89M=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/apiextensions-apiserver v1.37.2-k3s1 h1:ITAL3VNr8iaweqBYgZakiF6V5OXVVg6oiJwF01RSLzc=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/apiextensions-apiserver v1.37.2-k3s1/go.mod h1:gPy/t0ncfbkNMzFqE2qOksonMNmH8ww5ARNq4z4vArE=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/apimachinery v1.37.2-k3s1 h1:km7VaLrJT+288bPrVj9hWqRD875psi3Kxcu6NM+JNxA=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/apimachinery v1.37.2-k3s1/go.mod h1:mWlEyiDlTkS+wJahLiD8Lo0qjUv40yYD1g/fi/6O5NA=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/apiserver v1.37.2-k3s1 h1:8svAKLF2kj5ZIAI+YKUQp9mSoFkcDONYN72Q7pkh2BE=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/apiserver v1.37.2-k3s1/go.mod h1:5AWZHR84pLGXu1sJ7avgecFN6J03hbKhFfWW+oqUO0s=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cli-runtime v1.37.2-k3s1 h1:9eIrlRxKFBYUGUkgoZLEt9rN03atOE7VOn0+gtikzoM=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cli-runtime v1.37.2-k3s1/go.mod h1:7/ItgOWpP3aq6D2jlIQiJnrTybZ1C98FmTTtAPARgvM=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/client-go v1.37.2-k3s1 h1:YwXqwB9El8RWQ78N2jeN7oJ2LylLN5MbtE7EIlCCuUc=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/client-go v1.37.2-k3s1/go.mod h1:cQ3jgBNT6sUGExwi39kOFTn/jOrkuU7ygH9Lo3Y1kLg=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cloud-provider v1.37.2-k3s1 h1:BUDbMIYp6Rc6SikFfNNTxAQXwG7yjefWfwtID1YJk14=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cloud-provider v1.37.2-k3s1/go.mod h1:iSL07jajmZ7XYvKKlD+uVrXk8icT7BPepmexAKTK4zE=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cluster-bootstrap v1.37.2-k3s1 h1:sB/jtIqjN1zRl3qZsIktQzNsjy9ymBJ62P+ySCY9dgE=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cluster-bootstrap v1.37.2-k3s1/go.mod h1:jNb9d+INTkM7y2QvdPhC8EEbbdnOMtZGnmXN6cJASZA=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/component-base v1.37.2-k3s1 h1:xanP8oN2YpwmC1njc8EFdtM+fPAXcA6ppYGyxZtchEw=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/component-base v1.37.2-k3s1/go.mod h1:UQ6hEgBIBLq8XRbjaChdVQddq6WhIvBJ+to5vzfIOgY=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/component-helpers v1.37.2-k3s1 h1:OQdNl8+XXB7h6jdkTq+eYrjrVxmsIJ6kb9og9YitfOE=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/component-helpers v1.37.2-k3s1/go.mod h1:l0AB7M9MOJKbOIUPAfTWg50IK78E78gUefnIjvrXxBs=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/controller-manager v1.37.2-k3s1 h1:kcXUlyT/WqZ3RWqZ6/gkF1nUq5rlcyx5jxvf9geLkvk=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/controller-manager v1.37.2-k3s1/go.mod h1:hVhFkDpa4vz/o6/VOpVSlxxNtwM5UVVBNpUit7QOVoU=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-api v1.37.2-k3s1 h1:TsMLMSe0ahpSZFqjFUH9Dyh5uQSvNBBk8yth4Z3h1MU=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-api v1.37.2-k3s1/go.mod h1:6V8Gb6wznJYVPToj8CLxgbxsFeeGIswNZCE7cy+xT90=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-client v1.37.2-k3s1 h1:ptx0uB46lz084eDEsVaowlwOEeoCUFT8UuZQZrBtRVo=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-client v1.37.2-k3s1/go.mod h1:8nFep6iVIcuB2LrQLJ4+yo6a/1J0C5t7SuAVEzdfeEE=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-streaming v1.37.2-k3s1 h1:EKrEYGd3NdURDilERquAnjdMso/+0aCy+5x+klfjHrA=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/cri-streaming v1.37.2-k3s1/go.mod h1:KtdKU/YG47bIgENjEbMnHNnuU23gUrLj7dnxG3N+9Gw=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/csi-translation-lib v1.37.2-k3s1 h1:G8HEPCqLk6wue0n2BRVoZixBprg92dEYOHhc8ez/jjg=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/csi-translation-lib v1.37.2-k3s1/go.mod h1:Hi8IW4pwGnxtwToG0EAx8BOLtC/loEdYxD5h954PXSs=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v1.37.2-k3s1 h1:dN2Be7dGL+MskkERJLOMOLZkGwMk7/vBZwqU5RKwhv8=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v1.37.2-k3s1/go.mod h1:J0AVUcxZRjCH1VP0Xr39sBSyNwtvwg+KASy1pMNk+fs=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/endpointslice v1.37.2-k3s1 h1:JdKpjU3t6r3K31k3PElGCph5O8JL2GsD4RfOk+6lDM4=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io/endpointslice v1.37.2-k3s1/go.mod h1:J179EQL0Oyh7Q6QftK6Fl+Rz73wvslSgQx7U+TsRxvQ=
+-github.com/k3s-io/kubernetes/staging/src/k8s.io
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15058** (2026-11-24): [release-1.36] Pin Multus E2E charts to 4.3.204 (@thomasferrandiz)
-- **PR #15057** (2026-11-24): [release-1.35] Pin Multus E2E charts to 4.3.204 (@thomasferrandiz)
-- **PR #15056** (2026-11-24): [release-1.37] Pin Multus E2E charts to 4.3.204 (@thomasferrandiz)
-- **PR #15055** (closed): Drop setup-docker-action (@brandond)
-- **PR #15051** (2026-11-25): [main] Bump other dependencies (@github-actions[bot])
-- **PR #15049** (2026-11-25): [release-1.36] Bump other dependencies (@github-actions[bot])
+- **PR #15067** (2026-11-25): [release-1.35] Backports for 2026-11 (@brandond)
+- **PR #15066** (2026-11-25): [release-1.36] Backports for 2026-11 (@brandond)
+- **PR #15065** (2026-11-25): [release-1.37] Backports for 2026-11 (@brandond)
+- **PR #15064** (closed): [release-1.34] Bump k3s-io/kubernetes and Go references (@github-actions[bot])
+- **PR #15063** (2026-11-25): [release-1.37] Bump k3s-io/kubernetes and Go references (@github-actions[bot])
+- **PR #15062** (2026-11-25): [release-1.35] Bump k3s-io/kubernetes and Go references (@github-actions[bot])
 
 ---
 
@@ -974,33 +1192,38 @@ Signed-off-by: farisbasha <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. node matching for local snapshots in the legacy configmap
+## X. Wait for the image being processed before pruning the import cache
 
 **RULE**:
-When implementing operations in `pkg/etcd/snapshot_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/agent/containerd/watcher.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80bc4519`: node matching for local snapshots in the legacy configmap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9b575d91`: Wait for the image being processed before pruning the import cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/etcd/snapshot_controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/agent/containerd/watcher.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			if i := strings.LastIndexByte(s, '-'); i >= 0 {
-				s = s[:i]
-			}
+	"sync"
+	mu         sync.RWMutex
+	w.mu.RLock()
+	defer w.mu.RUnlock()
+
+	w.mu.Lock()
+	defer w.mu.Unlock()
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			s = strings.TrimRight(s, "-012345678")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80bc4519` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9b575d91` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

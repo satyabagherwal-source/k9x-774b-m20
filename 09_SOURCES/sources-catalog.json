@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "84e3d378",
+    "sourceVersion": "03c4e07f",
     "license": "Apache-2.0",
-    "contentHash": "177066ac3f1a96ba6216c929786356bdfeeec62564c2fdc70088ee855108ff60",
-    "lastHarvestedAt": "2026-11-25T05:00:50.358Z",
+    "contentHash": "9de75ac2c7671476a68c4e06bccfd804dfa3c3702d4187d9015eafc2571efaea",
+    "lastHarvestedAt": "2026-11-26T06:10:38.612Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "a5327bed",
+    "sourceVersion": "9b575d91",
     "license": "Apache-2.0",
-    "contentHash": "c4f32f734bf98abbbcf0769dbbe7fcff46eef00843f991f6d0ce99c756fbaa87",
-    "lastHarvestedAt": "2026-11-25T05:54:42.824Z",
+    "contentHash": "59229656970acc80a6f9d42a57b6ae4e475edb9cc8281fc7c4bad2757051c74e",
+    "lastHarvestedAt": "2026-11-26T06:10:32.935Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -9683,10 +9683,10 @@
     "repository": "iPlug2/iPlug2",
     "platform": "github",
     "sourceUrl": "https://github.com/iPlug2/iPlug2",
-    "sourceVersion": "3d378017",
+    "sourceVersion": "a6186c7a",
     "license": "NOASSERTION",
-    "contentHash": "8117d3fb75c58f61618f03876459be9289a345f773cbed5726e7cd67f4f9972f",
-    "lastHarvestedAt": "2026-11-23T20:22:01.481Z",
+    "contentHash": "554a559b644e725328e2ce24b1cde591afa29fd72ffad69fe20a664097cc8bcf",
+    "lastHarvestedAt": "2026-11-26T06:10:30.901Z",
     "learningId": "learn-github-iplug2-iplug2"
   },
   "digitalbazaar-jsonld.js": {
@@ -12635,8 +12635,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B",
     "sourceVersion": "hf-autotrust-autotrust-decider-pro-vision-27b",
     "license": "Open-Source",
-    "contentHash": "0695461a09fbf4caf98fe5293ffa519a561ab7ae2718b067feb9fb02dc95a6f4",
-    "lastHarvestedAt": "2026-11-22T10:17:55.625Z",
+    "contentHash": "bf42363186cca9cfc9082c7e1aa1cd657a464ea56a420b503946ae88855a42b7",
+    "lastHarvestedAt": "2026-11-26T06:10:23.701Z",
     "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b"
   },
   "chocoford-excalidrawz": {

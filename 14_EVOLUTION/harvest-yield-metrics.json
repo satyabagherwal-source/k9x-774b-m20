@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T05:57:15.254Z",
-  "total_cycles_completed": 12587,
-  "total_learnings_persisted": 12587,
-  "total_rules_promoted": 11503,
+  "last_updated": "2026-11-26T06:10:38.624Z",
+  "total_cycles_completed": 12591,
+  "total_learnings_persisted": 12591,
+  "total_rules_promoted": 11506,
   "history": [
-    {
-      "timestamp": "2026-11-25T11:20:08.417Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:30:00.811Z",
-      "repository": "openbmb/MiniCPM-OCR-1.0",
-      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:30:02.507Z",
-      "repository": "ClementTsang/bottom",
-      "learningId": "learn-github-clementtsang-bottom",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:30:12.596Z",
-      "repository": "kubeedge/kubeedge",
-      "learningId": "learn-github-kubeedge-kubeedge",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T11:42:22.892Z",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T05:57:15.254Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:10:23.713Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:10:30.914Z",
+      "repository": "iPlug2/iPlug2",
+      "learningId": "learn-github-iplug2-iplug2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:10:32.953Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:10:38.624Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T05:57:48.105Z",
+  "last_updated": "2026-11-26T06:10:45.072Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T05:48:51.455Z",
@@ -243,7 +243,7 @@
       "staged_for_review": 1
     },
     "k3s-io-k3s-learnings.md": {
-      "processed_at": "2026-11-25T05:54:48.298Z",
+      "processed_at": "2026-11-26T06:10:43.376Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1653,7 +1653,7 @@
       "staged_for_review": 0
     },
     "iplug2-iplug2-learnings.md": {
-      "processed_at": "2026-11-23T20:22:13.415Z",
+      "processed_at": "2026-11-26T06:10:42.425Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3018,7 +3018,7 @@
       "staged_for_review": 1
     },
     "hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md": {
-      "processed_at": "2026-11-22T10:18:06.985Z",
+      "processed_at": "2026-11-26T06:10:42.027Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4404,
+  "total_dossiers_evaluated": 4407,
   "total_canonical_promoted": 557,
-  "total_staged_for_review": 3335
+  "total_staged_for_review": 3337
 }

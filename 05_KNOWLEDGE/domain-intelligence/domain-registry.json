@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T05:57:47.578Z",
-  "total_records": 2712,
+  "last_updated": "2026-11-26T06:10:44.792Z",
+  "total_records": 2713,
   "domains": {
     "A": {
       "total": 22,
@@ -2350,7 +2350,7 @@
       ]
     },
     "I": {
-      "total": 159,
+      "total": 160,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2510,7 +2510,8 @@
         "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-core-invariants",
         "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria",
         "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants",
-        "DOM-I-F9C7458B"
+        "DOM-I-F9C7458B",
+        "domain_intelligence-content-information-intelligence-helixdb-helix-db-core-invariants"
       ]
     },
     "J": {
@@ -11311,8 +11312,8 @@
       "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
       "repository": "k3s-io/k3s",
-      "content_hash": "f91de857e16ab385e1fbca8eee5f812a3ac1f684e1e1d7d5da7eb14780070d30",
-      "created_at": "2026-11-25T05:54:43.383Z"
+      "content_hash": "58d573c87623536cb24b89a668e4330cb527054d518a58cadabe4ade5fd720cc",
+      "created_at": "2026-11-26T06:10:33.434Z"
     },
     "DOM-D-81EB8074": {
       "record_id": "DOM-D-81EB8074",
@@ -11422,8 +11423,8 @@
       "title": "Architecture Intelligence: k3s-io-k3s-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-learnings-architecture-intelligence-k3s-io-k3s-learnings-core-invaria.md",
       "repository": "k3s-io-k3s-learnings",
-      "content_hash": "2dc0d0568c7d3ff672a23d4d93e86e6b698042d379683c1e8f01527461b01a03",
-      "created_at": "2026-11-25T05:54:49.264Z"
+      "content_hash": "04b55ba38161c781023bf1fd45562e999964bf0e4e686428a197644b5f83460e",
+      "created_at": "2026-11-26T06:10:44.792Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants",
@@ -17280,10 +17281,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-research-knowledge-intelligence-autotrust-autotrust-deci.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-research-knowledge-intelligence-au.md",
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "content_hash": "a5ceac28787979f14f6abbf82fb3e5ed40debfa957140e9933b6120d971d7ee9",
-      "created_at": "2026-11-23T17:46:11.844Z"
+      "content_hash": "2ee6ceed171cd05163f0342e6efcc8421a0f790ce003995d665022a0556c5fc7",
+      "created_at": "2026-11-26T06:10:23.921Z"
     },
     "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants",
@@ -22255,8 +22256,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-autotrust-decider-pro-vision-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-learnings-research-knowledge-intel.md",
       "repository": "hf-autotrust-autotrust-decider-pro-vision-27b-learnings",
-      "content_hash": "39b9bf20744dafb496ee23b09b5856f582bcc6f51f141e531f7bf6007abf307b",
-      "created_at": "2026-11-22T10:18:07.217Z"
+      "content_hash": "7aa9d6e0128a1f29d149aeb6b2277941f5fb62864b7377c4e1e6c8e4af382d3c",
+      "created_at": "2026-11-26T06:10:42.248Z"
     },
     "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria",
@@ -25363,8 +25364,8 @@
       "title": "Architecture Intelligence: iPlug2/iPlug2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-architecture-intelligence-iplug2-iplug2-core-invariants.md",
       "repository": "iPlug2/iPlug2",
-      "content_hash": "65787bcea067e834766c6a159dc2d343c49a1027685b78b700967bd5960c1b54",
-      "created_at": "2026-11-23T20:22:01.917Z"
+      "content_hash": "9bee2717869272ba45def74ae7e176d30a1a8465f33dc16e1642988b1e63963e",
+      "created_at": "2026-11-26T06:10:31.283Z"
     },
     "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants",
@@ -25399,8 +25400,8 @@
       "title": "Architecture Intelligence: iplug2-iplug2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-learnings-architecture-intelligence-iplug2-iplug2-learnings-core-i.md",
       "repository": "iplug2-iplug2-learnings",
-      "content_hash": "69410930187c4d63fd499df7628b365659915eba2947e80037b06a2f75250944",
-      "created_at": "2026-11-23T20:22:15.407Z"
+      "content_hash": "6af1186a47259b7c53dc846a7d235a654308f805d4d0cc11294be47a2ab83557",
+      "created_at": "2026-11-26T06:10:43.079Z"
     },
     "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants",
@@ -45902,6 +45903,15 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T05:57:45.899Z"
+    },
+    "domain_intelligence-content-information-intelligence-helixdb-helix-db-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-helixdb-helix-db-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: HelixDB/helix-db Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-helixdb-helix-db-content-information-intelligence-helixdb-helix-db-core-invarian.md",
+      "repository": "HelixDB/helix-db",
+      "content_hash": "0157011340e432d46511a62a78965950e9a2422e5fafa2eede3ffb7ac620a665",
+      "created_at": "2026-11-26T06:10:39.022Z"
     }
   }
 }

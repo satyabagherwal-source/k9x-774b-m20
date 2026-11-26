@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-LPXP",
-    "timestamp": "2026-11-24T15:27:12.013Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "7222ba912e2da70d60962bbe127a4cb103c6d8ec0339ec25090137d91f4fb9a6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-LVWO",
-    "timestamp": "2026-11-24T15:27:19.752Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "83ec4b66321b53fbe589095450779e002696808ae68a93ef0dc7886ec5e8669d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-X29L",
-    "timestamp": "2026-11-24T15:36:01.209Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "24a4a8d584ef84a668283e088090328d013b9491344a0b3ead85efecbdb9ebc8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-X6FS",
-    "timestamp": "2026-11-24T15:36:06.616Z",
-    "repository": "emberstack/kubernetes-reflector",
-    "learningId": "learn-github-emberstack-kubernetes-reflector",
-    "contentHash": "2055607cfba62ef135de0bc3705ad04f7b83a935f22e370ef2751065866bb970",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-X9C0",
     "timestamp": "2026-11-24T15:36:10.368Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7430,66 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "a5ece367776b58dc0e4f6442671e501a7cffbf1f4d749e4fbee95b2efac1ff74",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LD8Y",
+    "timestamp": "2026-11-26T06:10:23.698Z",
+    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
+    "contentHash": "bf42363186cca9cfc9082c7e1aa1cd657a464ea56a420b503946ae88855a42b7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LISX",
+    "timestamp": "2026-11-26T06:10:30.897Z",
+    "repository": "iPlug2/iPlug2",
+    "learningId": "learn-github-iplug2-iplug2",
+    "contentHash": "554a559b644e725328e2ce24b1cde591afa29fd72ffad69fe20a664097cc8bcf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LKDF",
+    "timestamp": "2026-11-26T06:10:32.931Z",
+    "repository": "k3s-io/k3s",
+    "learningId": "learn-github-k3s-io-k3s",
+    "contentHash": "59229656970acc80a6f9d42a57b6ae4e475edb9cc8281fc7c4bad2757051c74e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LOR4",
+    "timestamp": "2026-11-26T06:10:38.608Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "9de75ac2c7671476a68c4e06bccfd804dfa3c3702d4187d9015eafc2571efaea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

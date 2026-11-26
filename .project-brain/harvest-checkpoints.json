@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T05:57:15.257Z",
+  "last_updated": "2026-11-26T06:10:38.628Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "177066ac3f1a96ba6216c929786356bdfeeec62564c2fdc70088ee855108ff60",
-      "verified_at": "2026-11-25T05:00:50.375Z",
+      "content_hash": "9de75ac2c7671476a68c4e06bccfd804dfa3c3702d4187d9015eafc2571efaea",
+      "verified_at": "2026-11-26T06:10:38.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T05:00:50.375Z"
+      "last_updated": "2026-11-26T06:10:38.627Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "c4f32f734bf98abbbcf0769dbbe7fcff46eef00843f991f6d0ce99c756fbaa87",
-      "verified_at": "2026-11-25T05:54:42.844Z",
+      "content_hash": "59229656970acc80a6f9d42a57b6ae4e475edb9cc8281fc7c4bad2757051c74e",
+      "verified_at": "2026-11-26T06:10:32.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T05:54:42.844Z"
+      "last_updated": "2026-11-26T06:10:32.957Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -14571,14 +14571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iplug2-iplug2",
-      "content_hash": "8117d3fb75c58f61618f03876459be9289a345f773cbed5726e7cd67f4f9972f",
-      "verified_at": "2026-11-23T20:22:01.490Z",
+      "content_hash": "554a559b644e725328e2ce24b1cde591afa29fd72ffad69fe20a664097cc8bcf",
+      "verified_at": "2026-11-26T06:10:30.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:22:01.490Z"
+      "last_updated": "2026-11-26T06:10:30.917Z"
     },
     "digitalbazaar/jsonld.js": {
       "repository": "digitalbazaar/jsonld.js",
@@ -18950,15 +18950,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "10ac85247d9a564117431ff24affc71a7f8ad06149f6b7fe2c7340fa584aef78",
-      "verified_at": "2026-11-23T17:46:11.633Z",
+      "learning_id": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
+      "content_hash": "bf42363186cca9cfc9082c7e1aa1cd657a464ea56a420b503946ae88855a42b7",
+      "verified_at": "2026-11-26T06:10:23.716Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:46:11.633Z"
+      "last_updated": "2026-11-26T06:10:23.716Z"
     },
     "autotrust/AutoTrust-Decider-Pro-35B": {
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",
