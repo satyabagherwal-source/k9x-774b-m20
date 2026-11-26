@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T02:27:12.635Z",
+  "last_updated": "2026-11-26T02:38:24.524Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57837,11 +57837,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-4H08",
+      "id": "CD-0R2G",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-4H08-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0R2G-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -62791,6 +62791,37 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1C5FFC-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-0LTS",
+      "directive_title": "use the selected tab’s sheet price (RevenueCat/purchases-ios_internal",
+      "source_repo": "RevenueCat/purchases-ios",
+      "source_commit": "8c1ff472",
+      "staged_file": "11_INBOX/candidate-directives/CD-0LTS-use-the-selected-tab-s-sheet-price-revenuecat-purchases-ios_internal.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-0Q9U",
+      "directive_title": "paywalls): use the selected tab’s sheet price (RevenueCat/purchases-ios_internal",
+      "source_repo": "revenuecat-purchases-ios-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0Q9U-paywalls-use-the-selected-tab-s-sheet-price-revenuecat-purchases-ios_internal.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-4C616D",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4C616D-rust-bind-bare-calls-to-the-enclosing-mo.md",
       "staged_date": "2026-11-26"
     }
   ]

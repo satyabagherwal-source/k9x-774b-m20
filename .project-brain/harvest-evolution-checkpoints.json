@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T02:27:13.174Z",
+  "last_updated": "2026-11-26T02:38:25.191Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T02:27:12.180Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-26T01:45:18.446Z",
+      "processed_at": "2026-11-26T02:38:24.060Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1478,7 +1478,7 @@
       "staged_for_review": 0
     },
     "revenuecat-purchases-ios-learnings.md": {
-      "processed_at": "2026-11-23T16:53:49.014Z",
+      "processed_at": "2026-11-26T02:38:23.221Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3058,7 +3058,7 @@
       "staged_for_review": 1
     },
     "hf-videorebirthai-hyperflow-h3-flash-learnings.md": {
-      "processed_at": "2026-11-22T05:50:30.764Z",
+      "processed_at": "2026-11-26T02:38:22.773Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4335,
+  "total_dossiers_evaluated": 4338,
   "total_canonical_promoted": 550,
-  "total_staged_for_review": 3291
+  "total_staged_for_review": 3293
 }

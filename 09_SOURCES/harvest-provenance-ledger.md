@@ -13242,3 +13242,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2` | `https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-26T02:18:33.440Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `2e7cf695` | Multi-dimensional audit evidence | 2026-11-26T02:18:35.002Z |
 | `learn-huggingface-tencent-qwen3-8-27b-dspine-b16` | `https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-26T02:26:59.200Z |
+| `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-26T02:38:10.868Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `8c1ff472` | Multi-dimensional audit evidence | 2026-11-26T02:38:17.461Z |

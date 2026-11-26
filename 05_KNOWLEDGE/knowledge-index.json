@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T02:27:13.022Z",
+  "last_updated": "2026-11-26T02:38:25.042Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25622,
+  "total_items": 25625,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ca1240c9bf96905e7f6502387996caa997284730ce24c99cdd94a40b3bfa3c3",
+      "content_hash": "88cb0c1ba729e9c3157cca73d1bcf4b00ee327b3e15be27585d33ef9946b52c4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T01:45:19.083Z"
+      "persisted_at": "2026-11-26T02:38:24.707Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "91442800e7e0fbdac9da786e095d96c1f8156bfea0656f6ae35769cb23a7c520",
+      "content_hash": "403ec2b0c3c7214415692e3e3ca5f1b0861d1d5e2c90ab527614eb89351ecd44",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T01:45:19.250Z"
+      "persisted_at": "2026-11-26T02:38:24.896Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "92e7e4e39649d3583c7d4288cb865e01f825122aae7b665dedcc31fbd2a06cd6",
+      "content_hash": "ae1c63ed4bf1b7c4e74db24489eba69ca753fd78088b843d6066f2cc785f7ac7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T01:45:19.389Z"
+      "persisted_at": "2026-11-26T02:38:25.042Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -252681,7 +252681,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
       "source_version": "hf-videorebirthai-hyperflow-h3-flash",
-      "content_hash": "18ca163bac8d3866f8d18eb0d88677b638d3aaddeba1c92f2ef59949b3dc8c22",
+      "content_hash": "ed205455312dcaad10faf7b6153b8abad74e6c535aa8e9f95fddc7afdba3966c",
       "dossier_path": "07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
       "promoted_rules": [],
@@ -252690,7 +252690,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T05:50:11.888Z",
+      "verified_at": "2026-11-26T02:38:10.625Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252707,9 +252707,9 @@
       "title": "Research & Knowledge Intelligence: VideoRebirthAI/hyperflow-h3-flash Core Invariants",
       "repository": "VideoRebirthAI/hyperflow-h3-flash",
       "source_version": "hf-videorebirthai-hyperflow-h3-flash",
-      "content_hash": "3ed0efe039b66455d33ac0730ebc4fdf0e78e44c2cb9f466a7fc5bd9e6fbcbcb",
+      "content_hash": "e5b84d0c8c8a6ff0cb1e8c534fe5e32b73f5044c76c6b185471dca731cbf055e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T05:50:12.370Z"
+      "persisted_at": "2026-11-26T02:38:11.094Z"
     },
     "learn-github-nsh07-tomato": {
       "learning_id": "learn-github-nsh07-tomato",
@@ -252807,9 +252807,9 @@
       "title": "Research & Knowledge Intelligence: hf-videorebirthai-hyperflow-h3-flash-learnings Core Invariants",
       "repository": "hf-videorebirthai-hyperflow-h3-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "778cfc9a3bca32ba1ff33ebee5051420e653e8c7f175e7a5f3065ed3e31ead10",
+      "content_hash": "f8c92d8bbf236a682064b84710430a0197ee80f39435da4528228d218a1abaf0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T05:50:31.008Z"
+      "persisted_at": "2026-11-26T02:38:23.013Z"
     },
     "candidate_directive-concurrency-remove-state-read-on-io-thread": {
       "item_id": "candidate_directive-concurrency-remove-state-read-on-io-thread",
@@ -260834,8 +260834,8 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "f3256c21",
-      "content_hash": "d82c9174f0b3496a7cddbcb940fc271eee393a2b8e581b0f2ff02d28b651968a",
+      "source_version": "8c1ff472",
+      "content_hash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
@@ -260853,6 +260853,11 @@
           "number": 10070,
           "title": "bump Ruby to 3.3.14 for the Regexp/String security advisory (RevenueCat/purchase",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10588,
+          "title": "use the selected tab’s sheet price (RevenueCat/purchases-ios_internal",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260860,7 +260865,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:53:37.029Z",
+      "verified_at": "2026-11-26T02:38:17.221Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260902,10 +260907,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-architecture-intelligence-revenuecat-purchases-ios-core.md",
       "title": "Architecture Intelligence: RevenueCat/purchases-ios Core Invariants",
       "repository": "RevenueCat/purchases-ios",
-      "source_version": "f3256c21",
-      "content_hash": "f6d7f9d2f8da8328104653825429bea028dfbb3ab870b31eb0c1457ecb3ee145",
+      "source_version": "8c1ff472",
+      "content_hash": "6aee47cfc050ba1c1dea1392caf7217151ac643db249ed317c9b35ae4062797d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:53:37.668Z"
+      "persisted_at": "2026-11-26T02:38:17.918Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios",
@@ -260914,10 +260919,10 @@
       "relative_path": "08_VERIFICATION/revenuecat-purchases-ios-verification-protocol-empirical-defect-shield-for-reven.md",
       "title": "Verification Protocol: Empirical Defect Shield for RevenueCat/purchases-ios",
       "repository": "RevenueCat/purchases-ios",
-      "source_version": "f3256c21",
-      "content_hash": "0fb89ee02aef3b5e79c560f3fa412b69f41a10dea0e055ff8cafdd6e7c9f2b5e",
+      "source_version": "8c1ff472",
+      "content_hash": "30625456fe105fb61b3ff1e3fef8903b2bb9a314367381c9f1bf35e130dde8fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:53:37.858Z"
+      "persisted_at": "2026-11-26T02:38:18.100Z"
     },
     "learn-github-qdrant-qdrant": {
       "learning_id": "learn-github-qdrant-qdrant",
@@ -261010,9 +261015,9 @@
       "title": "Architecture Intelligence: revenuecat-purchases-ios-learnings Core Invariants",
       "repository": "revenuecat-purchases-ios-learnings",
       "source_version": "HEAD",
-      "content_hash": "84bae245cae0d283b9237cb7a4c549be1e6284992100844a98554af09763a77f",
+      "content_hash": "5bd9b9ea73c3c3916424c3564bd98b1592cd12a51034eaa3f405cb9e14a2d426",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:53:49.970Z"
+      "persisted_at": "2026-11-26T02:38:23.674Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn",
@@ -261022,9 +261027,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for revenuecat-purchases-ios-learnings",
       "repository": "revenuecat-purchases-ios-learnings",
       "source_version": "HEAD",
-      "content_hash": "25dff90110071fc8f86222a5a50add212c36dfa196da6eb932a15011c6519ea0",
+      "content_hash": "e93da34a91969cfdfdc72718a739c6127281a0bb7e8925887e9df9e0db04b89d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:53:50.147Z"
+      "persisted_at": "2026-11-26T02:38:23.861Z"
     },
     "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
@@ -342759,13 +342764,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4H08-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0R2G-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "33f34d98bf380cedbe9eea4d3f99c408e434d1d6053eb526a55f1a8f110bea39",
+      "content_hash": "42ca66902e0b977e2ac183fe78ff15e75649c7f25958e37575145db7d147f955",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T01:45:18.875Z"
+      "persisted_at": "2026-11-26T02:38:24.524Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -350807,6 +350812,44 @@
       "content_hash": "10d8ae8621277e15c17fb614e2a81770538d8467cbb6249d5e17866c3fd8974b",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T02:18:46.239Z"
+    },
+    "rule-10588": {
+      "learning_id": "rule-10588",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10588,
+      "title": "use the selected tab’s sheet price (RevenueCat/purchases-ios_internal",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "8c1ff472",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T02:38:17.221Z"
+    },
+    "candidate_directive-use-the-selected-tab-s-sheet-price-revenuecat-purchases-ios_internal": {
+      "item_id": "candidate_directive-use-the-selected-tab-s-sheet-price-revenuecat-purchases-ios_internal",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0LTS-use-the-selected-tab-s-sheet-price-revenuecat-purchases-ios_internal.md",
+      "title": "use the selected tab’s sheet price (RevenueCat/purchases-ios_internal",
+      "repository": "RevenueCat/purchases-ios",
+      "source_version": "8c1ff472",
+      "content_hash": "3a24efe17f5800c5d10cb050dcc7893cee3cb8cec8d8a165973bb99cac81aa5f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T02:38:17.732Z"
+    },
+    "candidate_directive-paywalls-use-the-selected-tab-s-sheet-price-revenuecat-purchases-ios_internal": {
+      "item_id": "candidate_directive-paywalls-use-the-selected-tab-s-sheet-price-revenuecat-purchases-ios_internal",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0Q9U-paywalls-use-the-selected-tab-s-sheet-price-revenuecat-purchases-ios_internal.md",
+      "title": "paywalls): use the selected tab’s sheet price (RevenueCat/purchases-ios_internal",
+      "repository": "revenuecat-purchases-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fa6ad0b89dd94cc5d23ab6bc9280853831f9821407298abfef35c2f9b5369cb0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T02:38:23.493Z"
     }
   },
   "ai-builder-brain": {

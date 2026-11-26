@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-6PJZ",
-    "timestamp": "2026-11-24T12:27:33.983Z",
-    "repository": "slatedb/slatedb",
-    "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "543ef0868d61caffad97224c04b6e6505d89fc17a3919cc5399aaf242ad0f784",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-HZML",
-    "timestamp": "2026-11-24T12:36:20.253Z",
-    "repository": "mfontanini/presenterm",
-    "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "6c1185786d2442e9b7440bbf42555f981d38e8240fc9d4aad89369bf591fbf42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-U1DS",
     "timestamp": "2026-11-24T12:45:42.400Z",
     "repository": "temporalio/temporal",
@@ -7492,6 +7462,36 @@
     "contentHash": "13c0bac3d3c42d1d38d3a440fb7212408b755827ee2a3f50071f78ab3cf93194",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-0GJ3",
+    "timestamp": "2026-11-26T02:38:10.863Z",
+    "repository": "VideoRebirthAI/hyperflow-h3-flash",
+    "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+    "contentHash": "ed205455312dcaad10faf7b6153b8abad74e6c535aa8e9f95fddc7afdba3966c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-0LM9",
+    "timestamp": "2026-11-26T02:38:17.457Z",
+    "repository": "RevenueCat/purchases-ios",
+    "learningId": "learn-github-revenuecat-purchases-ios",
+    "contentHash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

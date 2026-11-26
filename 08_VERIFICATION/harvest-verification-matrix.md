@@ -13209,3 +13209,5 @@
 | `CYCLE-20261126-B80R` | `2026-11-26T02:18:33.435Z` | `autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md` | Yes (`10dbb74f...`) |
 | `CYCLE-20261126-B986` | `2026-11-26T02:18:34.998Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10587` | Yes (`ef078426...`) |
 | `CYCLE-20261126-M29O` | `2026-11-26T02:26:59.196Z` | `tencent/Qwen3.8-27B-DSpine-b16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md` | Yes (`13c0bac3...`) |
+| `CYCLE-20261126-0GJ3` | `2026-11-26T02:38:10.863Z` | `VideoRebirthAI/hyperflow-h3-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md` | Yes (`ed205455...`) |
+| `CYCLE-20261126-0LM9` | `2026-11-26T02:38:17.457Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10588` | Yes (`da2d43a6...`) |

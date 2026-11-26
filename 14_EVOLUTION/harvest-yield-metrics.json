@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T02:26:59.215Z",
-  "total_cycles_completed": 12537,
-  "total_learnings_persisted": 12537,
-  "total_rules_promoted": 11478,
+  "last_updated": "2026-11-26T02:38:17.467Z",
+  "total_cycles_completed": 12539,
+  "total_learnings_persisted": 12539,
+  "total_rules_promoted": 11479,
   "history": [
-    {
-      "timestamp": "2026-11-25T07:39:33.086Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:48:33.648Z",
-      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T07:48:40.280Z",
       "repository": "vanniktech/gradle-maven-publish-plugin",
@@ -1403,6 +1389,20 @@
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",
       "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:38:10.881Z",
+      "repository": "VideoRebirthAI/hyperflow-h3-flash",
+      "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:38:17.467Z",
+      "repository": "RevenueCat/purchases-ios",
+      "learningId": "learn-github-revenuecat-purchases-ios",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

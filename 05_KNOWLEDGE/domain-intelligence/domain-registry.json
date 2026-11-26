@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T02:27:12.821Z",
+  "last_updated": "2026-11-26T02:38:24.707Z",
   "total_records": 2700,
   "domains": {
     "A": {
@@ -8470,8 +8470,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "5ca1240c9bf96905e7f6502387996caa997284730ce24c99cdd94a40b3bfa3c3",
-      "created_at": "2026-11-26T01:45:19.083Z"
+      "content_hash": "88cb0c1ba729e9c3157cca73d1bcf4b00ee327b3e15be27585d33ef9946b52c4",
+      "created_at": "2026-11-26T02:38:24.707Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -22654,8 +22654,8 @@
       "title": "Research & Knowledge Intelligence: VideoRebirthAI/hyperflow-h3-flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-videorebirthai-hyperflow-h3-flash-research-knowledge-intelligence-videorebirt.md",
       "repository": "VideoRebirthAI/hyperflow-h3-flash",
-      "content_hash": "3ed0efe039b66455d33ac0730ebc4fdf0e78e44c2cb9f466a7fc5bd9e6fbcbcb",
-      "created_at": "2026-11-22T05:50:12.370Z"
+      "content_hash": "e5b84d0c8c8a6ff0cb1e8c534fe5e32b73f5044c76c6b185471dca731cbf055e",
+      "created_at": "2026-11-26T02:38:11.094Z"
     },
     "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants",
@@ -22714,8 +22714,8 @@
       "title": "Research & Knowledge Intelligence: hf-videorebirthai-hyperflow-h3-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-videorebirthai-hyperflow-h3-flash-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-videorebirthai-hyperflow-h3-flash-learnings",
-      "content_hash": "778cfc9a3bca32ba1ff33ebee5051420e653e8c7f175e7a5f3065ed3e31ead10",
-      "created_at": "2026-11-22T05:50:31.008Z"
+      "content_hash": "f8c92d8bbf236a682064b84710430a0197ee80f39435da4528228d218a1abaf0",
+      "created_at": "2026-11-26T02:38:23.013Z"
     },
     "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants",
@@ -24585,8 +24585,8 @@
       "title": "Architecture Intelligence: RevenueCat/purchases-ios Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-architecture-intelligence-revenuecat-purchases-ios-core.md",
       "repository": "RevenueCat/purchases-ios",
-      "content_hash": "f6d7f9d2f8da8328104653825429bea028dfbb3ab870b31eb0c1457ecb3ee145",
-      "created_at": "2026-11-23T16:53:37.668Z"
+      "content_hash": "6aee47cfc050ba1c1dea1392caf7217151ac643db249ed317c9b35ae4062797d",
+      "created_at": "2026-11-26T02:38:17.918Z"
     },
     "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants",
@@ -24603,8 +24603,8 @@
       "title": "Architecture Intelligence: revenuecat-purchases-ios-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-learnings-architecture-intelligence-revenuecat-purchase.md",
       "repository": "revenuecat-purchases-ios-learnings",
-      "content_hash": "84bae245cae0d283b9237cb7a4c549be1e6284992100844a98554af09763a77f",
-      "created_at": "2026-11-23T16:53:49.970Z"
+      "content_hash": "5bd9b9ea73c3c3916424c3564bd98b1592cd12a51034eaa3f405cb9e14a2d426",
+      "created_at": "2026-11-26T02:38:23.674Z"
     },
     "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",

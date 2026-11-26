@@ -9213,10 +9213,10 @@
     "repository": "RevenueCat/purchases-ios",
     "platform": "github",
     "sourceUrl": "https://github.com/RevenueCat/purchases-ios",
-    "sourceVersion": "f3256c21",
+    "sourceVersion": "8c1ff472",
     "license": "MIT",
-    "contentHash": "d82c9174f0b3496a7cddbcb940fc271eee393a2b8e581b0f2ff02d28b651968a",
-    "lastHarvestedAt": "2026-11-23T16:53:37.268Z",
+    "contentHash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
+    "lastHarvestedAt": "2026-11-26T02:38:17.461Z",
     "learningId": "learn-github-revenuecat-purchases-ios"
   },
   "hf-reflection-beam-1.0-501b-a23b": {
@@ -12275,8 +12275,8 @@
     "sourceUrl": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
     "sourceVersion": "hf-videorebirthai-hyperflow-h3-flash",
     "license": "Open-Source",
-    "contentHash": "18ca163bac8d3866f8d18eb0d88677b638d3aaddeba1c92f2ef59949b3dc8c22",
-    "lastHarvestedAt": "2026-11-22T05:50:12.148Z",
+    "contentHash": "ed205455312dcaad10faf7b6153b8abad74e6c535aa8e9f95fddc7afdba3966c",
+    "lastHarvestedAt": "2026-11-26T02:38:10.868Z",
     "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash"
   },
   "hf-comfy-org-minimax-h3-image": {

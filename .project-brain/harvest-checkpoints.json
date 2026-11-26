@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T02:26:59.218Z",
+  "last_updated": "2026-11-26T02:38:17.483Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13866,14 +13866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-revenuecat-purchases-ios",
-      "content_hash": "d82c9174f0b3496a7cddbcb940fc271eee393a2b8e581b0f2ff02d28b651968a",
-      "verified_at": "2026-11-23T16:53:37.276Z",
+      "content_hash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
+      "verified_at": "2026-11-26T02:38:17.483Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:53:37.276Z"
+      "last_updated": "2026-11-26T02:38:17.483Z"
     },
     "reflection/Beam-1.0-501B-A23B": {
       "repository": "reflection/Beam-1.0-501B-A23B",
@@ -18471,14 +18471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
-      "content_hash": "18ca163bac8d3866f8d18eb0d88677b638d3aaddeba1c92f2ef59949b3dc8c22",
-      "verified_at": "2026-11-22T05:50:12.157Z",
+      "content_hash": "ed205455312dcaad10faf7b6153b8abad74e6c535aa8e9f95fddc7afdba3966c",
+      "verified_at": "2026-11-26T02:38:10.883Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T05:50:12.157Z"
+      "last_updated": "2026-11-26T02:38:10.883Z"
     },
     "Comfy-Org/MiniMax-H3-Image": {
       "repository": "Comfy-Org/MiniMax-H3-Image",
