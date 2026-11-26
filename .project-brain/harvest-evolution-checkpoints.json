@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T12:11:41.577Z",
+  "last_updated": "2026-11-26T12:20:21.974Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -1853,12 +1853,12 @@
       "staged_for_review": 1
     },
     "tuist-tuist-learnings.md": {
-      "processed_at": "2026-11-25T04:39:39.429Z",
+      "processed_at": "2026-11-26T12:20:19.031Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "hf-lightricks-ltx-2.5-learnings.md": {
-      "processed_at": "2026-11-22T19:10:04.160Z",
+      "processed_at": "2026-11-26T12:20:20.649Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -1948,7 +1948,7 @@
       "staged_for_review": 0
     },
     "saffsanity-sill-learnings.md": {
-      "processed_at": "2026-11-24T01:46:59.500Z",
+      "processed_at": "2026-11-26T12:20:21.109Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3968,7 +3968,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4503,
+  "total_dossiers_evaluated": 4506,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3400
+  "total_staged_for_review": 3402
 }

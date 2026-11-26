@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T12:11:33.334Z",
-  "total_cycles_completed": 12688,
-  "total_learnings_persisted": 12688,
-  "total_rules_promoted": 11568,
+  "last_updated": "2026-11-26T12:20:15.530Z",
+  "total_cycles_completed": 12693,
+  "total_learnings_persisted": 12693,
+  "total_rules_promoted": 11572,
   "history": [
-    {
-      "timestamp": "2026-11-25T23:41:44.356Z",
-      "repository": "chrisbanes/skills",
-      "learningId": "learn-github-chrisbanes-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:50:00.242Z",
-      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:59:10.968Z",
-      "repository": "PrunaAI/P-Image-OSS-Comfy",
-      "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:59:17.558Z",
-      "repository": "Kianuni/Erosion-CN",
-      "learningId": "learn-github-kianuni-erosion-cn",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:59:22.852Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T00:09:18.302Z",
       "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-26T12:11:33.334Z",
       "repository": "iliyami/MacSai",
       "learningId": "learn-github-iliyami-macsai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:19:57.244Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:20:00.413Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:20:04.217Z",
+      "repository": "Saffsanity/sill",
+      "learningId": "learn-github-saffsanity-sill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:20:06.935Z",
+      "repository": "nats-io/nats.go",
+      "learningId": "learn-github-nats-io-nats-go",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:20:15.530Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

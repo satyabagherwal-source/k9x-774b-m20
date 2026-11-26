@@ -13404,3 +13404,8 @@ Every entry in this ledger must capture:
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `d9327074` | Multi-dimensional audit evidence | 2026-11-26T12:11:29.413Z |
 | `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-26T12:11:31.817Z |
 | `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `8aa34cc8` | Multi-dimensional audit evidence | 2026-11-26T12:11:33.318Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-26T12:19:57.232Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `5482e782` | Multi-dimensional audit evidence | 2026-11-26T12:20:00.398Z |
+| `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `22ab5a3e` | Multi-dimensional audit evidence | 2026-11-26T12:20:04.203Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `eb29cd1f` | Multi-dimensional audit evidence | 2026-11-26T12:20:06.922Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `4fc0fe7e` | Multi-dimensional audit evidence | 2026-11-26T12:20:15.516Z |

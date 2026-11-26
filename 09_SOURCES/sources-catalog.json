@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "41b047a71d8688399cb1a27565939c8f8d11742863465e0d45ba84790e02efcf",
-    "lastHarvestedAt": "2026-11-22T19:09:43.075Z",
+    "contentHash": "6774490567a62a50c1c705ea01da3c4ac41aa27cd24c0e849f10312fb08904e4",
+    "lastHarvestedAt": "2026-11-26T12:19:57.232Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -1613,10 +1613,10 @@
     "repository": "Saffsanity/sill",
     "platform": "github",
     "sourceUrl": "https://github.com/Saffsanity/sill",
-    "sourceVersion": "5d062a3c",
+    "sourceVersion": "22ab5a3e",
     "license": "Apache-2.0",
-    "contentHash": "d599c6771403c0e35b9e2822390fbdd7982f62e3c891a3dea62b07505ce0bc51",
-    "lastHarvestedAt": "2026-11-24T01:46:51.669Z",
+    "contentHash": "41d1169e908e4b2ce60fc6f720ff7135cc823d369612814f88818498c05a4eec",
+    "lastHarvestedAt": "2026-11-26T12:20:04.203Z",
     "learningId": "learn-github-saffsanity-sill"
   },
   "textbee-textbee": {
@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "c0846a17",
+    "sourceVersion": "eb29cd1f",
     "license": "Apache-2.0",
-    "contentHash": "e2041a3c7a36e43da191ced2e386c01decd71a5cb1c6752502d5385b1307a6e2",
-    "lastHarvestedAt": "2026-11-25T11:59:54.049Z",
+    "contentHash": "4ebd2f99a753d22b617dc3b9011742b7868a32498a598f717692ac2f0e8b4523",
+    "lastHarvestedAt": "2026-11-26T12:20:06.922Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "597eabf7",
+    "sourceVersion": "4fc0fe7e",
     "license": "Apache-2.0",
-    "contentHash": "a5fa5910d7f23aef714003fa89242961b94dcf57b14cc333de9345ffb02e28fd",
-    "lastHarvestedAt": "2026-11-25T10:57:59.770Z",
+    "contentHash": "628de032bc98c23623a5e0047622bc7d36e9ce148639a5b27d6f716a0e45b2c6",
+    "lastHarvestedAt": "2026-11-26T12:20:15.516Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "1f231c14",
+    "sourceVersion": "5482e782",
     "license": "NOASSERTION",
-    "contentHash": "170f8e3c43976c895e0021a55b3c5005cac4180e23cd810a64699913d6075a34",
-    "lastHarvestedAt": "2026-11-25T04:39:29.856Z",
+    "contentHash": "5372326bc413354af31bd7847202d1f226f55d8bd576fd06045ae273f5da2081",
+    "lastHarvestedAt": "2026-11-26T12:20:00.398Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {

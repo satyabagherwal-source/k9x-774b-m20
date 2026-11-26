@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-5O92",
-    "timestamp": "2026-11-24T22:42:37.190Z",
-    "repository": "alibaba/zvec",
-    "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "2eb9e5f50a9cf3ca75af40c8ffffe6a5cce4deb024c087cc77272c17d36870c6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-GG9K",
-    "timestamp": "2026-11-24T22:51:00.056Z",
-    "repository": "sveltejs/svelte",
-    "learningId": "learn-github-sveltejs-svelte",
-    "contentHash": "ef6dc4e10264d11eead6779a6b47a834afcc807cfcfe23f56d0beec327b9b6eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-GM0D",
-    "timestamp": "2026-11-24T22:51:07.501Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "bb6c8cdfb7d045a0c31b23163edca8c8655c6fedf7944eca23e257886b912da3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-GNZ8",
-    "timestamp": "2026-11-24T22:51:10.052Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "dbae65b48ccdb9f59604f08a29280249e3e182dafed38a156cfb63de49207040",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-XQYE",
-    "timestamp": "2026-11-24T23:04:27.062Z",
-    "repository": "solidjs/solid",
-    "learningId": "learn-github-solidjs-solid",
-    "contentHash": "2cd91ae795b428ab25a142801c31ec96b6396ce1e45da16f61c31cb8903c072b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-XYOO",
     "timestamp": "2026-11-24T23:04:37.080Z",
     "repository": "zilliztech/claude-context",
@@ -7490,6 +7415,81 @@
     "repository": "iliyami/MacSai",
     "learningId": "learn-github-iliyami-macsai",
     "contentHash": "6591ad9cb7f29b26462a658339785ca23b1b3efcec79705382ccf06795c9a5b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-SMGB",
+    "timestamp": "2026-11-26T12:19:57.227Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "6774490567a62a50c1c705ea01da3c4ac41aa27cd24c0e849f10312fb08904e4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-SOWA",
+    "timestamp": "2026-11-26T12:20:00.394Z",
+    "repository": "tuist/tuist",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "5372326bc413354af31bd7847202d1f226f55d8bd576fd06045ae273f5da2081",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-SRTZ",
+    "timestamp": "2026-11-26T12:20:04.199Z",
+    "repository": "Saffsanity/sill",
+    "learningId": "learn-github-saffsanity-sill",
+    "contentHash": "41d1169e908e4b2ce60fc6f720ff7135cc823d369612814f88818498c05a4eec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-STXH",
+    "timestamp": "2026-11-26T12:20:06.917Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "4ebd2f99a753d22b617dc3b9011742b7868a32498a598f717692ac2f0e8b4523",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-T0K7",
+    "timestamp": "2026-11-26T12:20:15.511Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "628de032bc98c23623a5e0047622bc7d36e9ce148639a5b27d6f716a0e45b2c6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

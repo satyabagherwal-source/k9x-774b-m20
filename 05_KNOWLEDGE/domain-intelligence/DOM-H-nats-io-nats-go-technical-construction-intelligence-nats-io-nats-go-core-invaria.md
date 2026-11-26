@@ -4,24 +4,24 @@
 {
   "source_repository": "nats-io/nats.go",
   "source_url": "https://github.com/nats-io/nats.go",
-  "source_version": "c0846a17",
+  "source_version": "eb29cd1f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T11:59:54.303Z",
+  "timestamp": "2026-11-26T12:20:07.177Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nats-io-nats-go",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nats-io/nats.go](https://github.com/nats-io/nats.go) (Revision: `c0846a17`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T11:59:54.303Z`  
+> **Provenance**: Harvested from [nats-io/nats.go](https://github.com/nats-io/nats.go) (Revision: `eb29cd1f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T12:20:07.177Z`  
 > **Learning ID**: `learn-github-nats-io-nats-go`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nats-io/nats.go:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T11:59:52.857Z  
+> **Harvest Timestamp**: 2026-11-26T12:20:05.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1575,126 +1575,545 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c0846a17` (2026-11-24)
-**Commit Message**: [FIXED] Reject MSG and HMSG sizes longer than 9 digits
+### Incident Patch 1: `ebf2f815` (2026-11-17)
+**Commit Message**: [FIXED] Unblock KV watcher when stopped with a full updates channel
+
+**File**: `jetstream/kv.go` (modified, +21/-3)
+```diff
+@@ -1222,6 +1222,9 @@ type watcher struct {
+ 	initDone    bool
+ 	initPending uint64
+ 	received    uint64
++	stop        chan struct{}
++	stopOnce    sync.Once
++	stopped     bool
+ }
+ 
+ // Updates returns the interior channel.
+@@ -1237,6 +1240,7 @@ func (w *watcher) Stop() error {
+ 	if w == nil {
+ 		return nil
+ 	}
++	w.stopOnce.Do(func() { close(w.stop) })
+ 	return w.sub.Unsubscribe()
+ }
+ 
+@@ -1274,7 +1278,21 @@ func (kv *kvs) WatchFiltered(ctx context.Context, keys []string, opts ...WatchOp
+ 	}
+ 
+ 	// We will block below on placing items on the chan. That is by design.
+-	w := &watcher{updates: make(chan KeyValueEntry, 256)}
++	w := &watcher{updates: make(chan KeyValueEntry, 256), stop: make(chan struct{})}
++
++	// Gives up once the watcher is stopped or the context ends.
++	send := func(entry KeyValueEntry) {
++		if w.stopped {
++			return
++		}
++		select {
++		case w.updates <- entry:
++		case <-w.stop:
++			w.stopped = true
++		case <-ctx.Done():
++			w.stopped = true
++		}
++	}
+ 
+ 	update := func(m *nats.Msg) {
+ 		tokens, err := parser.GetMetadataFields(m.Reply)
+@@ -1317,7 +1335,7 @@ func (kv *kvs) WatchFiltered(ctx context.Context, keys []string, opts ...WatchOp
+ 				delta:    delta,
+ 				op:       op,
+ 			}
+-			w.updates <- entry
++			send(entry)
+ 		}
+ 		// Check if done and initial values.
+ 		if !w.initDone {
+@@ -1326,7 +1344,7 @@ func (kv *kvs) WatchFiltered(ctx context.Context, keys []string, opts ...WatchOp
+ 			// We're done if we've received all expected messages OR there are no more pending.
+ 			if w.received >= w.initPending || delta == 0 {
+ 				w.initDone = true
+-				w.updates <- nil
++				send(nil)
+ 			}
+ 		}
+ 	}
+```
+
+**File**: `jetstream/test/kv_test.go` (modified, +58/-0)
+```diff
+@@ -684,6 +684,64 @@ func TestKeyValueWatchContext(t *testing.T) {
+ 	})
+ }
+ 
++func TestKeyValueWatchStopWithFullBuffer(t *testing.T) {
++	for _, cancelContext := range []bool{false, true} {
++		t.Run(fmt.Sprintf("cancel context %v", cancelContext), func(t *testing.T) {
++			withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
++				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
++				defer cancel()
++
++				kv, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "WATCHSTOP"})
++				expectOk(t, err)
++
++				watchCtx, cancelWatch := context.WithCancel(ctx)
++				defer cancelWatch()
++				watcher, err := kv.WatchAll(watchCtx)
++				expectOk(t, err)
++				defer watcher.Stop()
++
++				// Nothing reads the updates, so the watcher blocks on a full channel.
++				updates := watcher.Updates()
++				for i := range cap(updates) + 1 {
++					_, err := kv.PutString(ctx, fmt.Sprintf("key.%d", i), "value")
++					expectOk(t, err)
++				}
++				checkFor(t, 5*time.Second, 20*time.Millisecond, func() error {
++					if len(updates) < cap(updates) {
++						return errors.New("updates channel is not full")
++					}
++					return nil
++				})
++				// Let the watcher block on the entry that does not fit.
++				time.Sleep(250 * time.Millisecond)
++
++				if cancelContext {
++					cancelWatch()
++				} else {
++					expectOk(t, watcher.Stop())
++				}
++
++				// A watcher still blocked on that entry would deliver it now.
++				var received int
++				for {
++					select {
++					case _, ok := <-updates:
++						if !ok {
++							if received != cap(updates) {
++								t.Fatalf("Expected %d updates before the channel closed, got %d", cap(updates), received)
++							}
++							return
++						}
++						received++
++					case <-time.After(2 * time.Second):
++						t.Fatal("Updates channel was not closed")
++					}
++				}
++			})
++		})
++	}
++}
++
+ func TestKeyValueWatchContextUpdates(t *testing.T) {
+ 	withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
+ 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+```
+
+---
+
+### Incident Patch 2: `edf58b7a` (2026-11-19)
+**Commit Message**: [CHANGED] Refuse micro endpoints under the $SRV prefix
 
 Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 
-**File**: `nats_test.go` (modified, +37/-0)
+**File**: `micro/service.go` (modified, +6/-0)
 ```diff
-@@ -724,6 +724,43 @@ func TestParserShouldFail(t *testing.T) {
- 	}
- }
+@@ -32,6 +32,9 @@ type (
+ 	// Service exposes methods to operate on a service instance.
+ 	Service interface {
+ 		// AddEndpoint registers endpoint with given name on a specific subject.
++		// Subjects under [APIPrefix] are reserved for discovery and refused.
++		// A wildcard subject that overlaps with them, such as ">", is accepted,
++		// and its endpoint also receives discovery requests.
+ 		AddEndpoint(string, Handler, ...EndpointOpt) error
  
-+func TestParserMsgSizeLimit(t *testing.T) {
-+	for _, proto := range []string{
-+		"MSG foo 1 9223372036854775807\r\n",
-+		"MSG foo 1 _INBOX.bar 9223372036854775807\r\n",
-+		"MSG foo 1 4611686018427387904\r\n",
-+		"HMSG foo 1 0 9223372036854775807\r\n",
-+		"HMSG foo 1 _INBOX.bar 0 9223372036854775807\r\n",
-+		"HMSG foo 1 4611686018427387904 4611686018427387904\r\n",
-+	} {
-+		nc := &Conn{ps: &parseState{}}
-+		if err := nc.parse([]byte(proto)); err == nil {
-+			t.Errorf("Expected a parse error for %q", proto)
-+		}
+ 		// AddGroup returns a Group interface, allowing for more complex endpoint topologies.
+@@ -426,6 +429,9 @@ func addEndpoint(s *service, name, subject string, handler Handler, metadata map
+ 	if !subjectRegexp.MatchString(subject) {
+ 		return fmt.Errorf("%w: invalid endpoint subject", ErrConfigValidation)
+ 	}
++	if subject == APIPrefix || strings.HasPrefix(subject, APIPrefix+".") {
++		return fmt.Errorf("%w: endpoint subject %q is under %s, which is reserved for discovery", ErrConfigValidation, subject, APIPrefix)
 +	}
-+
-+	// The server never sends sizes longer than 9 digits.
-+	for _, tc := range []struct {
-+		hdr  int
-+		args string
-+		ok   bool
-+	}{
-+		{-1, "foo 1 999999999", true},
-+		{-1, "foo 1 1000000000", false},
-+		{0, "foo 1 999999999 999999999", true},
-+		{0, "foo 1 1000000000 1000000000", false},
-+	} {
-+		nc := &Conn{ps: &parseState{hdr: tc.hdr}}
-+		err := nc.processMsgArgs([]byte(tc.args))
-+		if tc.ok && (err != nil || nc.ps.ma.size != 999999999) {
-+			t.Errorf("Expected %q to be accepted, got size %d, err %v", tc.args, nc.ps.ma.size, err)
-+		}
-+		if !tc.ok && err == nil {
-+			t.Errorf("Expected %q to be rejected", tc.args)
-+		}
-+	}
-+}
-+
- func TestParserSplitMsg(t *testing.T) {
- 	nc := &Conn{}
- 	nc.ps = &parseState{}
+ 	if !subjectRegexp.MatchString(queueGroup) {
+ 		return fmt.Errorf("%w: invalid endpoint queue group", ErrConfigValidation)
+ 	}
 ```
 
-**File**: `parser.go` (modified, +24/-6)
+**File**: `micro/test/service_test.go` (modified, +48/-0)
 ```diff
-@@ -464,12 +464,12 @@ func (nc *Conn) processMsgArgs(arg []byte) error {
- 		nc.ps.ma.subject = args[0]
- 		nc.ps.ma.sid = parseInt64(args[1])
- 		nc.ps.ma.reply = nil
--		nc.ps.ma.size = int(parseInt64(args[2]))
-+		nc.ps.ma.size = parseSize(args[2])
- 	case 4:
- 		nc.ps.ma.subject = args[0]
- 		nc.ps.ma.sid = parseInt64(args[1])
- 		nc.ps.ma.reply = args[2]
--		nc.ps.ma.size = int(parseInt64(args[3]))
-+		nc.ps.ma.size = parseSize(args[3])
- 	default:
- 		return fmt.Errorf("nats: processMsgArgs Parse Error: '%s'", arg)
+@@ -1353,6 +1353,54 @@ func TestContextHandler(t *testing.T) {
+ 	})
+ }
+ 
++func TestAddEndpoint_ReservedSubject(t *testing.T) {
++	withServer(t, func(t *testing.T, nc *nats.Conn) {
++		handler := micro.HandlerFunc(func(micro.Request) {})
++
++		_, err := micro.AddService(nc, micro.Config{
++			Name:     "orders",
++			Version:  "0.1.0",
++			Endpoint: &micro.EndpointConfig{Subject: "$SRV.custom", Handler: handler},
++		})
++		if !errors.Is(err, micro.ErrConfigValidation) {
++			t.Fatalf("Expected error: %v; got: %v", micro.ErrConfigValidation, err)
++		}
++
++		srv, err := micro.AddService(nc, micro.Config{Name: "orders", Version: "0.1.0"})
++		if err != nil {
++			t.Fatalf("Unexpected error: %v", err)
++		}
++		defer srv.Stop()
++
++		tests := []struct {
++			name string
++			add  func() error
++		}{
++			{"prefix", func() error { return srv.AddEndpoint("e", handler, micro.WithEndpointSubject("$SRV")) }},
++			{"under prefix", func() error { return srv.AddEndpoint("e", handler, micro.WithEndpointSubject("$SRV.custom")) }},
++			{"discovery subject", func() error { return srv.AddEndpoint("e", handler, micro.WithEndpointSubject("$SRV.PING.orders")) }},
++			{"group", func() error { return srv.AddGroup("$SRV").AddEndpoint("e", handler) }},
++			{"nested group", func() error { return srv.AddGroup("$SRV").AddGroup("g").AddEndpoint("e", handler) }},
++		}
++		for _, test := range tests {
++			t.Run(test.name, func(t *testing.T) {
++				if err := test.add(); !errors.Is(err, micro.ErrConfigValidation) {
++					t.Fatalf("Expected error: %v; got: %v", micro.ErrConfigValidation, err)
++				}
++			})
++		}
++		if n := len(srv.Info().Endpoints); n != 0 {
++			t.Fatalf("Expected no endpoints; got: %d", n)
++		}
++
++		for _, subject := range []string{"$SRVX.custom", "orders.$SRV"} {
++			if err := srv.AddEndpoint("e", handler, micro.WithEndpointSubject(subject)); err != nil {
++				t.Fatalf("Unexpected error for %q: %v", subject, err)
++			}
++		}
++	})
++}
++
+ func TestAddEndpoint_Options(t *testing.T) {
+ 	withServer(t, func(t *testing.T, nc *nats.Conn) {
+ 		config := micro.Config{
+```
+
+---
+
+### Incident Patch 3: `b1914724` (2026-11-03)
+**Commit Message**: [FIXED] Call a closed handler set after its subscription closed
+
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+
+**File**: `kv.go` (modified, +4/-4)
+```diff
+@@ -1225,18 +1225,18 @@ func (kv *kvs) WatchFiltered(keys []string, opts ...WatchOpt) (KeyWatcher, error
+ 		// if UpdatesOnly was used, mark initialization as complete
+ 		w.initDone = true
  	}
-@@ -510,14 +510,14 @@ func (nc *Conn) processHeaderMsgArgs(arg []byte) error {
- 		nc.ps.ma.subject = args[0]
- 		nc.ps.ma.sid = parseInt64(args[1])
- 		nc.ps.ma.reply = nil
--		nc.ps.ma.hdr = int(parseInt64(args[2]))
--		nc.ps.ma.size = int(parseInt64(args[3]))
-+		nc.ps.ma.hdr = parseSize(args[2])
-+		nc.ps.ma.size = parseSize(args[3])
- 	case 5:
- 		nc.ps.ma.subject = args[0]
- 		nc.ps.ma.sid = parseInt64(args[1])
- 		nc.ps.ma.reply = args[2]
--		nc.ps.ma.hdr = int(parseInt64(args[3]))
--		nc.ps.ma.size = int(parseInt64(args[4]))
-+		nc.ps.ma.hdr = parseSize(args[3])
-+		nc.ps.ma.size = parseSize(args[4])
- 	default:
- 		return fmt.Errorf("nats: processHeaderMsgArgs Parse Error: '%s'", arg)
++	sub.mu.Unlock()
++
+ 	// Set us up to close when the waitForMessages func returns.
+-	sub.pDone = func(_ string) {
++	sub.SetClosedHandler(func(_ string) {
+ 		w.mu.Lock()
+ 		defer w.mu.Unlock()
+ 		if w.initDoneTimer != nil {
+ 			w.initDoneTimer.Stop()
+ 		}
+ 		close(w.updates)
+ 		close(w.errCh)
+-	}
+-
+-	sub.mu.Unlock()
++	})
+ 
+ 	w.sub = sub
+ 	return w, nil
+```
+
+**File**: `nats.go` (modified, +19/-2)
+```diff
+@@ -782,6 +782,8 @@ type Subscription struct {
+ 	pTail *Msg
+ 	pCond *sync.Cond
+ 	pDone func(subject string)
++	// Set when the subscription closed with no pDone to call.
++	pDoneMissed bool
+ 
+ 	// Pending stats, async subscriptions, high-speed etc.
+ 	pMsgs       int
+@@ -4043,6 +4045,7 @@ func (nc *Conn) waitForMsgs(s *Subscription) {
  	}
-@@ -553,3 +553,21 @@ func parseInt64(d []byte) (n int64) {
+ 	// Now check for pDone
+ 	done := s.pDone
++	s.pDoneMissed = done == nil
+ 	s.mu.Unlock()
+ 
+ 	if done != nil {
+@@ -5500,6 +5503,7 @@ func (nc *Conn) removeSub(s *Subscription) {
+ 
+ 	if s.typ != AsyncSubscription {
+ 		done := s.pDone
++		s.pDoneMissed = done == nil
+ 		if done != nil {
+ 			done(s.Subject)
+ 		}
+@@ -5779,11 +5783,23 @@ func (s *Subscription) AutoUnsubscribe(max int) error {
+ }
+ 
+ // SetClosedHandler will set the closed handler for when a subscription
+-// is closed (either unsubscribed or drained).
++// is closed (either unsubscribed or drained). If the subscription has
++// already closed without calling a closed handler, the handler is called
++// right away on its own goroutine.
+ func (s *Subscription) SetClosedHandler(handler func(subject string)) {
+ 	s.mu.Lock()
+ 	s.pDone = handler
++	missed := s.pDoneMissed && handler != nil
++	if missed {
++		s.pDoneMissed = false
++	}
++	subject := s.Subject
+ 	s.mu.Unlock()
++	// Nothing else will call the handler. Not inline, as the caller may hold
++	// locks the handler takes.
++	if missed {
++		go handler(subject)
++	}
+ }
+ 
+ // unsubscribe performs the low level unsubscribe to the server.
+@@ -6505,8 +6521,9 @@ func (nc *Conn) close(status Status, doCBs bool, err error) {
+ 		// Call closed handler for non-AsyncSubscription types (AsyncSubscription handlers
+ 		// are called by waitForMsgs when it exits)
+ 		var done func(string)
+-		if s.typ != AsyncSubscription && s.pDone != nil {
++		if s.typ != AsyncSubscription {
+ 			done = s.pDone
++			s.pDoneMissed = done == nil
+ 		}
+ 
+ 		// Mark as invalid, for signaling to waitForMsgs
+```
+
+**File**: `nats_test.go` (modified, +102/-0)
+```diff
+@@ -29,6 +29,7 @@ import (
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
++	"io"
+ 	"math"
+ 	"math/big"
+ 	"net"
+@@ -2367,3 +2368,104 @@ func TestStreamStateNumDeletedOverflow(t *testing.T) {
+ 		t.Fatalf("Unexpected state: %+v", state)
  	}
- 	return n
  }
 +
-+// maxSizeLen is the server's own limit on the digits of a size, which
-+// keeps any size well clear of overflowing an int, even on 32-bit.
-+const maxSizeLen = 9
-+
-+// parseSize parses a payload or header size. It returns -1 on error.
-+func parseSize(d []byte) (n int) {
-+	if len(d) == 0 || len(d) > maxSizeLen {
-+		return -1
++func TestClosedHandlerSetAfterAsyncSubClosed(t *testing.T) {
++	l, err := net.Listen("tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatalf("Could not listen on an ephemeral port: %v", err)
 +	}
-+	for _, dec := range d {
-+		if dec < ascii_0 || dec > ascii_9 {
-+			return -1
++	defer l.Close()
++	go func() {
++		for {
++			conn, err := l.Accept()
++			if err != nil {
++				return
++			}
++			go func() {
++				defer conn.Close()
++				conn.Write([]byte("INFO {\"server_id\":\"foobar\"}\r\n"))
++				br := bufio.NewReaderSize(conn, 10*1024)
++				br.ReadLine()
++				br.ReadLine()
++				conn.Write([]byte(pongProto))
++				io.Copy(io.Discard, br)
++			}()
 +		}
-+		n = n*10 + int(dec-ascii_0)
++	}()
++	url := fmt.Sprintf("nats://%s", l.Addr())
++
++	for _, test := range []struct {
++		name           string
++		close          func(*Conn, *Subscription)
++		handlerAtClose bool
++	}{
++		{"unsubscribe", func(_ *Conn, s *Subscription) { s.Unsubscribe() }, false},
++		{"unsubscribe with handler at close", func(_ *Conn, s *Subscription) { s.Unsubscribe() }, true},
++		{"conn close", func(nc *Conn, _ *Subscription) { nc.Close() }, false},
++		{"conn close with handler at close", func(nc *Conn, _ *Subscription) { nc.Close() }, true},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			nc, err := Connect(url)
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			defer nc.Close()
++			s, err := nc.Subscribe("foo", func(*Msg) {})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++
++			closed := make(chan string, 2)
++			waitClosed := func() {
++				t.Helper()
++				select {
++				case subject := <-closed:
++					if subject != "foo" {
++						t.Fatalf("Expected subject 'foo', got %q", subject)
++					}
++				case <-time.After(2 * time.Second):
++					t.Fatal("Closed handler not called")
++				}
++			}
++			if test.handlerAtClose {
++				s.SetClosedHandler(func(subject string) { closed <- subject })
++				test.close(nc, s)
++			} else {
++				test.close(nc, s)
++				// Wait for the delivery goroutine to exit having found no handler.
++				deadline := time.Now().Add(2 * time.Second)
++				for {
++					s.mu.Lock()
++					missed := s.pDoneMissed
++					s.mu.Unlock()
++					if missed {
++						break
++					}
++					if time.Now().After(deadline) {
++						t.Fatal("Delivery goroutine did not exit")
++					}
++					time.Sleep(10 * time.Millisecond)
++				}
++				// The handler takes a lock held by the caller of
++				// SetClosedHandler, so it must not be called inline.
++				var mu sync.Mutex
++				mu.Lock()
++				s.SetClosedHandler(func(subject string) {
++					mu.Lock()
++					defer mu.Unlock()
++					closed <- subject
++				})
++				mu.Unlock()
++			}
++			waitClosed()
++
++			// The close has been reported, so this one is not called.
++			s.SetClosedHandler(func(subject string) { closed <- subject })
++			select {
++			case <-closed:
++				t.Fatal("Closed handler called after the close was reported")
++			case <-time.After(100 * time.Millisecond):
++			}
++		})
 +	}
-+	return n
 +}
+```
+
+**File**: `object.go` (modified, +2/-2)
+```diff
+@@ -1128,9 +1128,9 @@ func (obs *obs) Watch(opts ...WatchOpt) (ObjectWatcher, error) {
+ 		return nil, err
+ 	}
+ 	// Set us up to close when the waitForMessages func returns.
+-	sub.pDone = func(_ string) {
++	sub.SetClosedHandler(func(_ string) {
+ 		close(w.updates)
+-	}
++	})
+ 	w.sub = sub
+ 	return w, nil
+ }
+```
+
+**File**: `test/sub_test.go` (modified, +64/-0)
+```diff
+@@ -1904,6 +1904,70 @@ func TestClosedHandlerOnConnectionClose(t *testing.T) {
+ 	})
+ }
+ 
++// Async subscriptions are covered by TestClosedHandlerSetAfterAsyncSubClosed,
++// as only a white-box test can tell when their delivery goroutine has exited.
++func TestClosedHandlerSetAfterClose(t *testing.T) {
++	withServerInstance(t, func(t *testing.T, _ *nats.Conn, inst *testservice.Instance) {
++		subscribe := map[string]func(*nats.Conn) (*nats.Subscription, error){
++			"chan subscribe": func(nc *nats.Conn) (*nats.Subscription, error) {
++				return nc.ChanSubscribe("foo", make(chan *nats.Msg, 1))
++			},
++			"sync subscribe": func(nc *nats.Conn) (*nats.Subscription, error) {
++				return nc.SubscribeSync("foo")
++			},
++		}
++		closers := map[string]func(*nats.Conn, *nats.Subscription){
++			"unsubscribe": func(_ *nats.Conn, sub *nats.Subscription) { sub.Unsubscribe() },
++			"conn close":  func(nc *nats.Conn, _ *nats.Subscription) { nc.Close() },
++		}
++		for subName, sub := range subscribe {
++			for closeName, closeSub := range closers {
++				for _, handlerAtClose := range []bool{false, true} {
++					name := fmt.Sprintf("%s/%s/handler at close %t", subName, closeName, handlerAtClose)
++					t.Run(name, func(t *testing.T) {
++						nc, err := nats.Connect(inst.Servers[0].URL)
++						if err != nil {
++							t.Fatalf("Unexpected error: %v", err)
++						}
++						defer nc.Close()
++						s, err := sub(nc)
++						if err != nil {
++							t.Fatalf("Unexpected error: %v", err)
++						}
++
++						closed := make(chan string, 2)
++						if handlerAtClose {
++							s.SetClosedHandler(func(subject string) { closed <- subject })
++							closeSub(nc, s)
++						} else {
++							closeSub(nc, s)
++							// The handler takes a lock held by the caller of
++							// SetClosedHandler, so it must not be called inline.
++							var mu sync.Mutex
++							mu.Lock()
++							s.SetClosedHandler(func(subject string) {
++								mu.Lock()
++								defer mu.Unlock()
++								closed <- subject
++							})
++							mu.Unlock()
++						}
++						WaitOnChannel(t, closed, "foo")
++
++						// The close has been reported, so this one is not called.
++						s.SetClosedHandler(func(subject string) { closed <- subject })
++						select {
++						case <-closed:
++							t.Fatal("Closed handler called after the close was reported")
++						case <-time.After(100 * time.Millisecond):
++						}
++					})
++				}
++			}
++		}
++	})
++}
++
+ const denyFooSubscribeAuthSnippet = `
+ authorization: {
+     users = [
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2268** (2026-11-26): [IMPROVED] Update CLAUDE.md test placement and contributor conventions (@piotrpio)
 - **PR #2262** (2026-11-25): [FIXED] Reject MSG and HMSG sizes longer than 9 digits (@piotrpio)
-- **PR #2249** (2026-11-18): [ADDED] Option to sign the server nonce as a trusted proxy (@bruth)
-- **PR #2246** (2026-11-17): Release v1.56.0 (@piotrpio)
-- **PR #2245** (2026-11-17): [CHANGED] Fixes for TLS and server discovery (@piotrpio)
-- **PR #2243** (2026-11-16): [IMPROVED] Bump ntf-client to v0.0.5 to fix nightly tester failures (@piotrpio)
-- **PR #2242** (2026-11-15): docs: remove duplicated word in MemoryMaxStreamBytes comment (@ninglinLiu)
+- **PR #2259** (closed): [IMPROVED] Share one allocation for the subject and reply of a received message (@g4lb)
+- **PR #2253** (2026-11-25): [ADDED] Configurable service API discovery prefix (@piotrpio)
+- **PR #2252** (2026-11-25): [CHANGED] Refuse micro endpoints under the $SRV prefix (@piotrpio)
+- **PR #2251** (2026-11-25): [FIXED] Keep the service start time on micro Reset (@piotrpio)
 
 ---
 
@@ -1714,67 +2133,53 @@ Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Reject MSG and HMSG sizes longer than 9 digits
+## X. [FIXED] Unblock KV watcher when stopped with a full updates channel
 
 **RULE**:
-When implementing operations in `nats_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jetstream/kv.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c0846a17`: [FIXED] Reject MSG and HMSG sizes longer than 9 digits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ebf2f815`: [FIXED] Unblock KV watcher when stopped with a full updates channel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `nats_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/kv.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func TestParserMsgSizeLimit(t *testing.T) {
-	for _, proto := range []string{
-		"MSG foo 1 9223372036854775807\r\n",
-		"MSG foo 1 _INBOX.bar 9223372036854775807\r\n",
-		"MSG foo 1 4611686018427387904\r\n",
-		"HMSG foo 1 0 9223372036854775807\r\n",
-		"HMSG foo 1 _INBOX.bar 0 9223372036854775807\r\n",
-		"HMSG foo 1 4611686018427387904 4611686018427387904\r\n",
-	} {
-		nc := &Conn{ps: &parseState{}}
-		if err := nc.parse([]byte(proto)); err == nil {
-			t.Errorf("Expected a parse error for %q", proto)
+	stop        chan struct{}
+	stopOnce    sync.Once
+	stopped     bool
+	w.stopOnce.Do(func() { close(w.stop) })
+	w := &watcher{updates: make(chan KeyValueEntry, 256), stop: make(chan struct{})}
+
+	// Gives up once the watcher is stopped or the context ends.
+	send := func(entry KeyValueEntry) {
+		if w.stopped {
+			return
+		}
+		select {
+		case w.updates <- entry:
+		case <-w.stop:
+			w.stopped = true
+		case <-ctx.Done():
+			w.stopped = true
 		}
 	}
-
-	// The server never sends sizes longer than 9 digits.
-	for _, tc := range []struct {
-		hdr  int
-		args string
-		ok   bool
-	}{
-		{-1, "foo 1 999999999", true},
-		{-1, "foo 1 1000000000", false},
-		{0, "foo 1 999999999 999999999", true},
-		{0, "foo 1 1000000000 1000000000", false},
-	} {
-		nc := &Conn{ps: &parseState{hdr: tc.hdr}}
-		err := nc.processMsgArgs([]byte(tc.args))
-		if tc.ok && (err != nil || nc.ps.ma.size != 999999999) {
-			t.Errorf("Expected %q to be accepted, got size %d, err %v", tc.args, nc.ps.ma.size, err)
-		}
-		if !tc.ok && err == nil {
-			t.Errorf("Expected %q to be rejected", tc.args)
-		}
-	}
-}
-
+			send(entry)
+				send(nil)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	w := &watcher{updates: make(chan KeyValueEntry, 256)}
+			w.updates <- entry
+				w.updates <- nil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c0846a17` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ebf2f815` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -13371,3 +13371,8 @@
 | `CYCLE-20261126-HQM7` | `2026-11-26T12:11:29.407Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10670` | Yes (`f8373b4b...`) |
 | `CYCLE-20261126-HSGZ` | `2026-11-26T12:11:31.811Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`80455e28...`) |
 | `CYCLE-20261126-HTMO` | `2026-11-26T12:11:33.312Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10671` | Yes (`6591ad9c...`) |
+| `CYCLE-20261126-SMGB` | `2026-11-26T12:19:57.227Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`67744905...`) |
+| `CYCLE-20261126-SOWA` | `2026-11-26T12:20:00.394Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10672` | Yes (`5372326b...`) |
+| `CYCLE-20261126-SRTZ` | `2026-11-26T12:20:04.199Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10673` | Yes (`41d1169e...`) |
+| `CYCLE-20261126-STXH` | `2026-11-26T12:20:06.917Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10674` | Yes (`4ebd2f99...`) |
+| `CYCLE-20261126-T0K7` | `2026-11-26T12:20:15.511Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10675` | Yes (`628de032...`) |

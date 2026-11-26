@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T12:11:41.026Z",
-  "total_records": 2744,
+  "last_updated": "2026-11-26T12:20:21.596Z",
+  "total_records": 2746,
   "domains": {
     "A": {
       "total": 23,
@@ -1707,7 +1707,7 @@
       ]
     },
     "H": {
-      "total": 660,
+      "total": 662,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2368,7 +2368,9 @@
         "domain_intelligence-technical-construction-intelligence-planetable-planet-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-higress-group-higress-core-invariants",
         "DOM-H-D48F999D",
-        "domain_intelligence-technical-construction-intelligence-higress-group-higress-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-higress-group-higress-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-saffsanity-sill-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-saffsanity-sill-learnings-core-invariants"
       ]
     },
     "I": {
@@ -18160,8 +18162,8 @@
       "title": "Architecture Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ytsaurus-ytsaurus-architecture-intelligence-ytsaurus-ytsaurus-core-invariants.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "80e1d1e2c38bec5ef008caa827f003157d6d9514f6e4aa49b49a154fdbd8cd6b",
-      "created_at": "2026-11-21T15:31:36.028Z"
+      "content_hash": "c6148983ba2a725394860c6c4d64bd21ddb750fd0282db339c30164250da2c50",
+      "created_at": "2026-11-26T12:20:15.966Z"
     },
     "DOM-D-CC7591B7": {
       "record_id": "DOM-D-CC7591B7",
@@ -21080,8 +21082,8 @@
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "repository": "tuist/tuist",
-      "content_hash": "368ad9accb970bf2353a467cc068dcfd83b8da3552e009403ecc9ef9d1e3aa04",
-      "created_at": "2026-11-25T04:39:30.318Z"
+      "content_hash": "bab0459e5107ce2b1b1555af3536d2cbf33b5bd661c45fdbcd614c67374ee229",
+      "created_at": "2026-11-26T12:20:00.859Z"
     },
     "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
       "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
@@ -21107,8 +21109,8 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
       "repository": "tuist-tuist-learnings",
-      "content_hash": "0a6392f7a2e28c45b4cd135b288cff3f939eabd41b75c052bbe90fdf3c27ecfa",
-      "created_at": "2026-11-25T04:39:40.876Z"
+      "content_hash": "f90a441f319bc3ead4088a57660d59e5265538c6993fdb2d51dd1cb7258d3c05",
+      "created_at": "2026-11-26T12:20:20.261Z"
     },
     "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
       "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
@@ -22392,8 +22394,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats.go Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-technical-construction-intelligence-nats-io-nats-go-core-invaria.md",
       "repository": "nats-io/nats.go",
-      "content_hash": "ec37e19b49a0e99f13f485ccf970498da5df3c078be6ff27eff2578ae4b11600",
-      "created_at": "2026-11-25T11:59:54.490Z"
+      "content_hash": "e477067be42159a9730c3c3fa77ab8043171d703fc2ff078d19451ccaf6bcca7",
+      "created_at": "2026-11-26T12:20:07.380Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants",
@@ -30168,8 +30170,8 @@
       "title": "Research & Knowledge Intelligence: Lightricks/LTX-2.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-research-knowledge-intelligence-lightricks-ltx-2-5-core-in.md",
       "repository": "Lightricks/LTX-2.5",
-      "content_hash": "09c03976f6f099af7cd3bfa91cfb87c1055f7a82e3d1e7a7f6ff36d42f8c9eb3",
-      "created_at": "2026-11-22T19:09:43.282Z"
+      "content_hash": "0df95e4fce911bca732aeaa308ec954ce2995e8ac02ace7758ff249f31a0e416",
+      "created_at": "2026-11-26T12:19:57.467Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants",
@@ -30177,8 +30179,8 @@
       "title": "Research & Knowledge Intelligence: hf-lightricks-ltx-2.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-learnings-research-knowledge-intelligence-hf-lightricks-lt.md",
       "repository": "hf-lightricks-ltx-2.5-learnings",
-      "content_hash": "d4d8012a0a552af0a8806155aacfddb665009b3d719d808ef90b6a08c1e373c3",
-      "created_at": "2026-11-22T19:10:04.361Z"
+      "content_hash": "45160cb129abcfbf7dba76c2f159aa3180296fdcefec3b354458cd316dac60eb",
+      "created_at": "2026-11-26T12:20:20.887Z"
     },
     "DOM-D-B990E946": {
       "record_id": "DOM-D-B990E946",
@@ -46354,6 +46356,24 @@
       "repository": "tauri-apps-tauri-learnings",
       "content_hash": "e9aa5a213a4672de7765a893333e3ce5e820c0af984d1bca259146d4198b149d",
       "created_at": "2026-11-26T11:40:00.282Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-saffsanity-sill-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-saffsanity-sill-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Saffsanity/sill Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-saffsanity-sill-technical-construction-intelligence-saffsanity-sill-core-invaria.md",
+      "repository": "Saffsanity/sill",
+      "content_hash": "b828d8ab8c6aca7048f6e2c6107769eb8afeb2a6b7e7d00c466f00700deb5c6e",
+      "created_at": "2026-11-26T12:20:04.663Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-saffsanity-sill-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-saffsanity-sill-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: saffsanity-sill-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-saffsanity-sill-learnings-technical-construction-intelligence-saffsanity-sill-le.md",
+      "repository": "saffsanity-sill-learnings",
+      "content_hash": "895aea7edc11e1459f16d4e109878268a7c4016202a5aafa98b46fbd83066750",
+      "created_at": "2026-11-26T12:20:21.596Z"
     }
   }
 }

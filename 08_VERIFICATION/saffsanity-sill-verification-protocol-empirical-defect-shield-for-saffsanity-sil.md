@@ -4,22 +4,22 @@
 {
   "source_repository": "Saffsanity/sill",
   "source_url": "https://github.com/Saffsanity/sill",
-  "source_version": "5d062a3c",
+  "source_version": "22ab5a3e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T01:46:51.995Z",
+  "timestamp": "2026-11-26T12:20:04.464Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-saffsanity-sill",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Saffsanity/sill](https://github.com/Saffsanity/sill) (Revision: `5d062a3c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T01:46:51.995Z`  
+> **Provenance**: Harvested from [Saffsanity/sill](https://github.com/Saffsanity/sill) (Revision: `22ab5a3e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T12:20:04.464Z`  
 > **Learning ID**: `learn-github-saffsanity-sill`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Saffsanity/sill` (Commit: `5d062a3c`)
+- **Target Repository**: `Saffsanity/sill` (Commit: `22ab5a3e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:46:50.168Z  
+> **Harvest Timestamp**: 2026-11-26T12:20:02.978Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Any window from your Mac, live on your iPhone or iPad. Touch, Apple Pencil, trackpad and keys. Free, open source, no servers.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5076 stars
+- **Stars / Engagement**: 5120 stars
 
 ---
 
@@ -1529,14 +1529,13 @@ func took(_ header: StreamHeader, _ payload: Data) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #365** (2026-11-20): **Sound can stay off for a whole stream after its capture fails once (-3815, "Start stream fail")**
-  *Symptoms*: ### What happened  With Virtual Display and Send Audio on, picking a window sometimes loses the app's sound for the rest of that stream. Sill's log on the Mac then has one of these lines:  ``` Audio capture ended: … (com.apple.ScreenCaptureKit.SCStreamErrorDomain -3815). The picture is unaffected. Audio: could not capture ‹app›'s sound: Start stream fail ```  -3815 is ScreenCaptureKit saying it found no display or window to capture. The picture keeps streaming; only the sound stops.  I found this while looking into #359, whose log has both lines. My own Mac's log has them too: 8 and 10 times over the last two days.  ### What I think is going on  Two things in Sill for Mac, both in how it captures an app's sound:  1. Sill asks ScreenCaptureKit for the app's sound on the Mac's **main display**. A window that streams from Sill's own virtual display isn't on the main display, and the app may have no window there at all. When Sill's display appears or goes, the sound capture can end with -3815 or fail to start. 2. After a failure, Sill tries the sound again only at the next event (the picture restarting, a device connecting or leaving, a setting changing), and at most once every 10 seconds. If nothing like that happens, the sound stays off until the stream ends.  I haven't proven that the main display is the cause of every one of these lines. It fits the timing: in #359's log the -3815 comes in the same millisecond as Sill's display being created.  ### What should happen  The app'
+- **Issue #379** (2026-11-24): **Locking the iPhone or iPad during Picture in Picture leaves the stream running for about 40 seconds, far behind**
+  *Symptoms*: ### What happened  I left Sill on my iPhone with my Mac's picture in Picture in Picture, then locked the iPhone. The session didn't end with the lock. For its last 38 seconds the iPhone took the stream at a trickle: Sill's log on the Mac shows about one frame a second arriving up to 35 seconds late, every sound packet dropped, and a warning that blames the connection:  ``` Link to iPhone (iPhone16,1): cannot carry Extreme (withheld 35 of 55 frames in the last second; the link carried about 3.4 Mbps); suggesting Low · Standard. client iPhone (iPhone16,1): 1 fps, frame age 18138/18138 ms, rtt – client iPhone (iPhone16,1): 1 fps, frame age 34906/34906 ms, rtt – ```  Then the iPhone left by itself and the Mac stopped capturing. The connection was fine: seconds before, the same iPhone showed 60 frames a second, 7 to 10 ms old, and it did again a minute later.  Nothing of this shows on the locked iPhone. What it costs is on the Mac: it keeps capturing and encoding its whole desktop for a device nobody is looking at, and its log says the connection can't keep up when the connection is fine.  ### What I think is going on  When the device locks, Sill ends Picture in Picture, but nothing ends or pauses the session. Sill is then in the background with a live connection and no picture to show, and it reads the stream slowly until iOS suspends it.  This looks new with Picture in Picture: in the 125 sessions before it in my Mac's log, no device ever fell 10 seconds behind. I haven't confir
 
-- **Issue #215** (2026-11-09): **Keyboard covers keyboard button on iPhone Duo "laptop mode"**
-  *Symptoms*: ### What happened  Keyboard covers keyboard button on iPhone Duo "laptop mode" Meaning you can't dismiss the keyboard after you have summoned it.  <img width="1004" height="1427" alt="Image" src="https://github.com/user-attachments/assets/d013cc01-409b-4eca-ad63-8954b5e16114" />  ### How to make it happen again  Put duo in laptop mode Summon keyboard with toggle button  ### Your Mac and its macOS  MacBook Pro M1 Max, macOS 27  ### Sill for Mac's version  0.5.1 (563)  ### Your iPhone or iPad and its iOS or iPadOS  iPhone Duo iOS 27.2  ### The Sill app's version  0.5.1  ### How the device reached the Mac  Wi-Fi  ### Sill's log on your Mac  ```text  ```
+- **Issue #370** (2026-11-24): **Apps list doesn't show apps installed on an external drive (e.g. /Volumes/Drive/Applications), even via aliases**
+  *Symptoms*: ### What happened  Apps installed on an external drive (e.g. `/Volumes/Drive/Applications`) don't appear in Sill's Apps list. Adding aliases to them in `/Applications` doesn't help either.  The Mac App Store has a setting to download and install large apps to a separate disk, and apps installed that way never show up in the Apps list. I expected Sill to list them alongside apps in `/Applications`.  ### How to make it happen again  1. In the App Store's settings, turn on downloading and installing large apps to a separate disk (or put an app in `/Volumes/<Drive>/Applications`). 2. Optionally, add an alias to that app in `/Applications`. 3. Open the Apps list in Sill on the iPhone or iPad: the app isn't listed.  ### Your Mac and its macOS  MacBook Pro (M4 Pro), macOS 27.2.1  ### Sill for Mac's version  0.6.0  ### Your iPhone or iPad and its iOS or iPadOS  iPad 11" M4 Pro  ### The Sill app's version  0.6.0  ### How the device reached the Mac  Remote (Remote Access)  ### Sill's log on your Mac  ```text  ```
   **Post-Mortem & Fix Analysis**:
-  > Opened #220 to fix this: in laptop mode on the iPhone Duo, the window bar now shows a **Keyboard** button alongside **Apps**, **Aa**, **Desktop**, and **Settings**, and drops its 12 pt top padding while the software keyboard is up so the buttons stay above the keyboard.
-  > @matt-cahill  This is a bad one. I will see about pushing a new build in the next day or two to resolve this bug. Really sorry about this. Thank you for reporting and bearing with me. Maybe at some point I had the hardware in hand to test!
+  > Will look into this thanks for reporting!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1553,333 +1552,456 @@ func took(_ header: StreamHeader, _ payload: Data) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d062a3c` (2026-11-23)
-**Commit Message**: Merge pull request #418 from Saffsanity/keys-above-keyboard
+### Incident Patch 1: `597aadbe` (2026-11-23)
+**Commit Message**: Revert "Settings: the scroll view places the rows' column by its content margins"
 
-Keep the modifier keys above any keyboard on an iPhone held upright
+This reverts commit b3a9029b. It built (GitHub's CI passed on it), but it
+could not be photographed: harness-photos refuses to build under 25 GB
+free, and the Mac stayed at 23.9 to 24.4 GB from 19:20 to 20:40 with no
+heavy job running. A layout change that no photo has shown does not go to
+Noah, so the view code is again 0fe6f77a's, which the photos show (iOSClient,
+Tests and Scripts are byte for byte 0fe6f77a's).
 
-**File**: `Scripts/harness-photos/keys-above-keyboard.cases` (added, +18/-0)
+What that leaves, in the plan and the step file: padded into the column
+inside the page-wide scroll view, Full Screen's footnote, which fitted its
+line with about a point to spare, breaks "them back." onto a second line on
+the Duo's inner display upright and on the iPads; every other line of text
+is where it was. The content margins are the likely way back, for when the
+photos can be taken.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/LAYOUT.md` (modified, +1/-2)
 ```diff
-@@ -0,0 +1,18 @@
-+# The keys above any keyboard (PhoneKeyboardLift, docs/steps/2026-11-19-keys-above-keyboard.md) on the iPhone Duo's
-+# cover, which draws an iPhone's arrangement upright: the real keyboard raised by -SillKeyboardToggle (the fake screen is
-+# the cover's own 466x678), -SillHardwareKeyboard 0 so it is drawn, -SillTallKeyboard 60 standing in for a taller one.
-+# The first case folds the Duo, so the keyboard cases launch on the cover already closed. Against main (eb48ac9f):
-+#   Scripts/harness-photos.sh Scripts/harness-photos/keys-above-keyboard.cases --baseline eb48ac9f
-+cover-no-keyboard         -SillLayout 466x678 -SillHinge closed --pose=closed-upright --wait=5
-+cover-keyboard            -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 --pose=closed-upright --wait=6
-+cover-tall-keyboard       -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 --pose=closed-upright --wait=6
-+cover-hide-keyboard       -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -Sill.hideThumbnailsWhileTyping 1 --pose=closed-upright --wait=6
-+cover-hide-tall-keyboard  -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 -Sill.hideThumbnailsWhileTyping 1 --pose=closed-upright --wait=6
-+cover-hide-no-keyboard    -SillLayout 466x678 -SillHinge closed -Sill.hideThumbnailsWhileTyping 1 --pose=closed-upright --wait=5
-+cover-drawer-tall         -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 -SillDrawer 1 --pose=closed-upright --wait=6
-+cover-settings            -SillLayout 466x678 -SillHinge closed -SillSettings 1 -SillSettingsScroll typing --pose=closed-upright --wait=5
-+# Without -SillHinge the harness knows no hinge, so Larger Picture applies on the cover (above the 233 pt estimate).
-+cover-larger-keyboard     -SillLayout 466x678 -Sill.largerPicture 1 -SillHardwareKeyboard 0 -SillKeyboardToggle 2 --pose=closed-upright --wait=6
-+cover-larger-tall         -SillLayout 466x678 -Sill.largerPicture 1 -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 --pose=closed-upright --wait=6
-+# The inner display upright, open flat, keeps #215's row over the keyboard: as on main.
-+inner-flat-keyboard       -SillLayout 669x951 -SillHinge flat -SillHardwareKeyboard 0 -SillKeyboardToggle 2 --wait=6
+@@ -939,8 +939,7 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
+   with Disconnect under the Mac's; each scroll view across its page, the
+   whole screen in one column, out to the screen's edges through the safe area
+   beside it (`ignoresSafeArea`), the header, the rows and Disconnect in their
+-  column inside it (`inColumn`; the rows that scroll by their scroll view's
+-  content margins), so a drag anywhere scrolls; DEBUG
++  column inside it (`inColumn`), so a drag anywhere scrolls; DEBUG
+   `-SillSettingsScrollArea 1` outlines them; a feature's group
+   goes into the part whose it is), `SettingsPane` (where the pane's two parts
+   go: one column on every screen without a fold to keep to, an iPad's and an
 ```
 
-**File**: `Tests/checks/phone-keyboard-lift/README.md` (added, +5/-0)
+**File**: `docs/settings-pane-plan.md` (modified, +6/-3)
 ```diff
-@@ -0,0 +1,5 @@
-+# `phone-keyboard-lift`
-+
-+**Checks:** a phone held upright's rows placed from the software keyboard's real top, whatever its height (PhoneKeyboardLift, asked for by mail; docs/steps/2026-11-19-keys-above-keyboard.md): no keyboard, or one at or under the screen's foot, is the layout itself, every rect and frame; Apple's keyboards as measured move nothing but on the iPhone SE, whose key row its own 233 pt keyboard covered by 24 pt (there the rows lift 34 pt and the picture's frame keeps 16:10 in the room left, 304×190); taller keyboards (an input method's candidates, the harness's 60 pt stand-in, 100 pt more) lift row 1, the thumbnails and the key row together just enough, the key row 10 pt above the keyboard; the iPhone Duo's cover, whose key row any keyboard over 236 pt covered; Larger Picture over its estimate (nothing moves) and over taller keyboards (the room shorter, the frame at its shape, the drawer above row 1 shorter, the viewport unchanged); Hide Thumbnails While Typing (the thumbnails' row and the Menus button tucked away while a keyboard is up, the key row 16 pt under row 1's buttons, the trackpad from 10 under it: 118 pt of it above an 18 Pro's keyboard against 46; nothing in Larger Picture's arrangement); the lift's ceiling (the picture's height), fractions and the lift in whole points; the switch's key, its default (off), where it is offered and its words; the console's lines; and a grid of every width from 300 to 599 pt, heights from the width + 1 to 1,400 by 7, eighteen keyboard heights and one above the screen, with and without the switch, the standard arrangement and Larger Picture's over two keyboards: everything inside the screen, the key row's clearance, a minimal lift, what lifts together, the gaps, the tuck, the trackpad, the drawer and the dim, the room and the frame
-+
-+**Compiles:** `iOSClient/PhonePortraitLayout.swift`, `iOSClient/PhoneKeyboardLift.swift`
+@@ -68,9 +68,12 @@ panel's rows, the same views in one place (`HostSettingsPanel`), unchanged in me
+   and bounce only when they do not fit. Each scroll view spans its page, the whole screen in one column, out
+   to the screen's edges through the safe area beside it (the pane is laid out in the safe area and each
+   scroll view reaches past it, `ignoresSafeArea`, as far as the pane's own reader says the safe area goes),
+-  and the rows keep to their column inside it (`SettingsPane.Layout`'s `macScroll` and `deviceScroll`; the
+-  column is the scroll view's content margins, so the rows are laid out at its width as before), so a drag
+-  beside them scrolls them as a drag on them does; a tap there does nothing. Their edges fade over 12 pt
++  and the rows keep to their column inside it (`SettingsPane.Layout`'s `macScroll` and `deviceScroll`), so a
++  drag beside them scrolls them as a drag on them does; a tap there does nothing. Padded into their column
++  inside the wider scroll view, the rows' text can be laid out a pixel narrower where the column's edge falls
++  between two pixels (34.5 pt on the Duo's inner display upright, on a 3x screen): there Full Screen's
++  footnote, which fitted its line with about a point to spare, breaks its last two words onto a second line,
++  and so it does on an iPad. Their edges fade over 12 pt
+   where rows go out of sight under the header, Disconnect or the fold (the panel cut them sharply, which at the
+   laptop pose's fold left a sliver of a line); the fade runs the scroll view's width, which holds nothing
+   beside the column, so it reads as before. The scroll indicator is the scroll view's, so it sits at the
 ```
 
-**File**: `Tests/checks/phone-keyboard-lift/main.swift` (added, +326/-0)
+**File**: `docs/steps/2026-11-18-settings-pane.md` (modified, +7/-4)
 ```diff
-@@ -0,0 +1,326 @@
-+// iOSClient/PhoneKeyboardLift.swift with iOSClient/PhonePortraitLayout.swift: a phone held upright's rows
-+// placed from the software keyboard's real top (docs/steps/2026-11-19-keys-above-keyboard.md). The phones
-+// with Apple's own keyboards as measured (nothing moves but on the SE, whose key row its own keyboard
-+// covered by 24 pt), taller keyboards (an input method's candidates, a third-party keyboard's bar, the
-+// harness's stand-in), the iPhone Duo's cover, Larger Picture over its estimate and over a taller keyboard,
-+// Hide Thumbnails While Typing, the lift's ceiling, the frame and the viewport, the switch and its words;
-+// then a grid of every width from 300 to 599 pt, heights to 1,400 and twenty keyboard heights, with and
-+// without the switch, in both arrangements.
-+//   swiftc -O iOSClient/PhonePortraitLayout.swift iOSClient/PhoneKeyboardLift.swift Tests/checks/phone-keyboard-lift/main.swift -o .build/checks/phone-keyboard-lift/check
-+import CoreGraphics
-+import Foundation
-+
-+typealias L = PhonePortraitLayout
-+typealias K = PhoneKeyboardLift
-+var fails = 0, passes = 0
-+func check(_ name: String, _ ok: Bool) { if !ok { fails += 1; print("FAIL", name) } else { passes += 1; print("ok  ", name) } }
-+func near(_ a: CGFloat, _ b: CGFloat, _ tolerance: CGFloat = 0.01) -> Bool { abs(a - b) <= tolerance }
-+func str(_ r: CGRect) -> String { String(format: "(%.2f, %.2f, %.2f×%.2f)", r.minX, r.minY, r.width, r.height) }
-+func shifted(_ r: CGRect, _ dy: CGFloat) -> CGRect { r.offsetBy(dx: 0, dy: dy) }
-+
-+/// Every rect of the lift equal to the layout's: nothing moved.
-+func unmoved(_ k: K) -> Bool {
-+    let l = k.layout
-+    return k.lift == 0 && !k.tucked && !k.moved && k.row1 == l.row1 && k.buttons == l.buttons
-+        && k.buttonsBesideMenus == l.buttonsBesideMenus && k.menus == l.menus && k.strip == l.strip
-+        && k.stripBesideMenus == l.stripBesideMenus && k.keys == l.keys && k.caps == l.caps && k.trackpad == l.trackpad
-+        && k.ruler == l.ruler && k.rulerBesideMenus == l.rulerBesideMenus && k.drawer == l.drawer && k.dim == l.dim
-+        && k.room == l.picture
-+}
-+let videos = [CGSize.zero, CGSize(width: 3024, height: 1964), CGSize(width: 1512, height: 949), CGSize(width: 2560, height: 1080),
-+              CGSize(width: 848, height: 844), CGSize(width: 1000, height: 1000), CGSize(width: 1000, height: 2000)]
-+/// The frame the layout draws for each video: the picture, or Larger Picture's pane at the video's shape.
-+func laid(_ l: L, _ v: CGSize) -> CGRect { l.largerPicture ? l.pane(video: v) : l.picture }
-+
-+// MARK: - The phones, as phone-portrait has them
-+
-+struct Phone {
-+    let name: String
-+    let screen: CGSize
-+    let inset: CGFloat
-+    /// Apple's keyboard as Sill's input view shows it, measured on the iOS 27 simulators (phone-portrait's).
-+    let keyboard: CGFloat
-+    var container: CGSize { CGSize(width: screen.width, height: screen.height - inset) }
-+    /// The keyboard's top in the stream screen for a keyboard `k` tall: the screen's foot less it, less the inset.
-+    func glass(_ k: CGFloat) -> CGFloat { container.height - k }
-+}
-+let proMax = Phone(name: "iPhone 18 Pro Max", screen: CGSize(width: 440, height: 956), inset: 62, keyboard: 320)
-+let pro = Phone(name: "iPhone 18 Pro", screen: CGSize(width: 402, height: 874), inset: 62, keyboard: 301)
-+let fifteenPro = Phone(name: "iPhone 15 Pro", screen: CGSize(width: 393, height: 852), inset: 59, keyboard: 301)
-+let seventeenE = Phone(name: "iPhone 17e", screen: CGSize(width: 390, height: 844), inset: 47, keyboard: 301)
-+let mini = Phone(name: "iPhone 13 mini", screen: CGSize(width: 375, height: 812), inset: 50, keyboard: 310)
-+let se = Phone(name: "iPhone SE (3rd generation)", screen: CGSize(width: 375, height: 667), inset: 20, keyboard: 233)
-+/// The iPhone Duo's cover upright (iOS 27.1, less its camera's strip): its keyboard was never measured; 233
-+/// is the estimate's, the Home-button shape's.
-+let duoCover = Phone(name: "the iPhone Duo's cover", screen: CGSize(width: 382, height: 678), inset: 0, keyboard: 233)
-+let seZoom = Phone(name: "iPhone SE with Display Zoom", screen: CGSize(width: 320, height: 568), inset: 20, keyboard: 233)
-+let phones = [proMax, pro, fifteenPro, seventeenE, mini, se]
-+
-+// Nothing up: every phone, both arrangements, the switch either way: the layout as it is.
-+for p in phones + [duoCover, seZoom] {
-+    for larger in [false, true] {
-+        let l = L(size: p.container, keyboard: larger ? p.keyboard : nil)
-+        for tuck in [false, true] {
-+            let none = K(l, glass: nil, tuck: tuck)
-+            let foot = K(l, glass: p.container.height, tuck: tuck)
-+            let under = K(l, glass: p.container.height + 40, tuck: tuck)
-+            check("\(p.name)\(larger ? ", Larger Picture" : ""), switch \(tuck ? "on" : "off"): no keyboard, or one at or under the screen's foot: the layout, every rect and frame",
-+                  unmoved(none) && unmoved(foot) && 
+@@ -103,10 +103,13 @@
+   to the fold's band, the laptop pose's page the screen's width, out to the screen's edges through the safe
+   area beside the stream screen (an iPhone on its side: 44 to 62 pt by its sensor housing and as much on the
+   other side; the Duo's cover: its camera's 84), and the header, the rows and Disconnect keep to their column
+-  inside it (HostSettingsPanel's `inColumn`; the rows that scroll by their scroll view's content margins, so the
+-  scroll view lays them out at the column's width as it did when it was the column's: padded inside it instead,
+-  Full Screen's footnote, which fitted its line with a point to spare, broke "them back." onto a second line in
+-  the first photos, b3a9029b). The pane is laid out in the safe area as before; each scroll view
++  inside it (HostSettingsPanel's `inColumn`). Padded into the column inside the wider scroll view, Full
++  Screen's footnote, which fitted its line with about a point to spare, breaks "them back." onto a second line
++  (the Duo's inner display upright, the iPads; every other line of text is where it was): the rows' text is laid
++  out a pixel narrower where the column's edge falls between pixels. b3a9029b kept the column as the scroll
++  view's content margins instead, which should lay the rows out as before; it built (CI) but could not be
++  photographed (the disk stayed at 24 GB, under harness-photos' 25), so a later commit reverts it, and the view
++  code is the photographed 0fe6f77a's. The pane is laid out in the safe area as before; each scroll view
+   reaches past it with `ignoresSafeArea(edges: .horizontal)`, as far as the pane's own reader says the safe
+   area goes (`geo.safeAreaInsets`, in the same layout, so a turn moves both at once), and its rows are placed
+   from its reached edge. The pure rule says both (`Layout.macScroll`, `deviceScroll`, `page(_:)`, the column
 ```
 
-**File**: `Tests/checks/phone-keyboard-lift/mutants.py` (added, +91/-0)
+**File**: `iOSClient/HostSettingsPanel.swift` (modified, +8/-12)
 ```diff
-@@ -0,0 +1,91 @@
-+"""Each mutant changes iOSClient/PhoneKeyboardLift.swift in one place and must fail the check (main.swift).
-+usage: mutants.py"""
-+import os, subprocess, sys
-+SP = os.path.dirname(os.path.abspath(__file__))
-+ROOT = os.path.abspath(os.path.join(SP, "..", "..", ".."))   # the repository
-+OUT = os.path.join(ROOT, ".build", "checks", "phone-keyboard-lift")   # the mutants' sources and binaries
-+os.makedirs(OUT, exist_ok=True)
-+SRC = os.path.join(ROOT, "iOSClient/PhoneKeyboardLift.swift")
-+LAYOUT = os.path.join(ROOT, "iOSClient/PhonePortraitLayout.swift")
-+orig = open(SRC).read()
-+MUTANTS = {
-+    # The key row's clearance and the lift.
-+    "K1 no clearance above the keyboard": ("keysTop + L.capHeight + L.keyboardClearance - $0", "keysTop + L.capHeight - $0"),
-+    "K2 the lift not in whole points": ("max(0, needed.rounded(.up))", "max(0, needed)"),
-+    "K3 the lift rounded down": ("needed.rounded(.up)", "needed.rounded(.down)"),
-+    "K4 no ceiling (rows over the picture's top)": ("let lifted = min(layout.picture.height, max(0, needed.rounded(.up)))",
-+                                                    "let lifted = max(0, needed.rounded(.up))"),
-+    "K5 a negative lift (rows pushed down for a short keyboard)": ("min(layout.picture.height, max(0, needed.rounded(.up)))",
-+                                                                   "min(layout.picture.height, needed.rounded(.up))"),
-+    "K6 a keyboard at the screen's foot counted": ("glass.flatMap { $0 < height ? $0 : nil }", "glass.flatMap { $0 <= height ? $0 : nil }"),
-+    "K7 any glass counted, under the foot too": ("let top: CGFloat? = glass.flatMap { $0 < height ? $0 : nil }", "let top: CGFloat? = glass"),
-+    "K8 the keyboard ignored (main's fault)": ("let needed = top.map { keysTop", "let needed = top.map { _ in 0 } ?? top.map { keysTop"),
-+    # Hide Thumbnails While Typing.
-+    "T1 the switch ignored": ("tucked = tuck && top != nil && !layout.largerPicture", "tucked = false && tuck && top != nil && !layout.largerPicture"),
-+    "T2 tucked whenever a keyboard is up": ("tucked = tuck && top != nil && !layout.largerPicture", "tucked = top != nil && !layout.largerPicture"),
-+    "T3 tucked without a keyboard": ("tucked = tuck && top != nil && !layout.largerPicture", "tucked = tuck && !layout.largerPicture"),
-+    "T4 tucked in Larger Picture": ("tucked = tuck && top != nil && !layout.largerPicture", "tucked = tuck && top != nil"),
-+    "T5 the tucked key row at the thumbnails' foot": ("let keysTop = tucked ? layout.strip.minY : layout.keys.minY",
-+                                                      "let keysTop = tucked ? layout.strip.maxY : layout.keys.minY"),
-+    "T6 the tucked key row where it was": ("let keysTop = tucked ? layout.strip.minY : layout.keys.minY", "let keysTop = layout.keys.minY"),
-+    "T7 moved without the tuck": ("var moved: Bool { tucked || lift > 0 }", "var moved: Bool { lift > 0 }"),
-+    # What lifts.
-+    "R1 row 1 left behind": ("row1 = layout.row1.offsetBy(dx: 0, dy: up)", "row1 = layout.row1"),
-+    "R2 row 1's buttons left behind": ("buttons = layout.buttons.map { $0.offsetBy(dx: 0, dy: up) }", "buttons = layout.buttons"),
-+    "R3 the six beside the menus left behind": ("buttonsBesideMenus = layout.buttonsBesideMenus.map { $0.offsetBy(dx: 0, dy: up) }",
-+                                                "buttonsBesideMenus = layout.buttonsBesideMenus"),
-+    "R4 Menus left behind": ("menus = layout.menus.offsetBy(dx: 0, dy: up)", "menus = layout.menus"),
-+    "R5 the thumbnails left behind": ("strip = layout.strip.offsetBy(dx: 0, dy: up)", "strip = layout.strip"),
-+    "R6 the thumbnails beside Menus left behind": ("stripBesideMenus = layout.stripBesideMenus.offsetBy(dx: 0, dy: up)",
-+                                                   "stripBesideMenus = layout.stripBesideMenus"),
-+    "R7 the ruler left behind": ("ruler = layout.ruler.offsetBy(dx: 0, dy: up)", "ruler = layout.ruler"),
-+    "R8 the six's ruler left behind": ("rulerBesideMenus = layout.rulerBesideMenus.offsetBy(dx: 0, dy: up)", "rulerBesideMenus = layout.rulerBesideMenus"),
-+    "R9 the key row lifted twice": ("let keysY = keysTop - lifted", "let keysY = keysTop - 2 * lifted"),
-+    "R10 the caps where they were": ("caps = layout.caps.map { CGRect(x: $0.minX, y: keysY, width: $0.width, height: $0.height) }",
-+                                     "caps = layout.caps"),
-+    # The trackpad, the drawer, the dim.
-+    "P1 the trackpad as laid out whatever moved": ("let padTop = tucked || lifted > 0 ? keys.maxY + L.rowGap : layout.trackpad.minY",
-+                                                   "let padTop = layout.trackpad.minY"),
-+    "P2 the trackpad not following the tucked key row": ("let padTop = tucked || lifted > 0 ?", "let padTop = lifted > 0 ?"),
-+    "P3 the trackpad against the key row": ("? keys.maxY + L.rowGap : layout.trackpad.minY", "? keys.maxY : layout.trackpad.minY"),
-+    "P4 the trackpad to the screen's foot":
-```
-
-**File**: `Tests/checks/phone-keyboard-lift/run.sh` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+#!/bin/bash
-+# PhoneKeyboardLift (iOSClient/PhoneKeyboardLift.swift) with PhonePortraitLayout: a phone held upright's rows
-+# placed from the software keyboard's real top, whatever its height: the phones with Apple's keyboards,
-+# taller ones, the iPhone Duo's cover, Larger Picture, Hide Thumbnails While Typing, the lift's ceiling, the
-+# frame and the viewport, the switch and its words, and a grid of every width from 300 to 599 pt.
-+#   Tests/checks/phone-keyboard-lift/run.sh             compile and run the check
-+#   Tests/checks/phone-keyboard-lift/run.sh --mutants   one-line mutants of PhoneKeyboardLift.swift; each must fail it
-+here="$(cd "$(dirname "$0")" && pwd)"
-+source "$here/../common.sh"
-+if [ "${1:-}" = "--mutants" ]; then run_mutants python3 "$here/mutants.py"; exit; fi
-+swiftc -O iOSClient/PhonePortraitLayout.swift iOSClient/PhoneKeyboardLift.swift "$here/main.swift" -o "$out/check"
-+"$out/check"
-```
-
-**File**: `docs/BUILD-AND-RUN.md` (modified, +12/-1)
-```diff
-@@ -502,7 +502,18 @@ the ruler's release does, whatever streams, so a synthetic host's `[1s]` lines
- show `win.fitOff` for a scale then Off). The console
- prints `viewport: 386×241 pt, scale off, 60 fps` for each viewport sent, and on
- a phone upright `trackpad: …, vertical span …` and, once the keyboard has moved,
--`keyboard: up, 301 pt tall, its top at …; the key row ends 10 pt above it`.
-+`keyboard: up, 301 pt tall, its top at …; the key row ends 10 pt above it`, and
-+`keys: …` each time the rows move over the person's keyboard (PhoneKeyboardLift:
-+`keys: lifted 34 pt, the key row 10 pt above the keyboard at 414, …`, `keys: the
-+thumbnails tucked away, …`, `keys: as laid out, …`, `keys: no keyboard`).
-+`-SillTallKeyboard N` puts a band N pt tall over the software keyboard (the stream's
-+input view's input accessory view, labelled a stand-in), so UIKit's keyboard is N pt
-+taller and says so, as a third-party keyboard's would be (a simulator installs none);
-+with `-SillKeyboardToggle 1 -SillHardwareKeyboard 0` on the iPhone Duo's cover
-+(`-SillLayout 466x678 -SillHinge closed`, `--pose=closed-upright` in a cases file) the
-+harness photographs the rows over it. `-Sill.hideThumbnailsWhileTyping 1` turns Hide
-+Thumbnails While Typing on for one run (the normal app too), `-SillSettingsScroll
-+typing` scrolls the Settings panel to it.
- `-SillAXDump <s>` lists the stream screen's accessibility elements in the
- tree's order (VoiceOver's), on a private simulator once `xcrun simctl spawn
- UDID defaults write com.apple.Accessibility ApplicationAccessibilityEnabled
-```
-
-**File**: `docs/DEVELOPMENT.md` (modified, +13/-0)
-```diff
-@@ -512,6 +512,19 @@ trackpad counts a stroke down it as far as the same stroke across a 16:10
- picture, however tall it is. On its side, and on an iPad (a narrow window
- included), everything is as it was.
+@@ -248,7 +248,7 @@ struct HostSettingsPanel: View {
+     /// below it. Nothing on the fold's band. Each part is laid out on its page (`page(macScroll)`, the whole
+     /// screen in one column) and its scroll view goes on into the safe area beside the screen, so it takes a drag
+     /// anywhere on the pane (`macScroll`, `deviceScroll`); the header, the rows and Disconnect keep to their
+-    /// column inside it (`inColumn`, and the scroll view's content margins).
++    /// column inside it (`inColumn`).
+     @ViewBuilder private func arranged(_ l: SettingsPane.Layout) -> some View {
+         let macPage = l.page(l.macScroll), devicePage = l.page(l.deviceScroll)
+         switch l.arrangement {
+@@ -322,28 +322,24 @@ struct HostSettingsPanel: View {
+     /// scrolls them too (Noah, 2026-11-23: "on iPad in landscape, you have to touch the middle 3rd of the display
+     /// to scroll instead of anywhere on the screen"). The pane lays the scroll view out on its page and
+     /// `ignoresSafeArea` takes it on to the screen's edge wherever the page meets one: inside, no safe area is
+-    /// left, so the column's place is measured from `scroll`'s leading edge, as the scroll view's content margins.
+-    /// Its indicator is at its trailing edge, as in a system list whose rows keep a readable width. `bottom`: the room kept under the rows where the scroll view
++    /// left, so the rows are placed from `scroll`'s leading edge. Its indicator is at its trailing edge, as in a
++    /// system list whose rows keep a readable width. `bottom`: the room kept under the rows where the scroll view
+     /// reaches the screen's bottom edge (the home indicator's), so they scroll under it and their last line rests
+     /// above it. Its edges fade (`ScrollEdgeFade`), so a row cut by the header, Disconnect or the fold reads as
+     /// scrolled away; the rows begin under the top's fade.
+     private func part<Content: View>(bottom: CGFloat, column: CGRect, scroll: CGRect,
+                                      @ViewBuilder _ content: () -> Content) -> some View {
+         let rows = content()
+-        // The column as the scroll view's content margins at its sides, not as padding round the rows: the scroll
+-        // view lays the rows out at the column's width and places them, as it did when it was the column's width
+-        // (with padding inside the scroll view, a footnote line that fitted with a point to spare broke a word early).
+-        let margins = EdgeInsets(top: 0, leading: max(0, column.minX - scroll.minX), bottom: bottom,
+-                                 trailing: max(0, scroll.maxX - column.maxX))
+         return ScrollViewReader { reader in
+             ScrollView {
+                 VStack(alignment: .leading, spacing: 0) { rows }
+                     .padding(.top, ScrollEdgeFade.height)
++                    .inColumn(x: column.minX - scroll.minX, width: column.width)
+             }
+             .scrollIndicatorsFlash(onAppear: true)
+             .scrollBounceBehavior(.basedOnSize)
+             .modifier(StartAnchor(atEnd: Self.startsAtEnd))
+-            .contentMargins([.leading, .bottom, .trailing], margins, for: .scrollContent)
++            .contentMargins(.bottom, bottom, for: .scrollContent)
+             .modifier(ScrollEdgeFade())
+             .modifier(ScrollAreaOutline())
+             .ignoresSafeArea(edges: .horizontal)
+@@ -1475,9 +1471,9 @@ private extension View {
+     }
  
-+The key row stays above the software keyboard too, whatever its height
-+(`PhoneKeyboardLift`, from the keyboard's real top as UIKit reports it): a
-+keyboard that would come within 10 pt of it (a third-party keyboard with a bar
-+of its own, an input method's candidates, an iPhone SE's own, any keyboard on
-+the iPhone Duo's cover) lifts row 1, the thumbnails and the key row together
-+until it is 10 pt clear, and while it is up the picture's frame keeps its shape
-+in the room left above them; the Mac's window is not resized. Apple's keyboard
-+moves nothing on the other iPhones. With Larger Picture the room stays the
-+estimate's below, and the same lift applies over a taller keyboard. Hide
-+Thumbnails While Typing (Settings › This iPhone, off by default) tucks the
-+thumbnails and the Menus button away whenever the keyboard is up, so the key
-+row sits under the buttons and more of the trackpad shows above the keyboard.
-+
- Larger Picture (Settings › This iPhone, off by default; issue #58,
- docs/larger-picture-plan.md) gives a phone held upright more picture while a
- window streams: the thumbnails go, and the picture gets every point that keeps
-```
-
-**File**: `docs/LAYOUT.md` (modified, +12/-1)
-```diff
-@@ -784,7 +784,18 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
-   `offersLargerPicture(screen:)`) no strip, the room over the keyboard, Menus in
-   row 1 (`buttonsBesideMenus`), the drawer above row 1, the pane at the
-   picture's shape (`pane(video:)`) and its span (`trackpadSpan(video:)`); pure,
--  `Tests/checks/phone-portrait`), `DuoPosture`
-+  `Tests/checks/phone-portrait`), `PhoneKeyboardLift` (a phone upright's rows
-+  over the person's software keyboard, from its real top, whatever its height:
-+  row 1, the thumbnails and the key row lifted together while the keyboard
-+  would come within 10 pt of the key row (`lift`, whole points, at most the
-+  picture's height), the picture's frame at its shape in the room left
-+  (`frame(video:)`; the viewport stays the layout's), the trackpad from under
-+  the moved key row, the drawer and the dim with row 1; Hide Thumbnails While
-+  Typing (`switchKey`, off: the thumbnails' row and its Menus button tucked
-+  away while a keyboard is up, the key row in their place, `tucked`), its
-+  words and the console's `keys: …` line; pure,
-+  `Tests/checks/phone-keyboard-lift`; pbxproj A0B0/F0B0; PortraitStreamScreen
-+  places the phone's rows from it), `DuoPosture`
-   (the iPhone Duo's posture and the rules that follow from it, docs/iphone-duo-plan.md:
-   `FoldInfo`, inferred before iOS 27.1 or the fold's band; the laptop pose's
-   split at the real fold and open flat's at the picture's shape, the book
+     /// This view as wide as a column `x` from its container's leading edge, the container's whole width taken
+-    /// (SettingsPane.Layout's column on its part's page): the header, Disconnect, and the rows where they fit
+-    /// without scrolling keep to the column while the part spans its page (the rows that scroll keep to it by
+-    /// their scroll view's content margins, `part`). From the leading edge, so right to left mirrors it.
++    /// (SettingsPane.Layout's column inside its part's scroll view): the rest is empty, so the scroll view around
++    /// it spans its page while the rows, the header and Disconnect keep to the column. From the leading edge,
++    /// so right to left mirrors it.
+     func inColumn(x: CGFloat, width: CGFloat) -> some View {
+         frame(width: max(0, width))
+             .padding(.leading, max(0, x))
 ```
 
 ---
 
-### Incident Patch 2: `e0f222a0` (2026-11-23)
-**Commit Message**: Merge pull request #389 from Saffsanity/promises-words
+### Incident Patch 2: `d8d6f57f` (2026-11-23)
+**Commit Message**: Steps: ready-292's 2026-11-23 results: the checks, mutants, build, run-all, CI and the Duo's photos
 
-Support page: the way back into a Mac that Sill cannot show (#316)
+The first hold's tour check found the one stale case c100e7de fixed; on c100e7de touch-hold
+51 and 29 of 29 mutants, tour 740,388 checks and its 12 picture-card mutants, the rig compiled,
+the iOS app built, run-all 76 of 76, CI green. The Duo's 5 changed cases against main: 2 as
+main's, the rest only where designed, and the default's photos byte for byte 11-19's with the
+switch on by name. The iPad's wait for the disk's floor. Noah's steps rewritten, shortest first.
 
-**File**: `docs/steps/2026-11-18-promises-words.md` (added, +20/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/steps/2026-11-19-ready-292.md` (modified, +43/-1)
 ```diff
-@@ -0,0 +1,20 @@
-+**Words Noah promised on the site: #316's way back in, and three contributors' credit (2026-11-18, branch `promises-words` from main at 8dbbb50).**
-+Noah, 2026-11-18: "also work on anything I promised would come in 0.6.x or 0.7 that hasnt been finished yet". The
-+promises that are words, not features, from the inventory in ~/Downloads/sill-handoff/next/promises/INVENTORY.md
-+(rows 6 and 10).
-+- `site/support.html`, "Your Mac is locked": a third paragraph, after the switch's, as Noah promised on #316
-+  (2026-11-12: "I'll add the recovery route to the support page next to the switch's description"). Sill can't bring
-+  your account back to the screen (macOS asks for the password at the login window, which nothing Sill sends
-+  reaches, his reasoning on the issue); Screen Sharing from another Mac or a VNC app can, and has to be on
-+  beforehand (System Settings › General › Sharing). Checked against `LockPolicy` (input from nobody off console),
-+  `LockedMac`'s words, junkaiman's test of 2026-11-11 (the console back to his account, everything back with no
-+  reconnect) and macOS 27.2.1's own Screen Sharing (`ScreenSharing.framework`'s session choice, "Curtain Mode is
-+  unavailable at Login Window": it works at the login window).
-+- `site/contribute.html`: Hunter Ahlquist among the contributors (his stale-hover fix, issue #81, landed through
-+  #335 with his Co-authored-by and shipped in 0.6.1); a paragraph thanking Ash Hopkins (#66, Sill Viewer) and MAREI
-+  (#89, Sill for Android), whose pull requests are open and not part of Sill. Noah promised all three
-+  acknowledgement (#81, 2026-10-18 and 19; #90 and #66, 2026-10-18). How to credit unmerged work is his call.
-+- Not here: the release notes' line for Hunter (a draft for 0.6.3's notes, in the handoff's promises/drafts), the
-+  site's republish (sill-site, Noah's), the comments on #316 and #81 (drafts, his to post).
-+- Verified: both pages parse with every tag closed; their new links are the pull requests and profiles named.
-+  Untested for Noah: how the pages look once published.
+@@ -158,4 +158,46 @@ and the review's list done on top; its pull request is a draft, "#292 ready: …
+   a window by its title bar, a slider or a selection of text. Touching and holding without moving still right-clicks,
+   now when you lift your finger. To have a hold right-click at once again, turn off Hold, Then Drag under This iPad
+   (This iPhone) in the settings panel."
+-- **Verified (2026-11-23):** in progress; the holds of tools/heavy.sh wait for the quiet flag (Noah's probes).
++- **Verified (2026-11-23).** The checks in two holds of tools/heavy.sh, 16:31 and 16:49 (the first stopped at the tour
++  check, below); the photos in a hold of slot A of their own, 17:04.
++  - The first hold's tour check failed one case of 740,388 (line 1165, "a row is spoken as it reads"): it still named
++    the right click's words for the default card. CI's run on 8fc800ea failed on the same line. c100e7de holds the
++    default to the drag's words and the switch off to the right click's; TourPolicy did not change.
++  - On c100e7de: touch-hold 51 passed, its mutants 29 of 29 caught (G1, the default off, among them). tour 740,388
++    checks, 0 failed. The tour's mutants: the 12 whose patterns sit on the picture card or in TourFeatures, run and
++    caught, 12 of 12 (the new one, TourFeatures' default off, with 1,542 FAIL lines); the other 120 not run, each
++    pattern found exactly once in the text (this change only flipped their cases' expectations on the picture card).
++  - The touch rig compiled as run.sh compiles it, now with `-D HOLD` (`-D GESTURES -D ZOOM -D HOLD -D REVEAL`):
++    0 errors, 0 warnings; not run.
++  - The iOS app for the simulator as CI builds it (Debug, arm64, Xcode 27.1): BUILD SUCCEEDED in 30 s, its one
++    warning main's (StreamClient.swift:4539, from 3c1bd97d).
++  - run-all: 76 of 76 (692 s), repo-rules 11 of 11.
++  - CI's Build and check on c100e7de (run 45161494273): green.
++  - Harness photos of c100e7de against main e0f222a0, the 8 cases whose arguments changed. The Duo (iOS 27.1, 168 s):
++    5 cases, 2 identical to main pixel for pixel (`duo-tour-holddrag-off`, `duo-stream-holddrag-on`). The 3 that
++    differ were looked at and differ only where they should: the row Hold, Then Drag off with
++    `-Sill.holdThenDrag 0`, the row on with no argument, and the tour's drag row with no argument. Against the photos
++    of 8578740c (2026-11-19), `duo-holddrag-on`, `duo-tour-holddrag-on`, `duo-tour-holddrag-off` and
++    `duo-stream-holddrag-on` are byte for byte the same: with no argument the default draws what
++    `-Sill.holdThenDrag 1` drew then. `duo-holddrag-off` differs from its 11-19 photo in 53 pixels, a channel by at
++    most 3, in a 71×12 box of the bar's first thumbnail, not in the panel.
++- **Not verified:** the touch rig's run (it needs a simulator of its own, and the rules keep agents to the harness
++  photos' pair), so neither `RIG_ONLY=hold`'s events nor compare.py's new rule on real logs; `swift build -c release`
++  here (no Mac source changed; CI built each head); anything on glass: a fresh install's default, an update that
++  never touched the switch, a switch turned off staying off after an update, the cancels mid-drag, the Pencil.
++- **Defaults for Noah to confirm (today's):** the tour's drag row stays unmarked, not "New:" (which of 0.7's rows get
++  the mark is the 0.7 tour's question); the footnote as it was; the support page's and README's new words; the
++  What's New words above. The 11-19 list's first item, the default off, is gone: Noah decided it.
++- **For Noah, on his devices** (a build of this head, a Mac window with something to drag), shortest first; the drag
++  itself he has done:
++  1. The default: on a device where the switch was never touched, Settings › This iPhone (This iPad) shows Hold, Then
++     Drag on.
++  2. Touch and hold a spot and lift without moving: the right-click menu opens as the finger lifts.
++  3. Turn the switch off: a hold right-clicks at about half a second with the finger still down, and moving then
++     drags nothing, as in 0.6. Turn it back on.
++  4. Settings › Take the Tour: the picture card says "…or hold, then drag, to move a window or select text"; with the
++     switch off, "Touch and hold to right-click."
++  5. Mid-drag, two more fingers down, or Control Center pulled with another finger: the button comes up and nothing is
++     clicked (a click on the Mac's own trackpad shows no button held).
++  6. On the iPad, the Pencil: unchanged, it drags as a mouse and its hold does not right-click.
++  7. The defaults above, then the merge word, or not.
 ```
 
-**File**: `site/contribute.html` (modified, +2/-0)
+---
+
+### Incident Patch 3: `287927b4` (2026-11-24)
+**Commit Message**: Revert "Settings: the rows' column in its scroll view from a whole pixel"
+
+This reverts commit 15a947a9. Its photos (run "the blur", 2026-11-24) show
+Full Screen's footnote breaking "them back." onto a second line on the Duo's
+inner display upright however the rows are placed in their scroll view: at
+the column's own 34.5 pt, from a whole pixel (34.33 pt) or from a whole point
+(34 pt). So the placement is not why it breaks: the footnote needs a little
+more than the 572 pt a 600 pt column gives its words. On feda62ff only that
+one layout gave them more (its scroll view was the column's own width at a
+half-pixel place; its cards' edges straddle pixels 103 and 1903, where
+Disconnect's card is crisp from 104 to 1903); its laptop pose, the same
+column, broke the footnote as now, and so does every 600 pt column of the
+iPads.
+
+Rounding down also put the rows' cards a pixel left of Disconnect's (from 103
+against 104 px), where the column's own place, which SwiftUI rounds as it does
+the header's and Disconnect's, keeps them over it. The tree is d02c139b's
+again, which both devices' photos cover.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Scripts/harness-photos/settings-pane-duo.cases` (modified, +0/-5)
 ```diff
-@@ -56,6 +56,7 @@ <h2 id="contributors">Contributors</h2>
-     <li><a href="https://github.com/cinminori">MinoriKiriu</a>: <a href="https://github.com/Saffsanity/sill/pull/147">Chinese input and dictation reaching the Mac</a>.</li>
-     <li><a href="https://github.com/andrewgribben">Andrew Gribben</a>: <a href="https://github.com/Saffsanity/sill/pull/217">trackpad scrolling that sends each movement as it is</a>.</li>
-     <li><a href="https://github.com/acalatrava">Antonio Calatrava</a>: <a href="https://github.com/Saffsanity/sill/pull/151">waking the Mac’s display for a stream</a>.</li>
-+    <li><a href="https://github.com/HunterAhlquist">Hunter Ahlquist</a>: <a href="https://github.com/Saffsanity/sill/pull/335">Apple Pencil strokes without a stray line back to where they began</a>.</li>
-     <li><a href="https://github.com/scripsweave">scripsweave</a>: <a href="https://github.com/Saffsanity/sill/pull/157">pairing codes on a remote desktop, as an opt-in</a>.</li>
-     <li><a href="https://github.com/grub-basket">grub-basket</a>: <a href="https://github.com/Saffsanity/sill/pull/110">Shift-Return and Shift-Tab reaching the Mac</a>.</li>
-     <li><a href="https://github.com/eco-null">Can</a>: <a href="https://github.com/Saffsanity/sill/pull/142">saved remote destinations kept</a>.</li>
-@@ -64,6 +65,7 @@ <h2 id="contributors">Contributors</h2>
-     <li><a href="https://github.com/K007-K">K Karthik</a>: <a href="https://github.com/Saffsanity/sill/pull/153">the checks’ build script with paths that have spaces</a>.</li>
-     <li><a href="https://github.com/kyleparisi">Kyle Parisi</a>: <a href="https://github.com/Saffsanity/sill/pull/87">a virtual display fix for Intel Macs</a>.</li>
-   </ul>
-+  <p>Thank you also to the people who built on Sill in pull requests that aren’t part of it: <a href="https://github.com/ashleigh-hopkins">Ash Hopkins</a> for <a href="https://github.com/Saffsanity/sill/pull/66">Sill Viewer, a Mac that controls another Mac</a>, and <a href="https://github.com/omarei-omoto">MAREI</a> for <a href="https://github.com/Saffsanity/sill/pull/89">Sill for Android</a>.</p>
-   <p>And thank you to the more than fifty people who have opened an <a href="https://github.com/Saffsanity/sill/issues?q=is%3Aissue">issue</a> so far: bug reports, questions and ideas. Many of Sill’s features began as one.</p>
- 
-   <h2 id="code">Contributing code</h2>
+@@ -6,15 +6,11 @@
+ # `-system-edge`: iOS 26's own scroll edge effect left on (`-SillSettingsSystemEdge 1`), which the pane turns off on every
+ # edge since 2026-11-24, on the Duo's own displays: beside the inner display's status bar strip, the cover's camera strip,
+ # over the home indicator under the laptop and book poses' pages; the same as without it where it draws nothing.
+-# `-grid-exact`, `-grid-points`: the rows' column in its scroll view at its own place (34.5 pt, as on 2026-11-23) or on whole
+-# points, instead of the display's pixels (`-SillSettingsColumnGrid`), for what each does to the rows' text.
+ #   Scripts/harness-photos.sh Scripts/harness-photos/settings-pane-duo.cases --baseline origin/main
+ # Open flat, upright (the default pose): the inner display, and an iPhone's 393x852 upright.
+ flat-portrait              -SillLayout 669x951 -SillHinge flat -SillSettings 1
+ flat-portrait-end          -SillLayout 669x951 -SillHinge flat -SillSettings 1 -SillSettingsEnd 1
+ flat-portrait-system-edge  -SillLayout 669x951 -SillHinge flat -SillSettings 1 -SillSettingsSystemEdge 1
+-flat-portrait-grid-exact   -SillLayout 669x951 -SillHinge flat -SillSettings 1 -SillSettingsColumnGrid exact
+-flat-portrait-grid-points  -SillLayout 669x951 -SillHinge flat -SillSettings 1 -SillSettingsColumnGrid points
+ flat-portrait-long         -SillLayout 669x951 -SillHinge flat -SillSettings 1 -SillSettingsCase linkbehind -SillPiPSupported 1 -SillClipboardNote sent
+ flat-portrait-stream       -SillLayout 669x951 -SillHinge flat
+ phone-upright              -SillLayout 393x852 -SillSafeArea 59,0,34,0 -SillSettings 1
+@@ -25,7 +21,6 @@ phone-upright-stream       -SillLayout 393x852 -SillSafeArea 59,0,34,0
+ laptop                     -SillLayout 669x951 -SillHinge half -SillSettings 1 --pose=laptop
+ laptop-end                 -SillLayout 669x951 -SillHinge half -SillSettings 1 -SillSettingsEnd 1 --pose=laptop
+ laptop-end-system-edge     -SillLayout 669x951 -SillHinge half -SillSettings 1 -SillSettingsEnd 1 -SillSettingsSystemEdge 1 --pose=laptop
+-laptop-grid-exact          -SillLayout 669x951 -SillHinge half -SillSettings 1 -SillSettingsColumnGrid exact --pose=laptop
+ laptop-ax3                 -SillLayout 669x951 -SillHinge half -SillSettings 1 -UIPreferredContentSizeCategoryName UICTContentSizeCategoryAccessibilityXL --pose=laptop
+ laptop-area                -SillLayout 669x951 -SillHinge half -SillSettings 1 -SillSettingsScrollArea 1 --pose=laptop
+ laptop-stream              -SillLayout 669x951 -SillHinge half --pose=laptop
 ```
 
-**File**: `site/support.html` (modified, +1/-0)
+**File**: `Tests/checks/settings-pane/README.md` (modified, +1/-1)
 ```diff
-@@ -58,6 +58,7 @@ <h2 id="black-picture">The picture is black</h2>
-   <h2 id="locked">Your Mac is locked</h2>
-   <p>While your Mac is locked, Sill shows none of it on your iPhone or iPad: the picture is your Mac’s own lock screen, and the Apps list, your Mac’s menus, its sound and the clipboard wait. Unlock your Mac and its windows come back. While your Mac is at its login window or switched to another user, Sill shows “Another user started controlling this Mac. Log in to your account to reactivate screen sharing with Sill.” Nothing you tap or type on your iPhone or iPad reaches your Mac until you log in on it.</p>
-   <p>If your Mac starts with another account on its screen, or you switch to another user and still want to see your own, turn on Show this account while another user is on the screen in Sill’s Settings › Devices on your Mac. Your iPhone or iPad then shows your account’s own desktop and windows, with a note that it isn’t what your Mac’s screen shows. Taps and keys reach it only once your account is back on the screen; its sound and the clipboard wait too.</p>
-+  <p>Sill can’t bring your account back to the screen: macOS asks for your password at the login window to switch to your account, and Sill runs inside your account, so nothing it sends reaches that window. To get your account back without being at your Mac, connect to your Mac with Screen Sharing from another Mac, or with a VNC app, switch to your account there as you would at your Mac, and enter your password. Your iPhone or iPad then shows your Mac again. Screen Sharing has to be on for this: turn it on before you need it, in System Settings › General › Sharing on your Mac.</p>
+@@ -1,5 +1,5 @@
+ # `settings-pane`
  
-   <h2 id="accessibility">Taps and typing don’t reach your Mac</h2>
-   <p>Sill needs Accessibility to click, scroll and type for you. On your Mac, open System Settings › Privacy &amp; Security › Accessibility and turn on Sill. It works right away.</p>
+-**Checks:** Settings as a whole-screen pane on every device (Noah, 2026-11-18; docs/settings-pane-plan.md): where its two parts go (the Mac's: the header with Done, its groups and Disconnect; this device's: This iPad's group, Take the Tour, the version) at the real sizes, every iPhone upright and on its side, the iPads either way round and in their narrow windows (one column on each), the iPhone Duo in every pose (the book pose a column on each page, the laptop pose a page above and a page below the fold, open flat and the cover one column as any screen), right to left too; then a grid of every width from 200 to 1,400 pt at heights from 240 to 1,400, each without a fold, with a book band down it (centred and off centre) and a laptop band across it, both ways round: every part inside the screen and 16 pt from its sides, none wider than 600, nothing on a fold's band, the Mac's part leading or above, one column on every screen without a fold kept to, however wide and whichever way round (both parts, centred; Noah, 2026-11-23: "Settings should not be 2 columns, please make it 1 column"), two columns or pages only around a fold, a fold kept to only where its pages hold a column (300 pt on a book page), each scroll view across its page with its column inside it, out to the screen's edges through the safe area beside the stream screen (an iPhone's sensor housing's strips, the Duo's cover's camera strip; laid out on its page, the stream screen's part of it) (in one column one scroll view, the whole screen, so a drag anywhere scrolls the rows; in the book pose each page up to the fold's band, never on it; in the laptop pose the screen's width above and below the fold; Noah, 2026-11-23: "on iPad in landscape, you have to touch the middle 3rd of the display to scroll instead of anywhere on the screen"), the header over the Mac's part (in the book pose across the fold to Done, its words the leading page's column), Disconnect clear of the home indicator (its room under it, 16 pt at least; 12 over the laptop pose's fold), iOS's own scroll edge effect off all four edges of both scroll views on every screen and in every arrangement (the pane's own fade their only edge; 2026-11-24: left on, it blurred all but the last rows of the 13-inch iPad's sideways harness photos), each part's rows in their scroll view from a whole pixel at 2x and 3x, at most a pixel short of the column's place and the column's whole width between the margins (2026-11-24: half a pixel off the grid, Full Screen's footnote broke a line early), right to left the mirror of left to right; the console's lines, with the scroll views and the bottom the pane was given; and what each way of closing it brings (back to the stream, the keyboard and VoiceOver's reading, only for Done and the harness's stand-in; only the tour and full screen wait for its motion)
++**Checks:** Settings as a whole-screen pane on every device (Noah, 2026-11-18; docs/settings-pane-plan.md): where its two parts go (the Mac's: the header with Done, its groups and Disconnect; this device's: This iPad's group, Take the Tour, the version) at the real sizes, every iPhone upright and on its side, the iPads either way round and in their narrow windows (one column on each), the iPhone Duo in every pose (the book pose a column on each page, the laptop pose a page above and a page below the fold, open flat and the cover one column as any screen), right to left too; then a grid of every width from 200 to 1,400 pt at heights from 240 to 1,400, each without a fold, with a book band down it (centred and off centre) and a laptop band across it, both ways round: every part inside the screen and 16 pt from its sides, none wider than 600, nothing on a fold's band, the Mac's part leading or above, one column on every screen without a fold kept to, however wide and whichever way round (both parts, centred; Noah, 2026-11-23: "Settings should not be 2 columns, please make it 1 column"), two columns or pages only around a fold, a fold kept to only where its pages hold a column (300 pt on a book page), each scroll view across its page with its column inside it, out to the screen's edges through the safe area beside the stream screen (an iPhone's sensor housing's strips, the Duo's cover's camera strip; laid out on its page, the stream screen's part of it) (in one column one scroll view, the whole screen, so a drag anywhere scrolls the rows; in the book pose each page up to the fold's band, never on it; in the laptop pose the screen's width above and below the fold; Noah, 2026-11-23: "on iPad in landscape, you have to touch the middle 3rd of the display to scroll instead of anywhere on the screen"), the header over the Mac's part (in the book pose across the fold to Done, its words the leading page's column), Disconnect clear of the home indicator (its room under it, 16 pt at least; 12 over the laptop pose's fold), iOS's own scroll edge effect off all four edges of both scroll 
+```
+
+**File**: `Tests/checks/settings-pane/main.swift` (modified, +1/-27)
+```diff
+@@ -39,26 +39,6 @@ typealias Edges = SettingsPane.Edges
+ let fourEdges: Edges = [.top, .leading, .bottom, .trailing]
+ check("a scroll view's four edges, each its own: top, leading, bottom, trailing",
+       [Edges.top, .leading, .bottom, .trailing].map(\.rawValue) == [1, 2, 4, 8] && Edges.all == fourEdges)
+-/// The rows' column in its scroll view (`contentMargins`) at `scale` pixels a point: from a whole pixel, at most a pixel
+-/// short of the column's own place (never past it), and the column's whole width between the two margins.
+-func marginsHold(_ column: CGRect, _ scroll: CGRect, scale: CGFloat) -> Bool {
+-    let (lead, trail) = Layout.contentMargins(column: column, in: scroll, scale: scale)
+-    let exact = column.minX - scroll.minX, px = lead * scale
+-    return abs(px - px.rounded()) < 1e-6 && exact - lead > -1e-9 && exact - lead < 1 / scale - 1e-9
+-        && near(lead + column.width + trail, scroll.width, 1e-6)
+-}
+-let upright3 = Layout.contentMargins(column: rect(34.5, 0, 600, 951), in: rect(0, 0, 669, 951), scale: 3)
+-let upright2 = Layout.contentMargins(column: rect(34.5, 0, 600, 951), in: rect(0, 0, 669, 951), scale: 2)
+-let uprightExact = Layout.contentMargins(column: rect(34.5, 0, 600, 951), in: rect(0, 0, 669, 951), scale: 0)
+-check("the Duo open flat upright (669 pt, the column at 34.5): its rows from 103 px at 3x (34.33 pt, 34.67 beyond), from 69 px at 2x "
+-        + "(34.5, 34.5 beyond); with no grid at 34.5 (2026-11-24: half a pixel off the grid, Full Screen's footnote broke a line early)",
+-      near(upright3.leading, 103.0 / 3, 1e-9) && near(upright3.trailing, 669 - 103.0 / 3 - 600, 1e-9)
+-        && upright2.leading == 34.5 && upright2.trailing == 34.5 && uprightExact.leading == 34.5 && uprightExact.trailing == 34.5)
+-check("the column on the grid already stays: an iPhone 15 Pro on its side, 126 pt into its scroll view (59 of it the island's strip)",
+-      [CGFloat(2), 3].allSatisfy { s in
+-          let m = Layout.contentMargins(column: rect(67, 0, 600, 393), in: rect(-59, 0, 852, 393), scale: s)
+-          return m.leading == 126 && m.trailing == 126
+-      })
+ 
+ // MARK: - The real sizes
+ //
+@@ -184,8 +164,6 @@ for c in cases {
+         check("\(c.name)\(dir): the bottom inset kept, \(c.bottom)", l.bottom == c.bottom)
+         check("\(c.name)\(dir): iOS's own scroll edge effect off all four edges of both scroll views",
+               l.systemEdgeEffectHidden == fourEdges)
+-        check("\(c.name)\(dir): each part's rows in their scroll view from a whole pixel at 2x and 3x, the column's width between the margins",
+-              [CGFloat(2), 3].allSatisfy { s in marginsHold(l.mac, l.macScroll, scale: s) && marginsHold(l.device, l.deviceScroll, scale: s) })
+         // Disconnect clear of the home indicator (its room, 16 pt at least), or 12 pt over the laptop pose's fold.
+         let foot: CGFloat = c.arrangement == .twoPages ? 12 : max(16, c.bottom)
+         check("\(c.name)\(dir): \(String(format: "%g", Double(foot))) pt under Disconnect, "
+@@ -296,9 +274,7 @@ let scrolls = Rule("each scroll view across its page, out to the screen's edges
+                    + "the laptop pose the screen's width above the band and below it; laid out on its page, the stream screen's part of it")
+ let systemEdge = Rule("iOS's own scroll edge effect off all four edges of both scroll views, in every arrangement, on every screen, "
+                       + "either way round and right to left (the pane's own fade their only edge; 2026-11-24)")
+-let onGrid = Rule("each part's rows in their scroll view from a whole pixel at 2x and 3x, at most a pixel short of the column's place, the "
+-                  + "column's whole width between the margins (2026-11-24)")
+-let rules = [inside, widest, decided, offFold, leadingMac, foldsOnly, single, headerRule, mirrored, footRule, scrolls, systemEdge, onGrid]
++let rules = [inside, widest, decided, offFold, leadingMac, foldsOnly, single, headerRule, mirrored, footRule, scrolls, systemEdge]
+ 
+ 
+ var gridLayouts = 0
+@@ -345,8 +321,6 @@ for w in stride(from: 200, through: 1400, by: 1) {
+                 footRule.expect(l.arrangement == .twoPages ? l.footBottom == 12 : l.footBottom == max(16, bottom) && l.footBottom >= bottom,
+                                 at + ", \(l.footBottom) under Disconnect")
+                 systemEdge.expect(l.systemEdgeEffectHidden == fourEdges, at + ", the system's edge effect hidden at \(l.systemEdgeEffectHidden.rawValue)")
+-                onGrid.expect([CGFloat(2), 3].allSatisfy { s in marginsHold(l.mac, l.macScroll, scale: s) && marginsHold(l.device, l.deviceScroll, scale: s) },
+-                              at + ", the margins at 3x \(Layout.contentMargins(column: l.mac, in: l.macScroll, scale: 3))")
+                 // The scroll views, in the leading-edge space (the mirror rule below holds them right to left): each
+                 // holds its column, spans its page and goes on into the safe area beside the screen where the 
+```
+
+**File**: `Tests/checks/settings-pane/mutants.py` (modified, +0/-8)
+```diff
+@@ -99,14 +99,6 @@
+         "var systemEdgeEffectHidden: SettingsPane.Edges { arrangement == .oneColumn ? .all : [] }"),
+     "M53 every edge without the sides": ("static let all: Edges = [.top, .leading, .bottom, .trailing]",
+                                          "static let all: Edges = [.top, .bottom]"),
+-    # The rows' column in its scroll view from a whole pixel (2026-11-24: half a pixel off the grid, Full Screen's footnote
+-    # broke a line early): off the grid, a pixel past the column's place, or the trailing margin the column's own, must fail.
+-    "M54 the rows' column in its scroll view off the pixel grid": (
+-        "let leading = scale > 0 ? (abs(pixels - pixels.rounded()) < 0.001 ? pixels.rounded() : pixels.rounded(.down)) / scale : exact",
+-        "let leading = exact"),
+-    "M55 the rows' column rounded up, past its place": ("pixels.rounded(.down)) / scale", "pixels.rounded(.up)) / scale"),
+-    "M56 the trailing margin from the column's own place": ("return (leading, max(0, scroll.width - leading - column.width))",
+-                                                            "return (leading, max(0, scroll.maxX - column.maxX))"),
+     # Closing.
+     "M27 the overlay puts the keyboard back":("var backToStream: Bool { self == .done || self == .harness }",
+                                                "var backToStream: Bool { self == .done || self == .harness || self == .overlay }"),
+```
+
+**File**: `docs/BUILD-AND-RUN.md` (modified, +1/-3)
+```diff
+@@ -356,9 +356,7 @@ views outlined in orange: where a drag scrolls the rows, the whole screen in one
+ to its edges, each page around the fold; none where the rows fit), `-SillSettingsSystemEdge 1`
+ (Settings' scroll views keep iOS 26's own scroll edge effect, which the pane turns off on every
+ edge: on the 13-inch iPad's sideways screen, drawn a quarter turn round, it blurs all but the
+-last rows; for photos of what it does, never a device's look), `-SillSettingsColumnGrid points|exact`
+-(Settings' rows placed in their scroll view from a whole point, or at the column's own place, instead of
+-from a whole pixel: half a pixel off on a 3x screen, Full Screen's footnote breaks a line early), `-SillSettingsScroll gestures` (the pane scrolled to its
++last rows; for photos of what it does, never a device's look), `-SillSettingsScroll gestures` (the pane scrolled to its
+ This iPad group; the mock Mac takes gestures in every case but `legacy`; `reverse`
+ to its Reverse Scrolling switch; `hold` to its Hold to Show Window Controls stepper),
+ `-Sill.trackpadGestures 0` (the device's Three-Finger Gestures off for one run,
+```
+
+**File**: `docs/LAYOUT.md` (modified, +2/-4)
+```diff
+@@ -943,8 +943,7 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
+   content margins), so a drag anywhere scrolls; DEBUG
+   `-SillSettingsScrollArea 1` outlines them; their edges the pane's own
+   12 pt fade (`ScrollEdgeFade`), iOS 26's scroll edge effect kept off them
+-  (`SystemEdgeEffect`; DEBUG `-SillSettingsSystemEdge 1` leaves it on); the
+-  rows from a whole pixel in their scroll view (DEBUG `-SillSettingsColumnGrid`); a feature's group
++  (`SystemEdgeEffect`; DEBUG `-SillSettingsSystemEdge 1` leaves it on); a feature's group
+   goes into the part whose it is), `SettingsPane` (where the pane's two parts
+   go: one column on every screen without a fold to keep to, an iPad's and an
+   iPhone's either way round (Noah, 2026-11-23), a column on each page of the
+@@ -953,8 +952,7 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
+   whole screen in one column, the side strips of the safe area included), nothing
+   on the fold, right to left mirrored, the room under Disconnect, the home
+   indicator's (`footBottom`), iOS's own scroll edge effect off every edge of
+-  each scroll view (`systemEdgeEffectHidden`, `Edges`), the column in its scroll
+-  view from a whole pixel (`contentMargins`); and `Close`, what each way of closing it
++  each scroll view (`systemEdgeEffectHidden`, `Edges`); and `Close`, what each way of closing it
+   brings; pure, `Tests/checks/settings-pane`; pbxproj A5E1/F5E1), `AwayCopy` (every
+   string of away from home and the link on the device, which callout shows,
+   and `LinkLine`, the stream screen's line over time; pure,
+```
+
+**File**: `iOSClient/ContentView.swift` (modified, +0/-4)
+```diff
+@@ -239,10 +239,6 @@ struct ContentView: View {
+ ///   edge effect (iOS 26 and later), which the pane otherwise turns off on every edge
+ ///   (`SettingsPane.Layout.systemEdgeEffectHidden`), so a photo shows what it does: on the 13-inch iPad's
+ ///   sideways screen, drawn a quarter turn round (below), a blur over all but the last rows.
+-/// * `-SillSettingsColumnGrid points|exact` — with `-SillSettings 1`: Settings' rows placed in their scroll
+-///   view from a whole point, or at their column's own place, instead of from a whole pixel
+-///   (`SettingsPane.Layout.contentMargins`), so a photo shows what each does to their text (`exact` at
+-///   34.5 pt on a 3x screen: Full Screen's footnote breaks "them back." onto a second line).
+ /// * `-SillSettingsCase <case>` — what the mock Mac's settings look like: `default` (Sill.app),
+ ///   `cli`, `software`, `custom`, `vdproblem`, `vdstream`, `legacy`, `pending`, `timeout`,
+ ///   `direct`, `directlink` (connected over it), `nodirect` (a host without it), `wired` or
+```
+
+**File**: `iOSClient/HostSettingsPanel.swift` (modified, +5/-21)
+```diff
+@@ -116,8 +116,6 @@ struct HostSettingsPanel: View {
+     @Environment(\.duoFold) private var duoFold
+     /// Right to left (Arabic, Hebrew): the Mac's part is still on the leading side, and a fold's pages swap.
+     @Environment(\.layoutDirection) private var layoutDirection
+-    /// Pixels a point, for the rows' column inside its scroll view (`part`).
+-    @Environment(\.displayScale) private var displayScale
+ 
+     private var mac: String { client.macName.isEmpty ? "the Mac" : client.macName }
+     /// DEBUG `-SillSettingsEnd 1`: the rows start scrolled to their end, so a photo of a short
+@@ -132,19 +130,6 @@ struct HostSettingsPanel: View {
+         return false
+         #endif
+     }
+-    /// The grid the rows' column keeps to inside its scroll view: the display's pixels (`displayScale`). DEBUG
+-    /// `-SillSettingsColumnGrid points` keeps it to whole points instead, `exact` to none (the column's own place, as
+-    /// on 2026-11-23), for photos of what each does to the rows' text.
+-    private static func columnGrid(_ displayScale: CGFloat) -> CGFloat {
+-        #if DEBUG
+-        switch UserDefaults.standard.string(forKey: "SillSettingsColumnGrid") {
+-        case "points"?: return 1
+-        case "exact"?: return 0
+-        default: break
+-        }
+-        #endif
+-        return displayScale
+-    }
+     /// DEBUG `-SillSettingsScroll gestures`: the rows start scrolled to the This iPad group, so a
+     /// photo of a short screen shows its switches and rows, which the footnote under them pushes out
+     /// of `-SillSettingsEnd`'s view; `sound`, to the Send Audio row; `mute`, to the Mute row
+@@ -353,12 +338,11 @@ struct HostSettingsPanel: View {
+     private func part<Content: View>(bottom: CGFloat, column: CGRect, scroll: CGRect, systemEdges: SettingsPane.Edges,
+                                      @ViewBuilder _ content: () -> Content) -> some View {
+         let rows = content()
+-        // The column as the scroll view's content margins at its sides, its leading one on the display's pixel grid
+-        // (SettingsPane.Layout.contentMargins): the scroll view lays the rows out the column's whole width from a whole
+-        // pixel, as when it was the column's own width (half a pixel off it, a footnote that needs all of its 572 pt
+-        // broke its last two words onto a second line).
+-        let side = SettingsPane.Layout.contentMargins(column: column, in: scroll, scale: Self.columnGrid(displayScale))
+-        let margins = EdgeInsets(top: 0, leading: side.leading, bottom: bottom, trailing: side.trailing)
++        // The column as the scroll view's content margins at its sides, not as padding round the rows: the scroll
++        // view lays the rows out at the column's width and places them, as it did when it was the column's width
++        // (with padding inside the scroll view, a footnote line that fitted with a point to spare broke a word early).
++        let margins = EdgeInsets(top: 0, leading: max(0, column.minX - scroll.minX), bottom: bottom,
++                                 trailing: max(0, scroll.maxX - column.maxX))
+         return ScrollViewReader { reader in
+             ScrollView {
+                 VStack(alignment: .leading, spacing: 0) { rows }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #434** (closed): Keep the session when backgrounded (@dahda-app)
+- **PR #433** (closed): Fix typing into Parallels (@dahda-app)
 - **PR #418** (2026-11-23): Keep the modifier keys above any keyboard on an iPhone held upright (@Saffsanity)
-- **PR #402** (2026-11-20): Privacy: lock this Mac when the last device leaves (part 1 of privacy mode, on #184) (@Saffsanity)
-- **PR #399** (2026-11-20): #368 ready: Host: follow macOS native tab switches in a streamed window (#366) (@Saffsanity)
-- **PR #396** (2026-11-20): #367 ready: Audio: capture a staged window's sound on Sill's display, and retry an ended capture by itself (#365) (@Saffsanity)
-- **PR #389** (2026-11-23): Support page: the way back into a Mac that Sill cannot show (#316) (@Saffsanity)
-- **PR #388** (2026-11-18): CLAUDE.md lean: the layout, the build and test notes and the compatibility floor move to docs (@Saffsanity)
+- **PR #414** (2026-11-24): #292 ready: iOS: hold, then drag, on the picture in Direct Touch (#178) (@Saffsanity)
+- **PR #410** (2026-11-24): #315 ready: iPhone: arrow keys in a scrolling key row (#287) (@Saffsanity)
+- **PR #406** (2026-11-24): Picture in Picture: the stream stops when it ends in the background (#379) (@Saffsanity)
 
 ---
 
@@ -1899,40 +2021,32 @@ Support page: the way back into a Mac that Sill cannot show (#316)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in keys-above-keyboard.cases
+## X. Revert "Settings: the scroll view places the rows' column by its content margins
 
 **RULE**:
-When implementing operations in `Scripts/harness-photos/keys-above-keyboard.cases`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/LAYOUT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d062a3c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `597aadbe`: Revert "Settings: the scroll view places the rows' column by its content margins". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Scripts/harness-photos/keys-above-keyboard.cases`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/LAYOUT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-# The keys above any keyboard (PhoneKeyboardLift, docs/steps/2026-11-19-keys-above-keyboard.md) on the iPhone Duo's
-# cover, which draws an iPhone's arrangement upright: the real keyboard raised by -SillKeyboardToggle (the fake screen is
-# the cover's own 466x678), -SillHardwareKeyboard 0 so it is drawn, -SillTallKeyboard 60 standing in for a taller one.
-# The first case folds the Duo, so the keyboard cases launch on the cover already closed. Against main (eb48ac9f):
-#   Scripts/harness-photos.sh Scripts/harness-photos/keys-above-keyboard.cases --baseline eb48ac9f
-cover-no-keyboard         -SillLayout 466x678 -SillHinge closed --pose=closed-upright --wait=5
-cover-keyboard            -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 --pose=closed-upright --wait=6
-cover-tall-keyboard       -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 --pose=closed-upright --wait=6
-cover-hide-keyboard       -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -Sill.hideThumbnailsWhileTyping 1 --pose=closed-upright --wait=6
-cover-hide-tall-keyboard  -SillLayout 466x678 -SillHinge
+  column inside it (`inColumn`), so a drag anywhere scrolls; DEBUG
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  column inside it (`inColumn`; the rows that scroll by their scroll view's
+  content margins), so a drag anywhere scrolls; DEBUG
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d062a3c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `597aadbe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,24 +4,24 @@
 {
   "source_repository": "ytsaurus/ytsaurus",
   "source_url": "https://github.com/ytsaurus/ytsaurus",
-  "source_version": "847a2b36",
+  "source_version": "4fc0fe7e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T15:31:35.886Z",
+  "timestamp": "2026-11-26T12:20:15.761Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ytsaurus-ytsaurus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `847a2b36`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T15:31:35.886Z`  
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `4fc0fe7e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T12:20:15.761Z`  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ytsaurus/ytsaurus:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T15:31:34.736Z  
+> **Harvest Timestamp**: 2026-11-26T12:20:14.334Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2325 stars
+- **Stars / Engagement**: 2327 stars
 
 ---
 
@@ -1209,111 +1209,426 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c1bd800` (2026-11-20)
-**Commit Message**: YT-30353: Increase timeout at test_replicated_table_backup
-commit_hash:5c158ffff94024a057d46ff9b6280aba05dbcdfb
+### Incident Patch 1: `9981fd4e` (2026-11-26)
+**Commit Message**: YT-23401: Allow toggling network throttler IPC via node dynamic config
 
-**File**: `yt/yt/tests/integration/dynamic_tables/test_backups.py` (modified, +1/-1)
+Data and exec nodes on a host share a network throttling budget through IPC. Add enable_network_throttler_ipc to the node dynamic config (default: true) so they can switch to independent budgets without restarting when their networks are separated.
+
+On a mode change, preserve bucket throttler objects, local quota and debt, accumulation windows, usage and pending requests. Replace only their shared-reserve connection; no initial quota is granted and the old shared reserve is not copied into the new group.
+commit_hash:94822bf018faf7de41a40590e4a4a7f122d0c7fb
+
+**File**: `yt/yt/core/concurrency/fair_throttler.cpp` (modified, +95/-63)
 ```diff
-@@ -1247,7 +1247,7 @@ def test_replicated_tables_backup(self, driver_cluster):
-         response = create_table_backup(
-             self._make_backup_manifest(2),
-             return_response=True,
--            checkpoint_timestamp_delay=3000,
-+            checkpoint_timestamp_delay=4000,
-             driver=get_driver(cluster=driver_cluster))
+@@ -5,6 +5,8 @@
  
-         cur_time = time()
-```
-
----
-
-### Incident Patch 2: `2b4a27fd` (2026-11-21)
-**Commit Message**: Fix Cython resource builds across target platforms
-
-Resource Cython broke cross-builds when host-tool discovery loaded Cython's dependencies in the target configuration. Register generated Python bytecode in the build tree and accept standard headers supplied by the system C++ library.
-commit_hash:98779d8dff17dcb05328bb8870e415490b853665
-
-**File**: `build/conf/sysincl.conf` (modified, +1/-0)
-```diff
-@@ -124,6 +124,7 @@ when ($USE_SYSTEM_OPENSSL == "yes") {
- when ($_USE_RESOURCE_CYTHON == "yes") {
-     SYSINCL+=build/sysincl/cython-py3.yml
-     SYSINCL+=build/sysincl/cython-py2.yml
-+    SYSINCL+=build/sysincl/cython-system-stl.yml
- }
- otherwise {
-     SYSINCL+=build/sysincl/cython-legacy-numpy.yml
-```
-
-**File**: `build/plugins/pybuild.py` (modified, +3/-0)
-```diff
-@@ -731,6 +731,9 @@ def process_pyx(filename, path, out_suffix, with_ext):
-                     if with_pyc:
-                         root_rel_path = rootrel_arc_src(path, unit)
-                         dst = path + uniq_suffix(path, unit)
-+                        if path.startswith('${ARCADIA_ROOT}/'):
-+                            # Resource registration must read generated bytecode from the build root.
-+                            dst = to_build_root(dst, unit)
-                         unit.on_py3_compile_bytecode([root_rel_path + '-', path, dst])
-                         res += ['DEST', dest + '.yapyc3', dst + '.yapyc3']
+ #include <yt/yt/core/profiling/timing.h>
  
-```
-
-**File**: `build/sysincl/cython-system-stl.yml` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+# System STL may supply these manifest headers outside Arcadia.
-+# The libc++ map adds tracked paths in configurations that use it.
-+- source_filter: "^contrib/tools/cython(_py2)?/induced_deps[.]h$"
-+  includes:
-+    - execution
-+- source_filter: "^contrib/tools/cython/induced_deps[.]h$"
-+  includes:
-+    - barrier
-+    - latch
-+    - semaphore
-+    - stop_token
-```
-
----
-
-### Incident Patch 3: `fe35eca3` (2026-11-20)
-**Commit Message**: Fix hedging
-commit_hash:be281c8cbcf15d303300317030a15b87b547d85a
-
-**File**: `yt/yt/ytlib/chunk_client/replication_reader.cpp` (modified, +5/-2)
-```diff
-@@ -1312,7 +1312,10 @@ class TSessionBase
-         const std::optional<TPeer>& backupPeer,
-         const std::optional<THedgingChannelOptions>& hedgingOptions)
++#include <library/cpp/yt/memory/atomic_intrusive_ptr.h>
++
+ #include <util/random/shuffle.h>
+ 
+ namespace NYT::NConcurrency {
+@@ -257,18 +259,19 @@ class TBucketThrottler
      {
--        if (backupPeer && hedgingOptions) {
-+        // Hedging reuses the primary replica spec, so offshore peers require separate requests.
-+        if (backupPeer && hedgingOptions &&
-+            !primaryPeer.Id.IsOffshore && !backupPeer->Id.IsOffshore)
-+        {
-             return CreateHedgingChannel(
-                 GetChannel(primaryPeer.Id),
-                 GetChannel(backupPeer->Id),
-@@ -3189,7 +3192,7 @@ class TReadBlockSetSession
+         YT_VERIFY(amount >= 0);
  
-             future = RequestBatcher_->GetBlockSet(
-                 IRequestBatcher::TRequest{
--                    .Channel = GetChannel(primaryPeerId),
-+                    .Channel = channel,
-                     .BlockIndexes = blockIndexes,
-                     .Session = MakeStrong(this),
-                     .Barriers = FillP2PBarriers(peers, blockIndexes),
++        auto sharedBucket = SharedBucket_.Acquire();
+         auto available = Quota_.GetValue();
+         auto globalAvailable = IsLimited()
+             ? 0
+-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
++            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+ 
+         if (amount > available + globalAvailable) {
+             return false;
+         }
+ 
+         auto globalConsumed = std::clamp<i64>(amount - available, 0, globalAvailable);
+         Quota_.Acquire(amount - globalConsumed);
+-        SharedBucket_->Limit.Acquire(globalConsumed);
++        sharedBucket->Limit.Acquire(globalConsumed);
+ 
+         ValueCounter_.Increment(amount);
+         Usage_ += amount;
+@@ -280,16 +283,17 @@ class TBucketThrottler
+     {
+         YT_VERIFY(amount >= 0);
+ 
++        auto sharedBucket = SharedBucket_.Acquire();
+         auto available = Quota_.GetValue();
+         auto globalAvailable = IsLimited()
+             ? 0
+-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
++            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+ 
+         auto consumed = std::min(amount, available + globalAvailable);
+ 
+         auto globalConsumed = std::clamp<i64>(consumed - available, 0, globalAvailable);
+         Quota_.Acquire(consumed - globalConsumed);
+-        SharedBucket_->Limit.Acquire(globalConsumed);
++        sharedBucket->Limit.Acquire(globalConsumed);
+ 
+         ValueCounter_.Increment(consumed);
+         Usage_ += consumed;
+@@ -301,15 +305,16 @@ class TBucketThrottler
+     {
+         YT_VERIFY(amount >= 0);
+ 
++        auto sharedBucket = SharedBucket_.Acquire();
+         auto available = Quota_.GetValue();
+         // NB: Shared bucket limit can get below zero because resource acquisition is racy.
+         auto globalAvailable = IsLimited()
+             ? 0
+-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
++            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+ 
+         auto globalConsumed = std::clamp<i64>(amount - available, 0, globalAvailable);
+         Quota_.Acquire(amount - globalConsumed);
+-        SharedBucket_->Limit.Acquire(globalConsumed);
++        sharedBucket->Limit.Acquire(globalConsumed);
+ 
+         ValueCounter_.Increment(amount);
+         Usage_ += amount;
+@@ -357,8 +362,9 @@ class TBucketThrottler
+ 
+     i64 GetAvailable() const override
+     {
++        auto sharedBucket = SharedBucket_.Acquire();
+         auto available = Quota_.GetValue();
+-        auto globalAvailable = IsLimited() ? 0 : SharedBucket_->Limit.GetValue();
++        auto globalAvailable = IsLimited() ? 0 : sharedBucket->Limit.GetValue();
+         return available + globalAvailable;
+     }
+ 
+@@ -465,14 +471,19 @@ class TBucketThrottler
+         }
+     }
+ 
++    void SetSharedBucket(const TSharedBucketPtr& sharedBucket)
++    {
++        SharedBucket_.Store(sharedBucket);
++    }
++
+     bool IsLimited() const
+     {
+         return Limited_.load();
+     }
+ 
+ private:
+     const NLogging::TLogger Logger;
+-    const TSharedBucketPtr SharedBucket_;
++    TAtomicIntrusivePtr<TSharedBucket> SharedBucket_;
+     const NProfiling::TProfiler Profiler_;
+     const NProfiling::TCounter ValueCounter_;
+     const NProfiling::TCounter ReleasedCounter_;
+@@ -520,15 +531,12 @@ class TFairThrottler
+         , SharedBucket_(New<TSharedBucket>(
+             Config_->GlobalAccumulationTicks,
+             Profiler_,
+-            GetSharedBucketValue()))
++            GetSharedBucketValue(Ipc_)))
+     {
+-        if (Ipc_) {
+-            Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
+-                return IsLeader_.load();
+-            });
+-        } else {
+-            IsLeader_ = true;
+-        }
++        IsLeader_ = !Ipc_;
++        Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
++            return IsLeader_.load();
++        });
+ 
+         Profiler_.AddFuncGauge("/total_limit", MakeStrong(this), [this] {
+             auto guard = Guard(Lock_);
+@@ -542,50 +550,44 @@ class TFairThrottler
+         const std::string& name,
+         TFairThrottlerBucketConfigPtr config) final
+     {
+-        if (!config) {
+-            config = New<TFairThrottlerBucketConfig>();
+-        }
+-
+         auto guard = Guard(Lock_);
+-        if (auto it = Buckets_.find(name); it != Buckets_.end()) {
+-            it->second.Throttler->Update(Config_, config);
+-
+-            it->second.Config = std::move(config);
+-
+-            return it->second.Throttler;
+-        }
+-
+-        auto throttler = New<TBucketThrottler>(
+-            Logger().WithTag("Bucket", name),
+-            Profiler_.WithTag("bucket", name),
+-            SharedBucket_,
+-            Config_);
+-
+-        throttler->Update(Config_, config);
+-
+-        IFai
+```
+
+**File**: `yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp` (modified, +164/-0)
+```diff
+@@ -5,6 +5,7 @@
+ 
+ #include <library/cpp/testing/common/env.h>
+ 
++#include <tuple>
+ #include <vector>
+ 
+ namespace NYT::NConcurrency {
+@@ -329,5 +330,168 @@ TEST_F(TConcurrentFairThrottlerTest, TwoBuckets)
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ 
++constexpr int LeaderMask = 1;
++constexpr int FollowerMask = 2;
++
++void CheckIpcReconfiguration(int reconfigureMask)
++{
++    std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
++    auto config = New<TFairThrottlerConfig>();
++    config->IpcPath = (GetOutputPath() / (testName + ".throttler")).GetPath();
++    config->TotalLimit = 100;
++    auto bucketConfig = New<TFairThrottlerBucketConfig>();
++
++    auto leader = CreateFairThrottler(config, Logger, NProfiling::TProfiler{});
++    auto first = leader->CreateBucketThrottler("first", bucketConfig);
++    // Elect the first throttler before creating its peer.
++    ASSERT_TRUE(WaitFor(first->Throttle(1).WithTimeout(TDuration::Seconds(5))).IsOK());
++
++    auto follower = CreateFairThrottler(config, Logger, NProfiling::TProfiler{});
++    auto second = follower->CreateBucketThrottler("second", bucketConfig);
++    auto reconfigure = [&] (const TFairThrottlerConfigPtr& newConfig) {
++        if (reconfigureMask & LeaderMask) {
++            leader->Reconfigure(newConfig, {});
++        }
++        if (reconfigureMask & FollowerMask) {
++            follower->Reconfigure(newConfig, {});
++        }
++    };
++
++    std::vector<TFuture<void>> firstRequests, secondRequests;
++    for (int index = 0; index < 1000; ++index) {
++        firstRequests.push_back(first->Throttle(10));
++        secondRequests.push_back(second->Throttle(10));
++    }
++
++    auto localConfig = New<TFairThrottlerConfig>();
++    localConfig->TotalLimit = config->TotalLimit;
++    for (int iteration = 0; iteration < 2; ++iteration) {
++        reconfigure(localConfig);
++        ASSERT_EQ(first, leader->CreateBucketThrottler("first", bucketConfig));
++        ASSERT_EQ(second, follower->CreateBucketThrottler("second", bucketConfig));
++
++        auto firstBefore = CountCompleted(firstRequests);
++        auto secondBefore = CountCompleted(secondRequests);
++        Sleep(TDuration::Seconds(2));
++
++        // Both throttlers now have independent budgets, including the former IPC peer.
++        EXPECT_GE(CountCompleted(firstRequests) - firstBefore, 15);
++        EXPECT_GE(CountCompleted(secondRequests) - secondBefore, 15);
++
++        reconfigure(config);
++        ASSERT_EQ(first, leader->CreateBucketThrottler("first", bucketConfig));
++        ASSERT_EQ(second, follower->CreateBucketThrottler("second", bucketConfig));
++        Sleep(TDuration::MilliSeconds(500));
++        firstBefore = CountCompleted(firstRequests);
++        secondBefore = CountCompleted(secondRequests);
++        Sleep(TDuration::Seconds(2));
++
++        // Rejoining IPC restores a single budget shared between both throttlers.
++        auto firstCompleted = CountCompleted(firstRequests) - firstBefore;
++        auto secondCompleted = CountCompleted(secondRequests) - secondBefore;
++        EXPECT_GE(firstCompleted, 5);
++        EXPECT_GE(secondCompleted, 5);
++        EXPECT_LE(firstCompleted + secondCompleted, 28);
++    }
++
++    for (const auto& request : firstRequests) {
++        request.Cancel(TError("Test finished"));
++    }
++    for (const auto& request : secondRequests) {
++        request.Cancel(TError("Test finished"));
++    }
++}
++
++class TFairThrottlerIpcReconfigurationTest
++    : public ::testing::TestWithParam<int>
++{ };
++
++TEST_P(TFairThrottlerIpcReconfigurationTest, IpcReconfiguration)
++{
++    CheckIpcReconfiguration(GetParam());
++}
++
++INSTANTIATE_TEST_SUITE_P(
++    TFairThrottlerIpcReconfigurationTest,
++    TFairThrottlerIpcReconfigurationTest,
++    ::testing::Values(FollowerMask, LeaderMask, LeaderMask | FollowerMask));
++
++////////////////////////////////////////////////////////////////////////////////
++
++void CheckLocalStatePreservation(bool useIpcBefore, bool useIpcAfter)
++{
++    std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
++    auto ipcPath = (GetOutputPath() / (testName + ".throttler")).GetPath();
++    auto oldConfig = New<TFairThrottlerConfig>();
++    oldConfig->TotalLimit = 100;
++    oldConfig->DistributionPeriod = TDuration::Hours(1);
++    if (useIpcBefore) {
++        oldConfig->IpcPath = ipcPath;
++    }
++
++    auto throttler = CreateFairThrottler(oldConfig, Logger, NProfiling::TProfiler{});
++    auto probe = throttler->CreateBucketThrottler("probe", New<TFairThrottlerBucketConfig>());
++    // Wait for the initial tick. The next tick is an hour away, so it cannot mask a reset.
++    ASSERT_TRUE(WaitFor(probe->Throttle(1).WithTimeout(TDuration::Seconds(5))).IsOK());
++
++    auto bucketConfig = New<TFairThrottlerBucketConfig>();
++    bucketConfig->Limit = 100;
++    auto bucket = throttler->CreateBucketThrottler("main", bucketConfig);
++    // A limited bucket cannot draw from th
+```
+
+**File**: `yt/yt/server/node/cluster_node/bootstrap.cpp` (modified, +8/-2)
+```diff
+@@ -1399,8 +1399,11 @@ class TBootstrap
+         std::optional<i64> netRxLimit)
+     {
+         {
+-            auto throttlerConfig = New<TFairThrottlerConfig>();
++            auto throttlerConfig = CloneYsonStruct(Config_->InThrottler);
+             throttlerConfig->TotalLimit = GetNetworkThrottlerLimit(newConfig, netRxLimit);
++            if (!newConfig->EnableNetworkThrottlerIpc) {
++                throttlerConfig->IpcPath.reset();
++            }
+ 
+             THashMap<std::string, TFairThrottlerBucketConfigPtr> inBucketsConfig;
+             for (const auto& bucket : EnabledInThrottlers_) {
+@@ -1412,8 +1415,11 @@ class TBootstrap
+             InThrottler_->Reconfigure(throttlerConfig, inBucketsConfig);
+         }
+         {
+-            auto throttlerConfig = New<TFairThrottlerConfig>();
++            auto throttlerConfig = CloneYsonStruct(Config_->OutThrottler);
+             throttlerConfig->TotalLimit = GetNetworkThrottlerLimit(newConfig, netTxLimit);
++            if (!newConfig->EnableNetworkThrottlerIpc) {
++                throttlerConfig->IpcPath.reset();
++            }
+             THashMap<std::string, TFairThrottlerBucketConfigPtr> outBucketsConfig;
+             for (const auto& bucket : EnabledOutThrottlers_) {
+                 outBucketsConfig[bucket] = Config_->OutThrottlers[bucket];
+```
+
+**File**: `yt/yt/server/node/cluster_node/config.cpp` (modified, +2/-0)
+```diff
+@@ -521,6 +521,8 @@ void TClusterNodeDynamicConfig::Register(TRegistrar registrar)
+         .DefaultNew();
+     registrar.Parameter("master_connector", &TThis::MasterConnector)
+         .DefaultNew();
++    registrar.Parameter("enable_network_throttler_ipc", &TThis::EnableNetworkThrottlerIpc)
++        .Default(true);
+     registrar.Parameter("in_throttlers", &TThis::InThrottlers)
+         .Default();
+     registrar.Parameter("out_throttlers", &TThis::OutThrottlers)
+```
+
+**File**: `yt/yt/server/node/cluster_node/config.h` (modified, +3/-0)
+```diff
+@@ -463,6 +463,9 @@ struct TClusterNodeDynamicConfig
+     //! Master connector configuration.
+     TMasterConnectorDynamicConfigPtr MasterConnector;
+ 
++    //! Whether network fair throttlers share quota with other processes via IPC.
++    bool EnableNetworkThrottlerIpc;
++
+     //! Bucket configuration for in network throttlers.
+     THashMap<std::string, NConcurrency::TFairThrottlerBucketConfigPtr> InThrottlers;
+ 
+```
+
+---
+
+### Incident Patch 2: `dc31b68d` (2026-11-26)
+**Commit Message**: YTFLOW: Fix the key-visitor scan-all description in docs
+commit_hash:4055ab9c76cdc17aeae95aa8a2be54e6da0f188b
+
+**File**: `yt/docs/en/_includes/flow/concepts/key_visitor.md` (modified, +1/-1)
+```diff
+@@ -73,7 +73,7 @@ To make a computation accept a visit stream, you must fill the `key_visitor_stre
+ 
+ - `names`: a list of internal-state names to count keys from. If unspecified or empty, all keys from all internal states of the computation are used.
+ - `weak_external_names`: a list of visitor-driven external-state joiners scanned in step with the visit stream without contributing keys. Such a joiner is read over the same key ranges as the other sources, so its row is available in `ProcessVisit` for the visit key, but a key present only in the joiner produces no visit (a left join against the keys of `names`/`external_names`). Must not overlap with `external_names`; the "at most one visit stream per joiner" rule covers both lists. See [Static table joiner](#static-table-joiner).
+-- `external_names`: a list of [external-state managers](../../../flow/concepts/glossary.md#state) and visitor-driven external-state joiners (see [Static table joiner](#static-table-joiner)) for the computation, whose tables are used to count keys. This lets the visitor scan the external state (including that of companion computations) and evict outdated records via `clear()` in the visit handler. If only `external_names` is specified (without `names`), only the listed external state is scanned; internal states aren’t scanned. If neither `names` nor `external_names` is specified, all internal states are scanned, but external state and joiners aren’t; a joiner is scanned only if explicitly listed in `external_names`, and in no more than one visit stream of the computation (checked at spec submit time).
++- `external_names`: a list of [external-state managers](../../../flow/concepts/glossary.md#state) and visitor-driven external-state joiners (see [Static table joiner](#static-table-joiner)) for the computation, whose tables are used to count keys. This lets the visitor scan the external state (including that of companion computations) and evict outdated records via `clear()` in the visit handler. If only `external_names` is specified (without `names`), only the listed external state is scanned; internal states aren’t scanned. If neither `names` nor `external_names` is specified, all internal states and all external-state managers of the computation are scanned, but joiners aren’t; a joiner is scanned only if explicitly listed in `external_names`, and in no more than one visit stream of the computation (checked at spec submit time).
+ - `upstream_streams`: which of the computation’s input and source streams the visitor follows, that is, whose completion it waits for before the final pass (see [Pass lifecycle](#pass-lifecycle)). When unspecified, all input and source streams of the computation. Only meaningful with `finite=%true` (see [Dynamic spec parameters](#dynamic-params)). For when the list needs narrowing, see [`streams_dependency`](#deps).
+ 
+ ### Dynamic spec parameters {#dynamic-params}
+```
+
+**File**: `yt/docs/ru/_includes/flow/concepts/key_visitor.md` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ Key-visitor-стрим решает эту задачу: фоновая зада
+ ### Параметры статической спеки {#static-params}
+ 
+ - `names` — список имён internal-стейтов, по которым считать ключи. Если не задан или пустой — все ключи всех internal-стейтов компьютейшена.
+-- `external_names` — список имён [external-стейт-менеджеров](../../../flow/concepts/glossary.md#state) и visitor-driven external-стейт-джойнеров (см. [Джойн внешней статической таблицы](#static-table-joiner)) компьютейшена, по таблицам которых считать ключи. Позволяет визитору обходить external-стейт (в том числе у companion-компьютейшенов) и эвиктить устаревшие записи через `clear()` в обработчике визита. Если задан только `external_names` (без `names`) — обходится только перечисленный external-стейт, internal-стейты не сканируются. Если не заданы ни `names`, ни `external_names`, обходятся все internal-стейты, а external-стейт и джойнеры — нет; джойнер обходится только при явном перечислении в `external_names`, и не более чем в одном visit-стриме компьютейшена (проверяется при submit'е спеки).
++- `external_names` — список имён [external-стейт-менеджеров](../../../flow/concepts/glossary.md#state) и visitor-driven external-стейт-джойнеров (см. [Джойн внешней статической таблицы](#static-table-joiner)) компьютейшена, по таблицам которых считать ключи. Позволяет визитору обходить external-стейт (в том числе у companion-компьютейшенов) и эвиктить устаревшие записи через `clear()` в обработчике визита. Если задан только `external_names` (без `names`) — обходится только перечисленный external-стейт, internal-стейты не сканируются. Если не заданы ни `names`, ни `external_names`, обходятся все internal-стейты и все external-стейт-менеджеры компьютейшена, а джойнеры — нет; джойнер обходится только при явном перечислении в `external_names`, и не более чем в одном visit-стриме компьютейшена (проверяется при submit'е спеки).
+ - `weak_external_names` — список visitor-driven external-стейт-джойнеров, которые обходятся синхронно с visit-стримом, но ключей в него не поставляют: джойнер читается по тем же диапазонам, что и остальные источники, и его строка доступна в `ProcessVisit` для ключа визита, а ключ, который есть только в джойнере, визита не порождает (left join по ключам `names`/`external_names`). Не пересекается с `external_names`; ограничение «не более одного visit-стрима на джойнер» действует для обоих списков. См. [Джойн внешней статической таблицы](#static-table-joiner).
+ - `upstream_streams` — какие входные и source-стримы компьютейшена визитор отслеживает, то есть завершения каких из них ждёт перед финальным pass'ом (см. [Жизненный цикл прохода](#pass-lifecycle)). Если не задан — все входные и source-стримы компьютейшена. Имеет смысл только при `finite=%true` (см. [Параметры динамической спеки](#dynamic-params)). Когда список нужно сужать — см. [`streams_dependency`](#deps).
+ 
+```
+
+---
+
+### Incident Patch 3: `5bdc9082` (2026-11-26)
+**Commit Message**: Fix partial type annotation
+
+Here are fixes for 2 bugs. One is trivial, but the second is interesting. `COALESCE(T?, Universal)` returned `T`. It seems that any `COALESCE` with `Universal`s should return `Universal`, because the type inference rule uses common type and a common type with any unknown type is obviously unknown.
+commit_hash:494c85b85dfabae384157bc2acc2fabc24b70782
+
+**File**: `yql/essentials/core/type_ann/type_ann_core.cpp` (modified, +6/-0)
+```diff
+@@ -6174,6 +6174,12 @@ IGraphTransformer::TStatus CoalesceWrapper(const TExprNode::TPtr& input, TExprNo
+     const auto leftType = input->Head().GetTypeAnn();
+     const auto rightType = input->Tail().GetTypeAnn();
+ 
++    if (leftType->GetKind() == ETypeAnnotationKind::Universal ||
++        (rightType->GetKind() == ETypeAnnotationKind::Universal && leftType->IsOptionalOrNull())) {
++        input->SetTypeAnn(ctx.Expr.MakeType<TUniversalExprType>());
++        return IGraphTransformer::TStatus::Ok;
++    }
++
+     auto leftItemType = leftType;
+     if (leftType->GetKind() == ETypeAnnotationKind::Optional) {
+         leftItemType = leftType->Cast<TOptionalExprType>()->GetItemType();
+```
+
+**File**: `yql/essentials/core/type_ann/type_ann_list.cpp` (modified, +2/-1)
+```diff
+@@ -3381,7 +3381,8 @@ namespace {
+                 return nullptr;
+             }
+             const auto itemType = input.GetTypeAnn()->Cast<TListExprType>()->GetItemType();
+-            if (itemType->GetKind() == ETypeAnnotationKind::UniversalStruct) {
++            if (itemType->GetKind() == ETypeAnnotationKind::UniversalStruct ||
++                itemType->GetKind() == ETypeAnnotationKind::Universal) {
+                 isUniversal = true;
+                 return nullptr;
+             }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1903** (closed): Go SDK: Serialization of Composite types. #1902 (@psk-nebi)
 - **PR #1897** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1895** (closed): yt/chyt: remove hardcoded jaeger (@koct9i)
 - **PR #1892** (closed): Fix typo in chaos-dynamic-tables.md (@hsalkaline)
 - **PR #1887** (closed): Preserve bus TLS configuration for YT QL RPC connections (@Tony-Romanov)
 - **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
-- **PR #1884** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 
 ---
 
@@ -1333,31 +1648,85 @@ commit_hash:be281c8cbcf15d303300317030a15b87b547d85a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-30353: Increase timeout at test_replicated_table_backup
+## X. YT-23401: Allow toggling network throttler IPC via node dynamic config
 
 **RULE**:
-When implementing operations in `yt/yt/tests/integration/dynamic_tables/test_backups.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/core/concurrency/fair_throttler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c1bd800`: YT-30353: Increase timeout at test_replicated_table_backup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9981fd4e`: YT-23401: Allow toggling network throttler IPC via node dynamic config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/dynamic_tables/test_backups.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/core/concurrency/fair_throttler.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            checkpoint_timestamp_delay=4000,
+#include <library/cpp/yt/memory/atomic_intrusive_ptr.h>
+
+        auto sharedBucket = SharedBucket_.Acquire();
+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+        sharedBucket->Limit.Acquire(globalConsumed);
+        auto sharedBucket = SharedBucket_.Acquire();
+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+        sharedBucket->Limit.Acquire(globalConsumed);
+        auto sharedBucket = SharedBucket_.Acquire();
+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+        sharedBucket->Limit.Acquire(globalConsumed);
+        auto sharedBucket = SharedBucket_.Acquire();
+        auto globalAvailable = IsLimited() ? 0 : sharedBucket->Limit.GetValue();
+    void SetSharedBucket(const TSharedBucketPtr& sharedBucket)
+    {
+        SharedBucket_.Store(sharedBucket);
+    }
+
+    TAtomicIntrusivePtr<TSharedBucket> SharedBucket_;
+            GetSharedBucketValue(Ipc_)))
+        IsLeader_ = !Ipc_;
+        Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
+            return IsLeader_.load();
+        });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-            checkpoint_timestamp_delay=3000,
+            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
+        SharedBucket_->Limit.Acquire(globalConsumed);
+            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
+        SharedBucket_->Limit.Acquire(globalConsumed);
+            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
+        SharedBucket_->Limit.Acquire(globalConsumed);
+        auto globalAvailable = IsLimited() ? 0 : SharedBucket_->Limit.GetValue();
+    const TSharedBucketPtr SharedBucket_;
+            GetSharedBucketValue()))
+        if (Ipc_) {
+            Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
+                return IsLeader_.load();
+            });
+        } else {
+            IsLeader_ = true;
+        }
+        if (!config) {
+            config = New<TFairThrottlerBucketConfig>();
+        }
+
+        if (auto it = Buckets_.find(name); it != Buckets_.end()) {
+            it->second.Throttler->Update(Config_, config);
+
+            it->second.Config = std::move(config);
+
+            return it->second.Throttler;
+        }
+
+        auto throttler = New<TBucketThrottler>(
+            Logger().WithTag("Bucket", name),
+            Profiler_.WithTag("bucket", name),
+            S
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c1bd800` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9981fd4e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

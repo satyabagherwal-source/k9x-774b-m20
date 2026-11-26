@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T12:11:33.345Z",
+  "last_updated": "2026-11-26T12:20:15.537Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -410,14 +410,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
-      "content_hash": "41b047a71d8688399cb1a27565939c8f8d11742863465e0d45ba84790e02efcf",
-      "verified_at": "2026-11-22T19:09:43.083Z",
+      "content_hash": "6774490567a62a50c1c705ea01da3c4ac41aa27cd24c0e849f10312fb08904e4",
+      "verified_at": "2026-11-26T12:19:57.247Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:09:43.083Z"
+      "last_updated": "2026-11-26T12:19:57.247Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -2556,14 +2556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saffsanity-sill",
-      "content_hash": "d599c6771403c0e35b9e2822390fbdd7982f62e3c891a3dea62b07505ce0bc51",
-      "verified_at": "2026-11-24T01:46:51.689Z",
+      "content_hash": "41d1169e908e4b2ce60fc6f720ff7135cc823d369612814f88818498c05a4eec",
+      "verified_at": "2026-11-26T12:20:04.224Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:46:51.689Z"
+      "last_updated": "2026-11-26T12:20:04.224Z"
     },
     "textbee/textbee": {
       "repository": "textbee/textbee",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "e2041a3c7a36e43da191ced2e386c01decd71a5cb1c6752502d5385b1307a6e2",
-      "verified_at": "2026-11-25T11:59:54.065Z",
+      "content_hash": "4ebd2f99a753d22b617dc3b9011742b7868a32498a598f717692ac2f0e8b4523",
+      "verified_at": "2026-11-26T12:20:06.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T11:59:54.065Z"
+      "last_updated": "2026-11-26T12:20:06.942Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "a5fa5910d7f23aef714003fa89242961b94dcf57b14cc333de9345ffb02e28fd",
-      "verified_at": "2026-11-25T10:57:59.786Z",
+      "content_hash": "628de032bc98c23623a5e0047622bc7d36e9ce148639a5b27d6f716a0e45b2c6",
+      "verified_at": "2026-11-26T12:20:15.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T10:57:59.786Z"
+      "last_updated": "2026-11-26T12:20:15.536Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -18741,14 +18741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tuist-tuist",
-      "content_hash": "170f8e3c43976c895e0021a55b3c5005cac4180e23cd810a64699913d6075a34",
-      "verified_at": "2026-11-25T04:39:29.873Z",
+      "content_hash": "5372326bc413354af31bd7847202d1f226f55d8bd576fd06045ae273f5da2081",
+      "verified_at": "2026-11-26T12:20:00.420Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T04:39:29.873Z"
+      "last_updated": "2026-11-26T12:20:00.420Z"
     },
     "mixelpixx/KiCAD-MCP-Server": {
       "repository": "mixelpixx/KiCAD-MCP-Server",

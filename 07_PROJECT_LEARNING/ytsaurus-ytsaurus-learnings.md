@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `597eabf7`  
+> **Source Version**: `4fc0fe7e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T10:57:58.558Z  
+> **Timestamp**: 2026-11-26T12:20:14.339Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T10:57:58.553Z  
+> **Harvest Timestamp**: 2026-11-26T12:20:14.334Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2326 stars
+- **Stars / Engagement**: 2327 stars
 
 ---
 
@@ -1195,260 +1195,417 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e0724d5` (2026-11-25)
-**Commit Message**: crash aware capture for facade runners
+### Incident Patch 1: `9981fd4e` (2026-11-26)
+**Commit Message**: YT-23401: Allow toggling network throttler IPC via node dynamic config
 
-#### Crash-aware capture for facade runners ✎
+Data and exec nodes on a host share a network throttling budget through IPC. Add enable_network_throttler_ipc to the node dynamic config (default: true) so they can switch to independent budgets without restarting when their networks are separated.
 
-A new `--qstorage-crash-aware` option makes QStorage capture flush each recorded metadata entry and its index immediately after every write, instead of buffering until the query commits. This allows replaying records that were written before a crash or forced termination. The option requires `--capture` or `--capture-full` and is rejected with an error otherwise.
+On a mode change, preserve bucket throttler objects, local quota and debt, accumulation windows, usage and pending requests. Replace only their shared-reserve connection; no initial quota is granted and the old shared reserve is not copied into the new group.
+commit_hash:94822bf018faf7de41a40590e4a4a7f122d0c7fb
 
-<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
-commit_hash:195fac9cd80bae24f674847d77e3ad306696bca7
-
-**File**: `yql/essentials/tools/yql_facade_run/yql_facade_run.cpp` (modified, +14/-6)
+**File**: `yt/yt/core/concurrency/fair_throttler.cpp` (modified, +95/-63)
 ```diff
-@@ -205,6 +205,8 @@ void TFacadeRunOptions::Parse(int argc, const char** argv) {
+@@ -5,6 +5,8 @@
+ 
+ #include <yt/yt/core/profiling/timing.h>
+ 
++#include <library/cpp/yt/memory/atomic_intrusive_ptr.h>
++
+ #include <util/random/shuffle.h>
+ 
+ namespace NYT::NConcurrency {
+@@ -257,18 +259,19 @@ class TBucketThrottler
+     {
+         YT_VERIFY(amount >= 0);
+ 
++        auto sharedBucket = SharedBucket_.Acquire();
+         auto available = Quota_.GetValue();
+         auto globalAvailable = IsLimited()
+             ? 0
+-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
++            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+ 
+         if (amount > available + globalAvailable) {
+             return false;
+         }
+ 
+         auto globalConsumed = std::clamp<i64>(amount - available, 0, globalAvailable);
+         Quota_.Acquire(amount - globalConsumed);
+-        SharedBucket_->Limit.Acquire(globalConsumed);
++        sharedBucket->Limit.Acquire(globalConsumed);
+ 
+         ValueCounter_.Increment(amount);
+         Usage_ += amount;
+@@ -280,16 +283,17 @@ class TBucketThrottler
+     {
+         YT_VERIFY(amount >= 0);
+ 
++        auto sharedBucket = SharedBucket_.Acquire();
+         auto available = Quota_.GetValue();
+         auto globalAvailable = IsLimited()
+             ? 0
+-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
++            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+ 
+         auto consumed = std::min(amount, available + globalAvailable);
+ 
+         auto globalConsumed = std::clamp<i64>(consumed - available, 0, globalAvailable);
+         Quota_.Acquire(consumed - globalConsumed);
+-        SharedBucket_->Limit.Acquire(globalConsumed);
++        sharedBucket->Limit.Acquire(globalConsumed);
+ 
+         ValueCounter_.Increment(consumed);
+         Usage_ += consumed;
+@@ -301,15 +305,16 @@ class TBucketThrottler
+     {
+         YT_VERIFY(amount >= 0);
+ 
++        auto sharedBucket = SharedBucket_.Acquire();
+         auto available = Quota_.GetValue();
+         // NB: Shared bucket limit can get below zero because resource acquisition is racy.
+         auto globalAvailable = IsLimited()
+             ? 0
+-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
++            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+ 
+         auto globalConsumed = std::clamp<i64>(amount - available, 0, globalAvailable);
+         Quota_.Acquire(amount - globalConsumed);
+-        SharedBucket_->Limit.Acquire(globalConsumed);
++        sharedBucket->Limit.Acquire(globalConsumed);
+ 
+         ValueCounter_.Increment(amount);
+         Usage_ += amount;
+@@ -357,8 +362,9 @@ class TBucketThrottler
+ 
+     i64 GetAvailable() const override
+     {
++        auto sharedBucket = SharedBucket_.Acquire();
+         auto available = Quota_.GetValue();
+-        auto globalAvailable = IsLimited() ? 0 : SharedBucket_->Limit.GetValue();
++        auto globalAvailable = IsLimited() ? 0 : sharedBucket->Limit.GetValue();
+         return available + globalAvailable;
      }
  
-     THashSet<TString> sqlFlags;
-+    TString qstorageDir = ".";
-+    bool qstorageCrashAware = false;
- 
-     NLastGetopt::TOpts opts = NLastGetopt::TOpts::Default();
- 
-@@ -418,9 +420,10 @@ void TFacadeRunOptions::Parse(int argc, const char** argv) {
-             });
-     }
-     if (EnableQPlayer) {
--        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").Handler1T<TString>([this](const TString& dir) {
--            QPlayerStorage_ = MakeFileQStorage(dir);
--        });
-+        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").StoreResult(&qstorageDir);
-+        opts.AddLongOption("qstorage-crash-aware", "Flush captured QStorage records and index after each write, before commit")
-+            .NoArgument()
-+            .SetFlag(&qstorageCrashAware);
-         opts.AddLongOption("op-id", "QStorage operation id").StoreResult(&OperationId).DefaultValue("dummy_op");
-         opts.AddLongOption("capture", "Write query metadata to QStorage").NoArgument().Handler0([this]() {
-             if (EQPlayerMode::None != QPlayerMode) {
-@@ -485,10 +488,15 @@ void TFacadeRunOptions::Parse(int argc, const char** argv) {
-         LangVer = *ProjectSettings.LangVer;
+@@ -465,14 +471,19 @@ class TBucketThrottler
+         }
      }
  
-+    if (qstorageCrashAware && QPlayerMode != EQPlayerMode::Capture) {
-+        throw yexception() << "qstorage-crash-aware requires capture or capture-full";
++    void SetSharedBucket(const TSharedBucketPtr& sharedBucket)
++    {
++        SharedBucket_.Store(sharedBucket);
 +    }
-     if (QPlayerMode != EQPlayerMode::None) {
--        if (!QPlayerStorage_) {
--            QPlayerStorage_ = MakeFileQStorage(".");
++
+     bool IsLimited() const
+     {
+         return Limited_.load();
+     }
+ 
+ private:
+     const NLogging::TLogger Logger;
+-    const TSharedBucketPtr SharedBucket_;
++    TAtomicIntrusivePtr<TSharedBucket> SharedBucket_;
+     const NProfiling::TProfiler Profiler_;
+     const NProfiling::TCounter ValueCounter_;
+     const NProfiling::TCounter ReleasedCounter_;
+@@ -520,15 +531,12 @@ class TFairThrottler
+         , SharedBucket_(New<TSharedBucket>(
+             Config_->GlobalAccumulationTicks,
+             Profiler_,
+-            GetSharedBucketValue()))
++            GetSharedBucketValue(Ipc_)))
+     {
+-        if (Ipc_) {
+-            Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
+-                return IsLeader_.load();
+-            });
+-        } else {
+-            IsLeader_ = true;
 -        }
-+        const TFileQStorageSettings settings{
-+            .BufferUntilCommit = !qstorageCrashAware,
-+            .AlwaysFlushIndex = qstorageCrashAware,
-+        };
-+        QPlayerStorage_ = MakeFileQStorage(qstorageDir, settings);
-         if (EQPlayerMode::Replay == QPlayerMode) {
-             try {
-                 auto reader = QPlayerStorage_->MakeReader(OperationId, {});
++        IsLeader_ = !Ipc_;
++        Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
++            return IsLeader_.load();
++        });
+ 
+         Profiler_.AddFuncGauge("/total_limit", MakeStrong(this), [this] {
+             auto guard = Guard(Lock_);
+@@ -542,50 +550,44 @@ class TFairThrottler
+         const std::string& name,
+         TFairThrottlerBucketConfigPtr config) final
+     {
+-        if (!config) {
+-            config = New<TFairThrottlerBucketConfig>();
+-        }
+-
+         auto guard = Guard(Lock_);
+-        if (auto it = Buckets_.find(name); it != Buckets_.end()) {
+-            it->second.Throttler->Update(Config_, config);
+-
+-            it->second.Config = std::move(config);
+-
+-            return it->second.Throttler;
+-        }
+-
+-        auto throttler = New<TBucketThrottler>(
+-            Logger().WithTag("Bucket", name),
+-            Profiler_.WithTag("bucket", name),
+-            SharedBucket_,
+-            Config_);
+-
+-        throttler->Update(Config_, config);
+-
+-        IFai
 ```
 
----
-
-### Incident Patch 2: `0db4a5b2` (2026-11-25)
-**Commit Message**: Reject oversized buffered YSON strings and fix style
-commit_hash:22dc5ee5e104027a8e61e98ea0f3966838d650fd
-
-**File**: `yt/yt/core/yson/unittests/buffered_yson_writer_ut.cpp` (modified, +30/-2)
+**File**: `yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp` (modified, +164/-0)
 ```diff
-@@ -6,9 +6,13 @@
- #include <yt/yt/core/yson/stream.h>
- #include <yt/yt/core/yson/writer.h>
+@@ -5,6 +5,7 @@
  
-+#include <library/cpp/yt/coding/varint.h>
-+
- #include <util/string/escape.h>
-+#include <util/system/filemap.h>
+ #include <library/cpp/testing/common/env.h>
  
- #include <array>
-+#include <limits>
- #include <stdexcept>
++#include <tuple>
  #include <vector>
  
-@@ -111,6 +115,30 @@ TEST_F(TBufferedYsonWriterTest, EmptyString)
-     TEST_SCALAR(TStringBuf(), String)
- }
+ namespace NYT::NConcurrency {
+@@ -329,5 +330,168 @@ TEST_F(TConcurrentFairThrottlerTest, TwoBuckets)
  
-+TEST_F(TBufferedYsonWriterTest, BinaryStringLengthLimit)
+ ////////////////////////////////////////////////////////////////////////////////
+ 
++constexpr int LeaderMask = 1;
++constexpr int FollowerMask = 2;
++
++void CheckIpcReconfiguration(int reconfigureMask)
 +{
-+    constexpr size_t MaxStringLength = std::numeric_limits<i32>::max();
-+    constexpr size_t MaxEncodedLength = 1 + MaxVarInt32Size + MaxStringLength;
++    std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
++    auto config = New<TFairThrottlerConfig>();
++    config->IpcPath = (GetOutputPath() / (testName + ".throttler")).GetPath();
++    config->TotalLimit = 100;
++    auto bucketConfig = New<TFairThrottlerBucketConfig>();
 +
-+    // Reserve address space without touching the string's pages.
-+    TMappedAllocation allocation(MaxStringLength + 1);
-+    TStringBuf oversizedValue(allocation.Data(), MaxStringLength + 1);
++    auto leader = CreateFairThrottler(config, Logger, NProfiling::TProfiler{});
++    auto first = leader->CreateBucketThrottler("first", bucketConfig);
++    // Elect the first throttler before creating its peer.
++    ASSERT_TRUE(WaitFor(first->Throttle(1).WithTimeout(TDuration::Seconds(5))).IsOK());
 +
-+    TSizeLimitedOutputStream outputStream(/*limit*/ MaxEncodedLength);
-+    TBufferedYsonWriter writer(&outputStream, EYsonFormat::Binary);
-+    EXPECT_THROW_WITH_SUBSTRING(writer.OnStringScalar(oversizedValue), "signed 32-bit limit");
-+    writer.Flush();
-+    EXPECT_EQ(outputStream.GetWrittenSize(), 0u);
++    auto follower = CreateFairThrottler(config, Logger, NProfiling::TProfiler{});
++    auto second = follower->CreateBucketThrottler("second", bucketConfig);
++    auto reconfigure = [&] (const TFairThrottlerConfigPtr& newConfig) {
++        if (reconfigureMask & LeaderMask) {
++            leader->Reconfigure(newConfig, {});
++        }
++        if (reconfigureMask & FollowerMask) {
++            follower->Reconfigure(newConfig, {});
++        }
++    };
 +
-+    EXPECT_THROW_WITH_SUBSTRING(writer.OnKeyedItem(oversizedValue), "signed 32-bit limit");
-+    writer.Flush();
-+    EXPECT_EQ(outputStream.GetWrittenSize(), 0u);
++    std::vector<TFuture<void>> firstRequests, secondRequests;
++    for (int index = 0; index < 1000; ++index) {
++        firstRequests.push_back(first->Throttle(10));
++        secondRequests.push_back(second->Throttle(10));
++    }
 +
-+    writer.OnStringScalar(TStringBuf(allocation.Data(), MaxStringLength));
-+    writer.Flush();
-+    EXPECT_EQ(outputStream.GetWrittenSize(), MaxEncodedLength);
++    auto localConfig = New<TFairThrottlerConfig>();
++    localConfig->TotalLimit = config->TotalLimit;
++    for (int iteration = 0; iteration < 2; ++iteration) {
++        reconfigure(localConfig);
++        ASSERT_EQ(first, leader->CreateBucketThrottler("first", bucketConfig));
++        ASSERT_EQ(second, follower->CreateBucketThrottler("second", bucketConfig));
++
++        auto firstBefore = CountCompleted(firstRequests);
++        auto secondBefore = CountCompleted(secondRequests);
++        Sleep(TDuration::Seconds(2));
++
++        // Both throttlers now have independent budgets, including the former IPC peer.
++        EXPECT_GE(CountCompleted(firstRequests) - firstBefore, 15);
++        EXPECT_GE(CountCompleted(secondRequests) - secondBefore, 15);
++
++        reconfigure(config);
++        ASSERT_EQ(first, leader->CreateBucketThrottler("first", bucketConfig));
++        ASSERT_EQ(second, follower->CreateBucketThrottler("second", bucketConfig));
++        Sleep(TDuration::MilliSeconds(500));
++        firstBefore = CountCompleted(firstRequests);
++        secondBefore = CountCompleted(secondRequests);
++        Sleep(TDuration::Seconds(2));
++
++        // Rejoining IPC restores a single budget shared between both throttlers.
++        auto firstCompleted = CountCompleted(firstRequests) - firstBefore;
++        auto secondCompleted = CountCompleted(secondRequests) - secondBefore;
++        EXPECT_GE(firstCompleted, 5);
++        EXPECT_GE(secondCompleted, 5);
++        EXPECT_LE(firstCompleted + secondCompleted, 28);
++    }
++
++    for (const auto& request : firstRequests) {
++        request.Cancel(TError("Test finished"));
++    }
++    for (const auto& request : secondRequests) {
++        request.Cancel(TError("Test finished"));
++    }
 +}
 +
- TEST_F(TBufferedYsonWriterTest, Int64)
- {
-     i64 value = 100500424242ll;
-@@ -431,7 +459,7 @@ TEST_F(TBufferedYsonWriterTest, ShortStringEscaping)
-         writer.OnStringScalar(input);
-         writer.Flush();
- 
--        TString expected = "\"";
-+        std::string expected = "\"";
-         expected += ::EscapeC(TStringBuf(input));
-         expected += '"';
-         EXPECT_EQ(expected, outputStream.Str());
-@@ -545,7 +573,7 @@ TEST_F(TBufferedYsonWriterTest, PrettyFormatWithLongIndent)
- 
- TEST_F(TBufferedYsonWriterTest, PrettyFormatDoesNotIndentAtNegativeDepth)
- {
--    TSizeLimitedOutputStream outputStream(64);
-+    TSizeLimitedOutputStream outputStream(/*limit*/ 64);
-     TBufferedYsonWriter writer(&outputStream, EYsonFormat::Pretty);
- 
-     EXPECT_NO_THROW({
-```
-
-**File**: `yt/yt/core/yson/writer.cpp` (modified, +18/-11)
-```diff
-@@ -15,6 +15,7 @@
- #include <array>
- #include <cmath>
- #include <cstring>
-+#include <limits>
- #include <utility>
- 
- namespace NYT::NYson {
-@@ -175,39 +176,39 @@ Y_NO_INLINE size_t EscapeShortStringToBuffer(char* buffer, TStringBuf value, siz
- }
- 
- template <class TOutput>
--void BufferedEscapeC(const char* str, size_t len, TOutput& output)
-+void BufferedEscapeC(const char* str, size_t len, TOutput* output)
- {
-     size_t literalBegin = 0;
-     for (size_t index = 0; index < len; ++index) {
-         if (str[index] != '"' && str[index] != '\\' && IsPrintable(str[index])) {
-             continue;
-         }
- 
--        output.Write(str + literalBegin, index - literalBegin);
-+        output->Write(str + literalBegin, index - literalBegin);
-         literalBegin = index + 1;
- 
--        auto* buffer = output.GetDirectWriteBuffer();
--        output.AdvanceDirectWrite(EscapeC(str[index], GetNextCharOrZero(str, len, index), buffer));
-+        auto* buffer = output->GetDirectWriteBuffer();
-+        output->AdvanceDirectWrite(EscapeC(str[index], GetNextCharOrZero(str, len, index), buffer));
-     }
- 
--    output.Write(str + literalBegin, len - literalBegin);
-+    output->Write(str + literalBegin, len - literalBegin);
- }
- 
- template <class TOutput>
--void BufferedWriteUtf8String(const char* str, size_t len, TOutput& output)
-+void BufferedWriteUtf8String(const char* str, size_t len, TOutput* output)
- {
-     const auto* ustr = reinterpret_cast<const unsigned char*>(str);
-     for (size_t i = 0; i < len;) {
-         size_t runeLen;
-         YT_VERIFY(RECODE_OK == GetUTF8CharLen(runeLen, ustr + i, ustr + len));
-         if (runeLen > 1) {
--            output.Write(ustr + i, runeLen);
-+            output->Write(ustr + i, runeLen);
-             i += runeLen;
-         } else {
-             YT_ASSERT(1 == runeLen);
-             // #EscapeC() handles single-byte characters, including control ones like `\t` and `\n`.
--            auto* buffer = output.GetDirectWriteBuffer();
--            output.AdvanceDirectWrite(EscapeC(ustr[i], GetNextCharOrZero(str, len, i), buffer));
-+            auto* buffer = output->GetDirectWriteBuffer();
-+            output->AdvanceDirectWrite(EscapeC(ustr[i], GetNextCharOrZero(str, len, i), buffer));
-             ++i;
-         }
-     }
-@@ -598,6 +599,12 @@ void TBufferedYsonWriter::EndCollection(char ch)
- void TBufferedYsonWriter::WriteStringScalar(TStringBuf value)
- {
-     if (Format_ == EYsonFormat::Binary) {
-+        if (value.length() > std::numeric_limits<i32>::max()) [[unlikely]] {
-+            THROW_ERROR_EXCEPTION("Binary YSON string length exceeds the signed 32-bit limit")
-+                .With("length", value.length())
-+                .With("limit", std::numeric_limits<i32>::max());
-+        }
++class TFairThrottlerIpcReconfigurationTest
++    : public ::testing::TestWithParam<int>
++{ };
 +
-         static_assert(MaxDirectWriteSize >= 1 + MaxVarInt32Size);
-         auto* buffer = Buffer_.GetDirectWriteBuffer();
-         buffer[0] = NDetail::StringMarker;
-@@ -635,9 +642,9 @@ Y_NO_INLINE void TBufferedYsonWriter::WriteTextStringScalarSlow(TStringBuf value
- {
-     Buffer_.Write('"');
-     if (PassThroughUtf8Characters_ && IsUtf(value)) {
--        BufferedWriteUtf8String(value.data(), value.length(), Buffer_);
-+        BufferedWriteUtf8String(value.data(), value.length(), &Buffer_);
-     } else {
--        BufferedEscapeC(value.data(), value.length(), Buffer_);
-+        BufferedEscapeC(value.data(), value.length(), &Buffer_);
-     }
-     Buffer_.Write('"');
- }
++TEST_P(TFairThrottlerIpcReconfigurationTest, IpcReconfiguration)
++{
++    CheckIpcReconfiguration(GetParam());
++}
++
++INSTANTIATE_TEST_SUITE_P(
++    TFairThrottlerIpcReconfigurationTest,
++    TFairThrottlerIpcReconfigurationTest,
++    ::testing::Values(FollowerMask, LeaderMask, LeaderMask | FollowerMask));
++
++////////////////////////////////////////////////////////////////////////////////
++
++void CheckLocalStatePreservation(bool useIpcBefore, bool useIpcAfter)
++{
++    std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
++    auto ipcPath = (GetOutputPath() / (testName + ".throttler")).GetPath();
++    auto oldConfig = New<TFairThrottlerConfig>();
++    oldConfig->TotalLimit = 100;
++    oldConfig->DistributionPeriod = TDuration::Hours(1);
++    if (useIpcBefore) {
++        oldConfig->IpcPath = ipcPath;
++    }
++
++    auto throttler = CreateFairThrottler(oldConfig, Logger, NProfiling::TProfiler{});
++    auto probe = throttler->CreateBucketThrottler("probe", New<TFairThrottlerBucketConfig>());
++    // Wait for the initial tick. The next tick is an hour away, so it cannot mask a reset.
++    ASSERT_TRUE(WaitFor(probe->Throttle(1).WithTimeout(TDuration::Seconds(5))).IsOK());
++
++    auto bucketConfig = New<TFairThrottlerBucketConfig>();
++    bucketConfig->Limit = 100;
++    auto bucket = throttler->CreateBucketThrottler("main", bucketConfig);
++    // A limited bucket cannot draw from th
 ```
 
-**File**: `yt/yt/core/yson/writer.h` (modified, +0/-2)
+**File**: `yt/yt/server/node/cluster_node/bootstrap.cpp` (modified, +8/-2)
 ```diff
-@@ -95,7 +95,6 @@ class TBufferedYsonWriter
- public:
-     static constexpr int DefaultIndent = 4;
+@@ -1399,8 +1399,11 @@ class TBootstrap
+         std::optional<i64> netRxLimit)
+     {
+         {
+-            auto throttlerConfig = New<TFairThrottlerConfig>();
++            auto throttlerConfig = CloneYsonStruct(Config_->InThrottler);
+             throttlerConfig->TotalLimit = GetNetworkThrottlerLimit(newConfig, netRxLimit);
++            if (!newConfig->EnableNetworkThrottlerIpc) {
++                throttlerConfig->IpcPath.reset();
++            }
  
--    //! Initializes an instance.
-     /*!
-      *  \param stream A stream for writing the YSON data to.
-      *  \param format A format used for encoding the data.
-@@ -111,7 +110,6 @@ class TBufferedYsonWriter
+             THashMap<std::string, TFairThrottlerBucketConfigPtr> inBucketsConfig;
+             for (const auto& bucket : EnabledInThrottlers_) {
+@@ -1412,8 +1415,11 @@ class TBootstrap
+             InThrottler_->Reconfigure(throttlerConfig, inBucketsConfig);
+         }
+         {
+-            auto throttlerConfig = New<TFairThrottlerConfig>();
++            auto throttlerConfig = CloneYsonStruct(Config_->OutThrottler);
+             throttlerConfig->TotalLimit = GetNetworkThrottlerLimit(newConfig, netTxLimit);
++            if (!newConfig->EnableNetworkThrottlerIpc) {
++                throttlerConfig->IpcPath.reset();
++            }
+             THashMap<std::string, TFairThrottlerBucketConfigPtr> outBucketsConfig;
+             for (const auto& bucket : EnabledOutThrottlers_) {
+                 outBucketsConfig[bucket] = Config_->OutThrottlers[bucket];
+```
+
+**File**: `yt/yt/server/node/cluster_node/config.cpp` (modified, +2/-0)
+```diff
+@@ -521,6 +521,8 @@ void TClusterNodeDynamicConfig::Register(TRegistrar registrar)
+         .DefaultNew();
+     registrar.Parameter("master_connector", &TThis::MasterConnector)
+         .DefaultNew();
++    registrar.Parameter("enable_network_throttler_ipc", &TThis::EnableNetworkThrottlerIpc)
++        .Default(true);
+     registrar.Parameter("in_throttlers", &TThis::InThrottlers)
+         .Default();
+     registrar.Parameter("out_throttlers", &TThis::OutThrottlers)
+```
+
+**File**: `yt/yt/server/node/cluster_node/config.h` (modified, +3/-0)
+```diff
+@@ -463,6 +463,9 @@ struct TClusterNodeDynamicConfig
+     //! Master connector configuration.
+     TMasterConnectorDynamicConfigPtr MasterConnector;
  
-     ~TBufferedYsonWriter() override;
++    //! Whether network fair throttlers share quota with other processes via IPC.
++    bool EnableNetworkThrottlerIpc;
++
+     //! Bucket configuration for in network throttlers.
+     THashMap<std::string, NConcurrency::TFairThrottlerBucketConfigPtr> InThrottlers;
  
--    // IYsonConsumer overrides.
-     void OnStringScalar(TStringBuf value) override;
-     void OnInt64Scalar(i64 value) override;
-     void OnUint64Scalar(ui64 value) override;
 ```
 
 ---
 
-### Incident Patch 3: `8b81ecf9` (2026-11-25)
-**Commit Message**: Fix tablet size calculation for bundles without cells
+### Incident Patch 2: `dc31b68d` (2026-11-26)
+**Commit Message**: YTFLOW: Fix the key-visitor scan-all description in docs
+commit_hash:4055ab9c76cdc17aeae95aa8a2be54e6da0f188b
 
-A table can remain in bundle snapshot after all its cells have been removed. Avoid division by zero when calculating tablet size limits for that table.
-commit_hash:f6f614ab86c7b6024647fdbe6f11f72ebdc363f1
-
-**File**: `yt/yt/server/lib/tablet_balancer/balancing_helpers.cpp` (modified, +1/-1)
+**File**: `yt/docs/en/_includes/flow/concepts/key_visitor.md` (modified, +1/-1)
 ```diff
-@@ -122,7 +122,7 @@ TTabletSizeConfig GetTabletSizeConfig(
-     }
+@@ -73,7 +73,7 @@ To make a computation accept a visit stream, you must fill the `key_visitor_stre
  
-     // Balancer would not create too many tablets unless desired_tablet_count is set.
--    if (!tableConfig->DesiredTabletCount) {
-+    if (!tableConfig->DesiredTabletCount && !bundle->TabletCells.empty()) {
-         i64 maxTabletCount = std::min<i64>(
-             std::ssize(bundle->TabletCells) * bundle->Config->TabletToCellRatio,
-             MaxTabletCount);
+ - `names`: a list of internal-state names to count keys from. If unspecified or empty, all keys from all internal states of the computation are used.
+ - `weak_external_names`: a list of visitor-driven external-state joiners scanned in step with the visit stream without contributing keys. Such a joiner is read over the same key ranges as the other sources, so its row is available in `ProcessVisit` for the visit key, but a key present only in the joiner produces no visit (a left join against the keys of `names`/`external_names`). Must not overlap with `external_names`; the "at most one visit stream per joiner" rule covers both lists. See [Static table joiner](#static-table-joiner).
+-- `external_names`: a list of [external-state managers](../../../flow/concepts/glossary.md#state) and visitor-driven external-state joiners (see [Static table joiner](#static-table-joiner)) for the computation, whose tables are used to count keys. This lets the visitor scan the external state (including that of companion computations) and evict outdated records via `clear()` in the visit handler. If only `external_names` is specified (without `names`), only the listed external state is scanned; internal states aren’t scanned. If neither `names` nor `external_names` is specified, all internal states are scanned, but external state and joiners aren’t; a joiner is scanned only if explicitly listed in `external_names`, and in no more than one visit stream of the computation (checked at spec submit time).
++- `external_names`: a list of [external-state managers](../../../flow/concepts/glossary.md#state) and visitor-driven external-state joiners (see [Static table joiner](#static-table-joiner)) for the computation, whose tables are used to count keys. This lets the visitor scan the external state (including that of companion computations) and evict outdated records via `clear()` in the visit handler. If only `external_names` is specified (without `names`), only the listed external state is scanned; internal states aren’t scanned. If neither `names` nor `external_names` is specified, all internal states and all external-state managers of the computation are scanned, but joiners aren’t; a joiner is scanned only if explicitly listed in `external_names`, and in no more than one visit stream of the computation (checked at spec submit time).
+ - `upstream_streams`: which of the computation’s input and source streams the visitor follows, that is, whose completion it waits for before the final pass (see [Pass lifecycle](#pass-lifecycle)). When unspecified, all input and source streams of the computation. Only meaningful with `finite=%true` (see [Dynamic spec parameters](#dynamic-params)). For when the list needs narrowing, see [`streams_dependency`](#deps).
+ 
+ ### Dynamic spec parameters {#dynamic-params}
+```
+
+**File**: `yt/docs/ru/_includes/flow/concepts/key_visitor.md` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ Key-visitor-стрим решает эту задачу: фоновая зада
+ ### Параметры статической спеки {#static-params}
+ 
+ - `names` — список имён internal-стейтов, по которым считать ключи. Если не задан или пустой — все ключи всех internal-стейтов компьютейшена.
+-- `external_names` — список имён [external-стейт-менеджеров](../../../flow/concepts/glossary.md#state) и visitor-driven external-стейт-джойнеров (см. [Джойн внешней статической таблицы](#static-table-joiner)) компьютейшена, по таблицам которых считать ключи. Позволяет визитору обходить external-стейт (в том числе у companion-компьютейшенов) и эвиктить устаревшие записи через `clear()` в обработчике визита. Если задан только `external_names` (без `names`) — обходится только перечисленный external-стейт, internal-стейты не сканируются. Если не заданы ни `names`, ни `external_names`, обходятся все internal-стейты, а external-стейт и джойнеры — нет; джойнер обходится только при явном перечислении в `external_names`, и не более чем в одном visit-стриме компьютейшена (проверяется при submit'е спеки).
++- `external_names` — список имён [external-стейт-менеджеров](../../../flow/concepts/glossary.md#state) и visitor-driven external-стейт-джойнеров (см. [Джойн внешней статической таблицы](#static-table-joiner)) компьютейшена, по таблицам которых считать ключи. Позволяет визитору обходить external-стейт (в том числе у companion-компьютейшенов) и эвиктить устаревшие записи через `clear()` в обработчике визита. Если задан только `external_names` (без `names`) — обходится только перечисленный external-стейт, internal-стейты не сканируются. Если не заданы ни `names`, ни `external_names`, обходятся все internal-стейты и все external-стейт-менеджеры компьютейшена, а джойнеры — нет; джойнер обходится только при явном перечислении в `external_names`, и не более чем в одном visit-стриме компьютейшена (проверяется при submit'е спеки).
+ - `weak_external_names` — список visitor-driven external-стейт-джойнеров, которые обходятся синхронно с visit-стримом, но ключей в него не поставляют: джойнер читается по тем же диапазонам, что и остальные источники, и его строка доступна в `ProcessVisit` для ключа визита, а ключ, который есть только в джойнере, визита не порождает (left join по ключам `names`/`external_names`). Не пересекается с `external_names`; ограничение «не более одного visit-стрима на джойнер» действует для обоих списков. См. [Джойн внешней статической таблицы](#static-table-joiner).
+ - `upstream_streams` — какие входные и source-стримы компьютейшена визитор отслеживает, то есть завершения каких из них ждёт перед финальным pass'ом (см. [Жизненный цикл прохода](#pass-lifecycle)). Если не задан — все входные и source-стримы компьютейшена. Имеет смысл только при `finite=%true` (см. [Параметры динамической спеки](#dynamic-params)). Когда список нужно сужать — см. [`streams_dependency`](#deps).
+ 
+```
+
+---
+
+### Incident Patch 3: `5bdc9082` (2026-11-26)
+**Commit Message**: Fix partial type annotation
+
+Here are fixes for 2 bugs. One is trivial, but the second is interesting. `COALESCE(T?, Universal)` returned `T`. It seems that any `COALESCE` with `Universal`s should return `Universal`, because the type inference rule uses common type and a common type with any unknown type is obviously unknown.
+commit_hash:494c85b85dfabae384157bc2acc2fabc24b70782
+
+**File**: `yql/essentials/core/type_ann/type_ann_core.cpp` (modified, +6/-0)
+```diff
+@@ -6174,6 +6174,12 @@ IGraphTransformer::TStatus CoalesceWrapper(const TExprNode::TPtr& input, TExprNo
+     const auto leftType = input->Head().GetTypeAnn();
+     const auto rightType = input->Tail().GetTypeAnn();
+ 
++    if (leftType->GetKind() == ETypeAnnotationKind::Universal ||
++        (rightType->GetKind() == ETypeAnnotationKind::Universal && leftType->IsOptionalOrNull())) {
++        input->SetTypeAnn(ctx.Expr.MakeType<TUniversalExprType>());
++        return IGraphTransformer::TStatus::Ok;
++    }
++
+     auto leftItemType = leftType;
+     if (leftType->GetKind() == ETypeAnnotationKind::Optional) {
+         leftItemType = leftType->Cast<TOptionalExprType>()->GetItemType();
+```
+
+**File**: `yql/essentials/core/type_ann/type_ann_list.cpp` (modified, +2/-1)
+```diff
+@@ -3381,7 +3381,8 @@ namespace {
+                 return nullptr;
+             }
+             const auto itemType = input.GetTypeAnn()->Cast<TListExprType>()->GetItemType();
+-            if (itemType->GetKind() == ETypeAnnotationKind::UniversalStruct) {
++            if (itemType->GetKind() == ETypeAnnotationKind::UniversalStruct ||
++                itemType->GetKind() == ETypeAnnotationKind::Universal) {
+                 isUniversal = true;
+                 return nullptr;
+             }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1477,46 +1634,82 @@ commit_hash:f6f614ab86c7b6024647fdbe6f11f72ebdc363f1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crash aware capture for facade runners
+## X. YT-23401: Allow toggling network throttler IPC via node dynamic config
 
 **RULE**:
-When implementing operations in `yql/essentials/tools/yql_facade_run/yql_facade_run.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/core/concurrency/fair_throttler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e0724d5`: crash aware capture for facade runners. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9981fd4e`: YT-23401: Allow toggling network throttler IPC via node dynamic config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yql/essentials/tools/yql_facade_run/yql_facade_run.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/core/concurrency/fair_throttler.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    TString qstorageDir = ".";
-    bool qstorageCrashAware = false;
-        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").StoreResult(&qstorageDir);
-        opts.AddLongOption("qstorage-crash-aware", "Flush captured QStorage records and index after each write, before commit")
-            .NoArgument()
-            .SetFlag(&qstorageCrashAware);
-    if (qstorageCrashAware && QPlayerMode != EQPlayerMode::Capture) {
-        throw yexception() << "qstorage-crash-aware requires capture or capture-full";
+#include <library/cpp/yt/memory/atomic_intrusive_ptr.h>
+
+        auto sharedBucket = SharedBucket_.Acquire();
+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+        sharedBucket->Limit.Acquire(globalConsumed);
+        auto sharedBucket = SharedBucket_.Acquire();
+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+        sharedBucket->Limit.Acquire(globalConsumed);
+        auto sharedBucket = SharedBucket_.Acquire();
+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
+        sharedBucket->Limit.Acquire(globalConsumed);
+        auto sharedBucket = SharedBucket_.Acquire();
+        auto globalAvailable = IsLimited() ? 0 : sharedBucket->Limit.GetValue();
+    void SetSharedBucket(const TSharedBucketPtr& sharedBucket)
+    {
+        SharedBucket_.Store(sharedBucket);
     }
-        const TFileQStorageSettings settings{
-            .BufferUntilCommit = !qstorageCrashAware,
-            .AlwaysFlushIndex = qstorageCrashAware,
-        };
-        QPlayerStorage_ = MakeFileQStorage(qstorageDir, settings);
+
+    TAtomicIntrusivePtr<TSharedBucket> SharedBucket_;
+            GetSharedBucketValue(Ipc_)))
+        IsLeader_ = !Ipc_;
+        Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
+            return IsLeader_.load();
+        });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").Handler1T<TString>([this](const TString& dir) {
-            QPlayerStorage_ = MakeFileQStorage(dir);
-        });
-        if (!QPlayerStorage_) {
-            QPlayerStorage_ = MakeFileQStorage(".");
+            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
+        SharedBucket_->Limit.Acquire(globalConsumed);
+            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
+        SharedBucket_->Limit.Acquire(globalConsumed);
+            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
+        SharedBucket_->Limit.Acquire(globalConsumed);
+        auto globalAvailable = IsLimited() ? 0 : SharedBucket_->Limit.GetValue();
+    const TSharedBucketPtr SharedBucket_;
+            GetSharedBucketValue()))
+        if (Ipc_) {
+            Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
+                return IsLeader_.load();
+            });
+        } else {
+            IsLeader_ = true;
         }
+        if (!config) {
+            config = New<TFairThrottlerBucketConfig>();
+        }
+
+        if (auto it = Buckets_.find(name); it != Buckets_.end()) {
+            it->second.Throttler->Update(Config_, config);
+
+            it->second.Config = std::move(config);
+
+            return it->second.Throttler;
+        }
+
+        auto throttler = New<TBucketThrottler>(
+            Logger().WithTag("Bucket", name),
+            Profiler_.WithTag("bucket", name),
+            S
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e0724d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9981fd4e` are properly handled with clean fallback behavior.
