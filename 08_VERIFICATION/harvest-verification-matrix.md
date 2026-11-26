@@ -13179,3 +13179,5 @@
 | `CYCLE-20261126-0XA5` | `2026-11-26T00:46:34.109Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10571` | Yes (`714b5e86...`) |
 | `CYCLE-20261126-0ZBP` | `2026-11-26T00:46:36.757Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10572` | Yes (`d85656c4...`) |
 | `CYCLE-20261126-13E4` | `2026-11-26T00:46:42.028Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10573` | Yes (`2f3def12...`) |
+| `CYCLE-20261126-HEZY` | `2026-11-26T00:59:23.566Z` | `unsloth/Qwen3.8-Flash-Next-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | Yes (`d6635611...`) |
+| `CYCLE-20261126-HFVC` | `2026-11-26T00:59:24.696Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10574` | Yes (`6a8e8193...`) |

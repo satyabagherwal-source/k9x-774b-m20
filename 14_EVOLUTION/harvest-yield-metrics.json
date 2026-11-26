@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:46:42.038Z",
-  "total_cycles_completed": 12509,
-  "total_learnings_persisted": 12509,
-  "total_rules_promoted": 11462,
+  "last_updated": "2026-11-26T00:59:24.706Z",
+  "total_cycles_completed": 12511,
+  "total_learnings_persisted": 12511,
+  "total_rules_promoted": 11463,
   "history": [
-    {
-      "timestamp": "2026-11-25T06:12:45.461Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T06:21:05.527Z",
-      "repository": "lodestones/Kromoss",
-      "learningId": "learn-huggingface-lodestones-kromoss",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T06:21:06.183Z",
       "repository": "BurntSushi/ripgrep",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T00:46:42.038Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:59:23.577Z",
+      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:59:24.706Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

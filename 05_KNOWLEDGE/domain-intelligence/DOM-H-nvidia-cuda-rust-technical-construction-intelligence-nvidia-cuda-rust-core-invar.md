@@ -4,24 +4,24 @@
 {
   "source_repository": "NVIDIA/cuda-rust",
   "source_url": "https://github.com/NVIDIA/cuda-rust",
-  "source_version": "5e5c77b1",
+  "source_version": "f35d6ccc",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T15:54:43.292Z",
+  "timestamp": "2026-11-26T00:59:24.958Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nvidia-cuda-rust",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `5e5c77b1`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T15:54:43.292Z`  
+> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `f35d6ccc`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T00:59:24.958Z`  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 92%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 91%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NVIDIA/cuda-rust:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T15:54:41.603Z  
+> **Harvest Timestamp**: 2026-11-26T00:59:23.460Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4081 stars
+- **Stars / Engagement**: 4102 stars
 
 ---
 
@@ -2269,11 +2269,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1866** (2026-11-25): **fix(cuda-oxide): support reverse indexing in writes_all_elems and harden write coverage**
+  *Symptoms*: ## Summary  Fixes `#[verify(writes_all_elems(...))]` for reverse and swapped 1D output indexing (`c[c.len() - 1 - idx]`, `c[idx ^ 1]`), and closes three gaps around `writes_all_elems` and `cargo oxide test` builds.  | Area                     | Fix                                                            | |:-------------------------|:---------------------------------------------------------------| | Reverse output indexing  | Picks the actual writer thread instead of assuming thread `i`  | | Panics before write      | Rejects `writes_all_elems` if an earlier bounds check can trap | | 1D launch check          | Rejects `writes_all_elems` on `domain = 2` kernels             | | `cargo oxide test`       | Handles uninlined `idx.get()` in unoptimized dev/test builds   |  ### Before vs. After  1. **Reverse output indexing (`c[c.len() - 1 - idx]`)**    ```text    Example (`c.len() = 4`): Thread 0 -> c[3], Thread 1 -> c[2], Thread 2 -> c[1], Thread 3 -> c[0]     Before: Always checked Thread `i` for `c[i]` (checked Thread 0 for `c[0]`, saw `c[3]` -> FAIL)    After:  Checks Thread `3 - i` for `c[i]` (checks Thread 3 for `c[0]`, sees `c[0]` -> PASS)    ```  2. **Trapping bounds check before an output write**    ```text    Before: `c[idx] = a[idx]` without `requires(a.len() >= c.len())` passed even though `a[idx]` traps when `a.len() == 0`    After:  Requires every `mir.assert` along the write path to pass, so unchecked `a[idx]` fails closed    ```  3. **2D domain mismatch & `cargo 
+
 - **Issue #1857** (2026-11-23): **fix(cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene**
   *Symptoms*: ## Summary  Closes 11 post-#1851 verification audit gaps across `oxide-proofs-preview`, `lean-exporter`, `cuda-oxide-codegen`, and `cuda-macros`.  | Area                  | Hardening Fix                                                   | |:----------------------|:----------------------------------------------------------------| | `writes_all_elems`    | Proves `Program.MirWritesAllElems` from entry block `0`         | | `SharedArray` init    | Seals `VerifiedSharedElement` + checks prior write dominance    | | `mbarrier` lifecycle  | Models `CfgOp.mbarInval` + checks 1-CTA arrival counts          | | Leader & `tcgen05`    | Rejects multi-warp `lane == 0` leaders; checks warp convergence | | `tcgen05_dealloc`     | Proves freed `TMEM` address has zero relative offset            | | 2D `laneId` & integer | Uses `(ty * blockDimX + tx) % 32` + real `Rhs.checkedOvf`       | | Pointer & call safety | Rejects element-size pointer casts and uninlined `mir.call`s    | | Enforcement & hygiene | Rejects `--device-debug` on `#[verify]` + isolates `unsafe`     |  ### Highlights (Before vs. After)  1. **Output coverage & `SharedArray` initialization**    ```text    Before: `if idx == 0 { return; }` passed `writes_all_elems`; uninitialized `TILE[i]` read passed    After:  `MirWritesAllElems` checks from block 0 (`out[0]` missing -> FAIL); `.sharedRead` requires prior write    ```  2. **Barriers, single-thread leaders & `tcgen05` collectives**    ```text    Before: `lane_id() == 0` treated 
-
-- **Issue #1838** (2026-11-19): **[BUG]: Tierras JIT compilation is stuck and memory usage continues to grow to 42GB.**
-  *Symptoms*: ### Description  The kernel code can pass Rust compilation normally, but during the JIT phase at first launch, the tileiras process does not exit, and CPU/memory usage continues to rise, peaking at about 42 GB, yet compilation ultimately never completes.  The Tile IR output by print_ir = true is relatively long, and I will paste it below.  #### Comparison - `ALL_VALID = 1`: The same kernel skips the score mask and compiles normally. - `ALL_VALID = 0`: Enabling the score mask causes the `tileiras` behavior above.   I observed this with both `select` and an arithmetic 0/1 mask. - Rewriting the computation to group query heads into three groups and use   `mma` instead of the `reduce_sum` QK path allows compilation to finish,   but runtime performance is significantly worse than the `ALL_VALID = 1`   path. This is a workaround, not an equivalent performance result.    ### Error / actual behavior <details> <summary>IR 和 kernel  code here</summary>  ```text NVIDIA GeForce RTX 5080 GENERATED ENTRY POINT: sca_module::sca #[cutile::entry(print_ir = true)] fn sca_entry<     const DV: i32,     const DK: i32,     const TQ: i32,     const TOPK: i32,     const HQ: i32,     const H: i32,     const BLOCK_SIZE: i32,     const BN: i32,     const BNT: i32,     const TAIL_BLOCKS: i32,     const TAIL: i32,     const OPENTAIL: i32,     const CAUSUAL: i32,     const ALL_VALID: i32, >(     out_ptr: PointerTile<*mut f32, { [] }>,     out_dim_0: i32,     out_dim_1: i32,     out_stride_0: i32,     out_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2290,532 +2290,425 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e5c77b1` (2026-11-23)
-**Commit Message**: fix(cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene (#1857)
+### Incident Patch 1: `f35d6ccc` (2026-11-25)
+**Commit Message**: fix(cuda-oxide): support reverse indexing in writes_all_elems and harden write coverage (#1866)
 
 ## Summary
 
-Closes 11 post-#1851 verification audit gaps across
-`oxide-proofs-preview`, `lean-exporter`, `cuda-oxide-codegen`, and
-`cuda-macros`.
+Fixes `#[verify(writes_all_elems(...))]` for reverse and swapped 1D
+output indexing (`c[c.len() - 1 - idx]`, `c[idx ^ 1]`), and closes three
+gaps around `writes_all_elems` and `cargo oxide test` builds.
 
-| Area | Hardening Fix |
+| Area | Fix |
 
-|:----------------------|:----------------------------------------------------------------|
-| `writes_all_elems` | Proves `Program.MirWritesAllElems` from entry
-block `0` |
-| `SharedArray` init | Seals `VerifiedSharedElement` + checks prior
-write dominance |
-| `mbarrier` lifecycle | Models `CfgOp.mbarInval` + checks 1-CTA arrival
-counts |
-| Leader & `tcgen05` | Rejects multi-warp `lane == 0` leaders; checks
-warp convergence |
-| `tcgen05_dealloc` | Proves freed `TMEM` address has zero relative
-offset |
-| 2D `laneId` & integer | Uses `(ty * blockDimX + tx) % 32` + real
-`Rhs.checkedOvf` |
-| Pointer & call safety | Rejects element-size pointer casts and
-uninlined `mir.call`s |
-| Enforcement & hygiene | Rejects `--device-debug` on `#[verify]` +
-isolates `unsafe` |
+|:-------------------------|:---------------------------------------------------------------|
+| Reverse output indexing | Picks the actual writer thread instead of
+assuming thread `i` |
+| Panics before write | Rejects `writes_all_elems` if an earlier bounds
+check can trap |
+| 1D launch check | Rejects `writes_all_elems` on `domain = 2` kernels |
+| `cargo oxide test` | Handles uninlined `idx.get()` in unoptimized
+dev/test builds |
 
-### Highlights (Before vs. After)
+### Before vs. After
 
-1. **Output coverage & `SharedArray` initialization**
+1. **Reverse output indexing (`c[c.len() - 1 - idx]`)**
    ```text
-Before: `if idx == 0 { return; }` passed `writes_all_elems`;
-uninit
+Example (`c.len() = 4`): Thread 0 -> c[3], Thread 1 -> c[2], Thread 2 ->
+c[1], Thread 3 -> c[0]
 
-**File**: `cuda-oxide/crates/cuda-device/src/shared.rs` (modified, +47/-0)
-```diff
-@@ -598,3 +598,50 @@ pub unsafe fn cvta_generic_to_shared_u32(ptr: *const u8) -> u32 {
- }
- 
- include!("generated/shared_sreg.rs");
-+
-+/// Private sealing module ensuring [`VerifiedSharedElement`] can only be
-+/// implemented within `cuda-device` for bit-valid element types.
-+mod verified_shared_sealed {
-+    /// Supertrait sealing [`super::VerifiedSharedElement`] against external impls.
-+    pub trait Sealed {}
-+}
-+
-+/// Sealed marker trait for element types of [`SharedArray`] statics proved safe
-+/// by `#[verify(...)]`.
-+///
-+/// # Safety
-+///
-+/// Every possible bit pattern of `Self` (including arbitrary SRAM power-on
-+/// bytes) must be a valid inhabited value of `Self` with no padding/niche
-+/// validity invariants (`bool`, `char`, references, and `NonZero*` are
-+/// excluded).
-+pub unsafe trait VerifiedSharedElement: verified_shared_sealed::Sealed {}
-+
-+/// Implement [`VerifiedSharedElement`] for primitive integer and float scalars
-+/// whose every bit pattern represents a valid value.
-+macro_rules! impl_verified_shared_element {
-+    ($($ty:ty),* $(,)?) => {
-+        $(
-+            impl verified_shared_sealed::Sealed for $ty {}
-+            // SAFETY: primitive integer/floating-point bit patterns are all valid.
-+            unsafe impl VerifiedSharedElement for $ty {}
-+        )*
-+    };
-+}
-+
-+impl_verified_shared_element!(
-+    u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f16, f32, f64,
-+);
-+
-+impl verified_shared_sealed::Sealed for crate::barrier::Barrier {}
-+// SAFETY: `Barrier` wraps an `UnsafeCell<u64>` whose raw storage accepts any 64-bit pattern
-+// while its state-machine lifecycle (`mbarrier_init` before use) is enforced by `ControlFlowCfg`.
-+unsafe impl VerifiedSharedElement for crate::barrier::Barrier {}
-+
-+impl<T> verified_shared_sealed::Sealed for core::mem::MaybeUninit<T> {}
-+// SAFETY: `MaybeUninit<T>` imposes no bit-validity requirement on `T`.
-+unsafe impl<T> VerifiedSharedElement for core::mem::MaybeUninit<T> {}
-+
-+impl<T: VerifiedSharedElement, const N: usize> verified_shared_sealed::Sealed for [T; N] {}
-+// SAFETY: Fixed-size arrays `[T; N]` have identical layout to `N` contiguous `T` values.
-+unsafe impl<T: VerifiedSharedElement, const N: usize> VerifiedSharedElement for [T; N] {}
-```
+Before: Always checked Thread `i` for `c[i]` (checked Thread 0 for
+`c[0]`, saw `c[3]` -> FAIL)
+After: Checks Thread `3 - i` for `c[i]` (checks Thread 3 for `c[0]`,
+sees `c[0]` -> PASS)
+   ```
 
-**File**: `cuda-oxide/crates/cuda-macros/src/verify.rs` (modified, +197/-55)
+2. **Trapping bounds check before an output write**
+   ``
+
+**File**: `cuda-oxide/crates/cuda-macros/src/cuda_module/mod.rs` (modified, +6/-0)
 ```diff
-@@ -220,6 +220,16 @@ fn expr_targets_static(expr: &Expr, allowed: &[Ident]) -> bool {
-         Expr::Reference(refer) => expr_targets_static(&refer.expr, allowed),
-         Expr::Paren(paren) => expr_targets_static(&paren.expr, allowed),
-         Expr::Group(group) => expr_targets_static(&group.expr, allowed),
-+        Expr::Unsafe(u) => {
-+            u.block.stmts.last().is_some_and(
-+                |s| matches!(s, Stmt::Expr(e, None) if expr_targets_static(e, allowed)),
-+            )
-+        }
-+        Expr::Block(b) => {
-+            b.block.stmts.last().is_some_and(
-+                |s| matches!(s, Stmt::Expr(e, None) if expr_targets_static(e, allowed)),
-+            )
-+        }
-         Expr::MethodCall(mc)
-             if (mc.args.is_empty()
-                 && (mc.method == "as_ptr"
-@@ -256,13 +266,31 @@ fn expr_targets_static(expr: &Expr, allowed: &[Ident]) -> bool {
-     }
- }
- 
-+/// Peel transparent `Delimiter::None` [`Expr::Group`] wrappers introduced by
-+/// outer attribute macros (`#[cuda_module]`, `#[kernel]`) around an expression.
-+fn peel_group(mut expr: &Expr) -> &Expr {
-+    while let Expr::Group(g) = expr {
-+        expr = &g.expr;
-+    }
-+    expr
-+}
-+
-+/// Mutable counterpart to [`peel_group`] for in-place AST rewriting across
-+/// macro-injected [`Expr::Group`] wrappers.
-+fn peel_group_mut(mut expr: &mut Expr) -> &mut Expr {
-+    while let Expr::Group(g) = expr {
-+        expr = &mut g.expr;
-+    }
-+    expr
-+}
-+
- impl VerifiedSharedArrayRewriter {
-     /// Return true when `expr` indexes a `SharedArray` static in `self.verified_shared`.
-     fn is_verified_shared_index(&self, expr: &Expr) -> bool {
--        let Expr::Index(index_expr) = expr else {
-+        let Expr::Index(index_expr) = peel_group(expr) else {
-             return false;
-         };
--        let Expr::Path(path_expr) = &*index_expr.expr else {
-+        let Expr::Path(path_expr) = peel_group(&index_expr.expr) else {
-             return false;
-         };
-         path_expr
-@@ -275,10 +303,10 @@ impl VerifiedSharedArrayRewriter {
-     /// a `g2s` TMA bulk copy targeting `self.verified_shared` + `self.barrier_statics`,
-     /// or (under `tmem_lifecycle`) a scoped `tcgen05` / `cvta_generic_to_shared_offset` call.
-     fn is_verified_async_barrier_call(&self, expr: &Expr) -> bool {
--        let Expr::Call(call_expr) = expr else {
-+        let Expr::Call(call_expr) = peel_group(expr) else {
-             return false;
-         };
--        let Expr::Path(path_expr) = &*call_expr.func else {
-+        let Expr::Path(path_expr) = peel_group(&call_expr.func) else {
-             return false;
-         };
-         let Some(last) = path_expr.path.segments.last() else {
-@@ -383,6 +411,10 @@ impl VerifiedSharedArrayRewriter {
- 
- impl VisitMut for VerifiedSharedArrayRewriter {
-     fn visit_expr_mut(&mut self, expr: &mut Expr) {
-+        if let Expr::Group(group) = expr {
-+            self.visit_expr_mut(&mut group.expr);
-+            return;
-+        }
-         if let Expr::Unsafe(expr_unsafe) = expr {
-             let prev = self.in_unsafe;
-             self.in_unsafe = true;
-@@ -392,50 +424,100 @@ impl VisitMut for VerifiedSharedArrayRewriter {
-         }
- 
-         if !self.in_unsafe {
--            if let Expr::Assign(assign) = expr
--                && self.is_verified_shared_index(&assign.left)
--            {
--                self.in_unsafe = true;
--                visit_mut::visit_expr_mut(self, &mut assign.right);
--                if let Expr::Index(idx) = &mut *assign.left {
--                    visit_mut::visit_expr_mut(self, &mut idx.index);
-+            if let Expr::Assign(assign) = expr {
-+                if self.is_verified_shared_index(&assign.left) {
-+                    self.visit_expr_mut(&mut assign.right);
-+                    if let Expr::Index(idx) = peel_group_mut(&mut assign.left) {
-+                        self.visit_expr_mut(&mut idx.index);
-+                        let arr = &idx.expr;
-+                        let index_expr = &idx.index;
-+                        let rhs_expr = &assign.right;
-+                        *expr = parse_quote! {
-+                            {
-+                                let __cuda_verify_val = #rhs_expr;
-+                                let __cuda_verify_idx = #index_expr;
-+                                unsafe { #arr[__cuda_verify_idx] = __cuda_verify_val; }
-+                            }
-+                        };
-+                        return;
-+                    }
+@@ -668,6 +668,12 @@ fn cuda_module_kernel(
+             && let Ok(v_args) = attr.parse_args::<crate::verify::VerifyArgs>()
+         {
+             for ident in v_args.writes_all_elems {
++                if launch_contract.as_ref().map(|c| c.domain) != Some(1) {
++                    return Err(syn::Error::new(
++                        ident.span(),
++                        "`writes_all_elems(...)` requires `#[launch_contract(domain = 1, ...)]`",
++                    ));
 +                }
-+                if let Expr::Unary(unary) = peel_group_mut(&mut assign.left)
-+                    && matches!(unary.op, syn::UnOp::Deref(_))
-+                    && expr_targets_static(&unary.expr, &self.verified_shared)
-+                {
-+                    self.visit_expr_mut(&mut assign.right);
-+                    self.visit_expr_mut(&mut unary.expr);
-+                    let ptr_expr = &unary.expr;
-+                    let rhs_expr = &assign.right;
-+                    *expr = p
+                 if !writes_all_elems_params.iter().any(|p| p == &ident) {
+                     writes_all_elems_params.push(ident);
+                 }
 ```
 
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/prep.rs` (modified, +44/-0)
+**File**: `cuda-oxide/crates/cuda-macros/src/tests/cuda_module.rs` (modified, +16/-0)
 ```diff
-@@ -98,6 +98,12 @@ pub fn prepare_mir_module(
-                     .to_string(),
-             ));
-         }
-+        if lean_exporter::has_verified_kernels(ctx, module) {
-+            return Err(PipelineError::Lowering(
-+                "#[verify] kernels require MIR variable promotion (mem2reg); full variable debug information (--device-debug) is not supported, use --lineinfo instead"
-+                    .to_string(),
-+            ));
+@@ -887,6 +887,22 @@ fn writes_all_elems_generates_host_grid_coverage_check_in_checked_launchers() {
+         "expected writes_all_elems grid coverage check in host launcher: {expanded}"
+     );
+     assert!(expanded.contains("saturating_mul"), "{expanded}");
++
++    let dom2_invalid: ItemMod = parse_quote! {
++        mod kernels {
++            #[kernel]
++            #[launch_contract(domain = 2, block = (16, 16, 1))]
++            #[verify(no_oob_idx(c), disjoint_writes(c), writes_all_elems(c))]
++            pub fn bad_dom2(c: &mut [f32]) {}
 +        }
-         if has_wgmma_mma_operations(ctx, module) {
-             let mut analyses = pliron::pass::AnalysisManager::default();
-             pliron::opts::mem2reg::mem2reg(module, ctx, &mut analyses).map_err(|error| {
-@@ -606,6 +612,44 @@ mod tests {
-         assert!(matches!(error, PipelineError::InvalidMirPassPipeline(_)));
-     }
++    };
++    let err = expand_cuda_module(dom2_invalid)
++        .expect_err("writes_all_elems on domain = 2 must fail closed");
++    assert!(
++        err.to_string()
++            .contains("requires `#[launch_contract(domain = 1"),
++        "unexpected error: {err}"
++    );
+ }
  
-+    #[test]
-+    fn debug_mode_rejects_verified_kernels_instead_of_bypassing_lean() {
-+        let mut ctx = Context::new();
-+        dialect_mir::register(&mut ctx);
-+        let module = ModuleOp::new(&mut ctx, "test".try_into().unwrap());
-+        let function_type = FunctionType::get(&ctx, vec![], vec![]);
-+        let function = Operation::new(
-+            &mut ctx,
-+            MirFuncOp::get_concrete_op_info(),
-+            vec![],
-+            vec![],
-+            vec![],
-+            1,
-+        );
-+        let function_op = MirFuncOp::new(&mut ctx, function, TypeAttr::new(function_type.into()));
-+        function_op.set_symbol_name(&mut ctx, "verified_k".try_into().unwrap());
-+        function.deref_mut(&ctx).attributes.set(
-+            pliron::identifier::Identifier::try_from("verify_uniform_barriers").unwrap(),
-+            pliron::builtin::attributes::UnitAttr::new(),
-+        );
-+        module.append_operation(&mut ctx, function, 0);
-+
-+        let error = prepare_mir_module(
-+            &mut ctx,
-+            module.get_operation(),
-+            MirPreparation {
-+                promote_and_unroll: false,
-+                verbose: false,
-+                mir_pass_pipeline: None,
-+            },
-+        )
-+        .unwrap_err();
-+        assert!(
-+            matches!(&error, PipelineError::Lowering(msg) if msg.contains("--lineinfo")),
-+            "expected --device-debug to fail closed on #[verify] kernels, got: {error}"
-+        );
+ #[cfg(feature = "async")]
+```
+
+**File**: `cuda-oxide/crates/lean-exporter/src/spec.rs` (modified, +8/-0)
+```diff
+@@ -272,6 +272,14 @@ pub(crate) fn parse_kernel_verification_spec(
+         Some(raw) => parse_param_list(&raw, arity, "verify_writes_all_elems")?,
+         None => Vec::new(),
+     };
++    if !writes_all_elems.is_empty() && domain != 1 {
++        return Err(reject(
++            "kernel contract",
++            format!(
++                "`writes_all_elems` requires a 1D launch contract (`domain = 1`), found domain = {domain}"
++            ),
++        ));
 +    }
+     let no_oob_shared = match get_string_attr(attrs, "verify_no_oob_shared") {
+         Some(raw) => parse_param_list(&raw, 64, "verify_no_oob_shared")?,
+         None => Vec::new(),
+```
+
+**File**: `cuda-oxide/crates/lean-exporter/src/translate/program.rs` (modified, +43/-1)
+```diff
+@@ -486,10 +486,14 @@ pub(super) fn translate_mir_program(
+         for op_ptr in blk.iter(ctx) {
+             let name = op_name(ctx, op_ptr);
+             let is_term = matches!(name.as_str(), "mir.goto" | "mir.cond_br");
++            let is_store = name == "mir.store";
+             let op = op_ptr.deref(ctx);
+             for o_idx in 0..op.get_num_operands() {
+                 let ov = op.get_operand(o_idx);
+-                if is_term || def_block.get(&ov).copied() != Some(old_idx) {
++                if is_term
++                    || (is_store && o_idx == 1)
++                    || def_block.get(&ov).copied() != Some(old_idx)
++                {
+                     cross_vals.insert(ov);
+                 }
+             }
+@@ -2923,6 +2927,33 @@ pub(super) fn translate_mir_program(
+                             tags.insert(res, LocalTag::SmemDescSource(sid));
+                             struct_fields
+                                 .insert(res, vec![(res_vid, Some(LocalTag::SmemDescSource(sid)))]);
++                        } else if is_cuda_dev
++                            && (callee.contains("ThreadIndex") || callee.contains("Uniform"))
++                            && callee.contains("3get")
++                            && op.get_num_operands() == 1
++                            && let Some((src_vid, wrap_tag)) = op.operands().next().and_then(|ov| {
++                                if let Some(
++                                    &t @ (LocalTag::Index1DWrapper(sv)
++                                    | LocalTag::ScalarWrapper(sv)),
++                                ) = tags.get(&ov)
++                                {
++                                    return Some((sv, t));
++                                }
++                                alloca_vars.get(&ov).and_then(|fs| fs.first()).and_then(
++                                    |&(sv, t_opt)| match t_opt {
++                                        Some(
++                                            t @ (LocalTag::Index1DWrapper(_)
++                                            | LocalTag::ScalarWrapper(_)),
++                                        ) => Some((sv, t)),
++                                        _ => None,
++                                    },
++                                )
++                            })
++                        {
++                            if matches!(wrap_tag, LocalTag::Index1DWrapper(_)) {
++                                idx1d_vals.insert(res);
++                            }
++                            stmts.push(MirStmt::Assign(res_vid, MirRhs::Copy(src_vid)));
+                         } else if let Some(&pid) = enum_payload_ids.get(&res) {
+                             stmts.push(MirStmt::Assign(
+                                 res_vid,
+@@ -3035,6 +3066,9 @@ pub(super) fn translate_mir_program(
+                         if let Some(&t) = tags.get(&src) {
+                             tags.insert(res, t);
+                         }
++                        if let Some(av) = alloca_vars.get(&src).cloned() {
++                            alloca_vars.insert(res, av);
++                        }
+                         if let Some(&sv) = bar_slot_vars.get(&src) {
+                             bar_slot_vars.insert(res, sv);
+                         }
+@@ -3549,10 +3583,18 @@ pub(super) fn translate_mir_program(
+                                     pos_counted_lt.insert(res);
+                                 }
+                             }
++                        } else if opid == "mir.gt"
++                            && let Some(&gp) = slice_len_vals.get(&l)
++                        {
++                            lt_slice_len.insert(res, gp);
+                         } else if opid == "mir.ge"
+                             && let Some(&gp) = slice_len_vals.get(&r)
+                         {
+                             ge_slice_len.insert(res, gp);
++                        } else if opid == "mir.le"
++                            && let Some(&gp) = slice_len_vals.get(&l)
++                        {
++                            ge_slice_len.insert(res, gp);
+                         } else if opid == "mir.eq"
+                             && let Some((gp, c)) = disc_pair
+                         {
+```
+
+**File**: `cuda-oxide/crates/lean-exporter/tests/export.rs` (modified, +116/-0)
+```diff
+@@ -2257,3 +2257,119 @@ builtin.module @lane_2d_test {
+         .expect_err("non-cuda_device function named fake_index_1d must fail closed");
+     assert!(fake_err.to_string().contains("unmodeled function call"));
+ }
 +
-     #[test]
-     fn invalid_staged_pipeline_is_rejected_before_preparation() {
-         let mut ctx = Context::new();
++#[test]
++fn verifies_reverse_writes_all_elems_and_rejects_trapping_asserts_off_by_one_and_2d_coverage() {
++    let Some(lean_dir) = lean_package_dir_if_available() else {
++        return;
++    };
++
++    // 1. Positive: reverse-indexed `c[c.len() - 1 - idx] = a[idx] + b[idx]` with flipped `mir.gt (c_len, idx)`
++    //    and uninlined `ThreadIndex::get` (`mir.alloca` + `mir.store` + `mir.cast` + `mir.call`) proves all obligations:
++    let rev_mir = r#"
++mir.func @vecadd_rev: builtin.function <(mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>, mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>, mir.slice <builtin.fp32 ,mutable:true,kind:UniqueRef>) -> ()>
++  [contract_requires_len_ge: builtin.string "0>=2,1>=2", gpu_kernel: builtin.string "true", launch_contract_domain: builtin.integer <1: ui32>, reqntid_x: builtin.integer <256: ui32>, reqntid_y: builtin.integer <1: ui32>, reqntid_z: builtin.integer <1: ui32>, verify_disjoint_writes: builtin.string "2", verify_no_oob_idx: builtin.string "0,1,2", verify_writes_all_elems: builtin.string "2"]
++{
++  ^entry(a: mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>, b: mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>, c: mir.slice <builtin.fp32 ,mutable:true,kind:UniqueRef>):
++    lc = mir.alloca () [] []: <() -> (mir.ptr <builtin.integer ui8 ,mutable:true,addrspace:0,kind:Erased>)>;
++    idx_slot = mir.alloca () [] []: <() -> (mir.ptr <builtin.integer ui64 ,mutable:true,addrspace:0,kind:Erased>)>;
++    lc_ref = mir.cast (lc) [] [cast_kind: mir.cast_kind PtrToPtr, pointer_kind_authority: mir.pointer_kind_authority Reborrow]: <(mir.ptr <builtin.integer ui8 ,mutable:true,addrspace:0,kind:Erased>) -> (mir.ptr <builtin.integer ui8 ,mutable:false,addrspace:0,kind:SharedRef>)>;
++    tid_wrapper = mir.call (lc_ref) [] [callee: builtin.string "_RINvNtNtCs11cuda_device6thread10___internal8index_1d"]: <(mir.ptr <builtin.integer ui8 ,mutable:false,addrspace:0,kind:SharedRef>) -> (builtin.integer ui64)>;
++    mir.store (idx_slot, tid_wrapper) [] []: <(mir.ptr <builtin.integer ui64 ,mutable:true,addrspace:0,kind:Erased>, builtin.integer ui64) -> ()>;
++    mir.goto () [^get_blk] []: <() -> ()>
++
++  ^get_blk():
++    slot_ref = mir.cast (idx_slot) [] [cast_kind: mir.cast_kind PtrToPtr, pointer_kind_authority: mir.pointer_kind_authority Reborrow]: <(mir.ptr <builtin.integer ui64 ,mutable:true,addrspace:0,kind:Erased>) -> (mir.ptr <builtin.integer ui64 ,mutable:false,addrspace:0,kind:SharedRef>)>;
++    idx = mir.call (slot_ref) [] [callee: builtin.string "_RNvMs8_NtCs11cuda_device6threadNtB5_11ThreadIndex3get"]: <(mir.ptr <builtin.integer ui64 ,mutable:false,addrspace:0,kind:SharedRef>) -> (builtin.integer ui64)>;
++    c_len = mir.extract_field (c) [] [index: mir.field_index 1]: <(mir.slice <builtin.fp32 ,mutable:true,kind:UniqueRef>) -> (builtin.integer ui64)>;
++    in_bounds = mir.gt (c_len, idx) [] []: <(builtin.integer ui64, builtin.integer ui64) -> (builtin.integer i1)>;
++    mir.cond_br (in_bounds) [^active, ^exit] [builtin_operand_segment_sizes: builtin.operand_segment_sizes [1, 0, 0]]: <(builtin.integer i1) -> ()>
++
++  ^active():
++    a_len = mir.extract_field (a) [] [index: mir.field_index 1]: <(mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>) -> (builtin.integer ui64)>;
++    a_ok = mir.lt (idx, a_len) [] []: <(builtin.integer ui64, builtin.integer ui64) -> (builtin.integer i1)>;
++    mir.assert (a_ok) [] []: <(builtin.integer i1) -> ()>;
++    a_ptr = mir.extract_field (a) [] [index: mir.field_index 0]: <(mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>)>;
++    a_elem = mir.ptr_offset (a_ptr, idx) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>, builtin.integer ui64) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>)>;
++    a_val = mir.load (a_elem) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>) -> (builtin.fp32)>;
++    b_ptr = mir.extract_field (b) [] [index: mir.field_index 0]: <(mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>)>;
++    b_elem = mir.ptr_offset (b_ptr, idx) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>, builtin.integer ui64) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>)>;
++    b_val = mir.load (b_elem) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>) -> (builtin.fp32)>;
++    one = mir.constant () [] [value: builtin.integer <1: ui64>]: <() -> (builtin.integer ui64)>;
++    last = mir.sub (c_len, one) [] []: <(builtin.integer ui64, builtin.integer ui64) -> (builtin.integer ui64)>;
++    rev_idx = mir.sub (last, idx) [] []: <(builtin.integer ui64, b
 ```
 
-**File**: `cuda-oxide/crates/lean-exporter/src/codegen.rs` (modified, +14/-18)
+**File**: `cuda-oxide/examples/safe_vecadd/src/main.rs` (modified, +29/-5)
 ```diff
-@@ -11,7 +11,7 @@
- //!     └── MirProgram ──► emits `CudaOxide.Mir.Program.MirFunc` + `ControlFlowCfg`
- //!                        + `MirNoOobGlobal`, `MirNoOobShared`, `MirDisjointWrites`,
- //!                          `MirNoSharedRace`, `MirAssertRedundant`, `MirNoOobTmem`,
--//!                          `UniformBarriers`, `TmemLifecycle`, `WritesOnAllActivePaths`
-+//!                          `UniformBarriers`, `TmemLifecycle`, `MirWritesAllElems`
- //! ```
- 
- use crate::{
-@@ -75,7 +75,7 @@ pub fn proved_obligation_descriptions(spec: &KernelVerificationSpec) -> Vec<Stri
+@@ -53,6 +53,23 @@ mod kernels {
+             c[idx] = a[idx] + b[idx];
+         }
      }
-     if !spec.writes_all_elems.is_empty() {
-         items.push(format!(
--            "writes_all_elems({}) -> CudaOxide.Contracts.ControlFlow.WritesOnAllActivePaths",
-+            "writes_all_elems({}) -> CudaOxide.Contracts.Program.MirWritesAllElems",
-             fmt_ids("param", &spec.writes_all_elems)
-         ));
-     }
-@@ -142,6 +142,7 @@ fn format_cfg_branch_cond(cond: &CfgBranchCond) -> String {
-         CfgBranchCond::MbarSpin(b) => format!("(.mbarSpin {b})"),
-         CfgBranchCond::PosLoopExit(body) => format!("(.posLoopExit {body})"),
-         CfgBranchCond::Uniform => ".uniform".to_string(),
-+        CfgBranchCond::WarpUniform => ".warpUniform".to_string(),
-         CfgBranchCond::Unknown => ".unknown".to_string(),
-     }
++
++    /// Reverse-indexed `&mut [f32]` vector addition (`c[c.len() - 1 - idx] = a[idx] + b[idx]`):
++    /// - Lean 4 proves `no_oob_idx(a, b, c)`, `disjoint_writes(c)`, and `writes_all_elems(c)`
++    ///   using the involutive witness thread `c.len() - 1 - elemIdx`, eliding all 3 bounds checks.
++    #[launch_contract(
++        domain = 1,
++        block = (256, 1, 1),
++        requires = (a.len() >= c.len(), b.len() >= c.len()),
++    )]
++    #[verify(no_oob_idx(a, b, c), disjoint_writes(c), writes_all_elems(c))]
++    #[kernel]
++    pub fn vecadd_reverse(a: &[f32], b: &[f32], c: &mut [f32]) {
++        let idx = thread::index_1d().get();
++        if idx < c.len() {
++            c[c.len() - 1 - idx] = a[idx] + b[idx];
++        }
++    }
  }
-@@ -155,6 +156,7 @@ fn format_cfg_op(op: &CfgOpItem) -> String {
-         CfgOpItem::SharedWrite { shared_id } => format!("(.sharedWrite {shared_id})"),
-         CfgOpItem::DsmemAccess { shared_id } => format!("(.dsmemAccess {shared_id})"),
-         CfgOpItem::MbarInit { bar_id, count } => format!("(.mbarInit {bar_id} {count})"),
-+        CfgOpItem::MbarInval { bar_id } => format!("(.mbarInval {bar_id})"),
-         CfgOpItem::ProxyFenceAsyncShared => ".proxyFenceAsyncShared".to_string(),
-         CfgOpItem::MbarArrive { bar_id } => format!("(.mbarArrive {bar_id})"),
-         CfgOpItem::MbarArriveExpectTx { bar_id, tx_bytes } => {
-@@ -191,6 +193,9 @@ fn format_cfg_op(op: &CfgOpItem) -> String {
-         CfgOpItem::TmemLoad { ld_id } => format!("(.tmemLoad {ld_id})"),
-         CfgOpItem::TmemLoadWait => ".tmemLoadWait".to_string(),
-         CfgOpItem::TmemLoadUse { ld_id } => format!("(.tmemLoadUse {ld_id})"),
-+        CfgOpItem::TmemStoreWait => ".tmemStoreWait".to_string(),
-+        CfgOpItem::TmemFenceBeforeSync => ".tmemFenceBeforeSync".to_string(),
-+        CfgOpItem::TmemFenceAfterSync => ".tmemFenceAfterSync".to_string(),
+ 
+ fn main() -> Result<(), Box<dyn std::error::Error>> {
+@@ -77,32 +94,39 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     let b_dev = DeviceBuffer::from_host(&stream, &b_host)?;
+     let mut c_dev = DeviceBuffer::<f32>::zeroed(&stream, N)?;
+     let mut c_mut_dev = DeviceBuffer::<f32>::zeroed(&stream, N)?;
++    let mut c_rev_dev = DeviceBuffer::<f32>::zeroed(&stream, N)?;
+ 
+     // SAFETY: this binary embeds the single `safe_vecadd` PTX module.
+     let module = unsafe { kernels::load(&ctx)? };
+     let blocks = (N as u32).div_ceil(BLOCK_SIZE);
+     let cfg = LaunchConfig1D::new(blocks, BLOCK_SIZE, 0);
+     let launch = module.prepare_vecadd(cfg)?;
+     let launch_mut = module.prepare_vecadd_mut_slice(cfg)?;
++    let launch_rev = module.prepare_vecadd_reverse(cfg)?;
+ 
+-    // Safe, contract-checked launches (`DisjointSlice` and plain `&mut [f32]`):
++    // Safe, contract-checked launches (`DisjointSlice`, forward `&mut [f32]`, and reverse `&mut [f32]`):
+     module.vecadd(&stream, &launch, &a_dev, &b_dev, &mut c_dev)?;
+     module.vecadd_mut_slice(&stream, &launch_mut, &a_dev, &b_dev, &mut c_mut_dev)?;
++    module.vecadd_reverse(&stream, &launch_rev, &a_dev, &b_dev, &mut c_rev_dev)?;
+ 
+     let c_host = c_dev.to_host_vec(&stream)?;
+     let c_mut_host = c_mut_dev.to_host_vec(&stream)?;
++    let c_rev_host = c_rev_dev.to_host_vec(&stream)?;
+     for i in 0..N {
+         let expected = a_host[i] + b_host[i];
+         assert!(
+-            (c_host[i] - expected).abs() <= 1e-5 && c_host[i] == c_mut_host[i],
+-            "mismatch at index {i}: expected {expected}, got {} / {}",
++            (c_host[i] - expected).abs() <= 1e-5
++                && c_host[i] == c_mut_host[i]
++                && c_rev_host[N - 1 - i] == c_host[i],
++            "mismatch at index {i}: expected {expected}, got {} / {} / rev {}",
+             c_host[i],
+-            c_mut_host[i]
++            c_mut_host[i],
++            c_rev_host[N - 1 - i],
+         );
      }
- }
  
-@@ -249,6 +254,7 @@ fn format_mir_rhs(rhs: &MirRhs) -> String {
-         MirRhs::SliceLen(p) => format!("(.sliceLen {p})"),
-         MirRhs::SharedBase(s) => format!("(.sharedBase {s})"),
-         MirRhs::BinOp(op, w, l, r) => format!("(.binOp .{op} {w} {l} {r})"),
-+        MirRhs::CheckedOvf(op, w, l, r) => format!("(.checkedOvf .{op} {w} {l} {r})"),
-         MirRhs::CmpOp(op, l, r) => format!("(.cmpOp .{op} {l} {r})"),
-         MirRhs::NotBool(s) => format!("(.notBool {s})"),
-         MirRhs::IntCast(dw, s) => format!("(.intCast {dw} {s})"),
-@@ -265,7 +271,7 @@ fn format_mir_rhs(rhs: &MirRhs) -> String {
- /// Render a line-by-line [`MirProgramData`] (`CudaOxide.Mir.Program.MirFunc`) and its
- /// declarative safety obligations (`MirNoOobGlobal`, `MirNoOobShared`, `MirDisjointWrites`,
- /// `MirNoSharedRace`, `MirAssertRedundant`, `MirNoOobTmem`, `UniformBarriers`, `TmemLifecycle`,
--/// and `WritesOnAllActivePaths`).
-+/// and `MirWritesAllElems`).
- fn render_mir_program_module(
-     spec: &KernelVerificationSpec,
-     program: &MirProgramData,
-@@ -359,8 +365,7 @@ fn render_mir_program_module(
- 
-     let need_uniform_barriers = spec.uniform_barriers
-         || (program.control_flow_cfg.num_barriers > 0 && !spec.tmem_lifecycle);
--    let need_cfg =
--        need_uniform_barriers || spec.tmem_lifecycle || !spec.writes_all_elems.is_empty();
-+    let need_cfg = need_uniform_barriers || spec.tmem_lifecycle;
-     let cfg_section = if need_cfg {
-         format!(
-             "{}\n\ncfg_def_state_map controlFlowCfg\n\n",
-@@ -426,22 +431,13 @@ fn render_mir_program_module(
-         ));
-         axiom_prints.push(format!("#print axioms {thm}"));
-     }
--    for &(p, ref ge, ref wb) in &program.write_path_obligations {
-+    for &p in &spec.writes_all_elems {
-         let thm = format!("verify_writes_all_elems_param{p}");
--        let ge_s = ge
--            .iter()
--            .map(usize::to_string)
--            .collect::<Vec<_>>()
--            .join(", ");
--        let wb_s = wb
--            .iter()
--            .map(usize::to_string)
--            .collect::<Vec<_>>()
--            .join(", ");
-         theorems.push(format!(
-             "theorem {thm} :\n    \
--             CudaOxide.Contracts.ControlFlow.WritesOnAllActivePaths controlFlowCfg [{ge_s}] [{wb_s}] := by\n  \
--             exact CudaOxide.Proofs.ControlFlow.writes_on_active_paths_sound (by decide)"
-+             CudaOxide.Contracts.Program.MirWritesAllElems mirFunc {p} := by\n  \
-+             apply vcWritesAll
-```
-
-**File**: `cuda-oxide/crates/lean-exporter/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ pub mod spec;
- pub mod ssa;
- pub mod translate;
- 
--pub use runner::verify_module_kernels;
-+pub use runner::{has_verified_kernels, verify_module_kernels};
- 
- use std::collections::HashSet;
- 
-```
-
-**File**: `cuda-oxide/crates/lean-exporter/src/runner.rs` (modified, +17/-0)
-```diff
-@@ -313,6 +313,23 @@ pub fn check_generated_lean_in_cache(
+     println!(
+-        "Verified launch succeeded (both `DisjointSlice` and plain `&mut [f32]`): all {N} elements match!"
++        "Verified launch succeeded (`DisjointSlice`, forward `&mut [f32]`, and reverse `&mut [f32]`): all {N} elements match!"
+     );
      Ok(())
  }
- 
-+/// Return `true` when `module` contains at least one `mir.func` carrying
-+/// `#[verify(...)]` obligations.
-+pub fn has_verified_kernels(ctx: &Context, module: Ptr<Operation>) -> bool {
-+    let module_ref = module.deref(ctx);
-+    if module_ref.num_regions() != 1 {
-+        return false;
-+    }
-+    let region = module_ref.get_region(0).deref(ctx);
-+    let Some(block) = region.get_head() else {
-+        return false;
-+    };
-+    block
-+        .deref(ctx)
-+        .iter(ctx)
-+        .any(|op| MirFuncOp::wrap(ctx, op).is_some() && has_verification_attributes(ctx, op))
-+}
-+
- /// Verify every `mir.func` in `module` that carries `#[verify(...)]` attributes,
- /// and elide `mir.assert` bounds checks proven redundant by Lean 4.
- ///
 ```
 
-**File**: `cuda-oxide/crates/lean-exporter/src/ssa.rs` (modified, +13/-0)
+**File**: `cuda-oxide/oxide-proofs-preview/CudaOxide/Contracts/Program.lean` (modified, +4/-4)
 ```diff
-@@ -132,6 +132,8 @@ pub enum CfgBranchCond {
-     PosLoopExit(usize),
-     /// CTA-uniform loop bound condition (`tile < k`, `col < 128`).
-     Uniform,
-+    /// Warp-convergent runtime condition (all 32 lanes of each active warp take the same branch).
-+    WarpUniform,
-     /// Data-dependent or unmodeled runtime condition (`if flag`, `if data[tid] > 0.0`).
-     Unknown,
- }
-@@ -166,6 +168,11 @@ pub enum CfgOpItem {
-         /// Expected thread arrival count.
-         count: u64,
-     },
-+    /// `mbarrier_inval(&BAR)` resetting `bar_id` back to `.uninit`.
-+    MbarInval {
-+        /// Index of the `Barrier` static (`0..num_barriers`).
-+        bar_id: usize,
-+    },
-     /// `fence_proxy_async_shared_cta()` flushing generic writes to the async proxy.
-     ProxyFenceAsyncShared,
-     /// Plain arrival `mbarrier_arrive(&BAR)`.
-@@ -243,6 +250,12 @@ pub enum CfgOpItem {
-         /// Identifier of the consumed `TmemLoad` result.
-         ld_id: usize,
-     },
-+    /// Warp-convergent `tcgen05_store_wait()` retiring async `tcgen05.st` operations.
-+    TmemStoreWait,
-+    /// `tcgen05_fence_before_thread_sync()` ordering `tcgen05` prior to thread synchronization.
-+    TmemFenceBeforeSync,
-+    /// `tcgen05_fence_after_thread_sync()` ordering `tcgen05` after thread synchronization.
-+    TmemFenceAfterSync,
- }
+@@ -125,10 +125,10 @@ def MirNoOobClusterRank (f : MirFunc) : Prop :=
+       r < f.clusterDimX                                     -- THEN `r` is a valid peer CTA rank `< f.clusterDimX`.
  
- /// One basic block transcribed into `CudaOxide.Mir.ControlFlow.CfgBlock`.
+ /-- **`writes_all_elems(out)`**: Whenever the launched grid has at least one Y row
+-    (`0 < env.gridDimY`) and covers `out.len()` (`env.sliceLen paramId ≤ gridDimX * f.blockDimX`,
++    (`0 < gridDimY`) and covers `out.len()` (`env.sliceLen paramId ≤ gridDimX * f.blockDimX`,
+     with `env.sliceLen paramId < 2^32` when `f.u32Coords = true`), EVERY element index
+-    `elemIdx < env.sliceLen paramId` is written by some valid launched GPU thread `t`
+-    (`t.bx < gridDimX ∧ t.by_ < gridDimY`) executing `f` from entry block `0`. -/
++    `elemIdx < env.sliceLen paramId` is written without hitting any `mir.assert` trap by some
++    valid launched GPU thread `t` (`t.bx < gridDimX ∧ t.by_ < gridDimY`) starting from block `0`. -/
+ def MirWritesAllElems (f : MirFunc) (paramId : Nat) : Prop :=
+   ∀ env : InputEnv, ∀ gridDimX gridDimY : Nat,              -- Pick ANY valid launch `env` and `(gridDimX, gridDimY)`:
+     f.validInput env →                                      -- IF `env` satisfies launch preconditions,
+@@ -140,7 +140,7 @@ def MirWritesAllElems (f : MirFunc) (paramId : Nat) : Prop :=
+       ∃ t : ThreadCtx, ∃ ev : MemEvent,                     -- there EXISTS a GPU thread `t` and write event `ev` such that:
+         f.validThread t ∧                                   --   (1) `t` is within the CTA's `(blockDimX, blockDimY)` bounds,
+         t.bx < gridDimX ∧ t.by_ < gridDimY ∧                --   (2) `t` belongs to an active launched CTA in the grid,
+-        EmitsEvent f env t ev ∧                             --   (3) `t` reaches and emits `ev` starting from entry block `0`,
++        EmitsTrapFreeEvent f env t ev ∧                     --   (3) `t` reaches and emits `ev` trap-free from entry block `0`,
+         ev.isWrite = true ∧ ev.space = .global ∧            --   (4) `ev` is a global write to `paramId` at `ev.index = elemIdx`.
+         ev.bufId = paramId ∧ ev.index = elemIdx
+ 
 ```
 
-**File**: `cuda-oxide/crates/lean-exporter/src/translate/ir_utils.rs` (modified, +31/-16)
+**File**: `cuda-oxide/oxide-proofs-preview/CudaOxide/Mir/Program.lean` (modified, +80/-0)
 ```diff
-@@ -8,7 +8,7 @@
+@@ -671,4 +671,84 @@ def EmitsTmemEvent (f : MirFunc) (env : InputEnv) (t : ThreadCtx) (tev : TmemEve
+     Reachable f env t b regs phase ∧
+     tev ∈ (execStmts f env t regs phase (f.blockAt b).term (f.blockAt b).stmts).2.2.2
  
- use std::collections::BTreeSet;
- 
--use dialect_mir::types::MirStructType;
-+use dialect_mir::types::{MirPtrType, MirStructType};
- use pliron::{
-     attribute::AttributeDict,
-     basic_block::BasicBlock,
-@@ -172,6 +172,35 @@ fn peel_single_field_structs(ctx: &Context, mut ty: TypeHandle) -> TypeHandle {
-     ty
- }
- 
-+/// Compute the byte width of a `dialect-mir` element `TypeHandle` (`0` if unknown).
-+/// Resolves integer bit widths (`u8..u128`), floats, and 1-field wrapper structs.
-+pub(super) fn mir_type_elem_bytes(ctx: &Context, ty: TypeHandle) -> u64 {
-+    let ty_handle = peel_single_field_structs(ctx, ty);
-+    let ty_ref = ty_handle.deref(ctx);
-+    if let Some(int_ty) = ty_ref.downcast_ref::<IntegerType>() {
-+        u64::from(int_ty.width()).div_ceil(8)
-+    } else if let Some(st) = ty_ref.downcast_ref::<MirStructType>()
-+        && st.total_size > 0
-+    {
-+        st.total_size
-+    } else {
-+        match ty_handle.disp(ctx).to_string().trim() {
-+            "builtin.fp16" | "builtin.bf16" | "mir.fp16" => 2,
-+            "builtin.fp32" => 4,
-+            "builtin.fp64" => 8,
-+            _ => 0,
-+        }
-+    }
-+}
++/-- True when every `Stmt.assertCond _ cond` in `stmts` evaluates `cond` to `.bool true`
++    (meaning no retained runtime `mir.assert` check traps while executing `stmts`). -/
++def stmtsNoTrap (f : MirFunc) (env : InputEnv) (t : ThreadCtx)
++    (regs : RegFile) (phase : Nat) (term : Terminator) : List Stmt → Bool
++  | [] => true
++  | stmt :: rest =>
++      match stmt with
++      | .assertCond _ cond =>
++          (regs cond == .bool true) && stmtsNoTrap f env t regs phase term rest
++      | .assign dst (.load _) =>
++          stmtsNoTrap f env t (regs.set dst .unk) phase term rest
++      | .assign dst (.loadTmemBase _ cols) =>
++          stmtsNoTrap f env t (regs.set dst (.tmemPtr cols 0)) phase term rest
++      | .assign dst rhs =>
++          stmtsNoTrap f env t (regs.set dst (evalRhs f env t regs rhs)) phase term rest
++      | .syncThreads =>
++          stmtsNoTrap f env t regs (phase + 1) term rest
++      | _ =>
++          stmtsNoTrap f env t regs phase term rest
 +
-+/// Extract the pointee byte width of a `MirPtrType` (`0` if not a `MirPtrType` or unknown).
-+pub(super) fn ptr_pointee_elem_bytes(ctx: &Context, ptr_ty: TypeHandle) -> u64 {
-+    ptr_ty
-+        .deref(ctx)
-+        .downcast_ref::<MirPtrType>()
-+        .map_or(0, |pt| mir_type_elem_bytes(ctx, pt.pointee))
-+}
++/-- Inductive small-step reachability of `(blockIdx, entryRegs, entryPhase)` where every
++    `Stmt.assertCond` executed along predecessor blocks evaluated to `.bool true`. -/
++inductive ReachableTrapFree (f : MirFunc) (env : InputEnv) (t : ThreadCtx) :
++    Nat → RegFile → Nat → Prop where
++  /-- Kernel starts at `block 0` in phase `0` with `initialRegs f env`. -/
++  | entry (hpos : 0 < f.blocks.length) :
++      ReachableTrapFree f env t 0 (initialRegs f env) 0
++  /-- Trap-free unconditional `mir.goto target args` transition. -/
++  | stepGoto {b target phase outPhase : Nat} {regs outRegs : RegFile}
++      {evs : List MemEvent} {tevs : List TmemEvent} {args : List Nat}
++      (hreach : ReachableTrapFree f env t b regs phase)
++      (hnotrap : stmtsNoTrap f env t regs phase (f.blockAt b).term (f.blockAt b).stmts = true)
++      (hexec : execStmts f env t regs phase (f.blockAt b).term (f.blockAt b).stmts = (outRegs, outPhase, evs, tevs))
++      (hterm : (f.blockAt b).term = .goto target args)
++      (hdst : target < f.blocks.length) :
++      ReachableTrapFree f env t target (bindBlockArgs outRegs outRegs (f.blockAt target).args args) outPhase
++  /-- Trap-free conditional `mir.cond_br` taking `thenBlk` when `outRegs cond = .bool true`. -/
++  | stepCondTrue {b tBlk fBlk cond phase outPhase : Nat} {regs outRegs : RegFile}
++      {evs : List MemEvent} {tevs : List TmemEvent} {tArgs fArgs : List Nat}
++      (hreach : ReachableTrapFree f env t b regs phase)
++      (hnotrap : stmtsNoTrap f env t regs phase (f.blockAt b).term (f.blockAt b).stmts = true)
++      (hexec : execStmts f env t regs phase (f.blockAt b).term (f.blockAt b).stmts = (outRegs, outPhase, evs, tevs))
++      (hterm : (f.blockAt b).term = .condBr cond tBlk tArgs fBlk fArgs)
++      (hcond : outRegs cond = .bool true)
++      (hdst : tBlk < f.blocks.length) :
++      ReachableTrapFree f env t tBlk (bindBlockArgs outRegs outRegs (f.blockAt tBlk).args tArgs) outPhase
++  /-- Trap-free conditional `mir.cond_br` taking `elseBlk` when `outRegs cond = .bool false`. -/
++  | stepCondFalse {b tBlk fBlk cond phase outPhase : Nat} {regs outRegs : RegFile}
++      {evs : List MemEvent} {tevs : List TmemEvent} {tArgs fArgs : List Nat}
++      (hreach : ReachableTrapFree f env t b regs phase)
++      (hnotrap : stmtsNoTrap f env t regs phase (f.blockAt b).term (f.blockAt b).stmts = true)
++      (hexec : execStmts f env t regs phase (f.blockAt b).term (f.blockAt b).stmts = (outRegs, outPhase, evs, tevs))
++      (hterm : (f.blockAt b).term = .condBr cond tBlk tArgs fBlk fArgs)
++      (hcond : outRegs cond = .bool false)
++      (hdst : fBlk < f.blocks.length) :
++      ReachableTrapFree f env t fBlk (bindBlockArgs outRegs outRegs (f.blockAt fBlk).args fArgs) outPhase
 +
- /// Compute the byte width of one element in a `mir.shared_alloc` operation (`0` if unknown).
- /// Resolves integer bit widths (`u8`, `u16`, `u32`, `u64`), floats, and 1-field wrapper structs.
- pub(super) fn shared_alloc_elem_bytes(ctx: &Context, op: &Operation) -> u64 {
-@@ -180,21 +209,7 @@ pub(super) fn shared_alloc_elem_bytes(ctx: &Context, op: &Operation) -> u64 {
-         .iter()
-         .find(|(k, _)| k.to_string() == "elem_type")
-         .and_then(|(_, v)| v.downcast_ref::<TypeAttr>())
--        .map(|ta| {
--            let ty_handle = peel_single_field_structs(ctx, ta.get_type(ctx));
--            let ty_ref = ty_handle.deref(ctx);
--            if let Some(int_ty) = ty_ref.downcast_ref::<IntegerType>() {
--                u64::from(int_ty.width()).div_ceil(8)
--            } else {
--                match ty_handle.disp(ctx).to_string().trim() {
--                    "builtin.fp16" | "builtin.bf16" => 2,
--                    "builtin.fp32" => 4,
--                    "builtin.fp64" => 8,
--                    _ => 0,
--                }
--            }
--        })
--        .unwrap_or(0)
-+        .map_or(0, |ta| mir_type_elem_bytes(ctx, ta.get_type(ctx)))
- }
- 
- /// Return true if `op` is a `mir.shared_alloc` for a scalar `static mut BAR: Barrier`.
++/-- Trap-free reachability implies general `Reachable`. -/
++theorem ReachableTrapFree.toReachable {f : MirFunc} {env : InputEnv} {t : ThreadCtx}
++    {b phase : Nat} {regs : RegFile} (h : ReachableTrapFree f env t b regs phase) :
++    Reachable f env t b regs phase := by
++  induction h with
++  | entry hpos => exact Reachable.entry hpos                 -- Base entry block `0`
++  | stepGoto _ _ hex hterm hdst ih => exact Reachable.stepGoto ih hex hterm hdst
++  | stepCondTrue _ _ hex hterm hc hdst ih => exact Reachable.stepCondTrue ih hex hterm hc hdst
++  | stepCondFalse _ _ hex hterm hc hdst ih => exact Reachable.stepCondFalse ih hex hterm hc hdst
++
++/-- `MemEvent` `ev` is emitted on a trap-free execution path (every `Stmt.assertCond`
++    along predecessor blocks and inside the emitting block evaluates to `.bool true`). -/
++def EmitsTrapFreeEvent (f : MirFunc) (env : InputEnv) (t : ThreadCtx) (ev : MemEvent) : Prop :=
++  ∃ b phase : Nat, ∃ regs : RegFile,
++    ReachableTrapFree f env t b regs phase ∧
++    stmtsNoTrap f e
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1866** (2026-11-25): fix(cuda-oxide): support reverse indexing in writes_all_elems and harden write coverage (@nihalpasham)
 - **PR #1857** (2026-11-23): fix(cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene (@nihalpasham)
 - **PR #1851** (2026-11-23): feat(cuda-oxide): compile-time Lean 4 kernel verification (#[verify], preview) and safe Blackwell GEMM (@nihalpasham)
 - **PR #1849** (2026-11-21): feat(cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a) (@nihalpasham)
 - **PR #1835** (2026-11-19): ci: move the cutile-rs setup action to the root .github/actions (@roivanov)
 - **PR #1833** (2026-11-18): fix(cutile-kernels): add strided prefill and improve FP16 GEMM (@elibol)
-- **PR #1830** (2026-11-17): fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target (@nihalpasham)
 
 ---
 
@@ -2835,53 +2728,26 @@ uninit
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene
+## X. cuda-oxide): support reverse indexing in writes_all_elems and harden write cover
 
 **RULE**:
-When implementing operations in `cuda-oxide/crates/cuda-device/src/shared.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/crates/cuda-macros/src/cuda_module/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e5c77b1`: cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f35d6ccc`: cuda-oxide): support reverse indexing in writes_all_elems and harden write coverage. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/cuda-device/src/shared.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/cuda-macros/src/cuda_module/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-/// Private sealing module ensuring [`VerifiedSharedElement`] can only be
-/// implemented within `cuda-device` for bit-valid element types.
-mod verified_shared_sealed {
-    /// Supertrait sealing [`super::VerifiedSharedElement`] against external impls.
-    pub trait Sealed {}
-}
-
-/// Sealed marker trait for element types of [`SharedArray`] statics proved safe
-/// by `#[verify(...)]`.
-///
-/// # Safety
-///
-/// Every possible bit pattern of `Self` (including arbitrary SRAM power-on
-/// bytes) must be a valid inhabited value of `Self` with no padding/niche
-/// validity invariants (`bool`, `char`, references, and `NonZero*` are
-/// excluded).
-pub unsafe trait VerifiedSharedElement: verified_shared_sealed::Sealed {}
-
-/// Implement [`VerifiedSharedElement`] for primitive integer and float scalars
-/// whose every bit pattern represents a valid value.
-macro_rules! impl_verified_shared_element {
-    ($($ty:ty),* $(,)?) => {
-        $(
-            impl verified_shared_sealed::Sealed for $ty {}
-            // SAFETY: primitive integer/floating-point bit patterns are all valid.
-            unsafe impl VerifiedSharedElement for $ty {}
-        )*
-    };
-}
-
-impl_verified_shared_element!(
-    u8, u
+                if launch_contract.as_ref().map(|c| c.domain) != Some(1) {
+                    return Err(syn::Error::new(
+                        ident.span(),
+                        "`writes_all_elems(...)` requires `#[launch_contract(domain = 1, ...)]`",
+                    ));
+                }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2891,7 +2757,7 @@ impl_verified_shared_element!(
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e5c77b1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f35d6ccc` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

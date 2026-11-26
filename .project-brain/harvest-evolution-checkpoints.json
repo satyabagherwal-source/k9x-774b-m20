@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:46:48.186Z",
+  "last_updated": "2026-11-26T00:59:37.846Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-26T00:26:35.558Z",
+      "processed_at": "2026-11-26T00:59:36.910Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -143,7 +143,7 @@
       "staged_for_review": 1
     },
     "hf-unsloth-qwen3.8-flash-next-gguf-learnings.md": {
-      "processed_at": "2026-11-22T03:46:26.569Z",
+      "processed_at": "2026-11-26T00:59:36.465Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -1003,7 +1003,7 @@
       "staged_for_review": 1
     },
     "nvidia-cuda-rust-learnings.md": {
-      "processed_at": "2026-11-23T15:54:52.867Z",
+      "processed_at": "2026-11-26T00:59:35.624Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3943,7 +3943,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4302,
+  "total_dossiers_evaluated": 4305,
   "total_canonical_promoted": 548,
-  "total_staged_for_review": 3268
+  "total_staged_for_review": 3270
 }

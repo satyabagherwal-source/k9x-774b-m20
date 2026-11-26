@@ -13212,3 +13212,5 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `279a0c24` | Multi-dimensional audit evidence | 2026-11-26T00:46:34.113Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f2c476cf` | Multi-dimensional audit evidence | 2026-11-26T00:46:36.761Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ac6641e3` | Multi-dimensional audit evidence | 2026-11-26T00:46:42.033Z |
+| `learn-huggingface-unsloth-qwen3-8-flash-next-gguf` | `https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-26T00:59:23.571Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `f35d6ccc` | Multi-dimensional audit evidence | 2026-11-26T00:59:24.701Z |

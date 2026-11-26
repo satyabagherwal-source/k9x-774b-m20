@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T00:46:47.811Z",
+  "last_updated": "2026-11-26T00:59:37.506Z",
   "total_records": 2693,
   "domains": {
     "A": {
@@ -8508,8 +8508,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c8d0cb8c44d216572fa9e5812950a228c5023178029734bd10146acd7ce5cfa6",
-      "created_at": "2026-11-26T00:26:36.149Z"
+      "content_hash": "f68a3d930bc1f218b7e8a9212c21207fb21989c703735027dc72963dd7636233",
+      "created_at": "2026-11-26T00:59:37.506Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -11421,8 +11421,8 @@
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "repository": "NVIDIA/cuda-rust",
-      "content_hash": "620d4681aa8c4304e453a2742f07aebf0f5201faf3e6ba412901556eb5b7d3d8",
-      "created_at": "2026-11-23T15:54:43.532Z"
+      "content_hash": "fe3965496aef43e4e5b7c75c5f78ae6808dbbd6c4136cff513a287d6eb91d004",
+      "created_at": "2026-11-26T00:59:25.164Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
@@ -11457,8 +11457,8 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
       "repository": "nvidia-cuda-rust-learnings",
-      "content_hash": "40886a2055a9401c349df5d78c79871b3dcf9157d3ccf665351ad1b040f5d415",
-      "created_at": "2026-11-23T15:54:53.431Z"
+      "content_hash": "0dfbc69ca8feb3a85fc9da39a59fa3c3551c4b26470d43aa486f6cbc91183d42",
+      "created_at": "2026-11-26T00:59:36.110Z"
     },
     "DOM-D-86956AB2": {
       "record_id": "DOM-D-86956AB2",
@@ -23579,8 +23579,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-Flash-Next-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-flash-next-gguf-research-knowledge-intelligence-unsloth-qwen3.md",
       "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
-      "content_hash": "725b54c630fa58e165dc29ce894103b5c7d4a4502a6c8460fa7fd250a8655bdd",
-      "created_at": "2026-11-22T03:46:14.316Z"
+      "content_hash": "52fea9a4455436f3a5302c3306196f029f8c6041bb9c761486eebcf01cd95059",
+      "created_at": "2026-11-26T00:59:23.821Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-flash-next-gguf-learnings-cor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-flash-next-gguf-learnings-cor",
@@ -23588,8 +23588,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-flash-next-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-flash-next-gguf-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-unsloth-qwen3.8-flash-next-gguf-learnings",
-      "content_hash": "2d1d8f51892d7e5a11a353b2692c2104998073810422e044ddf6ba55e946a012",
-      "created_at": "2026-11-22T03:46:26.760Z"
+      "content_hash": "41c36bff2a3379a7251d27dc990ab73846672c3bca7eed10fcbfb8fbbd327fc6",
+      "created_at": "2026-11-26T00:59:36.703Z"
     },
     "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants",

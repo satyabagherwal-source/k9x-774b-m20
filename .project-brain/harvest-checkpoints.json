@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T00:46:42.050Z",
+  "last_updated": "2026-11-26T00:59:24.718Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "7a4e7556c3c1698c049469ea840dee186ccc5d24ab8ca72cfe760f5970125717",
-      "verified_at": "2026-11-23T15:54:43.034Z",
+      "content_hash": "6a8e8193f8400f14600d6b6749e935f01d7fc8f17c57286b566198cc18e380a1",
+      "verified_at": "2026-11-26T00:59:24.717Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T15:54:43.035Z"
+      "last_updated": "2026-11-26T00:59:24.717Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -18171,14 +18171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-      "content_hash": "0c3aafcad38ff3348e774495056a9d7bea3301a78633afe855f8b315ed07a6e4",
-      "verified_at": "2026-11-22T03:46:14.141Z",
+      "content_hash": "d6635611622e9d9dc6fd609c39dbba2fed499aa811c82b19bf981ffcab0c2d72",
+      "verified_at": "2026-11-26T00:59:23.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:46:14.141Z"
+      "last_updated": "2026-11-26T00:59:23.590Z"
     },
     "baidu/ERNIE-5.5-Flash-Base": {
       "repository": "baidu/ERNIE-5.5-Flash-Base",

@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T00:18:02.040Z",
-    "lastVerified": "2026-11-26T00:18:02.040Z",
+    "lastChecked": "2026-11-26T00:59:35.452Z",
+    "lastVerified": "2026-11-26T00:59:35.452Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T00:46:45.430Z",
-    "lastVerified": "2026-11-26T00:46:45.430Z",
+    "lastChecked": "2026-11-26T00:59:35.461Z",
+    "lastVerified": "2026-11-26T00:59:35.461Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2245,9 +2245,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-24T23:33:27.130Z",
+    "lastChecked": "2026-11-26T00:59:32.807Z",
     "revisionIdentifier": "d375c6d7",
-    "lastVerified": "2026-11-24T23:33:27.130Z"
+    "lastVerified": "2026-11-26T00:59:32.807Z"
   },
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
@@ -2314,8 +2314,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-25T14:04:58.473Z",
-    "lastVerified": "2026-11-25T14:04:58.473Z",
+    "lastChecked": "2026-11-26T00:59:30.386Z",
+    "lastVerified": "2026-11-26T00:59:30.386Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -5016,12 +5016,12 @@
     "lastVerified": "2026-11-24T17:33:03.953Z"
   },
   "aquasecurity-trivy": {
-    "name": "aquasecurity/trivy",
+    "name": "trivy",
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T00:35:18.205Z",
-    "lastVerified": "2026-11-25T00:35:18.205Z",
+    "lastChecked": "2026-11-26T00:59:27.908Z",
+    "lastVerified": "2026-11-26T00:59:27.908Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
@@ -5030,7 +5030,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c14584a6"
   },
   "slatedb-slatedb": {
     "name": "slatedb/slatedb",
@@ -5693,22 +5694,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nvidia-cuda-rust": {
-    "name": "cuda-rust",
+    "name": "NVIDIA/cuda-rust",
     "officialUrl": "https://github.com/NVIDIA/cuda-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T17:22:51.468Z",
-    "lastVerified": "2026-11-24T17:22:51.468Z",
+    "lastChecked": "2026-11-26T00:59:23.460Z",
+    "lastVerified": "2026-11-26T00:59:23.460Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "7a4e7556c3c1698c049469ea840dee186ccc5d24ab8ca72cfe760f5970125717",
+    "contentHash": "6a8e8193f8400f14600d6b6749e935f01d7fc8f17c57286b566198cc18e380a1",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5e5c77b1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
     "name": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -10679,9 +10679,9 @@
   "gonzalezreal-swift-markdown-ui": {
     "name": "swift-markdown-ui",
     "officialUrl": "https://github.com/gonzalezreal/swift-markdown-ui",
-    "lastChecked": "2026-11-23T15:20:47.234Z",
+    "lastChecked": "2026-11-26T00:59:25.639Z",
     "revisionIdentifier": "8371aeb3",
-    "lastVerified": "2026-11-23T15:20:47.234Z"
+    "lastVerified": "2026-11-26T00:59:25.639Z"
   },
   "scrapy-plugins-scrapy-playwright": {
     "name": "scrapy-playwright",
@@ -14046,12 +14046,12 @@
     "officialUrl": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T03:46:13.443Z",
-    "lastVerified": "2026-11-22T03:46:13.443Z",
+    "lastChecked": "2026-11-26T00:59:22.863Z",
+    "lastVerified": "2026-11-26T00:59:22.863Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-    "contentHash": "0c3aafcad38ff3348e774495056a9d7bea3301a78633afe855f8b315ed07a6e4",
+    "contentHash": "d6635611622e9d9dc6fd609c39dbba2fed499aa811c82b19bf981ffcab0c2d72",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

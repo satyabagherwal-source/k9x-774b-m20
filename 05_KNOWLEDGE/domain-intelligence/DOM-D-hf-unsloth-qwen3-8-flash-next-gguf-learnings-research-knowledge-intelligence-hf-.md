@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T03:46:26.660Z",
+  "timestamp": "2026-11-26T00:59:36.579Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-unsloth-qwen3.8-flash-next-gguf-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-unsloth-qwen3.8-flash-next-gguf-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T03:46:26.660Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T00:59:36.579Z`  
 > **Learning ID**: `LEARN-EVO-hf-unsloth-qwen3.8-flash-next-gguf-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-unsloth-q`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T03:46:13.659Z  
+> **Timestamp**: 2026-11-26T00:59:22.992Z  
 > **Learning ID**: `learn-huggingface-unsloth-qwen3-8-flash-next-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF](https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T03:46:13.443Z  
+> **Harvest Timestamp**: 2026-11-26T00:59:22.863Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3289023 downloads | 1920 likes
+- **Stars / Engagement**: 4051762 downloads | 1978 likes
 
 ---
 

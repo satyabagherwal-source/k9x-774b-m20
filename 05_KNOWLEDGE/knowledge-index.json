@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T00:46:48.005Z",
+  "last_updated": "2026-11-26T00:59:37.694Z",
   "total_verified_learnings": 9121,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25579,
+  "total_items": 25582,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8d0cb8c44d216572fa9e5812950a228c5023178029734bd10146acd7ce5cfa6",
+      "content_hash": "f68a3d930bc1f218b7e8a9212c21207fb21989c703735027dc72963dd7636233",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T00:26:36.149Z"
+      "persisted_at": "2026-11-26T00:59:37.506Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba2dc0637aaee464ead11bf976b0dde545fc2bd9759752841bbb8c938301f88a",
+      "content_hash": "1c0bb1820b12167b4c354401442cf145c94dae0287c3d704a7a68747f790aa5b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:26:36.325Z"
+      "persisted_at": "2026-11-26T00:59:37.694Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -216917,8 +216917,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "5e5c77b1",
-      "content_hash": "7a4e7556c3c1698c049469ea840dee186ccc5d24ab8ca72cfe760f5970125717",
+      "source_version": "f35d6ccc",
+      "content_hash": "6a8e8193f8400f14600d6b6749e935f01d7fc8f17c57286b566198cc18e380a1",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -216956,6 +216956,11 @@
           "number": 10062,
           "title": "harden #[verify] contracts, MIR translation, and macro hygiene",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10574,
+          "title": "support reverse indexing in writes_all_elems and harden write cover",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216963,7 +216968,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T15:54:42.706Z",
+      "verified_at": "2026-11-26T00:59:24.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217005,10 +217010,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "5e5c77b1",
-      "content_hash": "620d4681aa8c4304e453a2742f07aebf0f5201faf3e6ba412901556eb5b7d3d8",
+      "source_version": "f35d6ccc",
+      "content_hash": "fe3965496aef43e4e5b7c75c5f78ae6808dbbd6c4136cff513a287d6eb91d004",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T15:54:43.532Z"
+      "persisted_at": "2026-11-26T00:59:25.164Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust",
@@ -217017,10 +217022,10 @@
       "relative_path": "08_VERIFICATION/nvidia-cuda-rust-verification-protocol-empirical-defect-shield-for-nvidia-cuda-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for NVIDIA/cuda-rust",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "5e5c77b1",
-      "content_hash": "83c572ae2c129f7c68aa67da0b3822856300da598ecf2e12f6445f0b0faf2095",
+      "source_version": "f35d6ccc",
+      "content_hash": "f9a3f7a8ab5c65c990e1dbe5a210a056b3aaceb57908210e0409e95ae58e3c04",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:54:43.767Z"
+      "persisted_at": "2026-11-26T00:59:25.362Z"
     },
     "learn-github-infinitered-reactotron": {
       "learning_id": "learn-github-infinitered-reactotron",
@@ -217379,9 +217384,9 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "40886a2055a9401c349df5d78c79871b3dcf9157d3ccf665351ad1b040f5d415",
+      "content_hash": "0dfbc69ca8feb3a85fc9da39a59fa3c3551c4b26470d43aa486f6cbc91183d42",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T15:54:53.431Z"
+      "persisted_at": "2026-11-26T00:59:36.110Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings",
@@ -217391,9 +217396,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nvidia-cuda-rust-learnings",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "cca4e5870977b2ced34001a8bb504d6c65e72fd96c9d3a2bda4ff477df31b4ef",
+      "content_hash": "71c2cf1f9d5c8badf50ab4f4f2686b6a996580708735a0cfda1cc87ce9dbc0a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:54:53.686Z"
+      "persisted_at": "2026-11-26T00:59:36.298Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants",
@@ -255634,7 +255639,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
       "source_version": "hf-unsloth-qwen3.8-flash-next-gguf",
-      "content_hash": "0c3aafcad38ff3348e774495056a9d7bea3301a78633afe855f8b315ed07a6e4",
+      "content_hash": "d6635611622e9d9dc6fd609c39dbba2fed499aa811c82b19bf981ffcab0c2d72",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
       "promoted_rules": [],
@@ -255643,7 +255648,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T03:46:13.908Z",
+      "verified_at": "2026-11-26T00:59:23.296Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255660,9 +255665,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-Flash-Next-GGUF Core Invariants",
       "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
       "source_version": "hf-unsloth-qwen3.8-flash-next-gguf",
-      "content_hash": "725b54c630fa58e165dc29ce894103b5c7d4a4502a6c8460fa7fd250a8655bdd",
+      "content_hash": "52fea9a4455436f3a5302c3306196f029f8c6041bb9c761486eebcf01cd95059",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T03:46:14.316Z"
+      "persisted_at": "2026-11-26T00:59:23.821Z"
     },
     "rule-8675": {
       "learning_id": "rule-8675",
@@ -255724,9 +255729,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-flash-next-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-qwen3.8-flash-next-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d1d8f51892d7e5a11a353b2692c2104998073810422e044ddf6ba55e946a012",
+      "content_hash": "41c36bff2a3379a7251d27dc990ab73846672c3bca7eed10fcbfb8fbbd327fc6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T03:46:26.760Z"
+      "persisted_at": "2026-11-26T00:59:36.703Z"
     },
     "learn-github-rainbow-me-rainbow": {
       "learning_id": "learn-github-rainbow-me-rainbow",
@@ -336495,13 +336500,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-B8S6-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HPM0-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd1f6aa9ec53ada0925516c0e5cb45089942055bf58b1a13002c298216fb6416",
+      "content_hash": "69c25c5eaec165d4503179ff0de7f08b4b1fe06f11e7c1e83a4c891a00f64b89",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T00:26:35.961Z"
+      "persisted_at": "2026-11-26T00:59:37.323Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -350172,6 +350177,44 @@
       "content_hash": "155fc48bbd37ed929161767fb1bfbecca227bd5bc1dbe4c0fce28835961403de",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T00:46:46.545Z"
+    },
+    "rule-10574": {
+      "learning_id": "rule-10574",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10574,
+      "title": "support reverse indexing in writes_all_elems and harden write cover",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "f35d6ccc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T00:59:24.461Z"
+    },
+    "candidate_directive-support-reverse-indexing-in-writes_all_elems-and-harden-write-cover": {
+      "item_id": "candidate_directive-support-reverse-indexing-in-writes_all_elems-and-harden-write-cover",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HG2M-support-reverse-indexing-in-writes_all_elems-and-harden-write-cover.md",
+      "title": "support reverse indexing in writes_all_elems and harden write cover",
+      "repository": "NVIDIA/cuda-rust",
+      "source_version": "f35d6ccc",
+      "content_hash": "42e3f807c7819093e6212372fdd54fb5739ad1dbf773452395eee2efbde68d82",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T00:59:24.961Z"
+    },
+    "candidate_directive-cuda-oxide-support-reverse-indexing-in-writes_all_elems-and-harden-write-cover": {
+      "item_id": "candidate_directive-cuda-oxide-support-reverse-indexing-in-writes_all_elems-and-harden-write-cover",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HOJ4-cuda-oxide-support-reverse-indexing-in-writes_all_elems-and-harden-write-cover.md",
+      "title": "cuda-oxide): support reverse indexing in writes_all_elems and harden write cover",
+      "repository": "nvidia-cuda-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "82146ad8097e483296e7b13cb347e842bd83d0fc86dfcb7c5d11a4520ef8b16d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T00:59:35.924Z"
     }
   },
   "ai-builder-brain": {

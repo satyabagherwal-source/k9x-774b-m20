@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "5e5c77b1",
+    "sourceVersion": "f35d6ccc",
     "license": "Apache-2.0",
-    "contentHash": "7a4e7556c3c1698c049469ea840dee186ccc5d24ab8ca72cfe760f5970125717",
-    "lastHarvestedAt": "2026-11-23T15:54:43.024Z",
+    "contentHash": "6a8e8193f8400f14600d6b6749e935f01d7fc8f17c57286b566198cc18e380a1",
+    "lastHarvestedAt": "2026-11-26T00:59:24.701Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -12075,8 +12075,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-flash-next-gguf",
     "license": "Open-Source",
-    "contentHash": "0c3aafcad38ff3348e774495056a9d7bea3301a78633afe855f8b315ed07a6e4",
-    "lastHarvestedAt": "2026-11-22T03:46:14.133Z",
+    "contentHash": "d6635611622e9d9dc6fd609c39dbba2fed499aa811c82b19bf981ffcab0c2d72",
+    "lastHarvestedAt": "2026-11-26T00:59:23.571Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf"
   },
   "hf-baidu-ernie-5.5-flash-base": {

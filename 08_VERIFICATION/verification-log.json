@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-I6SS",
-    "timestamp": "2026-11-24T08:24:33.004Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "2a60426ade967d14fc90af240454782856769fb26aae0d8c82253bfe701df90a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-IWVV",
-    "timestamp": "2026-11-24T08:25:06.811Z",
-    "repository": "zulip/zulip",
-    "learningId": "learn-github-zulip-zulip",
-    "contentHash": "f323e2d03a77f2873c98c850fe086056362cb604bbcb9a9acea363c2c6bb7b81",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-V048",
     "timestamp": "2026-11-24T08:34:30.872Z",
     "repository": "1jehuang/jcode",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "2f3def1226a529990dec69be1d6d554089d2dc7a81622536631885b027185976",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-HEZY",
+    "timestamp": "2026-11-26T00:59:23.566Z",
+    "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
+    "contentHash": "d6635611622e9d9dc6fd609c39dbba2fed499aa811c82b19bf981ffcab0c2d72",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-HFVC",
+    "timestamp": "2026-11-26T00:59:24.696Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "6a8e8193f8400f14600d6b6749e935f01d7fc8f17c57286b566198cc18e380a1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
