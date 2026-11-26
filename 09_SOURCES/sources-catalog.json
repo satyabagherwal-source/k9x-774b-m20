@@ -725,8 +725,8 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "569ffdd6fbcc092b4ae37f3d3ba29caac68481fb8f21da90c6adae0e448ce46f",
-    "lastHarvestedAt": "2026-11-23T00:39:27.106Z",
+    "contentHash": "a54184f8d0c72c943b79ad88bdc2540e6e78dbf90ae3aef4fb6866c282cec782",
+    "lastHarvestedAt": "2026-11-26T17:30:45.151Z",
     "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "fbb4083a",
+    "sourceVersion": "ae294f53",
     "license": "MIT",
-    "contentHash": "e5eb38a7fe39feb39f90fec6d0bf0969d24b68829ae3a772cd527ad6e3b37398",
-    "lastHarvestedAt": "2026-11-25T09:54:17.259Z",
+    "contentHash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
+    "lastHarvestedAt": "2026-11-26T17:30:47.798Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {

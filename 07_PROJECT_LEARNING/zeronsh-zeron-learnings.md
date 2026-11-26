@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `fbb4083a`  
+> **Source Version**: `ae294f53`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T09:54:16.068Z  
+> **Timestamp**: 2026-11-26T17:30:46.853Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T09:54:16.063Z  
+> **Harvest Timestamp**: 2026-11-26T17:30:46.849Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3752 stars
+- **Stars / Engagement**: 3765 stars
 
 ---
 
@@ -1533,327 +1533,636 @@ class TranscriptState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbb4083a` (2026-11-25)
-**Commit Message**: MCP settings: a section with nothing in it takes no room (#1600)
+### Incident Patch 1: `ae294f53` (2026-11-26)
+**Commit Message**: Delegate in the background: subagent chats on any provider or device, and a parent that waits (#1597)
 
-Settings → MCP kept the room of "Waiting for you" and "Your servers" while
-they had nothing to show: their search anchors stood in the page round a
-section that was hidden, each taking a step of its rhythm. With no server
-added, the list to add from stood 96 points under the page's words, not 32.
-The anchors are inside what shows the sections now.
+* Delegated work: durable tasks, engine-watched children, one wake with the results
 
-Co-authored-by: Wing <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-**File**: `apps/zgx/ui/mcp_page_fixture.luau` (added, +48/-0)
+* Background delegation in the app: a Waiting shelf, child chats in the tray with Stop, approvals on the parent, wakes as chips, the setting
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+
+* Delegation: one subagent list and waiting labels in the client, wakes on mobile, docs
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+
+* Delegation: approval card polish, waiting rows' detail, screenshots
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+
+* Delegation: Zeron v2's composer and the preview's refusals follow
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt` (modified, +19/-3)
 ```diff
-@@ -0,0 +1,48 @@
-+-- The shell (ui/shell_fixture.luau) with Settings → MCP's snapshot: what
-+-- tests/settings_mcp.test.luau measures. It starts with no server added;
-+-- `mcp_page.add` adds one, `mcp_page.ask` has an agent ask for one.
+@@ -629,11 +629,27 @@ class AppModel(private val app: Application) {
+     /** Every chat's terminals (shells on their hosts). */
+     val terminals = TerminalStore(app) { _client.value }
+ 
+-    /** A session's side chats, newest first. */
++    /** A session's side chats, newest first (the chats its agent delegated to are its subagents instead). */
+     fun sideChats(chatId: String): List<SessionRow> =
+-        _client.value?.childSessions(chatId).orEmpty().filter { !it.archived }
++        sh.zeron.android.ui.sideChatsOf(_client.value?.childSessions(chatId).orEmpty())
+ 
+-    /** The subagents a session's agent spawned (its open transcript). */
++    /** Stop a chat's turn (a delegated subagent's Stop) through its own session, let go after. */
++    fun interruptChat(chatId: String) {
++        val client = _client.value ?: return
++        try {
++            val handle = client.session(chatId) ?: client.openSession(chatId)
++            try {
++                handle.interrupt()
++            } finally {
++                handle.close()
++            }
++        } catch (e: Exception) {
++            Log.w("Zeron", "interrupt failed", e)
++            toast("Couldn't stop it")
++        }
++    }
 +
-+local mcp = require("@account/mcp")
-+
-+local LINEAR = { id = "linear", name = "Linear", description = "Issues and projects.", category = "", url = "https://mcp.linear.app/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "linear" }
-+local NOTION = { id = "notion", name = "Notion", description = "Pages and databases.", category = "", url = "https://mcp.notion.com/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "notion" }
-+
-+local function show(servers: { any }, requests: { any })
-+	mcp.now:set({ loaded = true, storage = "vault", vaultAvailable = true, presets = { LINEAR, NOTION }, servers = servers, requests = requests } :: any)
-+end
-+
-+local pending: any = { after = function() end }
-+for _, name in { "refresh", "upsert", "set_enabled", "delete", "start_auth", "cancel_auth", "disconnect_auth" } do
-+	(mcp :: any)[name] = function()
-+		return pending
-+	end
-+end
-+
-+ui.command {
-+	id = "mcp_page.add",
-+	title = "mcp_page.add",
-+	run = function()
-+		show({
-+			{ id = "linear", name = "Linear", preset = "linear", transport = "http", url = LINEAR.url, args = {}, envKeys = {}, authKind = "oauth", headerKeys = {}, enabled = true, storage = "vault", status = "connected", scopes = {}, agentName = "linear", updatedAt = 1 },
-+		}, {})
-+	end,
-+}
-+ui.command {
-+	id = "mcp_page.ask",
-+	title = "mcp_page.ask",
-+	run = function()
-+		show({}, {
-+			{ id = "r1", title = "Add Notion", status = "pending", createdAt = 1, action = "add", preset = "notion" },
-+		})
-+	end,
-+}
-+ui.command {
-+	id = "mcp_page.none",
-+	title = "mcp_page.none",
-+	run = function()
-+		show({}, {})
-+	end,
-+}
-+show({}, {})
-+
-+return require("@app/shell_fixture")
++    /** The subagents a session's agent spawned (its open transcript), then the chats it delegated to. */
+     fun sessionSubagents(chatId: String): List<uniffi.zeron_core.SubagentRow> {
+         val client = _client.value ?: return emptyList()
+         if ("--sub--" in chatId) return emptyList()
 ```
 
-**File**: `apps/zgx/ui/screens/settings/mcp.luau` (modified, +40/-32)
+**File**: `apps/android/app/src/main/java/sh/zeron/android/design/ZeronIcons.kt` (modified, +3/-0)
 ```diff
-@@ -2074,44 +2074,52 @@ function M.view(): Node
- 		end
- 	end)
- 
-+	-- (A section with nothing in it takes no room, its search anchor's neither:
-+	-- the anchor is inside what shows it, never round it.)
- 	local requests = ui.computed(pending_requests)
--	local waiting = search.anchor(
--		"requests",
--		ui.show(function(): boolean
-+	local waiting = ui.show(
-+		function(): boolean
- 			return #requests:get() > 0
--		end, ds.Settings.Section {
--			title = ui.t("settings.mcp.requests.title"),
--			description = ui.t("settings.mcp.requests.description"),
--			ds.Settings.Each(requests, function(_r: mcp.Request, _i: number, row: State<mcp.Request>): Node
--				return RequestRow { now = row }
--			end, {
--				key = function(r: mcp.Request): string
--					return r.id
--				end,
--			}),
--		})
-+		end,
-+		search.anchor(
-+			"requests",
-+			ds.Settings.Section {
-+				title = ui.t("settings.mcp.requests.title"),
-+				description = ui.t("settings.mcp.requests.description"),
-+				ds.Settings.Each(requests, function(_r: mcp.Request, _i: number, row: State<mcp.Request>): Node
-+					return RequestRow { now = row }
-+				end, {
-+					key = function(r: mcp.Request): string
-+						return r.id
-+					end,
-+				}),
-+			}
-+		)
- 	)
- 
--	local yours = search.anchor(
--		"servers",
--		ui.show(function(): boolean
-+	local yours = ui.show(
-+		function(): boolean
- 			return #servers:get() > 0
--		end, ds.Settings.Section {
--			title = ui.t("settings.mcp.servers.title"),
--			-- A card a service, as Providers has an agent's.
--			ui.column {
--				w_full = true,
--				gap = "$space.3",
--				ui.each(ui.computed(services), function(_svc: Service, _i: number, row: State<Service>): Node
--					return ServiceCard { now = row }
--				end, {
--					key = function(svc: Service): string
--						return svc.key
--					end,
-+		end,
-+		search.anchor(
-+			"servers",
-+			ds.Settings.Section {
-+				title = ui.t("settings.mcp.servers.title"),
-+				-- A card a service, as Providers has an agent's.
-+				ui.column {
- 					w_full = true,
--				}),
--			},
--		})
-+					gap = "$space.3",
-+					ui.each(ui.computed(services), function(_svc: Service, _i: number, row: State<Service>): Node
-+						return ServiceCard { now = row }
-+					end, {
-+						key = function(svc: Service): string
-+							return svc.key
-+						end,
-+						w_full = true,
-+					}),
-+				},
-+			}
-+		)
- 	)
- 
- 	local add = search.anchor(
+@@ -54,6 +54,9 @@ object ZIcons {
+     val Moon = R.drawable.zi_moon
+     val Magic = R.drawable.zi_magic_stick_3
+     val Info = R.drawable.zi_info_circle
++    /** The desktop's status glyphs: an approval asked (a shield with a question), a question asked. */
++    val StatusApproval = R.drawable.zi_status_approval
++    val StatusInput = R.drawable.zi_status_input
+     val Logout = R.drawable.zi_logout_2
+     val Offline = R.drawable.zi_wifi_off
+     val Chat = R.drawable.zi_chat_round_line
 ```
 
-**File**: `apps/zgx/ui/tests/settings_mcp.test.luau` (added, +65/-0)
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/Companions.kt` (modified, +342/-22)
 ```diff
-@@ -0,0 +1,65 @@
-+-- Settings → MCP: a section with nothing in it (no server added, nothing asked
-+-- for) takes no room, so the page's sections stand one step of its rhythm
-+-- apart whichever of them show. On ui/mcp_page_fixture.luau.
+@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
+ import androidx.compose.foundation.shape.RoundedCornerShape
+ import androidx.compose.material3.ExperimentalMaterial3Api
+ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
++import androidx.compose.material3.IconButton
+ import androidx.compose.material3.ListItemDefaults
+ import androidx.compose.material3.LoadingIndicator
+ import androidx.compose.material3.MaterialTheme
+@@ -42,6 +43,9 @@ import androidx.compose.material3.Text
+ import androidx.compose.material3.rememberModalBottomSheetState
+ import androidx.compose.material3.rememberSwipeToDismissBoxState
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.DisposableEffect
++import androidx.compose.runtime.collectAsState
++import androidx.compose.runtime.key
+ import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.Stable
+ import androidx.compose.runtime.getValue
+@@ -67,10 +71,13 @@ import sh.zeron.android.core.TerminalTab
+ import sh.zeron.android.design.ZIcon
+ import sh.zeron.android.design.ZIcons
+ import uniffi.zeron_core.CoreException
++import uniffi.zeron_core.InputRequest
++import uniffi.zeron_core.SessionHandle
+ import uniffi.zeron_core.SessionRow
+ import uniffi.zeron_core.SubagentRow
+ import uniffi.zeron_core.SubagentState
+ import uniffi.zeron_core.TerminalPhase
++import uniffi.zeron_core.UserInputAnswer
+ 
+ /** The companions sheet's sections (each chip opens its own). */
+ enum class CompanionSection(val title: String) { Agents("Agents"), SideChats("Side chats"), Terminals("Terminals") }
+@@ -79,10 +86,43 @@ enum class CompanionSection(val title: String) { Agents("Agents"), SideChats("Si
+ @Stable
+ class Companions(val agents: List<SubagentRow>, val sideChats: List<SessionRow>, val terminals: List<TerminalTab>) {
+     val runningAgents: Int get() = agents.count { it.state == SubagentState.RUNNING }
++    /** Chats it delegated to that ask the person something (answered on their rows). */
++    val askingAgents: Int get() = agents.count { it.asks }
+     val liveTerminals: Int get() = terminals.count { it.isLive }
+     val isEmpty: Boolean get() = agents.isEmpty() && sideChats.isEmpty() && terminals.isEmpty()
+ }
+ 
++/** A chat its parent's agent delegated to (a chat of its own, not a spawn in the parent's runtime). */
++val SubagentRow.isDelegated: Boolean get() = chatId != null
 +
-+local PAGE = "#settings-page"
-+local NAV = "#settings-nav"
-+-- From the page's words to its first section, and what a line of text may
-+-- round to.
-+local STEP, SLACK = 32, 2
++/** A session's side chats among its children: the chats it delegated to are its subagents instead. */
++internal fun sideChatsOf(children: List<SessionRow>): List<SessionRow> = children.filter { !it.archived && !it.delegated }
 +
-+-- A text's top and foot on the page.
-+local function span(app: any, words: string): (number, number)
-+	for line in app:tree(PAGE):gmatch("[^\n]+") do
-+		if line:find(words, 1, true) then
-+			local y, h = line:match(" %-?[%d.]+,(%-?[%d.]+) [%d.]+x([%d.]+)")
-+			if y then
-+				return tonumber(y) :: number, (tonumber(y) :: number) + (tonumber(h) :: number)
-+			end
-+		end
-+	end
-+	error(`no "{words}" on the page:\n{app:tree(PAGE)}`)
-+end
++/**
++ * The Agents section's order: its own spawns (live first, then newest), then
++ * the chats it delegated to (any that ask first, then live ones, oldest first
++ * as the core lists them).
++ */
++internal fun orderedAgents(agents: List<SubagentRow>): List<SubagentRow> {
++    val (delegated, native) = agents.partition { it.isDelegated }
++    val live = compareByDescending<IndexedValue<SubagentRow>> { it.value.state == SubagentState.RUNNING }
++    return native.withIndex().sortedWith(live.thenByDescending { it.index }).map { it.value } +
++        delegated.withIndex().sortedWith(compareByDescending<IndexedValue<SubagentRow>> { it.value.asks }.then(live).thenBy { it.index }).map { it.value }
++}
 +
-+-- From the foot of the page's description to the top of a section's title.
-+local function below(app: any, title: string): number
-+	local _, foot = span(app, "Tools your agents can use")
-+	local top = span(app, title)
-+	return top - foot
-+end
++/** A delegated row's word on it: its agent and, when it isn't the parent's, its device ("Codex · Build box"). */
++internal fun delegatedDetail(a: SubagentRow): String = listOfNotNull(a.kind, a.deviceName).joinToString(" · ")
 +
-+local function open(): any
-+	local app = mount("mcp_page_fixture.luau")
-+	app:resize(1200, 900)
-+	app:frames(30)
-+	app:command("settings_stub.sign_in")
-+	app:command("shell.settings")
-+	app:frames(20)
-+	app:click(`{NAV} >> role:tab "MCP"`)
-+	app:frames(30)
-+	return app
-+end
++/** What an approval would run: its fenced or backticked part, if it has one (the desktop's ask card shows it as code). */
++internal fun askCommand(question: String): String? {
++    Regex("```[^\\n]*\\n([\\s\\S]*?)```").find(question)?.let { return it.groupValues[1].trim().ifEmpty { null } }
++    return Regex("`([^`]+)`").find(question)?.groupValues?.get(1)?.trim()?.ifEmpty { null }
++}
 +
-+test("MCP: with no server and nothing asked for, the list to add from is right under the page's words", function()
-+	local app = open()
-+	expect(app:has(`{PAGE} >> "Your servers"`)).to_be(false)
-+	local gap = below(app, "Add a server")
-+	expect(`{math.abs(gap - STEP) <= SLACK} ({gap})`).to_be(`true ({gap})`)
-+	expect(app:error()).to_be_nil()
-+end)
++/** A question answered in place: one question, a single pick, a handful of options. */
++internal fun answersInPlace(input: InputRequest): Boolean =
++    !input.isApproval && input.questions.size == 1 && input.questions[0].let { !it.multiSelect && it.options.size in 1..5 }
 +
-+test("MCP: a server added, or a change asked for, shows there, and its room goes with it", function()
-+	local app = open()
-+	for _, case in { { "mcp_page.add", "Your servers" }, { "mcp_page.ask", "Waiting for you" } } do
-+		app:command(case[1])
-+		app:frames(30)
-+		local gap = below(app, case[2])
-+		expect(`{case[2]}: {math.abs(gap - STEP) <= SLACK} ({gap})`).to_be(`{case[2]}: true ({gap})`)
-+		app:command("mcp_page.none")
-+		app:frames(30)
-+		expect(app:has(`{PAGE} >> "{case[2]}"`)).to_be(false)
-+		local back = below(app, "Add a server")
-+		expect(`{math.abs(back - STEP) <= SLACK} ({back})`).to_be(`true ({back})`)
-+	end
-+	expect(app:error()).to_be_nil()
-+end)
+ /**
+  * A session's companions, re-read as it changes. Streaming changes the
+  * session every frame; this settles a few times a second (a subagent count
+@@ -125,12 +165,22 @@ fun CompanionStrip(c: Companions, onTap: (CompanionSection) -> Unit, modifier: M
+     Row(modifier.animateContentSize(MaterialTheme.motionScheme.defaultSpatialSpec()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+         AnimatedVisibility(c.agents.isNotEmpty(), enter = fadeIn() + expandHorizontally(), exit = fadeOut() + shrinkHorizontally()) {
+             val running = c.runningAgents
+-            CompanionChip(
+-                icon = if (running > 0) null else ZIcons.Bot,
+-                text = if (running > 0) "$running working" else "${c.agents.size}",
+-            
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SessionScreen.kt` (modified, +14/-6)
+```diff
+@@ -161,6 +161,8 @@ fun SessionScreen(
+         composer = handle.composer()
+         model.sessionEvents.collect { if (it == chatId) composer = handle.composer() }
+     }
++    // A delegated chat's start line says how that chat stands: it reads the workspace again as it changes.
++    LaunchedEffect(chatId) { model.workspace.collect { runCatching { transcript.engine.workspaceChanged() } } }
+     LaunchedEffect(chatId) {
+         val text = sendOnOpen ?: return@LaunchedEffect
+         runCatching { handle.send(uniffi.zeron_core.SendRequest(text, emptyList(), null, uniffi.zeron_core.BusyPolicy.QUEUE)) }
+@@ -255,16 +257,17 @@ fun SessionScreen(
+             which.startsWith("subagent:") -> {
+                 val tool = which.removePrefix("subagent:")
+                 model.sessionSubagents(chatId).firstOrNull { it.id == tool || it.docId?.endsWith(tool) == true }?.let { a ->
+-                    a.docId?.let { onOpenSubagent(chatId, it, a.title, a.state == uniffi.zeron_core.SubagentState.RUNNING) }
++                    // A delegated one is a chat of its own.
++                    a.chatId?.let(onOpenSideChat) ?: a.docId?.let { onOpenSubagent(chatId, it, a.title, a.state == uniffi.zeron_core.SubagentState.RUNNING) }
+                 }
+             }
+         }
+     }
+ 
+     val project = row?.project?.name ?: "No project"
+     val parentTitle = remember(workspace, parentId) { parentId?.let { model.row(it)?.title } }
+-    // A side chat heads itself as one, under its parent's title.
+-    val headerTitle = if (parentId != null) "Side chat" else composer.title
++    // A side chat (or a chat its parent delegated to) heads itself as one, under its parent's title.
++    val headerTitle = if (parentId != null) childHeading(row) else composer.title
+     val subtitle = parentTitle ?: composer.host.name?.let { "$project @ $it" } ?: project
+     var overflow by remember { mutableStateOf(false) }
+     val clipboard = LocalClipboardManager.current
+@@ -297,10 +300,12 @@ fun SessionScreen(
+                     sh.zeron.android.voice.VoiceHeaderButton(model.voice, onOpenStage = onOpenVoice, onOpenSettings = onVoiceSettings)
+                     androidx.compose.foundation.layout.Spacer(Modifier.size(8.dp))
+                 }
+-                // Agents, side chats and terminals; a badge while agents work.
++                // Agents, side chats and terminals; a badge while agents work, toned while one needs you.
+                 androidx.compose.material3.BadgedBox(
+                     badge = {
+-                        if (companions.runningAgents > 0) {
++                        if (companions.askingAgents > 0) {
++                            androidx.compose.material3.Badge(containerColor = warningColor(), contentColor = MaterialTheme.colorScheme.surface) { Text("${companions.askingAgents}") }
++                        } else if (companions.runningAgents > 0) {
+                             androidx.compose.material3.Badge(containerColor = MaterialTheme.colorScheme.primary) { Text("${companions.runningAgents}") }
+                         }
+                     },
+@@ -409,7 +414,7 @@ fun SessionScreen(
+         CompanionsSheet(
+             model,
+             chatId,
+-            title = if (parentId != null) "Side chat" else composer.title,
++            title = if (parentId != null) childHeading(row) else composer.title,
+             initialSection = companionsSheet,
+             onDismiss = {
+                 showCompanions = false
+@@ -463,6 +468,9 @@ fun SessionScreen(
+     }
+ }
+ 
++/** A child chat's heading: a subagent when its parent's agent delegated to it, else a side chat. */
++internal fun childHeading(row: uniffi.zeron_core.SessionRow?): String = if (row?.delegated == true) "Subagent" else "Side chat"
++
+ /** How far above the chips and composer the transcript starts to fade. */
+ private val FADE = 44.dp
+ 
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SessionsScreen.kt` (modified, +22/-1)
+```diff
+@@ -588,16 +588,37 @@ fun HarnessTile(row: SessionRow) {
+     ) { HarnessMark(row.harness, 24.dp, tint = MaterialTheme.colorScheme.onSurface) }
+ }
+ 
+-/** Project monogram + name, then the branch — the desktop sidebar subline. */
++/**
++ * What a waiting chat waits on, in a line (the desktop hover card's): the
++ * first of it ("Codex · Build box · Audit the parser") and how many more.
++ */
++internal fun waitingLine(row: SessionRow): String? = waitingParts(row)?.let { (first, more) -> first + more }
++
++/** [waitingLine] in two: what it waits on first (cut short when it must) and how many more (never cut). */
++internal fun waitingParts(row: SessionRow): Pair<String, String>? {
++    val first = row.waitingOn.firstOrNull() ?: return null
++    val more = row.waitingOn.size - 1
++    return "Waiting on $first" to if (more > 0) " (+$more more)" else ""
++}
++
++/** Project monogram + name, then the branch — the desktop sidebar subline; a waiting chat's says what it waits on. */
+ @Composable
+ private fun Subline(row: SessionRow) {
+     val muted = MaterialTheme.colorScheme.onSurfaceVariant
++    val waiting = waitingParts(row)
+     Row(verticalAlignment = Alignment.CenterVertically) {
+         val project = row.project
+         if (project != null) {
+             ProjectTile(project.name, project.colorIndex.toInt(), 16.dp)
+             Spacer(Modifier.width(6.dp))
+         }
++        // (The project's tile still says whose it is.)
++        if (waiting != null) {
++            val (first, more) = waiting
++            Text(first, style = MaterialTheme.typography.bodyMedium, color = muted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
++            if (more.isNotEmpty()) Text(more, style = MaterialTheme.typography.bodyMedium, color = muted, maxLines = 1, softWrap = false)
++            return@Row
++        }
+         Text(
+             project?.name ?: row.deviceName ?: "No project",
+             style = MaterialTheme.typography.bodyMedium,
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/TabletShell.kt` (modified, +2/-7)
+```diff
+@@ -188,16 +188,11 @@ fun InspectorPageContent(model: AppModel, shell: TabletShellState, chatId: Strin
+     when (page) {
+         is InspectorPage.Companions -> Column(Modifier.fillMaxSize()) {
+             val c = rememberCompanions(model, chatId)
+-            val title = model.row(chatId)?.let { if (it.parentChatId != null) "Side chat" else it.title } ?: "Session"
++            val title = model.row(chatId)?.let { if (it.parentChatId != null) childHeading(it) else it.title } ?: "Session"
+             Row(Modifier.fillMaxWidth().statusBarsPadding().padding(start = 20.dp, end = 12.dp, top = 8.dp, bottom = 4.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                 Column(Modifier.weight(1f)) {
+                     Text(title, style = MaterialTheme.typography.titleLargeEmphasized, maxLines = 1, overflow = TextOverflow.Ellipsis)
+-                    val running = c.runningAgents
+-                    Text(
+-                        if (running > 0) "$running agent${if (running == 1) "" else "s"} working" else "Agents, side chats & terminals",
+-                        style = MaterialTheme.typography.bodyMedium,
+-                        color = if (running > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+-                    )
++                    CompanionsSubtitle(c)
+                 }
+                 TonalCircleButton(sh.zeron.android.design.ZIcons.Close, "Close", onClick = shell::hideInspector, size = 44.dp, container = MaterialTheme.colorScheme.surfaceContainerHighest)
+             }
+```
+
+**File**: `apps/android/app/src/test/java/sh/zeron/android/ui/CompanionsTest.kt` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++package sh.zeron.android.ui
++
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertNull
++import org.junit.Assert.assertTrue
++import org.junit.Test
++import uniffi.zeron_core.ChatIndicator
++import uniffi.zeron_core.InputRequest
++import uniffi.zeron_core.SessionRow
++import uniffi.zeron_core.SubagentRow
++import uniffi.zeron_core.SubagentState
++import uniffi.zeron_core.UserInputQuestion
++
++class CompanionsTest {
++    private fun child(id: String, delegated: Boolean = false, archived: Boolean = false, waitingOn: List<String> = emptyList()) = SessionRow(
++        id = id, revision = 0u, title = id, hasTitle = true, preview = null, project = null,
++        deviceId = "mac", deviceName = null, deviceOnline = true, isCloud = false,
++        harness = null, harnessLabel = null, model = null, modelLabel = null, reasoning = null,
++        branch = null, cwd = null, indicator = ChatIndicator.IDLE, hostIndicator = ChatIndicator.IDLE,
++        workingSinceMs = null, lastActivityMs = 0, timeLabel = "", createdAtMs = 0,
++        unseen = false, archived = archived, pinned = false, sectionId = null, pullRequest = null,
++        sendState = null, parentChatId = "parent", delegated = delegated, waitingOn = waitingOn,
++        waitingSinceMs = null, childAsks = false, roomGen = 2u, sleepUntilMs = null, wokeAtMs = null, waitsOnProcess = false,
++    )
++
++    private fun agent(id: String, chat: String? = null, state: SubagentState = SubagentState.RUNNING, asks: Boolean = false) = SubagentRow(
++        id = id, chatId = chat, deviceName = null, harness = null, asks = asks, docId = null,
++        title = id, model = null, kind = null, state = state, tail = null, startedAtMs = 0,
++    )
++
++    @Test
++    fun delegated_children_are_subagents_not_side_chats() {
++        val sides = sideChatsOf(listOf(child("side"), child("audit", delegated = true), child("old", archived = true)))
++        assertEquals(listOf("side"), sides.map { it.id })
++    }
++
++    @Test
++    fun delegated_chats_follow_the_agents_own_spawns() {
++        val order = orderedAgents(
++            listOf(
++                agent("spawn-done", state = SubagentState.DONE),
++                agent("bench", chat = "c-bench", state = SubagentState.DONE),
++                agent("spawn-live"),
++                agent("notes", chat = "c-notes"),
++                agent("audit", chat = "c-audit", asks = true),
++            ),
++        )
++        // Spawns live first; then delegated chats, the one that asks first, live before done.
++        assertEquals(listOf("spawn-live", "spawn-done", "audit", "notes", "bench"), order.map { it.id })
++    }
++
++    @Test
++    fun a_delegated_rows_detail_is_its_agent_and_other_device() {
++        assertEquals("Codex · Build box", delegatedDetail(agent("a", chat = "c").copy(kind = "Codex", deviceName = "Build box")))
++        assertEquals("Claude Code", delegatedDetail(agent("a", chat = "c").copy(kind = "Claude Code")))
++    }
++
++    @Test
++    fun an_approval_shows_what_it_would_run() {
++        assertEquals("cargo fuzz run parse -- -max_total_time=60", askCommand("Run `cargo fuzz run parse -- -max_total_time=60`?"))
++        assertEquals("rm -rf build\nls", askCommand("Allow this?\n```sh\nrm -rf build\nls\n```"))
++        assertNull(askCommand("Edit src/parse.rs?"))
++        assertNull(askCommand("Run ``?"))
++    }
++
++    private fun question(options: List<String>, multi: Boolean = false) =
++        UserInputQuestion(id = "q", header = "", question = "Which branch?", options = options, multiSelect = multi, prefill = null, multiline = false)
++
++    @Test
++    fun only_a_short_single_pick_answers_in_place() {
++        fun input(vararg q: UserInputQuestion, approval: Boolean = false) = InputRequest("e", "r", q.toList(), approval)
++        assertTrue(answersInPlace(input(question(listOf("main", "release/1.9", "next")))))
++        assertFalse(answersInPlace(input(question(listOf("a", "b", "c", "d", "e", "f")))))
++        assertFalse(answersInPlace(input(question(listOf("a", "b"), multi = true))))
++        assertFalse(answersInPlace(input(question(emptyList()))))
++        assertFalse(answersInPlace(input(question(listOf("a")), question(listOf("b")))))
++        assertFalse(answersInPlace(input(question(listOf("Yes", "No")), approval = true)))
++    }
++
++    @Test
++    fun a_waiting_chat_says_what_it_waits_on() {
++        assertNull(waitingLine(child("idle")))
++        assertEquals("Waiting on Codex · Build box · Audit the parser", waitingLine(child("w", waitingOn = listOf("Codex · Build box · Audit the parser"))))
++        assertEquals(
++            "Waiting on Codex · Build box · Audit the parser (+1 more)",
++            waitingLine(child("w", waitingOn = listOf("Codex · Build box · Audit the parser", "Claude Code · Draft the release notes"))),
++        )
++    }
++
++    @Test
++    fun a_child_heads_itself_by_how_it_was_made() {
++        assertEquals("Subagent", childHeading(child("audit", 
+```
+
+**File**: `apps/android/icons/status-approval.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
 ```
 
 ---
 
-### Incident Patch 2: `53a4637a` (2026-11-25)
-**Commit Message**: Model menu: an option's row is as wide as the menu (#1598)
+### Incident Patch 2: `34e345ad` (2026-11-25)
+**Commit Message**: Merge pull request #1617 from zeronsh/zeron/landing-pixel-walker
 
-The rows for a model's options (Context Window, Fusion's Lead) were as wide
-as their own words since #1577 put their list straight in a ui.show, and
-their choices opened over the menu instead of beside it. A full-width column
-in the show keeps them the menu's width.
+Landing: the Pixel Walker walks the hero window's top bar, and the hero drops its "What's new" badge
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
-
-**File**: `apps/zgx/ui/ds/model_picker.luau` (modified, +13/-8)
+**File**: `apps/landing/src/components/app/PixelWalker.astro` (added, +114/-0)
 ```diff
-@@ -784,15 +784,20 @@ return ui.component(function(props: Props): Node
- 			function(): boolean
- 				return #owned:get() > 0
- 			end,
--			ui.each(owned, function(it: Owned): Node
--				return option_row(it.option)
--			end, {
--				key = function(it: Owned): string
--					return `{it.model.value}/{it.option.id}`
--				end,
-+			-- (The column is what keeps the rows the menu's width: a list
-+			-- straight in a show is as wide as its own rows.)
-+			ui.column {
- 				w_full = true,
--				gap = "$zeron.list.gap",
--			})
-+				ui.each(owned, function(it: Owned): Node
-+					return option_row(it.option)
-+				end, {
-+					key = function(it: Owned): string
-+						return `{it.model.value}/{it.option.id}`
-+					end,
-+					w_full = true,
-+					gap = "$zeron.list.gap",
-+				}),
-+			}
- 		),
- 		ui.show(
- 			function(): boolean
+@@ -0,0 +1,114 @@
++---
++// The Pixel Walker plugin's fellow in a red cap, strolling along the top bar
++// of the recreated window as he does in the app: the same 14 × 16 artwork
++// (sprite.luau), drawn at its "Normal" size (two points a pixel), at its
++// default 40 points a second, pausing 0.7 s at each end before he turns.
++// He sets off from the session's tab (which ends at x 430), heading right,
++// and walks the bar to 48 points short of its right edge, as in the app.
++//
++// Every move is a transform or an opacity, so it all runs on the compositor
++// and nothing is repainted: the walk is a translate, the turn a scale, the
++// stride a four-frame sheet stepped along, and a pause swaps in the
++// standing frame. With Reduce Motion he stands still, as the plugin does.
++
++const PALETTE: Record<string, string> = {
++  h: "#e4605b", // red 500: cap
++  k: "#362001", // amber 950: hair
++  s: "#ffd3be", // orange 200: skin
++  t: "#f9837b", // red 400: shirt
++  p: "#18aa99", // teal 500: overalls
++  b: "#905d02", // amber 700: boots
++  y: "#f0e4b6", // yellow 200: buttons
++};
++const HEAD = [
++  "....hhhhh.....",
++  "...hhhhhhhh...",
++  "...kksssks....",
++  "..ksssssks....",
++  "..kssssssss...",
++  "...ksssss.....",
++  "....ssss......",
++  "...tttttt.....",
++];
++const POSES = [
++  ["..ttpttptt....", "..ttpyyptt....", "..ssppppss....", "...pppppp.....", "...pp..pp.....", "..pp....pp....", "..bb....bb....", ".bbb....bbb..."],
++  ["...tpttpt.....", "...tpyypt.....", "...spppps.....", "....pppp......", "....pppp......", "....pppp......", "....bbbb......", "....bbbbb....."],
++  ["..ttpttptt....", "..ttpyyptt....", "...sppppsss...", "...pppppp.....", "...pp..pp.....", "....pp..pp....", "....bb..bb....", "...bbb..bbb..."],
++  ["...tpttpt.....", "...tpyypt.....", "...spppps.....", "....pppp......", "...pppp.......", "...pppp.......", "...bbbb.......", "...bbbbb......"],
++];
++const W = 14;
++
++// One rect per run of a colour, as the plugin paints them. The second and
++// fourth strides bob up a pixel, so each frame sits in a box one row taller.
++function rects(pose: string[], dx: number, dy: number) {
++  let out = "";
++  [...HEAD, ...pose].forEach((row, y) => {
++    for (let x = 0; x < row.length; ) {
++      let end = x + 1;
++      while (end < row.length && row[end] === row[x]) end++;
++      if (row[x] !== ".") out += `<rect x="${dx + x}" y="${dy + y}" width="${end - x}" height="1" fill="${PALETTE[row[x]]}"/>`;
++      x = end;
++    }
++  });
++  return out;
++}
++const sheet = POSES.map((pose, i) => rects(pose, i * W, i % 2 === 1 ? 0 : 1)).join("");
++const standing = rects(POSES[1], 0, 1);
++---
++
++<div class="walker" aria-hidden="true">
++  <div class="face">
++    <div class="stride"><svg class="sheet" viewBox="0 0 56 17" shape-rendering="crispEdges" set:html={sheet} /></div>
++    <svg class="stand" viewBox="0 0 14 17" shape-rendering="crispEdges" set:html={standing} />
++  </div>
++</div>
++
++<style>
++  /* In the stage's points: his walk starts just past the tab, at x 434; his
++     feet sit a point above the bar's foot (y 41), and the box is a row
++     taller for the bob. */
++  .walker { left: 434px; top: 7px; width: 28px; height: 34px; pointer-events: none; }
++  .face, .stride, .stand { position: absolute; inset: 0; }
++  .stride { overflow: hidden; opacity: 0; }
++  /* The sheet is four frames wide, wider than its box: the page's own svg rule would shrink it. */
++  .sheet { display: block; width: 112px; max-width: none; height: 34px; }
++  .stand { display: block; width: 28px; height: 34px; }
++
++  /* One round trip: 810 points each way (434 to 1272, less his width) at 40
++     a second is 20.25 s, and a 0.7 s pause at each end makes 41.9 s.
++     20.25 / 41.9 = 48.329 %, 40.95 / 41.9 = 97.733 %. He starts at the tab. */
++  @media (prefers-reduced-motion: no-preference) {
++    .walker, .face, .stride, .stand { animation-duration: 41.9s; animation-iteration-count: infinite; }
++    .walker { animation-name: walk; animation-timing-function: linear; }
++    .face { animation-name: face; animation-timing-function: step-end; }
++    .stride { animation-name: striding; animation-timing-function: step-end; }
++    .stand { animation-name: standing; animation-timing-function: step-end; }
++    /* Four strides of 0.12 s each. */
++    .sheet { animation: strides 0.48s steps(4) infinite; }
++  }
++  @keyframes walk {
++    0% { translate: 0 0; }
++    48.329% { translate: 810px 0; }
++    50% { translate: 810px 0; }
++    97.733% { translate: 0 0; }
++    100% { translate: 0 0; }
++  }
++  /* He turns when a pause ends, as the plugin does. */
++  @keyframes face {
++    0% { scale: 1 1; }
++    50% { scale: -1 1; }
++  }
++  @keyframes striding {
++    0% { opacity: 1; }
++    48.329% { opacity: 0; }
++    50% { opacity: 1; }
++    97.733% { opacity: 0; }
++  }
++  @keyframes standing {
++    0% { opacity: 0; }
++    48.329% { opacity: 1; }
++    50% { opacity: 0; }
++    97.733% { opacity: 1; }
++  }
++  @keyframes strides { to { translate: -112px 0; } }
++</style>
 ```
 
-**File**: `apps/zgx/ui/tests/model_picker_in_place.test.luau` (modified, +33/-0)
+**File**: `apps/landing/src/components/app/SessionWindow.astro` (modified, +8/-2)
 ```diff
-@@ -113,6 +113,39 @@ test("a model's options sit under it, above its reasoning, and are picked beside
- 	expect(app:error()).to_be(nil)
- end)
+@@ -12,6 +12,7 @@ import fragment from "./session.fragment.html?raw";
+ import "./session.icons.css";
+ import "./session.vars.css";
+ import "./zw.css";
++import PixelWalker from "./PixelWalker.astro";
  
-+-- A model's options are rows of the menu: as wide as the models' rows over
-+-- them, so a press anywhere along one opens it, and its choices open beside
-+-- the menu. (Each was as wide as its own words, its choices over the menu.)
-+test("a model's options are as wide as the menu's rows", function()
-+	local app = mount("picker_fixture.luau")
-+	app:resize(700, 700)
-+	app:set_state("test_picker_model", "fusion")
-+	settle(app)
-+	app:click('role:button "Model"')
-+	settle(app)
-+	-- Where a row is: its left edge and its width.
-+	local function across(row: string): string
-+		for line in app:tree():gmatch("[^\n]+") do
-+			if line:find(row, 1, true) and not line:find(" hidden", 1, true) then
-+				local x, w = line:match(" (%d+),%d+ (%d+)x%d+")
-+				return `{x} {w}`
-+			end
-+		end
-+		return "none"
-+	end
-+	local model = across('option "Fusion"')
-+	expect(model).never.to_be("none")
-+	expect(across('button "Lead"')).to_be(model)
-+	expect(across('button "Sidekick"')).to_be(model)
-+	-- Its choices open past the menu's edge, not over it.
-+	app:click('role:button "Lead"')
-+	settle(app)
-+	local row_x, row_w = model:match("(%d+) (%d+)")
-+	local choices = tonumber(across('listbox "Lead"'):match("^%d+")) or 0
-+	expect(choices > (tonumber(row_x) :: number) + (tonumber(row_w) :: number)).to_be(true)
-+	expect(app:error()).to_be(nil)
-+end)
-+
- -- Devin Fusion has no card beside its row: picked, its options are the
- -- tray's rows under it, as any model's are.
- test("Fusion is picked like any model, its options then under it", function()
+ interface Props {
+   theme?: "dark" | "light";
+@@ -20,13 +21,18 @@ interface Props {
+   /** Not for readers: a second copy on a page, or a piece used as a picture. */
+   decorative?: boolean;
+   class?: string;
++  /** The Pixel Walker plugin's fellow, strolling along the top bar. */
++  walker?: boolean;
+ }
+-const { theme = "dark", crop = [0, 0, 1320, 840], decorative = false, class: className } = Astro.props;
++const { theme = "dark", crop = [0, 0, 1320, 840], decorative = false, class: className, walker = false } = Astro.props;
+ const [x, y, w, h] = crop;
+ const label =
+   "Zeron with a session open. The sidebar groups eight sessions under four projects, run by Claude Code, Codex and Grok; two are still working. In the open one, Claude Code explains and fixes a rate limiter bug, and the Changes panel beside it shows the diff of window.ts.";
+ ---
+ 
+ <div class:list={["zw-fit", className]} style={`--zx:${x};--zy:${y};--zw:${w};--zh:${h}`}>
+-  <div class:list={["zw", "zw-session", theme === "light" ? "t1" : "t0"]} role={decorative ? undefined : "img"} aria-label={decorative ? undefined : label} aria-hidden={decorative ? "true" : undefined} set:html={fragment} />
++  <div class:list={["zw", "zw-session", theme === "light" ? "t1" : "t0"]} role={decorative ? undefined : "img"} aria-label={decorative ? undefined : label} aria-hidden={decorative ? "true" : undefined}>
++    <Fragment set:html={fragment} />
++    {walker && <PixelWalker />}
++  </div>
+ </div>
+```
+
+**File**: `apps/landing/src/components/home/Hero.astro` (modified, +5/-24)
+```diff
+@@ -1,5 +1,4 @@
+ ---
+-import { RELEASE_NOTES_URL } from "../../data/releases.ts";
+ import { SITE } from "../../data/site.ts";
+ import SessionWindow from "../app/SessionWindow.astro";
+ import GitHubStars from "../site/GitHubStars.astro";
+@@ -9,45 +8,27 @@ import Icon from "../ui/Icon.astro";
+ 
+ <section class="hero">
+   <div class="wrap">
+-    <a class="news rise" href={RELEASE_NOTES_URL}>What’s new in Zeron<span data-release-version hidden></span><Icon name="alt-arrow-right" size={12} /></a>
+-    <h1 class="rise" style="--i:1">The agent workspace that can become anything</h1>
+-    <p class="lead rise" style="--i:2">
++    <h1 class="rise">The agent workspace that can become anything</h1>
++    <p class="lead rise" style="--i:1">
+       Zeron runs Claude Code, Codex, Cursor and your other coding agents on
+       your own machines, in one native, open source app.
+     </p>
+-    <div class="actions rise" style="--i:3">
++    <div class="actions rise" style="--i:2">
+       <Button id="hero-download" href="#downloads" size="lg" data-download="long"><span data-download-label>Download</span></Button>
+       <a class="star" href={SITE.github}>Star on GitHub <GitHubStars /><Icon name="alt-arrow-right" size={12} /></a>
+     </div>
+   </div>
+   <!-- The app, laid back on the page and running off it. The window is the
+        HTML recreation, so it stays sharp at this size and angle. -->
+-  <div class="visual rise" style="--i:5">
+-    <div class="plane"><SessionWindow /></div>
++  <div class="visual rise" style="--i:4">
++    <div class="plane"><SessionWindow walker /></div>
+   </div>
+ </section>
+ 
+ <style>
+   .hero { position: relative; padding-top: clamp(64px, 8vw, 112px); overflow: hidden; }
+-  .news {
+-    display: inline-flex;
+-    align-items: center;
+-    gap: 6px;
+-    height: 30px;
+-    padding: 0 10px 0 12px;
+-    font-size: 13px;
+-    font-weight: 500;
+-    color: var(--text-2);
+-    background: var(--surface);
+-    border-radius: 15px;
+-    box-shadow: inset 0 0 0 1px var(--border);
+-    transition: color 0.12s, background-color 0.12s;
+-  }
+-  .news:hover { color: var(--text); background: var(--surface-raised); }
+-  .news [data-release-version]::before { content: " "; white-space: pre; }
+   h1 {
+     max-width: 15em;
+-    margin-top: 28px;
+     font-size: clamp(38px, 5.4vw, 68px);
+     font-weight: 560;
+     line-height: 1.03;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1600** (2026-11-25): MCP settings: a section with nothing in it takes no room (@wingleeio)
-- **PR #1598** (2026-11-25): Model menu: an option's row is as wide as the menu (@wingleeio)
-- **PR #1594** (2026-11-24): Zeron 0.3.20 (@wingleeio)
-- **PR #1593** (2026-11-24): A message waiting as the engine starts is answered with Zeron's tools (@wingleeio)
-- **PR #1592** (2026-11-24): Zeron 0.3.19 (@wingleeio)
-- **PR #1591** (2026-11-24): Sidebar: an archived session's row is its own, and follows it back (@wingleeio)
+- **PR #1617** (2026-11-25): Landing: the Pixel Walker walks the hero window's top bar, and the hero drops its "What's new" badge (@SinaKhalili)
+- **PR #1616** (2026-11-25): Zeron v2: closed sidebar leaves no 5pt sliver on the new chat page (@zeronsh[bot])
+- **PR #1615** (2026-11-25): Landing: the working ring turns on the compositor, and the glass drops its blur (@SinaKhalili)
+- **PR #1612** (2026-11-25): Landing: only the hero rises in, nothing blurs, and the machine picker fades off its card (@SinaKhalili)
+- **PR #1611** (2026-11-25): Pin zgx with the terminal and accessibility fixes (@wingleeio)
+- **PR #1608** (2026-11-25): Sidebar: a tall place folds around a session kept in view (@danperks)
 
 ---
 
@@ -1873,53 +2182,48 @@ Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MCP settings: a section with nothing in it takes no room
+## X. Delegate in the background: subagent chats on any provider or device, and a pare
 
 **RULE**:
-When implementing operations in `apps/zgx/ui/mcp_page_fixture.luau`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbb4083a`: MCP settings: a section with nothing in it takes no room. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae294f53`: Delegate in the background: subagent chats on any provider or device, and a parent that waits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/ui/mcp_page_fixture.luau`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
--- The shell (ui/shell_fixture.luau) with Settings → MCP's snapshot: what
--- tests/settings_mcp.test.luau measures. It starts with no server added;
--- `mcp_page.add` adds one, `mcp_page.ask` has an agent ask for one.
+    /** A session's side chats, newest first (the chats its agent delegated to are its subagents instead). */
+        sh.zeron.android.ui.sideChatsOf(_client.value?.childSessions(chatId).orEmpty())
+    /** Stop a chat's turn (a delegated subagent's Stop) through its own session, let go after. */
+    fun interruptChat(chatId: String) {
+        val client = _client.value ?: return
+        try {
+            val handle = client.session(chatId) ?: client.openSession(chatId)
+            try {
+                handle.interrupt()
+            } finally {
+                handle.close()
+            }
+        } catch (e: Exception) {
+            Log.w("Zeron", "interrupt failed", e)
+            toast("Couldn't stop it")
+        }
+    }
 
-local mcp = require("@account/mcp")
-
-local LINEAR = { id = "linear", name = "Linear", description = "Issues and projects.", category = "", url = "https://mcp.linear.app/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "linear" }
-local NOTION = { id = "notion", name = "Notion", description = "Pages and databases.", category = "", url = "https://mcp.notion.com/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "notion" }
-
-local function show(servers: { any }, requests: { any })
-	mcp.now:set({ loaded = true, storage = "vault", vaultAvailable = true, presets = { LINEAR, NOTION }, servers = servers, requests = requests } :: any)
-end
-
-local pending: any = { after = function() end }
-for _, name in { "refresh", "upsert", "set_enabled", "delete", "start_auth", "cancel_auth", "disconnect_auth" } do
-	(mcp :: any)[name] = function()
-		return pending
-	end
-end
-
-ui.command {
-	id = "mcp_page.add",
-	title = "mcp_page.add",
-	run = function()
-		show({
-	
+    /** The subagents a session's agent spawned (its open transcript), then the chats it delegated to. */
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    /** A session's side chats, newest first. */
+        _client.value?.childSessions(chatId).orEmpty().filter { !it.archived }
+    /** The subagents a session's agent spawned (its open transcript). */
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbb4083a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae294f53` are properly handled with clean fallback behavior.

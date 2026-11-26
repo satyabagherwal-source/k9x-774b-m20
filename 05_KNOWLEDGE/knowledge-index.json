@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T17:23:12.457Z",
+  "last_updated": "2026-11-26T17:30:58.824Z",
   "total_verified_learnings": 9131,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26067,
+  "total_items": 26069,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215962,7 +215962,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "569ffdd6fbcc092b4ae37f3d3ba29caac68481fb8f21da90c6adae0e448ce46f",
+      "content_hash": "a54184f8d0c72c943b79ad88bdc2540e6e78dbf90ae3aef4fb6866c282cec782",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [],
@@ -215971,7 +215971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T00:39:26.880Z",
+      "verified_at": "2026-11-26T17:30:44.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215988,9 +215988,9 @@
       "title": "Research & Knowledge Intelligence: google/electra-base-discriminator Core Invariants",
       "repository": "google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "077478d89edde396ee67de90f93ac14d0cb8ee98c323059913bbec0194299c2c",
+      "content_hash": "36b5022b4724dcb5def789bf3826fa4fc9a507cd79dcaaa97e3b6396822884f0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T00:39:27.300Z"
+      "persisted_at": "2026-11-26T17:30:45.359Z"
     },
     "learn-github-react-navigation-react-navigation": {
       "learning_id": "learn-github-react-navigation-react-navigation",
@@ -216518,9 +216518,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-electra-base-discriminator-learnings Core Invariants",
       "repository": "hf-google-electra-base-discriminator-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9d99ae23cf66d88d5ac1f7248da8a389b69af7dd8ff68bf92ac13413ea5ee12",
+      "content_hash": "3c50174fbb12efec7e3f9a78266776f6232dfae9d510745b79ec1e75036cd17d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T00:39:38.973Z"
+      "persisted_at": "2026-11-26T17:30:58.001Z"
     },
     "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar": {
       "item_id": "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar",
@@ -219532,9 +219532,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a7b6eaa7502e69d51c52aa90827adb7384b98a94465b88439938c8075155570",
+      "content_hash": "3b51d4cdf8078772c5508075edfe4690710468b3253be6445742af0a5394a96f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:02:08.802Z"
+      "persisted_at": "2026-11-26T17:30:58.661Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219544,9 +219544,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9de0ff9aee1c59f89c6c8f0c1a32029e3a256ef3d81d18a79aac8060918640e6",
+      "content_hash": "72bb791b6fa191fb33767ec3f925b53699d13988260b5ccd6a08d1b4a66d6509",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:02:09.028Z"
+      "persisted_at": "2026-11-26T17:30:58.824Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -245876,8 +245876,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "fbb4083a",
-      "content_hash": "e5eb38a7fe39feb39f90fec6d0bf0969d24b68829ae3a772cd527ad6e3b37398",
+      "source_version": "ae294f53",
+      "content_hash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -245920,6 +245920,11 @@
           "number": 10501,
           "title": "MCP settings: a section with nothing in it takes no room",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10737,
+          "title": "Delegate in the background: subagent chats on any provider or device, and a pare",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245927,7 +245932,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T09:54:17.029Z",
+      "verified_at": "2026-11-26T17:30:47.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245981,10 +245986,10 @@
       "relative_path": "08_VERIFICATION/zeronsh-zeron-verification-protocol-empirical-defect-shield-for-zeronsh-zeron.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh/zeron",
       "repository": "zeronsh/zeron",
-      "source_version": "fbb4083a",
-      "content_hash": "6a33d9739c0e3383bc280b42c7dd595ac9eaf6eeb60aabf814227f4d88267c77",
+      "source_version": "ae294f53",
+      "content_hash": "942f9fa8a84fc2062fb20c6a64b6c43d8eb99a1e190f2c8d24557828a557e406",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:54:17.878Z"
+      "persisted_at": "2026-11-26T17:30:48.402Z"
     },
     "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
@@ -246132,9 +246137,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh-zeron-learnings",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "09faa7a414522e873d9d42bd14cfbc191beb4e9b8836a52915bb867382ebc28e",
+      "content_hash": "fbe3c3c69e3760ae203a7d975d61eb2d48d0f97f602a6e2df60da198c308fd89",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:54:33.790Z"
+      "persisted_at": "2026-11-26T17:30:57.631Z"
     },
     "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning": {
       "item_id": "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning",
@@ -267626,10 +267631,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
       "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
       "repository": "zeronsh/zeron",
-      "source_version": "b289003b",
-      "content_hash": "0c791b9a47e5130722d63a1a71d40fa149a423c033dc43f591fe81c78d008fea",
+      "source_version": "ae294f53",
+      "content_hash": "40d668f787115dd56ad7a058589383207b43f82d50a0a0ab6eeeffe76ad39fc9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:33:14.152Z"
+      "persisted_at": "2026-11-26T17:30:48.205Z"
     },
     "rule-8821": {
       "learning_id": "rule-8821",
@@ -267742,9 +267747,9 @@
       "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "58ea04aedcf14c607412c549308eedfa988eb7625f5b51505bde76045ed733b9",
+      "content_hash": "2df8d1986af24010e1f75fe7478958bd189b101c0093e3eecf87970564ea9c85",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:33:31.342Z"
+      "persisted_at": "2026-11-26T17:30:57.429Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
@@ -349459,13 +349464,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5PTV-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WLKQ-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c962a346e50b1ca9f98a06348c2a4581f559c1d2455ec615ee54c4f2249368d",
+      "content_hash": "238c3fa4f14f1eb5ae8dcfd18f2b977eb3d07d7dbe815e8051922fa4874491cf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:02:08.516Z"
+      "persisted_at": "2026-11-26T17:30:58.490Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -357339,6 +357344,32 @@
       "content_hash": "99341d712450154fd71b25596611d2c769bd8865a5ccb0281e924ad3080eef59",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T17:23:12.031Z"
+    },
+    "rule-10737": {
+      "learning_id": "rule-10737",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10737,
+      "title": "Delegate in the background: subagent chats on any provider or device, and a pare",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "ae294f53",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T17:30:47.596Z"
+    },
+    "candidate_directive-delegate-in-the-background-subagent-chats-on-any-provider-or-device-and-a-pare": {
+      "item_id": "candidate_directive-delegate-in-the-background-subagent-chats-on-any-provider-or-device-and-a-pare",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WKLE-delegate-in-the-background-subagent-chats-on-any-provider-or-device-and-a-pare.md",
+      "title": "Delegate in the background: subagent chats on any provider or device, and a pare",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dcc0be03fa48bca437d5c39e23224461bc56612320926aec96d96ca3c7dabd00",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T17:30:57.224Z"
     }
   },
   "ai-builder-brain": {

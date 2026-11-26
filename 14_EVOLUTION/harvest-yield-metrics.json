@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:23:06.814Z",
-  "total_cycles_completed": 12800,
-  "total_learnings_persisted": 12800,
-  "total_rules_promoted": 11641,
+  "last_updated": "2026-11-26T17:30:47.810Z",
+  "total_cycles_completed": 12802,
+  "total_learnings_persisted": 12802,
+  "total_rules_promoted": 11642,
   "history": [
-    {
-      "timestamp": "2026-11-26T06:44:05.046Z",
-      "repository": "sozercan/kaset",
-      "learningId": "learn-github-sozercan-kaset",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:44:07.646Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T06:52:21.765Z",
       "repository": "nex-agi/Nex-N2.6",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T17:23:06.814Z",
       "repository": "karakeep-app/karakeep",
       "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:30:45.162Z",
+      "repository": "google/electra-base-discriminator",
+      "learningId": "learn-huggingface-google-electra-base-discriminator",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:30:47.810Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

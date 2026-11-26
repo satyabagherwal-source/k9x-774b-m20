@@ -4,24 +4,24 @@
 {
   "source_repository": "zeronsh/zeron",
   "source_url": "https://github.com/zeronsh/zeron",
-  "source_version": "b289003b",
+  "source_version": "ae294f53",
   "license": "MIT",
-  "timestamp": "2026-11-22T23:33:13.970Z",
+  "timestamp": "2026-11-26T17:30:48.017Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zeronsh-zeron",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `b289003b`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T23:33:13.970Z`  
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `ae294f53`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T17:30:48.017Z`  
 > **Learning ID**: `learn-github-zeronsh-zeron`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), E (Creative Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zeronsh/zeron:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:33:12.731Z  
+> **Harvest Timestamp**: 2026-11-26T17:30:46.849Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3732 stars
+- **Stars / Engagement**: 3765 stars
 
 ---
 
@@ -1547,1444 +1547,636 @@ class TranscriptState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dcd4f622` (2026-11-21)
-**Commit Message**: Merge pull request #1562 from zeronsh/zeron/fix-antigravity-cloud-disconnects
+### Incident Patch 1: `ae294f53` (2026-11-26)
+**Commit Message**: Delegate in the background: subagent chats on any provider or device, and a parent that waits (#1597)
 
-Fix Antigravity cloud disconnects, bump zgx stale scene node fix, and add Zig/Odin highlighting
+* Delegated work: durable tasks, engine-watched children, one wake with the results
 
-**File**: `Cargo.lock` (modified, +1/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+
+* Background delegation in the app: a Waiting shelf, child chats in the tray with Stop, approvals on the parent, wakes as chips, the setting
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+
+* Delegation: one subagent list and waiting labels in the client, wakes on mobile, docs
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+
+* Delegation: approval card polish, waiting rows' detail, screenshots
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+
+* Delegation: Zeron v2's composer and the preview's refusals follow
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt` (modified, +19/-3)
 ```diff
-@@ -9012,6 +9012,7 @@ dependencies = [
-  "futures",
-  "libc",
-  "reqwest",
-+ "rusqlite",
-  "semver",
-  "serde",
-  "serde_json",
-```
-
-**File**: `apps/zgx/Cargo.lock` (modified, +46/-46)
-```diff
-@@ -30,7 +30,7 @@ dependencies = [
- [[package]]
- name = "accesskit_atspi_common"
- version = "0.19.1"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -43,7 +43,7 @@ dependencies = [
- [[package]]
- name = "accesskit_consumer"
- version = "0.38.0"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "hashbrown 0.16.1",
-@@ -66,7 +66,7 @@ dependencies = [
- [[package]]
- name = "accesskit_macos"
- version = "0.26.3"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -79,7 +79,7 @@ dependencies = [
- [[package]]
- name = "accesskit_unix"
- version = "0.22.1"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "accesskit_atspi_common",
-@@ -96,7 +96,7 @@ dependencies = [
- [[package]]
- name = "accesskit_windows"
- version = "0.34.0"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -277,26 +277,6 @@ dependencies = [
-  "object",
- ]
+@@ -629,11 +629,27 @@ class AppModel(private val app: Application) {
+     /** Every chat's terminals (shells on their hosts). */
+     val terminals = TerminalStore(app) { _client.value }
  
--[[package]]
--name = "arboard"
--version = "3.7.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aeb9553e62312c8756a5979254fc6d7da8bbeb5986a1e17037fab932f7037917"
--dependencies = [
-- "clipboard-win",
-- "image",
-- "log",
-- "objc2 0.6.4",
-- "objc2-app-kit 0.3.2",
-- "objc2-core-foundation",
-- "objc2-core-graphics",
-- "objc2-foundation 0.3.2",
-- "parking_lot",
-- "percent-encoding",
-- "windows-sys 0.61.2",
-- "x11rb",
--]
--
- [[package]]
- name = "arrayref"
- version = "0.3.9"
-@@ -6450,7 +6430,7 @@ dependencies = [
- [[package]]
- name = "wgpu-hal"
- version = "29.0.4"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "android_system_properties",
-  "arrayvec",
-@@ -6888,7 +6868,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
- [[package]]
- name = "winit"
- version = "0.30.13"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "ahash",
-  "android-activity",
-@@ -7456,7 +7436,7 @@ dependencies = [
- [[package]]
- name = "zgx"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "fixed_decimal",
-  "foldhash 0.2.0",
-@@ -7485,7 +7465,7 @@ dependencies = [
- [[package]]
- name = "zgx-3d"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "bytemuck",
-  "zgx",
-@@ -7495,7 +7475,7 @@ dependencies = [
- [[package]]
- name = "zgx-alacritty-terminal"
- version = "0.26.8"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "base64 0.22.1",
-  "bitflags 2.13.2",
-@@ -7517,18 +7497,37 @@ dependencies = [
-  "zgx-vte",
- ]
+-    /** A session's side chats, newest first. */
++    /** A session's side chats, newest first (the chats its agent delegated to are its subagents instead). */
+     fun sideChats(chatId: String): List<SessionRow> =
+-        _client.value?.childSessions(chatId).orEmpty().filter { !it.archived }
++        sh.zeron.android.ui.sideChatsOf(_client.value?.childSessions(chatId).orEmpty())
  
-+[[package]]
-+name = "zgx-arboard"
-+version = "3.6.2"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6
-```
-
-**File**: `apps/zgx/Cargo.toml` (modified, +14/-14)
-```diff
-@@ -32,7 +32,7 @@ layout_probe = []
- 
- [dependencies]
- lz4_flex = { version = "0.11", default-features = false, features = ["safe-encode", "safe-decode"] }
--zgx = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7" }
-+zgx = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31" }
- # `mimalloc`: the program's allocator, in place of the system's. It hands
- # freed memory back to the system (the system's keeps the most it ever
- # held), and zgx measures 1-10% less CPU for script, text and layout work.
-@@ -43,26 +43,26 @@ zgx = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e2165
- # none of it, and without it pages are placeholders ("Web view · <url>").
- # zgx-run turns it on by default, but this app takes zgx-run without its
- # defaults (below). Nothing on macOS or Windows.
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["mimalloc", "terminal", "webkitgtk"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["mimalloc", "terminal", "webkitgtk"] }
- # `inspect`: devtools for `zgx inspect` (and its MCP server), asked for
- # with `--inspect`. `i18n`: `ui.t`'s plurals and numbers by each locale's
- # own rules (ICU4X's data, about 90 KB), for ui/locales' translations.
- # `scene3d`: `ui.scene3d`, `ui.mesh`, `ui.light`, `ui.group` (zgx-3d on the
- # wgpu this app already links), for plugins that show 3D: the CAD plugin
- # hands it its own triangles (`geometry = { positions, indices, … }`). It
- # asks no grant; a scene draws a frame only when something in it changes.
--zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["inspect", "i18n", "scene3d"] }
-+zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["inspect", "i18n", "scene3d"] }
- # A picture's pixels for the clipboard (src/images.rs): zgx's own decoder,
- # the formats `ui.image` shows (no features of its own: the ones zgx-desktop
- # turns on).
--zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", default-features = false }
-+zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false }
- # Each plugin's own database (`zeron.db`, src/plugins/db.rs): SQLite,
- # built in; `limits` to keep one from attaching any other file.
- rusqlite = { version = "0.32", features = ["bundled", "limits", "hooks"] }
- # `fetch`: zgx's own transport for `ui.fetch` and remote images (HTTP and
- # HTTPS, rustls), given to every window (src/main.rs): the app's scripts,
- # and plugins granted "network". Nothing else of the runner.
--zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", default-features = false, features = ["fetch"] }
-+zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false, features = ["fetch"] }
- # `webp`: `ui.image` decodes through this crate, by what its features
- # allow, so turning WebP on here is all it takes (the member cards' art).
- # `ico`: sites' favicons (the browser tab's: src/favicons.rs), most of
-@@ -162,7 +162,7 @@ foreign-types = "0.5"
- # elements, box drawing and Powerline glyphs to the cell; zgx's own renderer
- # draws them from the font at its text line height, gapped. Builds Ghostty
- # with Zig 0.16 (cached in ~/Library/Caches/zgx-ghostty).
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["ghostty"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["ghostty"] }
- 
- # Windows' Transparency effects (src/transparency.rs), read and watched in
- # the registry, until zgx reports them (zgx-asks/windows-transparency); a
-@@ -173,7 +173,7 @@ zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363a
- # 11 (and with Edge on Windows 10); without it, pages are placeholders.
- [target.'cfg(windows)'.dependencies]
- windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Media_Audio", "Win32_Storage_FileSystem", "Win32_System_IO", "Win32_System_Console", "Win32_System_Registry", "Win32_System_Threading", "Win32_System_Time", "Win32_UI_WindowsAndMessaging"] }
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["webview2"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["webview2"] }
- 
- # zgx's D-Bus (menus, portals) linked in rather than loaded: `zeron` is also
- # what a headless Linux server and every Cloud machine runs (`zeron
-@@ -185,13 +185,13 @@ li
-```
-
-**File**: `apps/zgx/tests/syntax.rs` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+//! Syntax highlighting lexing checks (`ui/demos/syntax_tests.luau`), run
-+//! headless through the gallery's Syntax highlighting page so every language
-+//! (including Zig and Odin) is verified in zgx's Luau runtime.
-+
-+use std::path::PathBuf;
-+
-+use zgx_script::{ScriptHost, Value, testing::TestApp};
-+
-+fn ui_dir() -> PathBuf {
-+    std::env::var_os("ZERON_ZGX_TEST_UI")
-+        .map(PathBuf::from)
-+        .unwrap_or_else(|| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("ui"))
-+}
-+
-+#[test]
-+fn syntax_lexing_checks_pass() {
-+    let mut gallery = TestApp::new(|runtime| {
-+        let host = ScriptHost::new(runtime, ui_dir().join("gallery.luau"));
-+        host.action("appearance", |_| {});
-+        host.async_action("appearance", |_| async { Ok(Value::Nil) });
-+        host
-+    });
-+    gallery.ui.scene.borrow_mut().resize(1400., 2800.);
-+    gallery.frames(30);
-+    gallery.click(r#"role:button "Syntax highlighting"[1]"#);
-+    gallery.frames(20);
-+    assert_eq!(gallery.error(), None, "Syntax highlighting page errored");
-+
-+    let tree = gallery.tree();
-+    for line in tree.lines() {
-+        if line.contains("lexing checks") {
-+            eprintln!("syntax verdict: {}", line.trim());
+-    /** The subagents a session's agent spawned (its open transcript). */
++    /** Stop a chat's turn (a delegated subagent's Stop) through its own session, let go after. */
++    fun interruptChat(chatId: String) {
++        val client = _client.value ?: return
++        try {
++            val handle = client.session(chatId) ?: client.openSession(chatId)
++            try {
++                handle.interrupt()
++            } finally {
++                handle.close()
++            }
++        } catch (e: Exception) {
++            Log.w("Zeron", "interrupt failed", e)
++            toast("Couldn't stop it")
 +        }
 +    }
-+    assert!(
-+        tree.contains("lexing checks pass") && !tree.contains("lexing checks fail"),
-+        "syntax_tests.luau reported failures:\n{tree}"
-+    );
-+}
++
++    /** The subagents a session's agent spawned (its open transcript), then the chats it delegated to. */
+     fun sessionSubagents(chatId: String): List<uniffi.zeron_core.SubagentRow> {
+         val client = _client.value ?: return emptyList()
+         if ("--sub--" in chatId) return emptyList()
 ```
 
-**File**: `apps/zgx/ui/demos/syntax_samples.luau` (modified, +64/-0)
+**File**: `apps/android/app/src/main/java/sh/zeron/android/design/ZeronIcons.kt` (modified, +3/-0)
 ```diff
-@@ -515,6 +515,70 @@ fn fs_main(@location(0) uv: vec2f) -> @location(0) vec4<f32> {
- }
- ]==]
+@@ -54,6 +54,9 @@ object ZIcons {
+     val Moon = R.drawable.zi_moon
+     val Magic = R.drawable.zi_magic_stick_3
+     val Info = R.drawable.zi_info_circle
++    /** The desktop's status glyphs: an approval asked (a shield with a question), a question asked. */
++    val StatusApproval = R.drawable.zi_status_approval
++    val StatusInput = R.drawable.zi_status_input
+     val Logout = R.drawable.zi_logout_2
+     val Offline = R.drawable.zi_wifi_off
+     val Chat = R.drawable.zi_chat_round_line
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/Companions.kt` (modified, +342/-22)
+```diff
+@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
+ import androidx.compose.foundation.shape.RoundedCornerShape
+ import androidx.compose.material3.ExperimentalMaterial3Api
+ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
++import androidx.compose.material3.IconButton
+ import androidx.compose.material3.ListItemDefaults
+ import androidx.compose.material3.LoadingIndicator
+ import androidx.compose.material3.MaterialTheme
+@@ -42,6 +43,9 @@ import androidx.compose.material3.Text
+ import androidx.compose.material3.rememberModalBottomSheetState
+ import androidx.compose.material3.rememberSwipeToDismissBoxState
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.DisposableEffect
++import androidx.compose.runtime.collectAsState
++import androidx.compose.runtime.key
+ import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.Stable
+ import androidx.compose.runtime.getValue
+@@ -67,10 +71,13 @@ import sh.zeron.android.core.TerminalTab
+ import sh.zeron.android.design.ZIcon
+ import sh.zeron.android.design.ZIcons
+ import uniffi.zeron_core.CoreException
++import uniffi.zeron_core.InputRequest
++import uniffi.zeron_core.SessionHandle
+ import uniffi.zeron_core.SessionRow
+ import uniffi.zeron_core.SubagentRow
+ import uniffi.zeron_core.SubagentState
+ import uniffi.zeron_core.TerminalPhase
++import uniffi.zeron_core.UserInputAnswer
  
-+S.zig = [==[
-+//! Relays a device's frames to its peers.
-+const std = @import("std");
+ /** The companions sheet's sections (each chip opens its own). */
+ enum class CompanionSection(val title: String) { Agents("Agents"), SideChats("Side chats"), Terminals("Terminals") }
+@@ -79,10 +86,43 @@ enum class CompanionSection(val title: String) { Agents("Agents"), SideChats("Si
+ @Stable
+ class Companions(val agents: List<SubagentRow>, val sideChats: List<SessionRow>, val terminals: List<TerminalTab>) {
+     val runningAgents: Int get() = agents.count { it.state == SubagentState.RUNNING }
++    /** Chats it delegated to that ask the person something (answered on their rows). */
++    val askingAgents: Int get() = agents.count { it.asks }
+     val liveTerminals: Int get() = terminals.count { it.isLive }
+     val isEmpty: Boolean get() = agents.isEmpty() && sideChats.isEmpty() && terminals.isEmpty()
+ }
+ 
++/** A chat its parent's agent delegated to (a chat of its own, not a spawn in the parent's runtime). */
++val SubagentRow.isDelegated: Boolean get() = chatId != null
 +
-+const MAX_FRAME: usize = 16 * 1024;
++/** A session's side chats among its children: the chats it delegated to are its subagents instead. */
++internal fun sideChatsOf(children: List<SessionRow>): List<SessionRow> = children.filter { !it.archived && !it.delegated }
 +
-+pub const FrameError = error{ TooLarge, PeerGone };
++/**
++ * The Agents section's order: its own spawns (live first, then newest), then
++ * the chats it delegated to (any that ask first, then live ones, oldest first
++ * as the core lists them).
++ */
++internal fun orderedAgents(agents: List<SubagentRow>): List<SubagentRow> {
++    val (delegated, native) = agents.partition { it.isDelegated }
++    val live = compareByDescending<IndexedValue<SubagentRow>> { it.value.state == SubagentState.RUNNING }
++    return native.withIndex().sortedWith(live.thenByDescending { it.index }).map { it.value } +
++        delegated.withIndex().sortedWith(compareByDescending<IndexedValue<SubagentRow>> { it.value.asks }.then(live).thenBy { it.index }).map { it.value }
++}
 +
-+pub const Header = packed struct(u24) {
-+    version: u4,
-+    flags: u4,
-+    length: u16,
++/** A delegated row's word on it: its agent and, when it isn't the parent's, its device ("Codex · Build box"). */
++internal fun delegatedDetail(a: SubagentRow): String = listOfNotNull(a.kind, a.deviceName).joinToString(" · ")
++
++/** What an approval would run: its fenced or backticked part, if it has one (the desktop's ask card shows it as code). */
++internal fun askCommand(question: String): String? {
++    Regex("```[^\\n]*\\n([\\s\\S]*?)```").find(question)?.let { return it.groupValues[1].trim().ifEmpty { null } }
++    return Regex("`([^`]+)`").find(question)?.groupValues?.get(1)?.trim()?.ifEmpty { null }
++}
++
++/** A question answered in place: one question, a single pick, a handful of options. */
++internal fun answersInPlace(input: InputRequest): Boolean =
++    !input.isApproval && input.questions.size == 1 && input.questions[0].let { !it.multiSelect && it.options.size in 1..5 }
++
+ /**
+  * A session's companions, re-read as it changes. Streaming changes the
+  * session every frame; this settles a few times a second (a subagent count
+@@ -125,12 +165,22 @@ fun CompanionStrip(c: Companions, onTap: (CompanionSection) -> Unit, modifier: M
+     Row(modifier.animateContentSize(MaterialTheme.motionScheme.defaultSpatialSpec()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+         AnimatedVisibility(c.agents.isNotEmpty(), enter = fadeIn() + expandHorizontally(), exit = fadeOut() + shrinkHorizontally()) {
+             val running = c.runningAgents
+-            CompanionChip(
+-                icon = if (running > 0) null else ZIcons.Bot,
+-                text = if (running > 0) "$running working" else "${c.agents.size}",
+-            
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SessionScreen.kt` (modified, +14/-6)
+```diff
+@@ -161,6 +161,8 @@ fun SessionScreen(
+         composer = handle.composer()
+         model.sessionEvents.collect { if (it == chatId) composer = handle.composer() }
+     }
++    // A delegated chat's start line says how that chat stands: it reads the workspace again as it changes.
++    LaunchedEffect(chatId) { model.workspace.collect { runCatching { transcript.engine.workspaceChanged() } } }
+     LaunchedEffect(chatId) {
+         val text = sendOnOpen ?: return@LaunchedEffect
+         runCatching { handle.send(uniffi.zeron_core.SendRequest(text, emptyList(), null, uniffi.zeron_core.BusyPolicy.QUEUE)) }
+@@ -255,16 +257,17 @@ fun SessionScreen(
+             which.startsWith("subagent:") -> {
+                 val tool = which.removePrefix("subagent:")
+                 model.sessionSubagents(chatId).firstOrNull { it.id == tool || it.docId?.endsWith(tool) == true }?.let { a ->
+-                    a.docId?.let { onOpenSubagent(chatId, it, a.title, a.state == uniffi.zeron_core.SubagentState.RUNNING) }
++                    // A delegated one is a chat of its own.
++                    a.chatId?.let(onOpenSideChat) ?: a.docId?.let { onOpenSubagent(chatId, it, a.title, a.state == uniffi.zeron_core.SubagentState.RUNNING) }
+                 }
+             }
+         }
+     }
+ 
+     val project = row?.project?.name ?: "No project"
+     val parentTitle = remember(workspace, parentId) { parentId?.let { model.row(it)?.title } }
+-    // A side chat heads itself as one, under its parent's title.
+-    val headerTitle = if (parentId != null) "Side chat" else composer.title
++    // A side chat (or a chat its parent delegated to) heads itself as one, under its parent's title.
++    val headerTitle = if (parentId != null) childHeading(row) else composer.title
+     val subtitle = parentTitle ?: composer.host.name?.let { "$project @ $it" } ?: project
+     var overflow by remember { mutableStateOf(false) }
+     val clipboard = LocalClipboardManager.current
+@@ -297,10 +300,12 @@ fun SessionScreen(
+                     sh.zeron.android.voice.VoiceHeaderButton(model.voice, onOpenStage = onOpenVoice, onOpenSettings = onVoiceSettings)
+                     androidx.compose.foundation.layout.Spacer(Modifier.size(8.dp))
+                 }
+-                // Agents, side chats and terminals; a badge while agents work.
++                // Agents, side chats and terminals; a badge while agents work, toned while one needs you.
+                 androidx.compose.material3.BadgedBox(
+                     badge = {
+-                        if (companions.runningAgents > 0) {
++                        if (companions.askingAgents > 0) {
++                            androidx.compose.material3.Badge(containerColor = warningColor(), contentColor = MaterialTheme.colorScheme.surface) { Text("${companions.askingAgents}") }
++                        } else if (companions.runningAgents > 0) {
+                             androidx.compose.material3.Badge(containerColor = MaterialTheme.colorScheme.primary) { Text("${companions.runningAgents}") }
+                         }
+                     },
+@@ -409,7 +414,7 @@ fun SessionScreen(
+         CompanionsSheet(
+             model,
+             chatId,
+-            title = if (parentId != null) "Side chat" else composer.title,
++            title = if (parentId != null) childHeading(row) else composer.title,
+             initialSection = companionsSheet,
+             onDismiss = {
+                 showCompanions = false
+@@ -463,6 +468,9 @@ fun SessionScreen(
+     }
+ }
+ 
++/** A child chat's heading: a subagent when its parent's agent delegated to it, else a side chat. */
++internal fun childHeading(row: uniffi.zeron_core.SessionRow?): String = if (row?.delegated == true) "Subagent" else "Side chat"
++
+ /** How far above the chips and composer the transcript starts to fade. */
+ private val FADE = 44.dp
+ 
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SessionsScreen.kt` (modified, +22/-1)
+```diff
+@@ -588,16 +588,37 @@ fun HarnessTile(row: SessionRow) {
+     ) { HarnessMark(row.harness, 24.dp, tint = MaterialTheme.colorScheme.onSurface) }
+ }
+ 
+-/** Project monogram + name, then the branch — the desktop sidebar subline. */
++/**
++ * What a waiting chat waits on, in a line (the desktop hover card's): the
++ * first of it ("Codex · Build box · Audit the parser") and how many more.
++ */
++internal fun waitingLine(row: SessionRow): String? = waitingParts(row)?.let { (first, more) -> first + more }
++
++/** [waitingLine] in two: what it waits on first (cut short when it must) and how many more (never cut). */
++internal fun waitingParts(row: SessionRow): Pair<String, String>? {
++    val first = row.waitingOn.firstOrNull() ?: return null
++    val more = row.waitingOn.size - 1
++    return "Waiting on $first" to if (more > 0) " (+$more more)" else ""
++}
++
++/** Project monogram + name, then the branch — the desktop sidebar subline; a waiting chat's says what it waits on. */
+ @Composable
+ private fun Subline(row: SessionRow) {
+     val muted = MaterialTheme.colorScheme.onSurfaceVariant
++    val waiting = waitingParts(row)
+     Row(verticalAlignment = Alignment.CenterVertically) {
+         val project = row.project
+         if (project != null) {
+             ProjectTile(project.name, project.colorIndex.toInt(), 16.dp)
+             Spacer(Modifier.width(6.dp))
+         }
++        // (The project's tile still says whose it is.)
++        if (waiting != null) {
++            val (first, more) = waiting
++            Text(first, style = MaterialTheme.typography.bodyMedium, color = muted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
++            if (more.isNotEmpty()) Text(more, style = MaterialTheme.typography.bodyMedium, color = muted, maxLines = 1, softWrap = false)
++            return@Row
++        }
+         Text(
+             project?.name ?: row.deviceName ?: "No project",
+             style = MaterialTheme.typography.bodyMedium,
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/TabletShell.kt` (modified, +2/-7)
+```diff
+@@ -188,16 +188,11 @@ fun InspectorPageContent(model: AppModel, shell: TabletShellState, chatId: Strin
+     when (page) {
+         is InspectorPage.Companions -> Column(Modifier.fillMaxSize()) {
+             val c = rememberCompanions(model, chatId)
+-            val title = model.row(chatId)?.let { if (it.parentChatId != null) "Side chat" else it.title } ?: "Session"
++            val title = model.row(chatId)?.let { if (it.parentChatId != null) childHeading(it) else it.title } ?: "Session"
+             Row(Modifier.fillMaxWidth().statusBarsPadding().padding(start = 20.dp, end = 12.dp, top = 8.dp, bottom = 4.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                 Column(Modifier.weight(1f)) {
+                     Text(title, style = MaterialTheme.typography.titleLargeEmphasized, maxLines = 1, overflow = TextOverflow.Ellipsis)
+-                    val running = c.runningAgents
+-                    Text(
+-                        if (running > 0) "$running agent${if (running == 1) "" else "s"} working" else "Agents, side chats & terminals",
+-                        style = MaterialTheme.typography.bodyMedium,
+-                        color = if (running > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+-                    )
++                    CompanionsSubtitle(c)
+                 }
+                 TonalCircleButton(sh.zeron.android.design.ZIcons.Close, "Close", onClick = shell::hideInspector, size = 44.dp, container = MaterialTheme.colorScheme.surfaceContainerHighest)
+             }
+```
+
+**File**: `apps/android/app/src/test/java/sh/zeron/android/ui/CompanionsTest.kt` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++package sh.zeron.android.ui
++
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertNull
++import org.junit.Assert.assertTrue
++import org.junit.Test
++import uniffi.zeron_core.ChatIndicator
++import uniffi.zeron_core.InputRequest
++import uniffi.zeron_core.SessionRow
++import uniffi.zeron_core.SubagentRow
++import uniffi.zeron_core.SubagentState
++import uniffi.zeron_core.UserInputQuestion
++
++class CompanionsTest {
++    private fun child(id: String, delegated: Boolean = false, archived: Boolean = false, waitingOn: List<String> = emptyList()) = SessionRow(
++        id = id, revision = 0u, title = id, hasTitle = true, preview = null, project = null,
++        deviceId = "mac", deviceName = null, deviceOnline = true, isCloud = false,
++        harness = null, harnessLabel = null, model = null, modelLabel = null, reasoning = null,
++        branch = null, cwd = null, indicator = ChatIndicator.IDLE, hostIndicator = ChatIndicator.IDLE,
++        workingSinceMs = null, lastActivityMs = 0, timeLabel = "", createdAtMs = 0,
++        unseen = false, archived = archived, pinned = false, sectionId = null, pullRequest = null,
++        sendState = null, parentChatId = "parent", delegated = delegated, waitingOn = waitingOn,
++        waitingSinceMs = null, childAsks = false, roomGen = 2u, sleepUntilMs = null, wokeAtMs = null, waitsOnProcess = false,
++    )
++
++    private fun agent(id: String, chat: String? = null, state: SubagentState = SubagentState.RUNNING, asks: Boolean = false) = SubagentRow(
++        id = id, chatId = chat, deviceName = null, harness = null, asks = asks, docId = null,
++        title = id, model = null, kind = null, state = state, tail = null, startedAtMs = 0,
++    )
++
++    @Test
++    fun delegated_children_are_subagents_not_side_chats() {
++        val sides = sideChatsOf(listOf(child("side"), child("audit", delegated = true), child("old", archived = true)))
++        assertEquals(listOf("side"), sides.map { it.id })
++    }
++
++    @Test
++    fun delegated_chats_follow_the_agents_own_spawns() {
++        val order = orderedAgents(
++            listOf(
++                agent("spawn-done", state = SubagentState.DONE),
++                agent("bench", chat = "c-bench", state = SubagentState.DONE),
++                agent("spawn-live"),
++                agent("notes", chat = "c-notes"),
++                agent("audit", chat = "c-audit", asks = true),
++            ),
++        )
++        // Spawns live first; then delegated chats, the one that asks first, live before done.
++        assertEquals(listOf("spawn-live", "spawn-done", "audit", "notes", "bench"), order.map { it.id })
++    }
++
++    @Test
++    fun a_delegated_rows_detail_is_its_agent_and_other_device() {
++        assertEquals("Codex · Build box", delegatedDetail(agent("a", chat = "c").copy(kind = "Codex", deviceName = "Build box")))
++        assertEquals("Claude Code", delegatedDetail(agent("a", chat = "c").copy(kind = "Claude Code")))
++    }
++
++    @Test
++    fun an_approval_shows_what_it_would_run() {
++        assertEquals("cargo fuzz run parse -- -max_total_time=60", askCommand("Run `cargo fuzz run parse -- -max_total_time=60`?"))
++        assertEquals("rm -rf build\nls", askCommand("Allow this?\n```sh\nrm -rf build\nls\n```"))
++        assertNull(askCommand("Edit src/parse.rs?"))
++        assertNull(askCommand("Run ``?"))
++    }
++
++    private fun question(options: List<String>, multi: Boolean = false) =
++        UserInputQuestion(id = "q", header = "", question = "Which branch?", options = options, multiSelect = multi, prefill = null, multiline = false)
++
++    @Test
++    fun only_a_short_single_pick_answers_in_place() {
++        fun input(vararg q: UserInputQuestion, approval: Boolean = false) = InputRequest("e", "r", q.toList(), approval)
++        assertTrue(answersInPlace(input(question(listOf("main", "release/1.9", "next")))))
++        assertFalse(answersInPlace(input(question(listOf("a", "b", "c", "d", "e", "f")))))
++        assertFalse(answersInPlace(input(question(listOf("a", "b"), multi = true))))
++        assertFalse(answersInPlace(input(question(emptyList()))))
++        assertFalse(answersInPlace(input(question(listOf("a")), question(listOf("b")))))
++        assertFalse(answersInPlace(input(question(listOf("Yes", "No")), approval = true)))
++    }
++
++    @Test
++    fun a_waiting_chat_says_what_it_waits_on() {
++        assertNull(waitingLine(child("idle")))
++        assertEquals("Waiting on Codex · Build box · Audit the parser", waitingLine(child("w", waitingOn = listOf("Codex · Build box · Audit the parser"))))
++        assertEquals(
++            "Waiting on Codex · Build box · Audit the parser (+1 more)",
++            waitingLine(child("w", waitingOn = listOf("Codex · Build box · Audit the parser", "Claude Code · Draft the release notes"))),
++        )
++    }
++
++    @Test
++    fun a_child_heads_itself_by_how_it_was_made() {
++        assertEquals("Subagent", childHeading(child("audit", 
+```
+
+**File**: `apps/android/icons/status-approval.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+```
+
+---
+
+### Incident Patch 2: `34e345ad` (2026-11-25)
+**Commit Message**: Merge pull request #1617 from zeronsh/zeron/landing-pixel-walker
+
+Landing: the Pixel Walker walks the hero window's top bar, and the hero drops its "What's new" badge
+
+**File**: `apps/landing/src/components/app/PixelWalker.astro` (added, +114/-0)
+```diff
+@@ -0,0 +1,114 @@
++---
++// The Pixel Walker plugin's fellow in a red cap, strolling along the top bar
++// of the recreated window as he does in the app: the same 14 × 16 artwork
++// (sprite.luau), drawn at its "Normal" size (two points a pixel), at its
++// default 40 points a second, pausing 0.7 s at each end before he turns.
++// He sets off from the session's tab (which ends at x 430), heading right,
++// and walks the bar to 48 points short of its right edge, as in the app.
++//
++// Every move is a transform or an opacity, so it all runs on the compositor
++// and nothing is repainted: the walk is a translate, the turn a scale, the
++// stride a four-frame sheet stepped along, and a pause swaps in the
++// standing frame. With Reduce Motion he stands still, as the plugin does.
++
++const PALETTE: Record<string, string> = {
++  h: "#e4605b", // red 500: cap
++  k: "#362001", // amber 950: hair
++  s: "#ffd3be", // orange 200: skin
++  t: "#f9837b", // red 400: shirt
++  p: "#18aa99", // teal 500: overalls
++  b: "#905d02", // amber 700: boots
++  y: "#f0e4b6", // yellow 200: buttons
 +};
++const HEAD = [
++  "....hhhhh.....",
++  "...hhhhhhhh...",
++  "...kksssks....",
++  "..ksssssks....",
++  "..kssssssss...",
++  "...ksssss.....",
++  "....ssss......",
++  "...tttttt.....",
++];
++const POSES = [
++  ["..ttpttptt....", "..ttpyyptt....", "..ssppppss....", "...pppppp.....", "...pp..pp.....", "..pp....pp....", "..bb....bb....", ".bbb....bbb..."],
++  ["...tpttpt.....", "...tpyypt.....", "...spppps.....", "....pppp......", "....pppp......", "....pppp......", "....bbbb......", "....bbbbb....."],
++  ["..ttpttptt....", "..ttpyyptt....", "...sppppsss...", "...pppppp.....", "...pp..pp.....", "....pp..pp....", "....bb..bb....", "...bbb..bbb..."],
++  ["...tpttpt.....", "...tpyypt.....", "...spppps.....", "....pppp......", "...pppp.......", "...pppp.......", "...bbbb.......", "...bbbbb......"],
++];
++const W = 14;
 +
-+pub fn send(id: u64, frame: []const u8, @"type": u7) FrameError!void {
-+    if (frame.len > MAX_FRAME) return error.TooLarge;
-+    const scale: f64 = 0x1.fp+3;
-+    const banner =
-+        \\a multiline string keeps "quotes" and \n literal
-+        \\and // is not a comment
-+    ;
-+    const tag: u8 = '\n';
-+    const n: i24 = @intCast(frame.len);
-+    std.debug.print("sent {d} bytes ({c}, {d}, {s}, {d})\n", .{ n, tag, id, banner, @as(f64, scale) + @floatFromInt(@"type") });
-+}
-+]==]
-+
-+S.odin = [==[
-+package relay
-+
-+import "core:fmt"
-+
-+/* Block comments /* nest */ in Odin. */
-+MAX_FRAME :: 16 * 1024
-+
-+Header :: struct #packed {
-+	version: u8,
-+	length:  u16be,
-+}
-+
-+Frame_Kind :: enum u8 {
-+	Data,
-+	Ping,
-+}
-+
-+Peer_Id :: distinct u64
-+
-+@(private="file")
-+BANNER :: `raw string keeps \n and "quotes"
-+over lines`
-+
-+@(require_results)
-+send :: proc(id: Peer_Id, kind: Frame_Kind, frame: []u8, loc := #caller_location) -> bool {
-+	if len(frame) > MAX_FRAME {
-+		return false
-+	}
-+	#partial switch kind {
-+	case .Data:
-+		fmt.printfln("peer %d: %s (%r)\n", id, BANNER, 'x')
-+	}
-+	return true
-+}
-+]==]
-+
- S.diff = [==[
- diff --git a/crates/ui/src/syntax_cache.rs b/crates/ui/src/syntax_cache.rs
- index 3f1c2a9..8b7afb3 100644
-```
-
-**File**: `apps/zgx/ui/demos/syntax_tests.luau` (modified, +64/-0)
-```diff
-@@ -133,6 +133,57 @@ local CASES: { { any } } = {
- 	{ "yaml: alias", "yaml", { "  <<: *defaults" }, 1, "*defaults", "label" },
- 	{ "diff: inserted", "diff", { "+added", "-gone" }, 1, "added", "inserted" },
- 	{ "diff: deleted", "diff", { "+added", "-gone" }, 2, "gone", "deleted" },
-+	{ "zig: builtin", "zig", { [[const std = @import("std");]] }, 1, "@import", "macro" },
-+	{ "zig: builtin before dot", "zig", { [[const mem = @import("std").mem;]] }, 1, "mem;", "property" },
-+	{ "zig: escaped ident", "zig", { [[const @"type" = u24;]] }, 1, '@"type"', "text" },
-+	{ "zig: escaped ident no stray string", "zig", { [[const @"type" = u24;]] }, 1, "u24", "type" },
-+	{ "zig: escaped ident fn", "zig", { [[pub fn @"return"(x: i7) void {}]] }, 1, '@"return"', "function" },
-+	{ "zig: escaped ident call", "zig", { [[const r = @"my func"(1);]] }, 1, '@"my func"', "function" },
-+	{ "zig: escaped ident property", "zig", { [[const v = s.@"while";]] }, 1, '@"while"', "property" },
-+	{ "zig: escaped ident quote", "zig", { [[const x = @"a\"b"; const y = 1;]] }, 1, "const y", "keyword" },
-+	{ "zig: arbitrary int u0", "zig", { "var z: u0 = 0; var a: u24 = 1; var b: i65535 = 2;" }, 1, "u0", "type" },
-+	{ "zig: arbitrary int u24", "zig", { "var a: u24 = 1; var b: i65535 = 2;" }, 1, "u24", "type" },
-+	{ "zig: arbitrary int i65535", "zig", { "var a: u24 = 1; var b: i65535 = 2;" }, 1, "i65535", "type" },
-+	{ "zig: invalid int width not type", "zig", { "var a: u65536 = 1; var b: i01 = 2;" }, 1, "u65536", "text" },
-+	{ "zig: leading zero int not type", "zig", { "var a: u65536 = 1; var b: i01 = 2;" }, 1, "i01", "text" },
-+	{ "zig: multiline string", "zig", { [[    \\hello "world" \n // not comment]] }, 1, "hello", "string" },
-+	{ "zig: multiline no escape", "zig", { [[    \\hello "world" \n // not comment]] }, 1, "\\n", "string" },
-+	{ "zig: multiline no comment", "zig", { [[    \\hello "world" \n // not comment]] }, 1, "// not", "string" },
-+	{ "zig: no block comments", "zig", { "/* not a comment */ const x = 1;" }, 1, "not", "text" },
-+	{ "zig: hex float", "zig", { "const f = 0x1.fp+3;" }, 1, "fp+3", "number" },
-+	{ "zig: hex float no frac", "zig", { "const f = 0x1p-4;" }, 1, "p-4", "number" },
-+	{ "rust: hex method not hex float", "rust", { "let a = 0x1.abs();" }, 1, "abs", "function" },
-+	{ "rust: hex range not hex float", "rust", { "for i in 0x1..0x10 {}" }, 1, "..", "punctuation" },
-+	{ "zig: char unicode escape", "zig", { [[const c = '\u{1F600}';]] }, 1, "\\u{1F600}", "escape" },
-+	{ "zig: char escaped quote", "zig", { [[const q = '\''; const z = 1;]] }, 1, "const z", "keyword" },
-+	{ "zig: keywords and constants", "zig", { "comptime var x: anytype = undefined;" }, 1, "comptime", "keyword" },
-+	{ "zig: constant undefined", "zig", { "comptime var x: anytype = undefined;" }, 1, "undefined", "constant" },
-+	{ "markdown: zig fence", "markdown", { "```zig", [[const s = @import("std");]], "```" }, 2, "@import", "macro" },
-+	{ "odin: nested block comment", "odin", { "/* a /* b */ still", "comment */ x := 1" }, 1, "still", "comment" },
-+	{ "odin: nested comment closes", "odin", { "/* a /* b */ still", "comment */ return nil" }, 2, "return", "keyword" },
-+	{ "odin: raw string over lines", "odin", { [[s := `one \n "q"]], [[two`]], "return nil" }, 1, "\\n", "string" },
-+	{ "odin: raw string line 2", "odin", { [[s := `one \n "q"]], [[two`]], "return nil" }, 2, "two", "string" },
-+	{ "odin: raw string closes", "odin", { [[s := `one \n "q"]], [[two`]], "return nil" }, 3, "return", "keyword" },
-+	{ "odin: directive mid-line", "odin", { "Vec3 :: struct #packed { x: f32 }" }, 1, "#packed", "macro" },
-+	{ "odin: directive start", "odin", { "#partial switch k {" }, 1, "#partial", "macro" },
-+	{ "odin: directive load", "odin", { [[data := #load("a.bin")]] }, 1, "#load", "macro" },
-+	{ "odin: decorator attr", "odin", { "@private x := 1" }, 1, "@private", "attribute" },
-+	{ "odin: paren attr", "odin", { [[@(private="file") foo :: proc() {}]] }, 1, "private", "attribute" },
-+	{ "odin: paren attr string parens", "odin", { [[@(deprecated="use foo() instead") bar :: proc() {}]] }, 1, "bar", "function" },
-+	{ "odin: proc decl", "odin", { "main :: proc() {" }, 1, "main", "function" },
-+	{ "odin: tight proc decl", "odin", { "main::proc() {" }, 1, "main", "function" },
-+	{ "odin: capitalized proc decl", "odin", { "Update :: proc(dt: f32) {" }, 1, "Update", "function" },
-+	{ "odin: lowercase struct decl", "odin", { "vec3 :: struct { x: f32 }" }, 1, "vec3", "type" },
-+	{ "odin: enum decl", "odin", { "kind :: enum u8 { A }" }, 1, "kind", "type" },
-+	{ "odin: union decl", "odin", { "val :: union { int, f32 }" }, 1, "val", "type" },
-+	{ "odin: bit_field decl", "odin", { "hdr :: bit_field u32 { a: u8 | 8 }" }, 1, "hdr", "type" },
-+	{ "odin: distinct decl", "odin", { "handle :: distinct u64" }, 1, "handle", "type" },
-+	{ "odin: bit_set decl", "odin", { "flags :: bit_set[Flag]" }, 1, "flags", "type" },
-+	{ "odin: caps constant", "odin", { "MAX_PEERS :: 64" }, 1, "MAX_PEER
-```
-
-**File**: `apps/zgx/ui/ds/syntax/code.luau` (modified, +37/-0)
-```diff
-@@ -275,6 +275,43 @@ local specs: { [string]: { [string]: any } } = {
- 		caps_type = true,
- 		decorators = true,
- 	},
-+	zig = {
-+		line = SLASHES,
-+		strings = { DOUBLE },
-+		keywords = set(
-+			"addrspace align allowzero and anyframe anytype asm async await break callconv catch comptime const continue defer else enum errdefer error export extern fn for if inline linksection noalias noinline nosuspend or orelse packed pub resume return struct suspend switch test threadlocal try union unreachable usingnamespace var volatile while"
-+		),
-+		constants = set("true false null undefined"),
-+		types = set(
-+			"bool void noreturn type anyerror anyopaque comptime_int comptime_float c_char c_short c_ushort c_int c_uint c_long c_ulong c_longlong c_ulonglong c_longdouble f16 f32 f64 f80 f128 usize isize i8 i16 i32 i64 i128 u8 u16 u32 u64 u128"
-+		),
-+		defs = set("fn"),
-+		decls = set("struct enum union error"),
-+		caps_type = true,
-+		chars = true,
-+		zig_multiline = true,
-+		zig_builtins = true,
-+		zig_int_types = true,
-+	},
-+	odin = {
-+		line = SLASHES,
-+		block = BLOCK,
-+		nest = true,
-+		strings = { DOUBLE, { open = "`", escape = false, multi = true } },
-+		keywords = set(
-+			"asm auto_cast bit_field bit_set break case cast context continue defer distinct do dynamic else enum fallthrough for foreign if import in map matrix not_in or_break or_continue or_else or_return package proc return struct switch transmute union using when where"
-+		),
-+		constants = set("true false nil"),
-+		types = set(
-+			"bool b8 b16 b32 b64 int i8 i16 i32 i64 i128 i16le i32le i64le i128le i16be i32be i64be i128be uint u8 u16 u32 u64 u128 u16le u32le u64le u128le u16be u32be u64be u128be uintptr byte rune f16 f32 f64 f16le f32le f64le f16be f32be f64be complex32 complex64 complex128 quaternion64 quaternion128 quaternion256 string cstring rawptr any typeid"
-+		),
-+		caps_type = true,
-+		chars = true,
-+		decorators = true,
-+		directives = true,
-+		odin_attrs = true,
-+		odin_decls = true,
-+	},
- }
- 
- local M = {}
-```
-
-**File**: `apps/zgx/ui/ds/syntax/init.luau` (modified, +5/-1)
-```diff
-@@ -100,6 +100,7 @@ local ALIASES: { [string]: string } = {
- 	less = "css",
- 	patch = "diff",
- 	frag = "wgsl",
-+	zon = "zig",
- }
- 
- -- Whole file names with a language of their own.
-@@ -150,15 +151,18 @@ local NAMES_SHOWN: { [string]: string } = {
- 	css = "CSS",
- 	sql = "SQL",
- 	wgsl = "WGSL",
-+	zig = "Zig",
-+	odin = "Odin",
- 	diff = "Diff",
- }
- 
- local COMMENTS: { [string]: Comment } = {}
- do
- 	local slashes: Comment = { line = "//", block = { "/*", "*/" } }
--	for _, id in { "rust", "typescript", "tsx", "javascript", "jsx", "go", "swift", "kotlin", "java", "csharp", "c", "cpp", "wgsl" } do
-+	for _, id in { "rust", "typescript", "tsx", "javascript", "jsx", "go", "swift", "kotlin", "java", "csharp", "c", "cpp", "wgsl", "odin" } do
- 		COMMENTS[id] = slashes
- 	end
-+	COMMENTS.zig = { line = "//" }
- 	local hash: Comment = { line = "#" }
- 	for _, id in { "python", "ruby", "shell", "toml", "yaml" } do
- 		COMMENTS[id] = hash
-```
-
----
-
-### Incident Patch 2: `66d025b2` (2026-11-21)
-**Commit Message**: fix(zgx): bump zgx rev to e3f35a546 for stale scene node fixes
-
-**File**: `apps/zgx/Cargo.lock` (modified, +46/-46)
-```diff
-@@ -30,7 +30,7 @@ dependencies = [
- [[package]]
- name = "accesskit_atspi_common"
- version = "0.19.1"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -43,7 +43,7 @@ dependencies = [
- [[package]]
- name = "accesskit_consumer"
- version = "0.38.0"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "hashbrown 0.16.1",
-@@ -66,7 +66,7 @@ dependencies = [
- [[package]]
- name = "accesskit_macos"
- version = "0.26.3"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -79,7 +79,7 @@ dependencies = [
- [[package]]
- name = "accesskit_unix"
- version = "0.22.1"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "accesskit_atspi_common",
-@@ -96,7 +96,7 @@ dependencies = [
- [[package]]
- name = "accesskit_windows"
- version = "0.34.0"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -277,26 +277,6 @@ dependencies = [
-  "object",
- ]
- 
--[[package]]
--name = "arboard"
--version = "3.7.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aeb9553e62312c8756a5979254fc6d7da8bbeb5986a1e17037fab932f7037917"
--dependencies = [
-- "clipboard-win",
-- "image",
-- "log",
-- "objc2 0.6.4",
-- "objc2-app-kit 0.3.2",
-- "objc2-core-foundation",
-- "objc2-core-graphics",
-- "objc2-foundation 0.3.2",
-- "parking_lot",
-- "percent-encoding",
-- "windows-sys 0.61.2",
-- "x11rb",
--]
--
- [[package]]
- name = "arrayref"
- version = "0.3.9"
-@@ -6450,7 +6430,7 @@ dependencies = [
- [[package]]
- name = "wgpu-hal"
- version = "29.0.4"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "android_system_properties",
-  "arrayvec",
-@@ -6888,7 +6868,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
- [[package]]
- name = "winit"
- version = "0.30.13"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "ahash",
-  "android-activity",
-@@ -7456,7 +7436,7 @@ dependencies = [
- [[package]]
- name = "zgx"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "fixed_decimal",
-  "foldhash 0.2.0",
-@@ -7485,7 +7465,7 @@ dependencies = [
- [[package]]
- name = "zgx-3d"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "bytemuck",
-  "zgx",
-@@ -7495,7 +7475,7 @@ dependencies = [
- [[package]]
- name = "zgx-alacritty-terminal"
- version = "0.26.8"
--source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
- dependencies = [
-  "base64 0.22.1",
-  "bitflags 2.13.2",
-@@ -7517,18 +7497,37 @@ dependencies = [
-  "zgx-vte",
- ]
- 
-+[[package]]
-+name = "zgx-arboard"
-+version = "3.6.2"
-+source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6
-```
-
-**File**: `apps/zgx/Cargo.toml` (modified, +14/-14)
-```diff
-@@ -32,7 +32,7 @@ layout_probe = []
- 
- [dependencies]
- lz4_flex = { version = "0.11", default-features = false, features = ["safe-encode", "safe-decode"] }
--zgx = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7" }
-+zgx = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31" }
- # `mimalloc`: the program's allocator, in place of the system's. It hands
- # freed memory back to the system (the system's keeps the most it ever
- # held), and zgx measures 1-10% less CPU for script, text and layout work.
-@@ -43,26 +43,26 @@ zgx = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e2165
- # none of it, and without it pages are placeholders ("Web view · <url>").
- # zgx-run turns it on by default, but this app takes zgx-run without its
- # defaults (below). Nothing on macOS or Windows.
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["mimalloc", "terminal", "webkitgtk"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["mimalloc", "terminal", "webkitgtk"] }
- # `inspect`: devtools for `zgx inspect` (and its MCP server), asked for
- # with `--inspect`. `i18n`: `ui.t`'s plurals and numbers by each locale's
- # own rules (ICU4X's data, about 90 KB), for ui/locales' translations.
- # `scene3d`: `ui.scene3d`, `ui.mesh`, `ui.light`, `ui.group` (zgx-3d on the
- # wgpu this app already links), for plugins that show 3D: the CAD plugin
- # hands it its own triangles (`geometry = { positions, indices, … }`). It
- # asks no grant; a scene draws a frame only when something in it changes.
--zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["inspect", "i18n", "scene3d"] }
-+zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["inspect", "i18n", "scene3d"] }
- # A picture's pixels for the clipboard (src/images.rs): zgx's own decoder,
- # the formats `ui.image` shows (no features of its own: the ones zgx-desktop
- # turns on).
--zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", default-features = false }
-+zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false }
- # Each plugin's own database (`zeron.db`, src/plugins/db.rs): SQLite,
- # built in; `limits` to keep one from attaching any other file.
- rusqlite = { version = "0.32", features = ["bundled", "limits", "hooks"] }
- # `fetch`: zgx's own transport for `ui.fetch` and remote images (HTTP and
- # HTTPS, rustls), given to every window (src/main.rs): the app's scripts,
- # and plugins granted "network". Nothing else of the runner.
--zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", default-features = false, features = ["fetch"] }
-+zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false, features = ["fetch"] }
- # `webp`: `ui.image` decodes through this crate, by what its features
- # allow, so turning WebP on here is all it takes (the member cards' art).
- # `ico`: sites' favicons (the browser tab's: src/favicons.rs), most of
-@@ -162,7 +162,7 @@ foreign-types = "0.5"
- # elements, box drawing and Powerline glyphs to the cell; zgx's own renderer
- # draws them from the font at its text line height, gapped. Builds Ghostty
- # with Zig 0.16 (cached in ~/Library/Caches/zgx-ghostty).
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["ghostty"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["ghostty"] }
- 
- # Windows' Transparency effects (src/transparency.rs), read and watched in
- # the registry, until zgx reports them (zgx-asks/windows-transparency); a
-@@ -173,7 +173,7 @@ zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363a
- # 11 (and with Edge on Windows 10); without it, pages are placeholders.
- [target.'cfg(windows)'.dependencies]
- windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Media_Audio", "Win32_Storage_FileSystem", "Win32_System_IO", "Win32_System_Console", "Win32_System_Registry", "Win32_System_Threading", "Win32_System_Time", "Win32_UI_WindowsAndMessaging"] }
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["webview2"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["webview2"] }
- 
- # zgx's D-Bus (menus, portals) linked in rather than loaded: `zeron` is also
- # what a headless Linux server and every Cloud machine runs (`zeron
-@@ -185,13 +185,13 @@ li
-```
-
----
-
-### Incident Patch 3: `e595626b` (2026-11-21)
-**Commit Message**: fix(cloud,harness): prevent Antigravity disconnects in Cloud Runner
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -9012,6 +9012,7 @@ dependencies = [
-  "futures",
-  "libc",
-  "reqwest",
-+ "rusqlite",
-  "semver",
-  "serde",
-  "serde_json",
-```
-
-**File**: `crates/engine/src/credentials.rs` (modified, +104/-17)
-```diff
-@@ -80,12 +80,13 @@
- //!     is replaced while more than 75 minutes remain: Hermes would start its
- //!     own refresh an hour ahead.
- //!   - Antigravity: on its Google login, `acp_token.json` holding the access
--//!     token and its expiry (its refresh fields present but empty) and
--//!     `auth.type = oauth-personal`; it reads the token once per connection,
--//!     so a run starts on one with 50 minutes left and a session whose token
--//!     runs low reads as another credential (replaced at its next turn). On
--//!     the key: `GEMINI_API_KEY`, and `auth.type = gemini-api-key` in its
--//!     `settings.json` (only when absent or plain JSON).
-+//!     token (refresh fields present but empty) and `auth.type = oauth-personal`,
-+//!     plus a loopback CCPA reverse proxy (`AGY_ACP_CCPA_BASE_URL`) that injects
-+//!     live vault tokens on every CCPA request (and retries once on 401) while
-+//!     writing a far-future `expiry` in `acp_token.json` so `agy_acp_server`'s
-+//!     in-memory credentials never expire mid-turn. On the key: `GEMINI_API_KEY`,
-+//!     and `auth.type = gemini-api-key` in its `settings.json` (only when absent
-+//!     or plain JSON).
- //!   - Muse: its whole `auth.json` document as the vault holds it (refresh
- //!     tokens empty), with `TBH_CREDENTIAL_BACKEND=file`; a file the broker
- //!     didn't write (its SHA-256 is kept) is Muse's own and stays.
-@@ -104,6 +105,8 @@
- //! `not_found`, `needs_reconnect`, revoked, kill switch) means "not connected":
- //! the cache entry and any file it backed are dropped.
- 
-+mod antigravity_proxy;
-+
- use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
- use std::path::{Path, PathBuf};
- use std::sync::{Arc, Mutex, MutexGuard, PoisonError, Weak};
-@@ -481,6 +484,10 @@ struct Inner {
-     /// Per account: when its usage was last reported, and what it said
-     /// ([`CredentialBroker::report_usage`]).
-     usage_reported: Mutex<HashMap<String, (Instant, String)>>,
-+    /// Lazy loopback CCPA auth reverse proxy for Antigravity vault runs.
-+    antigravity_proxy: Mutex<Option<antigravity_proxy::AntigravityProxy>>,
-+    /// Serializes lazy startup of [`Self::antigravity_proxy`].
-+    antigravity_proxy_init: tokio::sync::Mutex<()>,
- }
- 
- /// An agent's install check: done once it passes; a failed install is
-@@ -538,6 +545,8 @@ impl CredentialBroker {
-                 codex_check: tokio::sync::Mutex::new(CodexCheck::Unchecked),
-                 installs: Mutex::new(HashMap::new()),
-                 usage_reported: Mutex::new(HashMap::new()),
-+                antigravity_proxy: Mutex::new(None),
-+                antigravity_proxy_init: tokio::sync::Mutex::new(()),
-             }),
-         }
-     }
-@@ -619,6 +628,56 @@ impl CredentialBroker {
-         if let Some(task) = lock(&self.inner.refresher).take() {
-             task.abort();
-         }
-+        let _ = lock(&self.inner.antigravity_proxy).take();
++// One rect per run of a colour, as the plugin paints them. The second and
++// fourth strides bob up a pixel, so each frame sits in a box one row taller.
++function rects(pose: string[], dx: number, dy: number) {
++  let out = "";
++  [...HEAD, ...pose].forEach((row, y) => {
++    for (let x = 0; x < row.length; ) {
++      let end = x + 1;
++      while (end < row.length && row[end] === row[x]) end++;
++      if (row[x] !== ".") out += `<rect x="${dx + x}" y="${dy + y}" width="${end - x}" height="1" fill="${PALETTE[row[x]]}"/>`;
++      x = end;
 +    }
++  });
++  return out;
++}
++const sheet = POSES.map((pose, i) => rects(pose, i * W, i % 2 === 1 ? 0 : 1)).join("");
++const standing = rects(POSES[1], 0, 1);
++---
 +
-+    fn has_antigravity_proxy(&self) -> bool {
-+        lock(&self.inner.antigravity_proxy).is_some()
-+    }
++<div class="walker" aria-hidden="true">
++  <div class="face">
++    <div class="stride"><svg class="sheet" viewBox="0 0 56 17" shape-rendering="crispEdges" set:html={sheet} /></div>
++    <svg class="stand" viewBox="0 0 14 17" shape-rendering="crispEdges" set:html={standing} />
++  </div>
++</div>
 +
-+    async fn ensure_antigravity_proxy(&self, fixed_upstream: Option<String>) -> Option<String> {
-+        if let Some(proxy) = lock(&self.inner.antigravity_proxy).as_ref() {
-+            return Some(proxy.base_url().to_owned());
-+        }
-+        let _guard = self.inner.antigravity_proxy_init.lock().await;
-+        if let Some(proxy) = lock(&self.inner.antigravity_proxy).as_ref() {
-+            return Some(proxy.base_url().to_owned());
-+        }
-+        match antigravity_proxy::AntigravityProxy::start(
-+            Arc::downgrade(&self.inner),
-+            fixed_upstream,
-+        )
-+        .await
-+        {
-+            Ok(proxy) => {
-+                let url = proxy.base_url().to_owned();
-+                *lock(&self.inner.antigravity_proxy) = Some(proxy);
-+                Some(url)
-+            }
-+            Err(error) => {
-+                tracing::warn!(
-+                    %error,
-+                    "credentials: failed to start Antigravity CCPA auth proxy; falling back to static token"
-+                );
-+                None
-+            }
-+        }
-+    }
++<style>
++  /* In the stage's points: his walk starts just past the tab, at x 434; his
++     feet sit a point above the bar's foot (y 41), and the box is a row
++     taller for the bob. */
++  .walker { left: 434px; top: 7px; width: 28px; height: 34px; pointer-events: none; }
++  .face, .stride, .stand { position: absolute; inset: 0; }
++  .stride { overflow: hidden; opacity: 0; }
++  /* The sheet is four frames wide, wider than its box: the page's own svg rule would shrink it. */
++  .sheet { display: block; width: 112px; max-width: none; height: 34px; }
++  .stand { display: block; width: 28px; height: 34px; }
 +
-+    /// Fetch a live Antigravity access token for the loopback CCPA proxy.
-+    /// Uses [`GRANT_SLACK`] (5m) rather than [`ANTIGRAVITY_MIN_LIFE`] (50m) so
-+    /// ongoing requests reuse valid cached tokens and transparently refresh
-+    /// ahead of real Google expiry. When `force_refresh` is true (after an
-+    /// upstream 401), bypasses the cache once to ask the vault directly.
-+    async fn antigravity_proxy_grant(&self, force_refresh: bool) -> GrantOutcome {
-+        if !force_refresh {
-+            return self
-+                .grant_within(VaultProvider::Antigravity, GRANT_SLACK, Some(RUN_REVALIDATE))
-+                .await;
-+        }
-+        let _gate = self.inner.grant_gate.lock().await;
-+        let fetched = self.fetch(VaultProvider::Antigravity).await;
-+        self.record(VaultProvider::Antigravity, fetched)
-     }
- 
-     // -- grants
++  /* One round trip: 810 points each way (434 to 1272, less his width) at 40
++     a second is 20.25 s, and a 0.7 s pause at each end makes 41.9 s.
++     20.25 / 41.9 = 48.329 %, 40.95 / 41.9 = 97.733 %. He starts at the tab. */
++  @media (prefers-reduced-motion: no-preference) {
++    .walker, .face, .stride, .stand { animation-duration: 41.9s; animation-iteration-count: infinite; }
++    .walker { animation-name: walk; animation-timing-function: linear; }
++    .face { animation-name: face; animation-timing-function: step-end; }
++    .stride { animation-name: striding; animation-timing-function: step-end; }
++    .stand { animation-name: standing; animation-timing-function: step-end; }
++    /* Four strides of 0.12 s each. */
++    .sheet { animation: strides 0.48s steps(4) infinite; }
++  }
++  @keyframes walk {
++    0% { translate: 0 0; }
++    48.329% { translate: 810px 0; }
++    50% { translate: 810px 0; }
++    97.733% { translate: 0 0; }
++    100% { translate: 0 0; }
++  }
++  /* He turns when a pause ends, as the plugin does. */
++  @keyframes face {
++    0% { scale: 1 1; }
++    50% { scale: -1 1; }
++  }
++  @keyframes striding {
++    0% { opacity: 1; }
++    48.329% { opacity: 0; }
++    50% { opacity: 1; }
++    97.733% { opacity: 0; }
++  }
++  @keyframes standing {
++    0% { opacity: 0; }
++    48.329% { opacity: 1; }
++    50% { opacity: 0; }
++    97.733% { opacity: 1; }
++  }
++  @keyframes strides { to { translate: -112px 0; } }
++</style>
 ```
 
-**File**: `crates/engine/src/credentials/antigravity_proxy.rs` (added, +854/-0)
+**File**: `apps/landing/src/components/app/SessionWindow.astro` (modified, +8/-2)
 ```diff
-@@ -0,0 +1,854 @@
-+//! Loopback CCPA auth reverse proxy for Cloud-managed Antigravity sessions.
-+//!
-+//! `agy_acp_server` loads `acp_token.json` once at process startup and never
-+//! re-reads it from disk. Because Cloud vault grants intentionally omit
-+//! `refresh_token`, a long-lived Antigravity turn (> ~50 minutes) used to hit
-+//! `Credentials.valid == False`, fall back to interactive browser OAuth, and
-+//! terminate with "Antigravity isn't signed in".
-+//!
-+//! Setting `AGY_ACP_CCPA_BASE_URL=http://127.0.0.1:<port>/<secret>` routes all
-+//! post-startup CCPA calls (`streamGenerateContent`, `generateContent`,
-+//! `fetchAvailableModels`, `retrieveUserQuotaSummary`, chained cleanly behind
-+//! `zeron-harness`'s `ThoughtsProxy`) through this loopback forwarder, which:
-+//! 1. Authenticates the caller via a per-broker random path secret and rejects
-+//!    browser `Origin` / non-loopback `Host` / non-`v1internal` paths.
-+//! 2. Fetches the live vault `antigravity` access token on every request and
-+//!    replaces the `Authorization: Bearer` header.
-+//! 3. Transparently force-refreshes once from the vault and retries if upstream
-+//!    CCPA responds with HTTP 401.
-+//! 4. Resolves the upstream CCPA host identically to `agy_acp_server`'s
-+//!    `onboard._determine_endpoint` (`cloudcode-pa.googleapis.com` when
-+//!    `paidTier.usesGcpTos == true`, else `daily-cloudcode-pa.googleapis.com`),
-+//!    re-resolving if the active vault account or project changes.
-+//! 5. Streams SSE responses chunk-by-chunk with no full-response buffering.
-+
-+use std::future::Future;
-+use std::net::SocketAddr;
-+use std::pin::Pin;
-+use std::sync::{Arc, Weak};
-+use std::time::Duration;
-+
-+use base64::Engine as _;
-+use ring::rand::{SecureRandom, SystemRandom};
-+use serde_json::Value;
-+use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
-+use tokio::net::{TcpListener, TcpStream};
-+use tokio::sync::Mutex;
-+use tokio_util::sync::CancellationToken;
-+
-+use super::{CredentialBroker, Grant, GrantOutcome, Inner};
-+
-+pub(super) const CCPA_BASE_URL_ENV: &str = "AGY_ACP_CCPA_BASE_URL";
-+/// Far-future naive UTC expiry written to broker-managed `acp_token.json` when
-+/// this proxy is active, so `agy_acp_server`'s in-memory `Credentials.valid`
-+/// never flips to `False` mid-turn while fresh vault tokens are injected here.
-+pub(super) const PROXIED_TOKEN_EXPIRY: &str = "2099-01-01T00:00:00";
-+
-+const PROD_CCPA_ENDPOINT: &str = "https://cloudcode-pa.googleapis.com";
-+const DAILY_CCPA_ENDPOINT: &str = "https://daily-cloudcode-pa.googleapis.com";
-+const MAX_HEADER_BYTES: usize = 64 * 1024;
-+const LOAD_CODE_ASSIST_TIMEOUT: Duration = Duration::from_secs(10);
-+
-+type GrantFuture<'a> = Pin<Box<dyn Future<Output = GrantOutcome> + Send + 'a>>;
-+
-+trait TokenProvider: Send + Sync + 'static {
-+    fn get_grant(&self, force_refresh: bool) -> GrantFuture<'_>;
-+}
-+
-+struct BrokerTokenProvider {
-+    broker: Weak<Inner>,
-+}
-+
-+impl TokenProvider for BrokerTokenProvider {
-+    fn get_grant(&self, force_refresh: bool) -> GrantFuture<'_> {
-+        let weak = self.broker.clone();
-+        Box::pin(async move {
-+            let Some(inner) = weak.upgrade() else {
-+                return GrantOutcome::Unavailable("credential broker shut down".into());
-+            };
-+            let broker = CredentialBroker { inner };
-+            broker.antigravity_proxy_grant(force_refresh).await
-+        })
-+    }
-+}
-+
-+/// Running loopback CCPA auth proxy owned by [`CredentialBroker`].
-+pub(super) struct AntigravityProxy {
-+    base_url: String,
-+    shutdown: CancellationToken,
-+}
-+
-+impl AntigravityProxy {
-+    pub(super) fn base_url(&self) -> &str {
-+        &self.base_url
-+    }
-+
-+    pub(super) async fn start(
-+        broker: Weak<Inner>,
-+        fixed_upstream: Option<String>,
-+    ) -> std::io::Result<Self> {
-+        Self::start_with_provider(
-+            Arc::new(BrokerTokenProvider { broker }),
-+            fixed_upstream,
-+            PROD_CCPA_ENDPOINT.to_owned(),
-+        )
-+        .await
-+    }
-+
-+    async fn start_with_provider(
-+        tokens: Arc<dyn TokenProvider>,
-+        fixed_upstream: Option<String>,
-+        load_code_assist_base: String,
-+    ) -> std::io::Result<Self> {
-+        let listener = TcpListener::bind("127.0.0.1:0").await?;
-+        let addr: SocketAddr = listener.local_addr()?;
-+        let secret = generate_secret()?;
-+        let base_url = format!("http://{addr}/{secret}");
-+        let shutdown = CancellationToken::new();
-+        // Dedicated client with NO overall request timeout so long streaming
-+        // `streamGenerateContent?alt=sse` turns are never cut short.
-+        let client = reqwest::Client::builder()
-+            .connect_timeout(Duration::from_secs(30))
-+            .build()
-+            .map_err(std::io::Error::other)?;
-+        let state = Arc::new(ProxyState {
-+            client,
-+            tokens,
-+            secret,
-+            fixed_upstream: fixed_upstream.map(|u| u.trim
+@@ -12,6 +12,7 @@ import fragment from "./session.fragment.html?raw";
+ import "./session.icons.css";
+ import "./session.vars.css";
+ import "./zw.css";
++import PixelWalker from "./PixelWalker.astro";
+ 
+ interface Props {
+   theme?: "dark" | "light";
+@@ -20,13 +21,18 @@ interface Props {
+   /** Not for readers: a second copy on a page, or a piece used as a picture. */
+   decorative?: boolean;
+   class?: string;
++  /** The Pixel Walker plugin's fellow, strolling along the top bar. */
++  walker?: boolean;
+ }
+-const { theme = "dark", crop = [0, 0, 1320, 840], decorative = false, class: className } = Astro.props;
++const { theme = "dark", crop = [0, 0, 1320, 840], decorative = false, class: className, walker = false } = Astro.props;
+ const [x, y, w, h] = crop;
+ const label =
+   "Zeron with a session open. The sidebar groups eight sessions under four projects, run by Claude Code, Codex and Grok; two are still working. In the open one, Claude Code explains and fixes a rate limiter bug, and the Changes panel beside it shows the diff of window.ts.";
+ ---
+ 
+ <div class:list={["zw-fit", className]} style={`--zx:${x};--zy:${y};--zw:${w};--zh:${h}`}>
+-  <div class:list={["zw", "zw-session", theme === "light" ? "t1" : "t0"]} role={decorative ? undefined : "img"} aria-label={decorative ? undefined : label} aria-hidden={decorative ? "true" : undefined} set:html={fragment} />
++  <div class:list={["zw", "zw-session", theme === "light" ? "t1" : "t0"]} role={decorative ? undefined : "img"} aria-label={decorative ? undefined : label} aria-hidden={decorative ? "true" : undefined}>
++    <Fragment set:html={fragment} />
++    {walker && <PixelWalker />}
++  </div>
+ </div>
 ```
 
-**File**: `crates/engine/tests/cloud_runner.rs` (modified, +107/-0)
+**File**: `apps/landing/src/components/home/Hero.astro` (modified, +5/-24)
 ```diff
-@@ -2485,3 +2485,110 @@ async fn background_refresh_replaces_logins_agents_would_refresh_themselves() {
-     assert_eq!(read(&token)["token"], "ya29.2");
-     assert_eq!(read(&pi)["anthropic"]["access"], "claude-2");
- }
-+
-+#[tokio::test]
-+async fn antigravity_ccpa_proxy_rotates_vault_tokens_mid_turn() {
-+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+
-+    let rig = Rig::new().await;
-+    let identity = rig.enrolled().await;
-+    let google = |token: &str, secs: i64, generation: i64| {
-+        json!({"provider": "antigravity", "accessToken": token, "expiresAt": in_ms(secs), "generation": generation,
-+               "settings": {"client_id": "1071.apps.googleusercontent.com", "project_id": "proj",
-+                            "scopes": "https://www.googleapis.com/auth/cloud-platform"}})
-+    };
-+    rig.grant("antigravity", 200, google("ya29.initial", 3600, 1));
-+
-+    // Mock upstream CCPA server that rejects `ya29.initial` with 401 and
-+    // accepts `ya29.rotated` with streamed SSE chunks.
-+    let seen_auth = std::sync::Arc::new(std::sync::Mutex::new(Vec::<String>::new()));
-+    let seen_auth_clone = seen_auth.clone();
-+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+    let upstream_addr = listener.local_addr().unwrap();
-+    let upstream_task = tokio::spawn(async move {
-+        loop {
-+            let Ok((mut stream, _)) = listener.accept().await else {
-+                break;
-+            };
-+            let seen = seen_auth_clone.clone();
-+            tokio::spawn(async move {
-+                let mut buf = vec![0u8; 8192];
-+                let n = stream.read(&mut buf).await.unwrap_or(0);
-+                let text = String::from_utf8_lossy(&buf[..n]);
-+                let auth = text
-+                    .lines()
-+                    .find_map(|line| {
-+                        let (k, v) = line.split_once(':')?;
-+                        k.eq_ignore_ascii_case("authorization")
-+                            .then(|| v.trim().to_owned())
-+                    })
-+                    .unwrap_or_default();
-+                seen.lock().unwrap().push(auth.clone());
-+                let (status_line, ct, body) = if auth == "Bearer ya29.rotated" {
-+                    ("200 OK", "text/event-stream", "data: {\"ok\":true}\n\n")
-+                } else {
-+                    ("401 Unauthorized", "application/json", "{\"error\":\"expired\"}")
-+                };
-+                let resp = format!(
-+                    "HTTP/1.1 {status_line}\r\nContent-Type: {ct}\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
-+                    body.len()
-+                );
-+                let _ = stream.write_all(resp.as_bytes()).await;
-+                let _ = stream.flush().await;
-+            });
-+        }
-+    });
-+
-+    let broker = rig.broker(identity, "http://127.0.0.1:9");
-+    let mut request = run_request();
-+    request.env.insert(
-+        "AGY_ACP_CCPA_BASE_URL".into(),
-+        format!("http://{upstream_addr}"),
-+    );
-+    broker
-+        .prepare(HarnessId::Antigravity, &mut request)
-+        .await
-+        .unwrap();
-+
-+    // `prepare` wrote a far-future expiry so `agy_acp_server`'s in-memory
-+    // credentials never trip mid-turn, and pointed `AGY_ACP_CCPA_BASE_URL` at
-+    // the broker's loopback auth proxy.
-+    let token_doc = read(&rig.home.join(".gemini/antigravity-acp/acp_token.json"));
-+    assert_eq!(token_doc["token"], "ya29.initial");
-+    assert_eq!(token_doc["refresh_token"], "");
-+    assert_eq!(token_doc["expiry"], "2099-01-01T00:00:00");
-+    let proxy_url = request
-+        .env
-+        .get("AGY_ACP_CCPA_BASE_URL")
-+        .expect("broker sets AGY_ACP_CCPA_BASE_URL")
-+        .clone();
-+    assert!(
-+        proxy_url.starts_with("http://127.0.0.1:") && proxy_url != format!("http://{upstream_addr}"),
-+        "expected loopback proxy URL, got {proxy_url}"
-+    );
-+
-+    // Simulate >50m into a single turn: the vault now issues `ya29.rotated`
-+    // while the running `agy_acp_server` still sends its stale startup token.
-+    rig.grant("antigravity", 200, google("ya29.rotated", 3600, 2));
-+
-+    let client = reqwest::Client::new();
-+    let resp = client
-+        .post(format!(
-+            "{proxy_url}/v1internal:streamGenerateContent?alt=sse"
-+        ))
-+        .header("authorization", "Bearer ya29.initial")
-+        .header("content-type", "application/json")
-+        .body(r#"{"model":"gemini-4-neon"}"#)
-+        .send()
-+        .await
-+        .unwrap();
-+    assert_eq!(resp.status(), reqwest::StatusCode::OK);
-+    assert_eq!(resp.text().await.unwrap(), "data: {\"ok\":true}\n\n");
-+    assert_eq!(
-+        *seen_auth.lock().unwrap(),
-+        vec!["Bearer ya29.initial", "Bearer ya29.rotated"]
-+    );
-+
-+    broker.shutdown();
-+    upstream_task.abort();
-+}
-```
-
-**File**: `crates/harness/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -35,6 +35,7 @@ serde.workspace = true
- serde_json.workspace = true
- deser-hjson.workspace = true
- serde_yaml_ng = "0.10"
-+rusqlite.workspace = true
- anyhow.workspace = true
- thiserror.workspace = true
- tracing.workspace = true
-```
-
-**File**: `crates/harness/src/acp/ccpa_thoughts.rs` (modified, +31/-4)
-```diff
-@@ -26,7 +26,7 @@ use std::time::Duration;
- use serde_json::{Map, Value};
- use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
- use tokio::net::{TcpListener, TcpStream};
--use tokio::sync::Mutex;
-+use tokio::sync::{Mutex, watch};
- use tokio_util::sync::CancellationToken;
+@@ -1,5 +1,4 @@
+ ---
+-import { RELEASE_NOTES_URL } from "../../data/releases.ts";
+ import { SITE } from "../../data/site.ts";
+ import SessionWindow from "../app/SessionWindow.astro";
+ import GitHubStars from "../site/GitHubStars.astro";
+@@ -9,45 +8,27 @@ import Icon from "../ui/Icon.astro";
  
- const PROD_CCPA_ENDPOINT: &str = "https://cloudcode-pa.googleapis.com";
-@@ -41,13 +41,20 @@ const DISABLE_PROXY_ENV: &str = "ZERON_ANTIGRAVITY_THOUGHTS_PROXY";
- pub(crate) struct ThoughtsProxy {
-     base_url: String,
-     shutdown: CancellationToken,
-+    activity: watch::Receiver<u64>,
- }
+ <section class="hero">
+   <div class="wrap">
+-    <a class="news rise" href={RELEASE_NOTES_URL}>What’s new in Zeron<span data-release-version hidden></span><Icon name="alt-arrow-right" size={12} /></a>
+-    <h1 class="rise" style="--i:1">The agent workspace that can become anything</h1>
+-    <p class="lead rise" style="--i:2">
++    <h1 class="rise">The agent workspace that can become anything</h1>
++    <p class="lead rise" style="--i:1">
+       Zeron runs Claude Code, Codex, Cursor and your other coding agents on
+       your own machines, in one native, open source app.
+     </p>
+-    <div class="actions rise" style="--i:3">
++    <div class="actions rise" style="--i:2">
+       <Button id="hero-download" href="#downloads" size="lg" data-download="long"><span data-download-label>Download</span></Button>
+       <a class="star" href={SITE.github}>Star on GitHub <GitHubStars /><Icon name="alt-arrow-right" size={12} /></a>
+     </div>
+   </div>
+   <!-- The app, laid back on the page and running off it. The window is the
+        HTML recreation, so it stays sharp at this size and angle. -->
+-  <div class="visual rise" style="--i:5">
+-    <div class="plane"><SessionWindow /></div>
++  <div class="visual rise" style="--i:4">
++    <div class="plane"><SessionWindow walker /></div>
+   </div>
+ </section>
  
- impl ThoughtsProxy {
-     pub(crate) fn base_url(&self) -> &str {
-         &self.base_url
-     }
- 
-+    /// Subscribe to monotonic CCPA HTTP liveness ticks (incremented on every
-+    /// proxied request start and streaming response chunk).
-+    pub(crate) fn subscribe_activity(&self) -> watch::Receiver<u64> {
-+        self.activity.clone()
-+    }
-+
-     /// Start the loopback proxy unless disabled via `ZERON_ANTIGRAVITY_THOUGHTS_PROXY=0`.
-     pub(crate) async fn start(
-         run_env: &BTreeMap<String, String>,
-@@ -66,6 +73,7 @@ impl ThoughtsProxy {
-         let addr: SocketAddr = listener.local_addr()?;
-         let base_url = format!("http://{addr}");
-         let shutdown = CancellationToken::new();
-+        let (activity_tx, activity_rx) = watch::channel(0u64);
-         let client = reqwest::Client::builder()
-             .connect_timeout(Duration::from_secs(30))
-             .build()
-@@ -75,6 +83,7 @@ impl ThoughtsProxy {
-             fixed_upstream: fixed_upstream.map(|u| u.trim_end_matches('/').to_owned()),
-             resolved_upstream: Mutex::new(None),
-             skip_models: Mutex::new(HashSet::new()),
-+            activity: activity_tx,
-         });
-         let cancel = shutdown.clone();
-         tokio::spawn(async move {
-@@ -105,7 +114,11 @@ impl ThoughtsProxy {
-                 }
-             }
-         });
--        Ok(Self { base_url, shutdown })
-+        Ok(Self {
-+            base_url,
-+            shutdown,
-+            activity: activity_rx,
-+        })
-     }
- }
- 
-@@ -120,6 +133,13 @@ struct ProxyState {
-     fixed_upstream: Option<String>,
-     resolved_upstream: Mutex<Option<String>>,
-     skip_models: Mutex<HashSet<String>>,
-+    activity: watch::Sender<u64>,
-+}
-+
-+impl ProxyState {
-+    fn note_activity(&self) {
-+        self.activity.send_modify(|n| *n = n.wrapping_add(1));
-+    }
- }
- 
- fn is_disabled(run_env: &BTreeMap<String, String>) -> bool {
-@@ -476,7 +496,9 @@ async fn write_buffered_response(
- async fn stream_chunked_response(
-     stream: &mut TcpStream,
-     mut resp: reqwest::Response,
-+    state: &ProxyState,
- ) -> std::io::Result<()> {
-+    state.note_activity();
-     let status = resp.status();
-     let reason = status.canonical_reason().unwrap_or("OK");
-     let mut head = format!("HTTP/1.1 {} {}\r\n", status.as_u16(), reason);
-@@ -500,6 +522,7 @@ async fn stream_chunked_response(
-         if chunk.is_empty() {
-             continue;
-         }
-+        state.note_activity();
-         let size_hdr = format!("{:x}\r\n", chunk.len());
-         stream.write_all(size_hdr.as_bytes()).await?;
-         stream.write_all(&chunk).await?;
-@@ -514,6 +537,7 @@ async fn handle_connection(mut stream: TcpStream, state: Arc<ProxyState>) -> std
-     let Some(req) = read_http_request(&mut stream).await? else {
-         return Ok(());
-     };
-+    state.note_activity();
-     let upstream_base = resolve_upstream(&state, &req.headers).await;
-     let target = if req.target.starts_with('/') {
-         req.target.as_str()
-@@ -561,18 +585,21 @@ async fn handle_connection(mut stream: TcpStream, state: Arc<ProxyState>) -> std
-                 state.skip_models.lock().await.insert(model);
-             }
-             match send_upstream(&state.client, &req.method, &url, &req.headers, req.body).await {
--                Ok(retry_resp) => return stream_chunked_response(&mut stream, retry_resp).await,
-+                Ok(retry_resp) => {
-+                    return stream_chunked_response(&mut stream, retry_resp, &state).await;
-+                }
-                 Err(err) => {
-                     let msg = format!("upstream CCPA retry failed: {err}");
-                     let _ = write_error_response(&mut stream, 502, "Bad Gateway", &msg).await;
-                     return Ok(());
-                 }
-             }
-         }
-+        state.note_activity();
-         return write_buffered_response(&mut stream, status, &headers, &err_body).await;
-     }
- 
--    stream_chunked_response(&mut stream, resp).await
-+    stream_chunked_response(&mut stream, resp, &state).await
- }
- 
- #[cfg(test)]
-```
-
-**File**: `crates/harness/src/acp/mod.rs` (modified, +101/-5)
-```diff
-@@ -1315,6 +1315,63 @@ pub fn antigravity_saved_auth_method(home: &Path) -> Option<String> {
-         .map(|method| method.canonical)
- }
- 
-+/// Whether Antigravity's local conversation SQLite DB currently records an
-+/// active (`PENDING` = 1 or `RUNNING` = 2) background task step (such as a
-+/// `schedule` timer/cron or background command, all of which populate
-+/// `task_details` and emit no open ACP `tool_call` frame while sleeping).
-+///
-+/// Checked only on the rare occasion that Antigravity's prompt-stall deadline
-+/// elapses with zero wire or CCPA activity; missing DBs or schema differences
-+/// fail closed (`false`) so genuinely wedged runs still settle.
-+async fn antigravity_has_active_background_task(
-+    run_env: &std::collections::BTreeMap<String, String>,
-+    session_id: &str,
-+) -> bool {
-+    if session_id.is_empty()
-+        || session_id.contains('/')
-+        || session_id.contains('\\')
-+        || session_id.contains("..")
-+    {
-+        return false;
-+    }
-+    let home = run_env
-+        .get("GEMINI_HOME")
-+        .filter(|v| !v.is_empty())
-+        .map(PathBuf::from)
-+        .or_else(|| antigravity_home().ok());
-+    let Some(home) = home else {
-+        return false;
-+    };
-+    let db_path = home
-+        .join("antigravity-acp")
-+        .join("conversations")
-+        .join(format!("{session_id}.db"));
-+    tokio::task::spawn_blocking(move || antigravity_db_has_active_background_task(&db_path))
-+        .await
-+        .unwrap_or(false)
-+}
-+
-+fn antigravity_db_has_active_background_task(db_path: &Path) -> bool {
-+    if !db_path.is_file() {
-+        return false;
-+    }
-+    let flags = rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY
-+        | rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX;
-+    let Ok(conn) = rusqlite::Connection::open_with_flags(db_path, flags) else {
-+        return false;
-+    };
-+    let _ = conn.busy_timeout(Duration::from_millis(200));
-+    // CortexStepStatus::PENDING (1) / RUNNING (2) on steps that carry
-+    // background `task_details` (timers, crons, background commands).
-+    conn.query_row(
-+        "SELECT 1 FROM steps WHERE status IN (1, 2) \
-+         AND task_details IS NOT NULL AND length(task_details) > 0 LIMIT 1",
-+        [],
-+        |_| Ok(()),
-+    )
-+    .is_ok()
-+}
-+
- fn sign_in_auth_method(
-     initialized: &Value,
-     default_method: &str,
-@@ -1932,7 +1989,7 @@ struct WarmAgent {
- /// Per-child resources whose lifetimes match the spawned ACP subprocess.
- struct ChildGuards {
-     _scratch: Option<ScratchDir>,
--    _thoughts_proxy: Option<ccpa_thoughts::ThoughtsProxy>,
-+    thoughts_proxy: Option<ccpa_thoughts::ThoughtsProxy>,
- }
- 
- /// What `spawn_agent` hands a run.
-@@ -3002,7 +3059,7 @@ impl AcpHarness {
-         }
-         let guards = ChildGuards {
-             _scratch: scratch,
--            _thoughts_proxy: thoughts_proxy,
-+            thoughts_proxy,
-         };
-         Ok((guards, child, stderr_tail, sign_in_prompted))
-     }
-@@ -5904,7 +5961,7 @@ async fn select_session_config(
- async fn run_session(session: Session) {
-     let Session {
-         // Locals drop in reverse binding order: reap the child before cleanup.
--        guards: _guards,
-+        guards,
-         mut child,
-         client,
-         mut incoming,
-@@ -6203,6 +6260,10 @@ async fn run_session(session: Session) {
-     };
-     let mut prompt_stall_deadline: Option<tokio::time::Instant> =
-         prompt_stall.map(|d| tokio::time::Instant::now() + d);
-+    let mut ccpa_activity = guards
-+        .thoughts_proxy
-+        .as_ref()
-+        .map(ccpa_thoughts::ThoughtsProxy::subscribe_activity);
-     // The prompt in flight (re-sent by a preempt when the agent drops an
-     // unstarted cancelled prompt). When an unrestorable resumed session fell
-     // back to a fresh one, send the host's transcript-wrapped recovery prompt.
-@@ -7340,10 +7401,33 @@ async fn run_session(session: Session) {
-                 }
-             },
- 
-+            // Antigravity CCPA liveness heartbeat: any LLM request start or
-+            // streaming SSE chunk through the loopback thoughts proxy (including
-+            // subagents, workflows, and post-timer wakeups) proves the server is
-+            // actively working even while ACP stdout is quiet.
-+            changed = async {
-+                match ccpa_activity.as_mut() {
-+                    Some(rx) => rx.changed().await,
-+                    None => std::future::pending().await,
-+                }
-+            }, if ccpa_activity.is_some() => {
-+                if changed.is_err() {
-+                    ccpa_activity = None;
-+                } else if harness == HarnessId::Antigravity
-+                    && turn.is_some()
-+                    && open_tools.is_empty()
-+                    && questions.is_empty()
-+                {
-+                    prompt_stall_deadline =
-+                        prompt_stall.map(|d| tokio::time::Instant::now() + d);
-+                }
-+            },
-+
-             // Prompt-stall wat
-```
-
-**File**: `crates/harness/tests/acp_stall.rs` (modified, +252/-0)
-```diff
-@@ -206,4 +206,256 @@ for raw in sys.stdin:
-             ..
-         })
-     ));
-+
-+    // Antigravity background timer (`schedule`): no ACP wire frames for longer
-+    // than the stall budget while `conversations/<session_id>.db` holds a
-+    // RUNNING (status = 2) step with non-empty `task_details` must NOT fire the
-+    // stall watchdog.
-+    let timer_home = tempfile::tempdir().unwrap();
-+    let timer_script = dir.path().join("fake-agy-timer.py");
-+    std::fs::write(
-+        &timer_script,
-+        r#"#!/usr/bin/env python3
-+import json, os, sqlite3, sys, time
-+
-+def send(obj):
-+    sys.stdout.write(json.dumps(obj) + "\n")
-+    sys.stdout.flush()
-+
-+home = os.environ["GEMINI_HOME"]
-+conv_dir = os.path.join(home, "antigravity-acp", "conversations")
-+os.makedirs(conv_dir, exist_ok=True)
-+db_path = os.path.join(conv_dir, "agy-timer.db")
-+
-+for raw in sys.stdin:
-+    msg = json.loads(raw)
-+    mid = msg.get("id")
-+    method = msg.get("method")
-+    if method == "initialize":
-+        send({"jsonrpc": "2.0", "id": mid, "result": {"protocolVersion": 1, "agentCapabilities": {}}})
-+    elif method == "session/new":
-+        send({"jsonrpc": "2.0", "id": mid, "result": {"sessionId": "agy-timer"}})
-+    elif method == "session/prompt":
-+        conn = sqlite3.connect(db_path)
-+        conn.execute("CREATE TABLE IF NOT EXISTS steps (idx INTEGER PRIMARY KEY, step_type INTEGER, status INTEGER, task_details BLOB)")
-+        conn.execute("INSERT OR REPLACE INTO steps VALUES (1, 132, 2, ?)", (b"timer-5m",))
-+        conn.commit()
-+        send({"jsonrpc": "2.0", "method": "session/update", "params": {
-+            "sessionId": "agy-timer",
-+            "update": {"sessionUpdate": "agent_message_chunk", "content": {"type": "text", "text": "Standing by."}}
-+        }})
-+        # Sleep past the 700ms stall budget with zero ACP frames while timer is RUNNING.
-+        time.sleep(1.2)
-+        conn.execute("UPDATE steps SET status = 3 WHERE idx = 1")
-+        conn.commit()
-+        conn.close()
-+        send({"jsonrpc": "2.0", "method": "session/update", "params": {
-+            "sessionId": "agy-timer",
-+            "update": {"sessionUpdate": "agent_message_chunk", "content": {"type": "text", "text": " Timer fired."}}
-+        }})
-+        send({"jsonrpc": "2.0", "id": mid, "result": {"stopReason": "end_turn"}})
-+"#,
-+    )
-+    .unwrap();
-+    std::fs::set_permissions(&timer_script, std::fs::Permissions::from_mode(0o755)).unwrap();
-+
-+    let (steer_tx, steer_rx) = mpsc::channel(8);
-+    drop(steer_tx);
-+    let token = CancellationToken::new();
-+    let timer_controls = RunControls {
-+        realtime: None,
-+        execution_lease: None,
-+        request_input: Box::new(move |_| {
-+            let (tx, rx) = oneshot::channel();
-+            let _ = tx.send(Vec::new());
-+            rx
-+        }),
-+        steering: steer_rx,
-+        interrupt: token,
-+        turn: Default::default(),
-+    };
-+    let mut timer_env = std::collections::BTreeMap::new();
-+    timer_env.insert(
-+        "GEMINI_HOME".to_owned(),
-+        timer_home.path().to_string_lossy().into_owned(),
-+    );
-+    let timer_req = RunRequest {
-+        mcp: None,
-+        prompt: "wait on schedule timer".into(),
-+        harness: None,
-+        model: None,
-+        reasoning: None,
-+        model_options: serde_json::Map::new(),
-+        cwd: String::new(),
-+        sandbox: SandboxLevel::DangerFullAccess,
-+        auto_approve: true,
-+        access: Default::default(),
-+        plan: false,
-+        code_mode: false,
-+        attachments: Vec::new(),
-+        worktree: None,
-+        resume: None,
-+        env: timer_env,
-+        extra_mcp: Vec::new(),
-+    };
-+    let agy_timer = AcpHarness::antigravity()
-+        .with_executable(&timer_script)
-+        .with_graces(Duration::from_millis(100), Duration::from_millis(200));
-+    let timer_stream = agy_timer
-+        .run(timer_req, timer_controls)
-+        .await
-+        .expect("agy timer run starts");
-+    let timer_events = tokio::time::timeout(
-+        Duration::from_secs(10),
-+        timer_stream.map(|r| r.expect("timer event")).collect::<Vec<_>>(),
-+    )
-+    .await
-+    .expect("antigravity timer run finished cleanly");
-+    assert!(
-+        !timer_events
-+            .iter()
-+            .any(|e| matches!(e, AgentEvent::Error { .. })),
-+        "watchdog false-positived while schedule timer was active: {timer_events:?}"
-+    );
-+    assert!(matches!(
-+        timer_events.last(),
-+        Some(AgentEvent::Done {
-+            status: DoneStatus::Completed,
-+            ..
-+        })
-+    ));
-+
-+    // Antigravity CCPA HTTP liveness (subagents / post-timer wakeups):
-+    // silent ACP stdout while making CCPA calls through `ThoughtsProxy` must
-+    // keep resetting the stall watchdog.
-+    let mock_ccpa = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+    let mock_ccpa_addr = mock_ccpa.local_addr().unwrap();
-+    let mock_ccpa_task = tokio::spawn(async move {
-+   
+ <style>
+   .hero { position: relative; padding-top: clamp(64px, 8vw, 112px); overflow: hidden; }
+-  .news {
+-    display: inline-flex;
+-    align-items: center;
+-    gap: 6px;
+-    height: 30px;
+-    padding: 0 10px 0 12px;
+-    font-size: 13px;
+-    font-weight: 500;
+-    color: var(--text-2);
+-    background: var(--surface);
+-    border-radius: 15px;
+-    box-shadow: inset 0 0 0 1px var(--border);
+-    transition: color 0.12s, background-color 0.12s;
+-  }
+-  .news:hover { color: var(--text); background: var(--surface-raised); }
+-  .news [data-release-version]::before { content: " "; white-space: pre; }
+   h1 {
+     max-width: 15em;
+-    margin-top: 28px;
+     font-size: clamp(38px, 5.4vw, 68px);
+     font-weight: 560;
+     line-height: 1.03;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1563** (2026-11-21): Zeron 0.3.15 (@wingleeio)
-- **PR #1562** (2026-11-21): Fix Antigravity cloud disconnects, bump zgx stale scene node fix, and add Zig/Odin highlighting (@wingleeio)
-- **PR #1557** (2026-11-21): Cloud: a program the kernel kills for memory dies alone (OOMPolicy=continue) (@wingleeio)
-- **PR #1555** (2026-11-21): Zeron 0.3.14 (@wingleeio)
-- **PR #1554** (2026-11-21): fix(zgx): prevent streaming veil from replaying finished and previous blocks (@wingleeio)
-- **PR #1553** (2026-11-20): fix(voice): omit ort copy-dylibs for Rust 1.100 Windows builds (@wingleeio)
+- **PR #1617** (2026-11-25): Landing: the Pixel Walker walks the hero window's top bar, and the hero drops its "What's new" badge (@SinaKhalili)
+- **PR #1616** (2026-11-25): Zeron v2: closed sidebar leaves no 5pt sliver on the new chat page (@zeronsh[bot])
+- **PR #1615** (2026-11-25): Landing: the working ring turns on the compositor, and the glass drops its blur (@SinaKhalili)
+- **PR #1612** (2026-11-25): Landing: only the hero rises in, nothing blurs, and the machine picker fades off its card (@SinaKhalili)
+- **PR #1611** (2026-11-25): Pin zgx with the terminal and accessibility fixes (@wingleeio)
+- **PR #1608** (2026-11-25): Sidebar: a tall place folds around a session kept in view (@danperks)
 
 ---
 
@@ -3004,31 +2196,51 @@ Fix Antigravity cloud disconnects, bump zgx stale scene node fix, and add Zig/Od
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Delegate in the background: subagent chats on any provider or device, and a pare
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dcd4f622`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae294f53`: Delegate in the background: subagent chats on any provider or device, and a parent that waits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "rusqlite",
+    /** A session's side chats, newest first (the chats its agent delegated to are its subagents instead). */
+        sh.zeron.android.ui.sideChatsOf(_client.value?.childSessions(chatId).orEmpty())
+    /** Stop a chat's turn (a delegated subagent's Stop) through its own session, let go after. */
+    fun interruptChat(chatId: String) {
+        val client = _client.value ?: return
+        try {
+            val handle = client.session(chatId) ?: client.openSession(chatId)
+            try {
+                handle.interrupt()
+            } finally {
+                handle.close()
+            }
+        } catch (e: Exception) {
+            Log.w("Zeron", "interrupt failed", e)
+            toast("Couldn't stop it")
+        }
+    }
+
+    /** The subagents a session's agent spawned (its open transcript), then the chats it delegated to. */
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    /** A session's side chats, newest first. */
+        _client.value?.childSessions(chatId).orEmpty().filter { !it.archived }
+    /** The subagents a session's agent spawned (its open transcript). */
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dcd4f622` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae294f53` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

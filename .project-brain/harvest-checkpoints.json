@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T17:23:06.821Z",
+  "last_updated": "2026-11-26T17:30:47.817Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "569ffdd6fbcc092b4ae37f3d3ba29caac68481fb8f21da90c6adae0e448ce46f",
-      "verified_at": "2026-11-23T00:39:27.113Z",
+      "content_hash": "a54184f8d0c72c943b79ad88bdc2540e6e78dbf90ae3aef4fb6866c282cec782",
+      "verified_at": "2026-11-26T17:30:45.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T00:39:27.113Z"
+      "last_updated": "2026-11-26T17:30:45.164Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "e5eb38a7fe39feb39f90fec6d0bf0969d24b68829ae3a772cd527ad6e3b37398",
-      "verified_at": "2026-11-25T09:54:17.275Z",
+      "content_hash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
+      "verified_at": "2026-11-26T17:30:47.816Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T09:54:17.275Z"
+      "last_updated": "2026-11-26T17:30:47.816Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",

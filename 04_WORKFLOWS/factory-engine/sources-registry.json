@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T17:23:10.119Z",
-    "lastVerified": "2026-11-26T17:23:10.119Z",
+    "lastChecked": "2026-11-26T17:30:56.807Z",
+    "lastVerified": "2026-11-26T17:30:56.807Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -401,8 +401,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T16:58:28.104Z",
-    "lastVerified": "2026-11-26T16:58:28.104Z",
+    "lastChecked": "2026-11-26T17:30:56.798Z",
+    "lastVerified": "2026-11-26T17:30:56.798Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1093,9 +1093,9 @@
   "chroma-core-chroma": {
     "name": "chroma",
     "officialUrl": "https://github.com/chroma-core/chroma",
-    "lastChecked": "2026-11-25T16:06:04.950Z",
+    "lastChecked": "2026-11-26T17:30:54.396Z",
     "revisionIdentifier": "1a3ac2c7",
-    "lastVerified": "2026-11-25T16:06:04.950Z"
+    "lastVerified": "2026-11-26T17:30:54.396Z"
   },
   "burntsushi-ripgrep": {
     "name": "ripgrep",
@@ -1414,9 +1414,9 @@
   "maotoumao-musicfree": {
     "name": "MusicFree",
     "officialUrl": "https://github.com/maotoumao/MusicFree",
-    "lastChecked": "2026-11-24T08:05:32.445Z",
+    "lastChecked": "2026-11-26T17:30:46.821Z",
     "revisionIdentifier": "d118b18b",
-    "lastVerified": "2026-11-24T08:05:32.445Z"
+    "lastVerified": "2026-11-26T17:30:46.821Z"
   },
   "zeromicro-go-zero": {
     "name": "go-zero",
@@ -1542,9 +1542,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-26T13:08:15.302Z",
+    "lastChecked": "2026-11-26T17:30:51.912Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-26T13:08:15.302Z"
+    "lastVerified": "2026-11-26T17:30:51.912Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2711,12 +2711,12 @@
     "officialUrl": "https://github.com/zeronsh/zeron",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T09:54:16.063Z",
-    "lastVerified": "2026-11-25T09:54:16.063Z",
+    "lastChecked": "2026-11-26T17:30:46.849Z",
+    "lastVerified": "2026-11-26T17:30:46.849Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "e5eb38a7fe39feb39f90fec6d0bf0969d24b68829ae3a772cd527ad6e3b37398",
+    "contentHash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
@@ -3748,12 +3748,12 @@
     "officialUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T00:39:26.511Z",
-    "lastVerified": "2026-11-23T00:39:26.511Z",
+    "lastChecked": "2026-11-26T17:30:44.439Z",
+    "lastVerified": "2026-11-26T17:30:44.439Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-electra-base-discriminator",
-    "contentHash": "569ffdd6fbcc092b4ae37f3d3ba29caac68481fb8f21da90c6adae0e448ce46f",
+    "contentHash": "a54184f8d0c72c943b79ad88bdc2540e6e78dbf90ae3aef4fb6866c282cec782",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4574,8 +4574,8 @@
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T23:50:04.314Z",
-    "lastVerified": "2026-11-25T23:50:04.314Z",
+    "lastChecked": "2026-11-26T17:30:49.428Z",
+    "lastVerified": "2026-11-26T17:30:49.428Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",

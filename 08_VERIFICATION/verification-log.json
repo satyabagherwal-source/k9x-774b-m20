@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-9DO8",
-    "timestamp": "2026-11-25T05:45:24.344Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-    "contentHash": "6e3e5773feb5a0f26f07a10b7dc6f46fcda021dd2eb426fc537f4a54f9a2b53f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-9EL5",
-    "timestamp": "2026-11-25T05:45:25.529Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "8fb3a23578f98fe64f16afde4bf97504474974fd9b8b060290acd02b09bd8109",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-9LJH",
     "timestamp": "2026-11-25T05:45:34.541Z",
     "repository": "envoyproxy/envoy",
@@ -7490,6 +7460,36 @@
     "repository": "karakeep-app/karakeep",
     "learningId": "learn-github-karakeep-app-karakeep",
     "contentHash": "c6c83deeb14955e65401ae4a3c9af5a249f101bcbdc35c75ad764abaa76b7f0d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WBA4",
+    "timestamp": "2026-11-26T17:30:45.148Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "a54184f8d0c72c943b79ad88bdc2540e6e78dbf90ae3aef4fb6866c282cec782",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WDBN",
+    "timestamp": "2026-11-26T17:30:47.795Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
