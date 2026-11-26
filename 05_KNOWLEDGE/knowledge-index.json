@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T23:32:30.574Z",
+  "last_updated": "2026-11-26T23:41:09.391Z",
   "total_verified_learnings": 9137,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26254,
+  "total_items": 26258,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213170,8 +213170,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "c7f4fb42",
-      "content_hash": "980312a510cd980229d96a169d122ca528b9d6ad46004c71dad8a9dade3fe3ee",
+      "source_version": "86b0b067",
+      "content_hash": "f0d4b3bdf57687ec338d0562c5e6085d2e9e2476ba598732a93fde9f439d5c84",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -213229,6 +213229,11 @@
           "number": 10558,
           "title": "fix retained OSC32K restart handling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10794,
+          "title": "Revert \"stm32/i2s: override the clock source for f3\"",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213236,7 +213241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T23:24:02.374Z",
+      "verified_at": "2026-11-26T23:40:54.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213278,10 +213283,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "repository": "embassy-rs/embassy",
-      "source_version": "c7f4fb42",
-      "content_hash": "ae5d42d000517013322b02907810dcea553e3c28e844e1decfad8fe9eef863a7",
+      "source_version": "86b0b067",
+      "content_hash": "d27dcdbbc69a31be4a63ea6c9915909748cb23cc51ddf7d41d4b64c714fca195",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T23:24:03.284Z"
+      "persisted_at": "2026-11-26T23:40:55.464Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy",
@@ -213290,10 +213295,10 @@
       "relative_path": "08_VERIFICATION/embassy-rs-embassy-verification-protocol-empirical-defect-shield-for-embassy-rs-.md",
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs/embassy",
       "repository": "embassy-rs/embassy",
-      "source_version": "c7f4fb42",
-      "content_hash": "e9cfd96c68a60958284463c94902d1f11f44f7f458cd62f699f33445514376c4",
+      "source_version": "86b0b067",
+      "content_hash": "e5c856f0e04427c8b945c20a6d972aa436c1d3da5b983f153df5da7dbb261b63",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:24:03.548Z"
+      "persisted_at": "2026-11-26T23:40:55.717Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
@@ -213893,9 +213898,9 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "55c676df87583a48a8034670eda6eecb4cc8a1750ddcffa04d23e4c1dc4b7e2a",
+      "content_hash": "514ac1388f92d5c54e96c8b50ff0d0b85f79e1219a99d802d55621acb86abbb4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T23:24:16.516Z"
+      "persisted_at": "2026-11-26T23:41:07.507Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings",
@@ -213905,9 +213910,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs-embassy-learnings",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "186f1993ceb68cbff29195f5d17c6d234cb03edb0bb635920f849ac294a260dc",
+      "content_hash": "d9db3fc6dda669a569c0e18e21b1eddc0f79d78cdf289cc8df8be65606a2e078",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:24:16.787Z"
+      "persisted_at": "2026-11-26T23:41:07.727Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
@@ -215703,8 +215708,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "67959df6",
-      "content_hash": "6b2a06bbc80a011b875ac3b17917a316a42843d4c39146421508cbf11e21b5ae",
+      "source_version": "c2ec24c0",
+      "content_hash": "d5ab62b9195acd3405271ccfaddb74fcb3fd7456456ee12bd97ab6bb4dc149cc",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -215757,6 +215762,11 @@
           "number": 10607,
           "title": "Elasticsearch search attribute mapping backwards compatibility fix",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10795,
+          "title": "Wire a no-op parallelsuitelint into CI",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215764,7 +215774,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T05:48:45.574Z",
+      "verified_at": "2026-11-26T23:41:02.848Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215806,10 +215816,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-content-information-intelligence-temporalio-temporal-core-in.md",
       "title": "Content & Information Intelligence: temporalio/temporal Core Invariants",
       "repository": "temporalio/temporal",
-      "source_version": "67959df6",
-      "content_hash": "91553e4cf94ed82a20db403de6d362a86f2c8d9044acec8494783f7efe2cb599",
+      "source_version": "c2ec24c0",
+      "content_hash": "93bc697ecf0f42f7efa7c72ef4644eb490083fa93edcc17e0a47aae360e2d7e7",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T05:48:46.466Z"
+      "persisted_at": "2026-11-26T23:41:03.699Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-temporalio-temporal": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-temporalio-temporal",
@@ -215818,10 +215828,10 @@
       "relative_path": "08_VERIFICATION/temporalio-temporal-verification-protocol-empirical-defect-shield-for-temporalio.md",
       "title": "Verification Protocol: Empirical Defect Shield for temporalio/temporal",
       "repository": "temporalio/temporal",
-      "source_version": "67959df6",
-      "content_hash": "ecc0664397f4caf19a5102d6e1e4c7e275e195badb6b1e48a9eb63f7e206f7aa",
+      "source_version": "c2ec24c0",
+      "content_hash": "2b67aab074ccbf9bfa4ad9f268d035368cd196842abf02118cdfdd4c807460db",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T05:48:46.738Z"
+      "persisted_at": "2026-11-26T23:41:03.944Z"
     },
     "learn-github-alibaba-zvec": {
       "learning_id": "learn-github-alibaba-zvec",
@@ -227963,13 +227973,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "wcandillon-react-native-skia",
+      "slug": "shopify-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
-      "source_version": "d0e4075f",
-      "content_hash": "381414aa49d4c9aa188b2c33c3057e31b854175bfc9ab3f90b3684bc11cf7a1d",
-      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "caa24586",
+      "content_hash": "6db611d77c1f5deff593d37bb87bdfa616ccfb19b0a167330d73fe30c03e769f",
+      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 8346,
@@ -227994,7 +228004,7 @@
         {
           "number": 10658,
           "title": "🍏): don't name build stamps .signature (ITMS-91063)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228002,7 +228012,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T11:03:50.935Z",
+      "verified_at": "2026-11-26T23:41:00.830Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228041,25 +228051,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "d0e4075f",
-      "content_hash": "0b7bd87ae8057053814cfe02b5d561b4a48c42aacc5e231027536d54b0085148",
+      "source_version": "caa24586",
+      "content_hash": "d563e17693215a3238ec482bc5e72e7c7ff30e5c8f4330885fb45b8ffe0f2740",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T11:03:51.946Z"
+      "persisted_at": "2026-11-26T23:41:01.647Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/wcandillon-react-native-skia-verification-protocol-empirical-defect-shield-for-w.md",
+      "relative_path": "08_VERIFICATION/shopify-react-native-skia-verification-protocol-empirical-defect-shield-for-wcan.md",
       "title": "Verification Protocol: Empirical Defect Shield for wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "d0e4075f",
-      "content_hash": "4621f6bcee72cb6e4b9d2d078a5af62c59264d9767419357088205ac6ebf1b33",
+      "source_version": "caa24586",
+      "content_hash": "0247b89a257d87ff4b4653fcc4da0d24e2a37351e5e3400d59a2beee6cac2c86",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:03:52.209Z"
+      "persisted_at": "2026-11-26T23:41:01.880Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria",
@@ -228093,9 +228103,9 @@
       "title": "Technical Construction Intelligence: shopify-react-native-skia-learnings Core Invariants",
       "repository": "shopify-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "435f6df9db2e8026300ab75a29d964034b755d815e6da87bf310dfd2ca82ef04",
+      "content_hash": "a0ff5f11e775d98f1c453ac6624dba705526e90c223237476507ee1f32d10221",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T15:28:02.388Z"
+      "persisted_at": "2026-11-26T23:41:09.168Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-shopify-react-native-skia-lear": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shopify-react-native-skia-lear",
@@ -228105,9 +228115,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for shopify-react-native-skia-learnings",
       "repository": "shopify-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "f92532c54ee1aa03df0c0b1dedad721b1f81589a1d27e55ec959d65a5af223da",
+      "content_hash": "93eaa386f9fee0613beff776628e63b9b202c01c0323cdd2abc5522557e1d34b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:28:02.648Z"
+      "persisted_at": "2026-11-26T23:41:09.391Z"
     },
     "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora": {
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
@@ -230084,7 +230094,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "1243dd58a2a22d502bc63c80bea59a690cd8549b7bd4eca3da238c02eacd7ba4",
+      "content_hash": "794d0a522811935798578d58e01465eca90b721bf0057f0805d59f3e871c1ead",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "promoted_rules": [],
@@ -230093,7 +230103,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:55:19.113Z",
+      "verified_at": "2026-11-26T23:40:53.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230110,9 +230120,9 @@
       "title": "Research & Knowledge Intelligence: FacebookAI/xlm-roberta-base Core Invariants",
       "repository": "FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "480b72f92e638c543c3c21b2dbfc6bdc9b5fe21dc974bc1b9d8286faffcc7a8c",
+      "content_hash": "9a8a44840a4c811a772bba7fc18b8594ecb3a486db4c60af4e056c1b41d2fb21",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:55:19.677Z"
+      "persisted_at": "2026-11-26T23:40:53.895Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in",
@@ -230122,9 +230132,9 @@
       "title": "Research & Knowledge Intelligence: hf-facebookai-xlm-roberta-base-learnings Core Invariants",
       "repository": "hf-facebookai-xlm-roberta-base-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6ca694b513d69eb4b458dfdfe391627c646590c14f5e3c04b0aca60795e84ec",
+      "content_hash": "4982d0090fa2225984bcb5dec7ce1c57fe6eb16984b4242ea135dc50b77922e2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:55:31.277Z"
+      "persisted_at": "2026-11-26T23:41:08.221Z"
     },
     "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12": {
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
@@ -354608,14 +354618,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10658,
       "title": "🍏): don't name build stamps .signature (ITMS-91063)",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
-      "source_version": "d0e4075f",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "caa24586",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-26T11:03:50.935Z"
+      "verified_at": "2026-11-26T23:41:00.830Z"
     },
     "candidate_directive-empirical-invariant-guard-in-client_git_source_test-go": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-client_git_source_test-go",
@@ -354633,13 +354643,13 @@
       "item_id": "candidate_directive-don-t-name-build-stamps-signature-itms-91063",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2VBJ-don-t-name-build-stamps-signature-itms-91063.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4N99-don-t-name-build-stamps-signature-itms-91063.md",
       "title": "🍏): don't name build stamps .signature (ITMS-91063)",
-      "repository": "wcandillon-react-native-skia-learnings",
+      "repository": "shopify-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fd7c335ec6b938bfda7fe2d76c01172b4bd7bdb6dfef4809c1c94e2fe03f3cf",
+      "content_hash": "afce8df7b2efedb1dccd3539acc4b5b9497a6d98b6981d18d304c3fef0ff09a0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T11:03:56.438Z"
+      "persisted_at": "2026-11-26T23:41:08.930Z"
     },
     "learn-github-kividbio-kividb": {
       "learning_id": "learn-github-kividbio-kividb",
@@ -360085,6 +360095,58 @@
       "content_hash": "9bc9854baf2af1d9d626f81d233159eab3fd1b5770d507c7c23bddf5286e61b7",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T23:32:29.027Z"
+    },
+    "rule-10794": {
+      "learning_id": "rule-10794",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10794,
+      "title": "Revert \"stm32/i2s: override the clock source for f3\"",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "86b0b067",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T23:40:54.561Z"
+    },
+    "candidate_directive-revert-stm32-i2s-override-the-clock-source-for-f3": {
+      "item_id": "candidate_directive-revert-stm32-i2s-override-the-clock-source-for-f3",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4LXX-revert-stm32-i2s-override-the-clock-source-for-f3.md",
+      "title": "Revert \"stm32/i2s: override the clock source for f3\"",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e496852d9b3a35d242664ade823118bbe5d3addf330e1dd41dd2acd867787dcb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T23:41:07.222Z"
+    },
+    "rule-10795": {
+      "learning_id": "rule-10795",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10795,
+      "title": "Wire a no-op parallelsuitelint into CI",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "c2ec24c0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T23:41:02.848Z"
+    },
+    "candidate_directive-wire-a-no-op-parallelsuitelint-into-ci": {
+      "item_id": "candidate_directive-wire-a-no-op-parallelsuitelint-into-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4J1L-wire-a-no-op-parallelsuitelint-into-ci.md",
+      "title": "Wire a no-op parallelsuitelint into CI",
+      "repository": "temporalio/temporal",
+      "source_version": "c2ec24c0",
+      "content_hash": "1452217fa3c75f970d8b14d09dd6ed1a1ad73dd1fc6bef2ae55215c6f26464b9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T23:41:03.467Z"
     }
   },
   "ai-builder-brain": {

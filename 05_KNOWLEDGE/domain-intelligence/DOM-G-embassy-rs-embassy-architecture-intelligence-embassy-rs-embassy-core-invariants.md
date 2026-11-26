@@ -4,23 +4,23 @@
 {
   "source_repository": "embassy-rs/embassy",
   "source_url": "https://github.com/embassy-rs/embassy",
-  "source_version": "c7f4fb42",
+  "source_version": "86b0b067",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T23:24:03.008Z",
+  "timestamp": "2026-11-26T23:40:55.183Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-embassy-rs-embassy",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `c7f4fb42`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T23:24:03.008Z`  
+> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `86b0b067`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T23:40:55.183Z`  
 > **Learning ID**: `learn-github-embassy-rs-embassy`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:24:01.180Z  
+> **Harvest Timestamp**: 2026-11-26T23:40:53.454Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10148 stars
+- **Stars / Engagement**: 10156 stars
 
 ---
 
@@ -1449,14 +1449,13 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7641** (2026-11-25): **[MCXA] OSC32K: keep a retained mismatch running, make the lock optional**
-  *Symptoms*: OSC32K lives in the VBAT domain. Its controls survive every reset except a VBAT POR. Today `init` fails when a running OSC32K has other settings than the config asks for, and `configure_osc32k_clocks` locks `OSCLCKA`.  Failure sequence on a product: 1. Image A sets up OSC32K and locks it. 2. Image B (an update) asks for another gain or caps. 3. `init` returns `BadConfig`, so image B cannot boot. A boot loader rolls back to image A. 4. The update never applies until the battery and all supplies are removed (VBAT POR).  ## Changes `configure_osc32k_clocks` no longer fails on a retained OSC32K. It reports what it found in the new `Clocks::osc32k_status`:  | Retained OSC32K | Status | Action | |---|---|---| | Off, or same settings | `Requested` | Normal LP start-up, or keep it | | Unlocked, other settings | `Restarted` | Stop it, then run the LP start-up again (RTC loses up to the start-up time once) | | Locked, other settings | `LockedMismatch` | Keep it and its 32 kHz outputs | | Locked, off | `LockedDisabled` | No 32 kHz outputs |  New `Osc32KConfig::lock` (default `false`) sets `OSCLCKA`. The RM LP sequence has no lock step, and the NXP SDK does not lock OSC32K.  ## Testing MCXA577, LP mode, gain 01, `lock = false`.  | Start state | Result | |---|---| | Locked in Normal mode by older firmware | ✅ `LockedMismatch`, no init failure, RTC counts | | Off after VBAT POR | ✅ LP, gain 01, unlocked, RTC counts | | Unlocked LP, same settings, after MCU reset | ✅ Unchanged, unlocked | |
+- **Issue #7652** (2026-11-26): **Usb: refactor device test utils**
+  *Symptoms*: Remove duplicated (x5) `MockDriver` and stuff, in usb driver classes Same idea as already done for host.  Two commits - device already had private mocks `TestDriver`, `TestBus` and `TestEndpoint`, so moved and made `pub(crate)`. Needs "std" so conditional to `test_utils` feature AND target having OS (so embedded target don't get it by mistake) - extended mocks with endpoint + stall behaviour requires by classes.    
   **Post-Mortem & Fix Analysis**:
   > This pull request is a **draft**, so it isn't in the [review queue](https://bot.embassy.dev) yet. Mark it as **ready for review** when you'd like someone to look at it.
-  > @felipebalbi 
 
-- **Issue #7637** (2026-11-24): **stm32/hsem: fix secondary core boot; RCC enable registers are per-core**
-  *Symptoms*: Fixes the dual-core boot regression reported in [#7609](https://github.com/embassy-rs/embassy/issues/7609#issuecomment-4012288998) (follow-up to #7612, which is already merged).  `try_init_secondary` from #7612 waits for `init_primary` to enable the HSEM clock (`rcc::is_enabled`), on the assumption that the RCC enable registers are shared between the cores on STM32H7. **They are not: they are banked per core.** Each CPU has its own peripheral clock gates ("peripheral allocation", AN5557 2.3: *"each CPU features dedicated registers and bits"*), and one core cannot enable a peripheral for the other.  Closes gh-7609.
+- **Issue #7648** (2026-11-26): **stm32/adc: enable native VREFINT and temperature calibration across families**
+  *Symptoms*: ## Summary  Uses the structured `AdcCalibration` metadata added in embassy-rs/stm32-data#1004 to enable native VDDA and temperature calibration across STM32 families (removing hardcoded per-family `#[cfg]` lists and adding resolution-aware fixed-point conversion + optional `Adc` convenience methods):  - **Update `stm32-metapac` to `stm32-data-c4bec50293a31ad80084f76cce851caf5f16e38d`**   - Adapts `embassy-stm32/src/flash/v5.rs` (`set_clr_*` on G5 from `stm32-data` PR #1001) and `embassy-stm32/build.rs` / `embassy-stm32/src/rcc/h.rs` (`CCIPR1` on H7RS from `stm32-data` PR #998). - **Metadata-driven `build.rs` cfgs & constants**   - Reads `METADATA.adc_calibration`, emits `adc_vrefint_cal`, `adc_temp_cal`, `adc_temp_two_point`, `adc_temp_one_point`, and `adc_temp_nominal` cfgs, and populates `_generated.rs` constants (`ADC_VREF_CAL_MV`, `ADC_VREF_CAL_BITS`, `ADC_TEMP_CAL_MV`, `ADC_TEMP_CAL_BITS`, `ADC_TEMP_CAL1_C`, `ADC_TEMP_CAL2_C`, `ADC_TEMP_REF_C`, `ADC_TEMP_VREF_MV`, `ADC_TEMP_AVG_SLOPE_UV_PER_C`). - **Generalized `Calibration`, token accessors, and native `Adc` read helpers (`src/adc/internal.rs`)**   - Enables `VrefInt::calibrated_value()` across all `adc_vrefint_cal` families (masked to `ADC_VREF_CAL_BITS`, fixing unaligned `DESIG` upper bits on WBA/U5/U3), `Temperature::calibrated_value()` (`adc_temp_two_point`, migrating U0 from `TSCAL` to `TS_CAL1`/`TS_CAL2`), and `Temperature::cal1()` (`adc_temp_cal`).   - Generalizes `Calibration` (`read`, `vdda_mv`, `sample_to_mv`,
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1473,196 +1472,98 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cdc571c8` (2026-11-25)
-**Commit Message**: embassy-mcxa: fix retained OSC32K restart handling
+### Incident Patch 1: `844f8876` (2026-11-18)
+**Commit Message**: Revert "stm32/i2s: override the clock source for f3"
 
-Preserve inherited output gates across oscillator restarts and
-interrupted setup. Establish a disabled, non-bypass state before startup
-and reject stop readiness timeouts. Separate retained LP runtime
-compatibility from startup-trim verification so timer-only reset changes
-do not restart the source.
+This reverts commit 235899025319b4beb02dfcb00d4687ea4a88fc32.
 
-**File**: `embassy-mcxa/src/clocks/operator.rs` (modified, +35/-20)
+**File**: `embassy-stm32/src/i2s.rs` (modified, +1/-19)
 ```diff
-@@ -473,10 +473,11 @@ impl ClockOperator<'_> {
-         Ok(())
-     }
+@@ -658,26 +658,8 @@ impl<'d, W: Word> I2S<'d, W> {
  
-+    // Startup trim may change across reset without changing the running LP source.
-     #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
--    fn osc32k_lp_controls_match(&self) -> bool {
-+    fn osc32k_lp_runtime_controls_match(&self) -> bool {
-         use config::Osc32KCoarseGain;
--        use nxp_pac::vbat::{CoarseAmpGain, InitTrim, ModeEn, SupplyDet, XtalCapSel as ExtalCapSel, XtalCapSel};
-+        use nxp_pac::vbat::{CoarseAmpGain, ModeEn, SupplyDet, XtalCapSel as ExtalCapSel, XtalCapSel};
- 
-         let Some(cfg) = self.config.osc32k.as_ref() else {
-             return false;
-@@ -501,7 +502,6 @@ impl ClockOperator<'_> {
-             && osc.extal_cap_sel() == ExtalCapSel::Sel0
-             && osc.coarse_amp_gain() == gain
-             && osc.supply_det() == supply
--            && self.vbat0.osccfga().read().init_trim() == InitTrim::Sel0
-     }
- 
-     /// Establish LP OSC32K or adopt a compatible retained source without restarting it.
-@@ -535,21 +535,33 @@ impl ClockOperator<'_> {
-             self.clocks.osc32k_status = Osc32KStatus::LockedDisabled;
-             return Ok(());
-         }
--        let mismatch = running && !self.osc32k_lp_controls_match();
-+        // Snapshot output ownership before stopping the source. Gates can also
-+        // survive an interrupted restart with OSC_EN already cleared.
-+        let retained_gates = self.vbat0.oscclke().read();
-+        let mismatch = running && !self.osc32k_lp_runtime_controls_match();
-+        if !locked && (mismatch || !running) {
-+            // Establish a stopped, non-bypass state before startup, including
-+            // recovery from an interrupted stop with OSC_EN=0 and BYP_EN=1.
-+            self.vbat0.oscctla().modify(|w| {
-+                w.set_osc_en(false);
-+                // RM 31.7.1.8: exit bypass with both enable bits cleared.
-+                w.set_osc_byp_en(false);
-+            });
-+            let mut remaining = cfg.readiness_poll_budget.get();
-+            while self.vbat0.statusa().read().osc_rdy() {
-+                remaining -= 1;
-+                if remaining == 0 {
-+                    return Err(ClockError::BadConfig {
-+                        clock: "osc32k",
-+                        reason: "stop readiness poll budget exhausted",
-+                    });
-+                }
-+            }
-+        }
-         self.clocks.osc32k_status = match (mismatch, locked) {
-             (false, _) => Osc32KStatus::Requested,
-             (true, true) => Osc32KStatus::LockedMismatch,
--            (true, false) => {
--                // Stop the unlocked oscillator so the start-up sequence below applies
--                // the requested settings. Wait for OSC_RDY to clear, so the start-up
--                // wait does not pass on the stale flag.
--                self.vbat0.oscctla().modify(|w| w.set_osc_en(false));
--                let mut remaining = cfg.readiness_poll_budget.get();
--                while self.vbat0.statusa().read().osc_rdy() && remaining > 0 {
--                    remaining -= 1;
+         #[cfg(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7))]
+         let pclk = unsafe { crate::rcc::get_freqs() }.plli2s1_r.to_hertz().unwrap();
+-        #[cfg(not(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7, stm32f3)))]
++        #[cfg(not(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7)))]
+         let pclk = T::frequency();
+-        #[cfg(stm32f3)]
+-        let pclk = {
+-            // On STM32F3, I2SxCLK is either SYSCLK or the external I2S_CKIN pin.
+-            // It is NOT PCLK1 (that is only the SPI kernel clock).
+-            let cfgr = crate::pac::RCC.cfgr().read();
+-            match cfgr.i2ssrc() {
+-                crate::pac::rcc::vals::Issrc::Sys => {
+-                    // SAFETY: RCC must have been initialised before I2S construction.
+-                    unsafe { crate::rcc::get_freqs() }.sys.to_hertz().unwrap()
 -                }
--                Osc32KStatus::Restarted
+-                crate::pac::rcc::vals::Issrc::Ckin => {
+-                    panic!(
+-                        "I2S on STM32F3 is configured to use I2S_CKIN; \
+-                    either switch I2SSRC to SYSCLK or provide the CKIN frequency"
+-                    )
+-                }
 -            }
-+            (true, false) => Osc32KStatus::Restarted,
-         };
-         let keep_settings = self.clocks.osc32k_status == Osc32KStatus::LockedMismatch;
-         let retained = self.vbat0.oscctla().read().osc_en();
-@@ -633,7 +645,10 @@ impl ClockOperator<'_> {
-                 });
-             }
-         }
--        if !keep_settings && !self.osc32k_lp_controls_match() {
-+        if !keep_settings
-+            && (!self.osc32k_lp_runtime_controls_match()
-+                || (!retained && self.vbat0.osccfga().read().init_trim() != InitTrim::Sel0))
-+        {
-             return Err(ClockError::BadConfig {
-                 clock: "osc32k",
-                 reason: "LP control readback failed",
-@@ -642,9 +657,9 @@ impl ClockOperator<'_> {
+-        };
  
-         // Preserve retained gates that may feed an existing RTC; only claim requested outputs.
-         self.vbat0.oscclke().modify(|w| {
--            w.set_clke(0, cfg.vsys_domain_active || (retained && w.clke(0)));
--            w.set_clke(1, cfg.vdd_core_domain_active || (retained && w.clke(1)));
--            w.set_clke(2, cfg.vbat_domain_active || (retained && w.clke(2)));
-+            w.set_clke(0, cfg.vsys_domain_active || retained_gates.clke(0));
-+            w.set_clke(1, cfg.vdd_core_domain_active || retained_gates.clke(1));
-+            w.set_clke(2, cfg.vbat_domain_active || retained_gates.clke(2));
-         });
-         let gates = self.vbat0.oscclke().read();
-         if (cfg.vsys_domain_active && !gates.clke(0))
-@@ -658,7 +673,7 @@ impl ClockOperator<'_> {
-         }
+         let (odd, div) = compute_baud_rate(pclk, config.frequency, config.master_clock, config.format);
  
-         // The LDO lock is write-once until VBAT POR. Lock only after successful readback.
--        // Failures deliberately leave supplies/source running, without rollback or cache publication.
-+        // Failures do not roll back hardware changes or publi
 ```
 
 ---
 
-### Incident Patch 2: `03375dc3` (2026-11-25)
-**Commit Message**: Merge pull request #7626 from umutKaracelebi/cyw43-event-mask-bounds
+### Incident Patch 2: `ea5eb1d0` (2026-11-20)
+**Commit Message**: stm32/i2s: fix build.rs after branch rebase
 
-cyw43: bound-check the event code in EventMask::is_enabled
-
-**File**: `cyw43/src/events.rs` (modified, +31/-0)
+**File**: `embassy-stm32/build.rs` (modified, +4/-5)
 ```diff
-@@ -369,6 +369,13 @@ impl EventMask {
-         let word = n / u32::BITS;
-         let bit = n % u32::BITS;
+@@ -1081,17 +1081,15 @@ fn main() {
+             };
  
-+        // An event code that has no variant in `Event` maps to `Event::Unknown`
-+        // (0xFF), whose word index is past the end of the mask. Such an event is
-+        // never enabled.
-+        if word as usize >= Self::WORD_COUNT {
-+            return false;
-+        }
-+
-         self.mask[word as usize] & (1 << bit) > 0
-     }
- }
-@@ -415,3 +422,27 @@ impl Default for SharedEventMask {
-         Self::new()
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn is_enabled_with_unlisted_code() {
-+        // An event code with no variant maps to `Event::Unknown`, whose word
-+        // index lies past the end of the mask. Querying it must report "not
-+        // enabled" instead of indexing out of bounds.
-+        let mask = SharedEventMask::default();
-+        assert!(!mask.is_enabled(Event::from(92)));
-+        assert!(!mask.is_enabled(Event::Unknown));
-+    }
-+
-+    #[test]
-+    fn is_enabled_tracks_enabled_events() {
-+        let mask = SharedEventMask::default();
-+        mask.enable(&[Event::SET_SSID, Event::LAST]);
-+        assert!(mask.is_enabled(Event::SET_SSID));
-+        assert!(mask.is_enabled(Event::LAST));
-+        assert!(!mask.is_enabled(Event::AUTH));
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `cea7e0ed` (2026-11-24)
-**Commit Message**: Fix minor merge issue
-
-**File**: `embassy-usb-synopsys-otg/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ use core::sync::atomic::{AtomicBool, AtomicU16, AtomicU32, Ordering};
- use core::task::{Context, Poll};
+             let clock_frequency = match &rcc.kernel_clock {
+-                PeripheralRccKernelClock::Mux(mux) => clock_gen.gen_mux(p.name, mux),
+                 PeripheralRccKernelClock::Clock(clock) => {
+                     // STM32F3 SPI2/SPI3 are dual-purpose. If I2SMOD is set, the audio clock
+                     // comes from SYSCLK (or I2S_CKIN). If not, it's standard PCLK.
+                     //
+                     // Below code is implement a runtime check against I2SCFGR.I2SMOD that returns
+                     // the SPI clock in SPI mode and the I2S clock in I2S mode.
+                     let is_f3_i2s_capable = chip_name.starts_with("stm32f3")
+-                        && p.name.starts_with("SPI")
+-                            .strip_prefix("SPI")
+                         && p.name
++                            .strip_prefix("SPI")
+                             .map(|n| peripheral_map.contains_key(format!("I2S{}", n).as_str()))
+                             .unwrap_or(false);
  
- use embassy_hal_internal::iso_helpers::{IsoSchedule, forward};
--use embassy_sync::blocking_mutex::raw::{CriticalSectionRawMutex, RawMutex};
-+use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
- use embassy_sync::waitqueue::AtomicWaker;
- #[cfg(feature = "embassy-time")]
- use embassy_time::{Duration, Instant};
+@@ -1108,9 +1106,9 @@ fn main() {
+                                     panic!(
+                                         "I2S on {} is configured to use external I2S_CKIN, which is not \
+                                          supported by this driver. Clear RCC_CFGR.I2SSRC to use SYSCLK.",
+-                                        stringify!(#pname)
++                                        stringify!(#pname))
+                                 }
+-                                    );
++
+                                 unsafe { crate::rcc::get_freqs() }
+                                     .sys
+                                     .to_hertz()
+@@ -1127,6 +1125,7 @@ fn main() {
+                         clock_gen.gen_clock(p.name, clock)
+                     }
+                 }
++                PeripheralRccKernelClock::Mux(mux) => clock_gen.gen_kernel(p.name, mux),
+             };
+ 
+             let bus_clock_frequency = clock_gen.gen_clock(p.name, rcc.bus_clock);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7652** (2026-11-26): Usb: refactor device test utils (@cryptographix)
+- **PR #7648** (2026-11-26): stm32/adc: enable native VREFINT and temperature calibration across families (@leftger)
+- **PR #7647** (closed): stm32: capability-based low-power modes, WakeSource registry, and residency scheduling (@leftger)
+- **PR #7646** (2026-11-26): stm32: update metapac (@xoviat)
 - **PR #7641** (2026-11-25): [MCXA] OSC32K: keep a retained mismatch running, make the lock optional (@gjpmsft)
-- **PR #7637** (2026-11-24): stm32/hsem: fix secondary core boot; RCC enable registers are per-core (@xoviat)
-- **PR #7636** (2026-11-24): Replace synopsys-otg's Copy raw mutex with a SharedRawMutex trait (@bugadani)
-- **PR #7635** (2026-11-23): Remove embassy-sync's GenericAtomicWaker (@bugadani)
-- **PR #7631** (2026-11-25): usb: Add missing derive(defmt::Format) for CdcAcmError (@msrd0)
-- **PR #7629** (2026-11-25): embassy-usb: add CDC-ACM `SERIAL_STATE` notifications (@joelsa)
+- **PR #7638** (2026-11-26): usb-host: Fail open pipes when device removed, incl hub removal (@cryptographix)
 
 ---
 
@@ -1682,70 +1583,49 @@ cyw43: bound-check the event code in EventMask::is_enabled
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. embassy-mcxa: fix retained OSC32K restart handling
+## X. Revert "stm32/i2s: override the clock source for f3"
 
 **RULE**:
-When implementing operations in `embassy-mcxa/src/clocks/operator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-stm32/src/i2s.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cdc571c8`: embassy-mcxa: fix retained OSC32K restart handling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `844f8876`: Revert "stm32/i2s: override the clock source for f3". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-mcxa/src/clocks/operator.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32/src/i2s.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // Startup trim may change across reset without changing the running LP source.
-    fn osc32k_lp_runtime_controls_match(&self) -> bool {
-        use nxp_pac::vbat::{CoarseAmpGain, ModeEn, SupplyDet, XtalCapSel as ExtalCapSel, XtalCapSel};
-        // Snapshot output ownership before stopping the source. Gates can also
-        // survive an interrupted restart with OSC_EN already cleared.
-        let retained_gates = self.vbat0.oscclke().read();
-        let mismatch = running && !self.osc32k_lp_runtime_controls_match();
-        if !locked && (mismatch || !running) {
-            // Establish a stopped, non-bypass state before startup, including
-            // recovery from an interrupted stop with OSC_EN=0 and BYP_EN=1.
-            self.vbat0.oscctla().modify(|w| {
-                w.set_osc_en(false);
-                // RM 31.7.1.8: exit bypass with both enable bits cleared.
-                w.set_osc_byp_en(false);
-            });
-            let mut remaining = cfg.readiness_poll_budget.get();
-            while self.vbat0.statusa().read().osc_rdy() {
-                remaining -= 1;
-                if remaining == 0 {
-                    return Err(ClockError::BadConfig {
-        
+        #[cfg(not(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7)))]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    fn osc32k_lp_controls_match(&self) -> bool {
-        use nxp_pac::vbat::{CoarseAmpGain, InitTrim, ModeEn, SupplyDet, XtalCapSel as ExtalCapSel, XtalCapSel};
-            && self.vbat0.osccfga().read().init_trim() == InitTrim::Sel0
-        let mismatch = running && !self.osc32k_lp_controls_match();
-            (true, false) => {
-                // Stop the unlocked oscillator so the start-up sequence below applies
-                // the requested settings. Wait for OSC_RDY to clear, so the start-up
-                // wait does not pass on the stale flag.
-                self.vbat0.oscctla().modify(|w| w.set_osc_en(false));
-                let mut remaining = cfg.readiness_poll_budget.get();
-                while self.vbat0.statusa().read().osc_rdy() && remaining > 0 {
-                    remaining -= 1;
+        #[cfg(not(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7, stm32f3)))]
+        #[cfg(stm32f3)]
+        let pclk = {
+            // On STM32F3, I2SxCLK is either SYSCLK or the external I2S_CKIN pin.
+            // It is NOT PCLK1 (that is only the SPI kernel clock).
+            let cfgr = crate::pac::RCC.cfgr().read();
+            match cfgr.i2ssrc() {
+                crate::pac::rcc::vals::Issrc::Sys => {
+                    // SAFETY: RCC must have been initialised before I2S construction.
+                    unsafe { crate::rcc::get_freqs() }.sys.to_hertz().unwrap()
                 }
-                Osc32KStatus::Restarted
+                crate::pac::rcc::vals::Issrc::Ckin => {
+                    panic!(
+                        "I2S on STM32F3 is configured to use I2S_CKIN; \
+                    either switch I2SSRC to SYSCLK or provide the CKIN frequency"
+                    )
+                }
             }
-        if !keep_settings && !self.osc32k_lp_controls_match() {
-            w.set_clke(0, cfg.vsys_domain_active || (retained && w.clke(0)));
-            w.set_clke(1, cfg.vdd_core_domain_active || (retained && w.clke(1)));
-            w.set_clke(2, cfg.vbat_domain_active || (retained && w.clke(2)));
-        /
+        };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cdc571c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `844f8876` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

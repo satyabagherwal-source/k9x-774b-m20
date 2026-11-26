@@ -13629,3 +13629,7 @@ Every entry in this ledger must capture:
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `55f7ecc2` | Multi-dimensional audit evidence | 2026-11-26T23:24:11.217Z |
 | `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-11-26T23:32:15.281Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `f814a86f` | Multi-dimensional audit evidence | 2026-11-26T23:32:24.540Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-26T23:40:53.515Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `86b0b067` | Multi-dimensional audit evidence | 2026-11-26T23:40:54.898Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `caa24586` | Multi-dimensional audit evidence | 2026-11-26T23:41:01.107Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `c2ec24c0` | Multi-dimensional audit evidence | 2026-11-26T23:41:03.176Z |

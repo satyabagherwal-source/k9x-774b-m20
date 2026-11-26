@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T23:32:30.384Z",
+  "last_updated": "2026-11-26T23:41:09.168Z",
   "total_records": 2789,
   "domains": {
     "A": {
@@ -10602,8 +10602,8 @@
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "repository": "embassy-rs/embassy",
-      "content_hash": "ae5d42d000517013322b02907810dcea553e3c28e844e1decfad8fe9eef863a7",
-      "created_at": "2026-11-25T23:24:03.284Z"
+      "content_hash": "d27dcdbbc69a31be4a63ea6c9915909748cb23cc51ddf7d41d4b64c714fca195",
+      "created_at": "2026-11-26T23:40:55.464Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
@@ -10647,8 +10647,8 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
       "repository": "embassy-rs-embassy-learnings",
-      "content_hash": "55c676df87583a48a8034670eda6eecb4cc8a1750ddcffa04d23e4c1dc4b7e2a",
-      "created_at": "2026-11-25T23:24:16.516Z"
+      "content_hash": "514ac1388f92d5c54e96c8b50ff0d0b85f79e1219a99d802d55621acb86abbb4",
+      "created_at": "2026-11-26T23:41:07.507Z"
     },
     "DOM-D-4AA06C1E": {
       "record_id": "DOM-D-4AA06C1E",
@@ -11178,8 +11178,8 @@
       "title": "Content & Information Intelligence: temporalio/temporal Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-content-information-intelligence-temporalio-temporal-core-in.md",
       "repository": "temporalio/temporal",
-      "content_hash": "91553e4cf94ed82a20db403de6d362a86f2c8d9044acec8494783f7efe2cb599",
-      "created_at": "2026-11-26T05:48:46.466Z"
+      "content_hash": "93bc697ecf0f42f7efa7c72ef4644eb490083fa93edcc17e0a47aae360e2d7e7",
+      "created_at": "2026-11-26T23:41:03.699Z"
     },
     "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants",
@@ -14705,10 +14705,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "0b7bd87ae8057053814cfe02b5d561b4a48c42aacc5e231027536d54b0085148",
-      "created_at": "2026-11-26T11:03:51.946Z"
+      "content_hash": "d563e17693215a3238ec482bc5e72e7c7ff30e5c8f4330885fb45b8ffe0f2740",
+      "created_at": "2026-11-26T23:41:01.647Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -14818,8 +14818,8 @@
       "title": "Technical Construction Intelligence: shopify-react-native-skia-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-learnings-technical-construction-intelligence-shopify-.md",
       "repository": "shopify-react-native-skia-learnings",
-      "content_hash": "435f6df9db2e8026300ab75a29d964034b755d815e6da87bf310dfd2ca82ef04",
-      "created_at": "2026-11-24T15:28:02.388Z"
+      "content_hash": "a0ff5f11e775d98f1c453ac6624dba705526e90c223237476507ee1f32d10221",
+      "created_at": "2026-11-26T23:41:09.168Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar",
@@ -15520,8 +15520,8 @@
       "title": "Research & Knowledge Intelligence: FacebookAI/xlm-roberta-base Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-research-knowledge-intelligence-facebookai-xlm-ro.md",
       "repository": "FacebookAI/xlm-roberta-base",
-      "content_hash": "480b72f92e638c543c3c21b2dbfc6bdc9b5fe21dc974bc1b9d8286faffcc7a8c",
-      "created_at": "2026-11-23T14:55:19.677Z"
+      "content_hash": "9a8a44840a4c811a772bba7fc18b8594ecb3a486db4c60af4e056c1b41d2fb21",
+      "created_at": "2026-11-26T23:40:53.895Z"
     },
     "DOM-D-F08B07B4": {
       "record_id": "DOM-D-F08B07B4",
@@ -15571,8 +15571,8 @@
       "title": "Research & Knowledge Intelligence: hf-facebookai-xlm-roberta-base-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-learnings-research-knowledge-intelligence-hf-face.md",
       "repository": "hf-facebookai-xlm-roberta-base-learnings",
-      "content_hash": "d6ca694b513d69eb4b458dfdfe391627c646590c14f5e3c04b0aca60795e84ec",
-      "created_at": "2026-11-23T14:55:31.277Z"
+      "content_hash": "4982d0090fa2225984bcb5dec7ce1c57fe6eb16984b4242ea135dc50b77922e2",
+      "created_at": "2026-11-26T23:41:08.221Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",

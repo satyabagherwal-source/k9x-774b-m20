@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:32:30.748Z",
+  "last_updated": "2026-11-26T23:41:09.602Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T23:32:29.720Z",
@@ -908,7 +908,7 @@
       "staged_for_review": 0
     },
     "embassy-rs-embassy-learnings.md": {
-      "processed_at": "2026-11-25T23:24:15.818Z",
+      "processed_at": "2026-11-26T23:41:06.867Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2458,9 +2458,9 @@
       "staged_for_review": 0
     },
     "shopify-react-native-skia-learnings.md": {
-      "processed_at": "2026-11-24T15:28:01.375Z",
+      "processed_at": "2026-11-26T23:41:08.496Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md": {
       "processed_at": "2026-11-26T22:21:52.886Z",
@@ -2523,7 +2523,7 @@
       "staged_for_review": 1
     },
     "hf-facebookai-xlm-roberta-base-learnings.md": {
-      "processed_at": "2026-11-23T14:55:30.979Z",
+      "processed_at": "2026-11-26T23:41:07.939Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4008,7 +4008,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4716,
+  "total_dossiers_evaluated": 4719,
   "total_canonical_promoted": 569,
-  "total_staged_for_review": 3540
+  "total_staged_for_review": 3542
 }

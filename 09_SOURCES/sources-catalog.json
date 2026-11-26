@@ -1135,8 +1135,8 @@
     "sourceUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceVersion": "hf-facebookai-xlm-roberta-base",
     "license": "Open-Source",
-    "contentHash": "1243dd58a2a22d502bc63c80bea59a690cd8549b7bd4eca3da238c02eacd7ba4",
-    "lastHarvestedAt": "2026-11-23T14:55:19.393Z",
+    "contentHash": "794d0a522811935798578d58e01465eca90b721bf0057f0805d59f3e871c1ead",
+    "lastHarvestedAt": "2026-11-26T23:40:53.515Z",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base"
   },
   "hf-openai-community-gpt2": {
@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "d36553ce",
+    "sourceVersion": "caa24586",
     "license": "MIT",
-    "contentHash": "7222ba912e2da70d60962bbe127a4cb103c6d8ec0339ec25090137d91f4fb9a6",
-    "lastHarvestedAt": "2026-11-24T15:27:12.019Z",
+    "contentHash": "6db611d77c1f5deff593d37bb87bdfa616ccfb19b0a167330d73fe30c03e769f",
+    "lastHarvestedAt": "2026-11-26T23:41:01.107Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "c7f4fb42",
+    "sourceVersion": "86b0b067",
     "license": "Apache-2.0",
-    "contentHash": "980312a510cd980229d96a169d122ca528b9d6ad46004c71dad8a9dade3fe3ee",
-    "lastHarvestedAt": "2026-11-25T23:24:02.694Z",
+    "contentHash": "f0d4b3bdf57687ec338d0562c5e6085d2e9e2476ba598732a93fde9f439d5c84",
+    "lastHarvestedAt": "2026-11-26T23:40:54.898Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "67959df6",
+    "sourceVersion": "c2ec24c0",
     "license": "MIT",
-    "contentHash": "6b2a06bbc80a011b875ac3b17917a316a42843d4c39146421508cbf11e21b5ae",
-    "lastHarvestedAt": "2026-11-26T05:48:45.867Z",
+    "contentHash": "d5ab62b9195acd3405271ccfaddb74fcb3fd7456456ee12bd97ab6bb4dc149cc",
+    "lastHarvestedAt": "2026-11-26T23:41:03.176Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {

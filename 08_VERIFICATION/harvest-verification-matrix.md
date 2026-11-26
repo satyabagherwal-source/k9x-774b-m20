@@ -13596,3 +13596,7 @@
 | `CYCLE-20261126-ITZG` | `2026-11-26T23:24:11.212Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10792` | Yes (`11e09881...`) |
 | `CYCLE-20261126-T7HP` | `2026-11-26T23:32:15.277Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`1ba5fb68...`) |
 | `CYCLE-20261126-TEMX` | `2026-11-26T23:32:24.537Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10793` | Yes (`d0d3f2c7...`) |
+| `CYCLE-20261126-4BD3` | `2026-11-26T23:40:53.511Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`794d0a52...`) |
+| `CYCLE-20261126-4CFI` | `2026-11-26T23:40:54.894Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10794` | Yes (`f0d4b3bd...`) |
+| `CYCLE-20261126-4H7Y` | `2026-11-26T23:41:01.102Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10658` | Yes (`6db611d7...`) |
+| `CYCLE-20261126-4ITG` | `2026-11-26T23:41:03.172Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10795` | Yes (`d5ab62b9...`) |
